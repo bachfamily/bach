@@ -11,7 +11,7 @@ bach for Max
 SYSTEM REQUIREMENTS
 ===================================================
 
-Intel-based Mac, OSX 10.6 or higher, running Max 6.1.7 or higher.
+Intel-based Mac, OSX 10.7 or higher, running Max 6.1.7 or higher.
 Windows XP, Vista or 7, running Max 6.1.7 or higher.
 
 
@@ -55,7 +55,7 @@ We wish to thank: Carlos Agon, Arshia Cont, Eric Daubresse, Emmanuel Jourdan, Se
 
 We also wish to thank: Sara Adhitya, Davide Bordogna, DaFact, Phil Gaskill, Eric Grunin, Mika Kuuskankare, Andrew Pask, Andrea Rota, Andrea Sarto.
 
-bach includes a modified version of Simon Tathamâ€™s listsort (distributed under the terms of the MIT license), the Mini-XML library (distribute under LGPLv2.0 license) and the Kiss FFT library (distributed under BSD licence).
+bach includes a modified version of Simon Tatham’s listsort (distributed under the terms of the MIT license), the Mini-XML library (distribute under LGPLv2.0 license) and the Kiss FFT library (distributed under BSD licence).
 
 
 ===================================================
