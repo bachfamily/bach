@@ -26,7 +26,7 @@
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909741.910329"
+                  timestampString = "527005887.26167"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "344"
@@ -41,22 +41,7 @@
                   moduleName = "bach.expr"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909756.948465"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "344"
-                  endingLineNumber = "344"
-                  offsetFromSymbolStart = "2670">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llll_deparse"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909761.161453"
+                  timestampString = "527005906.081996"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "344"
@@ -80,38 +65,6 @@
             endingLineNumber = "110"
             landmarkName = "llll_post()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llll_post"
-                  moduleName = "bach"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_maxinterface.c"
-                  timestampString = "526909741.911676"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "110"
-                  endingLineNumber = "110"
-                  offsetFromSymbolStart = "2144">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llll_post"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_maxinterface.c"
-                  timestampString = "526909761.162207"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "110"
-                  endingLineNumber = "110"
-                  offsetFromSymbolStart = "2144">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -265,7 +218,7 @@
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909741.918593"
+                  timestampString = "527005887.269799"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "1710"
@@ -280,22 +233,7 @@
                   moduleName = "bach.expr"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909756.949089"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1710"
-                  endingLineNumber = "1710"
-                  offsetFromSymbolStart = "1179">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llll_swapelems"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909761.163199"
+                  timestampString = "527005906.082965"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "1710"
@@ -505,7 +443,7 @@
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909741.918952"
+                  timestampString = "527005887.27047"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "1268"
@@ -520,22 +458,7 @@
                   moduleName = "bach.expr"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909756.956241"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1268"
-                  endingLineNumber = "1268"
-                  offsetFromSymbolStart = "1502">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llll_check(_llll const*)"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909761.164452"
+                  timestampString = "527005906.090198"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "1268"
@@ -808,7 +731,7 @@
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526909741.919789"
+                  timestampString = "527005887.271208"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "401"
@@ -823,22 +746,7 @@
                   moduleName = "bach.expr"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526909756.963068"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "401"
-                  endingLineNumber = "401"
-                  offsetFromSymbolStart = "566">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_parse_llll"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526909761.165946"
+                  timestampString = "527005906.092692"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "401"
@@ -1681,7 +1589,7 @@
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909741.920177"
+                  timestampString = "527005887.275201"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "309"
@@ -1696,22 +1604,7 @@
                   moduleName = "bach.expr"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909756.9634"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "309"
-                  endingLineNumber = "309"
-                  offsetFromSymbolStart = "12">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "parse_64bit_float(atom*)"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909761.166226"
+                  timestampString = "527005906.093084"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "309"
@@ -1776,7 +1669,7 @@
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909741.923948"
+                  timestampString = "527005887.275563"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "367"
@@ -1791,22 +1684,7 @@
                   moduleName = "bach.expr"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909756.963654"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "367"
-                  endingLineNumber = "367"
-                  offsetFromSymbolStart = "19">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llll_quoteme"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_commons.c"
-                  timestampString = "526909761.166518"
+                  timestampString = "527005906.094087"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "367"
@@ -1903,12 +1781,12 @@
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_pitch.cpp"
-                  timestampString = "526909741.924242"
+                  timestampString = "527005887.275895"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "159"
-                  endingLineNumber = "159"
-                  offsetFromSymbolStart = "109">
+                  startingLineNumber = "161"
+                  endingLineNumber = "161"
+                  offsetFromSymbolStart = "23">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -1918,27 +1796,12 @@
                   moduleName = "bach.expr"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_pitch.cpp"
-                  timestampString = "526909756.964859"
+                  timestampString = "527005906.095417"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "159"
-                  endingLineNumber = "159"
-                  offsetFromSymbolStart = "109">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "t_pitch::divdiv(t_rat&lt;long long&gt; const&amp;) const"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_pitch.cpp"
-                  timestampString = "526909761.166719"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "159"
-                  endingLineNumber = "159"
-                  offsetFromSymbolStart = "109">
+                  startingLineNumber = "161"
+                  endingLineNumber = "161"
+                  offsetFromSymbolStart = "23">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -1973,6 +1836,38 @@
             endingLineNumber = "278"
             landmarkName = "hatom_fn_remainder()"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "hatom_fn_mod(_hatom*, _hatom*, _hatom*)"
+                  moduleName = "bach.expr"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_math.c"
+                  timestampString = "527005906.096395"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "279"
+                  endingLineNumber = "279"
+                  offsetFromSymbolStart = "483">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "hatom_fn_mod(_hatom*, _hatom*, _hatom*)"
+                  moduleName = "bach.expr"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/llll_math.c"
+                  timestampString = "527005906.096618"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "279"
+                  endingLineNumber = "279"
+                  offsetFromSymbolStart = "488">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1998,7 +1893,7 @@
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909741.924606"
+                  timestampString = "527005887.276314"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "622"
@@ -2013,22 +1908,7 @@
                   moduleName = "bach.expr"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909756.965658"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "622"
-                  endingLineNumber = "622"
-                  offsetFromSymbolStart = "1028">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llll_parse_with_leveltypes"
-                  moduleName = "bach.print"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/andreaagostini/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526909761.166922"
+                  timestampString = "527005906.096889"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "622"
@@ -2131,6 +2011,22 @@
             startingLineNumber = "442"
             endingLineNumber = "442"
             landmarkName = "lexpr_eval()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../commons/aa/llll_expr_commons.c"
+            timestampString = "527004972.024239"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "lexpr_init()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -1381,8 +1381,8 @@ long lexpr_append_lexeme_VAR(t_lexpr_lexeme *lex, char type, long index, short *
                     break;
     }
     lex->l_token.t_contents.c_var.v_index = index;
-    if (index > *numvars)
-        *numvars = index;
+    if (index >= *numvars)
+        *numvars = index + 1;
     return err;
 }
 
@@ -1693,6 +1693,7 @@ long lexpr_append_lexeme_PLUS(t_lexpr_lexeme *lex)
 
 long lexpr_append_lexeme_MINUS(t_lexpr_lexeme *lex)
 {
+    lex->l_type = L_TOKEN;
     lex->l_precedence = 11;
     lex->l_order = O_L2R;
     lex->l_token.t_type = TT_OP;
@@ -1705,6 +1706,7 @@ long lexpr_append_lexeme_MINUS(t_lexpr_lexeme *lex)
 
 long lexpr_append_lexeme_UMINUS(t_lexpr_lexeme *lex)
 {
+    lex->l_type = L_TOKEN;
     lex->l_precedence = 14;
     lex->l_order = O_R2L;
     lex->l_token.t_type = TT_OP;
@@ -1725,7 +1727,7 @@ long lexpr_append_lexeme_LONG(t_lexpr_lexeme *lex, t_atom_long l)
 
 long lexpr_append_lexeme_RATIONAL(t_lexpr_lexeme *lex, t_rational r)
 {
-    
+    lex->l_type = L_TOKEN;    
     lex->l_token.t_type = TT_HATOM;
     lex->l_token.t_contents.c_hatom.h_type = H_RAT;
     lex->l_token.t_contents.c_hatom.h_w.w_rat = r;

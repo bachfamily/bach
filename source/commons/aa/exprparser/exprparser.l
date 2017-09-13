@@ -183,10 +183,12 @@ ACCIDENTAL ([#bxdq]+)
 
 <BINARY>"-" {
     BEGIN INITIAL;
+    parserpost(" lex: binary -");
     return lexpr_append_lexeme_MINUS(epd->lexeme);
 }
 
 <INITIAL>"-"/[^ /n/t] {
+    parserpost(" lex: unary -");
     return lexpr_append_lexeme_UMINUS(epd->lexeme);
 }
 
@@ -322,7 +324,7 @@ t {
 }
 
 [ \t\n] {
-	parserpost(" lex: Whitespace\n");
+	parserpost(" lex: whitespace\n");
 }
 
 . {
