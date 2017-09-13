@@ -659,6 +659,11 @@
 			<key>orderHint</key>
 			<integer>139</integer>
 		</dict>
+		<key>bach_exprparser.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>140</integer>
+		</dict>
 		<key>bach_strparser.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -1018,6 +1023,11 @@
 			<true/>
 		</dict>
 		<key>91BCCC431F56CE4C002D8BE2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>91BCCC5F1F602A62002D8BE2</key>
 		<dict>
 			<key>primary</key>
 			<true/>

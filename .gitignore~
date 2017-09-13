@@ -5,9 +5,13 @@
 *.mxe64
 *.a
 
+# Makefile #
+############
+makefile
 
 # OS generated files #
 ######################
+.DS_Store
 ._*
 .Spotlight-V100
 .Trashes
@@ -15,6 +19,10 @@ ehthumbs.db
 Thumbs.db
 
 
+# Files #
+source/commons/aa/strparser/makefile
+source/commons/aa/symparser/makefile
+
 # Folders #
 ###########
-docs/refpages/*
+# docs/refpages/*

@@ -8,3 +8,4 @@ clean:
 			rm -f symparser.c
 			rm -f symparser.tab.c
 			rm -f symparser.tab.h
+			rm -f symparser.lex.h

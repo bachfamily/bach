@@ -882,7 +882,7 @@ void graph_jsave(t_graph *x, t_dictionary *d)
 void graph_expry(t_graph *x, t_symbol *s, long argc, t_atom *argv){
 	if (x->n_lexpry) 
 		lexpr_free(x->n_lexpry);
-	x->n_lexpry = lexpr_new(argc, argv, 0, NULL);
+	x->n_lexpry = lexpr_new(argc, argv, 0, NULL, (t_object *) x);
 	if (x->n_lexpry) {
 //		object_post((t_object *) x, "good expr!");
 		x->j_box.l_rebuild = 1;
@@ -895,7 +895,7 @@ void graph_expry(t_graph *x, t_symbol *s, long argc, t_atom *argv){
 void graph_exprx(t_graph *x, t_symbol *s, long argc, t_atom *argv){
 	if (x->n_lexprx) 
 		lexpr_free(x->n_lexprx);
-	x->n_lexprx = lexpr_new(argc, argv, 0, NULL);
+	x->n_lexprx = lexpr_new(argc, argv, 0, NULL, (t_object *) x);
 	if (x->n_lexprx) {
 //		object_post((t_object *) x, "good expr!");
 		x->j_box.l_rebuild = 1;
@@ -907,7 +907,7 @@ void graph_exprx(t_graph *x, t_symbol *s, long argc, t_atom *argv){
 void graph_exprr(t_graph *x, t_symbol *s, long argc, t_atom *argv){
 	if (x->n_lexprr) 
 		lexpr_free(x->n_lexprr);
-	x->n_lexprr = lexpr_new(argc, argv, 0,NULL);
+	x->n_lexprr = lexpr_new(argc, argv, 0, NULL, (t_object *) x);
 	if (x->n_lexprr) {
 //		object_post((t_object *) x, "good expr!");
 		x->j_box.l_rebuild = 1;

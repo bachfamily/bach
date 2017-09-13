@@ -651,7 +651,7 @@ t_max_err tonnetz_setattr_surface(t_tonnetz *x, t_object *attr, long ac, t_atom 
 
 		lexpr_free(x->surface_lexpr);
 
-		if (!(x->surface_lexpr = lexpr_new(ac, av, 2, subs)))
+		if (!(x->surface_lexpr = lexpr_new(ac, av, 2, subs, (t_object *) x)))
 //		if (!(x->surface_lexpr = lexpr_new(ac_temp, av_temp, 2, subs)))
             if (text && text[0] != 0)
                 object_error((t_object *)x, "Error: wrong surface expression introduced!");

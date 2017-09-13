@@ -115,6 +115,29 @@ void hatom_fn_den(t_hatom *arg, t_hatom *res)
     hatom_setlong(res, hatom_getrational(arg).r_den);
 }
 
+void hatom_fn_pitch(t_hatom *arg, t_hatom *res)
+{
+    switch(arg->h_type) {
+        case H_LONG:
+            hatom_setpitch(res, t_pitch::fromMC(arg->h_w.w_long));
+            break;
+        case H_RAT:
+            hatom_setpitch(res, t_pitch::fromMC(arg->h_w.w_rat));
+            break;
+        case H_DOUBLE:
+            hatom_setpitch(res, t_pitch::fromMC(arg->h_w.w_double));
+            break;
+        case H_PITCH:
+            *res = *arg;
+            break;
+        default:
+            hatom_setpitch(res, t_pitch(0, t_pitch::natural, 0));
+            break;
+    }
+}
+
+
+
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
     double d1 = hatom_getdouble(a1);

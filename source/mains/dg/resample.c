@@ -904,7 +904,7 @@ t_resample *resample_new(t_symbol *s, short ac, t_atom *av)
         long fooac;
         t_atom *fooav = NULL;
         atom_setparse_debug(&fooac, &fooav, "$x1 + $x2");
-        x->n_lexpr = lexpr_new(fooac, fooav, 0, NULL);
+        x->n_lexpr = lexpr_new(fooac, fooav, 0, NULL, (t_object *) x);
         bach_freeptr(fooav);
         
 		attr_args_process(x, ac, av);
