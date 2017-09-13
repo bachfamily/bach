@@ -5,6 +5,9 @@
 *.mxe64
 *.a
 
+# Makefile #
+############
+makefile
 
 # OS generated files #
 ######################
