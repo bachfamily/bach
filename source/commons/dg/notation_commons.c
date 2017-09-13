@@ -5473,7 +5473,7 @@ t_pitch pitch_fromMC(long tone_division, char accidentals_preferences, double mc
 
 t_lexpr *notation_obj_lexpr_new(short ac, t_atom *av)
 {
-	return lexpr_new(ac, av, notation_obj_lexpr_subs_count, notation_obj_lexpr_subs);
+	return lexpr_new(ac, av, notation_obj_lexpr_subs_count, notation_obj_lexpr_subs, NULL);
 }
 
 

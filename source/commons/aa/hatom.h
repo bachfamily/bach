@@ -39,8 +39,6 @@ typedef struct _bach_rwlock {
 	//t_int32_atomic		r_readers;
 } t_bach_rwlock;
 
-//test
-
 
 #ifdef BACH_TRACK_MEMORY_ALLOCATION
 //

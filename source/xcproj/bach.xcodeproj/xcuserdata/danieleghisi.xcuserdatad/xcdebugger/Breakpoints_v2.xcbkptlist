@@ -6,48 +6,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../mains/dg/tonnetz.c"
-            timestampString = "526750910.324368"
+            timestampString = "467754729.181104"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2409"
-            endingLineNumber = "2409"
-            landmarkName = "purely_diatonic_interval_to_freqratio()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/tonnetz.c"
-            timestampString = "526750910.324368"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2422"
-            endingLineNumber = "2422"
-            landmarkName = "purely_diatonic_interval_to_freqratio()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/tonnetz.c"
-            timestampString = "526750910.324368"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2454"
-            endingLineNumber = "2454"
-            landmarkName = "diatonic_interval_to_notename()"
+            startingLineNumber = "2712"
+            endingLineNumber = "2712"
+            landmarkName = "paint_tonnetz_point()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -58,12 +26,122 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../mains/dg/tonnetz.c"
-            timestampString = "526750910.324368"
+            timestampString = "467754729.181104"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2602"
-            endingLineNumber = "2602"
-            landmarkName = "coordinates_to_diatonic_interval()"
+            startingLineNumber = "2700"
+            endingLineNumber = "2700"
+            landmarkName = "paint_tonnetz_point()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../mains/dg/tonnetz.c"
+            timestampString = "467754729.181104"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2340"
+            endingLineNumber = "2340">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../mains/dg/tonnetz.c"
+            timestampString = "467754729.181104"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2353"
+            endingLineNumber = "2353"
+            landmarkName = "build_tonnetz_point()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../mains/dg/tonnetz.c"
+            timestampString = "467754729.181104"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2385"
+            endingLineNumber = "2385"
+            landmarkName = "build_tonnetz_point()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../mains/dg/tonnetz.c"
+            timestampString = "467754729.181104"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2533"
+            endingLineNumber = "2533"
+            landmarkName = "calculate_static_tonnetz()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../mains/dg/tonnetz.c"
+            timestampString = "467754966.347234"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2244"
+            endingLineNumber = "2244"
+            landmarkName = "tonnetz_free()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../mains/dg/tonnetz.c"
+            timestampString = "467755058.731842"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2254"
+            endingLineNumber = "2254"
+            landmarkName = "purely_diatonic_interval_to_midicents()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../mains/dg/tonnetz.c"
+            timestampString = "467755063.155603"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2252"
+            endingLineNumber = "2252"
+            landmarkName = "purely_diatonic_interval_to_midicents()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -79,428 +157,548 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "460"
             endingLineNumber = "460"
-            landmarkName = "llllobj_cache_text()"
+            landmarkName = "llllobj_gunload_native()"
             landmarkType = "7">
             <Locations>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
+                  symbolName = "llllobj_gunload_native"
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866868.702422"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529855.000283"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.reg"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.keys"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.060053"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.663033"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.args"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.172187"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.portal"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.195362"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.eq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.217622"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
+                  symbolName = "llllobj_gunload_native"
                   moduleName = "bach.wrap"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.260589"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.768085"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.reg"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.778507"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.append"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.788299"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.portal"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.79771"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.args"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.807251"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
                   moduleName = "bach.flat"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.285184"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.817832"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.step"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.eq"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.309092"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.840151"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.depth"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.354367"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.gt"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.399343"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.geq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.423787"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.leq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.446621"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.lt"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.470211"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.neq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.493324"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.iter"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.51732"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.collect"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.542481"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.expr"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.573579"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.join"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.599917"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.pick"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.636274"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.is"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.662777"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.rev"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.688777"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "460"
-                  endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
+                  symbolName = "llllobj_gunload_native"
                   moduleName = "bach.slice"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.713159"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.852889"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.subs"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.is"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.735827"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.865528"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.find"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.pick"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.759613"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.876042"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.nth"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.iter"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.783416"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.88606"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.collect"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.905461"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
                   moduleName = "bach.length"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.805532"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.917939"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.nth"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.928905"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.trans"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.941274"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.mapelem"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529858.981294"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.neq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.001155"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.minfo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.03567"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.rev"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.047493"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.expr"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.093814"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.print"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.118017"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.geq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.16952"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.score"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.208058"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
                   moduleName = "bach.n2mc"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.908209"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.334384"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "llllobj_cache_text"
-                  moduleName = "bach.roll"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.arithmser"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/llllobj.c"
-                  timestampString = "526866872.998786"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.353614"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "460"
                   endingLineNumber = "460"
-                  offsetFromSymbolStart = "390">
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.roll"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470529859.386323"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.value"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470530175.517653"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.thin"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470530175.570175"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.intersection"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470530175.587673"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.subs"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470530175.630541"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.gt"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470530205.823316"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.lace"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470530205.844769"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "bach.find"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470530205.98028"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llllobj_gunload_native"
+                  moduleName = "dada.platform"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/llllobj.c"
+                  timestampString = "470533534.916789"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "460"
+                  endingLineNumber = "460"
+                  offsetFromSymbolStart = "67">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -517,428 +715,548 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1385"
             endingLineNumber = "1385"
-            landmarkName = "memmap_item_new()"
+            landmarkName = "llll_check_error()"
             landmarkType = "7">
             <Locations>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
+                  symbolName = "llll_check_error"
                   moduleName = "bach"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866868.702711"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529855.000665"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.reg"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.keys"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.060282"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.663355"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.args"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.172432"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.portal"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.195597"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.eq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.217918"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
+                  symbolName = "llll_check_error"
                   moduleName = "bach.wrap"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.260861"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.768492"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.reg"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.778806"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.append"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.788652"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.portal"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.797988"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.args"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.807541"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
                   moduleName = "bach.flat"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.2854"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.818142"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.step"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.eq"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.309368"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.840469"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.depth"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.354594"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.gt"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.399661"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.geq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.424063"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.leq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.446883"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.lt"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.470442"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.neq"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.493585"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.iter"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.517759"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.collect"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.54274"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.expr"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.573848"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.join"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.600215"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.pick"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.636559"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.is"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.663079"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.rev"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.689025"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
+                  symbolName = "llll_check_error"
                   moduleName = "bach.slice"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.713409"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.853291"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.subs"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.is"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.736099"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.865926"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.find"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.pick"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.759863"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.876339"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.nth"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.iter"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.783653"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.88637"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.collect"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.905777"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
                   moduleName = "bach.length"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.805791"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.91828"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.nth"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.929242"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.trans"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.941599"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.mapelem"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529858.981615"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.neq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.001755"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.minfo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.035996"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.rev"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.047785"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.expr"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.094224"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.print"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.118384"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.geq"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.16992"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.score"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.211939"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
                   moduleName = "bach.n2mc"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.90865"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.334777"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "tinyll_insert_sorted(_tinyll*, void*, unsigned long long)"
-                  moduleName = "bach.roll"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.arithmser"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/aa/bach_mem.c"
-                  timestampString = "526866872.999403"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.354015"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1928"
-                  endingLineNumber = "1928"
-                  offsetFromSymbolStart = "20">
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.roll"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470529859.386748"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.value"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470530175.517958"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.thin"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470530175.570487"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.intersection"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470530175.588042"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.subs"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470530175.630944"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.gt"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470530205.823642"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.lace"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470530205.845128"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "bach.find"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470530205.980618"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "llll_check_error"
+                  moduleName = "dada.platform"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danieleghisi/max-sdk-7.0.3/source/bach/commons/aa/bach_mem.c"
+                  timestampString = "470533534.917177"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1385"
+                  endingLineNumber = "1385"
+                  offsetFromSymbolStart = "24">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -971,7 +1289,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2405"
             endingLineNumber = "2405"
-            landmarkName = "sync_ancestors()"
+            landmarkName = "get_checkvalues_as_llll()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -986,9 +1304,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2565"
-            endingLineNumber = "2565"
-            landmarkName = "set_check_to_elem()"
-            landmarkType = "7">
+            endingLineNumber = "2565">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1003,7 +1319,23 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2583"
             endingLineNumber = "2583"
-            landmarkName = "set_checkvalues_from_fixed_value_fn()"
+            landmarkName = "tree_mousedown()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../mains/dg/tree.c"
+            timestampString = "470065628.020027"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1200"
+            endingLineNumber = "1200"
+            landmarkName = "build_all_tree_nodes_fn()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1014,555 +1346,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../mains/dg/score.c"
-            timestampString = "526738338.319616"
+            timestampString = "470529851.991059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8271"
-            endingLineNumber = "8271">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/roll.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11795"
-            endingLineNumber = "11795"
-            landmarkName = "change_pitch_for_selection()"
+            startingLineNumber = "8173"
+            endingLineNumber = "8173"
+            landmarkName = "quick_merge_selection()"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../commons/dg/notation_commons.c"
-            timestampString = "526770976.68743"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11000"
-            endingLineNumber = "11000"
-            landmarkName = "midicents_to_diatsteps_from_middleC()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "midicents_to_diatsteps_from_middleC"
-                  moduleName = "bach.n2mc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866872.934477"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "11000"
-                  endingLineNumber = "11000"
-                  offsetFromSymbolStart = "414">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "midicents_to_diatsteps_from_middleC"
-                  moduleName = "bach.roll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866873.026782"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "11000"
-                  endingLineNumber = "11000"
-                  offsetFromSymbolStart = "414">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/roll.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "13937"
-            endingLineNumber = "13937"
-            landmarkName = "roll_make_chord_or_note_sharp_or_flat_on_linear_edit()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/playkeys.c"
-            timestampString = "526730522.463392"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "660"
-            endingLineNumber = "660"
-            landmarkName = "playkeys_handle_flattening_and_nullmode()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/roll.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "13730"
-            endingLineNumber = "13730"
-            landmarkName = "roll_enter()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/playkeys.c"
-            timestampString = "526733972.552703"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1657"
-            endingLineNumber = "1657"
-            landmarkName = "playkeys_anything()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../commons/dg/notation_commons.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31110"
-            endingLineNumber = "31110"
-            landmarkName = "transfer_note_slots()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "transfer_note_slots"
-                  moduleName = "bach.n2mc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866872.93472"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "31110"
-                  endingLineNumber = "31110"
-                  offsetFromSymbolStart = "25">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "transfer_note_slots"
-                  moduleName = "bach.roll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866873.027528"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "31110"
-                  endingLineNumber = "31110"
-                  offsetFromSymbolStart = "25">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../commons/dg/notation_commons.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32440"
-            endingLineNumber = "32440"
-            landmarkName = "change_note_pitch_from_lexpr_or_llll()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "change_note_pitch_from_lexpr_or_llll"
-                  moduleName = "bach.n2mc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866872.936686"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "32440"
-                  endingLineNumber = "32440"
-                  offsetFromSymbolStart = "150">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "change_note_pitch_from_lexpr_or_llll"
-                  moduleName = "bach.roll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866873.027688"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "32440"
-                  endingLineNumber = "32440"
-                  offsetFromSymbolStart = "150">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../commons/dg/notation_commons.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32462"
-            endingLineNumber = "32462"
-            landmarkName = "change_chord_pitch_from_lexpr_or_llll()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "change_chord_pitch_from_lexpr_or_llll"
-                  moduleName = "bach.n2mc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866872.936861"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "32462"
-                  endingLineNumber = "32462"
-                  offsetFromSymbolStart = "214">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "change_chord_pitch_from_lexpr_or_llll"
-                  moduleName = "bach.roll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866873.027898"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "32462"
-                  endingLineNumber = "32462"
-                  offsetFromSymbolStart = "214">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../commons/dg/notation_commons.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29077"
-            endingLineNumber = "29077"
-            landmarkName = "set_graphic_values_to_note_from_pitch()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "set_graphic_values_to_note_from_pitch(_notation_obj*, _note*, t_pitch)"
-                  moduleName = "bach.n2mc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866872.937149"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "29077"
-                  endingLineNumber = "29077"
-                  offsetFromSymbolStart = "24">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "set_graphic_values_to_note_from_pitch(_notation_obj*, _note*, t_pitch)"
-                  moduleName = "bach.roll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_commons.c"
-                  timestampString = "526866873.028135"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "29077"
-                  endingLineNumber = "29077"
-                  offsetFromSymbolStart = "24">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/roll.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7332"
-            endingLineNumber = "7332"
-            landmarkName = "set_extras_values_from_llll()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/tonnetz.c"
-            timestampString = "526750910.324368"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1890"
-            endingLineNumber = "1890"
-            landmarkName = "get_coordinates_from_diatonic_interval()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/tonnetz.c"
-            timestampString = "526750503.296172"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "731"
-            endingLineNumber = "731"
-            landmarkName = "tonnetz_setattr_generators()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/tonnetz.c"
-            timestampString = "526750507.146328"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "686"
-            endingLineNumber = "686"
-            landmarkName = "tonnetz_setattr_generators()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../mains/dg/roll.c"
-            timestampString = "526854983.361234"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7027"
-            endingLineNumber = "7027"
-            landmarkName = "set_voice_cents_values_from_llll()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../commons/dg/notation_pitches.c"
-            timestampString = "526867181.123372"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "606"
-            endingLineNumber = "606"
-            landmarkName = "notationobj_autospell_chew_and_chen()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "notationobj_autospell_chew_and_chen(_notation_obj*, _autospell_params*)"
-                  moduleName = "bach.n2mc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_pitches.c"
-                  timestampString = "526866872.937448"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "605"
-                  endingLineNumber = "605"
-                  offsetFromSymbolStart = "1007">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "notationobj_autospell_chew_and_chen(_notation_obj*, _autospell_params*)"
-                  moduleName = "bach.roll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_pitches.c"
-                  timestampString = "526866873.028772"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "605"
-                  endingLineNumber = "605"
-                  offsetFromSymbolStart = "1007">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../commons/dg/notation_pitches.c"
-            timestampString = "526867181.123372"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "704"
-            endingLineNumber = "704"
-            landmarkName = "notationobj_autospell_force_directed()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "notationobj_autospell_force_directed(_notation_obj*, _autospell_params*)"
-                  moduleName = "bach.n2mc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_pitches.c"
-                  timestampString = "526866872.937641"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "703"
-                  endingLineNumber = "703"
-                  offsetFromSymbolStart = "584">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "notationobj_autospell_force_directed(_notation_obj*, _autospell_params*)"
-                  moduleName = "bach.roll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_pitches.c"
-                  timestampString = "526866873.028995"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "703"
-                  endingLineNumber = "703"
-                  offsetFromSymbolStart = "584">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../commons/dg/notation_pitches.c"
-            timestampString = "526867181.123372"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "727"
-            endingLineNumber = "727"
-            landmarkName = "notationobj_autospell_force_directed()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "notationobj_autospell_force_directed(_notation_obj*, _autospell_params*)"
-                  moduleName = "bach.n2mc"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_pitches.c"
-                  timestampString = "526866872.9379"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "726"
-                  endingLineNumber = "726"
-                  offsetFromSymbolStart = "1939">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "notationobj_autospell_force_directed(_notation_obj*, _autospell_params*)"
-                  moduleName = "bach.roll"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/danieleghisi/Documents/Max%207/Packages/bach/source/commons/dg/notation_pitches.c"
-                  timestampString = "526866873.029237"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "726"
-                  endingLineNumber = "726"
-                  offsetFromSymbolStart = "1939">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

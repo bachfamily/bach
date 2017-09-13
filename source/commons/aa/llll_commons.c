@@ -8281,8 +8281,6 @@ t_max_err llll_store_in_dictionary(t_llll *ll, t_dictionary *dict, const char *h
 
 t_llll *llll_retrieve_from_dictionary(t_dictionary *dict, const char *header)
 {
-    return llll_retrieve_from_dictionary_with_leveltypes(dict, header);
-
 	char *entryname = (char *) bach_newptr(strlen(header) + 16);
 	long ac = 0, whole_ac = 0, count, i;
 	t_atom *av = NULL, *whole_av, *this_whole_av;

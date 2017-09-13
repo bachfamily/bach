@@ -106,6 +106,7 @@ t_pitch hatom_getpitch(const t_hatom *h)
         }
         case H_PITCH:
             return h->h_w.w_pitch;
+            break;
         default:
             return t_pitch(0);
             break;

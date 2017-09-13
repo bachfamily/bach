@@ -189,7 +189,7 @@ void bach_expr_anything(t_bach_expr *x, t_symbol *msg, long ac, t_atom *av)
 	if (msg == gensym("expr")) {
 		t_lexpr *old_lexpr, *new_lexpr;
 		if (ac)
-			new_lexpr = lexpr_new(ac, av, 0, NULL);
+			new_lexpr = lexpr_new(ac, av, 0, NULL, (t_object *) x);
 		else
 			new_lexpr = NULL;		
 		x->n_ob.l_rebuild = 1;
@@ -361,7 +361,7 @@ t_bach_expr *bach_expr_new(t_symbol *s, short ac, t_atom *av)
 		// For a complete list of the mathematical operators and functions supported by <o>bach.expr</o>, please refer to the help file.
 		
 		if (true_ac) {
-			x->n_lexpr = lexpr_new(true_ac, av, 0, NULL);
+			x->n_lexpr = lexpr_new(true_ac, av, 0, NULL, (t_object *) x);
 			if (x->n_lexpr) {
 //				object_post((t_object *) x, "good expr!");
 				x->n_maxvars = x->n_lexpr->l_numvars;

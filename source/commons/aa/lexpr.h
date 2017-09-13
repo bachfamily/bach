@@ -60,6 +60,13 @@ typedef enum _lexpr_ops {
 	O_RSHIFT
 } e_lexpr_operators;
 
+typedef enum _exprparser_err {
+    E_OK = 1,
+    E_BAD_VAR_TYPE,
+    E_BAD_NAME,
+    E_BAD_EXPR
+} e_exprparser_err;
+
 typedef struct _lexpr_var {
 	unsigned long v_index;	// the index number of the variable (0-LEXPR_MAX_VARS)
 	unsigned long v_type;	// the type of the corresponding hatom
@@ -138,14 +145,61 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
 t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars);
 
 t_lexpr *lexpr_alloc(void);
-t_lexpr *lexpr_new(short ac, t_atom *av, long subs_count, const char **substitutions);
-t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count, const char **substitutions);
+t_lexpr *lexpr_new(short ac, t_atom *av, long subs_count, const char **substitutions, t_object *culprit);
+t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count, const char **substitutions, t_object *culprit);
 long lexpr_invert(t_lexpr_token *verb, t_lexpr_token *arg2); 
 long lexpr_check(t_lexpr_token *tok, long chk);
 t_max_err lexpr_lex(char *this_pos, char **next_pos, t_lexpr_lexeme *lex, short *numvars, long subs_count, const char **substitutions);
 void lexpr_free(t_lexpr *x);
 void lexpr_retain(t_lexpr *x);
 void lexpr_release(t_lexpr *x);
+
+
+
+long lexpr_append_lexeme_OPEN(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_CLOSED(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_COMMA(t_lexpr_lexeme *lex);
+
+long lexpr_append_lexeme_VAR(t_lexpr_lexeme *lex, char type, long index, short *numvars, char *txt, char **offending);
+long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, char *txt, long subs_count, const char *substitutions[], short *numvars, char **offending);
+
+long lexpr_append_lexeme_BITOR(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_LOGOR(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_BITAND(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_LOGAND(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_BITXOR(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_LOGXOR(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_BITNOT(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_LOGNOT(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_NEQ(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_NEQMATCH(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_EQ(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_EQMATCH(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_LT(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_LSHIFT(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_LE(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_GT(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_RSHIFT(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_GE(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_TIMES(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_POW(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_MOD(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_DIV(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_DIVDIV(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_PLUS(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_MINUS(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_UMINUS(t_lexpr_lexeme *lex);
+long lexpr_append_lexeme_LONG(t_lexpr_lexeme *lex, t_atom_long l);
+long lexpr_append_lexeme_RATIONAL(t_lexpr_lexeme *lex, t_rational r);
+long lexpr_append_lexeme_FLOAT(t_lexpr_lexeme *lex, double d);
+long lexpr_append_lexeme_PITCH(t_lexpr_lexeme *lex, t_pitch p);
+
+long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a));
+long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a, double b));
+long lexpr_append_lexeme_FUNC_unary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *r));
+long lexpr_append_lexeme_FUNC_binary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r));
+long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r));
+
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

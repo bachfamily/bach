@@ -9,4 +9,4 @@ clean:
 			rm -f strparser.c
 			rm -f strparser.tab.c
 			rm -f strparser.tab.h
-			
+			rm -f strparser.lex.h

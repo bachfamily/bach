@@ -15,8 +15,9 @@ const t_shortRational t_pitch::natural = t_shortRational(0, 1);
 const t_shortRational t_pitch::qrtrflat = t_shortRational(-1, 4);
 const t_shortRational t_pitch::flat = t_shortRational(-1, 2);
 
-const t_pitch t_pitch::NaP = t_pitch(0, genrat(0, 0), 0); // not a pitch
-const t_pitch t_pitch::middleC = t_pitch(0, genrat(0, 1), 5); // middle C
+const t_pitch t_pitch::NaP = t_pitch(0, t_shortRational(0, 0), 0); // not a pitch
+const t_pitch t_pitch::middleC = t_pitch(0, natural, 5); // middle C
+const t_pitch t_pitch::C0 = t_pitch(0, natural, 0); // C0
 
 const t_atom_short t_pitch::degree2MC[] = {0, 200, 400, 500, 700, 900, 1100};
 const t_atom_short t_pitch::degree2PC[] = {0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23};
@@ -220,4 +221,162 @@ std::string t_pitch::toString()
     }
     
     return s;
+}
+
+t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
+{
+    // converts a midicents number in the accidentals, with respect to the given full_accidental_representation (representing for each note)
+    double fl = floor(mc/1200);
+    double step_mc = 200. / tone_division;
+    double rescaled = (mc - 1200 * fl) / step_mc; // this is a scaled value which tells us where the mc are with respect to the normalized grid 0 1 2 3 4 5...
+    long gridstep = (long)round(rescaled); // step index on the microtonal grid
+    long numsteps = 6 * tone_division;
+    long add_one_octave = (gridstep >= numsteps); // if the grid step is numsteps, we need to add 1 octave
+    long add_another_octave = 0;
+    double gridstep_12norm;
+    double natural_steps[8];
+    long natural_approx_diatstep = -1, natural_approx_step = -1, i;
+    t_rational natural_ratio, grid_ratio;
+    const double PERFECT_MATCH_THRESHOLD = 0.0005;
+    
+    gridstep %= numsteps; // modulo the number of steps of the grid
+    
+    // now we have the step, we gotta find what it means with respect to the NATURAL notes.
+    // where is the closest natural notes with respect to the grid?
+    // e.g. i'm at gridstep 3 in a 24-TET; gotta normalize it at 12...
+    gridstep_12norm = gridstep * 12. / numsteps; // ...so that now our 3 becomes 1.5
+    
+    
+    // now we have to find the 12-degree natural approximation {0, 2, 4, 5, 7, 9, 11} that suits our gridstep_12norm
+    
+    natural_steps[0] = 0.;
+    natural_steps[1] = 2.;
+    natural_steps[2] = 4.;
+    natural_steps[3] = 5.;
+    natural_steps[4] = 7.;
+    natural_steps[5] = 9.;
+    natural_steps[6] = 11.;
+    natural_steps[7] = 12.;
+    
+    // test the full_repr, if any
+    if (natural_approx_step < 0 && full_repr && (tone_division == 2 || tone_division == 4 || tone_division == 8)) {
+        double gridstep_48norm = gridstep * 48. / numsteps;
+        long round_gridstep_48norm = round(gridstep_48norm);
+        
+        if (fabs(round_gridstep_48norm - gridstep_48norm) < PERFECT_MATCH_THRESHOLD || fabs(round_gridstep_48norm - gridstep_48norm) > 12. - PERFECT_MATCH_THRESHOLD){
+            // precise match
+            
+            if (round_gridstep_48norm >= 48) {
+                round_gridstep_48norm -= 48;
+                add_another_octave = 1;
+            } else if (round_gridstep_48norm < 0) {
+                round_gridstep_48norm += 48;
+                add_another_octave = -1;
+            }
+            if (round_gridstep_48norm < 0 || round_gridstep_48norm >= 48) {
+                dev_post("Bug in mc_to_screen_approximation_do!");
+                round_gridstep_48norm = 0;
+            }
+            t_rational acc = full_repr[round_gridstep_48norm];
+            t_rational prod = rat_long_prod(acc, 8);
+            double approx_step = (round_gridstep_48norm - prod.r_num)/4.;
+            
+            if (prod.r_den == 1) {
+                long j = -1;
+                for (long i = 0; i < 7; i++) {
+                    double diff = fabs(approx_step - natural_steps[i]);
+                    if (diff < PERFECT_MATCH_THRESHOLD || diff > 12 - PERFECT_MATCH_THRESHOLD) {
+                        j = i;
+                        break;
+                    }
+                }
+                
+                if (j >= 0) {
+                    natural_approx_diatstep = j;
+                    natural_approx_step = round(approx_step);
+                    if (natural_approx_step < 0) {
+                        natural_approx_step += 12;
+                        add_another_octave = -1;
+                    } else if (natural_approx_step > 11) {
+                        natural_approx_step -= 12;
+                        add_another_octave = 1;
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    // if not found, test the key degrees
+    if (natural_approx_step < 0 && key_acc_pattern) { // see if it fits to a step in the current key
+        for (i = 0; i < 7; i++){
+            double pattern_step = natural_steps[i] + rat2double(key_acc_pattern[i]) * 2.;
+            if (fabs(gridstep_12norm - pattern_step) < PERFECT_MATCH_THRESHOLD || fabs(gridstep_12norm - pattern_step) > 12. - PERFECT_MATCH_THRESHOLD) {
+                natural_approx_diatstep = i;
+                natural_approx_step = natural_steps[i];
+                if (gridstep_12norm > natural_approx_step && key_acc_pattern[i].r_num < 0)
+                    add_another_octave = 1;
+                else if (gridstep_12norm < natural_approx_step && key_acc_pattern[i].r_num > 0)
+                    add_another_octave = -1;
+                break;
+            }
+        }
+    }
+    
+    // if not found, test the natural notes
+    if (natural_approx_step < 0) {
+        for (i = 0; i < 7; i++){
+            if (fabs(gridstep_12norm - natural_steps[i]) < PERFECT_MATCH_THRESHOLD || fabs(gridstep_12norm - natural_steps[i]) > 12. - PERFECT_MATCH_THRESHOLD) {
+                natural_approx_diatstep = i;
+                natural_approx_step = natural_steps[i];
+                break;
+            }
+        }
+    }
+    
+    // if not found, test the intermediate steps
+    if (natural_approx_step < 0) {
+        for (i = 0; i < 7; i++){
+            if (gridstep_12norm > natural_steps[i] && gridstep_12norm < natural_steps[i+1]) {
+                if (accidentals_preferences == k_ACC_FLATS) {
+                    natural_approx_diatstep = i+1;
+                    natural_approx_step = natural_steps[i+1];
+                } else if (accidentals_preferences == k_ACC_SHARPS) {
+                    natural_approx_diatstep = i;
+                    natural_approx_step = natural_steps[i];
+                } else { // auto
+                    // Default enharmonicity: we privilegiate Bb, Ab, Eb and all the rest will be sharps
+                    if (natural_steps[i] == 9. || natural_steps[i] == 7. || natural_steps[i] == 2.) {
+                        if (gridstep_12norm >= (natural_steps[i] + natural_steps[i+1])/2.) {
+                            natural_approx_diatstep = i+1;
+                            natural_approx_step = natural_steps[i+1];
+                        } else {
+                            natural_approx_diatstep = i;
+                            natural_approx_step = natural_steps[i];
+                        }
+                    } else {
+                        if (gridstep_12norm > (natural_steps[i] + natural_steps[i+1])/2.) {
+                            natural_approx_diatstep = i+1;
+                            natural_approx_step = natural_steps[i+1];
+                        } else {
+                            natural_approx_diatstep = i;
+                            natural_approx_step = natural_steps[i];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    long steps = ((long) fl + add_one_octave + add_another_octave) * 7 + natural_approx_diatstep;
+    
+    natural_ratio.r_num = natural_approx_step + 12 * add_another_octave;
+    natural_ratio.r_den = 12;
+    grid_ratio.r_num = gridstep;
+    grid_ratio.r_den = numsteps;
+    
+    t_rational accidental = rat_rat_diff(grid_ratio, natural_ratio) * 6;
+    
+    return t_pitch(steps % 7, accidental, steps / 7);
 }
