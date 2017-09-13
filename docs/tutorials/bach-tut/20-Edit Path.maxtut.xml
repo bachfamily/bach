@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 20: Edit Path">
+
+<openfile name="Edit Path" patch="Edit Path (a).maxpat"/>
+
+<header>bach Tutorial 20: Edit Path</header>
+
+<subhead>Discover how to customize or prevent editing for some items</subhead>
+<body>Notations objects can be used for a variety of purposes: in some cases, you might wish, for a given reason, that some parts of the score be not at all editable. For instance, you might want to keep all markers untouched, while you can move, add and delete chords. Sometimes you really don't care about this; sometimes this can really change your life. In this tutorial we'll show you the path leading to a complete control of the editing system. The attributes we'll come across are the ones gathered in the "Edit" tab of the object's inspector.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.roll">Display and edit a score in proportional notation</seealso>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+</seealsolist>
+
+</chapter>

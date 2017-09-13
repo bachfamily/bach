@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleGetInfoString</key>
+    <string>sdiftotext version 3.00Forum Version. Copyright © 2004 IRCAM.</string>
+    <key>CFBundleShortVersionString</key>
+    <string>sdiftotext version 3.00</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>sdiftotext</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>fr.ircam.sdiftotext</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>3.8</string>
+	<key>CSResourcesFileMapped</key>
+	<true/>
+	<key>LSUIElement</key>
+	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Sdif document</string>
+                        <key>CFBundleTypeOSTypes</key>
+                        <array>
+                                <string>SDIF</string>
+                        </array>
+                        <key>CFBundleTypeExtensions</key>
+                        <array>
+                                <string>sdif</string>
+                        </array>
+                        <key>CFBundleTypeRole</key>
+                        <string>Viewer</string>
+                </dict>
+        </array>
+</dict>
+</plist>

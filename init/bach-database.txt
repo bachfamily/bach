@@ -1,0 +1,12 @@
+max db.addvirtual alias bach.== bach.eq;
+max db.addvirtual alias bach.>= bach.geq;
+max db.addvirtual alias bach.> bach.gt;
+max db.addvirtual alias bach.<= bach.leq;
+max db.addvirtual alias bach.< bach.lt;
+max db.addvirtual alias bach.!= bach.neq;
+max db.addvirtual alias bach./ bach.div;
+max db.addvirtual alias bach.% bach.mod;
+max db.addvirtual alias bach.!/ bach.rdiv;
+max db.addvirtual alias bach.!- bach.rminus;
+max db.addvirtual alias bach.* bach.times;
+max db.addvirtual alias bach.mod* bach.modtimes;

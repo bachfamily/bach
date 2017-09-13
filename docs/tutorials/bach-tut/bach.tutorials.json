@@ -1,0 +1,182 @@
+{
+	"1" : {
+		"title" : [ "Hello World" ],
+		"filename" : [ "Hello World (a).maxpat" ],
+		"digest" : [ "First steps with the bach nested lists (lllls)" ],
+		"description" : [ "In this tutorial you'll move your first steps with the Lisp-like linked lists (lllls for short), which are the standard communication mechanism throughout all the bach environment" ],
+		"numsections" : [ 12 ],
+		"topics" : [ "displaying lllls, creating lllls, modifying lllls, handling lllls" ],
+		"seealso": [ "bach.tree", "bach.print", "bach.portal", "bach.reg", "bach.length", "bach.depth", "bach.nth", "bach.find", "bach.filternull", "bach.roll", "bach.score" ]
+	},
+	"2" : {
+		"title" : [ "Brother John" ],
+		"filename" : [ "Brother John (a).maxpat" ],
+		"digest" : [ "An introduction to bach.score" ],
+		"description" : [ "In this tutorial you'll move your first steps with the bach.score object, with the help of the popular Brother John traditional song. We'll construct the full melody, and to have a little fun with it!" ],
+		"numsections" : [ 9 ],
+		"topics" : [ "bach.score separate syntax, \"clear\" message, building a bach.score from separate parameters, changing measure information (measureinfo), ties handling, playing" ],
+		"seealso": [ "bach.score", "bach.unpacknote", "bach.ezmidiplay" ]
+	},
+	"3" : {
+		"title" : [ "Iterations" ],
+		"filename" : [ "Iterations (a).maxpat" ],
+		"digest" : [ "Iterating, collecting, finding elements, filtering lllls" ],
+		"description" : [ "In this tutorial you'll learn how to iterate through elements, or perform modifications on lllls iteratively." ],
+		"numsections" : [ 23 ],
+		"topics" : [ "iterating, collecting, element-wise modifications, filtering elements, finding elements, removing duplicates" ],
+		"seealso": [ "bach.iter", "bach.collect", "bach.mapelem", "bach.step", "bach.find", "bach.replace", "bach.keys", "bach.filter", "bach.sieve", "bach.is", "bach.filternull", "bach.thin" ]
+	},
+	"4" : {
+		"title" : [ "Through The Looking Glass" ],
+		"filename" : [ "Through The Looking Glass (a).maxpat" ],
+		"digest" : [ "Reversals, rotations, symmetries, taleas and co." ],
+		"description" : [ "In this tutorial you'll learn how to perform basic compositional processes, such as transposition, stretch, inversion, talea." ],
+		"numsections" : [ 16 ],
+		"topics" : [ "\"dump\" message, bach.roll selection, in-place modifications, accidentals display" ],
+		"seealso": [ "bach.roll", "bach.score", "bach.expr", "bach.mc2f", "bach.f2mc", "bach.beatbox", "bach.beatunbox", "bach.rev", "bach.tierev", "bach.rot", "bach.chordrot", "bach.toc&amp;r", "bach.fromc&amp;r" ]
+	},
+	"5" : {
+		"title" : [ "Slot Machines" ],
+		"filename" : [ "Slot Machines (a).maxpat" ],
+		"digest" : [ "Discovering the magical world of slots" ],
+		"description" : [ "One of the strong suit of the bach library is the concept of slot. To understand it, we have to think about a classical score, having pitches, durations, dynamics, or a proportional scores, having onsets, pitches and dynamics. This can be enough in some cases. But it won't be sufficient in many other situations. Dealing with computer-assisted composition might also mean having the need to characterize notes more specifically; either because you want to assign a playing style, or because you need to attach some lyrics, or because you have built a sequencer with bach and now you need to handle amplitude envelopes or panning variations. This is just a tiny tiny part of what one can have in mind which goes beyond the classic note representation. And if you think about this, all sums up in having some more data attached to each note. That's it. Nothing more than this: slots are additional data assigned to each note. All the rest is understanding the right type of data, and to operate accordingly: this is what you will learn to do with this tutorial." ],
+		"numsections" : [ 24 ],
+		"topics" : [ "defining the slotinfo, interface for slots, dealing with slots, modifying slot values, keeping slots in background, using commands" ],
+		"seealso": [ "bach.roll", "bach.tree", "bach.keys", "bach.slot2line", "bach.slot2curve", "bach.filternull", "bach.m2matrixctrl", "bach.score" ]
+	},
+	"6" : {
+		"title" : [ "The Gift Of Synthesis" ],
+		"filename" : [ "The Gift Of Synthesis (a).maxpat" ],
+		"digest" : [ "Using playout data to synthesize sounds" ],
+		"description" : [ "In this tutorial you'll learn how to build a simple synthesizers with bach." ],
+		"numsections" : [ 6 ],
+		"topics" : [ "playing, defining the slotinfo, using slots, keeping slots in background, retrieving slot content at play time" ],
+		"seealso": [ "bach.score", "bach.ezmidiplay", "bach.unpacknote", "bach.keys", "bach.slot2curve" ]
+	},
+	"7" : {
+		"title" : [ "Inspector As A Gadget" ],
+		"filename" : [ "Inspector As A Gadget (a).maxpat" ],
+		"digest" : [ "Meet the bach dedicated inspector" ],
+		"description" : [ "In this tutorial you'll learn to handle the bach inspector." ],
+		"numsections" : [ 3 ],
+		"topics" : [ "bach inspector" ],
+		"seealso": [ "bach.score" ]
+	},
+	"8" : {
+		"title" : [ "Real Time Stories" ],
+		"filename" : [ "Real Time Stories (a).maxpat" ],
+		"digest" : [ "Tips, tricks and examples of real-time bach usage" ],
+		"description" : [ "The bach library is designed to be perfectly fitting in the Max/MSP world; thus it is designed to be completely real-time compatible. In this tutorial we give a brief look to some possible real-time applications." ],
+		"numsections" : [ 16 ],
+		"topics" : [ "real-time usage of bach, disabling undo, hiding legend, playing modes, realtime transcription, \"addchord\" message, selection handling, \"tail\" message, \"inscreenpos\" message, using int slots to color notes, a first look to quantization, tips for quantizing in real-time, continuous score generation, retrieving notifications" ],
+		"seealso": [ "bach.roll", "bach.score", "bach.transcribe", "bach.quantize" ]
+	},
+	"9" : {
+		"title" : [ "The Minimal Way" ],
+		"filename" : [ "The Minimal Way (a).maxpat" ],
+		"digest" : [ "Using a pattern to build larger structures" ],
+		"description" : [ "In this tutorial you'll learn an example of how to build a score starting from a little pattern." ],
+		"numsections" : [ 6 ],
+		"topics" : [ "autoclear, handling enharmonicity, handling syncopations, using slots as probabilities, defining the slotinfo, assigning slot values as separate parameters, querying the number of chords, flatting a single level of an llll" ],
+		"seealso": [ "bach.score" ]
+	},
+	"10" : {
+		"title" : [ "The World Outside" ],
+		"filename" : [ "The World Outside (a).maxpat" ],
+		"digest" : [ "Import, export and communication with other pieces of software" ],
+		"description" : [ "bach is a very handy way to work with scores inside Max. Yet the musical world doesn't start nor end with Max: one might want to import or export scores already written in some other language, or some other format, or some other CAC software. This tutorial is meant to show you how to communicate with the most common softwares of CAC and music engraving. We'll also show you a way to send generic (and arbitrarily long) lllls through differents instances of Max." ],
+		"numsections" : [ 11 ],
+		"topics" : [ "MusicXML import and export, MIDI import and export, communication with OpenMusic, communication with PWGL" ],
+		"seealso": [ "bach.score", "bach.roll", "bach.omtree2bachtree", "bach.bachtree2omtree" ]
+	},
+	"11" : {
+		"title" : [ "From OpenMusic to bach" ],
+		"filename" : [ "From OpenMusic to bach (a).maxpat" ],
+		"digest" : [ "Used to OM, but new to bach? Here's how to make the leap!" ],
+		"description" : [ "If you are used to OpenMusic as computer-assisted composition environment, your way of learning bach might be very easy. This tutorials shows you step by step the important things, the tricks and the caveats." ],
+		"numsections" : [ 19 ],
+		"topics" : [ "Translation of patch from OpenMusic to bach, tricks for easily switching from OpenMusic to bach, \"preventedit\" attribute" ],
+		"seealso": [ "bach.roll", "bach.score" ]
+	},
+	"12" : {
+		"title" : [ "Abstract Thinking" ],
+		"filename" : [ "Abstract Thinking (a).maxpat" ],
+		"digest" : [ "How to make good abstractions, subpatches, custom libraries" ],
+		"description" : [ "In this tutorial you'll learn how to build your own library of abstractions starting from the bach elements." ],
+		"numsections" : [ 4 ],
+		"topics" : [ "\"out\" attribute and subpatches" ],
+		"seealso": [ "bach.portal", "bach.args" ]
+	},
+	"13" : {
+		"title" : [ "Beams Through The Trees" ],
+		"filename" : [ "Beams Through The Trees (a).maxpat" ],
+		"digest" : [ "Handling beams and tuplets finely with rhythmic trees" ],
+		"description" : [ "In this tutorial you'll learn to deal with rhythmic trees and all the intricacies of their attributes." ],
+		"numsections" : [ 17 ],
+		"topics" : [ "rhythmic trees" ],
+		"seealso": [ "bach.score" ]
+	},
+	"14" : {
+		"title" : [ "A Mazing Grace" ],
+		"filename" : [ "A Mazing Grace (a).maxpat" ],
+		"digest" : [ "How to get grace notes handling simple" ],
+		"description" : [ "In this tutorial you'll learn how to enter and play grace notes (and grace rests!) in bach.score." ],
+		"numsections" : [ 5 ],
+		"topics" : [ "rhythmic trees, grace notes, inspector for grace notes, linear editing for grace notes" ],
+		"seealso": [ "bach.score" ]
+	},
+	"15" : {
+		"title" : [ "God Solve The Queens" ],
+		"filename" : [ "God Solve The Queens (a).maxpat" ],
+		"digest" : [ "How to deal with constraint satisfaction problems" ],
+		"description" : [ "A class of problems one must face while working is to find configurations satisfying certain properties. In this category we have goals like \"find two elements such that their difference is 700\" or \"find a sequence of note such that no note is repeated\": we want to find a given configuration (two elements in a list, a sequence of notes) among a finite set of possible configurations (all the combinations of elements in the list, all the possible sequences of notes within a certain pitch range and time grid) satisfying a given condition (\"difference is 700\", or \"there are no repetitions\"). This condition is called \"constraint\", and represents a limitation we impose to the acceptable configurations. In this tutorial you'll learn how to solve constraint satistfaction problem within bach, thanks to bach.constraint" ],
+		"numsections" : [ 13 ],
+		"topics" : [ "constraint satisfaction problems, threading" ],
+		"seealso": [ "bach.constraints", "bach.group", "bach.cartesianprod" ]
+	},
+	"16" : {
+		"title" : [ "Into The Matrix" ],
+		"filename" : [ "Into The Matrix (a).maxpat" ],
+		"digest" : [ "An overview of the bach matrix calculus library" ],
+		"description" : [ "Having the possibility to define a list of lists (an llll of depth 2) means having the possibility to define a matrix. Indeed, bach has an extended library aimed to bring the power of the matrix calculus and linear algebra into Max. This tutorial will guide you through its discovery. " ],
+		"numsections" : [ 17 ],
+		"topics" : [ "matrix definition and operations, matrix transposition, eigenvalues and eigenvectors, kernel of a matrix, linear combinations, vector spaces, basis and dimensions, orthogonality and orthonormality, determinant of a matrix, inverse of a matrix, rank of a matrix, image of a matrix, solving linear systems of equations" ],
+		"seealso": [ "bach.m2jitcellblock", "bach.wellshape", "bach.minfo", "bach.mrandom", "bach.diag", "bach.idmatrix", "bach.trans", "bach.expr", "bach.mtimes", "bach.mpow", "bach.graph", "bach.eig", "bach.ker", "bach.extractbasis", "bach.norm", "bach.det", "bach.inv", "bach.rank", "bach.im", "bach.linearsolve" ]
+	},
+	"17" : {
+		"title" : [ "Lambda Scores" ],
+		"filename" : [ "Lambda Scores (a).maxpat" ],
+		"digest" : [ "How to keep slots and musical parameters always up-to-date" ],
+		"description" : [ "When writing music, very often we need to have parameters updated in real time, to follow the path of our composition. This is useful, for instance, if we want to assign a \"mode de jeu\" to a note depending on its duration, or if we want each note to keep its frequency in Hertz in a slot. In the first situation, if we resize the note, we'd like to see the \"mode de jeu\" changing in real time; in the second case, when we drag it up or down, we'd like to see the frequency changing accordingly. Most Lisp-based architectures deal with this problems by taking advantage of the power of the so-called lambda-calculus, in order to define properties of elements to be \"interpreted functions\". In such a way, and in such an environment, one could define a note slot to be a function - not one of bach's function-slots, which is just a series of (correctly interpreted) values, but a function itself, namely \"the way\" to assign values to values. Having interpreted functions as slots is not possible in bach, since slot can only contain \"rigid values\". Yet one could very well fake the lambda-calculus behaviour by keepint those values up-to-date. In this way, there will be no difference whatsoever for the final user; there will be - obviously - difference for you, programmer, and this tutorial will show you a way to achieve all this." ],
+		"numsections" : [ 9 ],
+		"topics" : [ "using commands, \"lambda\" message for notation objects, \"dumpselection\" message, \"changeslotvalue\" message, changing font size for background slots, outputting bangs continuously while mousedragging" ],
+		"seealso": [ "bach.roll" ]
+	},
+	"18" : {
+		"title" : [ "Graphical Synchronization" ],
+		"filename" : [ "Graphical Synchronization (a).maxpat" ],
+		"digest" : [ "Synchronizing domain and zoom with other objects" ],
+		"description" : [ "The bach interfaces can get very useful when their usage interacts with the standard Max object's usage. One can imagine a lot of situations where the notation object can be synchronized with standard objects like functions, bpatchers, and so on. In this tutorial, we show an easy example of how one of these situation can be handled." ],
+		"numsections" : [ 6 ],
+		"topics" : [ "zooming interface commands, querying length, querying domain, querying pixel positions, synchronizing bach.roll and bpatcher, notifications, the \"done\" notification, \"read\" and \"write\" messages" ],
+		"seealso": [ "bach.roll", "bach.read" ]
+	},
+	"19" : {
+		"title" : [ "Filter Filter Little Star" ],
+		"filename" : [ "Filter Filter Little Star (a).maxpat" ],
+		"digest" : [ "Meet the filter and dynfilter slots" ],
+		"description" : [ "In this tutorial you'll get accustomed to the filter and dynfilter types of slot, and you'll learn how to make them communicate with the standard dsp Max objects." ],
+		"numsections" : [ 8 ],
+		"topics" : [ "\"filter\" and \"dynfilter\" slots, using commands, automessage, \"changeslotvalue\" message, the \"samplerate\" attribute" ],
+		"seealso": [ "bach.roll" ]
+	},
+	"20" : {
+		"title" : [ "Edit Path" ],
+		"filename" : [ "Edit Path (a).maxpat" ],
+		"digest" : [ "Discover how to customize or prevent editing for some items" ],
+		"description" : [ "Notations objects can be used for a variety of purposes: in some cases, you might wish, for a given reason, that some parts of the score be not at all editable. For instance, you might want to keep all markers untouched, while you can move, add and delete chords. Sometimes you really don't care about this; sometimes this can really change your life. In this tutorial we'll show you the path leading to a complete control of the editing system. The attributes we'll come across are the ones gathered in the \"Edit\" tab of the object's inspector." ],
+		"numsections" : [ 7 ],
+		"topics" : [ "undo system, locking elements, muting elements, setting elements as solo, copying and pasting, snapping pitches to microtonal grid, snapping onsets or tails to temporal grid, prevent editing of specified elements" ],
+		"seealso": [ "bach.roll", "bach.score" ]
+	}
+}

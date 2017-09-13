@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorials: Table of Contents">
+
+<h1>
+bach Tutorials - Table of Contents
+</h1>
+
+<p>
+
+<h2>Basics</h2>
+
+<ul>
+<li><link type="tutorial" module="bach" name="01-Hello World">Hello World</link> — First steps with the bach nested lists (lllls)</li>
+<li><link type="tutorial" module="bach" name="02-Brother John">Brother John</link> — An introduction to <o>bach.score</o></li>
+</ul>
+
+<h2>Intermediate</h2>
+
+<ul>
+    <li><link type="tutorial" module="bach" name="03-Iterations">Iterations</link> — Iterating, collecting, finding elements, filtering lllls</li>
+    <li><link type="tutorial" module="bach" name="04-Through The Looking Glass">Through The Looking Glass</link> — Reversals, rotations, symmetries, taleas and co.</li>
+    <li><link type="tutorial" module="bach" name="05-Slot Machines">Slot Machines</link> — Discovering the magical world of slots</li>
+    <li><link type="tutorial" module="bach" name="06-The Gift Of Synthesis">The Gift Of Synthesis</link> — Using playout data to synthesize sounds</li>
+    <li><link type="tutorial" module="bach" name="07-Inspector As A Gadget">Inspector As A Gadget</link> — Meet the bach dedicated inspector</li>
+    <li><link type="tutorial" module="bach" name="08-Real Time Stories">Real Time Stories</link> — Tips, tricks and examples of real-time bach usage</li>
+</ul>
+
+<h2>Advanced</h2>
+
+<ul>
+    <li><link type="tutorial" module="bach" name="09-The Minimal Way">The Minimal Way</link> — Using a pattern to build larger structures</li>
+    <li><link type="tutorial" module="bach" name="10-The World Outside">The World Outside</link> — Import, export and communication with other pieces of software</li>
+    <li><link type="tutorial" module="bach" name="11-From OpenMusic to bach">From OpenMusic to bach</link> — Used to OM, but new to bach? Here's how to make the leap!</li>
+    <li><link type="tutorial" module="bach" name="12-Abstract Thinking">Abstract Thinking</link> — How to make good abstractions, subpatches, custom libraries</li>
+    <li><link type="tutorial" module="bach" name="13-Beams Through The Trees">Beams Through The Trees</link> — Handling beams and tuplets finely with rhythmic trees</li>
+    <li><link type="tutorial" module="bach" name="14-God Solve The Queens">God Solve The Queens</link> — How to deal with constraint satisfaction problems</li>
+    <li><link type="tutorial" module="bach" name="15-A Mazing Grace">A Mazing Grace</link> — How to get grace notes handling simple</li>
+    <li><link type="tutorial" module="bach" name="16-Into The Matrix">Into The Matrix</link> — An overview of the bach matrix calculus library</li>
+    <li><link type="tutorial" module="bach" name="17-Lambda Scores">Lambda Scores</link> — How to keep slots and musical parameters always up-to-date</li>
+    <li><link type="tutorial" module="bach" name="18-Graphical Synchronization">Graphical Synchronization</link> - Synchronizing domain and zoom with other objects</li>
+    <li><link type="tutorial" module="bach" name="19-Filter Filter Little Star">Filter Filter Little Star</link> — Meet the filter and dynfilter slots</li>
+    <li><link type="tutorial" module="bach" name="20-Edit Path">Edit Path</link> — Discover how to customize or prevent editing for some items</li>
+</ul>
+
+</p>
+
+</chapter>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

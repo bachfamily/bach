@@ -1,0 +1,364 @@
+<!-- $Id: utilities-doc.html,v 3.4 2006/05/11 16:37:11 schwarz Exp $
+
+     extern/utilities-doc.html	21. Jan. 1999	Diemo Schwarz
+     
+     Documentation of SDIF utilities.
+
+     $Log: utilities-doc.html,v $
+     Revision 3.4  2006/05/11 16:37:11  schwarz
+     new querysdif formats
+     fix <>
+     correct links
+
+     Revision 3.3  2000/08/07 15:12:12  schwarz
+     Cocoon is installed for groups now, more docs.
+
+# Revision 3.2  1999/08/26  15:25:34  schwarz
+# Added doc of pm sdif tools.
+#
+# Revision 3.1  1999/03/14  10:55:09  virolle
+# SdifStdErr add
+#
+# Revision 1.1  1999/01/21  16:36:43  schwarz
+# Beefed up the SDIF library user manual.  It now has the sections
+# User Manual		(as before, but with navigating toc frame and
+# 			 crosslinked to the function reference)
+# Function Reference	(automatic cocoon doc with navigating toc)
+# Tutorial		(coming soon, a quick introduction to get started)
+# Utilities		(description of the utility programs coming with
+# 			 the library)
+
+
+INSTALL WITH:
+
+	echo put doc/extern/utilities-doc.html | ncftp -u<user> -p$(PW) ftp://recherche.ircam.fr/sdif/extern
+ 
+-->
+
+<html>
+
+<head>
+  <title>Documentation of IRCAM SDIF utilities</title>
+</head>
+
+<body bgcolor=white>
+
+<p><hr width="100%"></p>
+
+<h1>THE IRCAM SDIF LIBRARY</h1>
+<h1>Documentation of the Utility Programs</h1>
+
+
+<em><a href=http://www.ircam.fr/anasyn target=_new>Analysis&ndash;Synthesis Team</a></em>, 
+
+<au><a href=http://www.ircam.fr/anasyn/schwarz target=_new>Diemo Schwarz</a></au>,
+
+<p><hr width="100%"></p>
+
+
+
+
+
+
+<a name=intro>
+<h2>Introduction</h2>
+</a>
+
+
+The utilities are part of the SDIF library distribution and are built and installed automatically with the library.<p>
+
+All utilities have the following two common options:
+
+<dl>
+ <dt><tt>-h</tt><dd> display the usage of the command<p>
+ <dt><tt>-T types-file</tt><dd> load a file with additional SDIF types, or type completions, as explained in the <a href="../SdifNormDoc.html#Types Declaration" target=_parent>SDIF Specification</a>
+</dl>
+
+
+<br><br>
+<a name=selectspec>
+<h3>The SDIF Selection Specification</h3>
+</a>
+
+The SDIF selection specification is a standardized (the
+<i>d'accord</i> from the community is pending) way to access a part of an
+SDIF file.  The selection can select SDIF frames at certain time
+intervals and/or certain parts of the data.<p>
+
+The selection specification can be appended to a filename.  For
+various problems with filename and shell metacharacters, the start of
+the select spec is marked by the last '<tt><b>::</b></tt>' occuring.
+This way, there is no ambiguity with filenames containing the
+selection element markers below.  To specify a filename containing
+'<tt><b>::</b></tt>' itself, you just have to append
+'<tt><b>::</b></tt>' (which means an empty selection which matches all
+data).<p>
+
+The full syntax for a filename (which can include the directory path,
+of course) with an SDIF selection is:<p>
+
+<pre>
+    [filename][<b>::</b>[<font color=#ff0000>#</font>stream][<b><font color=#ff0000>:</font></b>frame][<font color=#ff0000>/</font>matrix][<b><font color=#ff0000>.</font></b>column][<font color=#ff0000>_</font>row][<font color=#ff0000>@</font>time]]
+</pre>
+
+With these mnemonics for the selection elements:
+<ul>
+<li> <tt><font color=#ff0000>#</font>stream</tt>	as with "number"
+<li> <tt>frame<font color=#ff0000>/</font>matrix</tt>   as in a file hierarchy
+<li> <tt><b><font color=#ff0000>.</font></b>column</tt> as in a C-struct
+<li> <tt><font color=#ff0000>_</font>row</tt>		as in a LaTeX index
+<li> <tt><font color=#ff0000>@</font>time</tt>		as in English "at time t"
+</ul>
+
+For example,
+ 
+<pre>
+    piano.sdif<b>::</b><font color=#ff0000>#</font>1<b><font color=#ff0000>:</font></b>1HRM<font color=#ff0000>/</font>1HRM<b><font color=#ff0000>.</font></b>2,3<font color=#ff0000>_</font>1-50<font color=#ff0000>@</font>2+0.001
+</pre>
+
+specifies the part of the SDIF file piano.sdif which is contained in
+stream number 1 in <tt>1HRM</tt> frames and matrices, selects only
+columns 2 and 3 (frequency and amplitude) of rows (partials) 1 through
+50, between the times 1.999 and 2.001.
+ 
+Things to note:
+<ul>
+<li> There can be <b>white space</b> between the elements.  You have
+to quote the whole selection if you want to use spaces on a Unix shell
+command line, however.<p>
+
+<li> The <b>order</b> of the 6 possible elements is not significant.
+(Especially, as <tt>.column_row</tt> may seem unnatural for people
+with a maths background these can be given in inverse order as
+<tt><font color=#ff0000>_</font>row<b><font color=#ff0000>.</font></b>column</tt>.)<p>
+
+<li> All specifications can be comma-separated <b>lists of values</b>.
+Numerical specifications can also be <b>ranges</b> <i>lower-upper</i> (LATER:
+a missing value <i>lower</i> or <i>upper</i> is replaced by the
+respective min/max).<p>
+
+<li> Shortcut: if the first selection element is the frame, you can
+drop the frame element marker '<b><font color=#ff0000>:</font></b>'.  So instead of
+<tt>filename<b>::</b><b><font color=#ff0000>:</font></b>frame<font color=#ff0000>@</font>cetera</tt> it's <tt>filename<b>::</b>frame<font color=#ff0000>@</font>cetera</tt><p>
+
+<li>(LATER: Streams and columns can be given either as a number or as
+a name.)<p>
+
+<li> Watch out for possible <b>ambiguities</b> between floating point
+    time spec and column spec: <font color=#ff0000>@</font>1.2 will be time 1.2, not time 1,
+    column 2.  It is advisable always to put the time spec last to avoid this
+    (<b><font color=#ff0000>.</font></b>2<font color=#ff0000>@</font>1 is ok) or use spaces (<font color=#ff0000>@</font>1 <b><font color=#ff0000>.</font></b>2 is also ok).<p>
+
+<li> Beware that column selections can produce invalid SDIF output in
+terms of the description types.  It is useful to do this for external
+analysis of the data in an SDIF file, however.  SDIF tools should
+check if it is allowed to select columns.<p>
+
+<li> All IRCAM SDIF Tools accept an SDIF selection for the input
+filename.  This works also with <b>standard input</b> using as filename
+<tt><b>::</b>select-spec</tt> or <tt>-<b>::</b>select-spec</tt> <p>
+
+</ul>
+
+
+
+
+<br><br><hr><p>
+<a name=reading>
+<h2>Inspecting and reading SDIF files</h2>
+</a>
+
+<br>
+<a name=querysdif>
+<h3>querysdif</h3>
+</a>
+
+View summary of data in an SDIF-file.  Per default, all ASCII chunks are
+printed, followed by a count of the frames and the matrices occuring in
+the file.
+
+<pre>
+Usage: querysdif [options] [sdif-file]
+
+Options:
+        -a      view ASCII chunks
+        -d      view data
+        -t  &lt;sdif types file&gt;  specify file with additional sdif types
+        -h      this help
+</pre>
+
+
+
+
+<br><br>
+<a name=sdifextract><h3>sdifextract</h3></a>
+
+Extract data in the given stream, frame type, matrix type, row and
+column and write it to a file or to standard output.  If one of the
+five selections is not specified, all data is extracted.<p>
+
+The selection can be made using an <a href=#selectspec>SDIF Select
+Specification</a> appended to the input file, or by various flags on
+the command line.<p>
+
+Using the verbose flag, the selection is echoed and a summary is printed.<p>
+
+The output can be in SDIF (the default) or in two ASCII output formats:
+<dl>
+<dt><b>SDIF</b>
+<dd>	In SDIF output, the structure of the input file is kept if no
+        columns or rows are selected.  Otherwise, the output may not
+        conform to the SDIF description types.<p>
+	
+	SDIF output to a terminal is prohibited.<p>
+
+<dt><b>BPF</b>
+<dd>    In the default multi-bpf format, there will be one line per matrix 
+        row in the format:
+	<pre>
+                frame-time  matrix-row...
+	</pre>
+        If a column is selected, or the matrix contains only one column, 
+        the output file can be used as a break-point-function.<p>
+
+<dt><b>Format</b>
+<dd>    In .format file format (as used with additive), for each matrix 
+        there will be one frame in the format:
+	<pre>
+                number-of-rows  frame-time
+                matrix-row-1
+                ...
+                matrix-row-n
+	</pre><p>
+</dl>
+
+<pre>
+Usage: sdifextract [options] [input] [output]
+
+The input filename can have an appended SDIF selection of the form
+        ::[#stream][:frame][/matrix][.column][_row][@time]
+
+Options:
+        -T &lt;sdif types file&gt;  specify file with additional sdif types
+        -v                    be verbose
+        -q                    be quiet
+        -h                    short help
+        -help                 long help (prints sdif types if -T given before)
+
+Format options (see long help for formats):
+        -sdif                 output data in SDIF (default)
+        -bpf                  output data as ASCII multi-bpf
+        -format               output data as ASCII .format file
+        -time                 output only frame-times as ASCII
+        -data                 output data only (without frame-times) as ASCII
+	
+Selection options:
+        -t &lt;begin&gt;[-&lt;end&gt;|+&lt;delta&gt;]  select time range &lt;begin&gt; to &lt;end&gt; or 
+                             &lt;begin&gt;-&lt;delta&gt; to &lt;begin&gt;+&lt;delta&gt;
+        -s &lt;stream id&gt;        select stream to extract
+        -f &lt;frame signature&gt;  select frame  to extract
+        -m &lt;matrix signature&gt; select matrix to extract
+        -r &lt;row&gt;              select row    to extract
+        -c &lt;column&gt;           select column to extract
+
+Extract data in the given time range, stream, frame type, matrix type, row
+and column and write it to an ascii file.  If one of the six selections is
+not specified, all data is extracted.
+
+Formats:
+
+-sdif   In SDIF output, the structure of the input file is kept if no
+        columns or rows are selected.  Otherwise, the output may not
+        conform to the SDIF description types.
+
+-bpf    In multi-bpf format, every matrix row is printed as one line
+        of text in the format:
+
+                frame-time  matrix-row...
+
+        If one column is selected, or all selected matrices contain only
+        one column, the output file can be used as a break-point-function.
+
+-format In the ASCII .format file format (as used with additive),
+        each matrix is printed in the format:
+
+                number-of-rows  frame-time
+                matrix-row-1
+                ...
+                matrix-row-n
+
+-time   In time format, only the frame-times of the selected frames are
+        printed, where every time is printed on a new line
+
+-data   In data-only format, output is like bpf but without time (the first column)
+</pre>
+
+<br><br>
+<a name=sdiftotext><h3>sdiftotext</h3></a>
+
+Converts an SDIF file into text format, as described in the 
+<a href="by-subject-doc.html#Ecriture d'un fichier pseudo-SDIF texte">User Manual</a>.
+
+<pre>
+Usage: sdiftotext [-t &lt;types file&gt;] [-i &lt;input&gt;] [-o &lt;output&gt;]
+</pre>
+
+
+<br><br>
+<a name=sdiftoformat><a name=sdiftofmt>
+<h3>sdiftoformat and sdiftofmt</h3></a></a>
+
+Convert an SDIF file with additive analysis data (1TRK or 1HRM frames)
+into a .format ascii or .fmt binary file.<p>
+
+This is part of the <a target=_parent
+href=http://www.ircam.fr/equipes/analyse-synthese/pm>Pm library</a>.
+
+
+
+
+
+<br><br><hr>
+<a name=writing><h2>Writing SDIF files:</h2></a>
+
+<br>
+<a name=texttosdif><h3>texttosdif</h3></a>
+
+
+Converts an SDIF file in text format (pseudo--SDIF), as described in the 
+<a href="by-subject-doc.html#Exemple de fichier pseudo-SDIF">User Manual</a>
+to true binary SDIF.
+
+<pre>
+Usage: tosdif [-&lt;type input&gt;] [-i &lt;input&gt;] [-o &lt;output&gt;]
+</pre>
+
+
+<br><br>
+<a name=formattosdif><a name=fmttosdif>
+<h3>formattosdif and fmttosdif</h3></a></a>
+
+Convert a .format or .fmt file with additive analysis data into an
+SDIF file with, by default, 1TRK frames.<p>
+
+This is part of the <a target=_parent
+href=http://www.ircam.fr/equipes/analyse-synthese/pm>Pm library</a>.
+
+<br><br><br><br>
+
+<hr>
+<adress>
+<a href=http://www.ircam.fr/sdif target=_top>Back to SDIF</a>, 
+
+<p><em><a href=http://www.ircam.fr/anasyn target=_new>Équipe Analyse/Synthèse</a></em>, 
+
+<au><a href=http://www.ircam.fr/anasyn/schwarz target=_new>Diemo Schwarz</a></au>,
+
+last update Mai 2006
+</adress>
+
+
+
+</body>
+
+</html>

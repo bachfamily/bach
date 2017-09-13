@@ -1,0 +1,1325 @@
+2011-12-19  Axel Roebel  <roebel@m1712.ircam.fr>
+Version 3.11.4
+
+	* sdif/SdifFGet.c:
+	Gracefully handle NVT tables that do not include a trailing \000
+	as for examples the once written with the writesdif function in the old
+	matlab sdif toolbox. Obligation to have a trailing 0 in the 1NVT
+	matrix is not required in the SDIF specs and therefore the
+	present change seems appropriate.
+
+2011-06-11  Axel Roebel  <roebel@m1873.local>
+
+	* CMakeLists.txt, configure.in, include/sdif.h.in:
+	Fixed a number of issues with the conditional include of stdint.h and sys/types.h in instaled include file
+	sdif.h.
+	Correctly use the types provided by these include files for definition of sdif types.
+
+	* sdif/SdifFile.c: Fixed ftruncate implementation on windows.
+
+2011-04-19  Axel Roebel  <roebel@m1873.local>
+
+	* CMakeLists.txt: Fixed source location for installation of sdif.h;
+
+2011-04-18  Axel Roebel  <roebel@m1873.local>
+
+	* include/sdif.h.in: added sdif.h.in to cvs
+
+2011-04-15  Axel Roebel  <roebel@m1873.local>
+
+	* CMakeLists.txt, configure.in, include/sdif.h:
+	fixed use of stdint.h to be persistent in sdif.h even after
+	installation.
+	Added a complete configuration search to determine
+	SdiffPosT type such that it becomes a 64bit type.
+
+	* sdif/SdifSignatureTab.c, sdif/SdifTimePosition.c:
+	Use double quotes not <> for sdif.h include file.
+
+	* sdif/SdifString.c: Added missing header sdif_portability.h
+
+2011-04-12  Axel Roebel  <roebel@m1873.local>
+
+	* CMakeLists.txt, README, configure.in, include/sdif.h, sdif/SdifErrMess.c, sdif/SdifFile.c:
+	Fixed large file support to properly work on linux as well.
+
+	* tools/querysdif.c:
+	Removed unused variable, and fixed return code to be nonzero in case file is empty.
+
+	* test/cmd_testcheck:
+	Output error message in case querysdif program fails.
+
+	* include/sdif.h, sdif/SdifErrMess.c, sdif/SdifFile.c:
+	Fixed Sdif[fF]GetPos and Sdif[fF]SetPos to correctly support large files (>2GB).
+
+2011-04-06  diemo  <diemo@m1873.local>
+
+	* ReleaseNotes: v3.11.3 preview
+
+	* include/sdif.h, sdif/SdifHighLevel.c: realloc query tree
+
+	* configure.in: v3.11.3
+
+2011-03-29  Axel Roebel  <roebel@m1873.local>
+
+	* cmModules/REDIRECT_COMPILERS_TO_SYSROOT.cmake:
+	Disabled redirection which can established by standard cmake means starting with cmake 2.8.
+	SYSROOT manipulation is only required for binary distribution which om now can be done only with
+	cmake internal means.
+
+2009-10-29  Axel Roebel  <roebel@m1873.local>
+
+	* sdif/SdifMatrix.c, sdif/SdifSelect.c: Fixed memory leaks.
+
+	* CMakeLists.txt, test/CMakeLists.txt, tools/CMakeLists.txt:
+	Modified to use cmake 2.6 output directory selection.
+
+2009-10-19  diemo  <diemo@m1873.local>
+
+	* Makefile.am: new upload host and dir, again
+
+	* include/sdif.h: added prototype for SdifFreeQueryTree
+
+2009-08-11  diemo  <diemo@m1873.local>
+
+	* doc/standard/sdif-standard.html, doc/Makefile.am:
+	Remove standards doc and publication make rule, since
+	SDIF documentation has moved to the sdif-website CVS module
+
+	* doc/standard/sdif-standard.html: updated nvt syntax
+
+2009-08-10  diemo  <diemo@m1873.local>
+
+	* types/Makefile: nl
+
+	* sdif/SdifHighLevel.c:
+	fix matrix selection for SdifQuery: In SdifReadFile function, check if
+	matrix header is selected before calling matrix callback.
+
+	* doc/standard/sdif-standard.html:
+	correct description of matrix data type, thanks to Matt Wright for pointing this out!
+
+	* configure.in: version 3.11.2
+
+	* doc/Makefile.am: new server for web files,
+	update standards doc also
+
+	* Makefile.am: frs changed again...
+
+	* ReleaseNotes: version 3.11.2
+
+	* tools/sdiftotext.c: accept in/outfile without -i/-o also
+
+	* tools/querysdif.c:
+	- added flags to switch header, nvt, and type def printing
+
+	* tools/querysdif.c:
+	- reimplemented querysdif using SdifQuery for consistency
+	- added header printing
+
+2009-04-20  diemo  <diemo@m1873.local>
+
+	* include/sdif.h: example for SdifSelectAddSignature
+	move SDIF_API out of generating macro, to avoid it in SdifSelect.c (error on windows compilation)
+
+	* include/sdif.h: document two missing prototypes
+
+	* sdif.sln, sdif.vcproj: updated for Windows compilation
+
+2009-04-17  diemo  <diemo@m1873.local>
+
+	* include/sdif.h, sdif/SdifSelect.c:
+	clarified syntax in code-generating macro
+
+2009-04-09  diemo  <diemo@m1873.local>
+
+	* macosxbuild/README.MacOSX: doc building under SDK and UB on Mac
+
+	* sdif/SdifHighLevel.c: comm
+
+	* examples/Makefile.am: force linking with freshly built lib
+
+	* macosxbuild/SDIF.xcodeproj/project.pbxproj: version 3.11.1
+
+	* examples/list-nvt.c: remove unused
+
+2009-02-18  Axel Roebel  <roebel@m1873.local>
+
+	* cmModules/REDIRECT_COMPILERS_TO_SYSROOT.cmake:
+	Added support for -mmacosx-version-min in case a specific SYSROOT is selected
+
+	* cmModules/GET_GCC_VERSION.cmake:
+	Protect againstb calling with non gcc compilers
+
+2009-02-18  diemo  <diemo@m1873.local>
+
+	* autogen.sh: on mac, avoid warnings, try glibtoolize first
+
+	* macosxbuild/SDIF.xcodeproj/Makefile.am:
+	empty makefile just to include Mac xcode compilation project in source distribution
+
+2009-02-05  Axel Roebel  <roebel@m1873.local>
+
+	* test/CMakeLists.txt: Adapted for cmake 2.6.0
+
+	* CMakeLists.txt: Enforce to use cmake 2.6.0
+
+2009-01-27  Axel Roebel  <roebel@m1873.local>
+
+	* doc/window-enumeration.txt:
+	Added window type enumeration information text to SDIF doc.
+
+2009-01-07  diemo  <diemo@m1873.local>
+
+	* ChangeLog, ReleaseNotes: notes for 3.11.1
+
+	* configure.in: bump up release to 3.11.1
+
+	* include/sdif.h:
+	access functions for integration in script languages for all fields of:
+	- name-value table list global struct SdifNameValuesLT (-> list of tables),
+	- name-value table SdifNameValueTableT (-> hash of entries),
+	- name-value entry SdifNameValueT
+	iterator to iterate over all entries in hash table
+
+	* sdif/SdifHash.c:
+	iterator for integration in script languages to iterate over all entries in hash table
+
+	* sdif/SdifNameValue.c:
+	access functions for integration in script languages for all fields of:
+	- name-value table list global struct SdifNameValuesLT (-> list of tables),
+	- name-value table SdifNameValueTableT (-> hash of entries),
+	- name-value entry SdifNameValueT
+
+	* examples/list-nvt.c:
+	use new nvt access functions and hash table iterator
+
+	* examples/Makefile.am: link list-nvt example with freshly built lib
+
+	* Makefile.am: include examples dir in target and dist
+
+	* examples/Makefile.am: added nvt listing example
+
+	* examples/list-nvt.c: nvt listing example for library version <= 3.10
+
+2009-01-07  diemo  <diemo@here>
+Version 3.11.1
+
+	* configure.in: bump up release to 3.11.1
+
+	* include/sdif.h:
+	access functions for integration in script languages for all fields of:
+	- name-value table list global struct SdifNameValuesLT (-> list of tables),
+	- name-value table SdifNameValueTableT (-> hash of entries),
+	- name-value entry SdifNameValueT
+	iterator to iterate over all entries in hash table
+
+	* sdif/SdifHash.c:
+	iterator for integration in script languages to iterate over all entries in hash table
+
+	* sdif/SdifNameValue.c:
+	access functions for integration in script languages for all fields of:
+	- name-value table list global struct SdifNameValuesLT (-> list of tables),
+	- name-value table SdifNameValueTableT (-> hash of entries),
+	- name-value entry SdifNameValueT
+
+	* examples/list-nvt.c:
+	use new nvt access functions and hash table iterator
+
+	* examples/Makefile.am: link list-nvt example with freshly built lib
+
+	* Makefile.am: include examples dir in target and dist
+
+	* examples/Makefile.am: added nvt listing example
+
+	* examples/list-nvt.c: nvt listing example for library version <= 3.10
+
+2009-01-05  diemo  <diemo@here>
+Version 3.11.0-pre1
+
+	* ReleaseNotes: notes for 3.11.0
+
+	* macosxbuild/SDIF.xcodeproj/project.pbxproj:
+	move version definition up to project settings, base framework and project version on the three custom definitions in xcode project:
+	VERSION_MAJOR = 3
+	VERSION_MINOR = 11
+	VERSION_RELEASE = 0
+
+2008-12-18  diemo  <diemo@here>
+
+	* macosxbuild/Makefile.am: add some plist files to distribution
+
+	* examples/Makefile.am: makefile to build example programs
+
+	* configure.in:
+	Changed minor release number to 3.11 because of API change by new
+	access methods to struct elements of type definition.
+
+	* examples/list-types.c:
+	Use new access methods to struct elements of type definitions.
+
+	* include/sdif.h, sdif/SdifFrameType.c, sdif/SdifHash.c, sdif/SdifMatrixType.c:
+	Improvements of the public API for scripting languages binding to libSDIF:
+	- added SdifHashTableGetNbData
+	- added access methods to struct elements of type definitions.
+
+	* examples/list-types.c: separate frameinfo_from_signature function
+
+	* examples/list-types.c: read headers
+
+	* examples/list-types.c:
+	simple example showing SdifTestFrameType and direct access to struct elements
+
+2008-12-10  bogaards  <bogaards@here>
+
+	* tools/querysdif.c: support for frames that do not contain any matrix
+
+2008-10-06  diemo  <diemo@here>
+
+	* sdif/config.h.in:
+	revert erroneous commit back to rev 1.8, sorry for the inconvenience
+
+2008-09-18  diemo  <diemo@here>
+
+	* Makefile.am, macosxbuild/Makefile.am, macosxbuild/README.MacOSX, macosxbuild/SDIF.xcodeproj/project.pbxproj:
+	include Info.plist, update readme, remove zip before uploading, remove SdifVersion.h
+
+	* Makefile.am:
+	clarified last misunderstanding between autotools and me:
+
+	TO MAKE A FILE RELEASE ON SOURCEFORGE, DO:
+
+	   make pub
+
+	* include/Makefile.am, macosxbuild/Makefile.am, macosxbuild/SDIF.xcodeproj/project.pbxproj, sdif/config.h.in, Makefile.am, configure.in:
+	include current updated SDIF.xcodeproj, generated sdif_version.h for mac building out of the box
+	TO MAKE A FILE RELEASE ON SOURCEFORGE, DO:
+
+	   make -k pub
+
+	* macosxbuild/SDIF.xcodeproj/project.pbxproj:
+	activate UB framework building, with help from Niels
+
+	* doc/Makefile.am: publish doc on sourceforge
+	N.B.: DON'T USE THIS, BUT USE THE SDIF-WEBSITE MODULE
+
+	* Makefile.am: adapt to sf frs, publish src and mac ub framework only
+
+2008-09-10  diemo  <diemo@here>
+
+	* doc/index.html: ahem...
+
+	* doc/index.html:
+	replaced by redirection to new sdif main page on sourceforge
+
+2008-06-05  roebel  <roebel@here>
+
+	* cmModules/REDIRECT_COMPILERS_TO_SYSROOT.cmake:
+	simplified sysroot handling, rely on cmake to put -isysroot flag when necessary
+
+2008-06-03  roebel  <roebel@here>
+
+	* cmModules/REDIRECT_COMPILERS_TO_SYSROOT.cmake:
+	Added protection to sysroot flag in case cross compilation is active.
+
+2008-05-31  roebel  <roebel@here>
+
+	* ReleaseNotes: Prepared for new release.
+
+2008-05-22  roebel  <roebel@here>
+
+	* ChangeLog, configure.in, include/sdif.h:
+	Added missing SDIF_API to function declaration in sdif.h.
+
+2008-05-22  Axel Roebel  <Axel.Roebel@ircam.fr>
+Version 3.10.8
+
+	* include/sdif.h :
+	added SDIF_API to SdifFCleanCurrSignature.
+
+2008-01-22  Axel Roebel  <roebel@sam.localdomain>
+
+	* include/sdif.h :
+	Use stdint.h defined types if this header is available.
+
+2008-01-11  Axel Roebel  <Axel.Roebel@ircam.fr>
+
+	* sdif/SdifRWLowLevel.c, include/sdif.h : 
+	Use const char* for read only function arguments.
+
+2007-12-10  Axel Roebel  <roebel@sam.localdomain>
+
+	* sdif/SdifTest.h, sdif/SdifMatrixType.h :
+	Removed redundant function declarations.
+
+	* sdif/SdifFRead.c :
+	Properly cast printf arguments.
+
+	* sdif/SdifTest.c, sdif/SdifMatrixType.c, sdif/SdifFrameType.h, sdif/SdifFrameType.c, sdif/SdifFile.c, include/sdif.h : 
+	Use const char* for read only function arguments.
+
+2007-11-27  Axel Roebel  <Axel.Roebel@ircam.fr>
+Version 3.10.7
+
+	* sdif/SdifMatrix.c :
+	Fixed warning due to missing return value.
+
+	* tools/querysdif.c, test/utils.c, test/test2.c, test/test1.c :
+	prevent compiler warnings.
+
+2007-11-26  U-REC-1320-ROEBEL\Axel Roebel  <Axel.Roebel@ircam.fr>
+	
+	* sdif/SdifSignatureTab.c, sdif/SdifSelect.c, sdif/SdifPrint.c, sdif/SdifMatrix.c,
+	* sdif/SdifHighLevel.c, sdif/SdifFile.c, sdif/SdifFGet.c, sdif/SdifList.c
+	Changed data types to have less casts and
+	less compilation warnings with MSVC.
+	renamed some functions that are deprecated in MSVC.
+	
+	* sdif/CMakeLists.txt : 
+	Moved DLL export/import handling here where we deal with  
+	library only settings.
+	
+	* CMakeLists.txt :
+	Support gcc visibility flag.
+
+	* include/sdif.h :
+	Finished DLL export/import handling, support gcc visibility as well.
+
+	* tools/CMakeLists.txt :
+	Changed for MSVC.
+
+2007-04-30  axel roebel  <roebel@marl.hd.free.fr>
+
+	*  SDIF/CMakeLists.txt: 
+	Use centralized executable and library output dir.
+
+2006-12-11  axel roebel  <roebel@local>
+
+	* Makefile.am, configure.in, CMakeLists.txt :
+	version 3.10.6 added support for cmake project configuration
+	system.
+
+2006-05-05  Diemo Schwarz  <schwarz@ATR-DarkStar.local>
+
+	* configure.in, ReleaseNotes: version 3.10.5
+
+	* tools/querysdif.c: exit on invalid sdif header
+
+	* doc/standard/sdif-standard.html:
+	removed remains of "TreeWay" examples specific to the Chant program
+
+	* doc/standard/sdif-standard.html: adapted to format version 3:
+	ascii header frames contain text matrices, no more "special frames"
+
+	* doc/standard/sdif-standard.html:
+	moved SDIF standard specification document from doc to doc/standard
+
+2006-05-05  Diemo Schwarz  <schwarz@ATR-DarkStar.local>
+
+	* tools/querysdif.c: exit on invalid sdif header
+
+	* doc/standard/sdif-standard.html:
+	removed remains of "TreeWay" examples specific to the Chant program
+
+	* doc/standard/sdif-standard.html: adapted to format version 3:
+	ascii header frames contain text matrices, no more "special frames"
+
+	* doc/standard/sdif-standard.html:
+	moved SDIF standard specification document from doc to doc/standard
+
+2006-05-03  Diemo Schwarz  <schwarz@ATR-DarkStar.local>
+
+	* tools/sdifextract.c: added data only output option
+
+	* tools/querysdif.c: added brief output option
+
+	* include/sdif.h: add SDIF_API (for windows dll)
+	untabify
+
+	* include/sdif.h:
+	correct doc and remove function sketch (is now implemented)
+
+2006-03-22  roebel  <roebel@local>
+
+	* ChangeLog, configure.in: Version 3.10.4: x86_64
+
+	* sdif/SdifSelect.c:
+	cast pointer difference to int for printf arguments
+
+	* sdif/SdifRWLowLevel.c: Fixed wrong sizeof which would work only if
+	sizeof(pointer)  == sizeof(int)
+
+	* sdif/SdifFRead.c:
+	use correct format specifier for long int arguments.
+
+2006-02-04  roebel  <roebel@local>
+
+	* configure.in: updated version
+
+2006-02-03  roebel  <roebel@local>
+
+	* ChangeLog: Version 3.10.3
+
+	* sdif/SdifErrMess.h, sdif/SdifErrMess.c:
+	Fixed SdifFsPrintError which now creates a proper
+	error message. Before the error messages were
+	limited to 4 characters!
+
+2006-01-31  muller  <muller@m1213.ircam.fr>
+
+	* tools/querysdif.vcproj, tools/sdifextract.vcproj, tools/sdiftotext.vcproj, tools/sdifusage.vcproj, tools/tosdif.vcproj:
+	visual studio 7.1 projects for sdif tools
+
+	* sdif.ncb, sdif.suo:
+	removed visual C++ temporary files that shouldn't be in cvs
+
+2006-01-16  muller  <muller@m1213.ircam.fr>
+
+	* sdif.sln, sdif.vcproj, sdif/sdif_portability.h:
+	updated visual studio 7.1 projects in order to build the latest sdif version. (only tested with FTM)
+
+	it only builds a static library for now.
+	for a DLL we either need a module definition file with the list of exported symbols
+	or something like:
+
+	#ifdef WIN32
+	#if defined(SDIFDLL_EXPORTS)
+	#define SDIF_API __declspec(dllexport)
+	#else
+	#define SDIF_API __declspec(dllimport)
+	#endif
+	#else
+	#define SDIF_API extern
+	#endif
+
+	and SDIF_API in front of all exported symbols
+
+2006-01-09  ellis  <ellis@m1213.ircam.fr>
+
+	* macosxbuild/sdiftotext-Info.plist, macosxbuild/texttosdif-Info.plist:
+	 added 2 new targets to the macosx project to build sdiftotext & texttosdif with minimal gui
+
+	* tools/ProgressBar.cp, tools/ProgressBar.h, tools/StandardSuite.sdef, tools/Worker.cp, tools/Worker.h, tools/main.cp, tools/main.nib/classes.nib, tools/main.nib/info.nib, tools/main.nib/objects.xib, tools/sdiftotext.c:
+	minimal set of files to add XP-gui to the sdif tools
+
+2006-01-03  roebel  <roebel@local>
+
+	* doc/download/Easdif/index.html: Released version 1.2.2b.
+
+2005-12-05  Diemo Schwarz  <schwarz@ATR-DarkStar.local>
+
+	* include/sdif.h: export SdifSelectGetIntMask
+
+2005-11-10  Diemo Schwarz  <schwarz@ATR-DarkStar.local>
+
+	* sdif/SdifFScan.c: hoppla!
+
+2005-10-21  Diemo Schwarz  <schwarz@m1213.ircam.fr>
+
+	* sdif/SdifMatrixType.c, sdif/SdifRWLowLevel.c, sdif/SdifRWLowLevel.h, sdif/SdifSelect.c, sdif/SdifTest.c, sdif/SdifTextConv.c, sdif/SdifErrMess.c, sdif/SdifFGet.c, sdif/SdifFPrint.c, sdif/SdifFRead.c, sdif/SdifFScan.c, sdif/SdifFWrite.c, sdif/SdifFile.c, sdif/SdifFrame.c, sdif/SdifFrameType.c, sdif/SdifHard_OS.h, sdif/SdifHighLevel.c, sdif/SdifMatrix.c:
+	protect all static buffers from overflow by using snprintf instead of sprintf
+	move big errorMess buffers into error branch to avoid too large stack allocation
+
+2005-10-20  Diemo Schwarz  <schwarz@m1213.ircam.fr>
+
+	* sdif/SdifFRead.c:
+	protect all static buffers from overflow by using (v)snprintf instead of (v)sprintf
+	move big buffers into error branch to avoid too large stack allocation
+	check for error before reading padding
+
+2005-07-25  roebel  <roebel@local>
+
+	* .cvsignore, test/.cvsignore, include/.cvsignore, sdif/.cvsignore:
+	Removed user configuration files from cvs.
+
+2005-07-05  roebel  <roebel@local>
+
+	* sdif/SdifFile.c: changed to be able to compile with mingw32
+
+2005-06-15  Diemo Schwarz  <schwarz@m1213.ircam.fr>
+
+	* sdif.ncb, sdif.suo, sdif.vcproj:
+	adapted windows project to 3.10 (removed files)
+
+2005-06-10  roebel  <roebel@local>
+
+	* ChangeLog, configure.in: Updated for new version.
+
+	* sdif/SdifFGet.c:
+	Fixed SdifFGetOneNameValue for the case where the file is stored in
+	ASCII with windows or macintosh line feed conventions.
+
+2006-03-22  Axel Roebel  <Axel.Roebel@local>
+Version 3.10.4
+
+	* sdif/SdifRWLowLevel.c :
+	Fixed wrong sizeof which would work only if
+	sizeof(pointer)  == sizeof(int)
+
+	* sdif/SdifSelect.c : 
+	cast pointer difference to int for printf arguments
+
+	* sdif/SdifFRead.c : 
+	use correct format specifier for long int arguments.	
+
+2006-02-03  Axel Roebel  <roebel@local>
+Version 3.10.3
+
+	* sdif/SdifErrMess.c, SDIF/sdif/SdifErrMess.h: 
+	Fixed SdifFsPrintError which now creates a proper
+	error message. Before the error messages were
+	limited to 4 characters!
+	
+2005-06-10  Axel Roebel  <Axel.Roebel>
+Version 3.10.2
+
+	* sdif/SdifFGet.c:
+	Fixed SdifFGetOneNameValue for the case where the file is 
+	read in text mode from an ASCII file
+	with windows or macintosh line feed conventions.
+
+2005-06-03  Diemo Schwarz  <schwarz@siter.ircam.fr>
+
+	* doc/download/sdif-matlab/index.html: sdif matlab for mac
+
+2005-05-26  Nicholas Ellis  <ellis@siter.ircam.fr>
+
+	* macosxbuild/SDIF.xcode/project.pbxproj:
+	added SdifRWLowLevel.h in the Project
+
+	* macosxbuild/Info.plist, macosxbuild/SDIF.xcode/project.pbxproj:
+	. added the prebinding flag
+	. version 3.10.1 in xcode project
+
+	* macosxbuild/SDIF.xcode/project.pbxproj, macosxbuild/Info.plist:
+	added the Info.plist
+	working xcode project
+
+2005-05-24  Axel Roebel  <Axel.Roebel@local>
+
+	* sdif/SdifErrMess.c:
+	Removed double semicolons, which apparently make gcc 2.96 stumble.
+
+
+2005-05-24  Axel Roebel  <roebel@local>
+Version 3.10.1
+	
+	* include/sdif.h, sdif/SdifErrMess.c, sdif/SdifFGet.c, sdif/SdifFPrint.c, sdif/SdifFRead.c, sdif/SdifFScan.c, sdif/SdifFWrite.c, sdif/SdifHard_OS.h, sdif/SdifMatrix.c, sdif/SdifRWLowLevel.c, sdif/SdifRWLowLevel.h, sdif/SdifTest.c, sdif/SdifFGet.h: 
+	Fixed last checkin comment which turned out to be the start of
+	a c-comment.
+
+	* include/sdif.h, sdif/SdifErrMess.c: 
+	Synchronized the extended ErrorTagET with the new
+	table of error messages.
+	
+	* sdif/SdifFPrint.c, sdif/SdifFPut.c, sdif/SdifFPut.h, sdif/SdifFWrite.c, sdif/SdifFWrite.h:
+	Removed all old versions of ASCII Chunk writing functions that were
+	still based on the Text/Binary output distinction via 
+	function argument. Now the write functions are used for binary
+	and the Put functions used for ASCII files.
+	The writing of the pre 1999 SDIF 
+	ASCII chunks in binary files is no longer possible.
+
+	* test/SdifTypes.STYP:
+	fixed local SdifTypes file which will be used for the tests
+	because it is located in the current directory. Who invented
+	that?
+
+	* configure.in :
+	added -Wall to default compiler options. 
+	
+2005-05-23  schwarz  <schwarz@mac-borghesi.ircam.fr>
+Version 3.10.0
+	
+	* all sources and headers:
+	- Sdiffread*/Sdiffwrite* functions with SdifFileT instead of FILE *
+	  -> eof error reporting makes more sense
+	- more cleanup of sdif.h, above functions are private in SdifRWLowLevel.h
+	- eEof becomes error 4 to be distinguishable from ascii chars
+	- SdifFScanNameValueLCurrNVT reimplemented for ascii only
+
+	* Unified error handling:
+	- SdifErrorEnum (global errors) integrated into SdifErrorTagET (file errors)
+	- no more SdifError.[ch], everything done by SdifErrMess.[ch]
+
+2005-05-20  roebel  <roebel@local>
+
+	* ChangeLog, configure.in:
+	Fix for c++ compilation. Unfinished! But cleaner as before
+	and at least compiles.
+
+	* include/sdif.h: corrected detection seekablility of sdif file.
+	files are not seekable only if 	they are pipes!
+
+	* sdif/SdifFRead.c: back to returning 0 in case of file read error.
+	Skipping a matrix can never produce a read size of 0
+	so -1 is unnecessary here.
+	 SdifFSkip now uses seekability flag to determine
+	whether to seek or to read.
+	Don't confuse error tags and error enums, which does not compile
+	with c++.
+
+	* sdif/SdifError.c: Use proper type to initialize gSdifLastError.
+
+	* sdif/SdifHighLevel.c (Module):
+	back to returning 0 in case of file read error.
+	the case where it was really used for max is now checked
+	by means of comparing the expected matrix size.
+
+2005-05-20  Axel Roebel  <Axel.Roebel@local>
+Version 3.9.3a
+
+	* sdif/SdifError.c (Module): 
+	Use proper type to initialize gSdifLastError.
+	
+	* sdif/SdifHighLevel.c (Module): 
+	back to returning 0 in case of file read error.
+	the case where it was really used for max is now checked 
+	by means of comparing the expected matrix size.
+	
+	* sdif/SdifFRead.c (Module): 
+	back to returning 0 in case of file read error.
+	Skipping a matrix can never produce a read size of 0
+	so -1 is unnecessary here.
+	 SdifFSkip now uses seekability flag to determine
+	whether to seek or to read.
+	Don't confuse error tags and error enums, which does not compile
+	with c++.
+
+2005-05-18  Axel Roebel  <Axel.Roebel@local>
+
+	* sdif/SdifFile.c, include/sdif.h:
+	Corrected detection seekablility of sdif file. 
+	files are not seekable only if 
+	they are pipes!
+
+2005-05-13  schwarz  <schwarz@mac-borghesi.ircam.fr>
+Version 3.9.3
+
+	* configure.in: version 3.9.3
+
+	* include/sdif.h, sdif/SdifErrMess.c, sdif/SdifError.c:
+	make it possible that global errors from SdifError be passed through
+	the SdifErrMsg functions as file errors.
+
+	* sdif/SdifTest.c: print signatures in hex also
+
+	* sdif/SdifFile.c: file name in identstring
+
+	* sdif/SdifFRead.c: pass read errors to caller as -1 return values
+
+	* sdif/SdifHighLevel.c:
+	stop read loop on errors and return values of callbacks
+
+2005-04-25  roebel  <roebel@local>
+
+	* configure.in:
+	Extension of compiler flag variables CFLAGS and CXXFLAGS did not work properly because autoconf sets default values that may contradict the values we select.
+	Therefore, we now store the externally set CFLAGS/CXXFLAGS to later use them as default values.
+
+2005-04-19  schwarz  <schwarz@mac-borghesi.ircam.fr>
+
+	* sdif/SdifFile.c, sdifcpp/Makefile.am, include/sdif.h:
+	make sdifcpp compile again for easdif:
+	- removed deleted files from makefiles
+	- fixed some includes that were missing (but only for C++ compilation!?)
+
+2005-04-07  schwarz  <schwarz@mac-borghesi.ircam.fr>
+Version 3.9.2
+
+	* macosxbuild/SDIF.xcode/project.pbxproj:
+	adapted to removed files, framework version 3.9.2
+
+	* configure.in:
+	let's call this version 3.9.2, with the redundant header files removed
+	and Niels' -time extension to sdifextract
+
+	* include/sdif.h: removed unused SdifMr stuff
+
+	* sdif/SdifFWrite.c, sdif/SdifPrint.c, sdif/SdifPrint.h, sdif/SdifRWLowLevel.c, sdif/SdifRWLowLevel.h, sdif/SdifSelect.c, sdif/SdifSignatureTab.c, sdif/SdifSignatureTab.h, sdif/SdifString.c, sdif/SdifString.h, sdif/SdifTest.c, sdif/SdifTextConv.c, sdif/SdifTextConv.h, sdif/SdifTimePosition.c, sdif/SdifTimePosition.h, sdif/sdiftypes.h, sdif/SdifFPrint.h, sdif/SdifFPut.c, sdif/SdifFPut.h, sdif/SdifFRead.c, sdif/SdifFRead.h, sdif/SdifFScan.c, sdif/SdifFWrite.h, sdif/SdifFile.c, sdif/SdifGlobals.c, sdif/SdifGlobals.h, sdif/SdifHard_OS.c, sdif/SdifHash.c, sdif/SdifList.c, sdif/SdifNameValue.c, sdif/SdifNameValue.h, sdif/SdifPreTypes.c, sdif/SdifPreTypes.h, sdif/Makefile.am, sdif/SdifCheck.c, sdif/SdifConvToText.c, sdif/SdifConvToText.h, sdif/SdifFGet.c, sdif/SdifFGet.h, sdif/SdifFPrint.c:
+	removed some now empty local include files,
+	added include of <sdif.h> and "SdifGlobals.h"
+
+	* sdif/SdifPrint.h, sdif/SdifCheck.h, sdif/SdifConvToText.h, sdif/SdifErrMess.h, sdif/SdifFPrint.h, sdif/SdifGlobals.h, sdif/SdifHard_OS.h, sdif/SdifSelect.h, sdif/SdifSignatureTab.h, sdif/SdifTextConv.h:
+	removed duplicated declarations that belong to the external API in sdif.h
+
+	* sdif/SdifMemory.c, sdif/SdifMemory.h:
+	removed unused functions SdifMr_*
+	(they were redefining the Sdif*alloc functions to find memory leaks)
+	removed now empty files SdifMemory.[ch]
+
+	* sdif/SdifCheck.h:
+	removed duplicated declarations that belong to the external API in sdif.h
+
+	* sdif/SdifError.c: clearer error msg
+
+	* sdif/SdifFile.c:
+	removed debug code used to find struct member alignment problem
+	(--> do this at init by comparing sizeof(SdifFileT) in lib and caller?)
+
+2005-04-06  schwarz  <schwarz@mac-borghesi.ircam.fr>
+
+	* sdif/SdifFile.c, sdif.ncb, sdif.pc.in, sdif.sln, sdif.spec.in, sdif.suo, sdif.vcproj:
+	project for MS Visual Studio C++ 7, configured for building with FTM (struct member align 2)
+
+2005-04-05  bogaards  <bogaards@mac-borghesi.ircam.fr>
+
+	* tools/sdifextract.c:
+	added time ouput format to extract only the times of selected frames
+
+2005-01-31  roebel  <roebel@local>
+
+	* configure.in: respect external CFLAGS/CXXFLAGS variable
+
+2005-01-17  schwarz  <schwarz@mac-borghesi.ircam.fr>
+
+	* macosxbuild/SDIF.xcode/project.pbxproj:
+	converted to native xcode project
+	static lib installed with framework as resource
+	set framework version
+	todo: project version still separate, to be read from configure.in, or
+	      to be written to configure???
+
+2005-01-14  schwarz  <schwarz@mac-borghesi.ircam.fr>
+
+	* macosxbuild/SDIF.xcode/project.pbxproj: static lib target
+
+2004-12-20  roebel  <roebel@local>
+
+	* sdif/SdifRWLowLevel.c:
+	Fixed compilation warnings (errors) in gcc (g++) 3.4.2.
+
+2004-10-11  schwarz  <schwarz@mac-borghesi.ircam.fr>
+
+	* macosxbuild/SDIF.xcode/project.pbxproj:
+	created install target, installs into /Library/Frameworks
+	set version 3.9.0 in target properties: info.plist basic information
+
+2004-10-07  Axel Roebel  <Axel.Roebel@local>
+Version 3.9.1
+
+	* sdif/SdifFGet.c
+	Fixed SdifFGetOneNameValue to properly read NVTs from text files.
+
+	* sdif/SdifRWLowLevel.c
+	Fixed SdifStringToNV to only convrt \t and \n.
+	
+2004-09-09  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+Version 3.9.0
+	
+	* include/sdif.h:
+	- Changed SdifMatrixDataT to something sensible that allows to read
+	  and store a whole matrix's data as one block into field CurrMtrxData
+	  of SdifFileT with SdifFReadMatrixData and accessed with the
+	  functions SdifFCurrMatrixData, SdifFCurrMatrixDataPointer, with
+	  automatic reallocation.
+	- SdifReadSimple: simple callback-based reading of an entire SDIF file.
+	- SdifListConcat function
+	- SdifIsAReservedChar return value changed to boolean flag, clearer
+	- SdifSelectAppendList function
+	- Removed unimplemented prototypes drafted in sdif/SdifHighLevel.h
+
+	* sdif/SdifHighLevel.h:
+	Removed implemented prototypes SdifReadSimple from this draft file.
+
+	* sdif/SdifHighLevel.c:
+	SdifReadSimple: simple callback-based reading of an entire SDIF file.
+
+	* sdif/SdifFRead.c, sdif/SdifMatrix.c, sdif/SdifFile.c:
+	SdifFReadMatrixData allows to read and store a whole matrix's data as
+	one block in an SdifMatrixDataT, with automatic reallocation.
+	Changed SdifMatrixDataT to something sensible that allows to read and
+	store a whole matrix's data as one block, with automatic reallocation.
+	Copy matrix data to float array, to use in jMax/FTM.
+	Moved SdifSizeOfMatrix* functions here.
+
+	Whole matrix data can be read into field CurrMtrxData and accessed
+	with access functions SdifFCurrMatrixData, SdifFCurrMatrixDataPointer.
+
+	* sdif/SdifRWLowLevel.c, sdif/SdifFGet.c, sdif/SdifString.c:
+	Fixed parsing bug that the type definition string had to end with
+	whitespace.
+
+	SdiffGetSignaturefromSdifString, SdiffReadSpacefromSdifString,
+	SdiffGetWordUntilfromSdifString: better syntax error messages and
+	code reformatted to help finding Parsing bug.  Fixed low-level
+	tokenising errors that were part of the parsing bug.
+	
+	At the next bug with the type language parser and tokeniser, it should
+	be rewritten using flex/bison!
+
+	SdifIsAReservedChar return value changed to boolean flag, much clearer.
+
+	* sdif/SdifSelect.c: 
+	SdifSelectAppendList function, avoids the double references
+	SdifListConcat woulde create.
+	
+	* sdif/SdifList.c: SdifListConcat function
+
+	* sdif/SdifHash.c: local SdifHashInt4 function as macro
+
+	* sdif/SdifHard_OS.c: swapping code alternatives
+
+	* sdif/SdifFrame.c: moved SdifSizeOf* functions to SdifGlobals.c
+
+	* sdif/SdifGlobals.c:
+	moved SdifSizeOf* functions from SdifFWrite.c to SdifGlobals.c
+	padding test with ftell now only when compiling in debug mode
+
+	* sdif/SdifFWrite.c:
+	moved SdifSizeOf* functions from SdifFWrite.c to SdifGlobals.c
+
+
+2004-09-01  Axel Roebel  <Axel.Roebel@local>
+Version 3.8.7
+	
+	* configure.in
+	Fixed typo in PROGLIST for tools: EXEXT instead of EXEEXT.
+
+	* sdif/SdifConvToText.c:
+	fixed typo in USE_XPGUI macro.
+	
+
+
+2004-09-01  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* doc/download/sdif-matlab/index.html:
+	geoffroy's windows version, freesoft wiki
+
+	* doc/download/sdif-matlab/index.html:
+	someone edited this file without checking it in to CVS...
+
+2004-08-27  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* doc/index.html: 3.8.6
+	freesoftware + wiki
+
+	* doc/download/index.html: 3.8.6, ReleaseNotes
+
+2004-08-26  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* Makefile.am: ReleaseNotes
+	some echo's don't know -e, is it needed?
+
+2004-08-26  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+Version 3.8.6 released
+
+	* Makefile.am: ReleaseNotes
+	some echo's don't know -e, is it needed?
+
+2004-08-25  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* ReleaseNotes:
+	real release notes give a high-level summary of the changes,
+	ChangeLog gives the details per file
+
+2004-08-23  Axel Roebel  <roebel@local>
+
+	* sdif/Makefile.am: Fixed for dist target!
+
+2004-07-28  Axel Roebel  <roebel@local>
+
+	* sdif/SdifGlobals.c: Simplified global list initialisation.
+
+2004-07-27  Axel Roebel  <roebel@local>
+
+	* sdif/SdifGlobals.c: Fixed infinite recursion in FreeGlobals.
+
+2004-07-26  Niels Bogaards <bogaards@ircam.fr> and Axel Roebel  <roebel@local>
+Version 3.8.6 
+	
+	* SDIF now thread save if pthreads are available:
+
+	Removed all unnecessary global and static variables and
+	reorganized remaining globals to be located in a thread local
+	structure. Old global variables are still exported to
+	not break old programs, however, they will no longer be used
+	internally to SDIF.
+	
+	Added pthread configure test
+
+	* sdif.pc.in: Added switch configuration for pthread enabled libraries
+
+	* sdif/config.h.in: Added support for pthreads.
+
+	* ChangeLog, acinclude.m4, configure.in: Version 3.8.6:
+	thread safe sdif: finished pthread support in SDIF by means of adding pthread detection to configure.
+
+2004-07-13  Axel Roebel  <Axel.Roebel@local>
+Version 3.8.5
+
+	* Fixed SdiffReadSignature. Number of bytes read need to be added not stored
+	in the bytesread container.
+
+	* properly initilize byte counters ind SdifCheck.c
+
+2004-06-17  Axel Roebel  <Axel.Roebel@local>
+Version 3.8.4
+
+	* tools/sdifextract.c:
+	fixed sdifextract padding calculation. As it was it worked for
+	many files, but not for all!
+
+2004-06-03  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+Version 3.8.3
+	
+	* configure.in: Enable profiling compilation with --enable-profile.
+
+	* test/Makefile.am, tools/Makefile.am:
+	Complete profiling harness with a list of test cases with variable
+	arguments, pre-/postprocessing, logging, etc.
+	All output is saved into the prof directory.  The .mon.out files should
+	be kept for reference, the .gprof files can be regenerated from that.
+
+	* tools/querysdif.c: 
+	Don't read padding when skipping matrices!
+
+	* include/sdif.h:
+	added array swapping and binary signature reading functions.
+
+	* sdif/Makefile.am, sdif/SdifFGet.c, sdif/SdifFRead.c, sdif/SdifGlobals.c, sdif/SdifHard_OS.c, sdif/SdifHighLevel.c, sdif/SdifRWLowLevel.c:
+	Profiling showed some waste of cycles in byte swapping and signature reading:
+	- byte swapping now array-wise, not element-wise in SdifSwap<N>[Copy] routines:   -> from 0.24 s (18.5%) to 0.14s
+	- ASCII signature reading function SdiffGetSignature replaced by new binary
+	  function SdiffReadSignature (also in SdifFGetSignature, so the change is
+	  mostly transparent):
+	  -> from 0.11 s (9.6%)  to 0.01 s
+	- overall run time improvement with test case sdifextractall_a01:
+	  -> from 1.20 s         to 0.86 s (40% faster)
+
+2004-05-27  Nicholas Ellis  <ellis@ligeti.ircam.fr>
+
+	* sdif/SdifFile.c:
+	if SdifGenKill called while Sdif not being initialised, directly returning
+	(allows to call SdifGenKill more than once)
+
+
+2004-05-03  Axel Roebel and Diemo Schwarz
+Version 3.8.2
+
+	* SdifGlobals.c, SdifFRead.c, SdifFGet.c:
+	In order to make reading SDIF files from stdin and pipes possible,
+	fixed bugs in padding calculation for ascii chunks:
+	1. DON'T PAD FRAMES!
+	2. SdifFReadMatrixHeader already accounts for read signature.
+	
+	Now, calculating padding from ftell is redundant, but we leave it in,
+	with a warning, until everyone's code is tested.
+
+2004-02-10  Axel Roebel  <Axel.Roebel@local>
+Version 3.8.1
+	
+	* sdif/SdifFile.c
+	 Handling of the warning for sdiftypes file changed.
+	 Warning will be given only if sdiftypes file has been specified by
+	 means of environment variable.
+	 A non existing _SdifTypesFileName will no longer be communicated to the user.
+	
+2004-01-29  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+Version 3.8.0
+	
+	* macosxbuild/*:
+	Add Max OS-X xcode project to dist
+	Added Riccardo's xcode project.
+
+2004-01-12  Patrice Tisserand  <tisseran@ligeti.ircam.fr>
+
+	* sdif.spec.in: Fixed list of files to package.
+
+2004-01-09  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* include/sdif.h, sdif/SdifFile.h:
+	Removed declaration of SdifFGetFrameType and SdifFGetMatrixType from
+	public API because they are misleading.
+	Use the correct SdifTestFrameType and SdifTestMatrixType instead.
+
+2003-12-15  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* sdif/SdifList.c:
+	SdifKillListCurr for SdifNameValuesLKillCurrNVT, untested
+
+	* sdif/SdifNameValue.c: SdifNameValuesLKillCurrNVT, untested
+
+	* sdif/SdifFile.c, include/sdif.h:
+	Added SdifFileT based functions SdifFSetPos, SdifFGetPos around the
+	Sdiff* Macros, to be callable from OpenMusic.
+
+2003-11-18  Axel Roebel  <roebel@local>
+
+	* include/sdif.h: Added alias for typo in SdifErrorTagE.
+
+2003-11-07  Axel Roebel  <roebel@local>
+
+	* tools/*.c, sdif/*.c:
+	Removed last remainings of XpGuiCalls from tools files.
+	removed XpGuiCalls.h and replaced preinclude.h  by local files
+
+	* sdif/sdif_portability.h: added preincluded.h replacement to CVS
+
+2003-11-07  Patrice Tisserand  <tisseran@ligeti.ircam.fr>
+
+	* sdif/SdifFile.c: Removed inclusion of SdifFile.h
+	Used SDIF_VERSION now.
+
+	* sdif/Makefile.am: Removed CKSUM computing.
+	Removed generation of SdifFile.h
+
+2003-11-07  Nicholas Ellis  <ellis@ligeti.ircam.fr>
+
+	* tools/sdiftotext.c, sdif/SdifErrMess.c, sdif/SdifError.c, sdif/SdifFile.c, include/sdif.h:
+	Added the declaration of of two functions in the header file
+	SdifFAllFrameTypeToSdifString and SdifFAllMatrixTypeToSdifString
+
+
+
+2003-11-07  Axel Roebel  <Axel.Roebel@local>
+3.8.0-beta3
+
+	* reorganized Mac related portability code
+	removed all XpGuiCalls, rename preincluded.h to sdif_portability.h
+
+	* include/sdif.h
+	added alias for typo in enum eUnknow=eUnknown
+	
+2003-08-06  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* SdifSelect.c, SdifSelect.h:
+	SdifSelectIntMask added for more efficient integer selections.
+	New functions:
+	- SdifInitIntMask, SdifGetIntMask
+	- SdifSelectTestIntMask
+	- SdifFNumStreamsSelected, SdifFNumRowsSelected, SdifFNumColumnsSelected
+	- SdifFRowIsSelected, SdifFColumnIsSelected
+	int value/range had to be changed to SdifUInt4 for this
+
+	* SdifMemory.c, SdifMemory.h: 
+	SdifCalloc now does what it appears to do: clear memory
+	removed double defs (sdif.h) from SdifMemory.h,	now remove whole file?
+
+	* sdif.h, SdifFRead.c, SdifFRead.h: 
+	New functions SdifFSkip, SdifFSkipOneRow.
+
+	* sdif.h, SdifFGet.c, SdifFGet.h, SdifFPrint.c, SdifFPrint.h, SdifFPut.c, SdifFPut.h, SdifFRead.c, SdifFRead.h, SdifFScan.c, SdifFScan.h, SdifFWrite.c, SdifFWrite.h, SdifNameValue.c, SdifFile.c:
+	Finally removed obsolete functions (like SdifSkip...).
+	
+
+2003-07-21  Axel Roebel  <roebel@local>
+
+	* SdifFPrint.c: Added support for intreger types to SdifFPrintOneRow
+
+2003-07-21  Patrice Tisserand  <Patrice.Tisserand@ircam.fr>
+
+	* Makefile.am, sdifcpp/Makefile.am: fixed conditionnal compilation/installation of libsdif-cpp.
+
+2003-07-05  Axel Röbel  <roebel@local>
+3.8.0-beta2
+	
+	* include/sdif.h, sdif/SdifRWLowLevel.c, sdif/SdifFPrint.c, sdif/SdifGlobals.c
+	Added support for types eInt1 and eUInt1.
+
+2003-06-24  Axel Roebel  <Axel.Roebel@local>
+
+	* sdif/SdifConvToText.c, sdif/SdifFile.c, sdif/SdifTextConv.c
+	removed unnecessary include of UniversalEnvVar.h
+
+2003-06-13  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	Library version is 3.8.0-beta until we decide to announce the
+	official release, to avoid confusion.
+
+	* macosxbuild/Makefile.am, macosxbuild/README.MacOSX, macosxbuild/SDIF.pbproj/Makefile.am, Makefile.am, README.MacOSX, configure.in:
+	Riccardo updated the MacOsX project to live in macosxbuild.
+	Added latest projectbuilder mac os X project to cvs and dist.
+	
+	* macosxbuild/README.MacOSX.binary-distrib:
+	assembled from general readme and LGPL in COPYING
+
+2003-06-06  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* sdif/SdifFile.c, sdif/SdifHard_OS.c, include/sdif.h:
+	Added eReadWriteFile that eventually opens a file in read-write mode.
+
+2003-06-04  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* tools/querysdif.c: Finally: do statistics about matrix sizes.
+
+2003-05-30  Diemo Schwarz  <schwarz@ligeti.ircam.fr>
+
+	* configure.in:
+	Bumped up version to 3.8.0 because of added API functions for
+	type definition access.
+
+	* include/sdif.h, sdif/SdifFile.c:
+	Added SdifFGetMatrixType and SdifFGetFrameType.
+	Added SdifFGetMatrixTypesTable and SdifFGetFrameTypesTable.
+	Documented other type access functions.
+
+	* sdif/SdifFPrint.c:
+	Added text matrix case to SdifFPrintOneRow for sdiftotext conversion
+	(called from SdifConvToText.c)
+
+
+Version 3.7.5	2003-05-24  Axel Röbel  <roebel@local>
+
+	* include/sdif_version.h.in: 
+	Renamed  VERSION string to SDIF_VERSION_STRING
+	A VERSION Macro in user include files breaks
+	include files in dependend libraries that itself 
+	define a VERSION macro.
+
+	The version macro used for SdifPrintVersion is now 
+	SDIF_VERSION_STRING whic will work for all platforms.	
+
+Version 3.7.4	2003-05-23  Diemo Schwarz  <schwarz@ircam.fr>
+
+	* sdif.pbxproj, macosxbuild, winbuild:
+	Added Mac OS-X Project Builder project.
+	Added win and mac build directories winbuild and maxosxbuild,
+	not yet used since you have to change the projects first.
+
+	* include/sdif_version.h.in: 
+	Added definition of total VERSION string.
+	This is necessary for non-configured builds like on Mac.
+
+	
+2003-05-01  Axel Roebel  <roebel@local>
+
+	* ChangeLog: Added last changes.
+
+	* Makefile.am: Fixed double declaration of EXTRA_DIST variable.
+
+	* sdif/SdifRWLowLevel.h: Removed declarations that are now in sdif.h
+
+	* sdif/SdifRWLowLevel.c:
+	SdifStringToSignature takes now const char * as argument.
+
+	* include/sdif.h:
+	SdifStringToSignature takes now const char * as argument.
+	Added missing declaration for SdifSkipASCIIUntilfromSdifString.
+
+	
+2003-05-01  Axel Röbel  <roebel@local>
+
+	* Removed the declarations from SdifRWLowLevel.h that are in
+	sdif.h
+
+	* For improved integration into Easdif SdifStringToSignature 
+	takes now "const char *" as argument
+
+	
+Version 3.7.3	2003-03-07  Axel Roebel  <roebel@local>
+
+        * maintenance release for Easdif integration
+	
+	* Improved handling of ircam include files.
+
+        * cplusplus compilation takes place in separate directory and
+        is not used for instalation.
+
+	
+Version 3.7.2	2002-12-17  Axel Roebel, Patrice Tisserand
+
+	* Bug fix and increased efficency in SdifNameValuesLSetCurrNVT.
+	For certain cases setting the current NVT has messed up 
+	the NVT indices.
+
+	* Fixed .exe extensions for building with cygwin.
+
+	* Fixed debug library names.
+	
+	* Conditional SdifFTruncate body, because not Posix.
+	
+	
+Version 3.7.1	2002-10-30  Diemo Schwarz, Patrice Tisserand
+
+	Maintenance release, no changes to sources.
+	
+	* Added dynamic shared library building by default (libsdif-3.7.1.so).
+
+	* Added build targets and sdif.spec.in file for source
+	  distribution and binary rpm.
+		
+	* Added support of pkg-config for SDIF library.
+
+	* Added project file for MS Visual C++ 7.0 (.net),
+	  thanks to Michael Gogins (gogins@pipeline.com)
+	
+	
+Version 3.7.0	2002-09-20  Diemo Schwarz  <schwarz@lithium.ircam.fr>
+
+	* Reintroduced 3-field version numbering scheme:
+	  - first number:  major version, only gigantic changes
+	  - second number: minor version, records changes in API 
+			   (added/removed functions, changed prototypes)
+	  - third number:  release number, for intermediate releases, 
+			   bug fixes, etc. that don't change the API
+	
+	* Functions added:
+	  - SdifFRewind		   rewind file to beginning
+	  - SdifFTruncate	   file truncate function
+	  - SdifParseSignatureList Parse comma-separated list of signatures
+	  - SdifKillSelectElement  now public
+	
+	* Compilation with g++ configurable with --enable-cpp
+
+	* Changed description types (types/sdiftypes.xml)
+	  - added segmentation and midi frame and matrix types
+	  - changed definition of matrix data type: 
+	    use <datatype>...</datatype> tag around!	
+	  -> tdl-version 0.4beta
+	
+	
+Version 3.6	2002-08-05  Axel Roebel  <roebel@local>
+
+	* Fixed some unwanted redeclarations.
+
+	* SDIF now compiles with g++.
+
+	* Support for replacing a selection.
+
+	* Support for error and warning callbacks.
+
+	
+Version 3.5:
+	
+	* Fixed bugs in preincluded.h and UniversalEnvVar.h (thanks to
+	  Kelly Fitz for pointing out the problem).
+
+	* Fixed sdif output bug in sdifextract.
+
+	
+Version 3.4:
+	
+	* Added defines SDIF_VERSION_MAJOR/SDIF_VERSION_MINOR
+	  for version indication.
+	
+	* No more warnings if the number of columns exceeds the number defined 
+	  in the types file.
+	
+	* Minor changes in the default sdiftypes file.
+
+	
+Version 3.3:
+	
+	* Modification of standard SDIF description types initialisation:
+	  The types can now be defined in the file SdifTypes.STYP OR a
+	  built-in definition can be used. This allows effectively to drop
+	  the SdifTypes.STYP file altogether and avoid frequent
+	  installation problems.  The name of the built-in definition
+	  string is SDIFTYPES_STRING (in file sdiftypes.h). This string is
+	  used by SDIF library when the file SdifTypes.STYP define at
+	  compilation (in directory datadir, by default /usr/local/share
+	  or $PREFIX/share) or file specified in environnement variable
+	  SDIFTYPES is not found.  TODO: This string is generated at
+	  IRCAM, by a perl script which should be included in future
+	  version of library.
+	
+	* Fix for autoconfiguration tools.  autoconf will now work on all
+	  UNIX-like operating systems (OSF1, IRIX, Linux and Mac OS X).
+	  Beware, we have suppose than in each platform will use configure
+	  mechanism, the directory divider is "/".  TODO: We will include
+	  a test at configuration to know the directory divider use on
+	  Operating System.
+
+	
+$Id: ChangeLog,v 1.65 2011/12/19 17:48:10 roebel Exp $

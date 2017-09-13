@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 4: Through The Looking Glass">
+
+<openfile name="Through The Looking Glass" patch="Through The Looking Glass (a).maxpat"/>
+
+<header>bach Tutorial 4: Through The Looking Glass</header>
+
+<subhead>Reversions, rotations, symmetries, taleas and co.</subhead>
+<body>In this tutorial you'll learn how to perform basic compositional processes, such as transposition, stretch, inversion, talea.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.roll">Display and edit a score in proportional notation</seealso>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+<seealso name="bach.expr">Evaluate mathematical expressions</seealso>
+<seealso name="bach.mc2f">Midicents to frequency conversion</seealso>
+<seealso name="bach.f2mc">Frequency to midicents conversion</seealso>
+<seealso name="bach.beatbox">Box voice-wise parameters into measure-wise information</seealso>
+<seealso name="bach.beatunbox">Flatten measure-wise parameters into plain voice-wise information</seealso>
+<seealso name="bach.rev">Reverse an llll</seealso>
+<seealso name="bach.tierev">Reverse a sequence of ties</seealso>
+<seealso name="bach.rot">Rotate an llll</seealso>
+<seealso name="bach.chordrot">Rotate the non-rest elements of an llll</seealso>
+<seealso name="bach.toc&amp;r">Route non-rest and rest elements</seealso>
+<seealso name="bach.fromc&amp;r">Reassemble non-rest and rest elements</seealso>
+</seealsolist>
+
+</chapter>

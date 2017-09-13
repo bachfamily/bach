@@ -1,0 +1,275 @@
+<html>
+<!-- $Id: Todo.html,v 3.10 2001/03/01 13:27:15 schwarz Exp $-->
+<!--
+
+$Log: Todo.html,v $
+Revision 3.10  2001/03/01 13:27:15  schwarz
+Mailing list instructions done, generation of doc still to do.
+
+Revision 3.9  2001/03/01 11:18:33  schwarz
+Moved some important stuff into highest priority.
+Added "improvement of the SDIF library".
+Release done.
+
+Revision 3.8  2000/09/27 10:16:12  schwarz
+More todos.
+Enhanced download info.
+
+Revision 3.7  2000/08/27  15:19:52  schwarz
+Lots of stuff done.
+
+Revision 3.6  2000/08/22  16:33:53  schwarz
+Types points.
+
+Revision 3.5  2000/08/07  15:12:05  schwarz
+Cocoon is installed for groups now, more docs.
+
+Revision 3.4  2000/07/19  18:13:18  schwarz
+Matlab (writesdif): writing of text, int, float matrices according to type of matlab matrices
+
+Revision 3.3  2000/07/19  17:30:39  tisseran
+TODO: writesdif(Matlab): open multiple file
+      writesdif(Matlab): write multiple matrix in frame
+DONE: 1NVT, 1TYP, 1IDS conformant to spec (19/07/200)
+
+Revision 3.2  2000/07/17  18:20:44  schwarz
+Todo documents have the right to decent formatting, too.
+
+Revision 3.1  2000/07/17  18:09:05  schwarz
+Added Todo.html, to remember what we still wanted to implement and what
+is already done.
+
+-->
+
+<head>
+   <title>SDIF TODO</title>
+</head>
+
+<body BGCOLOR="white">
+
+<H1>SDIF TODO</H1>
+
+<table>
+<tr align=left valign=top>
+  <th>Description
+  <td>This document describes points to do in and around the <a
+      href=http://www.ircam.fr/sdif>IRCAM SDIF library</a>.
+</tr>
+
+<tr align=left valign=top>
+  <th>URL
+  <td><a href=http://www.ircam.fr/anasyn/sdif/Todo.html>http://www.ircam.fr/anasyn/sdif/Todo.html</a>
+</tr>
+
+<tr align=left valign=top>
+  <th>Revision
+  <td>$Id: Todo.html,v 3.10 2001/03/01 13:27:15 schwarz Exp $
+</tr>
+
+<tr align=left valign=top>
+  <th>Last&nbsp;change
+  <td><!--#echo var="LAST_MODIFIED"-->
+</tr>
+
+<tr valign=top align=left>
+  <th>Change log
+  <td colspan=1><font size=-1><pre>
+$Log: Todo.html,v $
+Revision 3.10  2001/03/01 13:27:15  schwarz
+Mailing list instructions done, generation of doc still to do.
+
+Revision 3.9  2001/03/01 11:18:33  schwarz
+Moved some important stuff into highest priority.
+Added "improvement of the SDIF library".
+Release done.
+
+Revision 3.8  2000/09/27 10:16:12  schwarz
+More todos.
+Enhanced download info.
+
+Revision 3.7  2000/08/27  15:19:52  schwarz
+Lots of stuff done.
+
+Revision 3.6  2000/08/22  16:33:53  schwarz
+Types points.
+
+Revision 3.5  2000/08/07  15:12:05  schwarz
+Cocoon is installed for groups now, more docs.
+
+Revision 3.4  2000/07/19  18:13:18  schwarz
+Matlab (writesdif): writing of text, int, float matrices according to type of matlab matrices
+
+Revision 3.3  2000/07/19  17:30:39  tisseran
+TODO: writesdif(Matlab): open multiple file
+      writesdif(Matlab): write multiple matrix in frame
+DONE: 1NVT, 1TYP, 1IDS conformant to spec (19/07/200)
+
+Revision 3.2  2000/07/17  18:20:44  schwarz
+Todo documents have the right to decent formatting, too.
+
+Revision 3.1  2000/07/17  18:09:05  schwarz
+Added Todo.html, to remember what we still wanted to implement and what
+is already done.
+</font></pre>
+</tr>
+
+</table>
+<p>
+
+
+<H2>Contents</H2>
+<dl>
+  <dt><a href=#1>Highest Priority</a>
+  <dt><a href=#tbd>Priority To Be Defined</a>
+  <dt><a href=#done>Done</a>
+</dl>
+
+<br>
+<br>
+
+
+
+<a name=1><H2>Highest Priority</H2></a>
+
+<ul>
+
+<li><b>improvement of the SDIF library</b>
+	<ul>
+	<li> unified error handling (pseudo-exceptions by setjmp/longjmp?)
+	<li> Matrix data structure
+	<li> memory i/o
+	<li> i/o function table (swap/native, memory/file)
+	</ul>
+
+<li> tools: unify flag for types file: use <t>-T</t> throughout
+
+<li> Generate export symbols for Macintosh (from autoconf'ed sources)
+
+<li> Get make and install of doc working under autoconf
+
+<li> XML types
+	<ul>
+	<li> design DTD
+	<li> standardise DTD
+	</ul>
+
+</ul>
+
+
+
+<br>
+<br>
+
+<a name=tbd><H2>Priority TBD</H2></A>
+
+<ul>
+
+<li> PSOLA writing SDIF (in Matlab)
+
+<li> automatic compression/decompression (pipe gzip or zlib)
+
+<li> write all standard/IRCAM document description types in XML
+
+<li> update SDIF text format
+	<ul>
+	<li> Text matrices for sdiftotext/tosdif
+	<li> stream IDs for ASCII chunks
+	<li> less restrictive nvt values (allow spaces, etc.)
+	</ul>
+
+<li> Redefine Chant description type
+
+<li> upgrade, recompile, install chant, modres (fix padding bug!)
+
+<li> column reordering functions for selection
+
+<li> implement SDIF directory
+
+<li> SdifFReadNextSelectedFrame
+
+<li> Types:
+     <ul>
+     <li> put used types in 1TYP frame -&gt; files independent from
+          sdiftypes.styp
+     <li> ability to merge/replace types to default types (-T option)
+     </ul>
+
+<li> Matlab
+	<ul><li> writesdif: writing of text, int, float matrices according to type of matlab matrices
+	<li> open multiple files
+	</ul>
+
+<li>Java-SDIF
+	<ul>
+	<li>start with simple version like Matlab-SDIF
+	</ul>
+
+<li> Make: generate version info (date, user, host) on build of programs and lib
+
+<li> Distrib: make, package bin/src releases for all architectures
+
+<li> High level writing: 
+     <pre>
+     SdifFNewFrame (file, framesig, time, streamid);
+     SdifFAddMatrix_TYPE_ (file, matrixsig, nrow, ncol, _TYPE_ *data);
+     SdifFAddMatrix_TYPE_Columns (file, matrixsig, nrow, ncol, _TYPE_ *columns[]);
+     SdifFWriteFrame (file);
+     </pre>
+
+<li> install sdif tools under alternative names (hard links): sdifquery, texttosdif 
+
+<li> SDIF mailing list: archives; subscribe, unsubscribe from web form
+
+</ul>
+
+
+<br>
+<br>
+
+<A name=done><H2>Done</H2></A>
+<ul>
+
+<li> Fix Diphone SDIF output frame size bug (July 2000)
+
+<li> 1NVT, 1TYP, 1IDS conformant to spec (19/07/2000)
+	<ul>
+	<li> -&gt; send to Matt
+	<li> update Diphone studio
+	</ul>
+
+<li> XML types
+	<ul>
+	<li> translator to .styp, HTML (27.07.2000)
+	<li> convert all .styp definitions to xml (09.08.2000)
+	<li> add all doc we can get hold of to sdiftypes.xml (22.08.2000)
+	</ul>
+
+<li> Release (22.08.2000)
+	<ul>
+	<li> use autoconf / configure
+	<li> clean up makefiles, directories:
+	<ul> <li> all programs in one directory
+	     <li> no more wrappers
+	</ul>
+	<li> official GPL in files
+	<li> create test cases
+	</ul>
+
+	<ul>
+	<li> reinstall current versions of tools on all systems
+	<li> Test release
+	<li> publish binary releases
+	</ul>
+
+<li> Matlab (26.08.2000)
+	<ul>
+	<li> writesdif: write multiple matrix in frame
+	<li> loadsdif: Bug: last matrix is not returned!
+	</ul>
+
+<li> Instructions for mailing list on sdif main page (01.03.2001)
+
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 8: Real Time Stories">
+
+<openfile name="Real Time Stories" patch="Real Time Stories (a).maxpat"/>
+
+<header>bach Tutorial 8: Real Time Stories</header>
+
+<subhead>Tips, tricks and examples of real-time bach usage</subhead>
+<body>The bach library is designed to be perfectly fitting in the Max/MSP world; thus it is designed to be completely real-time compatible. In this tutorial we give a brief look to some possible real-time applications.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.roll">Display and edit a score in proportional notation</seealso>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+<seealso name="bach.transcribe">Fills a <o>bach.roll</o> according to incoming MIDI data</seealso>
+<seealso name="bach.quantize">Perform quantization tasks</seealso>
+</seealsolist>
+
+</chapter>

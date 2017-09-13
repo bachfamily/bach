@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 18: Graphical Synchronization">
+
+<openfile name="Graphical Synchronization" patch="Graphical Synchronization (a).maxpat"/>
+
+<header>bach Tutorial 18: Graphical Synchronization</header>
+
+<subhead>Synchronize domain and zoom with other objects</subhead>
+<body>The bach interfaces can get very useful when their usage interacts with the standard Max object's usage. One can imagine a lot of situations where the notation object can be synchronized with standard objects like functions, bpatchers, and so on. In this tutorial, we show an easy example of how one of these situation can be handled.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.roll">Display and edit a score in proportional notation</seealso>
+<seealso name="bach.read">Read an llll from disk</seealso>
+</seealsolist>
+
+</chapter>

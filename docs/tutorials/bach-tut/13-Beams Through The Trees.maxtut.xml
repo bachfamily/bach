@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 13: Beams Through The Trees">
+
+<openfile name="Beams Through The Trees" patch="Beams Through The Trees (a).maxpat"/>
+
+<header>bach Tutorial 13: Beams Through The Trees</header>
+
+<subhead>Handle beams and tuplets finely with rhythmic trees</subhead>
+<body>In this tutorial you'll learn to deal with rhythmic trees and all the intricacies of their attributes.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+</seealsolist>
+
+</chapter>

@@ -1,0 +1,1021 @@
+<head>
+   <title>Format de fichier SDIF</title>
+   <!-- crée le 23/09/1997, Dominique Virolle -->
+
+</head>
+<body BGCOLOR="white">
+<p>
+<img src="pics/logo.gif" alt="Image logo.gif" height=22 witdh=276 align=lefttop>
+</p>
+<p><hr width="100%"></p>
+<h1>SDIF</h1>
+<h1>Le format de fichier</h1>
+
+<em>
+<p>Analyse/Synthèse <br>
+<!--#echo var="LAST_MODIFIED"-->
+</p>
+</em>
+<au>Dominique Virolle</au>
+<p><hr width="100%"></p>
+
+<a name="Index"></a>
+<ul>
+  <li><a href="#Principe de SDIF"><strong>Principe de SDIF</strong></a></li>
+  <ul>
+    <li><a href="#Des Matrices">Des Matrices</a></li>
+    <li><a href="#Des Frames">Des Frames</a></li>
+    <li><a href="#Notion Temporelle">Notion Temporelle</a></li>
+    <li><a href="#Des Chunks">Des Chunks</a></li>
+    <li><a href="#BigEndian">BigEndian</a></li>
+  </ul>
+  <li><a href="#Le Format"><strong>Le Format</strong></a></li>
+  <ul>
+    <li><a href="#File Header">File Header</a></li>
+    <li><a href="#Informations Table Chunk"><strong>Informations Table Chunk</strong></a></li>
+    <ul>
+      <li><a href="#Informations Table Header">Informations Table Header</a></li>
+      <li><a href="#Informations Table Data">Informations Table Data</a></li>
+      <li><a href="#Padding"><strong>Padding</strong></a></li>
+    </ul>
+    <li><a href="#Types Declarations Chunk"><strong>Types Declarations Chunk</strong></a></li>
+    <ul>
+      <li><a href="#Types Declarations Header">Types Declarations Header</a></li>
+      <li><a href="#Types Declarations Data">Types Declarations Data</a></li>
+      <ul>
+        <li><a href="#Type de Matrice">Type de Matrice</a></li>
+        <li><a href="#Type de Frame">Type de Frame</a></li>
+        <li><a href="#Types Declarations Grammaire">Types Declarations Grammaire</a></li>
+      </ul>
+    </ul>
+    <li><a href="#Stream IDs Table Chunk"><strong>Stream IDs Table Chunk</strong></a></li>
+    <ul>
+      <li><a href="#Stream IDs Table Header">Stream IDs Table Header</a></li>
+      <li><a href="#Stream IDs Table Data">Stream IDs Table Data</a></li>
+    </ul>
+    <li><a href="#Frames Chunks"><strong>Frames Chunks</strong></a></li>
+    <ul>
+      <li><a href="#Frame"><strong>Frame</strong></a></li>
+      <ul>
+        <li><a href="#Frame Header">Frame Header</a></li>
+        <li><a href="#Frame Data">Frame Data</a></li>
+      </ul>
+      <li><a href="#Matrix"><strong>Matrix</strong></a></li>
+      <ul>
+       <li><a href="#Matrix Header">Matrix Header</a></li>
+       <li><a href="#Matrix Data">Matrix Data</a></li>
+      </ul>
+      <li><a href="#Exemple de Frame en texte">Exemple de Frame en texte</a></li>
+    </ul>
+  </ul>
+  <li><a href="#Mots Reservés SDIF"><strong>Mots Reservés SDIF</strong></a></li>
+  <ul>
+    <li><a href="#Mots Information Table">Mots Information Table</a></li>
+    <li><a href="#Predefined Types">Predefined Types</a></li>
+    <ul>
+      <li><a href="#Predefined Matrix Types">Predefined Matrix Types</a></li>
+      <li><a href="#Predefined Frame Types">Predefined Frame Types</a></li>
+    </ul>
+    <li><a href="#StreamID TreeWay pour Chant">StreamID TreeWay pour Chant</a></li>
+    <ul>
+      <li><a href="#Description de chaque élément du TreeWay">
+                    Description de chaque élément du TreeWay</a></li>
+      <li><a href="#Exemple TreeWay Chant">Exemple TreeWay Chant</a></li>
+    </ul>
+  </ul>
+</ul>
+
+  <p><hr width="100%"></p>
+  <a name="Principe de SDIF"></a><h1>Principe de SDIF</h1>
+
+<ul>
+  <li><a href="#Des Matrices">Des Matrices</a></li>
+  <li><a href="#Des Frames">Des Frames</a></li>
+  <li><a href="#Notion Temporelle">Notion Temporelle</a></li>
+  <li><a href="#Des Chunks">Des Chunks</a></li>
+  <li><a href="#BigEndian">BigEndian</a></li>
+</ul>
+
+<p> L'idée générale de SDIF est de stocker les informations liées au traitement
+ du signal et plus particuliairement du son, dans des fichiers, suivant un format
+ commun à tous les types de données. Ainsi, il est possible de stocker des résultats
+ ou des paramètres d'analyses, de synthèses... 
+</p>
+
+
+  <a name="Des Matrices"></a><h2>Des Matrices</h2>
+
+<p> Le format a comme première spécification le stockage des données sous forme
+ de matrices ou chaque colonne représente un champ de structure, et chaque ligne
+ un élément de cette structure. Une structure que l'on peut représenter sous forme
+ de matrice est dite dans ce document "simple".
+</p>
+ <img src="pics/Matrix.gif" alt="Image Matrix.gif" height=271 witdh=241 align=lefttop>
+
+<p> Ainsi, pour une structure Filtre composée de trois champs "fréquence", "amplitude",
+ et "largeur de bande", des éléments de Filtre sont stockés comme une matrice de
+ trois colonnes et de autant de lignes qu'il y a d'éléments.
+</p>
+<table fontsize="small" border=1 bordercolor="black" cellpadding=5>
+<tr><th>Filtre</th> <th>fréquence</th><th>amplitude</th><th>largeur de bande</th></tr>
+<tr><th>Filtre1</th><td>-</td>        <td>-</td>        <td>-</td></tr>
+<tr><th>Filtre2</th><td>-</td>        <td>-</td>        <td>-</td></tr>
+<tr><th>FiltreN</th><td>-</td>        <td>-</td>        <td>-</td></tr>
+</table>
+
+  <a name="Des Frames"></a><h2>Des Frames</h2>
+
+<p> La seconde spécification de SDIF est que les matrices sont regroupées dans des
+ frames. Il y a plusieurs types de frames : les bancs de filtres, les bancs de fofs...
+ Un frame s'adresse à un objet contenant plusieurs sous-objets de structure(s) simple(s). 
+ Ainsi, un frame BancDeFiltre permet de représenter un ensemble de Filtres. Une structure
+ associée à un frame est dite "composée".
+</p>
+
+ <img src="pics/Frame.gif" alt="Image Frame.gif" height=261 witdh=221 align=lefttop>
+
+  <a name="Notion Temporelle"></a><h2>Notion Temporelle</h2>
+
+<p> A chaque modification dans le temps d'un paramètre d'un objet est associé un bloc
+ frame SDIF pour le type de l'objet. Le fichier SDIF est globalement une succession de
+ frames ordonnés dans le temps.
+</p>
+
+ <img src="pics/DataChunk.gif" alt="Image DataChunk.gif" height=256 witdh=241 align=lefttop>
+
+
+  <a name="Des Chunks"></a><h2>Des Chunks</h2>
+
+
+<p> Un fichier SDIF se compose de plusieurs chunks dans l'ordre :
+</p>
+<ul>
+  <li>Zéro, une ou plusieurs table d'informations "Informations Table",</li>
+  <li>Un Chunk optionnel de déclarations ou de complétions de types de matrices
+      ou frames "Types Declarations",</li>
+  <li>Une table optionnelle d'index SDIF "Stream IDs Table",</li>
+  <li>Une suite de chunks de type "Frame".</li>
+</ul>
+ <img src="pics/FileLevel.gif" alt="Image FileLevel.gif" height=381 witdh=261 align=lefttop>
+<p> Il devrait y avoir une Time Table mais son format et sa position n'ont pas encore
+  été décidés.
+</p>
+
+
+  <a name="BigEndian"></a><h2>BigEndian</h2>
+
+<p> Quelque soient les données d'un fichier SDIF ou le type de matériel informatique
+ qui écrit ou lit des fichiers SDIF, <strong>toutes les données sont écrites en
+ BigEndian IEEE </strong> et alignées sur 8 bytes.
+</p>
+
+
+
+
+
+
+  <p><hr width="100%"></p>
+  <a name="Le Format"></a><h1>Le Format</h1>
+
+  <ul>
+    <li><a href="#File Header">File Header</a></li>
+    <li><a href="#Informations Table Chunk">Informations Table Chunk</a></li>
+    <ul>
+      <li><a href="#Informations Table Header">Informations Table Header</a></li>
+      <li><a href="#Informations Table Data">Informations Table Data</a></li>
+      <li><a href="#Padding">Padding</a></li>
+    </ul>
+    <li><a href="#Types Declarations Chunk">Types Declarations Chunk</strong></a></li>
+    <ul>
+      <li><a href="#Types Declarations Header">Types Declarations Header</a></li>
+      <li><a href="#Types Declarations Data">Types Declarations Data</a></li>
+      <ul>
+        <li><a href="#Type de Matrice">Type de Matrice</a></li>
+        <li><a href="#Type de Frame">Type de Frame</a></li>
+        <li><a href="#Types Declarations Grammaire">Types Declarations Grammaire</a></li>
+      </ul>
+    </ul>
+    <li><a href="#Stream IDs Table Chunk">Stream IDs Table Chunk</a></li>
+    <ul>
+      <li><a href="#Stream IDs Table Header">Stream IDs Table Header</a></li>
+      <li><a href="#Stream IDs Table Data">Stream IDs Table Data</a></li>
+    </ul>
+    <li><a href="#Frames Chunks">Frames Chunks</a></li>
+    <ul>
+      <li><a href="#Frame">Frame</a></li>
+      <ul>
+        <li><a href="#Frame Header">Frame Header</a></li>
+        <li><a href="#Frame Data">Frame Data</a></li>
+      </ul>
+      <li><a href="#Matrix">Matrix</a></li>
+      <ul>
+       <li><a href="#Matrix Header">Matrix Header</a></li>
+       <li><a href="#Matrix Data">Matrix Data</a></li>
+      </ul>
+      <li><a href="#Exemple de Frame en texte">Exemple de Frame en texte</a></li>
+    </ul>
+  </ul>
+
+
+  <a name="File Header"></a><h2>File Header</h2>
+
+
+
+<p> L'entête d'un fichier SDIF se compose de 2 champs :
+</p>
+
+<table fontsize="small" border=1 bordercolor="black" cellpadding=5>
+<tr><td>"SDIF"</td><td>4 bytes</td><td>Signature SDIF</td></tr>
+<tr><td>&lt;champ vide&gt;</td><td>4 bytes</td><td>non encore défini (== 00000000 hexa)</td></tr>
+</table>
+
+
+
+
+
+
+  <a name="Informations Table Chunk"></a><h2>Informations Table Chunk</h2>
+
+    <a name="Informations Table Header"></a><h3>Informations Table Header</h3>
+
+<p> L'entête d'un chunk d'une table d'informations est codée sur 8 bytes :
+</p>
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><td>"1NVT"</td><td>4 bytes</td><td>Signature Informations Table</td></tr>
+<tr><td>&lt;Chunk Size&gt;</td><td>4 bytes</td>
+        <td>Taille du Chunk sans compter l'entête. <br>
+(<a href="#Padding">Padding</a> inclus et par défault ffffffff hexa)</td></tr>
+</table>
+
+    <a name="Informations Table Data"></a><h3>Informations Table Data</h3>
+
+<p> La table d'informations permet d'avoir des informations générales comme l'auteur
+du fichier, la version de SDIF, le nombre de cannaux... Les données de ce chunk sont
+en ASCII.
+</p>
+<p> Les données commencent par '{' et finissent par '}'. Chaque information est sous
+ la forme <code> &lt;Nom&gt; &lt;Valeur&gt; ';' </code>. Il est nécessaire d'avoir
+ au moins un caractère d'espacement entre le nom et la valeur (et non des caractères
+ nuls '\0' car c'est une partie ASCII).
+</p>
+<p> Exemple de Informations Table Data:
+</p>
+<pre>
+{
+  numChannels   6   ;
+  SDIFVersion   1.0.0.alpha;
+  MonProgrammeParametreSpecial  integer4  ;
+}
+</pre>
+<p>La grammaire associée est :
+</p>
+
+<pre>
+&lt;Info Table Data&gt;    := '{' &lt;Info declaration&gt; | ... '}'
+  &lt;Info declaration&gt; := [&lt;space chars&gt;] &lt;Name&gt; 
+                                 &lt;space chars&gt; &lt;Value&gt; [&lt;space chars&gt;]';'
+    &lt;space chars&gt;    := &lt;space&gt; | ...
+      &lt;space&gt;        :=  ' ' | '\t' | '\n' | '\f' | '\r' | '\v'
+    &lt;Name&gt;           := ASCII string
+    &lt;Value&gt;          := ASCII string
+</pre>
+
+    <a name="Padding"></a><h3>Padding</h3>
+
+<p> L'aspect ASCII de la table d'informations commence au '{' et fini au '}'. Mais après
+ le '}', il y a un Padding qui peut varier de 0 à 7 bytes. Chaque bytes du Padding est
+ mis à '\0'. Le Padding permet d'aligner le fichier sur 64 bits. Ainsi le chunk suivant
+ débute aligné.
+</p>
+
+
+
+
+
+
+
+  <a name="Types Declarations Chunk"></a><h2>Types Declarations Chunk</h2>
+
+
+<p> Il est possible dans SDIF de compléter les types de matrices ou de frames existant
+ (cf : <a href="#Predefined Types">Predefined Types</a>) ou d'en créer de nouveaux.
+ Si un types existe déjà, on considère qu'une déclaration sur ce type est une
+ complétion. S'il n'existe pas, alors c'est une création.
+</p>
+<p> Cependant, pour un type donné, il ne peut y avoir qu'une seule déclaration dans
+ un fichier SDIF. C'est à dire que l'on ne peut pas compléter un type une deuxième
+ fois et on ne peut pas créer un nouveau type puis le compléter.
+</p>
+<p>Comme pour les tables d'informations, les données de déclarations de types sont
+ en ASCII. Par contre, il ne peut y en avoir qu'un.
+</p>
+<p><strong>Important : </strong> Les créations sont vivement déconseillées puiqu'il s'agit
+ d'un mode exclusif par rapport à une application. De plus, les noms de types créés
+ doivent avoir 'E' comme premier caractère. Ainsi, un type exclusif peut être ajouter
+ à la base des types prédéfinis en remplaçant le 'E' par un digit. Les fichiers utilisant
+ le type exclusif est ainsi toujours lisible (pas de conflits de déclaration de type).
+</p>
+
+
+    <a name="Types Declarations Header"></a><h3>Types Declarations Header</h3>
+
+<p> L'entête d'un chunk de déclaration de types est codée sur 8 bytes :
+</p>
+<table fontsize="small" border=1 bordercolor="black" cellpadding=5>
+<tr><td>"1TYP"</td><td>4 bytes</td><td>Signature Types Declarations</td></tr>
+<tr><td>&lt;Chunk Size&gt;</td><td>4 bytes</td>
+    <td>Taille du Chunk sans compter l'entête<br> 
+(<a href="#Padding">Padding</a> inclus et par défault ffffffff hexa)</td></tr>
+</table>
+
+    <a name="Types Declarations Data"></a><h3>Types Declarations Data</h3>
+
+<p>La partie donnée du chunk Types Declarations est en ASCII. Elle commence donc par
+ '{' et fini par '}'. Une donnée est soit une déclaration de type de matrice, soit une
+ déclaration de type de frame. Comme un type de frame est un ensemble de matrices,
+ sa déclaration dépend des déclarations des types de matrices contenues. Deux mots
+ clés permettent de savoir s'il s'agit d'une déclaration d'un type de matrice ou d'un
+ frame. "1MTD" pour matrice, "1FTD" pour frame.
+</p>
+
+    <a name="Type de Matrice"></a><h4>Type de Matrice</h4>
+
+<p> La déclaration d'un type de matrice commence donc par "1MTD". On a ensuite le nom
+ du type de matrice sur 4 caractères ASCII dont le premier est un chiffre indiquant
+ la version du type si c'est une complétion ou 'E' si c'est une création.
+ Ensuite, on définie comme un tableau en C les noms des champs de la structure
+ représentée. Les champs indiques les entêtes de colonnes.
+</p>
+<p>Exemples :</p>
+<pre>
+   1MTD EFIL {frequence, amplitude, largeurdebande}
+   1MTD  1TYP { Champ1, Champ2, Champ3 }
+   1MTD2TYP{Champ21,Champ22,Champ23}
+
+
+EFIL est une création, 1TYP et 2TYP sont des complétions.
+</pre>
+<p> Comme les tailles de "1MTD" et du nom du type sont fixes, il n'est pas nécessaire
+ d'avoir des espacements (toutefois, c'est préférable).
+</p>
+<p> Les noms de champs définissent l'ordre des colonnes dans les matrices. Celui-ci
+ ne peut pas être modifier sans créer un nouveau type. Contrairement aux structures
+ C, les champs ne sont pas typés. Ceci vient du fait que les données sont toujours
+ des floattants sur 4 bytes ou sur 8 bytes (cf. Matrice Data).
+</p>
+
+<p>La Complétion de Matrice :</p>
+<p>Lorsque le type de matrice est prédéfini (il existe comme format dans SDIF), une
+ déclaration sur ce type entraine le mode complétion. Celle-ci consiste seulement à
+ ajouter de nouvelles colonnes (champs) aux matrices (aux structures simples). Ainsi
+ si 1FIL est prédéfini dans SDIF avec "fréquence", "amplitude", et "largeur de bande",
+ <code>1MTD 1FIL {saliance, correction}</code> ajoute deux nouvelles colonnes aux
+ matrices (la 4 et la 5). Mais aucune modification des colonnes prédéfinies n'est
+ possible.
+</p>
+
+    <a name="Type de Frame"></a><h4>Type de Frame</h4>
+
+<p> La déclaration d'un type de frame commence par "1FTD". Ensuite on a le nom du type
+ de frame (ne doit pas exister comme type de matrice) sur 4 caractères ASCII dont le
+ premier digit indique la version du type si c'est une complétion ou 'E' si c'est une
+ création. Le bloc de définition commence par '{' et fini par '}'. Chaque donnée du
+ type de frame est : un nom de type de matrice existant, un nom de champ de structure
+ frame. A la fin d'une donnée de type de frame, on a un ';'.
+</p>
+<p>Exemple (supposant 1FIL et 1TYP existant) :</p>
+<pre>
+    
+
+Création : mode exclusif
+    1FTD EFIB
+     {
+       1FIL  filtres;
+       1TYP  exemple1types;
+     }
+
+
+Complétion
+    1FTD 1FIB
+     {
+       2TYP exemple2types
+     }
+
+EFIB et 1FIB ne représentent pas le même type de frame même s'ils ont les
+mêmes 2 premières matrices, et que les 3 lettres significatives sont 'FIB'.
+</pre>
+<p> Ainsi, on défini EFIB comme un frame de 2 matrices. Comme pour les matrices, si le
+ type de frames est prédéfini, alors on complète le type de frame par des matrices
+ supplémentaires. Ainsi, si 1FIB est prédéfini comme dans l'exemple précédent, si on
+ déclare 1FTD 1FIB {2TYP exemple2types}, alors on ajoute une nouvelle matrice à 1FIB
+ (exemple1types de type 1TYP est toujours là).
+</p>
+
+    <a name="Types Declarations Grammaire"></a><h4>Types Declarations Grammaire</h4>
+
+<pre>
+&lt;Types Declaration Data&gt; := '{' &lt;Matrix or Frame Declaration&gt; | ... '}'
+  &lt;Matrix or Frame Declaration&gt; :=  &lt;Matrix Declaration&gt; 
+                                       | &lt;Frame Declaration&gt;
+    &lt;Matrix Declaration&gt; := 1MTD [space chars] &lt;Matrix Name&gt; [space chars]
+                                   '{' &lt;Col Names &gt; &lt;One Col Name&gt; '}'
+      &lt;Matrix Name&gt; := 4 chars (32bits)
+      &lt;Col Names&gt; := [&lt;(N-1) Col Names&gt;]
+        &lt;(N-1) Col Names&gt; := &lt;One Col Name Not Last&gt; | ... 
+          &lt;One Col Name Not Last&gt; := &lt;One Col Name&gt; ','
+      &lt;One Col Name&gt; := [space chars]&lt;string&gt;[space chars]
+         &lt;string&gt; := ASCII chars
+    &lt;Frame Declaration&gt; := 1FTD [space chars] &lt;Frame Name&gt; [space chars]
+                                   '{' &lt;Frame Component&gt; | ... '}'
+      &lt;Frame Name&gt;  :=  4 chars (32bits)
+      &lt;Frame Component&gt; := [spaces] &lt;Matrix Name&gt;
+                                 [spaces] &lt;Frame Component Name&gt;[spaces] ';'
+         &lt;Frame Component Name&gt; := &lt;string&gt;
+
+
+</pre>
+<p>Exemple de déclaration de types (ici ils sont complétés):</p>
+<pre>
+1TYP &lt;ChunkSize&gt;
+{
+  1MTD 1FIL {frequency, amplitude, banwidth}
+  1MTD 1CHA {channel1, channel2}
+
+  1FTD FIB
+    {
+      1FIL filtersparameters;
+      1CHA filterschannels;
+    }
+
+
+  1MTD 1FOF {frequence, amplitude, banwidth, tex, debatt, atten, phase}
+  1MTD 1FQ0 {fondamentalfq}
+
+  1FTD 1FOB
+    {
+      1FQ0 pitch;
+      1FOF fofsparameters;
+      1CHA fofschannels;
+    }
+}
+</pre>
+
+<p> Le chunk de déclarations de types est optionnel.
+</p>
+<p> Comme pour le chunk d'informations, le bloc données du chunk de type est suivi
+ d'un <a href="#Padding">Padding</a>.
+</p>
+
+
+
+
+
+
+
+
+
+
+  <a name="Stream IDs Table Chunk"></a><h2>Stream IDs Table Chunk</h2>
+
+    <a name="Stream IDs Table Header"></a><h3>Stream IDs Table Header</h3>
+
+<p> L'entête d'un chunk de la table de d'ID est aussi codée sur 8 bytes :
+</p>
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><td>"1IDS"</td><td>4 bytes</td><td>Signature Stream IDs Table</td></tr>
+<tr><td>&lt;Chunk Size&gt;</td><td>4 bytes</td>
+    <td>Taille du Chunk sans compter l'entête<br>
+(<a href="#Padding">Padding</a> inclus et par défault ffffffff hexa)</td></tr>
+</table>
+
+    <a name="Stream IDs Table Data"></a><h3>Stream IDs Table Data</h3>
+
+<p> La table d'ID permet d'avoir des informations sur les objets sur lesquels les frames
+ vont s'appliquer. Un ID est un entier représentant un objet particulier. Deux objets
+ ont toujours deux ID différents, même s'ils se différencient déjà par leurs types.
+ Ainsi un ID est une clé absolue pour un objet par rapport à un fichier SDIF.
+</p>
+<p> Les données commencent par '{' et finissent par '}'. Chaque information est sous
+ la forme <code>&lt;ID&gt; &lt;Source ou Destination&gt;: &lt;TreeWay&gt; ';' </code>.
+ Les données sont en ASCII.
+</p>
+<p> Exemple de Stream IDs Table Data:
+</p>
+<pre>
+{
+  1   MonProg:Groupe1/1/FIB/0/12/500./3./80.;
+  2   MonProg:Groupe1/1/FIB/1/5/500./3./80.;
+  3   MonProg:Groupe1/1/FIB/2/8/500./3./80.;
+  4   TonProg:FOB/"Fofbank"/4/4/2;
+}
+</pre>
+<p> La signification et la construction de TreeWay dépendent de la Source,
+ mais rien n'est prédéfini. La Source doit être un nom de programme, ou
+ un nom de méthode de calcul, d'analyse, de synthèse... Elle est utile pour
+ le programme qui va lire les données et non par celui qui les écrit.
+ C'est la raison pour laquelle on parle de Source ou de Destination.
+ TreeWay peut donner des informations sur des liens entre objet. Une composante
+ dans les TreeWay semble obligatoire : il doit y avoir le nom du type de l'objet
+ dans le TreeWay (sans le numéro de version pour qu'un lecteur SDIF puisse
+ faire une tentative de lecture sur un type de frame de version inconnue).
+ La table des ID est en quelque sorte le moyen de déclarer des objets qui
+ seront modifiés dans le temps via les frames.
+</p>
+
+
+<p>La grammaire associée est :
+</p>
+
+<pre>
+&lt;ID Table Data&gt;            := '{' &lt;ID declaration&gt; | ... '}'
+  &lt;ID declaration&gt;         := [&lt;space chars&gt;] &lt;ID&gt; 
+                                     &lt;space chars&gt; &lt;Souce ou Destination&gt; ':'
+			             [&lt;space chars&gt;] &lt;TreeWay&gt ';'
+    &lt;space chars&gt;          := &lt;space&gt; | ...
+      &lt;space&gt;              :=  ' ' | '\t' | '\n' | '\f' | '\r' | '\v'
+    &lt;ID&gt;                   := ASCII digits
+    &lt;Source ou Destination&gt;:= ASCII string
+    &lt;TreeWay&gt;              := ASCII string (définition variable)
+         Les composants de TreeWay sont séparés par le symbol '/'.
+</pre>
+
+<p> Comme pour les précédents chunk, le Stream IDs Chunk est aligné sur 8 bytes
+ par <a href="#Padding">Padding</a>.
+</p>
+
+
+
+
+
+
+
+
+  <a name="Frames Chunks"></a><h2>Frames Chunks</h2>
+
+      <a name="Frame"></a><h3>Frame</h3>
+
+	  <a name="Frame Header"></a><h4>Frame Header</h4>
+
+<p> Il faut pour l'entête du frame, avoir le nom du type, la taille du frame
+ (Somme des matrices), le nombre de matrices, l'ID de l'objet
+ de la structure composée du frame et le temps qui designe l'instant de la
+ mise en place des données codé en double précision (8 bytes).
+</p>
+<p> Le nombre de matrices d'un frame peut être inférieur au nombre de matrices
+ du type de frame. Le frame peut contenir seulement les N premières matrices du
+ type : 0 &lt; N &lt;= NbMatriceFrameType. si on considère le type de frame
+ 1FOB (cf. <a href="#Types Declarations Grammaire">Types Declarations Grammaire</a>),
+ on peut avoir un frame portant uniquement sur le "pitch" et sur les "fofsparameters".
+ Les "fofschannels" ne sont alors pas défini : N == 2. Mais, il n'est pas possible
+ d'avoir un frame 1FOB avec les matrices "pitch" et "fofschannels" car l'ordre des
+ matrices doit suivre l'ordre donnée dans la déclaration de type (ou du type prédéfini).
+</p>
+<p><strong>Remarque : Il ne doit pas y avoir d'"états". C'est à dire qu'a chaque frame,
+ toutes les connaissances sur l'objet indexé doivent apparaitre pour le temps donné.
+</strong> On doit pouvoir ainsi donner toutes les informations d'un objet à la lecture
+ d'un seul frame pour un temps donné; inutile de lire les frames de temps inférieurs.</p>
+    
+
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><td>&lt;Nom du type de Frame&gt;</td><td>4 bytes</td><td>char[4]</td></tr>
+<tr><td>&lt;Frame Size&gt;<br>(entête incluse)</td><td>4 bytes</td><td>int 4</td></tr>
+<tr><td>&lt;Nombre de Matrices N&gt;</td><td>4 bytes</td><td>int 4</td></tr>
+<tr><td>&lt;ID de l'objet concerné&gt;</td><td>4 bytes</td> <td>int 4</td></tr>
+<tr><td>&lt;Temps&gt;</td><td>8 bytes</td><td>float 8</td></tr>
+</table>
+
+
+
+         <a name="Frame Data"></a><h4>Frame Data</h4>
+
+<p> Les données d'un frame sont simplement une succession de N matrices.
+ Il n'y a pas de Padding pour les frames car ils sont obligatoirement alignés
+ par le fait que l'entête est sur 24 bytes donc alignée sur 8 bytes et que
+ chaque matrice sera alignée.
+</p>
+
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><td>Matrice 1</td><td>Alignée sur 8 bytes</td></tr>
+<tr><td>...</td><td>Alignée sur 8 bytes</td></tr>
+<tr><td>Matrice N</td><td>Alignée sur 8 bytes</td></tr>
+</table>
+
+    <a name="Matrix"></a><h3>Matrix</h3>
+
+      <a name="Matrix Header"></a><h4>Matrix Header</h4>
+
+<p> L'entête d'une matrice commence par sa signature. Elle doit
+ correspondre avec la signature déclarée dans le type de frame
+ en fonction de la position de la matrice dans le frame.
+</p>
+<p> Après le nom du type de matrice, il doit y avoir le code du format de donnée :
+<ul>
+  <li>32 si les données sont en float sur 4 bytes.</li>
+  <li>64 si les données sont en float sur 8 bytes.</li>
+</ul>
+</p>
+<p> Ensuite, on a le nombre de lignes L qui dépend du nombre d'éléments de la structure
+ simple contenus dans l'objet (ID) de la structure composée. Les éléments de la structure
+ simple sont indexés uniquement par le numéro de la ligne dans la matrice.
+</p>
+<p> Après L, le nombre de colonnes C. Celui-ci a la même propriété que N du niveau frame.
+ C'est à dire que la matrice contient les C premières colonnes du type de matrice.
+</p>
+<p><strong> Les 3 données "type de données (32 ou 64), L et C sont écrites dans
+ un fichier SDIF en float (4 bytes).</strong>
+</p>
+
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><td>Nom du type de Matrice</td><td>4 bytes</td><td>char</td></tr>
+<tr><td>Largeur des données (bits)</td><td>4 bytes</td><td>float 4</td></tr>
+<tr><td>Nombre de lignes L</td><td>4 bytes</td><td>float 4</td></tr>
+<tr><td>Nombre de colonnes C</td><td>4 bytes</td><td>float 4</td></tr>
+</table>
+
+      <a name="Matrix Data"></a><h4>Matrix Data</h4>
+
+<p> La matrice est écrite ligne après ligne. Elle est suivit d'un Padding pour
+ l'alignement sur 8 bytes.
+</p>
+
+
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><td>Ligne1 </td><td>(4 ou 8 bytes)*C</td><td>float 4 ou 8</td></tr>
+<tr><td> ...</td><td>(4 ou 8 bytes)*C</td><td>float 4 ou 8</td></tr>
+<tr><td>LigneL</td><td>(4 ou 8 bytes)*C</td><td>float 4 ou 8</td></tr>
+<tr><td><a href="#Padding">Padding</a></td><td>0 ou 4 bytes</td><td> '\0' </td>
+</table>
+
+    <a name="Exemple de Frame en texte"></a><h3>Exemple de Frame en texte</h3>
+
+<pre>
+( ) : commentaire pour l'exemple.
+
+
+
+'1FOB'  &lt;FrameSize&gt;  (N=)3   (ID=)0    (Time=)1.45
+
+
+  (matrice 1 : pitch)
+  '1FQ0'    (TypeDonnées=)32    (L=)1    (C=)1
+
+       (frequency)
+          164.
+
+
+  (matrice 2 : fofsparameters)
+  '1FOF'    (TypeDonnées=)32    (L=)5    (C=)7
+        (frequency amplitude bandwidth    tex  atten   debatt phase)
+	   609.       80.       78.     0.002   0.05    0.004   0.   (fof1)
+	   1000.      53.9	88.     0.002   0.05    0.004   0.   (fof2)
+	   2450.      18.	123.	0.002   0.05    0.004   0.   (fof3)
+	   2700.      19.	128.    0.002   0.05    0.004   0.   (fof4)
+	   3200.      6.1	138.    0.002   0.05    0.004   0.   (fof5)
+
+
+  (matrice 3 : fofschannels)
+  '1CHA'    (TypeDonnées=)32    (L=)5    (C=)1
+        (channel1 channel2)
+	   1.5       1.    (fof1)
+	   1.5	     1.    (fof2)
+	   1.5	     2.2   (fof3)
+	   1.5	     0.5   (fof4)
+	   1.5	     1.5   (fof5)
+
+ A part les signatures, la taille du frame, le nombre de matrices N et ID,
+ toutes les données sont des floats. Time est toujours en double précision.
+</pre>
+
+
+
+
+
+
+
+  <p><hr width="100%"></p>
+  <a name="Mots Reservés SDIF"><h1><strong>Mots Reservés SDIF</strong></h1></a>
+
+
+  <ul>
+    <li><a href="#Mots Information Table">Mots Information Table</a></li>
+    <li><a href="#Predefined Types">Predefined Types</a></li>
+    <ul>
+      <li><a href="#Predefined Matrix Types">Predefined Matrix Types</a></li>
+        <ul>
+          <li><a href="#Fréquence fondamentale 1FQ0">Fréquence fondamentale 1FQ0</a></li>
+          <li><a href="#Forme d'onde formantique 1FOF">
+	  Forme d'onde formantique 1FOF</a></li>
+          <li><a href="#Cannaux, mixage 1CHA">Cannaux, mixage 1CHA</a></li>
+          <li><a href="#Filtre Resonnant 1RES">Filtre Resonnant 1RES</a></li>
+          <li><a href="#Distribution d'un processus aléatoire 1DIS">
+               Distribution d'un processus aléatoire 1DIS</a></li>
+        </ul>
+      <li><a href="#Predefined Frame Types">Predefined Frame Types</a></li>
+        <ul>
+          <li><a href="#Bank de Formants 1FOB">Bank de Formants 1FOB</a></li>
+          <li><a href="#Bank de Filtres résonnants 1REB">
+                Bank de Filtres résonnants 1REB</a></li>
+          <li><a href="#Bruit 1NOI">Bruit 1NOI</a></li>
+        </ul>
+     </ul>
+  </ul>
+
+
+  <a name="Mots Information Table"><h2>Mots Information Table</h2></a>
+
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><td>SDIFAuthor</td><td>auteur du fichier</td></tr>
+<tr><td>SDIFLibraryVersion</td><td>version de la librairie SDIF</td></tr>
+<tr><td>SDIFTypesVersion</td><td>version du format des types</td></tr>
+</table>
+
+  <a name="Predefined Types"><h2>Predefined Types</h2></a>
+
+
+<p> 1 décembre 1997 </p>
+
+  <a name="Predefined Matrix Types"><h3>Predefined Matrix Types</h3></a>
+
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><th>Nom</th><th>Signification</th>
+<tr><td>1FQ0</td><td>Fréquence fondamentale ou excitation d'un banc de fofs</td></tr>
+<tr><td>1FOF</td><td>Forme d'Onde Formantique</td></tr>
+<tr><td>1CHA</td><td>Channels</td></tr>
+<tr><td>1RES</td><td>Filtre Resonnant</td></tr>
+<tr><td>1DIS</td><td>Distribution d'un processus aléatoire</td></tr>
+</table>
+
+
+<pre>
+<a name="Fréquence fondamentale 1FQ0">
+1FQ0</a>    {Frequency, Mode, Hit}
+  Frequency : Fréquence fondamentale d'un banc de fofs &gt;0. (Hz).
+  Mode      : Mode d'excitation (0: Frequency, 1:Hit, 2:Both).
+  Hit       : Excitation (Dirac) sur un temps précis 
+              (0:pas d'excitation, 1: excitation).
+
+<a name="Forme d'onde formantique 1FOF">
+1FOF</a>	{Frequency, Amplitude, BandWidth, Tex, DebAtt, Atten, Phase}
+  Frequency : Fréquence du fof  &gt;0. (Hz).
+  Amplitude : Amplitude de l'enveloppe du fof linèaire.
+  BandWidth : Largeur de bande du Fof &gt;0. (Hz).
+  Tex       : Temps d'exitation &gt;0.  (secondes).
+  DebAtt    : Instant de début de l'atténuation de l'enveloppe &gt;0. (secondes).
+  Atten     : Durée de l'atténuation &gt;0.  (secondes).
+  Phase     : Phase de la sinusoïde du fof 0. à 2pi rad.
+
+<a name="Cannaux, mixage 1CHA">
+1CHA</a>	{Channel1, Channel2, Channel3, Channel4}
+  channelX : Amplitude linéaire sur le channel X   &gt;0..
+  Si il y a plus de 4 cannaux, il suffit d'avoir un chunk de déclaration de types
+  et de faire une complétion de 1CHA :
+     1MTD 1CHA {Channel5, Channel6}
+  On peut ainsi ajouter autant de cannaux que l'on le souhaite.
+
+<a name="Filtre Resonnant 1RES">
+1RES</a>	{Frequency, Amplitude, BandWidth, Saliance, Correction}
+  Frequency  : Fréquence du filtre résonnant.
+  Amplitude  : Gain du Filtre.
+  BandWidth  : Largeur de bande du Filtre &gt;0. (Hz).
+  Saliance   : pourcentage d'erreur des paramètres 0.à 100.
+  Correction : paramètre de correction automatique du gain par rapport
+        aux autres paramètres  0. à 1.
+
+<a name="Distribution d'un processus aléatoire 1DIS">
+1DIS</a>	{Distribution, Amplitude}
+  Distribution : type de distribution
+     (pas encore défini mais 0 signifie équi-répartie)
+  Amplitude : variance du processus aléatoire (amplitude).
+     Ce type peut-être compléter pour faire apparaître des moments
+     d'ordre supérieur.
+</pre>
+
+
+
+  <a name="Predefined Frame Types"><h3>Predefined Frame Types</h3></a>
+
+
+
+<table border=1 bordercolor="black" cellpadding=5>
+<tr><th>Nom</th><th>Signification</th>
+<tr><td>1FOB</td><td>Bank de fofs</td></tr>
+<tr><td>1REB</td><td>Bank de filtres résonnants</td></tr>
+<tr><td>1NOI</td><td>Bruit</td></tr>
+</table>
+
+
+<pre>
+<a name="Bank de Formants 1FOB">
+1FOB</a>
+  {
+    1FQ0  PitchModeHit;
+    1FOF  Formants;
+    1CHA  FormantsChannels;
+  }
+PitchModeHit : excitation du fofbank. 1 seule ligne par frame 1FOB.
+Formants : paramètres des enveloppes de fof.
+FormantsChannels : amplitude de sortie des fofs sur chaque canal.
+  On pourrait avoir les cannaux dans 1FOF mais la complétion du
+  type ne permetterait que d'augmenter le nombre de cannaux
+  et non d'ajouter des paramètres liés à l'enveloppe.
+
+
+<a name="Bank de Filtres résonnants 1REB">
+1REB</a>
+  {
+    1RES  Filters;
+    1CHA  FiltersChannels;
+  }
+Filters : paramamètres des filtres.
+Filterschannels :  amplitude de sortie des filtres sur chaque canal.
+   Même remarque que pour fofschannels de 1FOB.
+
+
+<a name="Processus Aléatoire 1NOI">
+1NOI</a>
+  {
+    1DIS  NoiseInfo;
+  }
+NoiseInfo : paramètres du bruit.
+
+
+</pre>
+
+
+}
+
+
+
+
+
+
+
+
+    <a name="StreamID TreeWay pour Chant"><h2>StreamID TreeWay pour Chant</h2></a>
+
+
+
+<p>Rappel: Le champ TreeWay d'un StreamID n'a pas de définition
+absolue. Son interprétation dépend du champ Source qui représente le
+type de TreeWay qui le suit. La seule mise en forme prévue est que le
+TreeWay doit avoir l'allure d'une URL.
+<</p>
+
+<p>La librairie Chant sait interpréter des StreamID dont le champ
+Source est 'Chant' et où le champ TreeWay suit ce formalisme:<br>
+<code>&lt;PatchType&gt;/&lt;NumPatch&gt;/&lt;ObjType&gt;/&lt;NumObj&gt;
+/&lt;NbSubObjt&gt;/&lt;StartTime&gt;/&lt;EndTime&gt;[/"&lt;SoundFileName&gt;"]</code><br>
+
+([] signifie ici "éventuellement, Obj: Objet, Num: Numéro, Nb: Nombre").
+</p>
+
+
+
+
+      <a name="Description de chaque élément du TreeWay">
+      <h3>Description de chaque élément du TreeWay</h3></a>
+
+
+<p>
+<ul>
+  <li>PatchType: C'est le type de patch prédéfini dans Chant auquel
+appartient l'object indexé. Les valeurs possibles sont Patch0, Patch1,
+Patch2, Patch3 (Janvier98).</li>
+
+  <li>NumPatch: Numéro qui référence le patch parmis tous les patchs
+de même type. On peut ainsi contrôler plusieurs patch de type Patch0.
+Le premier aura NumPatch=1 et un second NumPatch=2...</li>
+
+  <li>ObjType: Un patch Chant est un assemblage d'objets de types
+différents.  ObjType représente le type de l'objet indexé. Les types
+reconnus sont: 'FOB', 'REB', 'NOI' et 'SND'. Les trois premiers sont
+aussi des signatures de types de frames prédéfinis sans version.
+Ainsi, il y a correspondance entre le type de l'objet déclaré dans le
+TreeWay et le type de frame qui permet de faire évoluer cet objet
+(reférencé dans l'index de l'entête de frame).</li>
+
+  <li>NumObj: Dans le cas où un patch contient plusieurs objets de
+même type, Il est nécessaire de pouvoir référencé chacun d'eux. Ainsi,
+NumObj détermine à quel objet de type ObjType on s'adresse. Attention,
+le numéro a une signification très précise au niveau des connections.
+Aussi, les patchs prédéfinis sont figés, on ne peut pas avoir NumObj=3
+si le patch ne contient que deux objets du type ObjType
+(cf. <a href="#Exemple TreeWay Chant">Exemple</a> ci-dessous). Actuellement
+(Janvier 1998) aucun patch prédéfini de Chant ne contient plus d'1
+objet de même type, donc NumObj est toujours 1.</li>
+
+
+  <li>NbSubObj: Nombre de sous objets maximum de l'objet indexé par
+le StreamID. Pour un banc de FOFs, c'est typiquement le nombre de
+FOFs maximum du banc (de même pour les bancs de filtres). Les objets
+typés par 'NOI' ou 'SND' sont les bruit et les fichiers sons. Ils
+ne possèdent pas de sous objets. Dans ce cas NbSubObj=0.</li>
+
+  <li>StartTime et EndTime: Ce sont les temps de début et de fin de
+l'objet.</li>
+
+  <li>SoundFileName: Cet élément du TreeWay doit être dans le TreeWay
+uniquement pour un objet typé par 'SND'. Il contient le nom du fichier
+son référencé par cet objet. La seule contrainte du contenu du nom placé
+entre '"', est qu'il ne doit pas y avoir de caractères ';'.</li>
+
+</ul>
+</p>
+
+
+      <a name="Exemple TreeWay Chant">
+      <h3>Exemple</h3></a>
+
+<p>Prenons un exemple de type de patch très général.
+<br><img src="pics/PatchExemple.gif" alt="Image PatchExemple.gif" height=156 witdh=420>
+<br>
+Chaque type d'objet de Chant y est représenté. Ce type de patch n'est qu'un
+exemple et n'existe pas comme type de patch prédéfini.
+</p>
+
+<p>On remarque qu'il y a 2 bancs de filtres. Ceci va faire intervenir
+le numéro de l'objet (à droite des noms sur le schéma). En effet, le
+banc de filtre dont le numéro est 1 correspond au banc qui ne filtre
+que le banc de FOFs. Le banc 2 correspond à celui qui filtre tous les
+objets. On pourra avoir par exemple les Stream ID suivant pour remplir
+le patch.
+</p>
+<pre>
+1IDS
+{
+  145   Chant:PatchTypeExemple/1/FOB/1/23/0./5.;
+  7     Chant:PatchTypeExemple/1/REB/1/45/0./5.;
+  32    Chant:PatchTypeExemple/1/NOI/1/0/0./6.;
+  12    Chant:PatchTypeExemple/1/SND/1/0/0./6./"./snd/file.sf.rs";
+  122   Chant:PatchTypeExemple/1/REB/2/85/0./6.;
+}
+</pre>
+<p> Les NumID sont idépendants des TreeWay. Ils doivent seulement être
+unique. Le nombre de sous-objet, les temps de fins et de début sont
+aussi indépendant pour chaque objet. L'objet de NumID 7 est le banc de
+filtres 1 du patch. C'est donc ce lui qui ne filtre que le banc de FOFs.
+L'objet de NumID 122 est le banc de filtres 2 qui filtre le banc de FOFs,
+le bruit et le fichier son.<br>
+
+Avoir un TreamID supplémentaire :<br>
+<code>123   Chant:PatchTypeExemple/1/REB/3/85/0./6.;</code><br>
+ne permet pas d'avoir un troisième banc de filtres, car un type
+de patch est figé.<br>
+De plus, s'il manque l'un des composants du patch, alors ce patch
+n'apparaitra pas à la synthèse. <strong>Un patch doit être complet
+pour être pris en compte dans la synthèse.</strong>
+</p>
+
+
+
+
+<p>
+Actuellement, ces types de patch sont disponibles :
+</p>
+<table border=0 bordercolor="black" cellpadding=5>
+<tr>
+  <td>
+      <img src="pics/Patch0.gif" alt="Image Patch0.gif" height=51  witdh=291>
+      <img src="pics/Patch1.gif" alt="Image Patch1.gif" height=91  witdh=291>
+      <img src="pics/Patch2.gif" alt="Image Patch2.gif" height=91  witdh=291>
+      <img src="pics/Patch3.gif" alt="Image Patch3.gif" height=131 witdh=291>
+      <img src="pics/Patch4.gif" alt="Image Patch4.gif" height=51  witdh=291>
+      <img src="pics/Patch5.gif" alt="Image Patch5.gif" height=51  witdh=291>
+  </td>
+  <td>
+      <img src="pics/Patch6.gif" alt="Image Patch6.gif" height=51  witdh=291>
+      <img src="pics/Patch7.gif" alt="Image Patch7.gif" height=91  witdh=291>
+      <img src="pics/Patch8.gif" alt="Image Patch8.gif" height=131  witdh=291>
+      <img src="pics/Patch9.gif" alt="Image Patch9.gif" height=91  witdh=291>
+      <img src="pics/Patch10.gif" alt="Image Patch10.gif" height=91  witdh=291>
+  </td>
+</tr>
+</table>
+<p>
+ Le Stream ID SND de Patch2 contient le nom d'un fichier son à filtrer.
+ Cependant, il n'y a ni matrice, ni frame associé à cet objet.
+</p>
+
+<p>
+<pre> Exemple de Stream ID pour un Patch1 :
+  0	Chant:Patch1/1/FOB/1/4/0./1.;
+  1	Chant:Patch1/1/REB/1/5/0./1.;
+  2	Chant:Patch1/1/NOI/1/0/0./1.;   // un bruit n'a pas de sous objets.<br>
+
+si on a un autre Patch1:
+  3	Chant:Patch1/2/FOB/1/3/2./5.;
+  4	Chant:Patch1/2/REB/1/8/2./5.;
+  5	Chant:Patch1/2/NOI/1/0/2./5.;
+
+
+Patch2:
+  6	Chant:Patch2/1/NOI/1/0/0./4.;
+  7	Chant:Patch2/1/REB/1/5/0./5.;
+  8	Chant:Patch2/1/SND/1/0/0./4./"filename";
+</pre>
+
+
+
+
+</body>
+<p></p>

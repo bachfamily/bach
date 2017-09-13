@@ -1,0 +1,53 @@
+#! /bin/sh
+
+FILE=$srcdir/xpianoRes.m5.FIL.sdif
+
+if [ "$SDIFTYPES" = "" ] ;then
+ echo SDIF not defined
+ exit 1
+fi
+
+sleep 1  # Wait one second
+echo 
+echo \****************************
+echo "***  Test on selection  ***"
+echo \****************************
+echo
+
+if [ "$QUERYPROG" = "" ]; then
+
+if [  -x ../tools/querysdif ]; then
+QUERYPROG=../tools/querysdif
+fi
+
+if [  -x ../tools/querysdif-debug ]; then
+QUERYPROG=../tools/querysdif-debug
+fi
+
+if [ "$QUERYPROG" = "" ]; then
+  echo Program querysdif not found
+  exit 1
+fi
+fi
+
+$QUERYPROG $FILE
+if [ "$?" != "0" ] ; then
+  echo querysdif returns an error for $FILE.
+  exit 1;
+fi
+  
+if [ "$TESTCHECK" = "" ];then
+    TESTCHECK=./testcheck
+fi
+
+echo
+echo Waiting for output: Found 1REB frame, index 0.
+"${TESTCHECK}" $FILE 1REB
+echo
+echo Waiting for output: Found 1REB frame, index 1. 
+"${TESTCHECK}" $FILE 1NOI 1REB
+echo
+echo Waiting for output: Found no frame, index -1.
+"${TESTCHECK}" $FILE 1HRM 1HRM 1HRM
+echo
+

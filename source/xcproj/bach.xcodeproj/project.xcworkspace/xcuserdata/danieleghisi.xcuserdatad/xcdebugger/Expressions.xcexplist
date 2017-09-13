@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "notationobj_autospell(_notation_obj*, _autospell_params*):notation_pitches.c">
+      </ContextState>
+      <ContextState
+         contextName = "notationobj_autospell_get_center_of_effect(_notation_obj*, _autospell_params*, _llll*):notation_pitches.c">
+      </ContextState>
+      <ContextState
+         contextName = "notationobj_autospell_force_directed(_notation_obj*, _autospell_params*):notation_pitches.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "nodes[i]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

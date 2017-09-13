@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 10: The World Outside">
+
+<openfile name="The World Outside" patch="The World Outside (a).maxpat"/>
+
+<header>bach Tutorial 10: The World Outside</header>
+
+<subhead>Import, export and communication with other pieces of software</subhead>
+<body>bach is a very handy way to work with scores inside Max. Yet the musical world doesn't start nor end with Max: one might want to import or export scores already written in some other language, or some other format, or some other CAC software. This tutorial is meant to show you how to communicate with the most common softwares of CAC and music engraving. We'll also show you a way to send generic (and arbitrarily long) lllls through differents instances of Max.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+<seealso name="bach.roll">Display and edit a score in proportional notation</seealso>
+<seealso name="bach.omtree2bachtree">Convert an OpenMusic rhythmic tree into a bach rhythmic tree</seealso>
+<seealso name="bach.bachtree2omtree">Convert a bach rhythmic tree into an OpenMusic rhythmic tree</seealso>
+</seealsolist>
+
+</chapter>

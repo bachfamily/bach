@@ -1,0 +1,61 @@
+
+# SDIF README
+# $Id: README,v 3.6 2011/04/12 20:17:33 roebel Exp $
+
+(C) Copyright Ircam 1998-2003
+
+
+# Introduction
+
+SDIF stands for Sound Description Interchange Format.
+
+The general idea of SDIF is to store information related to signal
+processing and specifically of sound, in files, according to a common
+format to all data types. Thus, it is possible to store results or
+parameters of analyses, syntheses...
+
+
+# Installation and compilation
+
+Refer to the file INSTALL
+
+# Utilisation
+
+From version 3.3 the library doesn't need the SdifTypes.STYP file any more.
+
+Only if you want to try out experimental description types, you need
+to set the environment variable SDIFTYPES to use tools.  SDIFTYPES
+must be set to the path of SdifTypes.STYP (file of frames and matrix
+types).  By default, this file is in sdif_package_dir/data/
+
+For example, if you put SDIF in joe home directory, to set SDIFTYPES
+you must execute:
+
+- if you use bash:
+        export SDIFTYPES= /home/joe/SDIF-3.3/data/SdifTypes.STYP
+
+- if you use csh:
+        setenv SDIFTYPES /home/joe/SDIF-3.3/data/SdifTypes.STYP
+
+
+# Documentation
+
+There is an HTML documentation in doc directory. 
+
+# Large file support
+
+starting from version 3.11.3 sdif files being larger than 2GB are supported on
+Mac OS X, Windows, and for all systems using the gcc compiler that support
+enabling large file support by means of setting the  compiler macro 
+_FILE_OFFSET_BITS=64.
+
+# License Agreement
+
+SDIF is free software, distributed under the GNU Lesser General
+Public License. See the file COPYING for further information.
+
+
+# Contact
+
+SDIF home page: http://www.ircam.fr/sdif
+

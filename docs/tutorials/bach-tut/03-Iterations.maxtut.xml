@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 3: Iterations">
+
+<openfile name="Iterations" patch="Iterations (a).maxpat"/>
+
+<header>bach Tutorial 3: Iterations</header>
+
+<subhead>Iterating, collecting, finding elements, filtering lllls</subhead>
+<body>In this tutorial you'll learn how to iterate through elements, or perform modifications on lllls iteratively.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.iter">Iterate through lllls</seealso>
+<seealso name="bach.collect">Collect elements into lllls</seealso>
+<seealso name="bach.mapelem">Remove duplicate elements</seealso>
+<seealso name="bach.step">Iterate through lllls, driven by bangs</seealso>
+<seealso name="bach.find">Find elements</seealso>
+<seealso name="bach.replace">Quickly find and replace elements</seealso>
+<seealso name="bach.keys">Route an llll according to specific keys</seealso>
+<seealso name="bach.filter">Only let specified data types through</seealso>
+<seealso name="bach.sieve">Only let some elements through</seealso>
+<seealso name="bach.is">Type of the incoming data</seealso>
+<seealso name="bach.filternull">Let through every non-null input</seealso>
+<seealso name="bach.thin">Remove duplicate elements</seealso>
+</seealsolist>
+
+</chapter>

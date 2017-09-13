@@ -1,0 +1,232 @@
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD><TITLE>IRCAM SDIF Library Tutorial</TITLE>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.05">
+</HEAD>
+<BODY TEXT=black BGCOLOR=white>
+<!--HEVEA command line is: hevea -fix -exec xxdate.exe extern/tutorial-doc.tex -o extern/tutorial-doc.html -->
+<!--HTMLHEAD-->
+<!--ENDHTML-->
+<!--CUT DEF section 1 -->
+
+
+<H1 ALIGN=center>IRCAM SDIF Library Tutorial</H1>
+
+<H3 ALIGN=center><A HREF="mailto:schwarz@ircam.fr">Diemo Schwarz</A></H3>
+
+<H3 ALIGN=center>October 26, 2001</H3><BR><BR><BR><A NAME="Introduction"></A><!--TOC section Introduction-->
+
+<H2>1&nbsp;&nbsp; Introduction</H2><!--SEC END -->
+This tutorial describes the standard way to read and write an SDIF file using
+the <A HREF="http://www.ircam.fr/sdif">Ircam SDIF Library</A>. Only rudimentary
+error checking is done. However, the reading program uses the SDIF selection
+(see this <A HREF="http://www.ircam.fr/anasyn/schwarz/publications/icmc2000/#sec:selection">ICMC article</A>) to show you how easy it is to incorporate powerful selection capabilities into your programs.<BR>
+<BR>
+To use the sdif library, include the definitions with<BR>
+<BR>
+<PRE>
+#include &lt;sdif.h&gt;
+</PRE>and link with the SDIF library using <TT>-lsdif</TT>.<BR>
+<BR>
+SDIF signatures are the 4 characters that identify a frame or matrix type. To
+create and read them, use:<BR>
+<BR>
+<PRE>
+SdifSignature mysig  = SdifSignatureConst ('1FQ0');
+char*         sigstr = SdifSignatureToString (mysig);
+</PRE>A little note on the naming convention of SDIF funtions: All functions
+starting with <TT>SdifF</TT>... work on an open SDIF file. They all take an
+<TT>SdifFileT *</TT> as first argument.<BR><BR><BR><A NAME="Initialisation"></A><!--TOC section Initialisation-->
+
+<H2>2&nbsp;&nbsp; Initialisation</H2><!--SEC END -->
+The library is initialised by calling<BR>
+<BR>
+<PRE>
+SdifGenInit ("");
+</PRE>giving an optional <TT>.styp</TT> file with description of type definitions. An
+empty string <TT>""</TT> means take the file at the standard place, or use the
+file given by the environment variable <TT>SDIFTYPES</TT>, if it exists.<BR>
+<BR>
+To deinitialise and clean up, call:<BR>
+<BR>
+<PRE>
+SdifGenKill ();
+</PRE><BR><BR><BR><A NAME="Reading"></A><!--TOC section Reading-->
+
+<H2>3&nbsp;&nbsp; Reading</H2><!--SEC END -->
+<PRE>
+
+size_t  bytesread = 0;
+int	eof       = 0;	<FONT COLOR="#0000ff"><TT><I>/* End-of-file flag */</I></TT></FONT>
+
+	<table cellspacing=0 cellpadding=0><tr valign=top><td>	<FONT COLOR="#0000ff"><TT><I>/* </I></TT></FONT><td><FONT COLOR="#0000ff"><TT><I>Open file for reading and parse selection.  (See
+	  </I></TT></FONT><A HREF="http://www.ircam.fr/anasyn/sdif/extern/utilities-doc.html#selectspec"><FONT COLOR="#0000ff"><TT><I>Utilities</I></TT></FONT></A><FONT COLOR="#0000ff"><TT><I> for selection syntax.)&nbsp;*/</I></TT></FONT></table>
+SdifFileT *file = SdifFOpen ("filename.sdif::<A HREF="http://www.ircam.fr/anasyn/sdif/extern/utilities-doc.html#selectspec">selection</A>", eReadFile);
+SdifFReadGeneralHeader  (file); <FONT COLOR="#0000ff"><TT><I>/* Read file header */</I></TT></FONT>
+SdifFReadAllASCIIChunks (file); <FONT COLOR="#0000ff"><TT><I>/* Read ASCII header info, such as name-value tables */</I></TT></FONT>
+
+	<table cellspacing=0 cellpadding=0><tr valign=top><td>	<FONT COLOR="#0000ff"><TT><I>/* </I></TT></FONT><td><FONT COLOR="#0000ff"><TT><I>Read all frames matching the file selection.&nbsp;*/</I></TT></FONT></table>  
+while (!eof  &amp;&amp;  SdifFLastError (file) == NULL)
+{
+    bytesread += SdifFReadFrameHeader(file);
+
+    <FONT COLOR="#0000ff"><TT><I>/* search for a frame we're interested in */</I></TT></FONT>
+    while (!SdifFCurrFrameIsSelected (file)
+	   ||  SdifFCurrSignature (file) != mysig)
+    {
+        SdifFSkipFrameData (file);
+        if ((eof = SdifFGetSignature(file, &amp;bytesread) == eEof))
+            break;                                         <FONT COLOR="#0000ff"><TT><I>/* eof */</I></TT></FONT>
+        bytesread += SdifFReadFrameHeader(file);
+    }
+
+    if (!eof)
+    {    <FONT COLOR="#0000ff"><TT><I>/* Access frame header information */</I></TT></FONT>
+    	SdifFloat8      time     = SdifFCurrTime (file);
+    	SdifSignature   sig      = SdifFCurrFrameSignature (file);
+    	SdifUInt4       streamid = SdifFCurrID (file);
+    	SdifUInt4       nmatrix  = SdifFCurrNbMatrix (file);
+    	int		m;
+    
+    	<FONT COLOR="#0000ff"><TT><I>/* Read all matrices in this frame matching the selection. */</I></TT></FONT>
+    	for (m = 0; m &lt; nmatrix; m++)
+    	{
+    	    bytesread += SdifFReadMatrixHeader (file);
+    
+    	    if (SdifFCurrMatrixIsSelected (file))
+    	    {    <FONT COLOR="#0000ff"><TT><I>/* Access matrix header information */</I></TT></FONT>
+ 		SdifSignature	sig   = SdifFCurrMatrixSignature (file);
+		SdifInt4	nrows = SdifFCurrNbRow (file);
+		SdifInt4	ncols = SdifFCurrNbCol (file);
+		SdifDataTypeET	type  = SdifFCurrDataType (file);
+    
+		int		row, col;
+		SdifFloat8	value;
+    		
+    		for (row = 0; row &lt; nrows; row++)
+    		{
+		    bytesread += SdifFReadOneRow (file);
+    
+    		    for (col = 1; col &lt;= ncols; col++)
+    		    {
+			<FONT COLOR="#0000ff"><TT><I>/* Access value by value... */</I></TT></FONT>
+    			value = SdifFCurrOneRowCol (file, col);
+    
+			<FONT COLOR="#0000ff"><TT><I>/*  Do something with the data... */</I></TT></FONT>
+		    }
+    		}
+    	    }
+    	    else
+	    {
+    		bytesread += SdifFSkipMatrixData(file);
+	    }
+
+	    <FONT COLOR="#0000ff"><TT><I>/* Read matrix-padding to assure 8 byte alignment.  
+		      (Frames are then automatically aligned.) */</I></TT></FONT>
+	    bytesread += SdifFReadPadding(file, SdifFPaddingCalculate(file-&gt;Stream, bytesread));
+    	} 
+
+        <FONT COLOR="#0000ff"><TT><I>/* Read next signature */</I></TT></FONT>
+    	eof = SdifFGetSignature(file, &amp;bytesread) == eEof;
+    }
+}
+
+if (SdifFLastError (file))   <FONT COLOR="#0000ff"><TT><I>/* Check for errors */</I></TT></FONT>
+{
+    exit (1);
+}
+
+SdifFClose (file);
+</PRE><BR><BR><BR><A NAME="Writing"></A><!--TOC section Writing-->
+
+<H2>4&nbsp;&nbsp; Writing</H2><!--SEC END -->
+<PRE>
+SdifFileT *file = SdifFOpen("filename.sdif", eWriteFile);  <FONT COLOR="#0000ff"><TT><I>/* Open file for writing */</I></TT></FONT>
+<FONT COLOR="#0000ff"><TT><I>/* Here, you could add some text data to the name-value tables */</I></TT></FONT>
+SdifFWriteGeneralHeader  (file);    <FONT COLOR="#0000ff"><TT><I>/* Write file header information */</I></TT></FONT>
+SdifFWriteAllASCIIChunks (file);    <FONT COLOR="#0000ff"><TT><I>/* Write ASCII header information */</I></TT></FONT>
+
+	<table cellspacing=0 cellpadding=0><tr valign=top><td>	<FONT COLOR="#0000ff"><TT><I>/* </I></TT></FONT><td><FONT COLOR="#0000ff"><TT><I>Writing can be done in different flavours:  For the common case of a frame with one matrix, use:&nbsp;*/</I></TT></FONT></table>
+SdifFWriteFrameAndOneMatrix (file, mysig, mystream, mytime,             <FONT COLOR="#0000ff"><TT><I>/* frame header */</I></TT></FONT>
+				   mysig, eFloat4, nrows, ncols, data); <FONT COLOR="#0000ff"><TT><I>/* matrix */</I></TT></FONT>
+
+	<table cellspacing=0 cellpadding=0><tr valign=top><td>	<FONT COLOR="#0000ff"><TT><I>/* </I></TT></FONT><td><FONT COLOR="#0000ff"><TT><I>If you have one or more matrices ready in row-major order, use:&nbsp;*/</I></TT></FONT></table>
+SdifUInt4 framesize = SdifSizeOfFrameHeader () 
+                    + SdifSizeOfMatrix (eFloat4, nrows, ncols); <FONT COLOR="#0000ff"><TT><I>/* as many as you like... */</I></TT></FONT>
+SdifFSetCurrFrameHeader (file, mysig, framesize, 1, mystream, mytime);
+SdifFWriteFrameHeader (file);
+SdifFWriteMatrix (file, mysig, eFloat4, nrows, ncols, data);
+
+	<table cellspacing=0 cellpadding=0><tr valign=top><td>	<FONT COLOR="#0000ff"><TT><I>/* </I></TT></FONT><td><FONT COLOR="#0000ff"><TT><I>If you want to calculate your data on-the-fly, you can write it the nitty-gritty way:&nbsp;*/</I></TT></FONT></table>
+SdifUInt4 SizeFrameW = 0;
+
+SdifFSetCurrFrameHeader (file, mysig, _SdifUnknownSize, nmatrix, mystream, mytime);
+SizeFrameW += SdifFWriteFrameHeader (file);
+
+<FONT COLOR="#0000ff"><TT><I>/* Write matrix header */</I></TT></FONT>
+SdifFSetCurrMatrixHeader (file, mysig, eFloat4, nrows, ncols);
+SizeFrameW += SdifFWriteMatrixHeader (file);
+
+<FONT COLOR="#0000ff"><TT><I>/* Write matrix data */</I></TT></FONT>
+for (row = 0; row &lt; nrows; row++)
+{
+    for (col = 1; col &lt;= ncols; col++)
+    {
+        SdifFSetCurrOneRowCol (file, col, value);
+    }
+    SizeFrameW += SdifFWriteOneRow (file);
+}
+<FONT COLOR="#0000ff"><TT><I>/* Write matrix padding */</I></TT></FONT>
+SizeFrameW += SdifFWritePadding (file, SdifFPaddingCalculate (file-&gt;Stream, SizeFrameW));
+
+SdifUpdateChunkSize (file, SizeFrameW - 8);  <FONT COLOR="#0000ff"><TT><I>/* Set frame size */</I></TT></FONT>
+
+SdifFClose (file);
+</PRE><BR><BR><BR><A NAME="Goodies"></A><!--TOC section Goodies-->
+
+<H2>5&nbsp;&nbsp; Goodies</H2><!--SEC END -->
+Some functions to make life with SDIF even easier:<BR>
+<BR>
+<PRE>
+	<table cellspacing=0 cellpadding=0><tr valign=top><td>	<FONT COLOR="#0000ff"><TT><I>/* </I></TT></FONT><td><FONT COLOR="#0000ff"><TT><I>Check if the file exists and is a good SDIF file&nbsp;*/</I></TT></FONT></table>
+if (SdifCheckFileFormat ("filename.sdif"))
+    /* ok */;
+
+	<table cellspacing=0 cellpadding=0><tr valign=top><td>	<FONT COLOR="#0000ff"><TT><I>/* </I></TT></FONT><td><FONT COLOR="#0000ff"><TT><I>Check if file is good, exists, and contains certain frame types&nbsp;*/</I></TT></FONT></table>
+SdifSignature wanted [] = { SdifSignatureConst('1TRC'), 
+			    SdifSignatureConst('1HRM'), 
+			    eEmptySignature <FONT COLOR="#0000ff"><TT><I>/* end marker */</I></TT></FONT> 
+			  },
+	      firstfound;
+int           firstindex;
+
+<FONT COLOR="#0000ff"><TT><I>/* This returns the signature of the first wanted frame found */</I></TT></FONT>
+firstfound = SdifCheckFileFramesTab ("filename.sdif", wanted);
+
+printf ("First sig found is: %s\n", 
+	firstfound  ?  SdifSignatureToString(firstfound)  
+		    :  "none of interest");
+
+<FONT COLOR="#0000ff"><TT><I>/* Alternatively, you can get the index of the first frame found */</I></TT></FONT>
+firstindex = SdifCheckFileFramesIndex ("filename.sdif", wanted);
+
+printf ("First sig found is: %s\n", 
+	firstindex &gt;= 0  ?  SdifSignatureToString(wanted [firstindex])  
+		         :  "none of interest");
+</PRE>N.B.: All of the above functions require a real file, and do not work with standard input.<BR>
+<BR>
+<!--HTMLFOOT-->
+<!--ENDHTML-->
+
+<!--FOOTER-->
+<HR SIZE=2>
+<BLOCKQUOTE><EM>This document was translated from L<sup>A</sup>T<sub>E</sub>X by
+</EM><A HREF="http://pauillac.inria.fr/~maranget/hevea/index.html"><EM>H</EM><EM><FONT SIZE=2><sup>E</sup></FONT></EM><EM>V</EM><EM><FONT SIZE=2><sup>E</sup></FONT></EM><EM>A</EM></A><EM>.
+</EM></BLOCKQUOTE></BODY>
+</HTML>
+

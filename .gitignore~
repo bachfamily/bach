@@ -1,0 +1,20 @@
+# Compiled source #
+###################
+*.mxo
+*.mxe
+*.mxe64
+*.a
+
+
+# OS generated files #
+######################
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+
+# Folders #
+###########
+docs/refpages/*

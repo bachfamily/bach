@@ -1,0 +1,20 @@
+{
+	"maxdb" : {
+		"aliases" : {
+			"bach.==" : "bach.eq",
+			"bach.>=" : "bach.geq",
+			"bach.>" : "bach.gt",
+			"bach.<=" : "bach.leq",
+			"bach.<" : "bach.lt",
+			"bach.!=" : "bach.neq",
+			"bach./" : "bach.div",
+			"bach.%" : "bach.mod",
+			"bach.!/" : "bach.rdiv",
+			"bach.!-" : "bach.rminus",
+			"bach.*" : "bach.times",
+			"bach.mod*" : "bach.modtimes"
+		},
+		
+		"exclusions" : ["bach.eq", "bach.geq", "bach.gt", "bach.leq", "bach.lt", "bach.neq", "bach.div", "bach.mod", "bach.rdiv", "bach.rminus", "bach.times", "bach.modtimes", "bach.help.searchtag", "bach.help.home", "bach.ninsert", "bach.nsubs", "bach.embed", "bach.mdelace", "bach.ssort", "bach.append"]
+	}
+}

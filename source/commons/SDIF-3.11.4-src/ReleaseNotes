@@ -1,0 +1,157 @@
+Version 3.11.4	2011-12-19  Axel Roebel
+
+	* sdif/SdifFGet.c:
+	Gracefully handle NVT tables that do not include a trailing \000
+	as for examples the once written with the writesdif function in the old
+	matlab sdif toolbox. Obligation to have a trailing 0 in the 1NVT
+	matrix is not required in the SDIF specs and therefore the
+	present change seems appropriate.
+	* CMakeLists.txt, configure.in, include/sdif.h.in:
+	Fixed a number of issues with the conditional include of stdint.h and sys/types.h in instaled include file
+	sdif.h.
+	Correctly use the types provided by these include files for definition of sdif types.
+	* sdif/SdifFile.c: Fixed ftruncate implementation on windows.
+	* CMakeLists.txt: Fixed source location for installation of sdif.h;
+	* CMakeLists.txt, configure.in, include/sdif.h:
+	fixed use of stdint.h to be persistent in sdif.h even after
+	installation.
+	Added a complete configuration search to determine
+	SdiffPosT type such that it becomes a 64bit type.
+	* CMakeLists.txt, README, configure.in, include/sdif.h, sdif/SdifErrMess.c, sdif/SdifFile.c:
+	Fixed large file support to properly work on linux as well.
+	* include/sdif.h, sdif/SdifErrMess.c, sdif/SdifFile.c:
+	Fixed Sdif[fF]GetPos and Sdif[fF]SetPos to correctly support large files (>2GB).
+
+Version 3.11.3   2011-04-06 Diemo Schwarz (unreleased)
+
+	* SdifQuery reallocates SdifQueryTree dynamically 
+	  (now even ircamdescriptor output files can be queried)
+
+Version 3.11.2   2009-08-10  Diemo Schwarz
+
+	* fix matrix selection for SdifQuery: In SdifReadFile
+          function, check if matrix header is selected before calling
+          matrix callback.
+	* reimplemented querysdif using SdifQuery for consistency
+	  added flags to switch header, nvt, and type def printing
+	* in sdiftotext, accept in/outfile without -i/-o also
+
+Version 3.11.1   2009-01-07  Diemo Schwarz
+
+	* Further Improvements of the public API for scripting
+	  languages binding to libSDIF:
+          - access functions for integration in script languages for
+	    all fields of: name-value table list, name-value table,
+	    name-value entry
+	  - iterator to iterate over all entries in hash table
+	* examples/list-nvt.c: nvt listing example
+
+Version 3.11.0   2009-01-05  Diemo Schwarz
+
+	* Improvements of the public API for scripting languages binding 
+	  to libSDIF:
+	  - added SdifHashTableGetNbData
+	  - added access methods to struct elements of type definitions.
+	* examples/list-types.c: simple example showing
+          SdifTestFrameType and direct access to struct elements
+	* tools/querysdif.c: support for frames that do not contain any matrix
+	* macosxbuild/SDIF.xcodeproj: builds Mac UB framework, include
+          current updated SDIF.xcodeproj, generated sdif_version.h for
+          mac building out of the box
+
+Version 3.10.8   2008-05-22  Axel Roebel
+
+	* added SDIF_API to SdifFCleanCurrSignature.
+
+Version 3.10.7  2008-04-07  Axel Roebel
+
+        * add support for gcc visibility (cmake configuration only)
+
+        * use stdint.h to determine integer types if this file is available
+
+Version 3.10.6  2006-12-11  Axel Roebel
+
+        * added support for cmake project configuration system
+
+Version 3.10.5	2005-05-05  Diemo Schwarz, Niels Bogaards
+
+	* doc/standard/sdif-standard.html updated
+ 	* querysdif: exit on invalid sdif header, added brief output option
+	* sdifextract: added data only output option
+	* lots of small fixes, 64-bit compilation
+
+Version 3.10.0	2005-05-23  Diemo Schwarz, Axel Roebel
+
+	* Unified error handling code	
+	* Sdiffread*/Sdiffwrite* functions with SdifFileT instead of FILE *
+	  -> eof error reporting makes more sense
+	* SdifFScanNameValueLCurrNVT reimplemented for ascii only
+
+Version 3.9.3	2005-05-13  Diemo Schwarz
+
+	* SdifReadSimple: robustness to corrupt sdif files (\n -> \r\n)
+
+Version 3.9.2	2005-04-07  Diemo Schwarz, Niels Bogaards
+
+	* sdifextract: added time ouput format to extract only the
+          times of selected frames
+	* redundant header files and functions removed
+
+Version 3.9.1	2004-10-07  Axel Roebel
+
+	* Fixed SdifFGetOneNameValue to properly read NVTs from text files.
+	* Fixed SdifStringToNV to only convrt \t and \n.
+
+Version 3.9.0	2004-09-09  Diemo Schwarz
+
+	* SdifFReadMatrixData: read and store a whole matrix's data as
+	  one block, accessed with the functions SdifFCurrMatrixData,
+	  SdifFCurrMatrixDataPointer, with automatic reallocation.
+	* SdifReadSimple: simple callback-based reading of an entire SDIF file.
+	* SdifListConcat function
+	* SdifIsAReservedChar return value changed to boolean flag, clearer
+	* SdifSelectAppendList function
+
+Version 3.8.6	2004-07-26  Niels Bogaards and Axel Roebel
+	
+	* SDIF now thread save if pthreads are available.
+
+Version 3.8.5	2004-07-13  Axel Roebel  
+
+	* read byte counter fixes
+
+Version 3.8.4	2004-06-17  Axel Roebel  
+
+	* fixed sdifextract padding calculation.
+
+Version 3.8.3	2004-06-03  Diemo Schwarz  
+
+	* profiling harness showed some waste of cycles -->
+	* optimisations give overall run time improvement of 40% on read/write
+
+Version 3.8.2	2004-05-03  Axel Roebel and Diemo Schwarz
+
+	* reading from pipes possible
+
+Version 3.8.1	2004-02-10  Axel Roebel  
+
+	* Handling of the warning for sdiftypes file changed
+
+Version 3.8.0	2004-01-29  Diemo Schwarz  
+
+	* API and compilation completion, MacOSX portability
+	* Added support for types eInt1 and eUInt1.
+
+
+See ChangeLog for previous versions:
+
+Version 3.7.5	2003-05-24  Axel Röbel  
+Version 3.7.4	2003-05-23  Diemo Schwarz  
+Version 3.7.3	2003-03-07  Axel Roebel  
+Version 3.7.2	2002-12-17  Axel Roebel, Patrice Tisserand
+Version 3.7.1	2002-10-30  Diemo Schwarz, Patrice Tisserand
+Version 3.7.0	2002-09-20  Diemo Schwarz  
+Version 3.6	2002-08-05  Axel Roebel  
+Version 3.5
+Version 3.4
+Version 3.3

@@ -1,0 +1,648 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		F446F771071AF3E800117647 /* all */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 21AFA3B20907D5740018539F /* Build configuration list for PBXAggregateTarget "all" */;
+			buildPhases = (
+			);
+			dependencies = (
+				F4A410B2079BCC7A00ADEFEF /* PBXTargetDependency */,
+			);
+			name = all;
+			productName = all;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		6C639A7008460E9100D1DBE2 /* SdifRWLowLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = 6C639A6E08460E9100D1DBE2 /* SdifRWLowLevel.h */; };
+		F4A4105F079BCB8E00ADEFEF /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BDE0496241101664058 /* config.h */; };
+		F4A41060079BCB8E00ADEFEF /* host_architecture.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BE00496241101664058 /* host_architecture.h */; };
+		F4A41063079BCB8E00ADEFEF /* SdifErrMess.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BEA0496241101664058 /* SdifErrMess.h */; };
+		F4A41065079BCB8E00ADEFEF /* SdifFGet.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BEE0496241101664058 /* SdifFGet.h */; };
+		F4A41066079BCB8E00ADEFEF /* SdifFile.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BF00496241101664058 /* SdifFile.h */; };
+		F4A41068079BCB8E00ADEFEF /* SdifFPut.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BF40496241101664058 /* SdifFPut.h */; };
+		F4A41069079BCB8E00ADEFEF /* SdifFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BF60496241101664058 /* SdifFrame.h */; };
+		F4A4106A079BCB8E00ADEFEF /* SdifFrameType.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BF80496241101664058 /* SdifFrameType.h */; };
+		F4A4106B079BCB8E00ADEFEF /* SdifFRead.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BFA0496241101664058 /* SdifFRead.h */; };
+		F4A4106C079BCB8E00ADEFEF /* SdifFScan.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BFC0496241101664058 /* SdifFScan.h */; };
+		F4A4106D079BCB8E00ADEFEF /* SdifFWrite.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0BFE0496241101664058 /* SdifFWrite.h */; };
+		F4A4106E079BCB8E00ADEFEF /* SdifGlobals.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C000496241101664058 /* SdifGlobals.h */; };
+		F4A4106F079BCB8E00ADEFEF /* SdifHard_OS.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C020496241101664058 /* SdifHard_OS.h */; };
+		F4A41070079BCB8E00ADEFEF /* SdifHash.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C040496241101664058 /* SdifHash.h */; };
+		F4A41071079BCB8E00ADEFEF /* SdifHighLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C060496241101664058 /* SdifHighLevel.h */; };
+		F4A41072079BCB8E00ADEFEF /* SdifList.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C080496241101664058 /* SdifList.h */; };
+		F4A41073079BCB8E00ADEFEF /* SdifMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C0A0496241101664058 /* SdifMatrix.h */; };
+		F4A41074079BCB8E00ADEFEF /* SdifMatrixType.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C0C0496241101664058 /* SdifMatrixType.h */; };
+		F4A4107A079BCB8E00ADEFEF /* SdifSelect.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C180496241101664058 /* SdifSelect.h */; };
+		F4A4107C079BCB8E00ADEFEF /* SdifStreamID.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C1C0496241101664058 /* SdifStreamID.h */; };
+		F4A4107E079BCB8E00ADEFEF /* SdifTest.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C200496241101664058 /* SdifTest.h */; };
+		F4A41081079BCB8E00ADEFEF /* sdiftypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C250496241101664058 /* sdiftypes.h */; };
+		F4A41083079BCB8E00ADEFEF /* sdif_version.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C760496243D01664058 /* sdif_version.h */; };
+		F4A41084079BCB8E00ADEFEF /* sdif.h in Headers */ = {isa = PBXBuildFile; fileRef = F70D0C770496243D01664058 /* sdif.h */; };
+		F4A41086079BCB8E00ADEFEF /* SdifCheck.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BE50496241101664058 /* SdifCheck.c */; };
+		F4A41087079BCB8E00ADEFEF /* SdifConvToText.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BE70496241101664058 /* SdifConvToText.c */; };
+		F4A41088079BCB8E00ADEFEF /* SdifErrMess.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BE90496241101664058 /* SdifErrMess.c */; };
+		F4A4108A079BCB8E00ADEFEF /* SdifFGet.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BED0496241101664058 /* SdifFGet.c */; };
+		F4A4108B079BCB8E00ADEFEF /* SdifFile.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BEF0496241101664058 /* SdifFile.c */; };
+		F4A4108C079BCB8E00ADEFEF /* SdifFPrint.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BF10496241101664058 /* SdifFPrint.c */; };
+		F4A4108D079BCB8E00ADEFEF /* SdifFPut.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BF30496241101664058 /* SdifFPut.c */; };
+		F4A4108E079BCB8E00ADEFEF /* SdifFrame.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BF50496241101664058 /* SdifFrame.c */; };
+		F4A4108F079BCB8E00ADEFEF /* SdifFrameType.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BF70496241101664058 /* SdifFrameType.c */; };
+		F4A41090079BCB8E00ADEFEF /* SdifFRead.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BF90496241101664058 /* SdifFRead.c */; };
+		F4A41091079BCB8E00ADEFEF /* SdifFScan.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BFB0496241101664058 /* SdifFScan.c */; };
+		F4A41092079BCB8E00ADEFEF /* SdifFWrite.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BFD0496241101664058 /* SdifFWrite.c */; };
+		F4A41093079BCB8E00ADEFEF /* SdifGlobals.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0BFF0496241101664058 /* SdifGlobals.c */; };
+		F4A41094079BCB8E00ADEFEF /* SdifHard_OS.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C010496241101664058 /* SdifHard_OS.c */; };
+		F4A41095079BCB8E00ADEFEF /* SdifHash.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C030496241101664058 /* SdifHash.c */; };
+		F4A41096079BCB8E00ADEFEF /* SdifHighLevel.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C050496241101664058 /* SdifHighLevel.c */; };
+		F4A41097079BCB8E00ADEFEF /* SdifList.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C070496241101664058 /* SdifList.c */; };
+		F4A41098079BCB8E00ADEFEF /* SdifMatrix.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C090496241101664058 /* SdifMatrix.c */; };
+		F4A41099079BCB8E00ADEFEF /* SdifMatrixType.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C0B0496241101664058 /* SdifMatrixType.c */; };
+		F4A4109B079BCB8E00ADEFEF /* SdifNameValue.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C0F0496241101664058 /* SdifNameValue.c */; };
+		F4A4109C079BCB8E00ADEFEF /* SdifPreTypes.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C110496241101664058 /* SdifPreTypes.c */; };
+		F4A4109D079BCB8E00ADEFEF /* SdifPrint.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C130496241101664058 /* SdifPrint.c */; };
+		F4A4109E079BCB8E00ADEFEF /* SdifRWLowLevel.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C150496241101664058 /* SdifRWLowLevel.c */; };
+		F4A4109F079BCB8E00ADEFEF /* SdifSelect.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C170496241101664058 /* SdifSelect.c */; };
+		F4A410A0079BCB8E00ADEFEF /* SdifSignatureTab.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C190496241101664058 /* SdifSignatureTab.c */; };
+		F4A410A1079BCB8E00ADEFEF /* SdifStreamID.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C1B0496241101664058 /* SdifStreamID.c */; };
+		F4A410A2079BCB8E00ADEFEF /* SdifString.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C1D0496241101664058 /* SdifString.c */; };
+		F4A410A3079BCB8E00ADEFEF /* SdifTest.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C1F0496241101664058 /* SdifTest.c */; };
+		F4A410A4079BCB8E00ADEFEF /* SdifTextConv.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C210496241101664058 /* SdifTextConv.c */; };
+		F4A410A5079BCB8E00ADEFEF /* SdifTimePosition.c in Sources */ = {isa = PBXBuildFile; fileRef = F70D0C230496241101664058 /* SdifTimePosition.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F4A410B1079BCC7A00ADEFEF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F5C28A9047E732E006640BC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F4A4105D079BCB8E00ADEFEF;
+			remoteInfo = "SDIF lib static";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0F5C2959047E760E006640BC /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6C639A6E08460E9100D1DBE2 /* SdifRWLowLevel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifRWLowLevel.h; path = ../sdif/SdifRWLowLevel.h; sourceTree = SOURCE_ROOT; };
+		6C8EEA15084602CE00972C15 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		914B2AA618BB4588002CDCD8 /* list-nvt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "list-nvt.c"; path = "../examples/list-nvt.c"; sourceTree = SOURCE_ROOT; };
+		914B2AA718BB4588002CDCD8 /* list-types.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "list-types.c"; path = "../examples/list-types.c"; sourceTree = SOURCE_ROOT; };
+		F4A410A7079BCB8E00ADEFEF /* libsdif.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsdif.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F70D0BDE0496241101664058 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../sdif/config.h; sourceTree = SOURCE_ROOT; };
+		F70D0BE00496241101664058 /* host_architecture.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = host_architecture.h; path = ../sdif/host_architecture.h; sourceTree = SOURCE_ROOT; };
+		F70D0BE50496241101664058 /* SdifCheck.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifCheck.c; path = ../sdif/SdifCheck.c; sourceTree = SOURCE_ROOT; };
+		F70D0BE70496241101664058 /* SdifConvToText.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifConvToText.c; path = ../sdif/SdifConvToText.c; sourceTree = SOURCE_ROOT; };
+		F70D0BE90496241101664058 /* SdifErrMess.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifErrMess.c; path = ../sdif/SdifErrMess.c; sourceTree = SOURCE_ROOT; };
+		F70D0BEA0496241101664058 /* SdifErrMess.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifErrMess.h; path = ../sdif/SdifErrMess.h; sourceTree = SOURCE_ROOT; };
+		F70D0BED0496241101664058 /* SdifFGet.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFGet.c; path = ../sdif/SdifFGet.c; sourceTree = SOURCE_ROOT; };
+		F70D0BEE0496241101664058 /* SdifFGet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifFGet.h; path = ../sdif/SdifFGet.h; sourceTree = SOURCE_ROOT; };
+		F70D0BEF0496241101664058 /* SdifFile.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFile.c; path = ../sdif/SdifFile.c; sourceTree = SOURCE_ROOT; };
+		F70D0BF00496241101664058 /* SdifFile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifFile.h; path = ../sdif/SdifFile.h; sourceTree = SOURCE_ROOT; };
+		F70D0BF10496241101664058 /* SdifFPrint.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFPrint.c; path = ../sdif/SdifFPrint.c; sourceTree = SOURCE_ROOT; };
+		F70D0BF30496241101664058 /* SdifFPut.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFPut.c; path = ../sdif/SdifFPut.c; sourceTree = SOURCE_ROOT; };
+		F70D0BF40496241101664058 /* SdifFPut.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifFPut.h; path = ../sdif/SdifFPut.h; sourceTree = SOURCE_ROOT; };
+		F70D0BF50496241101664058 /* SdifFrame.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFrame.c; path = ../sdif/SdifFrame.c; sourceTree = SOURCE_ROOT; };
+		F70D0BF60496241101664058 /* SdifFrame.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifFrame.h; path = ../sdif/SdifFrame.h; sourceTree = SOURCE_ROOT; };
+		F70D0BF70496241101664058 /* SdifFrameType.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFrameType.c; path = ../sdif/SdifFrameType.c; sourceTree = SOURCE_ROOT; };
+		F70D0BF80496241101664058 /* SdifFrameType.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifFrameType.h; path = ../sdif/SdifFrameType.h; sourceTree = SOURCE_ROOT; };
+		F70D0BF90496241101664058 /* SdifFRead.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFRead.c; path = ../sdif/SdifFRead.c; sourceTree = SOURCE_ROOT; };
+		F70D0BFA0496241101664058 /* SdifFRead.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifFRead.h; path = ../sdif/SdifFRead.h; sourceTree = SOURCE_ROOT; };
+		F70D0BFB0496241101664058 /* SdifFScan.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFScan.c; path = ../sdif/SdifFScan.c; sourceTree = SOURCE_ROOT; };
+		F70D0BFC0496241101664058 /* SdifFScan.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifFScan.h; path = ../sdif/SdifFScan.h; sourceTree = SOURCE_ROOT; };
+		F70D0BFD0496241101664058 /* SdifFWrite.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifFWrite.c; path = ../sdif/SdifFWrite.c; sourceTree = SOURCE_ROOT; };
+		F70D0BFE0496241101664058 /* SdifFWrite.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifFWrite.h; path = ../sdif/SdifFWrite.h; sourceTree = SOURCE_ROOT; };
+		F70D0BFF0496241101664058 /* SdifGlobals.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifGlobals.c; path = ../sdif/SdifGlobals.c; sourceTree = SOURCE_ROOT; };
+		F70D0C000496241101664058 /* SdifGlobals.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifGlobals.h; path = ../sdif/SdifGlobals.h; sourceTree = SOURCE_ROOT; };
+		F70D0C010496241101664058 /* SdifHard_OS.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifHard_OS.c; path = ../sdif/SdifHard_OS.c; sourceTree = SOURCE_ROOT; };
+		F70D0C020496241101664058 /* SdifHard_OS.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifHard_OS.h; path = ../sdif/SdifHard_OS.h; sourceTree = SOURCE_ROOT; };
+		F70D0C030496241101664058 /* SdifHash.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifHash.c; path = ../sdif/SdifHash.c; sourceTree = SOURCE_ROOT; };
+		F70D0C040496241101664058 /* SdifHash.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifHash.h; path = ../sdif/SdifHash.h; sourceTree = SOURCE_ROOT; };
+		F70D0C050496241101664058 /* SdifHighLevel.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifHighLevel.c; path = ../sdif/SdifHighLevel.c; sourceTree = SOURCE_ROOT; };
+		F70D0C060496241101664058 /* SdifHighLevel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifHighLevel.h; path = ../sdif/SdifHighLevel.h; sourceTree = SOURCE_ROOT; };
+		F70D0C070496241101664058 /* SdifList.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifList.c; path = ../sdif/SdifList.c; sourceTree = SOURCE_ROOT; };
+		F70D0C080496241101664058 /* SdifList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifList.h; path = ../sdif/SdifList.h; sourceTree = SOURCE_ROOT; };
+		F70D0C090496241101664058 /* SdifMatrix.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifMatrix.c; path = ../sdif/SdifMatrix.c; sourceTree = SOURCE_ROOT; };
+		F70D0C0A0496241101664058 /* SdifMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifMatrix.h; path = ../sdif/SdifMatrix.h; sourceTree = SOURCE_ROOT; };
+		F70D0C0B0496241101664058 /* SdifMatrixType.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifMatrixType.c; path = ../sdif/SdifMatrixType.c; sourceTree = SOURCE_ROOT; };
+		F70D0C0C0496241101664058 /* SdifMatrixType.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifMatrixType.h; path = ../sdif/SdifMatrixType.h; sourceTree = SOURCE_ROOT; };
+		F70D0C0F0496241101664058 /* SdifNameValue.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifNameValue.c; path = ../sdif/SdifNameValue.c; sourceTree = SOURCE_ROOT; };
+		F70D0C110496241101664058 /* SdifPreTypes.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifPreTypes.c; path = ../sdif/SdifPreTypes.c; sourceTree = SOURCE_ROOT; };
+		F70D0C130496241101664058 /* SdifPrint.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifPrint.c; path = ../sdif/SdifPrint.c; sourceTree = SOURCE_ROOT; };
+		F70D0C150496241101664058 /* SdifRWLowLevel.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifRWLowLevel.c; path = ../sdif/SdifRWLowLevel.c; sourceTree = SOURCE_ROOT; };
+		F70D0C170496241101664058 /* SdifSelect.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifSelect.c; path = ../sdif/SdifSelect.c; sourceTree = SOURCE_ROOT; };
+		F70D0C180496241101664058 /* SdifSelect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifSelect.h; path = ../sdif/SdifSelect.h; sourceTree = SOURCE_ROOT; };
+		F70D0C190496241101664058 /* SdifSignatureTab.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifSignatureTab.c; path = ../sdif/SdifSignatureTab.c; sourceTree = SOURCE_ROOT; };
+		F70D0C1B0496241101664058 /* SdifStreamID.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifStreamID.c; path = ../sdif/SdifStreamID.c; sourceTree = SOURCE_ROOT; };
+		F70D0C1C0496241101664058 /* SdifStreamID.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifStreamID.h; path = ../sdif/SdifStreamID.h; sourceTree = SOURCE_ROOT; };
+		F70D0C1D0496241101664058 /* SdifString.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifString.c; path = ../sdif/SdifString.c; sourceTree = SOURCE_ROOT; };
+		F70D0C1F0496241101664058 /* SdifTest.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifTest.c; path = ../sdif/SdifTest.c; sourceTree = SOURCE_ROOT; };
+		F70D0C200496241101664058 /* SdifTest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = SdifTest.h; path = ../sdif/SdifTest.h; sourceTree = SOURCE_ROOT; };
+		F70D0C210496241101664058 /* SdifTextConv.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifTextConv.c; path = ../sdif/SdifTextConv.c; sourceTree = SOURCE_ROOT; };
+		F70D0C230496241101664058 /* SdifTimePosition.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = SdifTimePosition.c; path = ../sdif/SdifTimePosition.c; sourceTree = SOURCE_ROOT; };
+		F70D0C250496241101664058 /* sdiftypes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sdiftypes.h; path = ../sdif/sdiftypes.h; sourceTree = SOURCE_ROOT; };
+		F70D0C760496243D01664058 /* sdif_version.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sdif_version.h; path = ../include/sdif_version.h; sourceTree = SOURCE_ROOT; };
+		F70D0C770496243D01664058 /* sdif.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sdif.h; path = ../include/sdif.h; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F4A410A6079BCB8E00ADEFEF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0F5C28A5047E732E006640BC = {
+			isa = PBXGroup;
+			children = (
+				914B2AA518BB4588002CDCD8 /* examples */,
+				0F5C28AB047E7385006640BC /* Sources */,
+				0F5C28AD047E73A1006640BC /* Resources */,
+				0F5C28AE047E73B1006640BC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0F5C28AB047E7385006640BC /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				F70D0BDE0496241101664058 /* config.h */,
+				F70D0BE00496241101664058 /* host_architecture.h */,
+				F70D0BE50496241101664058 /* SdifCheck.c */,
+				F70D0BE70496241101664058 /* SdifConvToText.c */,
+				F70D0BE90496241101664058 /* SdifErrMess.c */,
+				F70D0BEA0496241101664058 /* SdifErrMess.h */,
+				F70D0BED0496241101664058 /* SdifFGet.c */,
+				F70D0BEE0496241101664058 /* SdifFGet.h */,
+				F70D0BEF0496241101664058 /* SdifFile.c */,
+				F70D0BF00496241101664058 /* SdifFile.h */,
+				F70D0BF10496241101664058 /* SdifFPrint.c */,
+				F70D0BF30496241101664058 /* SdifFPut.c */,
+				F70D0BF40496241101664058 /* SdifFPut.h */,
+				F70D0BF50496241101664058 /* SdifFrame.c */,
+				F70D0BF60496241101664058 /* SdifFrame.h */,
+				F70D0BF70496241101664058 /* SdifFrameType.c */,
+				F70D0BF80496241101664058 /* SdifFrameType.h */,
+				F70D0BF90496241101664058 /* SdifFRead.c */,
+				F70D0BFA0496241101664058 /* SdifFRead.h */,
+				F70D0BFB0496241101664058 /* SdifFScan.c */,
+				F70D0BFC0496241101664058 /* SdifFScan.h */,
+				F70D0BFD0496241101664058 /* SdifFWrite.c */,
+				F70D0BFE0496241101664058 /* SdifFWrite.h */,
+				F70D0BFF0496241101664058 /* SdifGlobals.c */,
+				F70D0C000496241101664058 /* SdifGlobals.h */,
+				F70D0C010496241101664058 /* SdifHard_OS.c */,
+				F70D0C020496241101664058 /* SdifHard_OS.h */,
+				F70D0C030496241101664058 /* SdifHash.c */,
+				F70D0C040496241101664058 /* SdifHash.h */,
+				F70D0C050496241101664058 /* SdifHighLevel.c */,
+				F70D0C060496241101664058 /* SdifHighLevel.h */,
+				F70D0C070496241101664058 /* SdifList.c */,
+				F70D0C080496241101664058 /* SdifList.h */,
+				F70D0C090496241101664058 /* SdifMatrix.c */,
+				F70D0C0A0496241101664058 /* SdifMatrix.h */,
+				F70D0C0B0496241101664058 /* SdifMatrixType.c */,
+				F70D0C0C0496241101664058 /* SdifMatrixType.h */,
+				F70D0C0F0496241101664058 /* SdifNameValue.c */,
+				F70D0C110496241101664058 /* SdifPreTypes.c */,
+				F70D0C130496241101664058 /* SdifPrint.c */,
+				6C639A6E08460E9100D1DBE2 /* SdifRWLowLevel.h */,
+				F70D0C150496241101664058 /* SdifRWLowLevel.c */,
+				F70D0C170496241101664058 /* SdifSelect.c */,
+				F70D0C180496241101664058 /* SdifSelect.h */,
+				F70D0C190496241101664058 /* SdifSignatureTab.c */,
+				F70D0C1B0496241101664058 /* SdifStreamID.c */,
+				F70D0C1C0496241101664058 /* SdifStreamID.h */,
+				F70D0C1D0496241101664058 /* SdifString.c */,
+				F70D0C1F0496241101664058 /* SdifTest.c */,
+				F70D0C200496241101664058 /* SdifTest.h */,
+				F70D0C210496241101664058 /* SdifTextConv.c */,
+				F70D0C230496241101664058 /* SdifTimePosition.c */,
+				F70D0C250496241101664058 /* sdiftypes.h */,
+				0F5C2947047E7471006640BC /* include */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		0F5C28AD047E73A1006640BC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6C8EEA15084602CE00972C15 /* Info.plist */,
+				0F5C2958047E760E006640BC /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		0F5C28AE047E73B1006640BC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F4A410A7079BCB8E00ADEFEF /* libsdif.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0F5C2947047E7471006640BC /* include */ = {
+			isa = PBXGroup;
+			children = (
+				F70D0C760496243D01664058 /* sdif_version.h */,
+				F70D0C770496243D01664058 /* sdif.h */,
+			);
+			name = include;
+			path = ../include;
+			sourceTree = SOURCE_ROOT;
+		};
+		914B2AA518BB4588002CDCD8 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				914B2AA618BB4588002CDCD8 /* list-nvt.c */,
+				914B2AA718BB4588002CDCD8 /* list-types.c */,
+			);
+			name = examples;
+			path = ../examples;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		F4A4105E079BCB8E00ADEFEF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4A4105F079BCB8E00ADEFEF /* config.h in Headers */,
+				F4A41060079BCB8E00ADEFEF /* host_architecture.h in Headers */,
+				F4A41063079BCB8E00ADEFEF /* SdifErrMess.h in Headers */,
+				F4A41065079BCB8E00ADEFEF /* SdifFGet.h in Headers */,
+				F4A41066079BCB8E00ADEFEF /* SdifFile.h in Headers */,
+				F4A41068079BCB8E00ADEFEF /* SdifFPut.h in Headers */,
+				F4A41069079BCB8E00ADEFEF /* SdifFrame.h in Headers */,
+				F4A4106A079BCB8E00ADEFEF /* SdifFrameType.h in Headers */,
+				F4A4106B079BCB8E00ADEFEF /* SdifFRead.h in Headers */,
+				F4A4106C079BCB8E00ADEFEF /* SdifFScan.h in Headers */,
+				F4A4106D079BCB8E00ADEFEF /* SdifFWrite.h in Headers */,
+				F4A4106E079BCB8E00ADEFEF /* SdifGlobals.h in Headers */,
+				F4A4106F079BCB8E00ADEFEF /* SdifHard_OS.h in Headers */,
+				F4A41070079BCB8E00ADEFEF /* SdifHash.h in Headers */,
+				F4A41071079BCB8E00ADEFEF /* SdifHighLevel.h in Headers */,
+				F4A41072079BCB8E00ADEFEF /* SdifList.h in Headers */,
+				F4A41073079BCB8E00ADEFEF /* SdifMatrix.h in Headers */,
+				F4A41074079BCB8E00ADEFEF /* SdifMatrixType.h in Headers */,
+				F4A4107A079BCB8E00ADEFEF /* SdifSelect.h in Headers */,
+				F4A4107C079BCB8E00ADEFEF /* SdifStreamID.h in Headers */,
+				F4A4107E079BCB8E00ADEFEF /* SdifTest.h in Headers */,
+				F4A41081079BCB8E00ADEFEF /* sdiftypes.h in Headers */,
+				F4A41083079BCB8E00ADEFEF /* sdif_version.h in Headers */,
+				F4A41084079BCB8E00ADEFEF /* sdif.h in Headers */,
+				6C639A7008460E9100D1DBE2 /* SdifRWLowLevel.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F4A4105D079BCB8E00ADEFEF /* SDIF lib static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 21AFA3AA0907D5740018539F /* Build configuration list for PBXNativeTarget "SDIF lib static" */;
+			buildPhases = (
+				F4A4105E079BCB8E00ADEFEF /* Headers */,
+				F4A41085079BCB8E00ADEFEF /* Sources */,
+				F4A410A6079BCB8E00ADEFEF /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SDIF lib static";
+			productName = "SDIF lib static";
+			productReference = F4A410A7079BCB8E00ADEFEF /* libsdif.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0F5C28A9047E732E006640BC /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 21AFA3B60907D5740018539F /* Build configuration list for PBXProject "SDIF" */;
+			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 0F5C28A5047E732E006640BC;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F4A4105D079BCB8E00ADEFEF /* SDIF lib static */,
+				F446F771071AF3E800117647 /* all */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F4A41085079BCB8E00ADEFEF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4A41086079BCB8E00ADEFEF /* SdifCheck.c in Sources */,
+				F4A41087079BCB8E00ADEFEF /* SdifConvToText.c in Sources */,
+				F4A41088079BCB8E00ADEFEF /* SdifErrMess.c in Sources */,
+				F4A4108A079BCB8E00ADEFEF /* SdifFGet.c in Sources */,
+				F4A4108B079BCB8E00ADEFEF /* SdifFile.c in Sources */,
+				F4A4108C079BCB8E00ADEFEF /* SdifFPrint.c in Sources */,
+				F4A4108D079BCB8E00ADEFEF /* SdifFPut.c in Sources */,
+				F4A4108E079BCB8E00ADEFEF /* SdifFrame.c in Sources */,
+				F4A4108F079BCB8E00ADEFEF /* SdifFrameType.c in Sources */,
+				F4A41090079BCB8E00ADEFEF /* SdifFRead.c in Sources */,
+				F4A41091079BCB8E00ADEFEF /* SdifFScan.c in Sources */,
+				F4A41092079BCB8E00ADEFEF /* SdifFWrite.c in Sources */,
+				F4A41093079BCB8E00ADEFEF /* SdifGlobals.c in Sources */,
+				F4A41094079BCB8E00ADEFEF /* SdifHard_OS.c in Sources */,
+				F4A41095079BCB8E00ADEFEF /* SdifHash.c in Sources */,
+				F4A41096079BCB8E00ADEFEF /* SdifHighLevel.c in Sources */,
+				F4A41097079BCB8E00ADEFEF /* SdifList.c in Sources */,
+				F4A41098079BCB8E00ADEFEF /* SdifMatrix.c in Sources */,
+				F4A41099079BCB8E00ADEFEF /* SdifMatrixType.c in Sources */,
+				F4A4109B079BCB8E00ADEFEF /* SdifNameValue.c in Sources */,
+				F4A4109C079BCB8E00ADEFEF /* SdifPreTypes.c in Sources */,
+				F4A4109D079BCB8E00ADEFEF /* SdifPrint.c in Sources */,
+				F4A4109E079BCB8E00ADEFEF /* SdifRWLowLevel.c in Sources */,
+				F4A4109F079BCB8E00ADEFEF /* SdifSelect.c in Sources */,
+				F4A410A0079BCB8E00ADEFEF /* SdifSignatureTab.c in Sources */,
+				F4A410A1079BCB8E00ADEFEF /* SdifStreamID.c in Sources */,
+				F4A410A2079BCB8E00ADEFEF /* SdifString.c in Sources */,
+				F4A410A3079BCB8E00ADEFEF /* SdifTest.c in Sources */,
+				F4A410A4079BCB8E00ADEFEF /* SdifTextConv.c in Sources */,
+				F4A410A5079BCB8E00ADEFEF /* SdifTimePosition.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F4A410B2079BCC7A00ADEFEF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F4A4105D079BCB8E00ADEFEF /* SDIF lib static */;
+			targetProxy = F4A410B1079BCC7A00ADEFEF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		0F5C2958047E760E006640BC /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0F5C2959047E760E006640BC /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		21AFA3AB0907D5740018539F /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 3.9.2;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = sdif;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		21AFA3AC0907D5740018539F /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				COPY_PHASE_STRIP = YES;
+				CURRENT_PROJECT_VERSION = 3.9.2;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = sdif;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		21AFA3AD0907D5740018539F /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				INSTALL_PATH = /usr/local/lib;
+				LIBRARY_STYLE = STATIC;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Carbon,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = sdif;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+		21AFA3B30907D5740018539F /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 3.9.2;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = all;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		21AFA3B40907D5740018539F /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				CURRENT_PROJECT_VERSION = 3.9.2;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = all;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		21AFA3B50907D5740018539F /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = all;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+			};
+			name = Default;
+		};
+		21AFA3B70907D5740018539F /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				CURRENT_PROJECT_VERSION = "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_RELEASE)";
+				FRAMEWORK_VERSION = "$(VERSION_MAJOR).$(VERSION_MINOR)";
+				GCC_VERSION = 4.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				VERSION_MAJOR = 3;
+				VERSION_MINOR = 11;
+				VERSION_RELEASE = 4;
+			};
+			name = Development;
+		};
+		21AFA3B80907D5740018539F /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				CURRENT_PROJECT_VERSION = "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_RELEASE)";
+				FRAMEWORK_VERSION = "$(VERSION_MAJOR).$(VERSION_MINOR)";
+				GCC_VERSION = 4.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				VERSION_MAJOR = 3;
+				VERSION_MINOR = 11;
+				VERSION_RELEASE = 4;
+			};
+			name = Deployment;
+		};
+		21AFA3B90907D5740018539F /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_64_BIT_PRE_XCODE_3_1 = "x86_64 i386 ppc";
+				CURRENT_PROJECT_VERSION = "$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_RELEASE)";
+				FRAMEWORK_VERSION = "$(VERSION_MAJOR).$(VERSION_MINOR)";
+				GCC_VERSION = 4.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				VERSION_MAJOR = 3;
+				VERSION_MINOR = 11;
+				VERSION_RELEASE = 4;
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		21AFA3AA0907D5740018539F /* Build configuration list for PBXNativeTarget "SDIF lib static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21AFA3AB0907D5740018539F /* Development */,
+				21AFA3AC0907D5740018539F /* Deployment */,
+				21AFA3AD0907D5740018539F /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		21AFA3B20907D5740018539F /* Build configuration list for PBXAggregateTarget "all" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21AFA3B30907D5740018539F /* Development */,
+				21AFA3B40907D5740018539F /* Deployment */,
+				21AFA3B50907D5740018539F /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		21AFA3B60907D5740018539F /* Build configuration list for PBXProject "SDIF" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				21AFA3B70907D5740018539F /* Development */,
+				21AFA3B80907D5740018539F /* Deployment */,
+				21AFA3B90907D5740018539F /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0F5C28A9047E732E006640BC /* Project object */;
+}

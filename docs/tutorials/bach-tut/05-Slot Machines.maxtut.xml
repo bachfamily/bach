@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 5: Slot Machines">
+
+<openfile name="Slot Machines" patch="Slot Machines (a).maxpat"/>
+
+<header>bach Tutorial 5: Slot Machines</header>
+
+<subhead>Discovering the magical world of slots</subhead>
+<body>One of the strong suit of the bach library is the concept of slot. To understand it, we have to think about a classical score, having pitches, durations, dynamics, or a proportional scores, having onsets, pitches and dynamics. This can be enough in some cases. But it won't be sufficient in many other situations. Dealing with computer-assisted composition might also mean having the need to characterize notes more specifically; either because you want to assign a playing style, or because you need to attach some lyrics, or because you have built a sequencer with bach and now you need to handle amplitude envelopes or panning variations. This is just a tiny tiny part of what one can have in mind which goes beyond the classic note representation. And if you think about this, all sums up in having some more data attached to each note. That's it. Nothing more than this: slots are additional data assigned to each note. All the rest is understanding the right type of data, and to operate accordingly: this is what you will learn to do with this tutorial.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.roll">Display and edit a score in proportional notation</seealso>
+<seealso name="bach.tree">Display and edit lllls in a tree diagram</seealso>
+<seealso name="bach.keys">Route an llll according to specific keys</seealso>
+<seealso name="bach.slot2line">Convert a function-slot content into messages for <o>line~</o></seealso>
+<seealso name="bach.slot2curve">Convert a function-slot content into messages for <o>curve~</o></seealso>
+<seealso name="bach.filternull">Let through every non-null input</seealso>
+<seealso name="bach.m2matrixctrl">Format an llll matrix to be used with matrixctrl or matrix~</seealso>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+</seealsolist>
+
+</chapter>

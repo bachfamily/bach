@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 1: Hello World">
+
+<openfile name="Hello World" patch="Hello World (a).maxpat"/>
+
+<header>bach Tutorial 1: Hello World</header>
+
+<subhead>First steps with the bach nested lists (lllls)</subhead>
+<body>In this tutorial you'll move your first steps with the Lisp-like linked lists (lllls for short), which are the standard communication mechanism throughout all the bach environment</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.tree">Display and edit lllls in a tree diagram</seealso>
+<seealso name="bach.print">Print lllls in the Max window</seealso>
+<seealso name="bach.portal">Let lllls through</seealso>
+<seealso name="bach.reg">Store an llll</seealso>
+<seealso name="bach.length">Length of an llll</seealso>
+<seealso name="bach.depth">Depth of an llll</seealso>
+<seealso name="bach.nth">Return specific elements of an llll</seealso>
+<seealso name="bach.find">Find elements</seealso>
+<seealso name="bach.filternull">Let through every non-null input</seealso>
+<seealso name="bach.roll">Display and edit a score in proportional notation</seealso>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+</seealsolist>
+
+</chapter>

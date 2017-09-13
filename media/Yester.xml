@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN"
+"http://www.musicxml.org/dtds/partwise.dtd" >
+<score-partwise version="3.0">
+	<identification>
+		<encoding>
+			<software>bach for Max v0.7.9.6 beta</software>
+			<encoding-date>2016-12-01</encoding-date>
+		</encoding>
+	</identification>
+	<part-list>
+		<score-part id="P1">
+			<part-name></part-name>
+			<score-instrument id="P1-I1">
+				<instrument-name>Grand Piano</instrument-name>
+			</score-instrument>
+		</score-part>
+	</part-list>
+	<part id="P1">
+		<measure number="1">
+			<attributes>
+				<divisions>4</divisions>
+				<key>
+					<fifths>0</fifths>
+					<mode>major</mode>
+				</key>
+				<time>
+					<beats>4</beats>
+					<beat-type>4</beat-type>
+				</time>
+				<clef number="1">
+					<sign>G</sign>
+					<line>2</line>
+				</clef>
+			</attributes>
+			<direction>
+				<direction-type>
+					<metronome>
+						<beat-unit>quarter</beat-unit>
+						<per-minute>76</per-minute>
+					</metronome>
+				</direction-type>
+				<offset sound="yes">0</offset>
+				<sound tempo="76.000000" />
+			</direction>
+			<direction placement="below">
+				<direction-type>
+					<dynamics>
+						<mp />
+					</dynamics>
+				</direction-type>
+			</direction>
+			<note>
+				<pitch>
+					<step>E</step>
+					<alter>-1</alter>
+					<octave>4</octave>
+				</pitch>
+				<duration>2</duration>
+				<type>eighth</type>
+				<accidental>flat</accidental>
+				<notehead filled="yes">normal</notehead>
+				<beam number="1">begin</beam>
+				<notations>
+					<articulations>
+						<accent />
+					</articulations>
+					<ornaments />
+				</notations>
+				<lyric number="1">
+					<syllabic>begin</syllabic>
+					<text>yes</text>
+				</lyric>
+			</note>
+			<note>
+				<pitch>
+					<step>D</step>
+					<alter>-1</alter>
+					<octave>4</octave>
+				</pitch>
+				<duration>1</duration>
+				<type>16th</type>
+				<accidental>flat</accidental>
+				<notehead filled="yes">normal</notehead>
+				<beam number="1">continue</beam>
+				<beam number="2">begin</beam>
+				<notations>
+					<articulations />
+				</notations>
+				<lyric number="1">
+					<syllabic>middle</syllabic>
+					<text>ter</text>
+				</lyric>
+			</note>
+			<note>
+				<pitch>
+					<step>D</step>
+					<alter>-1</alter>
+					<octave>4</octave>
+				</pitch>
+				<duration>1</duration>
+				<tie type="start" />
+				<type>16th</type>
+				<notehead filled="yes">normal</notehead>
+				<beam number="1">end</beam>
+				<beam number="2">end</beam>
+				<notations>
+					<tied type="start" />
+					<articulations />
+				</notations>
+				<lyric number="1">
+					<syllabic>end</syllabic>
+					<text>day</text>
+				</lyric>
+			</note>
+			<note>
+				<pitch>
+					<step>D</step>
+					<alter>-1</alter>
+					<octave>4</octave>
+				</pitch>
+				<duration>8</duration>
+				<tie type="stop" />
+				<type>half</type>
+				<notehead filled="no">normal</notehead>
+				<notations>
+					<tied type="stop" />
+					<articulations />
+				</notations>
+			</note>
+			<note>
+				<rest />
+				<duration>4</duration>
+				<type>quarter</type>
+				<notations>
+					<ornaments />
+					<technical />
+					<articulations />
+				</notations>
+			</note>
+			<barline>
+				<bar-style>regular</bar-style>
+			</barline>
+		</measure>
+		<measure number="2">
+			<attributes>
+				<divisions>4</divisions>
+			</attributes>
+			<note>
+				<rest />
+				<duration>4</duration>
+				<type>quarter</type>
+				<notations>
+					<ornaments />
+					<technical />
+					<articulations />
+				</notations>
+			</note>
+			<note>
+				<pitch>
+					<step>F</step>
+					<alter>0</alter>
+					<octave>4</octave>
+				</pitch>
+				<duration>2</duration>
+				<type>eighth</type>
+				<notehead>x</notehead>
+				<beam number="1">begin</beam>
+				<notations>
+					<articulations />
+				</notations>
+				<lyric number="1">
+					<syllabic>single</syllabic>
+					<text>all</text>
+				</lyric>
+			</note>
+			<note>
+				<pitch>
+					<step>G</step>
+					<alter>0</alter>
+					<octave>4</octave>
+				</pitch>
+				<duration>2</duration>
+				<type>eighth</type>
+				<notehead filled="yes">normal</notehead>
+				<beam number="1">end</beam>
+				<notations>
+					<articulations />
+				</notations>
+				<lyric number="1">
+					<syllabic>single</syllabic>
+					<text>my</text>
+				</lyric>
+			</note>
+			<note>
+				<pitch>
+					<step>A</step>
+					<alter>0</alter>
+					<octave>4</octave>
+				</pitch>
+				<duration>1</duration>
+				<type>16th</type>
+				<notehead filled="yes">normal</notehead>
+				<beam number="1">begin</beam>
+				<beam number="2">forward hook</beam>
+				<notations>
+					<articulations />
+				</notations>
+				<lyric number="1">
+					<syllabic>begin</syllabic>
+					<text>trou</text>
+				</lyric>
+			</note>
+			<note>
+				<pitch>
+					<step>B</step>
+					<alter>-1</alter>
+					<octave>4</octave>
+				</pitch>
+				<duration>3</duration>
+				<type>eighth</type>
+				<dot />
+				<accidental>flat</accidental>
+				<notehead filled="yes">normal</notehead>
+				<beam number="1">end</beam>
+				<notations>
+					<articulations />
+				</notations>
+				<lyric number="1">
+					<syllabic>end</syllabic>
+					<text>bles</text>
+				</lyric>
+			</note>
+			<note>
+				<pitch>
+					<step>C</step>
+					<alter>0</alter>
+					<octave>5</octave>
+				</pitch>
+				<duration>2</duration>
+				<type>eighth</type>
+				<notehead filled="yes">normal</notehead>
+				<beam number="1">begin</beam>
+				<notations>
+					<articulations />
+					<ornaments />
+					<fermata>normal</fermata>
+				</notations>
+				<lyric number="1">
+					<syllabic>single</syllabic>
+					<text>seemed</text>
+				</lyric>
+			</note>
+			<note>
+				<pitch>
+					<step>D</step>
+					<alter>-1</alter>
+					<octave>5</octave>
+				</pitch>
+				<duration>2</duration>
+				<type>eighth</type>
+				<accidental>flat</accidental>
+				<notehead filled="yes">normal</notehead>
+				<beam number="1">end</beam>
+				<notations>
+					<articulations />
+				</notations>
+				<lyric number="1">
+					<syllabic>single</syllabic>
+					<text>so</text>
+				</lyric>
+			</note>
+			<barline>
+				<bar-style>regular</bar-style>
+			</barline>
+		</measure>
+	</part>
+</score-partwise>

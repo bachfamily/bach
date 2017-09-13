@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 6: The Gift Of Synthesis">
+
+<openfile name="The Gift Of Synthesis" patch="The Gift Of Synthesis (a).maxpat"/>
+
+<header>bach Tutorial 6: The Gift Of Synthesis</header>
+
+<subhead>Use playout data to synthesize sounds</subhead>
+<body>In this tutorial you'll learn how to build a simple synthesizers with bach.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+<seealso name="bach.ezmidiplay">Quick way to play MIDI</seealso>
+<seealso name="bach.unpacknote">Separate note parameters from playout syntax</seealso>
+<seealso name="bach.keys">Route an llll according to specific keys</seealso>
+<seealso name="bach.slot2curve">Convert a function-slot content into messages for <o>curve~</o></seealso>
+</seealsolist>
+
+</chapter>

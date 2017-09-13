@@ -1,0 +1,2 @@
+max definecommand B patcher inserttextobj bach.;
+max definecommandinstructions patcher B "bach object or abstraction";

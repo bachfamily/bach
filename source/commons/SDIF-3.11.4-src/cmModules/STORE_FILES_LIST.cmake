@@ -1,0 +1,15 @@
+# store the list of arguments
+# in variable DOCFILES completing them with full path
+
+
+MACRO (STORE_FILES_LIST STORE_VARIABLE INFILELIST )
+
+
+SET(${STORE_VARIABLE})
+FOREACH(FILE  ${INFILELIST} ${ARGN})
+GET_FILENAME_COMPONENT(store_files_list_full_file ${FILE} ABSOLUTE)
+LIST(APPEND ${STORE_VARIABLE} ${store_files_list_full_file})
+ENDFOREACH(FILE  ${INFILELIST} ${ARGN})
+
+
+ENDMACRO(STORE_FILES_LIST STORE_VARIABLE INFILELIST  )

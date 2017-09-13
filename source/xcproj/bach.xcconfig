@@ -1,0 +1,79 @@
+// Xcode target configuration settings for the Max 5 SDK
+// Used as the basis for Xcode projects to build Max externals.
+//
+// Changes to the settings in this file will be applied to all SDK examples
+// To change settings for only one of the examples, override the settings using
+// Xcode's target inspector.
+//
+// by Timothy Place
+// Copyright © 2008, Cycling '74
+
+
+// Name & Version
+//PRODUCT_NAME = $(PROJECT_NAME)
+PRODUCT_VERSION = 0.7.7
+ARCHS = i386 x86_64
+
+// Paths
+C74SUPPORT = $(SRCROOT)/../../../max-sdk-7.3.3/source/c74support
+HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
+FRAMEWORK_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
+
+// *** UNCOMMENT FOR MAX6 INSTALL
+
+//DSTROOT = ~/Documents/Max 7/Packages/bach
+//DSTROOT = /Applications/Max 6.1/packages/bach
+// (This next path is relative to DSTROOT)
+DSTROOT = $(SRCROOT)/../../
+INSTALL_PATH = /
+AA_INSTALL_PATH = /externals
+DG_INSTALL_PATH = /externals
+EXT_INSTALL_PATH = /extensions
+ZULU_INSTALL_PATH = /../zulu/externals
+
+
+// *** UNCOMMENT FOR MAX5 INSTALL
+//DSTROOT = /Applications/Max5/Cycling '74
+// '
+
+//AA_INSTALL_PATH = /bach/externals
+//DG_INSTALL_PATH = /bach/externals
+//EXT_INSTALL_PATH = /extensions
+
+
+// Special Files
+GCC_PREFIX_HEADER = $(C74SUPPORT)/max-includes/macho-prefix.pch
+INFOPLIST_FILE = $(SRCROOT)/Info.plist
+
+
+// Per architecture and deployment settings
+//SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
+
+// GCC_VERSION = 4.2
+// The above line can be specialized as follows provided you are using Xcode 3 or higher
+//	GCC_VERSION[arch=i386] = 4.0
+//	GCC_VERSION[arch=ppc] = 4.0
+
+MACOSX_DEVELOPMENT_TARGET = 10.7
+MACOSX_DEPLOYMENT_TARGET = 10.7
+
+CLANG_CXX_LANGUAGE_STANDARD = c++11
+//CLANG_CXX_LIBRARY = libstdc++
+CLANG_CXX_LIBRARY = libc++
+
+GCC_PREPROCESSOR_DEFINITIONS = "CONFIGURATION_$(CONFIGURATION)" "DENORM_WANT_FIX = 1" "BACH_MAX"
+
+// Static Configuration (don't change these)
+WRAPPER_EXTENSION = mxo;
+WARNING_CFLAGS = -Wmost -Wno-four-char-constants -Wno-unknown-pragmas
+DEPLOYMENT_LOCATION = YES
+GENERATE_PKGINFO_FILE = YES
+
+// Flags to enforce some build-time checks for the symbols used while not actually performing a hard link
+
+C74_SYM_LINKER_FLAGS = @$(C74SUPPORT)/max-includes/c74_linker_flags.txt
+OTHER_LDFLAGS = $(C74_SYM_LINKER_FLAGS) $(C74_SYM_LINKER_FLAGS)
+
+// hide all symbols by default
+// mark a function to be exported with the C74_EXPORT macro -- most likely this will only apply to the main() function
+OTHER_CFLAGS = -fvisibility=hidden

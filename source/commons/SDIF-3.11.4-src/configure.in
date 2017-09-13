@@ -1,0 +1,668 @@
+dnl -*-autoconf-*-  (Tell emacs it's an autoconf file!)
+dnl $Id: configure.in,v 1.83 2012/03/30 11:10:30 diemo Exp $
+dnl
+dnl configure.in		September 2000		Patrice Tisserand
+dnl
+dnl Source file for GNU autoconf, generates configure script.
+dnl
+dnl
+dnl This file is part of the IRCAM SDIF Library (http://www.ircam.fr/sdif)
+dnl
+dnl Copyright (C) 1998, 1999, 2000 by IRCAM - Centre Pompidou, Paris, France.
+dnl 
+dnl This program is free software; you can redistribute it and/or
+dnl modify it under the terms of the GNU Lesser General Public License
+dnl as published by the Free Software Foundation; either version 2
+dnl of the License, or (at your option) any later version.
+dnl 
+dnl See file COPYING for further informations on licensing terms.
+dnl 
+dnl This program is distributed in the hope that it will be useful,
+dnl but WITHOUT ANY WARRANTY; without even the implied warranty of
+dnl MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+dnl GNU Lesser General Public License for more details.
+dnl 
+dnl You should have received a copy of the GNU Lesser General Public License
+dnl along with this program; if not, write to the Free Software
+dnl Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+dnl
+dnl For any information regarding this and other IRCAM software, please
+dnl send email to:  sdif@ircam.fr
+
+
+dnl $Log: configure.in,v $
+dnl Revision 1.83  2012/03/30 11:10:30  diemo
+dnl fix
+dnl
+dnl configure: error: conditional "am__fastdepCXX" was never defined.
+dnl Usually this means the macro was only invoked conditionally.
+dnl
+dnl this macro must not be in a conditional, according to
+dnl http://osdir.com/ml/libtool-gnu/2010-05/msg00041.html
+dnl
+dnl Revision 1.82  2011/12/19 17:48:10  roebel
+dnl Version 3.11.4
+dnl
+dnl Revision 1.81  2011/06/11 23:23:10  roebel
+dnl Fixed a number of issues with the conditional include of stdint.h and sys/types.h in instaled include file
+dnl sdif.h.
+dnl Correctly use the types provided by these include files for definition of sdif types.
+dnl
+dnl Revision 1.80  2011/04/15 23:23:43  roebel
+dnl fixed use of stdint.h to be persistent in sdif.h even after
+dnl installation.
+dnl Added a complete configuration search to determine
+dnl SdiffPosT type such that it becomes a 64bit type.
+dnl
+dnl Revision 1.79  2011/04/12 20:17:33  roebel
+dnl Fixed large file support to properly work on linux as well.
+dnl
+dnl Revision 1.78  2011/04/06 17:08:07  diemo
+dnl v3.11.3
+dnl
+dnl Revision 1.77  2009/08/10 17:21:05  diemo
+dnl version 3.11.2
+dnl
+dnl Revision 1.76  2009/01/07 16:33:20  diemo
+dnl bump up release to 3.11.1
+dnl
+dnl Revision 1.75  2008/12/18 11:53:16  diemo
+dnl Changed minor release number to 3.11 because of API change by new
+dnl access methods to struct elements of type definition.
+dnl
+dnl Revision 1.74  2008/09/18 15:19:50  diemo
+dnl include current updated SDIF.xcodeproj, generated sdif_version.h for mac building out of the box
+dnl TO MAKE A FILE RELEASE ON SOURCEFORGE, DO:
+dnl
+dnl    make -k pub
+dnl
+dnl Revision 1.73  2008/05/22 11:57:32  roebel
+dnl Added missing SDIF_API to function declaration in sdif.h.
+dnl
+dnl Revision 1.72  2007/11/26 18:54:29  roebel
+dnl Updated version to 3.10.7.
+dnl
+dnl Revision 1.71  2006/12/14 20:01:31  roebel
+dnl provide machine/endian.h substitution.
+dnl
+dnl Revision 1.70  2006/12/10 17:18:28  roebel
+dnl Added cmake support
+dnl
+dnl Revision 1.69  2006/12/08 18:40:15  roebel
+dnl Version 3.10.6.
+dnl
+dnl Revision 1.68  2006/05/05 15:34:45  schwarz
+dnl version 3.10.5
+dnl
+dnl Revision 1.67  2006/03/22 22:48:46  roebel
+dnl Version 3.10.4: x86_64
+dnl
+dnl Revision 1.66  2006/02/04 14:47:29  roebel
+dnl updated version
+dnl
+dnl Revision 1.65  2005/06/10 12:48:10  roebel
+dnl Updated for new version.
+dnl
+dnl Revision 1.64  2005/05/24 09:38:39  roebel
+dnl
+dnl added -Wall to default compiler options.
+dnl
+dnl Revision 1.63  2005/05/23 17:52:52  schwarz
+dnl Unified error handling:
+dnl - SdifErrorEnum (global errors) integrated into SdifErrorTagET (file errors)
+dnl - no more SdifError.[ch], everything done by SdifErrMess.[ch]
+dnl
+dnl Revision 1.62  2005/05/20 21:16:17  roebel
+dnl Fix for c++ compilation. Unfinished! But cleaner as before
+dnl and at least compiles.
+dnl
+dnl Revision 1.61  2005/05/13 15:36:10  schwarz
+dnl version 3.9.3
+dnl
+dnl Revision 1.60  2005/04/25 19:41:06  roebel
+dnl Extension of compiler flag variables CFLAGS and CXXFLAGS did not work properly because autoconf sets default values that may contradict the values we select.
+dnl Therefore, we now store the externally set CFLAGS/CXXFLAGS to later use them as default values.
+dnl
+dnl Revision 1.59  2005/04/07 17:17:58  schwarz
+dnl let's call this version 3.9.2, with the redundant header files removed
+dnl and Niels' -time extension to sdifextract
+dnl
+dnl Revision 1.58  2005/01/31 16:29:01  roebel
+dnl respect external CFLAGS/CXXFLAGS variable
+dnl
+dnl Revision 1.57  2004/10/07 14:53:27  roebel
+dnl Version 3.9.1
+dnl
+dnl Revision 1.56  2004/09/09 18:04:59  schwarz
+dnl 3.9.0
+dnl
+dnl Revision 1.55  2004/09/06 18:24:57  roebel
+dnl Version 3.8.7: bug fixes for non linux systems.
+dnl
+dnl Revision 1.54  2004/08/31 13:58:46  roebel
+dnl Fixed typo in PROGLIST for tools: EXEXT instead of EXEEXT.
+dnl
+dnl Revision 1.53  2004/07/26 10:30:22  roebel
+dnl Version 3.8.6:
+dnl thread safe sdif: finished pthread support in SDIF by means of adding pthread detection to configure.
+dnl
+dnl Revision 1.52  2004/07/22 14:47:54  bogaards
+dnl removed many global variables, moved some into the thread-safe SdifGlobals structure, added HAVE_PTHREAD define, reorganized the code for selection, made some arguments const, new version 3.8.6
+dnl
+dnl Revision 1.51  2004/07/13 15:10:44  roebel
+dnl Version 3.8.5:
+dnl Fixed SdiffReadSignature to not override the btesread variable
+dnl but to add the number of  bytes read.
+dnl
+dnl Revision 1.50  2004/06/17 18:35:53  roebel
+dnl sdifextract fixed.
+dnl
+dnl Revision 1.49  2004/06/03 11:39:03  schwarz
+dnl Enable profiling compilation with --enable-profile.
+dnl 40% faster library is version 3.8.3
+dnl (array swapping and binary signature reading).
+dnl
+dnl Revision 1.48  2004/05/03 18:10:04  schwarz
+dnl version 3.8.2 bugfix version:
+dnl Fixed bugs in padding calculation for ascii chunks:
+dnl 1. DON'T PAD FRAMES!
+dnl 2. SdifFReadMatrixHeader already accounts for read signature
+dnl Now, calculating padding from ftell is redundant, but we leave it in,
+dnl with a warning, until everyone's code is tested.
+dnl
+dnl Revision 1.47  2004/02/10 14:58:19  roebel
+dnl Version 3.8.1 gets rid of annoying warning (remark) when using internal types
+dnl
+dnl Revision 1.46  2004/01/29 13:35:26  schwarz
+dnl passing to release,
+dnl add xcode to dist
+dnl
+dnl Revision 1.45  2003/12/15 13:17:28  schwarz
+dnl let's call this version beta4
+dnl
+dnl Revision 1.44  2003/11/07 21:47:16  roebel
+dnl removed XpGuiCalls.h and replaced preinclude.h  by local files
+dnl
+dnl Revision 1.43  2003/07/07 10:27:00  roebel
+dnl Added support for eInt1 and eUInt1 data types
+dnl
+dnl Revision 1.42  2003/06/13 10:05:40  schwarz
+dnl Added latest projectbuilder mac os X project to cvs and dist.
+dnl Library version is 3.8.0-beta until we decide to announce the official release,
+dnl to avoid confusion.
+dnl
+dnl Revision 1.41  2003/05/30 17:43:35  schwarz
+dnl Bumped up version to 3.8.0 because of added API functions for
+dnl type definition access.
+dnl
+dnl Revision 1.40  2003/05/24 00:29:38  roebel
+dnl Version 3.7.5
+dnl
+dnl Revision 1.39  2003/04/18 16:50:07  schwarz
+dnl Made sdif.h parseable by swig -> update version.
+dnl
+dnl Revision 1.38  2003/04/09 12:28:28  roebel
+dnl Changed default configuration back to enable-shared but added
+dnl README.MacOSX to announce problems with shared libraries to users.
+dnl
+dnl Revision 1.37  2003/04/06 16:30:17  roebel
+dnl Disable shared libraries by default due to problmes on Mac OSX
+dnl
+dnl Revision 1.36  2003/03/18 15:19:44  roebel
+dnl Improved docu.
+dnl
+dnl Revision 1.35  2003/03/18 14:58:08  roebel
+dnl Use libtool to built conveniance c++-library.
+dnl
+dnl Revision 1.34  2003/03/07 18:17:24  roebel
+dnl Disable shared libraries by default for MacOSX.
+dnl
+dnl Revision 1.33  2003/03/07 18:14:09  roebel
+dnl Changed back to clearer doc compilation conditional
+dnl
+dnl Revision 1.32  2003/03/07 18:12:42  roebel
+dnl conditional change of AC_OUTPUT removed it does not work -- why?
+dnl
+dnl Revision 1.31  2003/03/07 17:55:01  roebel
+dnl Added switch for doc compilation.
+dnl
+dnl Revision 1.30  2003/03/07 17:43:21  roebel
+dnl Version 3.7.3.
+dnl
+dnl Revision 1.29  2003/03/07 17:30:59  roebel
+dnl Updated handling of --enable-cpp to use own directory.
+dnl If --enable-cpp is given there are both versions compiled
+dnl but only the c version is installed. the c++ version is only for Easdif.
+dnl
+dnl Revision 1.28  2003/03/06 15:02:28  tisseran
+dnl Fix C++ compiler use when compiling in C++
+dnl
+dnl Revision 1.27  2003/03/03 09:53:17  roebel
+dnl Removed duplicate macro AC_SUBST.
+dnl Added c++ compiler check in case of --enable-c++.
+dnl
+dnl Revision 1.26  2002/12/20 11:59:54  schwarz
+dnl Publish version 3.7.2
+dnl
+dnl Revision 1.25  2002/11/27 17:59:19  roebel
+dnl Added support for --enable-ftruncate option.
+dnl
+dnl Revision 1.24  2002/11/08 15:58:25  livshin
+dnl Added support for exe extensions on cygwin
+dnl
+dnl Revision 1.23  2002/10/24 13:51:09  tisseran
+dnl First version of SDIF library using libtool.
+dnl It hasn't been tested since I can't compile at home.
+dnl So I need to commit, for testing after logging on an ircam host....
+dnl
+dnl Revision 1.22  2002/10/11 10:20:59  tisseran
+dnl Add spec fiel to create RPM.
+dnl Change RELEASE number.
+dnl TODO: Check the name of source archive (SDIF-3.7.1 or SDIF-3.7.1-src or sdif-3.7.1 ...)
+dnl and change sdif.spec.in if necessary
+dnl
+dnl Revision 1.21  2002/10/10 14:31:28  roebel
+dnl Removed remainings of TESTLIB
+dnl
+dnl Revision 1.20  2002/10/10 10:40:57  roebel
+dnl Removed configure-variable @TESTLIB@ which can be derived from @SELLIB@.
+dnl
+dnl Revision 1.19  2002/10/07 12:24:14  roebel
+dnl Fixed dependence with respect to include files in /u/formes/share/include for non ircam configuration
+dnl
+dnl Revision 1.18  2002/09/20 14:37:47  schwarz
+dnl Bumped up version to 3.7.0 (reintroduced release number for small changes
+dnl that don't change the API)
+dnl
+dnl Revision 1.17  2002/08/30 17:28:34  schwarz
+dnl Added enable-option to compile with g++ to use the lib with easdif.
+dnl
+dnl Revision 1.16  2002/08/29 16:07:09  tisseran
+dnl Add support of pkg-config for SDIF library.
+dnl After installation, now you can use:
+dnl pkg-config --cflags --libs sdif
+dnl to have correct compilation flags
+dnl
+dnl Revision 1.15  2002/08/05 14:31:29  roebel
+dnl Version 3.6
+dnl
+dnl Revision 1.14  2001/12/05 13:32:38  tisseran
+dnl SDIF 3.5:
+dnl Fix bug in preincluded,h and UniversalEnvVar.h
+dnl Note: These files are in formesutils cvs project. For the distribution, files are copied
+dnl from $FORMESROOT/include directory
+dnl
+dnl Revision 1.13  2001/07/12 14:11:46  roebel
+dnl Added include file holding library version defines to the distribution.
+dnl
+dnl Revision 1.12  2001/05/02 09:34:37  tisseran
+dnl Change License from GNU Public License to GNU Lesser Public License.
+dnl
+dnl Revision 1.11  2001/04/20 14:04:04  tisseran
+dnl SDIF VERSION 3.3
+dnl Create function: SdifTakeCodedPredefinedTypesfromString (SdifFile.[hc])
+dnl This function is use to read types from the define string SDIFTYPES_STRING
+dnl This string is generated by perl script xmltostyp.pl
+dnl Types definition are in the sdiftypes.xml file.
+dnl Change in preincluded.h to NOT INCLUDE host_architecture.h when using configure
+dnl script.
+dnl project_preinclude.h and configure.in have been changed according to new version number.
+dnl
+dnl Revision 1.10  2000/12/20 15:57:11  roebel
+dnl Changed Version to 3.2.2. Added missing test files to distribution
+dnl
+dnl Revision 1.9  2000/11/21 16:34:45  roebel
+dnl New SdifSignatureConst builds integer signature according to
+dnl endianess of machine. Multicharacter constants are no longer
+dnl supported by the library. Cleaned up sdif.h/SdifGlobals.h a bit.
+dnl Test for Multicharacter conversion is removed from configure.in.
+dnl
+dnl Revision 1.8  2000/11/21 14:48:30  schwarz
+dnl Nicer output for debug feature.
+dnl
+dnl Revision 1.7  2000/11/21 09:04:27  roebel
+dnl Changed Makefile.am  in tools and sdif to properly use
+dnl include files in $(topsrcdir)/sdif
+dnl
+dnl Revision 1.6  2000/10/30 20:05:12  roebel
+dnl Changed debug option switch from -g to -g2
+dnl
+dnl Revision 1.5  2000/10/30  19:13:59  roebel
+dnl Removed -g and added -O3 flags for configuration without --enable-debug
+dnl
+dnl Revision 1.4  2000/10/30  19:05:43  roebel
+dnl Added support for relative path compilation (VPATH)
+dnl Added support for debugging feature in configure.in and Makefiles
+dnl
+dnl Revision 1.3  2000/10/30  16:58:15  roebel
+dnl removing sdif/sdif.h
+dnl
+dnl Revision 1.2  2000/10/27  20:02:45  roebel
+dnl autoconf merged back to main trunk
+dnl
+dnl Revision 1.1.2.3  2000/10/26  17:27:17  schwarz
+dnl Added header with copyright and links to all Makefile.am and configure.in.
+dnl
+
+
+dnl To check if directory is present
+AC_INIT(sdif/SdifGlobals.h)
+
+dnl ############################################################
+dnl PACKAGE NAME AND VERSION
+AC_MSG_RESULT(PACKAGE NAME AND VERSION)
+
+PACKAGE=SDIF
+
+SDIF_VERSION_MAJOR=3
+SDIF_VERSION_MINOR=11
+SDIF_VERSION_RELEASE=4
+
+VERSION=$SDIF_VERSION_MAJOR.$SDIF_VERSION_MINOR.$SDIF_VERSION_RELEASE
+
+# prevent the use of the autoconf default values 
+# we impose our own handling
+EXTERNAL_CFLAGS=$CFLAGS
+
+
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+AC_SUBST(SDIF_VERSION_MINOR)
+AC_SUBST(SDIF_VERSION_MAJOR)
+AC_SUBST(SDIF_VERSION_RELEASE)
+AM_INIT_AUTOMAKE($PACKAGE,$VERSION)
+
+AM_CONFIG_HEADER(sdif/config.h)
+
+dnl ############################################################
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_RANLIB
+
+dnl you better disable shared libraries  due to problems with 
+dnl libtool when building under Mac OSX
+AC_PROG_LIBTOOL
+
+dnl Check for librairies
+
+dnl Check for headers
+AC_MSG_RESULT(CHECK FOR HEADERS)
+AC_HEADER_STDC
+AC_CHECK_HEADERS( sys/types.h,[HAVE_SYS_TYPES_H=1])
+AC_CHECK_HEADERS( sys/stat.h )
+AC_CHECK_HEADERS(errno.h)
+AC_CHECK_HEADERS(unistd.h)
+AC_CHECK_HEADERS(stdint.h,[HAVE_STDINT_H=1])
+AC_CHECK_FUNCS(getenv)
+
+AC_SUBST(HAVE_STDINT_H)
+AC_SUBST(HAVE_SYS_TYPES_H)
+
+dnl ############################################################
+dnl documentation wanted
+AC_ARG_ENABLE(doc-compilation, [--enable-doc-compilation            compile documentation (only for maintainer releases)], want_doc_compilation=yes,want_doc_compilation=no)
+AM_CONDITIONAL(COND_COMPILE_DOC, test "$want_doc_compilation" = "yes")
+
+dnl ############################################################
+dnl Particular compiler characteristics
+AC_MSG_RESULT(PARTICULAR COMPILER CHARACTERISTICS)
+dnl Check for BigEndian (WORDS_BIGENDIAN)
+AC_C_BIGENDIAN 
+dnl Check for Long 64 bits
+AC_CHECK_SIZEOF(long)
+dnl Check for Long 64 bits
+AC_CHECK_SIZEOF(long long)
+dnl Check for Long 64 bits
+AC_CHECK_SIZEOF(int64_t)
+dnl Check for Long 64 bits
+AC_CHECK_SIZEOF(__int64)
+dnl Check for Long 64 bits
+AC_CHECK_SIZEOF(INT64)
+dnl Check for Long 64 bits
+AC_CHECK_SIZEOF(off64_t)
+dnl Check for Long 64 bits
+AC_CHECK_SIZEOF(loff_t)
+dnl Check for Long 64 bits
+AC_CHECK_SIZEOF(off_t)
+
+AC_SUBST(SDIF_POS_TYPE)
+
+if test "$ac_cv_sizeof_int64_t" = 8; then
+  echo "use 64bit type int64_t"
+  SDIF_POS_TYPE="int64_t"
+else
+  if test "$ac_cv_sizeof_off64_t" = 8; then
+    echo "use 64bit type off64_t"
+    SDIF_POS_TYPE="off64_t"
+  else
+    if test "$ac_cv_sizeof_INT64" = 8; then
+      echo "use 64bit type INT64"
+      SDIF_POS_TYPE="INT64"
+    else
+      if test "$ac_cv_sizeof___int64" = 8; then
+        echo "use 64bit type __int64"
+        SDIF_POS_TYPE="__int64"
+      else
+        # Check for common 64 bit file offset types.
+        if test "$ac_cv_sizeof_loff_t" = 8; then
+          echo "use 64bit type loff_t"
+          SDIF_POS_TYPE="loff_t"
+        else
+          if test "$ac_cv_sizeof_long_long" = 8; then
+            echo "use 64bit type long long"
+            SDIF_POS_TYPE="long long"
+          else
+            # these 2 will be different for 64bit and 32bit compiler switches, 
+            # only use as a last resort       
+            if test "$ac_cv_sizeof_off_t" = 8; then
+              # this one may change size with compiler options
+              echo "use 64bit type off_t"
+              SDIF_POS_TYPE="off_t"
+            else
+              echo "no 64bit integer type found ... use long "
+              SDIF_POS_TYPE="long"
+            fi
+          fi
+        fi
+      fi
+    fi
+  fi
+fi
+
+
+dnl Add compiler/linker flags for large file support
+if test "$GCC" = "yes"; then
+     # many gcc implementations enable large file support when the 
+     # macro _FILE_OFFSET_BITS is compiled. We set it here, it will not harm if gcc does 
+     # honor it. In that case we are using the default large file support of the compiler
+     EXTERNAL_CFLAGS="$EXTERNAL_CFLAGS -D_FILE_OFFSET_BITS=64"
+fi
+	
+dnl ############################################################
+dnl Check for multi-character character constant inversion
+dnl AC_MSG_CHECKING(Multi-character character constant inversion)
+dnl AC_TRY_RUN([
+dnl #include <stdlib.h>
+dnl #include <stdio.h>
+dnl int main()
+dnl {
+dnl   char ConstCharTab[] = {'A', 'B', 'C', 'D'};
+dnl   const unsigned int ConstDCBA = 'DCBA';
+dnl   unsigned int *ConstUIntTest;
+dnl 
+dnl   ConstUIntTest = (unsigned int*) ConstCharTab;
+dnl 
+dnl   if ((*ConstUIntTest) == ConstDCBA)
+dnl 	return 0;
+dnl   else
+dnl 	return 1;
+dnl }
+dnl 
+dnl 	], multi_char_inversion=true, multi_char_inversion=false)
+dnl 
+dnl if test "$multi_char_inversion" = "true"; then
+dnl 	AC_MSG_RESULT(yes)
+dnl 	AC_DEFINE(MULTICHAR_CHAR_CONSTANT_INVERSION)
+dnl else
+dnl 	AC_MSG_RESULT(no)
+dnl fi
+
+dnl ############################################################
+dnl DEBUG feature
+
+AC_SUBST(SELLIB)
+AC_SUBST(PROGLIST)
+
+AC_ARG_ENABLE(debug,
+[--enable-debug            support additional library/programs with debug enabled],
+[echo FEATURE enable-debug... $enableval; 
+if test "$enableval" = "yes"; then
+	SELLIB=libsdif-debug.la; CFLAGS="$EXTERNAL_CFLAGS -g2 -Wall";
+	PROGLIST="querysdif-debug\$(EXEEXT) sdifextract-debug\$(EXEEXT) sdiftotext-debug\$(EXEEXT) tosdif-debug\$(EXEEXT)";
+
+else 
+	SELLIB=libsdif.la;  CFLAGS="$EXTERNAL_CFLAGS -O3";
+	PROGLIST="querysdif\$(EXEEXT) sdifextract\$(EXEEXT) sdiftotext\$(EXEEXT) tosdif\$(EXEEXT)";
+fi ],
+[
+SELLIB=libsdif.la; CFLAGS="$EXTERNAL_CFLAGS -O3";
+PROGLIST="querysdif\$(EXEEXT) sdifextract\$(EXEEXT) sdiftotext\$(EXEEXT) tosdif\$(EXEEXT)";
+])
+
+
+dnl ############################################################
+dnl profiling
+
+AC_ARG_ENABLE(profile,
+[--enable-profile          generate additional library/programs with profiling output enabled],
+[echo FEATURE enable-profile... $enableval; 
+if test "$enableval" = "yes"; then
+	SELLIB=libsdif-profile.la; CFLAGS="$CFLAGS -g -pg -fprofile-arcs";
+	PROGLIST="querysdif-profile\$(EXEEXT) sdifextract-profile\$(EXEEXT) sdiftotext-profile\$(EXEEXT) tosdif-profile\$(EXEEXT)";
+dnl else use the one selected above
+fi ], 
+[
+	echo using defaults;
+])
+
+
+dnl ############################################################
+dnl compile with g++
+
+dnl this macro must not be in a conditional, according to
+dnl http://osdir.com/ml/libtool-gnu/2010-05/msg00041.html
+AC_PROG_CXX
+
+cpp_enabled=no;
+AC_ARG_ENABLE(cpp,
+[--enable-cpp              compile with C++ in subdirectory sdifcpp (use for Easdif distributions only)],
+[ dnl actions if enable-option given
+  echo FEATURE enable-cpp... $enableval; 
+  if test "$enableval" = "yes"; then
+  dnl	
+  	dnl moved outside of conditional
+	dnl AC_PROG_CXX
+	CXXFLAGS=$CFLAGS
+	SELLIBCPP="libsdif-cpp.la"	
+	AM_CONDITIONAL(ENABLECPP,true)
+	cpp_enabled=yes;
+  else
+	dnl leave values unchanged
+        SELLIBCPP=
+	AM_CONDITIONAL(ENABLECPP,false)
+  fi 
+],
+[ dnl actions if enable-option not given
+  SELLIBCPP=
+  AM_CONDITIONAL(ENABLECPP,false)
+])
+
+AC_SUBST(SELLIBCPP)
+
+dnl ############################################################
+dnl checks for library functions
+
+AC_ARG_ENABLE(ftruncate,
+[--enable-ftruncate        enable/disable use of ftruncate in sdif library],
+[ dnl actions if enable-ftruncate given
+echo FEATURE enable-ftruncate... $enableval; 
+if test "$enableval" = "yes"; then
+  AC_CHECK_FUNCS(ftruncate)
+else
+unset HAVE_FTRUNCATE;
+fi
+],
+[ dnl actions if enable-ftruncate not given
+echo FEATURE enable-ftruncate... yes; 
+  AC_CHECK_FUNCS(ftruncate)
+])
+
+AC_SUBST(HAVE_PTHREAD)
+AC_MSG_CHECKING(pthreads requested)
+AC_ARG_ENABLE(pthreads,
+[--enable-pthreads          enable/disable check for availability of thread support to render sdif library thread safe (default: check)],
+[ dnl actions if enable-pthreads given
+AC_MSG_RESULT($enableval)
+if test "$enableval" = "yes"; then
+  ACX_PTHREAD
+  CC=$PTHREAD_CC
+  LIBS="$PTHREAD_LIBS $LIBS"
+  CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+  if test "$cpp_enabled" = "yes"; then
+    CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+  fi			
+else
+unset HAVE_PTHREAD;
+fi
+],
+[ dnl actions if enable-pthreads not given
+AC_MSG_RESULT(yes)
+  ACX_PTHREAD 
+  CC=$PTHREAD_CC
+  LIBS="$PTHREAD_LIBS $LIBS"
+  CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+  if test "$cpp_enabled" = "yes"; then
+    CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+  fi			
+])
+
+
+
+dnl don't remove
+dnl used by cmake on MacOSX for configuring oif universal binaries
+AC_SUBST(HAVE_MACHINE_ENDIAN_H)
+
+
+dnl ############################################################
+dnl CREATE OUTPUT FILES
+AC_MSG_RESULT(CREATE OUTPUT FILES)
+
+AC_OUTPUT(Makefile 
+sdif/Makefile 
+sdifcpp/Makefile 
+tools/Makefile
+data/Makefile 
+include/Makefile 
+include/sdif_version.h
+include/sdif.h
+doc/Makefile 
+doc/pics/Makefile 
+doc/extern/Makefile 
+doc/extern/cocoon/Makefile 
+examples/Makefile 
+test/Makefile 
+test/files/Makefile 
+test/files/txt/Makefile 
+test/files/sdif/Makefile 
+test/files/txtw/Makefile 
+test/files/sdifw/Makefile 
+test/files/sdifref/Makefile
+macosxbuild/Makefile
+macosxbuild/SDIF.xcodeproj/Makefile
+cmModules/Makefile
+sdif.pc 
+sdif.spec)
+
+
+AC_MSG_RESULT(END OF $PACKAGE CONFIGURATION)

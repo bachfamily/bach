@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 2: Brother John">
+
+<openfile name="Brother John" patch="Brother John (a).maxpat"/>
+
+<header>bach Tutorial 2: Brother John</header>
+
+<subhead>An introduction to bach.score</subhead>
+<body>In this tutorial you'll move your first steps with the bach.score object, with the help of the popular Brother John traditional song. We'll construct the full melody, and to have a little fun with it!</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+<seealso name="bach.unpacknote">Separate note parameters from playout syntax</seealso>
+<seealso name="bach.ezmidiplay">Quick way to play MIDI</seealso>
+</seealsolist>
+
+</chapter>

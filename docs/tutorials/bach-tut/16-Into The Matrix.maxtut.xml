@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 16: Into The Matrix">
+
+<openfile name="Into The Matrix" patch="Into The Matrix (a).maxpat"/>
+
+<header>bach Tutorial 16: Into The Matrix</header>
+
+<subhead>An overview of the bach matrix calculus library</subhead>
+<body>Having the possibility to define a list of lists (an llll of depth 2) means having the possibility to define a matrix. Indeed, bach has an extended library aimed to bring the power of the matrix calculus and linear algebra into Max. This tutorial will guide you through its discovery. </body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.m2jitcellblock">Display the content of an llll matrix in a jit.cellblock</seealso>
+<seealso name="bach.wellshape">Force matrix to be properly rectangular</seealso>
+<seealso name="bach.minfo">Report information about a matrix</seealso>
+<seealso name="bach.mrandom">Obtain a random matrix</seealso>
+<seealso name="bach.diag">Build a diagonal matrix</seealso>
+<seealso name="bach.idmatrix">Build identity matrix</seealso>
+<seealso name="bach.trans">Matrix transposition of an llll</seealso>
+<seealso name="bach.expr">Evaluate mathematical expressions</seealso>
+<seealso name="bach.mtimes">Perform matrix multiplication</seealso>
+<seealso name="bach.mpow">Compute the power of a matrix</seealso>
+<seealso name="bach.graph">Plot a graph</seealso>
+<seealso name="bach.eig">Find eigenvalues and eigenvectors</seealso>
+<seealso name="bach.ker">Find the kernel of a matrix</seealso>
+<seealso name="bach.extractbasis">Find linearly independent vectors</seealso>
+<seealso name="bach.norm">Find the norm of a vector</seealso>
+<seealso name="bach.det">Compute the determinant of a matrix</seealso>
+<seealso name="bach.inv">Find the inverse of a matrix</seealso>
+<seealso name="bach.rank">Compute the rank of a matrix</seealso>
+<seealso name="bach.im">Find the image of a matrix</seealso>
+<seealso name="bach.linearsolve">Solve a linear system of equations</seealso>
+</seealsolist>
+
+</chapter>

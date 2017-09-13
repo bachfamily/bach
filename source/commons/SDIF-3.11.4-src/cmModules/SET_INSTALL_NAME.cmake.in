@@ -1,0 +1,1 @@
+EXEC_PROGRAM(install_name_tool    ARGS -id "@INSTALLED_TARGET_NAME@"    "@INSTALLED_TARGET_NAME@")

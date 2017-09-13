@@ -1,0 +1,83 @@
+SDIF
+
+1NVT
+{
+BufferSize	64;
+EndTime	5.;
+SdifTypesVersion	1.00;
+ChantLibraryVersion	1.00;
+Author	CHANT;
+}
+
+1IDS
+{
+  0 Chant:Patch2/1/SND/1/1/0./5./"		!@#$%^&*()_-{}][\|':/?.>,<";
+  1 Chant:Patch2/1/REB/1/2/0./5.;
+  2 Chant:Patch2/1/NOI/1/0/0./5.;
+}
+
+
+SDFC
+
+1NOI	1	2	0
+  1DIS	1	1	2
+	0	0
+
+1REB	2	1	0
+  1RES	1	1	5
+	700	1	2	0	0
+  1CHA	1	1	1
+	1
+
+1REB	2	1	1
+  1RES	1	2	5
+	700	1	2	0	0
+	700	0	2	0	0
+  1CHA	1	2	1
+	1
+	1
+
+1NOI	1	2	1
+  1DIS	1	1	2
+	0	0
+
+1REB	2	1	2
+  1RES	1	2	5
+	300	1	2	0	0
+	900	2	2	0	0
+  1CHA	1	2	1
+	1
+	1
+
+1NOI	1	2	2
+  1DIS	1	1	2
+	0	0
+
+1REB	2	1	3
+  1RES	1	2	5
+	300	1	2	0	0
+	900	2	2	0	0
+  1CHA	1	2	1
+	1
+	1
+
+1NOI	1	2	3
+  1DIS	1	1	2
+	0	0
+
+1REB	2	1	4
+  1RES	1	2	5
+	700	1	2	0	0
+	700	0	2	0	0
+  1CHA	1	2	1
+	1
+	1
+
+1REB	2	1	5
+  1RES	1	1	5
+	700	1	2	0	0
+  1CHA	1	1	1
+	1
+
+ENDC
+ENDF

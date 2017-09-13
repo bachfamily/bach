@@ -1,0 +1,74 @@
+$Id: README.MacOSX,v 1.4 2009/04/09 10:49:54 diemo Exp $
+
+[Remark: SDIF.xcodeproj is actually a directory but appears as a file on Mac.]
+
+
+Building on Mac OS-X 10.3 or higher with XCODE
+==============================================
+
+The file macosxbuild/SDIF.xcodeproj builds a universal binary framework containing the
+SDIF library and exported header files.
+
+
+
+Building on Mac OS-X with gcc and the automake/autoconf system
+==============================================================
+
+You can also build from a terminal in the usual way to obtain the static library libsdif.a (see file INSTALL).
+
+
+Support for shared libraries
+----------------------------
+
+The default behavior of the configure script is to enable 
+the use of shared librairies. While libtool
+exists for MacOSX most versions are not working properly.
+Therefore, we recommand to disable creation of shared libraries
+under  MacOSX  by means of adding the configure
+option --disable-shared to the configuration command line.
+So under MacOSX the prefered configuration command line would read
+
+> ./configure --disable-shared
+
+
+
+Building on Mac OS-X using a specific SDK (using make)
+======================================================
+
+To avoid linker errors with versioned symbols, such as
+
+   Undefined symbols: "_fputs$UNIX2003", referenced from: 
+
+you have to compile under the same version of the SDK, by configuring
+it to replace the system headers:
+
+   env CFLAGS="-isystem /Developer/SDKs/MacOSX10.4u.sdk/usr/include" ./configure
+
+To build a universal binary, use
+
+   lipo  ppc/libsdif.a i386/libsdif.a -create -output ub/libsdif.a
+
+
+More info:
+
+Symbol Variants: Why Those Dollar Signs?
+http://developer.apple.com/releasenotes/Darwin/SymbolVariantsRelNotes/index.html
+
+Building an Open Source Universal Binary
+http://developer.apple.com/opensource/buildingopensourceuniversal.html
+
+man gcc
+       -isystem dir 
+           Search dir for header files, after all directories
+           specified by -I but before the standard system directories.
+           Mark it as a system directory, so that it gets the same
+           special treatment as is applied to the standard system
+           directories.
+
+       -nostdinc
+           Do not search the standard system directories for header
+           files.  Only the directories you have specified with -I
+           options (and the directory of the current file, if
+           appropriate) are searched.
+
+

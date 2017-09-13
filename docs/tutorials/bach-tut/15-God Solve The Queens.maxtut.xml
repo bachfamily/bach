@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 15: God Solve The Queens">
+
+<openfile name="God Solve The Queens" patch="God Solve The Queens (a).maxpat"/>
+
+<header>bach Tutorial 15: God Solve The Queens</header>
+
+<subhead>How to deal with constraint satisfaction problems</subhead>
+<body>A class of problems one must face while working is to find configurations satisfying certain properties. In this category we have goals like "find two elements such that their difference is 700" or "find a sequence of note such that no note is repeated": we want to find a given configuration (two elements in a list, a sequence of notes) among a finite set of possible configurations (all the combinations of elements in the list, all the possible sequences of notes within a certain pitch range and time grid) satisfying a given condition ("difference is 700", or "there are no repetitions"). This condition is called "constraint", and represents a limitation we impose to the acceptable configurations. In this tutorial you'll learn how to solve constraint satistfaction problem within bach, thanks to bach.constraint</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.constraints">Solve constraints satisfaction problems</seealso>
+<seealso name="bach.group">Group elements of an llll</seealso>
+<seealso name="bach.cartesianprod">Cartesian product</seealso>
+</seealsolist>
+
+</chapter>

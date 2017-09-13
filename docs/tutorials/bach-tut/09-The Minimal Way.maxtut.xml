@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 9: The Minimal Way">
+
+<openfile name="The Minimal Way" patch="The Minimal Way (a).maxpat"/>
+
+<header>bach Tutorial 9: The Minimal Way</header>
+
+<subhead>Using a pattern to build larger structures</subhead>
+<body>In this tutorial you'll learn an example of how to build a score starting from a little pattern.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+</seealsolist>
+
+</chapter>
