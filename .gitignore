@@ -22,6 +22,8 @@ Thumbs.db
 # Files #
 source/commons/aa/strparser/makefile
 source/commons/aa/symparser/makefile
+source/commons/aa/chkparser/makefile
+source/commons/aa/exprparser/makefile
 
 # Folders #
 ###########
