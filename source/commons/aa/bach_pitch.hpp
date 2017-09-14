@@ -245,7 +245,7 @@ public:
         t_atom av;
         t_pitch pitch = t_pitch::NaP;
         atom_setsym(&av, s);
-        t_llll *ll = llll_parse_with_leveltypes(ac, &av);
+        t_llll *ll = llll_parse(ac, &av);
         if (ll && ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_PITCH)
             pitch = hatom_getpitch(&ll->l_head->l_hatom);
         llll_free(ll);

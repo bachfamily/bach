@@ -279,7 +279,7 @@ t_arithmser *arithmser_new(t_symbol *s, short ac, t_atom *av)
 		for (i = 3; i > 0; i--)
 			x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
 		if (true_ac) {
-			t_llll *def_llll = llll_parse_with_leveltypes(true_ac, av);
+			t_llll *def_llll = llll_parse(true_ac, av);
 			if (def_llll) {
 				if (arithmser_parse_llll(x, def_llll, 0, "Bad arguments") == MAX_ERR_NONE)
 					x->n_ob.l_rebuild = 1;

@@ -303,7 +303,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2452"
             endingLineNumber = "2452"
-            landmarkName = "score_getmarker()"
+            landmarkName = "score_addmarker()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1882,7 +1882,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "622"
             endingLineNumber = "622"
-            landmarkName = "llll_parse_with_leveltypes()"
+            landmarkName = "llll_parse()"
             landmarkType = "7">
             <Locations>
                <Location

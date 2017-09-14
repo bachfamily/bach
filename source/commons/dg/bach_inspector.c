@@ -1260,7 +1260,7 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 			return;
 		} else if (attr->name == _llllobj_sym_pitch) {
 			if (ac && atom_gettype(av) == A_SYM) {
-                t_llll *ll = llll_parse_with_leveltypes(ac, av);
+                t_llll *ll = llll_parse(ac, av);
                 if (ll && ll->l_head && hatom_gettype(&ll->l_head->l_hatom) == H_PITCH)
                     note_set_pitch(r_ob, (t_note *)obj, hatom_getpitch(&ll->l_head->l_hatom));
 //				note_set_pitch_from_notename(r_ob, (t_note *)obj, atom_getsym(av), true);

@@ -279,6 +279,11 @@ void bach_setup(t_bach *x);
 // if you need to convert a string into a llll, use llll_from_text_buf instead
 //
 t_llll *llll_parse(long ac, t_atom *av);
+
+
+// still uses the old, non-flex parser
+// doesn't recognize pitches
+// useful only for bw-compatibility in bach.tree
 t_llll *llll_parse_with_leveltypes(long ac, t_atom *av); // same, with leveltypes
 
 // does it contain spaces or parentheses?

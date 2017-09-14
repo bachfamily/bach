@@ -297,7 +297,7 @@ void reg_anything(t_reg *x, t_symbol *msg, long ac, t_atom *av)
         const char *txt = "12345 678 1/2 1/4 \"foo bar\" foo bar 10 (c#4 d4-2/10t)";
         atom a;
         atom_setobj(&a, (void *) txt);
-        in_llll = llll_parse_with_leveltypes(1, &a);
+        in_llll = llll_parse(1, &a);
         llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, in_llll);
         llll_free(in_llll);
         

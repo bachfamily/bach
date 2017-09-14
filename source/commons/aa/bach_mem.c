@@ -341,218 +341,6 @@ float parse_64bit_float(t_atom *av)
 
 t_llll *llll_parse(long ac, t_atom *av) // creates a new llll from a list in text format
 {
-	//	char *inlist;
-	long i;
-	t_llll *this_llll, *temp_llll;
-	long len;
-	t_llll_stack *stack;
-	char *cursor = NULL, *thing_end, *txt, *more_txt, *bspos;
-	long type;
-	long a, b;
-	char dollarnum[2048];
-	t_llll *x;
-	
-	t_symbol *f64m = _llllobj_sym_float64_marker;
-	t_symbol *f6405 = _llllobj_sym_float64_marker_05;
-	t_symbol *f64corrupt = _llllobj_sym_float64_marker_corrupt;
-	
-	x = llll_get();
-	
-	if (!ac)
-		return x;
-	if (ac == 1 && atom_gettype(av) == A_OBJ) {
-		cursor = (char *) atom_getobj(av);
-		ac = -1;
-        while (cursor && isspace(*cursor))
-            cursor++;
-	}
-	
-	this_llll = x; 
-	stack = llll_stack_new();
-	
-	for (i = 0; i < ac || (i == 0 && ac < 0); i++, av++) {
-		if (!cursor) {
-			switch (type = atom_gettype(av)) {
-				case A_LONG:
-					llll_appendlong(this_llll, av->a_w.w_long, 0, WHITENULL_llll);
-					break;
-				case A_FLOAT:
-					llll_appenddouble(this_llll, av->a_w.w_float, 0, WHITENULL_llll);
-					break;
-				case A_COMMA:
-					llll_appendsym(this_llll, gensym(","), 0, WHITENULL_llll);
-					break;
-				case A_SEMI:
-					llll_appendsym(this_llll, gensym(";"), 0, WHITENULL_llll);
-					break;
-				case A_DOLLSYM:
-					llll_appendsym(this_llll, gensym("$"), 0, WHITENULL_llll);
-					break; 
-				case A_DOLLAR: 
-#ifdef BACH_MAX
-					snprintf_zero(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
-#else
-					snprintf(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
-#endif
-					llll_appendsym(this_llll, gensym(dollarnum), 0, WHITENULL_llll);
-					break;
-				case A_SYM:
-					if (av->a_w.w_sym == f64m || av->a_w.w_sym == f6405 || av->a_w.w_sym == f64corrupt) {
-                        double f = parse_64bit_float(av);
-						llll_appenddouble(this_llll, f, 0, WHITENULL_llll);
-                        av += 2;
-                        i += 2;
-					} else {
-						cursor = av->a_w.w_sym->s_name;
-						if (*cursor == QUOTE_CHAR && *(cursor + 1)) {
-							//							if (!strrchr(cursor, '\\')
-							llll_appendsym(this_llll, gensym(cursor + 1), 0, WHITENULL_llll);
-							/*							else {
-							 len = strlen(cursor);
-							 txt = (char *) bach_newptr(len); 
-							 strncpy_zero(txt, cursor + 1, len);
-							 while (bspos = strchr(txt, '\\'))
-							 strcpy(bspos, bspos - 1);
-							 llll_appendsym(this_llll, gensym(txt), 0, WHITENULL_llll);
-							 bach_freeptr(txt);
-							 } */
-							cursor = NULL;
-						} else if (llll_contains_separators(cursor)) {
-							llll_appendsym(this_llll, av->a_w.w_sym, 0, WHITENULL_llll);
-							cursor = NULL;
-						}
-					}
-					break;
-			}
-		} 
-		while (cursor && *cursor) {
-			long backtick = 0, type;
-			char prev_thing_end;
-			switch (*cursor) {
-				case '(':
-					temp_llll = llll_get();
-					llll_appendllll(this_llll, temp_llll, 0, WHITENULL_llll);
-					llll_stack_push(stack, this_llll);
-					this_llll = temp_llll;
-					cursor++;
-					break;
-					
-				case ')': // terminates a sub-list
-					temp_llll = (t_llll *) llll_stack_pop(stack);
-					if (!temp_llll)
-						goto llll_parse_err;
-					if (temp_llll->l_depth <= this_llll->l_depth)
-						temp_llll->l_depth = 1 + this_llll->l_depth;
-					this_llll = temp_llll;
-					cursor++;
-					break;
-					
-				case '"':
-					cursor++;
-					thing_end = cursor;
-					while (*thing_end && *thing_end != '"')
-						thing_end++;
-					if (!*thing_end)
-						goto llll_parse_err;
-					len = thing_end - cursor;
-					txt = (char *) bach_newptr(len + 1); 
-#ifdef BACH_MAX
-					strncpy_zero(txt, cursor, len + 1);
-#else
-					strncpy(txt, cursor, len + 1);
-#endif
-					*(txt + len) = 0; // txt contains the current re-parsed llll atom
-					llll_appendsym(this_llll, gensym(txt), 0, WHITENULL_llll);
-					cursor = thing_end + 1;
-					break;
-					
-				case QUOTE_CHAR:
-					if (ac < 0) {
-						backtick = 1;	// backtick is set if the current item begins with ` in string mode
-						cursor++;
-					}
-					
-				default:
-					thing_end = cursor;
-					prev_thing_end = 0;
-					// search for the end of this element, which is given by:
-					
-					while (*thing_end &&																// the string end, or
-						   (backtick || (*thing_end != '(' && *thing_end != ')')) &&					// a parenthesis, but only if we don't have backtick set
-						   (!isspace(*thing_end) || (prev_thing_end == '\\' && ac < 0))) {	// a space, but only if it's not backslashed, or we're not in string mode
-						prev_thing_end = *thing_end;
-						thing_end ++;
-					}
-					
-					len = thing_end - cursor;
-					txt = (char *) bach_newptr(len + 1); 
-#ifdef BACH_MAX
-					strncpy_zero(txt, cursor, len + 1);
-#else
-					strncpy(txt, cursor, len + 1);
-#endif
-					*(txt + len) = 0; // txt contains the current re-parsed llll atom
-					
-					type = backtick ? H_SYM : llll_typecheck(txt);
-					
-					switch(type) {
-						case H_LONG:
-							llll_appendlong(this_llll, strtol(txt, NULL, 10), 0, WHITENULL_llll);
-							break;
-						case H_DOUBLE:
-							llll_appenddouble(this_llll, strtod(txt, NULL), 0, WHITENULL_llll);
-							break;
-						case H_SYM:
-							if (!strcmp(txt, "nil")) {
-								llll_appendllll(this_llll, llll_get(), 0, WHITENULL_llll);
-								break;
-							}
-							if (!strcmp(txt, "null"))
-								break;
-							
-							if (ac < 0) {
-								char *this_txt = txt;
-								bspos = txt;
-								while (*bspos) {
-									if (*bspos == '\\')
-										bspos++;
-									*this_txt++ = *bspos++;
-								}
-								*this_txt = 0;
-							}
-							
-							llll_appendsym(this_llll, gensym(txt), 0, WHITENULL_llll);
-							break;
-						case H_RAT:
-							a = strtol(txt, &more_txt, 10);
-							b = strtol(more_txt + 1, NULL, 10);
-							llll_appendrat_from_elems(this_llll, a, b, 0, WHITENULL_llll);							
-							break;
-						default:
-							break;
-					}
-					bach_freeptr(txt);
-					cursor = thing_end; // points to the separator, because it must be parsed
-					break;
-			}
-			cursor = llll_next_thing(cursor);			
-		}
-		cursor = NULL;
-	}
-	
-	if (stack->s_items)
-		goto llll_parse_err;
-	llll_stack_destroy(stack);
-	return x;
-	
-llll_parse_err:
-	llll_stack_destroy(stack);
-	llll_free(x);
-	return NULL;
-}
-
-t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll from a list in text format, taking into account different types of parentheses
-{
 	long i;
     long depth;
 	t_llll *this_llll;
@@ -577,7 +365,7 @@ t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll fr
 	if (ac == 1 && atom_gettype(av) == A_OBJ) {
         string_parse((char *) av->a_w.w_obj, &this_llll, stack, &depth);
         if (depth < 1)
-            goto llll_parse_with_leveltypes_err;
+            goto llll_parse_err;
         llll_stack_destroy(stack);
         return x;
     }
@@ -621,7 +409,7 @@ t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll fr
                 } */else {
                     symbol_parse(s->s_name, &this_llll, stack, &depth);
                     if (depth < 1)
-                        goto llll_parse_with_leveltypes_err;
+                        goto llll_parse_err;
                 }
                 break;
             }
@@ -630,15 +418,251 @@ t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll fr
     }
 	
 	if (stack->s_items)
-		goto llll_parse_with_leveltypes_err;
+		goto llll_parse_err;
 	llll_stack_destroy(stack);
 	return x;
 	
-llll_parse_with_leveltypes_err:
+llll_parse_err:
 	llll_stack_destroy(stack);
 	llll_free(x);
 	return NULL;
 }
+
+
+// still uses the old, non-flex parser
+// doesn't recognize pitches
+// useful only for bw-compatibility in bach.tree
+t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll from a list in text format, taking into account different types of parentheses
+{
+    //	char *inlist;
+    long i;
+    t_llll *this_llll, *temp_llll;
+    long len;
+    t_llll_stack *stack;
+    char *cursor = NULL, *thing_end, *txt, *more_txt, *bspos;
+    long type;
+    long leveltype = L_STANDARD;
+    long a, b;
+    char dollarnum[2048];
+    t_llll *x;
+    
+    t_symbol *f64m = _llllobj_sym_float64_marker;
+    
+    x = llll_get();
+    
+    if (!ac)
+        return x;
+    if (ac == 1 && atom_gettype(av) == A_OBJ) {
+        cursor = (char *) atom_getobj(av);
+        ac = -1;
+    }
+    
+    this_llll = x;
+    stack = llll_stack_new();
+    
+    for (i = 0; i < ac || (i == 0 && ac < 0); i++, av++) {
+        if (!cursor) {
+            switch (type = atom_gettype(av)) {
+                case A_LONG:
+                    llll_appendlong(this_llll, av->a_w.w_long, 0, WHITENULL_llll);
+                    break;
+                case A_FLOAT:
+                    llll_appenddouble(this_llll, av->a_w.w_float, 0, WHITENULL_llll);
+                    break;
+                case A_COMMA:
+                    llll_appendsym(this_llll, gensym(","), 0, WHITENULL_llll);
+                    break;
+                case A_SEMI:
+                    llll_appendsym(this_llll, gensym(";"), 0, WHITENULL_llll);
+                    break;
+                case A_DOLLSYM:
+                    llll_appendsym(this_llll, gensym("$"), 0, WHITENULL_llll);
+                    break;
+                case A_DOLLAR:
+#ifdef BACH_MAX
+                    snprintf_zero(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
+#else
+                    snprintf(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
+#endif
+                    llll_appendsym(this_llll, gensym(dollarnum), 0, WHITENULL_llll);
+                    break;
+                case A_SYM:
+                    if (av->a_w.w_sym == f64m) {
+                        double f = parse_64bit_float(av);
+                        llll_appenddouble(this_llll, f, 0, WHITENULL_llll);
+                        av += 2;
+                        i += 2;
+                    } else {
+                        cursor = av->a_w.w_sym->s_name;
+                        if (*cursor == QUOTE_CHAR && *(cursor + 1)) {
+                            //							if (!strrchr(cursor, '\\')
+                            llll_appendsym(this_llll, gensym(cursor + 1), 0, WHITENULL_llll);
+                            /*							else {
+                             len = strlen(cursor);
+                             txt = (char *) bach_newptr(len);
+                             strncpy_zero(txt, cursor + 1, len);
+                             while (bspos = strchr(txt, '\\'))
+                             strcpy(bspos, bspos - 1);
+                             llll_appendsym(this_llll, gensym(txt), 0, WHITENULL_llll);
+                             bach_freeptr(txt);
+                             } */
+                            cursor = NULL;
+                        } else if (llll_contains_separators(cursor)) {
+                            llll_appendsym(this_llll, av->a_w.w_sym, 0, WHITENULL_llll);
+                            cursor = NULL;
+                        }
+                    }
+                    break;
+            }
+        }
+        while (cursor && *cursor) {
+            long backtick = 0, type;
+            char prev_thing_end;
+            switch (*cursor) {
+                case '(':
+                case '[':
+                case '{':
+                    temp_llll = llll_get();
+                    llll_appendllll(this_llll, temp_llll, 0, WHITENULL_llll);
+                    llll_stack_push(stack, this_llll);
+                    this_llll = temp_llll;
+                    switch (*cursor) {
+                        case '(':
+                            leveltype = L_STANDARD;
+                            break;
+                        case '[':
+                            leveltype = L_SQUARE;
+                            break;
+                        case '{':
+                            leveltype = L_CURLY;
+                            break;
+                    }
+                    temp_llll->l_leveltype = leveltype;
+                    cursor++;
+                    break;
+                    
+                case ')': // terminates a sub-list
+                case ']':
+                case '}':
+                    if (*cursor != _closed_parentheses[leveltype])
+                        goto llll_parse_with_leveltypes_err;
+                    
+                    temp_llll = (t_llll *) llll_stack_pop(stack);
+                    if (!temp_llll)
+                        goto llll_parse_with_leveltypes_err;
+                    if (temp_llll->l_depth <= this_llll->l_depth)
+                        temp_llll->l_depth = 1 + this_llll->l_depth;
+                    this_llll = temp_llll;
+                    leveltype = this_llll->l_leveltype;
+                    cursor++;
+                    break;
+                    
+                case '"':
+                    cursor++;
+                    thing_end = cursor;
+                    while (*thing_end && *thing_end != '"')
+                        thing_end++;
+                    if (!*thing_end)
+                        goto llll_parse_with_leveltypes_err;
+                    len = thing_end - cursor;
+                    txt = (char *) bach_newptr(len + 1);
+#ifdef BACH_MAX
+                    strncpy_zero(txt, cursor, len + 1);
+#else
+                    strncpy(txt, cursor, len + 1);
+#endif
+                    *(txt + len) = 0; // txt contains the current re-parsed llll atom
+                    llll_appendsym(this_llll, gensym(txt), 0, WHITENULL_llll);
+                    cursor = thing_end + 1;
+                    break;
+                    
+                case QUOTE_CHAR:
+                    if (ac < 0) {
+                        backtick = 1;	// backtick is set if the current item begins with ` in string mode
+                        cursor++;
+                    }
+                    
+                default:
+                    thing_end = cursor;
+                    prev_thing_end = 0;
+                    // search for the end of this element, which is given by:
+                    
+                    while (*thing_end &&																// the string end, or
+                           (backtick || (*thing_end != '(' && *thing_end != ')' &&
+                                         *thing_end != '[' && *thing_end != ']' &&
+                                         *thing_end != '{' && *thing_end != '}')) &&					// a parenthesis, but only if we don't have backtick set
+                           (!isspace(*thing_end) || (prev_thing_end == '\\' && ac < 0))) {	// a space, but only if it's not backslashed, or we're not in string mode
+                        prev_thing_end = *thing_end;
+                        thing_end ++;
+                    }
+                    
+                    len = thing_end - cursor;
+                    txt = (char *) bach_newptr(len + 1); 
+#ifdef BACH_MAX
+                    strncpy_zero(txt, cursor, len + 1);
+#else
+                    strncpy(txt, cursor, len + 1);
+#endif
+                    *(txt + len) = 0; // txt contains the current re-parsed llll atom
+                    
+                    type = backtick ? H_SYM : llll_typecheck(txt);
+                    
+                    switch(type) {
+                        case H_LONG:
+                            llll_appendlong(this_llll, strtol(txt, NULL, 10), 0, WHITENULL_llll);
+                            break;
+                        case H_DOUBLE:
+                            llll_appenddouble(this_llll, strtod(txt, NULL), 0, WHITENULL_llll);
+                            break;
+                        case H_SYM:
+                            if (!strcmp(txt, "nil")) {
+                                llll_appendllll(this_llll, llll_get(), 0, WHITENULL_llll);
+                                break;
+                            }
+                            if (!strcmp(txt, "null"))
+                                break;
+                            
+                            if (ac < 0) {
+                                char *this_txt = txt;
+                                bspos = txt;
+                                while (*bspos) {
+                                    if (*bspos == '\\')
+                                        bspos++;
+                                    *this_txt++ = *bspos++;
+                                }
+                                *this_txt = 0;
+                            }
+                            
+                            llll_appendsym(this_llll, gensym(txt), 0, WHITENULL_llll);
+                            break;
+                        case H_RAT:
+                            a = strtol(txt, &more_txt, 10);
+                            b = strtol(more_txt + 1, NULL, 10);
+                            llll_appendrat_from_elems(this_llll, a, b, 0, WHITENULL_llll);
+                            break;
+                        default:
+                            break;
+                    }
+                    bach_freeptr(txt);
+                    cursor = thing_end; // points to the separator, because it must be parsed
+                    break;
+            }
+            cursor = llll_next_thing(cursor);			
+        }
+        cursor = NULL;
+    }
+    
+    if (stack->s_items)
+        goto llll_parse_with_leveltypes_err;
+    llll_stack_destroy(stack);
+    return x;
+    
+llll_parse_with_leveltypes_err:
+    llll_stack_destroy(stack);
+    llll_free(x);
+    return NULL;
+}
+
 
 void llllelem_dispose(t_llllelem *x)
 {
