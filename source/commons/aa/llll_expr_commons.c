@@ -1782,7 +1782,7 @@ long lexpr_append_lexeme_FUNC_unary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 1;
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = f;
-    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
+    lex->l_token.t_contents.c_func.f_type = H_ALL;
     return E_OK;
 }
 
@@ -1792,7 +1792,7 @@ long lexpr_append_lexeme_FUNC_binary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 2;
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = f;
-    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
+    lex->l_token.t_contents.c_func.f_type = H_ALL;
     return E_OK;
 }
 
@@ -1802,7 +1802,7 @@ long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 2;
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = f;
-    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
+    lex->l_token.t_contents.c_func.f_type = H_ALL;
     lex->l_token.t_contents.c_func.f_dontfold = 1;
     return E_OK;
 }

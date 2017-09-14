@@ -1722,7 +1722,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "408"
             endingLineNumber = "408"
-            landmarkName = "hatom_op_times()"
+            landmarkName = "hatom_op_minus()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1738,7 +1738,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "231"
             endingLineNumber = "231"
-            landmarkName = "hatom_fn_mod()"
+            landmarkName = "hatom_fn_sgn()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1754,7 +1754,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "441"
             endingLineNumber = "441"
-            landmarkName = "hatom_op_divdiv()"
+            landmarkName = "hatom_op_times()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1818,7 +1818,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "474"
             endingLineNumber = "474"
-            landmarkName = "hatom_op_div()"
+            landmarkName = "hatom_op_divdiv()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1834,7 +1834,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "278"
             endingLineNumber = "278"
-            landmarkName = "hatom_fn_remainder()"
+            landmarkName = "hatom_fn_mod()"
             landmarkType = "7">
             <Locations>
                <Location
