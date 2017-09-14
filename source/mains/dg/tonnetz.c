@@ -2700,7 +2700,7 @@ void calculate_static_tonnetz(t_tonnetz *x)
 			build_tonnetz_point(x, 0, 0, local_interval, temp_coord, 0);
 	}
 	
-	coord.coord2 = x->center_offset[1] - 1;
+    coord.coord2 = -1; 
 
 	for (interval = TONNETZ_COMPUTE_FREQ_RATIOS ? diatonic_interval_diff(build_diatonic_interval(0, 0), x->generators[1]) : diatonic_interval_diff_no_freqratio(build_diatonic_interval(0, 0), x->generators[1]); 
 		 coord.coord2 + CONST_VELOCITY_ARRAY_ZERO_ZERO_OFFSET > 0; 
