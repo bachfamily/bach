@@ -463,6 +463,9 @@ t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
                         case H_RAT:
                             hatom_setrational(thisstack++, hatom_getrational(this_vars));
                             break;
+                        case H_PITCH:
+                            hatom_setpitch(thisstack++, hatom_getpitch(this_vars));
+                            break;
                         case H_DOUBLE:
                             hatom_setdouble(thisstack++, hatom_getdouble(this_vars));
                             break;
