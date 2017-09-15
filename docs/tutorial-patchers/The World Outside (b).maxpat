@@ -4,8 +4,8 @@
 		"appversion" : 		{
 			"major" : 7,
 			"minor" : 3,
-			"revision" : 3,
-			"architecture" : "x86",
+			"revision" : 2,
+			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
@@ -45,7 +45,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 324.0, 594.0, 33.0 ],
+					"patching_rect" : [ 12.0, 322.0, 594.0, 33.0 ],
 					"style" : "",
 					"text" : "Indeed, \"read\" is able to understand whether the file you're reading is a bach score, a MusicXML, a MIDI file, and will handle it properly and accordingly. Shortly: need to load stuff? Just use \"read\"!"
 				}
@@ -60,7 +60,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 230.0, 308.0, 35.0, 22.0 ],
+					"patching_rect" : [ 230.0, 291.0, 35.0, 22.0 ],
 					"style" : "",
 					"text" : "read"
 				}
@@ -75,7 +75,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 293.0, 594.0, 33.0 ],
+					"patching_rect" : [ 12.0, 274.0, 594.0, 33.0 ],
 					"style" : "",
 					"text" : "In order to read an existing MusicXML file, which you might have created with Finale, Sibelius, OpenMusic, or any other piece of software, just use the \"read\" message!"
 				}
@@ -121,7 +121,7 @@
 					"numvoices" : 2,
 					"out" : "nnnnnnnn",
 					"outlettype" : [ "", "", "", "", "", "", "", "", "bang" ],
-					"patching_rect" : [ 10.0, 135.0, 492.0, 154.666672 ],
+					"patching_rect" : [ 10.0, 116.0, 492.0, 154.666672 ],
 					"pitcheditrange" : [ "null" ],
 					"showmeasurenumbers" : [ 1, 1 ],
 					"stafflines" : [ 5, 5 ],
@@ -253,7 +253,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 5.0, 43.0, 573.0, 47.0 ],
 					"style" : "",
-					"text" : "As we said, MusicXML is the standard way to go when you want to import/export scores.\n\nTo save a bach score as a MusicXML file, just use the                      message."
+					"text" : "As we said, MusicXML is the standard format for sharing scores across different pieces of software.\n\nTo save a bach score as a MusicXML file, just use the                      message."
 				}
 
 			}
@@ -540,7 +540,6 @@
 					"destination" : [ "obj-22", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"midpoints" : [ 309.5, 120.5, 19.5, 120.5 ],
 					"source" : [ "obj-40", 0 ]
 				}
 
@@ -550,7 +549,7 @@
 					"destination" : [ "obj-22", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"midpoints" : [ 239.5, 326.0, 6.5, 326.0, 6.5, 129.0, 19.5, 129.0 ],
+					"midpoints" : [ 239.5, 318.0, 6.5, 318.0, 6.5, 113.0, 19.5, 113.0 ],
 					"source" : [ "obj-48", 0 ]
 				}
 
