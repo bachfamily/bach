@@ -18,7 +18,10 @@ Thumbs.db
 
 # XCode User Data #
 ###################
-source/xcproj/bach.xcodeproj/project.xcworkspace/xcuserdata/*
+source/xcproj/bach.xcodeproj/project.xcworkspace
+source/xcproj/bach.xcodeproj/xcuserdata
+source/xcproj/bach.xcodeproj/*.pbxuser
+source/xcproj/bach.xcodeproj/*.mode*
 
 
 # Makefiles #
