@@ -364,7 +364,7 @@ t_llll *llll_parse(long ac, t_atom *av) // creates a new llll from a list in tex
     
 	if (ac == 1 && atom_gettype(av) == A_OBJ) {
         string_parse((char *) av->a_w.w_obj, &this_llll, stack, &depth);
-        if (depth < 1)
+        if (depth != 1)
             goto llll_parse_err;
         llll_stack_destroy(stack);
         return x;

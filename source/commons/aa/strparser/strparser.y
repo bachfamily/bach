@@ -52,7 +52,7 @@
 %%
 
 sequence: 
-| term sequence
+| sequence term
 ;
 
 term: LONG {
