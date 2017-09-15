@@ -16,7 +16,7 @@ t_max_err bach_openfile_read(t_object * x, t_symbol *filename_sym, t_filehandle 
 	short path;
 	
 	if (bach_openfile_for_read(x, filename_sym, &path, types, numtypes, outtype, filename))
-		return MAX_ERR_GENERIC;
+		return FILE_ERR_NONE;
 
 	return bach_readfile(x, filename, path, fh);
 }
@@ -26,14 +26,14 @@ t_max_err bach_openfile_for_read(t_object *x, t_symbol *filename_sym, short *pat
 	if (!filename_sym || filename_sym == gensym("")) {      // if no argument supplied, ask for file
 		if (open_dialog(filename, path, outtype, types, numtypes)) {     // non-zero: user cancelled
 			*filename = 0;
-			return MAX_ERR_NONE;
+			return FILE_ERR_NONE;
 		}
 	} else {
 		strcpy(filename, filename_sym->s_name);    // must copy symbol before calling locatefile_extended
 		if (locatefile_extended(filename, path, outtype, types, numtypes)) { // non-zero: not found
 			*filename = 0;		
 			object_error(x, "%s: not found", filename_sym->s_name);
-			return MAX_ERR_GENERIC;
+			return FILE_ERR_CANTOPEN;
 		}
 	}
 	return MAX_ERR_NONE;
@@ -43,9 +43,9 @@ t_max_err bach_readfile(t_object *x, const char *filename, short path, t_filehan
 {
 	if (path_opensysfile(filename, path, fh, READ_PERM)) {
 		object_error(x, "Error opening %s", filename);
-		return MAX_ERR_GENERIC;
+		return FILE_ERR_CANTOPEN;
 	}
-	return MAX_ERR_NONE;
+	return FILE_ERR_NONE;
 }
 
 t_max_err bach_openfile_write(t_symbol *filename_sym, const char *default_filename, t_filehandle *fh, 
@@ -58,7 +58,7 @@ t_max_err bach_openfile_write(t_symbol *filename_sym, const char *default_filena
 	if (!filename_sym || filename_sym == gensym("")) {      // if no argument supplied, ask for file
 		strncpy_zero(filename, default_filename, MAX_PATH_CHARS);
 		if (saveasdialog_extended(filename, &path, outtype, types, numtypes)) {    // non-zero: user cancelled
-			return MAX_ERR_GENERIC;
+			return FILE_ERR_CANCELED;
 		}
 		if (!strchr(filename, '.')) {
 			const char *ext = strrchr(default_filename, '.');
@@ -69,6 +69,9 @@ t_max_err bach_openfile_write(t_symbol *filename_sym, const char *default_filena
 		path = path_getdefault();
 	}
 	err = path_createsysfile(filename, path, 'TEXT', fh);
+    if (!*fh) {
+        return FILE_ERR_CANTOPEN;
+    }
 	sysfile_seteof(*fh, 0);
 	
 	if (filename && output_filename) 

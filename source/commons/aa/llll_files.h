@@ -7,7 +7,11 @@
 BEGIN_CHECK_LINKAGE
 #endif	
 
-
+typedef enum _file_errors {
+    FILE_ERR_NONE = 0,
+    FILE_ERR_CANCELED,
+    FILE_ERR_CANTOPEN
+} e_file_errors;
 
 
 t_max_err bach_openfile_read(t_object * x, t_symbol *filename_sym, t_filehandle *fh, t_fourcc *types, long numtypes, t_fourcc *outtype);

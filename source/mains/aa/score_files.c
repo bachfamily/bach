@@ -2422,8 +2422,20 @@ t_max_err score_dowritexml(const t_score *score, t_symbol *s, long ac, t_atom *a
 	
 	t_filehandle fh;
 	//bach_fix_filename_extension(&filename_sym, "xml");
-	if (bach_openfile_write(filename_sym, "Untitled.xml", &fh, &filetype, 1, &outtype, NULL, NULL))
-		goto score_dowritexml_error_dontclose;
+	switch (bach_openfile_write(filename_sym, "Untitled.xml", &fh, &filetype, 1, &outtype, NULL, NULL)) {
+        case FILE_ERR_NONE:
+            break;
+        case FILE_ERR_CANCELED:
+            goto score_dowritexml_error_dontclose;
+            break;
+        case FILE_ERR_CANTOPEN:
+            if (filename_sym)
+                object_error((t_object *) score, "could not create file: %s", filename_sym->s_name);
+            else
+                object_error((t_object *) score, "could not create file");
+            goto score_dowritexml_error_dontclose;
+            break;
+    }
 	
 	mxmlSaveMaxFile(scorexml, fh, whitespace_cb);
 
