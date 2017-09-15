@@ -2092,22 +2092,10 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                                 }
 
                                 if (operate_on == 0) { // the command was not assigned to any of the routers
-                                    // Inferring whether the command is note-, chord- or rest-attached, depending on the command symbol
-                                    // If one wish to have a static
-                                    if (strstr(allowed_command_router->s_name, "chord")) {
-                                        operate_on = 2;
-                                        x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND + k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND;
-                                        llll_appendsym(x->n_chord_commands, allowed_command_router);
-                                    } else if (strstr(allowed_command_router->s_name, "rest")) {
-                                        operate_on = 3;
-                                        x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_SCOREREST_COMMAND;
-                                        llll_appendsym(x->n_rest_commands, allowed_command_router);
-                                    } else { // probably the command operates on notes.
-                                        operate_on = 1;
-                                        x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND + k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND;
-                                        llll_appendsym(x->n_note_commands, allowed_command_router);
-                                    }
-
+                                    // ASSIGNING IT TO NOTES
+                                    operate_on = 1;
+                                    x->n_notationitems_to_process |= k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND + k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND;
+                                    llll_appendsym(x->n_note_commands, allowed_command_router);
                                 }
                                 
                                 if (operate_on == 2) {
