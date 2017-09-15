@@ -5,9 +5,6 @@
 *.mxe64
 *.a
 
-# Makefile #
-############
-makefile
 
 # OS generated files #
 ######################
@@ -19,9 +16,19 @@ ehthumbs.db
 Thumbs.db
 
 
-# Files #
+# XCode User Data #
+###################
+source/xcproj/bach.xcodeproj/project.xcworkspace/xcuserdata/*
+
+
+# Makefiles #
+#########
+makefile
 source/commons/aa/strparser/makefile
 source/commons/aa/symparser/makefile
+source/commons/aa/chkparser/makefile
+source/commons/aa/exprparser/makefile
+
 
 # Folders #
 ###########
