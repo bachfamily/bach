@@ -69,6 +69,10 @@ t_max_err bach_openfile_write(t_symbol *filename_sym, const char *default_filena
 		path = path_getdefault();
 	}
 	err = path_createsysfile(filename, path, 'TEXT', fh);
+    if (path == -1) {
+        sysfile_close(*fh);
+        return FILE_ERR_CANTOPEN;
+    }
     if (!*fh) {
         return FILE_ERR_CANTOPEN;
     }
@@ -167,7 +171,13 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
 	//len = llll_to_text_buf(ll, &buf, 0, 10, LLLL_T_NULL, llll_add_trailing_zero);
     len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, LLLL_T_NULL, llll_add_trailing_zero);
     
-	llll_write_text_file(filename_sym, &len, buf);
+    if (llll_write_text_file(filename_sym, &len, buf) == FILE_ERR_CANTOPEN) {
+        if (filename_sym)
+            object_error((t_object *) x, "could not create file: %s", filename_sym->s_name);
+        else
+            object_error((t_object *) x, "could not create file");
+    }
+    
 	bach_freeptr(buf);
 	llll_free(ll);
     llll_free(arguments);
@@ -227,12 +237,10 @@ t_max_err llll_write_text_file(t_symbol *filename_sym, t_ptr_size *count, const 
 	t_fourcc filetype = 'TEXT';
 	//bach_fix_filename_extension(&filename_sym, "txt");
 	err = bach_openfile_write(filename_sym, "Untitled.txt", &fh, &filetype, 1, &outtype, NULL, NULL);	
-	if (err)
-		return err;
-//	err = sysfile_writetextfile(fh, (t_handle) &buffer, TEXT_LB_MAC);
-	err = sysfile_write(fh, count, buffer);
-	//err = sysfile_seteof(fh, *count);
-	sysfile_close(fh);
+    if (!err) {
+        err = sysfile_write(fh, count, buffer);
+        sysfile_close(fh);
+    }
 	return err;
 }
 
