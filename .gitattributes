@@ -1,0 +1,4 @@
+*.pbxproj binary merge=union
+*.aif binary
+*.mid binary
+*.svg binary

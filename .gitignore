@@ -33,9 +33,9 @@ source/commons/aa/chkparser/makefile
 source/commons/aa/exprparser/makefile
 
 
-# Emacs temp files #
+# Emacs temp files for .gitignore and .gitattributes #
 #########
-*~
+.g*~
 
 
 # Folders #
