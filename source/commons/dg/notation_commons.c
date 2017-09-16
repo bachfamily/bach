@@ -38944,6 +38944,9 @@ char *undo_op_to_string(long undo_op)
 		case k_UNDO_OP_POP_OUT_TEMPO:
 			sprintf(buf, "Pop Tempo Out");
 			break;
+        case k_UNDO_OP_ADD_TEMPO:
+            sprintf(buf, "Add Tempo");
+            break;
         case k_UNDO_OP_DELETE_SELECTED_MEASURES:
             sprintf(buf, "Delete Selected Measures");
             break;

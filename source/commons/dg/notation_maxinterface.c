@@ -804,7 +804,8 @@ void build_popup_measure_menu(t_notation_obj *r_ob, t_measure *measure)
 	jpopupmenu_additem(r_ob->popup_measure, 571, "No Mutes", NULL, 0, 0, NULL);
 
 	jpopupmenu_addseperator(r_ob->popup_measure);
-	jpopupmenu_additem(r_ob->popup_measure, 590, "Pop Out Tempo", NULL, 0, 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure, 589, "Pop Tempo Out", NULL, 0, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_measure, 590, "Pop Tempo Out In This Voice Only", NULL, 0, 0, NULL);
 
     jpopupmenu_addseperator(r_ob->popup_measure);
     jpopupmenu_additem(r_ob->popup_measure, 591, "Clear", NULL, 0, 0, NULL);
@@ -4041,7 +4042,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem >= 600 && chosenelem <= 605) {
 		return chosenelem; // we pass it through 
-	} else if (chosenelem == 590) {
+	} else if (chosenelem == 589 || chosenelem == 590) {
 		return chosenelem; // we pass it through 
     } else if (chosenelem == 591) {
         return chosenelem; // we pass it through

@@ -1649,6 +1649,7 @@ typedef enum _undo_operations
 	k_UNDO_OP_REBUILD_SCORE,
 	k_UNDO_OP_REBUILD_ROLL,
 	k_UNDO_OP_POP_OUT_TEMPO,
+    k_UNDO_OP_ADD_TEMPO,
 	k_UNDO_OP_DELETE_SELECTION,
     k_UNDO_OP_DELETE_SELECTED_MEASURES,
     k_UNDO_OP_RIPPLE_DELETE_SELECTION,
@@ -12848,6 +12849,9 @@ void compute_note_approximations_for_measure(t_notation_obj *r_ob, t_measure *me
 void validate_accidentals_for_measure(t_notation_obj *r_ob, t_measure *measure);
 
 
+
+
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // OBSOLETE
 void check_tuplets(t_notation_obj *r_ob, t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, t_llll **tuplets, long tuplet_group_offset, long *max_tuplet_group, char admit_dotted_tuplets, char max_dots);
@@ -13417,6 +13421,7 @@ t_timepoint get_zero_timepoint();
 	@return			1 if at least one note in the chord starts a tie, 0 otherwise.
  */
 char has_chord_at_least_one_tie(t_chord *ch);
+
 
 
 /** Obtain the (interpolated) tempo between two tempi, at a given timepoint of a scorevoice.

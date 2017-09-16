@@ -8148,14 +8148,30 @@ void check_tempi(t_score *x)
                     }
 					
 				}
-				if (all_found) {
-					t_voice *firstvisible = get_first_visible_voice((t_notation_obj *)x);
-					if (firstvisible) {
-						long i;
-						for (i = firstvisible->number + 1; i < x->r_ob.num_voices; i++)
-							if (found_tempi[i])
-								found_tempi[i]->hidden = true;
-					}
+                if (all_found) {
+                    t_voice *firstvisible = get_first_visible_voice((t_notation_obj *)x);
+                    if (firstvisible) {
+                        char must_hide = true;
+                        long interp = tmp_tempo->interpolation_type;
+                        
+                        if (interp) {
+                            t_tempo *pivot = get_next_tempo(tmp_tempo);
+                            if (pivot) {
+                                for (long i = firstvisible->number + 1; i < x->r_ob.num_voices; i++) {
+                                    if (!are_tempi_the_same_and_with_the_same_onset(get_next_tempo(found_tempi[i]), pivot)) {
+                                        must_hide = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (must_hide) {
+                            for (long i = firstvisible->number + 1; i < x->r_ob.num_voices; i++)
+                                if (found_tempi[i])
+                                    found_tempi[i]->hidden = true;
+                        }
+                    }
 				}
 			}
 	}

@@ -641,6 +641,23 @@
     //  the black flavour is used.
     //  As for articulations, not all fonts support all symbols.
 
+#define BACH_DOC_TEMPO_SYNTAX
+    //  A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
+    //  - <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
+    //  - <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+    //  The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
+    //  - <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
+    //  tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
+    //  but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
+    //  - <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
+    //  but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
+    //  yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b>
+    //  will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
+    //  If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
+    //  <b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
+    //  <b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant,
+    //  only their onset is accounted for. <br />
+
 #define BACH_DOC_MEASUREINFO_SYNTAX
 	//	Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
 	//	This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
@@ -651,22 +668,9 @@
 	//  - <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 	//  signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 	//  corresponds to a (3+2+3)/8 time signature. <br /> <br />
-	//  The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
-	//  - <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
-	//  - <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-	//  The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
-	//  - <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
-	//  tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
-	//  but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-	//  - <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
-	//  but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-	//  yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b> 
-	//  will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
-	//  If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-	//  <b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
-	//  <b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant, 
-	//  only their onset is accounted for. <br /> 
-	//  Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a 
+    //  The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+    //  @copy BACH_DOC_TEMPO_SYNTAX
+	//  Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
 	//  certain number of measures, such as <b>(<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
 	//  For instance <b>(5 (4 4) ((80) (1/4 160 1/2)))</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
 	//  until 1/4 = 160 exactly at half of the measure. For instance

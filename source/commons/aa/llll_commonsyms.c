@@ -604,6 +604,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_markers = gensym("markers");
 	x->s_marker = gensym("marker");
 	x->s_groups = gensym("groups");
+    x->s_addtempo = gensym("addtempo");
     x->s_addmeasure = gensym("addmeasure");
 	x->s_addmeasures = gensym("addmeasures");
     x->s_appendmeasure = gensym("appendmeasure");

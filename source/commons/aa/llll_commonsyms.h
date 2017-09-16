@@ -187,6 +187,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_markers;
 	t_symbol	*s_marker;
 	t_symbol	*s_groups;
+    t_symbol	*s_addtempo;
     t_symbol	*s_addmeasure;
 	t_symbol	*s_addmeasures;
     t_symbol	*s_appendmeasure;
@@ -559,6 +560,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_markers		(_llllobj_common_symbols->s_markers)
 #define _llllobj_sym_marker			(_llllobj_common_symbols->s_marker)
 #define _llllobj_sym_groups			(_llllobj_common_symbols->s_groups)
+#define _llllobj_sym_addtempo       (_llllobj_common_symbols->s_addtempo)
 #define _llllobj_sym_addmeasure 	(_llllobj_common_symbols->s_addmeasure)
 #define _llllobj_sym_addmeasures	(_llllobj_common_symbols->s_addmeasures)
 #define _llllobj_sym_appendmeasure 	(_llllobj_common_symbols->s_appendmeasure)

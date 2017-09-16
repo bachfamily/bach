@@ -352,6 +352,7 @@ char score_sel_dilate_mc(t_score *x, double mc_factor, double fixed_mc_point);
 void score_split(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 
+void score_addtempo(t_score *x, long meas_num, t_llll *tempo, t_llll *voices_1based);
 void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_deletemarker(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_clearmarkers(t_score *x);
@@ -398,8 +399,8 @@ t_measure *create_and_insert_new_measure(t_score *x, t_scorevoice *voice, t_meas
 void insert_new_measure_in_all_voices(t_score *x, t_scorevoice *reference_voice, long ref_meas_ID, char direction, 
 										t_measure **added_measures, long *num_added_meas, char also_add_undo_ticks, e_undo_operations *undo_op);
 void insert_measures_from_message(t_score *x, long start_voice_num_one_based, long end_voice_num_one_based, long ref_meas_num_one_based, t_llll *meas_ll, char allow_multiple_measures_per_voice);
-char delete_selected_tempi(t_score *x);
-char switch_interpolation_to_selected_tempi(t_score *x);
+char delete_selected_tempi(t_score *x, char also_synchronous_temp);
+char switch_interpolation_to_selected_tempi(t_score *x, char also_synchronous_temp);
 
 char is_note_in_selected_region(t_score *x, t_chord *chord, t_note *note);
 char is_chord_in_selected_region(t_score *x, t_chord *chord);
@@ -2447,7 +2448,31 @@ void score_sel_change_slot_value(t_score *x, t_symbol *s, long argc, t_atom *arg
 
 
 
-void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv){
+void score_addtempo(t_score *x, long meas_num, t_llll *tempo_ll, t_llll *voices_1based)
+{
+    lock_general_mutex((t_notation_obj *)x);
+    for (long i = 0; i < x->r_ob.num_voices; i++) {
+        if (voices_1based && !is_long_in_llll_first_level(voices_1based, i + 1))
+            continue;
+        t_scorevoice *voice = nth_scorevoice(x, i);
+        if (voice) {
+            t_measure *meas = nth_measure_of_scorevoice(voice, meas_num);
+            if (meas) {
+                create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
+                t_tempo *tempo = build_tempo_from_llll(tempo_ll, x->r_ob.tempo_approx_digits);
+                insert_tempo((t_notation_obj *)x, meas, tempo);
+                recompute_all_for_measure((t_notation_obj *)x, meas, true);
+            }
+        }
+    }
+    unlock_general_mutex((t_notation_obj *)x);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_TEMPO);
+}
+
+
+
+void score_addmarker(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
 	t_llll *params = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
 	if (params->l_size >= 2) { // position, name
 		double pos_ms = 0;
@@ -4166,6 +4191,24 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) score_anything, "appendmeasures", A_GIMME, 0);
     class_addmethod(c, (method) score_anything, "addmeasures", A_GIMME, 0);
 
+    
+    
+    
+    // @method addtempo @digest Add a tempo
+    // The <m>addtempo</m> message, followed by an integer <m>N</m> and an llll, adds in measure <m>N</m>  the tempo contained in the llll. <br />
+    // @copy BACH_DOC_TEMPO_SYNTAX
+    // @marg 0 @name measure_number @optional 0 @type int
+    // @marg 1 @name tempo @optional 0 @type llll
+    // @mattr voices @type llll @default null @digest Numbers of voices to be exported (<b>null</b> means: all voices)
+    // @example addtempo 1 (1/4 90) @caption add the quarter = 90 tempo at the beginning of the score (all voices)
+    // @example addtempo 3 (1/8 200) @caption add eighth = 200 tempo at measure 3 (all voices)
+    // @example addtempo 3 (1/8 200) @voices 1 @caption the same, but for first voice only
+    // @example addtempo 3 (1/8 200) @voices 1 3 @caption the same, for voices 1 and 3
+    // @example addtempo 2 (1/4 30 1/3) @voices 1 3 @caption add the tempo quarter = 30 in measure 2, with offset 1/3
+    // @seealso cleartempi
+    class_addmethod(c, (method) score_anything, "addtempo", A_GIMME, 0);
+
+    
     
     // @method appendmeasure @digest Append a single measure
     // @description An <m>appendmeasure</m> message will append a single measure to the existing ones.
@@ -8405,6 +8448,20 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         insert_measures_from_message(x, voice_start, voice_end, -1, meas, router == _llllobj_sym_appendmeasures);
                         handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, router == _llllobj_sym_appendmeasures ? k_UNDO_OP_APPEND_MEASURES : k_UNDO_OP_APPEND_MEASURE);
                         
+                    } else if (router == _llllobj_sym_addtempo) {
+                        long meas_num = 0;
+                        t_llll *voices = NULL;
+                        
+                        llll_destroyelem(firstelem);
+                        if (hatom_gettype(&inputlist->l_head->l_hatom) == H_LONG) {
+                            meas_num = hatom_getlong(&inputlist->l_head->l_hatom) - 1;
+                            llll_destroyelem(inputlist->l_head);
+                        }
+
+                        llll_parseargs_and_attrs_destructive((t_object *) x, inputlist, "l", gensym("voices"), &voices);
+                        score_addtempo(x, meas_num, hatom_gettype(&inputlist->l_head->l_hatom) == H_LLLL ? hatom_getllll(&inputlist->l_head->l_hatom) : inputlist, voices);
+                        llll_free(voices);
+                        
                     } else if (router == _llllobj_sym_insertmeasure || router == _llllobj_sym_insertmeasures) {
                         long voice_start = 1, voice_end = x->r_ob.num_voices;
                         long meas_num = -1;
@@ -12183,13 +12240,18 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 							} else if (res == 605 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_RHYTHMIC_TREE)){
 								rebeam_levels_of_selected_tree_nodes(x, true, true, k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
 								handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTO_RHYTHMIC_TREE_IGNORING_EXISTING_TUPLETS);
-							} else if (res == 590 && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC)) {
+							} else if ((res == 589 || res == 590) && is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC)) {
 								lock_general_mutex((t_notation_obj *)x);	
 								if (meas->firstchord && measure_barlines_coincide_for_all_voices(x, meas->measure_number)) {
-									t_scorevoice *tempvc;
-									for (tempvc = x->firstvoice; tempvc && tempvc->v_ob.number < x->r_ob.num_voices; tempvc = tempvc->next)
-										create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nth_measure_of_scorevoice(tempvc, meas->measure_number), k_UNDO_MODIFICATION_CHANGE);
-									pop_tempo_over_chord(x, meas->firstchord, true);
+                                    t_scorevoice *tempvc;
+                                    if (res == 589) {
+                                        for (tempvc = x->firstvoice; tempvc && tempvc->v_ob.number < x->r_ob.num_voices; tempvc = tempvc->next)
+                                            create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nth_measure_of_scorevoice(tempvc, meas->measure_number), k_UNDO_MODIFICATION_CHANGE);
+                                        pop_tempo_over_chord(x, meas->firstchord, true);
+                                    } else {
+                                        create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
+                                        pop_tempo_over_chord(x, meas->firstchord, false);
+                                    }
 								} else {
 									create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_CHANGE);
 									pop_tempo_over_chord(x, meas->firstchord, false);
@@ -15382,12 +15444,12 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 		return 1;
 	} else if ((x->r_ob.selection_type == k_TEMPO) && (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE)) { // only tempi selected + BACKSPACE
 		if (!is_editable((t_notation_obj *)x, k_TEMPO, k_DELETION)) return 0;
-		delete_selected_tempi(x); 
+		delete_selected_tempi(x, true);
 		handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SELECTED_TEMPI); 
 		return 1;
 	} else if ((x->r_ob.selection_type == k_TEMPO) && (modifiers & eCommandKey && modifiers & eAltKey && modifiers & eShiftKey) && (keycode == 105)) { // only tempi selected + Cmd+Alt+Shift+I 
 		if (!is_editable((t_notation_obj *)x, k_TEMPO, k_MODIFICATION_GENERIC)) return 0;
-		switch_interpolation_to_selected_tempi(x); 
+		switch_interpolation_to_selected_tempi(x, true);
 		handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TOGGLE_INTERPOLATION_FOR_SELECTED_TEMPI); 
 		return 1;
 	} else if (x->r_ob.selection_type == k_ARTICULATION && (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE)) { // only measures selected + BACKSPACE
@@ -16127,7 +16189,8 @@ char clear_selected_measures(t_score *x) {
 }
 
 
-char delete_selected_tempi(t_score *x) {
+char delete_selected_tempi(t_score *x, char also_synchronous_tempi)
+{
 	char changed = 0;
 	t_notation_item *temp = x->r_ob.firstselecteditem;
 	lock_general_mutex((t_notation_obj *)x);
@@ -16135,8 +16198,19 @@ char delete_selected_tempi(t_score *x) {
 		t_notation_item *next = temp->next_selected;
 		t_measure *meas = ((t_tempo *)temp)->owner;
 		if ((temp->type == k_TEMPO) && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)meas))) {
-			create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-			delete_tempo((t_notation_obj *)x, (t_tempo *)temp);
+            
+            if (also_synchronous_tempi) {
+                t_tempo *sync_tempi[CONST_MAX_VOICES];
+                long num_sync_tempi = get_synchronous_tempi((t_notation_obj *)x, (t_tempo *)temp, sync_tempi);
+                for (long i = 0; i < num_sync_tempi; i++) {
+                    create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)sync_tempi[i]->owner, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                    delete_tempo((t_notation_obj *)x, sync_tempi[i]);
+                }
+            } else {
+                create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                delete_tempo((t_notation_obj *)x, (t_tempo *)temp);
+            }
+            
 			changed = 1;
 		}
 		temp = next;
@@ -16147,7 +16221,8 @@ char delete_selected_tempi(t_score *x) {
 	return changed;
 }
 
-char switch_interpolation_to_selected_tempi(t_score *x) {
+char switch_interpolation_to_selected_tempi(t_score *x, char also_synchronous_tempi)
+{
 	char changed = 0;
 	t_notation_item *temp = x->r_ob.firstselecteditem;
 	lock_general_mutex((t_notation_obj *)x);	
@@ -16155,8 +16230,19 @@ char switch_interpolation_to_selected_tempi(t_score *x) {
 		t_measure *meas = ((t_tempo *)temp)->owner;
 		if (temp->type == k_TEMPO && !notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)meas)) {
 			t_tempo *this_tempo = (t_tempo *)temp;
-			create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-			this_tempo->interpolation_type = (this_tempo->interpolation_type > 0) ? 0 : 1;
+            long new_interpolation_type = (this_tempo->interpolation_type > 0) ? 0 : 1;
+            
+            if (also_synchronous_tempi) {
+                t_tempo *sync_tempi[CONST_MAX_VOICES];
+                long num_sync_tempi = get_synchronous_tempi((t_notation_obj *)x, (t_tempo *)temp, sync_tempi);
+                for (long i = 0; i < num_sync_tempi; i++) {
+                    create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)sync_tempi[i]->owner, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                    sync_tempi[i]->interpolation_type = new_interpolation_type;
+                }
+            } else {
+                create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                this_tempo->interpolation_type = new_interpolation_type;
+            }
 			changed = 1;
 		}
 		temp = temp->next_selected;
