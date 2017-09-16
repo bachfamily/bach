@@ -48,7 +48,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -192,7 +193,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -681,7 +683,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -1309,6 +1312,28 @@
 				<br />				See also:<m>changeslotvalue</m>,<m>eraseslot</m>,<m>filltiesequenceswithslots</m><br />
 			</description>
 		</method>
+		<method name="addtempo">
+			<arg name="measure_number" optional="0" type="int" />
+			<arg name="tempo" optional="0" type="llll" />
+			<digest>
+				Add a tempo
+			</digest>
+			<description>
+				Syntax: <b>addtempo <m>&lt;int: measure_number&gt;</m> <m>&lt;llll: tempo&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>addtempo 1 (1/4 90)</b>   <i>→ add the quarter = 90 tempo at the beginning of the score (all voices)</i><br />
+				• <b>addtempo 3 (1/8 200)</b>   <i>→ add eighth = 200 tempo at measure 3 (all voices)</i><br />
+				• <b>addtempo 3 (1/8 200) @voices 1</b>   <i>→ the same, but for first voice only</i><br />
+				• <b>addtempo 3 (1/8 200) @voices 1 3</b>   <i>→ the same, for voices 1 and 3</i><br />
+				• <b>addtempo 2 (1/4 30 1/3) @voices 1 3</b>   <i>→ add the tempo quarter = 30 in measure 2, with offset 1/3</i><br />
+				<br />
+				Message attributes:<br />
+				
+<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
+				<br />
+				<br />				See also:<m>cleartempi</m><br />
+			</description>
+		</method>
 		<method name="appendmeasure">
 			<arg name="voice_numbers" optional="1" type="int/symbol/llll" />
 			<arg name="measures" optional="1" type="llll" />
@@ -1365,7 +1390,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -1609,7 +1635,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -1878,7 +1905,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -2808,7 +2836,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -3371,7 +3400,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -4322,7 +4352,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -4563,7 +4594,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -4790,7 +4822,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -5445,7 +5478,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -6413,7 +6447,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -6653,7 +6688,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -7140,7 +7176,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -10551,7 +10588,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -10871,7 +10909,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -12885,7 +12924,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -13014,7 +13054,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
@@ -13491,7 +13532,8 @@
 				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
 				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
-				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo, having one of the following syntaxes: <br />
+				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
+				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
 				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
 				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
 				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />

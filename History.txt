@@ -125,6 +125,8 @@ v0.8b
 				Substitute "paste" with "paste replace" to preserve old behavior
 				Now "paste" also supports additional parameters for paste insertion (see #paste)
 			The default for @dlspansties has changed, now it is 1
+			Fixed several quirks with tempo interface
+			Added "addtempo" message
 
 
 - bach.roll		Now "merge" also applies to markers

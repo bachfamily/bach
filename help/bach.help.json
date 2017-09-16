@@ -1660,12 +1660,19 @@
 				"tags" : [ "message", "addchord", "add", "chord", "adding" ],
 				"title" : [ "Adding a chord in bach.roll" ]
 			},
-			"Addchords" : {
-				"filename" : [ "bach.help.notation.messages.02_addchords.maxpat" ],
+			"B_addchords" : {
+				"filename" : [ "bach.help.notation.messages.01b_addchords.maxpat" ],
 				"objects" : [ "bach.roll" ],
 				"seealso" : [ "addchord", "gluechord", "autosize" ],
 				"tags" : [ "message", "addchords", "add", "chord", "adding", "offset", "shift", "append", "several", "at", "once" ],
 				"title" : [ "Adding several chords at once in bach.roll" ]
+			},
+			"Addtempo" : {
+				"filename" : [ "bach.help.notation.messages.02_addtempo.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "tempo+syntax", "addchord" ],
+				"tags" : [ "message", "addchords", "add", "tempo", "adding", "offset", "measure", "append", "set", "delete", "clear", "tempi", "cleartempi", "addtempo", "cleartempo", "addtempi", "interpolation" ],
+				"title" : [ "Adding and deleting tempi" ]
 			},
 			"Gluechord" : {
 				"filename" : [ "bach.help.notation.messages.03_gluechord.maxpat" ],
@@ -1753,8 +1760,8 @@
 				"tags" : [ "message", "clear", "clearall", "voice" ],
 				"title" : [ "Clearing musical content" ]
 			},
-			"Advancedclear copy" : {
-				"filename" : [ "bach.help.notation.messages.09_advancedclear copy.maxpat" ],
+			"Advancedclear" : {
+				"filename" : [ "bach.help.notation.messages.09_advancedclear.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "measureinfo", "articulations" ],
 				"tags" : [ "message", "clear", "notes", "clearnotes", "articulations", "cleararticulations", "tempi", "cleartempi", "delete", "clearbreakpoints", "breakpoint", "pitch" ],
