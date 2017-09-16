@@ -958,8 +958,11 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
                     if (role == k_MARKER_ROLE_TIME_SIGNATURE && content)
 						curr_ts = get_timesignature_from_llll((t_object *)x, content);
 						
-					if (curr_tempo_figure.r_num < 0 || (tempi_handling != k_TEMPI_FROM_TEMPO_MARKERS && role == k_MARKER_ROLE_TIME_SIGNATURE && content)) // autoset
+                    if (curr_tempo_figure.r_num < 0 || (tempi_handling != k_TEMPI_FROM_TEMPO_MARKERS && role == k_MARKER_ROLE_TIME_SIGNATURE && content)) { // autoset
+                        t_rational old_tempo_figure = curr_tempo_figure;
 						curr_tempo_figure = ts_to_division(NULL, &curr_ts);
+                        curr_figure_tempo_value = curr_figure_tempo_value * (old_tempo_figure/RAT_1OVER4);
+                    }
 					
 					t_rational to_set_later_tempo_figure = curr_tempo_figure;
 					double to_set_later_figure_tempo_value = curr_figure_tempo_value;
@@ -971,7 +974,7 @@ char markers_to_measureinfo_and_rat_durations(t_quantize *x, t_llll *markers, t_
                     for (i = 0; i < MAX_NUM_DIVISIONS; i++)
                         num_subdivs[i] = 1;
                     
-					for (temp = elem->l_next; temp; temp = temp->l_next) {
+					for (temp = elem->l_next; temp && num_divs < MAX_NUM_DIVISIONS; temp = temp->l_next) {
 						e_marker_roles this_role = get_marker_role_from_llllelem(temp);
 						t_llll *this_content = get_marker_content_from_llllelem(temp);
                         if (this_role == k_MARKER_ROLE_MEASURE_SUBDIVISION) {
