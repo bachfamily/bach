@@ -299,6 +299,7 @@ v0.8b
 			New "split" message
 			New "addtempo" message
 			New "syncopationmaxdots" attribute
+			"sel chord" and "sel note" now support "any" symbol for measure number, to have global chord index
 
 - bach.roll		Now also supports linear editing. See #linear+edit in help center
 			Ripple delete: now works as expected on multiple voices

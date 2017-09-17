@@ -5103,13 +5103,15 @@ int T_EXPORT main(void){
 	// for the voice having such number.
 	// - If the word <m>sel</m> is followed by the symbol <b>chord</b> followed by one, two or three integers (representing an address), a certain chord is selected.
 	// The full syntax for the integers is: <m>voice_number</m> <m>measure_number</m> <m>chord_index</m>. If less elements are given, the first ones are considered
-	// to be by default 1's. The chord index is the counting index of the chord inside the measure.
+	// to be by default 1's. The chord index is the counting index of the chord inside the measure. If the <m>measure_number</m> is replaced by the symbol <b>any</b>,
+    // then the <m>chord_index</m> is interpreted as global (and not measure-wise).
 	// For instance, <b>sel chord 2 3</b> selects the third chord of second measure (of first voice), while <b>sel chord 4 2 3</b> does the same with the fourth voice. 
 	// Negative positions are also allowed, counting backwards. Multiple chords can be selected at once, provided that instead of a l ofist integers one gives
 	// a sequence of wrapped lists of integers, for instance <b>sel chord (2 3) (4 1 2) (5 6 1)</b>.<br />
 	// - If the word <m>sel</m> is followed by the symbol <b>note</b> followed by one, two, three or four integers (representing an address), a certain note is selected.
 	// The full syntax for the integers is: <m>voice_number</m> <m>measure_number</m> <m>chord_index</m> <m>note_index</m>. If less elements are given, the first ones are considered
 	// to be by default 1's. The chord index is the counting index of the chord inside the measure; the note index is taken from the lowest to the highest.
+    // If the <m>measure_number</m> is replaced by the symbol <b>any</b>, then the <m>chord_index</m> is interpreted as global (and not measure-wise).
 	// For instance, <b>sel note 4 2 3</b> selects the third note of second chord of fourth measure (of first voice), while <b>sel note 5 4 2 3</b> does the same with the fifth voice. 
 	// Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
 	// a sequence of wrapped lists of integers, for instance <b>sel note (5 2 4 3) (1 1 1 -1)</b>.<br />
@@ -5133,7 +5135,8 @@ int T_EXPORT main(void){
     // @example sel breakpoints @caption select all breakpoints
     // @example sel tails @caption select all tails
     // @example sel measures @caption select all measures
-    // @example sel chord 3 2 @caption select 3rd chord of 2nd measure (of 1st voice)
+    // @example sel chord 3 2 @caption select 2rd chord of 3nd measure (of 1st voice)
+    // @example sel chord () 20 @caption select 20th chord of 1st voice (in any measure)
     // @example sel chord 2 5 4 @caption select 4th chord of 5th measure 2nd voice
     // @example sel chord -1 -2 -1 @caption select last chord of one-but-last measure of last voice
     // @example sel note 3 4 1 -1 @caption select last note of 1st chord of 4th measure of 3rd voice

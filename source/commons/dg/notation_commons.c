@@ -20233,7 +20233,27 @@ void fill_measure_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *fir
 }
 
 
-void fill_chord_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_llllelem, 
+/// BEWARE: this function is 1-based!!!
+void global_chord_number_to_measure_and_chord_index(t_notation_obj *r_ob, long voice_num, long global_chord_num, long *local_chord_num, long *meas_num)
+{
+    t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
+    if (voice) {
+        for (t_measure *meas = voice->firstmeasure; meas; meas = meas->next) {
+            if (global_chord_num <= meas->num_chords) {
+                *local_chord_num = global_chord_num;
+                *meas_num = meas->measure_number + 1;
+                return;
+            } else {
+                global_chord_num -= meas->num_chords;
+            }
+        }
+        *local_chord_num = global_chord_num;
+        *meas_num = voice->num_measures;
+        return;
+    }
+}
+
+void fill_chord_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_llllelem,
 										 long *voice_num, long *meas_num, long *chord_num)
 {
 	// initializing stuff
@@ -20264,18 +20284,26 @@ void fill_chord_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first
 	} else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 		if (tot_size == 1 && is_hatom_number(&first_llllelem->l_hatom)) {
 			*chord_num = hatom_getlong(&first_llllelem->l_hatom);
-		} else if (tot_size == 2) { 
-			if (is_hatom_number(&first_llllelem->l_hatom))
-				*meas_num = hatom_getlong(&first_llllelem->l_hatom);
-			if (is_hatom_number(&first_llllelem->l_next->l_hatom))
-				*chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
-		} else if (tot_size >= 3) { 
-			if (is_hatom_number(&first_llllelem->l_hatom))
-				*voice_num = hatom_getlong(&first_llllelem->l_hatom);
-			if (is_hatom_number(&first_llllelem->l_next->l_hatom))
-				*meas_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
-			if (is_hatom_number(&first_llllelem->l_next->l_next->l_hatom))
-				*chord_num = hatom_getlong(&first_llllelem->l_next->l_next->l_hatom);
+            
+        } else if (tot_size >= 2) {
+            if (tot_size >= 3) {
+                if (is_hatom_number(&first_llllelem->l_hatom))
+                    *voice_num = hatom_getlong(&first_llllelem->l_hatom);
+                first_llllelem = first_llllelem->l_next;
+            }
+
+            if (hatom_gettype(&first_llllelem->l_hatom) == H_SYM && hatom_getsym(&first_llllelem->l_hatom) == _llllobj_sym_any) {
+                // chord is numbered from the beginning
+                long global_chord_num = 1;
+                if (is_hatom_number(&first_llllelem->l_next->l_hatom))
+                    global_chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
+                global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num);
+            } else {
+                if (is_hatom_number(&first_llllelem->l_hatom))
+                    *meas_num = hatom_getlong(&first_llllelem->l_hatom);
+                if (is_hatom_number(&first_llllelem->l_next->l_hatom))
+                    *chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
+            }
 		}
 	}
 }
@@ -20325,22 +20353,29 @@ void fill_note_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first_
 				*chord_num = hatom_getlong(&first_llllelem->l_hatom);
 			if (is_hatom_number(&first_llllelem->l_next->l_hatom))
 				*note_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
-		} else if (tot_size == 3) { 
-			if (is_hatom_number(&first_llllelem->l_hatom))
-				*meas_num = hatom_getlong(&first_llllelem->l_hatom);
-			if (is_hatom_number(&first_llllelem->l_next->l_hatom))
-				*chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
-			if (is_hatom_number(&first_llllelem->l_next->l_next->l_hatom))
-				*note_num = hatom_getlong(&first_llllelem->l_next->l_next->l_hatom);
-		} else if (tot_size >= 4) { 
-			if (is_hatom_number(&first_llllelem->l_hatom))
-				*voice_num = hatom_getlong(&first_llllelem->l_hatom);
-			if (is_hatom_number(&first_llllelem->l_next->l_hatom))
-				*meas_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
-			if (is_hatom_number(&first_llllelem->l_next->l_next->l_hatom))
-				*chord_num = hatom_getlong(&first_llllelem->l_next->l_next->l_hatom);
-			if (is_hatom_number(&first_llllelem->l_next->l_next->l_next->l_hatom))
-				*note_num = hatom_getlong(&first_llllelem->l_next->l_next->l_next->l_hatom);
+		} else if (tot_size >= 3) {
+            if (tot_size >= 4) {
+                if (is_hatom_number(&first_llllelem->l_hatom))
+                    *voice_num = hatom_getlong(&first_llllelem->l_hatom);
+                first_llllelem = first_llllelem->l_next;
+            }
+            
+            if (hatom_gettype(&first_llllelem->l_hatom) == H_SYM && hatom_getsym(&first_llllelem->l_hatom) == _llllobj_sym_any) {
+                // chord is numbered from the beginning
+                long global_chord_num = 1;
+                if (is_hatom_number(&first_llllelem->l_next->l_hatom))
+                    global_chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
+                if (is_hatom_number(&first_llllelem->l_next->l_next->l_hatom))
+                    *note_num = hatom_getlong(&first_llllelem->l_next->l_next->l_hatom);
+                global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num);
+            } else {
+                if (is_hatom_number(&first_llllelem->l_hatom))
+                    *meas_num = hatom_getlong(&first_llllelem->l_hatom);
+                if (is_hatom_number(&first_llllelem->l_next->l_hatom))
+                    *chord_num = hatom_getlong(&first_llllelem->l_next->l_hatom);
+                if (is_hatom_number(&first_llllelem->l_next->l_next->l_hatom))
+                    *note_num = hatom_getlong(&first_llllelem->l_next->l_next->l_hatom);
+            }
 		}
 	}
 }
