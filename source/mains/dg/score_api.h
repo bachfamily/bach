@@ -133,6 +133,7 @@ void scoreapi_set_minmeaswidth(t_score *x, double d);
 void scoreapi_set_minmeaswidthpersymunit(t_score *x, double d);
 void scoreapi_set_syncopationasymratio(t_score *x, double d);
 void scoreapi_set_syncopationposdurratio(t_score *x, double d);
+void scoreapi_set_syncopationmaxdots(t_score *x, long l);
 void scoreapi_set_lyricsaffectspacing(t_score *x, long s);
 void scoreapi_set_dynamicsaffectspacing(t_score *x, long s);
 void scoreapi_set_hidetupletshapeonbeams(t_score *x, long l);

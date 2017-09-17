@@ -168,6 +168,7 @@ t_max_err score_setattr_spacingproportionality(t_score *x, t_object *attr, long 
 t_max_err score_setattr_minmeaswidth(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_minmeaswidthpersymunit(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_syncopationposdurratio(t_score *x, t_object *attr, long ac, t_atom *av);
+t_max_err score_setattr_syncopationmaxdots(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_showaccidentalspreferences(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_showaccidentalstiepreferences(t_score *x, t_object *attr, long ac, t_atom *av);
 t_max_err score_setattr_cautionaryaccidentals(t_score *x, t_object *attr, long ac, t_atom *av);
@@ -6553,7 +6554,14 @@ int T_EXPORT main(void){
 	// appear complicated: if so, just leave it to the default value of 2.5. However, the idea is that this ratio 
 	// somehow tells "how simple" the syncopation is. <br />
 	// @copy BACH_DOC_SCORE_SYNCOPATION
-	
+
+    CLASS_ATTR_LONG(c,"syncopationmaxdots", 0, t_notation_obj, syncopation_max_dots);
+    CLASS_ATTR_STYLE_LABEL(c,"syncopationmaxdots", 0, "text", "Maximum Number of Dots in Syncopations");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"syncopationmaxdots", 0, "0");
+    CLASS_ATTR_ACCESSORS(c, "syncopationmaxdots", (method)NULL, (method)score_setattr_syncopationmaxdots);
+    // @description Maximum number of dots for a figure to be allowed inside a syncopation. <br />
+    // @copy BACH_DOC_SCORE_SYNCOPATION
+
 	CLASS_STICKY_ATTR_CLEAR(c, "category");
 	
 	
@@ -7427,6 +7435,12 @@ t_max_err score_setattr_syncopationposdurratio(t_score *x, t_object *attr, long 
 	if (ac && av)
 		scoreapi_set_syncopationposdurratio(x, atom_getfloat(av));
 	return MAX_ERR_NONE;
+}
+
+t_max_err score_setattr_syncopationmaxdots(t_score *x, t_object *attr, long ac, t_atom *av){
+    if (ac && av)
+        scoreapi_set_syncopationmaxdots(x, atom_getlong(av));
+    return MAX_ERR_NONE;
 }
 
 void score_set_spacingtype(t_score *x, long l)

@@ -865,6 +865,12 @@ void scoreapi_set_syncopationposdurratio(t_score *x, double d)
 	recompute_all_and_redraw(x);
 }
 
+void scoreapi_set_syncopationmaxdots(t_score *x, long l)
+{
+    x->r_ob.syncopation_max_dots = l;
+    recompute_all_and_redraw(x);
+}
+
 
 
 

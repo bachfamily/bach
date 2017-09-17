@@ -126,8 +126,6 @@ v0.8b
 				Now "paste" also supports additional parameters for paste insertion (see #paste)
 			The default for @dlspansties has changed, now it is 1
 			Fixed several quirks with tempo interface
-			Added "addtempo" message
-
 
 - bach.roll		Now "merge" also applies to markers
 
@@ -299,6 +297,8 @@ v0.8b
 			Fixed bug causing crashes when opening bach inspector with no selection
 			"ceilmeasures" now accepts an argument (number of total expected measures)
 			New "split" message
+			New "addtempo" message
+			New "syncopationmaxdots" attribute
 
 - bach.roll		Now also supports linear editing. See #linear+edit in help center
 			Ripple delete: now works as expected on multiple voices

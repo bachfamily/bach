@@ -17678,10 +17678,13 @@ char are_left_and_right_durations_ok_for_syncopation(t_notation_obj *r_ob, t_cho
 	t_rational pos_dur_ratio = rat_rat_div(genrat(1, syncopation_position.r_den), rat_abs(left_dur)); // 1/2 / (1/4) = 2.; (1/2) / (1/8) = 4.
 	
 	if (left_right_ratio.r_den != 0 && pos_dur_ratio.r_den != 0 &&
-		((left_llll_has_unique_element && (perfect_log2(rat_rat_div(right_dur, left_dur).r_den) >= 0 || rat_rat_div(rat_rat_sum(right_dur, left_dur), measure_division).r_den == 1)) || // i.e. it's not a "real" syncopation: it starts on the beginning of this box. This should never happen: singleton should be deleted from the tree!
-//		((left_llll_has_unique_element && perfect_log2(rat_rat_div(right_dur, left_dur).r_den) >= 0) || // i.e. it's not a "real" syncopation: it starts on the beginning of this box. This should never happen: singleton should be deleted from the tree!
-		 (rat_double_cmp(left_right_ratio, r_ob->syncopation_asym_ratio, 0.01) <= 0 &&  // CONST_EPSILON3
-		  rat_double_cmp(pos_dur_ratio, r_ob->syncopation_pos_dur_ratio, 0.01) <= 0))) { // ratio is admissible with respect to the simmetricity
+		((left_llll_has_unique_element && (perfect_log2(rat_rat_div(right_dur, left_dur).r_den) >= 0 ||
+                                           rat_rat_div(rat_rat_sum(right_dur, left_dur), measure_division).r_den == 1)) ||
+                                            // i.e. it's not a "real" syncopation: it starts on the beginning of this box.
+                                            // This should never happen: singleton should be deleted from the tree!
+		 (rat_double_cmp(left_right_ratio, r_ob->syncopation_asym_ratio, 0.01) <= 0 &&
+          rat_double_cmp(pos_dur_ratio, r_ob->syncopation_pos_dur_ratio, 0.01) <= 0 && // ratio is admissible
+          get_num_dots(r_ob, right_dur + left_dur) <= r_ob->syncopation_max_dots))) { // maxdots is admissible
 			return true;
 	}
 	return false;

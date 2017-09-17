@@ -4356,6 +4356,7 @@ typedef struct _notation_obj
 														///< E.g.: sixteenth quarter dotted_eight in 2/4 time, this value = 3 (quarter = dotted_eight (3/16) + sixteenth (1/16), and 3/16 / 1/16 = 3.
 	double		syncopation_pos_dur_ratio;				///< Maximum allowed ratio between the the position of the syncopation in the measure (but with numerator 1) and the left-side (symbolic) duration of the syncopation. 
 														///< A good value is 2.5; don't change it if not sure of what it is. 
+    long		syncopation_max_dots;                   ///< Maximum number of dots for a figure to be allowed inside a syncopation (default: 0)
 	char		allow_beaming;							///< Flag telling if we allow notes to be beamed or not (by default: yes)
     
 	// tempi
