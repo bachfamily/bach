@@ -33805,8 +33805,10 @@ t_timepoint llll_to_timepoint(t_notation_obj *r_ob, t_llll *innerllll, char *is_
 		}
         
         
-    } else if (innerllll && (innerllll->l_size == 2 || innerllll->l_size == 3) && (hatom_gettype(&innerllll->l_tail->l_prev->l_hatom) == H_LLLL && hatom_getllll(&innerllll->l_tail->l_prev->l_hatom)->l_size == 0 && is_hatom_number(&innerllll->l_tail->l_hatom))) {
-        // (() <global_sym_onset>) or ( <voicenumber> () <global_sym_onset>)
+    } else if (innerllll && (innerllll->l_size == 2 || innerllll->l_size == 3) &&
+               ((hatom_gettype(&innerllll->l_tail->l_prev->l_hatom) == H_LLLL && hatom_getllll(&innerllll->l_tail->l_prev->l_hatom)->l_size == 0 && is_hatom_number(&innerllll->l_tail->l_hatom)) ||
+                (hatom_gettype(&innerllll->l_tail->l_prev->l_hatom) == H_SYM && hatom_getsym(&innerllll->l_tail->l_prev->l_hatom) == _llllobj_sym_any && is_hatom_number(&innerllll->l_tail->l_hatom)))){
+        // (any <global_sym_onset>) or ( <voicenumber> any <global_sym_onset>)
         
         t_rational global_sym_onset = hatom_getrational(&innerllll->l_tail->l_hatom);
         arguments_tp.voice_num = (innerllll->l_size == 2 ? 0 : hatom_getlong(&innerllll->l_head->l_hatom) - 1);
