@@ -2176,16 +2176,16 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                     if (prev && prev->prev) // as always, we don't inspect the VERY FIRST breakpoint, because it corresponds to the note head (inspect the note itself, instead!)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)prev);
                 } else if (man->active_bach_inspector_obj_type == k_NOTE) {
-                    t_chord *prevch = get_prev_chord(((t_note *)item)->parent);
+                    t_chord *prevch = chord_get_prev(((t_note *)item)->parent);
                     t_note *prev = !prevch ? NULL : nth_note(prevch, CLAMP(note_get_position(r_ob, (t_note *)item) - 1, 0, prevch->num_notes - 1));
                     if (prev)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)prev);
                 } else if (man->active_bach_inspector_obj_type == k_CHORD) {
-                    t_chord *prev = get_prev_chord((t_chord *)item);
+                    t_chord *prev = chord_get_prev((t_chord *)item);
                     if (prev)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)prev);
                 } else if (man->active_bach_inspector_obj_type == k_TEMPO) {
-                    t_tempo *prev = get_prev_tempo((t_tempo *)item);
+                    t_tempo *prev = tempo_get_prev((t_tempo *)item);
                     if (prev)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)prev);
                 } else if (man->active_bach_inspector_obj_type == k_MEASURE) {
@@ -2210,16 +2210,16 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                     if (next)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)next);
                 } else if (man->active_bach_inspector_obj_type == k_NOTE) {
-                    t_chord *nextch = get_next_chord(((t_note *)item)->parent);
+                    t_chord *nextch = chord_get_next(((t_note *)item)->parent);
                     t_note *next = !nextch ? NULL : nth_note(nextch, CLAMP(note_get_position(r_ob, (t_note *)item) - 1, 0, nextch->num_notes - 1));
                     if (next)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)next);
                 } else if (man->active_bach_inspector_obj_type == k_CHORD) {
-                    t_chord *next = get_next_chord((t_chord *)item);
+                    t_chord *next = chord_get_next((t_chord *)item);
                     if (next)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)next);
                 } else if (man->active_bach_inspector_obj_type == k_TEMPO) {
-                    t_tempo *next = get_next_tempo((t_tempo *)item);
+                    t_tempo *next = tempo_get_next((t_tempo *)item);
                     if (next)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)next);
                 } else if (man->active_bach_inspector_obj_type == k_MEASURE) {
@@ -2249,13 +2249,13 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                     if (meas)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)meas);
                 } else if (man->active_bach_inspector_obj_type == k_CHORD) {
-                    t_voice *nextvoice = get_next_voice(r_ob, r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)((t_chord *)item)->voiceparent : (t_voice *)((t_chord *)item)->parent->voiceparent);
+                    t_voice *nextvoice = voice_get_next(r_ob, r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)((t_chord *)item)->voiceparent : (t_voice *)((t_chord *)item)->parent->voiceparent);
                     t_chord *ch = !nextvoice ? NULL : (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? find_ms_nearest_chord_in_rollvoice(r_ob, (t_rollvoice *)nextvoice, ((t_chord *)item)->onset) :
                                                        find_ux_nearest_chord_in_scorevoice(r_ob, (t_scorevoice *)nextvoice, chord_get_alignment_ux(r_ob, (t_chord *)item)));
                     if (ch)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)ch);
                 } else if (man->active_bach_inspector_obj_type == k_VOICE) {
-                    t_voice *next = get_next_voice(r_ob, (t_voice *)item);
+                    t_voice *next = voice_get_next(r_ob, (t_voice *)item);
                     if (next && next->number < r_ob->num_voices) 
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)next);
                 }
@@ -2273,13 +2273,13 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                     if (meas)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)meas);
                 } else if (man->active_bach_inspector_obj_type == k_CHORD) {
-                    t_voice *prevvoice = get_prev_voice(r_ob, r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)((t_chord *)item)->voiceparent : (t_voice *)((t_chord *)item)->parent->voiceparent);
+                    t_voice *prevvoice = voice_get_prev(r_ob, r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)((t_chord *)item)->voiceparent : (t_voice *)((t_chord *)item)->parent->voiceparent);
                     t_chord *ch = !prevvoice ? NULL : (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? find_ms_nearest_chord_in_rollvoice(r_ob, (t_rollvoice *)prevvoice, ((t_chord *)item)->onset) :
                                                        find_ux_nearest_chord_in_scorevoice(r_ob, (t_scorevoice *)prevvoice, chord_get_alignment_ux(r_ob, (t_chord *)item)));
                     if (ch)
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)ch);
                 } else if (man->active_bach_inspector_obj_type == k_VOICE) {
-                    t_voice *prev = get_prev_voice(r_ob, (t_voice *)item);
+                    t_voice *prev = voice_get_prev(r_ob, (t_voice *)item);
                     if (prev) 
                         switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)prev);
                 }

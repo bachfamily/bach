@@ -200,19 +200,19 @@ t_notation_item *get_next_notation_item(t_notation_obj *r_ob, t_notation_item *i
                 return (t_notation_item *)((t_note *)it)->next;
                 
             case k_CHORD:
-                return (t_notation_item *)(skip_rests ? get_next_nonrest_chord((t_chord *)it) : get_next_chord((t_chord *)it));
+                return (t_notation_item *)(skip_rests ? chord_get_next_nonrest((t_chord *)it) : chord_get_next((t_chord *)it));
                 
             case k_TEMPO:
-                return (t_notation_item *)(get_next_tempo((t_tempo *)it));
+                return (t_notation_item *)(tempo_get_next((t_tempo *)it));
                 
             case k_MARKER:
                 return (t_notation_item *)((t_marker *)it)->next;
                 
             case k_MEASURE:
-                return (t_notation_item *)get_next_measure((t_measure *)it);
+                return (t_notation_item *)measure_get_next((t_measure *)it);
                 
             case k_VOICE:
-                return (t_notation_item *)get_next_voice(r_ob, (t_voice *)it);
+                return (t_notation_item *)voice_get_next(r_ob, (t_voice *)it);
                 
             default:
                 return NULL;
@@ -323,14 +323,14 @@ t_llll *goto_get_tied_items(t_notation_obj *r_ob, t_notation_item *it, char tie_
             t_chord *ch = (t_chord *)it;
             if (tie_from) {
                 while (ch && is_all_chord_tied_from(ch, false)) {
-                    ch = get_prev_chord(ch);
+                    ch = chord_get_prev(ch);
                     llll_appendobj(out, ch);
                 }
             }
             ch = (t_chord *)it;
             if (tie_to) {
                 while (ch && is_all_chord_tied_to(r_ob, ch, false, NULL)) {
-                    ch = get_next_chord(ch);
+                    ch = chord_get_next(ch);
                     llll_appendobj(out, ch);
                 }
             }
@@ -545,7 +545,7 @@ t_llll *goto_get_first_notation_item_after_ms(t_notation_obj *r_ob, t_goto_param
             allowed_types[r_ob->lastselecteditem->type] = 1;
     
     if (allowed_types[k_VOICE]) {
-        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
             if (goto_account_for_voice(par, voice->number, activevoicenum)) {
                 if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)voice))
                     continue;
@@ -556,7 +556,7 @@ t_llll *goto_get_first_notation_item_after_ms(t_notation_obj *r_ob, t_goto_param
 
     if (allowed_types[k_MEASURE]) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
                 if (goto_account_for_voice(par, voice->number, activevoicenum)) {
                     for (t_measure *meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
                         if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)meas))
@@ -578,9 +578,9 @@ t_llll *goto_get_first_notation_item_after_ms(t_notation_obj *r_ob, t_goto_param
 
     if (allowed_types[k_TEMPO]) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
                 if (goto_account_for_voice(par, voice->number, activevoicenum)) {
-                    for (t_tempo *tempo = get_first_tempo((t_scorevoice *)voice); tempo; tempo = get_next_tempo(tempo)) {
+                    for (t_tempo *tempo = tempo_get_first((t_scorevoice *)voice); tempo; tempo = tempo_get_next(tempo)) {
                         if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)tempo))
                             continue;
                         double onset = goto_notation_item_get_onset(r_ob, par, (t_notation_item *)tempo);
@@ -595,9 +595,9 @@ t_llll *goto_get_first_notation_item_after_ms(t_notation_obj *r_ob, t_goto_param
     }
     
     if (allowed_types[k_CHORD] || allowed_types[k_NOTE]) {
-        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
             if (goto_account_for_voice(par, voice->number, activevoicenum)) {
-                for (t_chord *chord = get_first_chord(r_ob, voice); chord; chord = get_next_chord(chord)) {
+                for (t_chord *chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
                     if (!chord->firstnote && par->skiprests)
                         continue;
                     if (unselected_only && allowed_types[k_CHORD] && notation_item_is_selected(r_ob, (t_notation_item *)chord))
@@ -696,7 +696,7 @@ t_llll *goto_get_first_notation_item_before_ms(t_notation_obj *r_ob, t_goto_para
             allowed_types[r_ob->lastselecteditem->type] = 1;
     
     if (allowed_types[k_VOICE]) {
-        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
             if (goto_account_for_voice(par, voice->number, activevoicenum)) {
                 if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)voice))
                     continue;
@@ -707,7 +707,7 @@ t_llll *goto_get_first_notation_item_before_ms(t_notation_obj *r_ob, t_goto_para
     
     if (allowed_types[k_MEASURE]) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
                 if (goto_account_for_voice(par, voice->number, activevoicenum)) {
                     for (t_measure *meas = ((t_scorevoice *)voice)->lastmeasure; meas; meas = meas->prev) {
                         if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)meas))
@@ -729,9 +729,9 @@ t_llll *goto_get_first_notation_item_before_ms(t_notation_obj *r_ob, t_goto_para
     
     if (allowed_types[k_TEMPO]) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
                 if (goto_account_for_voice(par, voice->number, activevoicenum)) {
-                    for (t_tempo *tempo = get_last_tempo((t_scorevoice *)voice); tempo; tempo = get_prev_tempo(tempo)) {
+                    for (t_tempo *tempo = tempo_get_last((t_scorevoice *)voice); tempo; tempo = tempo_get_prev(tempo)) {
                         if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)tempo))
                             continue;
                         double onset = goto_notation_item_get_onset(r_ob, par, (t_notation_item *)tempo);
@@ -746,9 +746,9 @@ t_llll *goto_get_first_notation_item_before_ms(t_notation_obj *r_ob, t_goto_para
     }
     
     if (allowed_types[k_CHORD] || allowed_types[k_NOTE]) {
-        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
             if (goto_account_for_voice(par, voice->number, activevoicenum)) {
-                for (t_chord *chord = get_last_chord(r_ob, voice); chord; chord = get_prev_chord(chord)) {
+                for (t_chord *chord = chord_get_last(r_ob, voice); chord; chord = chord_get_prev(chord)) {
                     if (!chord->firstnote && par->skiprests)
                         continue;
                     if (unselected_only && allowed_types[k_CHORD] && notation_item_is_selected(r_ob, (t_notation_item *)chord))
@@ -845,19 +845,19 @@ t_notation_item *get_prev_notation_item(t_notation_obj *r_ob, t_notation_item *i
                 return (t_notation_item *)((t_note *)it)->prev;
                 
             case k_CHORD:
-                return (t_notation_item *)(skip_rests ? get_prev_nonrest_chord((t_chord *)it) : get_prev_chord((t_chord *)it));
+                return (t_notation_item *)(skip_rests ? chord_get_prev_nonrest((t_chord *)it) : chord_get_prev((t_chord *)it));
                 
             case k_TEMPO:
-                return (t_notation_item *)(get_prev_tempo((t_tempo *)it));
+                return (t_notation_item *)(tempo_get_prev((t_tempo *)it));
                 
             case k_MARKER:
                 return (t_notation_item *)((t_marker *)it)->prev;
                 
             case k_MEASURE:
-                return (t_notation_item *)get_prev_measure((t_measure *)it);
+                return (t_notation_item *)measure_get_prev((t_measure *)it);
                 
             case k_VOICE:
-                return (t_notation_item *)get_prev_voice(r_ob, (t_voice *)it);
+                return (t_notation_item *)voice_get_prev(r_ob, (t_voice *)it);
                 
             default:
                 return NULL;
@@ -904,7 +904,7 @@ t_llll *goto_get_nextprev_notation_item(t_notation_obj *r_ob, t_goto_params *par
         if (direction > 0) {
             while (curr_cur) {
                 if (curr_cur->type == k_CHORD && is_all_chord_tied_from((t_chord *)curr_cur, false) &&
-                    (tmp_it = (t_notation_item *)get_prev_chord((t_chord *)curr_cur)) && notation_item_is_selected(r_ob, tmp_it)) {
+                    (tmp_it = (t_notation_item *)chord_get_prev((t_chord *)curr_cur)) && notation_item_is_selected(r_ob, tmp_it)) {
                     curr_cur = tmp_it;
                 } else if (curr_cur->type == k_NOTE && ((t_note *)curr_cur)->tie_from && ((t_note *)curr_cur)->tie_from != WHITENULL &&
                            notation_item_is_selected(r_ob, (t_notation_item *)((t_note *)curr_cur)->tie_from)) {
@@ -983,7 +983,7 @@ e_goto_error set_selection_to_notation_item_with_index(t_notation_obj *r_ob, t_g
     
     switch (par->nitem_type) {
         case k_CHORD:
-            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
                 t_chord *ch = nth_chord_of_rollvoice(voice, n)
                 llll_append
             }
@@ -1036,7 +1036,7 @@ t_llll *goto_get_notation_item_at_ms(t_notation_obj *r_ob, t_goto_params *par, d
     }
     
     if (allowed_types[k_VOICE]) {
-        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
             if (goto_account_for_voice(par, voice->number, activevoicenum)) {
                 if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)voice))
                     continue;
@@ -1047,7 +1047,7 @@ t_llll *goto_get_notation_item_at_ms(t_notation_obj *r_ob, t_goto_params *par, d
     
     if (allowed_types[k_MEASURE]) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
                 if (goto_account_for_voice(par, voice->number, activevoicenum)) {
                     for (t_measure *meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
                         if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)meas))
@@ -1080,9 +1080,9 @@ t_llll *goto_get_notation_item_at_ms(t_notation_obj *r_ob, t_goto_params *par, d
     
     if (allowed_types[k_TEMPO]) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+            for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
                 if (goto_account_for_voice(par, voice->number, activevoicenum)) {
-                    for (t_tempo *tempo = get_first_tempo((t_scorevoice *)voice); tempo; tempo = get_next_tempo(tempo)) {
+                    for (t_tempo *tempo = tempo_get_first((t_scorevoice *)voice); tempo; tempo = tempo_get_next(tempo)) {
                         if (unselected_only && notation_item_is_selected(r_ob, (t_notation_item *)tempo))
                             continue;
                         double onset = goto_notation_item_get_onset(r_ob, par, (t_notation_item *)tempo);
@@ -1102,9 +1102,9 @@ t_llll *goto_get_notation_item_at_ms(t_notation_obj *r_ob, t_goto_params *par, d
     
     
     if (allowed_types[k_CHORD] || allowed_types[k_NOTE]) {
-        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
             if (goto_account_for_voice(par, voice->number, activevoicenum)) {
-                for (t_chord *chord = get_first_chord(r_ob, voice); chord; chord = get_next_chord(chord)) {
+                for (t_chord *chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
                     if (!chord->firstnote && par->skiprests)
                         continue;
                     if (unselected_only && allowed_types[k_CHORD] && notation_item_is_selected(r_ob, (t_notation_item *)chord))
@@ -1350,7 +1350,7 @@ e_goto_error notationobj_goto(t_notation_obj *r_ob, t_goto_params *par)
         t_llll *errors = llll_get();
         par_temp.tiemode = k_GOTO_TIEMODE_EACH;
         
-        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
             if (goto_account_for_voice(par, voice->number, -1)) {
                 
                 par_temp.voicenumbers = llll_get();

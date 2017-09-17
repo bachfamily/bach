@@ -228,9 +228,9 @@
 				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
 				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
 				<br />
-				If the measure number is replaced by an empty list <b>()</b>, then the following rational is interpreted as a global symbolic onset inside the score.
-				For instance, <b>(() 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-				<b>(3 () 27/4)</b> does the same for voice 3.
+				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
+				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>(3 any 27/4)</b> does the same for voice 3.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>)</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -729,9 +729,9 @@
 				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
 				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
 				<br />
-				If the measure number is replaced by an empty list <b>()</b>, then the following rational is interpreted as a global symbolic onset inside the score.
-				For instance, <b>(() 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-				<b>(3 () 27/4)</b> does the same for voice 3.
+				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
+				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>(3 any 27/4)</b> does the same for voice 3.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>)</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
@@ -1216,9 +1216,9 @@
 				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
 				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
 				<br />
-				If the measure number is replaced by an empty list <b>()</b>, then the following rational is interpreted as a global symbolic onset inside the score.
-				For instance, <b>(() 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-				<b>(3 () 27/4)</b> does the same for voice 3.
+				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
+				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>(3 any 27/4)</b> does the same for voice 3.
 				<br /> <br />
 				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>)</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>

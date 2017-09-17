@@ -327,8 +327,8 @@ char move_selected_measure_attached_markers(t_score *x, double delta_ux, char ma
 t_measure *create_and_insert_new_measure(t_score *x, t_scorevoice *voice, t_measure *refmeasure, char direction, unsigned long force_ID, t_measure *refmeasure_for_measureinfo, char clone_tempi);
 void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, long *out_num_meas = NULL);
 
-//t_scorevoice *get_first_visible_voice(t_score *x);
-//t_scorevoice *get_last_visible_voice(t_score *x);
+//t_scorevoice *voice_get_first_visible(t_score *x);
+//t_scorevoice *voice_get_last_visible(t_score *x);
 
 
 

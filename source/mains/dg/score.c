@@ -781,7 +781,7 @@ void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
 		t_llll *out_voice_breakpoints = llll_get();
 		t_llll *out_voice_slots = llll_get();
 
-		for (chord = voice->firstmeasure ? voice->firstmeasure->firstchord : NULL; chord; chord = get_next_chord(chord)) {
+		for (chord = voice->firstmeasure ? voice->firstmeasure->firstchord : NULL; chord; chord = chord_get_next(chord)) {
 			if (chord->r_sym_duration.r_num > 0) { // real chord
 				t_note *note;
 				t_llll *this_event_cents = llll_get();
@@ -892,8 +892,8 @@ void score_send_current_chord(t_score *x){
 					meas->tuttipoint_reference->offset_ux + next_chord_offset_ux >= curr_pos_ux) {
 */
                 double this_chord_ms = chord_get_onset_ms(chord);
-                t_chord *next_chord = get_next_chord(chord);
-                double next_chord_ms = next_chord ? chord_get_onset_ms(get_next_chord(chord)) : x->r_ob.length_ms_till_last_note;
+                t_chord *next_chord = chord_get_next(chord);
+                double next_chord_ms = next_chord ? chord_get_onset_ms(chord_get_next(chord)) : x->r_ob.length_ms_till_last_note;
                 if (this_chord_ms > curr_pos_ms)
                     break;
 
@@ -1008,7 +1008,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
             if (meas->prev)
                 create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas->prev, k_UNDO_MODIFICATION_CHANGE); // 'coz of ties
 			create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)meas, k_UNDO_MODIFICATION_ADD);
-            if (delete_measure(x, meas, meas->firstchord ? get_prev_chord(meas->firstchord) : NULL, &need_update_solos)) {
+            if (delete_measure(x, meas, meas->firstchord ? chord_get_prev(meas->firstchord) : NULL, &need_update_solos)) {
 				if (need_check_scheduling) *need_check_scheduling = true;
             }
             if (need_update_solos) update_solos((t_notation_obj *)x);
@@ -2695,7 +2695,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
 			long voice_num = CLAMP(voice->v_ob.number, 0, CONST_MAX_VOICES - 1);
 			cur_ch[voice_num] = (voice->firstmeasure) ? voice->firstmeasure->firstchord : NULL;
 			while (cur_ch[voice_num] && cur_ch[voice_num]->r_sym_duration.r_num < 0) {
-				cur_ch[voice_num] = get_next_chord(cur_ch[voice_num]);
+				cur_ch[voice_num] = chord_get_next(cur_ch[voice_num]);
 			}
 		}
 		
@@ -2733,14 +2733,14 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
 				for (i = 0; i < x->r_ob.num_voices; i++)
 					if (we_take_it[i] && i != reference_voice) {
 						while (cur_ch[i] && cur_ch[i]->r_sym_duration.r_num < 0)
-							cur_ch[i] = get_next_chord(cur_ch[i]);
+							cur_ch[i] = chord_get_next(cur_ch[i]);
 						if (cur_ch[i] && rat_rat_cmp(chord_get_overall_rat_onset_sec(cur_ch[i]), ref_chord_r_onset_sec) == 0) {
 							if (k < CONST_MAX_VOICES)
 								these_ch[k++] = cur_ch[i];
 							// increasing chord
-							cur_ch[i] = get_next_chord(cur_ch[i]);
+							cur_ch[i] = chord_get_next(cur_ch[i]);
 							while (cur_ch[i] && cur_ch[i]->r_sym_duration.r_num < 0)
-								cur_ch[i] = get_next_chord(cur_ch[i]);
+								cur_ch[i] = chord_get_next(cur_ch[i]);
 						}
 					}
 				if (k < CONST_MAX_VOICES)
@@ -2832,14 +2832,14 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
 					for (i = 0; i < x->r_ob.num_voices; i++)
 						if (we_take_it[i] && i != reference_voice) {
 							while (cur_ch[i] && cur_ch[i]->r_sym_duration.r_num < 0)
-								cur_ch[i] = get_next_chord(cur_ch[i]);
+								cur_ch[i] = chord_get_next(cur_ch[i]);
 							if (cur_ch[i] && rat_rat_cmp(chord_get_overall_rat_onset_sec(cur_ch[i]), curr_nonref_onset_sec_next) == 0) {
 								if (k < CONST_MAX_VOICES)
 									these_ch[k++] = cur_ch[i];
 								// increasing chord
-								cur_ch[i] = get_next_chord(cur_ch[i]);
+								cur_ch[i] = chord_get_next(cur_ch[i]);
 								while (cur_ch[i] && cur_ch[i]->r_sym_duration.r_num < 0)
-									cur_ch[i] = get_next_chord(cur_ch[i]);
+									cur_ch[i] = chord_get_next(cur_ch[i]);
 							}
 						}
 					
@@ -2955,7 +2955,7 @@ void score_legato(t_score *x) {
 				if (chord->r_sym_duration.r_num < 0) { // rest
 					if (notation_item_is_globally_selected((t_notation_obj *) x, (t_notation_item *)chord) && last_nonrest_chord_llll) {
 						t_chord *prevchord; t_note *prevnt, *nt;
-						prevchord = get_prev_chord(chord);
+						prevchord = chord_get_prev(chord);
 						if (prevchord->r_sym_duration.r_num >= 0) {
 							t_llll *localcopy;
 							t_rational duration_to_set = rat_abs(chord->r_sym_duration);
@@ -3488,10 +3488,10 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 						
 						// and we set as played all the rest sequences (if any)
 						if (temp_ch->r_sym_duration.r_num < 0 && !x->r_ob.play_rests_separately) {
-							t_chord *tmp = temp_ch, *end = get_last_rest_in_sequence(temp_ch, false);
+							t_chord *tmp = temp_ch, *end = rest_get_last_in_seq(temp_ch, false);
 							while (tmp) {
 								tmp->played = true;
-								tmp = get_next_chord(tmp);
+								tmp = chord_get_next(tmp);
 								if (!tmp || tmp == end || tmp->r_sym_duration.r_num >= 0)
 									break;
 							}
@@ -3500,7 +3500,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 						// and we set as played all the tied notes
 						if (!x->r_ob.play_tied_elements_separately) {
 							t_chord *tmp = temp_ch;
-							while (tmp && (next = get_next_chord(tmp)) && is_all_chord_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
+							while (tmp && (next = chord_get_next(tmp)) && is_all_chord_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
 								next->played = true;
 								tmp = next;
 							}
@@ -3691,7 +3691,7 @@ void score_task(t_score *x)
 					x->r_ob.chord_play_cursor[voice_num] = (t_chord *)items_to_send[0];
                     
                     if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && !x->r_ob.play_tied_elements_separately && is_all_chord_tied_to((t_notation_obj *)x, (t_chord *)items_to_send[0], false, NULL))
-                        x->r_ob.chord_play_cursor[voice_num] = get_last_tied_chord((t_chord *)items_to_send[0]);
+                        x->r_ob.chord_play_cursor[voice_num] = chord_get_last_in_tieseq((t_chord *)items_to_send[0]);
                     
                 } else if (items_to_send[0]->type == k_TEMPO) {
                     long voice_num = CLAMP(((t_tempo *)items_to_send[0])->owner->voiceparent->v_ob.number, 0, CONST_MAX_VOICES - 1);
@@ -3721,8 +3721,8 @@ void score_task(t_score *x)
                 
                 if (x->r_ob.play_measures) {
                     for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices && count < x->r_ob.max_num_chord_per_scheduler_event; voice = voice->next){
-                        for (measure = x->r_ob.measure_play_cursor[voice->v_ob.number] ? get_next_measure(x->r_ob.measure_play_cursor[voice->v_ob.number]) : voice->firstmeasure;
-                             measure && count < x->r_ob.max_num_chord_per_scheduler_event; measure = get_next_measure(measure)){
+                        for (measure = x->r_ob.measure_play_cursor[voice->v_ob.number] ? measure_get_next(x->r_ob.measure_play_cursor[voice->v_ob.number]) : voice->firstmeasure;
+                             measure && count < x->r_ob.max_num_chord_per_scheduler_event; measure = measure_get_next(measure)){
                             
                             if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)measure)){
                                 double measure_onset = notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)measure);
@@ -3740,8 +3740,8 @@ void score_task(t_score *x)
 
                 if (x->r_ob.play_tempi) {
                     for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices && count < x->r_ob.max_num_chord_per_scheduler_event; voice = voice->next){
-                        for (tempo = x->r_ob.tempo_play_cursor[voice->v_ob.number] ? get_next_tempo(x->r_ob.tempo_play_cursor[voice->v_ob.number]) : (voice->firstmeasure ? voice->firstmeasure->firsttempo : NULL);
-                             tempo && count < x->r_ob.max_num_chord_per_scheduler_event; tempo = get_next_tempo(tempo)){
+                        for (tempo = x->r_ob.tempo_play_cursor[voice->v_ob.number] ? tempo_get_next(x->r_ob.tempo_play_cursor[voice->v_ob.number]) : (voice->firstmeasure ? voice->firstmeasure->firsttempo : NULL);
+                             tempo && count < x->r_ob.max_num_chord_per_scheduler_event; tempo = tempo_get_next(tempo)){
                             
                             if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)tempo)){
                                 if (tempo->onset == x->r_ob.scheduled_ms) {
@@ -3757,8 +3757,8 @@ void score_task(t_score *x)
                 }
 
 				for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices && count < x->r_ob.max_num_chord_per_scheduler_event; voice = voice->next){
-					for (temp_ch = x->r_ob.chord_play_cursor[voice->v_ob.number] ? get_next_chord(x->r_ob.chord_play_cursor[voice->v_ob.number]) : (voice->firstmeasure ? voice->firstmeasure->firstchord : NULL);
-                         temp_ch && count < x->r_ob.max_num_chord_per_scheduler_event; temp_ch = get_next_chord(temp_ch)){
+					for (temp_ch = x->r_ob.chord_play_cursor[voice->v_ob.number] ? chord_get_next(x->r_ob.chord_play_cursor[voice->v_ob.number]) : (voice->firstmeasure ? voice->firstmeasure->firstchord : NULL);
+                         temp_ch && count < x->r_ob.max_num_chord_per_scheduler_event; temp_ch = chord_get_next(temp_ch)){
                         
                         if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)temp_ch)){
                             if (temp_ch->onset == x->r_ob.scheduled_ms) {
@@ -3851,12 +3851,12 @@ void score_task(t_score *x)
 					((t_chord *)items_to_send[i])->played = true;
 					// and we set as played all the rest sequences (if any)
 					if (((t_chord *)items_to_send[i])->r_sym_duration.r_num < 0 && !x->r_ob.play_rests_separately) {
-						t_chord *tmp = ((t_chord *)items_to_send[i]), *end = get_last_rest_in_sequence(((t_chord *)items_to_send[i]), false);
+						t_chord *tmp = ((t_chord *)items_to_send[i]), *end = rest_get_last_in_seq(((t_chord *)items_to_send[i]), false);
 						while (tmp) {
 							tmp->played = true;
 							if (tmp == end || tmp->r_sym_duration.r_num >= 0)
 								break;
-							tmp = get_next_chord(tmp);
+							tmp = chord_get_next(tmp);
 						}
 					}
 					
@@ -3869,7 +3869,7 @@ void score_task(t_score *x)
 							if (!temp_nt->tie_from) // we don't keep track of notes continuing ties in the "notes_being_played" llll
 								llll_appendobj(x->r_ob.notes_being_played, temp_nt, 0, WHITENULL_llll);
 						}
-						while (tmp && (next = get_next_chord(tmp)) && is_all_chord_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
+						while (tmp && (next = chord_get_next(tmp)) && is_all_chord_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
 							if (next->num_notes == tmp->num_notes)
 								next->played = true;
 							tmp = next;
@@ -10865,8 +10865,8 @@ char quick_merge_selection(t_score *x)
 void tie_untie_note_smart(t_score *x, t_note *nt, char *changed)
 {
     if (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)nt)) {
-        t_note *first_tied = get_first_tied_note(nt);
-        t_note *last_tied = get_last_tied_note(nt);
+        t_note *first_tied = note_get_first_in_tieseq(nt);
+        t_note *last_tied = note_get_last_in_tieseq(nt);
         t_measure *meas = nt->parent->parent;
         create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt->parent->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
         if (first_tied != nt || last_tied != nt) {
@@ -11293,7 +11293,7 @@ int is_in_tempo_shape(t_score *x, t_tempo *tempo, long point_x, long point_y){
 		return 0;
 	
 	tempo_x = unscaled_xposition_to_xposition((t_notation_obj *)x, tempo->owner->tuttipoint_reference->offset_ux + tempo->tuttipoint_offset_ux) - CONST_USHIFT_TEMPI_LEFT * x->r_ob.zoom_y;
-	if (tempo->owner && !tempo->owner->prev && tempo->changepoint.r_num == 0 && !get_next_tempo(tempo)) // very first tempo!
+	if (tempo->owner && !tempo->owner->prev && tempo->changepoint.r_num == 0 && !tempo_get_next(tempo)) // very first tempo!
 		tempo_x = x->r_ob.j_inset_x + 1 + x->r_ob.notation_typo_preferences.clef_ux_shift + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y;
 	tempo_width = tempo->real_x_width;
 	tempo_y = get_staff_top_y((t_notation_obj *)x, (t_voice *) tempo->owner->voiceparent, false) + (-x->r_ob.tempi_uy_pos + tempo->uy_offset) * x->r_ob.zoom_y;
@@ -12054,7 +12054,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 									double start_x = unscaled_xposition_to_xposition((t_notation_obj *)x, curr_ch->parent->tuttipoint_reference->offset_ux + curr_ch->parent->start_barline_offset_ux + curr_ch->stem_offset_ux);
                                     t_note *last_tied;
                                     double end_x;
-                                    if (x->r_ob.dl_spans_ties && (last_tied = get_last_tied_note(curr_nt)))
+                                    if (x->r_ob.dl_spans_ties && (last_tied = note_get_last_in_tieseq(curr_nt)))
                                         end_x = unscaled_xposition_to_xposition((t_notation_obj *)x, last_tied->parent->parent->tuttipoint_reference->offset_ux + last_tied->parent->parent->start_barline_offset_ux + last_tied->parent->stem_offset_ux + last_tied->parent->duration_ux);
                                     else
                                         end_x = unscaled_xposition_to_xposition((t_notation_obj *)x, curr_ch->parent->tuttipoint_reference->offset_ux + curr_ch->parent->start_barline_offset_ux + curr_ch->stem_offset_ux + curr_ch->duration_ux);
@@ -13857,8 +13857,8 @@ long score_keyfilter(t_score *x, t_object *patcherview, long *keycode, long *mod
 		if (x->r_ob.is_editing_type == k_LYRICS && x->r_ob.is_editing_chord && x->r_ob.is_editing_chord->firstnote) {
 			char *text	= NULL;
 			long size = 0;
-			t_chord *prev_chord = get_prev_nonrest_chord(x->r_ob.is_editing_chord);
-			t_chord *next_chord = get_next_nonrest_chord(x->r_ob.is_editing_chord);
+			t_chord *prev_chord = chord_get_prev_nonrest(x->r_ob.is_editing_chord);
+			t_chord *next_chord = chord_get_next_nonrest(x->r_ob.is_editing_chord);
 			t_object *textfield = jbox_get_textfield((t_object *)x);
 			object_method(textfield, gensym("gettextptr"), &text, &size);
 			create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
@@ -13874,8 +13874,8 @@ long score_keyfilter(t_score *x, t_object *patcherview, long *keycode, long *mod
         } else if (x->r_ob.is_editing_type == k_DYNAMICS && x->r_ob.is_editing_chord && x->r_ob.is_editing_chord->firstnote) {
             char *text	= NULL;
             long size = 0;
-            t_chord *prev_chord = get_prev_nonrest_chord(x->r_ob.is_editing_chord);
-            t_chord *next_chord = get_next_nonrest_chord(x->r_ob.is_editing_chord);
+            t_chord *prev_chord = chord_get_prev_nonrest(x->r_ob.is_editing_chord);
+            t_chord *next_chord = chord_get_next_nonrest(x->r_ob.is_editing_chord);
             t_object *textfield = jbox_get_textfield((t_object *)x);
             object_method(textfield, gensym("gettextptr"), &text, &size);
             create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
@@ -14032,9 +14032,9 @@ t_chord *make_chord_or_note_sharp_or_flat_on_linear_edit(t_score *x, char direct
 	if (chord) {
 		
 		while (orig_chord && is_all_chord_tied_from(orig_chord, false))
-			orig_chord = get_prev_chord(orig_chord);
+			orig_chord = chord_get_prev(orig_chord);
 		
-		for (temp = orig_chord; temp; temp = get_next_chord(temp)) {
+		for (temp = orig_chord; temp; temp = chord_get_next(temp)) {
 			t_note *nt, *cursor_nt = NULL;
 
 			create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)temp, k_UNDO_MODIFICATION_CHANGE);
@@ -14088,9 +14088,9 @@ t_chord *change_pitch_from_linear_edit(t_score *x, long diatonic_step)
 	if (chord) {
 		
 		while (orig_chord && is_all_chord_tied_from(orig_chord, false))
-			orig_chord = get_prev_chord(orig_chord);
+			orig_chord = chord_get_prev(orig_chord);
 		
-		for (temp = orig_chord; temp; temp = get_next_chord(temp)) {
+		for (temp = orig_chord; temp; temp = chord_get_next(temp)) {
 			t_note *nt, *cursor_nt = NULL;
 
 			create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)temp, k_UNDO_MODIFICATION_CHANGE);
@@ -14375,7 +14375,7 @@ char delete_selected_markers(t_score *x){
 	return changed;
 }
 
-t_chord *get_last_chord_before_notation_cursor(t_score *x){
+t_chord *chord_get_last_before_notation_cursor(t_score *x){
 	t_measure *meas = x->r_ob.notation_cursor.measure;
 	t_chord *ch = x->r_ob.notation_cursor.measure->lastchord;
 	while (!ch && meas) {
@@ -14808,7 +14808,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 								x->r_ob.notation_cursor.chord = x->r_ob.notation_cursor.measure->lastchord;
 							}
 						} else {
-							t_chord *prev_chord = get_prev_chord(x->r_ob.notation_cursor.chord);
+							t_chord *prev_chord = chord_get_prev(x->r_ob.notation_cursor.chord);
                             if (!x->r_ob.notation_cursor.chord->prev)
                                 jump_to_prev_meas = true;
 							if (prev_chord) {
@@ -14882,7 +14882,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 							if (!x->r_ob.notation_cursor.chord->next && x->r_ob.notation_cursor.measure->measure_filling < 0){
 								x->r_ob.notation_cursor.chord = NULL;
 							} else {
-								t_chord *next_chord = get_next_chord(x->r_ob.notation_cursor.chord);
+								t_chord *next_chord = chord_get_next(x->r_ob.notation_cursor.chord);
 								x->r_ob.notation_cursor.chord = next_chord;
                                 if (next_chord) {
 									x->r_ob.notation_cursor.measure = x->r_ob.notation_cursor.chord->parent;
@@ -14963,7 +14963,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 				}
 				case 'r':
                 {
-                    t_chord *ch = x->r_ob.notation_cursor.chord ? x->r_ob.notation_cursor.chord : get_last_chord_before_notation_cursor(x);
+                    t_chord *ch = x->r_ob.notation_cursor.chord ? x->r_ob.notation_cursor.chord : chord_get_last_before_notation_cursor(x);
 					if (ch && ch->parent) {
 						create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)ch->parent, k_UNDO_MODIFICATION_CHANGE);
 						
@@ -14994,7 +14994,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 						invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
 					} else {
 						// add new chord
-						t_chord *ch = get_last_chord_before_notation_cursor(x);
+						t_chord *ch = chord_get_last_before_notation_cursor(x);
 						t_rational dur = ch ? ch->figure : RAT_1OVER8;
 						int log2 = perfect_log2(dur.r_den);
 						x->r_ob.force_diatonic_step = ((keycode - 'a') + 5) % 7;
@@ -15569,9 +15569,9 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
             if (modifiers & eCommandKey && modifiers & eShiftKey) {
                 if (!is_editable((t_notation_obj *)x, k_DYNAMICS, k_ELEMENT_ACTIONS_NONE))
                     return 0;
-                t_chord *ch = get_first_selected_chord((t_notation_obj *) x);
+                t_chord *ch = chord_get_first_selected((t_notation_obj *) x);
                 if (!ch) {
-                    t_dynamics *dy = get_first_selected_dynamics((t_notation_obj *) x);
+                    t_dynamics *dy = dynamics_get_first_selected((t_notation_obj *) x);
                     if (dy)
                         ch = dy->owner;
                 }
@@ -15705,9 +15705,9 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 						} else {
 							// getting first selected chord
 							if (is_editable((t_notation_obj *)x, k_LYRICS, k_CREATION)) {
-								t_chord *ch = get_first_selected_chord((t_notation_obj *) x);
+								t_chord *ch = chord_get_first_selected((t_notation_obj *) x);
                                 if (!ch) {
-                                    t_lyrics *ly = get_first_selected_lyrics((t_notation_obj *) x);
+                                    t_lyrics *ly = lyrics_get_first_selected((t_notation_obj *) x);
                                     if (ly)
                                         ch = ly->owner;
                                 }
@@ -15852,7 +15852,7 @@ char move_selection_breakpoint(t_score *x, double delta_x_pos, double delta_y_po
 			if (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)note)) {
                 double note_length;
                 t_note *last_tied;
-                if (x->r_ob.dl_spans_ties && (last_tied = get_last_tied_note(note)))
+                if (x->r_ob.dl_spans_ties && (last_tied = note_get_last_in_tieseq(note)))
                     note_length = unscaled_xposition_to_xposition((t_notation_obj *)x, last_tied->parent->parent->tuttipoint_reference->offset_ux + last_tied->parent->stem_offset_ux + last_tied->parent->duration_ux) - unscaled_xposition_to_xposition((t_notation_obj *)x, note->parent->parent->tuttipoint_reference->offset_ux + note->parent->stem_offset_ux);
                 else
                     note_length = unscaled_xposition_to_xposition((t_notation_obj *)x, note->parent->parent->tuttipoint_reference->offset_ux + note->parent->stem_offset_ux + note->parent->duration_ux) - unscaled_xposition_to_xposition((t_notation_obj *)x, note->parent->parent->tuttipoint_reference->offset_ux + note->parent->stem_offset_ux);
@@ -16153,7 +16153,7 @@ char delete_selected_measures(t_score *x)
 		if (temp->type == k_MEASURE) {
 			if (!notation_item_is_globally_locked((t_notation_obj *) x, temp)) {
                 char need_update_solos = false;
-                if (voiceensemble_delete_measure(x, (t_measure *)temp, ((t_measure *)temp)->firstchord ? get_prev_chord(((t_measure *)temp)->firstchord) : NULL, &need_update_solos, true))
+                if (voiceensemble_delete_measure(x, (t_measure *)temp, ((t_measure *)temp)->firstchord ? chord_get_prev(((t_measure *)temp)->firstchord) : NULL, &need_update_solos, true))
                     need_check_scheduling = true;
                 if (need_update_solos) update_solos((t_notation_obj *)x);
  				changed = 1;
@@ -16644,7 +16644,7 @@ void score_new_undo_redo(t_score *x, char what)
                 char need_update_solos = false;
 				newcontent = measure_get_values_as_llll((t_notation_obj *) x, (t_measure *) item, k_CONSIDER_FOR_UNDO, true, true);
 				new_information = build_undo_redo_information(ID, k_MEASURE, k_UNDO_MODIFICATION_ADD, voice_num, meas_num, k_HEADER_NONE, newcontent);
-				if (delete_measure(x, meas, meas->firstchord ? get_prev_chord(meas->firstchord) : NULL, &need_update_solos))
+				if (delete_measure(x, meas, meas->firstchord ? chord_get_prev(meas->firstchord) : NULL, &need_update_solos))
 					check_correct_scheduling((t_notation_obj *)x, false);
                 if (need_update_solos) update_solos((t_notation_obj *)x);
 				recompute_all_except_for_beamings_and_autocompletion(x);

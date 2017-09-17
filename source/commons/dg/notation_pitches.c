@@ -339,8 +339,8 @@ t_llll *notationobj_autospell_get_chunks(t_notation_obj *r_ob, t_autospell_param
     double segm_dur = segm_end - segm_start;
     t_llll *out = llll_get();
     
-    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
-        for (t_chord *chord = get_first_chord(r_ob, voice); chord; chord = get_next_chord(chord)) {
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        for (t_chord *chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
             double onset = notation_item_get_onset_ms(r_ob, (t_notation_item *)chord);
             double tail = notation_item_get_tail_ms(r_ob, (t_notation_item *)chord);
             if (onset > segm_end)
@@ -655,8 +655,8 @@ void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_param
 t_llll *autospell_get_all_notes(t_notation_obj *r_ob, t_autospell_params *par)
 {
     t_llll *out = llll_get();
-    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
-        for (t_chord *chord = get_first_chord(r_ob, voice); chord; chord = get_next_chord(chord)) {
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        for (t_chord *chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
             for (t_note *note = chord->firstnote; note; note = note->next) {
                 if (!par->selection_only || notation_item_is_globally_selected(r_ob, (t_notation_item *)note)) {
                     llll_appendobj(out, note);

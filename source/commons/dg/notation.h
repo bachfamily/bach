@@ -10883,11 +10883,11 @@ void decide_dragging_direction(t_notation_obj *r_ob, t_pt pt);
 	@return				The first chord in the selectino linked list
 	@remark				Beware: this might not coincide with the first chord in temporal order!
  */
-t_chord *get_first_selected_chord(t_notation_obj *r_ob);
+t_chord *chord_get_first_selected(t_notation_obj *r_ob);
 
 // TBD
-t_dynamics *get_first_selected_dynamics(t_notation_obj *r_ob);
-t_lyrics *get_first_selected_lyrics(t_notation_obj *r_ob);
+t_dynamics *dynamics_get_first_selected(t_notation_obj *r_ob);
+t_lyrics *lyrics_get_first_selected(t_notation_obj *r_ob);
 
 
 /**	Tell if only note tails are selected. 
@@ -11657,7 +11657,7 @@ t_llll *get_groups_for_dump_as_llll(t_notation_obj *r_ob, char mode, double star
 	@param	voice		The scorevoice
 	@return				The first tempo for the #voice, NULL if none.
  */
-t_tempo* get_first_tempo(t_scorevoice *voice);
+t_tempo* tempo_get_first(t_scorevoice *voice);
 
 
 /**	Get the first tempo in a given scorevoice, after a given measure (included).
@@ -11665,7 +11665,7 @@ t_tempo* get_first_tempo(t_scorevoice *voice);
 	@param	meas		The given measure
 	@return				The first tempo in the measure's voice, happening inside the given measure or after it.
  */
-t_tempo* get_first_tempo_after_measure(t_measure *meas);
+t_tempo* tempo_get_first_after_measure(t_measure *meas);
 
 
 /**	Get the last tempo in a given scorevoice
@@ -11673,7 +11673,7 @@ t_tempo* get_first_tempo_after_measure(t_measure *meas);
 	@param	voice		The scorevoice
 	@return				The last tempo for the #voice, NULL if none.
  */
-t_tempo* get_last_tempo(t_scorevoice *voice);
+t_tempo* tempo_get_last(t_scorevoice *voice);
 
 
 /**	Get the previous tempo (for a given tempo)
@@ -11681,7 +11681,7 @@ t_tempo* get_last_tempo(t_scorevoice *voice);
 	@param	tempo		The given tempo
 	@return				The first tempo before #tempo.
  */
-t_tempo* get_prev_tempo(t_tempo *tempo);
+t_tempo* tempo_get_prev(t_tempo *tempo);
 
 
 /**	Get the next tempo (for a given tempo)
@@ -11689,7 +11689,7 @@ t_tempo* get_prev_tempo(t_tempo *tempo);
 	@param	tempo		The given tempo
 	@return				The first tempo after #tempo.
  */
-t_tempo* get_next_tempo(t_tempo *tempo);
+t_tempo* tempo_get_next(t_tempo *tempo);
 
 
 /**	Get the previous measure (for a given measure)
@@ -11697,7 +11697,7 @@ t_tempo* get_next_tempo(t_tempo *tempo);
 	@param	tempo		The given measure
 	@return				The measure before #measure (if any, or NULL if none).
  */
-t_measure* get_prev_measure(t_measure *measure);
+t_measure* measure_get_prev(t_measure *measure);
 
 
 /**	Get the next measure (for a given measure)
@@ -11705,7 +11705,7 @@ t_measure* get_prev_measure(t_measure *measure);
 	@param	tempo		The given measure
 	@return				The measure after #measure (if any, or NULL if none).
  */
-t_measure* get_next_measure(t_measure *measure);
+t_measure* measure_get_next(t_measure *measure);
 
 
 
@@ -11725,7 +11725,7 @@ t_voice *chord_get_voice(t_notation_obj *r_ob, t_chord *ch);
 	@param	r_ob		The notation object
 	@return				The first voice which is visible (not hidden)
  */
-t_voice *get_first_visible_voice(t_notation_obj *r_ob);
+t_voice *voice_get_first_visible(t_notation_obj *r_ob);
 
 
 /**	Get the las #t_voice structure which is not hidden.
@@ -11733,7 +11733,7 @@ t_voice *get_first_visible_voice(t_notation_obj *r_ob);
 	@param	r_ob		The notation object
 	@return				The last voice which is visible (not hidden)
  */
-t_voice *get_last_visible_voice(t_notation_obj *r_ob);
+t_voice *voice_get_last_visible(t_notation_obj *r_ob);
 
 
 /**	Obtain an llll containing as symbols all the voice names  
@@ -12229,39 +12229,39 @@ double measure_get_overall_onset(t_measure *measure);
 	@ingroup			notation_data
 	@param	chord		The chord
 	@return				The chord preceding the input one, of NULL if none.
-	@see	get_next_chord()
+	@see	chord_get_next()
 */
-t_chord *get_prev_chord(t_chord *chord);
+t_chord *chord_get_prev(t_chord *chord);
 
 
 /** Get the next chord (in case the chord is a bach.score chord, the next chord may not necessarily belong to the the same measure).
 	@ingroup			notation_data
 	@param	chord		The chord
 	@return				The chord following the input one, of NULL if none.
-	@see	get_prev_chord()
+	@see	chord_get_prev()
 */
-t_chord *get_next_chord(t_chord *chord); 
+t_chord *chord_get_next(t_chord *chord); 
 
 
 /** Get the next non-rest chord. (Only for bach.score)
 	@ingroup			notation_data
 	@param	chord		The chord
 	@return				The first non-rest chord following the input one, or NULL if none.
-	@see	get_next_chord()
+	@see	chord_get_next()
 */
-t_chord *get_next_nonrest_chord(t_chord *chord);
+t_chord *chord_get_next_nonrest(t_chord *chord);
 
 
 /** Get the previous non-rest chord. (Only for bach.score)
 	@ingroup			notation_data
 	@param	chord		The chord
 	@return				The first non-rest chord preceding the input one, or NULL if none.
-	@see	get_prev_chord()
+	@see	chord_get_prev()
 */
-t_chord *get_prev_nonrest_chord(t_chord *chord);
+t_chord *chord_get_prev_nonrest(t_chord *chord);
 
 // TBD
-t_chord *get_next_chord_containing_dynamics(t_notation_obj *r_ob, t_chord *chord, long *curr_hairpin_type, char return_last_one_in_any_case, char include_this_chord);
+t_chord *chord_get_next_with_dynamics(t_notation_obj *r_ob, t_chord *chord, long *curr_hairpin_type, char return_last_one_in_any_case, char include_this_chord);
 
 
 /** Get the notation item 'at left' with respect to the input one. The item 'at left' is the first item preceding the input one, 
@@ -12446,7 +12446,7 @@ const char *get_clef_octave_shift_for_clef_text(long clef);
 	@param	voice	The voice
 	@return			The voice following the given one, or NULL if none.
 */
-t_voice *get_next_voice(t_notation_obj *r_ob, t_voice *voice);
+t_voice *voice_get_next(t_notation_obj *r_ob, t_voice *voice);
 
 
 /** Get the previous voice. This is a small wrapper working both for bach.roll and for bach.score (allowing you to get always the previous #t_voice structure).
@@ -12455,7 +12455,7 @@ t_voice *get_next_voice(t_notation_obj *r_ob, t_voice *voice);
 	@param	voice	The voice
 	@return			The voice preceding the given one, or NULL if none.
 */
-t_voice *get_prev_voice(t_notation_obj *r_ob, t_voice *voice);
+t_voice *voice_get_prev(t_notation_obj *r_ob, t_voice *voice);
 
 
 /** Obtain the loop region in llll form. 
@@ -12478,7 +12478,7 @@ t_llll *get_loop_region_as_llll(t_notation_obj *r_ob, char router_sym);
 	@param	voice	The voice
 	@return			The first following voice belonging to a new voiceensemble
  */
-t_voice *get_next_voiceensemble(t_notation_obj *r_ob, t_voice *voice);
+t_voice *voiceensemble_get_next(t_notation_obj *r_ob, t_voice *voice);
 
 
 /** Get the first previous voice starting a new voiceensemble.
@@ -12487,7 +12487,7 @@ t_voice *get_next_voiceensemble(t_notation_obj *r_ob, t_voice *voice);
 	@param	voice	The voice
 	@return			The first previous voice starting a new voiceensemble
  */
-t_voice *get_prev_voiceensemble(t_notation_obj *r_ob, t_voice *voice);
+t_voice *voiceensemble_get_prev(t_notation_obj *r_ob, t_voice *voice);
 
 long get_num_voiceensembles(t_notation_obj *r_ob);
 char do_voices_belong_to_same_voiceensemble(t_notation_obj *r_ob, t_voice *v1, t_voice *v2);
@@ -12933,7 +12933,7 @@ void check_ties_around_measure(t_measure *measure);
 	@param	note	The note
 	@return	The last note tied to the given note.
  */
-t_note *get_last_tied_note(t_note *note);
+t_note *note_get_last_in_tieseq(t_note *note);
 
 
 /**	Get the first note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
@@ -12941,7 +12941,7 @@ t_note *get_last_tied_note(t_note *note);
 	@param	note	The note
 	@return	The first note tied to the given note.
  */
-t_note *get_first_tied_note(t_note *note);
+t_note *note_get_first_in_tieseq(t_note *note);
 
 
 /**	Get the last chord of the sequence of completely-tied chords containing a given chord. If the given chord is not completely tied to the
@@ -12950,7 +12950,7 @@ t_note *get_first_tied_note(t_note *note);
 	@param	note	The chord
 	@return			The last chord of the sequence of completely-tied chords (if any, the chord itself otherwise).
  */
-t_chord *get_last_tied_chord(t_chord *chord);
+t_chord *chord_get_last_in_tieseq(t_chord *chord);
 
 
 /**	Get the first chord of the sequence of completely-tied chords containing a given chord. If the given chord is not completely tied to the
@@ -12959,7 +12959,7 @@ t_chord *get_last_tied_chord(t_chord *chord);
 	@param	note	The chord
 	@return			The first chord of the sequence of completely-tied chords (if any, the chord itself otherwise).
  */
-t_chord *get_first_tied_chord(t_chord *chord);
+t_chord *chord_get_first_in_tieseq(t_chord *chord);
 
 
 /**	Get the last chord of the sequence of completely tied chords (i.e. whose notes are all completely tied to each other) 
@@ -12998,7 +12998,7 @@ t_rational get_all_tied_chord_sequence_abs_r_duration(t_chord *chord, char withi
 	@param	within_measure	If this is non-zero, only chords within the same measure of the given chords are considered.
 	@return					The last rest of the sequence, or NULL if none.
  */
-t_chord *get_last_rest_in_sequence(t_chord *chord, char within_measure);
+t_chord *rest_get_last_in_seq(t_chord *chord, char within_measure);
 
 
 /**	Get the first rest in a sequence of rest containing #chord. If #chord is not a rest, NULL is returned
@@ -13007,7 +13007,7 @@ t_chord *get_last_rest_in_sequence(t_chord *chord, char within_measure);
 	@param	within_measure	If this is non-zero, only chords within the same measure of the given chords are considered.
 	@return					The first rest of the sequence, or NULL if none.
  */
-t_chord *get_first_rest_in_sequence(t_chord *chord, char within_measure);
+t_chord *rest_get_first_in_seq(t_chord *chord, char within_measure);
 
 /**	Get the number of notes of a chord which have a starting tie.
 	@ingroup		notation
@@ -13173,7 +13173,7 @@ t_chord *find_ms_nearest_chord_in_rollvoice(t_notation_obj *r_ob, t_rollvoice *v
 	@param	chord	The chord
 	@return	The first note inside the chord which doesn't have a tie ending, or NULL if none.
  */
-t_note* get_first_non_tied_from_note(t_chord *chord);
+t_note* note_get_first_non_tiedfrom(t_chord *chord);
 
 
 /**	Tell if the note corresponding to a given cents is tied, starting from a list of midicents and a list of ties.
@@ -18515,8 +18515,8 @@ void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double heig
 
 
 // to be documented
-t_chord *get_first_chord(t_notation_obj *r_ob, t_voice *voice);
-t_chord *get_last_chord(t_notation_obj *r_ob, t_voice *voice);
+t_chord *chord_get_first(t_notation_obj *r_ob, t_voice *voice);
+t_chord *chord_get_last(t_notation_obj *r_ob, t_voice *voice);
 t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms);
 t_llll *notationobj_get_sampling(t_notation_obj *r_ob, long num_points);
 t_llll *notationobj_get_sampling_ms(t_notation_obj *r_ob, double delta_ms);
@@ -18536,8 +18536,8 @@ void tempo_to_char_buf(t_tempo *tempo, char *buf, long buf_size, long max_decima
 void time_to_char_buf(t_notation_obj *r_ob, double time_ms, char *buf, long buf_size);
 void select_markers_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);
 void select_breakpoints_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode, char tails_only);
-t_chord *get_first_chord_before_ms(t_notation_obj *r_ob, t_voice *voice, double ms);
-t_chord *get_first_chord_after_ms(t_notation_obj *r_ob, t_voice *voice, double ms);
+t_chord *chord_get_first_before_ms(t_notation_obj *r_ob, t_voice *voice, double ms);
+t_chord *chord_get_first_after_ms(t_notation_obj *r_ob, t_voice *voice, double ms);
 void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char num_steps, long modifiers);
 char is_in_linear_edit_mode(t_notation_obj *r_ob);
 void markers_check_update_name_uwidth(t_notation_obj *r_ob);

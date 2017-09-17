@@ -9972,7 +9972,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                         long s = x->r_ob.link_dynamics_to_slot - 1;
                         if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
                             // check if there's an hairpin ending on this chord
-                            for (t_chord *temp = get_prev_chord(curr_ch); temp; temp = get_prev_chord(temp)) {
+                            for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
                                 if (parse_chord_dynamics_easy((t_notation_obj *)x, temp, s, NULL, &curr_hairpin_type)) {
                                     curr_hairpin_start_x = onset_to_xposition((t_notation_obj *) x, temp->onset, NULL);
                                     break;
@@ -10298,7 +10298,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                 long s = x->r_ob.link_dynamics_to_slot - 1;
                 if (s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
                     long old_hairpin_type = curr_hairpin_type;
-                    t_chord *lastch = get_next_chord_containing_dynamics((t_notation_obj *)x, curr_ch, &curr_hairpin_type, false, true);
+                    t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, curr_ch, &curr_hairpin_type, false, true);
                     double curr_hairpin_end_x = rect.width * 2;
                     if (lastch)
                         curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
@@ -13965,7 +13965,7 @@ void roll_exit_linear_edit(t_roll *x)
 t_chord *roll_find_chord_at_onset(t_roll *x, t_voice *voice, double onset, double tolerance)
 {
     t_chord *temp;
-    for (temp = get_first_chord((t_notation_obj *)x, voice); temp; temp = temp->next)
+    for (temp = chord_get_first((t_notation_obj *)x, voice); temp; temp = temp->next)
         if (temp->onset >= onset - tolerance && temp->onset <= onset + tolerance)
             return temp;
     return NULL;
@@ -14248,7 +14248,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
             case JKEY_LEFTARROW:
             {
                 if (modifiers & eCommandKey) {
-                    t_chord *new_ch = x->r_ob.notation_cursor.chord ? get_prev_chord(x->r_ob.notation_cursor.chord) : get_first_chord_before_ms((t_notation_obj *)x, x->r_ob.notation_cursor.voice, x->r_ob.notation_cursor.onset);
+                    t_chord *new_ch = x->r_ob.notation_cursor.chord ? chord_get_prev(x->r_ob.notation_cursor.chord) : chord_get_first_before_ms((t_notation_obj *)x, x->r_ob.notation_cursor.voice, x->r_ob.notation_cursor.onset);
                     if (new_ch) {
                         double new_ch_tail = new_ch->onset + chord_get_max_duration((t_notation_obj *)x, new_ch);
                         if (new_ch && new_ch_tail > x->r_ob.notation_cursor.onset - 1) {
@@ -14276,7 +14276,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
             case JKEY_RIGHTARROW:
             {
                 if (modifiers & eCommandKey) {
-                    t_chord *new_ch = x->r_ob.notation_cursor.chord ? get_next_chord(x->r_ob.notation_cursor.chord) : get_first_chord_after_ms((t_notation_obj *)x, x->r_ob.notation_cursor.voice, x->r_ob.notation_cursor.onset);
+                    t_chord *new_ch = x->r_ob.notation_cursor.chord ? chord_get_next(x->r_ob.notation_cursor.chord) : chord_get_first_after_ms((t_notation_obj *)x, x->r_ob.notation_cursor.voice, x->r_ob.notation_cursor.onset);
                     double old_ch_tail = x->r_ob.notation_cursor.chord ? x->r_ob.notation_cursor.chord->onset + chord_get_max_duration((t_notation_obj *)x, x->r_ob.notation_cursor.chord) : 0;
                     if (new_ch && (!x->r_ob.notation_cursor.chord || old_ch_tail > new_ch->onset - 1)) {
                         // snap to chord
@@ -14302,7 +14302,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
             case JKEY_UPARROW:
             {
                 if (modifiers & eCommandKey) {
-                    t_voice *prev = get_prev_voice((t_notation_obj *)x, x->r_ob.notation_cursor.voice);
+                    t_voice *prev = voice_get_prev((t_notation_obj *)x, x->r_ob.notation_cursor.voice);
                     if (prev) {
                         x->r_ob.notation_cursor.voice = prev;
                         x->r_ob.notation_cursor.chord = roll_find_chord_at_onset(x, x->r_ob.notation_cursor.voice, x->r_ob.notation_cursor.onset, 0);
@@ -14318,7 +14318,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
             case JKEY_DOWNARROW:
             {
                 if (modifiers & eCommandKey) {
-                    t_voice *next = x->r_ob.notation_cursor.voice && x->r_ob.notation_cursor.voice->number >= x->r_ob.num_voices - 1 ? NULL : get_next_voice((t_notation_obj *)x, x->r_ob.notation_cursor.voice);
+                    t_voice *next = x->r_ob.notation_cursor.voice && x->r_ob.notation_cursor.voice->number >= x->r_ob.num_voices - 1 ? NULL : voice_get_next((t_notation_obj *)x, x->r_ob.notation_cursor.voice);
                     if (next) {
                         x->r_ob.notation_cursor.voice = next;
                         x->r_ob.notation_cursor.chord = roll_find_chord_at_onset(x, x->r_ob.notation_cursor.voice, x->r_ob.notation_cursor.onset, 0);
@@ -14849,9 +14849,9 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 						// getting first selected chord
 						if (!is_editable((t_notation_obj *)x, k_LYRICS, k_ELEMENT_ACTIONS_NONE))
 							return 0;
-						t_chord *ch = get_first_selected_chord((t_notation_obj *) x);
+						t_chord *ch = chord_get_first_selected((t_notation_obj *) x);
                         if (!ch) {
-                            t_lyrics *ly = get_first_selected_lyrics((t_notation_obj *) x);
+                            t_lyrics *ly = lyrics_get_first_selected((t_notation_obj *) x);
                             if (ly)
                                 ch = ly->owner;
                         }
@@ -14875,9 +14875,9 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                 // getting first selected chord
                 if (!is_editable((t_notation_obj *)x, k_DYNAMICS, k_ELEMENT_ACTIONS_NONE))
                     return 0;
-                t_chord *ch = get_first_selected_chord((t_notation_obj *) x);
+                t_chord *ch = chord_get_first_selected((t_notation_obj *) x);
                 if (!ch) {
-                    t_dynamics *dy = get_first_selected_dynamics((t_notation_obj *) x);
+                    t_dynamics *dy = dynamics_get_first_selected((t_notation_obj *) x);
                     if (dy)
                         ch = dy->owner;
                 }
@@ -16300,8 +16300,8 @@ void roll_swap_voiceensembles(t_roll *x, t_rollvoice *v1, t_rollvoice *v2)
     // we have to swap : E <-> A,    D A B    C E
     
     t_voice *temp1, *temp2;
-    for (temp2 = first2; temp2 && temp2->number < r_ob->num_voices; temp2 = get_next_voice(r_ob, temp2)) {
-        for (temp1 = first1; temp1 && temp1->number < r_ob->num_voices; temp1 = get_next_voice(r_ob, temp1)) {
+    for (temp2 = first2; temp2 && temp2->number < r_ob->num_voices; temp2 = voice_get_next(r_ob, temp2)) {
+        for (temp1 = first1; temp1 && temp1->number < r_ob->num_voices; temp1 = voice_get_next(r_ob, temp1)) {
             roll_swap_voices(x, (t_rollvoice *)temp1, (t_rollvoice *)temp2);
             if (temp1 == last1)
                 break;

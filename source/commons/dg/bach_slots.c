@@ -2443,7 +2443,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 				slot_window_active_width = duration_line_length;
 			else {
                 t_note *note = (t_note *)nitem;
-				t_note *lastnote = get_last_tied_note(note);
+				t_note *lastnote = note_get_last_in_tieseq(note);
 				if (lastnote && lastnote->parent && lastnote->parent->parent && lastnote->parent->parent->tuttipoint_reference) {
 					double end_pos = unscaled_xposition_to_xposition(r_ob, lastnote->parent->parent->tuttipoint_reference->offset_ux + lastnote->parent->stem_offset_ux + lastnote->parent->duration_ux);
 					slot_window_active_width = end_pos - note->center.x;
@@ -3955,9 +3955,9 @@ char convert_slot(t_notation_obj *r_ob, long slot_num, long old_slottype, long n
 			t_voice *voice; 
 			t_chord *chord; 
 			t_note *note;
-			for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice))
+			for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
 				for (chord = r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? (((t_scorevoice *) voice)->firstmeasure ? ((t_scorevoice *) voice)->firstmeasure->firstchord : NULL)
-					 : ((t_rollvoice *) voice)->firstchord; chord; chord = get_next_chord(chord))
+					 : ((t_rollvoice *) voice)->firstchord; chord; chord = chord_get_next(chord))
 					for (note = chord->firstnote; note; note = note->next) 
 						convert_note_slot(r_ob, note, slot_num, conversion_type);
 		}
@@ -4413,7 +4413,7 @@ void notation_obj_check(t_notation_obj *r_ob)
         t_measure *measure;
         t_chord *chord;
         t_note *note;
-        for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_scorevoice *)get_next_voice(r_ob, (t_voice *)voice)) {
+        for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_scorevoice *)voice_get_next(r_ob, (t_voice *)voice)) {
             notation_item_check(r_ob, (t_notation_item *)voice);
             for (measure = voice->firstmeasure; measure; measure = measure->next) {
                 notation_item_check(r_ob, (t_notation_item *)measure);
@@ -4437,7 +4437,7 @@ void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob)
         t_measure *measure;
         t_chord *chord;
         t_note *note;
-        for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_scorevoice *)get_next_voice(r_ob, (t_voice *)voice)) {
+        for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_scorevoice *)voice_get_next(r_ob, (t_voice *)voice)) {
             notation_item_check_against_tuttipoints(r_ob, (t_notation_item *)voice);
             for (measure = voice->firstmeasure; measure; measure = measure->next) {
                 notation_item_check_against_tuttipoints(r_ob, (t_notation_item *)measure);

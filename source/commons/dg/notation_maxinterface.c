@@ -522,7 +522,7 @@ t_llll *get_tempo_as_llll_for_sending(t_notation_obj *r_ob, t_tempo *tempo, e_da
         llll_appendsym(out_llll, _llllobj_sym_tempo);
         append_voice_or_full_path_to_playout_syntax(r_ob, out_llll, (t_notation_item *)tempo, mode);
         
-        if (tempo->interpolation_type && (next_tempo = get_next_tempo(tempo)))
+        if (tempo->interpolation_type && (next_tempo = tempo_get_next(tempo)))
             llll_appendllll(out_llll, double_triplet_to_llll(rat2double(tempo->tempo_value), rat2double(next_tempo->tempo_value), next_tempo->onset - tempo->onset));
         else // no interpolation, single number
             llll_appenddouble(out_llll, rat2double(tempo->tempo_value));
@@ -3400,7 +3400,7 @@ void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beami
 	if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 		t_scorevoice *voice;
 		t_measure *meas;
-		for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_scorevoice *) get_next_voice(r_ob, (t_voice *)voice)){
+		for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_scorevoice *) voice_get_next(r_ob, (t_voice *)voice)){
 			for (meas = voice->firstmeasure; meas; meas = meas->next) {
 				recompute_all_for_measure(r_ob, meas, also_recompute_beamings);
 			}
@@ -3409,7 +3409,7 @@ void implicitely_recalculate_all(t_notation_obj *r_ob, char also_recompute_beami
 	} else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
 		t_rollvoice *voice;
 		t_chord *chord;
-		for (voice = (t_rollvoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_rollvoice *) get_next_voice(r_ob, (t_voice *)voice)){
+		for (voice = (t_rollvoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_rollvoice *) voice_get_next(r_ob, (t_voice *)voice)){
 			for (chord = voice->firstchord; chord; chord = chord->next){
 				chord->need_recompute_parameters = true;
 			}
@@ -3472,9 +3472,9 @@ t_max_err notation_obj_setattr_samplingrate(t_notation_obj *r_ob, t_object *attr
 	if (ac && is_atom_number(av))
 		r_ob->sampling_freq = atom_getfloat(av);
 
-	for (voice = r_ob->firstvoice; voice; voice = get_next_voice(r_ob, voice)){
+	for (voice = r_ob->firstvoice; voice; voice = voice_get_next(r_ob, voice)){
 		for (chord = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? (((t_scorevoice *) voice)->firstmeasure ? ((t_scorevoice *) voice)->firstmeasure->firstchord : NULL)
-					  : ((t_rollvoice *)voice)->firstchord); chord; chord = get_next_chord(chord))
+					  : ((t_rollvoice *)voice)->firstchord); chord; chord = chord_get_next(chord))
 			for (note = chord->firstnote; note; note = note->next)
 				for (s = 0; s < CONST_MAX_SLOTS; s++)
 					if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_FILTER || r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_DYNFILTER) {
@@ -3992,7 +3992,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                 } else {
                     t_voice *temp;
                     long measure_num = ((t_measure *)item)->measure_number;
-                    for (temp = first; temp && temp->number < r_ob->num_voices; temp = get_next_voice(r_ob, temp)) {
+                    for (temp = first; temp && temp->number < r_ob->num_voices; temp = voice_get_next(r_ob, temp)) {
                         t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure_num);
                         if (m) {
                             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
@@ -4922,8 +4922,8 @@ t_llll *measure_get_path_in_notationobj(t_notation_obj *r_ob, t_measure *meas)
 }
 
 t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note *note){
-	t_note *note1 = get_first_tied_note(note);
-	t_note *note2 = get_last_tied_note(note);
+	t_note *note1 = note_get_first_in_tieseq(note);
+	t_note *note2 = note_get_last_in_tieseq(note);
 	t_note *temp;
 	t_llll *out = llll_get();
 	for (temp = note1; temp && temp != WHITENULL; temp = temp->tie_to) {
@@ -4936,11 +4936,11 @@ t_llll *get_tied_notes_sequence_path_in_notationobj(t_notation_obj *r_ob, t_note
 
 
 t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord){
-	t_chord *chord1 = get_first_tied_chord(chord);
-	t_chord *chord2 = get_last_tied_chord(chord);
+	t_chord *chord1 = chord_get_first_in_tieseq(chord);
+	t_chord *chord2 = chord_get_last_in_tieseq(chord);
 	t_chord *temp;
 	t_llll *out = llll_get();
-	for (temp = chord1; temp; temp = get_next_chord(temp)) {
+	for (temp = chord1; temp; temp = chord_get_next(temp)) {
 		llll_appendllll(out, chord_get_path_in_notationobj(r_ob, temp), 0, WHITENULL_llll);
 		if (temp == chord2)
 			break;
@@ -4949,11 +4949,11 @@ t_llll *get_tied_chords_sequence_path_in_notationobj(t_notation_obj *r_ob, t_cho
 }
 
 t_llll *get_rests_sequence_path_in_notationobj(t_notation_obj *r_ob, t_chord *chord){
-	t_chord *chord1 = get_first_rest_in_sequence(chord, 0);
-	t_chord *chord2 = get_last_rest_in_sequence(chord, 0);
+	t_chord *chord1 = rest_get_first_in_seq(chord, 0);
+	t_chord *chord2 = rest_get_last_in_seq(chord, 0);
 	t_chord *temp;
 	t_llll *out = llll_get();
-	for (temp = chord1; temp; temp = get_next_chord(temp)) {
+	for (temp = chord1; temp; temp = chord_get_next(temp)) {
 		llll_appendllll(out, chord_get_path_in_notationobj(r_ob, temp), 0, WHITENULL_llll);
 		if (temp == chord2)
 			break;
@@ -5205,7 +5205,7 @@ t_llll *get_voicenames_as_llll(t_notation_obj *r_ob, char prepend_router){
 	voice = r_ob->firstvoice;
 	for (v = 0; v < r_ob->num_voices; v++) {
 		llll_append_notation_item_name(outlist, (t_notation_item *)voice);
-		voice = get_next_voice(r_ob, voice);
+		voice = voice_get_next(r_ob, voice);
 	}
 	return outlist;
 }
@@ -5240,7 +5240,7 @@ t_llll *get_midichannels_as_llll(t_notation_obj *r_ob, char prepend_router)
 	voice = r_ob->firstvoice;
 	for (v = 0; v < r_ob->num_voices; v++) {
 		llll_appendlong(outlist, voice->midichannel, 0, WHITENULL_llll);
-		voice = get_next_voice(r_ob, voice);
+		voice = voice_get_next(r_ob, voice);
 	}
 	return outlist;
 }
@@ -5251,7 +5251,7 @@ t_llll *get_stafflines_as_llll(t_notation_obj *r_ob, char prepend_router)
 	t_voice *voice;
 	if (prepend_router)
 		llll_appendsym(outlist, _llllobj_sym_stafflines, 0, WHITENULL_llll);
-	for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) 
+	for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) 
 		llll_append(outlist, get_voice_stafflines_as_llllelem(r_ob, voice), WHITENULL_llll);
 	return outlist;
 }
@@ -5282,9 +5282,9 @@ void notationobj_erase_slot(t_notation_obj *r_ob, int slot_number){
 		return;
 	}
 	
-	for (voice = r_ob->firstvoice; voice && (voice->number < r_ob->num_voices); voice = get_next_voice(r_ob, voice)) {
+	for (voice = r_ob->firstvoice; voice && (voice->number < r_ob->num_voices); voice = voice_get_next(r_ob, voice)) {
 		for (temp_ch = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? ((t_rollvoice *)voice)->firstchord : (((t_scorevoice *)voice)->firstmeasure ? ((t_scorevoice *)voice)->firstmeasure->firstchord : NULL));
-				temp_ch; temp_ch = get_next_chord(temp_ch)) {
+				temp_ch; temp_ch = chord_get_next(temp_ch)) {
 			t_note *temp_nt = temp_ch->firstnote;
             if (!temp_nt && r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 #ifdef BACH_CHORDS_HAVE_SLOTS

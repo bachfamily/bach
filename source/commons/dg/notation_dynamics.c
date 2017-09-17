@@ -9,11 +9,11 @@
 
 
 
-t_chord *get_next_dynamics(t_notation_obj *r_ob, t_voice *voice, long slot_num, t_chord *curr_ch, long *num_dynamics, t_symbol **dynamics, long *hairpins, char *open_hairpin, double *onset)
+t_chord *dynamics_get_next(t_notation_obj *r_ob, t_voice *voice, long slot_num, t_chord *curr_ch, long *num_dynamics, t_symbol **dynamics, long *hairpins, char *open_hairpin, double *onset)
 {
     char dyn_text[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
     t_slotitem *slotitem = NULL;
-    for (t_chord *ch = curr_ch ? get_next_chord(curr_ch) : get_first_chord(r_ob, voice); ch; ch = get_next_chord(ch)) {
+    for (t_chord *ch = curr_ch ? chord_get_next(curr_ch) : chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
         if (parse_chord_dynamics(r_ob, ch, slot_num, dyn_text, hairpins, num_dynamics, open_hairpin, &slotitem)) {
             for (long i = 0; i < *num_dynamics; i++) {
                 char this_dyn_text_dep[CONST_MAX_NUM_DYNAMICS_CHARS];
@@ -29,12 +29,12 @@ t_chord *get_next_dynamics(t_notation_obj *r_ob, t_voice *voice, long slot_num, 
     
 }
 
-t_chord *get_prev_dynamics(t_notation_obj *r_ob, t_voice *voice, long slot_num, t_chord *curr_ch, long *num_dynamics, t_symbol **dynamics, long *hairpins, char *open_hairpin, double *onset)
+t_chord *dynamics_get_prev(t_notation_obj *r_ob, t_voice *voice, long slot_num, t_chord *curr_ch, long *num_dynamics, t_symbol **dynamics, long *hairpins, char *open_hairpin, double *onset)
 {
     long num_dyns = 0;
     char dyn_text[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
     t_slotitem *slotitem = NULL;
-    for (t_chord *ch = curr_ch ? get_prev_chord(curr_ch) : get_last_chord(r_ob, voice); ch; ch = get_prev_chord(ch)) {
+    for (t_chord *ch = curr_ch ? chord_get_prev(curr_ch) : chord_get_last(r_ob, voice); ch; ch = chord_get_prev(ch)) {
         if (parse_chord_dynamics(r_ob, ch, slot_num, dyn_text, hairpins, &num_dyns, open_hairpin, &slotitem)) {
             if (num_dynamics)
                 *num_dynamics = num_dyns;
@@ -57,9 +57,9 @@ t_chord *get_prev_dynamics(t_notation_obj *r_ob, t_voice *voice, long slot_num, 
     
 }
 
-t_chord *get_first_dynamics(t_notation_obj *r_ob, t_voice *voice, long slot_num, long *num_dynamics, t_symbol **dynamics, long *hairpins, char *open_hairpin, double *onset)
+t_chord *dynamics_get_first(t_notation_obj *r_ob, t_voice *voice, long slot_num, long *num_dynamics, t_symbol **dynamics, long *hairpins, char *open_hairpin, double *onset)
 {
-    return get_next_dynamics(r_ob, voice, slot_num, NULL, num_dynamics, dynamics, hairpins, open_hairpin, onset);
+    return dynamics_get_next(r_ob, voice, slot_num, NULL, num_dynamics, dynamics, hairpins, open_hairpin, onset);
 }
 
 long parse_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char dyn_text[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, t_slotitem **slotitem_containing_dynamics)
@@ -733,21 +733,21 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
     t_chord *last_chord = NULL;
     last_dyn_text_dep[0] = 0;
 
-    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         last_slotitem = NULL;
         last_chord = NULL;
         last_dyn_text_dep[0] = 0;
         last_hairpin = 0;
 
         
-        for (t_chord *ch = get_first_chord(r_ob, voice); ch; ) {
+        for (t_chord *ch = chord_get_first(r_ob, voice); ch; ) {
             long num_dynamics = 0;
             char open_hairpin = false;
             char something_fixed = false;
             t_slotitem *slotitem = NULL;
             
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch)) {
-                ch = get_next_chord(ch);
+                ch = chord_get_next(ch);
                 continue;
             }
             
@@ -786,7 +786,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                             // ... but if the corrected last_hairpin == 0, the dynamics on last_chord might have become unnecessary.
                             if (!last_hairpin) {
                                 last_slotitem = NULL;
-                                ch = get_prev_dynamics(r_ob, voice, slot_num, last_chord, NULL, NULL, NULL, NULL, NULL);
+                                ch = dynamics_get_prev(r_ob, voice, slot_num, last_chord, NULL, NULL, NULL, NULL, NULL);
                                 if (!ch)
                                     ch = last_chord;
                                 last_chord = NULL;
@@ -871,7 +871,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 last_chord = ch;
             }
             
-            ch = get_next_chord(ch);
+            ch = chord_get_next(ch);
         }
     }
     
@@ -1455,13 +1455,13 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
     dynamics_compute_b(&params);
     
 
-    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         t_chord *curr_dyn_chord = NULL, *next_dyn_chord = NULL;
         double curr_dyn_onset = -1, next_dyn_onset = -1;
         
-        next_dyn_chord = get_next_dynamics(r_ob, voice, slot_num, next_dyn_chord, &next_num_dynamics, next_dyn_sym, next_hairpins, &next_open_hairpin, &next_dyn_onset);
+        next_dyn_chord = dynamics_get_next(r_ob, voice, slot_num, next_dyn_chord, &next_num_dynamics, next_dyn_sym, next_hairpins, &next_open_hairpin, &next_dyn_onset);
 
-        for (t_chord *ch = get_first_chord(r_ob, voice); ch; ch = get_next_chord(ch)) {
+        for (t_chord *ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
             if (ch == next_dyn_chord) {
 //                if (next_num_dynamics > 0 && !is_dynamics_local(r_ob, dyn_vel_associations, next_dyn_sym[next_num_dynamics-1], 1)) {
                     curr_dyn_chord = next_dyn_chord;
@@ -1470,7 +1470,7 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
                     curr_open_hairpin = next_open_hairpin;
                     bach_copyptr(next_hairpins, curr_hairpins, CONST_MAX_NUM_DYNAMICS_PER_CHORD * sizeof(long));
                     bach_copyptr(next_dyn_sym, curr_dyn_sym, CONST_MAX_NUM_DYNAMICS_PER_CHORD * sizeof(t_symbol *));
-                    next_dyn_chord = get_next_dynamics(r_ob, voice, slot_num, next_dyn_chord, &next_num_dynamics, next_dyn_sym, next_hairpins, &next_open_hairpin, &next_dyn_onset);
+                    next_dyn_chord = dynamics_get_next(r_ob, voice, slot_num, next_dyn_chord, &next_num_dynamics, next_dyn_sym, next_hairpins, &next_open_hairpin, &next_dyn_onset);
 //                }
             }
             
@@ -1580,9 +1580,9 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
     
     lock_general_mutex(r_ob);
     
-    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = get_next_voice(r_ob, voice)) {
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         t_llll *ll = llll_get();
-        for (t_chord *ch = get_first_chord(r_ob, voice); ch; ch = get_next_chord(ch)) {
+        for (t_chord *ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
             
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
                 continue;
@@ -1616,8 +1616,8 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
             
             // no hairpin between consecutive chords!
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                t_chord *last_tied = get_last_tied_chord(ch);
-                for (t_chord *tmp = ch; tmp; tmp = get_next_chord(tmp)) {
+                t_chord *last_tied = chord_get_last_in_tieseq(ch);
+                for (t_chord *tmp = ch; tmp; tmp = chord_get_next(tmp)) {
                     if (tmp == next_ch) {
                         hairpin = 0;
                         break;
@@ -1625,7 +1625,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
                     if (tmp == last_tied)
                         break;
                 }
-                if (get_next_chord(last_tied) == next_ch)
+                if (chord_get_next(last_tied) == next_ch)
                     hairpin = 0;
             } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && ch->next == next_ch)
                 hairpin = 0;

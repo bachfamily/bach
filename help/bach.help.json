@@ -1905,14 +1905,14 @@
 					"filename" : [ "bach.help.notation.messages.20_selection.20_selectingsinglechords.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "unsel", "select", "sel+voices" ],
-					"tags" : [ "message", "selection", "chord", "index", "position", "single", "path", "sel", "unsel", "select" ],
+					"tags" : [ "message", "selection", "chord", "index", "position", "single", "path", "sel", "unsel", "select", "global", "measure", "measure-wise", "any" ],
 					"title" : [ "Selecting single chords" ]
 				},
 				"Selectingsinglenotes" : {
 					"filename" : [ "bach.help.notation.messages.20_selection.21_selectingsinglenotes.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "unsel", "select" ],
-					"tags" : [ "message", "selection", "note", "index", "position", "single", "path", "sel", "unsel", "select" ],
+					"tags" : [ "message", "selection", "note", "index", "position", "single", "path", "sel", "unsel", "select", "global", "any", "measure", "measurewise" ],
 					"title" : [ "Selecting single notes" ]
 				},
 				"Selectingsinglemeasures" : {
@@ -2047,7 +2047,7 @@
 					"filename" : [ "bach.help.notation.messages.25_navigation.10_time.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "goto", "timepoint+syntax" ],
-					"tags" : [ "message", "selection", "goto", "go-to", "go", "to", "navigate", "navigation", "move", "time", "item", "timepoint", "at", "notation", "select", "chord", "marker" ],
+					"tags" : [ "message", "selection", "goto", "go-to", "go", "to", "navigate", "navigation", "move", "time", "item", "timepoint", "at", "notation", "select", "chord", "marker", "any" ],
 					"title" : [ "Go to elements at time or timepoint" ]
 				},
 				"Timemore" : {
@@ -3013,7 +3013,7 @@
 				"filename" : [ "bach.help.notation.queries and notifications.12_timepointsconversion.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "timepoint+syntax", "pixeltotime", "timetopixel" ],
-				"tags" : [ "query", "queries", "convert", "time", "timepoint", "position", "millisecond", "conversion", "syntax", "time", "message" ],
+				"tags" : [ "query", "queries", "convert", "time", "timepoint", "position", "millisecond", "conversion", "syntax", "time", "message", "any", "measure", "measurewise", "global" ],
 				"title" : [ "Converting timepoints to and from milliseconds" ]
 			},
 			"Testdomain" : {
@@ -3123,6 +3123,13 @@
 					"seealso" : [ "syncopationasymratio", "rhythmic+tree+lock", "autobeam" ],
 					"tags" : [ "rhythm", "syncopation", "position", "duration", "side", "left", "ratio", "syncopationposdurratio" ],
 					"title" : [ "Syncopation position/duration ratio" ]
+				},
+				"Maxdots" : {
+					"filename" : [ "bach.help.notation.rhythm and beams.10_syncopations.04_maxdots.maxpat" ],
+					"objects" : [ "bach.score" ],
+					"seealso" : [ "syncopation", "maxdots" ],
+					"tags" : [ "rhythm", "syncopation", "dot", "maxdot", "syncopationmaxdots", "maximum" ],
+					"title" : [ "Syncopation and dots" ]
 				}
 			},
 			"Rhythmic trees" : {
@@ -4072,7 +4079,7 @@
 				"filename" : [ "bach.help.notation.syntax.09_timepointsglobal.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "addmarker", "inscreen", "timepoint" ],
-				"tags" : [ "syntax", "time", "point", "timepoint", "symbolic", "absolute", "numeric", "position", "global", "onset", "score" ],
+				"tags" : [ "syntax", "time", "point", "timepoint", "symbolic", "absolute", "numeric", "position", "global", "onset", "score", "measurewise", "any" ],
 				"title" : [ "Global symbolic onset in timepoints" ]
 			},
 			"Separate syntax" : {

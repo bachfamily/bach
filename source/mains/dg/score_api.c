@@ -1030,7 +1030,7 @@ void recompute_all_and_redraw(t_score *x)
 }
 
 /*
-t_scorevoice *get_last_visible_voice(t_score *x)
+t_scorevoice *voice_get_last_visible(t_score *x)
 {
 	t_scorevoice *voice = nth_scorevoice(x, x->r_ob.num_voices - 1);
 	while (voice && voice->v_ob.hidden)
@@ -1038,7 +1038,7 @@ t_scorevoice *get_last_visible_voice(t_score *x)
 	return voice;
 }
 
-t_scorevoice *get_first_visible_voice(t_score *x)
+t_scorevoice *voice_get_first_visible(t_score *x)
 {
 	t_scorevoice *voice = x->firstvoice;
 	while (voice && voice->v_ob.number < x->r_ob.num_voices && voice->v_ob.hidden)
@@ -4914,7 +4914,7 @@ char delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_c
 	}
 	
 	// checking if we need to assign a first tempo to next measures
-	firsttempo = get_first_tempo(measure->voiceparent);
+	firsttempo = tempo_get_first(measure->voiceparent);
 	if (firsttempo && firsttempo->owner == measure && measure->lasttempo && measure->next &&
         (!measure->next->firsttempo || rat_long_cmp(measure->next->firsttempo->changepoint, 0) < 0)) {
 		t_tempo *cloned = clone_tempo((t_notation_obj *)x, measure->lasttempo);
@@ -4984,7 +4984,7 @@ char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *updat
         char res = 0;
         t_voice *temp;
         long measure_number = measure->measure_number;
-        for (temp = first; temp && temp->number < x->r_ob.num_voices; temp = get_next_voice((t_notation_obj *)x, temp)) {
+        for (temp = first; temp && temp->number < x->r_ob.num_voices; temp = voice_get_next((t_notation_obj *)x, temp)) {
             t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure_number);
             if (m) {
                 char this_need_check_solos = false;
@@ -5104,7 +5104,7 @@ void voiceensemble_turn_measure_into_single_rest(t_score *x, t_measure *measure)
         turn_measure_into_single_rest(x, measure);
     else {
         t_voice *temp;
-        for (temp = first; temp && temp->number < x->r_ob.num_voices; temp = get_next_voice((t_notation_obj *)x, temp)) {
+        for (temp = first; temp && temp->number < x->r_ob.num_voices; temp = voice_get_next((t_notation_obj *)x, temp)) {
             t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure->measure_number);
             if (m)
                 turn_measure_into_single_rest(x, m);
@@ -5539,7 +5539,7 @@ t_rational get_grace_note_equivalent(t_score *x, t_chord *gracechord)
 //	tot_sym_rescaled_with_tempo = rat_rat_div(rat_long_prod(rat_rat_prod(tot_sym, x->r_ob.grace_note_equivalent), 8 * 60), tempo_value);
  
 	while (prev_non_grace_chord && prev_non_grace_chord->is_grace_chord)
-		prev_non_grace_chord = get_prev_chord(prev_non_grace_chord);
+		prev_non_grace_chord = chord_get_prev(prev_non_grace_chord);
 
 	if (prev_non_grace_chord) {
 		//t_rational diff = rat_rat_diff(prev_non_grace_chord->r_sym_duration, tot_sym_rescaled_with_tempo);
@@ -5593,7 +5593,7 @@ void calculate_all_chords_remaining_onsets(t_score *x)
 					
                     chord->onset -= diff_ms;
 					chord->play_r_sym_onset = rat_rat_diff(chord->play_r_sym_onset, diff_sym);
-					prevch = get_prev_chord(chord);
+					prevch = chord_get_prev(chord);
 					if (prevch && chord->onset < prevch->onset)
 						chord->onset = prevch->onset;
                     if (!chord->prev && measure->prev && measure->prev->lastchord) {
@@ -5987,7 +5987,7 @@ void refresh_all_tuttipoints_offset_ux(t_score *x)
 	x->r_ob.length_ms_till_last_note = x->r_ob.length_ms = x->lasttuttipoint->onset_ms + x->lasttuttipoint->duration_ms;
 }
 
-t_measure *get_first_tuttipoint_measure(t_score *x, t_tuttipoint *tpt){
+t_measure *tuttipoint_get_first_measure(t_score *x, t_tuttipoint *tpt){
 	long i;
 	for (i = 0; i < x->r_ob.num_voices; i++) // cycle on the voices
 		if (tpt->measure[i])
@@ -6132,7 +6132,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 	double all_tranches_width = 0.;
 	char are_there_stem_up_chords_in_prev_al_pt = false;
 	double prev_align_x = 0;
-	t_measure *first_tpt_measure = get_first_tuttipoint_measure(x, tpt);
+	t_measure *first_tpt_measure = tuttipoint_get_first_measure(x, tpt);
 	double wf = 1.;
 	long ct;
 	wf = tpt->local_spacing_width_multiplier = first_tpt_measure ? first_tpt_measure->local_spacing_width_multiplier : 1.;
@@ -6154,7 +6154,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 		// initializing chord and tempo cursors
 		for (i = 0; i < x->r_ob.num_voices; i++){
 			ch_cursor[i] = tpt->measure[i] ? tpt->measure[i]->firstchord : NULL;
-			tempo_cursor[i] = tpt->measure[i] ? get_first_tempo_after_measure(tpt->measure[i]) : NULL;
+			tempo_cursor[i] = tpt->measure[i] ? tempo_get_first_after_measure(tpt->measure[i]) : NULL;
 		}
 					
 		// tell all chords that we have to recalculate their offset
@@ -6196,7 +6196,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 			long idx = -1;
 			
 			for (i = 0; i < x->r_ob.num_voices; i++) {
-				for (chord = ch_cursor[i]; chord && chord->parent->tuttipoint_reference == tpt; chord = get_next_chord(chord))
+				for (chord = ch_cursor[i]; chord && chord->parent->tuttipoint_reference == tpt; chord = chord_get_next(chord))
 					if (chord->need_recalculate_onset && !chord->is_grace_chord){ 
 						if (!firstchord || 
 							(firstchord && chord != firstchord && chord->tuttipoint_onset_ms < firstchord->tuttipoint_onset_ms)) {
@@ -6208,7 +6208,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 
 			for (i = 0; i < x->r_ob.num_voices; i++)
 				for (tempo = tempo_cursor[i]; tempo && tempo->owner && tempo->owner->tuttipoint_reference == tpt; 
-					 tempo = get_next_tempo(tempo))
+					 tempo = tempo_get_next(tempo))
 					if (tempo->need_recalculate_onset) { 
 						if (!firstchord || 
 							(firstchord && !firsttempo && tempo->tuttipoint_onset_ms < firstchord->tuttipoint_onset_ms) ||
@@ -6287,7 +6287,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 					align_pt->aligned_obj[i] = (t_notation_item *)chords_to_align[i];
 					voice = chords_to_align[i]->parent->voiceparent;
 					align_pt->voice_number[i] = voice->v_ob.number;
-					ch_cursor[CLAMP(voice->v_ob.number, 0, x->r_ob.num_voices - 1)] = get_next_chord(chords_to_align[i]); // updating ch_cursor
+					ch_cursor[CLAMP(voice->v_ob.number, 0, x->r_ob.num_voices - 1)] = chord_get_next(chords_to_align[i]); // updating ch_cursor
 					tp1.measure_num = tpt->measure[align_pt->voice_number[i]]->measure_number; 
 					tp1.pt_in_measure = long2rat(0);
 					tp2.measure_num = chords_to_align[i]->parent->measure_number; 
@@ -6324,7 +6324,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 					align_pt->aligned_obj[i + offset] = (t_notation_item *)tempi_to_align[i];
 					voice = tempi_to_align[i]->owner->voiceparent;
 					align_pt->voice_number[i + offset] = voice->v_ob.number;
-					tempo_cursor[CLAMP(voice->v_ob.number, 0, x->r_ob.num_voices - 1)] = get_next_tempo(tempi_to_align[i]); // updating tempo_cursor
+					tempo_cursor[CLAMP(voice->v_ob.number, 0, x->r_ob.num_voices - 1)] = tempo_get_next(tempi_to_align[i]); // updating tempo_cursor
 					tp1.measure_num = tpt->measure[CLAMP(voice->v_ob.number, 0, x->r_ob.num_voices - 1)]->measure_number; tp1.pt_in_measure = long2rat(0);
 					tp2 = build_timepoint(tempi_to_align[i]->owner->measure_number, tempi_to_align[i]->changepoint);
 					align_pt->r_onset_sym[i + offset] = get_sym_durations_between_timepoints(voice, tp1, tp2);
@@ -6383,7 +6383,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 								}
 								
 								// are there grace notes before the barline, but in the same tuttipoint?
-								t_chord *pr = get_prev_chord(started_measure->firstchord);
+								t_chord *pr = chord_get_prev(started_measure->firstchord);
 								if (pr && pr->is_grace_chord && pr->parent->tuttipoint_reference == tpt) {
 									t_chord *temp_grace;
 									for (temp_grace = pr; temp_grace && temp_grace->is_grace_chord; temp_grace = temp_grace->prev) {
@@ -6741,7 +6741,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 			grace_space[i] = 0;
 		for (i = 0; i < x->r_ob.num_voices; i++) {
 			char are_there_grace = false; 
-			for (chord = ch_cursor[i]; chord && chord->parent->tuttipoint_reference == tpt; chord = get_next_chord(chord)) 
+			for (chord = ch_cursor[i]; chord && chord->parent->tuttipoint_reference == tpt; chord = chord_get_next(chord)) 
 				if (chord->is_grace_chord) {
 					grace_space[i] += chord->left_uextension + chord->right_uextension + has_chord_at_least_one_tie(chord) * CONST_SCORE_TIE_ADDITIONAL_USPACING * CONST_GRACE_CHORD_SIZE + CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
 					are_there_grace = true;
@@ -7446,7 +7446,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 							// grace chords before the measure, in this very same tuttipoint
 							t_chord *temp_grace;
 							double cursor = al_pt->offset_ux - CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
-							for (temp_grace = get_prev_chord(meas->firstchord); temp_grace && temp_grace->is_grace_chord && temp_grace->parent->tuttipoint_reference == tpt; temp_grace = temp_grace->prev){
+							for (temp_grace = chord_get_prev(meas->firstchord); temp_grace && temp_grace->is_grace_chord && temp_grace->parent->tuttipoint_reference == tpt; temp_grace = temp_grace->prev){
 								//							double add = (temp_grace == chord->prev && temp_grace->direction == 1 && chord->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0; 
 								temp_grace->stem_offset_ux = temp_grace->alignment_ux = cursor - temp_grace->right_uextension - has_chord_at_least_one_tie(temp_grace) * CONST_SCORE_TIE_ADDITIONAL_USPACING;
 								cursor = temp_grace->stem_offset_ux - temp_grace->left_uextension - CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
@@ -7480,7 +7480,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 			t_chord *next_chord;
 			double cursor;
 
-			while (lastchord && (next_chord = get_next_chord(lastchord)) && next_chord->parent->tuttipoint_reference == tpt)
+			while (lastchord && (next_chord = chord_get_next(lastchord)) && next_chord->parent->tuttipoint_reference == tpt)
 				lastchord = next_chord;
 			
 			lastnongracechord = lastchord;
@@ -7499,7 +7499,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 				}
 			} else {
 				cursor = lastchord ? lastchord->parent->start_barline_offset_ux + lastchord->parent->width_ux - CONST_SCORE_USPACE_BEFORE_GRACE_CHORD : 0; 
-				for (chord = lastchord; chord && chord->parent->tuttipoint_reference == tpt; chord = get_prev_chord(chord)){
+				for (chord = lastchord; chord && chord->parent->tuttipoint_reference == tpt; chord = chord_get_prev(chord)){
 					if (chord->is_grace_chord) {
 						chord->stem_offset_ux = chord->alignment_ux = cursor - chord->right_uextension - has_chord_at_least_one_tie(chord) * CONST_SCORE_TIE_ADDITIONAL_USPACING;
 						cursor = chord->stem_offset_ux - chord->left_uextension - CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
@@ -7755,7 +7755,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
         double note_stem_ux = get_stem_x_from_alignment_point_x((t_notation_obj *)x, chord, unscaled_xposition_to_xposition((t_notation_obj *)x, chord->alignment_ux))/x->r_ob.zoom_y;
         
         // checking agains all other voiceensemble voices
-        for (v = first; v && v->number < x->r_ob.num_voices; v = get_next_voice((t_notation_obj *)x, v)) {
+        for (v = first; v && v->number < x->r_ob.num_voices; v = voice_get_next((t_notation_obj *)x, v)) {
             if (v == voice) {
                 if (v == last)
                     break;
@@ -7832,7 +7832,7 @@ void correct_measure_spacing_for_voiceensembles(t_score *x, t_measure *measure)
 void correct_tuttipoint_spacing_for_voiceensembles(t_score *x, t_tuttipoint *tpt)
 {
     t_voice *voice;
-    for (voice = x->r_ob.firstvoice; voice && voice->number < x->r_ob.num_voices; voice = get_next_voice((t_notation_obj *)x, voice)) {
+    for (voice = x->r_ob.firstvoice; voice && voice->number < x->r_ob.num_voices; voice = voice_get_next((t_notation_obj *)x, voice)) {
         long i = voice->number;
         if (voiceensemble_get_numparts((t_notation_obj *)x, voice) > 1) {
             t_measure *this_meas;
@@ -8129,7 +8129,7 @@ void check_tempi(t_score *x)
 
                     } else {
                         // hard case.
-                        for (tmp3 = get_first_tempo(tmp_voice); tmp3; tmp3 = get_next_tempo(tmp3)) {
+                        for (tmp3 = tempo_get_first(tmp_voice); tmp3; tmp3 = tempo_get_next(tmp3)) {
                             if (are_tempi_the_same_and_with_the_same_onset(tmp_tempo, tmp3)) {
                                 found = true;
                                 found_tempi[CLAMP(tmp_voice->v_ob.number, 0, CONST_MAX_VOICES - 1)] = tmp3;
@@ -8140,7 +8140,7 @@ void check_tempi(t_score *x)
                     
                     
                     if (found && tmp3) {
-                        t_tempo *prev = get_prev_tempo(tmp3);
+                        t_tempo *prev = tempo_get_prev(tmp3);
                         if (prev && !prev->hidden && prev->interpolation_type != 0 && rat_rat_cmp(prev->tempo_value, tmp3->tempo_value) != 0) {
                             // the previous tempo was different for this voice, and had an interpolation to this tempo.
                             // Hence We can't hide this tempo.
@@ -8155,16 +8155,16 @@ void check_tempi(t_score *x)
 					
 				}
                 if (all_found) {
-                    t_voice *firstvisible = get_first_visible_voice((t_notation_obj *)x);
+                    t_voice *firstvisible = voice_get_first_visible((t_notation_obj *)x);
                     if (firstvisible) {
                         char must_hide = true;
                         long interp = tmp_tempo->interpolation_type;
                         
                         if (interp) {
-                            t_tempo *pivot = get_next_tempo(tmp_tempo);
+                            t_tempo *pivot = tempo_get_next(tmp_tempo);
                             if (pivot) {
                                 for (long i = firstvisible->number + 1; i < x->r_ob.num_voices; i++) {
-                                    if (!are_tempi_the_same_and_with_the_same_onset(get_next_tempo(found_tempi[i]), pivot)) {
+                                    if (!are_tempi_the_same_and_with_the_same_onset(tempo_get_next(found_tempi[i]), pivot)) {
                                         must_hide = false;
                                         break;
                                     }
@@ -8849,7 +8849,7 @@ double get_linear_edit_cursor_ux_position(t_score *x){
 char get_actual_tempo_interp(t_score *x, t_tempo *tempo)
 {
     char tempo_interp = 0;
-    t_tempo *nexttempo = get_next_tempo(tempo);
+    t_tempo *nexttempo = tempo_get_next(tempo);
     if (nexttempo && (tempo->interpolation_type != 0)) {
         if (rat_rat_cmp(nexttempo->tempo_value, tempo->tempo_value) == 1) // we start an accelerando
             tempo_interp = 1;
@@ -8894,7 +8894,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 	double left_dashed_ux = 0., left_word_extension_ux = 0.;
 	t_chord *last_drawn_chord = NULL;
 	double measure_numbers_top_y = 0;
-	t_voice *first_visible_voice = get_first_visible_voice((t_notation_obj *)x);
+	t_voice *first_visible_voice = voice_get_first_visible((t_notation_obj *)x);
     char is_in_voiceensemble = (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1);
     char part_direction = is_in_voiceensemble ? (voice->v_ob.part_index % 2 == 1 ? -1 : 1) : 0;
     char dynamics_span_ties = do_dynamics_span_ties(x);
@@ -9063,7 +9063,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 long s = x->r_ob.link_dynamics_to_slot - 1;
                 if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
                     // check if there's an hairpin ending on this chord
-                    for (t_chord *temp = get_prev_chord(curr_ch); temp; temp = get_prev_chord(temp)) {
+                    for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
                         if (parse_chord_dynamics_easy((t_notation_obj *)x, temp, s, NULL, &curr_hairpin_type)) {
                             curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
                             break;
@@ -9090,7 +9090,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 					if (curr_ch->firstnote)
 						lasttiedchord_forplay = x->r_ob.play_tied_elements_separately ? curr_ch : last_all_tied_chord(curr_ch, false);
 					else
-						lasttiedchord_forplay = x->r_ob.play_rests_separately ? curr_ch : get_last_rest_in_sequence(curr_ch, false);
+						lasttiedchord_forplay = x->r_ob.play_rests_separately ? curr_ch : rest_get_last_in_seq(curr_ch, false);
 					if (lasttiedchord_forplay && x->r_ob.play_head_ms < lasttiedchord_forplay->onset + lasttiedchord_forplay->duration_ms)
 						is_chord_played = true;
 				}
@@ -9303,7 +9303,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 							note_unselected = true;
                         
                         if (x->r_ob.dl_spans_ties) {
-                            t_note *last_tie = get_last_tied_note(curr_nt);
+                            t_note *last_tie = note_get_last_in_tieseq(curr_nt);
                             if (last_tie && last_tie != curr_nt)
                                 note_end_pos = unscaled_xposition_to_xposition((t_notation_obj *)x, last_tie->parent->parent->tuttipoint_reference->offset_ux + last_tie->parent->stem_offset_ux + last_tie->parent->duration_ux);
                         }
@@ -9315,7 +9315,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 								is_note_played = is_chord_played;
 							else {
 								if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) {
-									t_note *lasttiednote_forplay = x->r_ob.play_tied_elements_separately ? curr_nt : get_last_tied_note(curr_nt);
+									t_note *lasttiednote_forplay = x->r_ob.play_tied_elements_separately ? curr_nt : note_get_last_in_tieseq(curr_nt);
 									if (x->r_ob.play_head_ms < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms)
 										is_note_played = true;
 								}
@@ -9565,7 +9565,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                         t_articulation *art = (t_articulation *)item->item;
                                         double art_end_pos = end_pos;
                                         if (x->r_ob.articulations_typo_preferences.artpref[art->articulation_ID].options & k_ARTICULATION_OPTION_SPAN_TIES) {
-                                            t_note *last_tie = get_last_tied_note(curr_nt);
+                                            t_note *last_tie = note_get_last_in_tieseq(curr_nt);
                                             if (last_tie && last_tie != curr_nt)
                                             art_end_pos = unscaled_xposition_to_xposition((t_notation_obj *)x, last_tie->parent->parent->tuttipoint_reference->offset_ux + last_tie->parent->stem_offset_ux + last_tie->parent->duration_ux);
                                         }
@@ -9683,7 +9683,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                         t_articulation *art = (t_articulation *)item->item;
                                         double art_end_pos = end_pos;
                                         if (x->r_ob.articulations_typo_preferences.artpref[art->articulation_ID].options & k_ARTICULATION_OPTION_SPAN_REST_SEQUENCES) {
-                                            t_chord *lastrest = get_last_rest_in_sequence(curr_ch, false);
+                                            t_chord *lastrest = rest_get_last_in_seq(curr_ch, false);
                                             if (lastrest && lastrest != curr_ch)
                                                 art_end_pos = unscaled_xposition_to_xposition((t_notation_obj *)x, lastrest->parent->tuttipoint_reference->offset_ux + lastrest->stem_offset_ux + lastrest->duration_ux);
                                         }
@@ -9736,7 +9736,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         t_chord *next_chord = curr_ch->next;
                         
                         if (dyn_nitem->type == k_NOTE) {
-                            t_note *last_tie = get_last_tied_note((t_note *)dyn_nitem);
+                            t_note *last_tie = note_get_last_in_tieseq((t_note *)dyn_nitem);
                             if (last_tie) {
                                 end_pos = unscaled_xposition_to_xposition((t_notation_obj *)x, last_tie->parent->parent->tuttipoint_reference->offset_ux + last_tie->parent->stem_offset_ux + last_tie->parent->duration_ux - 6);
                                 next_chord = last_tie->parent->next;
@@ -9775,8 +9775,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 				if (x->r_ob.show_lyrics && x->r_ob.show_lyrics_word_extensions) {
 					if (lyrics_word_extension_going_on && !lyrics_dashed_going_on &&
 						(curr_ch->r_sym_duration.r_num < 0 || (curr_ch->lyrics && curr_ch->lyrics->label && strlen(curr_ch->lyrics->label) > 0)) &&
-						curr_ch != get_next_chord(lyrics_word_extensions_start_chord)) {
-						t_chord *prevch = get_prev_chord(curr_ch);
+						curr_ch != chord_get_next(lyrics_word_extensions_start_chord)) {
+						t_chord *prevch = chord_get_prev(curr_ch);
 						if (prevch) {
 							double line_y = get_lyrics_word_extension_y_pos((t_notation_obj *) x, staff_bottom);
 							double x1 = unscaled_xposition_to_xposition((t_notation_obj *) x, left_word_extension_ux);
@@ -10120,7 +10120,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 					}
 					
 					// does the tempo start at the VERY beginning of the voice???
-					veryfirsttempo = (!curr_meas->prev && curr_tempo->changepoint.r_num == 0 && !get_next_tempo(curr_tempo)) ? true : false;
+					veryfirsttempo = (!curr_meas->prev && curr_tempo->changepoint.r_num == 0 && !tempo_get_next(curr_tempo)) ? true : false;
 					if (veryfirsttempo)
                         tempibox_x1 = x->r_ob.j_inset_x + 1 + x->r_ob.notation_typo_preferences.clef_ux_shift; // we put the tempo over the clef
 					
@@ -10174,7 +10174,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 	
 	// word extension left to draw?
 	if (x->r_ob.show_lyrics && x->r_ob.show_lyrics_word_extensions) {
-		if (lyrics_word_extension_going_on && last_drawn_chord != lyrics_word_extensions_start_chord && last_drawn_chord != get_next_chord(lyrics_word_extensions_start_chord)) {
+		if (lyrics_word_extension_going_on && last_drawn_chord != lyrics_word_extensions_start_chord && last_drawn_chord != chord_get_next(lyrics_word_extensions_start_chord)) {
 			double line_y = get_lyrics_word_extension_y_pos((t_notation_obj *) x, staff_bottom);
 			double x1 = unscaled_xposition_to_xposition((t_notation_obj *) x, left_word_extension_ux);
 			double x2 = x->r_ob.j_inset_x + x->r_ob.inner_width;
@@ -10190,7 +10190,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         long s = x->r_ob.link_dynamics_to_slot - 1;
         if (s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
             long old_hairpin_type = curr_hairpin_type;
-            t_chord *lastch = get_next_chord_containing_dynamics((t_notation_obj *)x, curr_ch, &curr_hairpin_type, false, true);
+            t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, curr_ch, &curr_hairpin_type, false, true);
             double curr_hairpin_end_x = rect.width * 2;
             if (lastch)
                 curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
@@ -10273,7 +10273,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 			compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
 
 		if (x->r_ob.num_voices > 0)
-			last_staff_bottom = get_staff_bottom_y((t_notation_obj *) x, get_last_visible_voice((t_notation_obj *)x), false);
+			last_staff_bottom = get_staff_bottom_y((t_notation_obj *) x, voice_get_last_visible((t_notation_obj *)x), false);
 		
 #ifdef BACH_SPACING_DEBUG
 		t_tuttipoint *tmptp;
@@ -10455,7 +10455,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 			// repaint very first tempo
 			if (x->r_ob.show_tempi) {
 				if (voice->firstmeasure && voice->firstmeasure->firsttempo && voice->firstmeasure->firsttempo->changepoint.r_num == 0 && 
-					!get_next_tempo(voice->firstmeasure->firsttempo) && !voice->firstmeasure->firsttempo->hidden) {
+					!tempo_get_next(voice->firstmeasure->firsttempo) && !voice->firstmeasure->firsttempo->hidden) {
 					t_tempo *thistempo = voice->firstmeasure->firsttempo;
 					t_jrgba tempocolor = ((x->r_ob.num_selecteditems == 1) && (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)thistempo))) ?
 					x->r_ob.j_selection_rgba : x->r_ob.j_tempi_rgba;
@@ -10504,7 +10504,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 			lock_general_mutex((t_notation_obj *)x);
             if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_singleslotfortiednotes && x->r_ob.active_slot_notationitem->type == k_NOTE) {
                 // if requested, we go to the first tied note
-				x->r_ob.active_slot_notationitem = (t_notation_item *)get_first_tied_note((t_note *)x->r_ob.active_slot_notationitem);
+				x->r_ob.active_slot_notationitem = (t_notation_item *)note_get_first_in_tieseq((t_note *)x->r_ob.active_slot_notationitem);
             }
 			
 			// determine the slot window x
@@ -10515,7 +10515,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth < 0) { //temporal slot
                         x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
                         if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_singleslotfortiednotes) {
-                            t_note *lasttied = get_last_tied_note(activenote);
+                            t_note *lasttied = note_get_last_in_tieseq(activenote);
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, lasttied->parent->parent->tuttipoint_reference->offset_ux + lasttied->parent->stem_offset_ux + lasttied->parent->duration_ux);
                         } else {
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux + activenote->parent->duration_ux);
@@ -11396,8 +11396,8 @@ void score_swap_voiceensembles(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
     // we have to swap : E <-> A,    D A B    C E
     
     t_voice *temp1, *temp2;
-    for (temp2 = first2; temp2 && temp2->number < r_ob->num_voices; temp2 = get_next_voice(r_ob, temp2)) {
-        for (temp1 = first1; temp1 && temp1->number < r_ob->num_voices; temp1 = get_next_voice(r_ob, temp1)) {
+    for (temp2 = first2; temp2 && temp2->number < r_ob->num_voices; temp2 = voice_get_next(r_ob, temp2)) {
+        for (temp1 = first1; temp1 && temp1->number < r_ob->num_voices; temp1 = voice_get_next(r_ob, temp1)) {
             score_swap_voices(x, (t_scorevoice *)temp1, (t_scorevoice *)temp2);
             if (temp1 == last1)
                 break;
