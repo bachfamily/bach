@@ -179,12 +179,13 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     return t_pitch(sat);
 }
 
-std::string t_pitch::toString()
+std::string t_pitch::toString(char include_octave)
 {
     std::string s;
     s = degree2name[p_degree];
     if (p_alter == natural) {
-        s += std::to_string(p_octave);
+        if (include_octave)
+            s += std::to_string(p_octave);
     } else if (p_alter.den() == 1 || p_alter.den() == 2 || p_alter.den() == 4) {
         if (p_alter > natural) { // sharps
             t_shortRational remainder = p_alter;
@@ -212,15 +213,28 @@ std::string t_pitch::toString()
                 }
             }
         }
-        s += std::to_string(p_octave);
+        if (include_octave)
+            s += std::to_string(p_octave);
     } else {
-        if (p_alter > natural)
-            s += std::to_string(p_octave) + '+' + p_alter.to_string() + "t";
-        else
-            s += std::to_string(p_octave) + p_alter.to_string() + "t";
+        if (include_octave) {
+            if (p_alter > natural)
+                s += std::to_string(p_octave) + '+' + p_alter.to_string() + "t";
+            else
+                s += std::to_string(p_octave) + p_alter.to_string() + "t";
+        } else {
+            if (p_alter > natural)
+                s += '+' + p_alter.to_string() + "t";
+            else
+                s += p_alter.to_string() + "t";
+        }
     }
     
     return s;
+}
+
+std::string t_pitch::toString()
+{
+    return t_pitch::toString(true);
 }
 
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)

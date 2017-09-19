@@ -411,12 +411,6 @@ void create_whole_roll_undo_tick(t_roll *x);
 void roll_clear_all(t_roll *x);
 
 
-// Nonstandard accidental display (e.g. naturalizations, etc. see #e_show_accidentals_preferences)
-void update_all_accidentals_if_needed(t_roll *x);
-void update_all_accidentals_for_voice_if_needed(t_roll *x, t_rollvoice *voice);
-void update_all_accidentals_for_chord_if_needed(t_roll *x, t_chord *chord);
-
-
 // bach inspector
 void force_notation_item_inscreen(t_roll *x, t_notation_item *it, void *dummy);
 
@@ -1305,7 +1299,7 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
             transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty);
 			note_delete((t_notation_obj *)x, nt, false);
-            update_all_accidentals_for_voice_if_needed(x, voice);
+            update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
 			changed = 1;
 		}
 	} else if (curr_it->type == k_CHORD) {
@@ -1319,13 +1313,13 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
                 for (nt = ch->firstnote; nt; nt = nt->next)
                     if (!nt->locked)
                         note_delete((t_notation_obj *)x, nt, false);
-                update_all_accidentals_for_voice_if_needed(x, voice);
+                update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
                 changed = 1;
             } else {
                 create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_ADD);
                 if (delete_chord_from_voice((t_notation_obj *)x, ch, ch->prev, false)) {
                     if (need_check_scheduling) *need_check_scheduling = true;
-                    update_all_accidentals_for_voice_if_needed(x, voice);
+                    update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
                 }
             }
 			changed = 1;
@@ -1591,7 +1585,7 @@ void roll_resetgraphic(t_roll *x){
 			t_note *note;
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 			for (note = chord->firstnote; note; note = note->next){
-				changed |= reset_note_graphic((t_notation_obj *) x, note);
+				changed |= reset_note_enharmonicity((t_notation_obj *) x, note);
 			}
 		}
 	}
@@ -1600,12 +1594,7 @@ void roll_resetgraphic(t_roll *x){
 	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ALL_ENHARMONICITIES);
 }
 
-void roll_sel_resetgraphic(t_roll *x){
-	char changed;
-	changed = reset_selection_graphic((t_notation_obj *) x);
-    update_all_accidentals_if_needed(x);
-	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
-}
+
 
 void select_notes_with_lexpr(t_roll *x, e_selection_modes mode)
 {
@@ -1982,12 +1971,12 @@ void roll_sel_change_onset(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         switch (curr_it->type) {
             case k_NOTE:
                 changed |= change_chord_onset_from_lexpr_or_llll((t_notation_obj *)x, ((t_note *) curr_it)->parent, lexpr, new_onset);
-                update_all_accidentals_for_chord_if_needed(x, ((t_note *) curr_it)->parent);
+                update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, ((t_note *) curr_it)->parent);
                 break;
                 
             case k_CHORD:
                 changed |= change_chord_onset_from_lexpr_or_llll((t_notation_obj *)x, (t_chord *) curr_it, lexpr, new_onset);
-                update_all_accidentals_for_chord_if_needed(x, (t_chord *) curr_it);
+                update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, (t_chord *) curr_it);
                 break;
 
             case k_PITCH_BREAKPOINT:
@@ -2051,12 +2040,12 @@ void roll_sel_change_ioi(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         switch (curr_it->type) {
             case k_NOTE:
                 changed |= change_chord_ioi_from_lexpr_or_llll((t_notation_obj *)x, ((t_note *) curr_it)->parent, lexpr, new_ioi);
-                update_all_accidentals_for_chord_if_needed(x, ((t_note *) curr_it)->parent);
+                update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, ((t_note *) curr_it)->parent);
                 break;
                 
             case k_CHORD:
                 changed |= change_chord_ioi_from_lexpr_or_llll((t_notation_obj *)x, (t_chord *) curr_it, lexpr, new_ioi);
-                update_all_accidentals_for_chord_if_needed(x, (t_chord *) curr_it);
+                update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, (t_chord *) curr_it);
                 break;
                 
 /*            case k_PITCH_BREAKPOINT:
@@ -4211,10 +4200,28 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) roll_sel_snap_tail_to_grid, "snaptailtogrid", 0);
 
 
-	// @method respell @digest Respell selected notes automatically
-	// @description @copy BACH_DOC_MESSAGE_RESPELL
+    // @method respell @digest Respell selected notes automatically
+    // @description @copy BACH_DOC_MESSAGE_RESPELL
+    // @mattr selection @type int @default 0 @digest If non-zero, only operates on selection
+    // @mattr algorithm @type symbol @default default @digest Select the algorithm: "default", "chewandchen" or "atonal"
+    // @mattr voicewise @type int @default 1 @digest If non-zero, operate on one voice at a time
+    // @mattr sharpest @type symbol/pitch @default B# @digest Sets the "sharpest" note available (the farthest right on the line of fifths)
+    // @mattr flattest @type symbol/pitch @default Fb @digest Sets the "flattest" note available (the farthest left on the line of fifths)
+    // @mattr verbose @type int @default 0 @digest Toggle verbose mode for debug
+    // @mattr winsize @type double @default 500 @digest For Chew and Chen algorithm, sets the window size in milliseconds
+    // @mattr spiralr @type double @default 1.4142 @digest For Chew and Chen algorithm, sets the pitch spiral radius
+    // @mattr spiralh @type double @default 3.8729 @digest For Chew and Chen algorithm, sets the pitch spiral vertical step
+    // @mattr numsliding @type int @default 8 @digest For Chew and Chen algorithm, sets the number of sliding windows
+    // @mattr numselfreferential @type int @default 2 @digest For Chew and Chen algorithm, sets the number of selfreferential windows
+    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, avoids repetitions of the same diatonic step with different alterations
+    // @mattr stdevthresh @type llll/symbol @default 21/(numnotes+1) @digest For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth
+    // @example respell @caption respell according to key and/or enharmonic tables
+    // @example respell @algorithm atonal @caption respell via the atonal algorithm
+    // @example respell @algorithm atonal @flattest Gb @sharpest A# @caption the same, but avoid E#, B#, Cb, Fb
+    // @example respell @algorithm atonal @flattest Fbb @sharpest Bx @caption the same, also allowing double sharps and double flats
+    // @example respell @algorithm chewandchen @caption respell via the Chew and Chen algorithm
     // @seealso snappitchtogrid
-	class_addmethod(c, (method) roll_sel_resetgraphic, "respell", 0);
+	class_addmethod(c, (method) roll_anything, "respell", A_GIMME, 0);
 
 
 	// @method legato @digest Make selection legato
@@ -6026,50 +6033,6 @@ void roll_openslotwin(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
 
 ///// ACCIDENTALS HANDLING IN ROLL
-void update_all_accidentals_for_voice_if_needed(t_roll *x, t_rollvoice *voice)
-{
-    switch (x->r_ob.show_accidentals_preferences) {
-        case k_SHOW_ACC_ALL:
-        case k_SHOW_ACC_NONE:
-        case k_SHOW_ACC_CLASSICAL:
-        case k_SHOW_ACC_ALLALTERED_NONATURALS:
-            // nothing to do;
-            return;
-            
-        default:
-        {
-            t_chord *chord;
-            t_note *note;
-            for (chord = voice->firstchord; chord; chord = chord->next) {
-                char changed = false;
-                for (note = chord->firstnote; note; note = note->next) {
-                    note->show_accidental = true;
-                    changed = true;
-                }
-                chord->need_recompute_parameters |= changed;
-            }
-        }
-            break;
-    }
-}
-
-void update_all_accidentals_for_chord_if_needed(t_roll *x, t_chord *chord)
-{
-    update_all_accidentals_for_voice_if_needed(x, chord->voiceparent);
-}
-
-
-void update_all_accidentals_if_needed(t_roll *x)
-{
-    t_rollvoice *voice;
-
-    if (x->r_ob.show_accidentals_preferences == 0)
-        return;
-    
-    for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
-        update_all_accidentals_for_voice_if_needed(x, voice);
-}
-
 
 
 // QUERYING STUFF
@@ -6607,7 +6570,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     } else if (router == gensym("explodechords")) {
                         roll_explodechords(x, is_symbol_in_llll_first_level(inputlist, _llllobj_sym_selection));
 
-                    } else if (router == gensym("autospell")) {
+                    } else if (router == gensym("respell")) {
                         notationobj_autospell_parseargs((t_notation_obj *)x, inputlist);
 
                         // custom spacing stuff
@@ -9175,7 +9138,7 @@ char merge(t_roll *x, double threshold_ms, double threshold_cents, char gatherin
     }
     
     if (changed) {
-        update_all_accidentals_if_needed(x);
+        update_all_accidentals_if_needed((t_notation_obj *)x);
 		recompute_total_length((t_notation_obj *)x);
     }
 	
@@ -9388,7 +9351,7 @@ char change_note_voice_from_lexpr_or_llll(t_roll *x, t_note *note, t_lexpr *lexp
 			new_chord->onset = note->parent->onset;
 			insert_chord(x, voice, new_chord, 0);
 			note_delete((t_notation_obj *)x, note, false);
-            update_all_accidentals_for_voice_if_needed(x, voice);
+            update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
 			
 			if (also_select)
 				notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)new_chord);
@@ -11587,7 +11550,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         
 		note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
 		constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice); 
-        update_all_accidentals_for_chord_if_needed(x, note->parent);
+        update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, note->parent);
     
     } else { // note is changing voice!
 		double threshold_y, change_mc1, change_mc2;
@@ -11680,9 +11643,9 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
 		if (parent)
 			check_lock_mute_solo_compatibilities_for_chord_and_notes((t_notation_obj *)x, parent);
         
-        update_all_accidentals_for_chord_if_needed(x, newch);
+        update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, newch);
         if (parent)
-            update_all_accidentals_for_chord_if_needed(x, parent);
+            update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, parent);
 		
 // THIS LINE IS WRONG: if we wanted to do something like that, we should pass t_note ** note, but it's not needed 
 //		note = note_in_new_voice;
@@ -12251,7 +12214,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 								clicked_ptr = NULL;
 								create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)curr_nt->parent, curr_nt->parent->num_notes == 1 ? k_UNDO_MODIFICATION_ADD : k_UNDO_MODIFICATION_CHANGE);
 								note_delete((t_notation_obj *)x, curr_nt, true);
-                                update_all_accidentals_for_voice_if_needed(x, voice);
+                                update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
 								x->r_ob.item_changed_at_mousedown = 1;
 							}
 							unlock_general_mutex((t_notation_obj *)x);	
@@ -13957,7 +13920,7 @@ void roll_exit_linear_edit(t_roll *x)
     x->r_ob.notation_cursor.midicents = 6000;
     x->r_ob.notation_cursor.step = 0;
     x->r_ob.is_linear_editing = false;
-    update_all_accidentals_if_needed(x);
+    update_all_accidentals_if_needed((t_notation_obj *)x);
     recompute_total_length((t_notation_obj *) x);
     invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
 }
@@ -14928,7 +14891,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                     return 1;
                 } else {
                     enharmonically_respell_selection((t_notation_obj *) x);
-                    update_all_accidentals_if_needed(x);
+                    update_all_accidentals_if_needed((t_notation_obj *)x);
                     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
                     return 1;
                 }
@@ -15261,7 +15224,7 @@ char change_selection_onset(t_roll *x, double *delta_ms)
 					gotta_check_chords_order[CLAMP(ch->voiceparent->v_ob.number, 0, CONST_MAX_VOICES - 1)] = true;
 					changed = 1;
 					ch->r_it.flags = (e_bach_internal_notation_flags) (ch->r_it.flags | k_FLAG_MODIFIED);
-                    update_all_accidentals_for_chord_if_needed(x, ch);
+                    update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, ch);
 				}
 			} else if (curr_it->type == k_CHORD) {
 				t_chord *ch = ((t_chord *)curr_it);
@@ -15276,7 +15239,7 @@ char change_selection_onset(t_roll *x, double *delta_ms)
 					gotta_check_chords_order[CLAMP(ch->voiceparent->v_ob.number, 0, CONST_MAX_VOICES - 1)] = true;
 					ch->r_it.flags = (e_bach_internal_notation_flags) (e_bach_internal_notation_flags) (ch->r_it.flags | k_FLAG_MODIFIED);
 					changed = 1;
-                    update_all_accidentals_for_chord_if_needed(x, ch);
+                    update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, ch);
 				}
 			} else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
 				t_note *nt = ((t_bpt *)curr_it)->owner;

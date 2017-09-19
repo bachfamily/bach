@@ -233,8 +233,10 @@ public:
     }
     
     std::string toString();
+    std::string toString(char include_octave);
     
     const char* toCString() { return toString().c_str(); }
+    const char* toCString(char include_octave) { return toString(include_octave).c_str(); }
 
     t_symbol* toSym() { return gensym(toString().c_str()); }
 

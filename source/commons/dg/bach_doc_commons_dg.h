@@ -1247,6 +1247,32 @@
 
 #define BACH_DOC_MESSAGE_RESPELL
 	// The <m>respell</m> message reset the enharmonicity ("graphics") specification of each selected note to a default one.
+    // Three algorithms are available, which can be set using the "algorithm" message attribute: a default algorithm,
+    // the algorithm provided by Chew and Chen, and an algorithm targeting atonal diatonic behaviors. The three algorithms
+    // are described below. For the two non-trivial algorithms some additional attributes may fine tune respelling properties: <br />
+    // • "selection" (int, default 0): toggles the ability to operate on selection only (also works for default algorithm); <br />
+    // • "voicewise" (int, default 1): toggles the ability to respell one voice at a time; <br />
+    // • "sharpest" (symbol/pitch, default: B#): sets the "sharpest" note available (the farthest right on the line of fifths); <br />
+    // • "flattest" (symbol/pitch, default: Fb): sets the "flattest" note available (the farthest left on the line of fifths); <br />
+    // • "verbose" (int, default: 0): toggle a verbose mode (mostly for debug). <br />
+    // The algorithms characteristics are the following ones:
+    // - Default algorithm ("default"): just respell the notes according to the current key and enharmonicity tables. <br />
+    // - Chew and Chen algorithm ("chewandchen"): implements the algorithm provided by Chew and Chen in the article
+    // "Determining Context-Defining Windows: Pitch Spelling using the Spiral Array". Additional parameters, defined via message attributes,
+    // are: <br />
+    //   • "winsize" (double, default: 500): window size in milliseconds; <br />
+    //   • "spiralr" (double, default: sqrt(2)): spiral radius; <br />
+    //   • "spiralh" (double, default: sqrt(15)): spiral vertical step (i.e. the distance parallel to the axis of the helix corresponding
+    // to one step along the spiral array; <br />
+    //   • "numsliding" (int, default: 8): number of sliding windows; <br />
+    //   • "numselfreferential" (int, default: 2): number of self referential windows (see article); <br />
+    // - Atonal algorithm ("atonal"): respell the notes in a tree-like fashion (closest ones first), optimizing their position on the line of fifths. <br />
+    //   • "discardalteredrepetitions" (int, default: 1): discard solutions having subsequent repetitions of the same diatonic
+    // step with different alterations (e.g. F#4 F4, or Bb5 B5); <br />
+    //   • "stdevthresh" (llll/symbol, default: 21/(numnotes+1)): sets a formula for a maximum standard deviation that the group of notes
+    // being retranscribed must have (interpreted as their projection onto the line of fifths); <br />
+
+
 
 #define BACH_DOC_QUERY_LABELS
 	// Moreover, each query can have in bach as very first argument a label, kept inside the query answer, 

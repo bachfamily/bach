@@ -340,7 +340,6 @@ void score_sel_change_slot_value(t_score *x, t_symbol *s, long argc, t_atom *arg
 void score_sel_dumpselection(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_sendcommand(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_retranscribe(t_score *x);
-void score_sel_resetgraphic(t_score *x);
 void score_sel_resetarticulations(t_score *x);
 void score_inscreen(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_inscreenpos(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -1117,7 +1116,7 @@ void score_resetgraphic(t_score *x)
 				t_note *note;
 				create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 				for (note = chord->firstnote; note; note = note->next){
-					changed |= reset_note_graphic((t_notation_obj *) x, note);
+					changed |= reset_note_enharmonicity((t_notation_obj *) x, note);
 				}
 			}
 		}
@@ -1128,21 +1127,7 @@ void score_resetgraphic(t_score *x)
 }
 
 
-void score_sel_resetgraphic(t_score *x){
-	char changed;
-	t_llll *garbage;
-	changed = reset_selection_graphic((t_notation_obj *) x);
 
-	garbage = llll_get();
-	lock_general_mutex((t_notation_obj *)x);
-	perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_FROM_SCRATCH);
-	close_slot_window((t_notation_obj *)x); // if we were in slot view...
-	unlock_general_mutex((t_notation_obj *)x);
-
-	llll_free(garbage);
-
-	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
-}
 
 
 void score_clear_selection(t_score *x, t_symbol *s, long argc, t_atom *argv){
@@ -5063,8 +5048,26 @@ int T_EXPORT main(void){
 	
 	// @method respell @digest Respell selected notes automatically
 	// @description @copy BACH_DOC_MESSAGE_RESPELL
+    // @mattr selection @type int @default 0 @digest If non-zero, only operates on selection
+    // @mattr algorithm @type symbol @default default @digest Select the algorithm: "default", "chewandchen" or "atonal"
+    // @mattr voicewise @type int @default 1 @digest If non-zero, operate on one voice at a time
+    // @mattr sharpest @type symbol/pitch @default B# @digest Sets the "sharpest" note available (the farthest right on the line of fifths)
+    // @mattr flattest @type symbol/pitch @default Fb @digest Sets the "flattest" note available (the farthest left on the line of fifths)
+    // @mattr verbose @type int @default 0 @digest Toggle verbose mode for debug
+    // @mattr winsize @type double @default 500 @digest For Chew and Chen algorithm, sets the window size in milliseconds
+    // @mattr spiralr @type double @default 1.4142 @digest For Chew and Chen algorithm, sets the pitch spiral radius
+    // @mattr spiralh @type double @default 3.8729 @digest For Chew and Chen algorithm, sets the pitch spiral vertical step
+    // @mattr numsliding @type int @default 8 @digest For Chew and Chen algorithm, sets the number of sliding windows
+    // @mattr numselfreferential @type int @default 2 @digest For Chew and Chen algorithm, sets the number of selfreferential windows
+    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, avoids repetitions of the same diatonic step with different alterations
+    // @mattr stdevthresh @type llll/symbol @default 21/(numnotes+1) @digest For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth
+    // @example respell @caption respell according to key and/or enharmonic tables
+    // @example respell @algorithm atonal @caption respell via the atonal algorithm
+    // @example respell @algorithm atonal @flattest Gb @sharpest A# @caption the same, but avoid E#, B#, Cb, Fb
+    // @example respell @algorithm atonal @flattest Fbb @sharpest Bx @caption the same, also allowing double sharps and double flats
+    // @example respell @algorithm chewandchen @caption respell via the Chew and Chen algorithm
     // @seealso snappitchtogrid
-	class_addmethod(c, (method) score_sel_resetgraphic, "respell", 0);
+    class_addmethod(c, (method) score_anything, "respell", A_GIMME, 0);
 	
 	
 	// @method clearselectionarticulations @digest Clear articulations for selected items
@@ -8533,7 +8536,10 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         //                    update_hscrollbar((t_notation_obj *)x, 1);
                         invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
                         recompute_all_and_redraw(x);
-                        
+
+                    } else if (router == gensym("respell")) {
+                        notationobj_autospell_parseargs((t_notation_obj *)x, inputlist);
+
                     } else if (router == gensym("setnotationcolors")) {
                         llll_destroyelem(firstelem);
                         notationobj_setnotationcolors((t_notation_obj *)x, inputlist);

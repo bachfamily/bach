@@ -294,6 +294,20 @@ t_llll *llll_medianfilter(t_llll *ll, long window_in_samples)
 	return out;
 }
 
+double get_average_of_plain_double_llll(t_llll *ll)
+{
+    double av = 0;
+    long count = 0;
+    t_llllelem *elem;
+    for (elem = ll->l_head; elem; elem = elem->l_next) {
+        double this_val = hatom_getdouble(&elem->l_hatom);
+        av += this_val;
+        count ++;
+    }
+    av /= count;
+    return av;
+}
+
 double get_stdev_of_plain_double_llll(t_llll *ll, double *average)
 {
 	// find average

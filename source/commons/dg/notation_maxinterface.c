@@ -3763,7 +3763,7 @@ long handle_note_popup(t_notation_obj *r_ob, t_note *note, long modifiers, e_ele
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_SNAP_PITCH_TO_GRID_FOR_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 472) {
-		res = reset_selection_graphic(r_ob);
+		res = reset_selection_enharmonicity(r_ob);
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION);
 		return res ? k_CHANGED_SEND_BANG : k_CHANGED_DO_NOTHING;
 	} else if (chosenelem == 473 && r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {

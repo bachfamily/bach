@@ -405,6 +405,14 @@ t_llll* llll_dx2x_of_plain_double_llll(t_llll *in_llll, double start);
 t_llll* llll_x2dx_of_plain_double_llll(t_llll *in_llll);
 
 
+/**	Find average of a a plain llll containing doubles (or longs).
+	@ingroup				llll_utilities
+	@param	in_llll			The llll
+	@return					The average of the elements in the llll
+ */
+double get_average_of_plain_double_llll(t_llll *ll);
+
+
 /**	Find standard deviation in a plain llll containing doubles (or longs).
 	@ingroup				llll_utilities
 	@param	in_llll			The llll

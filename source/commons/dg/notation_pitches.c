@@ -7,6 +7,10 @@
 #include "bach.h"
 #include "notation.h" // header with all the structures for the notation objects
 
+const char *subs[] = {"numnotes", "extension"};
+const long subs_count = 2;
+
+
 //Midicents of the screen diatonic note, ignoring accidental. For example, for the Eb above the middle C, this will be 6400 (the midicents of the E)
 long note_get_screen_midicents(t_note *nt)
 {
@@ -177,44 +181,73 @@ void note_compute_approximation(t_notation_obj *r_ob, t_note* nt)
 
 
 
-//// AUTOMATIC RESPELLING ALGORITHM
-//// Implemented from Chew and Chen (2003, 2005)
+//// AUTOMATIC RESPELLING ALGORITHMS
+
 
 typedef struct _autospell_params
 {
     char    selection_only;
     long    verbose;
+    char    voicewise;
     
-    double  lineoffifth_bias;
-
-    t_symbol    *algorithm;
-
+    long    max_LOF_position; // max position on the line of fifths
+    long    min_LOF_position; // min position on the line of fifths
     
-    // PARAMETERS FOR FORCE DIRECTED
-    long    numiter;
-    double  strength_neighbors;
-    double  strength_enharmonic;
+    t_symbol    *algorithm; // either "default" or "chewandchen"
     
+    // PARAMETERS FOR DEFAULT ALGORITHM
+    double  lineoffifth_bias;       // Bias for the line of fifths
+    t_lexpr *stdev_thresh;          // Equation for the acceptance threshold for the standard deviation of the positions on the line of fifth (may depend on numnotes and note extension)
+    char    discard_altered_repetitions; // discard altered repetitions such as Eb E or F# F
     
     // PARAMETERS FOR CHEW AND CHEN ALGORITHM
     double  chunk_size_ms;
     double  spiral_r;
     double  spiral_h;
     
-    long    max_num_sharps;
-    long    max_num_flats;
-    
     long    w_sliding;          /// NUmber of chunks in sliding window
     long    w_selfreferential;  /// Number of chunks in selfreferential window
     double  f;                  ///< f parameter (see paper)
     
     
-    // handy pointers for mergesort
+    // HANDY POINTERS for mergesort
     t_notation_obj  *r_ob;
     void            *thing;
 } t_autospell_params;
 
 
+
+
+
+////////// BASELINE TRIVIAL ALGORITHM
+
+
+void notationobj_autospell_trivial(t_notation_obj *r_ob, t_autospell_params *par)
+{
+    if (par->selection_only)
+        reset_selection_enharmonicity(r_ob);
+    else
+        reset_all_enharmonicity(r_ob);
+    
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        lock_general_mutex(r_ob);
+        set_need_perform_analysis_and_change_flag(r_ob);
+        //        perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_FROM_SCRATCH);
+        close_slot_window(r_ob); // if we were in slot view...
+        unlock_general_mutex(r_ob);
+    } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        update_all_accidentals_if_needed(r_ob);
+    }
+}
+
+
+
+
+
+
+
+
+//// CHEW AND CHEN ALGORITHM from Chew and Chen (2003, 2005)
 
 t_pitch position_on_line_of_fifths_to_pitch(long pos)
 {
@@ -324,16 +357,16 @@ t_llll *notationobj_autospell_list_possibilities(t_notation_obj *r_ob, t_autospe
     // now, all possibilities must lie be between (-1 - 7 * par->max_num_flats) et (5 + 7 * par->max_num_sharps)
     pos = positive_mod(pos, 12);
     
-    for (long i = pos; i <= 5 + 7 * par->max_num_sharps; i += 12)
+    for (long i = pos; i <= par->max_LOF_position; i += 12)
         llll_appendlong(out, i + key);
 
-    for (long i = pos - 12; i >= -1 - 7 * par->max_num_flats; i -= 12)
+    for (long i = pos - 12; i >= par->min_LOF_position; i -= 12)
         llll_appendlong(out, i + key);
 
     return out;
 }
 
-t_llll *notationobj_autospell_get_chunks(t_notation_obj *r_ob, t_autospell_params *par, long idx_from, long idx_to)
+t_llll *notationobj_autospell_get_chunks(t_notation_obj *r_ob, t_autospell_params *par, long idx_from, long idx_to, t_voice *only_this_voice)
 {
     double single_chunk_dur = par->chunk_size_ms;
     double segm_start = idx_from * single_chunk_dur;
@@ -341,7 +374,7 @@ t_llll *notationobj_autospell_get_chunks(t_notation_obj *r_ob, t_autospell_param
     double segm_dur = segm_end - segm_start;
     t_llll *out = llll_get();
     
-    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+    for (t_voice *voice = only_this_voice ? only_this_voice : r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         for (t_chord *chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
             double onset = notation_item_get_onset_ms(r_ob, (t_notation_item *)chord);
             double tail = notation_item_get_tail_ms(r_ob, (t_notation_item *)chord);
@@ -380,6 +413,9 @@ t_llll *notationobj_autospell_get_chunks(t_notation_obj *r_ob, t_autospell_param
                 }
             }
         }
+        
+        if (only_this_voice)
+            break;
     }
     
     return out;
@@ -614,7 +650,7 @@ void wintostring(t_notation_obj *r_ob, t_autospell_params *par, t_llll *ll, char
     
 }
 
-void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_params *par)
+void notationobj_autospell_chew_and_chen_do(t_notation_obj *r_ob, t_autospell_params *par, t_voice *only_this_voice)
 {
     double chunk_size_ms = par->chunk_size_ms;
     long num_chunks = ceil(r_ob->length_ms_till_last_note/chunk_size_ms);
@@ -626,8 +662,8 @@ void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_param
     // (The way notationobj_autospell_get_chunks() is called should be largely optimizable).
     for (long j = 0; j < num_chunks; j++) {
         // FIRST PHASE: make each note consistent with the sliding_win
-        t_llll *thischunk = notationobj_autospell_get_chunks(r_ob, par, j, j);
-        t_llll *sliding_win = notationobj_autospell_get_chunks(r_ob, par, j - par->w_sliding, j - 1);
+        t_llll *thischunk = notationobj_autospell_get_chunks(r_ob, par, j, j, only_this_voice);
+        t_llll *sliding_win = notationobj_autospell_get_chunks(r_ob, par, j - par->w_sliding, j - 1, only_this_voice);
         t_pt3d sliding_win_CE = notationobj_autospell_get_center_of_effect(r_ob, par, sliding_win);
 
         if (par->verbose) {
@@ -657,9 +693,9 @@ void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_param
         
         
         // SECOND PHASE: the algorithm is allowed to revisit previous decisions
-        t_llll *selfreferential_win = notationobj_autospell_get_chunks(r_ob, par, j - par->w_selfreferential, j);
+        t_llll *selfreferential_win = notationobj_autospell_get_chunks(r_ob, par, j - par->w_selfreferential, j, only_this_voice);
         t_pt3d selfreferential_win_CE = notationobj_autospell_get_center_of_effect(r_ob, par, selfreferential_win);
-        t_llll *global_win = notationobj_autospell_get_chunks(r_ob, par, 0, j-1); // OR j ????
+        t_llll *global_win = notationobj_autospell_get_chunks(r_ob, par, 0, j-1, only_this_voice); // OR j ????
         t_pt3d global_win_CE = notationobj_autospell_get_center_of_effect(r_ob, par, global_win);
         t_pt3d weighted_CE = pt3d_sum(pt3d_double_prod(selfreferential_win_CE, par->f), pt3d_double_prod(global_win_CE, (1 - par->f)));
         
@@ -676,7 +712,8 @@ void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_param
         }
 
         if (isnan(weighted_CE.x) || isnan(weighted_CE.y) || isnan(weighted_CE.z)) {
-            object_post((t_object *)r_ob, "      • Nothing to do, center of effect is NaN");
+            if (par->verbose)
+                object_post((t_object *)r_ob, "      • Nothing to do, center of effect is NaN");
         } else {
             for (t_llllelem *elem = thischunk->l_head; elem; elem = elem->l_next) {
                 t_llll *ll = hatom_getllll(&elem->l_hatom);
@@ -702,14 +739,22 @@ void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_param
 
 
 
+void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_params *par)
+{
+    if (par->voicewise) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
+            notationobj_autospell_chew_and_chen_do(r_ob, par, voice);
+    } else {
+        notationobj_autospell_chew_and_chen_do(r_ob, par, NULL);
+    }
+}
 
 
-///// SIMULATED ANNEALING ALGO
-
-t_llll *autospell_get_all_notes(t_notation_obj *r_ob, t_autospell_params *par)
+// if only_in_this_voice = NULL, all voices are considered
+t_llll *autospell_dg_get_all_notes(t_notation_obj *r_ob, t_autospell_params *par, t_voice *only_in_this_voice)
 {
     t_llll *out = llll_get();
-    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+    for (t_voice *voice = only_in_this_voice ? only_in_this_voice : r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         for (t_chord *chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
             for (t_note *note = chord->firstnote; note; note = note->next) {
                 if (!par->selection_only || notation_item_is_globally_selected(r_ob, (t_notation_item *)note)) {
@@ -717,13 +762,16 @@ t_llll *autospell_get_all_notes(t_notation_obj *r_ob, t_autospell_params *par)
                 }
             }
         }
+        
+        if (only_in_this_voice)
+            break;
     }
     
     return out;
     
 }
 
-
+/*
 typedef struct _autospell_forcedirected_node
 {
     t_note  *note;
@@ -820,20 +868,7 @@ void notationobj_autospell_force_directed(t_notation_obj *r_ob, t_autospell_para
     
     unlock_general_mutex(r_ob);
 }
-
-
-
-
-//////////////
-
-
-
-typedef struct _note_cluster
-{
-    t_note  *firstnote;
-    t_note  *lastnote;
-    t_pt3d  spiral_centroid;
-} t_note_cluster;
+*/
 
 
 long ksubsets_sort_by_timespan(void *notationobj, t_llllelem *a, t_llllelem *b)
@@ -986,9 +1021,9 @@ long free_llllelems_lthing(void *data, t_hatom *a, const t_llll *address)
 }
 
 
-t_llll *autospell_dg_get_tree(t_notation_obj *r_ob, t_autospell_params *par)
+t_llll *autospell_dg_get_tree(t_notation_obj *r_ob, t_autospell_params *par, t_voice *voice)
 {
-    t_llll *notes = autospell_get_all_notes(r_ob, par);
+    t_llll *notes = autospell_dg_get_all_notes(r_ob, par, voice);
     t_llll *out = llll_clone(notes);
     
     for (t_llllelem *el = out->l_head; el; el = el->l_next)
@@ -1210,8 +1245,66 @@ double get_range_ext_ms(t_notation_obj *r_ob, t_llll *range)
     return notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&range->l_tail->l_hatom)) - notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&range->l_head->l_hatom));
 }
 
+void notes_llll_to_text_buf(t_notation_obj *r_ob, t_llll *ll, char *buf, long buf_size)
+{
+    long cur = 0;
+    for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
+        t_note *nt = (t_note *)hatom_getobj(&el->l_hatom);
+        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", nt->pitch_displayed.toCString(), el->l_next ? " " : "");
+    }
+}
+
+void positions_llll_to_text_buf(t_notation_obj *r_ob, t_llll *ll, char *buf, long buf_size)
+{
+    long cur = 0;
+    for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
+        t_pitch p = position_on_line_of_fifths_to_pitch(hatom_getlong(&el->l_hatom));
+        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", p.toCString(false), el->l_next ? " " : "");
+    }
+}
+
+
+void get_minmax_of_plain_long_llll(t_llll *ll, long *min, long *max)
+{
+    if (!ll || !ll->l_head)
+        return;
+    
+    *min = *max = hatom_getlong(&ll->l_head->l_hatom);
+    for (t_llllelem *el = ll->l_head->l_next; el; el = el->l_next) {
+        long thisval = hatom_getlong(&el->l_hatom);
+        if (thisval < *min)
+            *min = thisval;
+        if (thisval > *max)
+            *max = thisval;
+    }
+}
+
+
+char autospell_dg_respell_is_acceptable(t_notation_obj *r_ob, t_autospell_params *params, t_llll *positions)
+{
+    long minpos = 0, maxpos = 0;
+    get_minmax_of_plain_long_llll(positions, &minpos, &maxpos);
+    
+    if (minpos < params->min_LOF_position || maxpos > params->max_LOF_position)
+        return 0;
+    
+    if (params->min_LOF_position) {
+        // checking if same pitch appears repeated with increasing or decreasing number of accidentals, in which case it's not good
+        for (t_llllelem *el = positions->l_head; el && el->l_next; el = el->l_next) {
+            t_pitch p1 = position_on_line_of_fifths_to_pitch(hatom_getlong(&el->l_hatom));
+            t_pitch p2 = position_on_line_of_fifths_to_pitch(hatom_getlong(&el->l_next->l_hatom));
+            if (p1.degree() == p2.degree() && p1.alter() != p2.alter())
+                return 0;
+        }
+    }
+    
+    return 1;
+}
+
 long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_params *params, t_llll *notes)
 {
+    char pitches_str[2048];
+    
     if (!notes->l_head)
         return 0;
     
@@ -1223,42 +1316,72 @@ long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_para
     for (t_llllelem *nel = notes->l_head; nel; nel = nel->l_next) {
         t_llll *poss = notationobj_autospell_list_possibilities(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)));
         llll_chain(snap_positions, poss);
-//        llll_appenddouble(snap_positions, pitch_to_position_on_line_of_fifths(((t_note *)hatom_getobj(&nel->l_hatom))->pitch_displayed));
     }
     
     double best_pos = 0, best_stdev = 0, best_avg;
+    char found_one = false;
     for (t_llllelem *el = snap_positions->l_head; el; el = el->l_next) {
         double this_pos = hatom_getdouble(&el->l_hatom);
         t_llll *respell_note_pos = llll_get();
-        for (t_llllelem *nel = notes->l_head; nel; nel = nel->l_next)
-            llll_appenddouble(respell_note_pos, autospell_respell_note_wr_to_LCE(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)), this_pos, true, false));
+        t_llll *respell_note_keys = llll_get();
+        for (t_llllelem *nel = notes->l_head; nel; nel = nel->l_next) {
+            t_voice *note_voice = notation_item_get_voice(r_ob, (t_notation_item *)hatom_getobj(&nel->l_hatom));
+            llll_appendlong(respell_note_pos, autospell_respell_note_wr_to_LCE(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)), this_pos, true, false));
+            llll_appenddouble(respell_note_keys, note_voice ? note_voice->key : 0);
+        }
+        double key_avg = get_average_of_plain_double_llll(respell_note_keys);
         double avg;
         double stdev = get_stdev_of_plain_double_llll(respell_note_pos, &avg);
         
         avg -= params->lineoffifth_bias;
+        avg -= key_avg;
         
         if (params->verbose)
-            object_post((t_object *)r_ob, "  · Snapping to position %.2f gives LCE stdev of %.2f and average of %.2f (with %.2f of bias)", this_pos, stdev, avg, params->lineoffifth_bias);
-
-        if (!el->l_prev || fabs(stdev) < fabs(best_stdev) || (fabs(stdev) == fabs(best_stdev) && fabs(avg) < fabs(best_avg))) {
+            positions_llll_to_text_buf(r_ob, respell_note_pos, pitches_str, 2048);
+        
+        if (!autospell_dg_respell_is_acceptable(r_ob, params, respell_note_pos)) {
+            if (params->verbose)
+                object_post((t_object *)r_ob, "  · Snapping to position %.2f gives %s, but snapped pitches are unacceptable", this_pos, pitches_str, stdev, avg, params->lineoffifth_bias);
+        } else if (!found_one || fabs(stdev) < fabs(best_stdev) || (fabs(stdev) == fabs(best_stdev) && fabs(avg) < fabs(best_avg))) {
+            found_one = true;
             best_stdev = stdev;
             best_avg = avg;
             best_pos = this_pos;
+
             if (params->verbose)
-                object_post((t_object *)r_ob, "      ... best so far");
+                object_post((t_object *)r_ob, "  · Snapping to position %.2f gives %s, with LCE stdev of %.2f and average of %.2f (with %.2f of bias): best so far", this_pos, pitches_str, stdev, avg, params->lineoffifth_bias);
+        } else {
+            if (params->verbose >= 2)
+                object_post((t_object *)r_ob, "  · Snapping to position %.2f gives %s, with LCE stdev of %.2f and average of %.2f (with %.2f of bias)", this_pos, pitches_str, stdev, avg, params->lineoffifth_bias);
         }
         
         llll_free(respell_note_pos);
+        llll_free(respell_note_keys);
     }
     
-    if (!should_respell(best_stdev, extension_ms, extension_idx)) {
-        // won't respell! Too far apart, in time or in stdev
-        
+    // computing this threshold, depending on the value of the stdevthresh function
+    t_hatom vars[2];
+    hatom_setlong(vars, extension_idx);
+    hatom_setdouble(vars + 1, extension_ms);
+    t_hatom *res = lexpr_eval(params->stdev_thresh, vars);
+    double this_stdev_thresh = hatom_getdouble(res);
+    bach_freeptr(res);
+    
+    if (!found_one) {
+        // no viable solution found
         if (params->verbose)
-            object_post((t_object *)r_ob, "  · Won't respell: extension_ms = %.2f, stdev = %.2f", extension_ms, best_stdev);
+            object_post((t_object *)r_ob, "  · Won't respell: no solution found.");
+        return 1;
+        
+    } else if (best_stdev > this_stdev_thresh) {
+        if (params->verbose)
+            object_post((t_object *)r_ob, "  · Won't respell: stdev = %.2f > %.2f (current parameter threshold)", best_stdev, this_stdev_thresh);
         return 1;
     } else {
+        char verbose = params->verbose;
+        params->verbose = 0;
         autospell_dg_respell_notes_wr_LCE(r_ob, params, notes, best_pos);
+        params->verbose = verbose;
         return 0;
     }
 }
@@ -1292,26 +1415,18 @@ void autospell_dg_delete_container_ranges(t_notation_obj *r_ob, t_llll *range, t
     }
 }
 
-void range_to_pitches(t_notation_obj *r_ob, t_llll *range, char *buf, long buf_size)
-{
-    long cur = 0;
-    for (t_llllelem *el = range->l_head; el; el = el->l_next) {
-        t_note *nt = (t_note *)hatom_getobj(&el->l_hatom);
-        cur += snprintf_zero(buf + cur, buf_size - cur, "%s ", nt->pitch_displayed.toCString());
-    }
-}
 
-void notationobj_autospell_dg(t_notation_obj *r_ob, t_autospell_params *par)
+// if voice is a single voice, the single voice is considered;
+// if voice is NULL, all voices are considered
+void notationobj_autospell_dg_do(t_notation_obj *r_ob, t_autospell_params *par, t_voice *voice)
 {
     
     lock_general_mutex(r_ob);
     
-    t_llll *k_subsets_tree = autospell_dg_get_tree(r_ob, par);
-    llll_print(k_subsets_tree);
+    t_llll *k_subsets_tree = autospell_dg_get_tree(r_ob, par, voice);
     
     t_llll *scanned = llll_scan(k_subsets_tree, true);
     llll_flatten(scanned, 1, 0);
-    llll_print(scanned);
     llll_rev(scanned, 1, 1);
     
     t_llllelem *nextel;
@@ -1324,7 +1439,7 @@ void notationobj_autospell_dg(t_notation_obj *r_ob, t_autospell_params *par)
 
             if (par->verbose) {
                 char buf[1024];
-                range_to_pitches(r_ob, range, buf, 1024);
+                notes_llll_to_text_buf(r_ob, range, buf, 1024);
                 object_post((t_object *)r_ob, "Harmonizing pitches %s", buf);
             }
             
@@ -1344,13 +1459,22 @@ void notationobj_autospell_dg(t_notation_obj *r_ob, t_autospell_params *par)
 }
 
 
+void notationobj_autospell_dg(t_notation_obj *r_ob, t_autospell_params *par)
+{
+    notationobj_autospell_trivial(r_ob, par); // we rewrite the single notes trivially as first step
+    
+    if (par->voicewise) {
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
+            notationobj_autospell_dg_do(r_ob, par, voice);
+    } else {
+        notationobj_autospell_dg_do(r_ob, par, NULL);
+    }
+}
 
 
-//////////
 
 
-
-
+////
 
 
 t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob)
@@ -1358,7 +1482,8 @@ t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob
     t_autospell_params par;
     
     par.selection_only = false;
-    par.max_num_flats = par.max_num_sharps = 1;
+    par.max_LOF_position = 5 + 7;
+    par.min_LOF_position = -1 - 7;
     par.w_sliding = 8;
     par.w_selfreferential = 2;
     par.f = 0.5;
@@ -1370,21 +1495,84 @@ t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob
     par.r_ob = r_ob;
     par.algorithm = _llllobj_sym_default; //gensym("chewandchen");
     
-    
-    par.numiter = 10;
-    par.strength_neighbors = 1.;
-    par.strength_enharmonic = 1.;
+    par.voicewise = 1;
     
     par.lineoffifth_bias = 2.;
+    par.discard_altered_repetitions = true;
+    
+    t_llll *stdev_thresh_ll = llll_from_text_buf("3.5", false);
+    t_atom *stdev_thresh_av = NULL;
+    long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, 0);
+    par.stdev_thresh = lexpr_new(stdev_thresh_ac, stdev_thresh_av, subs_count, subs, (t_object *)r_ob);
+    llll_free(stdev_thresh_ll);
     
     return par;
 }
 
+long llll_to_pos_helper(t_llll *ll)
+{
+    if (ll && ll->l_head) {
+        switch (hatom_gettype(&ll->l_head->l_hatom)) {
+            case H_LONG:
+                return hatom_getlong(&ll->l_head->l_hatom);
+                break;
+            case H_PITCH:
+                return pitch_to_position_on_line_of_fifths(hatom_getpitch(&ll->l_head->l_hatom));
+                break;
+            case H_SYM:
+            {
+                long res = 0;
+                t_symbol *s = hatom_getsym(&ll->l_head->l_hatom);
+                char temp[2048];
+                snprintf_zero(temp, 2048, "%s0", s ? s->s_name : "C");
+                t_llll *temp_ll = llll_from_text_buf(temp, false);
+                if (temp_ll && temp_ll->l_head) {
+                    if (hatom_gettype(&temp_ll->l_head->l_hatom) == H_PITCH)
+                        res = pitch_to_position_on_line_of_fifths(hatom_getpitch(&temp_ll->l_head->l_hatom));
+                }
+                llll_free(temp_ll);
+                return res;
+            }
+                break;
+            default:
+                break;
+        }
+    }
+        return 0;
+}
+
 void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
 {
+
+    long maxsharps = -1, minflats = -1;
+    t_llll *maxpitch = NULL, *minpitch = NULL;
+    t_llll *stdev_thresh_ll = NULL;
     t_autospell_params par = notationobj_autospell_get_default_params(r_ob);
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisiddd", gensym("selection"), &par.selection_only, gensym("numsliding"), &par.w_sliding, gensym("numselfreferential"), &par.w_selfreferential, gensym("thresh"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &par.max_num_flats, gensym("maxsharps"), &par.max_num_sharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("numiter"), &par.numiter, gensym("strength"), &par.strength_neighbors, gensym("strengthenar"), &par.strength_enharmonic, gensym("bias"), &par.lineoffifth_bias);
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdillli", gensym("selection"), &par.selection_only, gensym("numsliding"), &par.w_sliding, gensym("numselfreferential"), &par.w_selfreferential, gensym("thresh"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &minflats, gensym("maxsharps"), &maxsharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("bias"), &par.lineoffifth_bias, gensym("voicewise"), &par.voicewise, gensym("sharpest"), &maxpitch, gensym("flattest"), &minpitch, gensym("stdevthresh"), &stdev_thresh_ll, gensym("discardalteredrepetitions"), &par.discard_altered_repetitions);
+    
+    
+    if (stdev_thresh_ll) {
+        if (par.stdev_thresh)
+            lexpr_free(par.stdev_thresh);
+        
+        t_atom *stdev_thresh_av = NULL;
+        long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, 0);
+        par.stdev_thresh = lexpr_new(stdev_thresh_ac, stdev_thresh_av, subs_count, subs, (t_object *)r_ob);
+        bach_freeptr(stdev_thresh_av);
+    }
+
+    
+    if (maxsharps >= 0)
+        par.max_LOF_position = 5 + 7 * maxsharps;
+    if (minflats >= 0)
+        par.min_LOF_position = -1 - 7 * minflats;
+    
+    if (maxpitch && maxpitch->l_head)
+        par.max_LOF_position = llll_to_pos_helper(maxpitch);
+    if (minpitch && minpitch->l_head)
+        par.min_LOF_position = llll_to_pos_helper(minpitch);
+    
     
     if (is_symbol_in_llll_first_level(args, _llllobj_sym_selection))
         par.selection_only = true;
@@ -1394,9 +1582,13 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
     
     if (par.algorithm == gensym("chewandchen"))
         notationobj_autospell_chew_and_chen(r_ob, &par);
-    else
+    else if (par.algorithm == gensym("atonal"))
         notationobj_autospell_dg(r_ob, &par);
-//        notationobj_autospell_force_directed(r_ob, &par);
+    else
+        notationobj_autospell_trivial(r_ob, &par);
     
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTOSPELL);
+    if (par.stdev_thresh)
+        lexpr_free(par.stdev_thresh);
+
+    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_RESPELL);
 }

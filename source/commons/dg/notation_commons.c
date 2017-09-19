@@ -3454,6 +3454,60 @@ char is_in_linear_edit_mode(t_notation_obj *r_ob)
     return 0;
 }
 
+
+void update_all_accidentals_for_voice_if_needed(t_notation_obj *r_ob, t_voice *voice)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        switch (r_ob->show_accidentals_preferences) {
+            case k_SHOW_ACC_ALL:
+            case k_SHOW_ACC_NONE:
+            case k_SHOW_ACC_CLASSICAL:
+            case k_SHOW_ACC_ALLALTERED_NONATURALS:
+                // nothing to do;
+                return;
+                
+            default:
+            {
+                t_chord *chord;
+                t_note *note;
+                for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
+                    char changed = false;
+                    for (note = chord->firstnote; note; note = note->next) {
+                        note->show_accidental = true;
+                        changed = true;
+                    }
+                    chord->need_recompute_parameters |= changed;
+                }
+            }
+                break;
+        }
+    }
+}
+
+
+void update_all_accidentals_for_chord_if_needed(t_notation_obj *r_ob, t_chord *chord)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+        update_all_accidentals_for_voice_if_needed(r_ob, (t_voice *)chord->voiceparent);
+}
+
+
+void update_all_accidentals_if_needed(t_notation_obj *r_ob)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        t_voice *voice;
+        
+        if (r_ob->show_accidentals_preferences == 0)
+            return;
+        
+        for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
+            update_all_accidentals_for_voice_if_needed(r_ob, voice);
+    }
+}
+
+
+
+
 void update_hscrollbar_and_paint_it_if_needed(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect){
 
 	if (r_ob->is_editing_type == k_NONE && !is_in_linear_edit_mode(r_ob))
@@ -29250,6 +29304,7 @@ void change_pitch(t_notation_obj *r_ob, t_pitch *pitch, t_lexpr *lexpr, t_llllel
     // if modify is a list it can be of the type (new_value +) or (new_value *)
     if (lexpr) {
         t_hatom *res = lexpr_eval_for_notation_item(r_ob, (t_notation_item *)lexpr_argument, lexpr);
+        *pitch = hatom_getpitch(res);
         bach_freeptr(res);
     } else if (modify) {
         change_pitch_from_llllelem(pitch, modify);
@@ -31763,7 +31818,7 @@ void recompute_all_for_tuttipoint_region(t_notation_obj *r_ob, t_tuttipoint *tpt
 	}
 }
 
-char reset_note_graphic(t_notation_obj *r_ob, t_note *note){
+char reset_note_enharmonicity(t_notation_obj *r_ob, t_note *note){
 	char changed = (note_is_enharmonicity_userdefined(note)) ? 1 : 0;
 
 //	t_voice *voice = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)note->parent->voiceparent : (t_voice *)note->parent->parent->voiceparent);
@@ -31779,7 +31834,20 @@ char reset_note_graphic(t_notation_obj *r_ob, t_note *note){
 	return changed;
 }
 
-char reset_selection_graphic(t_notation_obj *r_ob){  
+char reset_all_enharmonicity(t_notation_obj *r_ob)
+{
+    char changed = 0;
+    for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
+        for (t_chord *ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
+            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            for (t_note *nt = ch->firstnote; nt; nt = nt->next)
+                changed |= reset_note_enharmonicity(r_ob, nt);
+        }
+    return changed;
+}
+
+char reset_selection_enharmonicity(t_notation_obj *r_ob)
+{
 	// retranscribe and delete all the "graphic" extras for the selection (revert the accidentals to k_ACCIDENTALS_AUTO)
 	t_notation_item *curr_it = r_ob->firstselecteditem;
 	char changed = 0;
@@ -31790,14 +31858,14 @@ char reset_selection_graphic(t_notation_obj *r_ob){
 			t_note *nt = (t_note *) curr_it;
 			if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
 				create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-				changed |= reset_note_graphic(r_ob, nt);
+				changed |= reset_note_enharmonicity(r_ob, nt);
 			}
 		} else if (curr_it->type == k_CHORD) {
 			t_note *temp_nt = ((t_chord *)curr_it)->firstnote;
 			while (temp_nt) {
 				if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
 					create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-					changed |= reset_note_graphic(r_ob, temp_nt);
+					changed |= reset_note_enharmonicity(r_ob, temp_nt);
 				}
 				temp_nt = temp_nt->next;
 			}
@@ -31808,7 +31876,7 @@ char reset_selection_graphic(t_notation_obj *r_ob){
 				while (temp_nt) {
 					if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
 						create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-						changed |= reset_note_graphic(r_ob, temp_nt);
+						changed |= reset_note_enharmonicity(r_ob, temp_nt);
 					}
 					temp_nt = temp_nt->next;
 				}
@@ -39029,6 +39097,9 @@ char *undo_op_to_string(long undo_op)
 		case k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION:
 			sprintf(buf, "Reset Enharmonicity");
 			break;
+        case k_UNDO_OP_RESPELL:
+            sprintf(buf, "Respell Notes");
+            break;
 		case k_UNDO_OP_CHANGE_ONSET_FOR_SELECTION:
 			sprintf(buf, "Change Onset");
 			break;

@@ -1663,6 +1663,7 @@ typedef enum _undo_operations
 	k_UNDO_OP_SNAP_TAIL_TO_GRID_FOR_SELECTION,
 	k_UNDO_OP_RESET_ALL_ENHARMONICITIES,
 	k_UNDO_OP_RESET_ENHARMONICITY_FOR_SELECTION,
+    k_UNDO_OP_RESPELL,
 	k_UNDO_OP_CHANGE_ONSET_FOR_SELECTION,
 	k_UNDO_OP_CHANGE_DURATION_FOR_SELECTION,
 	k_UNDO_OP_CHANGE_TAIL_FOR_SELECTION,
@@ -5789,6 +5790,12 @@ void update_hscrollbar_and_paint_it_if_needed(t_notation_obj *r_ob, t_jgraphics*
 void update_vscrollbar_and_paint_it_if_needed(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect);
 
 
+//TBD
+void update_all_accidentals_if_needed(t_notation_obj *r_ob);
+void update_all_accidentals_for_voice_if_needed(t_notation_obj *r_ob, t_voice *voice);
+void update_all_accidentals_for_chord_if_needed(t_notation_obj *r_ob, t_chord *chord);
+
+
 /**	Obtain the horizontal width of the vertical scrollbar (in pixels) 
 	@ingroup			notation_graphics
 	@param r_ob			The notation object
@@ -8971,14 +8978,21 @@ t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note);
 	@param	r_ob	The notation object
 	@param	note	The note
 */
-char reset_note_graphic(t_notation_obj *r_ob, t_note *note);
+char reset_note_enharmonicity(t_notation_obj *r_ob, t_note *note);
 
 
-/**	Revert the enharmony of all the selected notes (works exactly as reset_note_graphic(), but for all the notes in the current object selection) 
+/**	Revert the enharmony of all the selected notes (works exactly as reset_note_enharmonicity(), but for all the notes in the current object selection)
 	@ingroup		notation_actions
 	@param	r_ob	The notation object
  */ 
-char reset_selection_graphic(t_notation_obj *r_ob);
+char reset_selection_enharmonicity(t_notation_obj *r_ob);
+
+
+/**	Revert the enharmony of all the notes
+	@ingroup		notation_actions
+	@param	r_ob	The notation object
+ */
+char reset_all_enharmonicity(t_notation_obj *r_ob);
 
 
 /**	Tie a note to a note of the next chord (if possible). 
@@ -18557,6 +18571,7 @@ void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char 
 
 // autospell
 void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args);
+
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
