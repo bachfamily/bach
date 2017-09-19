@@ -184,6 +184,8 @@ typedef struct _autospell_params
 {
     char    selection_only;
     long    verbose;
+    
+    double  lineoffifth_bias;
 
     t_symbol    *algorithm;
 
@@ -472,7 +474,7 @@ t_pt3d pt3d_versor(t_pt3d from, t_pt3d to)
 
 
 
-long llll_sort_by_distance_to_center_of_effect(void *spell_parameters, t_llllelem *a, t_llllelem *b)
+long llll_sort_by_distance_to_SCE(void *spell_parameters, t_llllelem *a, t_llllelem *b)
 {
     t_autospell_params *par = (t_autospell_params *)spell_parameters;
     t_pt3d ce = *((t_pt3d *)par->thing);
@@ -486,6 +488,26 @@ long llll_sort_by_distance_to_center_of_effect(void *spell_parameters, t_llllele
         t_pt3d apt = position_on_line_of_fifths_to_position_on_spiral_array(par->r_ob, par, ak);
         t_pt3d bpt = position_on_line_of_fifths_to_position_on_spiral_array(par->r_ob, par, bk);
         return pt3d_distance_squared(apt, ce) <= pt3d_distance_squared(bpt, ce);
+    }
+    
+    
+    return 1;
+}
+
+
+
+long llll_sort_by_distance_to_LCE(void *spell_parameters, t_llllelem *a, t_llllelem *b)
+{
+    t_autospell_params *par = (t_autospell_params *)spell_parameters;
+    double LCE = *((double *)par->thing);
+    
+    long ak = hatom_getlong(&a->l_hatom);
+    long bk = hatom_getlong(&b->l_hatom);
+    
+    if (isnan(LCE))
+        return labs(ak) <= labs(bk);
+    else {
+        return fabs(ak - LCE) <= fabs(bk - LCE);
     }
     
     
@@ -519,14 +541,14 @@ void notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(t_notati
     note_compute_approximation(r_ob, note);
 }
 
-// respell a note with respect to a center of effect
-void notationobj_autospell_respell_notewr_to_center_of_effect(t_notation_obj *r_ob, t_autospell_params *par, t_note *note, t_pt3d center_of_effect)
+// respell a note with respect to a spiral center of effect
+void autospell_respell_note_wr_to_SCE(t_notation_obj *r_ob, t_autospell_params *par, t_note *note, t_pt3d SCE)
 {
     t_llll *possibilities = notationobj_autospell_list_possibilities(r_ob, par, note);
 
     if (possibilities && possibilities->l_head) {
-        par->thing = &center_of_effect;
-        llll_mergesort_inplace(&possibilities, llll_sort_by_distance_to_center_of_effect, par);
+        par->thing = &SCE;
+        llll_mergesort_inplace(&possibilities, llll_sort_by_distance_to_SCE, par);
         par->thing = NULL;
         
         if (par->verbose) {
@@ -535,7 +557,7 @@ void notationobj_autospell_respell_notewr_to_center_of_effect(t_notation_obj *r_
                 t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
                 char notename[128];
                 snprintf_zero(notename, 128, "%s", thispitch.toCString());
-                object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, sqrt(pt3d_distance_squared(center_of_effect, pitch_to_position_on_spiral_array(r_ob, par, thispitch))), el->l_prev ? "" : " <-- chosen");
+                object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, sqrt(pt3d_distance_squared(SCE, pitch_to_position_on_spiral_array(r_ob, par, thispitch))), el->l_prev ? "" : " <-- chosen");
             }
         }
 
@@ -543,6 +565,38 @@ void notationobj_autospell_respell_notewr_to_center_of_effect(t_notation_obj *r_
     }
     llll_free(possibilities);
 }
+
+
+// respell a note with respect to a center of effect
+long autospell_respell_note_wr_to_LCE(t_notation_obj *r_ob, t_autospell_params *par, t_note *note, double LCE, char only_output_res, char verbose)
+{
+    t_llll *possibilities = notationobj_autospell_list_possibilities(r_ob, par, note);
+    long res = 0;
+    
+    if (possibilities && possibilities->l_head) {
+        par->thing = &LCE;
+        llll_mergesort_inplace(&possibilities, llll_sort_by_distance_to_LCE, par);
+        par->thing = NULL;
+        
+        if (verbose) {
+            object_post((t_object *)r_ob, "  Possibilities, in order of distance:");
+            for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
+                t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
+                char notename[128];
+                snprintf_zero(notename, 128, "%s", thispitch.toCString());
+                object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, fabs(LCE - pitch_to_position_on_line_of_fifths(thispitch)), el->l_prev ? "" : " <-- chosen");
+            }
+        }
+        
+        res = hatom_getlong(&possibilities->l_head->l_hatom);
+        if (!only_output_res)
+            notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(r_ob, par, note, hatom_getlong(&possibilities->l_head->l_hatom));
+    }
+    llll_free(possibilities);
+    
+    return res;
+}
+
 
 
 void wintostring(t_notation_obj *r_ob, t_autospell_params *par, t_llll *ll, char *buf, long buf_size)
@@ -597,7 +651,7 @@ void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_param
                 if (par->verbose)
                     object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", note->pitch_displayed.toCString(), notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
                 
-                notationobj_autospell_respell_notewr_to_center_of_effect(r_ob, par, note, sliding_win_CE);
+                autospell_respell_note_wr_to_SCE(r_ob, par, note, sliding_win_CE);
             }
         }
         
@@ -633,7 +687,7 @@ void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_param
                     if (par->verbose)
                         object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", note->pitch_displayed.toCString(), notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
                     
-                    notationobj_autospell_respell_notewr_to_center_of_effect(r_ob, par, note, weighted_CE);
+                    autospell_respell_note_wr_to_SCE(r_ob, par, note, weighted_CE);
                 }
             }
         }
@@ -758,7 +812,7 @@ void notationobj_autospell_force_directed(t_notation_obj *r_ob, t_autospell_para
     }
     
     for (i = 0; i < numnotes; i++) {
-        notationobj_autospell_respell_notewr_to_center_of_effect(r_ob, par, nodes[i].note, nodes[i].pt);
+        autospell_respell_note_wr_to_SCE(r_ob, par, nodes[i].note, nodes[i].pt);
     }
     
     
@@ -767,6 +821,532 @@ void notationobj_autospell_force_directed(t_notation_obj *r_ob, t_autospell_para
     unlock_general_mutex(r_ob);
 }
 
+
+
+
+//////////////
+
+
+
+typedef struct _note_cluster
+{
+    t_note  *firstnote;
+    t_note  *lastnote;
+    t_pt3d  spiral_centroid;
+} t_note_cluster;
+
+
+long ksubsets_sort_by_timespan(void *notationobj, t_llllelem *a, t_llllelem *b)
+{
+    t_notation_obj *r_ob = (t_notation_obj *)notationobj;
+    
+    t_llll *a_ll = hatom_getllll(&a->l_hatom);
+    t_llll *b_ll = hatom_getllll(&b->l_hatom);
+    
+    
+    double a_ext = notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&a_ll->l_tail->l_hatom)) - notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&a_ll->l_head->l_hatom));
+    double b_ext = notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&b_ll->l_tail->l_hatom)) - notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&b_ll->l_head->l_hatom));
+    
+    return a_ext <= b_ext;
+}
+
+
+t_llll *autospell_get_ksubsets(t_notation_obj *r_ob, t_llll *notes, long k)
+{
+    t_llll *out = llll_get();
+    long len = notes->l_size, i, j;
+    t_llllelem *el, *temp;
+    for (i = 0, el = notes->l_head; i + k - 1 < len; i++, el = el->l_next) {
+        t_llll *this_subset = llll_get();
+        for (j = 0, temp = el; temp && j < k; j++, temp = temp->l_next) {
+            llll_appendhatom_clone(this_subset, &temp->l_hatom);
+        }
+        llll_appendllll(out, this_subset);
+    }
+    
+//    llll_print(out);
+    llll_mergesort_inplace(&out, ksubsets_sort_by_timespan, r_ob);
+    return out;
+}
+
+
+t_llll *llll_wrap_element_range_ext(t_llllelem *from, t_llllelem *to)
+{
+    while (llllelem_get_depth(from) > 1)
+        from = from->l_parent->l_owner;
+    while (llllelem_get_depth(to) > 1)
+        to = from->l_parent->l_owner;
+    return llll_wrap_element_range(from, to);
+}
+
+
+long find_note_fn(void *data, t_hatom *a, const t_llll *address)
+{
+    t_note *to_match = (t_note *) ((void **)data)[9];
+    t_llllelem **to_fill = (t_llllelem **) ((void **)data)[1];
+
+    if (hatom_gettype(a) == H_OBJ){
+        t_note *note = (t_note *)hatom_getobj(a);
+        if (note == to_match) {
+            *to_fill = llll_hatom2elem(a);
+            return 0;
+        }
+    }
+    return 0;
+}
+
+
+// TO DO: make this better, this is slow!!!!!
+t_llllelem *find_note(t_llll *notes, t_note *note)
+{
+    t_llllelem *found = NULL;
+    void *data[2];
+    data[0] = note;
+    data[1] = &found;
+    llll_funall(notes, (fun_fn) find_note_fn, data, 1, -1, FUNALL_ONLY_PROCESS_ATOMS);
+    return found;
+}
+
+t_llll *autospell_dg_get_tree_old(t_notation_obj *r_ob, t_llll *notes)
+{
+    t_llll *out = llll_clone(notes);
+    
+    // step 1: building tree of couples
+    t_llll *notes_llllelems = llll_get();
+    long i = 1;
+    for (t_llllelem *el = out->l_head; el; el = el->l_next, i++) {
+        llll_appendobj(notes_llllelems, el);
+        ((t_note *)hatom_getobj(&el->l_hatom))->r_it.flags = i;
+    }
+    
+    t_llll *ksubsets = autospell_get_ksubsets(r_ob, notes, 2);
+
+    for (t_llllelem *el = ksubsets->l_head; el; el = el->l_next) {
+        t_note *start = (t_note *)hatom_getobj(&hatom_getllll(&el->l_hatom)->l_head->l_hatom);
+        t_note *end = (t_note *)hatom_getobj(&hatom_getllll(&el->l_hatom)->l_tail->l_hatom);
+        long start_idx = start->r_it.flags;
+        long end_idx = end->r_it.flags;
+        t_llllelem *start_el = (t_llllelem *)hatom_getobj(&llll_getindex(notes_llllelems, start_idx, I_STANDARD)->l_hatom);
+        t_llllelem *end_el = (t_llllelem *)hatom_getobj(&llll_getindex(notes_llllelems, end_idx, I_STANDARD)->l_hatom);
+        llll_wrap_element_range_ext(start_el, end_el);
+    }
+    
+    for (t_llllelem *el = notes->l_head; el; el = el->l_next, i++) {
+        ((t_note *)hatom_getobj(&el->l_hatom))->r_it.flags = 0;
+    }
+
+    llll_free(notes_llllelems);
+    return out;
+}
+
+
+typedef struct _node_helper
+{
+    double first_onset;
+    double last_onset;
+    double last_tail;
+    long   num_notes;
+} t_node_helper;
+
+
+t_node_helper *build_node_helper_from_note(t_notation_obj *r_ob, t_note *note)
+{
+    t_node_helper *nh = (t_node_helper *)bach_newptr(sizeof(t_node_helper));
+    nh->first_onset = nh->last_onset = notation_item_get_onset_ms(r_ob, (t_notation_item *)note);
+    nh->last_tail = notation_item_get_tail_ms(r_ob, (t_notation_item *)note);
+    nh->num_notes = 1;
+    return nh;
+}
+
+
+t_node_helper *build_node_helper(t_notation_obj *r_ob, double first_onset, double last_onset, double last_tail, long num_notes)
+{
+    t_node_helper *nh = (t_node_helper *)bach_newptr(sizeof(t_node_helper));
+    nh->first_onset = first_onset;
+    nh->last_onset = last_onset;
+    nh->last_tail = last_tail;
+    nh->num_notes = num_notes;
+    return nh;
+}
+
+
+
+
+long free_llllelems_lthing(void *data, t_hatom *a, const t_llll *address)
+{
+    if (hatom_gettype(a) == H_LLLL){
+        for (t_llllelem *el = hatom_getllll(a)->l_head; el; el = el->l_next) {
+            if (el->l_thing.w_obj) {
+                bach_freeptr(el->l_thing.w_obj);
+                el->l_thing.w_obj = NULL;
+            }
+        }
+    }
+    return 0;
+}
+
+
+t_llll *autospell_dg_get_tree(t_notation_obj *r_ob, t_autospell_params *par)
+{
+    t_llll *notes = autospell_get_all_notes(r_ob, par);
+    t_llll *out = llll_clone(notes);
+    
+    for (t_llllelem *el = out->l_head; el; el = el->l_next)
+        el->l_thing.w_obj = build_node_helper_from_note(r_ob, (t_note *)hatom_getobj(&el->l_hatom));
+    
+    while (true) {
+        
+        // finding closest elements
+        double best_dist = -1;
+        long best_numnotes = 0;
+        t_llllelem *best_el = NULL;
+        for (t_llllelem *el = out->l_head; el && el->l_next; el = el->l_next) {
+            t_node_helper *el_nh = (t_node_helper *)el->l_thing.w_obj;
+            t_node_helper *elnext_nh = (t_node_helper *)el->l_next->l_thing.w_obj;
+            double this_dist = fabs(elnext_nh->first_onset - el_nh->last_onset);
+            long this_numnotes = elnext_nh->num_notes + el_nh->num_notes;
+            if (best_dist < 0 || this_dist < best_dist || (this_dist == best_dist && this_numnotes < best_numnotes)) {
+                best_dist = this_dist;
+                best_numnotes = this_numnotes;
+                best_el = el;
+            }
+        }
+        
+        if (!best_el)
+            break; // we're done
+        
+        // merging best_el with best_el->l_next
+        t_llll *new_ll = llll_wrap_element_range(best_el, best_el->l_next);
+        
+        new_ll->l_owner->l_thing.w_obj = build_node_helper(r_ob, ((t_node_helper *)best_el->l_thing.w_obj)->first_onset, ((t_node_helper *)best_el->l_next->l_thing.w_obj)->last_onset, ((t_node_helper *)best_el->l_next->l_thing.w_obj)->last_tail, ((t_node_helper *)best_el->l_thing.w_obj)->num_notes + ((t_node_helper *)best_el->l_next->l_thing.w_obj)->num_notes);
+        
+    }
+
+    llll_funall(out, (fun_fn)free_llllelems_lthing, NULL, 0, -1, FUNALL_PROCESS_WHOLE_SUBLISTS);
+    llll_free(notes);
+    return out;
+}
+
+
+long autospell_dg_get_SCE_fn(void *data, t_hatom *a, const t_llll *address)
+{
+    t_notation_obj *r_ob = (t_notation_obj *) ((void **)data)[0];
+    t_autospell_params *params = (t_autospell_params *) ((void **)data)[1];
+    t_pt3d *tot_pos = (t_pt3d *) ((void **)data)[2];
+    double *tot_duration = (double *) ((void **)data)[3];
+    
+    if (hatom_gettype(a) == H_OBJ){
+        t_note *note = (t_note *)hatom_getobj(a);
+        t_pt3d this_pos = pitch_to_position_on_spiral_array(r_ob, params, note->pitch_displayed);
+        double duration = 1; // all notes are equal
+        
+        tot_pos->x += duration * this_pos.x;
+        tot_pos->y += duration * this_pos.y;
+        tot_pos->z += duration * this_pos.z;
+        *tot_duration += duration;
+    }
+    return 0;
+}
+
+
+
+t_pt3d autospell_dg_get_SCE(t_notation_obj *r_ob, t_autospell_params *params, t_llll *notes)
+{
+    double tot_duration = 0;
+    t_pt3d tot_pos = {0, 0, 0};
+    void *data[4];
+    data[0] = r_ob;
+    data[1] = params;
+    data[2] = &tot_pos;
+    data[3] = &tot_duration;
+    
+    llll_funall(notes, (fun_fn) autospell_dg_get_SCE_fn, data, 1, -1, FUNALL_ONLY_PROCESS_ATOMS);
+    tot_pos.x /= tot_duration;
+    tot_pos.y /= tot_duration;
+    tot_pos.z /= tot_duration;
+    
+    return tot_pos;
+}
+
+
+
+long respell_note_wr_SCE_fn(void *data, t_hatom *a, const t_llll *address)
+{
+    t_notation_obj *r_ob = (t_notation_obj *) ((void **)data)[0];
+    t_autospell_params *params = (t_autospell_params *) ((void **)data)[1];
+    t_pt3d SCE = *((t_pt3d *) ((void **)data)[2]);
+    
+    if (hatom_gettype(a) == H_OBJ){
+        t_note *note = (t_note *)hatom_getobj(a);
+        autospell_respell_note_wr_to_SCE(r_ob, params, note, SCE);
+    }
+    return 0;
+}
+
+
+void autospell_dg_respell_notes_wr_SCE(t_notation_obj *r_ob, t_autospell_params *params, t_llll *notes, t_pt3d SCE)
+{
+    void *data[3];
+    data[0] = r_ob;
+    data[1] = params;
+    data[2] = &SCE;
+    
+    llll_funall(notes, (fun_fn) respell_note_wr_SCE_fn, data, 1, -1, FUNALL_ONLY_PROCESS_ATOMS);
+}
+
+
+
+
+
+long autospell_dg_get_LCE_fn(void *data, t_hatom *a, const t_llll *address)
+{
+    t_notation_obj *r_ob = (t_notation_obj *) ((void **)data)[0];
+    t_autospell_params *params = (t_autospell_params *) ((void **)data)[1];
+    double *tot_pos = (double *) ((void **)data)[2];
+    double *tot_duration = (double *) ((void **)data)[3];
+    t_llll *positions = (t_llll *) ((void **)data)[4];
+    
+    if (hatom_gettype(a) == H_OBJ){
+        t_note *note = (t_note *)hatom_getobj(a);
+        double this_pos = pitch_to_position_on_line_of_fifths(note->pitch_displayed);
+        double duration = 1; // all notes are equal
+
+        llll_appenddouble(positions, this_pos);
+        
+        *tot_pos += duration * this_pos;
+        *tot_duration += duration;
+    }
+    return 0;
+}
+
+
+void get_positive_and_negative_values_closest_to_zero(t_llll *ll, double *positive, double *negative)
+{
+    *positive = 32000;
+    *negative = -32000;
+    for (t_llllelem *elem = ll->l_head; elem; elem = elem->l_next) {
+        double this_val = hatom_getdouble(&elem->l_hatom);
+        if (this_val == 0) {
+            *positive = *negative = 0;
+            return;
+        } else if (this_val < 0) {
+            if (this_val > *negative)
+                *negative = this_val;
+        } else {
+            if (this_val < *positive)
+                *positive = this_val;
+        }
+    }
+}
+
+// slightly smarter
+double autospell_dg_get_LCE(t_notation_obj *r_ob, t_autospell_params *params, t_llll *notes)
+{
+    double tot_duration = 0;
+    double tot_pos = 0.;
+    t_llll *positions = llll_get();
+    void *data[5];
+    data[0] = r_ob;
+    data[1] = params;
+    data[2] = &tot_pos;
+    data[3] = &tot_duration;
+    data[4] = positions;
+    
+    llll_funall(notes, (fun_fn) autospell_dg_get_LCE_fn, data, 1, -1, FUNALL_ONLY_PROCESS_ATOMS);
+    tot_pos /= tot_duration;
+    
+    double positive = 0, negative = 0;
+    get_positive_and_negative_values_closest_to_zero(positions, &positive, &negative);
+
+    llll_free(positions);
+    return tot_pos;
+//    return positions->l_head ? (positive < fabs(negative) ? positive : negative) : 0;
+}
+
+long respell_note_wr_LCE_fn(void *data, t_hatom *a, const t_llll *address)
+{
+    t_notation_obj *r_ob = (t_notation_obj *) ((void **)data)[0];
+    t_autospell_params *params = (t_autospell_params *) ((void **)data)[1];
+    double LCE = *((double *) ((void **)data)[2]);
+    
+    if (hatom_gettype(a) == H_OBJ){
+        t_note *note = (t_note *)hatom_getobj(a);
+        autospell_respell_note_wr_to_LCE(r_ob, params, note, LCE, false, params->verbose);
+    }
+    return 0;
+}
+
+
+void autospell_dg_respell_notes_wr_LCE(t_notation_obj *r_ob, t_autospell_params *params, t_llll *notes, double LC)
+{
+    void *data[3];
+    data[0] = r_ob;
+    data[1] = params;
+    data[2] = &LC;
+    
+    llll_funall(notes, (fun_fn) respell_note_wr_LCE_fn, data, 1, -1, FUNALL_ONLY_PROCESS_ATOMS);
+}
+
+
+long should_respell(double best_stdev, double extension_ms, long extension_idx)
+{
+    if (best_stdev < 3.)
+        return 1;
+    return 0.;
+}
+
+double get_range_firstonset(t_notation_obj *r_ob, t_llll *range)
+{
+    return notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&range->l_head->l_hatom));
+}
+
+double get_range_lastonset(t_notation_obj *r_ob, t_llll *range)
+{
+    return notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&range->l_tail->l_hatom));
+}
+
+double get_range_ext_ms(t_notation_obj *r_ob, t_llll *range)
+{
+    return notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&range->l_tail->l_hatom)) - notation_item_get_onset_ms(r_ob, (t_notation_item *)hatom_getobj(&range->l_head->l_hatom));
+}
+
+long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_params *params, t_llll *notes)
+{
+    if (!notes->l_head)
+        return 0;
+    
+    // get extension
+    double extension_ms = get_range_ext_ms(r_ob, notes);
+    long extension_idx = notes->l_size;
+
+    t_llll *snap_positions = llll_get();
+    for (t_llllelem *nel = notes->l_head; nel; nel = nel->l_next) {
+        t_llll *poss = notationobj_autospell_list_possibilities(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)));
+        llll_chain(snap_positions, poss);
+//        llll_appenddouble(snap_positions, pitch_to_position_on_line_of_fifths(((t_note *)hatom_getobj(&nel->l_hatom))->pitch_displayed));
+    }
+    
+    double best_pos = 0, best_stdev = 0, best_avg;
+    for (t_llllelem *el = snap_positions->l_head; el; el = el->l_next) {
+        double this_pos = hatom_getdouble(&el->l_hatom);
+        t_llll *respell_note_pos = llll_get();
+        for (t_llllelem *nel = notes->l_head; nel; nel = nel->l_next)
+            llll_appenddouble(respell_note_pos, autospell_respell_note_wr_to_LCE(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)), this_pos, true, false));
+        double avg;
+        double stdev = get_stdev_of_plain_double_llll(respell_note_pos, &avg);
+        
+        avg -= params->lineoffifth_bias;
+        
+        if (params->verbose)
+            object_post((t_object *)r_ob, "  · Snapping to position %.2f gives LCE stdev of %.2f and average of %.2f (with %.2f of bias)", this_pos, stdev, avg, params->lineoffifth_bias);
+
+        if (!el->l_prev || fabs(stdev) < fabs(best_stdev) || (fabs(stdev) == fabs(best_stdev) && fabs(avg) < fabs(best_avg))) {
+            best_stdev = stdev;
+            best_avg = avg;
+            best_pos = this_pos;
+            if (params->verbose)
+                object_post((t_object *)r_ob, "      ... best so far");
+        }
+        
+        llll_free(respell_note_pos);
+    }
+    
+    if (!should_respell(best_stdev, extension_ms, extension_idx)) {
+        // won't respell! Too far apart, in time or in stdev
+        
+        if (params->verbose)
+            object_post((t_object *)r_ob, "  · Won't respell: extension_ms = %.2f, stdev = %.2f", extension_ms, best_stdev);
+        return 1;
+    } else {
+        autospell_dg_respell_notes_wr_LCE(r_ob, params, notes, best_pos);
+        return 0;
+    }
+}
+
+
+long is_range_included(t_notation_obj *r_ob, t_llll *contained, t_llll *container)
+{
+    double contained_start = get_range_firstonset(r_ob, contained);
+    double contained_end = get_range_firstonset(r_ob, contained);
+    double container_start = get_range_firstonset(r_ob, container);
+    double container_end = get_range_firstonset(r_ob, container);
+    if (container_start < contained_start && container_end > contained_end)
+        return 1;
+    return 0;
+}
+
+
+void autospell_dg_delete_container_ranges(t_notation_obj *r_ob, t_llll *range, t_llllelem *range_el)
+{
+    t_llllelem *temp = range_el->l_next, *tempnext;
+    while (temp) {
+        tempnext = temp->l_next;
+        if (hatom_gettype(&temp->l_hatom) == H_LLLL) {
+            t_llll *temp_range = llll_clone(hatom_getllll(&temp->l_hatom));
+            llll_flatten(temp_range, -1, 0);
+            if (is_range_included(r_ob, range, temp_range))
+                llll_destroyelem(temp);
+            llll_free(temp_range);
+        }
+        temp = tempnext;
+    }
+}
+
+void range_to_pitches(t_notation_obj *r_ob, t_llll *range, char *buf, long buf_size)
+{
+    long cur = 0;
+    for (t_llllelem *el = range->l_head; el; el = el->l_next) {
+        t_note *nt = (t_note *)hatom_getobj(&el->l_hatom);
+        cur += snprintf_zero(buf + cur, buf_size - cur, "%s ", nt->pitch_displayed.toCString());
+    }
+}
+
+void notationobj_autospell_dg(t_notation_obj *r_ob, t_autospell_params *par)
+{
+    
+    lock_general_mutex(r_ob);
+    
+    t_llll *k_subsets_tree = autospell_dg_get_tree(r_ob, par);
+    llll_print(k_subsets_tree);
+    
+    t_llll *scanned = llll_scan(k_subsets_tree, true);
+    llll_flatten(scanned, 1, 0);
+    llll_print(scanned);
+    llll_rev(scanned, 1, 1);
+    
+    t_llllelem *nextel;
+    for (t_llllelem *el = scanned->l_head; el; el = nextel) {
+        t_llllelem *this_el = (t_llllelem *)hatom_getobj(&el->l_hatom);
+        nextel = el->l_next;
+        if (hatom_gettype(&this_el->l_hatom) == H_LLLL) {
+            t_llll *range = llll_clone(hatom_getllll(&this_el->l_hatom));
+            llll_flatten(range, -1, 0);
+
+            if (par->verbose) {
+                char buf[1024];
+                range_to_pitches(r_ob, range, buf, 1024);
+                object_post((t_object *)r_ob, "Harmonizing pitches %s", buf);
+            }
+            
+            // Harmonizing all the notes inside range
+            if (autospell_dg_respell_notes_multitest(r_ob, par, range)) {
+                // deleting all other scanned items that contain this one
+                autospell_dg_delete_container_ranges(r_ob, range, el);
+            }
+            llll_free(range);
+        }
+    }
+    
+    llll_free(k_subsets_tree);
+    llll_free(scanned);
+    
+    unlock_general_mutex(r_ob);
+}
+
+
+
+
+//////////
 
 
 
@@ -795,6 +1375,8 @@ t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob
     par.strength_neighbors = 1.;
     par.strength_enharmonic = 1.;
     
+    par.lineoffifth_bias = 2.;
+    
     return par;
 }
 
@@ -802,7 +1384,7 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
 {
     t_autospell_params par = notationobj_autospell_get_default_params(r_ob);
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisidd", gensym("selection"), &par.selection_only, gensym("numsliding"), &par.w_sliding, gensym("numselfreferential"), &par.w_selfreferential, gensym("thresh"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &par.max_num_flats, gensym("maxsharps"), &par.max_num_sharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("numiter"), &par.numiter, gensym("strength"), &par.strength_neighbors, gensym("strengthenar"), &par.strength_enharmonic);
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisiddd", gensym("selection"), &par.selection_only, gensym("numsliding"), &par.w_sliding, gensym("numselfreferential"), &par.w_selfreferential, gensym("thresh"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &par.max_num_flats, gensym("maxsharps"), &par.max_num_sharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("numiter"), &par.numiter, gensym("strength"), &par.strength_neighbors, gensym("strengthenar"), &par.strength_enharmonic, gensym("bias"), &par.lineoffifth_bias);
     
     if (is_symbol_in_llll_first_level(args, _llllobj_sym_selection))
         par.selection_only = true;
@@ -813,7 +1395,8 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
     if (par.algorithm == gensym("chewandchen"))
         notationobj_autospell_chew_and_chen(r_ob, &par);
     else
-        notationobj_autospell_force_directed(r_ob, &par);
+        notationobj_autospell_dg(r_ob, &par);
+//        notationobj_autospell_force_directed(r_ob, &par);
     
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_AUTOSPELL);
 }

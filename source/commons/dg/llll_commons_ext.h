@@ -272,15 +272,6 @@ t_llll *llll_betail(t_llll *inlist);
 long llllelem_getpos(t_llllelem *elem);
 
 
-/**	Return the depth of the level in which a given element is found.
-	For instance, inside [a (b c d) e ((f (g)) h) i], if elem = f, depth = 3
-	@ingroup		llll_utilities
-	@param	elem	The llllelem
-	@return			The depth of the level in which the llllelem is found
- */
-long llllelem_getdepth(t_llllelem *elem);
-
-
 /**	Only keep the first <num_elem> elements of a llll
 	@ingroup			llll_utilities
 	@param	inlist		The llll

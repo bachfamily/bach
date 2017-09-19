@@ -1300,7 +1300,7 @@ t_tsd_config *params_to_tsd_config(t_rhythmogram *x, double weight, long num_div
 void rewrap_to_next_llll(t_llll *ll, t_llllelem *elem)
 {
 	if (elem && elem->l_parent && elem->l_parent->l_owner) {
-		long d = llllelem_getdepth(elem);
+		long d = llllelem_get_depth(elem);
 //		char *buf = NULL, *buf2 = NULL, *buf3 = NULL;
 //		llll_to_text_buf(ll, &buf, 0, 1, 0, NULL); // buf + 250   buf2 + 250  buf3 + 250
 		t_llllelem *next_llll = elem->l_parent->l_owner->l_next;
@@ -1320,7 +1320,7 @@ void rewrap_to_next_llll(t_llll *ll, t_llllelem *elem)
 void rewrap_to_prev_llll(t_llll *ll, t_llllelem *elem)
 {
 	if (elem && elem->l_parent && elem->l_parent->l_owner) {
-		long d = llllelem_getdepth(elem);
+		long d = llllelem_get_depth(elem);
 //		char *buf = NULL, *buf2 = NULL, *buf3 = NULL;
 //		llll_to_text_buf(ll, &buf, 0, 1, 0, NULL); // buf + 250   buf2 + 250  buf3 + 250
 		t_llllelem *prev_llll = elem->l_parent->l_owner->l_prev;

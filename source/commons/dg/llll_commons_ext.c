@@ -104,7 +104,8 @@ t_llll *llll_betail(t_llll *inlist) {
 	return inlist; // dummy but needed somewhere here and there
 }
 
-long llllelem_getdepth(t_llllelem *elem){
+/*
+long llllelem_get_depth(t_llllelem *elem){
 	long d = 1;
 	t_llllelem *temp = elem;
 	while (temp->l_parent && temp->l_parent->l_owner) {
@@ -113,6 +114,7 @@ long llllelem_getdepth(t_llllelem *elem){
 	}
 	return d;
 }
+*/
 
 long llllelem_getpos(t_llllelem *elem){
 	t_llllelem *temp = elem;
