@@ -6,9 +6,9 @@
 %s BINARY
 
 SEPARATOR ([ \t\n\(\)\[\]\{\}])
-INTEGER ([-]?[0-9]+)
-FLOAT ([-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
-RATIONAL ({INTEGER}[/][+-]?[0-9]+)
+INTEGER ([0-9]+)
+FLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
+RATIONAL ({INTEGER}[/][+-]?{INTEGER})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq]+)
 
@@ -213,7 +213,7 @@ ACCIDENTAL ([#bxdq]+)
     return lexpr_append_lexeme_FLOAT(epd->lexeme, atof(yytext));
 }
 
-{NOTENAME}{ACCIDENTAL}?{INTEGER} {
+{NOTENAME}{ACCIDENTAL}?[-+]?{INTEGER} {
 	long degree = t_pitch::text2degree(*yytext);
 	char *pos = yytext + 1;
     t_shortRational alter = t_pitch::text2alter(&pos);
@@ -223,7 +223,7 @@ ACCIDENTAL ([#bxdq]+)
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{NOTENAME}{INTEGER}{ACCIDENTAL} {
+{NOTENAME}{INTEGER}[-+]?{ACCIDENTAL} {
 	long degree = t_pitch::text2degree(*yytext);
 	char *acc;
 	long octave = strtol(yytext + 1, &acc, 10);
@@ -233,7 +233,7 @@ ACCIDENTAL ([#bxdq]+)
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{NOTENAME}{INTEGER}[-+][0-9]+t {
+{NOTENAME}[-+]?{INTEGER}[-+][0-9]+t {
 	long degree = t_pitch::text2degree(*yytext);
 	char *next;
 	long octave = strtol(yytext + 1, &next, 10);
