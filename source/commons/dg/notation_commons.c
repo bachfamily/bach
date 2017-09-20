@@ -20295,17 +20295,31 @@ void global_chord_number_to_measure_and_chord_index(t_notation_obj *r_ob, long v
 {
     t_scorevoice *voice = (t_scorevoice *)nth_voice(r_ob, voice_num - 1);
     if (voice) {
-        for (t_measure *meas = voice->firstmeasure; meas; meas = meas->next) {
-            if (global_chord_num <= meas->num_chords) {
-                *local_chord_num = global_chord_num;
-                *meas_num = meas->measure_number + 1;
-                return;
-            } else {
-                global_chord_num -= meas->num_chords;
+        if (global_chord_num >= 0) {
+            for (t_measure *meas = voice->firstmeasure; meas; meas = meas->next) {
+                if (global_chord_num <= meas->num_chords) {
+                    *local_chord_num = global_chord_num;
+                    *meas_num = meas->measure_number + 1;
+                    return;
+                } else {
+                    global_chord_num -= meas->num_chords;
+                }
             }
+            *local_chord_num = global_chord_num;
+            *meas_num = voice->num_measures;
+        } else if (global_chord_num < 0) {
+            for (t_measure *meas = voice->lastmeasure; meas; meas = meas->prev) {
+                if (-global_chord_num <= meas->num_chords) {
+                    *local_chord_num = global_chord_num;
+                    *meas_num = meas->measure_number + 1;
+                    return;
+                } else {
+                    global_chord_num += meas->num_chords;
+                }
+            }
+            *local_chord_num = global_chord_num;
+            *meas_num = voice->num_measures;
         }
-        *local_chord_num = global_chord_num;
-        *meas_num = voice->num_measures;
         return;
     }
 }

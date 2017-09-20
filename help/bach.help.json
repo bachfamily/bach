@@ -2259,7 +2259,7 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.22_snap.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "breakpoint", "breakpointshavevelocity" ],
-					"tags" : [ "message", "operate", "on", "selection", "snap", "pitch", "snappitchtogrid", "respell", "snaponsettogrid", "snaptailtogrid", "onset", "grid", "tail", "retranscribe", "to" ],
+					"tags" : [ "message", "operate", "on", "selection", "snap", "pitch", "snappitchtogrid", "snaponsettogrid", "snaptailtogrid", "onset", "grid", "tail", "retranscribe", "to" ],
 					"title" : [ "Snapping selection" ]
 				},
 				"Deletearticulations" : {
@@ -2385,7 +2385,7 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.70_othermessages.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "merge", "explodechords", "checkdynamics", "fixdynamics", "dynamics2velocities", "name", "namefromslot", "nametoslot" ],
-					"tags" : [ "message", "operate", "on", "selection", "merge", "explode", "chords", "explodechords", "check", "fix", "dynamics", "checkdynamics", "fixdynamics", "velocity", "velocities", "dynamics2velocities" ],
+					"tags" : [ "message", "operate", "on", "selection", "merge", "explode", "chords", "explodechords", "check", "fix", "dynamics", "checkdynamics", "fixdynamics", "velocity", "velocities", "dynamics2velocities", "respell" ],
 					"title" : [ "Other messages" ]
 				}
 			},
@@ -2395,6 +2395,43 @@
 				"seealso" : [ "conditional+selection" ],
 				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace" ],
 				"title" : [ "Symbolic variables for expressions" ]
+			},
+			"Respell pitches automatically" : {
+				"Intro" : {
+					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.01_intro.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "key+signature", "enharmonic+table", "respell+options" ],
+					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "reset", "atonal", "chew", "chen", "chewandchen", "algorithm", "selection", "algorithm" ],
+					"title" : [ "Respell pitches" ]
+				},
+				"Basicoptions" : {
+					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.02_basicoptions.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "respell", "sel+note" ],
+					"tags" : [ "message", "pitch", "select", "selection", "respell", "automatically", "enharmonic", "enharmonicity", "option", "sharp", "flat", "sharper", "sharpest", "flatter", "flattest", "voicewise", "circle", "of", "fifths", "algorithm" ],
+					"title" : [ "Basic respell options" ]
+				},
+				"Atonaloptions" : {
+					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.03_atonaloptions.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "respell+flattest", "respell+sharpest", "respell+atonal" ],
+					"tags" : [ "message", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "discard", "altered", "repetition", "discardalteredrepetition", "stdev", "thresh", "stdevthresh", "standard", "deviation", "equation", "threshold", "algorithm", "atonal" ],
+					"title" : [ "Atonal algorithm options" ]
+				},
+				"Chewandchen" : {
+					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.04_chewandchen.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "respell" ],
+					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "winsize", "locality", "sliding", "selfreferential", "spiral", "spiralr", "spiralh", "radius", "height", "step" ],
+					"title" : [ "Chew and Chen algorithm" ]
+				},
+				"Globality" : {
+					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.05_globality.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "respell", "pitch+message", "sel+message" ],
+					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect" ],
+					"title" : [ "Respelling scope" ]
+				}
 			},
 			"Subroll" : {
 				"filename" : [ "bach.help.notation.messages.40_subroll.maxpat" ],

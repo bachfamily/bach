@@ -14057,7 +14057,9 @@ t_chord *make_chord_or_note_sharp_or_flat_on_linear_edit(t_score *x, char direct
 					nt->midicents = nt->midicents + step * direction;
 					constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &nt->midicents, chord->parent->voiceparent->v_ob.number); 
 					
-                    note_set_user_enharmonicity(nt, t_pitch(nt->pitch_displayed.degree(), rat_rat_sum(nt->pitch_displayed.alter(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.octave()));
+                    t_pitch p = t_pitch(nt->pitch_displayed.degree(), rat_rat_sum(nt->pitch_displayed.alter(), rat_long_prod(step_acc, direction)), nt->pitch_displayed.octave());
+                    note_set_user_enharmonicity(nt, p);
+                    note_set_displayed_user_enharmonicity(nt, p);
 
                     calculate_chord_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->parent->voiceparent), true);
 				}
@@ -14773,7 +14775,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 			t_chord *ch = make_chord_or_note_sharp_or_flat_on_linear_edit(x, -1);	// edited chord
 			if (ch)
 				ch->need_recompute_parameters = true;
-			
+
 			handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_ADD_FLAT);
 			
 			if (x->r_ob.playback_during_linear_editing && ch)

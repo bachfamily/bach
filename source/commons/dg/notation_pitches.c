@@ -750,6 +750,15 @@ void notationobj_autospell_chew_and_chen(t_notation_obj *r_ob, t_autospell_param
 }
 
 
+long llll_sort_by_onset(void *notationobj, t_llllelem *a, t_llllelem *b)
+{
+    t_notation_obj *r_ob = (t_notation_obj *)notationobj;
+    t_note *a_note = (t_note *)hatom_getobj(&a->l_hatom);
+    t_note *b_note = (t_note *)hatom_getobj(&b->l_hatom);
+    
+    return notation_item_get_onset_ms(r_ob, (t_notation_item *)a_note) <= notation_item_get_onset_ms(r_ob, (t_notation_item *)b_note);
+}
+
 // if only_in_this_voice = NULL, all voices are considered
 t_llll *autospell_dg_get_all_notes(t_notation_obj *r_ob, t_autospell_params *par, t_voice *only_in_this_voice)
 {
@@ -766,6 +775,8 @@ t_llll *autospell_dg_get_all_notes(t_notation_obj *r_ob, t_autospell_params *par
         if (only_in_this_voice)
             break;
     }
+    
+    llll_mergesort_inplace(&out, llll_sort_by_onset, r_ob);
     
     return out;
     
@@ -1288,7 +1299,7 @@ char autospell_dg_respell_is_acceptable(t_notation_obj *r_ob, t_autospell_params
     if (minpos < params->min_LOF_position || maxpos > params->max_LOF_position)
         return 0;
     
-    if (params->min_LOF_position) {
+    if (params->discard_altered_repetitions) {
         // checking if same pitch appears repeated with increasing or decreasing number of accidentals, in which case it's not good
         for (t_llllelem *el = positions->l_head; el && el->l_next; el = el->l_next) {
             t_pitch p1 = position_on_line_of_fifths_to_pitch(hatom_getlong(&el->l_hatom));
@@ -1500,7 +1511,7 @@ t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob
     par.lineoffifth_bias = 2.;
     par.discard_altered_repetitions = true;
     
-    t_llll *stdev_thresh_ll = llll_from_text_buf("3.5", false);
+    t_llll *stdev_thresh_ll = llll_from_text_buf("21/(numnotes+1)", false);
     t_atom *stdev_thresh_av = NULL;
     long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, 0);
     par.stdev_thresh = lexpr_new(stdev_thresh_ac, stdev_thresh_av, subs_count, subs, (t_object *)r_ob);
@@ -1549,7 +1560,7 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
     t_llll *stdev_thresh_ll = NULL;
     t_autospell_params par = notationobj_autospell_get_default_params(r_ob);
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdillli", gensym("selection"), &par.selection_only, gensym("numsliding"), &par.w_sliding, gensym("numselfreferential"), &par.w_selfreferential, gensym("thresh"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &minflats, gensym("maxsharps"), &maxsharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("bias"), &par.lineoffifth_bias, gensym("voicewise"), &par.voicewise, gensym("sharpest"), &maxpitch, gensym("flattest"), &minpitch, gensym("stdevthresh"), &stdev_thresh_ll, gensym("discardalteredrepetitions"), &par.discard_altered_repetitions);
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdillli", gensym("selection"), &par.selection_only, gensym("numsliding"), &par.w_sliding, gensym("numselfreferential"), &par.w_selfreferential, gensym("locality"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &minflats, gensym("maxsharps"), &maxsharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("bias"), &par.lineoffifth_bias, gensym("voicewise"), &par.voicewise, gensym("sharpest"), &maxpitch, gensym("flattest"), &minpitch, gensym("stdevthresh"), &stdev_thresh_ll, gensym("discardalteredrepetitions"), &par.discard_altered_repetitions);
     
     
     if (stdev_thresh_ll) {

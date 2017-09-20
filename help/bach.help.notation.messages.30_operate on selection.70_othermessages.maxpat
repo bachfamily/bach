@@ -5,7 +5,7 @@
 			"major" : 7,
 			"minor" : 3,
 			"revision" : 2,
-			"architecture" : "x86",
+			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
@@ -42,14 +42,14 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-3",
-					"linecount" : 7,
+					"linecount" : 10,
 					"maxclass" : "bach.hypercomment",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 32.0, 603.0, 108.0 ],
+					"patching_rect" : [ 6.0, 32.0, 593.0, 152.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Some messages work in two distinct flavours: a global flavour, affecting the whole score, and a selection-based flavour, triggered by putting the \"selection\" symbol as first argument.\nThese messages are #merge, #explodechords, #checkdynamics, #fixdynamics, #dynamics2velocities.\nRefer to their own specific page to know more.\n\nAlso the #name message operates on the selected items, but it has its own subsection in the help center, as well as the #namefromslot and #nametoslot related messages. Refer to them know more.",
+					"text" : "Some messages work in two distinct flavours: a global flavour, affecting the whole score, and a selection-based flavour, triggered by putting the \"selection\" symbol as first argument or as message attribute.\n\nThese messages are #merge, #explodechords, #checkdynamics, #fixdynamics, #dynamics2velocities, #respell.\nRefer to their own specific page to know more.\n\nAlso the #name message operates on the selected items, but it has its own subsection in the help center, as well as the #namefromslot and #nametoslot related messages. Refer to them know more.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -113,7 +113,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 593.0, 31.0 ],
 					"style" : "",
-					"text" : "Tags: message, operate, on, selection, merge, explode, chords, explodechords, check, fix, dynamics, checkdynamics, fixdynamics, velocity, velocities, dynamics2velocities",
+					"text" : "Tags: message, operate, on, selection, merge, explode, chords, explodechords, check, fix, dynamics, checkdynamics, fixdynamics, velocity, velocities, dynamics2velocities, respell",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

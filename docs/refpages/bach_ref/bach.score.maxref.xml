@@ -6803,6 +6803,8 @@
 				to one step along the spiral array; <br />
 				• "numsliding" (int, default: 8): number of sliding windows; <br />
 				• "numselfreferential" (int, default: 2): number of self referential windows (see article); <br />
+				• "locality" (double, default: 0.5): a value of 1 only takes self-referential window into account, a value of 0 only takes global context
+				into account; any number in between will result in a linear combination of the two (this is the parameter <m>f</m> of the Chew and Chen article); <br />
 				- Atonal algorithm ("atonal"): respell the notes in a tree-like fashion (closest ones first), optimizing their position on the line of fifths. <br />
 				• "discardalteredrepetitions" (int, default: 1): discard solutions having subsequent repetitions of the same diatonic
 				step with different alterations (e.g. F#4 F4, or Bb5 B5); <br />
