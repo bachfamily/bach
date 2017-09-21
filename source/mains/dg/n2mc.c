@@ -16,8 +16,11 @@
 
 	@author
 	bachproject
+ 
+    @status
+    deprecated
 	
-	@digest 
+	@digest
 	Note names to midicents conversion
 	
 	@description
