@@ -144,6 +144,7 @@ void is_anything(t_is *x, t_symbol *msg, long ac, t_atom *av)
 		case H_SYM:		x->n_symout = _llllobj_sym_s;		break;
 		case H_LLLL:	x->n_symout = _llllobj_sym_l;		break;
 		case H_OBJ:		x->n_symout = _llllobj_sym_o;		break;
+        case H_PITCH:	x->n_symout = _llllobj_sym_p;		break;
 		default:		x->n_symout = _llllobj_sym_unknown;	break;
 	}
 	x->n_longout = is;
@@ -159,12 +160,12 @@ void is_assist(t_is *x, void *b, long m, long a, char *s)
 			case 0:	sprintf(s, "int: Type");	break;
 				// @out 0 @type int @digest The numeric representation of the contained data types
 				// @description The numeric representation is one of the following values:
-				// <b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll.
+				// <b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll, <b>256</b> = pitch.
 				
 			case 1:	sprintf(s, "symbol: Type");	break;
 				// @out 1 @type llll @digest The symbolic representation of the contained data types
 				// @description The symbolic representation is one of the following symbols:
-				// <b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>null</b>.
+				// <b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>p</b> = pitch, <b>n</b> = null.
 		}
 	}
 }

@@ -41,6 +41,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_f;
 	t_symbol	*s_s;
 	t_symbol	*s_o;
+    t_symbol	*s_p;
 	t_symbol	*s_t;
 	t_symbol	*s_g;
 	t_symbol	*s_unknown;
@@ -413,6 +414,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_l				(_llllobj_common_symbols->s_l)
 #define _llllobj_sym_s				(_llllobj_common_symbols->s_s)
 #define _llllobj_sym_o				(_llllobj_common_symbols->s_o)
+#define _llllobj_sym_p				(_llllobj_common_symbols->s_p)
 #define _llllobj_sym_t				(_llllobj_common_symbols->s_t)
 #define _llllobj_sym_g				(_llllobj_common_symbols->s_g)
 #define _llllobj_sym_unknown		(_llllobj_common_symbols->s_unknown)

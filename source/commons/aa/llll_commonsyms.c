@@ -458,6 +458,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_n = gensym("n");
 	x->s_l = gensym("l");
 	x->s_o = gensym("o");
+    x->s_p = gensym("p");
 	x->s_t = gensym("t");
 	x->s_g = gensym("g");
 	x->s_unknown = gensym("unknown");

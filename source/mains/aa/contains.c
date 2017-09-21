@@ -187,6 +187,7 @@ void contains_anything(t_contains *x, t_symbol *msg, long ac, t_atom *av)
 		if (types & H_SYM)		llll_appendsym(types_llll, _llllobj_sym_s, 0, WHITENULL_llll);
 		if (types & H_LLLL)		llll_appendsym(types_llll, _llllobj_sym_l, 0, WHITENULL_llll);
 		if (types & H_OBJ)		llll_appendsym(types_llll, _llllobj_sym_o, 0, WHITENULL_llll);
+        if (types & H_PITCH)	llll_appendsym(types_llll, _llllobj_sym_p, 0, WHITENULL_llll);
 
 	}
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, types_llll, 1);
@@ -206,12 +207,12 @@ void contains_assist(t_contains *x, void *b, long m, long a, char *s)
 			case 0:	sprintf(s, "int: Contained Types as a Bitfield");			break; 
 				// @out 0 @type int @digest The bitfield representation of the contained data types
 				// @description The bitfield representation is a bitwise or of the following values:
-				// <b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll.
+				// <b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll, <b>256</b> = pitch.
 				// Only values corresponding to data types that are contained in the input llll concour to the representation.
 			case 1:	sprintf(s, "anything: Contained Types as Symbols");	break; 
 				// @out 1 @type anything @digest The symbolic representation of the contained data types
 				// @description The symbolic representation is a message composed by a combination of the following symbols:
-				// <b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>null</b>.
+				// <b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>p</b> = pitch, <b>n</b> = null.
 				// Only symbols corresponding to data types that are contained in the input llll are present in the output message. 
 		}
 	}
