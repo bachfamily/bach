@@ -123,6 +123,7 @@ int T_EXPORT main()
 	CLASS_ATTR_STYLE_LABEL(c,"notenamesstyle",0,"enumindex","Note Names Style");
 	CLASS_ATTR_ENUMINDEX(c,"notenamesstyle", 0, "Latin Anglo-Saxon");
 	CLASS_ATTR_BASIC(c,"notenamesstyle",0);
+    CLASS_ATTR_INVISIBLE(c, "notenamesstyle", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // deprecated and unsupported
 	// @description @copy BACH_DOC_NOTENAMESSTYLE
 
 	CLASS_ATTR_CHAR(c,"octave",0, t_mc2n, print_octave);
