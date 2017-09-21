@@ -25,7 +25,8 @@
 	
 	@discussion
 	The pitches are inferred automatically from the cents, by snapping it to the
-	nearest element of the current microtonal grid (see the <m>tonedivision</m> attribute).
+	nearest element of the current microtonal grid (see the <m>tonedivision</m> attribute),
+    depending on the values of the other attributes.
 	
 	@category
 	bach, bach objects, bach notation
