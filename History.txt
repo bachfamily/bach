@@ -8,8 +8,8 @@ v0.8b
 
 - All objects			Diatonic PITCHES are now accepted and arithmetics can be performed on them
 					They can be entered via ANGLOSAXON note names only: C5 (middle C), D#4, Fb3, C+1/16t, 
-				C5 is now ALWAYS the middle C
-					Please modify your patches accordingly, if you relied on other values
+					C5 is now ALWAYS the middle C
+					Please modify your patches accordingly, if you relied on other values or on latin names
 
 - bach.append -> bach.join	This one won't break the compatibility with older patches, we promise :-)
 					But still it's important that you start using the new [bach.join] instead of [bach.append].

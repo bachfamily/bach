@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 400.0, 123.0, 335.0, 372.0 ],
+		"rect" : [ 136.0, 98.0, 335.0, 372.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -189,10 +189,10 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 3,
-					"outlettype" : [ "bang", "", "int" ],
+					"outlettype" : [ "bang", "", "C0" ],
 					"patching_rect" : [ 93.0, 75.0, 78.0, 22.0 ],
 					"style" : "",
-					"text" : "t b l 0"
+					"text" : "t b l C0"
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 93.0, 225.0, 57.0, 22.0 ],
+					"patching_rect" : [ 93.0, 233.0, 57.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 0
 					}
@@ -330,7 +330,7 @@
 					"destination" : [ "obj-2", 1 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"midpoints" : [ 132.5, 217.0, 296.0, 217.0, 296.0, 159.0, 278.5, 159.0 ],
+					"midpoints" : [ 132.5, 220.0, 296.0, 220.0, 296.0, 159.0, 278.5, 159.0 ],
 					"order" : 0,
 					"source" : [ "obj-3", 0 ]
 				}
@@ -378,7 +378,7 @@
 					"destination" : [ "obj-2", 1 ],
 					"disabled" : 0,
 					"hidden" : 0,
-					"midpoints" : [ 161.5, 99.0, 207.0, 99.0, 207.0, 159.0, 278.5, 159.0 ],
+					"midpoints" : [ 161.5, 101.0, 278.5, 101.0 ],
 					"order" : 0,
 					"source" : [ "obj-5", 2 ]
 				}
