@@ -160,12 +160,12 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                             exprparser_data.lexeme = this_lex;
                             break;
                         case E_BAD_VAR_TYPE:
-                            object_error(culprit, "Bad variable %s", exprparser_data.offending);
+                            object_error(culprit, "Bad variable: %s", exprparser_data.offending);
                             bach_freeptr(*exprparser_data.offending);
                             goto lexpr_new_error;
                             break;
                         case E_BAD_NAME:
-                            object_error(culprit, "Bad name %s", exprparser_data.offending);
+                            object_error(culprit, "Bad name: %s", *exprparser_data.offending);
                             bach_freeptr(*exprparser_data.offending);
                             goto lexpr_new_error;
                             break;

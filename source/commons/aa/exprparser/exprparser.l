@@ -318,7 +318,7 @@ t {
 "random" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_random); }
 "bessel" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn); }
 
-([A-Z]|[a-z])([A-Z]|[a-z]|_)+ {
+([A-Z]|[a-z]|_)+ {
     BEGIN BINARY;
     return lexpr_append_lexeme_VAR_substitution(epd->lexeme, yytext, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
 }
