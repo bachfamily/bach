@@ -17,6 +17,9 @@
 	@author
 	bachproject
 	
+    @status
+    deprecated
+
 	@digest 
 	Midicents to note name conversion
 	
