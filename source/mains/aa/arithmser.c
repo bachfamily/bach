@@ -220,11 +220,11 @@ void arithmser_assist(t_arithmser *x, void *b, long m, long a, char *s)
 {	
 	if (m == ASSIST_INLET) {
 		switch (a) {
-			case 0: sprintf(s, "number/llll: Starting Value");			break;	// @in 0 @type number/llll @digest Starting value
+			case 0: sprintf(s, "number/pitch/llll: Starting Value");			break;	// @in 0 @type number/pitch/llll @digest Starting value
 																				// @description If an llll is entered, it is expected to contain: start, end, step, maximum number of items (see <m>llll</m> message).
-			case 1: sprintf(s, "number/llll: Ending Value");			break;	// @in 1 @type number/none/llll @digest Ending value
+			case 1: sprintf(s, "number/pitch/none/llll: Ending Value");			break;	// @in 1 @type number/pitch/none/llll @digest Ending value
 																				// @description If an llll is entered, it is expected to contain: end, step, maximum number of items (see <m>llll</m> message).
-			case 2: sprintf(s, "number/llll: Step");					break;	// @in 2 @type number/none/llll @digest Step
+			case 2: sprintf(s, "number/pitch/none/llll: Step");					break;	// @in 2 @type number/number/none/llll @digest Step
 																				// @description If an llll is entered, it is expected to contain: step, maximum number of items (see <m>llll</m> message).
 			case 3: sprintf(s, "int: Maximum Number of Elements");		break;	// @in 3 @type int/none @digest Maximum number of items
 		}

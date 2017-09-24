@@ -435,11 +435,11 @@ long parse_string_to_dynamics_once(t_notation_obj *r_ob, char *buf, char *dynami
                     dynamics[cur++] = 195;
                     dynamics[cur++] = 139;
                     c+=4;
-                } else if (strncasecmp(c, "sfz", 3) == 0) { // TO DO!!
+                } else if (strncasecmp(c, "sfz", 3) == 0) {
                     dynamics[cur++] = 195;
                     dynamics[cur++] = 141;
                     c+=3;
-                } else if (strncasecmp(c, "sf", 2) == 0) { // TO DO!!
+                } else if (strncasecmp(c, "sf", 2) == 0) {
                     dynamics[cur++] = 195;
                     dynamics[cur++] = 142;
                     c+=2;
