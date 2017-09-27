@@ -351,7 +351,7 @@ extern int symparser_lex \
 #undef YY_DECL
 #endif
 
-#line 144 "symparser.l"
+#line 150 "symparser.l"
 
 
 #line 358 "symparser.lex.h"

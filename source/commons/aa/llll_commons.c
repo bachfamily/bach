@@ -300,16 +300,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
                     
 				case H_SYM:
 					if (flags & LLLL_D_QUOTE) {
-						if (ac == 0) {
-							for (this_arg = _llllobj_attributes; *this_arg; this_arg++)
-								if (elem->l_hatom.h_w.w_sym == *this_arg)
-									break;
-							if (*this_arg)
-								checked = llll_addquote(elem->l_hatom.h_w.w_sym->s_name);
-							else
-								checked = llll_quoteme(elem->l_hatom.h_w.w_sym);
-						} else
-							checked = llll_quoteme(elem->l_hatom.h_w.w_sym);
+                        checked = llll_quoteme(elem->l_hatom.h_w.w_sym);
 					} else 
 						checked = elem->l_hatom.h_w.w_sym;
 					
@@ -364,15 +355,20 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 // if it returns anything different from one symbol, it should be quoted
 t_symbol *llll_quoteme(t_symbol *s)
 {
-	if (s == _llllobj_sym_nil ||
-        s == _llllobj_sym_null ||
-        typecheck_parse(s->s_name))
-		return llll_addquote(s->s_name);
-    else
-        return s;
+    if (s == _llllobj_sym_nil || s == _llllobj_sym_null) {
+		return sym_addquote(s->s_name);
+    } else {
+        long tct;
+        long type = typecheck_parse(s->s_name, &tct);
+        if (type != H_SYM || tct & E_TT_PAREN ||
+            (!(tct & E_TT_RESERVED) && (tct & E_TT_BACKTICK))) {
+            return sym_addquote(s->s_name);
+        } else
+            return s;
+    }
 }
 
-t_symbol *llll_addquote(const char *txt)
+t_symbol *sym_addquote(const char *txt)
 {
 	char quoted[2048];
 	*quoted = QUOTE_CHAR;

@@ -559,7 +559,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 					if (attrsym == *this_arg)
 						break;
 				if (*this_arg)
-					attrsym = llll_addquote(attrsym->s_name);
+					attrsym = sym_addquote(attrsym->s_name);
 				else
 					attrsym = llll_quoteme(attrsym);
 			}
@@ -605,7 +605,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 						if (attrsym == *this_arg)
 							break;
 					if (*this_arg)
-						attrsym = llll_addquote(attrsym->s_name);
+						attrsym = sym_addquote(attrsym->s_name);
 					else
 						attrsym = llll_quoteme(attrsym);
 				}

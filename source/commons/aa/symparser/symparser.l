@@ -101,13 +101,19 @@ ACCIDENTAL ([#bxdq]+)
 	return PITCH;
 }
 
-\`[^ \t\n\r\f\v]+ {
+\`.* {
     parserpost(" lex: BACKTICKED ELEMENT %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
     return SYMBOL;
 }
 
-["]("\\\""|[^" \t\n\r\f\v])*[^\\ \t\n\r\f\v]["] {
+\"\" {
+    parserpost(" lex: QUOTED EMPTY SYMBOL %s\n", yytext);
+    yylval->sym = gensym("");
+    return SYMBOL;
+}
+
+["]("\\\""|[^"` \t\n\r\f\v])("\\\""|[^" \t\n\r\f\v])*[^\\ \t\n\r\f\v]["] {
     parserpost(" lex: QUOTED NON-WHITESPACED SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
     return SYMBOL;

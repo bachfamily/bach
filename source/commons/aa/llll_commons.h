@@ -392,7 +392,7 @@ t_symbol *llll_quoteme(t_symbol *s);
 
 
 // returns a t_symbol with the backticked txt
-t_symbol *llll_addquote(const char *txt);
+t_symbol *sym_addquote(const char *txt);
 
 
 
