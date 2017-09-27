@@ -292,7 +292,10 @@ void args_anything(t_args *x, t_symbol *msg, long ac, t_atom *av)
                     break;
             }
         } else { // text ->
-            switch (x->n_ob.l_out[outlet].b_type) {
+            if (msg == _sym_bang && ac == 0) {
+                outlet_bang(x->n_ob.l_out[outlet].b_outlet);
+            } else {
+                switch (x->n_ob.l_out[outlet].b_type) {
                 case LLLL_O_NATIVE:
                 case LLLL_O_MAX:
                     inlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_DONT); // LLLL_PARSE_DONT is ignored
@@ -306,6 +309,7 @@ void args_anything(t_args *x, t_symbol *msg, long ac, t_atom *av)
                     break;
                 default:
                     break;
+                }
             }
         }
 	}

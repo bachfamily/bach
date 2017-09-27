@@ -187,7 +187,7 @@ void mapelem_anything(t_mapelem *x, t_symbol *msg, long ac, t_atom *av)
 			t_llll *cloned = llll_clone(base_ll);
 			llll_release(base_ll);
 			if (!x->n_unwrap)
-				llll_wrap(&cloned, 1ll);
+				llll_wrap(&cloned, 1);
 
 			llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), 1);
 			llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 1, cloned);
