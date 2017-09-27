@@ -82,7 +82,6 @@ typedef struct _args
 	t_systhread_mutex	n_mutex;
 	long				n_itsme;
 	long				n_retrying;
-	long				n_clone;
     t_object            *n_patcher;
 } t_args;
 
@@ -276,36 +275,39 @@ void args_anything(t_args *x, t_symbol *msg, long ac, t_atom *av)
 				}
 			}
 		}
-		if (inlist && (x->n_ob.l_out[outlet].b_type == LLLL_O_NATIVE)) { // native -> native
-			if (!x->n_clone) {
-				outlet_anything(x->n_ob.l_out[outlet].b_outlet, msg, ac, av);
-				llll_release(inlist);
-			} else {
-				t_llll *cloned = llll_clone(inlist);
-				llll_release(inlist);
-				llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, cloned);
-				llll_free(cloned);
-			}
-		} else if (!inlist && (x->n_ob.l_out[outlet].b_type == LLLL_O_TEXT)) { // text -> text
-			if (msg != _sym_list)
-				outlet_anything(x->n_ob.l_out[outlet].b_outlet, msg, ac, av);
-			else
-				outlet_list(x->n_ob.l_out[outlet].b_outlet, NULL, ac, av);
-		} else if (inlist) { // native -> text
-			llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, inlist);
-			llll_release(inlist);
-		}
-		else { // text -> native
-			if (msg == _sym_bang && ac == 0)
-				llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, outlet);
-			else {
-				inlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_RETAIN); // LLLL_PARSE_RETAIN is ignored as the llll is surely text
-				if (inlist) {
-					llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, inlist);
-					llll_free(inlist);
-				}
-			}
-		}
+        
+        
+        if (inlist) { // native ->
+            switch (x->n_ob.l_out[outlet].b_type) {
+                case LLLL_O_NATIVE:
+                    outlet_anything(x->n_ob.l_out[outlet].b_outlet, msg, ac, av);
+                    llll_release(inlist);
+                    break;
+                case LLLL_O_TEXT:
+                case LLLL_O_MAX:
+                    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, inlist);
+                    llll_release(inlist);
+                    break;
+                default:
+                    break;
+            }
+        } else { // text ->
+            switch (x->n_ob.l_out[outlet].b_type) {
+                case LLLL_O_NATIVE:
+                case LLLL_O_MAX:
+                    inlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_DONT); // LLLL_PARSE_DONT is ignored
+                    if (inlist) {
+                        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, inlist);
+                        llll_free(inlist);
+                    }
+                    break;
+                case LLLL_O_TEXT:
+                    outlet_anything(x->n_ob.l_out[outlet].b_outlet, msg, ac, av);
+                    break;
+                default:
+                    break;
+            }
+        }
 	}
 }
 
@@ -410,14 +412,6 @@ t_args *args_new(t_symbol *s, short ac, t_atom *av)
 					i++;
 				} else
 					object_error((t_object *) x, "Bad value for done attribute", i);
-			} else if (!strcmp(attrname, "clone")) {
-				long type = atom_gettype(av + i);
-				if (type == A_LONG || type == A_FLOAT) {
-					t_atom_long val = atom_getlong(av + i);
-					x->n_clone = CLAMP(val, 0, 1);
-					i++;
-				} else
-					object_error((t_object *) x, "Bad value for clone attribute", i);
 			} else if (!strcmp(attrname, "outout")) {
 				long type = atom_gettype(av + i);
 				if (type == A_LONG || type == A_FLOAT) {

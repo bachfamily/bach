@@ -253,7 +253,7 @@ void sort_anything(t_sort *x, t_symbol *msg, long ac, t_atom *av)
 		idx_ll = llll_get();
 		if (x->n_haslambda) {
 			depth = in->l_depth;
-			llll_prepare_sort_data((t_object *) x, in, by, (e_llllobj_outlet_types) (x->n_ob.l_out[2].b_type | x->n_ob.l_out[3].b_type));
+			llll_prepare_sort_data((t_object *) x, in, by, x->n_ob.l_out[2].b_type | x->n_ob.l_out[3].b_type);
 			//llll_mergesort(in, &out, (sort_fn) sort_func, x);
 			llll_inplacesort(in, (sort_fn) sort_func, x);
 			llll_retrieve_sort_data((t_object *) x, in, idx_ll, depth);
@@ -351,7 +351,7 @@ void sort_anything(t_sort *x, t_symbol *msg, long ac, t_atom *av)
 		idx_ll = llll_get();
 		if (x->n_haslambda) {
 			depth = in->l_depth;
-			llll_prepare_sort_data((t_object *) x, in, by, (e_llllobj_outlet_types) (x->n_ob.l_out[2].b_type | x->n_ob.l_out[3].b_type));
+			llll_prepare_sort_data((t_object *) x, in, by, x->n_ob.l_out[2].b_type | x->n_ob.l_out[3].b_type);
 			llll_mergesort(in, &out, (sort_fn) sort_func, x);
 			llll_retrieve_sort_data((t_object *) x, out, idx_ll, depth);
 		} else if (by->l_size > 0) {
@@ -435,15 +435,34 @@ long sort_func(t_sort *x, t_llllelem *a, t_llllelem *b)
 	}
 
 	x->n_haslambda = 0;
-	if (x->n_ob.l_out[3].b_type == LLLL_O_TEXT)
-		outlet_anything(x->n_ob.l_out[3].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
-	else if (x->n_ob.l_out[3].b_type == LLLL_O_NATIVE)
-		outlet_anything(x->n_ob.l_out[3].b_outlet, b_item->n_n_sym, 1, b_item->n_n_av);
-	
-	if (x->n_ob.l_out[2].b_type == LLLL_O_TEXT)
-		outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_t_sym, a_item->n_t_ac, a_item->n_t_av);
-	else if (x->n_ob.l_out[2].b_type == LLLL_O_NATIVE)
-		outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_n_sym, 1, a_item->n_n_av);
+    
+    switch (x->n_ob.l_out[3].b_type) {
+        case LLLL_O_TEXT:
+            outlet_anything(x->n_ob.l_out[3].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
+            break;
+        case LLLL_O_MAX:
+            outlet_anything(x->n_ob.l_out[3].b_outlet, b_item->n_t_sym, b_item->n_m_ac, b_item->n_m_av);
+            break;
+        case LLLL_O_NATIVE:
+            outlet_anything(x->n_ob.l_out[3].b_outlet, b_item->n_n_sym, 1, b_item->n_n_av);
+            break;
+        default:
+            break;
+    }
+
+    switch (x->n_ob.l_out[2].b_type) {
+        case LLLL_O_TEXT:
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
+            break;
+        case LLLL_O_MAX:
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_t_sym, b_item->n_m_ac, b_item->n_m_av);
+            break;
+        case LLLL_O_NATIVE:
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_n_sym, 1, b_item->n_n_av);
+            break;
+        default:
+            break;
+    }
 	return x->n_sort_return;
 }
 

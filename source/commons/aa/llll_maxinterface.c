@@ -298,7 +298,7 @@ void llll_text2atoms(char *text, long *ac, t_atom **av)
 
 // used by bach.sort and bach.msort
 // formats a llll before the sorting algorithm for outputting its elements one by one
-void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, e_llllobj_outlet_types outtypes)
+void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, long outtypes)
 {
 	t_llllelem *elem;
 	t_llll_sort_item *sort_item;
@@ -327,11 +327,10 @@ void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, e_llllobj_outle
 		} else
 			sort_item->n_this_by = wrapped;
 		
-		
 		if (outtypes & LLLL_O_TEXT) {
 			atoms = NULL;
-			sort_item->n_t_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, 1);
-			sort_item->n_freeme = atoms = (t_atom *) bach_resizeptr(atoms, sort_item->n_t_ac * sizeof(t_atom));
+			sort_item->n_t_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, LLLL_D_QUOTE);
+			sort_item->n_t_freeme = atoms = (t_atom *) bach_resizeptr(atoms, sort_item->n_t_ac * sizeof(t_atom));
 			switch (atoms->a_type) {
 				case A_FLOAT:
 					if (sort_item->n_t_ac > 1)
@@ -356,6 +355,36 @@ void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, e_llllobj_outle
 					break;
 			}
 		}
+        
+        if (outtypes & LLLL_O_MAX) {
+            atoms = NULL;
+            sort_item->n_m_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, LLLL_D_NONE);
+            sort_item->n_m_freeme = atoms = (t_atom *) bach_resizeptr(atoms, sort_item->n_m_ac * sizeof(t_atom));
+            switch (atoms->a_type) {
+                case A_FLOAT:
+                    if (sort_item->n_m_ac > 1)
+                        sort_item->n_m_sym = _sym_list;
+                    else
+                        sort_item->n_m_sym = _sym_float;
+                    sort_item->n_m_av = atoms;
+                    break;
+                case A_LONG:
+                    if (sort_item->n_m_ac > 1)
+                        sort_item->n_m_sym = _sym_list;
+                    else
+                        sort_item->n_m_sym = _sym_int;
+                    sort_item->n_m_av = atoms;
+                    break;
+                case A_SYM:
+                    sort_item->n_m_sym = atoms->a_w.w_sym;
+                    sort_item->n_m_ac--;
+                    sort_item->n_m_av = atoms + 1;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
 		if (outtypes & LLLL_O_NATIVE) {
 			sort_item->n_n_sym = LLLL_NATIVE_MSG;
 			sort_item->n_n_av = (t_atom *) bach_newptr(sizeof(t_atom));
@@ -384,8 +413,10 @@ void llll_retrieve_sort_data(t_object *x, t_llll *ll, t_llll *idx_ll, t_atom_lon
 		if (item->n_n_av)
 			bach_freeptr(item->n_n_av);
 		if (item->n_t_av)
-			bach_freeptr(item->n_freeme); // the t_atom* we originally allocated in llll_prepare_sort_data
-		
+			bach_freeptr(item->n_t_freeme); // the t_atom* we originally allocated in llll_prepare_sort_data
+        if (item->n_m_av)
+            bach_freeptr(item->n_m_freeme); // the t_atom* we originally allocated in llll_prepare_sort_data
+
 		orig_hatom = item->n_term;
 		bach_freeptr(item);
 		if (orig_hatom.h_type == H_LLLL)

@@ -2,31 +2,40 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 6,
-			"minor" : 1,
-			"revision" : 6,
-			"architecture" : "x64"
+			"major" : 7,
+			"minor" : 3,
+			"revision" : 3,
+			"architecture" : "x64",
+			"modernui" : 1
 		}
 ,
-		"rect" : [ 40.0, 44.0, 435.0, 403.0 ],
+		"rect" : [ 94.0, 129.0, 435.0, 403.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
-		"gridonopen" : 0,
+		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 0,
+		"gridsnaponopen" : 1,
+		"objectsnaponopen" : 1,
 		"statusbarvisible" : 2,
 		"toolbarvisible" : 1,
+		"lefttoolbarpinned" : 0,
+		"toptoolbarpinned" : 0,
+		"righttoolbarpinned" : 0,
+		"bottomtoolbarpinned" : 0,
+		"toolbars_unpinned_last_save" : 0,
+		"tallnewobj" : 0,
 		"boxanimatetime" : 200,
-		"imprint" : 0,
 		"enablehscroll" : 1,
 		"enablevscroll" : 1,
 		"devicewidth" : 0.0,
 		"description" : "",
 		"digest" : "",
 		"tags" : "",
+		"style" : "",
+		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
@@ -36,7 +45,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "bang" ],
-					"patching_rect" : [ 121.0, 177.0, 34.0, 20.0 ],
+					"patching_rect" : [ 121.0, 177.0, 34.0, 22.0 ],
+					"style" : "",
 					"text" : "t b b"
 				}
 
@@ -50,7 +60,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 97.75, 84.0, 68.0, 20.0 ],
+					"patching_rect" : [ 97.75, 84.0, 68.0, 22.0 ],
+					"style" : "",
 					"text" : "route bang"
 				}
 
@@ -64,7 +75,8 @@
 					"numinlets" : 3,
 					"numoutlets" : 5,
 					"outlettype" : [ "bang", "", "", "", "" ],
-					"patching_rect" : [ 21.0, 50.0, 326.0, 20.0 ],
+					"patching_rect" : [ 21.0, 50.0, 326.0, 22.0 ],
+					"style" : "",
 					"text" : "bach.args 1 @ins 2 @out nt @attrs inwrap outwrap"
 				}
 
@@ -73,11 +85,13 @@
 				"box" : 				{
 					"comment" : "llll: Count",
 					"id" : "obj-3",
+					"index" : 2,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
-					"outlettype" : [ "int" ],
-					"patching_rect" : [ 174.5, 18.0, 25.0, 25.0 ]
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 174.5, 18.0, 25.0, 25.0 ],
+					"style" : ""
 				}
 
 			}
@@ -90,7 +104,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 150.0, 306.0, 112.0, 20.0 ],
+					"patching_rect" : [ 150.0, 306.0, 112.0, 22.0 ],
+					"style" : "",
 					"text" : "bach.portal @out p"
 				}
 
@@ -99,10 +114,12 @@
 				"box" : 				{
 					"comment" : "llll",
 					"id" : "obj-1",
+					"index" : 1,
 					"maxclass" : "outlet",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 150.0, 339.0, 25.0, 25.0 ]
+					"patching_rect" : [ 150.0, 339.0, 25.0, 25.0 ],
+					"style" : ""
 				}
 
 			}
@@ -115,7 +132,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "bang", "", "clear" ],
-					"patching_rect" : [ 146.75, 123.0, 144.0, 20.0 ],
+					"patching_rect" : [ 146.75, 123.0, 144.0, 22.0 ],
+					"style" : "",
 					"text" : "t b l clear"
 				}
 
@@ -129,11 +147,12 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 223.0, 234.0, 57.0, 20.0 ],
+					"patching_rect" : [ 223.0, 234.0, 57.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 0
 					}
 ,
+					"style" : "",
 					"text" : "bach.reg"
 				}
 
@@ -147,7 +166,8 @@
 					"numinlets" : 3,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 150.0, 274.0, 164.0, 20.0 ],
+					"patching_rect" : [ 150.0, 274.0, 164.0, 22.0 ],
+					"style" : "",
 					"text" : "bach.collect"
 				}
 
@@ -161,7 +181,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 3,
 					"outlettype" : [ "bang", "bang", "int" ],
-					"patching_rect" : [ 136.0, 205.0, 46.0, 20.0 ],
+					"patching_rect" : [ 136.0, 205.0, 46.0, 22.0 ],
+					"style" : "",
 					"text" : "uzi"
 				}
 
@@ -170,11 +191,13 @@
 				"box" : 				{
 					"comment" : "llll",
 					"id" : "obj-47",
+					"index" : 1,
 					"maxclass" : "inlet",
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 21.0, 18.0, 25.0, 25.0 ]
+					"patching_rect" : [ 21.0, 18.0, 25.0, 25.0 ],
+					"style" : ""
 				}
 
 			}

@@ -271,6 +271,7 @@ void llllobj_get_llll_outlet_type_as_string(t_object *x, e_llllobj_obj_types typ
 	switch (llllobj_get_outlet_type((t_object *) x, type, num)) {
 		case LLLL_O_NATIVE:		*str = (char *)	"native";	break;
 		case LLLL_O_TEXT:		*str = (char *)	"text";		break;
+		case LLLL_O_MAX:		*str = (char *)	"max";		break;
 		case LLLL_O_DISABLED:	*str = (char *)	"disabled";	break;
 		default:	break;
 	}
@@ -416,13 +417,33 @@ t_llll *llllobj_parse_llllattr_llll(t_object *x, e_llllobj_obj_types type, long 
 	}
 }
 
-void llllobj_gunload_text(t_llllobj_out *cache, t_llll *inll)
+void llllobj_gunload_bttext(t_llllobj_out *cache, t_llll *inll)
 {
 	t_atomarray *deparsed_aa;
 	t_atomarray *free_me;
 	t_llll *old_ll;
 
 	deparsed_aa = llll_deparse_to_aa(inll, LLLL_D_QUOTE);
+	
+	bach_atomic_lock(&cache->b_lock);
+	old_ll = cache->b_ll;
+	cache->b_ll = inll;
+	free_me = cache->b_aa;
+	llllobj_cache_text(cache, deparsed_aa);
+	bach_atomic_unlock(&cache->b_lock);
+	llll_free(old_ll);
+	object_free_debug(free_me);
+	return;
+}
+
+
+void llllobj_gunload_max(t_llllobj_out *cache, t_llll *inll)
+{
+	t_atomarray *deparsed_aa;
+	t_atomarray *free_me;
+	t_llll *old_ll;
+	
+	deparsed_aa = llll_deparse_to_aa(inll, LLLL_D_NONE);
 	
 	bach_atomic_lock(&cache->b_lock);
 	old_ll = cache->b_ll;
@@ -515,12 +536,20 @@ void llllobj_gunload_llll(t_object *x, e_llllobj_obj_types type, t_llll *inll, l
 	
 	cache = llllobj_get_out(x, type) + outnum;
 
-	if (cache->b_type == LLLL_O_TEXT)
-		llllobj_gunload_text(cache, inll);
-	else if (cache->b_type == LLLL_O_NATIVE)
-		llllobj_gunload_native(cache, inll);
-	else
-		llll_release(inll);
+	switch (cache->b_type) {
+		case LLLL_O_TEXT:
+			llllobj_gunload_bttext(cache, inll);
+			break;
+		case LLLL_O_MAX:
+			llllobj_gunload_max(cache, inll);
+			break;
+		case LLLL_O_NATIVE:
+			llllobj_gunload_native(cache, inll);
+			break;
+		default:
+			llll_release(inll);
+			break;
+	}
 }
 
 void llllobj_gunload_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type, t_llll *inll, t_atom_ulong phonenumber, long outnum)
@@ -529,12 +558,20 @@ void llllobj_gunload_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type
 	
 	cache = llllobj_get_out(x, type) + outnum;
 	
-	if (cache->b_type == LLLL_O_TEXT)
-		llllobj_gunload_text(cache, inll);
-	else if (cache->b_type == LLLL_O_NATIVE)
-		llllobj_gunload_native_with_phonenumber(cache, inll, phonenumber);
-	else
-		llll_release(inll);
+	switch (cache->b_type) {
+		case LLLL_O_TEXT:
+			llllobj_gunload_bttext(cache, inll);
+			break;
+		case LLLL_O_MAX:
+			llllobj_gunload_max(cache, inll);
+			break;
+		case LLLL_O_NATIVE:
+			llllobj_gunload_native_with_phonenumber(cache, inll, phonenumber);
+			break;
+		default:
+			llll_release(inll);
+			break;
+	}
 }
 
 void llllobj_gunload_wrap(t_object *x, e_llllobj_obj_types type, t_atom *in_aa_atom, ...)
@@ -555,12 +592,21 @@ void llllobj_gunload_wrap(t_object *x, e_llllobj_obj_types type, t_atom *in_aa_a
 
 	for (i = ac - 1; i >= 0; i --) {
 		cache = out + *(--this_outnum);
-		if (cache->b_type == LLLL_O_TEXT)
-			llllobj_gunload_text(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
-		else if (cache->b_type == LLLL_O_NATIVE)
-			llllobj_gunload_native(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
-		else
-			llll_release((t_llll *) in_ll_atom[i].a_w.w_obj);
+		
+		switch (cache->b_type) {
+			case LLLL_O_TEXT:
+				llllobj_gunload_bttext(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
+				break;
+			case LLLL_O_MAX:
+				llllobj_gunload_max(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
+				break;
+			case LLLL_O_NATIVE:
+				llllobj_gunload_native(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
+				break;
+			default:
+				llll_release((t_llll *) in_ll_atom[i].a_w.w_obj);
+				break;
+		}
 	}
 	va_end(ap);
 
@@ -575,12 +621,22 @@ void llllobj_gunload_array_range(t_object *x, e_llllobj_obj_types type, t_llll *
 	out = llllobj_get_out(x, type);
 	
 	for (this_arr = arr + maxout - minout, cache = out + maxout; this_arr >= arr; this_arr--, cache--) {
-		if (cache->b_type == LLLL_O_TEXT)
-			llllobj_gunload_text(cache, *this_arr);
-		else if (cache->b_type == LLLL_O_NATIVE)
-			llllobj_gunload_native(cache, *this_arr);
-		else
-			llll_release(*this_arr);
+		
+		switch (cache->b_type) {
+			case LLLL_O_TEXT:
+				llllobj_gunload_bttext(cache, *this_arr);
+				break;
+			case LLLL_O_MAX:
+				llllobj_gunload_max(cache, *this_arr);
+				break;
+			case LLLL_O_NATIVE:
+				llllobj_gunload_native(cache, *this_arr);
+				break;
+			default:
+				llll_release((t_llll *) *this_arr);
+				break;
+		}
+
 	}
 }
 
@@ -597,12 +653,21 @@ void llllobj_gunload_wrap_range(t_object *x, e_llllobj_obj_types type, t_atom *i
 	atomarray_getatoms(in_aa, &ac, &in_ll_atom);
 
 	for (i = maxout - minout, cache = out + maxout; i >= 0; i--, cache--) {
-		if (cache->b_type == LLLL_O_TEXT)
-			llllobj_gunload_text(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
-		else if (cache->b_type == LLLL_O_NATIVE)
-			llllobj_gunload_native(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
-		else
-			llll_release((t_llll *) in_ll_atom[i].a_w.w_obj);
+		
+		switch (cache->b_type) {
+			case LLLL_O_TEXT:
+				llllobj_gunload_bttext(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
+				break;
+			case LLLL_O_MAX:
+				llllobj_gunload_max(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
+				break;
+			case LLLL_O_NATIVE:
+				llllobj_gunload_native(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
+				break;
+			default:
+				llll_release((t_llll *) in_ll_atom[i].a_w.w_obj);
+				break;
+		}
 	}
 	object_free_debug(in_aa);
 	
@@ -617,41 +682,49 @@ void llllobj_shoot_llll(t_object *x, e_llllobj_obj_types type, long outnum)
 		bach_atomic_unlock(&out->b_lock);
 		return;
 	}
-		
-	if (out->b_type == LLLL_O_NATIVE) {
-		t_atom out_av = *(out->b_av);
-		t_llll *outll = out->b_ll;
+	
+	switch (out->b_type) {
+			
+		case LLLL_O_NATIVE: {
+			t_atom out_av = *(out->b_av);
+			t_llll *outll = out->b_ll;
 #ifdef BACH_CHECK_LLLLS
-		if (llll_check(outll))
-			error("llllobj_shoot_llll: bad llll");
+			if (llll_check(outll))
+				error("llllobj_shoot_llll: bad llll");
 #endif
-		llll_retain(outll);
-		bach_atomic_unlock(&out->b_lock);
-		outlet_anything(out->b_outlet, out_msg, 1, &out_av);
-		llll_release(outll);
-
-	} else if (out->b_type == LLLL_O_TEXT) {
-		long out_ac = out->b_ac;
-		if (out_ac != 0) {
-			long out_size = out_ac * sizeof(t_atom);
-			t_atom *out_av = (t_atom *) bach_newptr(out_size);
-			bach_copyptr(out->b_av, out_av, out_size);
-//			bach_atomic_unlock(&out->b_lock);
+			llll_retain(outll);
 			bach_atomic_unlock(&out->b_lock);
-			if (out_msg == _sym_list)
-				outlet_list(out->b_outlet, NULL, MIN(out_ac, 32767), out_av);
-			else
-				outlet_anything(out->b_outlet, out_msg, MIN(out_ac, 32767), out_av);
-			bach_freeptr(out_av);
-		} else {
-//			bach_atomic_unlock(&out->b_lock);
-			bach_atomic_unlock(&out->b_lock);
-			outlet_anything(out->b_outlet, out_msg, 0, NULL);
+			outlet_anything(out->b_outlet, out_msg, 1, &out_av);
+			llll_release(outll);
+			break;
 		}
-	} else
-//		bach_atomic_unlock(&out->b_lock);
-		bach_atomic_unlock(&out->b_lock);
-
+			
+		case LLLL_O_TEXT:
+		case LLLL_O_MAX: {
+			long out_ac = out->b_ac;
+			if (out_ac != 0) {
+				long out_size = out_ac * sizeof(t_atom);
+				t_atom *out_av = (t_atom *) bach_newptr(out_size);
+				bach_copyptr(out->b_av, out_av, out_size);
+				bach_atomic_unlock(&out->b_lock);
+				if (out_msg == _sym_list)
+					outlet_list(out->b_outlet, NULL, MIN(out_ac, 32767), out_av);
+				else
+					outlet_anything(out->b_outlet, out_msg, MIN(out_ac, 32767), out_av);
+				bach_freeptr(out_av);
+			} else {
+				bach_atomic_unlock(&out->b_lock);
+				outlet_anything(out->b_outlet, out_msg, 0, NULL);
+			}
+			break;
+		}
+			
+		default: {
+			bach_atomic_unlock(&out->b_lock);
+			break;
+		}
+			
+	}
 }
 
 
@@ -703,16 +776,24 @@ void llllobj_outlet_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type,
 	
 	cache = llllobj_get_out(x, type) + outnum;
 
-	if (cache->b_type == LLLL_O_TEXT)
-		llllobj_outlet_llll(x, type, outnum, inll);
-	else if (cache->b_type == LLLL_O_NATIVE) {
+	switch (cache->b_type) {
+		case LLLL_O_TEXT:
+		case LLLL_O_MAX:
+			llllobj_outlet_llll(x, type, outnum, inll);
+			break;
+			
+		case LLLL_O_NATIVE:
 #ifdef BACH_CHECK_LLLLS
-		if (llll_retrieve_from_phonenumber_and_retain(phonenumber) != inll)
-			error("llllobj_outlet_llll_with_phonenumber: bad llll");
-		llll_release(inll);
+			if (llll_retrieve_from_phonenumber_and_retain(phonenumber) != inll)
+				error("llllobj_outlet_llll_with_phonenumber: bad llll");
+			llll_release(inll);
 #endif
-		atom_setlong(&outatom, phonenumber);
-		outlet_anything(cache->b_outlet, LLLL_NATIVE_MSG, 1, &outatom);
+			atom_setlong(&outatom, phonenumber);
+			outlet_anything(cache->b_outlet, LLLL_NATIVE_MSG, 1, &outatom);
+			break;
+			
+		default:
+			break;
 	}
 }
 
@@ -726,49 +807,60 @@ void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_l
 	out = llllobj_get_out(x, type);
 	cache = out + outnum;
 	
-	if (cache->b_type == LLLL_O_TEXT) {
-		t_atom *outlist;
-		if (in_ll) {
-			out_aa = llll_deparse_to_aa(in_ll, LLLL_D_QUOTE);
-			atomarray_getatoms(out_aa, &ac, &outlist);
+	switch (cache->b_type) {
 			
-			if (ac == 0) {
-				ac = 1;
-				atom_setsym(outlist, _llllobj_sym_null);
+		case LLLL_O_TEXT:
+		case LLLL_O_MAX: {
+			t_atom *outlist;
+			if (in_ll) {
+				out_aa = llll_deparse_to_aa(in_ll,
+											cache->b_type == LLLL_O_TEXT ? LLLL_D_QUOTE : LLLL_D_NONE);
+				atomarray_getatoms(out_aa, &ac, &outlist);
+				
+				if (ac == 0) {
+					ac = 1;
+					atom_setsym(outlist, _llllobj_sym_null);
+				}
+				ac = MIN(ac, 32767);
+				switch(atom_gettype(outlist)) {
+					case A_FLOAT:
+						if (ac > 1)
+							outlet_list(cache->b_outlet, NULL, ac, outlist);
+						else
+							outlet_anything(cache->b_outlet, _sym_float, 1, outlist);
+						break;
+					case A_LONG:
+						if (ac > 1)
+							outlet_list(cache->b_outlet, NULL, ac, outlist);
+						else
+							outlet_anything(cache->b_outlet, _sym_int, 1, outlist);
+						break;
+					case A_SYM:
+						outlet_anything(cache->b_outlet, atom_getsym(outlist), ac - 1, outlist + 1);
+						break;
+					default:
+						break;
+				}
+				if (out_aa)
+					object_free_debug(out_aa);
 			}
-			ac = MIN(ac, 32767);
-			switch(atom_gettype(outlist)) {
-				case A_FLOAT:
-					if (ac > 1)
-						outlet_list(cache->b_outlet, NULL, ac, outlist);
-					else
-						outlet_anything(cache->b_outlet, _sym_float, 1, outlist);
-					break;
-				case A_LONG:
-					if (ac > 1)
-						outlet_list(cache->b_outlet, NULL, ac, outlist);
-					else
-						outlet_anything(cache->b_outlet, _sym_int, 1, outlist);
-					break;
-				case A_SYM:
-					outlet_anything(cache->b_outlet, atom_getsym(outlist), ac - 1, outlist + 1);
-					break;
-				default:
-					break;
-			}
-			if (out_aa)
-				object_free_debug(out_aa);
+			break;
 		}
-
-
-	} else if (cache->b_type == LLLL_O_NATIVE) {
+			
+		case LLLL_O_NATIVE: {
 #ifdef BACH_CHECK_LLLLS
-		if (llll_check(in_ll))
-			error("llllobj_outlet_llll: bad llll");
+			if (llll_check(in_ll))
+				error("llllobj_outlet_llll: bad llll");
 #endif
-		atom_setlong(&outatom, llll_phonenumber(in_ll));
-		outlet_anything(cache->b_outlet, LLLL_NATIVE_MSG, 1, &outatom);
+			atom_setlong(&outatom, llll_phonenumber(in_ll));
+			outlet_anything(cache->b_outlet, LLLL_NATIVE_MSG, 1, &outatom);
+			break;
+		}
+			
+		default:
+			break;
 	}
+
 }
 
 void llllobj_cache_list(t_llllobj_out *cache, t_symbol *msg, long ac, t_atom *av, void *thing)
@@ -1077,6 +1169,12 @@ t_max_err llllobj_obj_setup(t_llllobj_object *x, long stores, const char *outlet
 						llll_retain(empty_llll);	
 						this_out->b_type = LLLL_O_TEXT;
 						break;
+					case 'm': case 'M':
+						this_out->b_msg = _llllobj_sym_null;
+						this_out->b_ll = empty_llll;
+						llll_retain(empty_llll);
+						this_out->b_type = LLLL_O_MAX;
+						break;
 					case 'n': case 'N':
 						this_out->b_msg = LLLL_NATIVE_MSG;
 						this_out->b_ac = 1;
@@ -1222,8 +1320,14 @@ t_max_err llllobj_pxobj_setup(t_llllobj_pxobject *x, long stores, const char *ou
 					case 't': case 'T':
 						this_out->b_msg = _llllobj_sym_null;
 						this_out->b_ll = empty_llll;
-						llll_retain(empty_llll);	
+						llll_retain(empty_llll);
 						this_out->b_type = LLLL_O_TEXT;
+						break;
+					case 'm': case 'M':
+						this_out->b_msg = _llllobj_sym_null;
+						this_out->b_ll = empty_llll;
+						llll_retain(empty_llll);
+						this_out->b_type = LLLL_O_MAX;
 						break;
 					case 'n': case 'N':
 						this_out->b_msg = LLLL_NATIVE_MSG;
@@ -1365,8 +1469,14 @@ t_max_err llllobj_jbox_setup(t_llllobj_jbox *x, long stores, const char *outlets
 					case 't': case 'T':
 						this_out->b_msg = _llllobj_sym_null;
 						this_out->b_ll = empty_llll;
-						llll_retain(empty_llll);	
+						llll_retain(empty_llll);
 						this_out->b_type = LLLL_O_TEXT;
+						break;
+					case 'm': case 'M':
+						this_out->b_msg = _llllobj_sym_null;
+						this_out->b_ll = empty_llll;
+						llll_retain(empty_llll);
+						this_out->b_type = LLLL_O_MAX;
 						break;
 					case 'n': case 'N':
 						this_out->b_msg = LLLL_NATIVE_MSG;
@@ -1513,8 +1623,14 @@ t_max_err llllobj_pxjbox_setup(t_llllobj_pxjbox *x, long stores, const char *out
 					case 't': case 'T':
 						this_out->b_msg = _llllobj_sym_null;
 						this_out->b_ll = empty_llll;
-						llll_retain(empty_llll);	
+						llll_retain(empty_llll);
 						this_out->b_type = LLLL_O_TEXT;
+						break;
+					case 'm': case 'M':
+						this_out->b_msg = _llllobj_sym_null;
+						this_out->b_ll = empty_llll;
+						llll_retain(empty_llll);
+						this_out->b_type = LLLL_O_MAX;
 						break;
 					case 'n': case 'N':
 						this_out->b_msg = LLLL_NATIVE_MSG;
@@ -1662,12 +1778,22 @@ void llllobj_clear_all_outs(t_object *x, e_llllobj_obj_types type)
 	t_llll *empty = llll_get();
 	//empty->l_count = 0;
 	for (i = 0; i < numouts; i++, cache++) {
-		if (cache->b_type == LLLL_O_TEXT) {
-			llll_retain(empty);
-			llllobj_gunload_text(cache, empty);
-		} else if (cache->b_type == LLLL_O_NATIVE) {
-			llll_retain(empty);
-			llllobj_gunload_native(cache, empty);
+		
+		switch (cache->b_type) {
+			case LLLL_O_TEXT:
+				llll_retain(empty);
+				llllobj_gunload_bttext(cache, empty);
+				break;
+			case LLLL_O_MAX:
+				llll_retain(empty);
+				llllobj_gunload_max(cache, empty);
+				break;
+			case LLLL_O_NATIVE:
+				llll_retain(empty);
+				llllobj_gunload_native(cache, empty);
+				break;
+			default:
+				break;
 		}
 	}
 	llll_release(empty);
@@ -1693,7 +1819,7 @@ long llllobj_conform_outtypes(t_object *x, e_llllobj_obj_types type, char **outt
 	}
 	for (i = 0; i < len_outtypes && i < numlllloutlets; i++) {
 		switch ((*outtypes)[i]) {
-			case 't': case 'n': case 'x':
+			case 't': case 'm': case 'n': case 'x':
 				break;
 			case 'T':
 				if (!changed) {
@@ -1760,91 +1886,6 @@ long llllobj_conform_outtypes(t_object *x, e_llllobj_obj_types type, char **outt
 	return changed;
 }
 
-
-long llllobj_conform_outtypes_old(t_object *x, e_llllobj_obj_types type, char **outtypes, long accept_minus)
-{
-	long numlllloutlets = llllobj_get_numllllouts(x, type);
-	long len_outtypes = strlen(*outtypes);
-	long i;
-	long changed;
-	if (accept_minus) {
-		char *old_outtypes = *outtypes;
-		*outtypes = (char *) bach_newptr(numlllloutlets + 1);
-		strncpy_zero(*outtypes, old_outtypes, numlllloutlets + 1);
-		changed = 1;
-	} else
-		changed = 0;
-	if (len_outtypes < numlllloutlets) {
-		long ref = 0;
-		if (!changed) {
-			char *old_outtypes = *outtypes;
-			*outtypes = (char *) bach_newptr(numlllloutlets + 1);
-			strncpy_zero(*outtypes, old_outtypes, numlllloutlets + 1);
-			changed = 1;
-		}
-		if (len_outtypes == 0) {
-			**outtypes = 'n';
-			len_outtypes = 1;
-		}
-//		char last_outtype = len_outtypes ? (*outtypes)[len_outtypes - 1] : 'n';
-		for (i = len_outtypes; i < numlllloutlets; i++) {
-			(*outtypes)[i] = (*outtypes)[ref];
-			ref = (ref + 1) % len_outtypes;
-		}
-		(*outtypes)[i] = 0;
-	} else if (len_outtypes > numlllloutlets && !changed) {
-		char *old_outtypes = *outtypes;
-		*outtypes = (char *) bach_newptr(numlllloutlets + 1);
-		strncpy_zero(*outtypes, old_outtypes, numlllloutlets + 1);
-		changed = 1;
-	}
-	for (i = 0; i < numlllloutlets; i++) {
-		switch ((*outtypes)[i]) {
-			case 't': case 'n': case 'x':
-				break;
-			case 'T':
-				if (!changed) {
-					char *old_outtypes = *outtypes;
-					*outtypes = (char *) bach_newptr(numlllloutlets + 1);
-					strncpy_zero(*outtypes, old_outtypes, numlllloutlets + 1);
-					changed = 1;
-				}
-				(*outtypes)[i] = 't';
-				break;
-			case 'X':
-				if (!changed) {
-					char *old_outtypes = *outtypes;
-					*outtypes = (char *) bach_newptr(numlllloutlets + 1);
-					strncpy_zero(*outtypes, old_outtypes, numlllloutlets + 1);
-					changed = 1;
-				}
-				(*outtypes)[i] = 'x';
-				break;
-			case '-':
-				if (!accept_minus) {
-					if (!changed) {
-						char *old_outtypes = *outtypes;
-						*outtypes = (char *) bach_newptr(numlllloutlets + 1);
-						strncpy_zero(*outtypes, old_outtypes, numlllloutlets + 1);
-						changed = 1;
-					}
-					(*outtypes)[i] = 'n';
-				}
-				break;
-			default:
-				if (!changed) {
-					char *old_outtypes = *outtypes;
-					*outtypes = (char *) bach_newptr(numlllloutlets + 1);
-					strncpy_zero(*outtypes, old_outtypes, numlllloutlets + 1);
-					changed = 1;
-				}
-				(*outtypes)[i] = 'n';
-				break;
-		}
-	}
-	return changed;
-}
-
 t_max_err llllobj_obj_setout(t_llllobj_object *x, t_object *attr, long argc, t_atom *argv)
 {
 	char *this_outtype;
@@ -1858,15 +1899,17 @@ t_max_err llllobj_obj_setout(t_llllobj_object *x, t_object *attr, long argc, t_a
 			llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_VANILLA, &outtypes, 1);
 			this_outtype = outtypes + numlllloutlets - 1;
 			for (this_out = x->l_out + numlllloutlets - 1; this_out >= x->l_out ; this_out--) {
-				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_DISABLED) {
+				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_MAX || this_out->b_type == LLLL_O_DISABLED) {
 					switch (*this_outtype) {
 						case 't': llllobj_change_out_type(this_out, LLLL_O_TEXT);		break;
+						case 'm': llllobj_change_out_type(this_out, LLLL_O_MAX);		break;
 						case 'x': llllobj_change_out_type(this_out, LLLL_O_DISABLED);	break;
 						case 'n': llllobj_change_out_type(this_out, LLLL_O_NATIVE);		break;
 						case '-':
 							switch (this_out->b_type) {
 								case LLLL_O_NATIVE:		*this_outtype = 'n';	break;
 								case LLLL_O_TEXT:		*this_outtype = 't';	break;
+								case LLLL_O_MAX:		*this_outtype = 'm';	break;
 								case LLLL_O_DISABLED:	*this_outtype = 'x';	break;
 								default: break;
 							}
@@ -1897,15 +1940,17 @@ t_max_err llllobj_jbox_setout(t_llllobj_jbox *x, t_object *attr, long argc, t_at
 			llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_UI, &outtypes, 1);
 			this_outtype = outtypes + numlllloutlets - 1;
 			for (this_out = x->l_out + numlllloutlets - 1; this_out >= x->l_out ; this_out--) {
-				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_DISABLED) {
+				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_MAX || this_out->b_type == LLLL_O_DISABLED) {
 					switch (*this_outtype) {
 						case 't': llllobj_change_out_type(this_out, LLLL_O_TEXT);		break;
+						case 'm': llllobj_change_out_type(this_out, LLLL_O_MAX);		break;
 						case 'x': llllobj_change_out_type(this_out, LLLL_O_DISABLED);	break;
 						case 'n': llllobj_change_out_type(this_out, LLLL_O_NATIVE);		break;
 						case '-':
 							switch (this_out->b_type) {
 								case LLLL_O_NATIVE:		*this_outtype = 'n';	break;
 								case LLLL_O_TEXT:		*this_outtype = 't';	break;
+								case LLLL_O_MAX:		*this_outtype = 'm';	break;
 								case LLLL_O_DISABLED:	*this_outtype = 'x';	break;
 								default: break;
 							}
@@ -1936,15 +1981,17 @@ t_max_err llllobj_pxobj_setout(t_llllobj_pxobject *x, t_object *attr, long argc,
 			llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_UI, &outtypes, 1);
 			this_outtype = outtypes + numlllloutlets - 1;
 			for (this_out = x->l_out + numlllloutlets - 1; this_out >= x->l_out ; this_out--) {
-				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_DISABLED) {
+				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_MAX || this_out->b_type == LLLL_O_DISABLED) {
 					switch (*this_outtype) {
 						case 't': llllobj_change_out_type(this_out, LLLL_O_TEXT);		break;
+						case 'm': llllobj_change_out_type(this_out, LLLL_O_MAX);		break;
 						case 'x': llllobj_change_out_type(this_out, LLLL_O_DISABLED);	break;
 						case 'n': llllobj_change_out_type(this_out, LLLL_O_NATIVE);		break;
 						case '-':
 							switch (this_out->b_type) {
 								case LLLL_O_NATIVE:		*this_outtype = 'n';	break;
 								case LLLL_O_TEXT:		*this_outtype = 't';	break;
+								case LLLL_O_MAX:		*this_outtype = 'm';	break;
 								case LLLL_O_DISABLED:	*this_outtype = 'x';	break;
 								default: break;
 							}
@@ -1975,15 +2022,17 @@ t_max_err llllobj_pxjbox_setout(t_llllobj_pxjbox *x, t_object *attr, long argc, 
 			llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_UIMSP, &outtypes, 1);
 			this_outtype = outtypes + numlllloutlets - 1;
 			for (this_out = x->l_out + numlllloutlets - 1; this_out >= x->l_out ; this_out--) {
-				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_DISABLED) {
+				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_MAX || this_out->b_type == LLLL_O_DISABLED) {
 					switch (*this_outtype) {
 						case 't': llllobj_change_out_type(this_out, LLLL_O_TEXT);		break;
+						case 'm': llllobj_change_out_type(this_out, LLLL_O_MAX);		break;
 						case 'x': llllobj_change_out_type(this_out, LLLL_O_DISABLED);	break;
 						case 'n': llllobj_change_out_type(this_out, LLLL_O_NATIVE);		break;
 						case '-':
 							switch (this_out->b_type) {
 								case LLLL_O_NATIVE:		*this_outtype = 'n';	break;
 								case LLLL_O_TEXT:		*this_outtype = 't';	break;
+								case LLLL_O_MAX:		*this_outtype = 'm';	break;
 								case LLLL_O_DISABLED:	*this_outtype = 'x';	break;
 								default: break;
 							}
@@ -2000,142 +2049,6 @@ t_max_err llllobj_pxjbox_setout(t_llllobj_pxjbox *x, t_object *attr, long argc, 
 	}
 	return MAX_ERR_NONE;
 }
-/*
-t_max_err llllobj_jbox_setout(t_llllobj_jbox *x, t_object *attr, long argc, t_atom *argv)
-{
-	char *outtypes, *this_outtype;
-	int len_outtypes;
-	t_llllobj_out *this_out;
-	long numoutlets = x->l_numouts;
-	t_symbol *sym;
-	if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
-		outtypes = sym->s_name;
-		len_outtypes = strlen(outtypes);
-		if (len_outtypes < numoutlets) {
-			char *old_outtypes = outtypes;
-			char last_outtype = outtypes[len_outtypes - 1];
-			long i;
-			outtypes = bach_newptr(numoutlets + 1);
-			strncpy_zero(outtypes, old_outtypes, numoutlets);
-			for (i = len_outtypes; i < numoutlets; i++)
-				outtypes[i] = last_outtype;
-			outtypes[i] = 0;
-			x->l_outtypes = gensym(outtypes);
-		} else if (len_outtypes > numoutlets) {
-			char *old_outtypes = outtypes;
-			outtypes = bach_newptr(numoutlets + 1);
-			strncpy_zero(outtypes, old_outtypes, numoutlets);
-			x->l_outtypes = gensym(outtypes);
-		} else {
-			x->l_outtypes = sym;
-		}
-		
-		if (x->l_running) {
-			this_outtype = outtypes + numoutlets - 1;
-			for (this_out = x->l_out + numoutlets - 1; this_out >= x->l_out ; this_out--) {
-				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_DISABLED) {
-					switch (*this_outtype) {
-						case 't': case 'T':	llllobj_change_out_type(this_out, LLLL_O_TEXT);		break;
-						case 'x': case 'X':	llllobj_change_out_type(this_out, LLLL_O_DISABLED);	break;
-						case 'n': case 'N':	llllobj_change_out_type(this_out, LLLL_O_NATIVE);	break;
-					}
-				}
-			}			
-		}
-	}
-	return MAX_ERR_NONE;
-}
-
-t_max_err llllobj_pxobj_setout(t_llllobj_pxobject *x, t_object *attr, long argc, t_atom *argv)
-{
-	char *outtypes, *this_outtype;
-	int len_outtypes;
-	t_llllobj_out *this_out;
-	long numoutlets = x->l_numouts;
-	t_symbol *sym;
-	if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
-		outtypes = sym->s_name;
-		len_outtypes = strlen(outtypes);
-		if (len_outtypes < numoutlets) {
-			char *old_outtypes = outtypes;
-			char last_outtype = outtypes[len_outtypes - 1];
-			long i;
-			outtypes = bach_newptr(numoutlets + 1);
-			strncpy_zero(outtypes, old_outtypes, numoutlets);
-			for (i = len_outtypes; i < numoutlets; i++)
-				outtypes[i] = last_outtype;
-			outtypes[i] = 0;
-			x->l_outtypes = gensym(outtypes);
-		} else if (len_outtypes > numoutlets) {
-			char *old_outtypes = outtypes;
-			outtypes = bach_newptr(numoutlets + 1);
-			strncpy_zero(outtypes, old_outtypes, numoutlets);
-			x->l_outtypes = gensym(outtypes);
-		} else {
-			x->l_outtypes = sym;
-		}
-		
-		if (x->l_running) {
-			this_outtype = outtypes + numoutlets - 1;
-			for (this_out = x->l_out + numoutlets - 1; this_out >= x->l_out ; this_out--) {
-				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_DISABLED) {
-					switch (*this_outtype) {
-						case 't': case 'T':	llllobj_change_out_type(this_out, LLLL_O_TEXT);		break;
-						case 'x': case 'X':	llllobj_change_out_type(this_out, LLLL_O_DISABLED);	break;
-						case 'n': case 'N':	llllobj_change_out_type(this_out, LLLL_O_NATIVE);	break;
-					}
-				}
-			}			
-		}
-	}
-	return MAX_ERR_NONE;
-}
-
-t_max_err llllobj_pxjbox_setout(t_llllobj_pxjbox *x, t_object *attr, long argc, t_atom *argv)
-{
-	char *outtypes, *this_outtype;
-	int len_outtypes;
-	t_llllobj_out *this_out;
-	long numoutlets = x->l_numouts;
-	t_symbol *sym;
-	if (argc && atom_gettype(argv) == A_SYM && (sym = argv->a_w.w_sym)) {
-		outtypes = sym->s_name;
-		len_outtypes = strlen(outtypes);
-		if (len_outtypes < numoutlets) {
-			char *old_outtypes = outtypes;
-			char last_outtype = outtypes[len_outtypes - 1];
-			long i;
-			outtypes = bach_newptr(numoutlets + 1);
-			strncpy_zero(outtypes, old_outtypes, numoutlets);
-			for (i = len_outtypes; i < numoutlets; i++)
-				outtypes[i] = last_outtype;
-			outtypes[i] = 0;
-			x->l_outtypes = gensym(outtypes);
-		} else if (len_outtypes > numoutlets) {
-			char *old_outtypes = outtypes;
-			outtypes = bach_newptr(numoutlets + 1);
-			strncpy_zero(outtypes, old_outtypes, numoutlets);
-			x->l_outtypes = gensym(outtypes);
-		} else {
-			x->l_outtypes = sym;
-		}
-		
-		if (x->l_running) {
-			this_outtype = outtypes + numoutlets - 1;
-			for (this_out = x->l_out + numoutlets - 1; this_out >= x->l_out ; this_out--) {
-				if (this_out->b_type == LLLL_O_NATIVE || this_out->b_type == LLLL_O_TEXT || this_out->b_type == LLLL_O_DISABLED) {
-					switch (*this_outtype) {
-						case 't': case 'T':	llllobj_change_out_type(this_out, LLLL_O_TEXT);		break;
-						case 'x': case 'X':	llllobj_change_out_type(this_out, LLLL_O_DISABLED);	break;
-						case 'n': case 'N':	llllobj_change_out_type(this_out, LLLL_O_NATIVE);	break;
-					}
-				}
-			}			
-		}
-	}
-	return MAX_ERR_NONE;
-}
-*/
 
 void llllobj_class_add_out_attr(t_class *c, e_llllobj_obj_types type) 
 {
@@ -2181,74 +2094,6 @@ void llllobj_class_add_out_attr(t_class *c, e_llllobj_obj_types type)
 	CLASS_ATTR_BASIC(c, "out", 0);
 }
 
-void llllobj_class_add_destructive_attr(t_class *c, e_llllobj_obj_types type)
-{
-#ifdef zzzzzz
-	switch (type) {
-		case LLLL_OBJ_VANILLA:
-			CLASS_ATTR_LONG(c, "destructive", 0, t_llllobj_object, l_destructive);
-			CLASS_ATTR_LONG(c, "d", 0, t_llllobj_object, l_destructive);
-			CLASS_ATTR_INVISIBLE(c, "d", 0);
-			CLASS_ATTR_FILTER_CLIP(c, "d", 0, LLLLOBJ_ENABLE_DESTRUCTIVE);
-			break;
-		case LLLL_OBJ_UI:
-			CLASS_ATTR_LONG(c, "destructive", 0, t_llllobj_jbox, l_destructive);
-			break;
-		case LLLL_OBJ_MSP:
-			CLASS_ATTR_LONG(c, "destructive", 0, t_llllobj_pxobject, l_destructive);
-			CLASS_ATTR_LONG(c, "d", 0, t_llllobj_pxobject, l_destructive);
-			CLASS_ATTR_INVISIBLE(c, "d", 0);
-			CLASS_ATTR_FILTER_CLIP(c, "d", 0, LLLLOBJ_ENABLE_DESTRUCTIVE);
-			break;
-		case LLLL_OBJ_UIMSP:
-			CLASS_ATTR_LONG(c, "destructive", 0, t_llllobj_pxjbox, l_destructive);
-			break;
-		default:
-			break;
-	}
-	CLASS_ATTR_FILTER_CLIP(c, "destructive", 0, LLLLOBJ_ENABLE_DESTRUCTIVE);
-	CLASS_ATTR_STYLE(c, "destructive", 0, "onoff");
-	CLASS_ATTR_LABEL(c, "destructive", 0, "Destructive");
-	CLASS_ATTR_CATEGORY(c, "destructive", 0, "Behavior");
-#endif
-}
-
-
-void llllobj_class_add_volatile_attr(t_class *c, e_llllobj_obj_types type)
-{
-#ifdef zzzzzz
-	switch (type) {
-		case LLLL_OBJ_VANILLA:
-			CLASS_ATTR_LONG(c, "volatile", 0, t_llllobj_object, l_volatile);
-			CLASS_ATTR_LONG(c, "v", 0, t_llllobj_object, l_volatile);
-			CLASS_ATTR_INVISIBLE(c, "v", 0);
-			CLASS_ATTR_FILTER_CLIP(c, "v", 0, LLLLOBJ_ENABLE_VOLATILE);
-			//class_addmethod(c, (method) llllobj_cleanup_vanilla, "bach.cleanup", 0);
-			break;
-		case LLLL_OBJ_UI:
-			CLASS_ATTR_LONG(c, "volatile", 0, t_llllobj_jbox, l_volatile);
-			//class_addmethod(c, (method) llllobj_cleanup_ui, "bach.cleanup", 0);
-			break;
-		case LLLL_OBJ_MSP:
-			CLASS_ATTR_LONG(c, "volatile", 0, t_llllobj_pxobject, l_volatile);
-			CLASS_ATTR_LONG(c, "v", 0, t_llllobj_pxobject, l_volatile);
-			CLASS_ATTR_INVISIBLE(c, "v", 0);
-			CLASS_ATTR_FILTER_CLIP(c, "v", 0, LLLLOBJ_ENABLE_VOLATILE);
-			//class_addmethod(c, (method) llllobj_cleanup_msp, "bach.cleanup", 0);
-			break;
-		case LLLL_OBJ_UIMSP:
-			CLASS_ATTR_LONG(c, "volatile", 0, t_llllobj_pxjbox, l_volatile);
-			//class_addmethod(c, (method) llllobj_cleanup_uimsp, "bach.cleanup", 0);
-			break;
-		default:
-			break;
-	}
-	CLASS_ATTR_FILTER_CLIP(c, "volatile", 0, LLLLOBJ_ENABLE_VOLATILE);
-	CLASS_ATTR_STYLE(c, "volatile", 0, "onoff");
-	CLASS_ATTR_LABEL(c, "volatile", 0, "Volatile");
-	CLASS_ATTR_CATEGORY(c, "volatile", 0, "Behavior");
-#endif
-}
 
 void llllobj_cleanup_vanilla(t_object *x)
 {
@@ -2281,13 +2126,20 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 //	bach_atomic_lock(&cache->b_lock);
 	bach_atomic_lock(&cache->b_lock);
 	switch (cache->b_type) {
+			
 		case LLLL_O_NATIVE:
 			switch (newtype) {
 				case LLLL_O_TEXT:
 					destroy_atom = cache->b_av;
-					deparsed_aa = llll_deparse_to_aa(cache->b_ll, 0);
+					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_QUOTE);
 					llllobj_cache_text(cache, deparsed_aa);
 					cache->b_type = LLLL_O_TEXT;
+					break;
+				case LLLL_O_MAX:
+					destroy_atom = cache->b_av;
+					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_NONE);
+					llllobj_cache_text(cache, deparsed_aa);
+					cache->b_type = LLLL_O_MAX;
 					break;
 				case LLLL_O_DISABLED:
 					destroy_atom = cache->b_av;
@@ -2300,8 +2152,44 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 					break;
 			}
 			break;
+			
 		case LLLL_O_TEXT:
 			switch (newtype) {
+				case LLLL_O_MAX:
+					destroy_aa = cache->b_aa;
+					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_NONE);
+					llllobj_cache_text(cache, deparsed_aa);
+					cache->b_type = LLLL_O_MAX;
+					break;
+				case LLLL_O_NATIVE:
+					destroy_aa = cache->b_aa;
+					cache->b_aa = NULL;
+					phonenum = llll_phonenumber(cache->b_ll);
+					cache->b_av = (t_atom *) bach_newptr(sizeof(t_atom));
+					cache->b_ac = 1;
+					atom_setlong(cache->b_av, phonenum);
+					cache->b_type = LLLL_O_NATIVE;
+					break;
+				case LLLL_O_DISABLED:
+					destroy_aa = cache->b_aa;
+					cache->b_aa = NULL;
+					destroy_ll = cache->b_ll;
+					cache->b_ll = NULL;
+					cache->b_type = LLLL_O_DISABLED;
+					break;
+				default:
+					break;
+			}
+			break;
+			
+		case LLLL_O_MAX:
+			switch (newtype) {
+				case LLLL_O_TEXT:
+					destroy_aa = cache->b_aa;
+					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_QUOTE);
+					llllobj_cache_text(cache, deparsed_aa);
+					cache->b_type = LLLL_O_TEXT;
+					break;
 				case LLLL_O_NATIVE:
 					destroy_aa = cache->b_aa;
 					cache->b_aa = NULL;
@@ -2337,7 +2225,15 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 					phonenum = llll_phonenumber(empty_llll);
 					cache->b_ll = empty_llll;
 					llll_retain(empty_llll);
-					deparsed_aa = llll_deparse_to_aa(empty_llll, 0);
+					deparsed_aa = llll_deparse_to_aa(empty_llll, LLLL_D_QUOTE);
+					llllobj_cache_text(cache, deparsed_aa);
+					cache->b_type = LLLL_O_TEXT;
+					break;
+				case LLLL_O_MAX:
+					phonenum = llll_phonenumber(empty_llll);
+					cache->b_ll = empty_llll;
+					llll_retain(empty_llll);
+					deparsed_aa = llll_deparse_to_aa(empty_llll, LLLL_D_NONE);
 					llllobj_cache_text(cache, deparsed_aa);
 					cache->b_type = LLLL_O_TEXT;
 					break;
@@ -2602,3 +2498,6 @@ void bach_class_setname(const char *obname, const char *filename)
 {
 	class_setname(const_cast<char *>(obname), const_cast<char *>(filename));
 }
+
+
+

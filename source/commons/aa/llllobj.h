@@ -393,7 +393,10 @@ void llllobj_gunload_array_range(t_object *x, e_llllobj_obj_types type, t_llll *
 
 
 // (private) load an llll in a text outlet
-void llllobj_gunload_text(t_llllobj_out *cache, t_llll *inll);
+void llllobj_gunload_bttext(t_llllobj_out *cache, t_llll *inll);
+
+// (private) load an llll in a max-formatted outlet
+void llllobj_gunload_max(t_llllobj_out *cache, t_llll *inll);
 
 // (private) load an llll in a native outlet
 void llllobj_gunload_native(t_llllobj_out *cache, t_llll *ll);
@@ -417,7 +420,7 @@ void llllobj_cache_list(t_llllobj_out *cache, t_symbol *msg, long ac, t_atom *av
 // (private) load any message in an output cache
 void llllobj_cache_anything(t_llllobj_out *cache, t_symbol *msg, long ac, t_atom *av, void *thing);
 
-// (private) load a text-based llll in an output cache from the atomarray coming from the deparse method
+// (private) load a text-based llll (with or without backticks) in an output cache from the atomarray coming from the deparse method
 void llllobj_cache_text(t_llllobj_out *cache, t_atomarray *deparsed_aa);
 
 
