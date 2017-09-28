@@ -375,7 +375,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 589.0, 31.0 ],
 					"style" : "",
-					"text" : "Tags: message, pitch, respell, automatically, enharmonic, enharmonicity, option, discard, altered, repetition, discardalteredrepetition, stdev, thresh, stdevthresh, standard, deviation, equation, threshold, algorithm, atonal",
+					"text" : "Tags: message, pitch, respell, automatically, enharmonic, enharmonicity, option, discard, altered, repetition, discardalteredrepetition, stdev, thresh, stdevthresh, standard, deviation, equation, threshold, algorithm, atonal, spell",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

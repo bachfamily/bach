@@ -277,6 +277,24 @@ t_rational rat_rat_div(t_rational rat1, t_rational rat2)
 	return rat_rat_prod(rat1, rat_inv(rat2));
 }
 
+// integer division between two rationals
+long rat_rat_divdiv(t_rational rat1, t_rational rat2, char always_positive_mod)
+{
+    t_rational mod;
+    t_rational div;
+    rat2 = rat_abs(rat2);
+    div  = rat_rat_div(rat1, rat2);
+    long divdiv = div.r_num / div.r_den;
+    if (always_positive_mod) {
+        mod = rat_rat_diff(rat1, rat_long_prod(rat2, div.r_num / div.r_den));
+        if (mod.r_num < 0)
+            divdiv -= 1;
+    }
+    
+    return divdiv;
+}
+
+
 t_rational rat_long_diff(t_rational rat1, t_atom_long num) 
 {
 	return(rat_long_sum(rat1, -num));

@@ -335,7 +335,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 583.0, 31.0 ],
 					"style" : "",
-					"text" : "Tags: message, pitch, select, selection, respell, automatically, enharmonic, enharmonicity, option, sharp, flat, sharper, sharpest, flatter, flattest, voicewise, circle, of, fifths, algorithm",
+					"text" : "Tags: message, pitch, select, selection, respell, automatically, enharmonic, enharmonicity, option, sharp, flat, sharper, sharpest, flatter, flattest, voicewise, circle, of, fifths, algorithm, spell",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
