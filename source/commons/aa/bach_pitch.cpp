@@ -148,7 +148,12 @@ t_pitch t_pitch::operator*(t_atom_long b) const
     return t_pitch(sat);
 }
 
-t_pitch t_pitch::divdiv(const t_atom_long b) const
+t_pitch t_pitch::operator*(const t_rational &b) const
+{
+    return divdiv(b.inv());
+}
+
+t_pitch t_pitch::operator/(const t_atom_long b) const
 {
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps /= b;
@@ -156,7 +161,7 @@ t_pitch t_pitch::divdiv(const t_atom_long b) const
     return t_pitch(sat);
 }
 
-t_pitch t_pitch::divdiv(const t_rational &b) const
+t_pitch t_pitch::operator/(const t_rational &b) const
 {
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps = sat.steps * b.den() / b.num();

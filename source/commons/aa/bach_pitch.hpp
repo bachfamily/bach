@@ -155,7 +155,9 @@ public:
     t_pitch operator+(const t_pitch &b) const;
     t_pitch operator-(const t_pitch &b) const;
     t_pitch operator*(t_atom_long b) const;
-    t_rational operator/(const t_rational &b) const { return toMC() / b; } ;
+    t_pitch operator*(const t_rational &b) const;
+    t_pitch operator/(const t_atom_long b) const;
+    t_pitch operator/(const t_rational &b) const;
     t_rational operator/(const t_pitch &b) const { return toMC() / b.toMC(); };
     long divdiv(const t_pitch &b) const {
         t_rational res = *this / b;
@@ -170,7 +172,7 @@ public:
     
     t_pitch operator+=(const t_pitch &b) { return *this = *this + b; }
     t_pitch operator-=(const t_pitch &b) { return *this = *this - b; }
-    t_pitch operator*=(t_atom_short b) { return *this = *this * b; }
+    t_pitch operator*=(t_atom_long b) { return *this = *this * b; }
     t_pitch operator%=(const t_pitch &b) { return *this = *this % b; }
 
     t_atom_short sgn() const {

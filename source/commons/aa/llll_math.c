@@ -448,13 +448,16 @@ void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res)
     else if (h1_type == H_PITCH && h2_type == H_LONG) // pl -> pitch
         hatom_setpitch(res, h1->h_w.w_pitch * h2->h_w.w_long);
     
+    else if (h1_type == H_PITCH && h2_type == H_RAT) // pr -> pitch
+        hatom_setpitch(res, h1->h_w.w_pitch * h2->h_w.w_rat);
+
     else if (h1_type == H_LONG && h2_type == H_RAT) // lr -> rat
         hatom_setrational(res, h1->h_w.w_long * h2->h_w.w_rat);
     
     else if (h1_type == H_RAT && h2_type == H_LONG) // rl -> rat
         hatom_setrational(res, h1->h_w.w_rat * h2->h_w.w_long);
     
-    else // rr rp pr pp -> rat
+    else // rr rp pp -> rat
         hatom_setrational(res, hatom_getrational(h1) * hatom_getrational(h2));
 
 }
@@ -505,7 +508,10 @@ void hatom_op_div(t_hatom *h1, t_hatom *h2, t_hatom *res)
         hatom_setdouble(res, hatom_getdouble(h1) / hatom_getdouble(h2));
  
     } else if (h1_type == H_PITCH && h2_type == H_LONG) { // pl -> p
-        hatom_setrational(res, h1->h_w.w_pitch / h2->h_w.w_long);
+        hatom_setpitch(res, h1->h_w.w_pitch / h2->h_w.w_long);
+        
+    } else if (h1_type == H_PITCH && h2_type == H_RAT) { // pr -> p
+        hatom_setpitch(res, h1->h_w.w_pitch / h2->h_w.w_rat);
         
     } else if (h1_type == H_LONG && h2_type == H_LONG) { // ll -> r
         hatom_setrational(res, t_rational(h1->h_w.w_long, h2->h_w.w_long));
@@ -516,7 +522,7 @@ void hatom_op_div(t_hatom *h1, t_hatom *h2, t_hatom *res)
     } else if ((h1_type == H_RAT || h1_type == H_PITCH) && h2_type == H_LONG) { // rl pl -> r
         hatom_setrational(res, hatom_getrational(h1) / h1->h_w.w_long);
 
-    } else { // rr rp pr
+    } else { // rr rp
         hatom_setrational(res, hatom_getrational(h1) / hatom_getrational(h2));
     }
     
