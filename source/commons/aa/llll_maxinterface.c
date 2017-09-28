@@ -329,7 +329,7 @@ void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, long outtypes)
 		
 		if (outtypes & LLLL_O_TEXT) {
 			atoms = NULL;
-			sort_item->n_t_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, LLLL_D_QUOTE);
+			sort_item->n_t_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, LLLL_D_QUOTE | LLLL_D_MAX);
 			sort_item->n_t_freeme = atoms = (t_atom *) bach_resizeptr(atoms, sort_item->n_t_ac * sizeof(t_atom));
 			switch (atoms->a_type) {
 				case A_FLOAT:
@@ -358,7 +358,7 @@ void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, long outtypes)
         
         if (outtypes & LLLL_O_MAX) {
             atoms = NULL;
-            sort_item->n_m_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, LLLL_D_NONE);
+            sort_item->n_m_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, LLLL_D_MAX);
             sort_item->n_m_freeme = atoms = (t_atom *) bach_resizeptr(atoms, sort_item->n_m_ac * sizeof(t_atom));
             switch (atoms->a_type) {
                 case A_FLOAT:

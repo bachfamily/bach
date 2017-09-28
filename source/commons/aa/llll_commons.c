@@ -196,10 +196,11 @@ t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags)
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// returns 0 if it can't allocate the memory it needs
+// returns 0 if it can't allocate the memory it needs,
+// otherwise the number of atoms constituting the result (including the offset)
 //
 // offset is referred to *out (leaves some atoms at the beginning, useful for preset)
-// flags are LLLL_D_QUOTE and LLLL_D_FLOAT64
+// flags are LLLL_D_QUOTE, LLLL_D_MAX and LLLL_D_FLOAT64
 
 t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flags)
 {
@@ -208,7 +209,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 	t_llllelem *elem;
 	char txt[256];
 	t_llll_stack *stack;
-	t_symbol *checked, **this_arg;
+	t_symbol *checked;
 	t_atom_long outsize;
 	long leveltype = L_STANDARD;
 	t_atom *new_out, *this_out;
@@ -298,16 +299,21 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
                     elem = elem->l_next;
                     break;
                     
-				case H_SYM:
-					if (flags & LLLL_D_QUOTE) {
-                        checked = llll_quoteme(elem->l_hatom.h_w.w_sym);
+                case H_SYM: {
+                    t_symbol *sym = elem->l_hatom.h_w.w_sym;
+
+                    if (ac == 0 && (flags & LLLL_D_MAX) && (sym == _sym_int || sym == _sym_float || sym == _sym_list)) {
+                        checked = sym_addquote(sym->s_name);
+                    } else if (flags & LLLL_D_QUOTE) {
+                        checked = llll_quoteme(sym);
 					} else 
-						checked = elem->l_hatom.h_w.w_sym;
+						checked = sym;
 					
 					atom_setsym(this_out++, checked);
 					ac ++;
 					elem = elem->l_next;
 					break;
+                }
 				case H_LLLL:
 					subll = elem->l_hatom.h_w.w_llll;
 					leveltype = subll->l_leveltype;

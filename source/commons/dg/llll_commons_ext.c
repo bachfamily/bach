@@ -586,7 +586,7 @@ t_symbol *nth_sym_of_a_plain_sym_llll(t_llll *in_llll, long index) {
 void llll_to_char_array(t_llll *in_llll, char* char_array, long max_chars) {
 //	return;
 	t_atom *av = NULL;
-	short ac = llll_deparse(in_llll, &av, 0, 1);
+	short ac = llll_deparse(in_llll, &av, 0, LLLL_D_QUOTE);
 	long i, cur = 0; 
 	char part_string[100];
 	for (i = 0; i < ac && cur < 85; i++){   

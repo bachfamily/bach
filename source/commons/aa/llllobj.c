@@ -423,7 +423,7 @@ void llllobj_gunload_bttext(t_llllobj_out *cache, t_llll *inll)
 	t_atomarray *free_me;
 	t_llll *old_ll;
 
-	deparsed_aa = llll_deparse_to_aa(inll, LLLL_D_QUOTE);
+	deparsed_aa = llll_deparse_to_aa(inll, LLLL_D_QUOTE | LLLL_D_MAX);
 	
 	bach_atomic_lock(&cache->b_lock);
 	old_ll = cache->b_ll;
@@ -443,7 +443,7 @@ void llllobj_gunload_max(t_llllobj_out *cache, t_llll *inll)
 	t_atomarray *free_me;
 	t_llll *old_ll;
 	
-	deparsed_aa = llll_deparse_to_aa(inll, LLLL_D_NONE);
+	deparsed_aa = llll_deparse_to_aa(inll, LLLL_D_MAX);
 	
 	bach_atomic_lock(&cache->b_lock);
 	old_ll = cache->b_ll;
@@ -814,7 +814,7 @@ void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_l
 			t_atom *outlist;
 			if (in_ll) {
 				out_aa = llll_deparse_to_aa(in_ll,
-											cache->b_type == LLLL_O_TEXT ? LLLL_D_QUOTE : LLLL_D_NONE);
+											cache->b_type == LLLL_O_TEXT ? LLLL_D_QUOTE | LLLL_D_MAX : LLLL_D_MAX);
 				atomarray_getatoms(out_aa, &ac, &outlist);
 				
 				if (ac == 0) {
@@ -2131,13 +2131,13 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 			switch (newtype) {
 				case LLLL_O_TEXT:
 					destroy_atom = cache->b_av;
-					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_QUOTE);
+					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_QUOTE | LLLL_D_MAX);
 					llllobj_cache_text(cache, deparsed_aa);
 					cache->b_type = LLLL_O_TEXT;
 					break;
 				case LLLL_O_MAX:
 					destroy_atom = cache->b_av;
-					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_NONE);
+					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_MAX);
 					llllobj_cache_text(cache, deparsed_aa);
 					cache->b_type = LLLL_O_MAX;
 					break;
@@ -2157,7 +2157,7 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 			switch (newtype) {
 				case LLLL_O_MAX:
 					destroy_aa = cache->b_aa;
-					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_NONE);
+					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_MAX);
 					llllobj_cache_text(cache, deparsed_aa);
 					cache->b_type = LLLL_O_MAX;
 					break;
@@ -2186,7 +2186,7 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 			switch (newtype) {
 				case LLLL_O_TEXT:
 					destroy_aa = cache->b_aa;
-					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_QUOTE);
+					deparsed_aa = llll_deparse_to_aa(cache->b_ll, LLLL_D_QUOTE | LLLL_D_MAX);
 					llllobj_cache_text(cache, deparsed_aa);
 					cache->b_type = LLLL_O_TEXT;
 					break;
@@ -2225,7 +2225,7 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 					phonenum = llll_phonenumber(empty_llll);
 					cache->b_ll = empty_llll;
 					llll_retain(empty_llll);
-					deparsed_aa = llll_deparse_to_aa(empty_llll, LLLL_D_QUOTE);
+					deparsed_aa = llll_deparse_to_aa(empty_llll, LLLL_D_QUOTE | LLLL_D_MAX);
 					llllobj_cache_text(cache, deparsed_aa);
 					cache->b_type = LLLL_O_TEXT;
 					break;
@@ -2233,7 +2233,7 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 					phonenum = llll_phonenumber(empty_llll);
 					cache->b_ll = empty_llll;
 					llll_retain(empty_llll);
-					deparsed_aa = llll_deparse_to_aa(empty_llll, LLLL_D_NONE);
+					deparsed_aa = llll_deparse_to_aa(empty_llll, LLLL_D_MAX);
 					llllobj_cache_text(cache, deparsed_aa);
 					cache->b_type = LLLL_O_TEXT;
 					break;

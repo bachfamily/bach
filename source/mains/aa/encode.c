@@ -148,7 +148,7 @@ void encode_anything(t_encode *x, t_symbol *msg, long ac, t_atom *av)
 	if (!ll)
 		return;
 	chunk_av = (t_atom *) bach_newptr(65536 * sizeof(t_atom));
-	data_ac = llll_deparse(ll, &data_av, 0, LLLL_D_QUOTE | LLLL_D_FLOAT64);
+	data_ac = llll_deparse(ll, &data_av, 0, LLLL_D_QUOTE | LLLL_D_MAX | LLLL_D_FLOAT64);
 	llll_free(ll);	
 	start = end = 0;
 	tot_chunks = 0;
