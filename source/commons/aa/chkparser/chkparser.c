@@ -413,56 +413,58 @@ static yyconst YY_CHAR yy_ec[256] =
 
 static yyconst YY_CHAR yy_meta[19] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
-        1,    2,    1,    1,    1,    2,    1,    1
+        1,    1,    1,    1,    1,    2,    1,    1,    1,    3,
+        1,    4,    1,    1,    1,    4,    1,    2
     } ;
 
-static yyconst flex_uint16_t yy_base[42] =
+static yyconst flex_uint16_t yy_base[43] =
     {   0,
-        0,    7,   73,   78,   78,   78,   78,   18,   62,   21,
-       35,   78,   61,    0,   60,   59,   26,   29,   34,   55,
+        0,    7,   73,   84,   84,   84,   84,   18,   62,   21,
+       35,   84,   61,    0,   60,   59,   26,   29,   34,   55,
        48,   36,   54,   52,   51,   50,   49,   47,   40,   46,
-       43,   39,   58,   42,   78,   37,   17,   78,   78,   75,
-        1
+       43,   39,   58,   42,   84,   37,   17,   84,   84,   75,
+       77,   80
     } ;
 
-static yyconst flex_int16_t yy_def[42] =
+static yyconst flex_int16_t yy_def[43] =
     {   0,
        40,   39,   39,   39,   39,   39,   39,   39,   39,   39,
        39,   39,   39,   10,   41,   41,   39,   39,   11,   39,
-       39,   39,   39,   39,   39,   39,   39,   39,   39,   39,
+       39,   39,   39,   39,   39,   39,   39,   42,   39,   39,
        39,   39,   39,   39,   39,   39,   39,   39,    0,   39,
-       39
+       39,   39
     } ;
 
-static yyconst flex_uint16_t yy_nxt[97] =
+static yyconst flex_uint16_t yy_nxt[103] =
     {   0,
-       39,    5,   22,    6,    6,   39,    7,    4,    5,    4,
+       39,    5,   39,    6,    6,   39,    7,    4,    5,    4,
         6,    6,    8,    7,    9,    4,   10,   11,   11,   12,
        11,   11,   11,    4,    4,   13,   37,   14,   16,   17,
        14,   23,   18,   38,   25,   24,   18,   19,   26,   27,
        20,   31,   29,   28,   21,   32,   37,   36,   32,   19,
        29,   37,   32,   30,   29,   33,   28,   21,   28,   26,
        26,   24,   29,   24,   21,   30,   34,   33,   15,   15,
-       15,   15,   39,   39,   35,    4,    4,    3,   39,   39,
+       15,   15,   39,   39,   35,    4,    4,    4,    4,   22,
+       22,   30,   30,    3,   39,   39,   39,   39,   39,   39,
        39,   39,   39,   39,   39,   39,   39,   39,   39,   39,
-       39,   39,   39,   39,   39,   39
 
+       39,   39
     } ;
 
-static yyconst flex_int16_t yy_chk[97] =
+static yyconst flex_int16_t yy_chk[103] =
     {   0,
-        0,    1,   41,    1,    1,    0,    1,    2,    2,    2,
+        0,    1,    0,    1,    1,    0,    1,    2,    2,    2,
         2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
         2,    2,    2,    2,    2,    8,   37,    8,   10,   10,
        10,   17,   10,   37,   18,   17,   10,   11,   18,   19,
        11,   22,   29,   19,   11,   22,   36,   34,   32,   11,
        21,   34,   31,   21,   29,   30,   28,   21,   27,   26,
        25,   24,   21,   23,   20,   21,   33,   33,   16,   15,
-       13,    9,    3,    0,   33,   40,   40,   39,   39,   39,
+       13,    9,    3,    0,   33,   40,   40,   40,   40,   41,
+       41,   42,   42,   39,   39,   39,   39,   39,   39,   39,
        39,   39,   39,   39,   39,   39,   39,   39,   39,   39,
-       39,   39,   39,   39,   39,   39
 
+       39,   39
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -485,7 +487,7 @@ static yyconst flex_int16_t yy_chk[97] =
     #include <ctype.h>
     #define parserpost printf
     #endif
-#line 489 "chkparser.c"
+#line 491 "chkparser.c"
 
 #define INITIAL 0
 
@@ -754,7 +756,7 @@ YY_DECL
     long *tct = yyextra;
 
 
-#line 758 "chkparser.c"
+#line 760 "chkparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -788,7 +790,7 @@ yy_match:
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 78 );
+		while ( yy_base[yy_current_state] != 84 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -907,7 +909,7 @@ YY_RULE_SETUP
 #line 91 "chkparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 911 "chkparser.c"
+#line 913 "chkparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

@@ -423,13 +423,13 @@ static yyconst YY_CHAR yy_meta[25] =
 
 static yyconst flex_uint16_t yy_base[74] =
     {   0,
-        0,    0,  121,    0,  173,   23,  173,  173,   22,  109,
-       29,   43,   29,   22,    0,   59,   30,   72,  114,   85,
-      113,  104,    0,   39,   57,   35,   45,   95,  103,  108,
-       52,    0,   91,   90,  105,  104,   93,  101,  131,    0,
-      100,   69,   56,   91,   90,   87,   86,   84,   83,   64,
-       81,    0,   71,  173,    0,  173,   79,   38,   74,    0,
-       69,    0,   17,   71,    0,  173,  145,  148,  152,  156,
+        0,    0,  123,    0,  173,   23,  173,  173,   22,  111,
+       29,   43,   29,   22,    0,   59,   30,   72,  117,   85,
+      116,  107,    0,   39,   57,   35,   45,   95,  106,  108,
+       52,    0,   95,   94,  107,  106,   95,  104,  131,    0,
+      103,   69,   56,   94,   93,   91,   87,   86,   69,   64,
+       84,    0,   72,  173,    0,  173,   71,   38,   74,    0,
+       83,    0,   17,   79,    0,  173,  145,  148,  152,  156,
       160,  164,  168
     } ;
 
@@ -454,13 +454,13 @@ static yyconst flex_uint16_t yy_nxt[198] =
        33,   27,   44,   37,   34,   45,   27,   28,   58,   24,
        29,   43,   46,   30,   15,   47,   43,   32,   32,   28,
        17,   18,   35,   57,   20,   20,   58,   24,   50,   43,
-       17,   17,   21,   17,   43,   38,   63,   17,   17,   64,
-       50,   64,   42,   61,   59,   39,   17,   17,   41,   58,
-       60,   59,   65,   49,   49,   62,   47,   47,   42,   28,
+       17,   17,   21,   17,   43,   38,   51,   17,   17,   49,
+       50,   58,   42,   61,   59,   39,   17,   17,   41,   64,
+       63,   60,   51,   64,   59,   62,   49,   47,   42,   28,
 
-       45,   45,   48,   56,   55,   49,   37,   54,   40,   53,
-       52,   28,   50,   30,   24,   51,   16,   40,   30,   24,
-       66,   66,   66,   66,   50,   66,   66,   66,   66,   66,
+       65,   47,   48,   45,   45,   49,   56,   55,   37,   54,
+       40,   28,   50,   53,   52,   51,   30,   24,   30,   16,
+       40,   24,   66,   66,   50,   66,   66,   66,   66,   66,
        66,   51,   17,   66,   66,   66,   17,   17,   66,   66,
        66,   66,   66,   66,   39,   15,   66,   15,   16,   16,
        16,   16,   31,   66,   31,   31,   17,   17,   17,   17,
@@ -480,13 +480,13 @@ static yyconst flex_int16_t yy_chk[198] =
        14,   11,   26,   17,   14,   26,   11,   12,   58,   24,
        12,   24,   27,   12,   31,   27,   24,   31,   31,   12,
        16,   16,   16,   43,   16,   16,   43,   25,   50,   25,
-       42,   42,   16,   18,   25,   18,   61,   18,   18,   61,
-       50,   64,   42,   59,   59,   18,   20,   20,   20,   57,
-       53,   51,   64,   49,   48,   59,   47,   46,   20,   28,
+       42,   42,   16,   18,   25,   18,   49,   18,   18,   49,
+       50,   57,   42,   59,   59,   18,   20,   20,   20,   64,
+       61,   53,   49,   61,   51,   59,   48,   47,   20,   28,
 
-       45,   44,   28,   41,   38,   28,   37,   36,   35,   34,
-       33,   28,   30,   29,   22,   30,   21,   19,   30,   10,
-        3,    0,    0,    0,   30,    0,    0,    0,    0,    0,
+       64,   46,   28,   45,   44,   28,   41,   38,   37,   36,
+       35,   28,   30,   34,   33,   30,   29,   22,   30,   21,
+       19,   10,    3,    0,   30,    0,    0,    0,    0,    0,
         0,   30,   39,    0,    0,    0,   39,   39,    0,    0,
         0,    0,    0,    0,   39,   67,    0,   67,   68,   68,
        68,   68,   69,    0,   69,   69,   70,   70,   70,   70,
@@ -933,32 +933,33 @@ case 8:
 YY_RULE_SETUP
 #line 84 "strparser.l"
 {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, NULL, 10), 1);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, NULL, 10), 1);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 94 "strparser.l"
+#line 95 "strparser.l"
 {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, &next, 10), 1);
-	alter /= strtol(next + 1, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, &next, 10), 1) / strtol(next + 1, NULL, 10);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 105 "strparser.l"
+#line 106 "strparser.l"
 {
     parserpost(" lex: BACKTICKED ELEMENT %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
@@ -967,7 +968,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 111 "strparser.l"
+#line 112 "strparser.l"
 {
     parserpost(" lex: QUOTED NON-WHITESPACED SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -977,7 +978,7 @@ YY_RULE_SETUP
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 117 "strparser.l"
+#line 118 "strparser.l"
 {
     parserpost(" lex: QUOTED WHITESPACED SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -986,7 +987,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 123 "strparser.l"
+#line 124 "strparser.l"
 {
     parserpost(" lex: null\n");
     return BACHNULL;
@@ -994,7 +995,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 128 "strparser.l"
+#line 129 "strparser.l"
 {
     parserpost(" lex: nil\n");
     return BACHNIL;
@@ -1003,14 +1004,14 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 133 "strparser.l"
+#line 134 "strparser.l"
 {
 	parserpost(" lex: Whitespace\n");
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 137 "strparser.l"
+#line 138 "strparser.l"
 {
     parserpost(" lex: SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -1019,10 +1020,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 143 "strparser.l"
+#line 144 "strparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1026 "strparser.c"
+#line 1027 "strparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2203,7 +2204,7 @@ void strparser_free (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 143 "strparser.l"
+#line 144 "strparser.l"
 
 
 

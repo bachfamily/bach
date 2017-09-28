@@ -150,7 +150,7 @@ t_pitch t_pitch::operator*(t_atom_long b) const
 
 t_pitch t_pitch::operator*(const t_rational &b) const
 {
-    return divdiv(b.inv());
+    return *this / b.inv();
 }
 
 t_pitch t_pitch::operator/(const t_atom_long b) const

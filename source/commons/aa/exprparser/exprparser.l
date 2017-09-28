@@ -215,15 +215,15 @@ ACCIDENTAL ([#bxdq]+)
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{INTEGER} {
 	long degree = t_pitch::text2degree(*yytext);
-	char *pos = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&pos);
-	long octave = strtol(pos, NULL, 10);
+	char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+	long octave = strtol(next, NULL, 10);
 	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{NOTENAME}{INTEGER}[-+]?{ACCIDENTAL} {
+{NOTENAME}[-+]?{INTEGER}{ACCIDENTAL} {
 	long degree = t_pitch::text2degree(*yytext);
 	char *acc;
 	long octave = strtol(yytext + 1, &acc, 10);
@@ -233,22 +233,24 @@ ACCIDENTAL ([#bxdq]+)
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{NOTENAME}[-+]?{INTEGER}[-+][0-9]+t {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, NULL, 10), 1);
+{NOTENAME}{ACCIDENTAL}?[-+]?{INTEGER}[-+][0-9]+t {
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, NULL, 10), 1);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{NOTENAME}{INTEGER}[-+][0-9]+[/][-+]?{INTEGER}t {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, &next, 10), 1);
-	alter /= strtol(next + 1, NULL, 10);
+{NOTENAME}{ACCIDENTAL}?[-+][0-9]+[/][-+]?{INTEGER}t {
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, &next, 10), 1) / strtol(next + 1, NULL, 10);
+
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));

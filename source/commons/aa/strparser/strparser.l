@@ -81,25 +81,26 @@ ACCIDENTAL ([#bxdq]+)
 	return PITCH;
 }
 
-{NOTENAME}{INTEGER}[+|-][0-9]+t {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, NULL, 10), 1);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, NULL, 10), 1);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 
-{NOTENAME}{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, &next, 10), 1);
-	alter /= strtol(next + 1, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, &next, 10), 1) / strtol(next + 1, NULL, 10);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 
 \`[^ \t\n\r\f\v]+ {

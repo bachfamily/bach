@@ -67,12 +67,12 @@ ACCIDENTAL ([#bxdq]+)
     return H_PITCH;
 }
 
-^{NOTENAME}{INTEGER}[+|-][0-9]+t {
+^{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
     parserpost("typecheck: pitch");
     return H_PITCH;
 }
 
-^{NOTENAME}{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+^{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
     parserpost("typecheck: pitch");
     return H_PITCH;
 }

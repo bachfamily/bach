@@ -436,12 +436,12 @@ static yyconst flex_uint16_t yy_base[133] =
       117,  123,  136,  138,  279,  294,  126,  308,  320,  334,
       151,  340,  155,  355,  370,  129,  168,  385,  394,  117,
         0,  408,  415,  110,  106,  176,  146,  161,  175,  188,
-      191,  192,   52,  199,  206,    0,    0,  207,  211,  230,
-      212,  430,  438,   96,   31,  231,  245,   83,   28,  445,
-      454,  257,   70,  469,  254,  217,  221,  475,  252,    0,
+      191,  190,   52,  199,  215,    0,    0,  202,  217,  230,
+      221,  430,  438,   96,   31,  217,  245,   83,   28,  445,
+      454,  257,   70,  469,  254,  234,  252,  475,  255,    0,
 
-       51,   36,    0,  266,    0,  277,  274,  559,  280,  281,
-      293,  559,  499,  502,  505,  508,  511,  514,  516,  519,
+       51,   36,    0,  283,    0,  279,  263,  559,  292,  293,
+      296,  559,  499,  502,  505,  508,  511,  514,  516,  519,
       522,  525,  528,  531,  534,  537,  540,  543,  546,  549,
       552,  555
     } ;
@@ -455,7 +455,7 @@ static yyconst flex_int16_t yy_def[133] =
         9,    9,   27,    9,  123,  124,   27,  121,  127,  114,
       128,  121,    9,  129,  122,    9,  128,  116,  130,   45,
        46,  114,  130,   46,   27,    9,    9,    9,    9,    9,
-        9,    9,   37,    9,  125,  131,  131,    9,    9,    9,
+        9,   37,   37,    9,  125,  131,  131,    9,    9,    9,
         9,  116,  114,  118,  132,  127,  114,  119,  128,  116,
       129,  116,  119,  130,  114,    9,    9,    9,    9,  118,
 
@@ -487,21 +487,21 @@ static yyconst flex_uint16_t yy_nxt[586] =
        55,   57,   57,   54,   58,   15,   89,   15,  112,   59,
        85,   15,   88,   68,  112,   60,   48,   49,   48,   62,
       112,   63,   63,   89,   96,   15,   15,   70,   97,  112,
-       64,   22,   22,   23,   65,  112,   45,   45,   15,   46,
+       64,   22,   22,   23,   65,   15,   45,   45,   15,   46,
 
-       70,   15,   15,   72,   72,   47,   32,   33,   19,   15,
-       34,   98,   76,   76,  112,   34,   15,   15,   31,   15,
-       66,   15,   15,   15,   15,   66,   15,   15,   31,   97,
-       66,   15,   99,   97,   81,   66,   35,   85,   85,   71,
-       15,   15,   15,   72,  112,  112,   86,   19,  112,   35,
+       70,   15,   72,   72,  112,   47,   32,   33,   15,   15,
+       34,   98,   15,  112,   15,   34,   15,   19,   31,  112,
+       66,   76,   76,   85,   85,   66,   15,   15,   31,   15,
+       66,   15,   86,   15,   81,   66,   35,  112,   99,   71,
+       15,   15,   15,   72,   15,  112,   97,   19,  112,   35,
        73,   20,   20,   74,  112,   15,   19,   37,   28,   28,
-       20,   20,   15,   73,   15,  112,   28,   28,   28,  112,
-       74,   39,   16,  112,  112,   28,   40,   40,  112,   39,
-       57,   57,   54,   82,   15,  109,   15,   15,   59,  110,
-       15,   15,  110,  110,   60,   48,   49,   48,   83,  112,
+       20,   20,   15,   73,   97,   15,   28,   15,  112,  112,
+       74,   39,   16,   15,  112,   15,   40,   40,  112,   39,
+       57,   57,   54,   82,   28,   28,  112,  109,   59,   15,
+      112,  110,   28,  112,   60,   48,   49,   48,   83,  112,
 
-       63,   63,  112,   15,  111,   15,  112,  112,  112,   64,
-       49,  112,   50,  112,   51,   51,  112,  112,  112,  112,
+       63,   63,   15,   15,  110,  110,   15,  112,   15,   64,
+       49,  112,   50,  112,   51,   51,  111,  112,  112,  112,
       112,  112,  112,   52,   84,  112,   85,   85,  112,  112,
       112,  112,  112,  112,  112,   86,   19,  112,   87,  112,
        20,   20,   49,  112,  112,  112,   51,   51,  112,  112,
@@ -555,21 +555,21 @@ static yyconst flex_int16_t yy_chk[586] =
        23,   25,   25,   25,   25,   53,   51,   53,    0,   25,
        57,   68,   57,   68,    0,   25,   26,   26,   26,   26,
         0,   26,   26,   57,   66,   69,   66,   69,   66,    0,
-       26,   27,   27,   27,   27,    0,   27,   27,   70,   27,
+       26,   27,   27,   27,   27,   72,   27,   27,   70,   27,
 
-       70,   71,   72,   71,   72,   27,   30,   30,   75,   74,
-       30,   74,   75,   75,    0,   30,   31,   78,   31,   78,
-       31,   79,   81,   79,   81,   31,   32,   96,   32,   96,
-       32,   97,   79,   97,   80,   32,   35,   86,   86,   35,
-       80,   35,   80,   35,    0,    0,   86,   87,    0,   35,
+       70,   71,   72,   71,    0,   27,   30,   30,   72,   74,
+       30,   74,   78,    0,   78,   30,   31,   75,   31,    0,
+       31,   75,   75,   86,   86,   31,   32,   79,   32,   79,
+       32,   81,   86,   81,   80,   32,   35,    0,   79,   35,
+       80,   35,   80,   35,   96,    0,   96,   87,    0,   35,
        37,   87,   87,   37,    0,   37,   95,   37,   92,   92,
-       95,   95,   99,   37,   99,    0,   92,  104,  104,    0,
-       37,   38,   38,    0,    0,  104,   38,   38,    0,   38,
-       45,   45,   45,   45,  107,  106,  107,  106,   45,  106,
-      109,  110,  109,  110,   45,   46,   46,   46,   46,    0,
+       95,   95,   97,   37,   97,   99,   92,   99,    0,    0,
+       37,   38,   38,  107,    0,  107,   38,   38,    0,   38,
+       45,   45,   45,   45,  104,  104,    0,  106,   45,  106,
+        0,  106,  104,    0,   45,   46,   46,   46,   46,    0,
 
-       46,   46,    0,  111,  110,  111,    0,    0,    0,   46,
-       48,    0,   48,    0,   48,   48,    0,    0,    0,    0,
+       46,   46,  109,  110,  109,  110,  111,    0,  111,   46,
+       48,    0,   48,    0,   48,   48,  110,    0,    0,    0,
         0,    0,    0,   48,   49,    0,   49,   49,    0,    0,
         0,    0,    0,    0,    0,   49,   50,    0,   50,    0,
        50,   50,   52,    0,    0,    0,   52,   52,    0,    0,
@@ -610,8 +610,8 @@ static yyconst flex_int16_t yy_chk[586] =
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "symparser.l"
 #line 13 "symparser.l"
-	#define BACH_MAX
-	#ifdef BACH_MAX
+    #define BACH_MAX
+    #ifdef BACH_MAX
     #include "llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
@@ -624,7 +624,7 @@ static yyconst flex_int16_t yy_chk[586] =
     
     #include "symparser.tab.h"
     #define YY_DECL int symparser_lex \
-            (YYSTYPE *yylval_param, yyscan_t yyscanner)
+    (YYSTYPE *yylval_param, yyscan_t yyscanner)
 #line 629 "symparser.c"
 
 #define INITIAL 0
@@ -990,8 +990,8 @@ YY_RULE_SETUP
 #line 48 "symparser.l"
 {
     char *textend;
-	long num = strtol(yytext, &textend, 10);
-	long den = strtol(textend + 1, NULL, 10);
+    long num = strtol(yytext, &textend, 10);
+    long den = strtol(textend + 1, NULL, 10);
     parserpost(" lex: RATIONAL %ld / %ld\n", num, den);
     yylval->r = t_rational(num, den);
     return RAT;
@@ -1010,58 +1010,59 @@ case 6:
 YY_RULE_SETUP
 #line 63 "symparser.l"
 {
-	long degree = t_pitch::text2degree(*yytext);
-	char *pos = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&pos);
-	long octave = strtol(pos, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, NULL, 10);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 73 "symparser.l"
 {
-	long degree = t_pitch::text2degree(*yytext);
-	char *acc;
-	long octave = strtol(yytext + 1, &acc, 10);
-	t_shortRational alter = t_pitch::text2alter(&acc);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+    long degree = t_pitch::text2degree(*yytext);
+    char *next;
+    long octave = strtol(yytext + 1, &next, 10);
+    t_shortRational alter = t_pitch::text2alter(&next);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 83 "symparser.l"
 {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, NULL, 10), 1);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, NULL, 10), 1);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 93 "symparser.l"
+#line 94 "symparser.l"
 {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, &next, 10), 1);
-	alter /= strtol(next + 1, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, &next, 10), 1) / strtol(next + 1, NULL, 10);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 104 "symparser.l"
+#line 105 "symparser.l"
 {
     parserpost(" lex: BACKTICKED ELEMENT %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
@@ -1070,16 +1071,16 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 110 "symparser.l"
+#line 111 "symparser.l"
 {
-    parserpost(" lex: QUOTED EMPTY SYMBOL %s\n", yytext);
-    yylval->sym = gensym("");
-    return SYMBOL;
+parserpost(" lex: QUOTED EMPTY SYMBOL %s\n", yytext);
+yylval->sym = gensym("");
+return SYMBOL;
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 116 "symparser.l"
+#line 117 "symparser.l"
 {
     parserpost(" lex: QUOTED NON-WHITESPACED SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -1089,7 +1090,7 @@ YY_RULE_SETUP
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 122 "symparser.l"
+#line 123 "symparser.l"
 {
     parserpost(" lex: QUOTED WHITESPACED SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -1098,7 +1099,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 128 "symparser.l"
+#line 129 "symparser.l"
 {
     parserpost(" lex: null\n");
     return BACHNULL;
@@ -1106,7 +1107,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 133 "symparser.l"
+#line 134 "symparser.l"
 {
     parserpost(" lex: nil\n");
     return BACHNIL;
@@ -1115,7 +1116,7 @@ YY_RULE_SETUP
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
-#line 138 "symparser.l"
+#line 139 "symparser.l"
 {
     parserpost(" lex: SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -1125,7 +1126,7 @@ YY_RULE_SETUP
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 144 "symparser.l"
+#line 145 "symparser.l"
 {
     parserpost(" lex: SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -1134,10 +1135,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 150 "symparser.l"
+#line 151 "symparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1141 "symparser.c"
+#line 1142 "symparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2318,14 +2319,14 @@ void symparser_free (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 150 "symparser.l"
+#line 151 "symparser.l"
 
 
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)
 {
-	symparser_lex();
+    symparser_lex();
 }
 #endif
 

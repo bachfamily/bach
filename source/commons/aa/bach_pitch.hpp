@@ -163,8 +163,6 @@ public:
         t_rational res = *this / b;
         return res.num() / res.den();
     };
-    t_pitch divdiv(const t_rational &b) const;
-    t_pitch divdiv(const t_atom_long b) const;
     t_pitch operator%(const t_atom_long b) const;
     t_pitch operator%(const t_pitch &b) const;
     
@@ -173,6 +171,8 @@ public:
     t_pitch operator+=(const t_pitch &b) { return *this = *this + b; }
     t_pitch operator-=(const t_pitch &b) { return *this = *this - b; }
     t_pitch operator*=(t_atom_long b) { return *this = *this * b; }
+    t_pitch operator/=(t_atom_long b) { return *this = *this / b; }
+    t_pitch operator/=(t_rational b) { return *this = *this / b; }
     t_pitch operator%=(const t_pitch &b) { return *this = *this % b; }
 
     t_atom_short sgn() const {

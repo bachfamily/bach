@@ -10,8 +10,8 @@ NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq]+)
 
 %{
-	#define BACH_MAX
-	#ifdef BACH_MAX
+    #define BACH_MAX
+    #ifdef BACH_MAX
     #include "llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
@@ -24,7 +24,7 @@ ACCIDENTAL ([#bxdq]+)
     
     #include "symparser.tab.h"
     #define YY_DECL int yylex \
-            (YYSTYPE *yylval_param, yyscan_t yyscanner)
+    (YYSTYPE *yylval_param, yyscan_t yyscanner)
 %}
 
 %%
@@ -47,8 +47,8 @@ ACCIDENTAL ([#bxdq]+)
 
 {RATIONAL} {
     char *textend;
-	long num = strtol(yytext, &textend, 10);
-	long den = strtol(textend + 1, NULL, 10);
+    long num = strtol(yytext, &textend, 10);
+    long den = strtol(textend + 1, NULL, 10);
     parserpost(" lex: RATIONAL %ld / %ld\n", num, den);
     yylval->r = t_rational(num, den);
     return RAT;
@@ -61,44 +61,45 @@ ACCIDENTAL ([#bxdq]+)
 }
 
 {NOTENAME}{ACCIDENTAL}?{INTEGER} {
-	long degree = t_pitch::text2degree(*yytext);
-	char *pos = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&pos);
-	long octave = strtol(pos, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, NULL, 10);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 
 {NOTENAME}{INTEGER}{ACCIDENTAL} {
-	long degree = t_pitch::text2degree(*yytext);
-	char *acc;
-	long octave = strtol(yytext + 1, &acc, 10);
-	t_shortRational alter = t_pitch::text2alter(&acc);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+    long degree = t_pitch::text2degree(*yytext);
+    char *next;
+    long octave = strtol(yytext + 1, &next, 10);
+    t_shortRational alter = t_pitch::text2alter(&next);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 
-{NOTENAME}{INTEGER}[+|-][0-9]+t {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, NULL, 10), 1);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, NULL, 10), 1);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 
-{NOTENAME}{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, &next, 10), 1);
-	alter /= strtol(next + 1, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-	yylval->p = t_pitch(degree, alter, octave);
-	return PITCH;
+{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, &next, 10), 1) / strtol(next + 1, NULL, 10);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    yylval->p = t_pitch(degree, alter, octave);
+    return PITCH;
 }
 
 \`.* {
@@ -108,9 +109,9 @@ ACCIDENTAL ([#bxdq]+)
 }
 
 \"\" {
-    parserpost(" lex: QUOTED EMPTY SYMBOL %s\n", yytext);
-    yylval->sym = gensym("");
-    return SYMBOL;
+parserpost(" lex: QUOTED EMPTY SYMBOL %s\n", yytext);
+yylval->sym = gensym("");
+return SYMBOL;
 }
 
 ["]("\\\""|[^"` \t\n\r\f\v])("\\\""|[^" \t\n\r\f\v])*[^\\ \t\n\r\f\v]["] {
@@ -152,7 +153,7 @@ ACCIDENTAL ([#bxdq]+)
 #ifndef BACH_MAX
 int main(int argc, char **argv)
 {
-	yylex();
+    yylex();
 }
 #endif
 
