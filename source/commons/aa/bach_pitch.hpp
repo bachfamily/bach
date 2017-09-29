@@ -60,12 +60,16 @@ public:
     static const t_atom_short degree2PC[];
     static const t_atom_short PC2degree[];
     static const char degree2name[];
+    
     static const t_shortRational dblsharp;
     static const t_shortRational sharp;
     static const t_shortRational qrtrsharp;
+    static const t_shortRational eighthsharp;
+    
     static const t_shortRational natural;
-    static const t_shortRational qrtrflat;
     static const t_shortRational flat;
+    static const t_shortRational qrtrflat;
+    static const t_shortRational eighthflat;
     static t_pitchMatrices &pm;
 
 private:
@@ -268,11 +272,17 @@ public:
         int go = 1;
         while (go) {
             switch (**pos) {
-                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
-                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
                 case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
+                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                    
+                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                    
                 case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
                 case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                    
+                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
+                case 'v':	alter += t_pitch::eighthflat;		(*pos)++;	break;
+                    
                 default:	go = 0;	break;
             }
         }

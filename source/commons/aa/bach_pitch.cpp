@@ -11,9 +11,12 @@
 const t_shortRational t_pitch::dblsharp = t_shortRational(1);
 const t_shortRational t_pitch::sharp = t_shortRational(1, 2);
 const t_shortRational t_pitch::qrtrsharp = t_shortRational(1, 4);
+const t_shortRational t_pitch::eighthsharp = t_shortRational(1, 8);
+
 const t_shortRational t_pitch::natural = t_shortRational(0, 1);
-const t_shortRational t_pitch::qrtrflat = t_shortRational(-1, 4);
 const t_shortRational t_pitch::flat = t_shortRational(-1, 2);
+const t_shortRational t_pitch::qrtrflat = t_shortRational(-1, 4);
+const t_shortRational t_pitch::eighthflat = t_shortRational(-1, 8);
 
 const t_pitch t_pitch::NaP = t_pitch(0, t_shortRational(0, 0), 0); // not a pitch
 const t_pitch t_pitch::middleC = t_pitch(0, natural, 5); // middle C
@@ -191,30 +194,53 @@ std::string t_pitch::toString(char include_octave)
     if (p_alter == natural) {
         if (include_octave)
             s += std::to_string(p_octave);
-    } else if (p_alter.den() == 1 || p_alter.den() == 2 || p_alter.den() == 4) {
+    } else if (p_alter.den() == 1 || p_alter.den() == 2 || p_alter.den() == 4 || p_alter.den() == 8) {
         if (p_alter > natural) { // sharps
             t_shortRational remainder = p_alter;
+            
+/* // this is probably not convenient, as it complicates simple cases
+            s += std::string("x", t_atom_long(remainder / dblsharp));
+            remainder %= dblsharp;
+            
+            s += std::string("#", t_atom_long(remainder / sharp));
+            remainder %= sharp;
+            
+            s += std::string("q", t_atom_long(remainder / qrtrsharp));
+            remainder %= qrtrsharp;
+            
+            s += std::string("^", t_atom_long(remainder / eighthsharp));
+            remainder %= eighthsharp;
+*/
+
             while (remainder != natural) {
                 if (remainder >= dblsharp) {
-                    s += 'x';
+                    s += "x";
                     remainder -= dblsharp;
                 } else if (remainder >= sharp) {
-                    s += '#';
+                    s += "#";
                     remainder -= sharp;
                 } else if (remainder >= qrtrsharp) {
-                    s += 'q';
+                    s += "q";
                     remainder -= qrtrsharp;
+                } else if (remainder >= eighthsharp) {
+                    s += "^";
+                    remainder -= eighthsharp;
                 }
             }
+
+            
         } else { // flats
             t_shortRational remainder = p_alter;
             while (remainder != natural) {
                 if (remainder <= flat) {
-                    s += 'b';
+                    s += "b";
                     remainder -= flat;
                 } else if (remainder <= qrtrflat) {
-                    s += 'd';
+                    s += "d";
                     remainder -= qrtrflat;
+                } else if (remainder <= eighthflat) {
+                    s += "v";
+                    remainder -= eighthflat;
                 }
             }
         }
@@ -233,7 +259,6 @@ std::string t_pitch::toString(char include_octave)
                 s += p_alter.to_string() + "t";
         }
     }
-    
     return s;
 }
 

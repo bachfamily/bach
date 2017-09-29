@@ -609,6 +609,7 @@
 		91A5EC191F7CE55D0052FBF6 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		91A5EC1A1F7CE55D0052FBF6 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		91A5EC221F7CE5EF0052FBF6 /* backtick.c in Sources */ = {isa = PBXBuildFile; fileRef = 91A5EC211F7CE5EF0052FBF6 /* backtick.c */; };
+		91A5EC4A1F7D89FD0052FBF6 /* pitchparser.c in Sources */ = {isa = PBXBuildFile; fileRef = 91A5EC3D1F7D68150052FBF6 /* pitchparser.c */; };
 		91AF1C5017BCFA7E0071A497 /* bach_128bit.h in Headers */ = {isa = PBXBuildFile; fileRef = 91AF1C4E17BCFA7E0071A497 /* bach_128bit.h */; };
 		91AF1C5117BCFA7E0071A497 /* bach_128bit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91AF1C4F17BCFA7E0071A497 /* bach_128bit.cpp */; };
 		91B0EB78150BD3A70069A206 /* uislot.c in Sources */ = {isa = PBXBuildFile; fileRef = 91B0EB54150BD3360069A206 /* uislot.c */; };
@@ -2326,6 +2327,13 @@
 			remoteGlobalIDString = 91A5EC111F7CE55D0052FBF6;
 			remoteInfo = bach.backtick;
 		};
+		91A5EC481F7D89D10052FBF6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91A5EC441F7D89530052FBF6;
+			remoteInfo = bach_pitchparser;
+		};
 		91B0EB7F150BD3D50069A206 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -3188,6 +3196,11 @@
 		91A5EC1F1F7CE55D0052FBF6 /* bach.backtick.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.backtick.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91A5EC201F7CE55E0052FBF6 /* bach.bachtree2omtree copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.bachtree2omtree copy-Info.plist"; path = "/Users/andreaagostini/Documents/Max 7/Packages/bach/source/xcproj/bach.bachtree2omtree copy-Info.plist"; sourceTree = "<absolute>"; };
 		91A5EC211F7CE5EF0052FBF6 /* backtick.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = backtick.c; sourceTree = "<group>"; };
+		91A5EC3C1F7D68150052FBF6 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		91A5EC3D1F7D68150052FBF6 /* pitchparser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pitchparser.c; sourceTree = "<group>"; };
+		91A5EC3E1F7D68150052FBF6 /* pitchparser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pitchparser.h; sourceTree = "<group>"; };
+		91A5EC3F1F7D68150052FBF6 /* pitchparser.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = pitchparser.l; sourceTree = "<group>"; };
+		91A5EC401F7D68150052FBF6 /* pitchparser.lex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pitchparser.lex.h; sourceTree = "<group>"; };
 		91AF1C4E17BCFA7E0071A497 /* bach_128bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_128bit.h; sourceTree = "<group>"; };
 		91AF1C4F17BCFA7E0071A497 /* bach_128bit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bach_128bit.cpp; sourceTree = "<group>"; };
 		91B0EA88150BD29B0069A206 /* bach_math_utilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_math_utilities.c; sourceTree = "<group>"; };
@@ -5449,6 +5462,7 @@
 		918A53BC131AD05D00D3993D /* aa */ = {
 			isa = PBXGroup;
 			children = (
+				91A5EC3B1F7D67D40052FBF6 /* pitchparser */,
 				91BCCC561F6029AE002D8BE2 /* exprparser */,
 				918055DC1F55C61500BCB4AB /* strparser */,
 				91B62BAD1F4EFC4900B9FC63 /* symparser */,
@@ -5529,6 +5543,18 @@
 				91DB2EAA1BBF1CCB003DCC81 /* spectral.c */,
 			);
 			path = dg;
+			sourceTree = "<group>";
+		};
+		91A5EC3B1F7D67D40052FBF6 /* pitchparser */ = {
+			isa = PBXGroup;
+			children = (
+				91A5EC3E1F7D68150052FBF6 /* pitchparser.h */,
+				91A5EC3F1F7D68150052FBF6 /* pitchparser.l */,
+				91A5EC3D1F7D68150052FBF6 /* pitchparser.c */,
+				91A5EC401F7D68150052FBF6 /* pitchparser.lex.h */,
+				91A5EC3C1F7D68150052FBF6 /* makefile */,
+			);
+			path = pitchparser;
 			sourceTree = "<group>";
 		};
 		91B62BAD1F4EFC4900B9FC63 /* symparser */ = {
@@ -6879,6 +6905,20 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXLegacyTarget section */
+		91A5EC441F7D89530052FBF6 /* bach_pitchparser */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 91A5EC451F7D89530052FBF6 /* Build configuration list for PBXLegacyTarget "bach_pitchparser" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "~/Documents/Max 7/Packages/bach/source/commons/aa/pitchparser";
+			dependencies = (
+			);
+			name = bach_pitchparser;
+			passBuildSettingsInEnvironment = 1;
+			productName = bach_symparser;
+		};
 		91BCCC0B1F56A5F8002D8BE2 /* bach_symparser */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = "$(ACTION)";
@@ -7870,6 +7910,7 @@
 				91BCCC101F56A60B002D8BE2 /* PBXTargetDependency */,
 				91BCCC541F56E42A002D8BE2 /* PBXTargetDependency */,
 				91BCCC641F602B49002D8BE2 /* PBXTargetDependency */,
+				91A5EC491F7D89D10052FBF6 /* PBXTargetDependency */,
 			);
 			name = lib_bach;
 			productName = _lib_everything;
@@ -9687,6 +9728,7 @@
 				91D7CAEF1233DDD600D767D4 /* bach.lt */,
 				910B177D19920899003F580D /* bach.mapelem */,
 				9108DB46145D605000C6289F /* bach.mc2n */,
+				1ED51E0B1F73F5940021C2D5 /* bach.mc2p */,
 				918C3BB5124A512D003D216B /* bach.mdelace */,
 				91D18AA2130EC49F00A2E668 /* bach.minfo */,
 				91D7CB801233E10500D767D4 /* bach.minmax */,
@@ -9698,6 +9740,7 @@
 				91D7C7DF1233986600D767D4 /* bach.nth */,
 				1E5F43501526109A0085FA87 /* bach.omtree2bachtree */,
 				91D7CBC51233E54D00D767D4 /* bach.oneperm */,
+				1ED51E1B1F73F5B40021C2D5 /* bach.p2mc */,
 				91BFBF8417E04F46000AC715 /* bach.pack */,
 				91C479741D312C8700FBC195 /* bach.pad */,
 				919BF80D1E01AB0200CDEA02 /* bach.partition */,
@@ -9755,8 +9798,7 @@
 				91BCCC111F56A80A002D8BE2 /* bach_strparser */,
 				91BCCC431F56CE4C002D8BE2 /* bach_chkparser */,
 				91BCCC5F1F602A62002D8BE2 /* bach_exprparser */,
-				1ED51E0B1F73F5940021C2D5 /* bach.mc2p */,
-				1ED51E1B1F73F5B40021C2D5 /* bach.p2mc */,
+				91A5EC441F7D89530052FBF6 /* bach_pitchparser */,
 			);
 		};
 /* End PBXProject section */
@@ -12087,6 +12129,7 @@
 				91C6047218C0D9F50027BB79 /* SdifTextConv.c in Sources */,
 				91C6047318C0D9F50027BB79 /* SdifTimePosition.c in Sources */,
 				91FE0ED1190AAB57007B6BED /* llll_comparisons.c in Sources */,
+				91A5EC4A1F7D89FD0052FBF6 /* pitchparser.c in Sources */,
 				910400B21C147F5C0072277C /* gpc.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -13838,6 +13881,11 @@
 			isa = PBXTargetDependency;
 			target = 91A5EC111F7CE55D0052FBF6 /* bach.backtick */;
 			targetProxy = 91A5EC231F7D04DD0052FBF6 /* PBXContainerItemProxy */;
+		};
+		91A5EC491F7D89D10052FBF6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 91A5EC441F7D89530052FBF6 /* bach_pitchparser */;
+			targetProxy = 91A5EC481F7D89D10052FBF6 /* PBXContainerItemProxy */;
 		};
 		91B0EB80150BD3D50069A206 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -15963,6 +16011,87 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INFOPLIST_FILE = "bach.bachtree2omtree copy-Info.plist";
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
+		91A5EC461F7D89530052FBF6 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		91A5EC471F7D89530052FBF6 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Deployment;
@@ -19415,6 +19544,15 @@
 			buildConfigurations = (
 				91A5EC1D1F7CE55D0052FBF6 /* Development */,
 				91A5EC1E1F7CE55D0052FBF6 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		91A5EC451F7D89530052FBF6 /* Build configuration list for PBXLegacyTarget "bach_pitchparser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91A5EC461F7D89530052FBF6 /* Development */,
+				91A5EC471F7D89530052FBF6 /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;

@@ -1,6 +1,6 @@
-#line 2 "exprparser.c"
+#line 2 "pitchparser.c"
 
-#line 4 "exprparser.c"
+#line 4 "pitchparser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -153,7 +153,7 @@ typedef void* yyscan_t;
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
 
 /* Special action meaning "start processing a new file". */
-#define YY_NEW_FILE exprparser_restart(yyin ,yyscanner )
+#define YY_NEW_FILE pitchparser_restart(yyin ,yyscanner )
 
 #define YY_END_OF_BUFFER_CHAR 0
 
@@ -264,7 +264,7 @@ struct yy_buffer_state
 	 * possible backing-up.
 	 *
 	 * When we actually see the EOF, we change the status to "new"
-	 * (via exprparser_restart()), so that the user can continue scanning by
+	 * (via pitchparser_restart()), so that the user can continue scanning by
 	 * just pointing yyin at a new input file.
 	 */
 #define YY_BUFFER_EOF_PENDING 2
@@ -287,36 +287,36 @@ struct yy_buffer_state
  */
 #define YY_CURRENT_BUFFER_LVALUE yyg->yy_buffer_stack[yyg->yy_buffer_stack_top]
 
-void exprparser_restart (FILE *input_file ,yyscan_t yyscanner );
-void exprparser__switch_to_buffer (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
-YY_BUFFER_STATE exprparser__create_buffer (FILE *file,int size ,yyscan_t yyscanner );
-void exprparser__delete_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
-void exprparser__flush_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
-void exprparser_push_buffer_state (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
-void exprparser_pop_buffer_state (yyscan_t yyscanner );
+void pitchparser_restart (FILE *input_file ,yyscan_t yyscanner );
+void pitchparser__switch_to_buffer (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
+YY_BUFFER_STATE pitchparser__create_buffer (FILE *file,int size ,yyscan_t yyscanner );
+void pitchparser__delete_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
+void pitchparser__flush_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
+void pitchparser_push_buffer_state (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
+void pitchparser_pop_buffer_state (yyscan_t yyscanner );
 
-static void exprparser_ensure_buffer_stack (yyscan_t yyscanner );
-static void exprparser__load_buffer_state (yyscan_t yyscanner );
-static void exprparser__init_buffer (YY_BUFFER_STATE b,FILE *file ,yyscan_t yyscanner );
+static void pitchparser_ensure_buffer_stack (yyscan_t yyscanner );
+static void pitchparser__load_buffer_state (yyscan_t yyscanner );
+static void pitchparser__init_buffer (YY_BUFFER_STATE b,FILE *file ,yyscan_t yyscanner );
 
-#define YY_FLUSH_BUFFER exprparser__flush_buffer(YY_CURRENT_BUFFER ,yyscanner)
+#define YY_FLUSH_BUFFER pitchparser__flush_buffer(YY_CURRENT_BUFFER ,yyscanner)
 
-YY_BUFFER_STATE exprparser__scan_buffer (char *base,yy_size_t size ,yyscan_t yyscanner );
-YY_BUFFER_STATE exprparser__scan_string (yyconst char *yy_str ,yyscan_t yyscanner );
-YY_BUFFER_STATE exprparser__scan_bytes (yyconst char *bytes,yy_size_t len ,yyscan_t yyscanner );
+YY_BUFFER_STATE pitchparser__scan_buffer (char *base,yy_size_t size ,yyscan_t yyscanner );
+YY_BUFFER_STATE pitchparser__scan_string (yyconst char *yy_str ,yyscan_t yyscanner );
+YY_BUFFER_STATE pitchparser__scan_bytes (yyconst char *bytes,yy_size_t len ,yyscan_t yyscanner );
 
-void *exprparser_alloc (yy_size_t ,yyscan_t yyscanner );
-void *exprparser_realloc (void *,yy_size_t ,yyscan_t yyscanner );
-void exprparser_free (void * ,yyscan_t yyscanner );
+void *pitchparser_alloc (yy_size_t ,yyscan_t yyscanner );
+void *pitchparser_realloc (void *,yy_size_t ,yyscan_t yyscanner );
+void pitchparser_free (void * ,yyscan_t yyscanner );
 
-#define yy_new_buffer exprparser__create_buffer
+#define yy_new_buffer pitchparser__create_buffer
 
 #define yy_set_interactive(is_interactive) \
 	{ \
 	if ( ! YY_CURRENT_BUFFER ){ \
-        exprparser_ensure_buffer_stack (yyscanner); \
+        pitchparser_ensure_buffer_stack (yyscanner); \
 		YY_CURRENT_BUFFER_LVALUE =    \
-            exprparser__create_buffer(yyin,YY_BUF_SIZE ,yyscanner); \
+            pitchparser__create_buffer(yyin,YY_BUF_SIZE ,yyscanner); \
 	} \
 	YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
 	}
@@ -324,9 +324,9 @@ void exprparser_free (void * ,yyscan_t yyscanner );
 #define yy_set_bol(at_bol) \
 	{ \
 	if ( ! YY_CURRENT_BUFFER ){\
-        exprparser_ensure_buffer_stack (yyscanner); \
+        pitchparser_ensure_buffer_stack (yyscanner); \
 		YY_CURRENT_BUFFER_LVALUE =    \
-            exprparser__create_buffer(yyin,YY_BUF_SIZE ,yyscanner); \
+            pitchparser__create_buffer(yyin,YY_BUF_SIZE ,yyscanner); \
 	} \
 	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
 	}
@@ -335,7 +335,7 @@ void exprparser_free (void * ,yyscan_t yyscanner );
 
 /* Begin user sect3 */
 
-#define exprparser_wrap(yyscanner) (/*CONSTCOND*/1)
+#define pitchparser_wrap(yyscanner) (/*CONSTCOND*/1)
 #define YY_SKIP_YYWRAP
 
 typedef unsigned char YY_CHAR;
@@ -362,8 +362,8 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 82
-#define YY_END_OF_BUFFER 83
+#define YY_NUM_RULES 7
+#define YY_END_OF_BUFFER 8
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -371,45 +371,29 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[177] =
+static yyconst flex_int16_t yy_accept[25] =
     {   0,
-        0,    0,    0,    0,   83,   81,   80,   80,   12,   81,
-       25,    7,    1,    2,   23,   81,    3,   81,   81,   26,
-       32,   17,   81,   20,   79,   79,    9,   79,   79,   79,
-       79,   79,   79,   79,   79,   79,   79,   79,   79,   79,
-       79,   42,    5,   11,   28,   30,   13,    0,    8,   24,
-       29,   31,   34,   27,   34,    0,   32,    0,   39,   18,
-       19,   15,   22,   21,    0,    0,   35,   79,   79,   10,
-       79,   79,   79,   79,   79,   79,   79,   79,   79,   79,
-       79,   79,   79,   79,   79,   79,   79,   79,   79,   79,
-       79,   79,   79,   79,    6,   14,    4,    0,   41,    0,
-
-       33,    0,   34,   16,    0,   35,   36,    0,   53,   79,
-       79,   79,   79,   79,   43,   52,   46,   79,   79,   79,
-       49,   47,   55,   51,   48,   79,   50,   79,   54,   44,
-       79,   45,   79,    0,   34,   40,    0,   56,   57,   58,
-       79,   65,   59,   62,   79,   79,   66,   79,    0,   63,
-       79,   79,   60,   64,   61,   79,    0,   37,   68,   69,
-       67,   70,   79,   76,   73,   72,   71,   79,   74,   75,
-        0,    0,   78,   77,   38,    0
+        0,    0,    8,    5,    6,    5,    5,    0,    0,    0,
+        0,    0,    1,    0,    0,    1,    2,    0,    0,    3,
+        0,    0,    4,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    4,    5,    1,    6,    7,    8,    9,    1,   10,
-       11,   12,   13,   14,   15,   16,   17,   18,   19,   20,
-       21,   21,   21,   21,   21,   21,   21,    1,    1,   22,
-       23,   24,    1,    1,   25,   25,   25,   25,   26,   25,
-       25,   27,   27,   27,   27,   27,   27,   27,   27,   27,
-       27,   27,   27,   27,   27,   27,   27,   27,   27,   27,
-        1,    1,    1,   28,   29,    1,   30,   31,   32,   33,
+        1,    1,    1,    1,    3,    1,    1,    1,    1,    1,
+        1,    1,    4,    1,    4,    1,    5,    6,    6,    6,
+        6,    6,    6,    6,    6,    6,    6,    1,    1,    1,
+        1,    1,    1,    1,    7,    7,    7,    7,    7,    7,
+        7,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    3,    1,    1,    8,    9,    8,    9,
 
-       34,   35,   36,   37,   38,   39,   39,   40,   41,   42,
-       43,   44,   45,   46,   47,   48,   49,   50,   51,   52,
-       53,   39,    1,   54,    1,   55,    1,    1,    1,    1,
+        8,    8,    8,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    3,    1,    1,   10,    1,    3,    1,    3,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -426,170 +410,47 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst YY_CHAR yy_meta[56] =
+static yyconst YY_CHAR yy_meta[11] =
     {   0,
-        1,    1,    1,    2,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    2,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    1,    1,    1,    1,    1,    2,    1,    1,
-        1,    1,    1,    1,    1
+        1,    1,    2,    1,    1,    1,    1,    1,    2,    1
     } ;
 
-static yyconst flex_uint16_t yy_base[179] =
+static yyconst flex_uint16_t yy_base[27] =
     {   0,
-        0,    0,   43,   44,  370,  409,  409,  409,  345,   25,
-      409,  351,  409,  409,  341,    0,  409,    0,   46,  335,
-       62,   39,  328,   49,  105,  153,  313,   43,  305,   42,
-      304,  284,   46,  273,  282,  279,  265,  257,  256,   54,
-       56,   59,  240,  409,  409,  409,  270,   88,  409,  409,
-      409,  409,  143,  409,  174,  191,    0,  200,  409,  409,
-      409,  268,  409,  409,  217,   94,  264,    0,  234,  409,
-      253,  238,  242,  248,  229,  237,  218,  222,  283,  220,
-      218,  216,  203,  210,  211,  202,  183,   51,  184,  189,
-      187,  182,  175,  167,  409,  409,  169,  292,  409,  206,
-
-      238,  221,  269,  409,  300,  310,  309,  314,    0,  167,
-      165,  160,  154,  159,  160,    0,  176,   73,  152,  140,
-        0,  102,    0,    0,    0,  149,    0,  138,    0,  142,
-      130,  139,  133,  325,  329,  409,  345,  133,  130,   80,
-      131,    0,    0,  409,  112,   83,    0,   80,  109,  409,
-       76,   71,    0,    0,    0,   70,  354,  409,    0,    0,
-      409,    0,   58,    0,    0,    0,  409,   54,    0,    0,
-      337,  360,    0,    0,  409,  409,   69,   67
+        0,    8,   22,   61,   61,   15,   22,    0,   14,   28,
+       31,    8,   35,    7,    6,    5,    0,   40,   47,   61,
+        0,   48,   61,   61,   58,    1
     } ;
 
-static yyconst flex_int16_t yy_def[179] =
+static yyconst flex_int16_t yy_def[27] =
     {   0,
-      176,    1,    1,    1,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  177,  176,  178,  176,  176,
-      176,  176,  176,  176,  176,   25,  176,   25,   25,   25,
-       25,   25,   25,   26,   26,   26,   26,   26,   26,   26,
-       26,   26,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,   21,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,   26,   25,  176,
-       25,   26,   26,   26,   26,   26,   26,   26,   25,   26,
-       26,   26,   26,   26,   26,   26,   26,   26,   26,   26,
-       26,   26,   26,   26,  176,  176,  176,  176,  176,  176,
-
-      176,  176,  176,  176,  176,  176,  176,  176,   26,   26,
-       26,   26,   26,   26,   26,   26,   26,   26,   26,   26,
-       26,   26,   26,   26,   26,   26,   26,   26,   26,   26,
-       26,   26,   26,  176,  176,  176,  176,   26,   26,   26,
-       26,   26,   26,  176,   26,   26,   26,   26,  176,  176,
-       26,   26,   26,   26,   26,   26,  176,  176,   26,   26,
-      176,   26,   26,   26,   26,   26,  176,   26,   26,   26,
-      176,  176,   26,   26,  176,    0,  176,  176
+       25,   25,   24,   24,   24,   24,   24,    6,   24,   24,
+        7,   24,   24,   24,   24,   10,   26,   24,   24,   24,
+       24,   24,   24,    0,   24,   24
     } ;
 
-static yyconst flex_uint16_t yy_nxt[465] =
+static yyconst flex_uint16_t yy_nxt[72] =
     {   0,
-        6,    7,    8,    7,    9,    6,   10,   11,   12,   13,
-       14,   15,   16,   17,   18,   19,   20,   21,   21,   21,
-       21,   22,   23,   24,   25,   25,   26,   27,   26,   28,
-       29,   30,   31,   32,   33,   25,   34,   35,   26,   36,
-       37,   38,   26,   39,   26,   40,   41,   42,   26,   26,
-       26,   26,   26,   43,   44,   45,   45,   46,   46,   48,
-       60,   61,   48,   53,   53,   53,   53,   52,   48,   51,
-       48,   63,   64,   71,   72,   76,   48,   55,   56,   57,
-       57,   57,   57,   88,   77,   80,   81,   58,   93,   73,
-       74,   90,  126,   91,  174,   58,   89,  173,  127,  161,
-
-       92,  170,  145,  169,   94,   97,   97,   97,   97,   59,
-       65,   67,   67,   67,   67,  146,  162,   66,  168,   66,
-      149,  150,   67,   67,   67,   67,  167,  166,  165,   68,
-       68,   68,   65,   68,   68,   69,   68,   69,   68,   68,
-       68,   68,   68,   68,   68,   68,   68,   68,   68,   69,
-       68,   68,   68,   68,   69,   68,   69,   68,  176,  164,
-       53,   53,   53,   53,  163,  176,  160,  176,   98,  159,
-      176,  176,  176,  176,  156,  155,   98,  154,  153,  152,
-      176,  151,  148,   68,  147,   68,   97,   97,   97,   97,
-       99,   53,   53,   53,   53,  144,  143,   68,  142,   98,
-
-      141,  140,   68,  100,   68,  100,  139,   98,  101,  101,
-      101,  101,  102,  138,  102,  133,  132,  103,  103,  103,
-      103,   99,   65,  101,  101,  101,  101,  131,  130,  105,
-      129,  105,  128,  125,  106,  106,  106,  106,  103,  103,
-      103,  103,  124,  123,   65,  122,  105,   65,  105,   65,
-      121,  106,  106,  106,  106,  101,  101,  101,  101,  120,
-      119,   65,  118,  116,  115,  105,   65,  105,   65,  107,
-      106,  106,  106,  106,  114,  113,  108,  112,  108,  111,
-      110,   67,   67,   67,   67,  136,  103,  103,  103,  103,
-      104,  107,   96,   95,  107,  105,  107,  105,   87,  109,
-
-      106,  106,  106,  106,  134,   86,  134,   85,  107,  135,
-      135,  135,  135,  107,  107,  107,   99,  106,  106,  106,
-      106,   84,  108,   83,  108,   82,  117,  106,  106,  106,
-      106,  137,  137,  137,  137,   79,  107,   78,   75,  107,
-       70,  107,  135,  135,  135,  135,  135,  135,  135,  135,
-       62,   54,   50,  107,  172,  172,  172,  172,  107,   49,
-      107,  157,  137,  137,  137,  137,  171,   47,  171,  176,
-      176,  172,  172,  172,  172,  176,   99,  172,  172,  172,
-      172,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  158,  176,  176,  176,  176,  176,  176,  176,
-
-      176,  176,  176,  176,  176,  176,  176,  175,    5,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176
+       24,    5,   17,   24,   24,   22,    6,    6,    6,    5,
+       16,   16,   18,   13,    7,    7,    7,    8,    9,   10,
+       10,   24,   24,    8,   11,   12,   24,   13,   24,   24,
+       11,   14,   24,   10,   15,   24,   16,   17,   14,   24,
+       13,   24,   24,   17,   19,   18,   24,   24,   24,   20,
+       21,   24,   22,   22,   24,   24,   24,   23,    4,    4,
+        3,   24,   24,   24,   24,   24,   24,   24,   24,   24,
+       24
     } ;
 
-static yyconst flex_int16_t yy_chk[465] =
+static yyconst flex_int16_t yy_chk[72] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    3,    4,    3,    4,   10,
-       22,   22,   10,   19,   19,   19,   19,  178,   10,  177,
-       10,   24,   24,   28,   28,   30,   10,   21,   21,   21,
-       21,   21,   21,   40,   30,   33,   33,   21,   42,   28,
-       28,   41,   88,   41,  168,   21,   40,  163,   88,  140,
-
-       41,  156,  118,  152,   42,   48,   48,   48,   48,   21,
-       25,   66,   66,   66,   66,  118,  140,   25,  151,   25,
-      122,  122,   25,   25,   25,   25,  149,  148,  146,   25,
-       25,   25,   25,   25,   25,   25,   25,   25,   25,   25,
-       25,   25,   25,   25,   25,   25,   25,   25,   25,   25,
-       25,   25,   25,   25,   25,   25,   25,   25,   26,  145,
-       53,   53,   53,   53,  141,   26,  139,   26,   53,  138,
-       26,   26,   26,   26,  133,  132,   53,  131,  130,  128,
-       26,  126,  120,   26,  119,   26,   97,   97,   97,   97,
-       53,   55,   55,   55,   55,  117,  115,   26,  114,   55,
-
-      113,  112,   26,   56,   26,   56,  111,   55,   56,   56,
-       56,   56,   58,  110,   58,   94,   93,   58,   58,   58,
-       58,   55,   65,  100,  100,  100,  100,   92,   91,   65,
-       90,   65,   89,   87,   65,   65,   65,   65,  102,  102,
-      102,  102,   86,   85,   65,   84,   69,   65,   69,   65,
-       83,   69,   69,   69,   69,  101,  101,  101,  101,   82,
-       81,   65,   80,   78,   77,   71,   65,   71,   65,   67,
-       71,   71,   71,   71,   76,   75,   67,   74,   67,   73,
-       72,   67,   67,   67,   67,  101,  103,  103,  103,  103,
-       62,   67,   47,   43,   67,   79,   67,   79,   39,   71,
-
-       79,   79,   79,   79,   98,   38,   98,   37,   67,   98,
-       98,   98,   98,   67,  107,   67,  103,  105,  105,  105,
-      105,   36,  106,   35,  106,   34,   79,  106,  106,  106,
-      106,  108,  108,  108,  108,   32,  107,   31,   29,  107,
-       27,  107,  134,  134,  134,  134,  135,  135,  135,  135,
-       23,   20,   15,  107,  171,  171,  171,  171,  107,   12,
-      107,  137,  137,  137,  137,  137,  157,    9,  157,    5,
-        0,  157,  157,  157,  157,    0,  135,  172,  172,  172,
-      172,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,  137,    0,    0,    0,    0,    0,    0,    0,
-
-        0,    0,    0,    0,    0,    0,    0,  172,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176
+        0,    1,   26,    0,    0,   21,    1,    1,    1,    2,
+       16,   15,   14,   12,    2,    2,    2,    6,    6,    9,
+        6,    3,    0,    6,    7,    7,    0,    7,    0,    0,
+        7,   10,    0,   10,   11,    0,   11,   13,   13,    0,
+       13,    0,    0,   13,   18,   18,    0,    0,    0,   18,
+       19,    0,   19,   22,    0,    0,    0,   22,   25,   25,
+       24,   24,   24,   24,   24,   24,   24,   24,   24,   24,
+       24
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -599,15 +460,14 @@ static yyconst flex_int16_t yy_chk[465] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "exprparser.l"
-
-#line 16 "exprparser.l"
-	#define BACH_MAX
-	#ifdef BACH_MAX
+#line 1 "pitchparser.l"
+#line 15 "pitchparser.l"
+    #define BACH_MAX
+    #ifdef BACH_MAX
     #include "llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
-    #include "exprparser.h"
+    #include "pitchparser.h"
     #include "lexpr.h"
     #include "llll_math.h"
     #else
@@ -615,10 +475,9 @@ static yyconst flex_int16_t yy_chk[465] =
     #include <ctype.h>
     #define parserpost printf
     #endif
-#line 619 "exprparser.c"
+#line 479 "pitchparser.c"
 
 #define INITIAL 0
-#define BINARY 1
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -628,7 +487,7 @@ static yyconst flex_int16_t yy_chk[465] =
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE t_exprparser_data *
+#define YY_EXTRA_TYPE t_pitch *
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -666,42 +525,42 @@ struct yyguts_t
 
 static int yy_init_globals (yyscan_t yyscanner );
 
-int exprparser_lex_init (yyscan_t* scanner);
+int pitchparser_lex_init (yyscan_t* scanner);
 
-int exprparser_lex_init_extra (YY_EXTRA_TYPE user_defined,yyscan_t* scanner);
+int pitchparser_lex_init_extra (YY_EXTRA_TYPE user_defined,yyscan_t* scanner);
 
 /* Accessor methods to globals.
    These are made visible to non-reentrant scanners for convenience. */
 
-int exprparser_lex_destroy (yyscan_t yyscanner );
+int pitchparser_lex_destroy (yyscan_t yyscanner );
 
-int exprparser_get_debug (yyscan_t yyscanner );
+int pitchparser_get_debug (yyscan_t yyscanner );
 
-void exprparser_set_debug (int debug_flag ,yyscan_t yyscanner );
+void pitchparser_set_debug (int debug_flag ,yyscan_t yyscanner );
 
-YY_EXTRA_TYPE exprparser_get_extra (yyscan_t yyscanner );
+YY_EXTRA_TYPE pitchparser_get_extra (yyscan_t yyscanner );
 
-void exprparser_set_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
+void pitchparser_set_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
 
-FILE *exprparser_get_in (yyscan_t yyscanner );
+FILE *pitchparser_get_in (yyscan_t yyscanner );
 
-void exprparser_set_in  (FILE * _in_str ,yyscan_t yyscanner );
+void pitchparser_set_in  (FILE * _in_str ,yyscan_t yyscanner );
 
-FILE *exprparser_get_out (yyscan_t yyscanner );
+FILE *pitchparser_get_out (yyscan_t yyscanner );
 
-void exprparser_set_out  (FILE * _out_str ,yyscan_t yyscanner );
+void pitchparser_set_out  (FILE * _out_str ,yyscan_t yyscanner );
 
-yy_size_t exprparser_get_leng (yyscan_t yyscanner );
+yy_size_t pitchparser_get_leng (yyscan_t yyscanner );
 
-char *exprparser_get_text (yyscan_t yyscanner );
+char *pitchparser_get_text (yyscan_t yyscanner );
 
-int exprparser_get_lineno (yyscan_t yyscanner );
+int pitchparser_get_lineno (yyscan_t yyscanner );
 
-void exprparser_set_lineno (int _line_number ,yyscan_t yyscanner );
+void pitchparser_set_lineno (int _line_number ,yyscan_t yyscanner );
 
-int exprparser_get_column  (yyscan_t yyscanner );
+int pitchparser_get_column  (yyscan_t yyscanner );
 
-void exprparser_set_column (int _column_no ,yyscan_t yyscanner );
+void pitchparser_set_column (int _column_no ,yyscan_t yyscanner );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -709,9 +568,9 @@ void exprparser_set_column (int _column_no ,yyscan_t yyscanner );
 
 #ifndef YY_SKIP_YYWRAP
 #ifdef __cplusplus
-extern "C" int exprparser_wrap (yyscan_t yyscanner );
+extern "C" int pitchparser_wrap (yyscan_t yyscanner );
 #else
-extern int exprparser_wrap (yyscan_t yyscanner );
+extern int pitchparser_wrap (yyscan_t yyscanner );
 #endif
 #endif
 
@@ -819,9 +678,9 @@ static int input (yyscan_t yyscanner );
 #ifndef YY_DECL
 #define YY_DECL_IS_OURS 1
 
-extern int exprparser_lex (yyscan_t yyscanner);
+extern int pitchparser_lex (yyscan_t yyscanner);
 
-#define YY_DECL int exprparser_lex (yyscan_t yyscanner)
+#define YY_DECL int pitchparser_lex (yyscan_t yyscanner)
 #endif /* !YY_DECL */
 
 /* Code executed at the beginning of each rule, after yytext and yyleng
@@ -837,6 +696,9 @@ extern int exprparser_lex (yyscan_t yyscanner);
 #endif
 
 #define YY_RULE_SETUP \
+	if ( yyleng > 0 ) \
+		YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
+				(yytext[yyleng - 1] == '\n'); \
 	YY_USER_ACTION
 
 /** The main scanner function which does all the work.
@@ -866,23 +728,23 @@ YY_DECL
 			yyout = stdout;
 
 		if ( ! YY_CURRENT_BUFFER ) {
-			exprparser_ensure_buffer_stack (yyscanner);
+			pitchparser_ensure_buffer_stack (yyscanner);
 			YY_CURRENT_BUFFER_LVALUE =
-				exprparser__create_buffer(yyin,YY_BUF_SIZE ,yyscanner);
+				pitchparser__create_buffer(yyin,YY_BUF_SIZE ,yyscanner);
 		}
 
-		exprparser__load_buffer_state(yyscanner );
+		pitchparser__load_buffer_state(yyscanner );
 		}
 
 	{
-#line 33 "exprparser.l"
+#line 32 "pitchparser.l"
 
 
 
-    t_exprparser_data *epd = yyextra;
+    t_pitch *p = yyextra;
 
 
-#line 886 "exprparser.c"
+#line 748 "pitchparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -897,6 +759,7 @@ YY_DECL
 		yy_bp = yy_cp;
 
 		yy_current_state = yyg->yy_start;
+		yy_current_state += YY_AT_BOL();
 yy_match:
 		do
 			{
@@ -909,13 +772,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 177 )
+				if ( yy_current_state >= 25 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 409 );
+		while ( yy_base[yy_current_state] != 61 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -941,322 +804,33 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 39 "exprparser.l"
+#line 38 "pitchparser.l"
 {
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_OPEN(epd->lexeme);
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, NULL, 10);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    p->set(degree, alter, octave);
+    return P_MORE;
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 44 "exprparser.l"
+#line 48 "pitchparser.l"
 {
-    BEGIN BINARY;
-    return lexpr_append_lexeme_CLOSED(epd->lexeme);
+    long degree = t_pitch::text2degree(*yytext);
+    char *acc;
+    long octave = strtol(yytext + 1, &acc, 10);
+    t_shortRational alter = t_pitch::text2alter(&acc);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    p->set(degree, alter, octave);
+    return P_MORE;
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 49 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_COMMA(epd->lexeme);
-}
-	YY_BREAK
-case 4:
-YY_RULE_SETUP
-#line 54 "exprparser.l"
-{
-    BEGIN BINARY;
-    return lexpr_append_lexeme_VAR(epd->lexeme, *(yytext + 1), atol(yytext + 2) - 1, epd->numvars, yytext, epd->offending);
-}
-	YY_BREAK
-case 5:
-YY_RULE_SETUP
-#line 59 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_BITOR(epd->lexeme);
-}
-	YY_BREAK
-case 6:
-YY_RULE_SETUP
-#line 64 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_LOGOR(epd->lexeme);
-}
-	YY_BREAK
-case 7:
-YY_RULE_SETUP
-#line 69 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_BITAND(epd->lexeme);
-}
-	YY_BREAK
-case 8:
-YY_RULE_SETUP
-#line 74 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_LOGAND(epd->lexeme);
-}
-	YY_BREAK
-case 9:
-YY_RULE_SETUP
-#line 79 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_BITXOR(epd->lexeme);
-}
-	YY_BREAK
-case 10:
-YY_RULE_SETUP
-#line 84 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_LOGXOR(epd->lexeme);
-}
-	YY_BREAK
-case 11:
-YY_RULE_SETUP
-#line 89 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_BITNOT(epd->lexeme);
-}
-	YY_BREAK
-case 12:
-YY_RULE_SETUP
-#line 94 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_LOGNOT(epd->lexeme);
-}
-	YY_BREAK
-case 13:
-YY_RULE_SETUP
-#line 99 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_NEQ(epd->lexeme);
-}
-	YY_BREAK
-case 14:
-YY_RULE_SETUP
-#line 104 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_NEQMATCH(epd->lexeme);
-}
-	YY_BREAK
-case 15:
-YY_RULE_SETUP
-#line 109 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_EQ(epd->lexeme);
-}
-	YY_BREAK
-case 16:
-YY_RULE_SETUP
-#line 114 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_EQMATCH(epd->lexeme);
-}
-	YY_BREAK
-case 17:
-YY_RULE_SETUP
-#line 119 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_LT(epd->lexeme);
-}
-	YY_BREAK
-case 18:
-YY_RULE_SETUP
-#line 124 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_LSHIFT(epd->lexeme);
-}
-	YY_BREAK
-case 19:
-YY_RULE_SETUP
-#line 129 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_LE(epd->lexeme);
-}
-	YY_BREAK
-case 20:
-YY_RULE_SETUP
-#line 134 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_GT(epd->lexeme);
-}
-	YY_BREAK
-case 21:
-YY_RULE_SETUP
-#line 139 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_RSHIFT(epd->lexeme);
-}
-	YY_BREAK
-case 22:
-YY_RULE_SETUP
-#line 144 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_GE(epd->lexeme);
-}
-	YY_BREAK
-case 23:
-YY_RULE_SETUP
-#line 149 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_TIMES(epd->lexeme);
-}
-	YY_BREAK
-case 24:
-YY_RULE_SETUP
-#line 154 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_POW(epd->lexeme);
-}
-	YY_BREAK
-case 25:
-YY_RULE_SETUP
-#line 159 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_MOD(epd->lexeme);
-}
-	YY_BREAK
-case 26:
-YY_RULE_SETUP
-#line 164 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_DIV(epd->lexeme);
-}
-	YY_BREAK
-case 27:
-YY_RULE_SETUP
-#line 169 "exprparser.l"
-{
-    BEGIN INITIAL;
-    return lexpr_append_lexeme_DIVDIV(epd->lexeme);
-}
-	YY_BREAK
-case 28:
-YY_RULE_SETUP
-#line 174 "exprparser.l"
-{
-    BEGIN INITIAL;
-    parserpost(" lex: binary +");
-    return lexpr_append_lexeme_PLUS(epd->lexeme);
-}
-	YY_BREAK
-case 29:
-/* rule 29 can match eol */
-*yy_cp = yyg->yy_hold_char; /* undo effects of setting up yytext */
-YY_LINENO_REWIND_TO(yy_bp + 1);
-yyg->yy_c_buf_p = yy_cp = yy_bp + 1;
-YY_DO_BEFORE_ACTION; /* set up yytext again */
-YY_RULE_SETUP
-#line 180 "exprparser.l"
-{
-    parserpost(" lex: unary + (ignored)");
-}
-	YY_BREAK
-case 30:
-YY_RULE_SETUP
-#line 184 "exprparser.l"
-{
-    BEGIN INITIAL;
-    parserpost(" lex: binary -");
-    return lexpr_append_lexeme_MINUS(epd->lexeme);
-}
-	YY_BREAK
-case 31:
-/* rule 31 can match eol */
-*yy_cp = yyg->yy_hold_char; /* undo effects of setting up yytext */
-YY_LINENO_REWIND_TO(yy_bp + 1);
-yyg->yy_c_buf_p = yy_cp = yy_bp + 1;
-YY_DO_BEFORE_ACTION; /* set up yytext again */
-YY_RULE_SETUP
-#line 190 "exprparser.l"
-{
-    parserpost(" lex: unary -");
-    return lexpr_append_lexeme_UMINUS(epd->lexeme);
-}
-	YY_BREAK
-case 32:
-YY_RULE_SETUP
-#line 195 "exprparser.l"
-{
-    parserpost(" lex: UINT %d\n", atoi(yytext));
-    BEGIN BINARY;
-    return lexpr_append_lexeme_LONG(epd->lexeme, atol(yytext));
-}
-	YY_BREAK
-case 33:
-YY_RULE_SETUP
-#line 201 "exprparser.l"
-{
-    char *textend;
-	long num = strtol(yytext, &textend, 10);
-	long den = strtol(textend + 1, NULL, 10);
-    parserpost(" lex: URAT %ld / %ld\n", num, den);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_RATIONAL(epd->lexeme, t_rational(num, den));
-}
-	YY_BREAK
-case 34:
-YY_RULE_SETUP
-#line 210 "exprparser.l"
-{
-    parserpost(" lex: DOUBLE %lf\n", atof(yytext));
-    BEGIN BINARY;
-    return lexpr_append_lexeme_FLOAT(epd->lexeme, atof(yytext));
-}
-	YY_BREAK
-case 35:
-YY_RULE_SETUP
-#line 216 "exprparser.l"
-{
-	long degree = t_pitch::text2degree(*yytext);
-	char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-	long octave = strtol(next, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
-}
-	YY_BREAK
-case 36:
-YY_RULE_SETUP
-#line 226 "exprparser.l"
-{
-	long degree = t_pitch::text2degree(*yytext);
-	char *acc;
-	long octave = strtol(yytext + 1, &acc, 10);
-	t_shortRational alter = t_pitch::text2alter(&acc);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
-}
-	YY_BREAK
-case 37:
-YY_RULE_SETUP
-#line 236 "exprparser.l"
+#line 58 "pitchparser.l"
 {
     long degree = t_pitch::text2degree(*yytext);
     char *next = yytext + 1;
@@ -1264,273 +838,48 @@ YY_RULE_SETUP
     long octave = strtol(next, &next, 10);
     alter += t_shortRational(strtol(next, NULL, 10), 1);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    p->set(degree, alter, octave);
+    return P_MORE;
 }
 	YY_BREAK
-case 38:
+case 4:
 YY_RULE_SETUP
-#line 247 "exprparser.l"
+#line 69 "pitchparser.l"
 {
     long degree = t_pitch::text2degree(*yytext);
     char *next = yytext + 1;
     t_shortRational alter = t_pitch::text2alter(&next);
     long octave = strtol(next, &next, 10);
     alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
-
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    p->set(degree, alter, octave);
+    return P_MORE;
 }
 	YY_BREAK
-case 39:
+case 5:
 YY_RULE_SETUP
-#line 259 "exprparser.l"
-{
-    t_shortRational alter = t_shortRational(atoi(yytext), 1);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, alter, 0));
-}
-	YY_BREAK
-case 40:
-YY_RULE_SETUP
-#line 265 "exprparser.l"
-{
-    char *textend;
-    long num = strtol(yytext, &textend, 10);
-    long den = strtol(textend + 1, NULL, 10);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(num, den), 0));
-}
-	YY_BREAK
-case 41:
-YY_RULE_SETUP
-#line 273 "exprparser.l"
-{
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(atof(yytext)), 0));
-}
-	YY_BREAK
-case 42:
-YY_RULE_SETUP
-#line 278 "exprparser.l"
-{
-    BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_pitch::dblsharp, 0));
-}
-	YY_BREAK
-case 43:
-YY_RULE_SETUP
-#line 283 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cos); }
-	YY_BREAK
-case 44:
-YY_RULE_SETUP
-#line 284 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sin); }
-	YY_BREAK
-case 45:
-YY_RULE_SETUP
-#line 285 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tan); }
-	YY_BREAK
-case 46:
-YY_RULE_SETUP
-#line 286 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp); }
-	YY_BREAK
-case 47:
-YY_RULE_SETUP
-#line 287 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log); }
-	YY_BREAK
-case 48:
-YY_RULE_SETUP
-#line 288 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_pow); }
-	YY_BREAK
-case 49:
-YY_RULE_SETUP
-#line 289 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_int); }
-	YY_BREAK
-case 50:
-YY_RULE_SETUP
-#line 290 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_rat); }
-	YY_BREAK
-case 51:
-YY_RULE_SETUP
-#line 291 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_num); }
-	YY_BREAK
-case 52:
-YY_RULE_SETUP
-#line 292 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_den); }
-	YY_BREAK
-case 53:
-YY_RULE_SETUP
-#line 293 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_abs); }
-	YY_BREAK
-case 54:
-YY_RULE_SETUP
-#line 294 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_sgn); }
-	YY_BREAK
-case 55:
-YY_RULE_SETUP
-#line 295 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_mod); }
-	YY_BREAK
-case 56:
-YY_RULE_SETUP
-#line 297 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acos); }
-	YY_BREAK
-case 57:
-YY_RULE_SETUP
-#line 298 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asin); }
-	YY_BREAK
-case 58:
-YY_RULE_SETUP
-#line 299 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atan); }
-	YY_BREAK
-case 59:
-YY_RULE_SETUP
-#line 300 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cosh); }
-	YY_BREAK
-case 60:
-YY_RULE_SETUP
-#line 301 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sinh); }
-	YY_BREAK
-case 61:
-YY_RULE_SETUP
-#line 302 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tanh); }
-	YY_BREAK
-case 62:
-YY_RULE_SETUP
-#line 303 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp2); }
-	YY_BREAK
-case 63:
-YY_RULE_SETUP
-#line 304 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log2); }
-	YY_BREAK
-case 64:
-YY_RULE_SETUP
-#line 305 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sqrt); }
-	YY_BREAK
-case 65:
-YY_RULE_SETUP
-#line 306 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, ceil); }
-	YY_BREAK
-case 66:
-YY_RULE_SETUP
-#line 307 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, fmod); }
-	YY_BREAK
-case 67:
-YY_RULE_SETUP
-#line 309 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, atan2); }
-	YY_BREAK
-case 68:
-YY_RULE_SETUP
-#line 310 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acosh); }
-	YY_BREAK
-case 69:
-YY_RULE_SETUP
-#line 311 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asinh); }
-	YY_BREAK
-case 70:
-YY_RULE_SETUP
-#line 312 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atanh); }
-	YY_BREAK
-case 71:
-YY_RULE_SETUP
-#line 313 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log10); }
-	YY_BREAK
-case 72:
-YY_RULE_SETUP
-#line 314 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, hypot); }
-	YY_BREAK
-case 73:
-YY_RULE_SETUP
-#line 315 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, floor); }
-	YY_BREAK
-case 74:
-YY_RULE_SETUP
-#line 316 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, round); }
-	YY_BREAK
-case 75:
-YY_RULE_SETUP
-#line 317 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, trunc); }
-	YY_BREAK
-case 76:
-YY_RULE_SETUP
-#line 318 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_float); }
-	YY_BREAK
-case 77:
-YY_RULE_SETUP
-#line 320 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_random); }
-	YY_BREAK
-case 78:
-YY_RULE_SETUP
-#line 321 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn); }
-	YY_BREAK
-case 79:
-YY_RULE_SETUP
-#line 323 "exprparser.l"
-{
-    BEGIN BINARY;
-    return lexpr_append_lexeme_VAR_substitution(epd->lexeme, yytext, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
-}
-	YY_BREAK
-case 80:
-/* rule 80 can match eol */
-YY_RULE_SETUP
-#line 328 "exprparser.l"
-{
-	parserpost(" lex: whitespace\n");
-}
-	YY_BREAK
-case 81:
-YY_RULE_SETUP
-#line 332 "exprparser.l"
+#line 80 "pitchparser.l"
 {
     parserpost(" lex: unrecognized character %s", yytext);
-    return E_BAD_EXPR;
+    return P_ERROR;
 }
 	YY_BREAK
-case 82:
+case 6:
+/* rule 6 can match eol */
 YY_RULE_SETUP
-#line 337 "exprparser.l"
+#line 85 "pitchparser.l"
+{
+    parserpost(" lex: unrecognized character \\n", yytext);
+    return P_ERROR;
+}
+	YY_BREAK
+case 7:
+YY_RULE_SETUP
+#line 90 "pitchparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1532 "exprparser.c"
+#line 882 "pitchparser.c"
 case YY_STATE_EOF(INITIAL):
-case YY_STATE_EOF(BINARY):
 	yyterminate();
 
 	case YY_END_OF_BUFFER:
@@ -1547,7 +896,7 @@ case YY_STATE_EOF(BINARY):
 			/* We're scanning a new file or input source.  It's
 			 * possible that this happened because the user
 			 * just pointed yyin at a new source and called
-			 * exprparser_lex().  If so, then we have to assure
+			 * pitchparser_lex().  If so, then we have to assure
 			 * consistency between YY_CURRENT_BUFFER and our
 			 * globals.  Here is the right place to do so, because
 			 * this is the first action (other than possibly a
@@ -1607,7 +956,7 @@ case YY_STATE_EOF(BINARY):
 				{
 				yyg->yy_did_buffer_switch_on_eof = 0;
 
-				if ( exprparser_wrap(yyscanner ) )
+				if ( pitchparser_wrap(yyscanner ) )
 					{
 					/* Note: because we've taken care in
 					 * yy_get_next_buffer() to have set up
@@ -1661,7 +1010,7 @@ case YY_STATE_EOF(BINARY):
 	} /* end of action switch */
 		} /* end of scanning one token */
 	} /* end of user's declarations */
-} /* end of exprparser_lex */
+} /* end of pitchparser_lex */
 
 /* yy_get_next_buffer - try to read in a new buffer
  *
@@ -1740,7 +1089,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 
 				b->yy_ch_buf = (char *)
 					/* Include room in for 2 EOB chars. */
-					exprparser_realloc((void *) b->yy_ch_buf,b->yy_buf_size + 2 ,yyscanner );
+					pitchparser_realloc((void *) b->yy_ch_buf,b->yy_buf_size + 2 ,yyscanner );
 				}
 			else
 				/* Can't grow it, we don't own it. */
@@ -1772,7 +1121,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		if ( number_to_move == YY_MORE_ADJ )
 			{
 			ret_val = EOB_ACT_END_OF_FILE;
-			exprparser_restart(yyin  ,yyscanner);
+			pitchparser_restart(yyin  ,yyscanner);
 			}
 
 		else
@@ -1789,7 +1138,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	if ((yy_size_t) (yyg->yy_n_chars + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
 		/* Extend the array by 50%, plus the number we really need. */
 		yy_size_t new_size = yyg->yy_n_chars + number_to_move + (yyg->yy_n_chars >> 1);
-		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) exprparser_realloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size ,yyscanner );
+		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) pitchparser_realloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size ,yyscanner );
 		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
 			YY_FATAL_ERROR( "out of dynamic memory in yy_get_next_buffer()" );
 	}
@@ -1812,6 +1161,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 	yy_current_state = yyg->yy_start;
+	yy_current_state += YY_AT_BOL();
 
 	for ( yy_cp = yyg->yytext_ptr + YY_MORE_ADJ; yy_cp < yyg->yy_c_buf_p; ++yy_cp )
 		{
@@ -1824,7 +1174,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 177 )
+			if ( yy_current_state >= 25 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1853,11 +1203,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 177 )
+		if ( yy_current_state >= 25 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 176);
+	yy_is_jam = (yy_current_state == 24);
 
 	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;
@@ -1947,13 +1297,13 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 					 */
 
 					/* Reset buffer status. */
-					exprparser_restart(yyin ,yyscanner);
+					pitchparser_restart(yyin ,yyscanner);
 
 					/*FALLTHROUGH*/
 
 				case EOB_ACT_END_OF_FILE:
 					{
-					if ( exprparser_wrap(yyscanner ) )
+					if ( pitchparser_wrap(yyscanner ) )
 						return EOF;
 
 					if ( ! yyg->yy_did_buffer_switch_on_eof )
@@ -1976,6 +1326,8 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	*yyg->yy_c_buf_p = '\0';	/* preserve yytext */
 	yyg->yy_hold_char = *++yyg->yy_c_buf_p;
 
+	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
+
 	return c;
 }
 #endif	/* ifndef YY_NO_INPUT */
@@ -1985,34 +1337,34 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
  * @param yyscanner The scanner object.
  * @note This function does not reset the start condition to @c INITIAL .
  */
-    void exprparser_restart  (FILE * input_file , yyscan_t yyscanner)
+    void pitchparser_restart  (FILE * input_file , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 	if ( ! YY_CURRENT_BUFFER ){
-        exprparser_ensure_buffer_stack (yyscanner);
+        pitchparser_ensure_buffer_stack (yyscanner);
 		YY_CURRENT_BUFFER_LVALUE =
-            exprparser__create_buffer(yyin,YY_BUF_SIZE ,yyscanner);
+            pitchparser__create_buffer(yyin,YY_BUF_SIZE ,yyscanner);
 	}
 
-	exprparser__init_buffer(YY_CURRENT_BUFFER,input_file ,yyscanner);
-	exprparser__load_buffer_state(yyscanner );
+	pitchparser__init_buffer(YY_CURRENT_BUFFER,input_file ,yyscanner);
+	pitchparser__load_buffer_state(yyscanner );
 }
 
 /** Switch to a different input buffer.
  * @param new_buffer The new input buffer.
  * @param yyscanner The scanner object.
  */
-    void exprparser__switch_to_buffer  (YY_BUFFER_STATE  new_buffer , yyscan_t yyscanner)
+    void pitchparser__switch_to_buffer  (YY_BUFFER_STATE  new_buffer , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
 	/* TODO. We should be able to replace this entire function body
 	 * with
-	 *		exprparser_pop_buffer_state();
-	 *		exprparser_push_buffer_state(new_buffer);
+	 *		pitchparser_pop_buffer_state();
+	 *		pitchparser_push_buffer_state(new_buffer);
      */
-	exprparser_ensure_buffer_stack (yyscanner);
+	pitchparser_ensure_buffer_stack (yyscanner);
 	if ( YY_CURRENT_BUFFER == new_buffer )
 		return;
 
@@ -2025,17 +1377,17 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		}
 
 	YY_CURRENT_BUFFER_LVALUE = new_buffer;
-	exprparser__load_buffer_state(yyscanner );
+	pitchparser__load_buffer_state(yyscanner );
 
 	/* We don't actually know whether we did this switch during
-	 * EOF (exprparser_wrap()) processing, but the only time this flag
-	 * is looked at is after exprparser_wrap() is called, so it's safe
+	 * EOF (pitchparser_wrap()) processing, but the only time this flag
+	 * is looked at is after pitchparser_wrap() is called, so it's safe
 	 * to go ahead and always set it.
 	 */
 	yyg->yy_did_buffer_switch_on_eof = 1;
 }
 
-static void exprparser__load_buffer_state  (yyscan_t yyscanner)
+static void pitchparser__load_buffer_state  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	yyg->yy_n_chars = YY_CURRENT_BUFFER_LVALUE->yy_n_chars;
@@ -2050,35 +1402,35 @@ static void exprparser__load_buffer_state  (yyscan_t yyscanner)
  * @param yyscanner The scanner object.
  * @return the allocated buffer state.
  */
-    YY_BUFFER_STATE exprparser__create_buffer  (FILE * file, int  size , yyscan_t yyscanner)
+    YY_BUFFER_STATE pitchparser__create_buffer  (FILE * file, int  size , yyscan_t yyscanner)
 {
 	YY_BUFFER_STATE b;
     
-	b = (YY_BUFFER_STATE) exprparser_alloc(sizeof( struct yy_buffer_state ) ,yyscanner );
+	b = (YY_BUFFER_STATE) pitchparser_alloc(sizeof( struct yy_buffer_state ) ,yyscanner );
 	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in exprparser__create_buffer()" );
+		YY_FATAL_ERROR( "out of dynamic memory in pitchparser__create_buffer()" );
 
 	b->yy_buf_size = (yy_size_t)size;
 
 	/* yy_ch_buf has to be 2 characters longer than the size given because
 	 * we need to put in 2 end-of-buffer characters.
 	 */
-	b->yy_ch_buf = (char *) exprparser_alloc(b->yy_buf_size + 2 ,yyscanner );
+	b->yy_ch_buf = (char *) pitchparser_alloc(b->yy_buf_size + 2 ,yyscanner );
 	if ( ! b->yy_ch_buf )
-		YY_FATAL_ERROR( "out of dynamic memory in exprparser__create_buffer()" );
+		YY_FATAL_ERROR( "out of dynamic memory in pitchparser__create_buffer()" );
 
 	b->yy_is_our_buffer = 1;
 
-	exprparser__init_buffer(b,file ,yyscanner);
+	pitchparser__init_buffer(b,file ,yyscanner);
 
 	return b;
 }
 
 /** Destroy the buffer.
- * @param b a buffer created with exprparser__create_buffer()
+ * @param b a buffer created with pitchparser__create_buffer()
  * @param yyscanner The scanner object.
  */
-    void exprparser__delete_buffer (YY_BUFFER_STATE  b , yyscan_t yyscanner)
+    void pitchparser__delete_buffer (YY_BUFFER_STATE  b , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
@@ -2089,28 +1441,28 @@ static void exprparser__load_buffer_state  (yyscan_t yyscanner)
 		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
 
 	if ( b->yy_is_our_buffer )
-		exprparser_free((void *) b->yy_ch_buf ,yyscanner );
+		pitchparser_free((void *) b->yy_ch_buf ,yyscanner );
 
-	exprparser_free((void *) b ,yyscanner );
+	pitchparser_free((void *) b ,yyscanner );
 }
 
 /* Initializes or reinitializes a buffer.
  * This function is sometimes called more than once on the same buffer,
- * such as during a exprparser_restart() or at EOF.
+ * such as during a pitchparser_restart() or at EOF.
  */
-    static void exprparser__init_buffer  (YY_BUFFER_STATE  b, FILE * file , yyscan_t yyscanner)
+    static void pitchparser__init_buffer  (YY_BUFFER_STATE  b, FILE * file , yyscan_t yyscanner)
 
 {
 	int oerrno = errno;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
-	exprparser__flush_buffer(b ,yyscanner);
+	pitchparser__flush_buffer(b ,yyscanner);
 
 	b->yy_input_file = file;
 	b->yy_fill_buffer = 1;
 
-    /* If b is the current buffer, then exprparser__init_buffer was _probably_
-     * called from exprparser_restart() or through yy_get_next_buffer.
+    /* If b is the current buffer, then pitchparser__init_buffer was _probably_
+     * called from pitchparser_restart() or through yy_get_next_buffer.
      * In that case, we don't want to reset the lineno or column.
      */
     if (b != YY_CURRENT_BUFFER){
@@ -2127,7 +1479,7 @@ static void exprparser__load_buffer_state  (yyscan_t yyscanner)
  * @param b the buffer state to be flushed, usually @c YY_CURRENT_BUFFER.
  * @param yyscanner The scanner object.
  */
-    void exprparser__flush_buffer (YY_BUFFER_STATE  b , yyscan_t yyscanner)
+    void pitchparser__flush_buffer (YY_BUFFER_STATE  b , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	if ( ! b )
@@ -2148,7 +1500,7 @@ static void exprparser__load_buffer_state  (yyscan_t yyscanner)
 	b->yy_buffer_status = YY_BUFFER_NEW;
 
 	if ( b == YY_CURRENT_BUFFER )
-		exprparser__load_buffer_state(yyscanner );
+		pitchparser__load_buffer_state(yyscanner );
 }
 
 /** Pushes the new state onto the stack. The new state becomes
@@ -2157,15 +1509,15 @@ static void exprparser__load_buffer_state  (yyscan_t yyscanner)
  *  @param new_buffer The new state.
  *  @param yyscanner The scanner object.
  */
-void exprparser_push_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscanner)
+void pitchparser_push_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	if (new_buffer == NULL)
 		return;
 
-	exprparser_ensure_buffer_stack(yyscanner);
+	pitchparser_ensure_buffer_stack(yyscanner);
 
-	/* This block is copied from exprparser__switch_to_buffer. */
+	/* This block is copied from pitchparser__switch_to_buffer. */
 	if ( YY_CURRENT_BUFFER )
 		{
 		/* Flush out information for old buffer. */
@@ -2179,8 +1531,8 @@ void exprparser_push_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscann
 		yyg->yy_buffer_stack_top++;
 	YY_CURRENT_BUFFER_LVALUE = new_buffer;
 
-	/* copied from exprparser__switch_to_buffer. */
-	exprparser__load_buffer_state(yyscanner );
+	/* copied from pitchparser__switch_to_buffer. */
+	pitchparser__load_buffer_state(yyscanner );
 	yyg->yy_did_buffer_switch_on_eof = 1;
 }
 
@@ -2188,19 +1540,19 @@ void exprparser_push_buffer_state (YY_BUFFER_STATE new_buffer , yyscan_t yyscann
  *  The next element becomes the new top.
  *  @param yyscanner The scanner object.
  */
-void exprparser_pop_buffer_state (yyscan_t yyscanner)
+void pitchparser_pop_buffer_state (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	if (!YY_CURRENT_BUFFER)
 		return;
 
-	exprparser__delete_buffer(YY_CURRENT_BUFFER ,yyscanner);
+	pitchparser__delete_buffer(YY_CURRENT_BUFFER ,yyscanner);
 	YY_CURRENT_BUFFER_LVALUE = NULL;
 	if (yyg->yy_buffer_stack_top > 0)
 		--yyg->yy_buffer_stack_top;
 
 	if (YY_CURRENT_BUFFER) {
-		exprparser__load_buffer_state(yyscanner );
+		pitchparser__load_buffer_state(yyscanner );
 		yyg->yy_did_buffer_switch_on_eof = 1;
 	}
 }
@@ -2208,7 +1560,7 @@ void exprparser_pop_buffer_state (yyscan_t yyscanner)
 /* Allocates the stack if it does not exist.
  *  Guarantees space for at least one push.
  */
-static void exprparser_ensure_buffer_stack (yyscan_t yyscanner)
+static void pitchparser_ensure_buffer_stack (yyscan_t yyscanner)
 {
 	yy_size_t num_to_alloc;
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
@@ -2220,11 +1572,11 @@ static void exprparser_ensure_buffer_stack (yyscan_t yyscanner)
 		 * immediate realloc on the next call.
          */
 		num_to_alloc = 1; // After all that talk, this was set to 1 anyways...
-		yyg->yy_buffer_stack = (struct yy_buffer_state**)exprparser_alloc
+		yyg->yy_buffer_stack = (struct yy_buffer_state**)pitchparser_alloc
 								(num_to_alloc * sizeof(struct yy_buffer_state*)
 								, yyscanner);
 		if ( ! yyg->yy_buffer_stack )
-			YY_FATAL_ERROR( "out of dynamic memory in exprparser_ensure_buffer_stack()" );
+			YY_FATAL_ERROR( "out of dynamic memory in pitchparser_ensure_buffer_stack()" );
 								  
 		memset(yyg->yy_buffer_stack, 0, num_to_alloc * sizeof(struct yy_buffer_state*));
 				
@@ -2239,12 +1591,12 @@ static void exprparser_ensure_buffer_stack (yyscan_t yyscanner)
 		yy_size_t grow_size = 8 /* arbitrary grow size */;
 
 		num_to_alloc = yyg->yy_buffer_stack_max + grow_size;
-		yyg->yy_buffer_stack = (struct yy_buffer_state**)exprparser_realloc
+		yyg->yy_buffer_stack = (struct yy_buffer_state**)pitchparser_realloc
 								(yyg->yy_buffer_stack,
 								num_to_alloc * sizeof(struct yy_buffer_state*)
 								, yyscanner);
 		if ( ! yyg->yy_buffer_stack )
-			YY_FATAL_ERROR( "out of dynamic memory in exprparser_ensure_buffer_stack()" );
+			YY_FATAL_ERROR( "out of dynamic memory in pitchparser_ensure_buffer_stack()" );
 
 		/* zero only the new slots.*/
 		memset(yyg->yy_buffer_stack + yyg->yy_buffer_stack_max, 0, grow_size * sizeof(struct yy_buffer_state*));
@@ -2258,7 +1610,7 @@ static void exprparser_ensure_buffer_stack (yyscan_t yyscanner)
  * @param yyscanner The scanner object.
  * @return the newly allocated buffer state object. 
  */
-YY_BUFFER_STATE exprparser__scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscanner)
+YY_BUFFER_STATE pitchparser__scan_buffer  (char * base, yy_size_t  size , yyscan_t yyscanner)
 {
 	YY_BUFFER_STATE b;
     
@@ -2268,9 +1620,9 @@ YY_BUFFER_STATE exprparser__scan_buffer  (char * base, yy_size_t  size , yyscan_
 		/* They forgot to leave room for the EOB's. */
 		return 0;
 
-	b = (YY_BUFFER_STATE) exprparser_alloc(sizeof( struct yy_buffer_state ) ,yyscanner );
+	b = (YY_BUFFER_STATE) pitchparser_alloc(sizeof( struct yy_buffer_state ) ,yyscanner );
 	if ( ! b )
-		YY_FATAL_ERROR( "out of dynamic memory in exprparser__scan_buffer()" );
+		YY_FATAL_ERROR( "out of dynamic memory in pitchparser__scan_buffer()" );
 
 	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
 	b->yy_buf_pos = b->yy_ch_buf = base;
@@ -2282,33 +1634,33 @@ YY_BUFFER_STATE exprparser__scan_buffer  (char * base, yy_size_t  size , yyscan_
 	b->yy_fill_buffer = 0;
 	b->yy_buffer_status = YY_BUFFER_NEW;
 
-	exprparser__switch_to_buffer(b ,yyscanner );
+	pitchparser__switch_to_buffer(b ,yyscanner );
 
 	return b;
 }
 
-/** Setup the input buffer state to scan a string. The next call to exprparser_lex() will
+/** Setup the input buffer state to scan a string. The next call to pitchparser_lex() will
  * scan from a @e copy of @a str.
  * @param yystr a NUL-terminated string to scan
  * @param yyscanner The scanner object.
  * @return the newly allocated buffer state object.
  * @note If you want to scan bytes that may contain NUL values, then use
- *       exprparser__scan_bytes() instead.
+ *       pitchparser__scan_bytes() instead.
  */
-YY_BUFFER_STATE exprparser__scan_string (yyconst char * yystr , yyscan_t yyscanner)
+YY_BUFFER_STATE pitchparser__scan_string (yyconst char * yystr , yyscan_t yyscanner)
 {
     
-	return exprparser__scan_bytes(yystr,strlen(yystr) ,yyscanner);
+	return pitchparser__scan_bytes(yystr,strlen(yystr) ,yyscanner);
 }
 
-/** Setup the input buffer state to scan the given bytes. The next call to exprparser_lex() will
+/** Setup the input buffer state to scan the given bytes. The next call to pitchparser_lex() will
  * scan from a @e copy of @a bytes.
  * @param yybytes the byte buffer to scan
  * @param _yybytes_len the number of bytes in the buffer pointed to by @a bytes.
  * @param yyscanner The scanner object.
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE exprparser__scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len , yyscan_t yyscanner)
+YY_BUFFER_STATE pitchparser__scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len , yyscan_t yyscanner)
 {
 	YY_BUFFER_STATE b;
 	char *buf;
@@ -2317,18 +1669,18 @@ YY_BUFFER_STATE exprparser__scan_bytes  (yyconst char * yybytes, yy_size_t  _yyb
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = _yybytes_len + 2;
-	buf = (char *) exprparser_alloc(n ,yyscanner );
+	buf = (char *) pitchparser_alloc(n ,yyscanner );
 	if ( ! buf )
-		YY_FATAL_ERROR( "out of dynamic memory in exprparser__scan_bytes()" );
+		YY_FATAL_ERROR( "out of dynamic memory in pitchparser__scan_bytes()" );
 
 	for ( i = 0; i < _yybytes_len; ++i )
 		buf[i] = yybytes[i];
 
 	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
 
-	b = exprparser__scan_buffer(buf,n ,yyscanner);
+	b = pitchparser__scan_buffer(buf,n ,yyscanner);
 	if ( ! b )
-		YY_FATAL_ERROR( "bad buffer in exprparser__scan_bytes()" );
+		YY_FATAL_ERROR( "bad buffer in pitchparser__scan_bytes()" );
 
 	/* It's okay to grow etc. this buffer, and we should throw it
 	 * away when we're done.
@@ -2372,7 +1724,7 @@ static void yy_fatal_error (yyconst char* msg , yyscan_t yyscanner)
 /** Get the user-defined data for this scanner.
  * @param yyscanner The scanner object.
  */
-YY_EXTRA_TYPE exprparser_get_extra  (yyscan_t yyscanner)
+YY_EXTRA_TYPE pitchparser_get_extra  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yyextra;
@@ -2381,7 +1733,7 @@ YY_EXTRA_TYPE exprparser_get_extra  (yyscan_t yyscanner)
 /** Get the current line number.
  * @param yyscanner The scanner object.
  */
-int exprparser_get_lineno  (yyscan_t yyscanner)
+int pitchparser_get_lineno  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     
@@ -2394,7 +1746,7 @@ int exprparser_get_lineno  (yyscan_t yyscanner)
 /** Get the current column number.
  * @param yyscanner The scanner object.
  */
-int exprparser_get_column  (yyscan_t yyscanner)
+int pitchparser_get_column  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     
@@ -2407,7 +1759,7 @@ int exprparser_get_column  (yyscan_t yyscanner)
 /** Get the input stream.
  * @param yyscanner The scanner object.
  */
-FILE *exprparser_get_in  (yyscan_t yyscanner)
+FILE *pitchparser_get_in  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yyin;
@@ -2416,7 +1768,7 @@ FILE *exprparser_get_in  (yyscan_t yyscanner)
 /** Get the output stream.
  * @param yyscanner The scanner object.
  */
-FILE *exprparser_get_out  (yyscan_t yyscanner)
+FILE *pitchparser_get_out  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yyout;
@@ -2425,7 +1777,7 @@ FILE *exprparser_get_out  (yyscan_t yyscanner)
 /** Get the length of the current token.
  * @param yyscanner The scanner object.
  */
-yy_size_t exprparser_get_leng  (yyscan_t yyscanner)
+yy_size_t pitchparser_get_leng  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yyleng;
@@ -2435,7 +1787,7 @@ yy_size_t exprparser_get_leng  (yyscan_t yyscanner)
  * @param yyscanner The scanner object.
  */
 
-char *exprparser_get_text  (yyscan_t yyscanner)
+char *pitchparser_get_text  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yytext;
@@ -2445,7 +1797,7 @@ char *exprparser_get_text  (yyscan_t yyscanner)
  * @param user_defined The data to be associated with this scanner.
  * @param yyscanner The scanner object.
  */
-void exprparser_set_extra (YY_EXTRA_TYPE  user_defined , yyscan_t yyscanner)
+void pitchparser_set_extra (YY_EXTRA_TYPE  user_defined , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     yyextra = user_defined ;
@@ -2455,13 +1807,13 @@ void exprparser_set_extra (YY_EXTRA_TYPE  user_defined , yyscan_t yyscanner)
  * @param _line_number line number
  * @param yyscanner The scanner object.
  */
-void exprparser_set_lineno (int  _line_number , yyscan_t yyscanner)
+void pitchparser_set_lineno (int  _line_number , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
         /* lineno is only valid if an input buffer exists. */
         if (! YY_CURRENT_BUFFER )
-           YY_FATAL_ERROR( "exprparser_set_lineno called with no buffer" );
+           YY_FATAL_ERROR( "pitchparser_set_lineno called with no buffer" );
     
     yylineno = _line_number;
 }
@@ -2470,13 +1822,13 @@ void exprparser_set_lineno (int  _line_number , yyscan_t yyscanner)
  * @param _column_no column number
  * @param yyscanner The scanner object.
  */
-void exprparser_set_column (int  _column_no , yyscan_t yyscanner)
+void pitchparser_set_column (int  _column_no , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
         /* column is only valid if an input buffer exists. */
         if (! YY_CURRENT_BUFFER )
-           YY_FATAL_ERROR( "exprparser_set_column called with no buffer" );
+           YY_FATAL_ERROR( "pitchparser_set_column called with no buffer" );
     
     yycolumn = _column_no;
 }
@@ -2485,27 +1837,27 @@ void exprparser_set_column (int  _column_no , yyscan_t yyscanner)
  * input buffer.
  * @param _in_str A readable stream.
  * @param yyscanner The scanner object.
- * @see exprparser__switch_to_buffer
+ * @see pitchparser__switch_to_buffer
  */
-void exprparser_set_in (FILE *  _in_str , yyscan_t yyscanner)
+void pitchparser_set_in (FILE *  _in_str , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     yyin = _in_str ;
 }
 
-void exprparser_set_out (FILE *  _out_str , yyscan_t yyscanner)
+void pitchparser_set_out (FILE *  _out_str , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     yyout = _out_str ;
 }
 
-int exprparser_get_debug  (yyscan_t yyscanner)
+int pitchparser_get_debug  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     return yy_flex_debug;
 }
 
-void exprparser_set_debug (int  _bdebug , yyscan_t yyscanner)
+void pitchparser_set_debug (int  _bdebug , yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     yy_flex_debug = _bdebug ;
@@ -2515,12 +1867,12 @@ void exprparser_set_debug (int  _bdebug , yyscan_t yyscanner)
 
 /* User-visible API */
 
-/* exprparser_lex_init is special because it creates the scanner itself, so it is
+/* pitchparser_lex_init is special because it creates the scanner itself, so it is
  * the ONLY reentrant function that doesn't take the scanner as the last argument.
  * That's why we explicitly handle the declaration, instead of using our macros.
  */
 
-int exprparser_lex_init(yyscan_t* ptr_yy_globals)
+int pitchparser_lex_init(yyscan_t* ptr_yy_globals)
 
 {
     if (ptr_yy_globals == NULL){
@@ -2528,7 +1880,7 @@ int exprparser_lex_init(yyscan_t* ptr_yy_globals)
         return 1;
     }
 
-    *ptr_yy_globals = (yyscan_t) exprparser_alloc ( sizeof( struct yyguts_t ), NULL );
+    *ptr_yy_globals = (yyscan_t) pitchparser_alloc ( sizeof( struct yyguts_t ), NULL );
 
     if (*ptr_yy_globals == NULL){
         errno = ENOMEM;
@@ -2541,27 +1893,27 @@ int exprparser_lex_init(yyscan_t* ptr_yy_globals)
     return yy_init_globals ( *ptr_yy_globals );
 }
 
-/* exprparser_lex_init_extra has the same functionality as exprparser_lex_init, but follows the
+/* pitchparser_lex_init_extra has the same functionality as pitchparser_lex_init, but follows the
  * convention of taking the scanner as the last argument. Note however, that
  * this is a *pointer* to a scanner, as it will be allocated by this call (and
  * is the reason, too, why this function also must handle its own declaration).
- * The user defined value in the first argument will be available to exprparser_alloc in
+ * The user defined value in the first argument will be available to pitchparser_alloc in
  * the yyextra field.
  */
 
-int exprparser_lex_init_extra(YY_EXTRA_TYPE yy_user_defined,yyscan_t* ptr_yy_globals )
+int pitchparser_lex_init_extra(YY_EXTRA_TYPE yy_user_defined,yyscan_t* ptr_yy_globals )
 
 {
     struct yyguts_t dummy_yyguts;
 
-    exprparser_set_extra (yy_user_defined, &dummy_yyguts);
+    pitchparser_set_extra (yy_user_defined, &dummy_yyguts);
 
     if (ptr_yy_globals == NULL){
         errno = EINVAL;
         return 1;
     }
 	
-    *ptr_yy_globals = (yyscan_t) exprparser_alloc ( sizeof( struct yyguts_t ), &dummy_yyguts );
+    *ptr_yy_globals = (yyscan_t) pitchparser_alloc ( sizeof( struct yyguts_t ), &dummy_yyguts );
 	
     if (*ptr_yy_globals == NULL){
         errno = ENOMEM;
@@ -2572,7 +1924,7 @@ int exprparser_lex_init_extra(YY_EXTRA_TYPE yy_user_defined,yyscan_t* ptr_yy_glo
     yy_init_globals. Leave at 0x00 for releases. */
     memset(*ptr_yy_globals,0x00,sizeof(struct yyguts_t));
     
-    exprparser_set_extra (yy_user_defined, *ptr_yy_globals);
+    pitchparser_set_extra (yy_user_defined, *ptr_yy_globals);
     
     return yy_init_globals ( *ptr_yy_globals );
 }
@@ -2581,7 +1933,7 @@ static int yy_init_globals (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
     /* Initialization is the same as for the non-reentrant scanner.
-     * This function is called from exprparser_lex_destroy(), so don't allocate here.
+     * This function is called from pitchparser_lex_destroy(), so don't allocate here.
      */
 
     yyg->yy_buffer_stack = 0;
@@ -2605,37 +1957,37 @@ static int yy_init_globals (yyscan_t yyscanner)
 #endif
 
     /* For future reference: Set errno on error, since we are called by
-     * exprparser_lex_init()
+     * pitchparser_lex_init()
      */
     return 0;
 }
 
-/* exprparser_lex_destroy is for both reentrant and non-reentrant scanners. */
-int exprparser_lex_destroy  (yyscan_t yyscanner)
+/* pitchparser_lex_destroy is for both reentrant and non-reentrant scanners. */
+int pitchparser_lex_destroy  (yyscan_t yyscanner)
 {
     struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 
     /* Pop the buffer stack, destroying each element. */
 	while(YY_CURRENT_BUFFER){
-		exprparser__delete_buffer(YY_CURRENT_BUFFER ,yyscanner );
+		pitchparser__delete_buffer(YY_CURRENT_BUFFER ,yyscanner );
 		YY_CURRENT_BUFFER_LVALUE = NULL;
-		exprparser_pop_buffer_state(yyscanner);
+		pitchparser_pop_buffer_state(yyscanner);
 	}
 
 	/* Destroy the stack itself. */
-	exprparser_free(yyg->yy_buffer_stack ,yyscanner);
+	pitchparser_free(yyg->yy_buffer_stack ,yyscanner);
 	yyg->yy_buffer_stack = NULL;
 
     /* Destroy the start condition stack. */
-        exprparser_free(yyg->yy_start_stack ,yyscanner );
+        pitchparser_free(yyg->yy_start_stack ,yyscanner );
         yyg->yy_start_stack = NULL;
 
     /* Reset the globals. This is important in a non-reentrant scanner so the next time
-     * exprparser_lex() is called, initialization will occur. */
+     * pitchparser_lex() is called, initialization will occur. */
     yy_init_globals( yyscanner);
 
     /* Destroy the main struct (reentrant only). */
-    exprparser_free ( yyscanner , yyscanner );
+    pitchparser_free ( yyscanner , yyscanner );
     yyscanner = NULL;
     return 0;
 }
@@ -2667,14 +2019,14 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *exprparser_alloc (yy_size_t  size , yyscan_t yyscanner)
+void *pitchparser_alloc (yy_size_t  size , yyscan_t yyscanner)
 {
 	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	(void)yyg;
 	return (void *) malloc( size );
 }
 
-void *exprparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
+void *pitchparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
 {
 	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	(void)yyg;
@@ -2689,55 +2041,58 @@ void *exprparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
 	return (void *) realloc( (char *) ptr, size );
 }
 
-void exprparser_free (void * ptr , yyscan_t yyscanner)
+void pitchparser_free (void * ptr , yyscan_t yyscanner)
 {
 	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
 	(void)yyg;
-	free( (char *) ptr );	/* see exprparser_realloc() for (char *) cast */
+	free( (char *) ptr );	/* see pitchparser_realloc() for (char *) cast */
 }
 
 #define YYTABLES_NAME "yytables"
 
-#line 337 "exprparser.l"
+#line 90 "pitchparser.l"
 
 
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)
 {
-	exprparser_lex();
+    pitchparser_lex();
 }
 #endif
 
-void *exprparser_new(t_exprparser_data *data)
+void pitchparser_new(t_pitchparser_wrapper *ppw)
 {
-    yyscan_t scanner;
-    exprparser_lex_init_extra(data,&scanner);
-    return (void *) scanner;
+    ppw->p = new(t_pitch);
+    pitchparser_lex_init_extra(ppw->p,(yyscan_t *) &ppw->scanner);
 }
 
-void *exprparser_scan_string(void *myscanner, char *buf)
+t_pitch pitchparser_scan_string(t_pitchparser_wrapper *ppw, char *buf)
 {
-    YY_BUFFER_STATE bp = exprparser__scan_string(buf,(yyscan_t) myscanner);
-    exprparser__switch_to_buffer(bp,(yyscan_t) myscanner);
-    return (void *) bp;
+    t_pitch p;
+    yyscan_t scanner = (yyscan_t) ppw->scanner;
+    YY_BUFFER_STATE bp = pitchparser__scan_string(buf,scanner);
+    pitchparser__switch_to_buffer(bp,scanner);
+    switch (pitchparser_lex(scanner)) {
+        case P_ERROR:
+        case P_END:
+            p = t_pitch::NaP;
+            break;
+        case P_MORE:
+            p = *ppw->p;
+            if (pitchparser_lex(scanner) != P_END)
+                p = t_pitch::NaP;
+            break;
+    }
+    pitchparser__flush_buffer(bp,scanner);
+    pitchparser__delete_buffer(bp,scanner);
+    return p;
 }
 
-void exprparser_flush_and_delete_buffer(void *myscanner, void *bp)
+void pitchparser_free(t_pitchparser_wrapper *ppw)
 {
-    exprparser__flush_buffer((YY_BUFFER_STATE) bp,(yyscan_t) myscanner);
-    exprparser__delete_buffer((YY_BUFFER_STATE) bp,(yyscan_t) myscanner);
-}
-
-void exprparser_free(void *myscanner)
-{
-    exprparser_lex_destroy((yyscan_t) myscanner);
-}
-
-void exprparser_set_start_condition(void *myscanner, int condition)
-{
-    struct yyguts_t *yyg = (struct yyguts_t*) myscanner;
-    BEGIN condition;
+    delete ppw->p;
+    pitchparser_lex_destroy(ppw->scanner);
 }
 
 

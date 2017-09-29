@@ -7,7 +7,7 @@ INTEGER ([+-]?[0-9]+)
 FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
 RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
-ACCIDENTAL ([#bxdq]+)
+ACCIDENTAL ([#bxdq\^v]+)
 
 %{
 	#define BACH_MAX

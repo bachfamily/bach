@@ -44,6 +44,7 @@
 #include "ext_globalsymbol.h"
 
 #include "bach_rat.hpp"
+#include "pitchparser.h"
 
 typedef struct _reg
 {
@@ -53,6 +54,8 @@ typedef struct _reg
 	long					n_in;
     
     t_object                *m_editor;
+    
+    t_pitchparser_wrapper   ppw;
 } t_reg;
 
 //DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_reg, dummy, reg_getattr_dummy, reg_setattr_dummy)
@@ -290,9 +293,17 @@ void reg_float(t_reg *x, double v)
 void reg_anything(t_reg *x, t_symbol *msg, long ac, t_atom *av)
 {
     t_llll *in_llll;
-
+    
+#define testtest
 #ifdef testtest
 
+    t_pitch p = pitchparser_scan_string(&x->ppw, msg->s_name);
+    post("%s", p.toCString());
+    
+    
+    
+    
+    
     if (msg == gensym("testtest")) {
         const char *txt = "12345 678 1/2 1/4 \"foo bar\" foo bar 10 (c#4 d4-2/10t)";
         atom a;
@@ -598,6 +609,7 @@ void reg_appendtodictionary(t_reg *x, t_dictionary *d)
 void reg_free(t_reg *x)
 {
 	object_free_debug(x->n_proxy);
+    pitchparser_free(&x->ppw);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
 
@@ -609,6 +621,8 @@ t_reg *reg_new(t_symbol *s, short ac, t_atom *av)
 	t_dictionary *d;
 	
 	if ((x = (t_reg *) object_alloc_debug(reg_class))) {
+        
+        pitchparser_new(&x->ppw);
         
         x->m_editor = NULL;
 

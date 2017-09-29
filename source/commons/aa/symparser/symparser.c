@@ -399,10 +399,10 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    1,    1,   14,   14,   14,   14,   15,   14,
        14,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,   16,    1,    1,    1,   17,   18,   19,   18,   19,
+        1,   16,    1,    6,    1,   17,   18,   19,   18,   19,
 
        20,   18,   18,    1,   21,    1,    1,   22,    1,   23,
-        1,    1,    6,    1,    1,   24,   25,    1,    1,    6,
+        1,    1,    6,    1,    1,   24,   25,    6,    1,    6,
         1,    1,    1,   26,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -1054,7 +1054,7 @@ YY_RULE_SETUP
     char *next = yytext + 1;
     t_shortRational alter = t_pitch::text2alter(&next);
     long octave = strtol(next, &next, 10);
-    alter += t_shortRational(strtol(next, &next, 10), 1) / strtol(next + 1, NULL, 10);
+    alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     yylval->p = t_pitch(degree, alter, octave);
     return PITCH;

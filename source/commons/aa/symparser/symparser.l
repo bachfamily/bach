@@ -7,7 +7,7 @@ INTEGER ([+-]?[0-9]+)
 FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
 RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
-ACCIDENTAL ([#bxdq]+)
+ACCIDENTAL ([#bxdq\^v]+)
 
 %{
     #define BACH_MAX
@@ -96,7 +96,7 @@ ACCIDENTAL ([#bxdq]+)
     char *next = yytext + 1;
     t_shortRational alter = t_pitch::text2alter(&next);
     long octave = strtol(next, &next, 10);
-    alter += t_shortRational(strtol(next, &next, 10), 1) / strtol(next + 1, NULL, 10);
+    alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     yylval->p = t_pitch(degree, alter, octave);
     return PITCH;
