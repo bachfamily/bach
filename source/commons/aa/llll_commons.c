@@ -6469,7 +6469,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else if (start_type == H_RAT || end_type == H_RAT || step_type == H_RAT || !  hatom_type_is_number(step_type)) {
+	} else if (start_type == H_RAT || end_type == H_RAT || step_type == H_RAT) {
 		t_rational start, end, step, v;
 		t_atom_long count;
 		step = hatom_getrational(&step_hatom);
@@ -6520,7 +6520,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else {
+	} else if (start_type == H_LONG || end_type == H_LONG || step_type == H_LONG) {
 		t_atom_long start, end, step, v;
 		t_atom_long count;
 		step = hatom_getlong(&step_hatom);
@@ -6568,7 +6568,58 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		}
 		pedantic_llll_check(outll);
 		return outll;
-	}
+        
+    } else { // pitches
+        t_pitch start, end, step, v;
+        t_atom_long count;
+        step = hatom_getpitch(&step_hatom);
+        
+        if (hatom_type_is_number(start_type)) {
+            start = hatom_getpitch(&start_hatom);
+        } else {
+            if (!(hatom_type_is_number(end_type))) {
+                return outll;
+            } else if (maxcount == 1) {
+                start = end = hatom_getpitch(&end_hatom);
+            } else if (step == t_pitch::C0 || maxcount <= 0) {
+                return outll;
+            } else {
+                end = hatom_getpitch(&end_hatom);
+                start = end - step * (maxcount - 1);
+            }
+        }
+        
+        if (hatom_type_is_number(end_type)) {
+            end = hatom_getpitch(&end_hatom);
+        } else {
+            if (step == t_pitch::C0 || maxcount <= 0)
+                return outll;
+            end = step > t_pitch::C0 ? PITCH_MAX : PITCH_MIN;
+        }
+        if (step == t_pitch::C0) {
+            if (maxcount <= 0) {
+                step =  start < end ? t_pitch(1, t_pitch::flat, 0) : t_pitch(6, t_pitch::natural, -1);
+                maxcount = ATOM_LONG_MAX;
+            } else {
+                if (maxcount > 1) {
+                    step = (end - start) / (maxcount - 1);;
+                }
+                if (step == t_pitch::C0)
+                    step = start < end ? PITCH_MIN_POSITIVE : PITCH_MAX_NEGATIVE;
+            }
+        } else if (maxcount <= 0)
+            maxcount = ATOM_LONG_MAX;
+        
+        if (step > t_pitch::C0) {
+            for (v = start, count = 0; v <= end && count < maxcount; v += step, count++)
+                llll_appendpitch(outll, v, 0, WHITENULL_llll);
+        } else {
+            for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                llll_appendpitch(outll, v, 0, WHITENULL_llll);
+        }
+        pedantic_llll_check(outll);
+        return outll;
+    }
 }
 
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err)
@@ -6637,7 +6688,8 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else if (start_type == H_RAT || end_type == H_RAT || factor_type == H_RAT) {
+	} else if (start_type == H_RAT || end_type == H_RAT || factor_type == H_RAT ||
+               start_type == H_PITCH || end_type == H_PITCH || factor_type == H_PITCH) {
 		t_rational start, end, factor, v;
 		t_atom_long count;
 		

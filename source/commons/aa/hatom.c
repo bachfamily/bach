@@ -108,7 +108,7 @@ t_pitch hatom_getpitch(const t_hatom *h)
             return h->h_w.w_pitch;
             break;
         default:
-            return t_pitch(0);
+            return t_pitch::C0;
             break;
     }
 }

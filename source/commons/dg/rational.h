@@ -21,7 +21,7 @@
 #include "bach_128bit.h"
 #include "bach_rat.hpp"
 
-#ifdef C74_X64
+#ifdef C74_X64 // 64 bit arch
 /**	Declaration of type t_atom_longlong, 128-bit integer, used with 64-bit architecture  
  @ingroup datatypes
  */
@@ -35,6 +35,15 @@ typedef t_int32 t_atom_short;
 typedef t_uint32 t_atom_ushort;
 
 #define ATOM_LONG_PRINTF_FMT "%lld"
+
+#define ATOM_LONG_MAX (0x7FFFFFFFFFFFFFFF)
+#define ATOM_LONG_MIN (-ATOM_LONG_MAX - 1)
+#define ATOM_SHORT_MAX (0x7FFFFFFF)
+#define ATOM_SHORT_MIN (-ATOM_SHORT_MAX - 1)
+#define ATOM_ULONG_MAX (0xFFFFFFFFFFFFFFFFu)
+#define ATOM_USHORT_MAX (0xFFFFFFFFu)
+
+/*
 #ifdef MAC_VERSION
 #define ATOM_LONG_MAX LONG_MAX
 #define ATOM_LONG_MIN LONG_MIN
@@ -44,11 +53,13 @@ typedef t_uint32 t_atom_ushort;
 #define ATOM_LONG_MIN _I64_MIN
 #define ATOM_ULONG_MAX _UI64_MAX
 #endif
+ */
 
 #define alabs(x) llabs(x)
 
-#else
-/**	Declaration of type t_atom_longlong, 64-bit integer, used with 32-bit architecture  
+#else // 32 bit arch
+
+/**	Declaration of type t_atom_longlong, 32-bit integer, used with 32-bit architecture
  @ingroup datatypes
  */
 typedef t_int64 t_atom_longlong;
@@ -61,18 +72,38 @@ typedef t_int16 t_atom_short;
 typedef t_uint16 t_atom_ushort;
 
 #define ATOM_LONG_PRINTF_FMT "%ld"
+
+#define ATOM_LONG_MAX (0x7FFFFFFF)
+#define ATOM_LONG_MIN (-ATOM_LONG_MAX - 1)
+#define ATOM_SHORT_MAX (0x7FFF)
+#define ATOM_SHORT_MIN (-ATOM_SHORT_MAX - 1)
+#define ATOM_ULONG_MAX (0xFFFFFFFFu)
+#define ATOM_USHORT_MAX (0xFFFFu)
+
+/*
 #define ATOM_LONG_MAX LONG_MAX
 #define ATOM_LONG_MIN LONG_MIN
 #define ATOM_ULONG_MAX ULONG_MAX
+*/
 
 #define alabs(x) labs(x)
 
 #endif
 
-#define RAT_MIN_POSITIVE (genrat(1, ATOM_LONG_MAX))			///< Minimum positive rational
-#define RAT_MAX_NEGATIVE (genrat(-1, ATOM_LONG_MIN))		///< Maximum negative rational
-#define RAT_MIN (genrat(ATOM_LONG_MIN, 1))					///< Minimum rational
-#define RAT_MAX (genrat(ATOM_LONG_MAX, 1))					///< Maximum rational
+#define RAT_MIN_POSITIVE (t_rational(1, ATOM_LONG_MAX))			///< Minimum positive rational
+#define RAT_MAX_NEGATIVE (t_rational(-1, ATOM_LONG_MIN))		///< Maximum negative rational
+#define RAT_MIN (t_rational(ATOM_LONG_MIN, 1))					///< Minimum rational
+#define RAT_MAX (t_rational(ATOM_LONG_MAX, 1))					///< Maximum rational
+
+#define SHORTRAT_MIN_POSITIVE (t_shortRational(1, ATOM_SHORT_MAX))			///< Minimum positive short rational
+#define SHORTRAT_MAX_NEGATIVE (t_shortRational(-1, ATOM_SHORT_MIN))		///< Maximum negative short rational
+#define SHORTRAT_MIN (t_shortRational(ATOM_SHORT_MIN, 1))					///< Minimum short rational
+#define SHORTRAT_MAX (t_shortRational(ATOM_SHORT_MAX, 1))					///< Maximum short rational
+
+#define PITCH_MIN_POSITIVE (t_pitch(0, SHORTRAT_MIN_POSITIVE, 0))
+#define PITCH_MAX_NEGATIVE (t_pitch(6, SHORTRAT_MAX_NEGATIVE, -1))
+#define PITCH_MIN (t_pitch(0, SHORTRAT_MIN, ATOM_SHORT_MIN))
+#define PITCH_MAX (t_pitch(6, SHORTRAT_MAX, ATOM_SHORT_MAX))
 
 #define CONST_EPSILON_FOR_DOUBLE2RAT_APPROXIMATION (2 * FLT_EPSILON)	///< Multiplier for the machine epsilon #DBL_EPSILON used while approximating a double to a rational
 
