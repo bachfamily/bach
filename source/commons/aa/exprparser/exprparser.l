@@ -320,6 +320,12 @@ t {
 "random" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_random); }
 "bessel" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn); }
 
+"pitch" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_pitch); }
+"degree" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_degree); }
+"octave" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_octave); }
+"alter" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_alter); }
+"makepitch" { return lexpr_append_lexeme_FUNC_ternary_ALL(epd->lexeme, hatom_fn_makepitch); }
+
 ([A-Z]|[a-z]|_)+ {
     BEGIN BINARY;
     return lexpr_append_lexeme_VAR_substitution(epd->lexeme, yytext, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);

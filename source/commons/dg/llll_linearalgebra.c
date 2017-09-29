@@ -63,7 +63,7 @@ t_llll* llll_matrix_matrix_elementwise_operation(t_llll *matrix1, t_llll *matrix
 			for (column_elem1 = matrix1->l_head, column_elem2 = matrix2->l_head; column_elem1 && column_elem2; 
 					column_elem1 = column_elem1->l_next, column_elem2 = column_elem2->l_next){
 				t_hatom res;
-				err = lexpr_eval_one(op, &column_elem1->l_hatom, &column_elem2->l_hatom, &res);
+				err = lexpr_eval_one(op, &column_elem1->l_hatom, &column_elem2->l_hatom, NULL, &res);
 				if (!err)
 					llll_appendhatom_clone(row_llll, &res, 0, WHITENULL_llll);
 				else
@@ -73,7 +73,7 @@ t_llll* llll_matrix_matrix_elementwise_operation(t_llll *matrix1, t_llll *matrix
 		} else {
 			// we treat this as operation on two simple hatoms
 			t_hatom res;
-			err = lexpr_eval_one(op, &row_elem1->l_hatom, &row_elem2->l_hatom, &res);
+			err = lexpr_eval_one(op, &row_elem1->l_hatom, &row_elem2->l_hatom, NULL, &res);
 			if (!err)
 				llll_appendhatom_clone(outmatrix, &res, 0, WHITENULL_llll);
 			else
@@ -108,9 +108,9 @@ t_hatom llll_vector_vector_product(t_llll *vector1, t_llll *vector2){
 		
 	for (elem1 = vector1->l_head, elem2 = vector2->l_head; elem1 && elem2; elem1 = elem1->l_next, elem2 = elem2->l_next) {
 		hatom_setlong(&partial_res_hatom, 0);
-		err = lexpr_eval_one(&times, &elem1->l_hatom, &elem2->l_hatom, &partial_res_hatom);
+		err = lexpr_eval_one(&times, &elem1->l_hatom, &elem2->l_hatom, NULL, &partial_res_hatom);
 		if (!err)
-			err = lexpr_eval_one(&plus, &res_hatom, &partial_res_hatom, &res_hatom);
+			err = lexpr_eval_one(&plus, &res_hatom, &partial_res_hatom, NULL, &res_hatom);
 	}
 	return res_hatom;
 }
@@ -144,7 +144,7 @@ t_llll* llll_scalar_matrix_product(t_hatom *scalar, t_llll *matrix){
 				case H_LONG:
 				case H_RAT:
 				case H_DOUBLE:
-					err = lexpr_eval_one(&times, &inelem->l_hatom, scalar, &partial_res_hatom);
+					err = lexpr_eval_one(&times, &inelem->l_hatom, scalar, NULL, &partial_res_hatom);
 					if (!err)
 						llll_appendhatom(outll, &partial_res_hatom, 0, WHITENULL_llll);
 					else
@@ -220,7 +220,7 @@ t_llll* llll_matrix_matrix_product(t_llll *llll1, t_llll *llll2){
 		long err;
 
 		out_llll = llll_get();
-		err = lexpr_eval_one(&times, &llll1->l_head->l_hatom, &llll2->l_head->l_hatom, &res_hatom);
+		err = lexpr_eval_one(&times, &llll1->l_head->l_hatom, &llll2->l_head->l_hatom, NULL, &res_hatom);
 		if (err) 
 			return NULL;
 		llll_appendhatom_clone(out_llll, &res_hatom, 0, WHITENULL_llll);
@@ -297,7 +297,7 @@ t_hatom llll_trace(t_llll *matrix, long shift){
 			}
 			elem2 = llll_getindex(row_llll, index + LLLL_IDX_BASE, I_NON_NEGATIVE); // 1-based
 			if (elem2)
-				err = lexpr_eval_one(&plus, &res_hatom, &elem2->l_hatom, &res_hatom);
+				err = lexpr_eval_one(&plus, &res_hatom, &elem2->l_hatom, NULL, &res_hatom);
 		}
 	}
 	return res_hatom;
@@ -553,7 +553,7 @@ t_llll* llll_gauss_reduce_matrix(	t_llll *matrix_in, long *num_swaps, long *rank
 		inverse_pivot = llll_hatom_inverse_if_number(&pivot_llllelem->l_hatom);
 
 		if (det && !llll_eq_hatom_ignoretype(det, &zero)) 
-			lexpr_eval_one(&times, det, &pivot_hatom, det);
+			lexpr_eval_one(&times, det, &pivot_hatom, NULL, det);
 		
 		if (llll_gt_hatom(&pivot_abs_hatom, &zero)) {
 			t_llllelem *row_i;
@@ -590,9 +590,9 @@ t_llll* llll_gauss_reduce_matrix(	t_llll *matrix_in, long *num_swaps, long *rank
 					t_llllelem *el_to_subtract = llll_get_element_in_matrix(matrix, i, h); 
 					t_hatom to_sum;
 					hatom_setlong(&to_sum, 0);
-					err = lexpr_eval_one(&times, &multiplier, &el_to_subtract->l_hatom, &to_sum);
-					err = lexpr_eval_one(&times, &to_sum, &minusone, &to_sum);
-					err = lexpr_eval_one(&plus, &el_to_operate_on->l_hatom, &to_sum, &el_to_operate_on->l_hatom);
+					err = lexpr_eval_one(&times, &multiplier, &el_to_subtract->l_hatom, NULL, &to_sum);
+					err = lexpr_eval_one(&times, &to_sum, &minusone, NULL, &to_sum);
+					err = lexpr_eval_one(&plus, &el_to_operate_on->l_hatom, &to_sum, NULL, &el_to_operate_on->l_hatom);
 				}
 				// now matrix[k, j] will be 0
 			}
@@ -615,7 +615,7 @@ t_llll* llll_gauss_reduce_matrix(	t_llll *matrix_in, long *num_swaps, long *rank
 	}
 	
 	if (det && (swaps % 2 != 0))
-		lexpr_eval_one(&times, det, &minusone, det);
+		lexpr_eval_one(&times, det, &minusone, NULL, det);
 
 	if (det && llll_eq_hatom_ignoretype(det, &zero))
 		hatom_setlong(det, 0); // if 0, we output a long
@@ -641,9 +641,9 @@ t_llll* llll_gauss_reduce_matrix(	t_llll *matrix_in, long *num_swaps, long *rank
 						t_llllelem *el_to_subtract = llll_get_element_in_matrix(matrix, i, h); 
 						t_hatom to_sum;
 						hatom_setlong(&to_sum, 0);
-						err = lexpr_eval_one(&times, &multiplier, &el_to_subtract->l_hatom, &to_sum);
-						err = lexpr_eval_one(&times, &to_sum, &minusone, &to_sum);
-						err = lexpr_eval_one(&plus, &el_to_operate_on->l_hatom, &to_sum, &el_to_operate_on->l_hatom);
+						err = lexpr_eval_one(&times, &multiplier, &el_to_subtract->l_hatom, NULL, &to_sum);
+						err = lexpr_eval_one(&times, &to_sum, &minusone, NULL, &to_sum);
+						err = lexpr_eval_one(&plus, &el_to_operate_on->l_hatom, &to_sum, NULL, &el_to_operate_on->l_hatom);
 					}
 				} else {
 					post("Error in double gaussian elimination");
@@ -916,7 +916,7 @@ t_hatom llll_get_cofactor(t_llll *matrix, long row, long col) {
 	hatom_setlong(&minus_one, -1);
 
 	if ((row + col) % 2 == 1)
-		lexpr_eval_one(&times, &cofactor, &minus_one, &cofactor);
+		lexpr_eval_one(&times, &cofactor, &minus_one, NULL, &cofactor);
 		
 	return cofactor; 
 }
@@ -1009,7 +1009,7 @@ t_llll* llll_proj(t_llll *vector, t_llll *direction) {
 	t_hatom num = llll_vector_vector_product(vector, direction);
 	t_hatom den = llll_vector_vector_product(direction, direction);
 	t_hatom multiplier;
-	lexpr_eval_one(&div, &num, &den, &multiplier);
+	lexpr_eval_one(&div, &num, &den, NULL, &multiplier);
 	return llll_scalar_vector_product(&multiplier, direction);
 }
 

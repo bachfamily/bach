@@ -56,6 +56,14 @@ void hatom_fn_int(t_hatom *arg, t_hatom *res);
 void hatom_fn_rat(t_hatom *arg, t_hatom *res);
 void hatom_fn_num(t_hatom *arg, t_hatom *res);
 void hatom_fn_den(t_hatom *arg, t_hatom *res);
+void hatom_fn_pitch(t_hatom *arg, t_hatom *res);
+void hatom_fn_degree(t_hatom *a1, t_hatom *res);
+void hatom_fn_octave(t_hatom *a1, t_hatom *res);
+void hatom_fn_alter(t_hatom *a1, t_hatom *res);
+void hatom_fn_makepitch(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res);
+
+
+
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_pow(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_abs(t_hatom *arg, t_hatom *res);
@@ -63,6 +71,9 @@ void hatom_fn_sgn(t_hatom *arg, t_hatom *res);
 void hatom_fn_mod(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_remainder(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res);
+
+
+
 
 void hatom_op_uminus(t_hatom *h1, t_hatom *res);
 void hatom_op_plus(t_hatom *h1, t_hatom *h2, t_hatom *res);
