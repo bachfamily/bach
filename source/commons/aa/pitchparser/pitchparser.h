@@ -12,17 +12,11 @@
 #include "llll_commons.h"
 
 #ifdef CONFIGURATION_Development
-#define parserpost post
-//#define parserpost(...) ((void) 0)
+//#define parserpost post
+#define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
 #endif
-
-typedef enum {
-    P_END = 0,
-    P_MORE,
-    P_ERROR
-} e_pitchparser_rv;
 
 typedef struct _pitchparser_wrapper {
     void *scanner;

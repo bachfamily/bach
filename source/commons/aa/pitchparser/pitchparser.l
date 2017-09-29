@@ -18,13 +18,17 @@ ACCIDENTAL ([#bxdq\^v]+)
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
     #include "pitchparser.h"
-    #include "lexpr.h"
-    #include "llll_math.h"
     #else
     #include <stdio.h>
     #include <ctype.h>
     #define parserpost printf
     #endif
+    
+    typedef enum {
+        P_END = 0,
+        P_MORE,
+        P_ERROR
+    } e_pitchparser_rv;
 %}
 
 %option extra-type = "t_pitch *"

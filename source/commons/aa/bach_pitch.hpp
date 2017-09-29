@@ -238,11 +238,9 @@ public:
         return (p_alter.r_den == 0);
     }
     
-    std::string toString();
-    std::string toString(char include_octave);
+    std::string toString(char include_octave = true);
     
-    const char* toCString() { return toString().c_str(); }
-    const char* toCString(char include_octave) { return toString(include_octave).c_str(); }
+    const char* toCString(char include_octave = true) { return toString(include_octave).c_str(); }
 
     t_symbol* toSym() { return gensym(toString().c_str()); }
 
@@ -281,7 +279,7 @@ public:
                 case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
                     
                 case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
-                case 'v':	alter += t_pitch::eighthflat;		(*pos)++;	break;
+                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
                     
                 default:	go = 0;	break;
             }

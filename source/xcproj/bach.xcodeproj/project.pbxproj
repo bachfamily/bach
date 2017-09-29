@@ -610,6 +610,7 @@
 		91A5EC1A1F7CE55D0052FBF6 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		91A5EC221F7CE5EF0052FBF6 /* backtick.c in Sources */ = {isa = PBXBuildFile; fileRef = 91A5EC211F7CE5EF0052FBF6 /* backtick.c */; };
 		91A5EC4A1F7D89FD0052FBF6 /* pitchparser.c in Sources */ = {isa = PBXBuildFile; fileRef = 91A5EC3D1F7D68150052FBF6 /* pitchparser.c */; };
+		91A5EC551F7E3C300052FBF6 /* alterparser.c in Sources */ = {isa = PBXBuildFile; fileRef = 91A5EC4C1F7E3B510052FBF6 /* alterparser.c */; };
 		91AF1C5017BCFA7E0071A497 /* bach_128bit.h in Headers */ = {isa = PBXBuildFile; fileRef = 91AF1C4E17BCFA7E0071A497 /* bach_128bit.h */; };
 		91AF1C5117BCFA7E0071A497 /* bach_128bit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91AF1C4F17BCFA7E0071A497 /* bach_128bit.cpp */; };
 		91B0EB78150BD3A70069A206 /* uislot.c in Sources */ = {isa = PBXBuildFile; fileRef = 91B0EB54150BD3360069A206 /* uislot.c */; };
@@ -2334,6 +2335,13 @@
 			remoteGlobalIDString = 91A5EC441F7D89530052FBF6;
 			remoteInfo = bach_pitchparser;
 		};
+		91A5EC561F7E3C490052FBF6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91A5EC511F7E3BAF0052FBF6;
+			remoteInfo = bach_alterparser;
+		};
 		91B0EB7F150BD3D50069A206 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -3194,13 +3202,17 @@
 		919BF81D1E01AB3800CDEA02 /* partition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = partition.c; sourceTree = "<group>"; };
 		919E6EDE17D9CD9300F44FAE /* thin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thin.c; sourceTree = "<group>"; };
 		91A5EC1F1F7CE55D0052FBF6 /* bach.backtick.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.backtick.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		91A5EC201F7CE55E0052FBF6 /* bach.bachtree2omtree copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.bachtree2omtree copy-Info.plist"; path = "/Users/andreaagostini/Documents/Max 7/Packages/bach/source/xcproj/bach.bachtree2omtree copy-Info.plist"; sourceTree = "<absolute>"; };
 		91A5EC211F7CE5EF0052FBF6 /* backtick.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = backtick.c; sourceTree = "<group>"; };
 		91A5EC3C1F7D68150052FBF6 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		91A5EC3D1F7D68150052FBF6 /* pitchparser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pitchparser.c; sourceTree = "<group>"; };
 		91A5EC3E1F7D68150052FBF6 /* pitchparser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pitchparser.h; sourceTree = "<group>"; };
 		91A5EC3F1F7D68150052FBF6 /* pitchparser.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = pitchparser.l; sourceTree = "<group>"; };
 		91A5EC401F7D68150052FBF6 /* pitchparser.lex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pitchparser.lex.h; sourceTree = "<group>"; };
+		91A5EC4C1F7E3B510052FBF6 /* alterparser.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = alterparser.c; sourceTree = "<group>"; };
+		91A5EC4D1F7E3B510052FBF6 /* alterparser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = alterparser.h; sourceTree = "<group>"; };
+		91A5EC4E1F7E3B510052FBF6 /* alterparser.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = alterparser.l; sourceTree = "<group>"; };
+		91A5EC4F1F7E3B510052FBF6 /* alterparser.lex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = alterparser.lex.h; sourceTree = "<group>"; };
+		91A5EC501F7E3B510052FBF6 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		91AF1C4E17BCFA7E0071A497 /* bach_128bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_128bit.h; sourceTree = "<group>"; };
 		91AF1C4F17BCFA7E0071A497 /* bach_128bit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bach_128bit.cpp; sourceTree = "<group>"; };
 		91B0EA88150BD29B0069A206 /* bach_math_utilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_math_utilities.c; sourceTree = "<group>"; };
@@ -4747,7 +4759,6 @@
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				913F87961C21702E00C9CAE0 /* stuff */,
 				91BA46AC1F71585E0002D515 /* package */,
-				91A5EC201F7CE55E0052FBF6 /* bach.bachtree2omtree copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -5462,6 +5473,7 @@
 		918A53BC131AD05D00D3993D /* aa */ = {
 			isa = PBXGroup;
 			children = (
+				91A5EC4B1F7E3B320052FBF6 /* alterparser */,
 				91A5EC3B1F7D67D40052FBF6 /* pitchparser */,
 				91BCCC561F6029AE002D8BE2 /* exprparser */,
 				918055DC1F55C61500BCB4AB /* strparser */,
@@ -5555,6 +5567,18 @@
 				91A5EC3C1F7D68150052FBF6 /* makefile */,
 			);
 			path = pitchparser;
+			sourceTree = "<group>";
+		};
+		91A5EC4B1F7E3B320052FBF6 /* alterparser */ = {
+			isa = PBXGroup;
+			children = (
+				91A5EC4D1F7E3B510052FBF6 /* alterparser.h */,
+				91A5EC4E1F7E3B510052FBF6 /* alterparser.l */,
+				91A5EC4C1F7E3B510052FBF6 /* alterparser.c */,
+				91A5EC4F1F7E3B510052FBF6 /* alterparser.lex.h */,
+				91A5EC501F7E3B510052FBF6 /* makefile */,
+			);
+			path = alterparser;
 			sourceTree = "<group>";
 		};
 		91B62BAD1F4EFC4900B9FC63 /* symparser */ = {
@@ -6919,6 +6943,20 @@
 			passBuildSettingsInEnvironment = 1;
 			productName = bach_symparser;
 		};
+		91A5EC511F7E3BAF0052FBF6 /* bach_alterparser */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 91A5EC521F7E3BAF0052FBF6 /* Build configuration list for PBXLegacyTarget "bach_alterparser" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "~/Documents/Max 7/Packages/bach/source/commons/aa/alterparser";
+			dependencies = (
+			);
+			name = bach_alterparser;
+			passBuildSettingsInEnvironment = 1;
+			productName = bach_symparser;
+		};
 		91BCCC0B1F56A5F8002D8BE2 /* bach_symparser */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = "$(ACTION)";
@@ -7906,6 +7944,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				91A5EC571F7E3C490052FBF6 /* PBXTargetDependency */,
 				91BCCC161F56A84A002D8BE2 /* PBXTargetDependency */,
 				91BCCC101F56A60B002D8BE2 /* PBXTargetDependency */,
 				91BCCC541F56E42A002D8BE2 /* PBXTargetDependency */,
@@ -9799,6 +9838,7 @@
 				91BCCC431F56CE4C002D8BE2 /* bach_chkparser */,
 				91BCCC5F1F602A62002D8BE2 /* bach_exprparser */,
 				91A5EC441F7D89530052FBF6 /* bach_pitchparser */,
+				91A5EC511F7E3BAF0052FBF6 /* bach_alterparser */,
 			);
 		};
 /* End PBXProject section */
@@ -12111,6 +12151,7 @@
 				91C6045918C0D9F50027BB79 /* SdifHard_OS.c in Sources */,
 				91B62BAB1F4EE6D400B9FC63 /* bach_pitch.cpp in Sources */,
 				91C6045B18C0D9F50027BB79 /* SdifHash.c in Sources */,
+				91A5EC551F7E3C300052FBF6 /* alterparser.c in Sources */,
 				91C6045D18C0D9F50027BB79 /* SdifHighLevel.c in Sources */,
 				91C6045F18C0D9F50027BB79 /* SdifList.c in Sources */,
 				91C6046118C0D9F50027BB79 /* SdifMatrix.c in Sources */,
@@ -13886,6 +13927,11 @@
 			isa = PBXTargetDependency;
 			target = 91A5EC441F7D89530052FBF6 /* bach_pitchparser */;
 			targetProxy = 91A5EC481F7D89D10052FBF6 /* PBXContainerItemProxy */;
+		};
+		91A5EC571F7E3C490052FBF6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 91A5EC511F7E3BAF0052FBF6 /* bach_alterparser */;
+			targetProxy = 91A5EC561F7E3C490052FBF6 /* PBXContainerItemProxy */;
 		};
 		91B0EB80150BD3D50069A206 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -15992,7 +16038,7 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = "bach.bachtree2omtree copy-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -16009,7 +16055,7 @@
 					/Library/Frameworks,
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
-				INFOPLIST_FILE = "bach.bachtree2omtree copy-Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -16061,6 +16107,87 @@
 			name = Development;
 		};
 		91A5EC471F7D89530052FBF6 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
+		91A5EC531F7E3BAF0052FBF6 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		91A5EC541F7E3BAF0052FBF6 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -19553,6 +19680,15 @@
 			buildConfigurations = (
 				91A5EC461F7D89530052FBF6 /* Development */,
 				91A5EC471F7D89530052FBF6 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		91A5EC521F7E3BAF0052FBF6 /* Build configuration list for PBXLegacyTarget "bach_alterparser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91A5EC531F7E3BAF0052FBF6 /* Development */,
+				91A5EC541F7E3BAF0052FBF6 /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;

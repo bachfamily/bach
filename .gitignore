@@ -32,6 +32,7 @@ source/commons/aa/symparser/makefile
 source/commons/aa/chkparser/makefile
 source/commons/aa/exprparser/makefile
 source/commons/aa/pitchparser/makefile
+source/commons/aa/alterparser/makefile
 
 
 # Emacs temp files for .gitignore and .gitattributes #

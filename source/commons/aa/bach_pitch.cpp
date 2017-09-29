@@ -262,11 +262,6 @@ std::string t_pitch::toString(char include_octave)
     return s;
 }
 
-std::string t_pitch::toString()
-{
-    return t_pitch::toString(true);
-}
-
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
 {
     // converts a midicents number in the accidentals, with respect to the given full_accidental_representation (representing for each note)
