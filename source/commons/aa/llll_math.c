@@ -450,6 +450,9 @@ void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res)
     
     else if (h1_type == H_PITCH && h2_type == H_RAT) // pr -> pitch
         hatom_setpitch(res, h1->h_w.w_pitch * h2->h_w.w_rat);
+    
+    else if (h1_type == H_RAT && h2_type == H_PITCH) // rp -> pitch
+        hatom_setpitch(res, h1->h_w.w_rat * h2->h_w.w_pitch);
 
     else if (h1_type == H_LONG && h2_type == H_RAT) // lr -> rat
         hatom_setrational(res, h1->h_w.w_long * h2->h_w.w_rat);
@@ -457,7 +460,7 @@ void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res)
     else if (h1_type == H_RAT && h2_type == H_LONG) // rl -> rat
         hatom_setrational(res, h1->h_w.w_rat * h2->h_w.w_long);
     
-    else // rr rp pp -> rat
+    else // rr pp -> rat
         hatom_setrational(res, hatom_getrational(h1) * hatom_getrational(h2));
 
 }
