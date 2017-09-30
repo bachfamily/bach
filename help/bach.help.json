@@ -90,11 +90,18 @@
 		},
 		"Outlet types" : {
 			"Nativeortext" : {
-				"filename" : [ "bach.help.llll.03_outlet types.03_nativeortext.maxpat" ],
+				"filename" : [ "bach.help.llll.03_outlet types.02_nativeortext.maxpat" ],
 				"objects" : [ "all" ],
 				"seealso" : [  ],
 				"tags" : [ "llll", "outlet", "text", "native", "type", "out" ],
 				"title" : [ "Outlet types: native or text" ]
+			},
+			"Outletmax" : {
+				"filename" : [ "bach.help.llll.03_outlet types.03_outletmax.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [  ],
+				"tags" : [ "llll", "outlet", "text", "native", "type", "out", "max", "m", "backtick", "remove", "quote", "friendly" ],
+				"title" : [ "Output to Max and backticks" ]
 			},
 			"Mixedoutlets" : {
 				"filename" : [ "bach.help.llll.03_outlet types.04_mixedoutlets.maxpat" ],

@@ -1987,7 +1987,7 @@
     ]
   },
   "bach.pitchpack": {
-    "digest": "Make pitches from their components.",
+    "digest": "Make pitches from their components",
     "module": "bach",
     "category": [
       "bach",
@@ -2007,7 +2007,7 @@
     ]
   },
   "bach.pitchunpack": {
-    "digest": "Separate components of pitches.",
+    "digest": "Separate components of pitches",
     "module": "bach",
     "category": [
       "bach",
