@@ -443,8 +443,22 @@ t_rational rat_long_mod(t_rational rat, t_atom_long num, char always_positive);
 	@return			The #t_rational remainder #rat1 mod #rat2.
 	@remark			For instance, rat_long_mod(9/5, 1/3, true) = 2/15, since 9/5 = 2/15 * 5 + 1/3. 
 	@remark			The sign of #rat2 is ignored (and always taken as positive)
+    @seealso rat_rat_divdiv()
  */
 t_rational rat_rat_mod(t_rational rat1, t_rational rat2, char always_positive);
+
+
+
+/**	Return the integer division between two rational numbers
+	@ingroup		rational
+	@param	rat1	The first rational number.
+	@param	rat2	The second rational number.
+	@param	always_positive_mod	If this flag is non-zero, the division is carried out so that the modulo is always positive (i.e. as a floor).
+	@return			The integer division between #rat1 and #rat2.
+	@remark			The sign of #rat2 is ignored (and always taken as positive)
+    @seealso rat_rat_mod()
+ */
+long rat_rat_divdiv(t_rational rat1, t_rational rat2, char always_positive_mod);
 
 
 

@@ -249,6 +249,19 @@ void notationobj_autospell_trivial(t_notation_obj *r_ob, t_autospell_params *par
 
 //// CHEW AND CHEN ALGORITHM from Chew and Chen (2003, 2005)
 
+t_pitch pitch_snap_alteration_to_semitones(t_pitch p)
+{
+    // floor(alter /(1/2))
+    long d = rat_rat_divdiv(p.alter(), RAT_1OVER2, false);
+    return t_pitch(p.degree(), rat_long_prod(RAT_1OVER2, d), p.octave());
+}
+
+t_pitch pitch_rematch_alteration_from_semitones(t_pitch p, t_pitch orig_pitch)
+{
+    t_rational module = rat_rat_mod(orig_pitch.alter(), RAT_1OVER2, false);
+    return t_pitch(p.degree(), rat_rat_sum(p.alter(), module), p.octave());
+}
+
 t_pitch position_on_line_of_fifths_to_pitch(long pos)
 {
     return t_pitch::middleC + pos * t_pitch(4);
@@ -257,7 +270,8 @@ t_pitch position_on_line_of_fifths_to_pitch(long pos)
 
 long pitch_to_position_on_line_of_fifths(t_pitch p)
 {
-    t_pitch temp = t_pitch(p.degree(), p.alter(), 0);
+    t_pitch snapped_p = pitch_snap_alteration_to_semitones(p);
+    t_pitch temp = t_pitch(p.degree(), snapped_p.alter(), 0);
     t_pitch lowG = t_pitch(4);
     t_pitch octave = t_pitch(0, long2rat(0), 1);
     const long MAX_TRY = 128;
@@ -555,6 +569,7 @@ t_pitch notationobj_autospell_match_pitch_with_position_on_line_of_fifths(t_nota
 {
     t_pitch new_pitch = position_on_line_of_fifths_to_pitch(pos);
     new_pitch.set(new_pitch.degree(), new_pitch.alter(), orig_pitch.octave());
+    new_pitch = pitch_rematch_alteration_from_semitones(new_pitch, orig_pitch);
     long new_pitch_octave = orig_pitch.octave() + floor((orig_pitch.toMC() - new_pitch.toMC())/1200);
     
     return t_pitch(new_pitch.degree(), new_pitch.alter(), new_pitch_octave);
