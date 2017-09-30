@@ -145,7 +145,8 @@ int T_EXPORT main()
 	mc2n_class = c;
 	
 	dev_post("bach.mc2n compiled %s %s", __DATE__, __TIME__);
-	
+    object_warn(NULL, "bach.mc2n is deprecated. Please consider replacing me with bach.mc2p!");
+
 	return 0;
 }
 
