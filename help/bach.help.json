@@ -2401,35 +2401,35 @@
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.01_intro.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "key+signature", "enharmonic+table", "respell+options" ],
-					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "reset", "atonal", "chew", "chen", "chewandchen", "algorithm", "selection", "algorithm" ],
+					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "reset", "atonal", "chew", "chen", "chewandchen", "algorithm", "selection", "algorithm", "spell" ],
 					"title" : [ "Respell pitches" ]
 				},
 				"Basicoptions" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.02_basicoptions.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell", "sel+note" ],
-					"tags" : [ "message", "pitch", "select", "selection", "respell", "automatically", "enharmonic", "enharmonicity", "option", "sharp", "flat", "sharper", "sharpest", "flatter", "flattest", "voicewise", "circle", "of", "fifths", "algorithm" ],
+					"tags" : [ "message", "pitch", "select", "selection", "respell", "automatically", "enharmonic", "enharmonicity", "option", "sharp", "flat", "sharper", "sharpest", "flatter", "flattest", "voicewise", "circle", "of", "fifths", "algorithm", "spell" ],
 					"title" : [ "Basic respell options" ]
 				},
 				"Atonaloptions" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.03_atonaloptions.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell+flattest", "respell+sharpest", "respell+atonal" ],
-					"tags" : [ "message", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "discard", "altered", "repetition", "discardalteredrepetition", "stdev", "thresh", "stdevthresh", "standard", "deviation", "equation", "threshold", "algorithm", "atonal" ],
+					"tags" : [ "message", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "discard", "altered", "repetition", "discardalteredrepetition", "stdev", "thresh", "stdevthresh", "standard", "deviation", "equation", "threshold", "algorithm", "atonal", "spell" ],
 					"title" : [ "Atonal algorithm options" ]
 				},
 				"Chewandchen" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.04_chewandchen.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell" ],
-					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "winsize", "locality", "sliding", "selfreferential", "spiral", "spiralr", "spiralh", "radius", "height", "step" ],
+					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "winsize", "locality", "sliding", "selfreferential", "spiral", "spiralr", "spiralh", "radius", "height", "step", "spell" ],
 					"title" : [ "Chew and Chen algorithm" ]
 				},
 				"Globality" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.05_globality.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell", "pitch+message", "sel+message" ],
-					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect" ],
+					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect", "spell" ],
 					"title" : [ "Respelling scope" ]
 				}
 			},

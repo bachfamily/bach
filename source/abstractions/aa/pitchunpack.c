@@ -18,7 +18,7 @@
 	bachproject
 	
 	@digest
-	Separate components of pitches.
+	Separate components of pitches
 	
 	@description
 	Retrieves degrees, alterations and octaves from an llll of pitches.

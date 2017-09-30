@@ -2,6 +2,7 @@
 <root>
 <refpage name='bach.args.maxref.xml'/>
 <refpage name='bach.arithmser.maxref.xml'/>
+<refpage name='bach.backtick.maxref.xml'/>
 <refpage name='bach.cartesianprod.maxref.xml'/>
 <refpage name='bach.classify.maxref.xml'/>
 <refpage name='bach.collect.maxref.xml'/>
@@ -89,6 +90,8 @@
 <refpage name='bach.mc2r.maxref.xml'/>
 <refpage name='bach.minimum.maxref.xml'/>
 <refpage name='bach.mod.maxref.xml'/>
+<refpage name='bach.pitchpack.maxref.xml'/>
+<refpage name='bach.pitchunpack.maxref.xml'/>
 <refpage name='bach.pow.maxref.xml'/>
 <refpage name='bach.prod.maxref.xml'/>
 <refpage name='bach.r2mc.maxref.xml'/>
@@ -122,11 +125,11 @@
 <refpage name='bach.ivec.maxref.xml'/>
 <refpage name='bach.linearsolve.maxref.xml'/>
 <refpage name='bach.llll2dict.maxref.xml'/>
-<refpage name='bach.mc2n.maxref.xml'/>
+<refpage name='bach.mc2o.maxref.xml'/>
 <refpage name='bach.minfo.maxref.xml'/>
 <refpage name='bach.mtimes.maxref.xml'/>
-<refpage name='bach.n2mc.maxref.xml'/>
 <refpage name='bach.omtree2bachtree.maxref.xml'/>
+<refpage name='bach.p2mc.maxref.xml'/>
 <refpage name='bach.pad.maxref.xml'/>
 <refpage name='bach.partition.maxref.xml'/>
 <refpage name='bach.playkeys.maxref.xml'/>

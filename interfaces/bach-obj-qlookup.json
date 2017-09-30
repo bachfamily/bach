@@ -41,6 +41,23 @@
       "bach.geomser"
     ]
   },
+  "bach.backtick": {
+    "digest": "Backticks the first element of a text-format llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "text",
+      "backtick",
+      "attributes"
+    ],
+    "seealso": [
+      "bach.portal"
+    ]
+  },
   "bach.cartesianprod": {
     "digest": "Cartesian product",
     "module": "bach",
@@ -1969,6 +1986,46 @@
       "%"
     ]
   },
+  "bach.pitchpack": {
+    "digest": "Make pitches from their components.",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math",
+      "pitch"
+    ],
+    "keywords": [
+      "calculate",
+      "compute",
+      "pitch",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.pitchunpack"
+    ]
+  },
+  "bach.pitchunpack": {
+    "digest": "Separate components of pitches.",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math",
+      "pitch"
+    ],
+    "keywords": [
+      "calculate",
+      "compute",
+      "pitch",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.pitchpack"
+    ]
+  },
   "bach.pow": {
     "digest": "Quick llll exponentiation",
     "module": "bach",
@@ -2809,8 +2866,8 @@
       "bach.tree"
     ]
   },
-  "bach.mc2n": {
-    "digest": "Midicents to note name conversion",
+  "bach.mc2p": {
+    "digest": "MIDIcents to pitch conversion",
     "module": "bach",
     "category": [
       "bach",
@@ -2822,10 +2879,11 @@
       "midicent",
       "cent",
       "note",
-      "name"
+      "name",
+      "pitch"
     ],
     "seealso": [
-      "bach.n2mc",
+      "bach.p2mc",
       "bach.f2mc",
       "bach.mc2f"
     ]
@@ -2876,27 +2934,6 @@
       "Into The Matrix"
     ]
   },
-  "bach.n2mc": {
-    "digest": "Note names to midicents conversion",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach notation"
-    ],
-    "keywords": [
-      "convert",
-      "midicent",
-      "cent",
-      "note",
-      "name"
-    ],
-    "seealso": [
-      "bach.mc2n",
-      "bach.f2mc",
-      "bach.mc2f"
-    ]
-  },
   "bach.omtree2bachtree": {
     "digest": "Convert an OpenMusic rhythmic tree into a bach rhythmic tree",
     "module": "bach",
@@ -2918,6 +2955,27 @@
       "bach.bachtree2omtree",
       "bach.score",
       "The World Outside"
+    ]
+  },
+  "bach.p2mc": {
+    "digest": "Pitches to MIDIcents conversion",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "convert",
+      "midicent",
+      "cent",
+      "note",
+      "name"
+    ],
+    "seealso": [
+      "bach.mc2p",
+      "bach.f2mc",
+      "bach.mc2f"
     ]
   },
   "bach.pad": {
