@@ -46,6 +46,10 @@ v0.8b
 - bach.tonnetz			Now center and generators are by default pitches; 
 					your patches should be brought to the new system automatically, but please verify their behavior
 
+- bach.mod			Now implements the expr mod() function, positive modulo.
+					Now [bach.%] is an alias for the new abstraction [bach.remainder], which implements the signed modulo (as in expr),
+					so compatibility is kept if you used [bach.%], but not if you used [bach.mod]
+
 - all objects:			Specifications syntax for message arguments has been replaced by @ syntax.
 					This will NOT break backwards compatibility, but you should use the new syntax whenever possible.
 					For instance: a message like [importmidi (tracks2voices 1)] should be replaced by [importmidi @tracks2voices 1]. 
@@ -199,10 +203,11 @@ v0.8b
 - bach.pad, bach.partition
 			Are now externals
 
-- bach.classify, bach.playkeys, bach.resample	
+- bach.classify, bach.playkeys, bach.resample, bach.backtick
 			New externals
 
-- bach.postpend		New abstraction
+- bach.postpend, bach.pitchpack, bach.pitchunpack, bach.remainder	
+			New abstractions
 
 - bach.prepend, bach.unpacknote, bach.mapchord
 			Optimized patchers

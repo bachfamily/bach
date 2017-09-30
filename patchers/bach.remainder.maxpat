@@ -61,9 +61,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 90.0, 147.0, 35.0 ],
+					"patching_rect" : [ 15.0, 90.0, 154.0, 35.0 ],
 					"style" : "",
-					"text" : "bach.expr mod($x1\\, $x2) @scalarmode 1"
+					"text" : "bach.expr $x1 % $x2 @scalarmode 1"
 				}
 
 			}

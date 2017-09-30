@@ -1961,7 +1961,7 @@
       "bach.expr"
     ]
   },
-  "bach.%": {
+  "bach.mod": {
     "digest": "Quick llll modulo",
     "module": "bach",
     "category": [
@@ -2119,6 +2119,31 @@
       "bach.-",
       "bach.%",
       "/"
+    ]
+  },
+  "bach.%": {
+    "digest": "Quick llll modulo",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "modulo",
+      "remainder",
+      "division",
+      "number",
+      "calculate",
+      "compute"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach./",
+      "bach.*",
+      "bach.+",
+      "bach.-",
+      "%"
     ]
   },
   "bach.repeat": {

@@ -4763,12 +4763,35 @@
 					"title" : [ "Slots for rests in separate syntax" ]
 				}
 			},
-			"Notenames" : {
-				"filename" : [ "bach.help.notation.syntax.90_notenames.maxpat" ],
-				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "ascii+accidentals" ],
-				"tags" : [ "syntax", "note", "name", "middlecoctave" ],
-				"title" : [ "Inputting note names" ]
+			"Pitches" : {
+				"Notenames" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.01_notenames.maxpat" ],
+					"objects" : [ "all" ],
+					"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "middlecoctave", "notename" ],
+					"title" : [ "Inputting pitches" ]
+				},
+				"Pitchsyntax" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
+					"objects" : [ "all" ],
+					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone" ],
+					"title" : [ "Pitch syntax" ]
+				},
+				"Intervals" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.03_intervals.maxpat" ],
+					"objects" : [ "all" ],
+					"seealso" : [ "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "arithmetics", "add", "divide", "multiply", "subtract", "subtract", "remainder" ],
+					"title" : [ "Pitch arithmetics and intervals" ]
+				},
+				"Pack" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.04_pack.maxpat" ],
+					"objects" : [ "all" ],
+					"seealso" : [ "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "create", "break", "build", "pack", "unpack", "pitchpack", "pitchunpack" ],
+					"title" : [ "Packing and unpacking pitches" ]
+				}
 			}
 		},
 		"Voice properties" : {
