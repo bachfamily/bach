@@ -2110,11 +2110,11 @@
 	// @copy BACH_DOC_SLOT_EDIT_KEYBOARD_COMMANDS
 	
 #define BACH_DOC_OPERATION_ABSTRACTIONS_LLLL_AND_NUMBERS_REMARK
-	// Unless one of the two operand lllls is a number, the operation is intended to be 
-	// element-wise: position of elements of left and right elements must match in operations, 
-	// both left and right lllls must have the same shape.
-	// If one of the two lllls is a single number, such number is used in the operation against 
-	// all elements of the other llll (as when the <m>scalarmode</m> attribute is set to 1 
+	// Unless one of the two operand lllls contains a single number or pitch, the operation is intended to be
+	// element-wise: position of elements of the left and right lllls are matched in operations,
+	// and both left and right lllls must have the same shape.
+	// If one of the two lllls contains a single element, such element is used in the operation against
+	// all the elements of the other llll (as when the <m>scalarmode</m> attribute is set to 1
 	// in <o>bach.expr</o>).
 	// <br /> <br />
 

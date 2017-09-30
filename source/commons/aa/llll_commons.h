@@ -898,7 +898,7 @@ t_llll *llll_primeser(long min, long max, long maxcount);
 
 
 // return an arithmetic series (see bach.arithmser)
-t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount);
+t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount, t_object *culprit = NULL);
 
 // return a geometric series (see bach.arithmser)
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err);

@@ -335,7 +335,7 @@ void derive_anything(t_derive *x, t_symbol *msg, long ac, t_atom *av)
 					hatom_setdouble(&start, domain_start);
 					hatom_setdouble(&end, domain_end);
 					hatom_setdouble(&step, (domain_end-domain_start)/(this_num_sampling_points - 1));
-					ll = llll_arithmser(start, end, step, 0);
+					ll = llll_arithmser(start, end, step, 0, (t_object *) x);
 				}
 				
 				t_llll *sampling_x = ll;

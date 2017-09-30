@@ -6397,7 +6397,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
 	return ser;
 }
 
-t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount)
+t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount, t_object *culprit)
 {
 	long start_type = hatom_gettype(&start_hatom);
 	long end_type = hatom_gettype(&end_hatom);
@@ -6440,10 +6440,13 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = start <= end ? 1 : -1;
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
 			} else {
 				maxcount_decides = true;
-                if (maxcount > 1)
-                    step = (end - start) / (maxcount - 1);
+                step = (end - start) / (maxcount - 1);
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6500,12 +6503,14 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = rat_rat_cmp(start, end) <= 0 ? genrat(1, 1) : genrat(-1, 1);
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld/%ld", step.num(), step.den());
 			} else {
-                if (maxcount > 1) {
-                    step = rat_long_div(rat_rat_diff(end, start), maxcount - 1);
-                }
+                step = rat_long_div(rat_rat_diff(end, start), maxcount - 1);
 				if (step.r_num == 0)
 					step = rat_rat_cmp(start, end) <= 0 ? RAT_MIN_POSITIVE : RAT_MAX_NEGATIVE;
+                else if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld/%ld", step.num(), step.den());
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6550,11 +6555,14 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = start <= end ? 1 : -1;
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld", step);
 			} else {
-                if (maxcount > 1)
-                    step = (end - start) / (maxcount - 1);
+                step = (end - start) / (maxcount - 1);
 				if (step == 0)
 					step = start <= end ? 1 : -1;
+                else if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld", step);
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6598,24 +6606,38 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         }
         if (step == t_pitch::C0) {
             if (maxcount <= 0) {
-                step =  start < end ? t_pitch(1, t_pitch::flat, 0) : t_pitch(6, t_pitch::natural, -1);
+                step = start < end ? t_pitch(1, t_pitch::flat, 0) : t_pitch(1, t_pitch::flat, 0);
                 maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %s", step.toCString());
             } else {
-                if (maxcount > 1) {
-                    step = (end - start) / (maxcount - 1);;
-                }
+                step = (end - start) / (maxcount - 1);;
                 if (step == t_pitch::C0)
-                    step = start < end ? PITCH_MIN_POSITIVE : PITCH_MAX_NEGATIVE;
+                    step = start < end ? t_pitch(1, t_pitch::flat, 0) : t_pitch(1, t_pitch::flat, 0);
+                if (start != end && hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %s", step.toCString());
             }
         } else if (maxcount <= 0)
             maxcount = ATOM_LONG_MAX;
         
-        if (step > t_pitch::C0) {
-            for (v = start, count = 0; v <= end && count < maxcount; v += step, count++)
-                llll_appendpitch(outll, v, 0, WHITENULL_llll);
+        if ((step.degree() != 0 || step.octave() != 0) &&
+            (start.degree() != end.degree() || start.octave() != end.octave())) {
+            if (step > t_pitch::C0) {
+                for (v = start, count = 0; v <= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            } else {
+                for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            }
         } else {
-            for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
-                llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            object_warn((t_object *) culprit, "Also considering midicents");
+            if (step > t_pitch::C0) {
+                for (v = start, count = 0; v <= end && v.toMC() < end.toMC() && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            } else {
+                for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            }
         }
         pedantic_llll_check(outll);
         return outll;

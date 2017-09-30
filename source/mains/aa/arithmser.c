@@ -139,7 +139,7 @@ void arithmser_bang(t_arithmser *x)
 {	
 	if (x->n_ob.l_rebuild != 0) {
 		x->n_ob.l_rebuild = 0;
-		llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, llll_arithmser(x->n_min, x->n_max, x->n_step, x->n_maxcount), 0);
+		llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, llll_arithmser(x->n_min, x->n_max, x->n_step, x->n_maxcount, (t_object *) x), 0);
 	}
 	llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
 }

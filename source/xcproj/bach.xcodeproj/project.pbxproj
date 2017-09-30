@@ -3213,6 +3213,8 @@
 		91A5EC4E1F7E3B510052FBF6 /* alterparser.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = alterparser.l; sourceTree = "<group>"; };
 		91A5EC4F1F7E3B510052FBF6 /* alterparser.lex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = alterparser.lex.h; sourceTree = "<group>"; };
 		91A5EC501F7E3B510052FBF6 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		91A5EC581F7EA26B0052FBF6 /* pitchpack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pitchpack.c; sourceTree = "<group>"; };
+		91A5EC591F7EDA470052FBF6 /* pitchunpack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pitchunpack.c; sourceTree = "<group>"; };
 		91AF1C4E17BCFA7E0071A497 /* bach_128bit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_128bit.h; sourceTree = "<group>"; };
 		91AF1C4F17BCFA7E0071A497 /* bach_128bit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bach_128bit.cpp; sourceTree = "<group>"; };
 		91B0EA88150BD29B0069A206 /* bach_math_utilities.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_math_utilities.c; sourceTree = "<group>"; };
@@ -5225,6 +5227,8 @@
 				915D1DDC18D764F5005ED0A4 /* mc2r.c */,
 				913526D6181FC9F000BE45DE /* minimum.c */,
 				913526D7181FC9F000BE45DE /* mod.c */,
+				91A5EC581F7EA26B0052FBF6 /* pitchpack.c */,
+				91A5EC591F7EDA470052FBF6 /* pitchunpack.c */,
 				913526DA181FC9F000BE45DE /* pow.c */,
 				913526DB181FC9F000BE45DE /* prod.c */,
 				915D1DDD18D764F5005ED0A4 /* r2mc.c */,
