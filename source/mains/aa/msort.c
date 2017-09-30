@@ -183,20 +183,26 @@ long msort_func(t_msort *x, t_llllelem *a, t_llllelem *b)
 	}
 	
 	x->n_haslambda = 0;
-	
-	if (x->n_ob.l_out[2].b_type == LLLL_O_TEXT) {
-		outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base + 1);
-		outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
-		outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base);
-		outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_t_sym, a_item->n_t_ac, a_item->n_t_av);
-	
-	} else if (x->n_ob.l_out[2].b_type == LLLL_O_NATIVE) {
-		outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base + 1);
-		outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_n_sym, 1, b_item->n_n_av);
-		outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base);
-		outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_n_sym, 1, a_item->n_n_av);
-	}	
-	
+    
+    switch (x->n_ob.l_out[2].b_type) {
+        case LLLL_O_TEXT:
+            outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base + 1);
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
+            outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base);
+            outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_t_sym, a_item->n_t_ac, a_item->n_t_av);
+            break;
+        case LLLL_O_MAX:
+            outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base + 1);
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_m_sym, b_item->n_m_ac, b_item->n_m_av);
+            outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base);
+            outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_m_sym, a_item->n_m_ac, a_item->n_m_av);
+            break;
+        case LLLL_O_NATIVE:
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_n_sym, 1, b_item->n_n_av);
+            break;
+        default:
+            break;
+    }
 	
 	if (!x->n_haslambda)
 		return llll_leq(a_item->n_this_by, b_item->n_this_by);

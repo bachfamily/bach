@@ -60,12 +60,16 @@ public:
     static const t_atom_short degree2PC[];
     static const t_atom_short PC2degree[];
     static const char degree2name[];
+    
     static const t_shortRational dblsharp;
     static const t_shortRational sharp;
     static const t_shortRational qrtrsharp;
+    static const t_shortRational eighthsharp;
+    
     static const t_shortRational natural;
-    static const t_shortRational qrtrflat;
     static const t_shortRational flat;
+    static const t_shortRational qrtrflat;
+    static const t_shortRational eighthflat;
     static t_pitchMatrices &pm;
 
 private:
@@ -155,24 +159,30 @@ public:
     t_pitch operator+(const t_pitch &b) const;
     t_pitch operator-(const t_pitch &b) const;
     t_pitch operator*(t_atom_long b) const;
-    t_rational operator/(const t_rational &b) const { return toMC() / b; } ;
+    t_pitch operator*(const t_rational &b) const;
+    t_pitch operator/(const t_atom_long b) const;
+    t_pitch operator/(const t_rational &b) const;
     t_rational operator/(const t_pitch &b) const { return toMC() / b.toMC(); };
+    t_pitch operator%(const t_atom_long b) const;
+    t_pitch operator%(const t_pitch &b) const;
+    
     long divdiv(const t_pitch &b) const {
         t_rational res = *this / b;
         return res.num() / res.den();
     };
-    t_pitch divdiv(const t_rational &b) const;
-    t_pitch divdiv(const t_atom_long b) const;
-    t_pitch operator%(const t_atom_long b) const;
-    t_pitch operator%(const t_pitch &b) const;
     
     friend t_pitch operator*(const t_atom_long a, const t_pitch b) { return b * a; }
-    
+    friend t_pitch operator*(const t_rational &a, const t_pitch &b) { return b * a; }
+
     t_pitch operator+=(const t_pitch &b) { return *this = *this + b; }
     t_pitch operator-=(const t_pitch &b) { return *this = *this - b; }
-    t_pitch operator*=(t_atom_short b) { return *this = *this * b; }
+    t_pitch operator*=(t_atom_long b) { return *this = *this * b; }
+    t_pitch operator*=(t_rational &b) { return *this = *this * b; }
+    t_pitch operator/=(t_atom_long b) { return *this = *this / b; }
+    t_pitch operator/=(t_rational b) { return *this = *this / b; }
     t_pitch operator%=(const t_pitch &b) { return *this = *this % b; }
 
+    
     t_atom_short sgn() const {
         if (toMC() > 0) return 1;
         else if (toMC() == 0) return 0;
@@ -232,11 +242,9 @@ public:
         return (p_alter.r_den == 0);
     }
     
-    std::string toString();
-    std::string toString(char include_octave);
+    std::string toString(char include_octave = true);
     
-    const char* toCString() { return toString().c_str(); }
-    const char* toCString(char include_octave) { return toString(include_octave).c_str(); }
+    const char* toCString(char include_octave = true) { return toString(include_octave).c_str(); }
 
     t_symbol* toSym() { return gensym(toString().c_str()); }
 
@@ -266,11 +274,17 @@ public:
         int go = 1;
         while (go) {
             switch (**pos) {
-                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
-                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
                 case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
+                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                    
+                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                    
                 case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
                 case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                    
+                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
+                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                    
                 default:	go = 0;	break;
             }
         }

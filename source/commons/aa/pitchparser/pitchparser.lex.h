@@ -1,10 +1,10 @@
-#ifndef exprparser_HEADER_H
-#define exprparser_HEADER_H 1
-#define exprparser_IN_HEADER 1
+#ifndef pitchparser_HEADER_H
+#define pitchparser_HEADER_H 1
+#define pitchparser_IN_HEADER 1
 
-#line 6 "exprparser.lex.h"
+#line 6 "pitchparser.lex.h"
 
-#line 8 "exprparser.lex.h"
+#line 8 "pitchparser.lex.h"
 
 #define  YY_INT_ALIGNED short int
 
@@ -204,32 +204,31 @@ struct yy_buffer_state
 	};
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
 
-void exprparser_restart (FILE *input_file ,yyscan_t yyscanner );
-void exprparser__switch_to_buffer (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
-YY_BUFFER_STATE exprparser__create_buffer (FILE *file,int size ,yyscan_t yyscanner );
-void exprparser__delete_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
-void exprparser__flush_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
-void exprparser_push_buffer_state (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
-void exprparser_pop_buffer_state (yyscan_t yyscanner );
+void pitchparser_restart (FILE *input_file ,yyscan_t yyscanner );
+void pitchparser__switch_to_buffer (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
+YY_BUFFER_STATE pitchparser__create_buffer (FILE *file,int size ,yyscan_t yyscanner );
+void pitchparser__delete_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
+void pitchparser__flush_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
+void pitchparser_push_buffer_state (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
+void pitchparser_pop_buffer_state (yyscan_t yyscanner );
 
-YY_BUFFER_STATE exprparser__scan_buffer (char *base,yy_size_t size ,yyscan_t yyscanner );
-YY_BUFFER_STATE exprparser__scan_string (yyconst char *yy_str ,yyscan_t yyscanner );
-YY_BUFFER_STATE exprparser__scan_bytes (yyconst char *bytes,yy_size_t len ,yyscan_t yyscanner );
+YY_BUFFER_STATE pitchparser__scan_buffer (char *base,yy_size_t size ,yyscan_t yyscanner );
+YY_BUFFER_STATE pitchparser__scan_string (yyconst char *yy_str ,yyscan_t yyscanner );
+YY_BUFFER_STATE pitchparser__scan_bytes (yyconst char *bytes,yy_size_t len ,yyscan_t yyscanner );
 
-void *exprparser_alloc (yy_size_t ,yyscan_t yyscanner );
-void *exprparser_realloc (void *,yy_size_t ,yyscan_t yyscanner );
-void exprparser_free (void * ,yyscan_t yyscanner );
+void *pitchparser_alloc (yy_size_t ,yyscan_t yyscanner );
+void *pitchparser_realloc (void *,yy_size_t ,yyscan_t yyscanner );
+void pitchparser_free (void * ,yyscan_t yyscanner );
 
 /* Begin user sect3 */
 
-#define exprparser_wrap(yyscanner) (/*CONSTCOND*/1)
+#define pitchparser_wrap(yyscanner) (/*CONSTCOND*/1)
 #define YY_SKIP_YYWRAP
 
 #define yytext_ptr yytext_r
 
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
-#define BINARY 1
 
 #endif
 
@@ -241,44 +240,44 @@ void exprparser_free (void * ,yyscan_t yyscanner );
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE t_exprparser_data *
+#define YY_EXTRA_TYPE t_pitch *
 
-int exprparser_lex_init (yyscan_t* scanner);
+int pitchparser_lex_init (yyscan_t* scanner);
 
-int exprparser_lex_init_extra (YY_EXTRA_TYPE user_defined,yyscan_t* scanner);
+int pitchparser_lex_init_extra (YY_EXTRA_TYPE user_defined,yyscan_t* scanner);
 
 /* Accessor methods to globals.
    These are made visible to non-reentrant scanners for convenience. */
 
-int exprparser_lex_destroy (yyscan_t yyscanner );
+int pitchparser_lex_destroy (yyscan_t yyscanner );
 
-int exprparser_get_debug (yyscan_t yyscanner );
+int pitchparser_get_debug (yyscan_t yyscanner );
 
-void exprparser_set_debug (int debug_flag ,yyscan_t yyscanner );
+void pitchparser_set_debug (int debug_flag ,yyscan_t yyscanner );
 
-YY_EXTRA_TYPE exprparser_get_extra (yyscan_t yyscanner );
+YY_EXTRA_TYPE pitchparser_get_extra (yyscan_t yyscanner );
 
-void exprparser_set_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
+void pitchparser_set_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
 
-FILE *exprparser_get_in (yyscan_t yyscanner );
+FILE *pitchparser_get_in (yyscan_t yyscanner );
 
-void exprparser_set_in  (FILE * _in_str ,yyscan_t yyscanner );
+void pitchparser_set_in  (FILE * _in_str ,yyscan_t yyscanner );
 
-FILE *exprparser_get_out (yyscan_t yyscanner );
+FILE *pitchparser_get_out (yyscan_t yyscanner );
 
-void exprparser_set_out  (FILE * _out_str ,yyscan_t yyscanner );
+void pitchparser_set_out  (FILE * _out_str ,yyscan_t yyscanner );
 
-yy_size_t exprparser_get_leng (yyscan_t yyscanner );
+yy_size_t pitchparser_get_leng (yyscan_t yyscanner );
 
-char *exprparser_get_text (yyscan_t yyscanner );
+char *pitchparser_get_text (yyscan_t yyscanner );
 
-int exprparser_get_lineno (yyscan_t yyscanner );
+int pitchparser_get_lineno (yyscan_t yyscanner );
 
-void exprparser_set_lineno (int _line_number ,yyscan_t yyscanner );
+void pitchparser_set_lineno (int _line_number ,yyscan_t yyscanner );
 
-int exprparser_get_column  (yyscan_t yyscanner );
+int pitchparser_get_column  (yyscan_t yyscanner );
 
-void exprparser_set_column (int _column_no ,yyscan_t yyscanner );
+void pitchparser_set_column (int _column_no ,yyscan_t yyscanner );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -286,9 +285,9 @@ void exprparser_set_column (int _column_no ,yyscan_t yyscanner );
 
 #ifndef YY_SKIP_YYWRAP
 #ifdef __cplusplus
-extern "C" int exprparser_wrap (yyscan_t yyscanner );
+extern "C" int pitchparser_wrap (yyscan_t yyscanner );
 #else
-extern int exprparser_wrap (yyscan_t yyscanner );
+extern int pitchparser_wrap (yyscan_t yyscanner );
 #endif
 #endif
 
@@ -325,9 +324,9 @@ static int yy_flex_strlen (yyconst char * ,yyscan_t yyscanner);
 #ifndef YY_DECL
 #define YY_DECL_IS_OURS 1
 
-extern int exprparser_lex (yyscan_t yyscanner);
+extern int pitchparser_lex (yyscan_t yyscanner);
 
-#define YY_DECL int exprparser_lex (yyscan_t yyscanner)
+#define YY_DECL int pitchparser_lex (yyscan_t yyscanner)
 #endif /* !YY_DECL */
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
@@ -344,9 +343,9 @@ extern int exprparser_lex (yyscan_t yyscanner);
 #undef YY_DECL
 #endif
 
-#line 343 "exprparser.l"
+#line 94 "pitchparser.l"
 
 
-#line 351 "exprparser.lex.h"
-#undef exprparser_IN_HEADER
-#endif /* exprparser_HEADER_H */
+#line 350 "pitchparser.lex.h"
+#undef pitchparser_IN_HEADER
+#endif /* pitchparser_HEADER_H */

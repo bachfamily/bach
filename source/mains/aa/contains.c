@@ -184,10 +184,10 @@ void contains_anything(t_contains *x, t_symbol *msg, long ac, t_atom *av)
 		if (types & H_LONG)		llll_appendsym(types_llll, _llllobj_sym_i, 0, WHITENULL_llll);
 		if (types & H_RAT)		llll_appendsym(types_llll, _llllobj_sym_r, 0, WHITENULL_llll);
 		if (types & H_DOUBLE)	llll_appendsym(types_llll, _llllobj_sym_f, 0, WHITENULL_llll);
+        if (types & H_PITCH)	llll_appendsym(types_llll, _llllobj_sym_p, 0, WHITENULL_llll);
 		if (types & H_SYM)		llll_appendsym(types_llll, _llllobj_sym_s, 0, WHITENULL_llll);
 		if (types & H_LLLL)		llll_appendsym(types_llll, _llllobj_sym_l, 0, WHITENULL_llll);
 		if (types & H_OBJ)		llll_appendsym(types_llll, _llllobj_sym_o, 0, WHITENULL_llll);
-        if (types & H_PITCH)	llll_appendsym(types_llll, _llllobj_sym_p, 0, WHITENULL_llll);
 
 	}
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, types_llll, 1);
@@ -201,8 +201,6 @@ void contains_assist(t_contains *x, void *b, long m, long a, char *s)
 	if (m == ASSIST_INLET) {
 		sprintf(s, "llll"); // @in 0 @type llll @digest The llll whose contained data types will be reported
 	} else {
-		char *type = NULL;
-		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
 		switch (a) {
 			case 0:	sprintf(s, "int: Contained Types as a Bitfield");			break; 
 				// @out 0 @type int @digest The bitfield representation of the contained data types

@@ -196,10 +196,11 @@ t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags)
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// returns 0 if it can't allocate the memory it needs
+// returns 0 if it can't allocate the memory it needs,
+// otherwise the number of atoms constituting the result (including the offset)
 //
 // offset is referred to *out (leaves some atoms at the beginning, useful for preset)
-// flags are LLLL_D_QUOTE and LLLL_D_FLOAT64
+// flags are LLLL_D_QUOTE, LLLL_D_MAX and LLLL_D_FLOAT64
 
 t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flags)
 {
@@ -208,7 +209,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 	t_llllelem *elem;
 	char txt[256];
 	t_llll_stack *stack;
-	t_symbol *checked, **this_arg;
+	t_symbol *checked;
 	t_atom_long outsize;
 	long leveltype = L_STANDARD;
 	t_atom *new_out, *this_out;
@@ -298,25 +299,21 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
                     elem = elem->l_next;
                     break;
                     
-				case H_SYM:
-					if (flags & LLLL_D_QUOTE) {
-						if (ac == 0) {
-							for (this_arg = _llllobj_attributes; *this_arg; this_arg++)
-								if (elem->l_hatom.h_w.w_sym == *this_arg)
-									break;
-							if (*this_arg)
-								checked = llll_addquote(elem->l_hatom.h_w.w_sym->s_name);
-							else
-								checked = llll_quoteme(elem->l_hatom.h_w.w_sym);
-						} else
-							checked = llll_quoteme(elem->l_hatom.h_w.w_sym);
+                case H_SYM: {
+                    t_symbol *sym = elem->l_hatom.h_w.w_sym;
+
+                    if (ac == 0 && (flags & LLLL_D_MAX) && (sym == _sym_int || sym == _sym_float || sym == _sym_list)) {
+                        checked = sym_addquote(sym->s_name);
+                    } else if (flags & LLLL_D_QUOTE) {
+                        checked = llll_quoteme(sym);
 					} else 
-						checked = elem->l_hatom.h_w.w_sym;
+						checked = sym;
 					
 					atom_setsym(this_out++, checked);
 					ac ++;
 					elem = elem->l_next;
 					break;
+                }
 				case H_LLLL:
 					subll = elem->l_hatom.h_w.w_llll;
 					leveltype = subll->l_leveltype;
@@ -364,15 +361,20 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 // if it returns anything different from one symbol, it should be quoted
 t_symbol *llll_quoteme(t_symbol *s)
 {
-	if (s == _llllobj_sym_nil ||
-        s == _llllobj_sym_null ||
-        typecheck_parse(s->s_name))
-		return llll_addquote(s->s_name);
-    else
-        return s;
+    if (s == _llllobj_sym_nil || s == _llllobj_sym_null) {
+		return sym_addquote(s->s_name);
+    } else {
+        long tct;
+        long type = typecheck_parse(s->s_name, &tct);
+        if (type != H_SYM || tct & E_TT_PAREN ||
+            (!(tct & E_TT_RESERVED) && (tct & E_TT_BACKTICK))) {
+            return sym_addquote(s->s_name);
+        } else
+            return s;
+    }
 }
 
-t_symbol *llll_addquote(const char *txt)
+t_symbol *sym_addquote(const char *txt)
 {
 	char quoted[2048];
 	*quoted = QUOTE_CHAR;
@@ -6395,7 +6397,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
 	return ser;
 }
 
-t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount)
+t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount, t_object *culprit)
 {
 	long start_type = hatom_gettype(&start_hatom);
 	long end_type = hatom_gettype(&end_hatom);
@@ -6438,10 +6440,13 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = start <= end ? 1 : -1;
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
 			} else {
 				maxcount_decides = true;
-                if (maxcount > 1)
-                    step = (end - start) / (maxcount - 1);
+                step = (end - start) / (maxcount - 1);
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6467,7 +6472,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else if (start_type == H_RAT || end_type == H_RAT || step_type == H_RAT || !  hatom_type_is_number(step_type)) {
+	} else if (start_type == H_RAT || end_type == H_RAT || step_type == H_RAT) {
 		t_rational start, end, step, v;
 		t_atom_long count;
 		step = hatom_getrational(&step_hatom);
@@ -6498,12 +6503,14 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = rat_rat_cmp(start, end) <= 0 ? genrat(1, 1) : genrat(-1, 1);
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld/%ld", step.num(), step.den());
 			} else {
-                if (maxcount > 1) {
-                    step = rat_long_div(rat_rat_diff(end, start), maxcount - 1);
-                }
+                step = rat_long_div(rat_rat_diff(end, start), maxcount - 1);
 				if (step.r_num == 0)
 					step = rat_rat_cmp(start, end) <= 0 ? RAT_MIN_POSITIVE : RAT_MAX_NEGATIVE;
+                else if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld/%ld", step.num(), step.den());
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6518,7 +6525,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else {
+	} else if (start_type == H_LONG || end_type == H_LONG || step_type == H_LONG) {
 		t_atom_long start, end, step, v;
 		t_atom_long count;
 		step = hatom_getlong(&step_hatom);
@@ -6548,11 +6555,14 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = start <= end ? 1 : -1;
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld", step);
 			} else {
-                if (maxcount > 1)
-                    step = (end - start) / (maxcount - 1);
+                step = (end - start) / (maxcount - 1);
 				if (step == 0)
 					step = start <= end ? 1 : -1;
+                else if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld", step);
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6566,7 +6576,72 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		}
 		pedantic_llll_check(outll);
 		return outll;
-	}
+        
+    } else { // pitches
+        t_pitch start, end, step, v;
+        t_atom_long count;
+        step = hatom_getpitch(&step_hatom);
+        
+        if (hatom_type_is_number(start_type)) {
+            start = hatom_getpitch(&start_hatom);
+        } else {
+            if (!(hatom_type_is_number(end_type))) {
+                return outll;
+            } else if (maxcount == 1) {
+                start = end = hatom_getpitch(&end_hatom);
+            } else if (step == t_pitch::C0 || maxcount <= 0) {
+                return outll;
+            } else {
+                end = hatom_getpitch(&end_hatom);
+                start = end - step * (maxcount - 1);
+            }
+        }
+        
+        if (hatom_type_is_number(end_type)) {
+            end = hatom_getpitch(&end_hatom);
+        } else {
+            if (step == t_pitch::C0 || maxcount <= 0)
+                return outll;
+            end = step > t_pitch::C0 ? PITCH_MAX : PITCH_MIN;
+        }
+        if (step == t_pitch::C0) {
+            if (maxcount <= 0) {
+                step = start < end ? t_pitch(1, t_pitch::flat, 0) : t_pitch(1, t_pitch::flat, 0);
+                maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %s", step.toCString());
+            } else {
+                step = (end - start) / (maxcount - 1);;
+                if (step == t_pitch::C0)
+                    step = start < end ? t_pitch(1, t_pitch::flat, 0) : t_pitch(1, t_pitch::flat, 0);
+                if (start != end && hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %s", step.toCString());
+            }
+        } else if (maxcount <= 0)
+            maxcount = ATOM_LONG_MAX;
+        
+        if ((step.degree() != 0 || step.octave() != 0) &&
+            (start.degree() != end.degree() || start.octave() != end.octave())) {
+            if (step > t_pitch::C0) {
+                for (v = start, count = 0; v <= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            } else {
+                for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            }
+        } else {
+            object_warn((t_object *) culprit, "Also considering midicents");
+            if (step > t_pitch::C0) {
+                for (v = start, count = 0; v <= end && v.toMC() < end.toMC() && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            } else {
+                for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            }
+        }
+        pedantic_llll_check(outll);
+        return outll;
+    }
 }
 
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err)
@@ -6635,7 +6710,8 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else if (start_type == H_RAT || end_type == H_RAT || factor_type == H_RAT) {
+	} else if (start_type == H_RAT || end_type == H_RAT || factor_type == H_RAT ||
+               start_type == H_PITCH || end_type == H_PITCH || factor_type == H_PITCH) {
 		t_rational start, end, factor, v;
 		t_atom_long count;
 		

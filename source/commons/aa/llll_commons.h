@@ -38,8 +38,9 @@
 // NB: for cross-architecture compatibility, 64-bit floats are stored as two longs even under 64-bit architecture
 typedef enum _llll_deparse_flags {
 	LLLL_D_NONE		= 0x00,
-	LLLL_D_QUOTE	= 0x01, // backtick symbols if they can be interpreted as other data types or attributes
-	LLLL_D_FLOAT64	= 0x02	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
+	LLLL_D_QUOTE	= 0x01, // backtick symbols if they can be interpreted as other data types
+    LLLL_D_MAX      = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
+	LLLL_D_FLOAT64	= 0x04	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
 } e_llll_deparse_flags;
 
 
@@ -64,16 +65,16 @@ typedef enum _llll_text_flags {
 
 // outlet types (used in the llllobj_out structure)
 typedef enum _llllobj_outlet_types {
-	LLLL_O_DISABLED		= 0x00,
-	LLLL_O_BANG			= 0x01,
-	LLLL_O_LONG			= 0x02,
-	LLLL_O_FLOAT		= 0x04,
-	LLLL_O_LIST			= 0x08,
-	LLLL_O_ANYTHING		= 0x10,
-	LLLL_O_NATIVE		= 0x20,
-	LLLL_O_TEXT			= 0x40,
-	LLLL_O_SIGNAL		= 0x80,
-	LLLL_O_UNCHANGED	= 0xFF // only used in the out attribute setter
+	LLLL_O_DISABLED		= 0x0000,
+	LLLL_O_BANG         = 0x0001,
+	LLLL_O_LONG         = 0x0002,
+	LLLL_O_FLOAT        = 0x0004,
+	LLLL_O_LIST         = 0x0008,
+	LLLL_O_ANYTHING     = 0x0010,
+	LLLL_O_NATIVE       = 0x0020,
+	LLLL_O_TEXT         = 0x0080,
+    LLLL_O_MAX          = 0x0100,
+	LLLL_O_SIGNAL       = 0x0200 // unused for now
 } e_llllobj_outlet_types;
 
 
@@ -168,10 +169,18 @@ typedef struct _llll_sort_item {
 	t_symbol	*n_t_sym;	// the message selector
 	long		n_t_ac;		// ac
 	t_atom		*n_t_av;	// av
-	t_atom		*n_freeme;	// the atom* to free might not be n_t_av, so we use this instead
+	t_atom		*n_t_freeme;	// the atom* to free might not be n_t_av, so we use this instead
+    
+    
+    // fields if the outlet is max
+    t_symbol	*n_m_sym;	// the message selector
+    long		n_m_ac;		// ac
+    t_atom		*n_m_av;	// av
+    t_atom		*n_m_freeme;	// the atom* to free might not be n_t_av, so we use this instead
+    
 } t_llll_sort_item;
 // NB: in principle, bach.sort might have one of the two comparison outlet being native and the other being text
-// so we can't use an union for the two output format, because we might need them both} t_llll_sort_item;
+// so we can't use an union for the two output format, because we might need them both;
 
 
 
@@ -375,7 +384,7 @@ void llll_printobject_free(t_object *printobj, t_symbol *name, long ac, t_atom *
 // if out is NULL, it will be initialized. 
 // otherwise, it will be considered initialized - but it could be relocated by llll_deparse.
 // offset is referred to *out (leaves some atoms at the beginning, useful for preset)
-// flags are LLLL_D_QUOTE and LLLL_D_FLOAT64
+// flags are LLLL_D_QUOTE, LLLL_D_MAX and LLLL_D_FLOAT64
 t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flags);
 
 
@@ -389,10 +398,13 @@ t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags);
 // (of course the t_symbol is left unaffected, and you get a new one if needed!)
 t_symbol *llll_quoteme(t_symbol *s);
 
+// backticks a t_symbol without checking
+t_symbol *sym_addquote(const char *txt);
+
 
 
 // returns a t_symbol with the backticked txt
-t_symbol *llll_addquote(const char *txt);
+t_symbol *sym_addquote(const char *txt);
 
 
 
@@ -621,7 +633,7 @@ void llll_mergesort_with_lthings(t_llll *in, t_llll **out, sort_fn cmpfn, void *
 
 // used by bach.sort and bach.msort
 // formats a llll before the sorting algorithm for outputting its elements one by one
-void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, e_llllobj_outlet_types outtypes);
+void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, long outtypes);
 
 
 
@@ -886,7 +898,7 @@ t_llll *llll_primeser(long min, long max, long maxcount);
 
 
 // return an arithmetic series (see bach.arithmser)
-t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount);
+t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount, t_object *culprit = NULL);
 
 // return a geometric series (see bach.arithmser)
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err);

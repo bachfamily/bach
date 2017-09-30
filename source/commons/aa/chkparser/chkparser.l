@@ -7,7 +7,7 @@ INTEGER ([+-]?[0-9]+)
 FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
 RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
-ACCIDENTAL ([#bxdq]+)
+ACCIDENTAL ([#bxdq\^v]+)
 
 %{
 	#define BACH_MAX
@@ -21,65 +21,70 @@ ACCIDENTAL ([#bxdq]+)
     #include <ctype.h>
     #define parserpost printf
     #endif
-
-
-    typedef struct _typecheck_res {
-        t_bool t_reserved;
-        t_bool t_wishesbt;
-    } t_typecheck_res;
 %}
 
-%option extra-type="t_typecheck_res *"
+%option extra-type="long *"
 
 %%
 
 %{
-    t_typecheck_res *tcr = yyextra;
+    long *tct = yyextra;
 %}
 
 ^` {
     parserpost("typecheck: starting backtick");
-    tcr->t_wishesbt = true;
+    *tct |= E_TT_BACKTICK;
+    return H_SYM; // because backtick wins, if we're here we don't need to scan any longer
 }
 
 \(|\) {
     parserpost("typecheck: paren");
-    tcr->t_wishesbt = true;
+    *tct |= E_TT_PAREN;
 }
 
-{INTEGER}|{RATIONAL}|{FLOAT} {
-    parserpost("typecheck: number");
-    tcr->t_wishesbt = true;
+^{INTEGER} {
+    parserpost("typecheck: long");
+    return H_LONG;
 }
 
-{NOTENAME}{ACCIDENTAL}?{INTEGER} {
+^{FLOAT} {
+    parserpost("typecheck: double");
+    return H_DOUBLE;
+}
+
+^{RATIONAL} {
+    parserpost("typecheck: rational");
+    return H_RAT;
+}
+
+^{NOTENAME}{ACCIDENTAL}?{INTEGER} {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 
-{NOTENAME}{INTEGER}{ACCIDENTAL} {
+^{NOTENAME}{INTEGER}{ACCIDENTAL} {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 
-{NOTENAME}{INTEGER}[+|-][0-9]+t {
+^{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 
-{NOTENAME}{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+^{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 
 [ \t\n\,\;] {
     parserpost("typecheck: reserved char");
-    tcr->t_reserved = true;
-    return 0;
+    *tct |= E_TT_RESERVED;
+    return H_SYM; // if we're here, it means that the first char was not a backtick, in which case reserved chars win and we can return
 }
 
-[^\(\) \t\n]* {
-    parserpost(" typecheck: symbol");
+[^\(\) \t\n] {
+    parserpost("easy stuff");
 }
 
 
@@ -98,17 +103,19 @@ void chkparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
     yy_delete_buffer(bp, myscanner);
 }
 
-t_bool typecheck_parse(char *buf)
+long typecheck_parse(char *buf, long *tct)
 {
     yyscan_t myscanner;
     YY_BUFFER_STATE bp;
-    t_typecheck_res res = {false, false};
-    chkparser_lex_init_extra(&res, &myscanner);
+    *tct = 0;
+    chkparser_lex_init_extra(tct, &myscanner);
     bp = yy_scan_string(buf, myscanner);
-    yylex(myscanner);
+    long t = yylex(myscanner);
+    if (t == H_NOTHING)
+        t = H_SYM;
     chkparser_flush_and_delete_buffer(myscanner, bp);
     chkparser_lex_destroy(myscanner);
-    return res.t_wishesbt && !res.t_reserved;
+    return t;
 }
 
 YY_BUFFER_STATE chkparser_scan_string(yyscan_t myscanner, char *buf)

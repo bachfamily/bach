@@ -6,11 +6,11 @@
 %s BINARY
 
 SEPARATOR ([ \t\n\(\)\[\]\{\}])
-INTEGER ([0-9]+)
-FLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
-RATIONAL ({INTEGER}[/][+-]?{INTEGER})
+UINT ([0-9]+)
+UFLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
+URAT ({UINT}[/][+-]?{UINT})
 NOTENAME ([a-g]|[A-G])
-ACCIDENTAL ([#bxdq]+)
+ACCIDENTAL ([#bxdq\^v]+)
 
 %{
 	#define BACH_MAX
@@ -192,38 +192,38 @@ ACCIDENTAL ([#bxdq]+)
     return lexpr_append_lexeme_UMINUS(epd->lexeme);
 }
 
-{INTEGER} {
-    parserpost(" lex: INTEGER %d\n", atoi(yytext));
+{UINT} {
+    parserpost(" lex: UINT %d\n", atoi(yytext));
     BEGIN BINARY;
     return lexpr_append_lexeme_LONG(epd->lexeme, atol(yytext));
 }
 
-{RATIONAL} {
+{URAT} {
     char *textend;
 	long num = strtol(yytext, &textend, 10);
 	long den = strtol(textend + 1, NULL, 10);
-    parserpost(" lex: RATIONAL %ld / %ld\n", num, den);
+    parserpost(" lex: URAT %ld / %ld\n", num, den);
     BEGIN BINARY;
     return lexpr_append_lexeme_RATIONAL(epd->lexeme, t_rational(num, den));
 }
 
-{FLOAT} {
+{UFLOAT} {
     parserpost(" lex: DOUBLE %lf\n", atof(yytext));
     BEGIN BINARY;
     return lexpr_append_lexeme_FLOAT(epd->lexeme, atof(yytext));
 }
 
-{NOTENAME}{ACCIDENTAL}?[-+]?{INTEGER} {
+{NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {
 	long degree = t_pitch::text2degree(*yytext);
-	char *pos = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&pos);
-	long octave = strtol(pos, NULL, 10);
+	char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+	long octave = strtol(next, NULL, 10);
 	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{NOTENAME}{INTEGER}[-+]?{ACCIDENTAL} {
+{NOTENAME}[-+]?{UINT}{ACCIDENTAL} {
 	long degree = t_pitch::text2degree(*yytext);
 	char *acc;
 	long octave = strtol(yytext + 1, &acc, 10);
@@ -233,34 +233,36 @@ ACCIDENTAL ([#bxdq]+)
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{NOTENAME}[-+]?{INTEGER}[-+][0-9]+t {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, NULL, 10), 1);
+{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t {
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, NULL, 10), 1);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{NOTENAME}{INTEGER}[-+][0-9]+[/][-+]?{INTEGER}t {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next;
-	long octave = strtol(yytext + 1, &next, 10);
-	t_shortRational alter = t_shortRational(strtol(next, &next, 10), 1);
-	alter /= strtol(next + 1, NULL, 10);
+{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
+    long degree = t_pitch::text2degree(*yytext);
+    char *next = yytext + 1;
+    t_shortRational alter = t_pitch::text2alter(&next);
+    long octave = strtol(next, &next, 10);
+    alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
+
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
 }
 
-{INTEGER}t {
+{UINT}t {
     t_shortRational alter = t_shortRational(atoi(yytext), 1);
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, alter, 0));
 }
 
-{RATIONAL}t {
+{URAT}t {
     char *textend;
     long num = strtol(yytext, &textend, 10);
     long den = strtol(textend + 1, NULL, 10);
@@ -268,7 +270,7 @@ ACCIDENTAL ([#bxdq]+)
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(num, den), 0));
 }
 
-{FLOAT}t {
+{UFLOAT}t {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(atof(yytext)), 0));
 }
@@ -317,6 +319,12 @@ t {
 
 "random" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_random); }
 "bessel" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn); }
+
+"pitch" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_pitch); }
+"degree" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_degree); }
+"octave" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_octave); }
+"alter" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_alter); }
+"makepitch" { return lexpr_append_lexeme_FUNC_ternary_ALL(epd->lexeme, hatom_fn_makepitch); }
 
 ([A-Z]|[a-z]|_)+ {
     BEGIN BINARY;

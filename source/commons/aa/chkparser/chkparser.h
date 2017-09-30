@@ -18,7 +18,14 @@
 #define parserpost(...) ((void) 0)
 #endif
 
-// returns true if the symbol has to be quoted
-t_bool typecheck_parse(char *buf);
+typedef enum _typecheck_traits {
+    E_TT_PAREN = 0x01, // contains at least one paren
+    E_TT_RESERVED = 0x02, // contains whitespace, comma, semicolon
+    E_TT_BACKTICK = 0x04, // begins with a backtick
+} e_typecheck_traits;
+
+// returns an #e_hatom_types indicating the inferred type for the text
+// tct is a pointer to #e_typecheck_traits
+long typecheck_parse(char *buf, long *tct);
 
 #endif /* chkparser_h */

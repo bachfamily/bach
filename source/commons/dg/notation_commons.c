@@ -29278,7 +29278,7 @@ void change_pitch_from_llllelem(t_pitch *pitch, t_llllelem *modify) {
             else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("times")))
                 *pitch *= hatom_getlong(&thisllll->l_head->l_hatom);
             else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("div")))
-                *pitch = (*pitch).divdiv(hatom_getrational(&thisllll->l_head->l_hatom));
+                *pitch /= hatom_getrational(&thisllll->l_head->l_hatom);
             else
                 *pitch = hatom_getpitch(&thisllll->l_head->l_hatom);
         }

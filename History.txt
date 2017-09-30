@@ -11,6 +11,12 @@ v0.8b
 					C5 is now ALWAYS the middle C
 					Please modify your patches accordingly, if you relied on other values or on latin names
 
+- All objects       The behavior of backticks in the text-format llll output has changed:
+                        now the first item of an llll doesn't get a backtick any longer if it is the name of an attribute of a bach object.
+                    There is a new format for llll output: 'm' (as in Max), which is a textual representation (akin to 't') with no backticks at all,
+                        useful for passing correctly symbols to regular Max objects.
+                    Notice that, unlike the 't' format, the 'm' format is not invertible, i.e., a 'm' llll output from a bach object might not be parsed correctly by another bach object, even if it doesn't exceed the size limit for a Max message.
+
 - bach.append -> bach.join	This one won't break the compatibility with older patches, we promise :-)
 					But still it's important that you start using the new [bach.join] instead of [bach.append].
 					It is basically the same object and it behaves in the very same way. All bach patchers 
