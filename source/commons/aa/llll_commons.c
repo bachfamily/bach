@@ -366,8 +366,8 @@ t_symbol *llll_quoteme(t_symbol *s)
     } else {
         long tct;
         long type = typecheck_parse(s->s_name, &tct);
-        if (type != H_SYM || tct & E_TT_PAREN ||
-            (!(tct & E_TT_RESERVED) && (tct & E_TT_BACKTICK))) {
+        if (type != H_SYM || tct & E_TT_BACKTICK ||
+            ((tct & E_TT_PAREN) && !(tct & E_TT_RESERVED))) {
             return sym_addquote(s->s_name);
         } else
             return s;
