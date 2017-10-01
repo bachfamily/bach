@@ -4726,7 +4726,7 @@ t_rational symbol_to_acc(t_symbol *sym){
 	temp[len+2] = 0;
 	strncpy(temp + 2, sym->s_name, len);
 	long screen_mc, last_used_octave = 4;
-	t_rational acc = long2rat(0); 
+	t_rational acc = long2rat(0);
 	notename2midicents(4, &last_used_octave, temp, &screen_mc, &acc);
 	bach_freeptr(temp);
 	return acc;
@@ -4815,7 +4815,7 @@ void parse_sym_to_key_and_mode(t_notation_obj *r_ob, t_symbol *sym, char *key, c
 		}
 		bach_freeptr(temp);	
 		bach_freeptr(name_cpy);
-	} else { // major or minor key, as Cm, DM, F#m, but also quartertonal C+M or Ddm
+	} else { // major or minor key, as Cm, DM, F#m, but also quartertonal CqM or Ddm
 		if (len > 0) {
 			if (sym->s_name[len-1] == 'm')
 				*mode = k_MODE_MINOR;
@@ -24616,7 +24616,7 @@ void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
     note_compute_approximation(r_ob, note);
 }
 
-// DEPRECATED, OLD
+// DEPRECATED, OLD!!
 void note_set_pitch_from_notename(t_notation_obj *r_ob, t_note *note, t_symbol *note_name, char dont_change_cents_for_enharmonic_changes)
 {
 	long screen_mc = 6000, old_screen_mc = note_get_screen_midicents(note);
@@ -31135,12 +31135,11 @@ double notename2midicents(long middleC_octave, long *last_used_octave, char *nam
 					acc = rat_long_sum(acc, 1);
 					break;
 				case '+':
+                case 'q':
 					acc = rat_rat_sum(acc, RAT_1OVER4);
 					break;
 				case '-':
-					acc = rat_rat_sum(acc, genrat(-1,4));
-					break;
-				case 'd':
+                case 'd':
 					acc = rat_rat_sum(acc, genrat(-1,4));
 					break;
 				case '^':

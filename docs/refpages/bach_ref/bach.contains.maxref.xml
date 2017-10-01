@@ -40,7 +40,7 @@
 			</digest>
 			<description>
 				The bitfield representation is a bitwise or of the following values:
-				<b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll.
+				<b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll, <b>256</b> = pitch.
 				Only values corresponding to data types that are contained in the input llll concour to the representation.
 			</description>
 		</outlet>
@@ -50,7 +50,7 @@
 			</digest>
 			<description>
 				The symbolic representation is a message composed by a combination of the following symbols:
-				<b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>null</b>.
+				<b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>p</b> = pitch, <b>n</b> = null.
 				Only symbols corresponding to data types that are contained in the input llll are present in the output message.
 			</description>
 		</outlet>
@@ -156,7 +156,7 @@
 			<description>
 				The bitfield representation of the contained data types.
 				The bitfield representation is a bitwise or of the following values:
-				<b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll.
+				<b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll, <b>256</b> = pitch.
 				Only values corresponding to data types that are contained in the input llll concour to the representation.
 			</description>
 		</entry>
@@ -164,7 +164,7 @@
 			<description>
 				The symbolic representation of the contained data types.
 				The symbolic representation is a message composed by a combination of the following symbols:
-				<b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>null</b>.
+				<b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>p</b> = pitch, <b>n</b> = null.
 				Only symbols corresponding to data types that are contained in the input llll are present in the output message.
 			</description>
 		</entry>

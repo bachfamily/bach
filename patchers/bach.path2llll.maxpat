@@ -1435,7 +1435,7 @@
 															"modernui" : 1
 														}
 ,
-														"rect" : [ 293.0, 44.0, 640.0, 480.0 ],
+														"rect" : [ 293.0, 79.0, 640.0, 480.0 ],
 														"bglocked" : 0,
 														"openinpresentation" : 0,
 														"default_fontsize" : 12.0,
@@ -1485,7 +1485,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 23.25, 51.0, 54.0, 20.0 ],
+																	"patching_rect" : [ 23.25, 51.0, 54.0, 22.0 ],
 																	"style" : "",
 																	"text" : "gate 2 2"
 																}
@@ -1500,9 +1500,9 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "bang" ],
-																	"patching_rect" : [ 58.25, 100.0, 109.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 100.0, 115.0, 22.0 ],
 																	"style" : "",
-																	"text" : "bach.portal @out t"
+																	"text" : "bach.portal @out m"
 																}
 
 															}
@@ -1515,7 +1515,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 319.75, 378.0, 41.0, 20.0 ],
+																	"patching_rect" : [ 319.75, 378.0, 41.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 125"
 																}
@@ -1530,7 +1530,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 349.0, 267.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 349.0, 267.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 97 && $i1 <= 122 then $i1 else out2 $i1"
 																}
@@ -1545,7 +1545,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 316.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 316.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 95 then out2 -3 else $i1"
 																}
@@ -1560,7 +1560,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 285.0, 189.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 285.0, 189.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 126 then out2 -2 else $i1"
 																}
@@ -1575,7 +1575,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 257.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 257.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 32 then out2 -1 else $i1"
 																}
@@ -1590,7 +1590,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 312.75, 257.0, 34.0, 20.0 ],
+																	"patching_rect" : [ 312.75, 257.0, 34.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 32"
 																}
@@ -1605,7 +1605,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "" ],
-																	"patching_rect" : [ 50.0, 425.0, 74.0, 20.0 ],
+																	"patching_rect" : [ 50.0, 425.0, 74.0, 22.0 ],
 																	"style" : "",
 																	"text" : "bach.collect"
 																}
@@ -1620,7 +1620,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "bang", "" ],
-																	"patching_rect" : [ 58.25, 160.0, 32.5, 20.0 ],
+																	"patching_rect" : [ 58.25, 160.0, 32.5, 22.0 ],
 																	"style" : "",
 																	"text" : "t b l"
 																}
@@ -1635,7 +1635,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 200.0, 49.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 200.0, 49.0, 22.0 ],
 																	"style" : "",
 																	"text" : "zl iter 1"
 																}
@@ -1650,7 +1650,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 230.0, 260.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 230.0, 260.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 65 && $i1 <= 90 then out2 $i1 else $i1"
 																}
@@ -1665,7 +1665,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "list" ],
-																	"patching_rect" : [ 58.25, 134.0, 46.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 134.0, 46.0, 22.0 ],
 																	"style" : "",
 																	"text" : "atoi"
 																}
@@ -1948,7 +1948,7 @@
 															"modernui" : 1
 														}
 ,
-														"rect" : [ 293.0, 44.0, 640.0, 480.0 ],
+														"rect" : [ 293.0, 79.0, 640.0, 480.0 ],
 														"bglocked" : 0,
 														"openinpresentation" : 0,
 														"default_fontsize" : 12.0,
@@ -1998,7 +1998,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 23.25, 51.0, 54.0, 20.0 ],
+																	"patching_rect" : [ 23.25, 51.0, 54.0, 22.0 ],
 																	"style" : "",
 																	"text" : "gate 2 2"
 																}
@@ -2013,9 +2013,9 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "bang" ],
-																	"patching_rect" : [ 58.25, 100.0, 109.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 100.0, 115.0, 22.0 ],
 																	"style" : "",
-																	"text" : "bach.portal @out t"
+																	"text" : "bach.portal @out m"
 																}
 
 															}
@@ -2028,7 +2028,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 319.75, 378.0, 41.0, 20.0 ],
+																	"patching_rect" : [ 319.75, 378.0, 41.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 125"
 																}
@@ -2043,7 +2043,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 349.0, 267.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 349.0, 267.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 97 && $i1 <= 122 then $i1 else out2 $i1"
 																}
@@ -2058,7 +2058,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 316.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 316.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 95 then out2 -3 else $i1"
 																}
@@ -2073,7 +2073,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 285.0, 189.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 285.0, 189.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 126 then out2 -2 else $i1"
 																}
@@ -2088,7 +2088,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 257.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 257.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 32 then out2 -1 else $i1"
 																}
@@ -2103,7 +2103,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 312.75, 257.0, 34.0, 20.0 ],
+																	"patching_rect" : [ 312.75, 257.0, 34.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 32"
 																}
@@ -2118,7 +2118,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "" ],
-																	"patching_rect" : [ 50.0, 425.0, 74.0, 20.0 ],
+																	"patching_rect" : [ 50.0, 425.0, 74.0, 22.0 ],
 																	"style" : "",
 																	"text" : "bach.collect"
 																}
@@ -2133,7 +2133,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "bang", "" ],
-																	"patching_rect" : [ 58.25, 160.0, 32.5, 20.0 ],
+																	"patching_rect" : [ 58.25, 160.0, 32.5, 22.0 ],
 																	"style" : "",
 																	"text" : "t b l"
 																}
@@ -2148,7 +2148,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 200.0, 49.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 200.0, 49.0, 22.0 ],
 																	"style" : "",
 																	"text" : "zl iter 1"
 																}
@@ -2163,7 +2163,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 230.0, 260.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 230.0, 260.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 65 && $i1 <= 90 then out2 $i1 else $i1"
 																}
@@ -2178,7 +2178,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "list" ],
-																	"patching_rect" : [ 58.25, 134.0, 46.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 134.0, 46.0, 22.0 ],
 																	"style" : "",
 																	"text" : "atoi"
 																}
@@ -3451,7 +3451,7 @@
 															"modernui" : 1
 														}
 ,
-														"rect" : [ 293.0, 44.0, 640.0, 480.0 ],
+														"rect" : [ 293.0, 79.0, 640.0, 480.0 ],
 														"bglocked" : 0,
 														"openinpresentation" : 0,
 														"default_fontsize" : 12.0,
@@ -3501,7 +3501,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 23.25, 51.0, 54.0, 20.0 ],
+																	"patching_rect" : [ 23.25, 51.0, 54.0, 22.0 ],
 																	"style" : "",
 																	"text" : "gate 2 2"
 																}
@@ -3516,9 +3516,9 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "bang" ],
-																	"patching_rect" : [ 58.25, 100.0, 109.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 99.0, 115.0, 22.0 ],
 																	"style" : "",
-																	"text" : "bach.portal @out t"
+																	"text" : "bach.portal @out m"
 																}
 
 															}
@@ -3531,7 +3531,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 319.75, 378.0, 41.0, 20.0 ],
+																	"patching_rect" : [ 319.75, 378.0, 41.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 125"
 																}
@@ -3546,7 +3546,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 349.0, 267.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 349.0, 267.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 97 && $i1 <= 122 then $i1 else out2 $i1"
 																}
@@ -3561,7 +3561,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 316.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 316.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 95 then out2 -3 else $i1"
 																}
@@ -3576,7 +3576,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 285.0, 189.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 285.0, 189.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 126 then out2 -2 else $i1"
 																}
@@ -3591,7 +3591,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 257.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 257.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 32 then out2 -1 else $i1"
 																}
@@ -3606,7 +3606,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 312.75, 257.0, 34.0, 20.0 ],
+																	"patching_rect" : [ 312.75, 257.0, 34.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 32"
 																}
@@ -3621,7 +3621,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "" ],
-																	"patching_rect" : [ 50.0, 425.0, 74.0, 20.0 ],
+																	"patching_rect" : [ 50.0, 425.0, 74.0, 22.0 ],
 																	"style" : "",
 																	"text" : "bach.collect"
 																}
@@ -3636,7 +3636,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "bang", "" ],
-																	"patching_rect" : [ 58.25, 160.0, 32.5, 20.0 ],
+																	"patching_rect" : [ 58.25, 160.0, 32.5, 22.0 ],
 																	"style" : "",
 																	"text" : "t b l"
 																}
@@ -3651,7 +3651,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 200.0, 49.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 200.0, 49.0, 22.0 ],
 																	"style" : "",
 																	"text" : "zl iter 1"
 																}
@@ -3666,7 +3666,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 230.0, 260.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 230.0, 260.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 65 && $i1 <= 90 then out2 $i1 else $i1"
 																}
@@ -3681,7 +3681,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "list" ],
-																	"patching_rect" : [ 58.25, 134.0, 46.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 134.0, 46.0, 22.0 ],
 																	"style" : "",
 																	"text" : "atoi"
 																}
@@ -3964,7 +3964,7 @@
 															"modernui" : 1
 														}
 ,
-														"rect" : [ 293.0, 44.0, 640.0, 480.0 ],
+														"rect" : [ 293.0, 79.0, 640.0, 480.0 ],
 														"bglocked" : 0,
 														"openinpresentation" : 0,
 														"default_fontsize" : 12.0,
@@ -4014,7 +4014,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 23.25, 51.0, 54.0, 20.0 ],
+																	"patching_rect" : [ 23.25, 51.0, 54.0, 22.0 ],
 																	"style" : "",
 																	"text" : "gate 2 2"
 																}
@@ -4029,9 +4029,9 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "bang" ],
-																	"patching_rect" : [ 58.25, 100.0, 109.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 100.0, 115.0, 22.0 ],
 																	"style" : "",
-																	"text" : "bach.portal @out t"
+																	"text" : "bach.portal @out m"
 																}
 
 															}
@@ -4044,7 +4044,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 319.75, 378.0, 41.0, 20.0 ],
+																	"patching_rect" : [ 319.75, 378.0, 41.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 125"
 																}
@@ -4059,7 +4059,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 349.0, 267.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 349.0, 267.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 97 && $i1 <= 122 then $i1 else out2 $i1"
 																}
@@ -4074,7 +4074,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 316.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 316.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 95 then out2 -3 else $i1"
 																}
@@ -4089,7 +4089,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 285.0, 189.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 285.0, 189.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 126 then out2 -2 else $i1"
 																}
@@ -4104,7 +4104,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 257.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 257.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 32 then out2 -1 else $i1"
 																}
@@ -4119,7 +4119,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 312.75, 257.0, 34.0, 20.0 ],
+																	"patching_rect" : [ 312.75, 257.0, 34.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 32"
 																}
@@ -4134,7 +4134,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "" ],
-																	"patching_rect" : [ 50.0, 425.0, 74.0, 20.0 ],
+																	"patching_rect" : [ 50.0, 425.0, 74.0, 22.0 ],
 																	"style" : "",
 																	"text" : "bach.collect"
 																}
@@ -4149,7 +4149,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "bang", "" ],
-																	"patching_rect" : [ 58.25, 160.0, 32.5, 20.0 ],
+																	"patching_rect" : [ 58.25, 160.0, 32.5, 22.0 ],
 																	"style" : "",
 																	"text" : "t b l"
 																}
@@ -4164,7 +4164,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 200.0, 49.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 200.0, 49.0, 22.0 ],
 																	"style" : "",
 																	"text" : "zl iter 1"
 																}
@@ -4179,7 +4179,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 230.0, 260.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 230.0, 260.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 65 && $i1 <= 90 then out2 $i1 else $i1"
 																}
@@ -4194,7 +4194,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "list" ],
-																	"patching_rect" : [ 58.25, 134.0, 46.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 134.0, 46.0, 22.0 ],
 																	"style" : "",
 																	"text" : "atoi"
 																}
@@ -6168,7 +6168,7 @@
 															"modernui" : 1
 														}
 ,
-														"rect" : [ 293.0, 44.0, 640.0, 480.0 ],
+														"rect" : [ 293.0, 79.0, 640.0, 480.0 ],
 														"bglocked" : 0,
 														"openinpresentation" : 0,
 														"default_fontsize" : 12.0,
@@ -6218,7 +6218,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 23.25, 51.0, 54.0, 20.0 ],
+																	"patching_rect" : [ 23.25, 51.0, 54.0, 22.0 ],
 																	"style" : "",
 																	"text" : "gate 2 2"
 																}
@@ -6233,9 +6233,9 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "bang" ],
-																	"patching_rect" : [ 58.25, 100.0, 109.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 100.0, 115.0, 22.0 ],
 																	"style" : "",
-																	"text" : "bach.portal @out t"
+																	"text" : "bach.portal @out m"
 																}
 
 															}
@@ -6248,7 +6248,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 319.75, 378.0, 41.0, 20.0 ],
+																	"patching_rect" : [ 319.75, 378.0, 41.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 125"
 																}
@@ -6263,7 +6263,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 349.0, 267.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 349.0, 267.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 97 && $i1 <= 122 then $i1 else out2 $i1"
 																}
@@ -6278,7 +6278,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 316.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 316.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 95 then out2 -3 else $i1"
 																}
@@ -6293,7 +6293,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 285.0, 189.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 285.0, 189.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 126 then out2 -2 else $i1"
 																}
@@ -6308,7 +6308,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 257.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 257.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 32 then out2 -1 else $i1"
 																}
@@ -6323,7 +6323,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 312.75, 257.0, 34.0, 20.0 ],
+																	"patching_rect" : [ 312.75, 257.0, 34.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 32"
 																}
@@ -6338,7 +6338,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "" ],
-																	"patching_rect" : [ 50.0, 425.0, 74.0, 20.0 ],
+																	"patching_rect" : [ 50.0, 425.0, 74.0, 22.0 ],
 																	"style" : "",
 																	"text" : "bach.collect"
 																}
@@ -6353,7 +6353,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "bang", "" ],
-																	"patching_rect" : [ 58.25, 160.0, 32.5, 20.0 ],
+																	"patching_rect" : [ 58.25, 160.0, 32.5, 22.0 ],
 																	"style" : "",
 																	"text" : "t b l"
 																}
@@ -6368,7 +6368,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 200.0, 49.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 200.0, 49.0, 22.0 ],
 																	"style" : "",
 																	"text" : "zl iter 1"
 																}
@@ -6383,7 +6383,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 230.0, 260.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 230.0, 260.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 65 && $i1 <= 90 then out2 $i1 else $i1"
 																}
@@ -6398,7 +6398,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "list" ],
-																	"patching_rect" : [ 58.25, 134.0, 46.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 134.0, 46.0, 22.0 ],
 																	"style" : "",
 																	"text" : "atoi"
 																}
@@ -6681,7 +6681,7 @@
 															"modernui" : 1
 														}
 ,
-														"rect" : [ 293.0, 44.0, 640.0, 480.0 ],
+														"rect" : [ 293.0, 79.0, 640.0, 480.0 ],
 														"bglocked" : 0,
 														"openinpresentation" : 0,
 														"default_fontsize" : 12.0,
@@ -6731,7 +6731,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 23.25, 51.0, 54.0, 20.0 ],
+																	"patching_rect" : [ 23.25, 51.0, 54.0, 22.0 ],
 																	"style" : "",
 																	"text" : "gate 2 2"
 																}
@@ -6746,9 +6746,9 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "bang" ],
-																	"patching_rect" : [ 58.25, 100.0, 109.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 100.0, 115.0, 22.0 ],
 																	"style" : "",
-																	"text" : "bach.portal @out t"
+																	"text" : "bach.portal @out m"
 																}
 
 															}
@@ -6761,7 +6761,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 319.75, 378.0, 41.0, 20.0 ],
+																	"patching_rect" : [ 319.75, 378.0, 41.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 125"
 																}
@@ -6776,7 +6776,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 349.0, 267.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 349.0, 267.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 97 && $i1 <= 122 then $i1 else out2 $i1"
 																}
@@ -6791,7 +6791,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 316.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 316.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 95 then out2 -3 else $i1"
 																}
@@ -6806,7 +6806,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 285.0, 189.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 285.0, 189.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 126 then out2 -2 else $i1"
 																}
@@ -6821,7 +6821,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 257.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 257.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 32 then out2 -1 else $i1"
 																}
@@ -6836,7 +6836,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 312.75, 257.0, 34.0, 20.0 ],
+																	"patching_rect" : [ 312.75, 257.0, 34.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 32"
 																}
@@ -6851,7 +6851,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "" ],
-																	"patching_rect" : [ 50.0, 425.0, 74.0, 20.0 ],
+																	"patching_rect" : [ 50.0, 425.0, 74.0, 22.0 ],
 																	"style" : "",
 																	"text" : "bach.collect"
 																}
@@ -6866,7 +6866,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "bang", "" ],
-																	"patching_rect" : [ 58.25, 160.0, 32.5, 20.0 ],
+																	"patching_rect" : [ 58.25, 160.0, 32.5, 22.0 ],
 																	"style" : "",
 																	"text" : "t b l"
 																}
@@ -6881,7 +6881,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 200.0, 49.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 200.0, 49.0, 22.0 ],
 																	"style" : "",
 																	"text" : "zl iter 1"
 																}
@@ -6896,7 +6896,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 230.0, 260.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 230.0, 260.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 65 && $i1 <= 90 then out2 $i1 else $i1"
 																}
@@ -6911,7 +6911,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "list" ],
-																	"patching_rect" : [ 58.25, 134.0, 46.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 134.0, 46.0, 22.0 ],
 																	"style" : "",
 																	"text" : "atoi"
 																}
@@ -8109,7 +8109,7 @@
 											"modernui" : 1
 										}
 ,
-										"rect" : [ 417.0, 44.0, 640.0, 480.0 ],
+										"rect" : [ 417.0, 79.0, 640.0, 480.0 ],
 										"bglocked" : 0,
 										"openinpresentation" : 0,
 										"default_fontsize" : 12.0,
@@ -8145,7 +8145,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "int" ],
-													"patching_rect" : [ 401.666687, 387.0, 32.5, 20.0 ],
+													"patching_rect" : [ 401.666687, 387.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "+ 1"
 												}
@@ -8184,7 +8184,7 @@
 															"modernui" : 1
 														}
 ,
-														"rect" : [ 293.0, 44.0, 640.0, 480.0 ],
+														"rect" : [ 293.0, 79.0, 640.0, 480.0 ],
 														"bglocked" : 0,
 														"openinpresentation" : 0,
 														"default_fontsize" : 12.0,
@@ -8234,7 +8234,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 23.25, 51.0, 54.0, 20.0 ],
+																	"patching_rect" : [ 23.25, 51.0, 54.0, 22.0 ],
 																	"style" : "",
 																	"text" : "gate 2 2"
 																}
@@ -8249,9 +8249,9 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "bang" ],
-																	"patching_rect" : [ 58.25, 100.0, 109.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 100.0, 115.0, 22.0 ],
 																	"style" : "",
-																	"text" : "bach.portal @out t"
+																	"text" : "bach.portal @out m"
 																}
 
 															}
@@ -8264,7 +8264,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 319.75, 378.0, 41.0, 20.0 ],
+																	"patching_rect" : [ 319.75, 378.0, 41.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 125"
 																}
@@ -8279,7 +8279,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 349.0, 267.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 349.0, 267.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 97 && $i1 <= 122 then $i1 else out2 $i1"
 																}
@@ -8294,7 +8294,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 316.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 316.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 95 then out2 -3 else $i1"
 																}
@@ -8309,7 +8309,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 285.0, 189.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 285.0, 189.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 126 then out2 -2 else $i1"
 																}
@@ -8324,7 +8324,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 257.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 257.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 32 then out2 -1 else $i1"
 																}
@@ -8339,7 +8339,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 312.75, 257.0, 34.0, 20.0 ],
+																	"patching_rect" : [ 312.75, 257.0, 34.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 32"
 																}
@@ -8354,7 +8354,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "" ],
-																	"patching_rect" : [ 50.0, 425.0, 74.0, 20.0 ],
+																	"patching_rect" : [ 50.0, 425.0, 74.0, 22.0 ],
 																	"style" : "",
 																	"text" : "bach.collect"
 																}
@@ -8369,7 +8369,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "bang", "" ],
-																	"patching_rect" : [ 58.25, 160.0, 32.5, 20.0 ],
+																	"patching_rect" : [ 58.25, 160.0, 32.5, 22.0 ],
 																	"style" : "",
 																	"text" : "t b l"
 																}
@@ -8384,7 +8384,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 200.0, 49.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 200.0, 49.0, 22.0 ],
 																	"style" : "",
 																	"text" : "zl iter 1"
 																}
@@ -8399,7 +8399,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 230.0, 260.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 230.0, 260.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 65 && $i1 <= 90 then out2 $i1 else $i1"
 																}
@@ -8414,7 +8414,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "list" ],
-																	"patching_rect" : [ 58.25, 134.0, 46.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 134.0, 46.0, 22.0 ],
 																	"style" : "",
 																	"text" : "atoi"
 																}
@@ -8649,7 +8649,7 @@
  ]
 													}
 ,
-													"patching_rect" : [ 268.333313, 192.0, 183.0, 20.0 ],
+													"patching_rect" : [ 268.333313, 192.0, 183.0, 22.0 ],
 													"saved_object_attributes" : 													{
 														"description" : "",
 														"digest" : "",
@@ -8672,7 +8672,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 268.333313, 162.0, 67.0, 20.0 ],
+													"patching_rect" : [ 268.333313, 162.0, 67.0, 22.0 ],
 													"style" : "",
 													"text" : "bach.nth 1"
 												}
@@ -8697,7 +8697,7 @@
 															"modernui" : 1
 														}
 ,
-														"rect" : [ 293.0, 44.0, 640.0, 480.0 ],
+														"rect" : [ 293.0, 79.0, 640.0, 480.0 ],
 														"bglocked" : 0,
 														"openinpresentation" : 0,
 														"default_fontsize" : 12.0,
@@ -8747,7 +8747,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 23.25, 51.0, 54.0, 20.0 ],
+																	"patching_rect" : [ 23.25, 51.0, 54.0, 22.0 ],
 																	"style" : "",
 																	"text" : "gate 2 2"
 																}
@@ -8762,9 +8762,9 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "bang" ],
-																	"patching_rect" : [ 58.25, 100.0, 109.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 100.0, 115.0, 22.0 ],
 																	"style" : "",
-																	"text" : "bach.portal @out t"
+																	"text" : "bach.portal @out m"
 																}
 
 															}
@@ -8777,7 +8777,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 319.75, 378.0, 41.0, 20.0 ],
+																	"patching_rect" : [ 319.75, 378.0, 41.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 125"
 																}
@@ -8792,7 +8792,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 349.0, 267.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 349.0, 267.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 97 && $i1 <= 122 then $i1 else out2 $i1"
 																}
@@ -8807,7 +8807,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 316.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 316.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 95 then out2 -3 else $i1"
 																}
@@ -8822,7 +8822,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 285.0, 189.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 285.0, 189.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 126 then out2 -2 else $i1"
 																}
@@ -8837,7 +8837,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 257.0, 182.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 257.0, 182.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 == 32 then out2 -1 else $i1"
 																}
@@ -8852,7 +8852,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "int" ],
-																	"patching_rect" : [ 312.75, 257.0, 34.0, 20.0 ],
+																	"patching_rect" : [ 312.75, 257.0, 34.0, 22.0 ],
 																	"style" : "",
 																	"text" : "+ 32"
 																}
@@ -8867,7 +8867,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "" ],
-																	"patching_rect" : [ 50.0, 425.0, 74.0, 20.0 ],
+																	"patching_rect" : [ 50.0, 425.0, 74.0, 22.0 ],
 																	"style" : "",
 																	"text" : "bach.collect"
 																}
@@ -8882,7 +8882,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "bang", "" ],
-																	"patching_rect" : [ 58.25, 160.0, 32.5, 20.0 ],
+																	"patching_rect" : [ 58.25, 160.0, 32.5, 22.0 ],
 																	"style" : "",
 																	"text" : "t b l"
 																}
@@ -8897,7 +8897,7 @@
 																	"numinlets" : 2,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 200.0, 49.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 200.0, 49.0, 22.0 ],
 																	"style" : "",
 																	"text" : "zl iter 1"
 																}
@@ -8912,7 +8912,7 @@
 																	"numinlets" : 1,
 																	"numoutlets" : 2,
 																	"outlettype" : [ "", "" ],
-																	"patching_rect" : [ 71.75, 230.0, 260.0, 20.0 ],
+																	"patching_rect" : [ 71.75, 230.0, 260.0, 22.0 ],
 																	"style" : "",
 																	"text" : "if $i1 >= 65 && $i1 <= 90 then out2 $i1 else $i1"
 																}
@@ -8927,7 +8927,7 @@
 																	"numinlets" : 3,
 																	"numoutlets" : 1,
 																	"outlettype" : [ "list" ],
-																	"patching_rect" : [ 58.25, 134.0, 46.0, 20.0 ],
+																	"patching_rect" : [ 58.25, 134.0, 46.0, 22.0 ],
 																	"style" : "",
 																	"text" : "atoi"
 																}
@@ -9162,7 +9162,7 @@
  ]
 													}
 ,
-													"patching_rect" : [ 78.333313, 192.0, 183.0, 20.0 ],
+													"patching_rect" : [ 78.333313, 192.0, 183.0, 22.0 ],
 													"saved_object_attributes" : 													{
 														"description" : "",
 														"digest" : "",
@@ -9185,7 +9185,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 78.333313, 162.0, 67.0, 20.0 ],
+													"patching_rect" : [ 78.333313, 162.0, 67.0, 22.0 ],
 													"style" : "",
 													"text" : "bach.nth 1"
 												}
@@ -9200,7 +9200,7 @@
 													"numinlets" : 1,
 													"numoutlets" : 2,
 													"outlettype" : [ "int", "int" ],
-													"patching_rect" : [ 278.25, 289.0, 201.0, 20.0 ],
+													"patching_rect" : [ 278.25, 289.0, 201.0, 22.0 ],
 													"style" : "",
 													"text" : "unpack i i"
 												}
@@ -9215,7 +9215,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 294.666687, 463.0, 32.5, 18.0 ],
+													"patching_rect" : [ 294.666687, 463.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "0"
 												}
@@ -9230,7 +9230,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 261.0, 463.0, 32.5, 18.0 ],
+													"patching_rect" : [ 261.0, 463.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "1"
 												}
@@ -9245,7 +9245,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 3,
 													"outlettype" : [ "", "", "" ],
-													"patching_rect" : [ 237.5, 432.0, 66.0, 20.0 ],
+													"patching_rect" : [ 237.5, 432.0, 66.0, 22.0 ],
 													"style" : "",
 													"text" : "gate 3 1"
 												}
@@ -9294,7 +9294,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 182.5, 463.0, 32.5, 18.0 ],
+													"patching_rect" : [ 182.5, 463.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "1"
 												}
@@ -9309,7 +9309,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 148.833313, 463.0, 32.5, 18.0 ],
+													"patching_rect" : [ 148.833313, 463.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "0"
 												}
@@ -9324,7 +9324,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 3,
 													"outlettype" : [ "", "", "" ],
-													"patching_rect" : [ 125.333313, 432.0, 66.0, 20.0 ],
+													"patching_rect" : [ 125.333313, 432.0, 66.0, 22.0 ],
 													"style" : "",
 													"text" : "gate 3 1"
 												}
@@ -9354,7 +9354,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "int" ],
-													"patching_rect" : [ 50.0, 433.0, 54.0, 20.0 ],
+													"patching_rect" : [ 50.0, 433.0, 54.0, 22.0 ],
 													"style" : "",
 													"text" : "bach.<="
 												}
@@ -9369,7 +9369,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 3,
 													"outlettype" : [ "", "", "" ],
-													"patching_rect" : [ 50.0, 357.0, 165.0, 20.0 ],
+													"patching_rect" : [ 50.0, 357.0, 165.0, 22.0 ],
 													"style" : "",
 													"text" : "gate 3"
 												}
@@ -9384,7 +9384,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 278.25, 319.0, 201.0, 20.0 ],
+													"patching_rect" : [ 278.25, 319.0, 201.0, 22.0 ],
 													"style" : "",
 													"text" : "if $i1 == 0 && $i2 == 1 then 2 else 3"
 												}
@@ -9399,7 +9399,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 97.25, 263.0, 200.0, 20.0 ],
+													"patching_rect" : [ 97.25, 263.0, 200.0, 22.0 ],
 													"style" : "",
 													"text" : "if $i1 == $i2 then 1 else out2 $i1 $i2"
 												}
@@ -9414,7 +9414,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 318.333313, 230.0, 32.5, 18.0 ],
+													"patching_rect" : [ 318.333313, 230.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "0"
 												}
@@ -9429,7 +9429,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 281.833313, 230.0, 32.5, 18.0 ],
+													"patching_rect" : [ 281.833313, 230.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "1"
 												}
@@ -9444,7 +9444,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 141.833313, 230.0, 32.5, 18.0 ],
+													"patching_rect" : [ 141.833313, 230.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "0"
 												}
@@ -9459,7 +9459,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 91.833313, 230.0, 32.5, 18.0 ],
+													"patching_rect" : [ 91.833313, 230.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "1"
 												}
@@ -9474,7 +9474,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 281.833313, 100.0, 69.0, 20.0 ],
+													"patching_rect" : [ 281.833313, 100.0, 69.0, 22.0 ],
 													"style" : "",
 													"text" : "bach.filter l"
 												}
@@ -9489,7 +9489,7 @@
 													"numinlets" : 1,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 268.333313, 70.0, 32.5, 20.0 ],
+													"patching_rect" : [ 268.333313, 70.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "t l l"
 												}
@@ -9504,7 +9504,7 @@
 													"numinlets" : 2,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 91.833313, 100.0, 69.0, 20.0 ],
+													"patching_rect" : [ 91.833313, 100.0, 69.0, 22.0 ],
 													"style" : "",
 													"text" : "bach.filter l"
 												}
@@ -9519,7 +9519,7 @@
 													"numinlets" : 1,
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
-													"patching_rect" : [ 78.333313, 70.0, 32.5, 20.0 ],
+													"patching_rect" : [ 78.333313, 70.0, 32.5, 22.0 ],
 													"style" : "",
 													"text" : "t l l"
 												}
@@ -9534,7 +9534,7 @@
 													"numinlets" : 1,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 268.333313, 128.0, 66.0, 20.0 ],
+													"patching_rect" : [ 268.333313, 128.0, 66.0, 22.0 ],
 													"style" : "",
 													"text" : "bach.flat 1"
 												}
@@ -9549,7 +9549,7 @@
 													"numinlets" : 1,
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
-													"patching_rect" : [ 78.333313, 128.0, 66.0, 20.0 ],
+													"patching_rect" : [ 78.333313, 128.0, 66.0, 22.0 ],
 													"style" : "",
 													"text" : "bach.flat 1"
 												}
@@ -10861,9 +10861,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
-					"patching_rect" : [ 133.0, 712.0, 109.0, 22.0 ],
+					"patching_rect" : [ 133.0, 712.0, 116.0, 22.0 ],
 					"style" : "",
-					"text" : "bach.portal @out t"
+					"text" : "bach.portal @out m"
 				}
 
 			}
@@ -11207,9 +11207,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 268.0, 571.0, 95.0, 22.0 ],
+					"patching_rect" : [ 268.0, 571.0, 103.0, 22.0 ],
 					"style" : "",
-					"text" : "bach.iter @out t"
+					"text" : "bach.iter @out m"
 				}
 
 			}

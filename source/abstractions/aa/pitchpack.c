@@ -18,7 +18,7 @@
 	bachproject
 	
 	@digest
-	Make pitches from their components.
+	Make pitches from their components
 	
 	@description
 	Generates pitches from their degrees, alterations and octaves.

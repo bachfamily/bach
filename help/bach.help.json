@@ -90,11 +90,18 @@
 		},
 		"Outlet types" : {
 			"Nativeortext" : {
-				"filename" : [ "bach.help.llll.03_outlet types.03_nativeortext.maxpat" ],
+				"filename" : [ "bach.help.llll.03_outlet types.02_nativeortext.maxpat" ],
 				"objects" : [ "all" ],
 				"seealso" : [  ],
 				"tags" : [ "llll", "outlet", "text", "native", "type", "out" ],
 				"title" : [ "Outlet types: native or text" ]
+			},
+			"Outletmax" : {
+				"filename" : [ "bach.help.llll.03_outlet types.03_outletmax.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [  ],
+				"tags" : [ "llll", "outlet", "text", "native", "type", "out", "max", "m", "backtick", "remove", "quote", "friendly" ],
+				"title" : [ "Output to Max and backticks" ]
 			},
 			"Mixedoutlets" : {
 				"filename" : [ "bach.help.llll.03_outlet types.04_mixedoutlets.maxpat" ],
@@ -2401,35 +2408,35 @@
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.01_intro.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "key+signature", "enharmonic+table", "respell+options" ],
-					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "reset", "atonal", "chew", "chen", "chewandchen", "algorithm", "selection", "algorithm" ],
+					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "reset", "atonal", "chew", "chen", "chewandchen", "algorithm", "selection", "algorithm", "spell" ],
 					"title" : [ "Respell pitches" ]
 				},
 				"Basicoptions" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.02_basicoptions.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell", "sel+note" ],
-					"tags" : [ "message", "pitch", "select", "selection", "respell", "automatically", "enharmonic", "enharmonicity", "option", "sharp", "flat", "sharper", "sharpest", "flatter", "flattest", "voicewise", "circle", "of", "fifths", "algorithm" ],
+					"tags" : [ "message", "pitch", "select", "selection", "respell", "automatically", "enharmonic", "enharmonicity", "option", "sharp", "flat", "sharper", "sharpest", "flatter", "flattest", "voicewise", "circle", "of", "fifths", "algorithm", "spell" ],
 					"title" : [ "Basic respell options" ]
 				},
 				"Atonaloptions" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.03_atonaloptions.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell+flattest", "respell+sharpest", "respell+atonal" ],
-					"tags" : [ "message", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "discard", "altered", "repetition", "discardalteredrepetition", "stdev", "thresh", "stdevthresh", "standard", "deviation", "equation", "threshold", "algorithm", "atonal" ],
+					"tags" : [ "message", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "discard", "altered", "repetition", "discardalteredrepetition", "stdev", "thresh", "stdevthresh", "standard", "deviation", "equation", "threshold", "algorithm", "atonal", "spell" ],
 					"title" : [ "Atonal algorithm options" ]
 				},
 				"Chewandchen" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.04_chewandchen.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell" ],
-					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "winsize", "locality", "sliding", "selfreferential", "spiral", "spiralr", "spiralh", "radius", "height", "step" ],
+					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "winsize", "locality", "sliding", "selfreferential", "spiral", "spiralr", "spiralh", "radius", "height", "step", "spell" ],
 					"title" : [ "Chew and Chen algorithm" ]
 				},
 				"Globality" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.05_globality.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell", "pitch+message", "sel+message" ],
-					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect" ],
+					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect", "spell" ],
 					"title" : [ "Respelling scope" ]
 				}
 			},
@@ -4756,12 +4763,35 @@
 					"title" : [ "Slots for rests in separate syntax" ]
 				}
 			},
-			"Notenames" : {
-				"filename" : [ "bach.help.notation.syntax.90_notenames.maxpat" ],
-				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "ascii+accidentals" ],
-				"tags" : [ "syntax", "note", "name", "middlecoctave" ],
-				"title" : [ "Inputting note names" ]
+			"Pitches" : {
+				"Notenames" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.01_notenames.maxpat" ],
+					"objects" : [ "all" ],
+					"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "middlecoctave", "notename" ],
+					"title" : [ "Inputting pitches" ]
+				},
+				"Pitchsyntax" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
+					"objects" : [ "all" ],
+					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone" ],
+					"title" : [ "Pitch syntax" ]
+				},
+				"Intervals" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.03_intervals.maxpat" ],
+					"objects" : [ "all" ],
+					"seealso" : [ "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "arithmetics", "add", "divide", "multiply", "subtract", "subtract", "remainder" ],
+					"title" : [ "Pitch arithmetics and intervals" ]
+				},
+				"Pack" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.04_pack.maxpat" ],
+					"objects" : [ "all" ],
+					"seealso" : [ "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "create", "break", "build", "pack", "unpack", "pitchpack", "pitchunpack" ],
+					"title" : [ "Packing and unpacking pitches" ]
+				}
 			}
 		},
 		"Voice properties" : {

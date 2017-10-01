@@ -3,7 +3,7 @@
 	mod.c
 	
 	@name 
-	bach.%
+	bach.mod
 	
 	@realname 
 	bach.mod
@@ -21,19 +21,16 @@
 	Quick llll modulo
 	
 	@description
-	Outputs the remainders in a division operation
-	between lllls or between lllls and numbers, 
-	keeping the same sign of the left operand.
+	Outputs the positive remainders in a division operation
+	between lllls or between lllls and numbers.
 	
 	@discussion
 	The abstraction is equivalent to a modulo performed
 	in a <o>bach.expr</o> object, with the <m>scalarmode</m>
 	attribute set to 1.
-	Although the real name of the abstraction is
-	<b>bach.mod</b>, The used modulo function is not  
-	<o>bach.expr</o>'s <b>mod</b> function (whose result is always
-	positive), rather the <b>%</b> operation, whose result
-	preserves the sign of the left operand.
+	 The used modulo function is  
+	<o>bach.expr</o>'s <b>mod</b> function, whose result is always
+	positive.
 
 	@category
 	bach, bach abstractions, bach math

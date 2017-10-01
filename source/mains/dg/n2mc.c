@@ -116,7 +116,8 @@ int T_EXPORT main()
 	n2mc_class = c;
 	
 	dev_post("bach.n2mc compiled %s %s", __DATE__, __TIME__);
-	
+    object_warn(NULL, "bach.n2mc is deprecated. Please consider replacing me with bach.p2mc!");
+
 	return 0;
 }
 

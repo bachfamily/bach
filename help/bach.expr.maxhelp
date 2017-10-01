@@ -2,31 +2,40 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 6,
-			"minor" : 1,
-			"revision" : 4,
-			"architecture" : "x86"
+			"major" : 7,
+			"minor" : 3,
+			"revision" : 2,
+			"architecture" : "x64",
+			"modernui" : 1
 		}
 ,
-		"rect" : [ 291.0, 68.0, 837.0, 516.0 ],
+		"rect" : [ 100.0, 100.0, 837.0, 516.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
-		"gridonopen" : 0,
+		"gridonopen" : 1,
 		"gridsize" : [ 5.0, 5.0 ],
-		"gridsnaponopen" : 0,
+		"gridsnaponopen" : 1,
+		"objectsnaponopen" : 1,
 		"statusbarvisible" : 2,
 		"toolbarvisible" : 1,
+		"lefttoolbarpinned" : 0,
+		"toptoolbarpinned" : 0,
+		"righttoolbarpinned" : 0,
+		"bottomtoolbarpinned" : 0,
+		"toolbars_unpinned_last_save" : 0,
+		"tallnewobj" : 0,
 		"boxanimatetime" : 200,
-		"imprint" : 0,
 		"enablehscroll" : 1,
 		"enablevscroll" : 1,
 		"devicewidth" : 0.0,
 		"description" : "",
 		"digest" : "",
 		"tags" : "",
+		"style" : "",
+		"subpatcher_template" : "",
 		"showrootpatcherontab" : 0,
 		"showontab" : 0,
 		"boxes" : [ 			{
@@ -40,10 +49,11 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 6,
-							"minor" : 1,
-							"revision" : 4,
-							"architecture" : "x86"
+							"major" : 7,
+							"minor" : 3,
+							"revision" : 2,
+							"architecture" : "x64",
+							"modernui" : 1
 						}
 ,
 						"rect" : [ 0.0, 26.0, 837.0, 490.0 ],
@@ -52,30 +62,38 @@
 						"default_fontsize" : 13.0,
 						"default_fontface" : 0,
 						"default_fontname" : "Arial",
-						"gridonopen" : 0,
+						"gridonopen" : 1,
 						"gridsize" : [ 5.0, 5.0 ],
-						"gridsnaponopen" : 0,
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
 						"statusbarvisible" : 2,
 						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
 						"boxanimatetime" : 200,
-						"imprint" : 0,
 						"enablehscroll" : 1,
 						"enablevscroll" : 1,
 						"devicewidth" : 0.0,
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-13",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 297.0, 610.0, 21.0 ],
+									"style" : "",
 									"text" : "Supported functions:"
 								}
 
@@ -84,12 +102,12 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-12",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 73.0, 276.0, 21.0 ],
+									"style" : "",
 									"text" : "Operator precedence and order of evaluation:"
 								}
 
@@ -98,12 +116,12 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-11",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 326.0, 168.0, 302.0, 21.0 ],
+									"style" : "",
 									"text" : "Notes:"
 								}
 
@@ -112,13 +130,13 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-6",
 									"linecount" : 11,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 318.0, 610.0, 167.0 ],
+									"style" : "",
 									"text" : "mod (positive modulo)\npow, sqrt, exp, exp2, log, log2, log10\ncos, sin, tan, acos, asin, atan, atan2, cosh, sinh, tanh, acosh, asinh, atanh, hypot\nbessel (integer-order bessel functions. First parameter is order, second is x).\nsgn, abs, floor, ceil, round, trunc, fmod\nrandom (int random number within a range - takes two arguments)\nint, float, rat (force to the corresponding data type)\nnum, den (return the corresponding element of a rational)\n\nall the functions always return floats, except pow, abs (whose return type depends on the incoming types), sgn, int, num, den, random (which return ints), rat (which returns a rational or an int)",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
@@ -128,13 +146,13 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-4",
 									"linecount" : 5,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 326.0, 188.0, 302.0, 80.0 ],
+									"style" : "",
 									"text" : "** raises to power (equivalent to the pow function)\n/ with two int operands returns an int or a rational\n// with two int operands always returns an int\n^ is bitwise xor\n^^ is logical xor",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
@@ -144,13 +162,13 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-1",
 									"linecount" : 13,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 92.0, 276.0, 196.0 ],
+									"style" : "",
 									"text" : "13  ! ~ + - (unary) right to left\n12  ** right to left\n11  * / % // left to right\n10 + - left to right\n9   << >> left to right\n8   < <= > >= left to right\n7   == != left to right\n6   & left to right\n5   ^ left to right\n4   | left to right\n3  && left to right\n2  ^^ left to right\n1  || left to right",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
@@ -178,18 +196,15 @@
 ,
 					"patching_rect" : [ 10.0, 259.0, 154.0, 20.0 ],
 					"saved_object_attributes" : 					{
-						"default_fontface" : 0,
-						"default_fontname" : "Arial",
-						"default_fontsize" : 13.0,
 						"description" : "",
 						"digest" : "",
-						"fontface" : 0,
-						"fontname" : "Arial",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
+						"style" : "",
 						"tags" : ""
 					}
 ,
+					"style" : "",
 					"text" : "p \"operators and functions\"",
 					"varname" : "basic_tab[5]"
 				}
@@ -206,10 +221,11 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 6,
-							"minor" : 1,
-							"revision" : 4,
-							"architecture" : "x86"
+							"major" : 7,
+							"minor" : 3,
+							"revision" : 2,
+							"architecture" : "x64",
+							"modernui" : 1
 						}
 ,
 						"rect" : [ 0.0, 26.0, 837.0, 490.0 ],
@@ -218,19 +234,27 @@
 						"default_fontsize" : 13.0,
 						"default_fontface" : 0,
 						"default_fontname" : "Arial",
-						"gridonopen" : 0,
+						"gridonopen" : 1,
 						"gridsize" : [ 5.0, 5.0 ],
-						"gridsnaponopen" : 0,
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
 						"statusbarvisible" : 2,
 						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
 						"boxanimatetime" : 200,
-						"imprint" : 0,
 						"enablehscroll" : 1,
 						"enablevscroll" : 1,
 						"devicewidth" : 0.0,
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
@@ -238,13 +262,13 @@
 									"bubbleside" : 3,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-20",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 132.0, 373.5, 154.0, 54.0 ],
+									"patching_rect" : [ 132.0, 373.5, 156.0, 54.0 ],
+									"style" : "",
 									"text" : "This would not happen if we used the $i... or $f... prefix."
 								}
 
@@ -256,7 +280,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 494.0, 270.0, 20.0, 20.0 ]
+									"patching_rect" : [ 494.0, 270.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -268,7 +293,8 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 494.0, 420.0, 37.0, 21.0 ],
+									"patching_rect" : [ 494.0, 420.0, 37.0, 23.0 ],
+									"style" : "",
 									"text" : "print"
 								}
 
@@ -282,7 +308,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 494.0, 360.0, 65.0, 21.0 ],
+									"patching_rect" : [ 494.0, 360.0, 65.0, 23.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -291,7 +318,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-18",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -300,6 +326,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 494.0, 300.0, 105.0, 50.0 ],
+									"style" : "",
 									"text" : "3 3. (2 4.)"
 								}
 
@@ -313,7 +340,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 494.0, 390.0, 149.0, 21.0 ],
+									"patching_rect" : [ 494.0, 390.0, 149.0, 23.0 ],
+									"style" : "",
 									"text" : "bach.expr $f1 / 2 @out t"
 								}
 
@@ -325,7 +353,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 299.0, 270.0, 20.0, 20.0 ]
+									"patching_rect" : [ 299.0, 270.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -337,7 +366,8 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 299.0, 420.0, 37.0, 21.0 ],
+									"patching_rect" : [ 299.0, 420.0, 37.0, 23.0 ],
+									"style" : "",
 									"text" : "print"
 								}
 
@@ -351,7 +381,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 299.0, 360.0, 65.0, 21.0 ],
+									"patching_rect" : [ 299.0, 360.0, 65.0, 23.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -360,7 +391,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-13",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -369,6 +399,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 299.0, 300.0, 105.0, 50.0 ],
+									"style" : "",
 									"text" : "3 3. (2 4.)"
 								}
 
@@ -382,7 +413,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 299.0, 390.0, 149.0, 21.0 ],
+									"patching_rect" : [ 299.0, 390.0, 149.0, 23.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 / 2 @out t"
 								}
 
@@ -393,13 +425,13 @@
 									"bubblepoint" : 1.0,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-6",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 149.0, 191.0, 271.0, 54.0 ],
+									"style" : "",
 									"text" : "Have a look at the output: integers become rational upon division, while floating point numbers remain the same."
 								}
 
@@ -411,7 +443,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 19.0, 134.0, 20.0, 20.0 ]
+									"patching_rect" : [ 19.0, 134.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -423,7 +456,8 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 19.0, 284.0, 37.0, 21.0 ],
+									"patching_rect" : [ 19.0, 284.0, 37.0, 23.0 ],
+									"style" : "",
 									"text" : "print"
 								}
 
@@ -437,7 +471,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 19.0, 224.0, 65.0, 21.0 ],
+									"patching_rect" : [ 19.0, 224.0, 65.0, 23.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -446,7 +481,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-11",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -455,6 +489,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 19.0, 164.0, 105.0, 50.0 ],
+									"style" : "",
 									"text" : "3 3. (2 4.)"
 								}
 
@@ -468,7 +503,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 19.0, 254.0, 154.0, 21.0 ],
+									"patching_rect" : [ 19.0, 254.0, 154.0, 23.0 ],
+									"style" : "",
 									"text" : "bach.expr $x1 / 2 @out t"
 								}
 
@@ -477,14 +513,14 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-12",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 70.0, 624.0, 50.0 ],
-									"text" : "In addition to the usual variable prefixes $i... (integers), $f... (floats) and to the bach prefix $r... (rationals), bach.expr allows for a \"neutral\" variable type, expressed as $x...\nWhen a $x... variable is encountered, the type of the corresponding incoming number is simply preserved."
+									"patching_rect" : [ 10.0, 70.0, 717.0, 50.0 ],
+									"style" : "",
+									"text" : "In addition to the usual variable prefixes $i... (integers), $f... (floats) and to the bach prefix $r... (rationals), $p... (pitches),  bach.expr allows for a \"neutral\" variable type, expressed as $x...\nWhen a $x... variable is encountered, the type of the corresponding incoming number is simply preserved."
 								}
 
 							}
@@ -500,7 +536,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 215.796875, 53.625 ]
+									"patching_rect" : [ 10.0, 10.0, 210.098251, 57.567627 ]
 								}
 
 							}
@@ -618,18 +654,15 @@
 ,
 					"patching_rect" : [ 10.0, 174.0, 117.0, 20.0 ],
 					"saved_object_attributes" : 					{
-						"default_fontface" : 0,
-						"default_fontname" : "Arial",
-						"default_fontsize" : 13.0,
 						"description" : "",
 						"digest" : "",
-						"fontface" : 0,
-						"fontname" : "Arial",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
+						"style" : "",
 						"tags" : ""
 					}
 ,
+					"style" : "",
 					"text" : "p \"neutral variables\"",
 					"varname" : "basic_tab[4]"
 				}
@@ -646,10 +679,11 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 6,
-							"minor" : 1,
-							"revision" : 4,
-							"architecture" : "x86"
+							"major" : 7,
+							"minor" : 3,
+							"revision" : 2,
+							"architecture" : "x64",
+							"modernui" : 1
 						}
 ,
 						"rect" : [ 0.0, 26.0, 837.0, 490.0 ],
@@ -658,31 +692,39 @@
 						"default_fontsize" : 13.0,
 						"default_fontface" : 0,
 						"default_fontname" : "Arial",
-						"gridonopen" : 0,
+						"gridonopen" : 1,
 						"gridsize" : [ 5.0, 5.0 ],
-						"gridsnaponopen" : 0,
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
 						"statusbarvisible" : 2,
 						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
 						"boxanimatetime" : 200,
-						"imprint" : 0,
 						"enablehscroll" : 1,
 						"enablevscroll" : 1,
 						"devicewidth" : 0.0,
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-22",
 									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 399.0, 416.0, 269.0, 36.0 ],
+									"style" : "",
 									"text" : "Remember that rationals with denominator 1 are automatically converted to integers",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -695,7 +737,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 218.0, 266.0, 20.0, 20.0 ]
+									"patching_rect" : [ 218.0, 266.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -708,6 +751,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 218.0, 416.0, 100.0, 21.0 ],
+									"style" : "",
 									"text" : "print @popup 1"
 								}
 
@@ -722,6 +766,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 218.0, 356.0, 65.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -730,7 +775,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-18",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -739,6 +783,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 218.0, 296.0, 108.0, 50.0 ],
+									"style" : "",
 									"text" : "3/4 4/5 6"
 								}
 
@@ -753,6 +798,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 218.0, 386.0, 154.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr $r1 + 2 @out t"
 								}
 
@@ -762,13 +808,13 @@
 									"bubble" : 1,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-20",
 									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 381.0, 371.5, 195.0, 40.0 ],
+									"style" : "",
 									"text" : "To indicate a rational variable, use the $r... prefix"
 								}
 
@@ -780,7 +826,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 425.0, 99.0, 20.0, 20.0 ]
+									"patching_rect" : [ 425.0, 99.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -793,6 +840,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 425.0, 249.0, 100.0, 21.0 ],
+									"style" : "",
 									"text" : "print @popup 1"
 								}
 
@@ -807,6 +855,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 425.0, 189.0, 65.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -815,7 +864,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-13",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -824,6 +872,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 425.0, 129.0, 107.0, 50.0 ],
+									"style" : "",
 									"text" : "4 5 6 7"
 								}
 
@@ -838,6 +887,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 425.0, 219.0, 154.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 // 2 @out t"
 								}
 
@@ -848,13 +898,13 @@
 									"bubblepoint" : 1.0,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-7",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 551.0, 155.5, 209.0, 54.0 ],
+									"style" : "",
 									"text" : "If you want an integer division to return an integer in any case, you can use the // operator"
 								}
 
@@ -865,13 +915,13 @@
 									"bubblepoint" : 1.0,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-5",
 									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 149.5, 148.0, 197.0, 69.0 ],
+									"style" : "",
 									"text" : "bach.expr works on rationals. The result of a non-exact division between two integers is a rational."
 								}
 
@@ -883,7 +933,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 18.0, 106.0, 20.0, 20.0 ]
+									"patching_rect" : [ 18.0, 106.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -896,6 +947,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 18.0, 256.0, 100.0, 21.0 ],
+									"style" : "",
 									"text" : "print @popup 1"
 								}
 
@@ -910,6 +962,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 18.0, 196.0, 65.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -918,7 +971,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-11",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -927,6 +979,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 18.0, 136.0, 107.0, 50.0 ],
+									"style" : "",
 									"text" : "4 5 6 7"
 								}
 
@@ -941,6 +994,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 18.0, 226.0, 154.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 / 2 @out t"
 								}
 
@@ -949,12 +1003,12 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-12",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 70.0, 574.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr has full support for rational numbers."
 								}
 
@@ -1089,18 +1143,15 @@
 ,
 					"patching_rect" : [ 10.0, 144.0, 74.0, 20.0 ],
 					"saved_object_attributes" : 					{
-						"default_fontface" : 0,
-						"default_fontname" : "Arial",
-						"default_fontsize" : 13.0,
 						"description" : "",
 						"digest" : "",
-						"fontface" : 0,
-						"fontname" : "Arial",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
+						"style" : "",
 						"tags" : ""
 					}
 ,
+					"style" : "",
 					"text" : "p rationals",
 					"varname" : "basic_tab[3]"
 				}
@@ -1117,10 +1168,11 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 6,
-							"minor" : 1,
-							"revision" : 4,
-							"architecture" : "x86"
+							"major" : 7,
+							"minor" : 3,
+							"revision" : 2,
+							"architecture" : "x64",
+							"modernui" : 1
 						}
 ,
 						"rect" : [ 0.0, 26.0, 837.0, 490.0 ],
@@ -1129,19 +1181,27 @@
 						"default_fontsize" : 13.0,
 						"default_fontface" : 0,
 						"default_fontname" : "Arial",
-						"gridonopen" : 0,
+						"gridonopen" : 1,
 						"gridsize" : [ 5.0, 5.0 ],
-						"gridsnaponopen" : 0,
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
 						"statusbarvisible" : 2,
 						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
 						"boxanimatetime" : 200,
-						"imprint" : 0,
 						"enablehscroll" : 1,
 						"enablevscroll" : 1,
 						"devicewidth" : 0.0,
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
@@ -1149,13 +1209,13 @@
 									"bubblepoint" : 0.17,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-44",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 502.0, 376.0, 252.0, 54.0 ],
+									"style" : "",
 									"text" : "\"maxvars\" tells that, although the formula initially just involves two inlets, we might need the third one in future!"
 								}
 
@@ -1167,13 +1227,13 @@
 									"bubbleside" : 2,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-43",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 332.0, 224.0, 69.0 ],
+									"style" : "",
 									"text" : "As you change the expression to a new one involving the third inlet, this is also taken into account"
 								}
 
@@ -1185,13 +1245,13 @@
 									"bubbleside" : 3,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-42",
 									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 47.398438, 288.0, 212.601562, 40.0 ],
+									"style" : "",
 									"text" : "At the beginning, only the first two lllls are taken into account"
 								}
 
@@ -1206,6 +1266,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 406.0, 116.0, 19.0 ],
+									"style" : "",
 									"text" : "expr $i1 * $i2 * $i3"
 								}
 
@@ -1216,13 +1277,13 @@
 									"bubbleside" : 3,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-36",
 									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 100.0, 112.0, 69.0 ],
+									"style" : "",
 									"text" : "Change the expression after the object instantiation"
 								}
 
@@ -1237,6 +1298,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 153.0, 113.0, 19.0 ],
+									"style" : "",
 									"text" : "expr $i1 * log($f2)"
 								}
 
@@ -1251,6 +1313,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 126.0, 89.0, 19.0 ],
+									"style" : "",
 									"text" : "expr $i1 + $i2"
 								}
 
@@ -1265,6 +1328,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 100.0, 86.0, 19.0 ],
+									"style" : "",
 									"text" : "expr $i1 - $i2"
 								}
 
@@ -1279,6 +1343,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 250.296875, 451.0, 385.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 + $i2 + $i3 + $i4 + $i5 + $i6 + $i7 + $i8 + $i9 + $i10"
 								}
 
@@ -1289,12 +1354,12 @@
 									"bubbleside" : 3,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-29",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 449.0, 223.0, 25.0 ],
+									"style" : "",
 									"text" : "You can have up to 255 variables!"
 								}
 
@@ -1306,7 +1371,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 493.796875, 286.0, 20.0, 20.0 ]
+									"patching_rect" : [ 493.796875, 286.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -1320,6 +1386,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 493.796875, 346.0, 66.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -1328,7 +1395,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-22",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -1337,6 +1403,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 493.796875, 316.0, 106.0, 26.0 ],
+									"style" : "",
 									"text" : "2 3 4"
 								}
 
@@ -1348,7 +1415,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 379.296875, 286.0, 20.0, 20.0 ]
+									"patching_rect" : [ 379.296875, 286.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -1362,6 +1430,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 379.296875, 346.0, 66.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -1370,7 +1439,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-15",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -1379,6 +1447,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 379.296875, 316.0, 108.0, 26.0 ],
+									"style" : "",
 									"text" : "1 2 3 4 5"
 								}
 
@@ -1390,7 +1459,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 264.796875, 286.0, 20.0, 20.0 ]
+									"patching_rect" : [ 264.796875, 286.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -1403,6 +1473,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 264.796875, 406.0, 37.0, 21.0 ],
+									"style" : "",
 									"text" : "print"
 								}
 
@@ -1417,6 +1488,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 264.796875, 346.0, 66.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -1425,7 +1497,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-19",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -1434,6 +1505,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 264.796875, 316.0, 108.0, 26.0 ],
+									"style" : "",
 									"text" : "3 4 5 6 7"
 								}
 
@@ -1448,6 +1520,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 264.796875, 376.0, 248.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 + $i2 @out t @maxvars 3"
 								}
 
@@ -1459,7 +1532,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 447.796875, 88.0, 20.0, 20.0 ]
+									"patching_rect" : [ 447.796875, 88.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -1473,6 +1547,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 447.796875, 145.0, 66.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -1481,7 +1556,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-7",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -1490,6 +1564,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 447.796875, 113.0, 101.0, 27.0 ],
+									"style" : "",
 									"text" : "1 2 3"
 								}
 
@@ -1501,7 +1576,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 302.796875, 88.0, 20.0, 20.0 ]
+									"patching_rect" : [ 302.796875, 88.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -1514,6 +1590,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 302.796875, 202.0, 101.0, 21.0 ],
+									"style" : "",
 									"text" : "print @popup 1"
 								}
 
@@ -1528,6 +1605,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 302.796875, 145.0, 66.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -1536,7 +1614,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-11",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -1545,6 +1622,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 302.796875, 113.0, 101.0, 27.0 ],
+									"style" : "",
 									"text" : "3 4 5"
 								}
 
@@ -1559,6 +1637,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 302.796875, 175.0, 164.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 + $i2 @out t"
 								}
 
@@ -1567,13 +1646,13 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-28",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 227.0, 782.0, 50.0 ],
+									"style" : "",
 									"text" : "By default, the number of inlets is the index of the highest-indexed variable in the expression given as the argument. You can ask for a different number of inlet with the maxvars attribute, which you can only set at the object instantiation. In any case, only the inlets up to the highest-indexed variable of the current expression are taken into account for the iteration.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1583,12 +1662,12 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-12",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 65.0, 606.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr allows to change the expression at any time after the object creation, via the message expr."
 								}
 
@@ -1804,18 +1883,15 @@
 ,
 					"patching_rect" : [ 10.0, 232.0, 130.0, 20.0 ],
 					"saved_object_attributes" : 					{
-						"default_fontface" : 0,
-						"default_fontname" : "Arial",
-						"default_fontsize" : 13.0,
 						"description" : "",
 						"digest" : "",
-						"fontface" : 0,
-						"fontname" : "Arial",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
+						"style" : "",
 						"tags" : ""
 					}
 ,
+					"style" : "",
 					"text" : "p \"change expression\"",
 					"varname" : "basic_tab[2]"
 				}
@@ -1832,10 +1908,11 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 6,
-							"minor" : 1,
-							"revision" : 4,
-							"architecture" : "x86"
+							"major" : 7,
+							"minor" : 3,
+							"revision" : 2,
+							"architecture" : "x64",
+							"modernui" : 1
 						}
 ,
 						"rect" : [ 0.0, 26.0, 837.0, 490.0 ],
@@ -1844,19 +1921,27 @@
 						"default_fontsize" : 13.0,
 						"default_fontface" : 0,
 						"default_fontname" : "Arial",
-						"gridonopen" : 0,
+						"gridonopen" : 1,
 						"gridsize" : [ 5.0, 5.0 ],
-						"gridsnaponopen" : 0,
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
 						"statusbarvisible" : 2,
 						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
 						"boxanimatetime" : 200,
-						"imprint" : 0,
 						"enablehscroll" : 1,
 						"enablevscroll" : 1,
 						"devicewidth" : 0.0,
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
@@ -1864,13 +1949,13 @@
 									"bubbleside" : 3,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-28",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 568.0, 407.5, 116.0, 54.0 ],
+									"style" : "",
 									"text" : "These are essentially the same",
 									"textjustification" : 1
 								}
@@ -1886,6 +1971,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 693.0, 423.0, 50.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.+"
 								}
 
@@ -1894,13 +1980,13 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-26",
 									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 329.0, 366.0, 414.0, 36.0 ],
+									"style" : "",
 									"text" : "There are a bunch of abstractions which simplify standard operations: bach.+, bach.-, bach.*, bach./, bach.!-, bach.!/, bach.mod, bach.abs."
 								}
 
@@ -1910,13 +1996,13 @@
 									"bubble" : 1,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-25",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 554.0, 407.5, 116.0, 54.0 ],
+									"style" : "",
 									"text" : "These are essentially the same",
 									"textjustification" : 1
 								}
@@ -1932,6 +2018,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 329.0, 424.0, 216.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 + $i2 @scalarmode 1"
 								}
 
@@ -1940,13 +2027,13 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-14",
 									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 302.5, 124.0, 36.0 ],
+									"style" : "",
 									"text" : "The default value for scalarmode is 0."
 								}
 
@@ -1955,12 +2042,12 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-9",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 380.0, 148.0, 232.0, 21.0 ],
+									"style" : "",
 									"text" : "Try with different values of scalarmode",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1976,6 +2063,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 380.0, 281.0, 36.0, 19.0 ],
+									"style" : "",
 									"text" : "12.3"
 								}
 
@@ -1990,6 +2078,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 365.0, 253.0, 149.0, 19.0 ],
+									"style" : "",
 									"text" : "0.1 0.1 ((0.3 1.9) (12.3))"
 								}
 
@@ -2001,13 +2090,13 @@
 									"bubbleside" : 2,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-3",
 									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 136.0, 152.0, 84.0 ],
+									"style" : "",
 									"text" : "When scalarmode is set to 1, input lllls of length 1 are applied to each element of the other lists"
 								}
 
@@ -2020,7 +2109,8 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 29.0, 226.0, 20.0, 20.0 ]
+									"patching_rect" : [ 29.0, 226.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -2034,6 +2124,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 29.0, 256.0, 97.0, 19.0 ],
+									"style" : "",
 									"text" : "scalarmode $1"
 								}
 
@@ -2045,7 +2136,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 349.0, 148.0, 20.0, 20.0 ]
+									"patching_rect" : [ 349.0, 148.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -2059,6 +2151,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 349.0, 223.0, 65.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -2067,7 +2160,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-22",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -2076,6 +2168,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 349.0, 178.0, 156.0, 35.0 ],
+									"style" : "",
 									"text" : "12"
 								}
 
@@ -2087,7 +2180,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 170.0, 192.0, 20.0, 20.0 ]
+									"patching_rect" : [ 170.0, 192.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -2100,6 +2194,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 170.0, 353.0, 100.0, 21.0 ],
+									"style" : "",
 									"text" : "print @popup 1"
 								}
 
@@ -2114,6 +2209,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 170.0, 267.0, 65.0, 21.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -2122,7 +2218,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-18",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -2131,6 +2226,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 170.0, 222.0, 117.0, 35.0 ],
+									"style" : "",
 									"text" : "3 1 ((0 9) (12))"
 								}
 
@@ -2145,6 +2241,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 170.0, 310.0, 198.0, 21.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 * 4 + $f2/2. @out t"
 								}
 
@@ -2153,13 +2250,13 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-12",
 									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 70.0, 574.0, 36.0 ],
+									"style" : "",
 									"text" : "As you might expect, bach.expr works on lllls: it traverses the incoming lllls in parallel, just like bach.iter @iterationmode 0 @recursionmode 1. As vexpr, it accepts the scalarmode attribute. "
 								}
 
@@ -2285,18 +2382,15 @@
 ,
 					"patching_rect" : [ 10.0, 115.0, 134.0, 20.0 ],
 					"saved_object_attributes" : 					{
-						"default_fontface" : 0,
-						"default_fontname" : "Arial",
-						"default_fontsize" : 13.0,
 						"description" : "",
 						"digest" : "",
-						"fontface" : 0,
-						"fontname" : "Arial",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
+						"style" : "",
 						"tags" : ""
 					}
 ,
+					"style" : "",
 					"text" : "p \"lllls and scalarmode\"",
 					"varname" : "basic_tab[1]"
 				}
@@ -2317,6 +2411,7 @@
 						"parameter_enable" : 0
 					}
 ,
+					"style" : "",
 					"text" : "js helpstarter.js bach.expr"
 				}
 
@@ -2332,45 +2427,112 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 6,
-							"minor" : 1,
-							"revision" : 4,
-							"architecture" : "x86"
+							"major" : 7,
+							"minor" : 3,
+							"revision" : 2,
+							"architecture" : "x64",
+							"modernui" : 1
 						}
 ,
-						"rect" : [ 291.0, 94.0, 837.0, 490.0 ],
+						"rect" : [ 100.0, 126.0, 837.0, 490.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
 						"default_fontface" : 0,
 						"default_fontname" : "Arial",
-						"gridonopen" : 0,
+						"gridonopen" : 1,
 						"gridsize" : [ 5.0, 5.0 ],
-						"gridsnaponopen" : 0,
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
 						"statusbarvisible" : 2,
 						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
 						"boxanimatetime" : 200,
-						"imprint" : 0,
 						"enablehscroll" : 1,
 						"enablevscroll" : 1,
 						"devicewidth" : 0.0,
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
+								"box" : 								{
+									"bubble" : 1,
+									"bubblepoint" : 0.84,
+									"bubbleside" : 3,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-13",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 411.0, 361.0, 110.0, 40.0 ],
+									"presentation_rect" : [ 289.0, 401.693512, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Works with pitches too:"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-10",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 542.0, 415.0, 50.0, 23.0 ],
+									"style" : "",
+									"text" : "Fx4"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-7",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 533.0, 347.0, 33.0, 23.0 ],
+									"style" : "",
+									"text" : "F#4"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-5",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 533.0, 378.0, 174.0, 23.0 ],
+									"style" : "",
+									"text" : "bach.expr $p1 + C#0 @out t"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"bubble" : 1,
 									"bubblepoint" : 0.84,
 									"bubbleside" : 2,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-44",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 371.0, 210.693497, 150.0, 40.0 ],
+									"patching_rect" : [ 371.0, 151.693497, 150.0, 40.0 ],
+									"style" : "",
 									"text" : "bang to evaluate again"
 								}
 
@@ -2382,7 +2544,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 489.0, 256.118896, 20.0, 20.0 ]
+									"patching_rect" : [ 489.0, 197.118896, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -2393,13 +2556,13 @@
 									"bubbleside" : 2,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-33",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 164.0, 185.522156, 150.0, 69.0 ],
+									"style" : "",
 									"text" : "The mathematical expression must be given as argument"
 								}
 
@@ -2412,7 +2575,8 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 533.0, 353.312408, 100.0, 21.0 ],
+									"patching_rect" : [ 533.0, 294.312408, 100.0, 23.0 ],
+									"style" : "",
 									"text" : "print @popup 1"
 								}
 
@@ -2424,7 +2588,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 665.0, 165.0, 20.0, 20.0 ]
+									"patching_rect" : [ 665.0, 106.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -2437,7 +2602,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 665.0, 256.118896, 65.0, 21.0 ],
+									"patching_rect" : [ 665.0, 197.118896, 65.0, 23.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -2446,7 +2612,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-30",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -2454,7 +2619,8 @@
 									"numoutlets" : 4,
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 665.0, 201.447571, 106.0, 42.522156 ],
+									"patching_rect" : [ 665.0, 142.447571, 106.0, 42.522156 ],
+									"style" : "",
 									"text" : "3.2 1.4 2.5"
 								}
 
@@ -2466,7 +2632,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 533.0, 165.0, 20.0, 20.0 ]
+									"patching_rect" : [ 533.0, 106.0, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -2479,7 +2646,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 533.0, 256.118896, 65.0, 21.0 ],
+									"patching_rect" : [ 533.0, 197.118896, 65.0, 23.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -2488,7 +2656,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-27",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -2496,7 +2663,8 @@
 									"numoutlets" : 4,
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 533.0, 201.447571, 106.0, 42.522156 ],
+									"patching_rect" : [ 533.0, 142.447571, 106.0, 42.522156 ],
+									"style" : "",
 									"text" : "4 5 6"
 								}
 
@@ -2511,7 +2679,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 533.0, 296.211243, 151.0, 36.0 ],
+									"patching_rect" : [ 533.0, 237.211243, 151.0, 38.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 * 4 + 2 / log($f2) @out t"
 								}
 
@@ -2528,7 +2697,8 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 194.0, 262.285828, 235.0, 61.390694 ]
+									"patching_rect" : [ 194.0, 262.0, 208.601227, 39.0 ],
+									"presentation_rect" : [ 194.0, 262.0, 208.601227, 39.0 ]
 								}
 
 							}
@@ -2536,13 +2706,13 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-12",
-									"linecount" : 2,
+									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 398.0, 674.0, 36.0 ],
+									"patching_rect" : [ 10.0, 347.0, 343.0, 50.0 ],
+									"style" : "",
 									"text" : "bach.expr essentially behaves like vexpr, with additional noticeable features, which you can discover by clicking on any of the tabs of this help file.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -2555,7 +2725,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 16.0, 131.0746, 20.0, 20.0 ]
+									"patching_rect" : [ 16.0, 131.0746, 20.0, 20.0 ],
+									"style" : ""
 								}
 
 							}
@@ -2567,7 +2738,8 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 16.0, 296.303558, 100.0, 21.0 ],
+									"patching_rect" : [ 16.0, 296.303558, 100.0, 23.0 ],
+									"style" : "",
 									"text" : "print @popup 1"
 								}
 
@@ -2581,7 +2753,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
-									"patching_rect" : [ 16.0, 222.193497, 65.0, 21.0 ],
+									"patching_rect" : [ 16.0, 222.193497, 65.0, 23.0 ],
+									"style" : "",
 									"text" : "route text"
 								}
 
@@ -2590,7 +2763,6 @@
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"frgb" : 0.0,
 									"id" : "obj-11",
 									"keymode" : 1,
 									"maxclass" : "textedit",
@@ -2599,6 +2771,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 16.0, 167.522156, 106.0, 42.522156 ],
+									"style" : "",
 									"text" : "4 5 6"
 								}
 
@@ -2612,7 +2785,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 16.0, 259.855988, 172.0, 21.0 ],
+									"patching_rect" : [ 16.0, 259.855988, 172.0, 23.0 ],
+									"style" : "",
 									"text" : "bach.expr $i1 * 4 + 2 @out t"
 								}
 
@@ -2735,6 +2909,24 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-10", 1 ],
+									"disabled" : 0,
+									"hidden" : 0,
+									"source" : [ "obj-5", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-5", 0 ],
+									"disabled" : 0,
+									"hidden" : 0,
+									"source" : [ "obj-7", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-11", 0 ],
 									"disabled" : 0,
 									"hidden" : 0,
@@ -2747,18 +2939,15 @@
 ,
 					"patching_rect" : [ 10.0, 85.0, 50.0, 20.0 ],
 					"saved_object_attributes" : 					{
-						"default_fontface" : 0,
-						"default_fontname" : "Arial",
-						"default_fontsize" : 13.0,
 						"description" : "",
 						"digest" : "",
-						"fontface" : 0,
-						"fontname" : "Arial",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
+						"style" : "",
 						"tags" : ""
 					}
 ,
+					"style" : "",
 					"text" : "p basic",
 					"varname" : "basic_tab"
 				}
@@ -2791,10 +2980,11 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 6,
-							"minor" : 1,
-							"revision" : 4,
-							"architecture" : "x86"
+							"major" : 7,
+							"minor" : 3,
+							"revision" : 2,
+							"architecture" : "x64",
+							"modernui" : 1
 						}
 ,
 						"rect" : [ 0.0, 26.0, 837.0, 490.0 ],
@@ -2803,19 +2993,27 @@
 						"default_fontsize" : 13.0,
 						"default_fontface" : 0,
 						"default_fontname" : "Arial",
-						"gridonopen" : 0,
+						"gridonopen" : 1,
 						"gridsize" : [ 5.0, 5.0 ],
-						"gridsnaponopen" : 0,
+						"gridsnaponopen" : 1,
+						"objectsnaponopen" : 1,
 						"statusbarvisible" : 2,
 						"toolbarvisible" : 1,
+						"lefttoolbarpinned" : 0,
+						"toptoolbarpinned" : 0,
+						"righttoolbarpinned" : 0,
+						"bottomtoolbarpinned" : 0,
+						"toolbars_unpinned_last_save" : 0,
+						"tallnewobj" : 0,
 						"boxanimatetime" : 200,
-						"imprint" : 0,
 						"enablehscroll" : 1,
 						"enablevscroll" : 1,
 						"devicewidth" : 0.0,
 						"description" : "",
 						"digest" : "",
 						"tags" : "",
+						"style" : "",
+						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [  ],
 						"lines" : [  ]
@@ -2823,18 +3021,15 @@
 ,
 					"patching_rect" : [ 205.0, 205.0, 50.0, 20.0 ],
 					"saved_object_attributes" : 					{
-						"default_fontface" : 0,
-						"default_fontname" : "Arial",
-						"default_fontsize" : 13.0,
 						"description" : "",
 						"digest" : "",
-						"fontface" : 0,
-						"fontname" : "Arial",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
+						"style" : "",
 						"tags" : ""
 					}
 ,
+					"style" : "",
 					"text" : "p ?",
 					"varname" : "q_tab"
 				}
@@ -2844,36 +3039,31 @@
 		"lines" : [  ],
 		"dependency_cache" : [ 			{
 				"name" : "helpname.js",
-				"bootpath" : "/Applications/Max 6.1/Cycling '74/help-resources",
-				"patcherrelativepath" : "../../../Cycling '74/help-resources",
+				"bootpath" : "C74:/help/resources",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "helpdetails.js",
-				"bootpath" : "/Applications/Max 6.1/Cycling '74/help-resources",
-				"patcherrelativepath" : "../../../Cycling '74/help-resources",
+				"bootpath" : "C74:/help/resources",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "helpargs.js",
-				"bootpath" : "/Applications/Max 6.1/Cycling '74/help-resources",
-				"patcherrelativepath" : "../../../Cycling '74/help-resources",
+				"bootpath" : "C74:/help/resources",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "helpstarter.js",
-				"bootpath" : "/Applications/Max 6.1/Cycling '74/help-resources",
-				"patcherrelativepath" : "../../../Cycling '74/help-resources",
+				"bootpath" : "C74:/help/resources",
 				"type" : "TEXT",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.+.maxpat",
-				"bootpath" : "/Applications/Max 6.1/packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
@@ -2889,7 +3079,8 @@
 				"name" : "bach.args.mxo",
 				"type" : "iLaX"
 			}
- ]
+ ],
+		"autosave" : 0
 	}
 
 }
