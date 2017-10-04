@@ -202,6 +202,15 @@ void hatom_fn_makepitch(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res)
 }
 
 
+// makepitch from steps and cents
+void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res)
+{
+    t_pitch::t_stepsAndMC smc;
+    smc.steps = hatom_getlong(a1);
+    smc.mc = hatom_getrational(a2);
+    hatom_setpitch(res, t_pitch(smc));
+}
+
 
 
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res)

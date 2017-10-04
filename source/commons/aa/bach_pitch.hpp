@@ -77,11 +77,11 @@ private:
 protected:
     
 public:
-    typedef struct _stepsAndTones {
+    typedef struct _stepsAndMC {
         t_atom_long steps;
         t_shortRational mc;
     } t_stepsAndMC;
-    
+
     t_atom_short p_degree; // 0-6, corresponding to the white keys from c to b
     t_atom_short p_octave; // middle C (MIDI note 60) starts octave 5
     t_shortRational p_alter; // in steps: # is +1/2
@@ -193,7 +193,8 @@ public:
         if (toMC() > 0) return *this;
         else return -*this;
     }
-    
+
+
     template <typename T> t_pitch mod(const T b) const {
         if (toMC() > 0) return *this % b;
         else return -(*this % b);
@@ -211,7 +212,7 @@ public:
         return fromMC(mc, 2, k_ACC_AUTO, NULL, NULL);
     }
     
-    
+
 /*    template <typename T> static t_pitch fromMC(const T mc) {
         t_pitch res;
         if (mc >= 0)
@@ -236,6 +237,30 @@ public:
         t_atom_long base = degree2MC_safe(p_degree) + p_octave * 1200;
         return base;
     }
+    
+    
+    t_pitch enharm(long delta_steps) const {
+        t_stepsAndMC smc = this->toStepsAndMC();
+        smc.steps += delta_steps;
+        return t_pitch(smc);
+    }
+    
+    t_pitch autoenharm(long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr) const {
+        return fromMC(this->toMC(), tone_division, accidentals_preferences, key_acc_pattern, full_repr);
+    }
+
+    t_pitch autoenharm(long tone_division, e_accidentals_preferences accidentals_preferences) const {
+        return this->autoenharm(tone_division, accidentals_preferences, NULL, NULL);
+    }
+
+    t_pitch autoenharm() const {
+        long tone_division = 2;
+        // inferring minimal tone division from accidental
+        if (this->alter().r_den > tone_division)
+            tone_division = lcm(2, this->alter().r_den);
+        return this->autoenharm(tone_division, k_ACC_AUTO, NULL, NULL);
+    }
+
     
     
     t_bool isNaP() const {

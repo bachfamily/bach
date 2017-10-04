@@ -61,6 +61,7 @@ void hatom_fn_degree(t_hatom *a1, t_hatom *res);
 void hatom_fn_octave(t_hatom *a1, t_hatom *res);
 void hatom_fn_alter(t_hatom *a1, t_hatom *res);
 void hatom_fn_makepitch(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res);
+void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res);
 
 
 
