@@ -31,7 +31,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     long *tct = yyextra;
 %}
 
-^`(.|\n|\r)* {
+^` {
     parserpost("typecheck: starting backtick");
     *tct = E_TT_BACKTICK;
     return H_SYM; // because backtick wins, if we're here we don't need to scan any longer
@@ -72,24 +72,24 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_PITCH;
 }
 
-^[^\(\) \t\n\,\;]* {
+^[^`\(\) \t\n\,\;][^\(\) \t\n\,\;]* {
     parserpost("typecheck: plain old symbol");
     return H_SYM;
 }
 
-^[^ \t\n\,\;]* {
+^[^` \t\n\,\;][^ \t\n\,\;]* {
     *tct = E_TT_PAREN;
     parserpost("typecheck: parens, no reserved chars");
     return H_SYM;
 }
 
-^[^\(\)]* {
+^[^`\(\)][^\(\)]* {
     *tct = E_TT_RESERVED;
     parserpost("typecheck: reserved chars, no parens");
     return H_SYM;
 }
 
-^(.|\n|\r)* {
+^[^`](.|\n|\r)* {
     *tct = E_TT_PAREN | E_TT_RESERVED;
     parserpost("typecheck: reserved chars parens");
     return H_SYM;
