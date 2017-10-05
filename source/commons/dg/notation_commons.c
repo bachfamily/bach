@@ -24699,7 +24699,7 @@ void free_note(t_notation_obj *r_ob, t_note *note)
 		shashtable_chuck_thing(r_ob->IDtable, note->r_it.ID);
 #endif 
 	
-	free_notation_item((t_notation_item *)note);
+	notation_item_free((t_notation_item *)note);
 
 	// free the memory of the note pointers
 	t_bpt *temp2, *temp = note->firstbreakpoint;
@@ -24727,7 +24727,7 @@ void free_note(t_notation_obj *r_ob, t_note *note)
 }
 
 void free_voice(t_notation_obj *r_ob, t_voice *voice) {
-	free_notation_item((t_notation_item *)voice);
+	notation_item_free((t_notation_item *)voice);
 	bach_freeptr(voice);
 	voice = NULL;
 }
@@ -24755,7 +24755,7 @@ void free_chord(t_notation_obj *r_ob, t_chord *chord)
 	
 	free_lyrics(r_ob, chord->lyrics);
     free_dynamics(r_ob, chord->dynamics);
-	free_notation_item((t_notation_item *)chord);
+	notation_item_free((t_notation_item *)chord);
 	
 	temp1 = chord->firstnote; 
 	
@@ -24831,7 +24831,7 @@ void free_measure_ext(t_notation_obj *r_ob, t_measure *measure, char dont_free_c
         if (measure->rhythmic_tree)
             free_rhythmic_tree(r_ob, measure);
     
-    free_notation_item((t_notation_item *)measure);
+    notation_item_free((t_notation_item *)measure);
     
     if (!dont_free_chords) {
         while (temp1) {
@@ -24877,7 +24877,7 @@ void free_tempo(t_notation_obj *r_ob, t_tempo *tempo) {
 // free the memory related to the tempo *tempo
 	tempo->need_recalculate_onset = -66; // to have a clue that we freed...
 	
-	free_notation_item((t_notation_item *)tempo);
+	notation_item_free((t_notation_item *)tempo);
 	bach_freeptr(tempo); 
 	tempo = NULL;
 }
@@ -24900,7 +24900,7 @@ void free_marker(t_notation_obj *r_ob, t_marker *marker) {
     free_notationitem_slots(r_ob, (t_notation_item *)marker);
 #endif
 
-	free_notation_item((t_notation_item *)marker);
+	notation_item_free((t_notation_item *)marker);
 	bach_freeptr(marker); 
 	marker = NULL;
 }
@@ -34509,7 +34509,7 @@ t_jrgba partidx_to_color(long part_idx)
     return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false);
 }
 
-void initialize_notation_obj(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen)
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen)
 {
 	long i;
     
@@ -34567,6 +34567,7 @@ void initialize_notation_obj(t_notation_obj *r_ob, char obj_type, rebuild_fn reb
 	r_ob->m_labels.families = llll_get();
     
     r_ob->notation_cursor.touched_measures = llll_get();
+    r_ob->to_preschedule = llll_get();
 
 	// surfaces
 	r_ob->quarternotehead_surface = NULL;
@@ -34637,7 +34638,8 @@ void initialize_notation_obj(t_notation_obj *r_ob, char obj_type, rebuild_fn reb
 	r_ob->firstmarker = r_ob->lastmarker = NULL;
 	r_ob->num_markers = 0;
 
-	r_ob->playing = r_ob->playing_offline = false;
+	r_ob->playing = false;
+    r_ob->playing_scheduling_type = k_SCHEDULING_STANDARD;
 	r_ob->notes_being_played = llll_get();
 	
 	r_ob->inhibited_undo = false;

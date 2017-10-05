@@ -3352,9 +3352,16 @@ void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 		return;
 	}
 
-	if (x->r_ob.playing_offline) {
-		object_warn((t_object *)x, "Can't play: already playing offline");
+    if (x->r_ob.playing) {
+        if (x->r_ob.playing_scheduling_type == k_SCHEDULING_OFFLINE) {
+            object_warn((t_object *)x, "Can't play: already playing offline");
+        } else if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
+            object_warn((t_object *)x, "Can't play: already playing in preschedule mode");
+        } else {
+            object_warn((t_object *)x, "Can't play: already playing!");
+        }
 	} else {
+        x->r_ob.playing_scheduling_type = k_SCHEDULING_STANDARD;
 		schedule_delay(x, (method) score_do_play, 0, s, argc, argv);
 	}
 }
@@ -3364,9 +3371,9 @@ void score_play_offline(t_score *x, t_symbol *s, long argc, t_atom *argv)
 	if (x->r_ob.playing) {
 		object_warn((t_object *)x, "Can't play offline: already playing");
 	} else {
-		x->r_ob.playing_offline = true;
+		x->r_ob.playing_scheduling_type = k_SCHEDULING_OFFLINE;
 		score_do_play(x, s, argc, argv);
-		while (x->r_ob.playing_offline) {
+		while (x->r_ob.playing) {
 			x->r_ob.play_step_count = x->r_ob.play_num_steps;
 			score_task(x);
 		}
@@ -3567,7 +3574,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 		}
 		x->r_ob.play_step_count = 0;
 		
-		if (!x->r_ob.playing_offline) {
+		if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
 			setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
 			setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
 			if (x->r_ob.highlight_played_notes)
@@ -3759,7 +3766,7 @@ void score_task(t_score *x)
             }
 			
 			// we now have to find the next item to schedule
-			if (!x->r_ob.playing_offline && scheduled_item_type == k_LOOP_END) {
+			if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD && scheduled_item_type == k_LOOP_END) {
 				// looping: setting the chord_play_cursor, measure_play_cursor and tempo_play_cursor to NULL for every voice
                 for (i = 0; i < x->r_ob.num_voices; i++) {
 					x->r_ob.chord_play_cursor[i] = NULL;
@@ -3902,13 +3909,13 @@ void score_task(t_score *x)
 			
 			unlock_general_mutex((t_notation_obj *)x);
 			
-			if (!x->r_ob.playing_offline) 
+			if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD)
 				setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
 			
 			x->r_ob.play_head_ms = last_scheduled_ms;
 			x->r_ob.play_head_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_ms, 1);
 			
-			if (!x->r_ob.playing_offline)
+			if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD)
 				if (x->r_ob.catch_playhead && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false))
 					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
 			
@@ -3921,7 +3928,7 @@ void score_task(t_score *x)
 				llll_free(to_send_references);
 			}
 			
-			if (!x->r_ob.playing_offline) {
+			if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
 				if (x->r_ob.highlight_played_notes)
 					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
 				else
@@ -3933,10 +3940,10 @@ void score_task(t_score *x)
 		} else {
 
 			// next event is the end of the score
-			char need_repaint = (x->r_ob.playing_offline == 0); 
+			char need_repaint = (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD);
 			t_llll *end_llll;
 			set_everything_unplayed(x);
-			x->r_ob.playing = x->r_ob.playing_offline = false;
+			x->r_ob.playing = false;
 			x->r_ob.play_head_ms = -1;
 			x->r_ob.play_head_ux = -1;
 			x->r_ob.scheduled_item = NULL;
@@ -9226,7 +9233,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
 	// retrieving patcher parent
 	object_obex_lookup(x, gensym("#P"), &(x->r_ob.patcher_parent));
 
-	initialize_notation_obj((t_notation_obj *) x, k_NOTATION_OBJECT_SCORE, (rebuild_fn) set_score_from_llll, 
+	notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SCORE, (rebuild_fn) set_score_from_llll, 
 							(notation_obj_fn) create_whole_score_undo_tick, (notation_obj_notation_item_fn) force_notation_item_inscreen);
 
     x->r_ob.timepoint_to_unscaled_xposition = (notation_obj_timepoint_to_ux_fn)timepoint_to_unscaled_xposition;
@@ -9354,7 +9361,7 @@ void score_free(t_score *x)
 {
 	scoreapi_destroyscore(x);
 	
-	free_notation_obj((t_notation_obj *)x);
+	notation_obj_free((t_notation_obj *)x);
 
 	// freeing proxies
 	object_free_debug(x->m_proxy1);

@@ -201,7 +201,7 @@ void send_llll_through_playout(t_notation_obj *r_ob, t_llll *llll, long outlet, 
 	atom_setobj(outatoms + 2, related_object);
 	atom_setlong(outatoms + 3, related_type);
 	
-	if (r_ob->playing_offline)
+	if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE)
 		do_send_llll_through_playout(r_ob, NULL, 4, outatoms);
 	else
 		schedule_delay(r_ob, (method) do_send_llll_through_playout, 0, NULL, 4, outatoms);
@@ -219,7 +219,7 @@ void send_llll_through_playout_and_free(t_notation_obj *r_ob, t_llll *llll, long
 	atom_setobj(outatoms + 2, related_object);
 	atom_setlong(outatoms + 3, related_type);
 	
-	if (r_ob->playing_offline)
+    if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE)
 		do_send_llll_through_playout_and_free(r_ob, NULL, 4, outatoms);
 	else
 		schedule_delay(r_ob, (method) do_send_llll_through_playout_and_free, 0, NULL, 4, outatoms);
@@ -234,7 +234,7 @@ void send_sublists_through_playout_and_free(t_notation_obj *r_ob, long outlet, t
 	atom_setobj(outatoms + 2, to_send_references);
 	atom_setlong(outatoms + 3, is_notewise);
 
-	if (r_ob->playing_offline)
+    if (r_ob->playing_scheduling_type == k_SCHEDULING_OFFLINE || r_ob->playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
 		do_send_sublists_through_playout_and_free(r_ob, NULL, 4, outatoms);
 	else
 		schedule_delay(r_ob, (method) do_send_sublists_through_playout_and_free, 0, NULL, 4, outatoms);
@@ -277,8 +277,8 @@ void do_send_sublists_through_playout_and_free(t_notation_obj *r_ob, t_symbol *s
 void setup_sublists_lambda_and_send_llll(t_notation_obj *r_ob, long outlet, t_llll *to_send, t_llll *to_send_references, long is_notewise)
 {
 	t_llllelem *elem, *refelem;
-	for (elem = to_send->l_head, refelem = to_send_references->l_head; 
-		 elem; elem = elem->l_next, refelem = refelem->l_next) {
+    for (elem = to_send->l_head, refelem = to_send_references ? to_send_references->l_head : NULL;
+         elem; elem = elem->l_next, refelem = refelem ? refelem->l_next : NULL) {
 		if (hatom_gettype(&elem->l_hatom) == H_OBJ) {
 			t_llll *subll = (t_llll *)hatom_getobj(&elem->l_hatom);
 			setup_lambda_and_send_llll(r_ob, outlet, subll, refelem ? (t_notation_item *)hatom_getobj(&refelem->l_hatom) : NULL);
@@ -4634,7 +4634,7 @@ void start_editing_bach_attribute(t_notation_obj *r_ob, t_bach_inspector_manager
 }
 
 
-void free_notation_item(t_notation_item *it)
+void notation_item_free(t_notation_item *it)
 {
 	// keeping label families synchronized
 	remove_label_families_data_for_notation_item(it);
@@ -4644,7 +4644,74 @@ void free_notation_item(t_notation_item *it)
 }
 
 
-void free_notation_obj(t_notation_obj *r_ob){
+void notation_obj_preschedule_task(t_notation_obj *r_ob)
+{
+    
+    long playout = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 6 : 7;
+    t_llllelem *cur = r_ob->preschedule_cursor;
+    if (cur) {
+        t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&cur->l_hatom);
+        r_ob->play_head_ms = ev->time;
+        if (ev->is_end) {
+            t_llll *end_llll = llll_get();
+            llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
+            llllobj_outlet_llll((t_object *) r_ob, LLLL_OBJ_UI, playout, end_llll);
+            llll_free(end_llll);
+            defer((t_object *) r_ob, (method)notation_obj_preschedule_end, NULL, 0, NULL);
+        } else {
+            
+            if (ev->content && r_ob->highlight_played_notes) {
+                check_unplayed_notes(r_ob, r_ob->play_head_ms);
+                invalidate_notation_static_layer_and_repaint(r_ob);
+            } else {
+                //            if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
+                //                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                notationobj_redraw(r_ob);
+            }
+
+            if (ev->content){
+                send_sublists_through_playout_and_free(r_ob, playout, ev->content, NULL, ev->is_notewise);
+                r_ob->preschedule_cursor = r_ob->preschedule_cursor->l_next;
+            }
+        }
+    }
+}
+
+void notation_obj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end)
+{
+    t_scheduled_event *ev = (t_scheduled_event *)bach_newptr(sizeof(t_scheduled_event));
+    ev->time = time;
+    ev->clock = clock_new_debug((t_object *)r_ob, (method)notation_obj_preschedule_task);
+    ev->content = content;
+    ev->is_end = is_end;
+    ev->is_notewise = is_notewise;
+    llll_appendobj(r_ob->to_preschedule, ev);
+}
+
+void notation_obj_clear_prescheduled_events(t_notation_obj *r_ob)
+{
+    for (t_llllelem *el = r_ob->to_preschedule->l_head; el; el = el->l_next) {
+        t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&el->l_hatom);
+        clock_unset(ev->clock);
+//        llll_free(ev->content);
+        object_free_debug(ev->clock);
+        bach_freeptr(ev);
+    }
+    llll_clear(r_ob->to_preschedule);
+}
+
+void notation_obj_preschedule_end(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    r_ob->preschedule_cursor = NULL;
+    r_ob->playing = false;
+    notation_obj_clear_prescheduled_events(r_ob);
+    invalidate_notation_static_layer_and_repaint(r_ob);
+}
+
+
+
+void notation_obj_free(t_notation_obj *r_ob)
+{
 	long i;
 	
 	jbox_free(&r_ob->j_box.l_box);
@@ -4728,6 +4795,8 @@ void free_notation_obj(t_notation_obj *r_ob){
 	llll_free(r_ob->redo_llll);
 	llll_free(r_ob->undo_notation_items_under_tick);
 
+    notation_obj_clear_prescheduled_events(r_ob);
+    llll_free(r_ob->to_preschedule);
     
     if (r_ob->notation_cursor.touched_measures)
         llll_free(r_ob->notation_cursor.touched_measures);

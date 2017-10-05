@@ -678,6 +678,17 @@ typedef enum _merge_when {
 
 
 
+typedef enum _scheduling_type {
+    k_SCHEDULING_STANDARD = 0,       ///< Online play (default)
+    k_SCHEDULING_OFFLINE = 1,      ///< Off-line play (no scheduling)
+    k_SCHEDULING_PRESCHEDULE = 2      ///< Accurate online scheduling (but won't respond to modifications in the score, and loops and lambda won't work)
+} e_scheduling_type;
+
+
+
+
+
+
 typedef enum _nametoslot_chordname_policy {
     k_NAMETOSLOT_CHORDNAME_IGNORE = 0,
     k_NAMETOSLOT_CHORDNAME_REPLACE = 1,
@@ -2195,6 +2206,20 @@ typedef struct _clipboard
 	
 	double onset;	///< Onset of the copied content, if any (e.g. for [bach.roll], if copying a bunch of notes, this onset is the onset of the first copied note).
 } t_clipboard;
+
+
+
+// private
+typedef struct _scheduled_event
+{
+    void            *clock;
+    t_llll          *content;
+    double          time;
+    char            is_notewise;
+    char            is_end;
+} t_scheduled_event;
+
+
 
 
 /** The data structure representing an articulation. 
@@ -3770,20 +3795,20 @@ typedef struct _notation_obj
 	t_symbol		**clefs_as_symlist;				///< List of clefs as symbols (one for each voice).
 													///< Functions clef_symbol_to_clef_number() and clef_number_to_clef_symbol() operate conversions 
 													///< between symbols (such as "G", "F"...) and numbers (such as #k_CLEF_G, #k_CLEF_F...)
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 	t_llll			*voicenames_as_llll;			///< Voicenames represented in llll form (one llllelem for each voice)
 	char			*hidevoices_as_charlist;		///< List of 0's and 1's (one for each voice), depending if the voice is hidden (1) or not (0)
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 	double			*voiceuspacing_as_floatlist;	///< List of unscaled distances (in pixel) between voices. First element is the space before 
 													///< first voice, last element is the space after last voice (and thus these values are #num_voices + 1
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
-													///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+													///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in notation_obj_init() and freed by notation_obj_free()
 	t_symbol		**keys_as_symlist;				///< List of key signatures as symbols (one symbol for each voice). 'M' = major, 'm' = minor, so "C#M" is C# major, and so on. 
 													///< Latin and anglosaxon syntax accepted. Functions parse_sym_to_key_and_mode() and notename2midicents()
 													///< operate parsing and conversions
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 	long			*midichannels_as_longlist;		///< List of midichannels (one for each voice). 
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 
 	// staff lines
 	t_llll			*stafflines_as_llll;	///< Stafflines as an llll
@@ -3793,7 +3818,7 @@ typedef struct _notation_obj
 
 	// measure numbers
 	char			*show_measure_numbers;			///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 	double			measure_numbers_font_size;		///< Font size for the measure numbers (for zoom_y = 1, will be scaled according to the zoom)
 	
 	// private, utilities
@@ -3874,7 +3899,7 @@ typedef struct _notation_obj
 	
 	// slots fields 
 	t_slotinfo	*slotinfo;					///< Information about the structure of each slot)
-											///< It is an array with #CONST_MAX_SLOTS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+											///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	double		slot_minimum_window_uwidth;	///< Unscaled minimum width (in pixels) for a slot window (only for non-temporal slots)
 	
 	long		active_slot_num;			///< Number (0-based) of the slot whose slot window is being shown (-1 = normal view: no slot windows are show  n)
@@ -3917,11 +3942,11 @@ typedef struct _notation_obj
 
 	long		num_background_slots;				///< Number of slots to be kept drawn in background (also when slot window is closed)
 	long		*background_slots;					///< List of the slot numbers (1-based!) which have to be kept in background, only the first <num_background_slots> elements are meaningful.
-													///< It is an array with #CONST_MAX_SLOTS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	
 	long		num_popup_menu_slots;				///< Number of slots appearing in the contextual menu (when clicking on a note)
 	long		*popup_menu_slots;					///< List of the slot numbers (1-based!) which have to be in the contextual menu, only the first <num_popup_menu_slots> elements are meaningful.
-													///< It is an array with #CONST_MAX_SLOTS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	
 	char		mouse_hover;				///< Flag telling if we allow mouse hovering on the points of the #k_SLOT_TYPE_FUNCTION slots
 	t_slotitem	*hovered_slotitem;			///< Pointer to the currently hovered slot item (typically a #t_slotitem of a function slot) 
@@ -4086,7 +4111,7 @@ typedef struct _notation_obj
 	e_accidentals_preferences	accidentals_preferences;	///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
 	t_symbol	**full_acc_repr;					///< List of accidental representation symbols (one for each voice).
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 													///< Each symbol specifies the full accidental representation for a voice.
 													///< For a semitonal representation a sequence like "n # n # n n b n b n # n" is expected (12 elems)
 													///< For a quartertonal representation a sequence like "n + # - n + # - n + n + b - n db b - n + # #+ n +" is expected (24 elems).
@@ -4167,7 +4192,7 @@ typedef struct _notation_obj
     char            need_snap_some_nonselected_items;   ///< Field which is set only when nonselected elements (flagged with #k_FLAG_TO_BE_SNAPPED) need to be snapped
 	t_prevent_edit	prevent_edit;						///< Structure telling if a given element type can (0) or cannot (1) be edited via the interface
 	t_atom			*prevent_editing_atom;				///< Array with the symbols corresponding to the elements whose editing is denied (the number of such elements is #num_prevent_editing_elems
-														///< It is an array with #CONST_MAX_BACH_ELEMENT_TYPES + 10 elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+														///< It is an array with #CONST_MAX_BACH_ELEMENT_TYPES + 10 elements allocated in notation_obj_init() and freed by notation_obj_free()
 	long			num_prevent_editing_elems;			///< Number of elements whose editing is to be prevented
 	char			allow_linear_edit;					///< Allow usage of the linear editing system (for [bach.score] only)
 	t_llll			*constraint_pitches_when_editing;	///< llll containing possible information on how pitches must be constrained while editing them.
@@ -4319,9 +4344,9 @@ typedef struct _notation_obj
 	char		allow_undo;							///< Flag telling if we allow undo. 
 	
 	t_llll		**old_undo_llll;					///< (OBSOLETE!) Array containing the #CONST_MAX_UNDO_STEPS undo steps (NULL if step is not defined)
-													///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	t_llll		**old_redo_llll;					///< (OBSOLETE!) Array containing the #CONST_MAX_UNDO_STEPS redo steps (NULL if step is not defined) 
-													///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	
 	double		last_undo_time;						///< (UNUSED) Operating system's time (in milliseconds) of the last time when un undo step has been performed 
 
@@ -4471,7 +4496,9 @@ typedef struct _notation_obj
 	// play
 	char		allow_play_from_interface;	///< Flag telling if we allow playing from the interface
 	char		playing;					///< Flag telling if the object is currently playing
-	char		playing_offline;			///< Flag telling if the object is currently playing in "offline" mode
+	char		playing_scheduling_type;    ///< Scheduling type for playing, one of the #e_scheduling_type
+    t_llll      *to_preschedule;            ///< List containing t_scheduled_events to be scheduled, ONLY for the PRESCHEDULED mode.
+    t_llllelem  *preschedule_cursor;        ///< Cursor while reading the prescheduled list
 	
 	double		play_head_start_ms;		///< Position in milliseconds of the OFFLINE play cursor
 	double		play_head_start_ux;		///< Unscaled x pixel of the OFFLINE play cursor (only used in [bach.score]) 
@@ -4502,7 +4529,7 @@ typedef struct _notation_obj
 													///< Synchoronous chords exceeding this number will be played 'as soon as possible' in the next scheduler tick (scheduled immediately)
 
 	t_chord		**chord_play_cursor;		///< Multicursor (one element for each voice) containing the last played chords, or generally (when possible) the chords happening _before_ the already scheduled events. 
-											///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+											///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 											///< The idea is that, to play the next chord, we start to look ahead from the ones we have already played, and
 											///< we keep track of this 'looking ahead' with this multicursor.
     t_tempo     **tempo_play_cursor;         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
@@ -6673,7 +6700,7 @@ void initialize_rollvoice(t_notation_obj *r_ob, t_rollvoice *voice, long voice_n
 	@param	whole_undo_tick	Pointer to the function creating an undo tick for the whole notation object. Must be implemented for each notation object.
 	@param	force_notation_item_inscreen		Pointer to a function forcing a notation item to be inside the screen; leave NULL if unneeded.
 */
-void initialize_notation_obj(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen);
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen);
 
 
 /**	Initialize (or re-initialize) slot information with a default slotinfo 
@@ -6705,6 +6732,15 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
 
 
 
+// PRE-SCHEDULING
+void notation_obj_clear_prescheduled_events(t_notation_obj *r_ob);
+void notation_obj_preschedule_end(t_notation_obj *x, t_symbol *s, long argc, t_atom *argv);
+void notation_obj_preschedule_task(t_notation_obj *r_ob);
+void notation_obj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
+
+
+
+
 
 // -----------------------------------
 // FREEING STUFF
@@ -6714,14 +6750,14 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
 	@ingroup		notation_free
 	@param r_ob		The notation object
  */
-void free_notation_obj(t_notation_obj *r_ob);
+void notation_obj_free(t_notation_obj *r_ob);
 
 
 /**	Free the memory of a notation item (created via build_notation_item())
 	@ingroup		notation_free
 	@param it		The notation item
  */
-void free_notation_item(t_notation_item *it);
+void notation_item_free(t_notation_item *it);
 
 
 /**	Free the memory of slots of a notation item

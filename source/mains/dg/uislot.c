@@ -1333,7 +1333,7 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv){
 	x->r_ob.obj_type = k_NOTATION_OBJECT_SLOT;
 	x->r_ob.slot_window_zoom = x->r_ob.bgslot_zoom = 100;
 
-	initialize_notation_obj((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notation_obj_fn) create_whole_uislot_undo_tick, NULL);
+	notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notation_obj_fn) create_whole_uislot_undo_tick, NULL);
 
     x->r_ob.active_slot_num = 0;
     x->r_ob.active_slot_num_1based = 1;
@@ -1433,7 +1433,7 @@ void uislot_float(t_uislot *x, double num){
 
 void uislot_free(t_uislot *x){
 	free_note((t_notation_obj *)x, x->r_ob.dummynote);
-	free_notation_obj((t_notation_obj *) x);
+	notation_obj_free((t_notation_obj *) x);
 }
 
 
