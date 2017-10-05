@@ -4,12 +4,12 @@
 		"appversion" : 		{
 			"major" : 7,
 			"minor" : 3,
-			"revision" : 2,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 100.0, 100.0, 837.0, 516.0 ],
+		"rect" : [ -1338.0, 143.0, 837.0, 516.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -51,12 +51,12 @@
 						"appversion" : 						{
 							"major" : 7,
 							"minor" : 3,
-							"revision" : 2,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 837.0, 490.0 ],
+						"rect" : [ -1338.0, 169.0, 837.0, 490.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -135,7 +135,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 318.0, 610.0, 167.0 ],
+									"patching_rect" : [ 10.0, 318.0, 610.0, 166.0 ],
 									"style" : "",
 									"text" : "mod (positive modulo)\npow, sqrt, exp, exp2, log, log2, log10\ncos, sin, tan, acos, asin, atan, atan2, cosh, sinh, tanh, acosh, asinh, atanh, hypot\nbessel (integer-order bessel functions. First parameter is order, second is x).\nsgn, abs, floor, ceil, round, trunc, fmod\nrandom (int random number within a range - takes two arguments)\nint, float, rat (force to the corresponding data type)\nnum, den (return the corresponding element of a rational)\n\nall the functions always return floats, except pow, abs (whose return type depends on the incoming types), sgn, int, num, den, random (which return ints), rat (which returns a rational or an int)",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
@@ -151,7 +151,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 326.0, 188.0, 302.0, 80.0 ],
+									"patching_rect" : [ 326.0, 188.0, 302.0, 79.0 ],
 									"style" : "",
 									"text" : "** raises to power (equivalent to the pow function)\n/ with two int operands returns an int or a rational\n// with two int operands always returns an int\n^ is bitwise xor\n^^ is logical xor",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
@@ -167,9 +167,9 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 92.0, 276.0, 196.0 ],
+									"patching_rect" : [ 10.0, 92.0, 276.0, 195.0 ],
 									"style" : "",
-									"text" : "13  ! ~ + - (unary) right to left\n12  ** right to left\n11  * / % // left to right\n10 + - left to right\n9   << >> left to right\n8   < <= > >= left to right\n7   == != left to right\n6   & left to right\n5   ^ left to right\n4   | left to right\n3  && left to right\n2  ^^ left to right\n1  || left to right",
+									"text" : "13  ** right to left\n12  ! ~ + - (unary) right to left\n11  * / % // left to right\n10 + - left to right\n9   << >> left to right\n8   < <= > >= left to right\n7   == != left to right\n6   & left to right\n5   ^ left to right\n4   | left to right\n3  && left to right\n2  ^^ left to right\n1  || left to right",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -186,7 +186,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 215.796875, 53.625 ]
+									"patching_rect" : [ 10.0, 10.0, 210.098251, 57.567627 ]
 								}
 
 							}
@@ -223,7 +223,7 @@
 						"appversion" : 						{
 							"major" : 7,
 							"minor" : 3,
-							"revision" : 2,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -544,8 +544,6 @@
 						"lines" : [ 							{
 								"patchline" : 								{
 									"destination" : [ "obj-4", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-1", 0 ]
 								}
 
@@ -553,8 +551,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-14", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-10", 0 ]
 								}
 
@@ -562,8 +558,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-3", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-11", 0 ]
 								}
 
@@ -571,8 +565,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-10", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-13", 0 ]
 								}
 
@@ -580,8 +572,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-9", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-14", 0 ]
 								}
 
@@ -589,8 +579,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-18", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-15", 0 ]
 								}
 
@@ -598,8 +586,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-19", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-17", 0 ]
 								}
 
@@ -607,8 +593,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-17", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-18", 0 ]
 								}
 
@@ -616,8 +600,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-16", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-19", 0 ]
 								}
 
@@ -625,8 +607,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-1", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-3", 0 ]
 								}
 
@@ -634,8 +614,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-13", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-7", 0 ]
 								}
 
@@ -643,8 +621,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-11", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-8", 0 ]
 								}
 
@@ -681,7 +657,7 @@
 						"appversion" : 						{
 							"major" : 7,
 							"minor" : 3,
-							"revision" : 2,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1033,8 +1009,6 @@
 						"lines" : [ 							{
 								"patchline" : 								{
 									"destination" : [ "obj-14", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-1", 0 ]
 								}
 
@@ -1042,8 +1016,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-3", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-11", 0 ]
 								}
 
@@ -1051,8 +1023,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-1", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-13", 0 ]
 								}
 
@@ -1060,8 +1030,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-10", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-14", 0 ]
 								}
 
@@ -1069,8 +1037,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-18", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-15", 0 ]
 								}
 
@@ -1078,8 +1044,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-19", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-17", 0 ]
 								}
 
@@ -1087,8 +1051,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-17", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-18", 0 ]
 								}
 
@@ -1096,8 +1058,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-16", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-19", 0 ]
 								}
 
@@ -1105,8 +1065,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-6", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-3", 0 ]
 								}
 
@@ -1114,8 +1072,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-4", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-6", 0 ]
 								}
 
@@ -1123,8 +1079,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-11", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-8", 0 ]
 								}
 
@@ -1132,8 +1086,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-13", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-9", 0 ]
 								}
 
@@ -1170,7 +1122,7 @@
 						"appversion" : 						{
 							"major" : 7,
 							"minor" : 3,
-							"revision" : 2,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1692,8 +1644,6 @@
 						"lines" : [ 							{
 								"patchline" : 								{
 									"destination" : [ "obj-3", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-11", 0 ]
 								}
 
@@ -1701,8 +1651,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-15", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-13", 0 ]
 								}
 
@@ -1710,8 +1658,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-20", 1 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-14", 0 ]
 								}
 
@@ -1719,8 +1665,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-14", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-15", 0 ]
 								}
 
@@ -1728,8 +1672,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-19", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-16", 0 ]
 								}
 
@@ -1737,8 +1679,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-20", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-18", 0 ]
 								}
 
@@ -1746,8 +1686,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-18", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-19", 0 ]
 								}
 
@@ -1755,8 +1693,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-17", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-20", 0 ]
 								}
 
@@ -1764,8 +1700,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-20", 2 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-21", 0 ]
 								}
 
@@ -1773,8 +1707,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-21", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-22", 0 ]
 								}
 
@@ -1782,8 +1714,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-4", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-23", 0 ]
 								}
 
@@ -1791,8 +1721,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-22", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-24", 0 ]
 								}
 
@@ -1800,8 +1728,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-23", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-3", 0 ]
 								}
 
@@ -1809,8 +1735,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-23", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-32", 0 ]
 								}
 
@@ -1818,8 +1742,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-23", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-33", 0 ]
 								}
 
@@ -1827,8 +1749,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-23", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-34", 0 ]
 								}
 
@@ -1836,8 +1756,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-20", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-41", 0 ]
 								}
 
@@ -1845,8 +1763,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-7", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-5", 0 ]
 								}
 
@@ -1854,8 +1770,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-23", 1 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-6", 0 ]
 								}
 
@@ -1863,8 +1777,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-6", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-7", 0 ]
 								}
 
@@ -1872,8 +1784,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-11", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-8", 0 ]
 								}
 
@@ -1910,7 +1820,7 @@
 						"appversion" : 						{
 							"major" : 7,
 							"minor" : 3,
-							"revision" : 2,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -2281,8 +2191,6 @@
 						"lines" : [ 							{
 								"patchline" : 								{
 									"destination" : [ "obj-19", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-10", 0 ]
 								}
 
@@ -2290,8 +2198,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-10", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-13", 0 ]
 								}
 
@@ -2299,8 +2205,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-18", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-15", 0 ]
 								}
 
@@ -2308,8 +2212,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-19", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-17", 0 ]
 								}
 
@@ -2317,8 +2219,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-17", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-18", 0 ]
 								}
 
@@ -2326,8 +2226,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-16", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-19", 0 ]
 								}
 
@@ -2335,8 +2233,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-22", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-20", 0 ]
 								}
 
@@ -2344,8 +2240,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-19", 1 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-21", 0 ]
 								}
 
@@ -2353,8 +2247,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-21", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-22", 0 ]
 								}
 
@@ -2362,8 +2254,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-19", 1 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-6", 0 ]
 								}
 
@@ -2371,8 +2261,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-19", 1 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-7", 0 ]
 								}
 
@@ -2429,12 +2317,12 @@
 						"appversion" : 						{
 							"major" : 7,
 							"minor" : 3,
-							"revision" : 2,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 837.0, 490.0 ],
+						"rect" : [ 0.0, 26.0, 837.0, 490.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2475,7 +2363,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 411.0, 361.0, 110.0, 40.0 ],
-									"presentation_rect" : [ 289.0, 401.693512, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Works with pitches too:"
 								}
@@ -2711,7 +2598,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 347.0, 343.0, 50.0 ],
+									"patching_rect" : [ 10.0, 347.0, 345.0, 50.0 ],
 									"style" : "",
 									"text" : "bach.expr essentially behaves like vexpr, with additional noticeable features, which you can discover by clicking on any of the tabs of this help file.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -2811,8 +2698,6 @@
 						"lines" : [ 							{
 								"patchline" : 								{
 									"destination" : [ "obj-4", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-1", 0 ]
 								}
 
@@ -2820,8 +2705,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-3", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-11", 0 ]
 								}
 
@@ -2829,8 +2712,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-31", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-24", 0 ]
 								}
 
@@ -2838,8 +2719,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-27", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-25", 0 ]
 								}
 
@@ -2847,8 +2726,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-24", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-26", 0 ]
 								}
 
@@ -2856,8 +2733,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-26", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-27", 0 ]
 								}
 
@@ -2865,8 +2740,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-30", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-28", 0 ]
 								}
 
@@ -2874,8 +2747,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-24", 1 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-29", 0 ]
 								}
 
@@ -2883,8 +2754,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-1", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-3", 0 ]
 								}
 
@@ -2892,8 +2761,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-29", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-30", 0 ]
 								}
 
@@ -2901,8 +2768,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-24", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-43", 0 ]
 								}
 
@@ -2910,8 +2775,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-10", 1 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-5", 0 ]
 								}
 
@@ -2919,8 +2782,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-5", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-7", 0 ]
 								}
 
@@ -2928,8 +2789,6 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-11", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-8", 0 ]
 								}
 
@@ -2982,7 +2841,7 @@
 						"appversion" : 						{
 							"major" : 7,
 							"minor" : 3,
-							"revision" : 2,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -3064,6 +2923,7 @@
 , 			{
 				"name" : "bach.+.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}

@@ -61,6 +61,8 @@ v0.8b
 
 *** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
 
+- bach.expr     The power operator (**) now has higher priority than unary minus and plus, and logical and bitwise not.
+
 - bach.urn. bach.wurn	IMPORTANT: Former @autoclear 2 (introduced in 0.7.9) is now @autoclear 3; @autoclear 2 has a similar yet different meaning. See bach.urn help file
 
 - bach.norm		Now supports the @out attribute, as most other bach modules. 
