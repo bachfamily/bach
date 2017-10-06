@@ -317,7 +317,7 @@ t {
 "trunc" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, trunc); }
 "float" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_float); }
 
-"random" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_random); }
+"random" { return lexpr_append_lexeme_FUNC_binary_ALL_dontfold(epd->lexeme, hatom_fn_random); }
 "bessel" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn); }
 
 "pitch" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_pitch); }
