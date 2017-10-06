@@ -73,12 +73,12 @@ llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
 CLASS_ATTR_LONG(c, "inwrap", 0, t_repeat, inwrap); 
 CLASS_ATTR_STYLE_LABEL(c,"inwrap",0,"text","Wrap Input");
 CLASS_ATTR_BASIC(c,"unwrap",0);
-//	@copy BACH_DOC_INWRAP
+// @description @copy BACH_DOC_INWRAP
 
 CLASS_ATTR_LONG(c, "outwrap", 0, t_repeat, unwrap); 
 CLASS_ATTR_STYLE_LABEL(c,"outwrap",0,"text","Wrap Output");
 CLASS_ATTR_BASIC(c,"unwrap",0);
-//	@copy BACH_DOC_OUTWRAP
+// @description @copy BACH_DOC_OUTWRAP
 
 }
 
