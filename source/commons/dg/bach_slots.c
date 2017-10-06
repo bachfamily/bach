@@ -4232,7 +4232,7 @@ t_jrgba get_default_slotcolor(int num_slot){
 		case 2:
 			color = build_jrgba ( 0., 0.82, 0.12, 1. ); break;
 		case 3:
-			color = build_jrgba ( 1., 0.91, 0., 1. ); break;
+			color = build_jrgba ( 0.91, 0.76, 0.05, 1. ); break;
 		case 4:
 			color = build_jrgba ( 1., 0.55, 0., 1. ); break;
 		case 5:
