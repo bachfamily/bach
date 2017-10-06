@@ -153,11 +153,19 @@ t_pitch t_pitch::operator*(t_atom_long b) const
 
 t_pitch t_pitch::operator*(const t_rational &b) const
 {
+    t_rat<long> inv = b.inv();
+
+    if (inv.r_num == 0 || inv.r_den == 0)
+        return t_pitch::NaP;
+
     return *this / b.inv();
 }
 
 t_pitch t_pitch::operator/(const t_atom_long b) const
 {
+    if (b == 0)
+        return t_pitch::NaP;
+    
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps /= b;
     sat.mc /= b;
@@ -166,6 +174,9 @@ t_pitch t_pitch::operator/(const t_atom_long b) const
 
 t_pitch t_pitch::operator/(const t_rational &b) const
 {
+    if (b.r_num == 0 || b.r_den == 0)
+        return t_pitch::NaP;
+
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps = sat.steps * b.den() / b.num();
     sat.mc /= t_shortRational(b);
@@ -174,6 +185,9 @@ t_pitch t_pitch::operator/(const t_rational &b) const
 
 t_pitch t_pitch::operator%(const t_pitch &b) const
 {
+    if (b.toMC() == 0)
+        return t_pitch::NaP;
+
     t_atom_long quotient = t_atom_long(double(*this / b));
     t_pitch t = b * quotient;
     return *this - t;
@@ -181,6 +195,9 @@ t_pitch t_pitch::operator%(const t_pitch &b) const
 
 t_pitch t_pitch::operator%(const t_atom_long b) const
 {
+    if (b == 0)
+        return t_pitch::NaP;
+    
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps -= (sat.steps / b) * b;
     sat.mc = t_shortRational(0);
