@@ -71,6 +71,7 @@ enum playkeys_properties
     k_PLAYKEYS_TEMPO,
     k_PLAYKEYS_QUARTERTEMPO,
     k_PLAYKEYS_SLOT,
+    k_PLAYKEYS_ALLSLOTS,
     k_PLAYKEYS_CHORDINDEX,
     k_PLAYKEYS_NOTEINDEX,
     k_PLAYKEYS_PLAY,
@@ -332,6 +333,8 @@ long symbol_to_property(t_symbol *s)
         return k_PLAYKEYS_QUARTERTEMPO;
     if (s == _llllobj_sym_slot)
         return k_PLAYKEYS_SLOT;
+    if (s == _llllobj_sym_slots)
+        return k_PLAYKEYS_ALLSLOTS;
     if (s == _llllobj_sym_play)
         return k_PLAYKEYS_PLAY;
     if (s == _llllobj_sym_stop)
@@ -387,6 +390,7 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_TEMPO: return _llllobj_sym_tempo;
         case k_PLAYKEYS_QUARTERTEMPO: return _llllobj_sym_quartertempo;
         case k_PLAYKEYS_SLOT: return _llllobj_sym_slot;
+        case k_PLAYKEYS_ALLSLOTS: return _llllobj_sym_slots;
         case k_PLAYKEYS_PLAY: return _llllobj_sym_play;
         case k_PLAYKEYS_STOP: return _llllobj_sym_stop;
         case k_PLAYKEYS_PAUSE: return _llllobj_sym_pause;
@@ -1756,6 +1760,49 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                         
                         
                         
+                    case k_PLAYKEYS_ALLSLOTS:
+                    {
+                        switch (incoming) {
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD:
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                                found = llll_get();
+                                for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, incoming_is_from_roll(incoming) ? 2 : 5); startnoteel; startnoteel = startnoteel->l_next) {
+                                    if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
+                                        break;
+                                    t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
+                                    if (!can_llll_be_a_note(notell))
+                                        break;
+                                    
+                                    if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_slots))) {
+                                        if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
+                                            break;
+                                        
+                                        t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
+                                        llll_appendllll(found, llll_behead(llll_clone(slotsll)));
+                                    } else
+                                        llll_appendllll(found, llll_get());
+                                }
+                                break;
+                                
+                                
+                            case k_PLAYKEYS_INCOMING_SCOREREST:
+                            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                                // to do
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                        playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
+                    }
+                        break;
+                        
                     case k_PLAYKEYS_LYRICS:
                     case k_PLAYKEYS_DYNAMICS:
                     case k_PLAYKEYS_ARTICULATIONS:
@@ -1972,7 +2019,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         // if <m>playoutfullpath</m> is active for the notation object), "measurenumber"
         // (only meaningful for notes and chords if <m>playoutfullpath</m> is active for the notation object), "breakpoints",
         // "measureinfo", "name", "tempo", "quartertempo", "slot", "playoffset" (for partial played notes with
-        // <m>playpartialnotes</m> set to 2), "role" (for markers only).
+        // <m>playpartialnotes</m> set to 2), "role" (for markers only), "slots" (all slots)
         // In addition to these,
         // also "play", "stop", "pause", "end" keys are allowed; the "router" key will output the incoming router message;
         // they will report the corresponding actions with a bang.

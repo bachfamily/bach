@@ -3589,6 +3589,13 @@
 				"tags" : [ "sequencer", "sequencing", "play", "offline", "playselection", "dumpselection", "non-real-time", "off", "line", "off-line", "messages", "order", "onset" ],
 				"title" : [ "Offline playing from messages" ]
 			},
+			"Prescheduledplay" : {
+				"filename" : [ "bach.help.notation.sequencing.26_prescheduledplay.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "play", "play+offline" ],
+				"tags" : [ "sequencer", "sequencing", "play", "preschedule", "playback", "schedule", "accurate", "playing", "prescheduled", "scheduler" ],
+				"title" : [ "Prescheduling playback" ]
+			},
 			"Mute" : {
 				"filename" : [ "bach.help.notation.sequencing.30_mute.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],

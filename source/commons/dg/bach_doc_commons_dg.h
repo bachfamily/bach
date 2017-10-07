@@ -2245,3 +2245,13 @@
     // while within the broader spectrum {"pppp", "ppp", "pp", "p", "mp", "mf", "f", "ff", "fff", "ffff"}, having <m>maxchars</m> = 4 and <m>D</m> = 5,
     // one has x = x(7, 5) = -1+2i/(2D+1) = -1 + 14/11 = 3/11
     // vel("f") = vel(7) = 128 * ((1 + (3/11)^a)/2)^b ~ 128 * 0.748 ~ 96. <br />
+
+
+#define BACH_DOC_PRESCHEDULED_PLAYBACK
+    // Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
+    // ensures the best possible timing. Prescheduled playback has some limitations: <br />
+    // - no live modification to the roll or score is accounted for during playback; <br />
+    // - loops won't work;  <br />
+    // - lambda+modifications won't work;  <br />
+    // - redraw is only performed at each new event;  <br />
+    // - the "pause" message won't work.  <br />

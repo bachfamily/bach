@@ -1663,19 +1663,19 @@ t_jrgba long_to_color(long value){
 	if (value < 0) value = 0;
 	switch (value % 10) {
 		case 0:
-			out_color.red = 1.; 
-			out_color.green = 0.; 
+			out_color.red = 0.77;
+			out_color.green = 0.11;
 			out_color.blue = 0.; 
 			break;
 		case 1:
-			out_color.red = 0.42; 
-			out_color.green = 0.27; 
-			out_color.blue = 0.08; 
+			out_color.red = 0.57;
+			out_color.green = 0.41;
+			out_color.blue = 0.0;
 			break;
 		case 2:
-			out_color.red = 0.04; 
-			out_color.green = 0.32; 
-			out_color.blue = 0.04; 
+			out_color.red = 0.0;
+			out_color.green = 0.53;
+			out_color.blue = 0.03; 
 			break;
 		case 3:
 			out_color.red = 0.88; 
@@ -1688,29 +1688,29 @@ t_jrgba long_to_color(long value){
 			out_color.blue = 0.87; 
 			break;
 		case 5:
-			out_color.red = 0.67; 
-			out_color.green = 0.47; 
-			out_color.blue = 0.37; 
+			out_color.red = 0.;
+			out_color.green = 0.;
+			out_color.blue = 0.81;
 			break;
 		case 6:
-			out_color.red = 0.81; 
-			out_color.green = 0.95; 
-			out_color.blue = 0.; 
+			out_color.red = 0.;
+			out_color.green = 0.61;
+			out_color.blue = 0.42;
 			break;
 		case 7:
-			out_color.red = 0.61; 
-			out_color.green = 0.75; 
-			out_color.blue = 0.40; 
+			out_color.red = 0.68;
+			out_color.green = 0.77;
+			out_color.blue = 0.;
 			break;
 		case 8:
-			out_color.red = 0.34; 
-			out_color.green = 0.17; 
-			out_color.blue = 0.17; 
+			out_color.red = 0.53;
+			out_color.green = 0.;
+			out_color.blue = 0.59;
 			break;
 		default:
-			out_color.red = 0.99; 
-			out_color.green = 0.85; 
-			out_color.blue = 0.26; 
+			out_color.red = 0.84;
+			out_color.green = 0.69;
+			out_color.blue = 0.;
 			break;
 	}
 	out_color.alpha = 1.;

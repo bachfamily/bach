@@ -59,6 +59,12 @@ void main_foo() {
     
     llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
     
+CLASS_ATTR_LONG(c, "degreesym", 0, t_pitchunpack, degreesym); 
+CLASS_ATTR_STYLE_LABEL(c,"degreesym",0,"text","Output Degrees As Letters");
+CLASS_ATTR_BASIC(c,"degreesym",0);
+// @description Toggles the ability to output the degrees as letters (C to B) instead of numbers (0 to 6).
+
+
 }
 
 // ---------------
