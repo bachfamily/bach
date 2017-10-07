@@ -3185,9 +3185,9 @@ void roll_do_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     // then we send partial notes, if needed
 	// i.e. the chords whose onset is < start_ms but whose duration continue at start_ms
 	if (x->r_ob.play_partial_notes) {
-		t_llll *to_send = llll_get();
-		t_llll *to_send_references = llll_get();
-		char is_notewise = true;
+		to_send = llll_get();
+		to_send_references = llll_get();
+		is_notewise = true;
 
 		lock_general_mutex((t_notation_obj *)x);
 		for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
