@@ -6206,17 +6206,18 @@
 			</description>
 		</method>
 		<method name="play">
-			<arg name="offline_mode" optional="1" type="symbol" />
+			<arg name="scheduling_mode" optional="1" type="symbol" />
 			<arg name="start" optional="1" type="float/llll" />
 			<arg name="end" optional="1" type="float/llll" />
 			<digest>
 				Play
 			</digest>
 			<description>
-				Syntax: <b>play <m>[&lt;symbol: offline_mode&gt;]</m> <m>[&lt;float/llll: start&gt;]</m> <m>[&lt;float/llll: end&gt;]</m> </b><br />
+				Syntax: <b>play <m>[&lt;symbol: scheduling_mode&gt;]</m> <m>[&lt;float/llll: start&gt;]</m> <m>[&lt;float/llll: end&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>play</b>   <i>→ play from current playhead position</i><br />
 				• <b>play offline</b>   <i>→ play in non-realtime mode ("uzi-like")</i><br />
+				• <b>play preschedule</b>   <i>→ accurate prescheduled playback (with limitations)</i><br />
 				• <b>play 2000</b>   <i>→ play starting from 2s till the end</i><br />
 				• <b>play 2000 4000</b>   <i>→ play starting from 2s, stop at 4s</i><br />
 				• <b>play (4)</b>   <i>→ play starting from measure 4</i><br />
@@ -6242,6 +6243,14 @@
 				(by default: the beginning of the <o>bach.score</o>) to the end. <br />
 				If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
 				will be still output from the playout, but one after another, "immediately". <br />
+				If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+				Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
+				ensures the best possible timing. Prescheduled playback has some limitations: <br />
+				- no live modification to the roll or score is accounted for during playback; <br />
+				- loops won't work;  <br />
+				- lambda+modifications won't work;  <br />
+				- redraw is only performed at each new event;  <br />
+				- the "pause" message won't work.  <br />
 				If you give a single numeric argument, it will be the starting point in milliseconds
 				of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
 				ending point in milliseconds of the region to be played.
@@ -6502,12 +6511,12 @@
 			</description>
 		</method>
 		<method name="playselection">
-			<arg name="offline_mode" optional="1" type="symbol" />
+			<arg name="scheduling_mode" optional="1" type="symbol" />
 			<digest>
 				Only play selected items
 			</digest>
 			<description>
-				Syntax: <b>playselection <m>[&lt;symbol: offline_mode&gt;]</m> </b><br />
+				Syntax: <b>playselection <m>[&lt;symbol: scheduling_mode&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>playselection</b>   <i>→ play selected items only</i><br />
 				• <b>playselection offline</b>   <i>→ the same, in non-realtime mode ("uzi-like")</i><br />
@@ -6517,6 +6526,14 @@
 				Mute and solo status are also taken into account (see <m>play</m>). <br />
 				If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
 				will be still output from the playout, but one after another, "immediately", in the low-priority queue. <br />
+				If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+				Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
+				ensures the best possible timing. Prescheduled playback has some limitations: <br />
+				- no live modification to the roll or score is accounted for during playback; <br />
+				- loops won't work;  <br />
+				- lambda+modifications won't work;  <br />
+				- redraw is only performed at each new event;  <br />
+				- the "pause" message won't work.  <br />
 				<br />				See also:<m>stop</m>,<m>pause</m>,<m>play</m><br />
 			</description>
 		</method>

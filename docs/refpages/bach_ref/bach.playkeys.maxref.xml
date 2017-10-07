@@ -53,7 +53,7 @@
 				if <m>playoutfullpath</m> is active for the notation object), "measurenumber"
 				(only meaningful for notes and chords if <m>playoutfullpath</m> is active for the notation object), "breakpoints",
 				"measureinfo", "name", "tempo", "quartertempo", "slot", "playoffset" (for partial played notes with
-				<m>playpartialnotes</m> set to 2), "role" (for markers only).
+				<m>playpartialnotes</m> set to 2), "role" (for markers only), "slots" (all slots)
 				In addition to these,
 				also "play", "stop", "pause", "end" keys are allowed; the "router" key will output the incoming router message;
 				they will report the corresponding actions with a bang.

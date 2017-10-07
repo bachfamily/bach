@@ -87,6 +87,18 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="degreesym" get="1" set="1" type="int" size="1">
+			<digest>
+				Output Degrees As Letters
+			</digest>
+			<description>
+				Toggles the ability to output the degrees as letters (C to B) instead of numbers (0 to 6).
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output Degrees As Letters" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="out" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Outlet Types

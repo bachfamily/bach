@@ -144,6 +144,9 @@
 				
 			</digest>
 			<description>
+				Wrap every output llll in the correspongind number of parentheses.
+				This is equivalent to connecting a <o>bach.wrap</o> object to every llll outlet.
+				<br /> <br />
 			</description>
 			<attributelist>
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />

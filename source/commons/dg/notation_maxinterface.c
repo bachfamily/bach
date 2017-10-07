@@ -4652,6 +4652,8 @@ void notation_obj_preschedule_task(t_notation_obj *r_ob)
     if (cur) {
         t_scheduled_event *ev = (t_scheduled_event *)hatom_getobj(&cur->l_hatom);
         r_ob->play_head_ms = ev->time;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE);
+            r_ob->play_head_ux = ms_to_unscaled_xposition(r_ob, ev->time, 1);
         if (ev->is_end) {
             t_llll *end_llll = llll_get();
             llll_appendsym(end_llll, _llllobj_sym_end, 0, WHITENULL_llll);
@@ -4660,14 +4662,15 @@ void notation_obj_preschedule_task(t_notation_obj *r_ob)
             defer((t_object *) r_ob, (method)notation_obj_preschedule_end, NULL, 0, NULL);
         } else {
             
-            if (ev->content && r_ob->highlight_played_notes) {
+            notationobj_redraw(r_ob);
+/*            if (ev->content && r_ob->highlight_played_notes) {
                 check_unplayed_notes(r_ob, r_ob->play_head_ms);
                 invalidate_notation_static_layer_and_repaint(r_ob);
             } else {
                 //            if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
                 //                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
                 notationobj_redraw(r_ob);
-            }
+            } */
 
             if (ev->content){
                 send_sublists_through_playout_and_free(r_ob, playout, ev->content, NULL, ev->is_notewise);

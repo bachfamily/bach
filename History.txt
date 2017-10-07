@@ -282,6 +282,8 @@ v0.8b
 			New @catchplay attribute to follow playhead while playing (default: on)
 			"sel tail if" and "sel tails": new messages (also unsel/select)
 			Now "dumpselection" message also supports a @router attribute (e.g. "dumpselection @router foo")  
+			Now "play preschedule" feature, ensuring best timing (with some limitations): see #play+preschedule
+			Now the "play" message is output *before* partial notes also in offline mode
 
 
 - bach.score		Fixed bug causing lost slots on syncopations
