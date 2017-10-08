@@ -10951,8 +10951,8 @@ char quick_merge_selection(t_score *x)
 void tie_untie_note_smart(t_score *x, t_note *nt, char *changed)
 {
     if (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)nt)) {
-        t_note *first_tied = note_get_first_in_tieseq(nt);
-        t_note *last_tied = note_get_last_in_tieseq(nt);
+        t_note *first_tied = note_get_first_selected_in_tieseq((t_notation_obj *)x, nt);
+        t_note *last_tied = note_get_last_selected_in_tieseq((t_notation_obj *)x, nt);
         t_measure *meas = nt->parent->parent;
         create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt->parent->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
         if (first_tied != nt || last_tied != nt) {
@@ -10966,7 +10966,7 @@ void tie_untie_note_smart(t_score *x, t_note *nt, char *changed)
             }
             nt->r_it.flags &= ~k_FLAG_TO_BE_MODIFIED;
         } else {
-            if (nt->tie_to == WHITENULL)
+            if (nt->tie_to) // == WHITENULL)
                 untie_note(nt);
             else
                 tie_note(nt);

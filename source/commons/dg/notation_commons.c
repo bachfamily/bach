@@ -13824,6 +13824,25 @@ t_note *note_get_last_in_tieseq(t_note *note)
 	return outnote;
 }
 
+t_note *note_get_first_selected_in_tieseq(t_notation_obj *r_ob, t_note *note)
+{
+    t_note *outnote = note;
+    while (outnote && (outnote->tie_from) && (outnote->tie_from != (t_note *) WHITENULL_llll) &&
+           notation_item_is_globally_selected(r_ob, (t_notation_item *)outnote->tie_from))
+        outnote = outnote->tie_from;
+    return outnote;
+}
+
+t_note *note_get_last_selected_in_tieseq(t_notation_obj *r_ob, t_note *note)
+{
+    t_note *outnote = note;
+    while (outnote && (outnote->tie_to) && (outnote->tie_to != (t_note *) WHITENULL_llll) &&
+           notation_item_is_globally_selected(r_ob, (t_notation_item *)outnote->tie_to))
+        outnote = outnote->tie_to;
+    return outnote;
+}
+
+
 t_chord *last_all_tied_chord(t_chord *chord, char within_measure){
 	t_chord *outchord = chord;
 	while (outchord && is_all_chord_tied_to(NULL, outchord, 0, NULL) && (!within_measure || outchord->next))

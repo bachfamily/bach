@@ -12978,6 +12978,14 @@ char chord_has_a_tie_from(t_chord *ch);
 void check_ties_around_measure(t_measure *measure);
 
 
+/**	Get the first note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
+	@ingroup		notation
+	@param	note	The note
+	@return	The first note tied to the given note.
+ */
+t_note *note_get_first_in_tieseq(t_note *note);
+
+
 /**	Get the last note of the sequence of tied notes containing a given note. If the given note has no starting ties, the note itself is returned.
 	@ingroup		notation
 	@param	note	The note
@@ -12986,12 +12994,22 @@ void check_ties_around_measure(t_measure *measure);
 t_note *note_get_last_in_tieseq(t_note *note);
 
 
-/**	Get the first note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
+/**	Get the first selected note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
 	@ingroup		notation
+    @param  r_ob    The notation object
 	@param	note	The note
-	@return	The first note tied to the given note.
+	@return	The first selected note tied to the given note.
  */
-t_note *note_get_first_in_tieseq(t_note *note);
+t_note *note_get_first_selected_in_tieseq(t_notation_obj *r_ob, t_note *note);
+
+
+/**	Get the last selected note of the sequence of tied notes containing a given note. If the given note has no starting ties, the note itself is returned.
+	@ingroup		notation
+ @param  r_ob    The notation object
+	@param	note	The note
+	@return	The last selected note tied to the given note.
+ */
+t_note *note_get_last_selected_in_tieseq(t_notation_obj *r_ob, t_note *note);
 
 
 /**	Get the last chord of the sequence of completely-tied chords containing a given chord. If the given chord is not completely tied to the
