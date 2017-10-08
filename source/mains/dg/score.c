@@ -10966,7 +10966,7 @@ void tie_untie_note_smart(t_score *x, t_note *nt, char *changed)
             }
             nt->r_it.flags &= ~k_FLAG_TO_BE_MODIFIED;
         } else {
-            if (nt->tie_to) // == WHITENULL)
+            if (nt->tie_to)
                 untie_note(nt);
             else
                 tie_note(nt);
