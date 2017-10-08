@@ -1663,8 +1663,8 @@
 			"Addchord" : {
 				"filename" : [ "bach.help.notation.messages.01_addchord.maxpat" ],
 				"objects" : [ "bach.roll" ],
-				"seealso" : [ "addchords", "gluechord" ],
-				"tags" : [ "message", "addchord", "add", "chord", "adding" ],
+				"seealso" : [ "addchords", "gluechord", "sel" ],
+				"tags" : [ "message", "addchord", "add", "chord", "adding", "select", "sel", "selection" ],
 				"title" : [ "Adding a chord in bach.roll" ]
 			},
 			"B_addchords" : {
@@ -1684,8 +1684,8 @@
 			"Gluechord" : {
 				"filename" : [ "bach.help.notation.messages.03_gluechord.maxpat" ],
 				"objects" : [ "bach.roll" ],
-				"seealso" : [ "addchord", "addchords", "gluechord+example" ],
-				"tags" : [ "message", "gluechord", "glue", "chord", "gluing", "glueing" ],
+				"seealso" : [ "addchord", "addchords", "gluechord+example", "sel" ],
+				"tags" : [ "message", "gluechord", "glue", "chord", "gluing", "glueing", "select", "sel", "selection" ],
 				"title" : [ "Gluing chords in bach.roll" ]
 			},
 			"Gluechordslots" : {

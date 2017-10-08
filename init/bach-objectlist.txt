@@ -143,6 +143,7 @@ max oblist "bach objects" bach.score;
 max oblist "bach objects" bach.submatrix;
 max oblist "bach objects" bach.tonnetz;
 max oblist "bach objects" bach.trace;
+max oblist "bach objects" bach.transcribe;
 max oblist "bach objects" bach.tree;
 max oblist "bach objects" bach.slot;
 max oblist "bach objects" bach.wordcloud;

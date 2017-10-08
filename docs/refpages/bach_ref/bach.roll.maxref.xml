@@ -858,12 +858,17 @@
 				Add a chord
 			</digest>
 			<description>
-				Syntax: <b>addchord <m>[&lt;int: voice_number&gt;]</m> <m>&lt;llll: chord&gt;</m> </b><br />
+				Syntax: <b>addchord <m>[&lt;int: voice_number&gt;]</m> <m>&lt;llll: chord&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
-				• <b>addchord (1000 (6000 500 50))</b>   <i>→ add a middle c at 1s, lasting 0.5s and with velocity 50</i><br />
+				• <b>addchord (1000 (6000 500 50))</b>   <i>→ add a middle C at 1s, lasting 0.5s and with velocity 50</i><br />
 				• <b>addchord 2 (1000 (6000 500 50))</b>   <i>→ the same, in second voice</i><br />
+				• <b>addchord 2 (1000 (6000 500 50)) @sel 1</b>   <i>→ the same, also selecting the chord</i><br />
 				• <b>addchord 2 (1000 (6000 500 50) (7200 0.5 50))</b>   <i>→ add a chord with two notes</i><br />
 				• <b>addchord 2 (1000 (6000 500 50 (slots (3 10 20 30))) (7200 0.5 50 (breakpoints (0 0 0) (1 -500 0))))</b>   <i>→ and with extra information</i><br />
+				<br />
+				Message attributes:<br />
+				
+<m>@sel</m> (int, default: 0): Also select the added chord<br />
 				<br />
 				An <m>addchord</m> message will add a new chord to the existing ones.
 				The first optional integer argument is the number of the voice in which the chord should be placed.
@@ -3099,10 +3104,15 @@
 				Glue a chord to the existing ones
 			</digest>
 			<description>
-				Syntax: <b>gluechord <m>[&lt;int: voice_number&gt;]</m> <m>&lt;llll: chord&gt;</m> <m>[&lt;float: threshold_ms&gt;]</m> <m>[&lt;float: threshold_cents&gt;]</m> <m>[&lt;atom: smooth_ms&gt;]</m> </b><br />
+				Syntax: <b>gluechord <m>[&lt;int: voice_number&gt;]</m> <m>&lt;llll: chord&gt;</m> <m>[&lt;float: threshold_ms&gt;]</m> <m>[&lt;float: threshold_cents&gt;]</m> <m>[&lt;atom: smooth_ms&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>gluechord (3000 (6210 1000 100))</b>   <i>→ glue the chord to a contiguous one, if any</i><br />
 				• <b>gluechord (3000 (6210 1000 100)) 10 30</b>   <i>→ ...only if they join seamlessly within 10ms and 30cents</i><br />
+				• <b>gluechord (3000 (6210 1000 100)) 10 30 @sel 1</b>   <i>→ ...and select the added or glued chord</i><br />
+				<br />
+				Message attributes:<br />
+				
+<m>@sel</m> (int, default: 0): Also select the added or glued chord<br />
 				<br />
 				A <m>gluechord</m> message acts exactly like an <m>addchord</m> message, which an important difference:
 				it glues the introduced chord, whenever possible, to existing notes. More precisely: if an already existing note is

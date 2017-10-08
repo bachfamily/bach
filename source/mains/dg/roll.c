@@ -365,7 +365,7 @@ void set_breakpoints_values_from_llll(t_roll *x, t_llll* breakpoints);
 void set_slots_values_from_llll(t_roll *x, t_llll* slots);
 void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mutex);
 t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, char also_lock_general_mutex, char also_recompute_total_length);
-void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double threshold_ms, double threshold_cents, double smooth_ms);
+void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double threshold_ms, double threshold_cents, double smooth_ms, char also_select);
 
 t_llll* get_roll_values_as_llll_for_pwgl(t_roll *x);
 
@@ -4632,8 +4632,10 @@ int T_EXPORT main(void){
 	// @copy BACH_DOC_CHORD_GATHERED_SYNTAX_ROLL
 	// @marg 0 @name voice_number @optional 1 @type int
 	// @marg 1 @name chord @optional 0 @type llll
-    // @example addchord (1000 (6000 500 50)) @caption add a middle c at 1s, lasting 0.5s and with velocity 50
+    // @mattr sel @type int @default 0 @digest Also select the added chord
+    // @example addchord (1000 (6000 500 50)) @caption add a middle C at 1s, lasting 0.5s and with velocity 50
     // @example addchord 2 (1000 (6000 500 50)) @caption the same, in second voice
+    // @example addchord 2 (1000 (6000 500 50)) @sel 1 @caption the same, also selecting the chord
     // @example addchord 2 (1000 (6000 500 50) (7200 0.5 50)) @caption add a chord with two notes
     // @example addchord 2 (1000 (6000 500 50 (slots (3 10 20 30))) (7200 0.5 50 (breakpoints (0 0 0) (1 -500 0)))) @caption and with extra information
     // @seealso gluechord, addchords, delete
@@ -4707,8 +4709,10 @@ int T_EXPORT main(void){
 	// @marg 2 @name threshold_ms @optional 1 @type float
 	// @marg 3 @name threshold_cents @optional 1 @type float
 	// @marg 4 @name smooth_ms @optional 1 @type atom
+    // @mattr sel @type int @default 0 @digest Also select the added or glued chord
     // @example gluechord (3000 (6210 1000 100)) @caption glue the chord to a contiguous one, if any
     // @example gluechord (3000 (6210 1000 100)) 10 30 @caption ...only if they join seamlessly within 10ms and 30cents
+    // @example gluechord (3000 (6210 1000 100)) 10 30 @sel 1 @caption ...and select the added or glued chord
     // @seealso addchord
 	class_addmethod(c, (method) roll_anything, "gluechord", A_GIMME, 0);
 
@@ -6824,8 +6828,11 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         
                     } else if (router == _llllobj_sym_addchord || router == _llllobj_sym_gluechord) {
                         t_llllelem *secondelem, *chordinfo; //let's add a chord!
-                        long voicenumber = 0;
+                        long voicenumber = 0, also_select = 0;
                         llll_destroyelem(firstelem);
+                        
+                        llll_parseattrs((t_object *)x, inputlist, true, "i", _llllobj_sym_sel, &also_select);
+                        
                         secondelem = inputlist->l_head;
                         if (secondelem && hatom_gettype(&secondelem->l_hatom) == H_LONG){
                             voicenumber = hatom_getlong(&secondelem->l_hatom) - 1; // 0-based inside, 1-based for the user
@@ -6833,9 +6840,11 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         }
                         chordinfo = inputlist->l_head;
                         if (chordinfo && hatom_gettype(&chordinfo->l_hatom) == H_LLLL) {
-                            if (hatom_getsym(&firstelem->l_hatom) == _llllobj_sym_addchord) {
+                            if (router == _llllobj_sym_addchord) {
                                 t_chord *newch = addchord_from_llll(x, hatom_getllll(&chordinfo->l_hatom), nth_rollvoice(x, voicenumber), true, true);
                                 if (newch) {
+                                    if (also_select)
+                                        notation_item_add_to_selection((t_notation_obj *)x, (t_notation_item *)newch);
                                     create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *) newch, k_UNDO_MODIFICATION_DELETE);
                                     handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_CHORD);
                                 }
@@ -6858,25 +6867,29 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                     }
                                 }
                                 
-                                gluechord_from_llll(x, hatom_getllll(&chordinfo->l_hatom), nth_rollvoice(x, voicenumber), threshold_ms, threshold_cents, smooth_ms);
+                                gluechord_from_llll(x, hatom_getllll(&chordinfo->l_hatom), nth_rollvoice(x, voicenumber), threshold_ms, threshold_cents, smooth_ms, also_select);
                                 handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_GLUE_CHORD);
                             }
                         }
-                    } else if (!x->r_ob.itsme || router == _llllobj_sym_lambda) {
-                        // send deparsed message to roll,
-                        // TO DO: not the best way, though, at least for long messages!...
-                        t_atom *av = NULL, rv;
-                        long ac = llll_deparse(inputlist, &av, 0, 0);
-                        if (ac) {
-                            x->r_ob.itsme = true;
-                            object_method_typed((t_object *)x, hatom_getsym(&firstelem->l_hatom), ac - 1, av + 1, &rv);
-                            x->r_ob.itsme = false;
+                    } else if (s == _llllobj_sym_bach_llll){
+                        bach_atomic_lock(&x->r_ob.c_atomic_lock);
+                        if ((!x->r_ob.itsme || router == _llllobj_sym_lambda) && router != _llllobj_sym_bach_llll) {
+                            // send deparsed message to roll,
+                            // TO DO: not the best way, though, at least for long messages!...
+                            t_atom *av = NULL, rv;
+                            long ac = llll_deparse(inputlist, &av, 0, 0);
+                            if (ac) {
+                                x->r_ob.itsme = true;
+                                object_method_typed((t_object *)x, router, ac - 1, av + 1, &rv);
+                                x->r_ob.itsme = false;
+                            }
+                            bach_freeptr(av);
                         }
-                        bach_freeptr(av);
+                        bach_atomic_unlock(&x->r_ob.c_atomic_lock);
                     } else {
                         post_unknown_message((t_object *) x, inputlist);
                     }
-				} else {
+                } else {
 					post_unknown_message((t_object *) x, inputlist);
 				}
 				llll_free(inputlist);
@@ -7868,7 +7881,8 @@ t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice* voice, char a
 }
 
 // beware!! this function changes the <chord> llll, destroying stuff inside it
-void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double threshold_ms, double threshold_cents, double smooth_ms){
+void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double threshold_ms, double threshold_cents, double smooth_ms, char also_select)
+{
 	if (chord && chord->l_size >= 2) { // AT LEAST onset + 1 note
 		t_llllelem *secondelem = chord->l_head->l_next;
 		
@@ -7886,18 +7900,16 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 					if (note_llll->l_size >= 2 && (is_hatom_number(&note_llll->l_head->l_hatom) || first_element_type == H_SYM) 
 						&& is_hatom_number(&note_llll->l_head->l_next->l_hatom)) {
 						
-						double cents = (first_element_type == H_SYM) ? 
-							notename2midicents(x->r_ob.middleC_octave, &x->r_ob.last_used_octave, hatom_getsym(&note_llll->l_head->l_hatom)->s_name, NULL, NULL) :
-							hatom_getdouble(&note_llll->l_head->l_hatom);
+						double cents = (first_element_type == H_PITCH) ? hatom_getpitch(&note_llll->l_head->l_hatom).toMC() : hatom_getdouble(&note_llll->l_head->l_hatom);
 						double duration = hatom_getdouble(&note_llll->l_head->l_next->l_hatom);
 						double velocity = note_llll->l_size >= 3 ? hatom_getlong(&note_llll->l_head->l_next->l_next->l_hatom) : -1;
 						t_llll *breakpoints = find_sublist_with_router((t_notation_obj *)x, note_llll, _llllobj_sym_breakpoints);
 						t_note *dummy_breakpoints_note = NULL;
 						
-                        if (cents > 4810 && cents < 4812) {
+/*                        if (cents > 4810 && cents < 4812) {
                             long foo = 7;
                             foo++;
-                        }
+                        } */
                         
 						if (breakpoints) { // only if the note to be inserted has breakpoints! We create a dummy note to more easily sample the breakpoints
 							dummy_breakpoints_note = build_note((t_notation_obj *) x, cents, duration, velocity);
@@ -7967,11 +7979,17 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 								
 								// updating duration
 								foundnt->duration = onset + duration - foundnt->parent->onset; //update duration
+                                
+                                if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) foundnt) && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) foundnt->parent)) {
+                                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *) foundnt);
+                                    move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+                                }
+
  							}
 							llll_destroyelem(note_elem); // delete the note from the chord llll
-                        } else {
+/*                        } else {
                             char foo = 7;
-                            foo++;
+                            foo++; */
                         }
 						
 						if (breakpoints) 
@@ -8061,6 +8079,9 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 							}
 						}
 						parent->onset = onset;
+                        
+                        if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) parent))
+                            notation_item_add_to_selection((t_notation_obj *)x, (t_notation_item *) parent);
 					}
 					
 				}
@@ -8074,8 +8095,11 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 			
 			if (get_num_llll_no_first_attribute_sym_in_llll(chord) > 0) { // if there are still some notes
 				t_chord *ch = addchord_from_llll(x, chord, voice, true, true); 
-				if (ch)
+                if (ch) {
+                    if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)ch))
+                        notation_item_add_to_selection((t_notation_obj *)x, (t_notation_item *)ch);
 					create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)ch, k_UNDO_MODIFICATION_DELETE);
+                }
 			}
 		}
 	}

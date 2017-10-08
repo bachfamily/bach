@@ -8833,16 +8833,20 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             }
                         }
                         
-                    } else if (!x->r_ob.itsme || router == _llllobj_sym_lambda) {
-                        // send deparsed message to score
-                        t_atom *av = NULL, rv;
-                        long ac = llll_deparse(inputlist, &av, 0, 0);
-                        if (ac) {
-                            x->r_ob.itsme = true;
-                            object_method_typed((t_object *)x, router, ac - 1, av + 1, &rv);
-                            x->r_ob.itsme = false;
+                    } else if (s == _llllobj_sym_bach_llll){
+                        bach_atomic_lock(&x->r_ob.c_atomic_lock);
+                        if ((!x->r_ob.itsme || router == _llllobj_sym_lambda) && router != _llllobj_sym_bach_llll) {
+                            // send deparsed message to score
+                            t_atom *av = NULL, rv;
+                            long ac = llll_deparse(inputlist, &av, 0, 0);
+                            if (ac) {
+                                x->r_ob.itsme = true;
+                                object_method_typed((t_object *)x, router, ac - 1, av + 1, &rv);
+                                x->r_ob.itsme = false;
+                            }
+                            bach_freeptr(av);
                         }
-                        bach_freeptr(av);
+                        bach_atomic_unlock(&x->r_ob.c_atomic_lock);
                     } else {
                         post_unknown_message((t_object *) x, inputlist);
                     }

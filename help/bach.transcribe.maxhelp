@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 100.0, 100.0, 684.0, 546.0 ],
+		"rect" : [ 100.0, 100.0, 684.0, 587.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -56,7 +56,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 684.0, 520.0 ],
+						"rect" : [ 0.0, 26.0, 684.0, 561.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -346,7 +346,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 684.0, 520.0 ],
+						"rect" : [ 0.0, 26.0, 684.0, 561.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -887,7 +887,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 684.0, 520.0 ],
+						"rect" : [ 0.0, 26.0, 684.0, 561.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1520,7 +1520,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 684.0, 520.0 ],
+						"rect" : [ 100.0, 126.0, 684.0, 561.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1549,6 +1549,66 @@
 						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-19",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 360.0, 334.91214, 172.0, 25.0 ],
+									"presentation_rect" : [ 381.0, 335.5, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Works with pitch data too"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-16",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 292.0, 335.91214, 63.0, 23.0 ],
+									"presentation_rect" : [ 208.0, 357.91214, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Dbb5 0 2"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-14",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 208.0, 335.91214, 78.0, 23.0 ],
+									"presentation_rect" : [ 195.0, 330.0, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Dbb5 100 2"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-7",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 60.0, 403.0, 68.0, 23.0 ],
+									"style" : "",
+									"text" : "bach.print"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"bubble" : 1,
 									"fontname" : "Arial",
@@ -1636,7 +1696,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 258.0, 350.333313, 361.0, 40.0 ],
+									"patching_rect" : [ 258.0, 389.333313, 361.0, 40.0 ],
 									"style" : "",
 									"text" : "Second outlet outputs current time (in milliseconds) when a new event is received or when transcribe refreshes"
 								}
@@ -1653,7 +1713,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 159.0, 359.833313, 90.0, 23.0 ],
+									"patching_rect" : [ 159.0, 398.833313, 90.0, 23.0 ],
 									"style" : ""
 								}
 
@@ -1772,7 +1832,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "float" ],
-									"patching_rect" : [ 10.0, 331.91214, 168.0, 23.0 ],
+									"patching_rect" : [ 10.0, 370.91214, 168.0, 23.0 ],
 									"style" : "",
 									"text" : "bach.transcribe"
 								}
@@ -1820,7 +1880,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 25.0, 367.833344, 99.0, 23.0 ],
+									"patching_rect" : [ 25.0, 406.833344, 99.0, 23.0 ],
 									"style" : "",
 									"text" : "loadmess clear"
 								}
@@ -1850,7 +1910,7 @@
 									"numvoices" : 2,
 									"out" : "nnnnnnn",
 									"outlettype" : [ "", "", "", "", "", "", "", "bang" ],
-									"patching_rect" : [ 10.0, 392.833344, 497.0, 120.333336 ],
+									"patching_rect" : [ 10.0, 431.833344, 497.0, 120.333336 ],
 									"pitcheditrange" : [ "null" ],
 									"stafflines" : [ 5, 5 ],
 									"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
@@ -1948,6 +2008,20 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-77", 1 ],
+									"source" : [ "obj-14", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-77", 1 ],
+									"source" : [ "obj-16", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-28", 2 ],
 									"source" : [ "obj-18", 0 ]
 								}
@@ -2006,6 +2080,15 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-59", 0 ],
+									"order" : 1,
+									"source" : [ "obj-77", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-7", 0 ],
+									"order" : 0,
 									"source" : [ "obj-77", 0 ]
 								}
 
@@ -2070,7 +2153,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 684.0, 520.0 ],
+						"rect" : [ 0.0, 26.0, 684.0, 561.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2133,20 +2216,6 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.transcribe.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.prepend.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
 				"name" : "helpstarter.js",
 				"bootpath" : "C74:/help/resources",
 				"type" : "TEXT",
@@ -2185,35 +2254,19 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.expr.mxo",
+				"name" : "bach.transcribe.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.args.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.keys.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.portal.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.join.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.reg.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.wrap.mxo",
+				"name" : "bach.print.mxo",
 				"type" : "iLaX"
 			}
 , 			{
 				"name" : "bach.playkeys.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.expr.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -2233,7 +2286,19 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.print.mxo",
+				"name" : "bach.args.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.reg.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.keys.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.portal.mxo",
 				"type" : "iLaX"
 			}
 , 			{

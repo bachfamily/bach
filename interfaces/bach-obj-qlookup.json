@@ -3486,6 +3486,38 @@
       "Into The Matrix"
     ]
   },
+  "bach.transcribe": {
+    "digest": "Fills a <o>bach.roll</o> according to incoming MIDI data",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "transcribe",
+      "write",
+      "fill",
+      "MIDI",
+      "stream",
+      "pitch",
+      "velocity",
+      "cent",
+      "midicent",
+      "voice",
+      "number",
+      "duration",
+      "insert",
+      "note",
+      "proportional"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.quantize",
+      "bach.ezmidiplay",
+      "Real Time Stories"
+    ]
+  },
   "bach.tree": {
     "digest": "Display and edit lllls in a tree diagram",
     "module": "bach",
