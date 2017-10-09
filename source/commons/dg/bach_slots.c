@@ -30,7 +30,9 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 	r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
 	r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 	r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
-	r_ob->slotinfo[i].slot_uwidth = r_ob->slotinfo[i].slot_active_uheight = -1.;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_RELATIVE;
+    r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_FUNCTION_DEFAULT_UWIDTH;
+    r_ob->slotinfo[i].slot_active_uheight = -1.;
 	r_ob->slotinfo[i].slot_default = 0;
     r_ob->slotinfo[i].copy_when_split = false;
 	
@@ -48,7 +50,9 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
     r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
     r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
-    r_ob->slotinfo[i].slot_uwidth = r_ob->slotinfo[i].slot_active_uheight = -1.;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_RELATIVE;
+    r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_FUNCTION_DEFAULT_UWIDTH;
+    r_ob->slotinfo[i].slot_active_uheight = -1.;
     r_ob->slotinfo[i].slot_default = 0;
     r_ob->slotinfo[i].copy_when_split = false;
     
@@ -66,6 +70,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 	r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
 	r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 	r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
 	r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_LONG_FLOAT_DEFAULT_UWIDTH;
 	r_ob->slotinfo[i].slot_active_uheight = -1;
   	r_ob->slotinfo[i].slot_default = 64;
@@ -85,6 +90,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 	r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
 	r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 	r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
 	r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_LONG_FLOAT_DEFAULT_UWIDTH;
 	r_ob->slotinfo[i].slot_active_uheight = -1;
 	r_ob->slotinfo[i].slot_default = 0.;
@@ -104,6 +110,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 	r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
 	r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 	r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
 	r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_LONG_FLOAT_DEFAULT_UWIDTH;
 	r_ob->slotinfo[i].slot_active_uheight = -1;
 	r_ob->slotinfo[i].slot_default = 64;
@@ -123,6 +130,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 	r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
 	r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 	r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
 	r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_LONG_FLOAT_DEFAULT_UWIDTH;
 	r_ob->slotinfo[i].slot_active_uheight = -1;
 	r_ob->slotinfo[i].slot_default = 0.;
@@ -142,6 +150,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 	r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
 	r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 	r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
 	r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_TEXT_DEFAULT_UWIDTH;
 	r_ob->slotinfo[i].slot_active_uheight = -1;
 	r_ob->slotinfo[i].slot_default = 0.;
@@ -161,6 +170,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 	r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL; // idle, ignored
 	r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 	r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
 	r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_FILELIST_DEFAULT_UWIDTH;
 	r_ob->slotinfo[i].slot_active_uheight = -1;
 	r_ob->slotinfo[i].slot_default = 0.;
@@ -180,7 +190,8 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 	r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL; // idle, ignored
 	r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 	r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
-	r_ob->slotinfo[i].slot_uwidth = -1;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_RELATIVE;
+	r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_FUNCTION_DEFAULT_UWIDTH;
 	r_ob->slotinfo[i].slot_active_uheight = -1;
 	r_ob->slotinfo[i].slot_default = 0.;
 
@@ -198,6 +209,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
     r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
     r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
     r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_TEXT_DEFAULT_UWIDTH;
     r_ob->slotinfo[i].slot_active_uheight = -1;
     r_ob->slotinfo[i].slot_default = 0.;
@@ -221,6 +233,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 		r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
 		r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
 		r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+        r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
 		r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_NONE_DEFAULT_UWIDTH;
 		r_ob->slotinfo[i].slot_active_uheight = -1;
 		r_ob->slotinfo[i].slot_default = 0.;
@@ -268,6 +281,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
     r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
     r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
     r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_DYNAMICS_DEFAULT_UWIDTH;
     r_ob->slotinfo[i].slot_active_uheight = -1;
     r_ob->slotinfo[i].slot_default = 0.;
@@ -292,6 +306,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
     r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
     r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
     r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_TEXT_DEFAULT_UWIDTH;
     r_ob->slotinfo[i].slot_active_uheight = -1;
     r_ob->slotinfo[i].slot_default = 0.;
@@ -312,6 +327,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL;
     r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
     r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
     r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_ARTICULATIONS_DEFAULT_UWIDTH;
     r_ob->slotinfo[i].slot_active_uheight = -1;
     r_ob->slotinfo[i].slot_default = 0.;
@@ -332,6 +348,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL; // idle, ignored
     r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0;
     r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false;
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
     r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_NOTEHEAD_DEFAULT_UWIDTH;
     r_ob->slotinfo[i].slot_active_uheight = -1;
     r_ob->slotinfo[i].slot_default = 0.;
@@ -439,6 +456,33 @@ e_slot_types slot_symbol_to_type(t_symbol *type)
     return slottype;
 }
 
+
+t_symbol *slot_temporalmode_to_symbol(e_slot_temporalmodes slot_temporalmode)
+{
+    switch (slot_temporalmode) {
+        case k_SLOT_TEMPORALMODE_RELATIVE: return _llllobj_sym_relative;
+        case k_SLOT_TEMPORALMODE_MILLISECONDS: return _llllobj_sym_milliseconds;
+        case k_SLOT_TEMPORALMODE_TIMEPOINTS: return _llllobj_sym_timepoints;
+        default: return _llllobj_sym_none;
+    }	
+}
+
+
+e_slot_temporalmodes slot_symbol_to_temporalmode(t_symbol *temporalmode)
+{
+    e_slot_temporalmodes slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
+    if (temporalmode == _llllobj_sym_relative)
+        slot_temporalmode = k_SLOT_TEMPORALMODE_RELATIVE;
+    else if (temporalmode == _llllobj_sym_milliseconds)
+        slot_temporalmode = k_SLOT_TEMPORALMODE_MILLISECONDS;
+    else if (temporalmode == _llllobj_sym_timepoints)
+        slot_temporalmode = k_SLOT_TEMPORALMODE_TIMEPOINTS;
+    return slot_temporalmode;
+}
+
+
+
+
 long slot_access_type_from_symbol(t_symbol *sym)
 {
     if (sym == _llllobj_sym_none)
@@ -483,7 +527,7 @@ char is_slot_writable(t_notation_obj *r_ob, long slotnum)
 }
 
 
-t_llll* get_slotinfo_values_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible){
+t_llll* get_slotinfo_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible){
 	t_llll* out_llll = llll_get();
 	int j;
 
@@ -619,13 +663,30 @@ t_llll* get_slotinfo_values_as_llll(t_notation_obj *r_ob, char explicitly_get_al
 			llll_appendllll(inner_llll, defaultllll, 0, WHITENULL_llll);
 		}
 
+        t_llll *temporalmode = llll_get();
+        llll_appendsym(temporalmode, _llllobj_sym_temporalmode);
+        switch (r_ob->slotinfo[j].slot_temporalmode) {
+            case k_SLOT_TEMPORALMODE_NONE:
+                llll_appendsym(temporalmode, _llllobj_sym_none);
+                break;
+            case k_SLOT_TEMPORALMODE_RELATIVE:
+                llll_appendsym(temporalmode, _llllobj_sym_relative);
+                break;
+            case k_SLOT_TEMPORALMODE_MILLISECONDS:
+                llll_appendsym(temporalmode, _llllobj_sym_milliseconds);
+                break;
+            case k_SLOT_TEMPORALMODE_TIMEPOINTS:
+                llll_appendsym(temporalmode, _llllobj_sym_timepoints);
+                break;
+            default:
+                break;
+        }
+        llll_appendllll(inner_llll, temporalmode);
+        
 
 		t_llll *width = llll_get();
 		llll_appendsym(width, _llllobj_sym_width, 0, WHITENULL_llll);
-		if (r_ob->slotinfo[j].slot_uwidth < 0)
-			llll_appendsym(width, _llllobj_sym_temporal, 0, WHITENULL_llll);
-		else
-			llll_appenddouble(width, r_ob->slotinfo[j].slot_uwidth, 0, WHITENULL_llll);
+        llll_appenddouble(width, r_ob->slotinfo[j].slot_uwidth, 0, WHITENULL_llll);
 		llll_appendllll(inner_llll, width, 0, WHITENULL_llll);
 
 
@@ -2416,6 +2477,12 @@ double get_default_slot_window_uheight(t_notation_obj *r_ob, long slot_num, t_no
 	return slot_window_height;
 }
 
+
+char is_slot_temporal(t_notation_obj *r_ob, long slotnum)
+{
+    return (r_ob->slotinfo[slotnum].slot_temporalmode != k_SLOT_TEMPORALMODE_NONE);
+}
+
 void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bgwindow_active_x1, double slot_bgwindow_active_y2, double duration_line_length,
 								t_jfont *jf_slottext, t_jfont *jf_slotbold, t_jfont *jf_slotdynamics, t_notation_item *nitem,
 								double pos_x_for_numbers, double pos_y_for_numbers, double pos_x_for_text, double pos_y_for_text,
@@ -2438,7 +2505,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 
         function_slot_has_labels(r_ob, i, &has_x_labels, &has_y_labels);
 
-		if (r_ob->slotinfo[slotnum].slot_uwidth < 0) { // temporal
+		if (is_slot_temporal(r_ob, slotnum)) {
 			if (r_ob->obj_type != k_NOTATION_OBJECT_SCORE || nitem->type != k_NOTE || !((t_note *)nitem)->tie_to || !r_ob->slotinfo[slotnum].slot_singleslotfortiednotes)
 				slot_window_active_width = duration_line_length;
 			else {
@@ -2484,7 +2551,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 		if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS && slot && slot->firstitem && slot->firstitem->item){
 			t_jrgba slot_color = change_luminosity(r_ob->slotinfo[slotnum].slot_color, 0.9);
 			t_rect rect = build_rect(slot_window_active_x1, slot_window_active_y1, 
-									 r_ob->slotinfo[slotnum].slot_uwidth < 0 ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y,  slot_window_active_height);
+									 is_slot_temporal(r_ob, slotnum) ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y,  slot_window_active_height);
 			switch (r_ob->slotinfo[slotnum].slot_type) {
 				case k_SLOT_TYPE_FUNCTION:
 					paint_function_in_slot_win(r_ob, g, rect, rect, nitem, slotnum, slot_color, 0.5, false, false, true, false, r_ob->bgslot_zoom, false, false, NULL, false);
@@ -2620,13 +2687,13 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 					break;
 				case k_SLOT_TYPE_FILTER:
 					paint_filtergraph_in_slot_win(r_ob, g, build_rect(slot_window_active_x1, slot_window_active_y1, 
-																	  r_ob->slotinfo[slotnum].slot_uwidth < 0 ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y,
+																	  is_slot_temporal(r_ob, slotnum) ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y,
 																	  slot_window_active_height), nitem, slotnum, slot_color, 0.5, false, true, false, false, false, r_ob->bgslot_zoom);
 					break;
 				case k_SLOT_TYPE_DYNFILTER:
 				{
 					t_rect rect = build_rect(slot_window_active_x1, slot_window_active_y1, 
-											 r_ob->slotinfo[slotnum].slot_uwidth < 0 ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y, slot_window_active_height);
+											 is_slot_temporal(r_ob, slotnum) ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y, slot_window_active_height);
 					paint_dynfiltergraph_in_slot_win(r_ob, g, rect, rect, nitem, slotnum, slot_color, 0.5, false, true, false, r_ob->bgslot_zoom);
 				}
 					break;
@@ -3764,11 +3831,19 @@ t_llll *set_slotinfo_from_llll(t_notation_obj *r_ob, t_llll* slotinfo)
                                         r_ob->slotinfo[j].grid = llll_clone(this_llll);
                                         llll_behead(r_ob->slotinfo[j].grid);
                                         
+                                    } else if (router == _llllobj_sym_temporalmode && this_llll->l_head->l_next) {
+                                        if (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM)
+                                            r_ob->slotinfo[j].slot_temporalmode = slot_symbol_to_temporalmode(hatom_getsym(&this_llll->l_head->l_next->l_hatom));
+                                        else
+                                            r_ob->slotinfo[j].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
+
                                     } else if (router == _llllobj_sym_width && this_llll->l_head->l_next) {
                                         if (is_hatom_number(&this_llll->l_head->l_next->l_hatom) && r_ob->obj_type != k_NOTATION_OBJECT_SLOT)
                                             r_ob->slotinfo[j].slot_uwidth = hatom_getdouble(&this_llll->l_head->l_next->l_hatom);
-                                        else // temporal behaviour
-                                            r_ob->slotinfo[j].slot_uwidth = -1;
+                                        else { // backward compatibility with old temporal behaviour!
+                                            r_ob->slotinfo[j].slot_uwidth = 100; // dummy, in any case
+                                            r_ob->slotinfo[j].slot_temporalmode = k_SLOT_TEMPORALMODE_RELATIVE;
+                                        }
                                         
                                     } else if (router == _llllobj_sym_height && this_llll->l_head->l_next) {
                                         if (is_hatom_number(&this_llll->l_head->l_next->l_hatom) && r_ob->obj_type != k_NOTATION_OBJECT_SLOT)

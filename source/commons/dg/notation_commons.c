@@ -10231,7 +10231,7 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
 	}
 	
     for (i = 0; i < CONST_MAX_SLOTS; i++) {
-		if (r_ob->slotinfo[i].slot_uwidth < 0) { // temporal slots
+		if (is_slot_temporal(r_ob, i)) { // temporal slots
 			// need to split!
 			t_llll *left_slot = get_partialnote_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
 			t_llll *right_slot = get_partialnote_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, 1.);
@@ -26944,7 +26944,7 @@ void glue_portion_of_temporal_slots(t_notation_obj *r_ob, t_note *receiver, t_ll
 				t_llll *this_slot_ll = hatom_getllll(&slot_elem->l_hatom);
 				if (this_slot_ll && this_slot_ll->l_head) {
 					long slotnum = llllelem_to_slotnum(r_ob, this_slot_ll->l_head, true);
-					if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS && r_ob->slotinfo[slotnum].slot_uwidth < 0) { // temporal
+					if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS && is_slot_temporal(r_ob, slotnum)) { // temporal
 						done[slotnum] = true;
 						glue_portion_of_single_temporal_slot(r_ob, receiver, this_slot_ll, slotnum,
 															 start_glued_note_portion_rel_x, end_glued_note_portion_rel_x, 
@@ -26958,7 +26958,7 @@ void glue_portion_of_temporal_slots(t_notation_obj *r_ob, t_note *receiver, t_ll
 	// checking remaining slots
 	double rel_x = 1./(1. + portion_duration_ratio_to_receiver);
 	for (i = 0; i < CONST_MAX_SLOTS; i++) {
-		if (r_ob->slotinfo[i].slot_uwidth < 0 && !done[i] && receiver->slot[i].firstitem)
+		if (is_slot_temporal(r_ob, i) && !done[i] && receiver->slot[i].firstitem)
 			rescale_domain_of_single_temporal_slot(r_ob, receiver, i, direction > 0 ? 0. : 1 - rel_x, direction > 0 ? rel_x : 1.);
 	}
 }
@@ -27557,30 +27557,36 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 			t_slotitem *temp_item = slot->firstitem;
 			double new_x_pos = 0.;
 			if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING)
-				&& !only_get_selected_items && r_ob->slotinfo[j].slot_uwidth < 0) { // adding partial tempitems if function is temporal!
-				double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-				while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) < hot_point))
-					temp_item = temp_item->next;
-				if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) != hot_point)) {
-					double this_x = ((t_pts *)temp_item->item)->x; double prev_x = ((t_pts *)temp_item->prev->item)->x;
-					double this_y = ((t_pts *)temp_item->item)->y; double prev_y = ((t_pts *)temp_item->prev->item)->y;
-					double this_slope = ((t_pts *)temp_item->item)->slope;
-					double x_ratio, new_y_pos;
-					t_llll *inner5_llll;
-					new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / notation_item_get_duration_ms(r_ob, nitem);
-					x_ratio = (new_x_pos - prev_x) /(this_x - prev_x);
-					new_y_pos = prev_y + x_ratio * (this_y - prev_y);
-					if (this_y >= prev_y)
-						new_y_pos = rescale_with_slope(new_y_pos, prev_y, this_y, prev_y, this_y, this_slope, 0);
-					else
-						new_y_pos = this_y + prev_y - rescale_with_slope(prev_y - new_y_pos, 0, prev_y - this_y, this_y, prev_y, this_slope, 0);
-					
-					inner5_llll = llll_get();
-					llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // relative x position
-					llll_appenddouble(inner5_llll, new_y_pos, 0, WHITENULL_llll); // y position
-					llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // first
-					llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
-				}
+				&& !only_get_selected_items && is_slot_temporal(r_ob, j)) { // adding partial tempitems if function is temporal!
+                
+                double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
+                
+                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) < hot_point))
+                    temp_item = temp_item->next;
+                if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) != hot_point)) {
+                    double this_x = ((t_pts *)temp_item->item)->x; double prev_x = ((t_pts *)temp_item->prev->item)->x;
+                    double this_y = ((t_pts *)temp_item->item)->y; double prev_y = ((t_pts *)temp_item->prev->item)->y;
+                    double this_slope = ((t_pts *)temp_item->item)->slope;
+                    double x_ratio, new_y_pos;
+                    t_llll *inner5_llll;
+                    if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE) {
+                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / notation_item_get_duration_ms(r_ob, nitem);
+                    } else if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
+                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem));
+                    }
+                    x_ratio = (new_x_pos - prev_x) /(this_x - prev_x);
+                    new_y_pos = prev_y + x_ratio * (this_y - prev_y);
+                    if (this_y >= prev_y)
+                        new_y_pos = rescale_with_slope(new_y_pos, prev_y, this_y, prev_y, this_y, this_slope, 0);
+                    else
+                        new_y_pos = this_y + prev_y - rescale_with_slope(prev_y - new_y_pos, 0, prev_y - this_y, this_y, prev_y, this_slope, 0);
+                    
+                    inner5_llll = llll_get();
+                    llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // relative x position
+                    llll_appenddouble(inner5_llll, new_y_pos, 0, WHITENULL_llll); // y position
+                    llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // first
+                    llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
+                }
 			}
 			if (mode != k_CONSIDER_FOR_SAMPLING || r_ob->slotinfo[j].slot_uwidth >= 0) {
 				while (temp_item && temp_item->item) {
@@ -27602,7 +27608,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 			t_slotitem *temp_item = slot->firstitem;
 			double new_x_pos = 0.;
 			if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING)
-				&& !only_get_selected_items && r_ob->slotinfo[j].slot_uwidth < 0) { // adding partial tempitems if function is temporal!
+				&& !only_get_selected_items && is_slot_temporal(r_ob, j)) { // adding partial tempitems if function is temporal!
 				double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
 				while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts3d *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) < hot_point))
 					temp_item = temp_item->next;
@@ -27616,7 +27622,10 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 					double this_slope = ((t_pts3d *)temp_item->item)->slope;
 					double x_ratio, new_y_pos, new_z_pos;
 					t_llll *inner5_llll;
-					new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / notation_item_get_duration_ms(r_ob, nitem);
+                    if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
+                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / notation_item_get_duration_ms(r_ob, nitem);
+                    else if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
+                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem));
 					x_ratio = (new_x_pos - prev_x) /(this_x - prev_x);
 
 					new_y_pos = prev_y + x_ratio * (this_y - prev_y);
@@ -39894,7 +39903,7 @@ t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, ch
 		llll_appendsym(out_llll, r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? _llllobj_sym_roll : _llllobj_sym_score, 0, WHITENULL_llll);
 
 	if (dump_what & k_HEADER_SLOTINFO) 
-		llll_appendllll(out_llll, get_slotinfo_values_as_llll(r_ob, explicitly_get_also_default_stuff, also_get_fields_saved_in_max_inspector, for_what == k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY), 0, WHITENULL_llll); // slotinfo
+		llll_appendllll(out_llll, get_slotinfo_as_llll(r_ob, explicitly_get_also_default_stuff, also_get_fields_saved_in_max_inspector, for_what == k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY), 0, WHITENULL_llll); // slotinfo
 	
 	if (r_ob->obj_type != k_NOTATION_OBJECT_SLOT) {
 
@@ -41798,13 +41807,19 @@ void trim_note_end(t_notation_obj *r_ob, t_note *nt, double delta_ms)
 	
 	// handling temporal slots
 	for (i = 0; i < CONST_MAX_SLOTS; i++) {
-		if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_FUNCTION && nt->slot[i].firstitem && r_ob->slotinfo[i].slot_uwidth < 0){ // temporal function
+		if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_FUNCTION && nt->slot[i].firstitem && is_slot_temporal(r_ob, i)){ // temporal function
 			t_slotitem *thisitem = nt->slot[i].firstitem;
 			while (thisitem){
 				t_slotitem *next = thisitem->next;
 				t_pts *pts = (t_pts *) thisitem->item;
-				double pts_absolute_onset = pts->x * nt->duration;
-				double new_rel_x_pos = pts_absolute_onset/new_duration;
+                
+                double pts_absolute_onset = 0;
+                if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
+                    pts_absolute_onset = pts->x * nt->duration;
+                else if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
+                    pts_absolute_onset = pts->x;
+				
+                double new_rel_x_pos = pts_absolute_onset/new_duration;
 				if (new_rel_x_pos > 1 || new_rel_x_pos < 0) {
 					if (thisitem->prev && ((t_pts *)thisitem->prev->item)->x == 1)
 						delete_slotitem(r_ob, i, thisitem);
@@ -41819,13 +41834,19 @@ void trim_note_end(t_notation_obj *r_ob, t_note *nt, double delta_ms)
 					pts->x = new_rel_x_pos;
 				thisitem = next;
 			}
-		} else if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_3DFUNCTION && nt->slot[i].firstitem && r_ob->slotinfo[i].slot_uwidth < 0){ // temporal function
+		} else if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_3DFUNCTION && nt->slot[i].firstitem && is_slot_temporal(r_ob, i)){ // temporal function
 			t_slotitem *thisitem = nt->slot[i].firstitem;
 			while (thisitem){
 				t_slotitem *next = thisitem->next;
 				t_pts3d *pts = (t_pts3d *) thisitem->item;
-				double pts_absolute_onset = pts->x * nt->duration;
-				double new_rel_x_pos = pts_absolute_onset/new_duration;
+                
+                double pts_absolute_onset = 0;
+                if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
+                    pts_absolute_onset = pts->x * nt->duration;
+                else if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
+                    pts_absolute_onset = pts->x;
+
+                double new_rel_x_pos = pts_absolute_onset/new_duration;
 				if (new_rel_x_pos > 1 || new_rel_x_pos < 0) {
 					if (thisitem->prev && ((t_pts3d *)thisitem->prev->item)->x == 1)
 						delete_slotitem(r_ob, i, thisitem);
@@ -41841,13 +41862,19 @@ void trim_note_end(t_notation_obj *r_ob, t_note *nt, double delta_ms)
 					pts->x = new_rel_x_pos;
 				thisitem = next;
 			}
-		} else if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_SPAT && nt->slot[i].firstitem && r_ob->slotinfo[i].slot_uwidth < 0){ // temporal spatfunction
+		} else if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_SPAT && nt->slot[i].firstitem && is_slot_temporal(r_ob, i)){ // temporal spatfunction
 			t_slotitem *thisitem = nt->slot[i].firstitem;
 			while (thisitem){
 				t_slotitem *next = thisitem->next;
 				t_spatpt *spatp = (t_spatpt *) thisitem->item;
-				double pts_absolute_onset = spatp->t * nt->duration;
-				double new_rel_t_pos = pts_absolute_onset/new_duration;
+                
+                double pts_absolute_onset = 0;
+                if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
+                    pts_absolute_onset = spatp->t * nt->duration;
+                else if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
+                    pts_absolute_onset = spatp->t;
+
+                double new_rel_t_pos = pts_absolute_onset/new_duration;
 				if (new_rel_t_pos > 1 || new_rel_t_pos < 0) {
 					if (thisitem->prev && ((t_spatpt *)thisitem->prev->item)->t == 1)
 						delete_slotitem(r_ob, i, thisitem);
@@ -42054,14 +42081,20 @@ void trim_chord_start(t_notation_obj *r_ob, t_chord *ch, double delta_ms)
     for (nt = ch->firstnote; nt; nt = nt->next) {
         double new_duration = nt->duration - delta_ms;
         for (i = 0; i < CONST_MAX_SLOTS; i++) {
-            if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_FUNCTION && nt->slot[i].firstitem && r_ob->slotinfo[i].slot_uwidth < 0){ // temporal function
+            if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_FUNCTION && nt->slot[i].firstitem && is_slot_temporal(r_ob, i)){ // temporal function
                 t_slotitem *thisitem = nt->slot[i].firstitem;
                 while (thisitem){
                     t_slotitem *next = thisitem->next;
                     t_pts *pts = (t_pts *) thisitem->item;
                     // TO DO: implement for a generic domain; everywhere
                     // should be: rescale(pts->x, r_ob->slotinfo[i].slot_domain[0], r_ob->slotinfo[i].slot_domain[1], 0, 1)
-                    double pts_absolute_onset = ch->onset + pts->x * nt->duration;
+
+                    double pts_absolute_onset = 0;
+                    if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
+                        pts_absolute_onset = ch->onset + pts->x * nt->duration;
+                    else if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
+                        pts_absolute_onset = ch->onset + pts->x;
+                    
                     double new_rel_x_pos = (pts_absolute_onset - new_onset)/new_duration;
                     if (new_rel_x_pos > 1 || new_rel_x_pos < 0) {
                         double next_pts_absolute_onset = thisitem->next ? ch->onset + ((t_pts *)thisitem->next->item)->x * nt->duration : 0;
@@ -42081,12 +42114,18 @@ void trim_chord_start(t_notation_obj *r_ob, t_chord *ch, double delta_ms)
                         pts->x = new_rel_x_pos;
                     thisitem = next;
                 }
-            } else if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_3DFUNCTION && nt->slot[i].firstitem && r_ob->slotinfo[i].slot_uwidth < 0){ // temporal function
+            } else if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_3DFUNCTION && nt->slot[i].firstitem && is_slot_temporal(r_ob, i)){ // temporal function
                 t_slotitem *thisitem = nt->slot[i].firstitem;
                 while (thisitem){
                     t_slotitem *next = thisitem->next;
                     t_pts3d *pts = (t_pts3d *) thisitem->item;
-                    double pts_absolute_onset = pts->x * nt->duration;
+                    
+                    double pts_absolute_onset = 0;
+                    if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
+                        pts_absolute_onset = ch->onset + pts->x * nt->duration;
+                    else if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
+                        pts_absolute_onset = ch->onset + pts->x;
+                    
                     double new_rel_x_pos = pts_absolute_onset/new_duration;
                     if (new_rel_x_pos > 1 || new_rel_x_pos < 0) {
                         if (thisitem->prev && ((t_pts3d *)thisitem->prev->item)->x == 1)
@@ -42103,12 +42142,18 @@ void trim_chord_start(t_notation_obj *r_ob, t_chord *ch, double delta_ms)
                         pts->x = new_rel_x_pos;
                     thisitem = next;
                 }
-            } else if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_SPAT && nt->slot[i].firstitem && r_ob->slotinfo[i].slot_uwidth < 0){ // temporal spatfunction
+            } else if (r_ob->slotinfo[i].slot_type == k_SLOT_TYPE_SPAT && nt->slot[i].firstitem && is_slot_temporal(r_ob, i)){ // temporal spatfunction
                 t_slotitem *thisitem = nt->slot[i].firstitem;
                 while (thisitem){
                     t_slotitem *next = thisitem->next;
                     t_spatpt *spatp = (t_spatpt *) thisitem->item;
-                    double pts_absolute_onset = spatp->t * nt->duration;
+                    
+                    double pts_absolute_onset = 0;
+                    if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
+                        pts_absolute_onset = ch->onset + spatp->t * nt->duration;
+                    else if (r_ob->slotinfo[i].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
+                        pts_absolute_onset = ch->onset + spatp->t;
+                    
                     double new_rel_t_pos = pts_absolute_onset/new_duration;
                     if (new_rel_t_pos > 1 || new_rel_t_pos < 0) {
                         if (thisitem->prev && ((t_spatpt *)thisitem->prev->item)->t == 1)

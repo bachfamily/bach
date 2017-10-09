@@ -2617,7 +2617,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
 	llll_appendsym(out_llll, _llllobj_sym_score, 0, WHITENULL_llll); // "score" message
 	
 	if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_slotinfo))
-		llll_appendllll(out_llll, get_slotinfo_values_as_llll((t_notation_obj *) x, false, false, false), 0, WHITENULL_llll); // slotinfo
+		llll_appendllll(out_llll, get_slotinfo_as_llll((t_notation_obj *) x, false, false, false), 0, WHITENULL_llll); // slotinfo
 
 	if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_commands))
 		llll_appendllll(out_llll, get_commands_values_as_llll((t_notation_obj *) x, false), 0, WHITENULL_llll); // command
@@ -8274,7 +8274,7 @@ void score2roll(t_score *x, char markmeasures, char marktimesig, char marktempi,
     lock_general_mutex((t_notation_obj *)x);
 
     llll_appendsym(out_llll, _llllobj_sym_score2roll, 0, WHITENULL_llll); // "score2roll" message
-	llll_appendllll(out_llll, get_slotinfo_values_as_llll((t_notation_obj *) x, false, false, false), 0, WHITENULL_llll); // slotinfo
+	llll_appendllll(out_llll, get_slotinfo_as_llll((t_notation_obj *) x, false, false, false), 0, WHITENULL_llll); // slotinfo
 	llll_appendllll(out_llll, get_commands_values_as_llll((t_notation_obj *) x, false), 0, WHITENULL_llll); // command
 	llll_appendllll(out_llll, get_clefs_as_llll((t_notation_obj *) x, true), 0, WHITENULL_llll); // clefs
 	llll_appendllll(out_llll, get_keys_as_llll((t_notation_obj *) x, true), 0, WHITENULL_llll); // keys
@@ -13250,7 +13250,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
 	llll_appendsym(out_llll, _llllobj_sym_score, 0, WHITENULL_llll); // "score" message
 	
 	if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_slotinfo))
-		llll_appendllll(out_llll, get_slotinfo_values_as_llll((t_notation_obj *) x, false, false, false), 0, WHITENULL_llll); // slotinfo
+		llll_appendllll(out_llll, get_slotinfo_as_llll((t_notation_obj *) x, false, false, false), 0, WHITENULL_llll); // slotinfo
 	
 	if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_commands))
 		llll_appendllll(out_llll, get_commands_values_as_llll((t_notation_obj *) x, false), 0, WHITENULL_llll); // command
@@ -17040,7 +17040,7 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                 }
                 
                 for (long i = 0; i < CONST_MAX_SLOTS; i++) {
-                    if (x->r_ob.slotinfo[i].slot_uwidth < 0) { // temporal slots
+                    if (is_slot_temporal((t_notation_obj *)x, i)) { // temporal slots
                         // need to split!
                         t_llll *left_slot = get_partialnote_single_slot_values_as_llll((t_notation_obj *)x, nt, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
                         t_llll *right_slot = get_partialnote_single_slot_values_as_llll((t_notation_obj *)x, nt, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, 1.);

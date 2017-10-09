@@ -10570,7 +10570,7 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 			
 			// determine the slot window x
 			lock_general_mutex((t_notation_obj *)x);
-			if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth < 0) { //temporal slot
+			if (is_slot_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
 				x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
 				x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
 				
@@ -12930,7 +12930,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
 	llll_appendsym(out_llll, _llllobj_sym_roll, 0, WHITENULL_llll); // "roll" message
 	
 	if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_slotinfo))
-		llll_appendllll(out_llll, get_slotinfo_values_as_llll((t_notation_obj *) x, false, false, false), 0, WHITENULL_llll); // slotinfo
+		llll_appendllll(out_llll, get_slotinfo_as_llll((t_notation_obj *) x, false, false, false), 0, WHITENULL_llll); // slotinfo
 
 	if (what_to_dump_is_empty || is_symbol_in_llll_first_level(what_to_dump, _llllobj_sym_commands))
 		llll_appendllll(out_llll, get_commands_values_as_llll((t_notation_obj *) x, k_CONSIDER_FOR_SUBDUMPING), 0, WHITENULL_llll); // command

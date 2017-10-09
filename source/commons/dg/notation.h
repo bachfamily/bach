@@ -309,6 +309,7 @@
 #define CONST_SLOT_ARTICULATIONS_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_ARTICULATIONS
 #define CONST_SLOT_NOTEHEAD_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_NOTEHEAD
 #define CONST_SLOT_DYNAMICS_DEFAULT_UWIDTH 70				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_DYNAMICS
+#define CONST_SLOT_FUNCTION_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FUNCTION (when static)
 #define CONST_SLOT_FILELIST_DEFAULT_UWIDTH 150			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FILELIST
 #define CONST_SLOT_MATRIX_DEFAULT_UWIDTH 150			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_TOGGLEMATRIX, #k_SLOT_TYPE_INTMATRIX, #k_SLOT_TYPE_FLOATMATRIX
 #define CONST_SLOT_FILTER_DEFAULT_UWIDTH 200			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FILTER 
@@ -1337,6 +1338,20 @@ typedef enum _slot_types {
     k_NUM_SLOT_TYPES            ///< Number of slot types (NONE-type included).
 
 } e_slot_types;
+
+
+/** Slot temporal modes.
+	@ingroup	slots
+ */
+
+typedef enum _slot_temporalmodes
+{
+    k_SLOT_TEMPORALMODE_NONE = 0,               ///< The slot is static (not temporal)
+    k_SLOT_TEMPORALMODE_RELATIVE = 1,           ///< The slot is temporal, and the temporal position is a relative value between the domain start (= note beginning) and the domain end (note end)
+    k_SLOT_TEMPORALMODE_MILLISECONDS = 2,       ///< The slot is temporal, and the temporal position is a ms position (0 being the note start)
+    k_SLOT_TEMPORALMODE_TIMEPOINTS = 3,         ///< The slot is temporal, and the temporal position is a timepoint (not yet supported)
+    k_NUM_SLOT_TEMPORALMODES                    ///< Number of slot temporal modes (NONE-type included).
+} e_slot_temporalmodes;
 
 
 /** Things to which a slot can be linked with.
@@ -3593,6 +3608,7 @@ typedef struct _slotinfo
 	long		slot_num;								///< 0-based slot number
 	t_symbol	*slot_name;								///< Name of the slot
 	char		slot_type;								///< Type of the slot, must be one of #e_slot_types
+    char        slot_temporalmode;                      ///< Temporal mode of the slot, must be one of the #e_slot_temporalmodes
     
 	double		slot_domain[2];							///< Domain of the slot (minimum and maximum value, only for #k_SLOT_TYPE_FUNCTION slots)
 	double		slot_domain_par;						///< Slope parameter (-1 to 1) which can desplay exponentially the slot domain
@@ -3600,7 +3616,8 @@ typedef struct _slotinfo
 	double		slot_range_par;							///< Slope parameter (-1 to 1) which can display exponentially the slot range (see #t_pts to know more about the slope)
 	double		slot_zrange[2];							///< Range of the 3rd dimension (the one "coming out from the screen) for #k_SLOT_TYPE_3DFUNCTION slots (minimum and maximum value)
 	double		slot_zrange_par;						///< Slope parameter (-1 to 1) which can display exponentially the of the 3rd dimension (the one "coming out from the screen) for #k_SLOT_TYPE_3DFUNCTION slots
-	
+
+    
     t_llll		*slot_repr;								///< Slot representation. This can be:
 														///< - a single symbol, such as "Hz", and will be understood as unit of measurement;
 														///< - a plain llll, such as "(John George Ringo)", which will be understood as enumeration content for
@@ -7717,6 +7734,15 @@ t_marker *get_marker_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllele
 // -----------------------------------
 
 
+/**	Tell if a given slot is temporal (of any kind).
+	@ingroup			slots
+	@param r_ob			The notation object
+	@param slotnum		The 0-based slot number
+	@return				1 if the slot is temporal, 0 otherwise
+ */
+char is_slot_temporal(t_notation_obj *r_ob, long slotnum);
+
+
 /**	Allocates the memory for a new #t_slotitem.
 	@ingroup			slots
 	@param r_ob			The notation object
@@ -7785,6 +7811,10 @@ t_symbol *slot_type_to_symbol(e_slot_types slot_type);
 	@return		One of the #e_slot_types (e.g. #k_SLOT_TYPE_FUNCTION)
  */
 e_slot_types slot_symbol_to_type(t_symbol *type);
+
+// TBD
+t_symbol *slot_temporalmode_to_symbol(e_slot_temporalmodes slot_temporalmode);
+e_slot_temporalmodes slot_symbol_to_temporalmode(t_symbol *temporalmode);
 
 
 /**	Get last item of a slot.
@@ -8177,7 +8207,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
     @param bw_compatible      Guarantees backward compatibility with bach 0.7.9 or previous (i.e. only outputs 30 slots)
 	@return				An llll containing the slotinfo information for the notation object.
  */
-t_llll* get_slotinfo_values_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible);
+t_llll* get_slotinfo_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible);
 
 
 /**	Just like note_get_slots_values_as_llll() but it removes the gensym("slots") symbol.

@@ -224,6 +224,12 @@ void get_slottypes_as_sym_list(t_notation_obj *r_ob, t_symbol **list)
         list[i] = slot_type_to_symbol((e_slot_types)i);
 }
 
+void get_slottemporalmodes_as_sym_list(t_notation_obj *r_ob, t_symbol **list)
+{
+    long i;
+    for (i = 0; i < k_NUM_SLOT_TEMPORALMODES; i++)
+        list[i] = slot_temporalmode_to_symbol((e_slot_temporalmodes)i);
+}
 void get_slotlinkages_as_sym_list(t_notation_obj *r_ob, t_symbol **list)
 {
 	list[k_SLOT_LINKAGE_NONE] = _llllobj_sym_none;
@@ -341,6 +347,7 @@ void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
 
 	// SLOTINFO ATTRIBUTES
 	t_symbol *slottypes[k_NUM_SLOT_TYPES];
+    t_symbol *slottemporalmodes[k_NUM_SLOT_TEMPORALMODES];
 	t_symbol *slotlinkages[k_NUM_SLOT_LINKAGES];
     t_symbol *accesstypes[3];
 	t_symbol *clefs[23];
@@ -355,6 +362,10 @@ void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_access, "Access", k_SLOTINFO, t_slotinfo, access_type, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
     get_access_types_as_sym_list(r_ob, accesstypes);
     bach_attribute_add_enumindex(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_access), 3, accesstypes);
+
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_temporalmode, "Temporal Mode", k_SLOTINFO, t_slotinfo, slot_temporalmode, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
+    get_slottemporalmodes_as_sym_list(r_ob, slottemporalmodes);
+    bach_attribute_add_enumindex(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_temporalmode), 3, slottemporalmodes);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_domain, "Domain", k_SLOTINFO, t_slotinfo, slot_domain, k_BACH_ATTR_DOUBLE_ARRAY, 2, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_domainslope, "Domain Slope", k_SLOTINFO, t_slotinfo, slot_domain_par, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
@@ -1121,6 +1132,7 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
                 return 0;
             return 1;
         }
+        
         // slot is writable
 		if ((attr->name == _llllobj_sym_domain || attr->name == _llllobj_sym_domainslope) &&
 			(slot_type != k_SLOT_TYPE_FUNCTION && slot_type != k_SLOT_TYPE_FILTER && slot_type != k_SLOT_TYPE_DYNFILTER))
@@ -1131,8 +1143,14 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
 			return 1;
 		else if (attr->name == _llllobj_sym_zsnap && slot_type != k_SLOT_TYPE_3DFUNCTION)
 			return 1;
+        else if (attr->name == _llllobj_sym_domainslope && ((t_slotinfo *)elem)->slot_temporalmode != k_SLOT_TEMPORALMODE_NONE)
+            return 1;
+        else if (attr->name == _llllobj_sym_domain && (((t_slotinfo *)elem)->slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS || ((t_slotinfo *)elem)->slot_temporalmode == k_SLOT_TEMPORALMODE_TIMEPOINTS))
+            return 1;
 		else if ((attr->name == _llllobj_sym_width || attr->name == _llllobj_sym_height) && r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			return 1;
+        else if (attr->name == _llllobj_sym_width && ((t_slotinfo *)elem)->slot_temporalmode != k_SLOT_TEMPORALMODE_NONE)
+            return 1;
 		else if (attr->name == _llllobj_sym_height && (slot_type == k_SLOT_TYPE_INTLIST || slot_type == k_SLOT_TYPE_FLOATLIST || slot_type == k_SLOT_TYPE_FILELIST))
 			return 1;
 		else if (attr->name == _llllobj_sym_default && 
@@ -1507,12 +1525,12 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 	
 	if (attr->owner_type == k_SLOTINFO) {
 		if (attr->name == _llllobj_sym_width) {
-			if (attr->attr_type == k_BACH_ATTR_DOUBLE && *((double *)field) < 0) {
+/*			if (attr->attr_type == k_BACH_ATTR_DOUBLE && *((double *)field) < 0) {
 				*ac = 1;
 				*av = (t_atom *)bach_newptr(sizeof(t_atom));
 				atom_setsym(*av, _llllobj_sym_temporal);
 				return;
-			}
+			} */
 		} else if (attr->name == _llllobj_sym_height) {
 			if (attr->attr_type == k_BACH_ATTR_DOUBLE && *((double *)field) < 0) {
 				*ac = 1;

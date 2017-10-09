@@ -10512,7 +10512,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 case k_NOTE:
                 {
                     t_note *activenote = (t_note *)x->r_ob.active_slot_notationitem;
-                    if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth < 0) { //temporal slot
+                    if (is_slot_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
                         x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
                         if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_singleslotfortiednotes) {
                             t_note *lasttied = note_get_last_in_tieseq(activenote);
@@ -10533,7 +10533,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux));
                         x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->parent->width_ux);
                     } else {
-                        if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth < 0) { //temporal slot
+                        if (is_slot_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
                             x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->stem_offset_ux));
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->stem_offset_ux + activechord->duration_ux);
                         } else {

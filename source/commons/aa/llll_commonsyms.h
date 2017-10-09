@@ -212,6 +212,10 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_timeatpixel;
 	t_symbol	*s_width;
 	t_symbol	*s_temporal;
+    t_symbol	*s_temporalmode;
+    t_symbol	*s_relative;
+    t_symbol	*s_milliseconds;
+    t_symbol	*s_timepoints;
 	t_symbol	*s_abr_none_abr;
 	t_symbol	*s_legato;
     t_symbol	*s_legatotrim;
@@ -586,6 +590,10 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_timeatpixel	(_llllobj_common_symbols->s_timeatpixel)
 #define _llllobj_sym_width			(_llllobj_common_symbols->s_width)
 #define _llllobj_sym_temporal		(_llllobj_common_symbols->s_temporal)
+#define _llllobj_sym_temporalmode		(_llllobj_common_symbols->s_temporalmode)
+#define _llllobj_sym_relative		(_llllobj_common_symbols->s_relative)
+#define _llllobj_sym_milliseconds		(_llllobj_common_symbols->s_milliseconds)
+#define _llllobj_sym_timepoints		(_llllobj_common_symbols->s_timepoints)
 #define _llllobj_sym_abr_none_abr	(_llllobj_common_symbols->s_abr_none_abr)
 #define _llllobj_sym_legato			(_llllobj_common_symbols->s_legato)
 #define _llllobj_sym_legatotrim		(_llllobj_common_symbols->s_legatotrim)
