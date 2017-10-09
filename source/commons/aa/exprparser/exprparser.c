@@ -1508,7 +1508,7 @@ YY_RULE_SETUP
 case 77:
 YY_RULE_SETUP
 #line 320 "exprparser.l"
-{ return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_random); }
+{ return lexpr_append_lexeme_FUNC_binary_ALL_dontfold(epd->lexeme, hatom_fn_random); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
