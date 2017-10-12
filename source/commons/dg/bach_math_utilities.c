@@ -43,7 +43,8 @@ double rescale_with_slope(double value, double min, double max, double new_min, 
 	return rescale_with_slope_and_get_derivative(value, min, max, new_min, new_max, slope, NULL, admit_mirroring);
 }
 
-double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char admit_mirroring){
+double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char admit_mirroring)
+{
 	char mirrored;
 	double res;
 	// slope is between -1 and 1; 0 = linear; this function rescale a given value to new boundaries with a given slope.
@@ -66,7 +67,7 @@ double rescale_with_slope_and_get_derivative(double value, double min, double ma
 		double base, exp, pow_val;
 		value = CLAMP(value, min, max);
 		base = (value - min)/(max - min);
-		exp = (1+ slope) /(1 - slope);
+		exp = (1+slope)/(1-slope);
 		pow_val = pow(base, exp);
 		res = new_min + (new_max - new_min) * pow_val;
 		if (derivative)
@@ -78,9 +79,6 @@ double rescale_with_slope_and_get_derivative(double value, double min, double ma
 		if (derivative)
 			*derivative *= -1;
 	}
-	
-	//	if (res >= new_max) return new_max;
-	//	if (res <= new_min) return new_min;
 	return res;
 }
 

@@ -2046,7 +2046,7 @@ long uislot_key(t_uislot *x, t_object *patcherview, long keycode, long modifiers
 						}
 						if (def_min) {
 							t_pt pt;
-							function_xy_values_to_pt((t_notation_obj *)x, min, 0, x->r_ob.active_slot_num, activeslotwin, &pt);
+							function_xy_values_to_pt((t_notation_obj *)x, (t_notation_item *)x->r_ob.dummynote, min, 0, x->r_ob.active_slot_num, activeslotwin, &pt);
 							offset -= pt.x - activeslotwin.x;
 						}
 						

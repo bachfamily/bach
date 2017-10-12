@@ -5715,7 +5715,7 @@ void notation_obj_paste_slot_selection_to_open_slot_window(t_notation_obj *r_ob,
 		}
 		if (def_min) {
 			t_pt pt;
-			function_xy_values_to_pt(r_ob, min, 0, r_ob->active_slot_num, activeslotwin, &pt);
+			function_xy_values_to_pt(r_ob, r_ob->active_slot_notationitem, min, 0, r_ob->active_slot_num, activeslotwin, &pt);
 			offset -= pt.x - activeslotwin.x;
 		}
 		

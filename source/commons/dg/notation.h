@@ -7644,7 +7644,7 @@ void quick_notation_obj_recompute_all_chord_parameters(t_notation_obj *r_ob);
 	@param		tempo		The tempo
 	@return		1 if the tempo is necessary, 0 if the score timings remain exactly the same without the tempo.
 */ 
-char is_tempo_necessary(t_tempo *tempo);
+char tempo_is_necessary(t_tempo *tempo);
 
 
 /**	Simply build a time signature from a numerator/denominator couple.
@@ -7740,7 +7740,16 @@ t_marker *get_marker_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllele
 	@param slotnum		The 0-based slot number
 	@return				1 if the slot is temporal, 0 otherwise
  */
-char is_slot_temporal(t_notation_obj *r_ob, long slotnum);
+char slot_is_temporal(t_notation_obj *r_ob, long slotnum);
+
+
+/**	Tell if a given slot is temporal in absolute mode (i.e. non-relative).
+	@ingroup			slots
+	@param r_ob			The notation object
+	@param slotnum		The 0-based slot number
+	@return				1 if the slot is temporal in absolute mode, 0 otherwise
+ */
+char slot_is_temporal_absolute(t_notation_obj *r_ob, long slotnum);
 
 
 /**	Allocates the memory for a new #t_slotitem.
@@ -8432,6 +8441,7 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
 /**	Convert a screen point (pixels) into its coordinates in a function slot, by retrieving the x and y coordinates.
 	@ingroup			slot_graphic
 	@param r_ob			The notation object
+    @param nitem        The notation item owning the slot
 	@param pt			The point on the screen (in pixels) as a #t_pt structure
 	@param slot_number	Number (0-based) of the (function) slot
 	@param active_slot_window	The rectangle containing the pixels for the active part of the slotwindow
@@ -8441,12 +8451,13 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
 	@remark				It works like pt_to_function_slot_point() but it doesn't allocate memory for a slotitem, it just fills the <xval> and <yval> pointers.
 	@see				pt_to_function_slot_point()
  */
-void pt_to_function_xy_values(t_notation_obj *r_ob, t_pt pt, long slot_number, t_rect active_slot_window, double *xval, double *yval);
+void pt_to_function_xy_values(t_notation_obj *r_ob, t_notation_item *nitem, t_pt pt, long slot_number, t_rect active_slot_window, double *xval, double *yval);
 
 
 /**	Convert the coordinates of a point in a function slot into its screen coordinates (in pixels).
 	@ingroup					slot_graphic
 	@param r_ob					The notation object
+    @param nitem                The notation item owning the slot
 	@param xval					x coordinate of the function point
 	@param yval					y coordinate of the function point
 	@param slot_number			Number (0-based) of the (function) slot
@@ -8456,12 +8467,13 @@ void pt_to_function_xy_values(t_notation_obj *r_ob, t_pt pt, long slot_number, t
 	@see						pt_to_function_xy_values()
 	@see						function_xyz_values_to_pt()
  */
-void function_xy_values_to_pt(t_notation_obj *r_ob, double xval, double yval, long slot_number, t_rect active_slot_window, t_pt *pt);
+void function_xy_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, double xval, double yval, long slot_number, t_rect active_slot_window, t_pt *pt);
 
 
 /**	Convert the coordinates of a point in a 3d-function slot into its screen coordinates (in pixels).
 	@ingroup					slot_graphic
 	@param r_ob					The notation object
+    @param nitem                The notation item owning the slot
 	@param xval					x coordinate of the function point
 	@param yval					y coordinate of the function point
 	@param zval					z coordinate of the function point
@@ -8474,7 +8486,7 @@ void function_xy_values_to_pt(t_notation_obj *r_ob, double xval, double yval, lo
 	
 	@see						function_xy_values_to_pt()
  */
-void function_xyz_values_to_pt(t_notation_obj *r_ob, double xval, double yval, double zval, long slot_number, t_rect active_slot_window, t_pt *pt, double slot_zoom);
+void function_xyz_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, double xval, double yval, double zval, long slot_number, t_rect active_slot_window, t_pt *pt, double slot_zoom);
 
 
 // TBD
@@ -14083,6 +14095,7 @@ t_llll* get_function_slot_sampling(t_notation_obj *r_ob, t_note *note, long slot
 t_llll* get_function_slot_sampling_delta(t_notation_obj *r_ob, t_note *note, long slot_num, double delta);
 
 
+
 /**	Paste slot items from an llll (currently this only works for function slots).
 	The function inserts the slot items at the appropriate places inside the llll.
 	@ingroup slot_interface
@@ -14098,6 +14111,7 @@ void paste_slotitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum,
 
 // TBD
 t_llll *slots_develop_ranges(t_notation_obj *r_ob, t_llll *ll);
+double slot_get_max_x(t_notation_obj *r_ob, t_slot *slot, long slot_num);
 
 
 
@@ -17603,7 +17617,7 @@ void bach_get_attr(t_bach_inspector_manager *man, void *obj, t_bach_attribute *a
 	@param	obj		Pointer to the object being inspected
 	@param	attr	The bach attribute
  */
-long bach_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+long bach_attr_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Preprocessor for a bach attribute. This function is called BEFORE the attribute is set. 

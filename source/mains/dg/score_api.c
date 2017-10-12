@@ -10512,17 +10512,32 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 case k_NOTE:
                 {
                     t_note *activenote = (t_note *)x->r_ob.active_slot_notationitem;
-                    if (is_slot_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
-                        x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
+                    
+                    x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
+
+                    if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1.) { // duration
                         if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_singleslotfortiednotes) {
                             t_note *lasttied = note_get_last_in_tieseq(activenote);
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, lasttied->parent->parent->tuttipoint_reference->offset_ux + lasttied->parent->stem_offset_ux + lasttied->parent->duration_ux);
                         } else {
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux + activenote->parent->duration_ux);
                         }
+                        
+                    } else if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { // auto
+                        double max_x = slot_get_max_x((t_notation_obj *)x, notation_item_get_slot((t_notation_obj *)x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num), x->r_ob.active_slot_num);
+                        
+                        if (slot_is_temporal_absolute((t_notation_obj *)x, x->r_ob.active_slot_num)) {
+                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + MAX(max_x, notation_item_get_duration_ms((t_notation_obj *)x, (t_notation_item *)activenote)));
+                        } else {
+                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + rescale(MAX(max_x, 1.), x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[0], x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[1], 0, notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem)));
+                        }
+                        
                     } else {
-                        x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
-                        x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
+                        if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
+                            x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
+                        } else {
+                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth);
+                        }
                     }
                 }
                     break;
@@ -10533,7 +10548,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux));
                         x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->parent->width_ux);
                     } else {
-                        if (is_slot_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
+                        if (slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
                             x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->stem_offset_ux));
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->stem_offset_ux + activechord->duration_ux);
                         } else {

@@ -10570,17 +10570,40 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 			
 			// determine the slot window x
 			lock_general_mutex((t_notation_obj *)x);
-			if (is_slot_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
-				x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
-				x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
+            
+            if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1.) { // duration
+                x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
+                x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
 				
 				x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
 				x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
-			} else {
+                
+            } else if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { // auto
+                double max_x = slot_get_max_x((t_notation_obj *)x, notation_item_get_slot((t_notation_obj *)x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num), x->r_ob.active_slot_num);
+
                 x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
-				x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
-				x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
-				x->r_ob.slot_window_ms2 = xposition_to_onset((t_notation_obj *) x, x->r_ob.slot_window_x2, system1);
+
+                if (slot_is_temporal_absolute((t_notation_obj *)x, x->r_ob.active_slot_num)) {
+                    x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + MAX(max_x, notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem));
+                } else {
+                    x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + rescale(MAX(1., max_x), x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[0], x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[1], 0, notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem));
+                }
+                
+                x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
+
+            } else {
+                if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
+                    x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
+                    x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth;
+                    x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                    x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1);
+                } else {
+                    x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
+                    x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                    x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
+                    x->r_ob.slot_window_ms2 = xposition_to_onset((t_notation_obj *) x, x->r_ob.slot_window_x2, system1);
+                }
 			}
 			paint_slot((t_notation_obj *) x, g, rect, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num);
 			unlock_general_mutex((t_notation_obj *)x);

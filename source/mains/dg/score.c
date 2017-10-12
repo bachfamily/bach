@@ -17040,7 +17040,7 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                 }
                 
                 for (long i = 0; i < CONST_MAX_SLOTS; i++) {
-                    if (is_slot_temporal((t_notation_obj *)x, i)) { // temporal slots
+                    if (slot_is_temporal((t_notation_obj *)x, i)) { // temporal slots
                         // need to split!
                         t_llll *left_slot = get_partialnote_single_slot_values_as_llll((t_notation_obj *)x, nt, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
                         t_llll *right_slot = get_partialnote_single_slot_values_as_llll((t_notation_obj *)x, nt, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, 1.);

@@ -573,7 +573,7 @@ void paint_bach_inspector_items(t_notation_obj *r_ob, t_bach_inspector_manager *
 		for (i = 0, ypos = 0; i < num_attributes; i++, ypos += ystep) {
 			char *content_txt = NULL;
 			t_bach_attribute *attr = &man->attr_manager->attr[obj_type][i];
-			char inactive = bach_inactive(man, obj, attr);
+			char inactive = bach_attr_inactive(man, obj, attr);
 			
 			if (i % 2)
 				paint_filledrectangle(g, build_jrgba(0.98, 0.98, 0.98, 1.), 0, ypos, rect.width, ystep);
@@ -1134,7 +1134,9 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
         }
         
         // slot is writable
-		if ((attr->name == _llllobj_sym_domain || attr->name == _llllobj_sym_domainslope) &&
+        if (attr->name == _llllobj_sym_temporalmode && r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
+            return 1;
+		else if ((attr->name == _llllobj_sym_domain || attr->name == _llllobj_sym_domainslope) &&
 			(slot_type != k_SLOT_TYPE_FUNCTION && slot_type != k_SLOT_TYPE_FILTER && slot_type != k_SLOT_TYPE_DYNFILTER))
 			return 1;
 		else if ((attr->name == _llllobj_sym_zrange || attr->name == _llllobj_sym_zslope) && slot_type != k_SLOT_TYPE_3DFUNCTION)
@@ -1149,7 +1151,7 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
             return 1;
 		else if ((attr->name == _llllobj_sym_width || attr->name == _llllobj_sym_height) && r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			return 1;
-        else if (attr->name == _llllobj_sym_width && ((t_slotinfo *)elem)->slot_temporalmode != k_SLOT_TEMPORALMODE_NONE)
+        else if (attr->name == _llllobj_sym_width && ((t_slotinfo *)elem)->slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
             return 1;
 		else if (attr->name == _llllobj_sym_height && (slot_type == k_SLOT_TYPE_INTLIST || slot_type == k_SLOT_TYPE_FLOATLIST || slot_type == k_SLOT_TYPE_FILELIST))
 			return 1;
@@ -1200,8 +1202,14 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 			notationobj_erase_slots_from_llll(r_ob, slots_to_erase);
 			llll_free(slots_to_erase);
 		} else if (attr->name == _llllobj_sym_width || attr->name == _llllobj_sym_height) {
-			if (atom_gettype(av) == A_SYM)
-				atom_setfloat(av, -1.);
+            if (atom_gettype(av) == A_SYM) {
+                if (atom_getsym(av) == _llllobj_sym_auto)
+                    atom_setfloat(av, -2.);
+                else if (atom_getsym(av) == _llllobj_sym_duration)
+                    atom_setfloat(av, -3.);
+                else
+                    atom_setfloat(av, -1.);
+            }
 		}
 	} else if (attr->owner_type == k_CHORD) {
 		if (attr->name == _llllobj_sym_onset) {
@@ -1497,7 +1505,7 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 	}
 }
 
-long bach_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr)
+long bach_attr_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr)
 {
     t_notation_obj *r_ob = (man->bach_managing ? (t_notation_obj *)man->owner : NULL);
 	if (attr->inactive)
@@ -1525,12 +1533,12 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 	
 	if (attr->owner_type == k_SLOTINFO) {
 		if (attr->name == _llllobj_sym_width) {
-/*			if (attr->attr_type == k_BACH_ATTR_DOUBLE && *((double *)field) < 0) {
+			if (attr->attr_type == k_BACH_ATTR_DOUBLE && *((double *)field) < 0) {
 				*ac = 1;
 				*av = (t_atom *)bach_newptr(sizeof(t_atom));
-				atom_setsym(*av, _llllobj_sym_temporal);
+                atom_setsym(*av, *((double *)field) == -2 ? _llllobj_sym_auto : _llllobj_sym_duration);
 				return;
-			} */
+			}
 		} else if (attr->name == _llllobj_sym_height) {
 			if (attr->attr_type == k_BACH_ATTR_DOUBLE && *((double *)field) < 0) {
 				*ac = 1;
@@ -1768,7 +1776,7 @@ long handle_doubleclick_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector
 {
 	if (man->active_bach_inspector_item) {
 		t_bach_attribute *attr = pt_to_attribute_to_edit(man, patcherview, pt);
-		if (attr && (attr->display_type == k_BACH_ATTR_DISPLAY_CHAR || attr->display_type == k_BACH_ATTR_DISPLAY_TEXT) && !bach_inactive(man, man->active_bach_inspector_item, attr)) {
+		if (attr && (attr->display_type == k_BACH_ATTR_DISPLAY_CHAR || attr->display_type == k_BACH_ATTR_DISPLAY_TEXT) && !bach_attr_inactive(man, man->active_bach_inspector_item, attr)) {
 			start_editing_bach_attribute(r_ob, man, patcherview, attr);
 			return 1;
 		}
@@ -1817,7 +1825,7 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			}
 		} 
 		
-		if (man->active_inspector_enumindex && !bach_inactive(man, man->active_bach_inspector_item, man->active_inspector_enumindex)) {
+		if (man->active_inspector_enumindex && !bach_attr_inactive(man, man->active_bach_inspector_item, man->active_inspector_enumindex)) {
 			if (pt.y > man->active_inspector_enumindex_rect.y && pt.y < man->active_inspector_enumindex_rect.y + man->active_inspector_enumindex_rect.height &&
 				pt.x > man->active_inspector_enumindex_rect.x && pt.x < man->active_inspector_enumindex_rect.x + man->active_inspector_enumindex_rect.width) {
 				t_atom av;
@@ -1834,7 +1842,7 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
                 if (r_ob)
                     invalidate_notation_static_layer_and_repaint(r_ob);
 			}
-		} else if (man->active_inspector_color && !bach_inactive(man, man->active_bach_inspector_item, man->active_inspector_color)) {
+		} else if (man->active_inspector_color && !bach_attr_inactive(man, man->active_bach_inspector_item, man->active_inspector_color)) {
 			// to do
 			
 			if (pt.y > man->active_inspector_color_palette_rect.y && pt.y < man->active_inspector_color_palette_rect.y + man->active_inspector_color_palette_rect.height &&
@@ -1861,7 +1869,7 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			t_atom *av = NULL;
 			void *elem = man->active_bach_inspector_item;
 			
-			if (attr && !bach_inactive(man, elem, attr)) {
+			if (attr && !bach_attr_inactive(man, elem, attr)) {
 				
 				if (r_ob)
 					set_mousedown(r_ob, attr, k_BACH_INSPECTOR_ITEM);

@@ -1031,15 +1031,16 @@ void get_middle_refinement_point_for_curve(double x1, double y1, double x2, doub
 	*middle_x = chosen_x;
 	*middle_y = rescale_with_slope_and_get_derivative(*middle_x, x1, x2, y1, y2, slope, middle_derivative, false);
 	
-	return;
-
+/*
+    OLD STUFF
 	char ADMIT_MIRRORING = false;
 	*middle_y = y1 + (*middle_x - x1) * (y2 - y1) / (x2 - x1);
 	if (y2 >= y1)
 		*middle_y = rescale_with_slope_and_get_derivative(*middle_y, y1, y2, y1, y2, slope, middle_derivative, ADMIT_MIRRORING);
 	else
 		*middle_y = y2 + y1 - rescale_with_slope_and_get_derivative(y1 - *middle_y, 0, y1 - y2, y2, y1, slope, middle_derivative, ADMIT_MIRRORING);
-}
+*/
+ }
 
 void paint_curve(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, double slope, double width)
 {
