@@ -3234,11 +3234,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
 						t_symbol *pivotsym = hatom_getsym(&pivot->l_hatom);
 						if (pivotsym == _llllobj_sym_slotinfo) {
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the set_slotinfo function
-							if (firstllll && firstllll->l_head) {
-								t_llll *slots_to_erase = set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
-								notationobj_erase_slots_from_llll((t_notation_obj *)x, slots_to_erase);
-								llll_free(slots_to_erase);
-							}
+							if (firstllll && firstllll->l_head)
+								set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
 						} else if (pivotsym == _llllobj_sym_commands) {
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the function
 							if (firstllll && firstllll->l_head)
@@ -10515,7 +10512,8 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                     
                     x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
 
-                    if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1.) { // duration
+                    if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1. ||
+                        (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && !slot_can_extend_beyond_note_tail((t_notation_obj *)x, x->r_ob.active_slot_num))) { // duration
                         if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_singleslotfortiednotes) {
                             t_note *lasttied = note_get_last_in_tieseq(activenote);
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, lasttied->parent->parent->tuttipoint_reference->offset_ux + lasttied->parent->stem_offset_ux + lasttied->parent->duration_ux);

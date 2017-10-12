@@ -35,18 +35,21 @@ long iexp2(long exponent){
 }
 
 
-double rescale(double value, double min, double max, double new_min, double new_max){
-	return new_min + (new_max - new_min) * (value - min)/(max - min);
-}
 
-double rescale_with_slope(double value, double min, double max, double new_min, double new_max, double slope, char admit_mirroring){
-	return rescale_with_slope_and_get_derivative(value, min, max, new_min, new_max, slope, NULL, admit_mirroring);
-}
 
-double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char admit_mirroring)
+
+double rescale_with_slope_and_get_derivative_do(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char sign_of_slopes_to_be_mirrored)
 {
-	char mirrored;
-	double res;
+    // Curve function is
+    // y = t^((1+slope)/(1-slope))
+    // for positive slopes and
+    // y = 1-(1-t)^((1+slope)/(1-slope))
+    // for negative slopes.
+    // The parameter t is the normalized x (between 0 and 1), and result is also normalized between 0 and 1
+    
+    
+	char mirrored = false;
+	double value_norm, res, res_norm;
 	// slope is between -1 and 1; 0 = linear; this function rescale a given value to new boundaries with a given slope.
     
     if (derivative) *derivative = 0;
@@ -54,37 +57,72 @@ double rescale_with_slope_and_get_derivative(double value, double min, double ma
     if (slope >= 1.) return new_min;
 	if (slope <= -1.) return new_max;
 	if (max == min) return new_min;
-	
-	mirrored = false;
-	if (admit_mirroring && (slope > 0.)) {
+    
+    
+    value_norm = (value-min)/(max-min);
+
+	if ((sign_of_slopes_to_be_mirrored < 0 && slope < 0.) || (sign_of_slopes_to_be_mirrored > 0 && slope > 0.)) {
 		slope = -slope;
-		mirrored = true;
+        value_norm = 1 - value_norm;
+        mirrored = true;
 	}
 	
 	if (slope == 0.)
-		res = rescale(value, min, max, new_min, new_max); // faster (in most cases we need this)
+        res_norm = value_norm; // faster (in most cases we need this)
 	else {
-		double base, exp, pow_val;
-		value = CLAMP(value, min, max);
-		base = (value - min)/(max - min);
+		double base, exp;
+		base = CLAMP(value_norm, 0., 1.);
 		exp = (1+slope)/(1-slope);
-		pow_val = pow(base, exp);
-		res = new_min + (new_max - new_min) * pow_val;
-		if (derivative)
-			*derivative = ((new_max - new_min) / (max - min)) * exp * (pow_val / base);
+		res_norm = pow(base, exp);
+        if (derivative) {
+            *derivative = ((new_max - new_min) / (max - min)) * exp * (res_norm / base);
+        }
 	}
 	
-	if (mirrored) {
-		res = new_min + new_max - res;
-		if (derivative)
-			*derivative *= -1;
-	}
-	return res;
+    if (mirrored) {
+        res_norm = 1 - res_norm;
+    }
+
+    res = new_min + (new_max - new_min) * res_norm;
+	
+    return res;
 }
 
-double rescale_same_boundaries_with_slope(double value, double min, double max, double slope, char admit_mirroring){
-	return rescale_with_slope(value, min, max, min, max, slope, admit_mirroring);
+
+double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative)
+{
+    return rescale_with_slope_and_get_derivative_do(value, min, max, new_min, new_max, slope, derivative, -1);
 }
+
+double rescale_with_slope_and_get_derivative_inv(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char admit_mirroring)
+{
+    return rescale_with_slope_and_get_derivative_do(value, min, max, new_min, new_max, slope, derivative, 1);
+}
+
+
+double rescale_same_boundaries_with_slope(double value, double min, double max, double slope)
+{
+	return rescale_with_slope(value, min, max, min, max, slope);
+}
+
+
+
+double rescale(double value, double min, double max, double new_min, double new_max)
+{
+    return new_min + (new_max - new_min) * (value - min)/(max - min);
+}
+
+double rescale_with_slope(double value, double min, double max, double new_min, double new_max, double slope)
+{
+    return rescale_with_slope_and_get_derivative_do(value, min, max, new_min, new_max, slope, NULL, -1);
+}
+
+
+double rescale_with_slope_inv(double value, double min, double max, double new_min, double new_max, double slope)
+{
+    return rescale_with_slope_and_get_derivative_do(value, min, max, new_min, new_max, -slope, NULL, 1);
+}
+
 
 
 void swap_doubles(double *d1, double *d2){

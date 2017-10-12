@@ -1208,8 +1208,7 @@ void roll_send_current_chord(t_roll *x){
 						llll_appenddouble(out_cents, note->midicents + note->lastbreakpoint->delta_mc, 0, WHITENULL_llll);
 						llll_appendlong(out_vels, x->r_ob.breakpoints_have_velocity ? note->lastbreakpoint->velocity : note->velocity, 0, WHITENULL_llll);
 					} else {
-						double cents = rescale_with_slope(curr_pos_ms, get_breakpoint_absolute_onset(prev_bpt), get_breakpoint_absolute_onset(prev_bpt->next), 
-														  note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope, false);
+						double cents = rescale_with_slope(curr_pos_ms, get_breakpoint_absolute_onset(prev_bpt), get_breakpoint_absolute_onset(prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
 						double velocity;
 						if (x->r_ob.breakpoints_have_velocity)
 							velocity = rescale(curr_pos_ms, get_breakpoint_absolute_onset(prev_bpt), get_breakpoint_absolute_onset(prev_bpt->next), 
@@ -7896,7 +7895,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 				t_llllelem *next_note_elem = note_elem->l_next;
 				if (hatom_gettype(&note_elem->l_hatom) == H_LLLL){
 					t_llll *note_llll = hatom_getllll(&note_elem->l_hatom);
-					char first_element_type = hatom_gettype(&note_llll->l_head->l_hatom);
+					long first_element_type = hatom_gettype(&note_llll->l_head->l_hatom);
 					if (note_llll->l_size >= 2 && (is_hatom_number(&note_llll->l_head->l_hatom) || first_element_type == H_SYM) 
 						&& is_hatom_number(&note_llll->l_head->l_next->l_hatom)) {
 						
@@ -7960,7 +7959,8 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 						
 						if (foundnt){ // there's a note which we can make longer!
 							if (onset + duration > foundnt->parent->onset + foundnt->duration) {
-								
+                                double new_duration = onset + duration - foundnt->parent->onset;
+                                
 								// handling temporal slots' and breakpoints' information
 								if (foundnt->duration <= 0) { // pathological case
 									create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)foundnt->parent, k_UNDO_MODIFICATION_CHANGE);
@@ -7969,7 +7969,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 								} else if (duration > 0){
 									double start_glued_note_portion_rel_x = CLAMP((foundnt->parent->onset + foundnt->duration - onset)/duration, 0., 1.);
 									create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)foundnt->parent, k_UNDO_MODIFICATION_CHANGE);
-									glue_portion_of_temporal_slots((t_notation_obj *)x, foundnt, note_llll, start_glued_note_portion_rel_x, 1., (onset + duration - (foundnt->parent->onset + foundnt->duration))/foundnt->duration, 1, smooth_ms);
+									glue_portion_of_temporal_slots((t_notation_obj *)x, foundnt, note_llll, start_glued_note_portion_rel_x, 1., (onset + duration - (foundnt->parent->onset + foundnt->duration))/foundnt->duration, 1, smooth_ms, duration, new_duration);
 									glue_portion_of_breakpoints((t_notation_obj *)x, foundnt, note_llll, dummy_breakpoints_note, start_glued_note_portion_rel_x, 1., (onset + duration - (foundnt->parent->onset + foundnt->duration))/foundnt->duration, 1, smooth_ms);
 								}
 								
@@ -8036,7 +8036,8 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 									double this_cents = hatom_getdouble(&note_ll->l_head->l_hatom);
 									double this_duration = hatom_getdouble(&note_ll->l_head->l_next->l_hatom);
 									double this_velocity = note_ll->l_size >= 3 ? hatom_getdouble(&note_ll->l_head->l_next->l_next->l_hatom) : -1;
-
+                                    double final_duration = MAX(parent->onset + temp->duration, this_duration + onset) - onset;
+                                    
 									// handling temporal slots' and breakpoints' information
 									if (temp->duration <= 0) { // pathological case
 										set_slots_values_to_note_from_llll((t_notation_obj *)x, temp, find_sublist_with_router((t_notation_obj *)x, hatom_getllll(&temp_el->l_hatom), _llllobj_sym_slots));
@@ -8051,12 +8052,12 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 										}
 										double end_glued_note_portion_rel_x = CLAMP((parent->onset - onset)/this_duration, 0., 1.);
 										double duration_ratio1 = (parent->onset - onset)/temp->duration;
-										glue_portion_of_temporal_slots((t_notation_obj *)x, temp, temp_llll, 0., end_glued_note_portion_rel_x, duration_ratio1, -1, smooth_ms);
+										glue_portion_of_temporal_slots((t_notation_obj *)x, temp, temp_llll, 0., end_glued_note_portion_rel_x, duration_ratio1, -1, smooth_ms, this_duration, final_duration);
 										glue_portion_of_breakpoints((t_notation_obj *)x, temp, temp_llll, dummy_breakpoints_note, 0., end_glued_note_portion_rel_x, duration_ratio1, -1, smooth_ms);
 										if (this_duration + onset > parent->onset + temp->duration) {
 											double start_glued_note_portion_rel_x = CLAMP((parent->onset + temp->duration - onset)/this_duration, 0., 1.);
 											double duration_ratio2 = (onset + this_duration - (parent->onset + temp->duration))/(parent->onset + temp->duration - onset);
-											glue_portion_of_temporal_slots((t_notation_obj *)x, temp, temp_llll, start_glued_note_portion_rel_x, 1., duration_ratio2, 1, smooth_ms);
+											glue_portion_of_temporal_slots((t_notation_obj *)x, temp, temp_llll, start_glued_note_portion_rel_x, 1., duration_ratio2, 1, smooth_ms, this_duration, final_duration);
 											glue_portion_of_breakpoints((t_notation_obj *)x, temp, temp_llll, dummy_breakpoints_note, start_glued_note_portion_rel_x, 1., duration_ratio2, 1, smooth_ms);
 										}
 										if (dummy_breakpoints_note)
@@ -8068,7 +8069,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 										temp->velocity = CLAMP(((temp->velocity * temp->duration) + (this_velocity * this_duration))/(temp->duration + this_duration), CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
 
 									// updating duration
-									temp->duration = MAX(parent->onset + temp->duration, this_duration + onset) - onset;
+                                    temp->duration = final_duration;
 									
 									
 									if (temp_el == next)
@@ -8247,11 +8248,8 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
 						t_symbol *pivotsym = hatom_getsym(&pivot->l_hatom);
 						if (pivotsym == _llllobj_sym_slotinfo) {
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the set_slotinfo function
-							if (firstllll && firstllll->l_head) {
-								t_llll *slots_to_erase = set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
-								notationobj_erase_slots_from_llll((t_notation_obj *)x, slots_to_erase);
-								llll_free(slots_to_erase);
-							}
+							if (firstllll && firstllll->l_head) 
+								set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
 						} else if (pivotsym == _llllobj_sym_commands) {
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the function
 							if (firstllll && firstllll->l_head)
@@ -10571,7 +10569,9 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 			// determine the slot window x
 			lock_general_mutex((t_notation_obj *)x);
             
-            if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1.) { // duration
+            if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1. ||
+                (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && !slot_can_extend_beyond_note_tail((t_notation_obj *)x, x->r_ob.active_slot_num))) {
+                    // duration
                 x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
                 x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
 				
@@ -15450,8 +15450,10 @@ char change_selection_duration(t_roll *x, double delta_ms){
 				if (!(note->parent->r_it.flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
 					create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 				
-				note->duration += delta_ms; 
-				if (note->duration < 0) 
+                trim_note_slots((t_notation_obj *)x, note, delta_ms, true);
+                note->duration += delta_ms;
+                
+				if (note->duration < 0)
 					note->duration = 0;
 				changed = 1;
 			}
@@ -15463,7 +15465,8 @@ char change_selection_duration(t_roll *x, double delta_ms){
 					if (!(curr_nt->parent->r_it.flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
 						create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)curr_nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 
-					curr_nt->duration += delta_ms; 
+                    trim_note_slots((t_notation_obj *)x, curr_nt, delta_ms, true);
+					curr_nt->duration += delta_ms;
 					if (curr_nt->duration < 0) 
 						curr_nt->duration = 0;
 				}

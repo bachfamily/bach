@@ -1262,11 +1262,8 @@ void set_uislot_from_llll(t_uislot *x, t_llll* inputlist, char also_lock_general
 						if (pivotsym == _llllobj_sym_slots) {
 							break;
 						} else if (pivotsym == _llllobj_sym_slotinfo) {
-							t_llll *slots_to_erase;
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the set_slotinfo function
-							slots_to_erase = set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
-							notationobj_erase_slots_from_llll((t_notation_obj *)x, slots_to_erase);
-							llll_free(slots_to_erase);
+							set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
 						}
 					} else 
 						break; // break and go to the body of the object!

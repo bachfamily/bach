@@ -1714,9 +1714,9 @@
 	//    ↪ Add the <m>Shift</m> key to change duration more rapidly. <br />
 	// • <m>Alt+←</m>: Decrease duration for selected notes (possible breakpoint positions are rescaled). <br /> 
 	//    ↪ Add the <m>Shift</m> key to change duration more rapidly. <br />
-	// • <m>Alt+Ctrl+→</m> (mac) or <m>Alt+Shift+Ctrl+→</m> (win): Increase note duration, preserving the absolute position of each pitch breakpoint. <br />
+	// • <m>Alt+Ctrl+→</m> (mac) or <m>Alt+Shift+Ctrl+→</m> (win): Increase note duration, preserving the absolute position of each relative breakpoint. <br />
 	//    ↪ Add the <m>Shift</m> key (mac) to change duration more rapidly. <br />
-	// • <m>Alt+Ctrl+←</m> (mac) or <m>Alt+Shift+Ctrl+←</m> (win): Decrease note duration, preserving the absolute position of each pitch breakpoint. <br />
+    // • <m>Alt+Ctrl+←</m> (mac) or <m>Alt+Shift+Ctrl+←</m> (win): Decrease note duration, preserving the absolute position of each relative breakpoint. <br />
 	//    ↪ Add the <m>Shift</m> key (mac) to change duration more rapidly. <br />
 	// • <m>↑</m>: Raise pitch of selection by one step. <br /> 
 	//    ↪ Add the <m>Shift</m> key to raise the pitch by one octave. <br />
@@ -1942,9 +1942,7 @@
 	// • <m>Backspace</m>: Delete all selected items, except for selected note tails, for which the backspace key reverts their pitch to the 
 	// original notehead pitch (no glissando). <br /> 
     //    ↪ Add the <m>Shift</m> key to delete selected measures; otherwise simple <m>Backspace</m> will clear the measure content. <br />
-	// • <m>→</m>: Shift selection onsets to the right; for selected tails: increase corresponding note duration <br />
-	// • <m>←</m>: Shift selection onsets to the left; for selected tails: decrease corresponding note duration <br /> 
-	// • <m>↑</m>: Raise pitch of selection by one step. <br /> 
+	// • <m>↑</m>: Raise pitch of selection by one step. <br />
 	//    ↪ Add the <m>Shift</m> key to raise the pitch by one octave. <br />
 	//    ↪ Add the <m>Ctrl+Shift</m> key to prevent notes from being assigned to different voices. <br />
 	// • <m>↓</m>: Lower pitch of selection by one step. <br /> 

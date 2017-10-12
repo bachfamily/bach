@@ -1382,7 +1382,7 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                 } else {
                                     if (!dynamics_to_velocity(r_ob, left_dyns[idx1], &left_velocity, dyn_vel_associations, params, 1)) {
                                         if (!dynamics_to_velocity(r_ob, left_dyns[idx2], &right_velocity, dyn_vel_associations, params, -1)) {
-                                            bpt->velocity = rescale_with_slope(CLAMP(idx_dyn - idx1, 0., 1.), 0., 1., left_velocity, right_velocity, hairpins[idx1] > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (hairpins[idx1] < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.), false);
+                                            bpt->velocity = rescale_with_slope_inv(CLAMP(idx_dyn - idx1, 0., 1.), 0., 1., left_velocity, right_velocity, hairpins[idx1] > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (hairpins[idx1] < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                         } else
                                             object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamics '%s'. Skipping dynamic marking.", left_dyns[idx2]->s_name);
                                     } else
@@ -1402,7 +1402,7 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
             if (!dynamics_to_velocity(r_ob, left_dyns[num_left_dyns - 1], &left_velocity, dyn_vel_associations, params,  -1)) {
                 if (!dynamics_to_velocity(r_ob, right_dyn, &right_velocity, dyn_vel_associations, params, 1)) {
                     if (last_hairpin * (right_velocity - left_velocity) > 0) {
-                        velocity = rescale_with_slope(CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.), false);
+                        velocity = rescale_with_slope(CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                         for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
                             nt->velocity = velocity;
                             if (r_ob->breakpoints_have_velocity) {
@@ -1410,7 +1410,7 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                     if (!bpt->prev)
                                         bpt->velocity = velocity;
                                     else {
-                                        bpt->velocity = rescale_with_slope(CLAMP(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.), false);
+                                        bpt->velocity = rescale_with_slope_inv(CLAMP(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                     }
                                 }
                             }

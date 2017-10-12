@@ -631,6 +631,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_temporal = gensym("temporal");
     x->s_relative = gensym("relative");
     x->s_temporalmode = gensym("temporalmode");
+    x->s_extend = gensym("extend");
     x->s_milliseconds = gensym("milliseconds");
     x->s_timepoints = gensym("timepoints");
 	x->s_abr_none_abr = gensym("<none>");

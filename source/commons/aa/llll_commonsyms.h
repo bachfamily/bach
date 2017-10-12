@@ -213,6 +213,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_width;
 	t_symbol	*s_temporal;
     t_symbol	*s_temporalmode;
+    t_symbol	*s_extend;
     t_symbol	*s_relative;
     t_symbol	*s_milliseconds;
     t_symbol	*s_timepoints;
@@ -591,6 +592,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_width			(_llllobj_common_symbols->s_width)
 #define _llllobj_sym_temporal		(_llllobj_common_symbols->s_temporal)
 #define _llllobj_sym_temporalmode		(_llllobj_common_symbols->s_temporalmode)
+#define _llllobj_sym_extend		(_llllobj_common_symbols->s_extend)
 #define _llllobj_sym_relative		(_llllobj_common_symbols->s_relative)
 #define _llllobj_sym_milliseconds		(_llllobj_common_symbols->s_milliseconds)
 #define _llllobj_sym_timepoints		(_llllobj_common_symbols->s_timepoints)

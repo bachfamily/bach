@@ -3609,6 +3609,7 @@ typedef struct _slotinfo
 	t_symbol	*slot_name;								///< Name of the slot
 	char		slot_type;								///< Type of the slot, must be one of #e_slot_types
     char        slot_temporalmode;                      ///< Temporal mode of the slot, must be one of the #e_slot_temporalmodes
+    char        extend_beyond_tails;                    ///< Temporal slots can extend beyond note tails
     
 	double		slot_domain[2];							///< Domain of the slot (minimum and maximum value, only for #k_SLOT_TYPE_FUNCTION slots)
 	double		slot_domain_par;						///< Slope parameter (-1 to 1) which can desplay exponentially the slot domain
@@ -7751,6 +7752,9 @@ char slot_is_temporal(t_notation_obj *r_ob, long slotnum);
  */
 char slot_is_temporal_absolute(t_notation_obj *r_ob, long slotnum);
 
+// TBD
+char slot_can_extend_beyond_note_tail(t_notation_obj *r_ob, long slotnum);
+
 
 /**	Allocates the memory for a new #t_slotitem.
 	@ingroup			slots
@@ -7777,10 +7781,8 @@ t_slotitem *build_default_slotitem(t_notation_obj *r_ob, t_slot *parent, long sl
 	@param r_ob				The notation object
 	@param slot_num			Number (0-based) of the slot to modify
 	@param new_type			New type of the slot (as symbol)
-	@param slots_to_erase	llll which will be filled to (just declare it as t_llll *slot_to_erase, and then pass it to the function which will fill it)
-							If you don't need this list, just pass NULL
  */
-void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type, t_llll *slots_to_erase);
+void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type);
 
 
 /**	Convert the content of a slot (i.e. convert each note's slot content for a given slot) 
@@ -7793,7 +7795,7 @@ void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type, t
 	@return					1 if the conversion could not be performed (incompatible slots) and thus the slot content should be deleted.,
 							0 otherwise.
  */
-char convert_slot(t_notation_obj *r_ob, long slot_num, long old_slottype, long new_slottype);
+char convert_slot_type(t_notation_obj *r_ob, long slot_num, long old_slottype, long new_slottype);
 
 
 /**	Convert the content of a note's slot so that it matches a newly defined slot type.
@@ -7803,7 +7805,7 @@ char convert_slot(t_notation_obj *r_ob, long slot_num, long old_slottype, long n
 	@param slot_num			Number (0-based) of the slot to modify
 	@param conversion_type	0 for no conversion, 1 for conversion from long to double, 2 for conversion from double to long.
  */
-void convert_note_slot(t_notation_obj *r_ob, t_note *note, long slot_num, long conversion_type);
+void convert_note_slot_type(t_notation_obj *r_ob, t_note *note, long slot_num, long conversion_type);
 
 
 /**	Retrieve slot type as symbol from slot type as #e_slot_types
@@ -7821,7 +7823,10 @@ t_symbol *slot_type_to_symbol(e_slot_types slot_type);
  */
 e_slot_types slot_symbol_to_type(t_symbol *type);
 
+
+
 // TBD
+void change_slot_temporalmode(t_notation_obj *r_ob, long slot_num, t_symbol *new_temporalmode);
 t_symbol *slot_temporalmode_to_symbol(e_slot_temporalmodes slot_temporalmode);
 e_slot_temporalmodes slot_symbol_to_temporalmode(t_symbol *temporalmode);
 
@@ -8284,10 +8289,10 @@ t_llll *get_biquad_as_full_llll(t_notation_obj *r_ob, t_biquad *bqd);
 t_llll *find_sublist_with_router(t_notation_obj *r_ob, t_llll *note_llll, t_symbol *sym);
 void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver, t_llll *slot_llll, long slotnum,
 										  double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
-										  double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
+										  double portion_duration_ratio_to_receiver, char direction, double smooth_ms, double giver_duration, double final_duration);
 void glue_portion_of_temporal_slots(t_notation_obj *r_ob, t_note *receiver, t_llll *note_llll, 
 									double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
-									double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
+									double portion_duration_ratio_to_receiver, char direction, double smooth_ms, double giver_duration, double final_duration);
 void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll *note_llll, t_note *dummy_giver,
 								 double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
 								 double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
@@ -13986,6 +13991,9 @@ char change_selection_breakpoint_pitch(t_notation_obj *r_ob, double delta_mc);
  */
 void trim_note_end(t_notation_obj *r_ob, t_note *nt, double delta_ms);
 
+// TBD
+void trim_note_slots(t_notation_obj *r_ob, t_note *nt, double delta_ms, char trim_absolute_slots_only);
+
 /**	Change the position of the note heads preserving the absolute position of all breakpoints and temporal slot elements.
     Only usable in bach.roll.
 	@ingroup interface
@@ -14112,6 +14120,10 @@ void paste_slotitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum,
 // TBD
 t_llll *slots_develop_ranges(t_notation_obj *r_ob, t_llll *ll);
 double slot_get_max_x(t_notation_obj *r_ob, t_slot *slot, long slot_num);
+double notationobj_get_slot_max_x(t_notation_obj *r_ob, long slot_num);
+double slot_get_domain_min(t_notation_obj *r_ob, long slot_num);
+double slot_get_domain_max(t_notation_obj *r_ob, long slot_num, t_notation_item *nitem);
+double slot_get_domain_max_force_default_duration(t_notation_obj *r_ob, long slot_num, double default_duration);
 
 
 
