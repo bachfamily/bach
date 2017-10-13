@@ -10221,8 +10221,8 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
 	if (are_note_breakpoints_nontrivial(r_ob, note)) {
 		// split breakpoints
 		double new_midicents = note->midicents;
-		t_llll *left_bpt = get_partialnote_breakpoint_values_as_llll(r_ob, note, 0., cut_rel_pos, NULL);
-		t_llll *right_bpt = get_partialnote_breakpoint_values_as_llll(r_ob, note, cut_rel_pos, 1., &new_midicents);
+		t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll(r_ob, note, 0., cut_rel_pos, NULL);
+		t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll(r_ob, note, cut_rel_pos, 1., &new_midicents);
 		set_breakpoints_values_to_note_from_llll(r_ob, note, left_bpt);
 		set_breakpoints_values_to_note_from_llll(r_ob, right_note, right_bpt);
 		right_note->midicents = new_midicents;
@@ -10233,8 +10233,8 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
     for (i = 0; i < CONST_MAX_SLOTS; i++) {
 		if (slot_is_temporal(r_ob, i)) { // temporal slots
 			// need to split!
-			t_llll *left_slot = get_partialnote_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
-			t_llll *right_slot = get_partialnote_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, 1.);
+			t_llll *left_slot = notation_item_get_partial_single_slot_values_as_llll(r_ob, (t_notation_item *)note, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
+			t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll(r_ob, (t_notation_item *)note, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, -1.); // -1 means: till the end (it's different from 1. for slot allowing extension beyond note tails)
 			llll_wrap_once(&left_slot);
 			llll_wrap_once(&right_slot);
 			set_slots_values_to_note_from_llll(r_ob, note, left_slot);
@@ -26866,7 +26866,7 @@ void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver
 	t_llll *temp = llll_get();
 	llll_appendllll_clone(temp, slot_llll, 0, WHITENULL_llll, NULL);
 	set_slots_values_to_note_from_llll(r_ob, dummy, temp);
-	t_llll *extracted_portion = get_partialnote_single_slot_values_as_llll(r_ob, dummy, k_CONSIDER_FOR_SAVING, slotnum, start_glued_note_portion_rel_x, end_glued_note_portion_rel_x);
+	t_llll *extracted_portion = notation_item_get_partial_single_slot_values_as_llll(r_ob, (t_notation_item *)dummy, k_CONSIDER_FOR_SAVING, slotnum, start_glued_note_portion_rel_x, end_glued_note_portion_rel_x);
 	free_note(r_ob, dummy);
 	llll_free(temp);
 
@@ -27077,7 +27077,7 @@ void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll 
 		double new_extracted_portion_start_mc;
 		
 		// extract portion of slot_llll
-		t_llll *extracted_portion = get_partialnote_breakpoint_values_as_llll(r_ob, dummy_giver, start_glued_note_portion_rel_x, end_glued_note_portion_rel_x, &new_extracted_portion_start_mc);
+		t_llll *extracted_portion = note_get_partial_breakpoint_values_as_llll(r_ob, dummy_giver, start_glued_note_portion_rel_x, end_glued_note_portion_rel_x, &new_extracted_portion_start_mc);
 		
 		if (direction > 0) {
 			// shifting all extracted portion x's
@@ -27218,14 +27218,18 @@ void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll 
 
 // obtains only a portion of the temporal envelopes (the portion between start_rel_x_pos and end_rel_x_pos)
 // mode is one of the e_data_considering_types
-t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, double start_rel_x_pos, double end_rel_x_pos){
-	
-	if (r_ob->slotinfo[slotnum].slot_uwidth >= 0) // slot isn't temporal!!!
-		return note_get_single_slot_values_as_llll(r_ob, note, mode, slotnum, false);
-	
+t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, double start_rel_x_pos, double end_rel_x_pos)
+{
+    double can_extend = (end_rel_x_pos < 0 && r_ob->slotinfo[slotnum].extend_beyond_tails);
+    
+    if (end_rel_x_pos < 0)
+        end_rel_x_pos = 1;
+    
+	if (!slot_is_temporal(r_ob, slotnum))
+        return notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, slotnum, false);
 	
     double domain_min = slot_get_domain_min(r_ob, slotnum);
-    double domain_max = slot_get_domain_max(r_ob, slotnum, (t_notation_item *)note);
+    double domain_max = slot_get_domain_max(r_ob, slotnum, nitem);
     double new_domain_max = domain_max;
     if (r_ob->slotinfo[slotnum].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
         new_domain_max = domain_max * (end_rel_x_pos - start_rel_x_pos);
@@ -27241,8 +27245,8 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 	
     double start_x_pos, end_x_pos;
     if (slot_is_temporal_absolute(r_ob, slotnum)) {
-        start_x_pos = start_rel_x_pos * notation_item_get_duration_ms(r_ob, (t_notation_item *)note);
-        end_x_pos = end_rel_x_pos * notation_item_get_duration_ms(r_ob, (t_notation_item *)note);
+        start_x_pos = start_rel_x_pos * notation_item_get_duration_ms(r_ob, nitem);
+        end_x_pos = end_rel_x_pos * notation_item_get_duration_ms(r_ob, nitem);
     } else {
         start_x_pos = rescale(start_rel_x_pos, 0, 1, domain_min, domain_max);
         end_x_pos = rescale(end_rel_x_pos, 0, 1, domain_min, domain_max);
@@ -27251,7 +27255,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 	switch (r_ob->slotinfo[slotnum].slot_type) { // slot type
 		case k_SLOT_TYPE_FUNCTION: {
 			
-			t_slotitem *temp = note->slot[slotnum].firstitem;
+			t_slotitem *temp = notation_item_get_slot_firstitem(r_ob, nitem, slotnum);
 			
 			while (temp && ((t_pts *)temp->item)->x < start_x_pos)
 				temp = temp->next;
@@ -27265,14 +27269,14 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 			}
 			
 			// middle points
-			while (temp && ((t_pts *)temp->item)->x <= end_x_pos) {
+			while (temp && (can_extend || ((t_pts *)temp->item)->x <= end_x_pos)) {
 				t_pts *pts = (t_pts *)temp->item;
 				llll_appendllll(out_llll, double_triplet_to_llll(rescale(pts->x, start_x_pos, end_x_pos, domain_min, new_domain_max), pts->y, pts->slope), 0, WHITENULL_llll);
 				temp = temp->next;
 			}
 			
 			// last point
-			if (temp && temp->prev && ((t_pts *)temp->item)->x > end_x_pos) {
+			if (temp && temp->prev && !can_extend && ((t_pts *)temp->item)->x > end_x_pos) {
 				t_pts *pts_prev = (t_pts *)temp->prev->item;
 				t_pts *pts = (t_pts *)temp->item;
 				double end_y_pos = rescale_with_slope(end_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
@@ -27283,7 +27287,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 			
 		case k_SLOT_TYPE_3DFUNCTION: { 
 			
-			t_slotitem *temp = note->slot[slotnum].firstitem;
+            t_slotitem *temp = notation_item_get_slot_firstitem(r_ob, nitem, slotnum);
 			
 			while (temp && ((t_pts3d *)temp->item)->x < start_x_pos)
 				temp = temp->next;
@@ -27298,14 +27302,14 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 			}
 			
 			// middle points
-			while (temp && ((t_pts3d *)temp->item)->x <= end_x_pos) {
+			while (temp && (can_extend || ((t_pts3d *)temp->item)->x <= end_x_pos)) {
 				t_pts3d *pts = (t_pts3d *)temp->item;
 				llll_appendllll(out_llll, double_quadruplet_to_llll(rescale(pts->x, start_x_pos, end_x_pos, domain_min, new_domain_max), pts->y, pts->z, pts->slope), 0, WHITENULL_llll);
 				temp = temp->next;
 			}
 			
 			// last point
-			if (temp && temp->prev && ((t_pts3d *)temp->item)->x > end_x_pos) {
+			if (temp && temp->prev && !can_extend && ((t_pts3d *)temp->item)->x > end_x_pos) {
 				t_pts3d *pts_prev = (t_pts3d *)temp->prev->item;
 				t_pts3d *pts = (t_pts3d *)temp->item;
 				double end_y_pos = rescale_with_slope(end_x_pos, pts_prev->x, pts->x, pts_prev->y, pts->y, pts->slope);
@@ -27317,7 +27321,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 
 		case k_SLOT_TYPE_SPAT: { 
 			
-			t_slotitem *temp = note->slot[slotnum].firstitem;
+            t_slotitem *temp = notation_item_get_slot_firstitem(r_ob, nitem, slotnum);
 
             while (temp && ((t_spatpt *)temp->item)->t < start_x_pos)
 				temp = temp->next;
@@ -27332,14 +27336,14 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 			}
 			
 			// middle points
-			while (temp && ((t_spatpt *)temp->item)->t <= end_x_pos) {
+			while (temp && (can_extend || ((t_spatpt *)temp->item)->t <= end_x_pos)) {
 				t_spatpt *pts = (t_spatpt *)temp->item;
 				llll_appendllll(out_llll, double_triplet_and_long_to_llll(rescale(pts->t, start_x_pos, end_x_pos, domain_min, new_domain_max), pts->radius, pts->angle, pts->interp), 0, WHITENULL_llll);
 				temp = temp->next;
 			}
 			
 			// last point
-			if (temp && temp->prev && ((t_spatpt *)temp->item)->t > end_x_pos) {
+			if (temp && temp->prev && !can_extend && ((t_spatpt *)temp->item)->t > end_x_pos) {
 				t_spatpt *pts_prev = (t_spatpt *)temp->prev->item;
 				t_spatpt *pts = (t_spatpt *)temp->item;
 				double end_radius_pos = rescale(end_x_pos, pts_prev->t, pts->t, pts_prev->radius, pts->radius);
@@ -27351,7 +27355,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 			
 		case k_SLOT_TYPE_DYNFILTER: { 
 			
-			t_slotitem *temp = note->slot[slotnum].firstitem;
+            t_slotitem *temp = notation_item_get_slot_firstitem(r_ob, nitem, slotnum);
 			
 			while (temp && ((t_biquad *)temp->item)->t < start_x_pos)
 				temp = temp->next;
@@ -27368,7 +27372,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 			}
 			
 			// middle points
-			while (temp && ((t_biquad *)temp->item)->t <= end_x_pos) {
+			while (temp && (can_extend || ((t_biquad *)temp->item)->t <= end_x_pos)) {
 				t_biquad *pts = (t_biquad *)temp->item;
 				t_llll *ll = llll_get();
 				llll_appenddouble(ll, rescale(pts->t, start_x_pos, end_x_pos, domain_min, domain_max), 0, WHITENULL_llll);
@@ -27378,7 +27382,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 			}
 			
 			// last point
-			if (temp && temp->prev && ((t_biquad *)temp->item)->t > end_x_pos) {
+			if (temp && temp->prev && !can_extend && ((t_biquad *)temp->item)->t > end_x_pos) {
 				t_biquad pts_prev = *((t_biquad *)temp->prev->item);
 				t_biquad pts = *((t_biquad *)temp->item);
 				t_biquad interp = interpolate_biquad(r_ob, pts_prev, pts, rescale(end_x_pos, pts_prev.t, pts.t, 0, 1), 1);
@@ -27392,7 +27396,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 		
 		default:
 			llll_free(out_llll);
-			out_llll = note_get_single_slot_values_as_llll(r_ob, note, mode, slotnum, false);
+			out_llll = notation_item_get_single_slot_values_as_llll(r_ob, nitem, mode, slotnum, false);
 			break;
 
 	}
@@ -27403,7 +27407,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
 
 // obtains only a portion of the breakpoints bpc (the portion between start_rel_x_pos and end_rel_x_pos
 // mode is one of the e_data_considering_types
-t_llll* get_partialnote_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, double start_rel_x_pos, double end_rel_x_pos, double *new_start_midicents){
+t_llll* note_get_partial_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, double start_rel_x_pos, double end_rel_x_pos, double *new_start_midicents){
 	// if mode == 2 it is a partialnote, and new_start_midicents is filled
 	t_bpt *temp;
 	double start_y_pos = 0., start_vel;
@@ -27634,7 +27638,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                     llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
                 }
 			}
-			if (mode != k_CONSIDER_FOR_SAMPLING || r_ob->slotinfo[j].slot_uwidth >= 0) {
+			if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {
 				while (temp_item && temp_item->item) {
 					if (!only_get_selected_items || temp_item->selected) {
 						t_llll* inner5_llll = llll_get();
@@ -27695,7 +27699,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 					llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
 				}
 			}
-			if (mode != k_CONSIDER_FOR_SAMPLING || r_ob->slotinfo[j].slot_uwidth >= 0) {
+			if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {
 				while (temp_item && temp_item->item) {
 					if (!only_get_selected_items || temp_item->selected) {
 						t_llll* inner5_llll = llll_get();
@@ -27737,7 +27741,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 					llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
 				}
 			}
-			if (mode != k_CONSIDER_FOR_SAMPLING || r_ob->slotinfo[j].slot_uwidth >= 0) {
+			if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {
 				while (temp_item && temp_item->item) {
 					if (!only_get_selected_items || temp_item->selected) {
 						t_llll* inner5_llll = llll_get();
@@ -27940,7 +27944,7 @@ t_llll* note_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, 
 
 
 
-t_llll* get_partialnote_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, char force_all_slots, double start_rel_x_pos, double end_rel_x_pos){
+t_llll* notation_item_get_partial_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char force_all_slots, double start_rel_x_pos, double end_rel_x_pos){
 	// if mode == 2 it's a partialnote
 	
 	// slots
@@ -27949,8 +27953,8 @@ t_llll* get_partialnote_slots_values_as_llll(t_notation_obj *r_ob, t_note *note,
 	llll_appendsym(out_llll, _llllobj_sym_slots, 0, WHITENULL_llll); 
 	
 	for (j = 0; j < CONST_MAX_SLOTS; j++) {
-		if (note->slot[j].firstitem || force_all_slots) { // do we need this slot?
-			t_llll *thisslot_llll = get_partialnote_single_slot_values_as_llll(r_ob, note, mode, j, start_rel_x_pos, end_rel_x_pos);
+		if (notation_item_get_slot_firstitem(r_ob, nitem, j) || force_all_slots) { // do we need this slot?
+			t_llll *thisslot_llll = notation_item_get_partial_single_slot_values_as_llll(r_ob, nitem, mode, j, start_rel_x_pos, end_rel_x_pos);
 			llll_appendllll(out_llll, thisslot_llll, 0, WHITENULL_llll);
 		}
 	}
@@ -28300,13 +28304,13 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 	// see if we need breakpoint extras
 	if (are_note_breakpoints_nontrivial(r_ob, note)) {
 		double new_mc = 0.;
-		llll_appendllll(out_llll, get_partialnote_breakpoint_values_as_llll(r_ob, note, start_x_rel, end_x_rel, &new_mc), 0, WHITENULL_llll);
+		llll_appendllll(out_llll, note_get_partial_breakpoint_values_as_llll(r_ob, note, start_x_rel, end_x_rel, &new_mc), 0, WHITENULL_llll);
 	}
 	
 	// see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
 	// TO DO: slots have to be correctly trimmed
 	if (notation_item_has_slot_content(r_ob, (t_notation_item *)note))
-		llll_appendllll(out_llll, get_partialnote_slots_values_as_llll(r_ob, note, mode, false, start_x_rel, end_x_rel), 0, WHITENULL_llll);	
+		llll_appendllll(out_llll, notation_item_get_partial_slots_values_as_llll(r_ob, (t_notation_item *)note, mode, false, start_x_rel, end_x_rel), 0, WHITENULL_llll);
 	
 	// see if we need articulation extras 
 	if (note->num_articulations > 0)
@@ -33504,7 +33508,7 @@ double unscaled_xposition_snap_to_nearest_chord(t_notation_obj *r_ob, double ux,
                             t_bpt *bpt;
                             for (bpt = note->firstbreakpoint; bpt; bpt = bpt->next) {
                                 if (bpt->prev && bpt->next) { // internal pitch breakpoint
-                                    double bpt_ux = onset_to_unscaled_xposition(r_ob, get_breakpoint_absolute_onset(bpt));
+                                    double bpt_ux = onset_to_unscaled_xposition(r_ob, breakpoint_get_absolute_onset(bpt));
                                     double bpt_fabs = fabs(bpt_ux - ux);
                                     if (!best_approx || bpt_fabs < best_approx_fabs) {
                                         best_approx = (t_notation_item *)bpt;
@@ -37454,7 +37458,7 @@ t_xml_chord_beam_info get_xml_chord_beam_info(t_notation_obj *r_ob, t_chord *cho
 
 
 
-double get_breakpoint_absolute_onset(t_bpt *bpt){
+double breakpoint_get_absolute_onset(t_bpt *bpt){
 	if (!bpt->owner)
 		return 0;
 	

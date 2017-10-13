@@ -902,17 +902,17 @@ void score_send_current_chord(t_score *x){
 						
 						// breakpoints
 						t_bpt *prev_bpt = note->firstbreakpoint;
-						while (prev_bpt && prev_bpt->next && get_breakpoint_absolute_onset(prev_bpt->next) <= curr_pos_ms)
+						while (prev_bpt && prev_bpt->next && breakpoint_get_absolute_onset(prev_bpt->next) <= curr_pos_ms)
 							prev_bpt = prev_bpt->next;
 						
 						if (!prev_bpt || !prev_bpt->next) {
 							llll_appenddouble(out_cents, note->midicents + note->lastbreakpoint->delta_mc, 0, WHITENULL_llll);
 							llll_appendlong(out_vels, x->r_ob.breakpoints_have_velocity ? note->lastbreakpoint->velocity : note->velocity, 0, WHITENULL_llll);
 						} else {
-							double cents = rescale_with_slope(curr_pos_ms, get_breakpoint_absolute_onset(prev_bpt), get_breakpoint_absolute_onset(prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
+							double cents = rescale_with_slope(curr_pos_ms, breakpoint_get_absolute_onset(prev_bpt), breakpoint_get_absolute_onset(prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
 							double velocity;
 							if (x->r_ob.breakpoints_have_velocity)
-								velocity = rescale(curr_pos_ms, get_breakpoint_absolute_onset(prev_bpt), get_breakpoint_absolute_onset(prev_bpt->next), prev_bpt->velocity, prev_bpt->next->velocity);
+								velocity = rescale(curr_pos_ms, breakpoint_get_absolute_onset(prev_bpt), breakpoint_get_absolute_onset(prev_bpt->next), prev_bpt->velocity, prev_bpt->next->velocity);
 							else 
 								velocity = note->velocity;
 							llll_appenddouble(out_cents, cents, 0, WHITENULL_llll);
@@ -17028,8 +17028,8 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                 if (are_note_breakpoints_nontrivial((t_notation_obj *)x, nt)) {
                     // split breakpoints
                     double new_midicents = nt->midicents;
-                    t_llll *left_bpt = get_partialnote_breakpoint_values_as_llll((t_notation_obj *)x, nt, 0., cut_rel_pos, NULL);
-                    t_llll *right_bpt = get_partialnote_breakpoint_values_as_llll((t_notation_obj *)x, nt, cut_rel_pos, 1., &new_midicents);
+                    t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, 0., cut_rel_pos, NULL);
+                    t_llll *right_bpt = note_get_partial_breakpoint_values_as_llll((t_notation_obj *)x, nt, cut_rel_pos, 1., &new_midicents);
                     set_breakpoints_values_to_note_from_llll((t_notation_obj *)x, nt, left_bpt);
                     set_breakpoints_values_to_note_from_llll((t_notation_obj *)x, new_nt, right_bpt);
                     new_nt->midicents = new_midicents;
@@ -17040,8 +17040,8 @@ void slice_voice_at_position(t_score *x, t_scorevoice *voice, t_timepoint tp, ch
                 for (long i = 0; i < CONST_MAX_SLOTS; i++) {
                     if (slot_is_temporal((t_notation_obj *)x, i)) { // temporal slots
                         // need to split!
-                        t_llll *left_slot = get_partialnote_single_slot_values_as_llll((t_notation_obj *)x, nt, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
-                        t_llll *right_slot = get_partialnote_single_slot_values_as_llll((t_notation_obj *)x, nt, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, 1.);
+                        t_llll *left_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, 0., cut_rel_pos);
+                        t_llll *right_slot = notation_item_get_partial_single_slot_values_as_llll((t_notation_obj *)x, (t_notation_item *)nt, k_CONSIDER_FOR_SAVING, i, cut_rel_pos, -1);
                         llll_wrap_once(&left_slot);
                         llll_wrap_once(&right_slot);
                         set_slots_values_to_note_from_llll((t_notation_obj *)x, nt, left_slot);

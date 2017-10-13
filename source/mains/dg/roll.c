@@ -1201,17 +1201,17 @@ void roll_send_current_chord(t_roll *x){
 				if (chord->onset <= curr_pos_ms && chord->onset + note->duration > curr_pos_ms){
 					// breakpoints
 					t_bpt *prev_bpt = note->firstbreakpoint;
-					while (prev_bpt && prev_bpt->next && get_breakpoint_absolute_onset(prev_bpt->next) <= curr_pos_ms)
+					while (prev_bpt && prev_bpt->next && breakpoint_get_absolute_onset(prev_bpt->next) <= curr_pos_ms)
 						prev_bpt = prev_bpt->next;
 					
 					if (!prev_bpt || !prev_bpt->next) {
 						llll_appenddouble(out_cents, note->midicents + note->lastbreakpoint->delta_mc, 0, WHITENULL_llll);
 						llll_appendlong(out_vels, x->r_ob.breakpoints_have_velocity ? note->lastbreakpoint->velocity : note->velocity, 0, WHITENULL_llll);
 					} else {
-						double cents = rescale_with_slope(curr_pos_ms, get_breakpoint_absolute_onset(prev_bpt), get_breakpoint_absolute_onset(prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
+						double cents = rescale_with_slope(curr_pos_ms, breakpoint_get_absolute_onset(prev_bpt), breakpoint_get_absolute_onset(prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
 						double velocity;
 						if (x->r_ob.breakpoints_have_velocity)
-							velocity = rescale(curr_pos_ms, get_breakpoint_absolute_onset(prev_bpt), get_breakpoint_absolute_onset(prev_bpt->next), 
+							velocity = rescale(curr_pos_ms, breakpoint_get_absolute_onset(prev_bpt), breakpoint_get_absolute_onset(prev_bpt->next), 
 											   prev_bpt->velocity, prev_bpt->next->velocity);
 						else 
 							velocity = note->velocity;
@@ -15525,7 +15525,7 @@ char align_selection_onsets(t_roll *x){
 			if ((leftmost_onset == -32000) || (((t_chord *)curr_it)->onset < leftmost_onset)) 
 				leftmost_onset = ((t_chord *)curr_it)->onset;
 		} else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
-			double thisonset = get_breakpoint_absolute_onset((t_bpt *) curr_it);
+			double thisonset = breakpoint_get_absolute_onset((t_bpt *) curr_it);
 			if (leftmost_onset == -32000 || thisonset < leftmost_onset) 
 				leftmost_onset = thisonset;
 		}

@@ -1206,6 +1206,7 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
             change_slot_temporalmode(r_ob, slotnum, slot_temporalmode_to_symbol((e_slot_temporalmodes)atom_getlong(av)));
         } else if (attr->name == _llllobj_sym_extend) {
             r_ob->slotinfo[slotnum].extend_beyond_tails = atom_getlong(av);
+            notationobj_slot_remove_extensions(r_ob, slotnum);
             check_slot_domain(r_ob, slotnum);
 		} else if (attr->name == _llllobj_sym_width || attr->name == _llllobj_sym_height) {
             if (atom_gettype(av) == A_SYM) {

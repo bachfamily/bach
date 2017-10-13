@@ -2552,7 +2552,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
         function_slot_has_labels(r_ob, i, &has_x_labels, &has_y_labels);
 
         
-        if (r_ob->slotinfo[slotnum].slot_uwidth < 0.) {
+        if (slot_is_temporal(r_ob, slotnum)) {
 			if (r_ob->obj_type != k_NOTATION_OBJECT_SCORE || nitem->type != k_NOTE || !((t_note *)nitem)->tie_to || !r_ob->slotinfo[slotnum].slot_singleslotfortiednotes)
 				slot_window_active_width = duration_line_length;
 			else {
@@ -2606,7 +2606,11 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 		if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS && slot && slot->firstitem && slot->firstitem->item){
 			t_jrgba slot_color = change_luminosity(r_ob->slotinfo[slotnum].slot_color, 0.9);
 			t_rect rect = build_rect(slot_window_active_x1, slot_window_active_y1,
-                                     r_ob->slotinfo[slotnum].slot_uwidth < 0 ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y,  slot_window_active_height);
+                                     slot_is_temporal(r_ob, slotnum) ? slot_window_active_width : r_ob->slotinfo[slotnum].slot_uwidth * zoom_y,  slot_window_active_height);
+
+            if (slot_can_extend_beyond_note_tail(r_ob, slotnum))
+                rect.width = r_ob->width - rect.x - r_ob->j_inset_x;
+            
 			switch (r_ob->slotinfo[slotnum].slot_type) {
 				case k_SLOT_TYPE_FUNCTION:
 					paint_function_in_slot_win(r_ob, g, rect, rect, nitem, slotnum, slot_color, 0.5, false, false, true, false, r_ob->bgslot_zoom, false, false, NULL, false);
@@ -3219,7 +3223,7 @@ void paint_3dfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect f
 void paint_spatfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect function_bounding_rectangle, t_rect displayed_bounding_rectangle, t_notation_item *nitem, long slot_number,
 									t_jrgba slot_color, t_jrgba slot_textcolor, double new_alpha, char show_points, char can_change_line_luminosity, char can_change_point_luminosity, 
 									char can_change_alpha, double point_radius, double slot_zoom, char paint_lines_separately, char trim_overflowing_lines){
-	double this_point_screen_x, this_point_screen_y, next_point_screen_x, next_point_screen_y, slot_max, slot_min, slot_domain_max, slot_domain_min;
+	double slot_max, slot_min, slot_domain_max, slot_domain_min;
 	t_slotitem *temp;
 	t_spatpt this_point, next_point;
 	
@@ -3252,14 +3256,18 @@ void paint_spatfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect
 	while (temp && temp->next) {
 		char direction, turns; 
 		t_jrgba line_color = slot_color;
+        t_pt this_point_screen, next_point_screen;
 		next_point = *((t_spatpt *)temp->next->item);
-		
-		this_point_screen_x = function_bounding_rectangle.x + rescale_with_slope_inv(this_point.t, slot_domain_min, slot_domain_max, 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * function_bounding_rectangle.width;
-		this_point_screen_y = 2 * function_bounding_rectangle.y + function_bounding_rectangle.height - rescale_with_slope_inv(this_point.radius, slot_min, slot_max, function_bounding_rectangle.y, function_bounding_rectangle.y + function_bounding_rectangle.height, -r_ob->slotinfo[slot_number].slot_range_par);
+
+        function_xy_values_to_pt(r_ob, nitem, this_point.t, this_point.radius, slot_number, function_bounding_rectangle, &this_point_screen);
+        function_xy_values_to_pt(r_ob, nitem, next_point.t, next_point.radius, slot_number, function_bounding_rectangle, &next_point_screen);
+        
+/*		this_point_screen_x = function_bounding_rectangle.x + rescale_with_slope_inv(this_point.t, slot_domain_min, slot_domain_max, 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * function_bounding_rectangle.width;
+		this_point_screen_y = 2 * function_bounding_rectangle.y + function_bounding_rectangle.height - rescale_with_slope_inv(this_point.radius, slot_min, slot_max, function_bounding_rectangle.y, function_bounding_rectangle.y + function_bounding_rectangle.height, r_ob->slotinfo[slot_number].slot_range_par);
 		
 		next_point_screen_x = function_bounding_rectangle.x + rescale_with_slope_inv(next_point.t, slot_domain_min, slot_domain_max, 0., 1., r_ob->slotinfo[slot_number].slot_domain_par)* function_bounding_rectangle.width;
 		next_point_screen_y = 2 * function_bounding_rectangle.y + function_bounding_rectangle.height - rescale_with_slope_inv(next_point.radius, slot_min, slot_max, function_bounding_rectangle.y, function_bounding_rectangle.y + function_bounding_rectangle.height, r_ob->slotinfo[slot_number].slot_range_par);
-		
+		 */
 		// how many turns do we have to draw?
 		
 		if (next_point.angle - this_point.angle > 0) 
@@ -3273,17 +3281,17 @@ void paint_spatfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect
 		if (can_change_line_luminosity) line_color = change_luminosity(line_color, 0.3);
 		if (can_change_alpha) line_color = change_alpha(line_color, new_alpha);
 
-		if ((direction == 0) || (next_point_screen_x == this_point_screen_x) || (next_point.interp == k_SPAT_INTERPOLATION_SEGMENT)) { // easy case: just a segment
+		if ((direction == 0) || (next_point_screen.x == this_point_screen.x) || (next_point.interp == k_SPAT_INTERPOLATION_SEGMENT)) { // easy case: just a segment
 			if (paint_lines_separately)
-				paint_line(lines_g, line_color, this_point_screen_x - function_bounding_rectangle.x + PAD_X, this_point_screen_y - function_bounding_rectangle.y + PAD_Y, next_point_screen_x - function_bounding_rectangle.x + PAD_X, next_point_screen_y - function_bounding_rectangle.y + PAD_Y, CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y);
+				paint_line(lines_g, line_color, this_point_screen.x - function_bounding_rectangle.x + PAD_X, this_point_screen.y - function_bounding_rectangle.y + PAD_Y, next_point_screen.x - function_bounding_rectangle.x + PAD_X, next_point_screen.y - function_bounding_rectangle.y + PAD_Y, CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y);
 			else
-				paint_line(g, line_color, this_point_screen_x, this_point_screen_y, next_point_screen_x, next_point_screen_y, CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y);
+				paint_line(g, line_color, this_point_screen.x, this_point_screen.y, next_point_screen.x, next_point_screen.y, CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y);
 		} else {
 			char j;
 			double const H = 18 * zoom_y;
 			double const P = 0.4;
-			double D = sqrt((next_point_screen_x - this_point_screen_x) * (next_point_screen_x - this_point_screen_x) + (next_point_screen_y - this_point_screen_y) * (next_point_screen_y - this_point_screen_y));
-			double theta = atan((next_point_screen_y - this_point_screen_y) / (next_point_screen_x - this_point_screen_x));
+			double D = sqrt((next_point_screen.x - this_point_screen.x) * (next_point_screen.x - this_point_screen.x) + (next_point_screen.y - this_point_screen.y) * (next_point_screen.y - this_point_screen.y));
+			double theta = atan((next_point_screen.y - this_point_screen.y) / (next_point_screen.x - this_point_screen.x));
 			double turn_x_step = D / (turns+1);
 			t_pt this_turn_p0, this_turn_p1, this_turn_p2, this_turn_p3, this_turn_h1, this_turn_h2;
 
@@ -3291,13 +3299,13 @@ void paint_spatfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect
 #ifdef BACH_MAX
 			jgraphics_set_line_width(paint_lines_separately ? lines_g : g, CONST_SLOT_FUNCTION_LINE_WIDTH * zoom_y); 
 			if (paint_lines_separately)
-				jgraphics_move_to(lines_g, this_point_screen_x - function_bounding_rectangle.x + PAD_X, this_point_screen_y - function_bounding_rectangle.y + PAD_Y);
+				jgraphics_move_to(lines_g, this_point_screen.x - function_bounding_rectangle.x + PAD_X, this_point_screen.y - function_bounding_rectangle.y + PAD_Y);
 			else
-				jgraphics_move_to(g, this_point_screen_x, this_point_screen_y);
+				jgraphics_move_to(g, this_point_screen.x, this_point_screen.y);
 #endif
 #ifdef BACH_JUCE
 			Path p;
-			p.startNewSubPath(this_point_screen_x, this_point_screen_y);
+			p.startNewSubPath(this_point_screen.x, this_point_screen.y);
 #endif
 			for (j = 0; j <= turns; j++) {
 				double new_x, new_y;
@@ -3351,10 +3359,10 @@ void paint_spatfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect
 				this_turn_h2.x = new_x; this_turn_h2.y = new_y;
 				
 				// gotta shift the points
-				this_turn_p0.x += this_point_screen_x; this_turn_p1.x += this_point_screen_x; this_turn_p2.x += this_point_screen_x; this_turn_p3.x += this_point_screen_x;
-				this_turn_p0.y += this_point_screen_y; this_turn_p1.y += this_point_screen_y; this_turn_p2.y += this_point_screen_y; this_turn_p3.y += this_point_screen_y;
-				this_turn_h1.x += this_point_screen_x; this_turn_h2.x += this_point_screen_x; 
-				this_turn_h1.y += this_point_screen_y; this_turn_h2.y += this_point_screen_y; 				
+				this_turn_p0.x += this_point_screen.x; this_turn_p1.x += this_point_screen.x; this_turn_p2.x += this_point_screen.x; this_turn_p3.x += this_point_screen.x;
+				this_turn_p0.y += this_point_screen.y; this_turn_p1.y += this_point_screen.y; this_turn_p2.y += this_point_screen.y; this_turn_p3.y += this_point_screen.y;
+				this_turn_h1.x += this_point_screen.x; this_turn_h2.x += this_point_screen.x;
+				this_turn_h1.y += this_point_screen.y; this_turn_h2.y += this_point_screen.y;
 				
 				// We paint the points for debug
 				/*						paint_circle_filled((t_notation_obj *) x, g, get_grey(0.), this_turn_p0.x, this_turn_p0.y, 1.);
@@ -3415,18 +3423,20 @@ void paint_spatfunction_in_slot_win(t_notation_obj *r_ob, t_jgraphics* g, t_rect
 	temp = notation_item_get_slot_firstitem(r_ob, nitem, slot_number); // first point
 	while (temp) {
 		t_spatpt point = *((t_spatpt *)temp->item);
-		double point_screen_x = function_bounding_rectangle.x + rescale_with_slope_inv(point.t, slot_domain_min, slot_domain_max, 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * function_bounding_rectangle.width;
-		double point_screen_y = 2 * function_bounding_rectangle.y + function_bounding_rectangle.height - rescale_with_slope_inv(point.radius, slot_min, slot_max, function_bounding_rectangle.y, function_bounding_rectangle.y + function_bounding_rectangle.height, r_ob->slotinfo[slot_number].slot_range_par);
-		double angle_mod_2_pi, this_sin, this_cos, tick_end_x, tick_end_y;
-		
-		if (is_pt_in_rectangle_tolerance(build_pt(point_screen_x, point_screen_y), displayed_bounding_rectangle, 1.)) {
-			paint_circle(g, slot_textcolor, get_grey(1), point_screen_x, point_screen_y, point_radius * zoom_y, 1);
+        t_pt point_screen;
+        
+        function_xy_values_to_pt(r_ob, nitem, point.t, point.radius, slot_number, function_bounding_rectangle, &point_screen);
+
+        double angle_mod_2_pi, this_sin, this_cos, tick_end_x, tick_end_y;
+ 
+		if (is_pt_in_rectangle_tolerance(build_pt(point_screen.x, point_screen.y), displayed_bounding_rectangle, 1.)) {
+			paint_circle(g, slot_textcolor, get_grey(1), point_screen.x, point_screen.y, point_radius * zoom_y, 1);
 			
 			angle_mod_2_pi = point.angle - floor(point.angle/(2 * M_PI)) * 2 * M_PI;
 			this_sin = sin(angle_mod_2_pi); this_cos = cos(angle_mod_2_pi);
-			tick_end_x = point_screen_x + point_radius * 0.85 * zoom_y * this_sin;
-			tick_end_y = point_screen_y - point_radius * 0.85 * zoom_y * this_cos;
-			paint_line(g, slot_textcolor, point_screen_x, point_screen_y, tick_end_x, tick_end_y, 1.);
+			tick_end_x = point_screen.x + point_radius * 0.85 * zoom_y * this_sin;
+			tick_end_y = point_screen.y - point_radius * 0.85 * zoom_y * this_cos;
+			paint_line(g, slot_textcolor, point_screen.x, point_screen.y, tick_end_x, tick_end_y, 1.);
 		}
 			
 		temp = temp->next;
@@ -3785,7 +3795,7 @@ t_llll *set_slotinfo_from_llll(t_notation_obj *r_ob, t_llll* slotinfo)
                         t_llllelem *elem;
                         
                         // user defined values:
-                        char need_check_slot_domain = false;
+                        char need_check_slot_domain = false, need_remove_extension = false;
                         for (elem = single_slots->l_head->l_next; elem; elem = elem->l_next) {
                             if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
                                 t_llll *this_llll = hatom_getllll(&elem->l_hatom);
@@ -3895,6 +3905,7 @@ t_llll *set_slotinfo_from_llll(t_notation_obj *r_ob, t_llll* slotinfo)
 
                                     } else if (router == _llllobj_sym_extend && this_llll->l_head->l_next) {
                                         r_ob->slotinfo[j].extend_beyond_tails = (hatom_getlong(&this_llll->l_head->l_next->l_hatom) > 0 ? 1 : 0);
+                                        need_remove_extension = (hatom_getlong(&this_llll->l_head->l_next->l_hatom) == 0);
                                         need_check_slot_domain = true;
 
                                     } else if (router == _llllobj_sym_width && this_llll->l_head->l_next) {
@@ -3964,6 +3975,9 @@ t_llll *set_slotinfo_from_llll(t_notation_obj *r_ob, t_llll* slotinfo)
                             }
                         }
                         
+                        if (need_remove_extension)
+                            notationobj_slot_remove_extensions(r_ob, j);
+                            
                         if (need_check_slot_domain && (r_ob->slotinfo[j].slot_temporalmode != k_SLOT_TEMPORALMODE_MILLISECONDS && r_ob->slotinfo[j].slot_temporalmode != k_SLOT_TEMPORALMODE_TIMEPOINTS))
                             check_slot_domain(r_ob, j);
                         
@@ -4315,6 +4329,10 @@ char convert_slot_temporalmode(t_notation_obj *r_ob, long slot_num, long old_tem
                 default:
                     break; // nothing to do
             }
+            
+            if (old_temporalmode != k_SLOT_TEMPORALMODE_NONE && r_ob->slotinfo[slot_num].slot_uwidth < 0)
+                r_ob->slotinfo[slot_num].slot_uwidth = CONST_SLOT_FUNCTION_DEFAULT_UWIDTH;
+            
             break;
             
         case k_SLOT_TEMPORALMODE_RELATIVE:
@@ -4368,6 +4386,28 @@ void change_slot_temporalmode(t_notation_obj *r_ob, long slot_num, t_symbol *new
     
 }
 
+
+void slot_remove_extensions(t_notation_obj *r_ob, t_notation_item *nitem, long slot_num)
+{
+    t_llll *ll = notation_item_get_partial_single_slot_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, slot_num, 0., 1.);
+    llll_wrap_once(&ll);
+    set_slots_values_to_notationitem_from_llll(r_ob, nitem, ll);
+    llll_free(ll);
+}
+
+void notationobj_slot_remove_extensions(t_notation_obj *r_ob, long slot_num)
+{
+    for (t_voice *v = r_ob->firstvoice; v && v->number < r_ob->num_voices; v = voice_get_next(r_ob, v)) {
+        for (t_chord *c = chord_get_first(r_ob, v); c; c = chord_get_next(c)) {
+            if (!c->firstnote) {
+                slot_remove_extensions(r_ob, (t_notation_item *)c, slot_num);
+            } else {
+                for (t_note *n = c->firstnote; n; n = n->next)
+                    slot_remove_extensions(r_ob, (t_notation_item *)n, slot_num);
+            }
+        }
+    }
+}
 
 
 // ******* DATA ***********
@@ -6946,26 +6986,8 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 					{
 						// with spat, just like with functions, we can add, delete points, change slope, move points... it makes a lot of things! :-)
 						
-						double slot_max = r_ob->slotinfo[s].slot_range[1]; 
-						double slot_min = r_ob->slotinfo[s].slot_range[0]; // max and min values allowed for the slots
-						
 						//let's check if we've clicked on a point
-						t_slotitem *clicked = NULL;
-						t_slotitem *temp = get_activeitem_slot_firstitem(r_ob, s);
-						double item_t_val, item_r_val, item_x_pixel, item_y_pixel;
-						double point_radius = CONST_SLOT_SPAT_CIRCLE_URADIUS * zoom_y;
-						while (temp) {
-							item_t_val = ((t_spatpt *)temp->item)->t;	
-							item_r_val = ((t_spatpt *)temp->item)->radius;
-							item_x_pixel = r_ob->slot_window_active.x + r_ob->slot_window_active.width * rescale_with_slope_inv(item_t_val, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], 0., 1., r_ob->slotinfo[s].slot_domain_par);
-							item_y_pixel = 2 * r_ob->slot_window_active.y + r_ob->slot_window_active.height - rescale_with_slope_inv(item_r_val, slot_min, slot_max, r_ob->slot_window_active.y, r_ob->slot_window_active.y + r_ob->slot_window_active.height, r_ob->slotinfo[s].slot_range_par);
-							if ((this_x - item_x_pixel)*(this_x - item_x_pixel) + (this_y - item_y_pixel)*(this_y - item_y_pixel) < point_radius * point_radius) {
-								clicked = temp;
-								break;
-							}
-							temp = temp->next;
-						}
-						
+                        t_slotitem *clicked = pt_to_spat_slot_point(r_ob, pt, s);
 						if (clicked) { // something has been clicked
 							if (modifiers == eCommandKey) { // delete point
 								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
@@ -6995,10 +7017,13 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								double t_val, r_val;
 								
 								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-								
-								//t_val = (this_x - (r_ob->slot_window_x1 + x_function_inlet)) / (r_ob->slot_window_x2 - r_ob->slot_window_x1 - 2 * x_function_inlet);
-								t_val = rescale_with_slope(this_x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
+                                
+                                pt_to_function_xy_values(r_ob, r_ob->active_slot_notationitem, build_pt(this_x, this_y), s, r_ob->slot_window_active, &t_val, &r_val);
+/*
+                                t_val = rescale_with_slope(this_x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
 								r_val = rescale_with_slope((r_ob->slot_window_active.y + r_ob->slot_window_active.height) - this_y, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
+ */
+                                
 								thispts->t = t_val;	thispts->radius = r_val; thispts->angle = 0.; thispts->interp = k_SPAT_INTERPOLATION_ARC;
 								thisitem->item = thispts; // correctly assign the point to the item
 								// we check where we have to put the point within the list
@@ -7936,9 +7961,16 @@ void handle_slot_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
         
         switch (r_ob->slotinfo[s].slot_temporalmode) {
             case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                new_x_value = xposition_to_onset(r_ob, xpt, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
+                new_x_value = xposition_to_ms(r_ob, xpt, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
                 break;
-                
+
+            case k_SLOT_TEMPORALMODE_RELATIVE:
+            {
+                double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                new_x_value = (xposition_to_ms(r_ob, xpt, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/(duration == 0 ? 1 : duration);
+            }
+                break;
+
             default:
                 new_x_value = rescale_with_slope(xpt, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                 break;
@@ -7969,9 +8001,16 @@ void handle_slot_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
 		
         switch (r_ob->slotinfo[s].slot_temporalmode) {
             case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                new_x_value = changing_segment ? thisbpt->x : xposition_to_onset(r_ob, xpt, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
+                new_x_value = changing_segment ? thisbpt->x : xposition_to_ms(r_ob, xpt, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
                 break;
-                
+
+            case k_SLOT_TEMPORALMODE_RELATIVE:
+            {
+                double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                new_x_value = changing_segment ? thisbpt->x : (xposition_to_ms(r_ob, xpt, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/(duration == 0 ? 1 : duration);
+            }
+                break;
+
             default:
                 new_x_value = changing_segment ? thisbpt->x : rescale_with_slope(xpt, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                 break;
@@ -8131,8 +8170,15 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                             
                             switch (r_ob->slotinfo[s].slot_temporalmode) {
                                 case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                                    delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (xposition_to_onset(r_ob, pt.x, 0) - xposition_to_onset(r_ob, r_ob->floatdragging_x, 0));
+                                    delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (xposition_to_ms(r_ob, pt.x, 0) - xposition_to_ms(r_ob, r_ob->floatdragging_x, 0));
                                     break;
+                                    
+                                case k_SLOT_TEMPORALMODE_RELATIVE:
+                                {
+                                    double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                    delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (xposition_to_ms(r_ob, pt.x, 0) - xposition_to_ms(r_ob, r_ob->floatdragging_x, 0))/(duration = 0 ? 1 : duration);
+                                }
+
 
                                 default:
                                     delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (pt.x - r_ob->floatdragging_x) * (r_ob->slotinfo[s].slot_domain[1] - r_ob->slotinfo[s].slot_domain[0])/r_ob->slot_window_active.width;
@@ -8157,7 +8203,14 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                             
                             switch (r_ob->slotinfo[s].slot_temporalmode) {
                                 case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                                    delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (xposition_to_onset(r_ob, pt.x, 0) - xposition_to_onset(r_ob, r_ob->floatdragging_x, 0));
+                                    delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (xposition_to_ms(r_ob, pt.x, 0) - xposition_to_ms(r_ob, r_ob->floatdragging_x, 0));
+                                    break;
+                                    
+                                case k_SLOT_TEMPORALMODE_RELATIVE:
+                                {
+                                    double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                    delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (xposition_to_ms(r_ob, pt.x, 0) - xposition_to_ms(r_ob, r_ob->floatdragging_x, 0)) / (duration == 0 ? 1 : duration);
+                                }
                                     break;
                                     
                                 default:
@@ -8204,9 +8257,16 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                             
                             switch (r_ob->slotinfo[s].slot_temporalmode) {
                                 case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                                    new_t_value = xposition_to_onset(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
+                                    new_t_value = xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
                                     break;
-                                    
+
+                                case k_SLOT_TEMPORALMODE_RELATIVE:
+                                {
+                                    double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                    new_t_value = (xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/(duration == 0 ? 1 : duration);
+                                }
+                                    break;
+
                                 default:
                                     new_t_value = rescale_with_slope(pt.x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                                     break;
@@ -8233,9 +8293,16 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                             
                             switch (r_ob->slotinfo[s].slot_temporalmode) {
                                 case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                                    new_t_value = xposition_to_onset(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
+                                    new_t_value = xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
                                     break;
-                                    
+
+                                case k_SLOT_TEMPORALMODE_RELATIVE:
+                                {
+                                    double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                    new_t_value = (xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/(duration == 0 ? 1 : duration);
+                                }
+                                    break;
+
                                 default:
                                     new_t_value = rescale_with_slope(pt.x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                                     break;
@@ -8502,9 +8569,16 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                 double new_pos;
                                 switch (r_ob->slotinfo[s].slot_temporalmode) {
                                     case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                                        new_pos = xposition_to_onset(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
+                                        new_pos = xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem);
                                         break;
-                                        
+
+                                    case k_SLOT_TEMPORALMODE_RELATIVE:
+                                    {
+                                        double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                        new_pos = (xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/duration;
+                                    }
+                                        break;
+
                                     default:
                                         new_pos = rescale_with_slope(pt.x, r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
                                         break;
@@ -8612,9 +8686,13 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
             double thisx;
             switch (r_ob->slotinfo[slot_number].slot_temporalmode) {
                 case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                    thisx = onset_to_xposition(r_ob, ((t_biquad *)temp->item)->t + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
+                    thisx = ms_to_xposition(r_ob, ((t_biquad *)temp->item)->t + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
                     break;
-                    
+
+                case k_SLOT_TEMPORALMODE_RELATIVE:
+                    thisx = ms_to_xposition(r_ob, ((t_biquad *)temp->item)->t * notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem) + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
+                    break;
+
                 default:
                     thisx = rescale_with_slope_inv(((t_biquad *)temp->item)->t, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], r_ob->slot_window_active_x1, r_ob->slot_window_active_x2, r_ob->slotinfo[slot_number].slot_domain_par);
                     break;
@@ -8640,9 +8718,13 @@ t_slotitem *pt_to_function_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_n
         
         switch (r_ob->slotinfo[slot_number].slot_temporalmode) {
             case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                item_x_pixel = onset_to_xposition(r_ob, item_x_val + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
+                item_x_pixel = ms_to_xposition(r_ob, item_x_val + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
                 break;
-                
+
+            case k_SLOT_TEMPORALMODE_RELATIVE:
+                item_x_pixel = ms_to_xposition(r_ob, item_x_val * notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem) + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
+                break;
+
             default:
                 item_x_pixel = r_ob->slot_window_active.x + r_ob->slot_window_active.width * rescale_with_slope_inv(item_x_val, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], 0., 1., r_ob->slotinfo[slot_number].slot_domain_par);
                 break;
@@ -8686,13 +8768,39 @@ t_slotitem *pt_to_3dfunction_slot_point(t_notation_obj *r_ob, t_pt pt, long slot
 }
 
 
+t_slotitem *pt_to_spat_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_number)
+{
+    double zoom_y = r_ob->zoom_y * (r_ob->slot_window_zoom / 100.);
+    t_slotitem *temp, *clicked = NULL;
+    for (temp = get_activeitem_slot_firstitem(r_ob, slot_number); temp; temp = temp->next) {
+        t_pt this_pt;
+        double this_radius = CONST_SLOT_SPAT_CIRCLE_URADIUS * zoom_y;
+        
+        function_xy_values_to_pt(r_ob, r_ob->active_slot_notationitem, ((t_spatpt *)temp->item)->t, ((t_spatpt *)temp->item)->radius, slot_number, r_ob->slot_window_active, &this_pt);
+        
+        if ((pt.x - this_pt.x)*(pt.x - this_pt.x) + (pt.y - this_pt.y)*(pt.y - this_pt.y) < (this_radius + CONST_SLOT_FUNCTION_POINT_ADD_RADIUS_FOR_SELECTION) * (this_radius + CONST_SLOT_FUNCTION_POINT_ADD_RADIUS_FOR_SELECTION)) {
+            clicked = temp;
+            break;
+        }
+    }
+    return clicked;
+}
+
+
 void pt_to_function_xy_values(t_notation_obj *r_ob, t_notation_item *nitem, t_pt pt, long slot_number, t_rect active_slot_window, double *xval, double *yval)
 {
     switch (r_ob->slotinfo[slot_number].slot_temporalmode) {
         case k_SLOT_TEMPORALMODE_MILLISECONDS:
-            *xval = xposition_to_onset(r_ob, pt.x, 0) - (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0);
+            *xval = xposition_to_ms(r_ob, pt.x, 0) - (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0);
             break;
             
+        case k_SLOT_TEMPORALMODE_RELATIVE:
+        {
+            double duration = (nitem ? notation_item_get_duration_ms(r_ob, nitem) : 1);
+            *xval = (xposition_to_ms(r_ob, pt.x, 0) - (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0))/(duration == 0 ? 1 : duration);
+        }
+            break;
+
         default:
             *xval = rescale_with_slope(pt.x, active_slot_window.x, active_slot_window.x + active_slot_window.width, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], r_ob->slotinfo[slot_number].slot_domain_par);
             break;
@@ -8704,7 +8812,11 @@ void function_xy_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, doub
 {
     switch (r_ob->slotinfo[slot_number].slot_temporalmode) {
         case k_SLOT_TEMPORALMODE_MILLISECONDS:
-            pt->x = onset_to_xposition(r_ob, xval + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
+            pt->x = ms_to_xposition(r_ob, xval + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
+            break;
+            
+        case k_SLOT_TEMPORALMODE_RELATIVE:
+            pt->x = ms_to_xposition(r_ob, xval * (nitem ? notation_item_get_duration_ms(r_ob, nitem) : 1) + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
             break;
             
         default:
@@ -8721,9 +8833,13 @@ void function_xyz_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, dou
     
     switch (r_ob->slotinfo[slot_number].slot_temporalmode) {
         case k_SLOT_TEMPORALMODE_MILLISECONDS:
-            pt->x = onset_to_xposition(r_ob, xval + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
+            pt->x = ms_to_xposition(r_ob, xval + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
             break;
             
+        case k_SLOT_TEMPORALMODE_RELATIVE:
+            pt->x = ms_to_xposition(r_ob, xval * notation_item_get_duration_ms(r_ob, nitem) + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
+            break;
+
         default:
             pt->x = active_slot_window.x + rescale_with_slope_inv(xval, r_ob->slotinfo[slot_number].slot_domain[0], r_ob->slotinfo[slot_number].slot_domain[1], 0., 1., r_ob->slotinfo[slot_number].slot_domain_par) * active_slot_window.width;
             break;

@@ -7829,6 +7829,7 @@ e_slot_types slot_symbol_to_type(t_symbol *type);
 void change_slot_temporalmode(t_notation_obj *r_ob, long slot_num, t_symbol *new_temporalmode);
 t_symbol *slot_temporalmode_to_symbol(e_slot_temporalmodes slot_temporalmode);
 e_slot_temporalmodes slot_symbol_to_temporalmode(t_symbol *temporalmode);
+void notationobj_slot_remove_extensions(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Get last item of a slot.
@@ -8164,17 +8165,17 @@ void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1
 t_llll *get_default_slots_to_transfer_1based(t_notation_obj * r_ob);
 
 
-/**	Get the complete information about the content of all the slots of a portion of note in a llll form.
+/**	Get the complete information about the content of all the slots of a portion of a notation item in a llll form.
 	@ingroup					slots
 	@param	r_ob				The notation object
-	@param	note				The note
+	@param	nitem				The notation item
 	@param	mode				One of the #e_data_considering_types, informing on the aim for which you want to collect the information
 	@param	force_all_slots		If this is 1 the algorithm will return all the note slots, if this is 0 (advised) only the one containing real slot information, and not the empty ones.
 	@param	start_rel_x_pos		The starting point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@param	end_rel_x_pos		The ending point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@return						An llll containing all the note slots information.
  */
-t_llll* get_partialnote_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, char force_all_slots, double start_rel_x_pos, double end_rel_x_pos);
+t_llll* notation_item_get_partial_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char force_all_slots, double start_rel_x_pos, double end_rel_x_pos);
 
 
 /**	Get the information about the content of a given slot of a given note in a llll form.
@@ -8195,17 +8196,17 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 t_notation_item *notation_item_get_bearing_dynamics(t_notation_obj *r_ob, t_notation_item *nitem, long dynamics_slot_num);
 t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notation_obj *r_ob, t_notation_item *nitem);
 
-/**	Get the information about the content of a part given slot of a given note in a llll form.
+/**	Get the information about the content of a part given slot of a given notation item in a llll form.
 	@ingroup					slots
 	@param	r_ob				The notation object
-	@param	note				The note
+	@param	nitem				The notation item
 	@param	mode				One of the #e_data_considering_types, informing on the aim for which you want to collect the information
 	@param	slotnum				The 0-based slot number in which we are interested
 	@param	start_rel_x_pos		The starting point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@param	end_rel_x_pos		The ending point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@return						An llll containing the specified slot information.
  */
-t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, double start_rel_x_pos, double end_rel_x_pos);
+t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, double start_rel_x_pos, double end_rel_x_pos);
 
 
 /**	Retrieve all the information about the slotinfo of a given notation object.
@@ -8430,6 +8431,9 @@ t_slotitem *pt_to_function_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_n
 						IS inside the slot function window, with is_pt_in_inner_slot_subwindow()
  */
 t_slotitem *pt_to_3dfunction_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_number);
+
+// TBD
+t_slotitem *pt_to_spat_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_number);
 
 
 /**	Retrieve the clicked biquad filter in a dynfilter type of slot window, starting from a screen point (pixels).
@@ -10558,7 +10562,7 @@ void append_note_breakpoints_formatted_for_pwgl(t_notation_obj *r_ob, t_llll *th
 	@param		bpt		The breakpoint
 	@return				The absolute onset of the breakpoint in milliseconds.
 */
-double get_breakpoint_absolute_onset(t_bpt *bpt);
+double breakpoint_get_absolute_onset(t_bpt *bpt);
 
 
 /** Obtain a part of duration line, as breakpoints llll.
@@ -10570,7 +10574,7 @@ double get_breakpoint_absolute_onset(t_bpt *bpt);
 	@param	new_start_midicents	Pointer which will be filled with the midicents value at the beginning of the extrapolated part, or NULL if not needed.
 	@return				The partial breakpoints as llll
  */
-t_llll* get_partialnote_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, double start_rel_x_pos, double end_rel_x_pos, double *new_start_midicents);
+t_llll* note_get_partial_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, double start_rel_x_pos, double end_rel_x_pos, double *new_start_midicents);
 
 
 
