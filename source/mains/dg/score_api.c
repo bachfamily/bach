@@ -10532,9 +10532,9 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         
                     } else {
                         if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
-                            x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
-                        } else {
                             x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth);
+                        } else {
+                            x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
                         }
                     }
                 }

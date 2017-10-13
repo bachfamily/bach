@@ -15,7 +15,8 @@ v0.8b
                         now the first item of an llll doesn't get a backtick any longer if it is the name of an attribute of a bach object.
                     There is a new format for llll output: 'm' (as in Max), which is a textual representation (akin to 't') with no backticks at all,
                         useful for passing correctly symbols to regular Max objects.
-                    Notice that, unlike the 't' format, the 'm' format is not invertible, i.e., a 'm' llll output from a bach object might not be parsed correctly by another bach object, even if it doesn't exceed the size limit for a Max message.
+                    Notice that, unlike the 't' format, the 'm' format is not invertible, i.e., a 'm' 
+			llll output from a bach object might not be parsed correctly by another bach object, even if it doesn't exceed the size limit for a Max message.
 
 - bach.append -> bach.join	This one won't break the compatibility with older patches, we promise :-)
 					But still it's important that you start using the new [bach.join] instead of [bach.append].
@@ -119,6 +120,8 @@ v0.8b
 				you should use the new ones from now on
 			Default loop is now (0ms, 1000ms) for bach.roll and first measure for bach.score
 			If you named markers or items "next", "prev" or "time", you might run into trouble.
+			New important features for slots: "temporalmode" (none, relative or milliseconds) and "extend" (to extend the slot content beyond the note tail)
+				In particular, you may now define millisecond-based behaviors for slots.
 
 
 
