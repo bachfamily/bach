@@ -149,7 +149,7 @@
 		"digest" : [ "How to keep slots and musical parameters always up-to-date" ],
 		"description" : [ "When writing music, very often we need to have parameters updated in real time, to follow the path of our composition. This is useful, for instance, if we want to assign a \"mode de jeu\" to a note depending on its duration, or if we want each note to keep its frequency in Hertz in a slot. In the first situation, if we resize the note, we'd like to see the \"mode de jeu\" changing in real time; in the second case, when we drag it up or down, we'd like to see the frequency changing accordingly. Most Lisp-based architectures deal with this problems by taking advantage of the power of the so-called lambda-calculus, in order to define properties of elements to be \"interpreted functions\". In such a way, and in such an environment, one could define a note slot to be a function - not one of bach's function-slots, which is just a series of (correctly interpreted) values, but a function itself, namely \"the way\" to assign values to values. Having interpreted functions as slots is not possible in bach, since slot can only contain \"rigid values\". Yet one could very well fake the lambda-calculus behaviour by keepint those values up-to-date. In this way, there will be no difference whatsoever for the final user; there will be - obviously - difference for you, programmer, and this tutorial will show you a way to achieve all this." ],
 		"numsections" : [ 9 ],
-		"topics" : [ "using commands, \"lambda\" message for notation objects, \"dumpselection\" message, \"changeslotvalue\" message, changing font size for background slots, outputting bangs continuously while mousedragging" ],
+		"topics" : [ "using commands, \"lambda\" message for notation objects, \"dumpselection\" message, \"changeslotitem\" message, changing font size for background slots, outputting bangs continuously while mousedragging" ],
 		"seealso": [ "bach.roll" ]
 	},
 	"18" : {
@@ -167,7 +167,7 @@
 		"digest" : [ "Meet the filter and dynfilter slots" ],
 		"description" : [ "In this tutorial you'll get accustomed to the filter and dynfilter types of slot, and you'll learn how to make them communicate with the standard dsp Max objects." ],
 		"numsections" : [ 8 ],
-		"topics" : [ "\"filter\" and \"dynfilter\" slots, using commands, automessage, \"changeslotvalue\" message, the \"samplerate\" attribute" ],
+		"topics" : [ "\"filter\" and \"dynfilter\" slots, using commands, automessage, \"changeslotitem\" message, the \"samplerate\" attribute" ],
 		"seealso": [ "bach.roll" ]
 	},
 	"20" : {

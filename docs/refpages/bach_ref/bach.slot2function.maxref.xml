@@ -155,12 +155,17 @@
 				- <b>access</b>: sets the slot accessibility, and expects a symbol. Default is "readandwrite" (slot is readable and writable);
 				you can also use "readonly" (slot is only readable, not writable via interface), or "none" (slot window can't even be opened, slot
 				content cannot be accessed).<br />
+				- <b>temporalmode</b>: sets whether the slot contains temporal information, and if so in which form.
+				It expects one of the following symbols: "none" (the information is not temporal), "relative" (the information is temporal, and the X value
+				of each slot item is a relative position inside the note duration, usually between 0 and 1), "milliseconds" (the information is temporal, and the X
+				value of each slot item is defined as a position milliseconds with respect to the note onset). <br />
+				- <b>extend</b>: toggles the ability for temporal slots to extend their content beyond the end of each corresponding note (might be also useful,
+				in combination with the "milliseconds" temporalmode, in order to define continuous parameters, independently from a note duration). <br />
 				– <b>range</b>: followed by two numbers, sets the minimum and maximum values the slot range (vertical axis for function and 3dfunction slots, or number
 				range for number slots) may assume. <br />
 				– <b>key</b>: expects the character or the ASCII value of a key to be mapped as a hotkey for the slot. <br />
 				– <b>slope</b>: expects a parameter (-1 to 1, 0 = linear) to exponentially represent the displayed range values of the slot. <br />
-				– <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). You can also put "temporal"
-				if you want the window to correspond exactly to the note length, which is handy when dealing e.g. with envelopes or spatializations. <br />
+				– <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). <br />
 				– <b>height</b>: a value determining the height of the slot window (scaled according to the object's vertical zoom). You can also put "auto"
 				if you want to leave an automatically calculated height (default). <br />
 				– <b>ysnap</b>: sets, for function or 3dfunction slots, some privileged Y points to which the points will be snapped

@@ -5548,7 +5548,9 @@ void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nite
 							slope = 0;
 						else
 							slope = hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_hatom);
-						clip_double(&x_val, 0., 1.); clip_double(&y_val, slotmin, slotmax); clip_double(&slope, -1., 1.);
+						slot_clip_domain_value(r_ob, nitem, slotnum, &x_val);
+                        clip_double(&y_val, slotmin, slotmax);
+                        clip_double(&slope, -1., 1.);
 						point = (t_pts *)bach_newptr(sizeof(t_pts));
 						point->x = x_val; point->y = y_val; point->slope = slope;
                         t_slotitem *lastitem = slot_get_last_item(slot);
@@ -5574,8 +5576,8 @@ void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nite
 							slope = 0;
 						else
 							slope = hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom);
-						clip_double(&x_val, 0., 1.); 
-						clip_double(&y_val, slotmin, slotmax); 
+                        slot_clip_domain_value(r_ob, nitem, slotnum, &x_val);
+						clip_double(&y_val, slotmin, slotmax);
 						clip_double(&z_val, slotzmin, slotzmax); 
 						clip_double(&slope, -1., 1.);
 						point = (t_pts3d *)bach_newptr(sizeof(t_pts));
@@ -5607,7 +5609,8 @@ void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nite
 							angle = deg2rad(hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_hatom));
 							interp = (values_as_llll->l_size >= 4) ? hatom_getlong(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) : k_SPAT_INTERPOLATION_ARC;
 						}
-						clip_double(&t_val, 0., 1.); clip_double(&r_val, slotmin, slotmax); 
+                        slot_clip_domain_value(r_ob, nitem, slotnum, &t_val);
+                        clip_double(&r_val, slotmin, slotmax);
 						clip_double(&angle, -CONST_MAX_TURN_ANGLE * 2 * M_PI, CONST_MAX_TURN_ANGLE * 2 * M_PI);
 						clip_long(&interp, 0, 1);
 						point = (t_spatpt *)bach_newptr(sizeof(t_spatpt));

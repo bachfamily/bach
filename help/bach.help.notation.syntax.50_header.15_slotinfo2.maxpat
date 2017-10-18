@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 7,
 			"minor" : 3,
-			"revision" : 0,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -101,7 +101,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 69.0, 580.0, 224.0 ],
+					"patching_rect" : [ 6.0, 69.0, 580.0, 210.0 ],
 					"showhand" : 0,
 					"text" : "– default: a numeric value (for numeric slots) determining the slot default\n– representation: either symbols defining units of measurement (e.g. \"Hz\", \"ms\"...) or an enumeration list (only for int and intlist slots), mapping each integer to an element of this enumeration list (e.g. in an int slot from 1 to 3, a slot_representation \"(one two three)\" will display \"one\" at the place of 1, \"two\" at the place of 2, \"three\" at the place of 3). These symbols will never be output upon dump or play (just the original values). For matrix-typed slots, it can be either a llll containing the number of rows and columns, such as (3 4), or a llll containing the names of the rows and columns, such as ((or fee foo) (col1 col2 col3)). To give units to different axes, just list them, such as: Hz dB.\n– singleslotfortiednotes: (for bach.score only) tells whether tied sequences of notes have just one slot, the one corresponding to the first note of the sequence.\n– copywhensplit: 1/0 flag telling if content should be copied when a note is split into a sequence of notes (e.g. via quantization)\n– follownotehead: automatically modify slot value according to notehead trimming.\n",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],

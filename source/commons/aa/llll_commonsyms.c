@@ -648,6 +648,9 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_tail = gensym("tail");
 	x->s_eraseslot = gensym("eraseslot");
 	x->s_changeslotvalue = gensym("changeslotvalue");
+    x->s_changeslotitem = gensym("changeslotitem");
+    x->s_addslotitem = gensym("addslotitem");
+    x->s_appendslotitem = gensym("appendslotitem");
 	x->s_addslot = gensym("addslot");
 	x->s_addbreakpoint = gensym("addbreakpoint");
 	x->s_erasebreakpoints = gensym("erasebreakpoints");

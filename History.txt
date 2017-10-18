@@ -84,6 +84,9 @@ v0.8b
 - bach.circle, bach.tonnetz
 			Old "velocityhandling" attribute is now called "showvelocity". This might change the display of your patches!
 
+- bach.roll, bach.score, bach.slot
+			The "changeslotvalue" message is now called "changeslotitem". Old name is however kept for backward compatibility.
+
 - bach.roll, bach.score	
 			Old "velocityhandling" attribute is now called "showvelocity", but differently from bach.circle and bach.tonnetz,
 				your patches should be automatically updated to the new attribute name. 

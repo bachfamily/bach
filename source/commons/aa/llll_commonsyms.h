@@ -231,6 +231,9 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_tail;
 	t_symbol	*s_eraseslot;
 	t_symbol	*s_changeslotvalue;
+    t_symbol	*s_changeslotitem;
+    t_symbol	*s_addslotitem;
+    t_symbol	*s_appendslotitem;
 	t_symbol	*s_addslot;
 	t_symbol	*s_addbreakpoint;
 	t_symbol	*s_erasebreakpoints;
@@ -610,6 +613,9 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_tail			(_llllobj_common_symbols->s_tail)
 #define _llllobj_sym_eraseslot		(_llllobj_common_symbols->s_eraseslot)
 #define _llllobj_sym_changeslotvalue	(_llllobj_common_symbols->s_changeslotvalue)
+#define _llllobj_sym_changeslotitem	(_llllobj_common_symbols->s_changeslotitem)
+#define _llllobj_sym_addslotitem	(_llllobj_common_symbols->s_addslotitem)
+#define _llllobj_sym_appendslotitem	(_llllobj_common_symbols->s_appendslotitem)
 #define _llllobj_sym_addslot		(_llllobj_common_symbols->s_addslot)
 #define _llllobj_sym_addbreakpoint	(_llllobj_common_symbols->s_addbreakpoint)
 #define _llllobj_sym_erasebreakpoints	(_llllobj_common_symbols->s_erasebreakpoints)

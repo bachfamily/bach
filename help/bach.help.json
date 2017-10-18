@@ -764,7 +764,7 @@
 				"filename" : [ "bach.help.notation.articulations.02_defining.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "header" ],
-				"tags" : [ "articulation", "define", "assign", "introduce", "slot", "addslot", "changeslotvalue", "delete", "clear", "cleararticulations" ],
+				"tags" : [ "articulation", "define", "assign", "introduce", "slot", "addslot", "changeslotitem", "delete", "clear", "cleararticulations" ],
 				"title" : [ "Introducing standard articulations" ]
 			},
 			"Articulationslist" : {
@@ -2230,7 +2230,7 @@
 				"Slot" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.13_slot.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
-					"seealso" : [ "copyslot", "moveslot", "changeslotvalue" ],
+					"seealso" : [ "copyslot", "moveslot", "changeslotitem" ],
 					"tags" : [ "message", "operate", "on", "selection", "slot", "addslot", "eraseslot", "add", "erase", "active", "clear" ],
 					"title" : [ "Adding or deleting slot content" ]
 				},
@@ -2244,15 +2244,15 @@
 				"Slotchange" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.18_slotchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "changeslotvalue", "slot+content+syntax" ],
-					"tags" : [ "message", "operate", "on", "selection", "slot", "change", "single", "value", "changeslotvalue", "all" ],
+					"seealso" : [ "changeslotitem", "slot+content+syntax" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "change", "single", "value", "changeslotitem", "all" ],
 					"title" : [ "Setting single slot elements" ]
 				},
 				"Relativeslotchange" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.19_relativeslotchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "relative+modify" ],
-					"tags" : [ "message", "operate", "on", "selection", "slot", "relative", "modify", "changeslotvalue", "`nil" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "relative", "modify", "changeslotitem", "`nil" ],
 					"title" : [ "Modifying existing slot elements" ]
 				},
 				"Openslotwin" : {
@@ -3803,15 +3803,29 @@
 					"title" : [ "Dynamics slots" ]
 				}
 			},
-			"Slotdomain" : {
-				"filename" : [ "bach.help.notation.slots.11_slotdomain.maxpat" ],
+			"A_slottemporalmode" : {
+				"filename" : [ "bach.help.notation.slots.11a_slottemporalmode.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+syntax", "slotinfo+inspector", "temporal" ],
+				"tags" : [ "slot", "temporal", "mode", "absolute", "temporality", "relative", "millisecond", "none", "crop", "information", "temporalmode" ],
+				"title" : [ "Slot temporal modes" ]
+			},
+			"B_slotextend" : {
+				"filename" : [ "bach.help.notation.slots.11b_slotextend.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+syntax", "slotinfo+inspector", "temporal" ],
+				"tags" : [ "slot", "temporal", "mode", "absolute", "temporality", "relative", "millisecond", "example", "beyond", "extend", "tail", "longer", "minlength", "fake", "note", "automation", "record", "write", "latch" ],
+				"title" : [ "Extend temporal slots beyond tails" ]
+			},
+			"A_slotdomain" : {
+				"filename" : [ "bach.help.notation.slots.12a_slotdomain.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "llll+dollar" ],
 				"tags" : [ "slot", "slotinfo", "domain", "slope", "domainslope" ],
 				"title" : [ "Slot domain" ]
 			},
-			"Slotrange" : {
-				"filename" : [ "bach.help.notation.slots.12_slotrange.maxpat" ],
+			"B_slotrange" : {
+				"filename" : [ "bach.help.notation.slots.12b_slotrange.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "llll+dollar" ],
 				"tags" : [ "slot", "slotinfo", "range", "slope" ],
@@ -3923,6 +3937,13 @@
 				"seealso" : [ "slotinfo" ],
 				"tags" : [ "slot", "slotinfo", "resetslotinfo", "reset", "revert", "default" ],
 				"title" : [ "Resetting the slotinfo" ]
+			},
+			"Slottemporalmodeconversion" : {
+				"filename" : [ "bach.help.notation.slots.29_slottemporalmodeconversion.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+syntax", "slotinfo+inspector", "slot+temporalmode" ],
+				"tags" : [ "slot", "temporal", "mode", "temporalmode", "conversion", "convert", "change", "relative", "millisecond", "absolute" ],
+				"title" : [ "Slot temporal mode conversion" ]
 			},
 			"Slot linkage" : {
 				"Intro" : {
@@ -4620,10 +4641,17 @@
 				},
 				"Slotinfo1" : {
 					"filename" : [ "bach.help.notation.syntax.50_header.14_slotinfo1.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "interface+slotinfo", "inspector", "slot+slotinfo" ],
+					"tags" : [ "header", "syntax", "slotinfo", "parameter", "slot", "name", "type", "name", "key", "access", "temporalmode", "temporal", "mode", "range", "slope", "domain", "domainslope", "zrange", "zslope", "extend", "beyond", "tail" ],
+					"title" : [ "Basic slotinfo parameters (1)" ]
+				},
+				"B_slotinfo1b" : {
+					"filename" : [ "bach.help.notation.syntax.50_header.14b_slotinfo1b.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "interface+slotinfo", "inspector", "slot+slotinfo" ],
-					"tags" : [ "header", "syntax", "slotinfo", "parameter", "slot", "name", "type", "range", "key", "slope", "width", "height", "ysnap", "domain", "domainslope", "default", "representation", "zrange", "zslope", "singleslotfortiednotes", "copywhensplit", "follownotehead", "trim", "access", "prevent", "readonly", "read", "only", "write", "readandwrite" ],
-					"title" : [ "Basic slotinfo parameters" ]
+					"tags" : [ "header", "syntax", "slotinfo", "parameter", "slot", "width", "height", "snap", "ysnap", "zsnap" ],
+					"title" : [ "Basic slotinfo parameters (2)" ]
 				},
 				"Slotinfo2" : {
 					"filename" : [ "bach.help.notation.syntax.50_header.15_slotinfo2.maxpat" ],

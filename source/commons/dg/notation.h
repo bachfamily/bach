@@ -4599,8 +4599,8 @@ typedef struct _notation_obj
 												///< very same item. If nothing is being output, this is 0. 
 												///< More precisely, before outputting any thing from the playout, the #lambda_selected_item_ID is set, then its values are output,
 												///< and then the #lambda_selected_item_ID is unset (= set to 0). If the user closes the lambda loop, the #lambda_selected_item_ID is 
-												///< still set, and can be retrieven by any message accepting the lambda prefix (such as "lambda cents" or "lambda changeslotvalue").
-												///< This is thread safe, since if another thread deletes the object, when the "cents" or "changeslotvalue" function tries to retrieve
+												///< still set, and can be retrieven by any message accepting the lambda prefix (such as "lambda cents" or "lambda changeslotitem").
+												///< This is thread safe, since if another thread deletes the object, when the "cents" or "changeslotitem" function tries to retrieve
 												///< the notation item from its ID, it fails (item has been deleted).
 	
 	// expression evaluations
@@ -8040,7 +8040,7 @@ void change_slot_matrix_value(t_notation_obj *r_ob, t_note *note, int slot_num, 
 	@param	note				The note which owns the slot
 	@param	slot_num			The slot number (0-based!)
 	@param	position			The 1-based index of the item which you want to change (e.g. to change second value in a #k_SLOT_TYPE_INTLIST, set <position> = 2)
-	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotvalue' message syntax)
+	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
  */
 void change_note_slot_value(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll);
 

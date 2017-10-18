@@ -2697,13 +2697,14 @@ void roll_sel_sendcommand(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 }
 
 // arguments are: slot#, position, new value (as llll).
-void roll_sel_change_slot_value(t_roll *x, t_symbol *s, long argc, t_atom *argv){
+void roll_sel_change_slot_value(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
 	long slotnum, position;
 	t_llll *new_values_as_llll;
 	char lambda = (s == _llllobj_sym_lambda);
 	char changed = 0;
 	
-	if (argc < 3) 
+	if (argc < 3)
 		return;
 
 	slotnum = (atom_gettype(argv) == A_SYM ? slotname_to_slotnum((t_notation_obj *) x, atom_getsym(argv)) : atom_getlong(argv)-1);
@@ -4175,7 +4176,7 @@ int T_EXPORT main(void){
     // @example addslot (amplienv (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for slot named 'amplienv'
     // @example addslot (active (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for currently open slot
     // @example addslot (3 10 20 30) (2 (0 0 0) (0.5 0 1) (1 1 0.2)) @caption set more slots at once
-    // @seealso changeslotvalue, eraseslot
+    // @seealso changeslotitem, eraseslot
 	class_addmethod(c, (method) roll_sel_add_slot, "addslot", A_GIMME, 0);
 
 
@@ -4185,7 +4186,7 @@ int T_EXPORT main(void){
     // @example eraseslot active @caption clear currently open slot for selected items
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
-    // @seealso copyslot, moveslot, addslot, changeslotvalue, resetslotinfo
+    // @seealso copyslot, moveslot, addslot, changeslotitem, resetslotinfo
 	class_addmethod(c, (method) roll_sel_erase_slot, "eraseslot", A_GIMME, 0);
 
     
@@ -4196,7 +4197,7 @@ int T_EXPORT main(void){
     // @example moveslot 2 7 @caption move the content of slot 2 to slot 7 for selected items
     // @example moveslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the slot named amplienv to the slot named myfunction
-    // @seealso copyslot, eraseslot, addslot, changeslotvalue, resetslotinfo
+    // @seealso copyslot, eraseslot, addslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) roll_sel_move_slot, "moveslot", A_GIMME, 0);
 
     
@@ -4207,26 +4208,27 @@ int T_EXPORT main(void){
     // @example copyslot 2 7 @caption copy the content of slot 2 to slot 7 for selected items
     // @example copyslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the 'amplienv' slot to the 'myfunction' slot
-    // @seealso moveslot, eraseslot, addslot, changeslotvalue, resetslotinfo
+    // @seealso moveslot, eraseslot, addslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) roll_sel_copy_slot, "copyslot", A_GIMME, 0);
 
 
-	// @method changeslotvalue @digest Change a specific value inside a slot for selected items
-	// @description @copy BACH_DOC_MESSAGE_CHANGESLOTVALUE
+	// @method changeslotitem @digest Change a specific slot element inside a specific slot of selected items
+	// @description @copy BACH_DOC_MESSAGE_CHANGESLOTITEM
 	// @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
 	// @marg 1 @name element_index @optional 0 @type int
 	// @marg 2 @name slot_element @optional 0 @type llll	
-    // @example changeslotvalue 3 2 13 @caption set the 2nd element of 3nd (int or float) slot to 13
-    // @example changeslotvalue 3 0 13 @caption append 13 at the end of slot 3
-    // @example changeslotvalue 1 2 0.5 10 0 @caption change the 2nd point of the 1st (function) slot to (0.5 10 0) in (x y slope) form
-    // @example changeslotvalue active 2 0.5 10 0 @caption the same, for the currently open slot
-    // @example changeslotvalue spectrenv 2 0.5 10 0 @caption the same, for the a slot named 'spectrenv'
-    // @example changeslotvalue 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
-    // @example changeslotvalue 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
-    // @example changeslotvalue 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
+    // @example changeslotitem 3 2 13 @caption set the 2nd element of 3nd (int or float) slot to 13
+    // @example changeslotitem 3 0 13 @caption append 13 at the end of slot 3
+    // @example changeslotitem 1 2 0.5 10 0 @caption change the 2nd point of the 1st (function) slot to (0.5 10 0) in (x y slope) form
+    // @example changeslotitem active 2 0.5 10 0 @caption the same, for the currently open slot
+    // @example changeslotitem spectrenv 2 0.5 10 0 @caption the same, for the a slot named 'spectrenv'
+    // @example changeslotitem 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
+    // @example changeslotitem 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
+    // @example changeslotitem 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
     // @seealso addslot, eraseslot
-	class_addmethod(c, (method) roll_sel_change_slot_value, "changeslotvalue", A_GIMME, 0);
-	
+	class_addmethod(c, (method) roll_sel_change_slot_value, "changeslotitem", A_GIMME, 0);
+    class_addmethod(c, (method) roll_sel_change_slot_value, "changeslotvalue", A_GIMME, 0);
+
 	
 	// @method dumpselection @digest Play selected items off-line
 	// @description The <m>dumpselection</m> message sends the content of each one of selected notation items from the 
@@ -4503,8 +4505,8 @@ int T_EXPORT main(void){
 	// @description @copy BACH_DOC_MESSAGE_LAMBDA
 	// @marg 0 @name modification_message @optional 0 @type llll
     // @example lamdba cents $1 @caption assign the incoming value as note cents
-    // @example lamdba changeslotvalue $1 $2 $3 @caption the same, for some slot value
-    // @seealso cents, velocity, duration, onset, changeslotvalue, addslot, eraseslot, name, voice
+    // @example lamdba changeslotitem $1 $2 $3 @caption the same, for some slot value
+    // @seealso cents, velocity, duration, onset, changeslotitem, addslot, eraseslot, name, voice
 	class_addmethod(c, (method) roll_lambda, "lambda", A_GIMME, 0);
 
 
@@ -6555,6 +6557,8 @@ void roll_lambda(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 			roll_sel_erase_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_changeslotvalue){
 			roll_sel_change_slot_value(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_changeslotitem){
+            roll_sel_change_slot_value(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_addslot){
 			roll_sel_add_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_addbreakpoint){

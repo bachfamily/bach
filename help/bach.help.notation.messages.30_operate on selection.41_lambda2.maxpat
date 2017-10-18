@@ -95,7 +95,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 405.0, 139.5, 190.0, 23.0 ],
 					"style" : "",
-					"text" : "lambda changeslotvalue 3 1 20"
+					"text" : "lambda changeslotitem 3 1 20"
 				}
 
 			}
@@ -156,7 +156,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 232.0, 433.0, 383.0, 38.0 ],
 					"style" : "",
-					"text" : "lambda changeslotvalue 3 1 $1, lambda changeslotvalue 3 2 $2, lambda eraseslot $3, lambda velocity $2"
+					"text" : "lambda changeslotitem 3 1 $1, lambda changeslotitem 3 2 $2, lambda eraseslot $3, lambda velocity $2"
 				}
 
 			}
@@ -201,7 +201,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 310.0, 82.0, 205.0, 23.0 ],
 					"style" : "",
-					"text" : "lambda changeslotvalue $1 $2 $3"
+					"text" : "lambda changeslotitem $1 $2 $3"
 				}
 
 			}

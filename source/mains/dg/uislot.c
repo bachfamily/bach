@@ -616,7 +616,7 @@ int T_EXPORT main(void){
     // @example addslot (amplienv (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for slot named 'amplienv'
     // @example addslot (active (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for currently open slot
     // @example addslot (3 10 20 30) (2 (0 0 0) (0.5 0 1) (1 1 0.2)) @caption set more slots at once
-    // @seealso changeslotvalue, eraseslot
+    // @seealso changeslotitem, eraseslot
 	class_addmethod(c, (method) uislot_add_slot, "addslot", A_GIMME, 0);
 
 
@@ -627,7 +627,7 @@ int T_EXPORT main(void){
     // @example eraseslot active @caption clear currently open slot
     // @example eraseslot 4 @caption clear 4th slot
     // @example eraseslot amplienv @caption clear slot named amplienv
-    // @seealso addslot, changeslotvalue, resetslotinfo
+    // @seealso addslot, changeslotitem, resetslotinfo
 	class_addmethod(c, (method) uislot_erase_slot, "eraseslot", A_GIMME, 0);
 
     
@@ -638,7 +638,7 @@ int T_EXPORT main(void){
     // @example moveslot 2 7 @caption move the content of slot 2 to slot 7 for selected items
     // @example moveslot 2 active @caption destination slot is the active slot
     // @example moveslot amplienv myfunction @caption move the 'amplienv' slot to the 'myfunction' slot
-    // @seealso copyslot, eraseslot, addslot, changeslotvalue, resetslotinfo
+    // @seealso copyslot, eraseslot, addslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_move_slot, "moveslot", A_GIMME, 0);
     
     
@@ -649,13 +649,13 @@ int T_EXPORT main(void){
     // @example copyslot 2 7 @caption copy the content of slot 2 to slot 7 for selected items
     // @example copyslot 2 active @caption destination slot is the active slot
     // @example copyslot amplienv myfunction @caption copy the slot named amplienv to the slot named myfunction
-    // @seealso moveslot, eraseslot, addslot, changeslotvalue, resetslotinfo
+    // @seealso moveslot, eraseslot, addslot, changeslotitem, resetslotinfo
     class_addmethod(c, (method) uislot_copy_slot, "copyslot", A_GIMME, 0);
     
 
     
-	// @method changeslotvalue @digest Change a specific value inside a slot
-	// @description A <m>changeslotvalue</m> message will change a specific value inside a slot (possibly containing more than one element, such as
+	// @method changeslotitem @digest Change a specific element inside a slot
+	// @description A <m>changeslotitem</m> message will change a specific element inside a slot (possibly containing more than one element, such as
 	// a <m>function</m> slot, or an <m>intlist</m> slot...). 
 	// The syntax is <b>changeslotvalue <m>slot_number</m> <m>element_index</m> <m>SLOT_ELEMENT_CONTENT</m></b>. <br />
 	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
@@ -668,16 +668,17 @@ int T_EXPORT main(void){
 	// @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
 	// @marg 1 @name element_index @optional 0 @type int
 	// @marg 2 @name slot_element @optional 0 @type llll
-    // @example changeslotvalue 3 2 13 @caption set the 2nd element of 3nd (int or float) slot to 13
-    // @example changeslotvalue 3 0 13 @caption append 13 at the end of slot 3
-    // @example changeslotvalue 1 2 0.5 10 0 @caption change the 2nd point of the 1st (function) slot to (0.5 10 0) in (x y slope) form
-    // @example changeslotvalue active 2 0.5 10 0 @caption the same, for the currently open slot
-    // @example changeslotvalue spectrenv 2 0.5 10 0 @caption the same, for the a slot named 'spectrenv'
-    // @example changeslotvalue 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
-    // @example changeslotvalue 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
-    // @example changeslotvalue 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
+    // @example changeslotitem 3 2 13 @caption set the 2nd element of 3nd (int or float) slot to 13
+    // @example changeslotitem 3 0 13 @caption append 13 at the end of slot 3
+    // @example changeslotitem 1 2 0.5 10 0 @caption change the 2nd point of the 1st (function) slot to (0.5 10 0) in (x y slope) form
+    // @example changeslotitem active 2 0.5 10 0 @caption the same, for the currently open slot
+    // @example changeslotitem spectrenv 2 0.5 10 0 @caption the same, for the a slot named 'spectrenv'
+    // @example changeslotitem 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
+    // @example changeslotitem 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
+    // @example changeslotitem 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
     // @seealso addslot, eraseslot
 	class_addmethod(c, (method) uislot_change_slot_value, "changeslotvalue", A_GIMME, 0);
+    class_addmethod(c, (method) uislot_change_slot_value, "changeslotitem", A_GIMME, 0);
 
 
 	// @method resetslotinfo @digest Reset the slotinfo to the default one
