@@ -56,8 +56,7 @@ typedef struct _bach_expr
 	long				n_in;
 	long				n_maxvars;
 	long				n_scalarmode;
-	long				n_clone;
-	t_lexpr				*n_lexpr;	
+	t_lexpr				*n_lexpr;
 	t_llll				*n_dummy;
 	t_llll				*n_empty;
 	t_bach_atomic_lock	n_lock;
@@ -137,10 +136,6 @@ int T_EXPORT main()
 	CLASS_ATTR_LABEL(c, "scalarmode", 0, "Scalar Mode");
 	CLASS_ATTR_BASIC(c, "scalarmode", 0);
 	// @description @copy BACH_DOC_SCALARMODE
-	
-	CLASS_ATTR_LONG(c, "clone", 0, t_bach_expr, n_clone);
-	CLASS_ATTR_FILTER_CLIP(c, "clone", 0, 1);
-	CLASS_ATTR_STYLE_LABEL(c, "clone", 0, "onoff", "Clone");
 	
 	/*
 	CLASS_ATTR_LONG(c, "maxvars",	0,	t_bach_expr, n_maxvars);
@@ -241,7 +236,7 @@ void bach_expr_anything(t_bach_expr *x, t_symbol *msg, long ac, t_atom *av)
 			data.e_evaluate = 0;
 			
 			for (i = 0; i < data.e_count; i++) {
-				lists[i] = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i, x->n_clone);
+				lists[i] = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i, 0);
 			}
 
 			llll_iter(data.e_count, lists, -1,
