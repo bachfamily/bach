@@ -187,7 +187,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return lexpr_append_lexeme_MINUS(epd->lexeme);
 }
 
-<INITIAL>"-"/[^ /n/t] {
+<INITIAL>"-" {
     parserpost(" lex: unary -");
     return lexpr_append_lexeme_UMINUS(epd->lexeme);
 }

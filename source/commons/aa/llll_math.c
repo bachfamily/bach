@@ -569,7 +569,7 @@ void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res)
         hatom_setrational(res, h1->h_w.w_long / hatom_getrational(h2));
         
     } else if ((h1_type == H_RAT || h1_type == H_PITCH) && h2_type == H_LONG) { // rl pl -> r
-        hatom_setrational(res, hatom_getrational(h1) / h1->h_w.w_long);
+        hatom_setrational(res, hatom_getrational(h1) / h2->h_w.w_long);
         
     } else { // rr rp
         hatom_setrational(res, hatom_getrational(h1) / hatom_getrational(h2));
@@ -602,7 +602,7 @@ void hatom_op_div(t_hatom *h1, t_hatom *h2, t_hatom *res)
         hatom_setrational(res, h1->h_w.w_long / hatom_getrational(h2));
 
     } else if ((h1_type == H_RAT || h1_type == H_PITCH) && h2_type == H_LONG) { // rl pl -> r
-        hatom_setrational(res, hatom_getrational(h1) / h1->h_w.w_long);
+        hatom_setrational(res, hatom_getrational(h1) / h2->h_w.w_long);
 
     } else { // rr rp
         hatom_setrational(res, hatom_getrational(h1) / hatom_getrational(h2));

@@ -1747,6 +1747,9 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 	
 	// Convert slopes to linear, and if |slope| > threshold add a mid-point!
 	for (elem = in_ll->l_head; elem; elem = elem->l_next) {
+        if (hatom_gettype(&elem->l_hatom) != H_LLLL)
+            continue;
+        
 		double pt_x, pt_y, pt_slope, prev_x, prev_y, prev_slope;
 		double fabs_pt_slope = 0;
         t_llll *orig_ll = hatom_getllll(&elem->l_hatom);
