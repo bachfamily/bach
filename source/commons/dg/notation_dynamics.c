@@ -878,7 +878,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
     if (fix_unnecessary || fix_inconsistent) {
         if (r_ob->link_dynamics_to_slot - 1 >= 0 && r_ob->link_dynamics_to_slot - 1 < CONST_MAX_SLOTS)
             check_slot_linkage_recomputations_for_everything(r_ob, r_ob->link_dynamics_to_slot - 1);
-        invalidate_notation_static_layer_and_repaint(r_ob);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }
     
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_FIX_DYNAMICS);
@@ -1649,7 +1649,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
     check_slot_linkage_recomputations_for_everything(r_ob, slot_num);
     unlock_general_mutex(r_ob);
 
-    invalidate_notation_static_layer_and_repaint(r_ob);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ASSIGN_DYNAMICS);
 
     return 0;

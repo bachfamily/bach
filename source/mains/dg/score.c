@@ -1135,13 +1135,13 @@ void score_clear_selection(t_score *x, t_symbol *s, long argc, t_atom *argv){
 		clear_preselection((t_notation_obj *) x);
 		clear_selection((t_notation_obj *) x);
 		unlock_general_mutex((t_notation_obj *)x);	
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	} else if (argc == 1 && atom_gettype(argv) == A_LONG) {
 		lock_general_mutex((t_notation_obj *)x);	
 		clear_preselection((t_notation_obj *) x);
 		clear_voice_selection((t_notation_obj *) x, atom_getlong(argv) - 1);
 		unlock_general_mutex((t_notation_obj *)x);	
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	handle_change_selection((t_notation_obj *)x);
 }
@@ -1233,7 +1233,7 @@ void score_do_selectmeasures(t_score *x, e_selection_modes mode, t_llll *selectl
 		unlock_general_mutex((t_notation_obj *)x);
         x->r_ob.selection_type = get_selected_items_common_type((t_notation_obj *)x);
 		handle_change_selection((t_notation_obj *)x);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		llll_free(voicenums);
 	}
 	
@@ -1638,7 +1638,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
 		handle_change_selection((t_notation_obj *)x);
 
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	llll_free(selectllll);
 }
@@ -1923,7 +1923,7 @@ void score_sel_change_onset(t_score *x, t_symbol *s, long argc, t_atom *argv){
         sync_all_markers_absolute_ms_onset(x);
 		check_markers_order((t_notation_obj *) x);
 		unlock_general_mutex((t_notation_obj *)x);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ONSET_FOR_SELECTION);
 	}
 }
@@ -2977,7 +2977,7 @@ void score_inscreen(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	if (need_redraw) {
 		if (x->r_ob.notify_also_upon_messages)
 			send_domain(x, 7, NULL);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 }
 
@@ -2996,7 +2996,7 @@ void score_inscreenpos(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	if (need_redraw) {
 		if (x->r_ob.notify_also_upon_messages)
 			send_domain(x, 7, NULL);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 }
 
@@ -3053,7 +3053,7 @@ void score_mergegrace(t_score *x)
     unlock_general_mutex((t_notation_obj *)x);
     
     if (changed) {
-        invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
         handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_MERGE_GRACE);
     }
 }
@@ -3097,7 +3097,7 @@ void score_deletegrace(t_score *x)
     unlock_general_mutex((t_notation_obj *)x);
     
     if (changed) {
-        invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
         handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_GRACE);
     }
 }
@@ -3115,7 +3115,7 @@ void score_inscreenmeas(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	if (need_redraw) {
 		if (x->r_ob.notify_also_upon_messages)
 			send_domain(x, 7, NULL);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 }
 
@@ -3576,7 +3576,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 		x->r_ob.play_head_ux = ms_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.play_head_ms, 1);
 
 		if (x->r_ob.catch_playhead && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false))
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 
 		x->r_ob.playing = true;
 		llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 7, _llllobj_sym_play);
@@ -3596,7 +3596,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 			setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
 			setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
 			if (x->r_ob.highlight_played_notes)
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			else
                 notationobj_redraw((t_notation_obj *) x);
 		}
@@ -3628,7 +3628,7 @@ void score_do_stop(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	unlock_general_mutex((t_notation_obj *)x);
 
     llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 7, s ? s : _llllobj_sym_stop);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
 void set_everything_unplayed(t_score *x){
@@ -3668,7 +3668,7 @@ void score_task(t_score *x)
 
 		if (x->r_ob.theoretical_play_step_ms > 0) {
 			if (x->r_ob.catch_playhead && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false))
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
             notationobj_redraw((t_notation_obj *) x);
 		}
 	
@@ -3941,7 +3941,7 @@ void score_task(t_score *x)
 			
 			if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD)
 				if (x->r_ob.catch_playhead && force_inscreen_ux_rolling(x, x->r_ob.play_head_ux, 0, true, false))
-					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+					notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
             
             // outputting chord values
             if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
@@ -3958,7 +3958,7 @@ void score_task(t_score *x)
                 
                 if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
                     if (x->r_ob.highlight_played_notes)
-                        invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                     else
                         notationobj_redraw((t_notation_obj *) x);
                 }
@@ -3992,7 +3992,7 @@ void score_task(t_score *x)
             }
 			
 			if (need_repaint)
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		}
 	}
 }
@@ -7183,7 +7183,7 @@ t_max_err score_setattr_showstems(t_score *x, t_object *attr, long ac, t_atom *a
     if (ac && av) {
         x->r_ob.show_stems = (e_show_stems_preferences) atom_getlong(av);
         recalculate_all_chord_parameters(x);
-        invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
     }
     return MAX_ERR_NONE;
 }
@@ -8183,7 +8183,7 @@ void score_domain(t_score *x, t_symbol *s, long argc, t_atom *argv){
 			//			x->r_ob.screen_ms_end = x->r_ob.screen_ms_start + domain; 
 			getdomain((t_notation_obj *) x);
 //			redraw_hscrollbar((t_notation_obj *)x, 1, k_NOTATION_OBJECT_SCORE);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		} else {
 			object_warn((t_object *)x, "Can't handle negative domains.");
 		}
@@ -8210,7 +8210,7 @@ void score_domain(t_score *x, t_symbol *s, long argc, t_atom *argv){
 			x->r_ob.screen_ux_start = domain_start_ux;
 			x->r_ob.screen_ux_end = domain_end_ux; 
 			redraw_hscrollbar((t_notation_obj *)x, 2);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		} else {
 			object_warn((t_object *)x, "Can't handle negative domains.");
 		}
@@ -8623,7 +8623,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         
                     } else if (router == gensym("refresh")) {
                         //                    update_hscrollbar((t_notation_obj *)x, 1);
-                        invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                         recompute_all_and_redraw(x);
 
                     } else if (router == gensym("respell")) {
@@ -9518,7 +9518,7 @@ void score_mousemove(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
     }
 
 	if (redraw)
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
     else if (x->r_ob.legend > 1)
         notationobj_redraw((t_notation_obj *) x);
 }
@@ -10283,7 +10283,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 	x->r_ob.j_mouse_hasbeendragged = 1; // mouse has been dragged
 	
 	if (redraw) {
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		if (changed && x->r_ob.j_mouse_is_down) {
 			x->r_ob.changed_while_dragging = true;
 			handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
@@ -11495,7 +11495,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 			x->r_ob.show_dilation_rectangle = false;
 			bach_set_cursor((t_object *)x, &x->r_ob.j_mouse_cursor, patcherview, BACH_CURSOR_DEFAULT);
 		}
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	
 	
@@ -11636,7 +11636,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 			update_hscrollbar((t_notation_obj *) x, 0);
 			unlock_general_mutex((t_notation_obj *)x);
 			send_domain(x, 7, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
 			return;
 		} else if (res == -2) {
@@ -11646,7 +11646,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 			update_hscrollbar((t_notation_obj *) x, 0);
 			unlock_general_mutex((t_notation_obj *)x);	
 			send_domain(x, 7, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
 			return;
 		}
@@ -11671,7 +11671,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 			x->r_ob.vscrollbar_y -= x->r_ob.vscrollbar_height;
 			update_vscrollbar((t_notation_obj *) x, 0);
 			unlock_general_mutex((t_notation_obj *)x);	
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
 			//			send_vdomain(x, 7, NULL);
 			return;
@@ -11681,7 +11681,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 			x->r_ob.vscrollbar_y += x->r_ob.vscrollbar_height;
 			update_vscrollbar((t_notation_obj *) x, 0);
 			unlock_general_mutex((t_notation_obj *)x);	
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			//			send_vdomain(x, 7, NULL);
 			set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
 			return;
@@ -12638,7 +12638,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 	
 	// redraw if needed
 	if (clicked_ptr)
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
     if (!clicked_ptr && clicked_obj != k_SCROLLBAR && clicked_obj != k_VSCROLLBAR) {
 		// we start a region determination (the user is either just clicking, or (pre)selecting a region.
@@ -13667,7 +13667,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 				x->r_ob.screen_ux_start = start_ux;
 				update_hscrollbar((t_notation_obj *)x, 2);
 				send_domain(x, 7, NULL);
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			}
 		}
 	}
@@ -13680,7 +13680,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
 		set_loop_region_from_extremes_tp(x, start_tp, end_tp);
 		send_loop_region((t_notation_obj *) x, 7);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	
 	if (!there_are_free_undo_ticks && !x->r_ob.item_changed_at_mousedown && x->r_ob.j_mousedown_obj_type == k_REGION && (x->r_ob.j_mousedown_point.x != pt.x || x->r_ob.j_mousedown_point.y != pt.y)) { 
@@ -13794,7 +13794,7 @@ void score_mousewheel(t_score *x, t_object *view, t_pt pt, long modifiers, doubl
 		update_hscrollbar((t_notation_obj *)x, 2);
 
 		send_domain(x, 7, NULL);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 
 	} else { // simple scroll 
 	
@@ -13807,7 +13807,7 @@ void score_mousewheel(t_score *x, t_object *view, t_pt pt, long modifiers, doubl
 			x->r_ob.screen_ux_start = MAX(0, x->r_ob.screen_ux_start + delta_x / x->r_ob.zoom_x);
 			redraw_hscrollbar((t_notation_obj *)x, 2);
 			send_domain(x, 7, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		}
 		if (x->r_ob.show_vscrollbar) {
 			double delta_y = y_inc * CONST_Y_MOUSEWHEEL_FACTOR;
@@ -13816,7 +13816,7 @@ void score_mousewheel(t_score *x, t_object *view, t_pt pt, long modifiers, doubl
 			x->r_ob.vscrollbar_y -= delta_y;
 			redraw_vscrollbar((t_notation_obj *)x, 0);
 			//send_vdomain(x, 7, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		}
 	}
 }
@@ -14460,7 +14460,7 @@ void exit_linear_edit(t_score *x)
 	x->r_ob.notation_cursor.midicents = 6000;
 	x->r_ob.notation_cursor.step = 0;
 	x->r_ob.is_linear_editing = false;
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
 
@@ -14807,7 +14807,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 			if (x->r_ob.m_inspector.inspector_patcher)
 				bring_external_inspector_to_front(&x->r_ob.m_inspector);
 			open_bach_inspector((t_notation_obj *)x, &x->r_ob.m_inspector, &x->r_ob.slotinfo[x->r_ob.active_slot_num], k_SLOTINFO);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 			return 1;
 		} else if (x->r_ob.firstselecteditem && (x->r_ob.firstselecteditem->type == k_CHORD || x->r_ob.firstselecteditem->type == k_NOTE ||
 					x->r_ob.firstselecteditem->type == k_MEASURE || x->r_ob.firstselecteditem->type == k_VOICE ||
@@ -14820,7 +14820,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 if (x->r_ob.m_inspector.inspector_patcher)
                     bring_external_inspector_to_front(&x->r_ob.m_inspector);
                 open_bach_inspector_for_notation_item((t_notation_obj *) x, x->r_ob.firstselecteditem);
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
                 return 1;
             }
         }
@@ -14841,7 +14841,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 				redraw_hscrollbar((t_notation_obj *) x, 1);
 			} else {
 				force_inscreen_ux_to_boundary(x, x->r_ob.play_head_start_ux, false, true, false);
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 			}
 			send_domain(x, 7, NULL);
 			return 1;
@@ -14886,7 +14886,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 				case JKEY_ESC:
 					if (modifiers & eAltKey) {
 						x->r_ob.num_speedy_tuplets = 0;
-						invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+						notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 					} else {
 						exit_linear_edit(x);
 						recompute_all_and_redraw(x);
@@ -14936,7 +14936,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 					
 					force_inscreen_ux_rolling_while_editing(x);
 					
-					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+					notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 					break;
 				}
 				case JKEY_RIGHTARROW: 
@@ -15012,7 +15012,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 					
 					force_inscreen_ux_rolling_while_editing(x);
 					
-					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+					notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 					break;
 				}
 				case JKEY_UPARROW:
@@ -15040,7 +15040,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 						x->r_ob.notation_cursor.midicents = scaleposition_to_midicents(x->r_ob.notation_cursor.step);
 						
 					}
-					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+					notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 					break;
 				}
 				case JKEY_DOWNARROW:
@@ -15067,7 +15067,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 						move_linear_edit_cursor_depending_on_edit_ranges((t_notation_obj *)x, modifiers & eShiftKey ? -7 : -1, modifiers);
 						x->r_ob.notation_cursor.midicents = scaleposition_to_midicents(x->r_ob.notation_cursor.step);
 					}
-					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+					notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 					break;
 				}
 				case 'r':
@@ -15100,7 +15100,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 							send_chord_as_llll((t_notation_obj *) x, x->r_ob.notation_cursor.chord, 7, k_CONSIDER_FOR_DUMPING, -1);
 						
 						handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_CHANGE_PITCH);
-						invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+						notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 					} else {
 						// add new chord
 						t_chord *ch = chord_get_last_before_notation_cursor(x);
@@ -15236,7 +15236,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 						if (x->r_ob.defining_numerator && x->r_ob.num_speedy_tuplets >= 0) {
 							x->r_ob.speedy_tuplet_numerator_defined[x->r_ob.num_speedy_tuplets - 1] = true;
 							x->r_ob.speedy_tuplet[x->r_ob.num_speedy_tuplets - 1].r_num = keycode - 48;
-							invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+							notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 						} else if (x->r_ob.num_speedy_tuplets >= 0 && x->r_ob.num_speedy_tuplets < CONST_MAX_NESTED_TUPLETS_FOR_SPEEDY){
 							t_urrational this_ratio = genurrat(1, 1);
 							switch (keycode - 48) {
@@ -15268,7 +15268,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 							x->r_ob.speedy_tuplet_numerator_defined[x->r_ob.num_speedy_tuplets] = false;
 							x->r_ob.speedy_tuplet[x->r_ob.num_speedy_tuplets] = this_ratio;
 							x->r_ob.num_speedy_tuplets++;
-							invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+							notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 						}
 					} else {
 						if (keycode == 46 || (keycode > 48 && keycode < 57)) {
@@ -15362,7 +15362,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 		
 		if (keycode == 46 && modifiers & eShiftKey) {
 			x->r_ob.defining_numerator = true;
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		} else 
 			x->r_ob.defining_numerator = false;
 		
@@ -15558,7 +15558,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 					notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)meas_to_add);
 					move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_FORCE_SELECT, false, false);
 					set_mousedown((t_notation_obj *) x, meas_to_add, k_MEASURE);
-					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+					notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 					unlock_general_mutex((t_notation_obj *)x);	
 				}
 			}
@@ -15639,7 +15639,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 t_llll *slots_to_transfer = get_default_slots_to_transfer_1based((t_notation_obj *)x);
                 turn_selection_into_rests(x, is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_DELETION), is_editable((t_notation_obj *)x, k_LYRICS, k_ELEMENT_ACTIONS_NONE), is_editable((t_notation_obj *)x, k_DYNAMICS, k_ELEMENT_ACTIONS_NONE), slots_to_transfer, false);
                 llll_free(slots_to_transfer);
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 				handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TURN_SELECTION_INTO_RESTS); 
 			}
 			return 1;
@@ -15686,7 +15686,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 }
                 if (ch && x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0)
                     start_editing_dynamics((t_notation_obj *) x, patcherview, ch);
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
             }
             return 1;
 
@@ -15779,7 +15779,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 					if (x->r_ob.selection_type == k_MEASURE)
 						score_paste_replace_single_measures(x, modifiers & eShiftKey); // DEPRECATED, should not be used
 				}
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			}
 			return 1;
 			break;
@@ -15793,7 +15793,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 							send_loop_region((t_notation_obj *)x, 7);
 						if (x->r_ob.playing)
 							check_correct_scheduling((t_notation_obj *)x, true);
-						invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+						notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 					} else {
 						x->r_ob.show_loop_region = x->r_ob.show_loop_region ? false : true;
 						send_loop_region_on_off((t_notation_obj *)x, 7);
@@ -15801,7 +15801,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 							send_loop_region((t_notation_obj *)x, 7);
 						if (x->r_ob.playing)
 							check_correct_scheduling((t_notation_obj *)x, true);
-						invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+						notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 					}
 				} else {
 					if (modifiers & eShiftKey) {
@@ -15833,7 +15833,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 					}
 				}
 			}
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			return 1;
 			break;
             
@@ -16067,7 +16067,7 @@ void select_all(t_score *x){
 	unlock_markers_mutex((t_notation_obj *)x);
 	unlock_general_mutex((t_notation_obj *)x);
 	handle_change_selection((t_notation_obj *)x);
-//	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+//	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }	
 
 void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, double ux2, double mc1, double mc2, long v1, long v2){
@@ -16525,7 +16525,7 @@ void score_paint(t_score *x, t_object *view)
 	paint_background((t_object *)x, g, &rect, &x->r_ob.j_background_rgba, x->r_ob.corner_roundness);
 
 	if (x->r_ob.j_box.l_rebuild){
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		x->r_ob.j_box.l_rebuild = 0;
 	}
 	

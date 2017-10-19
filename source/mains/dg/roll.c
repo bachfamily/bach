@@ -652,7 +652,7 @@ void roll_bang(t_roll *x)
 	recalculate_all_chord_parameters(x);
 	x->r_ob.hscrollbar_pos = 0.; // needed here, to initialize r_ob->screen_ux_start
 	update_hscrollbar((t_notation_obj *)x, 1);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 
 	handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_ROLL);
 }
@@ -1950,7 +1950,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 	if (selectllll) 
 		llll_free(selectllll);
 
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void roll_sel_change_onset(t_roll *x, t_symbol *s, long argc, t_atom *argv)
@@ -2957,7 +2957,7 @@ void roll_inscreen(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 		if (force_inscreen_ms(x, inscreen, true)) {
 			if (x->r_ob.notify_also_upon_messages)
 				send_domain(x, 6, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		}
 	}
 }
@@ -2989,7 +2989,7 @@ void roll_inscreenpos(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 		
 		if (x->r_ob.notify_also_upon_messages)
 			send_domain(x, 6, NULL);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 }
 
@@ -3255,7 +3255,7 @@ void roll_do_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 		x->r_ob.play_head_ms = start_ms;
 
 		if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 
 		x->r_ob.playing = true;
 		llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 6, _llllobj_sym_play);
@@ -3276,7 +3276,7 @@ void roll_do_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 			setclock_getftime(x->r_ob.setclock->s_thing, &x->r_ob.start_play_time);
 			
 			if (x->r_ob.highlight_played_notes)
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			else
                 notationobj_redraw((t_notation_obj *) x);
 		}
@@ -3310,7 +3310,7 @@ void roll_do_stop(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 	
     llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 6, s ? s : _llllobj_sym_stop);
     if (x->r_ob.highlight_played_notes)
-        invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
     else
         notationobj_redraw((t_notation_obj *) x);
 }
@@ -3345,7 +3345,7 @@ void roll_task(t_roll *x){
 		setclock_fdelay(x->r_ob.setclock->s_thing, x->r_ob.m_clock, x->r_ob.play_step_ms);
 		if (x->r_ob.theoretical_play_step_ms > 0) {
 			if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
             notationobj_redraw((t_notation_obj *) x);
 		}
 		
@@ -3505,7 +3505,7 @@ void roll_task(t_roll *x){
 
 			if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD)
 				if (x->r_ob.catch_playhead && force_inscreen_ms_rolling(x, x->r_ob.play_head_ms, 0, true, false, false))
-					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+					notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			
 			// outputting chord values
             if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
@@ -3522,7 +3522,7 @@ void roll_task(t_roll *x){
                 
                 if (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD) {
                     if (x->r_ob.highlight_played_notes)
-                        invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                     else
                         notationobj_redraw((t_notation_obj *) x);
                 }
@@ -3554,7 +3554,7 @@ void roll_task(t_roll *x){
             }
 			
 			if (need_repaint)
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		}
 	}
 }
@@ -3589,13 +3589,13 @@ void roll_clearselection(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 		clear_preselection((t_notation_obj *) x);
 		clear_selection((t_notation_obj *) x);
 		unlock_general_mutex((t_notation_obj *)x);	
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	} else if (argc == 1 && atom_gettype(argv) == A_LONG) {
 		lock_general_mutex((t_notation_obj *)x);	
 		clear_preselection((t_notation_obj *) x);
 		clear_voice_selection((t_notation_obj *) x, atom_getlong(argv) - 1);
 		unlock_general_mutex((t_notation_obj *)x);	
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	handle_change_selection((t_notation_obj *)x);
 }
@@ -5780,7 +5780,7 @@ t_max_err roll_setattr_customspacing(t_roll *x, t_object *attr, long ac, t_atom 
         if (x->r_ob.lambda_spacing != k_CUSTOMSPACING_NONE && !x->r_ob.creatingnewobj) {
             recompute_total_length((t_notation_obj *) x);
             update_hscrollbar((t_notation_obj *)x, 0);
-            invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+            notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
         }
     }
     return MAX_ERR_NONE;
@@ -5845,7 +5845,7 @@ t_max_err roll_setattr_showstems(t_roll *x, t_object *attr, long ac, t_atom *av)
 	if (ac && av) {
 		x->r_ob.show_stems = (e_show_stems_preferences) atom_getlong(av);
 		recalculate_all_chord_parameters(x);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	return MAX_ERR_NONE;
 }
@@ -5859,7 +5859,7 @@ t_max_err roll_setattr_zoom(t_roll *x, t_object *attr, long ac, t_atom *av){
 		change_zoom((t_notation_obj *) x, (z > minzoom) ? z : minzoom);
 		recompute_total_length((t_notation_obj *)x);
 		calculate_ms_on_a_line((t_notation_obj *) x);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	return MAX_ERR_NONE;
 }
@@ -5911,7 +5911,7 @@ t_max_err roll_setattr_view(t_roll *x, t_object *attr, long ac, t_atom *av){
 			x->r_ob.view = z; 
 		recompute_total_length((t_notation_obj *)x);
 		recalculate_num_systems((t_notation_obj *) x);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	return MAX_ERR_NONE;
 }
@@ -5936,7 +5936,7 @@ t_max_err roll_setattr_noteheads_font(t_roll *x, t_object *attr, long ac, t_atom
 			load_notation_typo_preferences((t_notation_obj *) x, x->r_ob.noteheads_font);
             load_noteheads_typo_preferences((t_notation_obj *) x, x->r_ob.noteheads_font);
 			recalculate_all_chord_parameters(x);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			bach_freeptr(text);
 		}
 	}
@@ -5961,7 +5961,7 @@ t_max_err roll_setattr_accidentals_font(t_roll *x, t_object *attr, long ac, t_at
 			x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
 			x->r_ob.firsttime = true;
 			
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			bach_freeptr(text);
 		}
 	}
@@ -5983,7 +5983,7 @@ t_max_err roll_setattr_articulations_font(t_roll *x, t_object *attr, long ac, t_
             reset_all_articulations_positions((t_notation_obj *)x);
             x->r_ob.firsttime = true;
             
-            invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+            notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
             bach_freeptr(text);
         }
     }
@@ -6127,7 +6127,7 @@ void roll_adjustadditionalstartpad(t_roll *x){
 
 	x->r_ob.additional_ux_start_pad = -this_pad;
 	update_hscrollbar((t_notation_obj *) x, 0);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
 void roll_fixvzoom(t_roll *x){
@@ -6405,7 +6405,7 @@ void roll_domain(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 			redraw_hscrollbar((t_notation_obj *)x, 1);
 			if (x->r_ob.notify_also_upon_messages)
 				send_domain(x, 6, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		} else {
 			object_warn((t_object *)x, "Can't handle negative domains.");
 		}
@@ -6435,7 +6435,7 @@ void roll_domain(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 			redraw_hscrollbar((t_notation_obj *)x, 1);
 			if (x->r_ob.notify_also_upon_messages)
 				send_domain(x, 6, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		} else {
 			object_warn((t_object *)x, "Can't handle negative domains.");
 		}
@@ -6792,7 +6792,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         update_hscrollbar((t_notation_obj *)x, 1);
                         quick_notation_obj_recompute_all_chord_parameters((t_notation_obj *)x);
                         recompute_total_length((t_notation_obj *)x);
-                        invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                         
                     } else if (router == _llllobj_sym_interp && firstelem->l_next && is_hatom_number(&firstelem->l_next->l_hatom)) {
                         t_llll *out = notationobj_get_interp((t_notation_obj *)x, hatom_getdouble(&firstelem->l_next->l_hatom));
@@ -7111,7 +7111,7 @@ void set_voice_onsets_values_from_llll(t_roll *x, t_llll* onsets, t_rollvoice *v
 	if (also_check_chords_order)
 		check_chords_order_for_voice(x, voice); // USUALLY BAD THING TO DO, since user might insert things scrambled with matching parameters, so we usually will NOT want this especially upon reconstruction bang
 	recompute_total_length((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -7246,7 +7246,7 @@ void set_voice_cents_values_from_llll(t_roll *x, t_llll* midicents, t_rollvoice 
 	}
 //	check_chords_order_for_voice(x, voice); // NO MORE NEEDED HERE
 	recompute_total_length((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -7334,7 +7334,7 @@ void set_voice_durations_values_from_llll(t_roll *x, t_llll* durations, t_rollvo
 			
 	//	check_chords_order_for_voice(x, voice); // NO MORE NEEDED HERE
 	recompute_total_length((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -7419,7 +7419,7 @@ void set_voice_velocities_values_from_llll(t_roll *x, t_llll* velocities, t_roll
 
 	//	check_chords_order_for_voice(x, voice); // NO MORE NEEDED HERE
 	recompute_total_length((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -7462,7 +7462,7 @@ void set_extras_values_from_llll(t_roll *x, t_llll* extras){
 	}
 	//	check_chords_order_for_voice(x, voice); // NO MORE NEEDED HERE
 	recompute_total_length((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -7597,7 +7597,7 @@ void set_voice_graphic_values_from_llll(t_roll *x, t_llll* graphic, t_rollvoice 
 			} 
 		}
 	}
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -7711,7 +7711,7 @@ void set_voice_breakpoints_values_from_llll(t_roll *x, t_llll* breakpoints, t_ro
 			} 
 		}
 	}
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -7835,7 +7835,7 @@ void set_voice_slots_values_from_llll(t_roll *x, t_llll* slots, t_rollvoice *voi
 			} 
 		}
 	}
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -8474,7 +8474,7 @@ void set_roll_from_llll(t_roll *x, t_llll* inputlist, char also_lock_general_mut
 	check_correct_scheduling((t_notation_obj *)x, also_lock_general_mutex);
 	
 	llll_free(wholeroll);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	verbose_print(x);
 }
 
@@ -8530,7 +8530,7 @@ void roll_snap_pitch_to_grid(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 		}
 		unlock_general_mutex((t_notation_obj *)x);
 	}
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
 void roll_getmaxID(t_roll *x){
@@ -8578,7 +8578,7 @@ void clear_roll_body(t_roll *x, long voicenum){
 
 	recompute_total_length((t_notation_obj *)x);
 
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
 void roll_clear_all(t_roll *x)
@@ -8845,7 +8845,7 @@ t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unu
 
 	this_ch->need_recompute_parameters = true; // gotta calculate chord parameters
 	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 	return this_ch;
 }
@@ -9448,7 +9448,7 @@ char delete_selection(t_roll *x, char only_editable_items){ // the longs are the
     if (changed) {
 		recompute_total_length((t_notation_obj *)x);
         update_hscrollbar((t_notation_obj *)x, x->r_ob.lambda_spacing != k_CUSTOMSPACING_NONE ? 1 : 2);
-        invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
     }
 	
 	unlock_general_mutex((t_notation_obj *)x);
@@ -9588,7 +9588,7 @@ long roll_oksize(t_roll *x, t_rect *newrect)
 		recalculate_num_systems((t_notation_obj *)x);
 		x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
 		x->r_ob.firsttime = true;
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		return 1;
 	}
 	return 0;
@@ -10668,10 +10668,8 @@ void roll_paint(t_roll *x, t_object *view)
 	
 	t_jfont *jf_text, *jf_text_fixed, *jf, *jf_acc, *jf_acc_bogus, *jf_text_fractions;
 		
-	char legend_text[256];
-	
 	if (x->r_ob.j_box.l_rebuild){
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		x->r_ob.j_box.l_rebuild = 0;
 	}
 	
@@ -10741,7 +10739,9 @@ void roll_paint(t_roll *x, t_object *view)
 	if (x->r_ob.playing) { 
 		double playhead_y1, playhead_y2;
 		double play_head_pos = onset_to_xposition((t_notation_obj *) x, x->r_ob.play_head_ms, NULL);
-		get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
+//        dev_post("Domain start: %.2f", x->r_ob.screen_ms_start);
+//        dev_post("Playhead: %.2f", play_head_pos);
+        get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
 		paint_playhead(g, x->r_ob.j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * x->r_ob.zoom_y);
 	} else if (x->r_ob.show_playhead) {
 		double playhead_y1, playhead_y2;
@@ -10817,7 +10817,7 @@ void roll_paint(t_roll *x, t_object *view)
 	send_changed_bang_and_automessage_if_needed((t_notation_obj *)x);
 	
 	if (must_repaint)
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
 
@@ -10880,7 +10880,7 @@ void roll_mousemove(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
 	
 	
 	if (redraw)
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	else if (x->r_ob.legend > 1)
         notationobj_redraw((t_notation_obj *) x);
 }
@@ -11675,7 +11675,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 	x->r_ob.j_mouse_hasbeendragged = 1; // mouse has been dragged
 	
 	if (redraw) {
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		if (changed && x->r_ob.j_mouse_is_down) {
 			x->r_ob.changed_while_dragging = true;
 			handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
@@ -12051,7 +12051,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 			x->r_ob.show_dilation_rectangle = false;
 			bach_set_cursor((t_object *)x, &x->r_ob.j_mouse_cursor, patcherview, BACH_CURSOR_DEFAULT);
 		}
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	
 	this_x = pt.x; this_y = pt.y; // click-point coordinates
@@ -12207,7 +12207,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 			x->r_ob.hscrollbar_x = x->r_ob.hscrollbar_x - x->r_ob.hscrollbar_width;
 			update_hscrollbar((t_notation_obj *) x, 0);
 			unlock_general_mutex((t_notation_obj *)x);	
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
 			send_domain(x, 6, NULL);
 			return;
@@ -12217,7 +12217,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 			x->r_ob.hscrollbar_x = x->r_ob.hscrollbar_x + x->r_ob.hscrollbar_width;
 			update_hscrollbar((t_notation_obj *) x, 0);
 			unlock_general_mutex((t_notation_obj *)x);	
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			send_domain(x, 6, NULL);
 			set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
 			return;
@@ -12245,7 +12245,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 			x->r_ob.vscrollbar_y -= x->r_ob.vscrollbar_height;
 			update_vscrollbar((t_notation_obj *) x, 0);
 			unlock_general_mutex((t_notation_obj *)x);	
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
 			//			send_vdomain(x, 6, NULL);
 			return;
@@ -12255,7 +12255,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 			x->r_ob.vscrollbar_y += x->r_ob.vscrollbar_height;
 			update_vscrollbar((t_notation_obj *) x, 0);
 			unlock_general_mutex((t_notation_obj *)x);	
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			//			send_vdomain(x, 6, NULL);
 			set_mousedown((t_notation_obj *) x, clicked_ptr, clicked_obj);
 			return;
@@ -12758,7 +12758,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 	
 	// redraw if needed
 	if (clicked_ptr)	
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 	if (!clicked_ptr && clicked_obj != k_SCROLLBAR && clicked_obj != k_VSCROLLBAR) {
 		// we start a region determination (the user is either just clicking, or (pre)selecting a region.
@@ -13561,7 +13561,7 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
             x->r_ob.screen_ux_start = onset_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.screen_ms_start);
 			update_hscrollbar((t_notation_obj *)x, 2);
 			send_domain(x, 6, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		}
 	}
 
@@ -13576,7 +13576,7 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
 			end_ms = nearest_chord_end->onset;
 		set_loop_region_from_extremes(x, start_ms, end_ms);
 		send_loop_region((t_notation_obj *) x, 6);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 	
 	// turning selection rectangle into a dilation rectangle
@@ -13684,7 +13684,7 @@ void roll_mousewheel(t_roll *x, t_object *view, t_pt pt, long modifiers, double 
 		update_hscrollbar((t_notation_obj *)x, 2);
 
 		send_domain(x, 6, NULL);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		
 	} else { // simple scroll
 
@@ -13697,7 +13697,7 @@ void roll_mousewheel(t_roll *x, t_object *view, t_pt pt, long modifiers, double 
             x->r_ob.screen_ms_start = MAX(0, x->r_ob.screen_ms_start + delta_x);
             redraw_hscrollbar((t_notation_obj *)x, 2);
             send_domain(x, 6, NULL);
-            invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+            notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
         }
 
 		if (x->r_ob.show_vscrollbar) {
@@ -13707,7 +13707,7 @@ void roll_mousewheel(t_roll *x, t_object *view, t_pt pt, long modifiers, double 
 			x->r_ob.vscrollbar_y -= delta_y;
 			redraw_vscrollbar((t_notation_obj *)x, 0);
 			//send_vdomain(x, 6, NULL);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		}
 		
 	} 
@@ -14102,7 +14102,7 @@ void roll_exit_linear_edit(t_roll *x)
     x->r_ob.is_linear_editing = false;
     update_all_accidentals_if_needed((t_notation_obj *)x);
     recompute_total_length((t_notation_obj *) x);
-    invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }
 
 t_chord *roll_find_chord_at_onset(t_roll *x, t_voice *voice, double onset, double tolerance)
@@ -14324,7 +14324,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                         note->duration = round(note->duration + 1 * (modifiers & eShiftKey ? 10 : 1));
                 }
                 recompute_total_length((t_notation_obj *)x);
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             } else {
                 if (modifiers & eAltKey)
                     x->r_ob.linear_edit_time_step *= 2.;
@@ -14356,7 +14356,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                     note->duration = MAX(note->duration, 0);
                 }
                 recompute_total_length((t_notation_obj *)x);
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
             } else {
                 if (modifiers & eAltKey)
                     x->r_ob.linear_edit_time_step /= 2.;
@@ -14381,10 +14381,10 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
         switch (keycode) {
             case JKEY_ESC:
                 if (modifiers & eAltKey) {
-                    invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 } else {
                     roll_exit_linear_edit(x);
-                    invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 }
                 return 1;
                 break;
@@ -14412,7 +14412,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 
                 roll_force_inscreen_ms_rolling_while_editing(x);
                 
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 return 1;
                 break;
             }
@@ -14438,7 +14438,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                 
                 roll_force_inscreen_ms_rolling_while_editing(x);
                 
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 return 1;
                 break;
             }
@@ -14454,7 +14454,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                     move_linear_edit_cursor_depending_on_edit_ranges((t_notation_obj *)x, modifiers & eShiftKey ? 7 : 1, modifiers);
                     x->r_ob.notation_cursor.midicents = scaleposition_to_midicents(x->r_ob.notation_cursor.step);
                 }
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 return 1;
                 break;
             }
@@ -14470,7 +14470,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                     move_linear_edit_cursor_depending_on_edit_ranges((t_notation_obj *)x, modifiers & eShiftKey ? -7 : -1, modifiers);
                     x->r_ob.notation_cursor.midicents = scaleposition_to_midicents(x->r_ob.notation_cursor.step);
                 }
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 return 1;
                 break;
             }
@@ -14488,7 +14488,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                         send_chord_as_llll((t_notation_obj *) x, x->r_ob.notation_cursor.chord, 6, k_CONSIDER_FOR_DUMPING, -1);
                     
                     handle_change((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_CHANGE_PITCH);
-                    invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                    notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 } else {
                     // add new chord
                     x->r_ob.force_diatonic_step = ((keycode - 'a') + 5) % 7;
@@ -14645,7 +14645,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 			if (x->r_ob.m_inspector.inspector_patcher)
 				bring_external_inspector_to_front(&x->r_ob.m_inspector);
 			open_bach_inspector((t_notation_obj *)x, &x->r_ob.m_inspector, &x->r_ob.slotinfo[x->r_ob.active_slot_num], k_SLOTINFO);
-			invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+			notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 			return 1;
             
 		} else if (x->r_ob.num_selecteditems == 1 &&
@@ -14655,7 +14655,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 					   if (x->r_ob.m_inspector.inspector_patcher)
 						   bring_external_inspector_to_front(&x->r_ob.m_inspector);
 					   open_bach_inspector_for_notation_item((t_notation_obj *)x, x->r_ob.firstselecteditem);
-					   invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+					   notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 					   return 1;
 				   }
 	} else if (keycode == JKEY_RETURN && is_editable((t_notation_obj *)x, k_PLAYCURSOR, k_ELEMENT_ACTIONS_NONE)) {
@@ -14667,7 +14667,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 				redraw_hscrollbar((t_notation_obj *) x, 1);
 			} else {
 				force_inscreen_ms_to_boundary(x, x->r_ob.play_head_start_ms, false, true, true, false);
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 			}
 			send_domain(x, 6, NULL);
 			return 1;
@@ -14975,7 +14975,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 							send_loop_region((t_notation_obj *)x, 6);
 						if (x->r_ob.playing)
 							check_correct_scheduling((t_notation_obj *)x, true);
-						invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+						notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 						return 1;
 					} else {
 						x->r_ob.show_loop_region = x->r_ob.show_loop_region ? false : true;
@@ -14984,7 +14984,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 							send_loop_region((t_notation_obj *)x, 6);
 						if (x->r_ob.playing)
 							check_correct_scheduling((t_notation_obj *)x, true);
-						invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+						notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 						return 1;
 					}
 				} else {
@@ -15000,12 +15000,12 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                         }
 						if (ch && x->r_ob.show_lyrics && x->r_ob.link_lyrics_to_slot > 0)
 							start_editing_lyrics((t_notation_obj *) x, patcherview, ch);
-						invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+						notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 						return 1;
 					} else if (x->r_ob.allow_lock){
 						lock_unlock_selection((t_notation_obj *) x, true);
 						handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LOCK_UNLOCK_SELECTION); 
-						invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+						notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 						return 1;
 					}
 				}
@@ -15026,7 +15026,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                 }
                 if (ch && x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0)
                     start_editing_dynamics((t_notation_obj *) x, patcherview, ch);
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
                 return 1;
             }
             return 0;
@@ -15733,7 +15733,7 @@ void select_all(t_roll *x){
 	unlock_markers_mutex((t_notation_obj *)x);
 	unlock_general_mutex((t_notation_obj *)x);
 	handle_change_selection((t_notation_obj *)x);
-//	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+//	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }	
 
 
@@ -16333,7 +16333,7 @@ void roll_delete_voice(t_roll *x, t_rollvoice *voice)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
 
@@ -16421,7 +16421,7 @@ void roll_swap_voices(t_roll *x, t_rollvoice *v1, t_rollvoice *v2)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
 
@@ -16532,7 +16532,7 @@ void roll_move_and_reinitialize_last_voice(t_roll *x, t_rollvoice *after_this_vo
 			auto_set_rectangle_size((t_notation_obj *) x);
 		else
 			calculate_voice_offsets((t_notation_obj *) x);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 }
 

@@ -327,6 +327,7 @@ typedef struct _llllobj_common_symbols_table
     t_symbol	*s_quartertempo;
 	t_symbol	*s_figure;
 	t_symbol	*s_interp;
+    t_symbol	*s_prepad;
 	t_symbol	*s_lockrhythmictree;
 	t_symbol	*s_clef;
 	t_symbol	*s_mode;
@@ -714,6 +715,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_quartertempo	(_llllobj_common_symbols->s_quartertempo)
 #define _llllobj_sym_figure			(_llllobj_common_symbols->s_figure)
 #define _llllobj_sym_interp			(_llllobj_common_symbols->s_interp)
+#define _llllobj_sym_prepad			(_llllobj_common_symbols->s_prepad)
 #define _llllobj_sym_lockrhythmictree			(_llllobj_common_symbols->s_lockrhythmictree)
 #define _llllobj_sym_clef			(_llllobj_common_symbols->s_clef)
 #define _llllobj_sym_mode			(_llllobj_common_symbols->s_mode)

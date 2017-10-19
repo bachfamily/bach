@@ -9582,7 +9582,7 @@ void handle_dilation_rectangle_mouse_cursor(t_notation_obj *r_ob, t_object *patc
 	@ingroup		notation_paint
 	@param	r_ob	The notation object
 */
-void invalidate_notation_static_layer_and_repaint(t_notation_obj *r_ob);
+void notationobj_invalidate_notation_static_layer_and_redraw(t_notation_obj *r_ob);
 
 
 /** Call jbox_redraw() to repaint the notation object.
@@ -13446,7 +13446,7 @@ void recompute_all_for_tuttipoint_region(t_notation_obj *r_ob, t_tuttipoint *tpt
 	For bach.roll: this sets the t_chord::need_recompute_parameters flags for all the chords in a given measure, 
 	forcing the chord parameters to be recomputed at the next paint cycle.
 	For bach.score: this calls recompute_all_for_measure() for all measures.
-	In any case, the t_notation_obj::need_perform_analysis_and_change flag is set, then the invalidate_notation_static_layer_and_repaint() function is called
+	In any case, the t_notation_obj::need_perform_analysis_and_change flag is set, then the notationobj_invalidate_notation_static_layer_and_redraw() function is called
 	in order to repaint (all parameters will be actually calculated inside the paint cycle).
 	@ingroup								notation
 	@param	r_ob							The notation object
@@ -15565,7 +15565,7 @@ long handle_articulations_popup(t_notation_obj *r_ob, t_articulation *art, long 
 				@code
 				assign_local_spacing_width_multiplier(r_ob, tpt, 2.);
 				recompute_all_for_tuttipoint_region(r_ob, tpt);
-				invalidate_notation_static_layer_and_repaint(r_ob);	// or perform_analysis_and_change(...)
+				notationobj_invalidate_notation_static_layer_and_redraw(r_ob);	// or perform_analysis_and_change(...)
 				@endcode
 	
  */

@@ -369,7 +369,7 @@ e_goto_error goto_set_selection_from_llll(t_notation_obj *r_ob, t_goto_params *p
 {
     if (!toselect || !toselect->l_head) {
         clear_selection(r_ob);
-        invalidate_notation_static_layer_and_repaint(r_ob);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         return k_GOTO_ERROR_NOTFOUND;
     }
     
@@ -1014,7 +1014,7 @@ e_goto_error set_selection_to_notation_item_with_index(t_notation_obj *r_ob, t_g
             notation_item_add_to_preselection(r_ob, newit);
             move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
         }
-        invalidate_notation_static_layer_and_repaint(r_ob);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         unlock_general_mutex(r_ob);
     }
     
@@ -1408,7 +1408,7 @@ e_goto_error notationobj_goto(t_notation_obj *r_ob, t_goto_params *par)
             (r_ob->force_notation_item_inscreen)(r_ob, (t_notation_item *)hatom_getobj(&el->l_hatom), NULL);
     }
 
-    invalidate_notation_static_layer_and_repaint(r_ob);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 
     if (toselect)
         llll_free(toselect);

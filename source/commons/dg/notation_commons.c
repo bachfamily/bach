@@ -27874,7 +27874,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 							strncpy_zero(completepath, file->filename, MAX_PATH_CHARS); // if unsuccesful, we just copy the path name
 																						// this is the case, for instance, if a user has 
 																						// moved the file (so it does not exist any more) 
-							invalidate_notation_static_layer_and_repaint(r_ob);
+							notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 						} else {
 							path_topathname(file->pathID, file->filename, completepath);
 							object_warn((t_object *) r_ob, "Warning: file %s has been moved and has been relocated", file->filename);
@@ -27888,7 +27888,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 						path_topathname(file->pathID, file->filename, completepath);
 						file->exists = true;
 						object_warn((t_object *) r_ob, "Warning: file %s has been relocated", file->filename);
-						invalidate_notation_static_layer_and_repaint(r_ob);
+						notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 					}
 				}
 				llll_appendsym(inner4_llll, gensym(completepath), 0, WHITENULL_llll); // filepath as a symbol
@@ -30243,7 +30243,7 @@ void set_voicenames_from_llll(t_notation_obj *r_ob, t_llll* voicenames, char als
 		// recalculate needed 
 		recalculate_voicenames_width(r_ob);
 		update_hscrollbar(r_ob, 0);
-		invalidate_notation_static_layer_and_repaint(r_ob);
+		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 	}
 }
 
@@ -30275,7 +30275,7 @@ void set_stafflines_from_llll(t_notation_obj *r_ob, t_llll* stafflines, char als
 		// recalculate needed 
 		recalculate_voicenames_width(r_ob);
 		update_hscrollbar(r_ob, 0);
-		invalidate_notation_static_layer_and_repaint(r_ob);
+		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 	}
 }
 
@@ -30531,7 +30531,7 @@ void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 
 void redraw_hscrollbar(t_notation_obj *r_ob, char from_pos){
 	update_hscrollbar(r_ob, from_pos);
-	invalidate_notation_static_layer_and_repaint(r_ob);
+	notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 }
 
 
@@ -30600,7 +30600,7 @@ void update_vscrollbar(t_notation_obj *r_ob, char from_what){
 
 void redraw_vscrollbar(t_notation_obj *r_ob, char from_pos){
 	update_vscrollbar(r_ob, from_pos);
-	invalidate_notation_static_layer_and_repaint(r_ob);
+	notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 }
 
 
@@ -32641,7 +32641,7 @@ char change_breakpoint_cents_from_lexpr_or_llll(t_notation_obj *r_ob, t_bpt *bpt
         bpt->delta_mc = mc - note->midicents;
         changed = 1;
     }
-    invalidate_notation_static_layer_and_repaint(r_ob);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     
     return changed;
 }
@@ -33459,7 +33459,7 @@ void change_marker_role(t_notation_obj *r_ob, t_marker *marker, e_marker_roles n
     else
         marker->content = NULL;
 	unlock_markers_mutex(r_ob);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)r_ob);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)r_ob);
 }
 
 void change_marker_ms(t_notation_obj *r_ob, t_marker *marker, double new_ms, char delta_mode, char also_check_sorting){
@@ -36477,7 +36477,7 @@ void change_single_voicename(t_notation_obj *r_ob, t_voice *voice, t_llll *new_n
 	// recalculate needed 
 	recalculate_voicenames_width(r_ob);
 	update_hscrollbar(r_ob, 0);
-	invalidate_notation_static_layer_and_repaint(r_ob);
+	notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 }
 
 
@@ -36801,7 +36801,7 @@ t_max_err notation_obj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, l
         if (new_num_voices != r_ob->num_voices) {
 			notation_obj_setattr_clefs(r_ob, NULL, new_num_voices, clefs);
 			implicitely_recalculate_all(r_ob, false);
-            invalidate_notation_static_layer_and_repaint(r_ob);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 		}
 		bach_freeptr(clefs);
 		err = MAX_ERR_NONE;
@@ -37098,7 +37098,7 @@ t_max_err notation_obj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long
 		compute_middleC_position_for_voice(r_ob, voice);
 	
 	
-	invalidate_notation_static_layer_and_repaint(r_ob);
+	notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 	
 #ifdef BACH_CHECK_NOTATION_ITEMS
     notation_obj_check_all_measure_tuttipoints(r_ob);
@@ -37240,7 +37240,7 @@ t_max_err notation_obj_set_keys(t_notation_obj *r_ob, t_symbol **keys)
 	recalculate_num_systems(r_ob);
 	r_ob->system_jump = get_system_jump(r_ob);
 	r_ob->firsttime = true;
-	invalidate_notation_static_layer_and_repaint(r_ob);
+	notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 	return MAX_ERR_NONE;
 }
 
@@ -37532,13 +37532,15 @@ t_llll *get_body(t_llll *ll){
 
 void notationobj_redraw(t_notation_obj *r_ob)
 {
+//    dev_post("->Redraw");
     jbox_redraw((t_jbox *) r_ob);
 }
 
 
-void invalidate_notation_static_layer_and_repaint(t_notation_obj *r_ob)
+void notationobj_invalidate_notation_static_layer_and_redraw(t_notation_obj *r_ob)
 {
 	if (r_ob->obj_type != k_NOTATION_OBJECT_SLOT) {
+ //       dev_post("-> Invalidate");
 		jbox_invalidate_layer((t_object *)r_ob, NULL, gensym("static_layer1"));
 		jbox_invalidate_layer((t_object *)r_ob, NULL, gensym("static_layer2"));
 	}
@@ -37817,7 +37819,7 @@ void check_unplayed_notes(t_notation_obj *r_ob, double current_ms){
 	}
 	
 	if (must_repaint)
-		invalidate_notation_static_layer_and_repaint(r_ob);
+		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 }
 
 
@@ -38805,14 +38807,14 @@ void resync_selection_with_bach_inspector(t_notation_obj *r_ob){
 			clear_selection(r_ob);
 			notation_item_add_to_preselection(r_ob, (t_notation_item *) r_ob->m_inspector.active_bach_inspector_item);
 			move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
-			invalidate_notation_static_layer_and_repaint(r_ob);
+			notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 		} else if (r_ob->m_inspector.active_bach_inspector_obj_type == k_SLOTINFO){
             if (r_ob->active_slot_notationitem){
                 long slot_num = ((t_slotinfo *)r_ob->m_inspector.active_bach_inspector_item)->slot_num;
                 if (slot_num >= 0 && slot_num < CONST_MAX_SLOTS && r_ob->slotinfo[slot_num].access_type != k_SLOT_ACCESS_CANT) {
                     r_ob->active_slot_num = slot_num;
                     r_ob->active_slot_num_1based = r_ob->active_slot_num + 1;
-                    invalidate_notation_static_layer_and_repaint(r_ob);
+                    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
                 }
 			}
 		}
@@ -40321,7 +40323,7 @@ char change_selection_name(t_notation_obj *r_ob, t_llll *newnames, t_llll *only_
     unset_selected_markers_flags(r_ob, k_FLAG_TO_BE_MODIFIED);
 
     
-	invalidate_notation_static_layer_and_repaint(r_ob);
+	notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 	return res;
 }
 
@@ -40520,7 +40522,7 @@ long notation_obj_slottoname_do(t_notation_obj *r_ob, long slotnum)
     
     unlock_general_mutex(r_ob);
     
-    invalidate_notation_static_layer_and_repaint(r_ob);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return changed;
 }
 
@@ -40619,7 +40621,7 @@ char change_selection_role(t_notation_obj *r_ob, t_symbol *new_role, t_llll *new
         curr_it = lambda ? NULL : curr_it->next_selected;
     }
     
-    invalidate_notation_static_layer_and_repaint(r_ob);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     return res;
 }
 

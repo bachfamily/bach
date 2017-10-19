@@ -56,6 +56,8 @@
 #include <stdio.h>
 #include <locale.h>
 #include <time.h> 
+#include "llll_commons_ext.h"
+#include "notation.h"
 
 typedef struct _transcribe_event
 {
@@ -79,6 +81,9 @@ typedef struct _transcribe
     double  n_transcribe_start_time;
 
     t_llll  *n_active_notes;
+    t_hatom *n_active_slotitems[CONST_MAX_VOICES + 1];
+    long    n_max_active_voice;
+    long    n_max_active_slotnum;
 
     // attributes
     double  n_refresh;
@@ -151,6 +156,19 @@ int T_EXPORT main()
     // @method llll @digest Transcribe whole roll
     // @description An <m>llll</m> in the <o>bach.roll</o> gathered syntax in the second inlet will be considered as a whole roll
     // to be transcribed.
+
+    // @method slot @digest Record temporal slot data
+    // @description A <m>slot</m> message followed by a slot number <m>N</m> and a value <m>V</m> will assume that slot <m>N</m> is a
+    // temporal slot with <m>temporalmode</m> "Milliseconds" and will record the value <m>V</m> as its Y value, corresponding to the 'current'
+    // instant. This is a way to easily transcribe continuous controllers.
+    // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
+    // @marg 1 @name y_value @optional 0 @type number/llll
+    // @mattr voice @type int @default 0 @digest Limit slot assignment to a given voice (0 = all)
+    // @mattr interp @type int @default 0 @digest Interpolate linearly between values
+    // @mattr prepad @type int @default 0 @digest Prepad slots when first elements come in
+    // @example slot 1 0.1 @caption add value 0.1 to slot 1
+    // @example slot 1 0.1 @voice 3 @caption The same, but only for notes in voice 3
+    // @example slot 1 0.1 @interp 1 @caption The same, and interpolate between different values
     class_addmethod(c, (method)transcribe_anything,					"anything",				A_GIMME,	0);
     
     // @method allnotesoff @digest Send note-off messages for all active notes
@@ -195,7 +213,7 @@ int T_EXPORT main()
     // Defaults to 0 (off).
 
     CLASS_ATTR_DOUBLE(c, "playdelay",		0,	t_transcribe, n_playdelay);
-    CLASS_ATTR_STYLE_LABEL(c, "playdelay", 0, "onoff", "Play Delay");
+    CLASS_ATTR_STYLE_LABEL(c, "playdelay", 0, "text", "Play Delay");
     CLASS_ATTR_BASIC(c, "playdelay", 0);
     // @description Sets a delay in millisecond between the record head and the play head. Defaults to 250ms.
     // Only meaningful if the <m>play</m> attribute is on.
@@ -259,6 +277,23 @@ t_max_err transcribe_setattr_play(t_transcribe *x, t_object *attr, long ac, t_at
         }
     }
     return MAX_ERR_NONE;
+}
+
+
+
+void transcribe_free_active_slotitems(t_transcribe *x)
+{
+    for (long i = 0; i <= CONST_MAX_VOICES && i <= x->n_max_active_voice; i++) {
+        for (long j = 0; j <= CONST_MAX_SLOTS && j <= x->n_max_active_slotnum; j++)
+        if (x->n_active_slotitems[i][j].h_type != H_NULL) {
+            if (hatom_gettype(&x->n_active_slotitems[i][j]) == H_LLLL)
+                llll_free(hatom_getllll(&x->n_active_slotitems[i][j]));
+            x->n_active_slotitems[i][j].h_type = H_NULL;
+        }
+    }
+    
+    x->n_max_active_slotnum = 0;
+    x->n_max_active_voice = 0;
 }
 
 
@@ -377,6 +412,7 @@ void transcribe_event_noteoff(t_transcribe *x, t_transcribe_event *ev)
 
 void transcribe_allnotesoff(t_transcribe *x)
 {
+    transcribe_send_tail(x, transcribe_get_time(x));
     for (t_llllelem *el = x->n_active_notes->l_head; el; el = el->l_next) {
         t_transcribe_event *ev = (t_transcribe_event *)hatom_getobj(&el->l_hatom);
         if (x->n_use_names)
@@ -407,6 +443,8 @@ void transcribe_record(t_transcribe *x)
     
     if (refresh > 0)
         clock_fdelay(x->n_clock, refresh);
+
+    transcribe_free_active_slotitems(x);
     
     if (x->n_autoclear) {
         x->n_curr_name = 0;
@@ -518,13 +556,106 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                 llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, args);
                 transcribe_send_tail(x, t);
                 transcribe_send_inscreenpos(x, t);
+
+            } else if (args->l_head && hatom_gettype(&args->l_head->l_hatom) == H_SYM && hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_slot && args->l_head->l_next) {
+                // Inserting a temporal slot item
+                t_symbol *temporalmode = _llllobj_sym_milliseconds;
+                long voice = 0, interp = 0, prepad = 0;
+                llll_parseattrs((t_object *)x, args, true, "iiii", _llllobj_sym_temporalmode, &temporalmode, _llllobj_sym_voice, &voice, _llllobj_sym_interp, &interp, _llllobj_sym_prepad, &prepad);
                 
+                if (temporalmode == _llllobj_sym_milliseconds) {
+                    
+                    systhread_mutex_lock(x->n_mutex);
+                    
+                    if (voice > x->n_max_active_voice)
+                        x->n_max_active_voice = voice;
+                    
+                    long slotnum = CLAMP(hatom_getlong(&args->l_head->l_next->l_hatom), 0, CONST_MAX_SLOTS - 1);
+
+                    if (slotnum > x->n_max_active_slotnum)
+                        x->n_max_active_slotnum = slotnum;
+
+                    if (!interp && x->n_active_slotitems[voice][slotnum].h_type != H_NULL) {
+                        // "noteoff" for the slot item
+                        t_llll *command = llll_get();
+                        t_llll *point = llll_get();
+                        llll_appendsym(command, _llllobj_sym_appendslotitem);
+                        llll_appendhatom_clone(command, &args->l_head->l_next->l_hatom);
+                        llll_appenddouble(point, t);
+                        if (args->l_head->l_next->l_next)
+                            llll_appendhatom_clone(point, &x->n_active_slotitems[voice][slotnum]);
+                        llll_appendllll(command, point);
+                        if (voice > 0) {
+                            llll_appendsym(command, gensym("@voice"));
+                            llll_appendlong(command, voice);
+                        }
+
+                        systhread_mutex_unlock(x->n_mutex);
+                        
+                        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, command);
+                        llll_free(command);
+
+                        systhread_mutex_lock(x->n_mutex);
+
+                    }
+                    
+                    if (prepad && x->n_active_slotitems[voice][slotnum].h_type == H_NULL && t > 0) {
+                        t_llll *command = llll_get();
+                        t_llll *point = llll_get();
+                        llll_appendsym(command, _llllobj_sym_appendslotitem);
+                        llll_appendhatom_clone(command, &args->l_head->l_next->l_hatom);
+                        llll_appenddouble(point, 0);
+                        if (args->l_head->l_next->l_next)
+                            llll_appendhatom_clone(point, &args->l_head->l_next->l_next->l_hatom);
+                        llll_appendllll(command, point);
+                        if (voice > 0) {
+                            llll_appendsym(command, gensym("@voice"));
+                            llll_appendlong(command, voice);
+                        }
+                        
+                        systhread_mutex_unlock(x->n_mutex);
+                        
+                        llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, command);
+                        llll_free(command);
+                        
+                        systhread_mutex_lock(x->n_mutex);
+                    }
+                    
+                    t_llll *command = llll_get();
+                    t_llll *point = llll_get();
+                    llll_appendsym(command, _llllobj_sym_appendslotitem);
+                    llll_appendhatom_clone(command, &args->l_head->l_next->l_hatom);
+                    llll_appenddouble(point, t);
+                    if (args->l_head->l_next->l_next) {
+                        llll_appendhatom_clone(point, &args->l_head->l_next->l_next->l_hatom);
+                        hatom_change_to_hatom(&x->n_active_slotitems[voice][slotnum], &args->l_head->l_next->l_next->l_hatom);
+                    }
+                    llll_appendllll(command, point);
+                    if (voice > 0) {
+                        llll_appendsym(command, gensym("@voice"));
+                        llll_appendlong(command, voice);
+                    }
+                    
+                    systhread_mutex_unlock(x->n_mutex);
+                    
+                    llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, command);
+                    llll_free(command);
+                } else {
+                    t_llll *command = llll_get();
+                    llll_appendsym(command, _llllobj_sym_addslot);
+                    llll_chain(command, llll_subllll(args->l_head->l_next, args->l_tail));
+                    llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, command);
+                    llll_free(command);
+                }
+
             } else if (args->l_size >= 4) {
                 // input is: pitch, velocity, voice, duration
 
                 t_llll *command = llll_get();
                 t_llll *chord = llll_get();
                 t_llll *note = llll_get();
+
+                systhread_mutex_lock(x->n_mutex);
                 llll_appendsym(command, _llllobj_sym_addchord);
                 llll_appendhatom_clone(command, &args->l_head->l_next->l_next->l_hatom);
                 llll_appenddouble(chord, t);
@@ -533,6 +664,7 @@ void transcribe_anything(t_transcribe *x, t_symbol *msg, long ac, t_atom *av)
                 llll_appendhatom_clone(note, &args->l_head->l_next->l_hatom);
                 llll_appendllll(chord, note);
                 llll_appendllll(command, chord);
+                systhread_mutex_unlock(x->n_mutex);
                 
                 transcribe_send_time(x, t);
                 llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, command);
@@ -642,8 +774,12 @@ void transcribe_free(t_transcribe *x)
 	for (i = 1; i < 2; i++)
 		object_free_debug(x->n_proxy[i]);
     
+    transcribe_free_active_slotitems(x);
     transcribe_clear_active_notes(x);
     llll_free(x->n_active_notes);
+
+    for (i = 0; i < CONST_MAX_SLOTS; i++)
+        bach_freeptr(x->n_active_slotitems[i]);
     
     object_free(x->n_clock);
     systhread_mutex_free_debug(x->n_mutex);
@@ -666,7 +802,15 @@ t_transcribe *transcribe_new(t_symbol *s, short ac, t_atom *av)
         x->n_use_names = 0;
         x->n_use_Max_logical_time = 0;
         x->n_active_notes = llll_get();
-	
+        
+        for (long i = 0; i <= CONST_MAX_VOICES; i++)
+            x->n_active_slotitems[i] = (t_hatom *)bach_newptr(CONST_MAX_SLOTS * sizeof(t_hatom));
+        
+        for (long i = 0; i <= CONST_MAX_VOICES; i++)
+            for (long j = 0; j < CONST_MAX_SLOTS; j++)
+                x->n_active_slotitems[i][j].h_type = H_NULL;
+        x->n_max_active_voice = x->n_max_active_slotnum = 0;
+        
         x->n_clock = clock_new_debug((t_object *)x, (method)transcribe_task);
 		x->n_proxy[1] = proxy_new_debug((t_object *) x, 1, &x->n_in);
         systhread_mutex_new_debug(&x->n_mutex, 0);
@@ -690,18 +834,16 @@ void transcribe_qelem_do(t_transcribe *x)
 {
     double t = transcribe_get_time(x);
     t_llll *tail_ll = llll_get();
-    t_llll *inscreenpos_ll = llll_get();
 
     llll_appendsym(tail_ll, _llllobj_sym_tail);
     llll_appenddouble(tail_ll, t);
-
-    llll_appendsym(inscreenpos_ll, gensym("inscreenpos"));
-    llll_appenddouble(inscreenpos_ll, x->n_inscreenpos);
-    llll_appenddouble(inscreenpos_ll, t);
-
     llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, tail_ll);
     llll_free(tail_ll);
 
+    t_llll *inscreenpos_ll = llll_get();
+    llll_appendsym(inscreenpos_ll, gensym("inscreenpos"));
+    llll_appenddouble(inscreenpos_ll, x->n_inscreenpos);
+    llll_appenddouble(inscreenpos_ll, t);
     llllobj_outlet_llll((t_object *)x, LLLL_OBJ_VANILLA, 0, inscreenpos_ll);
     llll_free(inscreenpos_ll);
 }

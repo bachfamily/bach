@@ -745,6 +745,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_quartertempo = gensym("quartertempo");
 	x->s_figure = gensym("figure");
 	x->s_interp = gensym("interp");
+    x->s_prepad = gensym("prepad");
 	x->s_lockrhythmictree = gensym("lockrhythmictree");
 	x->s_clef = gensym("clef");
 	x->s_mode = gensym("mode");

@@ -1128,7 +1128,7 @@ void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv){ //argv+
                 
                 
             } else if (router == gensym("refresh")) {
-                invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+                notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 
             
             } else if (router == _sym_dump) {
@@ -1855,7 +1855,7 @@ void uislot_domain(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
 					x->r_ob.slot_window_hzoom_factor = MAX(0.01, x->r_ob.slot_window_hzoom_factor);
 					if (x->r_ob.notify_also_upon_messages)
 						send_domain(x, 1, NULL);
-					invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+					notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 				} else {
 					object_warn((t_object *)x, "Can't handle negative domains.");
 				}
@@ -1874,7 +1874,7 @@ void uislot_domain(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
 				if (x->r_ob.notify_also_upon_messages)
 					send_domain(x, 1, NULL);
 				
-				invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 			}
 		}
 }

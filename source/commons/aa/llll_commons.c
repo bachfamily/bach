@@ -8538,7 +8538,7 @@ llll_parseargs_error:
 
 
 /// Same as llll_parseargs, but using the attribute-like syntax: @attrname attrvalue
-// IMPORTANT: if destructive is non-zero the function is destructive: the incoming ll will have all @stuff removed.
+// IMPORTANT: if destructive is non-zero the incoming ll will have all @stuff removed.
 long llll_parseattrs(t_object *x, t_llll *ll, char destructive, const char *types, ...)
 {
     va_list ap;

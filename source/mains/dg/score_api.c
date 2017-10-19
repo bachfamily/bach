@@ -538,7 +538,7 @@ void scoreapi_set_zoom(t_score *x, double z)
 {
 	change_zoom((t_notation_obj *) x, (z > 1.) ? z : 1.);
 	redraw_hscrollbar((t_notation_obj *)x, 0);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void scoreapi_set_vzoom(t_score *x, double z)
@@ -552,7 +552,7 @@ void scoreapi_set_vzoom(t_score *x, double z)
 	x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
 	//		post("supposed: %f. this: %f.--> zoom %f", supposedheight, height, x->r_ob.zoom_y);
 	calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void scoreapi_set_noteheads_font(t_score *x, t_symbol *font)
@@ -996,7 +996,7 @@ void recompute_all_except_for_beamings_and_autocompletion(t_score *x)
 	recalculate_all_utf_measure_timesignatures(x);
 	check_all_measures_ties(x);
 	set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	x->r_ob.need_recompute_chords_double_onset = true;
 }
 
@@ -1013,20 +1013,20 @@ void recompute_all(t_score *x)
 	recalculate_all_utf_measure_timesignatures(x);
 	check_all_measures_ties(x);
 	set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	x->r_ob.need_recompute_chords_double_onset = true;
 }
 
 void recompute_all_except_for_beamings_and_autocompletion_and_redraw(t_score *x)
 {
 	recompute_all_except_for_beamings_and_autocompletion(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void recompute_all_and_redraw(t_score *x) 
 {
 	recompute_all(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 /*
@@ -2891,7 +2891,7 @@ t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av){
 	compute_all_notes_approximations(x, true); 
 	recalculate_all_chord_parameters(x);
 	recalculate_all_beams_positions(x); // by calling this it will also validate the accidentals for all measures.
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	return err;
 }
 
@@ -3418,7 +3418,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
  	llll_free(wholescore);
 	
 	update_hscrollbar((t_notation_obj *)x, 0);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 
 #ifdef CONFIGURATION_Development
 	verbose_print(x);
@@ -3484,7 +3484,7 @@ void score_snap_pitch_to_grid(t_score *x, t_symbol *s, long argc, t_atom *argv)
 		}
 	}
 	unlock_general_mutex((t_notation_obj *)x);	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 
@@ -3547,7 +3547,7 @@ void clear_score_body(t_score *x, long voicenum)
 #endif
 	update_hscrollbar((t_notation_obj *)x, 0);
 	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 
@@ -4008,7 +4008,7 @@ void turn_chord_into_rest_or_into_note(t_score *x, t_chord *chord, double mc) {
 		x->r_ob.notation_cursor.measure->need_recompute_beamings = true;
 		set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
 		perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_TIES + k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	}
 }
 
@@ -4113,7 +4113,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
 		curr_nt = curr_nt->next;
 	}
 	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	
 	return this_ch;
 }
@@ -4771,7 +4771,7 @@ char merge(t_score *x, t_rational threshold_sym, double threshold_cents, char ga
 	
 	if (changed) {
 		check_correct_scheduling((t_notation_obj *)x, false);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	}
 	
 	return changed;
@@ -5285,7 +5285,7 @@ long score_oksize(t_score *x, t_rect *newrect)
 		reset_all_slurs_position(x);
 		
 		x->r_ob.firsttime = true;
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		return 1;
 	}
 	return 0;
@@ -5374,7 +5374,7 @@ void scoreapi_initscore_step02(t_score *x)
 	x->can_need_repaint = false;
 	
 	recompute_all(x); // needed here, to have the right domain (after a draw)
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void delete_measure_tempi(t_score *x, t_measure *measure)
@@ -10678,7 +10678,7 @@ void scoreapi_paint(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
 	
 	if (x->need_repaint) { // in some very special cases (particular tuplets) we need to draw at least 2 times to have the correct result
 		x->can_need_repaint = false;
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	} else if (x->r_ob.need_send_rebuild_done_after_paint) {
 #ifdef BACH_MAX
 		// sending rebuild done (will be deferred_low!!!)
@@ -11291,10 +11291,10 @@ void score_delete_voice(t_score *x, t_scorevoice *voice)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 	recompute_all(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
 
@@ -11383,7 +11383,7 @@ void score_swap_voices(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
 
@@ -11510,7 +11510,7 @@ void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this
             perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_FROM_SCRATCH);
         }
         
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 }
 
