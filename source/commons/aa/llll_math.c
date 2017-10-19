@@ -211,7 +211,14 @@ void hatom_fn_makepitchsc(t_hatom *a1, t_hatom *a2, t_hatom *res)
     hatom_setpitch(res, t_pitch(smc));
 }
 
-
+void hatom_fn_cents(t_hatom *a1, t_hatom *res)
+{
+    if (hatom_gettype(a1) == H_PITCH) {
+        hatom_setlong(res, a1->h_w.w_pitch.toMC());
+    } else {
+        *res = *a1;
+    }
+}
 
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {

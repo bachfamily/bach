@@ -57,6 +57,7 @@ void hatom_fn_rat(t_hatom *arg, t_hatom *res);
 void hatom_fn_num(t_hatom *arg, t_hatom *res);
 void hatom_fn_den(t_hatom *arg, t_hatom *res);
 void hatom_fn_pitch(t_hatom *arg, t_hatom *res);
+void hatom_fn_cents(t_hatom *a1, t_hatom *res);
 void hatom_fn_degree(t_hatom *a1, t_hatom *res);
 void hatom_fn_octave(t_hatom *a1, t_hatom *res);
 void hatom_fn_alter(t_hatom *a1, t_hatom *res);
