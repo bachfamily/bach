@@ -179,7 +179,11 @@ void roll_sel_add_breakpoint(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_erase_breakpoints(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_add_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_erase_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv);
-void roll_sel_change_slot_value(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_sel_change_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_sel_append_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_sel_prepend_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_sel_insert_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_sel_delete_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_dumpselection(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_sendcommand(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_snap_pitch_to_grid(t_roll *x);
@@ -2696,58 +2700,50 @@ void roll_sel_sendcommand(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 	}
 }
 
-// arguments are: slot#, position, new value (as llll).
-void roll_sel_change_slot_value(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+
+void roll_sel_change_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
-	long slotnum, position;
-	t_llll *new_values_as_llll;
-	char lambda = (s == _llllobj_sym_lambda);
-	char changed = 0;
-	
-	if (argc < 3)
-		return;
-
-	slotnum = (atom_gettype(argv) == A_SYM ? slotname_to_slotnum((t_notation_obj *) x, atom_getsym(argv)) : atom_getlong(argv)-1);
-	if (slotnum < 0)
-		return;
-
-    if (atom_gettype(argv+1) == A_SYM && atom_getsym(argv+1) == _llllobj_sym_all)
-        position = -1;
-    else
-        position = atom_getlong(argv+1);
-	new_values_as_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc-2, argv+2, LLLL_PARSE_CLONE);
-		
-	lock_general_mutex((t_notation_obj *)x);
-	if (new_values_as_llll) {
-		t_notation_item *curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
-		while (curr_it) {
-			if (curr_it->type == k_NOTE) {
-				t_note *nt = (t_note *) curr_it;
-				if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
-					create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-					change_note_slot_value((t_notation_obj *) x, nt, slotnum, position, new_values_as_llll);
-					changed = 1;
-				}
-			} else if (curr_it->type == k_CHORD) {
-				t_chord *ch = (t_chord *) curr_it;
-                t_note *nt;
-                for (nt=ch->firstnote; nt; nt = nt->next) {
-                    if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
-                        create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                        change_note_slot_value((t_notation_obj *) x, nt, slotnum, position, new_values_as_llll);
-                        changed = 1;
-                    }
-                }
-			}
-			curr_it = lambda ? NULL : curr_it->next_selected;
-		}
-	}
-	unlock_general_mutex((t_notation_obj *)x);
-	
-	llll_free(new_values_as_llll);
-	
-	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_MODIFY_ONE);
+    llll_release(args);
 }
+
+
+void roll_sel_append_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    if (args->l_head)
+        llll_insertlong_after(1, args->l_head); // inserting dummy position
+    notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_APPEND);
+    llll_release(args);
+}
+
+
+void roll_sel_prepend_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    if (args->l_head)
+        llll_insertlong_after(1, args->l_head); // inserting dummy position
+    notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_PREPEND);
+    llll_release(args);
+}
+
+void roll_sel_insert_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_INSERT_AUTO);
+    llll_release(args);
+}
+
+
+void roll_sel_delete_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_DELETE_ONE);
+    llll_release(args);
+}
+
+
 
 
 void roll_addmarker(t_roll *x, t_symbol *s, long argc, t_atom *argv){
@@ -4225,9 +4221,39 @@ int T_EXPORT main(void){
     // @example changeslotitem 9 1 highpass 400 0 2 @caption set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"
     // @example changeslotitem 8 0 Max.app 0 @caption append the Max.app file in the 8th (filelist) slot, and make it active
     // @example changeslotitem 8 0 0 2 @caption Make 2nd file active in 8th (filelist) slot
-    // @seealso addslot, eraseslot
-	class_addmethod(c, (method) roll_sel_change_slot_value, "changeslotitem", A_GIMME, 0);
-    class_addmethod(c, (method) roll_sel_change_slot_value, "changeslotvalue", A_GIMME, 0);
+    // @seealso appendslotitem, prependslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+	class_addmethod(c, (method) roll_sel_change_slot_item, "changeslotitem", A_GIMME, 0);
+    class_addmethod(c, (method) roll_sel_change_slot_item, "changeslotvalue", A_GIMME, 0);
+
+    
+    // @method appendslotitem @digest Append a slot element at the end of a slot
+    // @description @copy BACH_DOC_MESSAGE_APPENDSLOTITEM
+    // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
+    // @marg 1 @name slot_element @optional 0 @type llll
+    // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    class_addmethod(c, (method) roll_sel_append_slot_item, "appendslotitem", A_GIMME, 0);
+
+    // @method prependslotitem @digest Prepend a slot element at the beginning of a slot
+    // @description @copy BACH_DOC_MESSAGE_PREPENDSLOTITEM
+    // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
+    // @marg 1 @name slot_element @optional 0 @type llll
+    // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
+    class_addmethod(c, (method) roll_sel_prepend_slot_item, "prependslotitem", A_GIMME, 0);
+
+    // @method insertslotitem @digest Insert a slot element at a given position in a slot
+    // @description @copy BACH_DOC_MESSAGE_INSERTSLOTITEM
+    // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
+    // @marg 1 @name element_position @optional 0 @type int
+    // @marg 2 @name slot_element @optional 0 @type llll
+    // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, addslot, eraseslot
+    class_addmethod(c, (method) roll_sel_insert_slot_item, "insertslotitem", A_GIMME, 0);
+
+    // @method deleteslotitem @digest Delete the slot element at a given position of a slot
+    // @description @copy BACH_DOC_MESSAGE_DELETESLOTITEM
+    // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
+    // @marg 1 @name element_position @optional 0 @type int
+    // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
+    class_addmethod(c, (method) roll_sel_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 
 	
 	// @method dumpselection @digest Play selected items off-line
@@ -6556,9 +6582,19 @@ void roll_lambda(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 		} else if (router == _llllobj_sym_eraseslot){
 			roll_sel_erase_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_changeslotvalue){
-			roll_sel_change_slot_value(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+			roll_sel_change_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_changeslotitem){
-            roll_sel_change_slot_value(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+            roll_sel_change_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_appendslotitem){
+            roll_sel_append_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_prependslotitem){
+            roll_sel_prepend_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_insertslotitem){
+            roll_sel_insert_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_deleteslotitem){
+            roll_sel_delete_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_insertslotitem){
+            roll_sel_insert_slot_item(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_addslot){
 			roll_sel_add_slot(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_addbreakpoint){
@@ -8965,7 +9001,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 							if (atom_gettype(slots + s + 2) == A_SYM) { // it MUST be a A_SYM
 								if (strcmp(atom_getsym(slots + s + 2)->s_name, "function") == 0) { // slot function
 									long num_pts = atom_getlong(slots + s + 3);
-									temp->slot[j].length = 0; // we'll put it at the end (just to avoid that append_slotitem get crazy)
+									temp->slot[j].length = 0; // we'll put it at the end (just to avoid that slotitem_append get crazy)
 									s += 4;
 									for (i = 0; i < num_pts; i++) { // add each point 
 										double x_val, y_val, slope;
@@ -8978,7 +9014,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 										point = (t_pts *)bach_newptr(sizeof(t_pts));
 										point->x = x_val; point->y = y_val; point->slope = slope;
 										thisitem->item = point;
-										append_slotitem(thisitem); // points are ordered! we just have to append them
+										slotitem_append(thisitem); // points are ordered! we just have to append them
 									}
 									temp->slot[j].length = num_pts; // number of points
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "long") == 0) { // slot long
@@ -8988,7 +9024,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 									*val = atom_getlong(slots + s + 3);
 									s += 4;
 									thisitem->item = val;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "float") == 0) { // slot float
 									t_slotitem *thisitem = build_slotitem((t_notation_obj *)x, &(temp->slot[j]));
 									double *val = (double *)bach_newptr(sizeof(double));
@@ -8996,7 +9032,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 									s += 4;
 									thisitem->item = val;
 									temp->slot[j].length = 0;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "longlist") == 0) { // slot longlist
 									long num_numbers = atom_getlong(slots + s + 3); // number of numbers
 									temp->slot[j].length = 0;
@@ -9007,7 +9043,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 										*val = atom_getlong(slots + s);
 										s += 1;
 										thisitem->item = val;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
 									}
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "floatlist") == 0) { // slot floatlist
 									long num_numbers = atom_getlong(slots + s + 3); // number of numbers
@@ -9019,7 +9055,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 										*val = atom_getfloat(slots + s);
 										s += 1;
 										thisitem->item = val;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
 									}
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "text") == 0) { // slot text
 									long num_chars = atom_getlong(slots + s + 3); // number of files
@@ -9028,8 +9064,8 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 									snprintf_zero(text, num_chars, atom_getsym(slots + 4)->s_name);
 									s += 5;
 									bach_copyptr(thisitem->item, text, num_chars * sizeof(char));
-									temp->slot[j].length = 0; // just to avoid that append_slotitem (which incrase automatically the # of items) get crazy
-									append_slotitem(thisitem);
+									temp->slot[j].length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+									slotitem_append(thisitem);
 									temp->slot[j].length = num_chars;
 									bach_freeptr(text);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "filelist") == 0) { // slot filelist
@@ -9054,7 +9090,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 										thisitem->item = file;
 										if (i + 1 == act_file_index)
                                             slot_set_active_item(&temp->slot[j], thisitem);
-										append_slotitem(thisitem); // files are ordered! we just have to append them
+										slotitem_append(thisitem); // files are ordered! we just have to append them
 									}
 								} else { // undefined or wrongly defined slot
 									s += 3;
@@ -12402,7 +12438,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                     } else if (modifiers == eCommandKey && (!notation_item_is_globally_locked((t_notation_obj *) x, (t_notation_item *)curr_ch))) { // delete articulation
                                         if (is_editable((t_notation_obj *)x, k_ARTICULATION, k_DELETION)) {
                                             create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)curr_ch, k_UNDO_MODIFICATION_CHANGE);
-                                            delete_slotitem((t_notation_obj *)x, s, item);
+                                            slotitem_delete((t_notation_obj *)x, s, item);
                                             handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULTATION);
                                             x->r_ob.item_changed_at_mousedown = 1;
                                         }
@@ -13831,7 +13867,7 @@ void roll_enter(t_roll *x)	// enter is triggerd at "endeditbox time"
 		bach_freeptr(av);
 	} else if (x->r_ob.is_editing_type == k_MARKERNAME && x->r_ob.is_editing_marker) {
 		t_llll *names = llll_from_text_buf(text, 0);
-		lock_markers_mutex((t_notation_obj *)x);;
+		lock_markers_mutex((t_notation_obj *)x);
 		create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
 		change_marker_names((t_notation_obj *) x, x->r_ob.is_editing_marker, names);
 		handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_MARKER_NAME);
@@ -13840,32 +13876,38 @@ void roll_enter(t_roll *x)	// enter is triggerd at "endeditbox time"
 	} else if (x->r_ob.is_editing_type == k_TEXT_IN_SLOT) {
 		t_llll *new_text_as_llll = llll_get();
 		llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
+        lock_general_mutex((t_notation_obj *)x);
 		create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
-		change_notation_item_slot_value((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, new_text_as_llll);
+		notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, new_text_as_llll);
 		llll_free(new_text_as_llll);
         if (x->r_ob.link_lyrics_to_slot > 0 && x->r_ob.link_lyrics_to_slot - 1 == x->r_ob.active_slot_num) {
             t_chord *ch = notation_item_chord_get_parent((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
 			if (ch)
                 ch->need_recompute_parameters = true;
         }
+        unlock_general_mutex((t_notation_obj *)x);
 		handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
     } else if (x->r_ob.is_editing_type == k_DYNAMICS_IN_SLOT) {
         t_llll *new_text_as_llll = llll_get();
         llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
+        lock_general_mutex((t_notation_obj *)x);
         create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
-        change_notation_item_slot_value((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, new_text_as_llll);
-        llll_free(new_text_as_llll);
+        notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, new_text_as_llll);
         if (x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.link_dynamics_to_slot - 1 == x->r_ob.active_slot_num) {
             t_chord *ch = notation_item_chord_get_parent((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
             if (ch)
                 ch->need_recompute_parameters = true;
         }
+        unlock_general_mutex((t_notation_obj *)x);
+        llll_free(new_text_as_llll);
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
 	} else if (x->r_ob.is_editing_type == k_LYRICS && x->r_ob.is_editing_chord && x->r_ob.is_editing_chord->firstnote) {
 		t_llll *new_text_as_llll = llll_get();
 		llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
+        lock_general_mutex((t_notation_obj *)x);
 		create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
-		change_note_slot_value((t_notation_obj *) x, x->r_ob.is_editing_chord->firstnote, x->r_ob.link_lyrics_to_slot - 1, 1, new_text_as_llll);
+		note_change_slot_item((t_notation_obj *) x, x->r_ob.is_editing_chord->firstnote, x->r_ob.link_lyrics_to_slot - 1, 1, new_text_as_llll);
+        unlock_general_mutex((t_notation_obj *)x);
 		llll_free(new_text_as_llll);
 		x->r_ob.is_editing_chord->need_recompute_parameters = true;
 		handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_LYRICS);
@@ -13875,30 +13917,36 @@ void roll_enter(t_roll *x)	// enter is triggerd at "endeditbox time"
         if (nitem) {
             t_llll *new_text_as_llll = llll_get();
             llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
+            lock_general_mutex((t_notation_obj *)x);
             create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
-            change_notation_item_slot_value((t_notation_obj *) x, nitem, x->r_ob.link_dynamics_to_slot - 1, 1, new_text_as_llll);
+            notation_item_change_slotitem((t_notation_obj *) x, nitem, x->r_ob.link_dynamics_to_slot - 1, 1, new_text_as_llll);
             llll_free(new_text_as_llll);
             x->r_ob.is_editing_chord->need_recompute_parameters = true;
+            unlock_general_mutex((t_notation_obj *)x);
             handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DYNAMICS);
         }
     } else if (x->r_ob.is_editing_type == k_LLLL_IN_SLOT) {
 		t_llll *my_llll = llll_from_text_buf(text, false);
 		if (my_llll) {
+            lock_general_mutex((t_notation_obj *)x);
 			create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
 #ifdef BACH_NEW_LLLLSLOT_SYNTAX
             // nothing to do
 #else
 			llll_wrap_once(&my_llll);
 #endif
-			change_notation_item_slot_value((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, my_llll);
+			notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, my_llll);
 			llll_free(my_llll);
+            unlock_general_mutex((t_notation_obj *)x);
 			handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
 		}
     } else if (x->r_ob.is_editing_type == k_NUMBER_IN_SLOT) {
         t_llll *ll = llll_from_text_buf(text, false);
+        lock_general_mutex((t_notation_obj *)x);
         create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
-        change_notation_item_slot_value((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, ll);
+        notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, ll);
         llll_free(ll);
+        unlock_general_mutex((t_notation_obj *)x);
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
 	}
 	end_editing_textfield((t_notation_obj *) x);

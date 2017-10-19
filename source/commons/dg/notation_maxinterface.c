@@ -2857,7 +2857,7 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
 		
 		CLASS_ATTR_DOUBLE(c,"bgslotfontsize",0, t_notation_obj, slot_background_font_size);
 		CLASS_ATTR_STYLE_LABEL(c,"bgslotfontsize",0,"text","Background Slot Font Size");
-		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bgslotfontsize", 0, "7");
+		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"bgslotfontsize", 0, "8");
 		// @exclude bach.slot
 		// @description Sets the font size of background slots displayed as text (rescaled according to the <m>vzoom</m>). 
 		
@@ -3835,7 +3835,7 @@ long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clic
 				active_filter = (t_biquad *)bach_newptr(sizeof(t_biquad));
 				initialize_biquad(active_filter);
 				thisitem->item = active_filter;
-				append_slotitem(thisitem);
+				slotitem_append(thisitem);
 			}
 			active_filter->filter_type = (e_filter_types)(chosenelem - 2000);
 			synchronize_biquad_coeff_from_freq_gain_and_Q(active_filter, r_ob->sampling_freq);
@@ -5350,7 +5350,7 @@ void notationobj_erase_slot(t_notation_obj *r_ob, int slot_number){
 	t_chord *temp_ch;
 	
 	if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT) {
-		erase_note_slot(r_ob, r_ob->dummynote, slot_number);
+		note_clear_slot(r_ob, r_ob->dummynote, slot_number);
 		return;
 	}
 	
@@ -5360,11 +5360,11 @@ void notationobj_erase_slot(t_notation_obj *r_ob, int slot_number){
 			t_note *temp_nt = temp_ch->firstnote;
             if (!temp_nt && r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 #ifdef BACH_CHORDS_HAVE_SLOTS
-                erase_notationitem_slot(r_ob, (t_notation_item *)temp_ch, slot_number, false);
+                notation_item_clear_slot(r_ob, (t_notation_item *)temp_ch, slot_number, false);
 #endif
             } else {
                 while (temp_nt) {
-                    erase_notationitem_slot(r_ob, (t_notation_item *)temp_nt, slot_number, false);
+                    notation_item_clear_slot(r_ob, (t_notation_item *)temp_nt, slot_number, false);
                     temp_nt = temp_nt->next;
                 }
             }
@@ -5628,7 +5628,7 @@ void notation_obj_copy_slot(t_notation_obj *r_ob, t_clipboard *clipboard, t_nota
 			r_ob->whole_obj_undo_tick_function(r_ob);
 		else
 			create_simple_selected_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-		erase_notationitem_slot(r_ob, nitem, slot_num);
+		notation_item_clear_slot(r_ob, nitem, slot_num);
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}
 }

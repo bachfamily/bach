@@ -1006,15 +1006,15 @@ void bach_preprocess_attr(t_bach_inspector_manager *man, void *obj, t_bach_attri
 void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute *attr){
 	if (attr->owner_type == k_SLOTINFO) {
 		if (attr->name == _llllobj_sym_domain)
-			check_slot_domain(r_ob, ((t_slotinfo *)obj)->slot_num);
+			slot_check_domain(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_range)
-			check_slot_range(r_ob, ((t_slotinfo *)obj)->slot_num);
+			slot_check_range(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_zrange)
-			check_slot_zrange(r_ob, ((t_slotinfo *)obj)->slot_num);
+			slot_check_zrange(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_representation)
 			set_matrix_parameters_from_slotinfo(r_ob, ((t_slotinfo *)obj)->slot_num);
         else if (attr->name == _llllobj_sym_access)
-            check_slot_access(r_ob, ((t_slotinfo *)obj)->slot_num);
+            slot_check_access(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_color) {
 			t_atom av[4];
 			t_jrgba color = get_bach_attribute_as_color(&r_ob->m_inspector, obj, attr);
@@ -1207,7 +1207,7 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
         } else if (attr->name == _llllobj_sym_extend) {
             r_ob->slotinfo[slotnum].extend_beyond_tails = atom_getlong(av);
             notationobj_slot_remove_extensions(r_ob, slotnum);
-            check_slot_domain(r_ob, slotnum);
+            slot_check_domain(r_ob, slotnum);
 		} else if (attr->name == _llllobj_sym_width || attr->name == _llllobj_sym_height) {
             if (atom_gettype(av) == A_SYM) {
                 if (atom_getsym(av) == _llllobj_sym_auto)

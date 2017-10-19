@@ -860,6 +860,28 @@ t_slotitem *notation_item_get_slot_firstitem(t_notation_obj *r_ob, t_notation_it
     return NULL;
 }
 
+t_slotitem *notation_item_get_slot_nth_item(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, long n)
+{
+    t_slotitem *it = notation_item_get_slot_firstitem(r_ob, nitem, slotnumber);
+    
+    for (long i = 0; it && i < n; i++)
+        it = it->next;
+    
+    return it;
+}
+
+t_slotitem *slot_get_nth_item(t_slot *s, long n)
+{
+    t_slotitem *it = s->firstitem;
+    
+    for (long i = 0; it && i < n; i++)
+        it = it->next;
+    
+    return it;
+}
+
+
+
 long notation_item_get_slot_numitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber)
 {
     // can't rely on slot->length, since we use that for number of chars in text slot.
@@ -2326,6 +2348,17 @@ long atom_to_slotnum(t_notation_obj *r_ob, t_atom *av, char atom_is_1based)
 	else if (is_atom_number(av))
 		j = atom_getlong(av) - (atom_is_1based ? 1 : 0);
 	return j;
+}
+
+long hatom_to_slotnum(t_notation_obj *r_ob, t_hatom *h, char hatom_is_1based)
+{
+    long j = -1;
+    
+    if (hatom_gettype(h) == H_SYM)
+        j = slotname_to_slotnum(r_ob, hatom_getsym(h));
+    else if (is_hatom_number(h))
+        j = hatom_getlong(h) - (hatom_is_1based ? 1 : 0);
+    return j;
 }
 
 long number_slot_to_text_buf(t_notation_obj *r_ob, t_slotitem *firstslotitem, long num_elems, char **buf, char slot_type, long slot_num, char numbers_only){
@@ -3814,12 +3847,12 @@ t_llll *set_slotinfo_from_llll(t_notation_obj *r_ob, t_llll* slotinfo)
                                     } else if (router == _llllobj_sym_range && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next){
                                         r_ob->slotinfo[j].slot_range[0] = hatom_getdouble(&this_llll->l_head->l_next->l_hatom);
                                         r_ob->slotinfo[j].slot_range[1] = hatom_getdouble(&this_llll->l_head->l_next->l_next->l_hatom);
-                                        check_slot_range(r_ob, j);
+                                        slot_check_range(r_ob, j);
                                         
                                     } else if (router == _llllobj_sym_zrange && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next){
                                         r_ob->slotinfo[j].slot_zrange[0] = hatom_getdouble(&this_llll->l_head->l_next->l_hatom);
                                         r_ob->slotinfo[j].slot_zrange[1] = hatom_getdouble(&this_llll->l_head->l_next->l_next->l_hatom);
-                                        check_slot_zrange(r_ob, j);
+                                        slot_check_zrange(r_ob, j);
                                         
                                     } else if (router == _llllobj_sym_key && this_llll->l_head->l_next){
                                         if (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_LONG)
@@ -3947,7 +3980,7 @@ t_llll *set_slotinfo_from_llll(t_notation_obj *r_ob, t_llll* slotinfo)
                                             r_ob->slotinfo[j].access_type = hatom_getlong(&this_llll->l_head->l_next->l_hatom);
                                         else if (hatom_gettype(&this_llll->l_head->l_next->l_hatom) == H_SYM)
                                             r_ob->slotinfo[j].access_type = slot_access_type_from_symbol(hatom_getsym(&this_llll->l_head->l_next->l_hatom));
-                                        check_slot_access(r_ob, r_ob->active_slot_num);
+                                        slot_check_access(r_ob, r_ob->active_slot_num);
                                         
                                     } else if (router == _llllobj_sym_domain && this_llll->l_head->l_next && this_llll->l_head->l_next->l_next) {
                                         r_ob->slotinfo[j].slot_domain[0] = hatom_getdouble(&this_llll->l_head->l_next->l_hatom);
@@ -3979,7 +4012,7 @@ t_llll *set_slotinfo_from_llll(t_notation_obj *r_ob, t_llll* slotinfo)
                             notationobj_slot_remove_extensions(r_ob, j);
                             
                         if (need_check_slot_domain && (r_ob->slotinfo[j].slot_temporalmode != k_SLOT_TEMPORALMODE_MILLISECONDS && r_ob->slotinfo[j].slot_temporalmode != k_SLOT_TEMPORALMODE_TIMEPOINTS))
-                            check_slot_domain(r_ob, j);
+                            slot_check_domain(r_ob, j);
                         
                         if (r_ob->slotinfo[j].slot_type == k_SLOT_TYPE_FILTER){
                             // ????
@@ -4379,7 +4412,7 @@ void change_slot_temporalmode(t_notation_obj *r_ob, long slot_num, t_symbol *new
     
     if (convert_slot_temporalmode(r_ob, slot_num, old_slottemporalmode, new_temporalmode)) {
         r_ob->slotinfo[j].slot_temporalmode = new_temporalmode;
-        check_slot_domain(r_ob, slot_num);
+        slot_check_domain(r_ob, slot_num);
     } else {
         r_ob->slotinfo[j].slot_temporalmode = new_temporalmode;
     }
@@ -4412,7 +4445,7 @@ void notationobj_slot_remove_extensions(t_notation_obj *r_ob, long slot_num)
 
 // ******* DATA ***********
 
-void delete_slotitem(t_notation_obj *r_ob, long slot_num, t_slotitem *item){
+void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item){
 	if (item->selected) {
 		t_llllelem *temp;
 		for (temp = r_ob->selected_slot_items->l_head; temp; temp = temp->l_next){
@@ -4503,7 +4536,7 @@ t_slotitem *slot_get_last_item(t_slot *slot)
 #endif
 }
 
-void append_slotitem(t_slotitem *item)
+void slotitem_append(t_slotitem *item)
 {
 	if (item){
         t_slotitem *lastitem = slot_get_last_item(item->parent);
@@ -4526,7 +4559,7 @@ void append_slotitem(t_slotitem *item)
 	}
 }
 
-void prepend_slotitem(t_slotitem *item){
+void slotitem_prepend(t_slotitem *item){
 	if (item){
 		if (item->parent->firstitem) {
 			item->prev = NULL;
@@ -4545,7 +4578,9 @@ void prepend_slotitem(t_slotitem *item){
 	}
 }
 
-void insert_slotitem(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_item){
+
+void slotitem_insert(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_item)
+{
 	if (item && prev_item && next_item){
 		item->next = next_item;
 		item->prev = prev_item;
@@ -4563,6 +4598,121 @@ void insert_slotitem(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_i
 		item->parent->length++;
 	}
 }
+
+
+
+long slotitem_find_insertion_point(t_notation_obj *r_ob, long slotnum, t_slotitem *item)
+{
+    t_slotitem *tmp;
+    long count = 0;
+    t_slot *s = item->parent;
+    switch (r_ob->slotinfo[slotnum].slot_type) {
+        case k_SLOT_TYPE_FUNCTION:
+        {
+            t_pts *item_p = (t_pts *)item->item;
+            for (tmp = s->firstitem; tmp; tmp = tmp->next, count++) {
+                if (tmp->item) {
+                    t_pts *p = (t_pts *)tmp->item;
+                    if (item_p->x < p->x)
+                        return count;
+                }
+            }
+            return count;
+        }
+            break;
+
+        case k_SLOT_TYPE_3DFUNCTION:
+        {
+            t_pts3d *item_p = (t_pts3d *)item->item;
+            for (tmp = s->firstitem; tmp; tmp = tmp->next, count++) {
+                if (tmp->item) {
+                    t_pts3d *p = (t_pts3d *)tmp->item;
+                    if (item_p->x < p->x)
+                        return count;
+                }
+            }
+            return count;
+        }
+            break;
+
+        case k_SLOT_TYPE_SPAT:
+        {
+            t_spatpt *item_p = (t_spatpt *)item->item;
+            for (tmp = s->firstitem; tmp; tmp = tmp->next, count++) {
+                if (tmp->item) {
+                    t_spatpt *p = (t_spatpt *)tmp->item;
+                    if (item_p->t < p->t)
+                        return count;
+                }
+            }
+            return count;
+        }
+            break;
+
+        case k_SLOT_TYPE_DYNFILTER:
+        {
+            t_biquad *item_p = (t_biquad *)item->item;
+            for (tmp = s->firstitem; tmp; tmp = tmp->next, count++) {
+                if (tmp->item) {
+                    t_biquad *p = (t_biquad *)tmp->item;
+                    if (item_p->t < p->t)
+                        return count;
+                }
+            }
+            return count;
+        }
+            break;
+            
+        default:
+            break;
+    }
+    return 0;
+}
+
+void slotitem_insert_extended(t_notation_obj *r_ob, long slotnum, t_slotitem *item, e_slot_changeslotitem_modes mode, long insertion_position_0based)
+{
+    switch (mode) {
+        case k_CHANGESLOTITEM_MODE_PREPEND:
+            slotitem_prepend(item);
+            break;
+            
+        case k_CHANGESLOTITEM_MODE_INSERT:
+        {
+            t_slotitem *item_at_position = slot_get_nth_item(item->parent, insertion_position_0based);
+            if (item_at_position) {
+                if (item_at_position->prev)
+                    slotitem_insert(item, item_at_position->prev, item_at_position);
+                else
+                    slotitem_prepend(item);
+            } else {
+                slotitem_append(item);
+            }
+        }
+            break;
+            
+        case k_CHANGESLOTITEM_MODE_INSERT_AUTO:
+        {
+            switch (r_ob->slotinfo[slotnum].slot_type) {
+                case k_SLOT_TYPE_FUNCTION:
+                case k_SLOT_TYPE_3DFUNCTION:
+                case k_SLOT_TYPE_SPAT:
+                case k_SLOT_TYPE_DYNFILTER:
+                    slotitem_insert_extended(r_ob, slotnum, item, k_CHANGESLOTITEM_MODE_INSERT, slotitem_find_insertion_point(r_ob, slotnum, item));
+                    break;
+                    
+                default:
+                    slotitem_insert_extended(r_ob, slotnum, item, k_CHANGESLOTITEM_MODE_INSERT, insertion_position_0based);
+                    break;
+            }
+            break;
+        }
+            
+        default:
+            slotitem_append(item);
+            break;
+    }
+}
+
 
 long slotitem_to_index(t_slotitem *slotitem){ //return the index of the slotitem in the list (1-based!)
 	if (slotitem) {
@@ -4841,7 +4991,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                             t_slot *slot = notation_item_get_slot(r_ob, nitem, j);
                             
 							// we erase the slot
-							erase_notationitem_slot(r_ob, nitem, j);
+							notation_item_clear_slot(r_ob, nitem, j);
 							
 							slotmin = r_ob->slotinfo[j].slot_range[0];	
 							slotmax = r_ob->slotinfo[j].slot_range[1];
@@ -4874,7 +5024,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 												point = (t_pts *)bach_newptr(sizeof(t_pts));
 												point->x = x_val; point->y = y_val; point->slope = slope;
 												thisitem->item = point;
-												append_slotitem(thisitem); // points are ordered! we just have to append them
+												slotitem_append(thisitem); // points are ordered! we just have to append them
 											}
 										}
 									}
@@ -4918,7 +5068,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 												point->z = z_val;
 												point->slope = slope;
 												thisitem->item = point;
-												append_slotitem(thisitem); // points are ordered! we just have to append them
+												slotitem_append(thisitem); // points are ordered! we just have to append them
 											}
 										}
 									}
@@ -4957,7 +5107,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 												point = (t_spatpt *)bach_newptr(sizeof(t_spatpt));
 												point->t = t_val; point->radius = r_val; point->angle = angle; point->interp = (char) interp;
 												thisitem->item = point;
-												append_slotitem(thisitem); // points are ordered! we just have to append them
+												slotitem_append(thisitem); // points are ordered! we just have to append them
 											}
 										}
 									}
@@ -4972,7 +5122,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 									*val = hatom_getlong(&subelem->l_hatom);
 									clip_long(val, round(slotmin), round(slotmax));
 									thisitem->item = val;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 									break;
 								}
 
@@ -4984,7 +5134,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 									*val = hatom_getdouble(&subelem->l_hatom);
 									clip_double(val, slotmin, slotmax);
 									thisitem->item = val;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 									break;
 								}
 								case k_SLOT_TYPE_INTLIST:
@@ -4996,7 +5146,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 										*val = hatom_getlong(&subelem->l_hatom);
 										clip_long(val, round(slotmin), round(slotmax));
 										thisitem->item = val;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
 									}
 									break;
 								}
@@ -5008,7 +5158,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                         t_slotitem *thisitem = build_slotitem(r_ob, slot);
                                         t_articulation *art = build_articulation(r_ob, art_ID, nitem, thisitem, hatom_getsym(&subelem->l_hatom));
                                         thisitem->item = art;
-                                        append_slotitem(thisitem);
+                                        slotitem_append(thisitem);
                                     }
                                     break;
                                 }
@@ -5020,7 +5170,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                         t_slotitem *thisitem = build_slotitem(r_ob, slot);
                                         t_symbol *s = hatom_gettype(&subelem->l_hatom) == H_SYM ? hatom_getsym(&subelem->l_hatom) : _llllobj_sym_none;
                                         thisitem->item = s;
-                                        append_slotitem(thisitem);
+                                        slotitem_append(thisitem);
                                     }
                                     break;
                                 }
@@ -5033,7 +5183,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 										*val = hatom_getdouble(&subelem->l_hatom);
 										clip_double(val, slotmin, slotmax);
 										thisitem->item = val;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
 									}
 									break;
 								}
@@ -5046,8 +5196,8 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 									thisitem->item = (char *)bach_newptr((numchars + 10) * sizeof(char));
 									memcpy(thisitem->item, text->s_name, numchars * sizeof(char));
 									((char *) thisitem->item)[numchars] = 0;
-									slot->length = 0; // just to avoid that append_slotitem (which incrase automatically the # of items) get crazy
-									append_slotitem(thisitem);
+									slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+									slotitem_append(thisitem);
 									slot->length = numchars;
 									break;
 								}
@@ -5064,8 +5214,8 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                             t_llll *cloned = llll_clone(this_llll);
                                             t_slotitem *thisitem = build_slotitem(r_ob, slot);
                                             thisitem->item = cloned;
-                                            slot->length = 0; // just to avoid that append_slotitem (which incrase automatically the # of items) get crazy
-                                            append_slotitem(thisitem);
+                                            slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+                                            slotitem_append(thisitem);
                                             slot->length = 1;
                                         }
                                     } else {
@@ -5074,8 +5224,8 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                             llll_behead(this_llll);
                                             t_slotitem *thisitem = build_slotitem(r_ob, slot);
                                             thisitem->item = this_llll;
-                                            slot->length = 0; // just to avoid that append_slotitem (which incrase automatically the # of items) get crazy
-                                            append_slotitem(thisitem);
+                                            slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+                                            slotitem_append(thisitem);
                                             slot->length = 1;
                                         }
                                     }
@@ -5086,8 +5236,8 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 										t_llll *cloned = llll_clone(this_llll);
 										t_slotitem *thisitem = build_slotitem(r_ob, slot);
 										thisitem->item = cloned;
-										slot->length = 0; // just to avoid that append_slotitem (which incrase automatically the # of items) get crazy
-										append_slotitem(thisitem);
+										slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+										slotitem_append(thisitem);
 										slot->length = 1;
 									}
 #endif
@@ -5113,7 +5263,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 										thisitem->item = file;
 										if (i == active_file_index)
                                             slot_set_active_item(slot, thisitem);
-										append_slotitem(thisitem); // files are ordered! we just have to append them
+										slotitem_append(thisitem); // files are ordered! we just have to append them
 										i++;
 									}	
 									break;
@@ -5133,7 +5283,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 									
 									set_biquad_filter_from_llll(r_ob, biquad, biquadllll);
 									thisitem->item = biquad;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 									llll_free(biquadllll);
 									break;
 								}
@@ -5147,7 +5297,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 											t_biquad *biquad = (t_biquad *)bach_newptr(sizeof(t_biquad));
 											set_biquad_filter_from_llll(r_ob, biquad, hatom_getllll(&subelem->l_hatom));
 											thisitem->item = biquad;
-											append_slotitem(thisitem);
+											slotitem_append(thisitem);
 										}
 									}
 									break;
@@ -5168,7 +5318,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 									change_color_according_to_llll(col, col_llll);
 									
 									thisitem->item = col;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 									llll_free(col_llll);
 									break;
 								}
@@ -5176,7 +5326,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 							}
 						}
 					} else {
-						erase_notationitem_slot(r_ob, nitem, j);
+						notation_item_clear_slot(r_ob, nitem, j);
 					}
 					
                     t_chord *ch = notation_item_chord_get_parent(r_ob, nitem);
@@ -5351,7 +5501,7 @@ void change_slot_pts_value(t_notation_obj *r_ob, t_notation_item *nitem, int slo
 					while (tmp_slot && (temp->x < ((t_pts *)tmp_slot->item)->x)){
 						tmp_slot2 = tmp_slot->prev;
 						lock_general_mutex(r_ob);	
-						delete_slotitem(r_ob, slot_num, tmp_slot);
+						slotitem_delete(r_ob, slot_num, tmp_slot);
 						unlock_general_mutex(r_ob);	
 						tmp_slot = tmp_slot2;
 					}
@@ -5367,7 +5517,7 @@ void change_slot_pts_value(t_notation_obj *r_ob, t_notation_item *nitem, int slo
 					while (tmp_slot && (temp->x > ((t_pts *)tmp_slot->item)->x)){
 						tmp_slot2 = tmp_slot->next;
 						lock_general_mutex(r_ob);	
-						delete_slotitem(r_ob, slot_num, tmp_slot);
+						slotitem_delete(r_ob, slot_num, tmp_slot);
 						unlock_general_mutex(r_ob);	
 						tmp_slot = tmp_slot2;
 					}
@@ -5417,7 +5567,7 @@ void change_slot_3dpts_value(t_notation_obj *r_ob, t_notation_item *nitem, int s
 					while (tmp_slot && (temp->x < ((t_pts3d *)tmp_slot->item)->x)){
 						tmp_slot2 = tmp_slot->prev;
 						lock_general_mutex(r_ob);	
-						delete_slotitem(r_ob, slot_num, tmp_slot);
+						slotitem_delete(r_ob, slot_num, tmp_slot);
 						unlock_general_mutex(r_ob);	
 						tmp_slot = tmp_slot2;
 					}
@@ -5433,7 +5583,7 @@ void change_slot_3dpts_value(t_notation_obj *r_ob, t_notation_item *nitem, int s
 					while (tmp_slot && (temp->x > ((t_pts3d *)tmp_slot->item)->x)){
 						tmp_slot2 = tmp_slot->next;
 						lock_general_mutex(r_ob);	
-						delete_slotitem(r_ob, slot_num, tmp_slot);
+						slotitem_delete(r_ob, slot_num, tmp_slot);
 						unlock_general_mutex(r_ob);	
 						tmp_slot = tmp_slot2;
 					}
@@ -5475,7 +5625,7 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_notation_item *nitem, int
 					while (tmp_slot && (temp->t < ((t_spatpt *)tmp_slot->item)->t)){
 						tmp_slot2 = tmp_slot->prev;
 						lock_general_mutex(r_ob);	
-						delete_slotitem(r_ob, slot_num, tmp_slot);
+						slotitem_delete(r_ob, slot_num, tmp_slot);
 						unlock_general_mutex(r_ob);	
 						tmp_slot = tmp_slot2;
 					}
@@ -5491,7 +5641,7 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_notation_item *nitem, int
 					while (tmp_slot && (temp->t > ((t_spatpt *)tmp_slot->item)->t)){
 						tmp_slot2 = tmp_slot->next;
 						lock_general_mutex(r_ob);	
-						delete_slotitem(r_ob, slot_num, tmp_slot);
+						slotitem_delete(r_ob, slot_num, tmp_slot);
 						unlock_general_mutex(r_ob);	
 						tmp_slot = tmp_slot2;
 					}
@@ -5505,492 +5655,528 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_notation_item *nitem, int
 
 
 // position == -1 means ALL
-void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position, t_llll *new_values_as_llll)
+void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode)
 {
+    long position = position_1based;
+
+    /*
+    // old bw compatibility stuff ?
+    if (BW_COMPATIBILITY && position < 0)
+        mode = k_CHANGESLOTITEM_MODE_MODIFY_ALL;
+    */
     
-    if (position == -1) {
-        // change ALL SLOTS!
+    if (position == 0)
+        mode = k_CHANGESLOTITEM_MODE_APPEND;
+
+    if (mode == k_CHANGESLOTITEM_MODE_MODIFY_ALL) {
         long numitems = notation_item_get_slot_numitems(r_ob, nitem, slotnum);
         long i;
         for (i = 1; i <= numitems; i++)
-            change_notation_item_slot_value(r_ob, nitem, slotnum, i, new_values_as_llll);
+            notation_item_change_slotitem(r_ob, nitem, slotnum, i, new_values_as_llll, k_CHANGESLOTITEM_MODE_MODIFY_ONE);
         return;
     }
     
-    
     t_slot *slot = notation_item_get_slot(r_ob, nitem, slotnum);
-	if (slotnum >= CONST_MAX_SLOTS || !slot)
-		return;
+    if (slotnum < 0 || slotnum >= CONST_MAX_SLOTS || !slot)
+        return;
+    
+    long slot_type = r_ob->slotinfo[slotnum].slot_type;
+   
+    if (mode == k_CHANGESLOTITEM_MODE_DELETE_ALL) {
+        // delete all slot items
+        notation_item_clear_slot(r_ob, nitem, slotnum);
 
-	if (new_values_as_llll) {
-		double slotmin, slotmax;
-		t_llll *values_as_llll = llll_clone(new_values_as_llll); // we work on a cloned copy, because we want to change it!
+    } else if (mode == k_CHANGESLOTITEM_MODE_DELETE_ONE) {
+        // delete a given slot item
+        t_slotitem *it = notation_item_get_slot_nth_item(r_ob, nitem, slotnum, position - 1);
+        if (it)
+            slotitem_delete(r_ob, slotnum, it);
 
-		slotmin = r_ob->slotinfo[slotnum].slot_range[0]; 
-		slotmax = r_ob->slotinfo[slotnum].slot_range[1];
-		if (position > 1 && (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_TEXT || r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_LLLL))
-			position = 1;
-		if ((slot->length < position || position <= 0) &&
-			(r_ob->slotinfo[slotnum].slot_type != k_SLOT_TYPE_TEXT && r_ob->slotinfo[slotnum].slot_type != k_SLOT_TYPE_LLLL)) {
+    } else {
+        
+        if (new_values_as_llll) {
+            double slotmin, slotmax;
+            t_llll *values_as_llll = llll_clone(new_values_as_llll); // we work on a cloned copy, because we want to change it!
             
-            // we add it at the end
-			switch (r_ob->slotinfo[slotnum].slot_type) {
-					
-				case k_SLOT_TYPE_FUNCTION:
-				{
-					if ((values_as_llll->l_size >= 2)  && (values_as_llll->l_size <= 3)) {
-						double x_val, y_val, slope;
-						t_pts *point, *lastpoint;
-						t_slotitem *thisitem = build_slotitem(r_ob, slot);
-						x_val = hatom_getdouble(&values_as_llll->l_head->l_hatom);
-						y_val = hatom_getdouble(&values_as_llll->l_head->l_next->l_hatom);
-						if (values_as_llll->l_size == 2) 
-							slope = 0;
-						else
-							slope = hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_hatom);
-						slot_clip_domain_value(r_ob, nitem, slotnum, &x_val);
-                        clip_double(&y_val, slotmin, slotmax);
-                        clip_double(&slope, -1., 1.);
-						point = (t_pts *)bach_newptr(sizeof(t_pts));
-						point->x = x_val; point->y = y_val; point->slope = slope;
-                        t_slotitem *lastitem = slot_get_last_item(slot);
-						lastpoint = (slot->length && lastitem) ? (t_pts *)lastitem->item : NULL;
-						if (lastpoint && (lastpoint->x >= point->x)) point->x = lastpoint->x;
-						thisitem->item = point;
-						append_slotitem(thisitem);
-					}
-					break;
-				}
-				case k_SLOT_TYPE_3DFUNCTION:
-				{
-					double slotzmin = r_ob->slotinfo[slotnum].slot_zrange[0]; 
-					double slotzmax = r_ob->slotinfo[slotnum].slot_zrange[1];
-					if ((values_as_llll->l_size >= 3)  && (values_as_llll->l_size <= 4)) {
-						double x_val, y_val, z_val, slope;
-						t_pts3d *point, *lastpoint;
-						t_slotitem *thisitem = build_slotitem(r_ob, slot);
-						x_val = hatom_getdouble(&values_as_llll->l_head->l_hatom);
-						y_val = hatom_getdouble(&values_as_llll->l_head->l_next->l_hatom);
-						z_val = hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_hatom);
-						if (values_as_llll->l_size == 3) 
-							slope = 0;
-						else
-							slope = hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom);
-                        slot_clip_domain_value(r_ob, nitem, slotnum, &x_val);
-						clip_double(&y_val, slotmin, slotmax);
-						clip_double(&z_val, slotzmin, slotzmax); 
-						clip_double(&slope, -1., 1.);
-						point = (t_pts3d *)bach_newptr(sizeof(t_pts));
-						point->x = x_val; 
-						point->y = y_val; 
-						point->z = z_val;
-						point->slope = slope;
-                        t_slotitem *lastitem = slot_get_last_item(slot);
-						lastpoint = (slot->length && lastitem) ? (t_pts3d *)lastitem->item : NULL;
-						if (lastpoint && (lastpoint->x >= point->x)) point->x = lastpoint->x;
-						thisitem->item = point;
-						append_slotitem(thisitem);
-					}
-					break;
-				}
-                    
-				case k_SLOT_TYPE_SPAT:
-				{
-					if ((values_as_llll->l_size >= 2)  && (values_as_llll->l_size <= 3)) {
-						double t_val, r_val, angle;
-						long interp;
-						t_slotitem *thisitem = build_slotitem(r_ob, slot);
-						t_spatpt *point, *lastpoint;
-						t_val = hatom_getdouble(&values_as_llll->l_head->l_hatom);
-						r_val = hatom_getdouble(&values_as_llll->l_head->l_next->l_hatom);
-						if (values_as_llll->l_size == 2) {
-							angle = 0; interp = k_SPAT_INTERPOLATION_ARC;
-						} else {
-							angle = deg2rad(hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_hatom));
-							interp = (values_as_llll->l_size >= 4) ? hatom_getlong(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) : k_SPAT_INTERPOLATION_ARC;
-						}
-                        slot_clip_domain_value(r_ob, nitem, slotnum, &t_val);
-                        clip_double(&r_val, slotmin, slotmax);
-						clip_double(&angle, -CONST_MAX_TURN_ANGLE * 2 * M_PI, CONST_MAX_TURN_ANGLE * 2 * M_PI);
-						clip_long(&interp, 0, 1);
-						point = (t_spatpt *)bach_newptr(sizeof(t_spatpt));
-						point->t = t_val; 
-						point->radius = r_val; 
-						point->angle = angle; 
-						point->interp = (char) interp;
-                        t_slotitem *lastitem = slot_get_last_item(slot);
-						lastpoint = (slot->length && lastitem) ? (t_spatpt *)lastitem->item : NULL;
-						if (lastpoint && (lastpoint->t >= point->t)) point->t = lastpoint->t;
-						thisitem->item = point;
-						append_slotitem(thisitem);
-					}
-					break;
-				}
-                    
-				case k_SLOT_TYPE_INT: case k_SLOT_TYPE_INTLIST:
-				{
-                    if (values_as_llll->l_head) {
-                        t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
-                        change_long(r_ob, ((long *)thisitem->item), NULL, values_as_llll->l_head, 0, nitem);
-                        clip_long(((long *)thisitem->item), round(slotmin), round(slotmax));
-                        append_slotitem(thisitem);
-                    }
+            slotmin = r_ob->slotinfo[slotnum].slot_range[0];
+            slotmax = r_ob->slotinfo[slotnum].slot_range[1];
+            
+            switch (slot_type) {
+                case k_SLOT_TYPE_TEXT:
+                case k_SLOT_TYPE_LLLL:
+                case k_SLOT_TYPE_INT:
+                case k_SLOT_TYPE_FLOAT:
+                case k_SLOT_TYPE_COLOR:
+                    mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE;
+                    position = 1;
                     break;
-				}
                     
-                case k_SLOT_TYPE_ARTICULATIONS:
-                {
-                    if (values_as_llll->l_head) {
-                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                        if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) {
-                            thisitem->item = build_articulation(r_ob, notationobj_articulation_symbol2id(r_ob, hatom_getsym(&values_as_llll->l_head->l_hatom)), nitem, thisitem, hatom_getsym(&values_as_llll->l_head->l_hatom));
-                        } else {
-                            thisitem->item = build_articulation(r_ob, hatom_getlong(&values_as_llll->l_head->l_hatom), nitem, thisitem, notationobj_articulation_id2symbol(r_ob, hatom_getlong(&values_as_llll->l_head->l_hatom)));
+                default:
+                    break;
+            }
+ 
+            if (position < 0) // handling negative positions
+                position = slot->length + position + 1;
+            
+            if (position > slot->length)
+                mode = k_CHANGESLOTITEM_MODE_APPEND;
+            
+            llll_flatten(values_as_llll, 1, 0); // possibly removing the outer level of paraentheses
+            
+            if (mode == k_CHANGESLOTITEM_MODE_APPEND || mode == k_CHANGESLOTITEM_MODE_PREPEND || mode == k_CHANGESLOTITEM_MODE_INSERT || mode == k_CHANGESLOTITEM_MODE_INSERT_AUTO) {
+                
+                // APPENDING a new value!
+                switch (slot_type) {
+                        
+                    case k_SLOT_TYPE_FUNCTION:
+                    {
+                        if ((values_as_llll->l_size >= 2)  && (values_as_llll->l_size <= 3)) {
+                            double x_val, y_val, slope;
+                            t_pts *point;
+                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                            x_val = hatom_getdouble(&values_as_llll->l_head->l_hatom);
+                            y_val = hatom_getdouble(&values_as_llll->l_head->l_next->l_hatom);
+                            if (values_as_llll->l_size == 2)
+                                slope = 0;
+                            else
+                                slope = hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_hatom);
+                            slot_clip_domain_value(r_ob, nitem, slotnum, &x_val);
+                            clip_double(&y_val, slotmin, slotmax);
+                            clip_double(&slope, -1., 1.);
+                            point = (t_pts *)bach_newptr(sizeof(t_pts));
+                            point->x = x_val; point->y = y_val; point->slope = slope;
+                            thisitem->item = point;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, k_CHANGESLOTITEM_MODE_INSERT_AUTO, position - 1);
                         }
-                        ((t_articulation *)thisitem->item)->need_recompute_position = true;
-                        append_slotitem(thisitem);
+                        break;
                     }
-                    break;
-                }
-
-                case k_SLOT_TYPE_NOTEHEAD:
-                case k_SLOT_TYPE_DYNAMICS:
-                {
-                    if (values_as_llll->l_head) {
-                        t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
-                        if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM)
-                            thisitem->item = hatom_getsym(&values_as_llll->l_head->l_hatom);
-                        else
-                            thisitem->item = _llllobj_sym_none;
-                        append_slotitem(thisitem);
+                    case k_SLOT_TYPE_3DFUNCTION:
+                    {
+                        double slotzmin = r_ob->slotinfo[slotnum].slot_zrange[0];
+                        double slotzmax = r_ob->slotinfo[slotnum].slot_zrange[1];
+                        if ((values_as_llll->l_size >= 3)  && (values_as_llll->l_size <= 4)) {
+                            double x_val, y_val, z_val, slope;
+                            t_pts3d *point;
+                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                            x_val = hatom_getdouble(&values_as_llll->l_head->l_hatom);
+                            y_val = hatom_getdouble(&values_as_llll->l_head->l_next->l_hatom);
+                            z_val = hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_hatom);
+                            if (values_as_llll->l_size == 3)
+                                slope = 0;
+                            else
+                                slope = hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom);
+                            slot_clip_domain_value(r_ob, nitem, slotnum, &x_val);
+                            clip_double(&y_val, slotmin, slotmax);
+                            clip_double(&z_val, slotzmin, slotzmax);
+                            clip_double(&slope, -1., 1.);
+                            point = (t_pts3d *)bach_newptr(sizeof(t_pts));
+                            point->x = x_val;
+                            point->y = y_val;
+                            point->z = z_val;
+                            point->slope = slope;
+                            thisitem->item = point;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, k_CHANGESLOTITEM_MODE_INSERT_AUTO, position - 1);
+                        }
+                        break;
                     }
-                    break;
-                }
-                    
-                case k_SLOT_TYPE_FLOAT: case k_SLOT_TYPE_FLOATLIST:
-				{
-                    if (values_as_llll->l_head) {
-                        t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
-                        change_double(r_ob, ((double *)thisitem->item), NULL, values_as_llll->l_head, 0, nitem);
-                        clip_double(((double *)thisitem->item), slotmin, slotmax);
-                        append_slotitem(thisitem);
+                        
+                    case k_SLOT_TYPE_SPAT:
+                    {
+                        if ((values_as_llll->l_size >= 2)  && (values_as_llll->l_size <= 3)) {
+                            double t_val, r_val, angle;
+                            long interp;
+                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                            t_spatpt *point;
+                            t_val = hatom_getdouble(&values_as_llll->l_head->l_hatom);
+                            r_val = hatom_getdouble(&values_as_llll->l_head->l_next->l_hatom);
+                            if (values_as_llll->l_size == 2) {
+                                angle = 0; interp = k_SPAT_INTERPOLATION_ARC;
+                            } else {
+                                angle = deg2rad(hatom_getdouble(&values_as_llll->l_head->l_next->l_next->l_hatom));
+                                interp = (values_as_llll->l_size >= 4) ? hatom_getlong(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) : k_SPAT_INTERPOLATION_ARC;
+                            }
+                            slot_clip_domain_value(r_ob, nitem, slotnum, &t_val);
+                            clip_double(&r_val, slotmin, slotmax);
+                            clip_double(&angle, -CONST_MAX_TURN_ANGLE * 2 * M_PI, CONST_MAX_TURN_ANGLE * 2 * M_PI);
+                            clip_long(&interp, 0, 1);
+                            point = (t_spatpt *)bach_newptr(sizeof(t_spatpt));
+                            point->t = t_val;
+                            point->radius = r_val;
+                            point->angle = angle;
+                            point->interp = (char) interp;
+                            thisitem->item = point;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, k_CHANGESLOTITEM_MODE_INSERT_AUTO, position - 1);
+                        }
+                        break;
                     }
-					break;
-				}
-				case k_SLOT_TYPE_TEXT:
-				{
-                    if (values_as_llll->l_head) {
-                        t_symbol *text = (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) ? hatom_getsym(&values_as_llll->l_head->l_hatom) : _llllobj_sym_empty_symbol;
-                        long numchars = strlen(text->s_name);
-                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                        if (thisitem->item)
-                            bach_freeptr(thisitem->item);
-                        thisitem->item = (char *)bach_newptr((numchars + 10) * sizeof(char));
-                        memcpy(thisitem->item, text->s_name, numchars * sizeof(char));
-                        ((char *)thisitem->item)[numchars] = 0;
-                        slot->length = 0; // just to avoid that append_slotitem (which incrase automatically the # of items) get crazy
-                        append_slotitem(thisitem);
-                        slot->length = numchars;
+                        
+                    case k_SLOT_TYPE_INT: case k_SLOT_TYPE_INTLIST:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
+                            change_long(r_ob, ((long *)thisitem->item), NULL, values_as_llll->l_head, 0, nitem);
+                            clip_long(((long *)thisitem->item), round(slotmin), round(slotmax));
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                        }
+                        break;
                     }
-					break;
-				}
-				case k_SLOT_TYPE_LLLL: case k_SLOT_TYPE_INTMATRIX: case k_SLOT_TYPE_FLOATMATRIX: case k_SLOT_TYPE_TOGGLEMATRIX:
-				{
-                    
+                        
+                    case k_SLOT_TYPE_ARTICULATIONS:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                            if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) {
+                                thisitem->item = build_articulation(r_ob, notationobj_articulation_symbol2id(r_ob, hatom_getsym(&values_as_llll->l_head->l_hatom)), nitem, thisitem, hatom_getsym(&values_as_llll->l_head->l_hatom));
+                            } else {
+                                thisitem->item = build_articulation(r_ob, hatom_getlong(&values_as_llll->l_head->l_hatom), nitem, thisitem, notationobj_articulation_id2symbol(r_ob, hatom_getlong(&values_as_llll->l_head->l_hatom)));
+                            }
+                            ((t_articulation *)thisitem->item)->need_recompute_position = true;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                        }
+                        break;
+                    }
+                        
+                    case k_SLOT_TYPE_NOTEHEAD:
+                    case k_SLOT_TYPE_DYNAMICS:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
+                            if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM)
+                                thisitem->item = hatom_getsym(&values_as_llll->l_head->l_hatom);
+                            else
+                                thisitem->item = _llllobj_sym_none;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                        }
+                        break;
+                    }
+                        
+                    case k_SLOT_TYPE_FLOAT: case k_SLOT_TYPE_FLOATLIST:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
+                            change_double(r_ob, ((double *)thisitem->item), NULL, values_as_llll->l_head, 0, nitem);
+                            clip_double(((double *)thisitem->item), slotmin, slotmax);
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                        }
+                        break;
+                    }
+                    case k_SLOT_TYPE_TEXT:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_symbol *text = (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) ? hatom_getsym(&values_as_llll->l_head->l_hatom) : _llllobj_sym_empty_symbol;
+                            long numchars = strlen(text->s_name);
+                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                            if (thisitem->item)
+                                bach_freeptr(thisitem->item);
+                            thisitem->item = (char *)bach_newptr((numchars + 10) * sizeof(char));
+                            memcpy(thisitem->item, text->s_name, numchars * sizeof(char));
+                            ((char *)thisitem->item)[numchars] = 0;
+                            slot->length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                            slot->length = numchars;
+                        }
+                        break;
+                    }
+                    case k_SLOT_TYPE_LLLL: case k_SLOT_TYPE_INTMATRIX: case k_SLOT_TYPE_FLOATMATRIX: case k_SLOT_TYPE_TOGGLEMATRIX:
+                    {
+                        
 #ifdef BACH_NEW_LLLLSLOT_SYNTAX
-                    t_llll *this_llll = values_as_llll ? llll_clone(values_as_llll) : NULL;
-                    if (this_llll) {
-                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                        if (thisitem->item)
-                            llll_free((t_llll *) thisitem->item);
-                        thisitem->item = this_llll;
-                        slot->length = 0;
-                        append_slotitem(thisitem);
-                        slot->length = 1;
-                    }
-#else
-                    if (values_as_llll->l_head) {
-                        t_llll *this_llll = (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL) ? hatom_getllll(&values_as_llll->l_head->l_hatom) : NULL;
+                        t_llll *this_llll = values_as_llll ? llll_clone(values_as_llll) : NULL;
                         if (this_llll) {
                             t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                            t_llll *cloned = llll_clone(this_llll);
                             if (thisitem->item)
                                 llll_free((t_llll *) thisitem->item);
-                            thisitem->item = cloned;
+                            thisitem->item = this_llll;
                             slot->length = 0;
-                            append_slotitem(thisitem);
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
                             slot->length = 1;
                         }
-                    }
-#endif
-                    break;
-                    
-				}
-#ifdef BACH_MAX
-				case k_SLOT_TYPE_FILELIST:
-				{
-                    if (values_as_llll->l_head) {
-                        if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) {
-                            t_file *file = (t_file *)bach_newptr(sizeof(t_file));
-                            t_symbol *single_path = hatom_getsym(&values_as_llll->l_head->l_hatom);
-                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                            set_file_from_symbol(r_ob, file, single_path);
-                            thisitem->item = file;
-                            append_slotitem(thisitem);
+#else
+                        if (values_as_llll->l_head) {
+                            t_llll *this_llll = (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL) ? hatom_getllll(&values_as_llll->l_head->l_hatom) : NULL;
+                            if (this_llll) {
+                                t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                t_llll *cloned = llll_clone(this_llll);
+                                if (thisitem->item)
+                                    llll_free((t_llll *) thisitem->item);
+                                thisitem->item = cloned;
+                                slot->length = 0;
+                                slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                                slot->length = 1;
+                            }
                         }
-                        if (hatom_gettype(&values_as_llll->l_tail->l_hatom) == H_LONG) {
-                            long act_item = hatom_getlong(&values_as_llll->l_tail->l_hatom);
-                            if (act_item == 0)
-                                slot_set_active_item(slot, slot_get_last_item(slot));
-                            else if (act_item < 0)
-                                slot_set_active_item(slot, NULL);
-                            else {
-                                t_slotitem *tmp = slot->firstitem; long count = 1;
-                                while (tmp) {
-                                    if (count == act_item) {
-                                        slot_set_active_item(slot, tmp);
-                                        break;
+#endif
+                        break;
+                        
+                    }
+#ifdef BACH_MAX
+                    case k_SLOT_TYPE_FILELIST:
+                    {
+                        if (values_as_llll->l_head) {
+                            if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) {
+                                t_file *file = (t_file *)bach_newptr(sizeof(t_file));
+                                t_symbol *single_path = hatom_getsym(&values_as_llll->l_head->l_hatom);
+                                t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                set_file_from_symbol(r_ob, file, single_path);
+                                thisitem->item = file;
+                                slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                            }
+                            if (hatom_gettype(&values_as_llll->l_tail->l_hatom) == H_LONG) {
+                                long act_item = hatom_getlong(&values_as_llll->l_tail->l_hatom);
+                                if (act_item == 0)
+                                    slot_set_active_item(slot, slot_get_last_item(slot));
+                                else if (act_item < 0)
+                                    slot_set_active_item(slot, NULL);
+                                else {
+                                    t_slotitem *tmp = slot->firstitem; long count = 1;
+                                    while (tmp) {
+                                        if (count == act_item) {
+                                            slot_set_active_item(slot, tmp);
+                                            break;
+                                        }
+                                        tmp = tmp->next;
+                                        count++;
                                     }
-                                    tmp = tmp->next;
-                                    count++;
                                 }
                             }
                         }
+                        break;
                     }
-					break;
-				}	
-					
-				case k_SLOT_TYPE_FILTER: case k_SLOT_TYPE_DYNFILTER:
-                {
-                    if (values_as_llll->l_head) {
-                        t_biquad *biquad = (t_biquad *)bach_newptr(sizeof(t_biquad));
-                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                        initialize_biquad(biquad);
-                        set_biquad_filter_from_llll(r_ob, biquad, values_as_llll);
-                        thisitem->item = biquad;
-                        append_slotitem(thisitem);
-                    }
-					break;
-				}
-					
-                case k_SLOT_TYPE_COLOR:
-                {
-                    if (values_as_llll->l_head) {
-                        t_jrgba *col = (t_jrgba *)bach_newptr(sizeof(t_jrgba));
-                        t_slotitem *thisitem = build_slotitem(r_ob, slot);
-                        *col = build_jrgba(0, 0, 0, 1);
-                        change_color_according_to_llll(col, values_as_llll);
-                        thisitem->item = col;
-                        append_slotitem(thisitem);
-                    }
-					break;
-				}
-					
-#endif
-			}
-			
-		} else {
-			
-			long i; 
-			t_slotitem *sl_item = slot->firstitem;
-			for (i = 1; (i < position) && sl_item; i++) 
-				sl_item = sl_item->next;
-			switch (r_ob->slotinfo[slotnum].slot_type) {
-				case k_SLOT_TYPE_INT: case k_SLOT_TYPE_INTLIST:
-                    if (values_as_llll->l_head) {
-					change_long(r_ob, ((long *)sl_item->item), NULL, values_as_llll->l_head, 0, nitem);
-					clip_long(((long *)sl_item->item), round(slotmin), round(slotmax));
-                    }
-					break;
-				case k_SLOT_TYPE_FLOAT: case k_SLOT_TYPE_FLOATLIST:
-                    if (values_as_llll->l_head) {
-					change_double(r_ob, ((double *)sl_item->item), NULL, values_as_llll->l_head, 0, nitem);
-					clip_double(((double *)sl_item->item), slotmin, slotmax);
-                    }
-					break;
-                case k_SLOT_TYPE_ARTICULATIONS:
-                    if (values_as_llll->l_head) {
-                    if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM)
-                        ((t_articulation *)sl_item->item)->articulation_ID = notationobj_articulation_symbol2id(r_ob, hatom_getsym(&values_as_llll->l_head->l_hatom));
-                    else
-                        ((t_articulation *)sl_item->item)->articulation_ID = hatom_getlong(&values_as_llll->l_head->l_hatom);
-                    ((t_articulation *)sl_item->item)->need_recompute_position = true;
-                    }
-                    break;
-                    
-                case k_SLOT_TYPE_NOTEHEAD:
-                case k_SLOT_TYPE_DYNAMICS:
-                    if (values_as_llll->l_head) {
-                    if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM)
-                        sl_item->item = hatom_getsym(&values_as_llll->l_head->l_hatom);
-                    else
-                        sl_item->item = _llllobj_sym_none;
-                    }
-                    break;
-                    
-				case k_SLOT_TYPE_FUNCTION:
-				{
-                    if (values_as_llll->l_head) {
-					if (is_hatom_number(&values_as_llll->l_head->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL)
-						change_double(r_ob, &((t_pts *)sl_item->item)->x, NULL, values_as_llll->l_head, 0, nitem);
-					clip_double(&((t_pts *)sl_item->item)->x, 0., 1.);
-					if (values_as_llll->l_head->l_next && (is_hatom_number(&values_as_llll->l_head->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_LLLL))
-						change_double(r_ob, &((t_pts *)sl_item->item)->y, NULL, values_as_llll->l_head->l_next, 0, nitem);
-					clip_double(&((t_pts *)sl_item->item)->y, slotmin, slotmax);
-					if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && (is_hatom_number(&values_as_llll->l_head->l_next->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_LLLL))
-						change_double(r_ob, &((t_pts *)sl_item->item)->slope, NULL, values_as_llll->l_head->l_next->l_next, 0, nitem);
-					clip_double(&((t_pts *)sl_item->item)->slope, -1., 1.);
-                    }
-					break;
-				}
-				case k_SLOT_TYPE_3DFUNCTION:
-				{
-                    if (values_as_llll->l_head) {
-					if (is_hatom_number(&values_as_llll->l_head->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL)
-						change_double(r_ob, &((t_pts3d *)sl_item->item)->x, NULL, values_as_llll->l_head, 0, nitem);
-					clip_double(&((t_pts3d *)sl_item->item)->x, 0., 1.);
-					if (values_as_llll->l_head->l_next && (is_hatom_number(&values_as_llll->l_head->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_LLLL))
-						change_double(r_ob, &((t_pts3d *)sl_item->item)->y, NULL, values_as_llll->l_head->l_next, 0, nitem);
-					clip_double(&((t_pts3d *)sl_item->item)->y, slotmin, slotmax);
-					if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && (is_hatom_number(&values_as_llll->l_head->l_next->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_LLLL))
-						change_double(r_ob, &((t_pts3d *)sl_item->item)->z, NULL, values_as_llll->l_head->l_next->l_next, 0, nitem);
-					clip_double(&((t_pts3d *)sl_item->item)->z, slotmin, slotmax);
-					if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && values_as_llll->l_head->l_next->l_next->l_next && 
-						(is_hatom_number(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LLLL))
-						change_double(r_ob, &((t_pts3d *)sl_item->item)->slope, NULL, values_as_llll->l_head->l_next->l_next->l_next, 0, nitem);
-					clip_double(&((t_pts3d *)sl_item->item)->slope, -1., 1.);
-                    }
-					break;
-				}
-				case k_SLOT_TYPE_SPAT:
-				{
-                    if (values_as_llll->l_head) {
-					if ((hatom_gettype(&values_as_llll->l_head->l_hatom) == H_DOUBLE) || (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LONG) || (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_RAT) || (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL))
-						change_double(r_ob, &((t_spatpt *)sl_item->item)->t, NULL, values_as_llll->l_head, 0, nitem);
-					clip_double(&((t_spatpt *)sl_item->item)->t, 0., 1.);
-					if (values_as_llll->l_head->l_next && ((hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_DOUBLE) || 
-															   (hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_LONG) || (hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_RAT) || (hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_LLLL)))
-						change_double(r_ob, &((t_spatpt *)sl_item->item)->radius, NULL, values_as_llll->l_head->l_next, 0, nitem);
-					clip_double(&((t_spatpt *)sl_item->item)->radius, slotmin, slotmax);
-					if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && ((hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_DOUBLE) || 
-																											 (hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_LONG) || (hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_RAT) || (hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_LLLL)))
-						change_double(r_ob, &((t_spatpt *)sl_item->item)->angle, NULL, values_as_llll->l_head->l_next->l_next, 1, nitem);
-					clip_double(&((t_spatpt *)sl_item->item)->angle, -CONST_MAX_TURN_ANGLE * 2 * M_PI, CONST_MAX_TURN_ANGLE * 2 * M_PI);
-					if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && values_as_llll->l_head->l_next->l_next->l_next
-							&& (hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LONG))
-						((t_spatpt *)sl_item->item)->interp = hatom_getlong(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom);
-					if (((t_spatpt *)sl_item->item)->interp < 0) ((t_spatpt *)sl_item->item)->interp = 0;
-					if (((t_spatpt *)sl_item->item)->interp > 1) ((t_spatpt *)sl_item->item)->interp = 1;
-                    }
-					break;
-				}
-#ifdef BACH_MAX
-				case k_SLOT_TYPE_FILELIST:
-				{
-                    if (values_as_llll->l_head) {
-					if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) {
-						t_symbol *single_path = hatom_getsym(&values_as_llll->l_head->l_hatom);
-						t_file *this_file = (t_file *)sl_item->item;
-						set_file_from_symbol(r_ob, this_file, single_path);
-					}
-					if (hatom_gettype(&values_as_llll->l_tail->l_hatom) == H_LONG) {
-						long act_item = hatom_getlong(&values_as_llll->l_tail->l_hatom);
-						if (act_item < 0) {
-                            slot_set_active_item(slot, NULL);
-						} else {
-							t_slotitem *tmp;
-							long count = 1;
-							if (act_item == 0) act_item = position;
-							tmp = slot->firstitem;
-							while (tmp) {
-								if (count == act_item) {
-                                    slot_set_active_item(slot, tmp);
-									break;
-								}
-								tmp = tmp->next;
-								count++;
-							}
-						}
-					}
-                    }
-					break;
-				}
-
-				case k_SLOT_TYPE_FILTER: case k_SLOT_TYPE_DYNFILTER:
-				{
-                    if (values_as_llll->l_head) {
-					t_biquad *biquad = (t_biquad *)sl_item->item;
-					set_biquad_filter_from_llll(r_ob, biquad, values_as_llll);
-                    }
-					break;
-				}
-
-				case k_SLOT_TYPE_COLOR:
-				{
-                    if (values_as_llll->l_head) {
-					t_jrgba *col = (t_jrgba *)sl_item->item;
-					change_color_according_to_llll(col, values_as_llll);
-                    }
-					break;
-				}
-#endif
-				case k_SLOT_TYPE_TEXT:
-				{
-                    if (values_as_llll->l_head) {
-					t_symbol *sym = (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) ? hatom_getsym(&values_as_llll->l_head->l_hatom) : _llllobj_sym_empty_symbol;
-					long len = strlen(sym->s_name);
-					if (!sl_item) {
-						build_default_data_for_text_slot(r_ob, nitem, slotnum);
-						sl_item = slot->firstitem;
-					}
-					if (sl_item->item) 
-						bach_freeptr(sl_item->item);
-					sl_item->item = (char *)bach_newptr((len + 10) * sizeof(char));
-					memcpy((char *)sl_item->item, sym->s_name, len * sizeof(char));
-					((char *)sl_item->item)[len] = 0;
-					slot->length = len; // or len + 1?
-                    }
-					break;
-				}
-                    
-				case k_SLOT_TYPE_LLLL: case k_SLOT_TYPE_INTMATRIX: case k_SLOT_TYPE_FLOATMATRIX: case k_SLOT_TYPE_TOGGLEMATRIX:
-                {
-#ifdef BACH_NEW_LLLLSLOT_SYNTAX
-                    t_llll *this_llll = llll_clone(values_as_llll);
-                    if (this_llll) {
-                        if (!sl_item) {
-                            build_default_data_for_llll_slot(r_ob, nitem, slotnum);
-                            sl_item = slot->firstitem;
+                        
+                    case k_SLOT_TYPE_FILTER: case k_SLOT_TYPE_DYNFILTER:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_biquad *biquad = (t_biquad *)bach_newptr(sizeof(t_biquad));
+                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                            initialize_biquad(biquad);
+                            set_biquad_filter_from_llll(r_ob, biquad, values_as_llll);
+                            thisitem->item = biquad;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
                         }
-                        if (sl_item->item)
-                            llll_free((t_llll *) sl_item->item);
-                        sl_item->item = this_llll;
+                        break;
                     }
-#else
-                    if (values_as_llll->l_head) {
-                        t_llll *this_llll = (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL) ? hatom_getllll(&values_as_llll->l_head->l_hatom) : NULL;
+                        
+                    case k_SLOT_TYPE_COLOR:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_jrgba *col = (t_jrgba *)bach_newptr(sizeof(t_jrgba));
+                            t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                            *col = build_jrgba(0, 0, 0, 1);
+                            change_color_according_to_llll(col, values_as_llll);
+                            thisitem->item = col;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                        }
+                        break;
+                    }
+                        
+#endif
+                }
+                
+            } else {
+                
+                // modifying a single specific slot item
+                
+                long i;
+                t_slotitem *sl_item = slot->firstitem;
+                for (i = 1; (i < position) && sl_item; i++)
+                    sl_item = sl_item->next;
+                switch (r_ob->slotinfo[slotnum].slot_type) {
+                    case k_SLOT_TYPE_INT: case k_SLOT_TYPE_INTLIST:
+                        if (values_as_llll->l_head) {
+                            change_long(r_ob, ((long *)sl_item->item), NULL, values_as_llll->l_head, 0, nitem);
+                            clip_long(((long *)sl_item->item), round(slotmin), round(slotmax));
+                        }
+                        break;
+                    case k_SLOT_TYPE_FLOAT: case k_SLOT_TYPE_FLOATLIST:
+                        if (values_as_llll->l_head) {
+                            change_double(r_ob, ((double *)sl_item->item), NULL, values_as_llll->l_head, 0, nitem);
+                            clip_double(((double *)sl_item->item), slotmin, slotmax);
+                        }
+                        break;
+                    case k_SLOT_TYPE_ARTICULATIONS:
+                        if (values_as_llll->l_head) {
+                            if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM)
+                                ((t_articulation *)sl_item->item)->articulation_ID = notationobj_articulation_symbol2id(r_ob, hatom_getsym(&values_as_llll->l_head->l_hatom));
+                            else
+                                ((t_articulation *)sl_item->item)->articulation_ID = hatom_getlong(&values_as_llll->l_head->l_hatom);
+                            ((t_articulation *)sl_item->item)->need_recompute_position = true;
+                        }
+                        break;
+                        
+                    case k_SLOT_TYPE_NOTEHEAD:
+                    case k_SLOT_TYPE_DYNAMICS:
+                        if (values_as_llll->l_head) {
+                            if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM)
+                                sl_item->item = hatom_getsym(&values_as_llll->l_head->l_hatom);
+                            else
+                                sl_item->item = _llllobj_sym_none;
+                        }
+                        break;
+                        
+                    case k_SLOT_TYPE_FUNCTION:
+                    {
+                        if (values_as_llll->l_head) {
+                            if (is_hatom_number(&values_as_llll->l_head->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL)
+                                change_double(r_ob, &((t_pts *)sl_item->item)->x, NULL, values_as_llll->l_head, 0, nitem);
+                            clip_double(&((t_pts *)sl_item->item)->x, 0., 1.);
+                            if (values_as_llll->l_head->l_next && (is_hatom_number(&values_as_llll->l_head->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_LLLL))
+                                change_double(r_ob, &((t_pts *)sl_item->item)->y, NULL, values_as_llll->l_head->l_next, 0, nitem);
+                            clip_double(&((t_pts *)sl_item->item)->y, slotmin, slotmax);
+                            if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && (is_hatom_number(&values_as_llll->l_head->l_next->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_LLLL))
+                                change_double(r_ob, &((t_pts *)sl_item->item)->slope, NULL, values_as_llll->l_head->l_next->l_next, 0, nitem);
+                            clip_double(&((t_pts *)sl_item->item)->slope, -1., 1.);
+                        }
+                        break;
+                    }
+                    case k_SLOT_TYPE_3DFUNCTION:
+                    {
+                        if (values_as_llll->l_head) {
+                            if (is_hatom_number(&values_as_llll->l_head->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL)
+                                change_double(r_ob, &((t_pts3d *)sl_item->item)->x, NULL, values_as_llll->l_head, 0, nitem);
+                            clip_double(&((t_pts3d *)sl_item->item)->x, 0., 1.);
+                            if (values_as_llll->l_head->l_next && (is_hatom_number(&values_as_llll->l_head->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_LLLL))
+                                change_double(r_ob, &((t_pts3d *)sl_item->item)->y, NULL, values_as_llll->l_head->l_next, 0, nitem);
+                            clip_double(&((t_pts3d *)sl_item->item)->y, slotmin, slotmax);
+                            if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && (is_hatom_number(&values_as_llll->l_head->l_next->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_LLLL))
+                                change_double(r_ob, &((t_pts3d *)sl_item->item)->z, NULL, values_as_llll->l_head->l_next->l_next, 0, nitem);
+                            clip_double(&((t_pts3d *)sl_item->item)->z, slotmin, slotmax);
+                            if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && values_as_llll->l_head->l_next->l_next->l_next &&
+                                (is_hatom_number(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) || hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LLLL))
+                                change_double(r_ob, &((t_pts3d *)sl_item->item)->slope, NULL, values_as_llll->l_head->l_next->l_next->l_next, 0, nitem);
+                            clip_double(&((t_pts3d *)sl_item->item)->slope, -1., 1.);
+                        }
+                        break;
+                    }
+                    case k_SLOT_TYPE_SPAT:
+                    {
+                        if (values_as_llll->l_head) {
+                            if ((hatom_gettype(&values_as_llll->l_head->l_hatom) == H_DOUBLE) || (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LONG) || (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_RAT) || (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL))
+                                change_double(r_ob, &((t_spatpt *)sl_item->item)->t, NULL, values_as_llll->l_head, 0, nitem);
+                            clip_double(&((t_spatpt *)sl_item->item)->t, 0., 1.);
+                            if (values_as_llll->l_head->l_next && ((hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_DOUBLE) ||
+                                                                   (hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_LONG) || (hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_RAT) || (hatom_gettype(&values_as_llll->l_head->l_next->l_hatom) == H_LLLL)))
+                                change_double(r_ob, &((t_spatpt *)sl_item->item)->radius, NULL, values_as_llll->l_head->l_next, 0, nitem);
+                            clip_double(&((t_spatpt *)sl_item->item)->radius, slotmin, slotmax);
+                            if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && ((hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_DOUBLE) ||
+                                                                                                             (hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_LONG) || (hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_RAT) || (hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_hatom) == H_LLLL)))
+                                change_double(r_ob, &((t_spatpt *)sl_item->item)->angle, NULL, values_as_llll->l_head->l_next->l_next, 1, nitem);
+                            clip_double(&((t_spatpt *)sl_item->item)->angle, -CONST_MAX_TURN_ANGLE * 2 * M_PI, CONST_MAX_TURN_ANGLE * 2 * M_PI);
+                            if (values_as_llll->l_head->l_next && values_as_llll->l_head->l_next->l_next && values_as_llll->l_head->l_next->l_next->l_next
+                                && (hatom_gettype(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom) == H_LONG))
+                                ((t_spatpt *)sl_item->item)->interp = hatom_getlong(&values_as_llll->l_head->l_next->l_next->l_next->l_hatom);
+                            if (((t_spatpt *)sl_item->item)->interp < 0) ((t_spatpt *)sl_item->item)->interp = 0;
+                            if (((t_spatpt *)sl_item->item)->interp > 1) ((t_spatpt *)sl_item->item)->interp = 1;
+                        }
+                        break;
+                    }
+#ifdef BACH_MAX
+                    case k_SLOT_TYPE_FILELIST:
+                    {
+                        if (values_as_llll->l_head) {
+                            if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) {
+                                t_symbol *single_path = hatom_getsym(&values_as_llll->l_head->l_hatom);
+                                t_file *this_file = (t_file *)sl_item->item;
+                                set_file_from_symbol(r_ob, this_file, single_path);
+                            }
+                            if (hatom_gettype(&values_as_llll->l_tail->l_hatom) == H_LONG) {
+                                long act_item = hatom_getlong(&values_as_llll->l_tail->l_hatom);
+                                if (act_item < 0) {
+                                    slot_set_active_item(slot, NULL);
+                                } else {
+                                    t_slotitem *tmp;
+                                    long count = 1;
+                                    if (act_item == 0) act_item = position;
+                                    tmp = slot->firstitem;
+                                    while (tmp) {
+                                        if (count == act_item) {
+                                            slot_set_active_item(slot, tmp);
+                                            break;
+                                        }
+                                        tmp = tmp->next;
+                                        count++;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                        
+                    case k_SLOT_TYPE_FILTER: case k_SLOT_TYPE_DYNFILTER:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_biquad *biquad = (t_biquad *)sl_item->item;
+                            set_biquad_filter_from_llll(r_ob, biquad, values_as_llll);
+                        }
+                        break;
+                    }
+                        
+                    case k_SLOT_TYPE_COLOR:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_jrgba *col = (t_jrgba *)sl_item->item;
+                            change_color_according_to_llll(col, values_as_llll);
+                        }
+                        break;
+                    }
+#endif
+                    case k_SLOT_TYPE_TEXT:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_symbol *sym = (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM) ? hatom_getsym(&values_as_llll->l_head->l_hatom) : _llllobj_sym_empty_symbol;
+                            long len = strlen(sym->s_name);
+                            if (!sl_item) {
+                                build_default_data_for_text_slot(r_ob, nitem, slotnum);
+                                sl_item = slot->firstitem;
+                            }
+                            if (sl_item->item) 
+                                bach_freeptr(sl_item->item);
+                            sl_item->item = (char *)bach_newptr((len + 10) * sizeof(char));
+                            memcpy((char *)sl_item->item, sym->s_name, len * sizeof(char));
+                            ((char *)sl_item->item)[len] = 0;
+                            slot->length = len; // or len + 1?
+                        }
+                        break;
+                    }
+                        
+                    case k_SLOT_TYPE_LLLL: case k_SLOT_TYPE_INTMATRIX: case k_SLOT_TYPE_FLOATMATRIX: case k_SLOT_TYPE_TOGGLEMATRIX:
+                    {
+#ifdef BACH_NEW_LLLLSLOT_SYNTAX
+                        t_llll *this_llll = llll_clone(values_as_llll);
                         if (this_llll) {
-                            t_llll *cloned = llll_clone(this_llll);
                             if (!sl_item) {
                                 build_default_data_for_llll_slot(r_ob, nitem, slotnum);
                                 sl_item = slot->firstitem;
                             }
                             if (sl_item->item)
                                 llll_free((t_llll *) sl_item->item);
-                            sl_item->item = cloned;
+                            sl_item->item = this_llll;
                         }
-                    }
+#else
+                        if (values_as_llll->l_head) {
+                            t_llll *this_llll = (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_LLLL) ? hatom_getllll(&values_as_llll->l_head->l_hatom) : NULL;
+                            if (this_llll) {
+                                t_llll *cloned = llll_clone(this_llll);
+                                if (!sl_item) {
+                                    build_default_data_for_llll_slot(r_ob, nitem, slotnum);
+                                    sl_item = slot->firstitem;
+                                }
+                                if (sl_item->item)
+                                    llll_free((t_llll *) sl_item->item);
+                                sl_item->item = cloned;
+                            }
+                        }
 #endif
-                    break;
+                        break;
+                    }
+                        
+                        
+                        
                 }
-                   
-                    
-                    
             }
-		}
-
-		llll_free(values_as_llll);
-	}
+            
+            llll_free(values_as_llll);
+        }
+    }
 	
     t_chord *ch = (nitem->type == k_CHORD ? (t_chord *)nitem : (nitem->type == k_NOTE ? ((t_note *)nitem)->parent : NULL));
 	if (r_ob->link_lyrics_to_slot > 0 && r_ob->link_lyrics_to_slot - 1 == slotnum && ch) {
@@ -6014,9 +6200,9 @@ void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nite
 	
 }
 
-void change_note_slot_value(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll)
+void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode)
 {
-    change_notation_item_slot_value(r_ob, (t_notation_item *)note, slotnum, position, new_values_as_llll);
+    notation_item_change_slotitem(r_ob, (t_notation_item *)note, slotnum, position, new_values_as_llll, mode);
 }
 
 void set_biquad_coeffs(t_biquad *biquad, t_llll *llll){
@@ -6088,7 +6274,7 @@ void set_biquad_filter_from_llll(t_notation_obj *r_ob, t_biquad *biquad, t_llll 
 	}
 }
 
-void erase_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_number, char also_check_slot_recomputations)
+void notation_item_clear_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_number, char also_check_slot_recomputations)
 {
 	t_slotitem *temp_slotitem, *temp_slotitem2;
 	if (!nitem || slot_number < 0 || slot_number >= CONST_MAX_SLOTS)
@@ -6109,7 +6295,7 @@ void erase_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int s
 		if (r_ob->j_mousedown_ptr == temp_slotitem2)
 			set_mousedown(r_ob, NULL, k_NONE);
 
-		delete_slotitem(r_ob, slot_number, temp_slotitem2);
+		slotitem_delete(r_ob, slot_number, temp_slotitem2);
 		
 	}
 	slot->length = 0;
@@ -6129,13 +6315,13 @@ void erase_all_notationitem_slots(t_notation_obj *r_ob, t_notation_item *nitem, 
 {
     long i;
     for (i = 0; i < CONST_MAX_SLOTS; i++)
-        erase_notationitem_slot(r_ob, nitem, i, also_check_slot_recomputations);
+        notation_item_clear_slot(r_ob, nitem, i, also_check_slot_recomputations);
 }
 
 
-void erase_note_slot(t_notation_obj *r_ob, t_note *note, int slot_number, char also_check_slot_recomputations)
+void note_clear_slot(t_notation_obj *r_ob, t_note *note, int slot_number, char also_check_slot_recomputations)
 {
-    erase_notationitem_slot(r_ob, (t_notation_item *)note, slot_number, also_check_slot_recomputations);
+    notation_item_clear_slot(r_ob, (t_notation_item *)note, slot_number, also_check_slot_recomputations);
 }
 
 
@@ -6155,7 +6341,7 @@ void move_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int sl
     llll_free(ll);
     
     if (!keep_original)
-        erase_notationitem_slot(r_ob, nitem, slot_from);
+        notation_item_clear_slot(r_ob, nitem, slot_from);
     
     if (also_check_slot_recomputations && r_ob->obj_type != k_NOTATION_OBJECT_SLOT) { // i.e. note is not dummy: it has a parent!
         check_slot_linkage_recomputations_for_notationitem(r_ob, nitem, slot_from);
@@ -6687,7 +6873,7 @@ void delete_all_selected_function_points(t_notation_obj *r_ob, long slot_num)
 	
 	for (elem = cloned->l_head; elem; elem = elem->l_next) {
 		t_slotitem *item = (t_slotitem *)hatom_getobj(&elem->l_hatom);
-		delete_slotitem(r_ob, slot_num, item);
+		slotitem_delete(r_ob, slot_num, item);
 	}
 }
 
@@ -6713,7 +6899,7 @@ t_slotitem *insert_new_slot_function_point(t_notation_obj *r_ob, long slot_num, 
 	temp = get_activeitem_slot_firstitem(r_ob, slot_num);
 	if (temp) {
 		if (x_val < ((t_pts *)temp->item)->x)
-			prepend_slotitem(thisitem); // first item
+			slotitem_prepend(thisitem); // first item
 		else {
 			char done = 0;
 			while (temp) { // look for the element following our element
@@ -6726,12 +6912,12 @@ t_slotitem *insert_new_slot_function_point(t_notation_obj *r_ob, long slot_num, 
 				temp = temp->next;
 			}
 			if (done) // we have found the element following to our element
-				insert_slotitem(thisitem, temp->prev, temp);
+				slotitem_insert(thisitem, temp->prev, temp);
 			else
-				append_slotitem(thisitem); // last element
+				slotitem_append(thisitem); // last element
 		}
 	} else
-		append_slotitem(thisitem); // TO DO: to be changed
+		slotitem_append(thisitem); // TO DO: to be changed
 	
 	if (delete_all_elements_between_the_new_slot_point_and_this_item) {
 		if (forward_delete_elements) {
@@ -6740,7 +6926,7 @@ t_slotitem *insert_new_slot_function_point(t_notation_obj *r_ob, long slot_num, 
 				t_slotitem *next = temp2->next;
 				if (temp2 == thisitem)
 					break;
-				delete_slotitem(r_ob, slot_num, temp2);
+				slotitem_delete(r_ob, slot_num, temp2);
 				temp2 = next;
 			}
 		} else {
@@ -6751,7 +6937,7 @@ t_slotitem *insert_new_slot_function_point(t_notation_obj *r_ob, long slot_num, 
 						t_slotitem *prev = temp2->prev;
 						if (temp2 == thisitem)
 							break;
-						delete_slotitem(r_ob, slot_num, temp2);
+						slotitem_delete(r_ob, slot_num, temp2);
 						temp2 = prev;
 					}
 					break;	
@@ -6785,7 +6971,7 @@ t_slotitem *append_new_numberlist_elem(t_notation_obj *r_ob, t_notation_item *ni
 		*val = CLAMP(r_ob->slotinfo[s].slot_default, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1]); 
 		thisitem->item = val;
 	}
-	append_slotitem(thisitem);
+	slotitem_append(thisitem);
 	return thisitem;
 }
 
@@ -6840,7 +7026,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 										delete_all_selected_function_points(r_ob, s);
 									else {
 										clear_slot_window_selection(r_ob);
-										delete_slotitem(r_ob, s, clicked);
+										slotitem_delete(r_ob, s, clicked);
 									}
 									r_ob->changed_while_dragging = true;
 									*changed = 1;
@@ -6907,7 +7093,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						if (clicked) { // something has been clicked
 							if (modifiers == eCommandKey) { // delete point
 								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-								delete_slotitem(r_ob, s, clicked);
+								slotitem_delete(r_ob, s, clicked);
 								r_ob->changed_while_dragging = true;
 								*changed = 1;
 								invalidate_notation_static_layer_and_repaint(r_ob);
@@ -6943,7 +7129,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									temp = get_activeitem_slot_firstitem(r_ob, s);
 									if (temp) {
 										if (x_val < ((t_pts3d *)temp->item)->x)
-											prepend_slotitem(thisitem); // first item
+											slotitem_prepend(thisitem); // first item
 										else {
 											char done = 0;
 											temp = temp->next;
@@ -6955,12 +7141,12 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 												temp = temp->next;
 											}
 											if (done) // we have found the element following to our element
-												insert_slotitem(thisitem, temp->prev, temp);
+												slotitem_insert(thisitem, temp->prev, temp);
 											else
-												append_slotitem(thisitem); // last element
+												slotitem_append(thisitem); // last element
 										}
 									} else
-										append_slotitem(thisitem); // TO DO: to be changed
+										slotitem_append(thisitem); // TO DO: to be changed
 									
                                     slot_set_active_item(activeslot, thisitem);
 									r_ob->hovered_slotitem = thisitem;
@@ -6994,7 +7180,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						if (clicked) { // something has been clicked
 							if (modifiers == eCommandKey) { // delete point
 								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-								delete_slotitem(r_ob, s, clicked);
+								slotitem_delete(r_ob, s, clicked);
 								r_ob->changed_while_dragging = true;
 								*changed = 1;
 								invalidate_notation_static_layer_and_repaint(r_ob);
@@ -7033,7 +7219,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								temp = get_activeitem_slot_firstitem(r_ob, s); //  r_ob->active_slot_note->slot[s].lastitem
 								if (temp) {
 									if (t_val < ((t_spatpt *)temp->item)->t)
-										prepend_slotitem(thisitem); // first item
+										slotitem_prepend(thisitem); // first item
 									else {
 										char done = 0;
 										temp = temp->next;
@@ -7045,12 +7231,12 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 											temp = temp->next;
 										}
 										if (done) // we have found the element following to our element
-											insert_slotitem(thisitem, temp->prev, temp);
+											slotitem_insert(thisitem, temp->prev, temp);
 										else
-											append_slotitem(thisitem); // last element
+											slotitem_append(thisitem); // last element
 									}
 								} else
-									append_slotitem(thisitem); // TO DO: to be changed
+									slotitem_append(thisitem); // TO DO: to be changed
 								
                                 slot_set_active_item(activeslot, thisitem);
 								
@@ -7076,7 +7262,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							if (modifiers == eCommandKey) {
 								if (get_activeitem_slot_firstitem(r_ob, s)) {
 									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-									delete_slotitem(r_ob, s, get_activeitem_slot_firstitem(r_ob, s));
+									slotitem_delete(r_ob, s, get_activeitem_slot_firstitem(r_ob, s));
 									r_ob->changed_while_dragging = true;
 									*changed = 1;
 									invalidate_notation_static_layer_and_repaint(r_ob);
@@ -7150,7 +7336,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									if (temp2) { // there is number data in the item
 										if (modifiers == eCommandKey) { // delete data
 											create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-											delete_slotitem(r_ob, s, temp2);
+											slotitem_delete(r_ob, s, temp2);
 											*changed = 1;
 											r_ob->changed_while_dragging = true;
 										} else { 
@@ -7216,7 +7402,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
 								
 								thisitem->item = llll_get();
-								append_slotitem(thisitem);
+								slotitem_append(thisitem);
 								temp2 = thisitem;
 							}
 							if (temp2 && temp2->item) {
@@ -7265,7 +7451,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						if (modifiers == eCommandKey) {
 							create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
 							
-                            erase_notationitem_slot(r_ob, r_ob->active_slot_notationitem, s);
+                            notation_item_clear_slot(r_ob, r_ob->active_slot_notationitem, s);
                             
                             if ((r_ob->link_lyrics_to_slot > 0 && r_ob->link_lyrics_to_slot - 1 == s) ||
                                 (r_ob->link_dynamics_to_slot > 0 && r_ob->link_dynamics_to_slot - 1 == s)) {
@@ -7303,7 +7489,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 							if (temp2) { // there is file data in the clicked file
 								if (modifiers == eCommandKey) { // delete data
 									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-									delete_slotitem(r_ob, s, temp2);
+									slotitem_delete(r_ob, s, temp2);
 								} else if (modifiers & eShiftKey) {
 									// re-select file
 									t_fourcc outtype;
@@ -7359,7 +7545,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 										file->pathID = path; file->filename_length = strlen(file->filename);
 										thisitem->item = file;
 										file->exists = true;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
                                         slot_set_active_item(activeslot, thisitem);
 										r_ob->changed_while_dragging = true;
 										*changed = true;
@@ -7413,7 +7599,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								lock_general_mutex(r_ob);
 							} else if (modifiers == eCommandKey) { // delete point
 								create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-								delete_slotitem(r_ob, s, clicked);
+								slotitem_delete(r_ob, s, clicked);
 								r_ob->changed_while_dragging = true;
 								*changed = 1;
 								invalidate_notation_static_layer_and_repaint(r_ob);
@@ -7474,7 +7660,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                         t_chord *ch = notation_item_chord_get_parent(r_ob, r_ob->active_slot_notationitem);
                         if (item && modifiers & eCommandKey) {
                             create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-                            delete_slotitem(r_ob, s, item);
+                            slotitem_delete(r_ob, s, item);
                             if (ch)
                                 reset_articulation_position_for_chord(r_ob, ch);
                             *changed = 1;
@@ -7484,7 +7670,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                             t_slotitem *thisitem = build_slotitem(r_ob, activeslot);
                             t_articulation *art = build_articulation(r_ob, id, r_ob->active_slot_notationitem, thisitem, notationobj_articulation_id2symbol(r_ob, id));
                             thisitem->item = art;
-                            append_slotitem(thisitem);
+                            slotitem_append(thisitem);
                             if (ch)
                                 reset_articulation_position_for_chord(r_ob, ch);
                             r_ob->changed_while_dragging = true;
@@ -7500,7 +7686,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                         if (modifiers & eCommandKey) {
                             if (get_activeitem_slot_firstitem(r_ob, s)) {
                                 create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-                                delete_slotitem(r_ob, s, get_activeitem_slot_firstitem(r_ob, s));
+                                slotitem_delete(r_ob, s, get_activeitem_slot_firstitem(r_ob, s));
                                 if (ch) {
                                     ch->need_recompute_parameters = true;
                                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
@@ -7516,7 +7702,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                     create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
                                     t_slotitem *thisitem = build_slotitem(r_ob, activeslot);
                                     thisitem->item = notationobj_notehead_id2symbol(r_ob, id);
-                                    append_slotitem(thisitem);
+                                    slotitem_append(thisitem);
                                 } else {
                                     get_activeitem_slot_firstitem(r_ob, s)->item = notationobj_notehead_id2symbol(r_ob, id);
                                 }
@@ -7590,7 +7776,7 @@ char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						// erase note slot
 						create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
 						
-						erase_notationitem_slot(r_ob, r_ob->active_slot_notationitem, s);
+						notation_item_clear_slot(r_ob, r_ob->active_slot_notationitem, s);
 						
 						if ((r_ob->link_lyrics_to_slot > 0 && r_ob->link_lyrics_to_slot - 1 == s) ||
                             (r_ob->link_dynamics_to_slot > 0 && r_ob->link_dynamics_to_slot - 1 == s)) {
@@ -7859,7 +8045,7 @@ char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                         if (!temp) {
                             initialize_biquad(interp);
                             interp->t = this_t;
-                            append_slotitem(newitem);
+                            slotitem_append(newitem);
                         } else {
                             while (temp) {
                                 if (((t_biquad *)temp->item)->t > this_t)
@@ -7872,16 +8058,16 @@ char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                                 if (lastitem) {
                                     *interp = *((t_biquad *)lastitem->item);
                                     interp->t = this_t;
-                                    append_slotitem(newitem);
+                                    slotitem_append(newitem);
                                 }
                             } else if (temp && !temp->prev) {
                                 *interp = *((t_biquad *)get_activeitem_slot_firstitem(r_ob, s)->item);
                                 interp->t = this_t;
-                                prepend_slotitem(newitem);
+                                slotitem_prepend(newitem);
                             } else { 
                                 *interp = interpolate_biquad(r_ob, *((t_biquad *)temp->prev->item), *((t_biquad *)temp->item), this_t, r_ob->dynfilter_interp_mode);
                                 interp->t = this_t;
-                                insert_slotitem(newitem, temp->prev, temp);
+                                slotitem_insert(newitem, temp->prev, temp);
                             }
                         }
                         r_ob->changed_while_dragging = true;
@@ -7900,7 +8086,7 @@ char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             t_jrgba *col = (t_jrgba *)bach_newptr(sizeof(t_jrgba));
                             r_ob->slot_top_right_color = *col = build_jrgba(1, 0, 0, 1);
                             thisitem->item = col;
-                            append_slotitem(thisitem);
+                            slotitem_append(thisitem);
                             r_ob->changed_while_dragging = true;
                             *changed = true;
                         }
@@ -9884,7 +10070,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
             t_note *nt = (t_note *) curr_it;
             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                 create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                erase_note_slot(r_ob, nt, slotnum);
+                note_clear_slot(r_ob, nt, slotnum);
                 changed = 1;
             }
         } else if (curr_it->type == k_CHORD) {
@@ -9894,7 +10080,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
 #ifdef BACH_CHORDS_HAVE_SLOTS
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)ch)) {
                     create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                    erase_notationitem_slot(r_ob, (t_notation_item *)ch, slotnum);
+                    notation_item_clear_slot(r_ob, (t_notation_item *)ch, slotnum);
                     changed = 1;
                 }
 #endif
@@ -9902,7 +10088,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
                 for (nt=ch->firstnote; nt; nt = nt->next) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                         create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                        erase_note_slot(r_ob, nt, slotnum);
+                        note_clear_slot(r_ob, nt, slotnum);
                         changed = 1;
                     }
                 }
@@ -9915,7 +10101,7 @@ void notationobj_sel_erase_slot(t_notation_obj *r_ob, long slotnum, char lambda)
                 for (nt=ch->firstnote; nt; nt = nt->next) {
                     if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                         create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                        erase_note_slot(r_ob, nt, slotnum);
+                        note_clear_slot(r_ob, nt, slotnum);
                         changed = 1;
                     }
                 }
@@ -9983,4 +10169,107 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
     }
     unlock_general_mutex(r_ob);
     
+}
+
+
+
+
+// arguments are: slot#, position, new value (as llll).
+void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args, char lambda, e_slot_changeslotitem_modes mode)
+{
+    long slotnum, position;
+    t_llll *new_values_as_llll;
+    char changed = 0;
+
+    if (!args || !args->l_head)
+        return;
+    
+    if (mode == k_CHANGESLOTITEM_MODE_INSERT_AUTO && args->l_size <= 2)
+        llll_insertlong_after(1, args->l_head); // dummy position for auto-insertion mode
+    
+    t_llllelem *args_el = args->l_head;
+    if (!args_el || !args_el->l_next)
+        return;
+    
+    slotnum = llllelem_to_slotnum(r_ob, args_el, true);
+    if (slotnum < 0)
+        return;
+    
+    args_el = args_el->l_next;
+    
+    if (hatom_gettype(&args_el->l_hatom) == H_SYM) {
+        if (hatom_getsym(&args_el->l_hatom) == _llllobj_sym_all) {
+            if (mode == k_CHANGESLOTITEM_MODE_MODIFY_ONE)
+                mode = k_CHANGESLOTITEM_MODE_MODIFY_ALL;
+            else if (mode == k_CHANGESLOTITEM_MODE_DELETE_ONE)
+                mode = k_CHANGESLOTITEM_MODE_DELETE_ALL;
+        } else if (hatom_getsym(&args_el->l_hatom) == _llllobj_sym_auto) {
+            if (mode == k_CHANGESLOTITEM_MODE_INSERT)
+                mode = k_CHANGESLOTITEM_MODE_INSERT_AUTO;
+        }
+        position = 1;
+    } else {
+        position = hatom_getlong(&args_el->l_hatom);
+    }
+    
+    args_el = args_el->l_next;
+    
+    new_values_as_llll = llll_subllll(args_el, args_el ? args->l_tail : NULL);
+    
+    if (new_values_as_llll) {
+        t_notation_item *curr_it;
+
+        lock_general_mutex(r_ob);
+        
+        curr_it = lambda ? (t_notation_item *) shashtable_retrieve(r_ob->IDtable, r_ob->lambda_selected_item_ID) : r_ob->firstselecteditem;
+        while (curr_it) {
+            if (curr_it->type == k_NOTE) {
+                t_note *nt = (t_note *) curr_it;
+                if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                    create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                    note_change_slot_item(r_ob, nt, slotnum, position, new_values_as_llll, mode);
+                    changed = 1;
+                }
+            } else if (curr_it->type == k_CHORD) {
+                t_chord *ch = (t_chord *) curr_it;
+                if (!ch->firstnote) {
+#ifdef BACH_CHORDS_HAVE_SLOTS
+                    create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                    notation_item_change_slotitem(r_ob, (t_notation_item *)ch, slotnum, position, new_values_as_llll, mode);
+                    changed = 1;
+#endif
+                } else {
+                    t_note *nt;
+                    for (nt=ch->firstnote; nt; nt = nt->next) {
+                        if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                            note_change_slot_item(r_ob, nt, slotnum, position, new_values_as_llll, mode);
+                            changed = 1;
+                        }
+                    }
+                }
+            } else if (curr_it->type == k_MEASURE) {
+                t_measure *meas = (t_measure *) curr_it;
+                t_chord *ch = meas->firstchord;
+                while (ch) {
+                    t_note *nt;
+                    for (nt=ch->firstnote; nt; nt = nt->next) {
+                        if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                            note_change_slot_item(r_ob, nt, slotnum, position, new_values_as_llll, mode);
+                            changed = 1;
+                        }
+                    }
+                    ch = ch->next;
+                }
+            }
+            curr_it = lambda ? NULL : curr_it->next_selected;
+        }
+        
+        unlock_general_mutex(r_ob);
+    }
+    
+    llll_free(new_values_as_llll);
+    
+    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }

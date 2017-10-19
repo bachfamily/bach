@@ -860,7 +860,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 reassemble_dynamics_buf(r_ob, num_dynamics, dyn_text_dep, hairpins, buf, CONST_MAX_NUM_DYNAMICS_PER_CHORD * CONST_MAX_NUM_DYNAMICS_CHARS);
                 create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
                 if (num_dynamics <= 0) {
-                    delete_slotitem(r_ob, slot_num, slotitem);
+                    slotitem_delete(r_ob, slot_num, slotitem);
                     slotitem = NULL;
                 } else
                     slotitem->item = gensym(buf);
@@ -1506,7 +1506,7 @@ void erase_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char
             undo_tick_added = true;
             create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
         }
-        erase_notationitem_slot(r_ob, (t_notation_item *)ch, slot_num);
+        notation_item_clear_slot(r_ob, (t_notation_item *)ch, slot_num);
     }
     
     for (t_note *nt = ch->firstnote; nt; nt = nt->next){
@@ -1515,7 +1515,7 @@ void erase_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char
                 undo_tick_added = true;
                 create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
             }
-            erase_notationitem_slot(r_ob, (t_notation_item *)nt, slot_num);
+            notation_item_clear_slot(r_ob, (t_notation_item *)nt, slot_num);
         }
     }
 }

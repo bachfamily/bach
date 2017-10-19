@@ -1872,6 +1872,22 @@ typedef enum _slot_access_types
 } e_slot_access_types;
 
 
+/** Used by notation_item_change_slotitem()
+	@ingroup	slots
+ */
+typedef enum _slot_changeslotitem_modes
+{
+    k_CHANGESLOTITEM_MODE_MODIFY_ONE = 0,	///< Modify a single item
+    k_CHANGESLOTITEM_MODE_MODIFY_ALL = 1,	///< Modify all items
+    k_CHANGESLOTITEM_MODE_INSERT = 2,       ///< Insert an item at a given position
+    k_CHANGESLOTITEM_MODE_INSERT_AUTO = 3,       ///< Insert an item and automatically find the right position if needed (e.g. for function points)
+    k_CHANGESLOTITEM_MODE_APPEND = 4,       ///< Append an item
+    k_CHANGESLOTITEM_MODE_PREPEND = 5,      ///< Prepend an item
+    k_CHANGESLOTITEM_MODE_DELETE_ONE = 6,       ///< Delete an item
+    k_CHANGESLOTITEM_MODE_DELETE_ALL = 7,	///< Delete all items
+} e_slot_changeslotitem_modes;
+
+
 /** Play modes.
 	@ingroup	sequencing
  */
@@ -7861,7 +7877,7 @@ void slot_set_active_item(t_slot *slot, t_slotitem *item_to_be_set_as_active);
 	@param item			Pointer to the slotitem to insert
 	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void prepend_slotitem(t_slotitem *item);
+void slotitem_prepend(t_slotitem *item);
 
 
 /**	Insert a slotitem at the end of a slot.
@@ -7869,7 +7885,11 @@ void prepend_slotitem(t_slotitem *item);
 	@param item			Pointer to the slotitem to insert
  	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void append_slotitem(t_slotitem *item);
+void slotitem_append(t_slotitem *item);
+
+
+/// TBD
+void slotitem_insert_extended(t_notation_obj *r_ob, long slotnum, t_slotitem *item, e_slot_changeslotitem_modes mode, long insertion_position_0based);
 
 
 /**	Insert a slotitem between two existing slotitems.
@@ -7879,7 +7899,7 @@ void append_slotitem(t_slotitem *item);
 	@param next_item	Pointer to the right slotitem
 	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void insert_slotitem(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_item);
+void slotitem_insert(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_item);
 
 
 /**	Delete a slotitem from slot.
@@ -7888,7 +7908,7 @@ void insert_slotitem(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_i
 	@param	slot_num	The 0-based number of the slot
 	@param	item		Pointer to the slotitem to delete
  */
-void delete_slotitem(t_notation_obj *r_ob, long slot_num, t_slotitem *item);
+void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item);
 
 
 /**	Retrieve the index (0-based) index of a slotitem (in in the parent slot linked list) 
@@ -8034,18 +8054,29 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_note *note, int slot_num,
 void change_slot_matrix_value(t_notation_obj *r_ob, t_note *note, int slot_num, t_slotitem *slotitem, long row, long col, double new_val, char val_given_as_delta);
 
 
-/**	Change the value of a generic slot; new value is expressed as an llll.
+/**	Change a specific slotitem of a note; new item is expressed as an llll.
 	@ingroup					slots
 	@param	r_ob				The notation object
 	@param	note				The note which owns the slot
 	@param	slot_num			The slot number (0-based!)
 	@param	position			The 1-based index of the item which you want to change (e.g. to change second value in a #k_SLOT_TYPE_INTLIST, set <position> = 2)
 	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
+    @param  mode                The operation mode, one of the #e_slot_changeslotitem_modes
  */
-void change_note_slot_value(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll);
+void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE);
 
-// TBD
-void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position, t_llll *new_values_as_llll);
+
+/**	Change a specific slotitem of a notation item; new item is expressed as an llll.
+	@ingroup					slots
+	@param	r_ob				The notation object
+	@param	note				The note which owns the slot
+	@param	slot_num			The slot number (0-based!)
+	@param	position_1based		The 1-based index of the item which you want to change (e.g. to change second value in a #k_SLOT_TYPE_INTLIST, set <position> = 2)
+	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
+ @param  mode                The operation mode, one of the #e_slot_changeslotitem_modes
+ */
+void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE);
+
 
 /**	Completely erase a note's slot.
 	@ingroup					slots
@@ -8054,10 +8085,10 @@ void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nite
 	@param	slot_number			The slot number (0-based!)
 	@param	also_check_slot_recomputations			Also checks slot recomputation and linkages
  */
-void erase_note_slot(t_notation_obj *r_ob, t_note *note, int slot_number, char also_check_slot_recomputations = 1);
+void note_clear_slot(t_notation_obj *r_ob, t_note *note, int slot_number, char also_check_slot_recomputations = 1);
 
 // TBD
-void erase_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_number, char also_check_slot_recomputations = 1);
+void notation_item_clear_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_number, char also_check_slot_recomputations = 1);
 void erase_all_notationitem_slots(t_notation_obj *r_ob, t_notation_item *nitem, char also_check_slot_recomputations = 1);
 
 
@@ -8070,6 +8101,7 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
 // TBD
 void move_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_from, int slot_to, char keep_original, char also_check_slot_recomputations = 1);
 void move_note_slot(t_notation_obj *r_ob, t_note *note, int slot_from, int slot_to, char keep_original, char also_check_slot_recomputations = 1);
+void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args, char lambda, e_slot_changeslotitem_modes mode);
 
 
 /**	Check if all the slot data in a notation object correctly lie within the slot domain. If not, it forces data to lie within the slot domain.
@@ -8078,7 +8110,7 @@ void move_note_slot(t_notation_obj *r_ob, t_note *note, int slot_from, int slot_
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_domain(t_notation_obj *r_ob, long slot_num);
+void slot_check_domain(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Check if all the slot data in a notation object correclty lie within the slot range. If not, it forces data to lie within the slot range.
@@ -8087,7 +8119,7 @@ void check_slot_domain(t_notation_obj *r_ob, long slot_num);
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_range(t_notation_obj *r_ob, long slot_num);
+void slot_check_range(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Check if all the slot data in a notation object correclty lie within the slot zrange (the range of the 3rd dimension). If not, it forces data to lie within the slot range.
@@ -8096,10 +8128,10 @@ void check_slot_range(t_notation_obj *r_ob, long slot_num);
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_zrange(t_notation_obj *r_ob, long slot_num);
+void slot_check_zrange(t_notation_obj *r_ob, long slot_num);
 
 // TBD
-void check_slot_access(t_notation_obj *r_ob, long slot_num);
+void slot_check_access(t_notation_obj *r_ob, long slot_num);
 
 
 // -----------------------------------
@@ -8311,6 +8343,8 @@ t_slot *get_activeitem_slot(t_notation_obj *r_ob, long slotnumber);
 t_slot *notation_item_get_slot(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber);
 t_slot *notation_item_get_slot_extended(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, char force_get_for_chords);
 t_slotitem *notation_item_get_slot_firstitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber);
+t_slotitem *notation_item_get_slot_nth_item(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, long n);
+t_slotitem *slot_get_nth_item(t_slot *s, long n);
 t_chord *notation_item_chord_get_parent(t_notation_obj *r_ob, t_notation_item *nitem);
 long notation_item_get_slot_numitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber); // private
 

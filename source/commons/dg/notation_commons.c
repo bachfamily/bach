@@ -10054,7 +10054,7 @@ void clone_slots_for_notation_item(t_notation_obj *r_ob, t_notation_item *from, 
                         } else {
                             prec = newitem->prev;
                             if (prec) prec->next = NULL;
-                            delete_slotitem(r_ob, i, newitem);
+                            slotitem_delete(r_ob, i, newitem);
                         }
                     }
                         break;
@@ -10374,7 +10374,7 @@ t_chord *clone_chord_without_lyrics(t_notation_obj *r_ob, t_chord *chord, e_clon
     if (r_ob->link_lyrics_to_slot > 0) {
         t_note *note;
         for (note = newch->firstnote; note; note = note->next)
-            erase_note_slot(r_ob, note, r_ob->link_lyrics_to_slot - 1, false);
+            note_clear_slot(r_ob, note, r_ob->link_lyrics_to_slot - 1, false);
     }
     return newch;
 }
@@ -23346,7 +23346,7 @@ void set_textfield_info_to_lyrics_slot(t_notation_obj *r_ob, char *text)
 {
 	t_llll *new_text_as_llll = llll_get();
 	llll_appendsym(new_text_as_llll, text ? gensym(text) : gensym(""), 0, WHITENULL_llll);
-	change_note_slot_value(r_ob, r_ob->is_editing_chord->firstnote, r_ob->link_lyrics_to_slot - 1, 1, new_text_as_llll);
+	note_change_slot_item(r_ob, r_ob->is_editing_chord->firstnote, r_ob->link_lyrics_to_slot - 1, 1, new_text_as_llll);
 	llll_free(new_text_as_llll);
 	
 	if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
@@ -23360,13 +23360,15 @@ void set_textfield_info_to_dynamics_slot(t_notation_obj *r_ob, char *text)
     t_llll *new_text_as_llll = llll_get();
     if (text && strlen(text) > 0)
         llll_appendsym(new_text_as_llll, text ? gensym(text) : gensym(""), 0, WHITENULL_llll);
+    lock_general_mutex(r_ob);
     t_notation_item *nitem = notation_item_get_to_which_dynamics_should_be_assigned(r_ob, (t_notation_item *)r_ob->is_editing_chord);
-    change_notation_item_slot_value(r_ob, nitem, r_ob->link_dynamics_to_slot - 1, 1, new_text_as_llll);
+    notation_item_change_slotitem(r_ob, nitem, r_ob->link_dynamics_to_slot - 1, 1, new_text_as_llll);
     llll_free(new_text_as_llll);
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
         r_ob->is_editing_chord->need_recompute_parameters = true;
     else
         recompute_all_for_measure(r_ob, r_ob->is_editing_chord->parent, false);
+    unlock_general_mutex(r_ob);
 }
 
 
@@ -23379,7 +23381,7 @@ char delete_chord_lyrics(t_notation_obj *r_ob, t_chord *chord)
         notation_item_delete_from_selection(r_ob, (t_notation_item *)chord->lyrics);
 
 	for (note = chord->firstnote; note; note = note->next)
-		erase_note_slot(r_ob, note, r_ob->link_lyrics_to_slot - 1);
+		note_clear_slot(r_ob, note, r_ob->link_lyrics_to_slot - 1);
 	
 	if (chord->lyrics) {
 		chord->lyrics->lyrics_dashed_extension = chord->lyrics->lyrics_uheight = chord->lyrics->lyrics_uwidth = chord->lyrics->lyrics_ux_shift = 0;
@@ -23462,9 +23464,9 @@ char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
     
     if (chord->firstnote) {
         for (note = chord->firstnote; note; note = note->next)
-            erase_note_slot(r_ob, note, r_ob->link_dynamics_to_slot - 1);
+            note_clear_slot(r_ob, note, r_ob->link_dynamics_to_slot - 1);
     } else {
-        erase_notationitem_slot(r_ob, (t_notation_item *)chord, r_ob->link_dynamics_to_slot - 1);
+        notation_item_clear_slot(r_ob, (t_notation_item *)chord, r_ob->link_dynamics_to_slot - 1);
     }
     
     if (chord->dynamics) {
@@ -26308,7 +26310,7 @@ void delete_all_articulations_from_notation_item(t_notation_obj *r_ob, t_notatio
 		bach_freeptr(nt->articulation);
 		nt->articulation = NULL;
         if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot <= CONST_MAX_SLOTS) {
-            erase_note_slot(r_ob, nt, r_ob->link_articulations_to_slot - 1);
+            note_clear_slot(r_ob, nt, r_ob->link_articulations_to_slot - 1);
         }
 	}
 }
@@ -26404,7 +26406,7 @@ char delete_articulations_in_selection(t_notation_obj *r_ob)
                 if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot <= CONST_MAX_SLOTS) {
                     long s = r_ob->link_articulations_to_slot - 1;
                     if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_ARTICULATIONS && art->parent)
-                        delete_slotitem(r_ob, s, art->parent);
+                        slotitem_delete(r_ob, s, art->parent);
                 }
                 
 				changed = 1;
@@ -26485,7 +26487,7 @@ void add_articulation_to_notation_item(t_notation_obj *r_ob, t_notation_item *it
             t_slotitem *thisitem = build_slotitem(r_ob, slot);
             t_articulation *art = build_articulation(r_ob, articulation_ID, item, thisitem, notationobj_articulation_id2symbol(r_ob, articulation_ID));
             thisitem->item = art;
-            append_slotitem(thisitem);
+            slotitem_append(thisitem);
             reset_articulation_position_for_chord(r_ob, notation_item_chord_get_parent(r_ob, item));
         }
     }
@@ -26790,12 +26792,12 @@ void ease_slotitem(t_notation_obj *r_ob, t_slotitem *item, double smooth_rel_x, 
                     ((t_pts *)item->item)->x += smooth_rel_x * domain_width;
                     if ((!item->next && ((t_pts *)item->item)->x > domain_max) ||
                         (item->next && ((t_pts *)item->item)->x > ((t_pts *)item->next->item)->x))
-                        delete_slotitem(r_ob, slotnum, item);
+                        slotitem_delete(r_ob, slotnum, item);
                 } else if (direction < 0) {
                     ((t_pts *)item->item)->x -= smooth_rel_x * domain_width;
                     if ((!item->prev && ((t_pts *)item->item)->x < domain_min) ||
                         (item->prev && ((t_pts *)item->item)->x < ((t_pts *)item->prev->item)->x))
-                        delete_slotitem(r_ob, slotnum, item);
+                        slotitem_delete(r_ob, slotnum, item);
                 }
                 break;
             case k_SLOT_TYPE_3DFUNCTION:
@@ -26803,12 +26805,12 @@ void ease_slotitem(t_notation_obj *r_ob, t_slotitem *item, double smooth_rel_x, 
                     ((t_pts3d *)item->item)->x += smooth_rel_x * domain_width;
 					if ((!item->next && ((t_pts3d *)item->item)->x > domain_max) ||
 						(item->next && ((t_pts3d *)item->item)->x > ((t_pts *)item->next->item)->x))
-						delete_slotitem(r_ob, slotnum, item);
+						slotitem_delete(r_ob, slotnum, item);
 				} else if (direction < 0) {
 					((t_pts3d *)item->item)->x -= smooth_rel_x * domain_width;
 					if ((!item->prev && ((t_pts3d *)item->item)->x < domain_min) ||
 						(item->prev && ((t_pts3d *)item->item)->x < ((t_pts *)item->prev->item)->x))
-						delete_slotitem(r_ob, slotnum, item);
+						slotitem_delete(r_ob, slotnum, item);
 				}
 				break;
 			case k_SLOT_TYPE_SPAT:
@@ -26816,12 +26818,12 @@ void ease_slotitem(t_notation_obj *r_ob, t_slotitem *item, double smooth_rel_x, 
 					((t_spatpt *)item->item)->t += smooth_rel_x * domain_width;
 					if ((!item->next && ((t_spatpt *)item->item)->t > domain_max) ||
 						(item->next && ((t_spatpt *)item->item)->t > ((t_spatpt *)item->next->item)->t))
-						delete_slotitem(r_ob, slotnum, item);
+						slotitem_delete(r_ob, slotnum, item);
 				} else if (direction < 0) {
 					((t_spatpt *)item->item)->t -= smooth_rel_x * domain_width;
 					if ((!item->prev && ((t_spatpt *)item->item)->t < domain_min) ||
 						(item->prev && ((t_spatpt *)item->item)->t < ((t_spatpt *)item->prev->item)->t))
-						delete_slotitem(r_ob, slotnum, item);
+						slotitem_delete(r_ob, slotnum, item);
 				}
 				break;
 			case k_SLOT_TYPE_DYNFILTER:
@@ -26829,12 +26831,12 @@ void ease_slotitem(t_notation_obj *r_ob, t_slotitem *item, double smooth_rel_x, 
 					((t_biquad *)item->item)->t += smooth_rel_x * domain_width;
 					if ((!item->next && ((t_biquad *)item->item)->t > domain_max) ||
 						(item->next && ((t_biquad *)item->item)->t > ((t_biquad *)item->next->item)->t))
-						delete_slotitem(r_ob, slotnum, item);
+						slotitem_delete(r_ob, slotnum, item);
 				} else if (direction < 0) {
 					((t_biquad *)item->item)->t -= smooth_rel_x * domain_width;
 					if ((!item->prev && ((t_biquad *)item->item)->t < domain_min) ||
 						(item->prev && ((t_biquad *)item->item)->t < ((t_biquad *)item->prev->item)->t))
-						delete_slotitem(r_ob, slotnum, item);
+						slotitem_delete(r_ob, slotnum, item);
 				}
 				break;
 		}
@@ -26935,7 +26937,7 @@ void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver
 		t_slotitem *slotitem_to_be_smoothed = nth_slotitem(r_ob, (t_notation_item *)receiver, slotnum, idx_of_slotitem_to_be_smoothed);
 		if (slotitem_to_be_smoothed) {
 			if (smooth_ms < 0)
-				delete_slotitem(r_ob, slotnum, slotitem_to_be_smoothed);
+				slotitem_delete(r_ob, slotnum, slotitem_to_be_smoothed);
 			else
 				ease_slotitem(r_ob, slotitem_to_be_smoothed, smooth_ms/(receiver->duration * (1 + portion_duration_ratio_to_receiver)), direction, slotnum);
 		}
@@ -29727,7 +29729,7 @@ void notation_item_check_slot_domain(t_notation_obj *r_ob, long slot_num, t_nota
         t_slotitem *tempitem = delete_from_this, *next = NULL;
         while (tempitem) {
             next = tempitem->next;
-            delete_slotitem(r_ob, slot_num, tempitem);
+            slotitem_delete(r_ob, slot_num, tempitem);
             tempitem = next;
         }
     }
@@ -29802,7 +29804,7 @@ void notation_item_check_slot_range(t_notation_obj *r_ob, long slot_num, t_notat
 	}
 }
 
-void check_slot_range(t_notation_obj *r_ob, long slot_num){
+void slot_check_range(t_notation_obj *r_ob, long slot_num){
 	char obj_type = r_ob->obj_type;
 	long num_voices = r_ob->num_voices;
 	void *firstvoice = r_ob->firstvoice;
@@ -29840,7 +29842,7 @@ void check_slot_range(t_notation_obj *r_ob, long slot_num){
 }
 
 
-void check_slot_zrange(t_notation_obj *r_ob, long slot_num){
+void slot_check_zrange(t_notation_obj *r_ob, long slot_num){
 	char obj_type = r_ob->obj_type;
 	long num_voices = r_ob->num_voices;
 	void *firstvoice = r_ob->firstvoice;
@@ -29878,7 +29880,7 @@ void check_slot_zrange(t_notation_obj *r_ob, long slot_num){
 }
 
 
-void check_slot_domain(t_notation_obj *r_ob, long slot_num)
+void slot_check_domain(t_notation_obj *r_ob, long slot_num)
 {
 	char obj_type = r_ob->obj_type;
 	long num_voices = r_ob->num_voices;
@@ -29920,7 +29922,7 @@ void check_slot_domain(t_notation_obj *r_ob, long slot_num)
 	}
 }
 
-void check_slot_access(t_notation_obj *r_ob, long slot_num)
+void slot_check_access(t_notation_obj *r_ob, long slot_num)
 {
     if (r_ob->active_slot_num == slot_num && slot_num >= 0 && slot_num < CONST_MAX_SLOTS && r_ob->slotinfo[slot_num].access_type == k_SLOT_ACCESS_CANT) {
         char found = false;
@@ -30053,7 +30055,7 @@ void set_rollnote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* n
 			// now the extras. first: we erase the slots, the graphic and the breakpoints
 			note_delete_breakpoints(r_ob, note);
 			for (i=0; i< CONST_MAX_SLOTS; i++) 
-				erase_note_slot(r_ob, note, i);
+				note_clear_slot(r_ob, note, i);
 
             note_set_enharmonicity(note, pitch_in); // we set the enharmonicity
 
@@ -31508,7 +31510,7 @@ void set_scorenote_values_from_llll(t_notation_obj *r_ob, t_note *note, t_llll* 
 			note_delete_breakpoints(r_ob, note);
             
 			for (i=0; i< CONST_MAX_SLOTS; i++) 
-				erase_note_slot(r_ob, note, i);
+				note_clear_slot(r_ob, note, i);
 
 			if (notevalues->l_size >= 4) {
 				t_llllelem *elem;
@@ -40406,7 +40408,7 @@ void note_nametoslot_do(t_notation_obj *r_ob, t_note *nt, long slotnum, e_nameto
     if (slotll)
         set_slots_values_to_notationitem_from_llll(r_ob, nt_it, slotll);
     else
-        erase_note_slot(r_ob, nt, slotnum);
+        note_clear_slot(r_ob, nt, slotnum);
     llll_free(slotll);
 }
 
@@ -41915,7 +41917,7 @@ void trim_note_slots(t_notation_obj *r_ob, t_note *nt, double delta_ms, char tri
                 
                 if (new_x < domain_min || (new_x > domain_max && !can_extend_beyond_note_tail)) {
                     if (thisitem->prev && ((t_pts *)thisitem->prev->item)->x == domain_max)
-                        delete_slotitem(r_ob, i, thisitem);
+                        slotitem_delete(r_ob, i, thisitem);
                     else if (!thisitem->prev)
                         new_x = domain_max;
                     else {
@@ -41944,7 +41946,7 @@ void trim_note_slots(t_notation_obj *r_ob, t_note *nt, double delta_ms, char tri
                 
                 if (new_x < domain_min || (new_x > domain_max && !can_extend_beyond_note_tail)) {
                     if (thisitem->prev && ((t_pts3d *)thisitem->prev->item)->x == domain_max)
-                        delete_slotitem(r_ob, i, thisitem);
+                        slotitem_delete(r_ob, i, thisitem);
                     else if (!thisitem->prev)
                         new_x = domain_max;
                     else {
@@ -41974,7 +41976,7 @@ void trim_note_slots(t_notation_obj *r_ob, t_note *nt, double delta_ms, char tri
                 
                 if (new_x < domain_min || (new_x > domain_max && !can_extend_beyond_note_tail)) {
                     if (thisitem->prev && ((t_spatpt *)thisitem->prev->item)->t == domain_max)
-                        delete_slotitem(r_ob, i, thisitem);
+                        slotitem_delete(r_ob, i, thisitem);
                     else if (!thisitem->prev) 
                         new_x = domain_max;
                     else {
@@ -42238,9 +42240,9 @@ void trim_chord_start(t_notation_obj *r_ob, t_chord *ch, double delta_ms)
                                 next_pts_absolute_onset = ch->onset + ((t_pts *)thisitem->next->item)->x;
                         }
                         if (thisitem->next && ((t_pts *)thisitem->next->item)->x == 0)
-                            delete_slotitem(r_ob, i, thisitem);
+                            slotitem_delete(r_ob, i, thisitem);
                         else if (thisitem->next && next_pts_absolute_onset <= new_onset)
-                            delete_slotitem(r_ob, i, thisitem);
+                            slotitem_delete(r_ob, i, thisitem);
                         else if (!thisitem->next)
                             new_x = domain_min;
                         else {
@@ -42270,7 +42272,7 @@ void trim_chord_start(t_notation_obj *r_ob, t_chord *ch, double delta_ms)
                     
                     if (new_x < domain_min || (new_x > domain_max && !slot_can_extend_beyond_tail)) {
                         if (thisitem->prev && ((t_pts3d *)thisitem->prev->item)->x == domain_max)
-                            delete_slotitem(r_ob, i, thisitem);
+                            slotitem_delete(r_ob, i, thisitem);
                         else if (!thisitem->prev)
                             new_x = domain_max;
                         else {
@@ -42300,7 +42302,7 @@ void trim_chord_start(t_notation_obj *r_ob, t_chord *ch, double delta_ms)
 
                     if (new_x < domain_min || (new_x > domain_max && !slot_can_extend_beyond_tail)) {
                         if (thisitem->prev && ((t_spatpt *)thisitem->prev->item)->t == domain_max)
-                            delete_slotitem(r_ob, i, thisitem);
+                            slotitem_delete(r_ob, i, thisitem);
                         else if (!thisitem->prev)
                             new_x = domain_max;
                         else {
@@ -42489,9 +42491,9 @@ void notation_obj_reset_slotinfo(t_notation_obj *r_ob)
 	long i;
 	initialize_slots(r_ob, true);
 	for (i = 0; i < CONST_MAX_SLOTS; i++) {
-		check_slot_range(r_ob, i); 
-		check_slot_zrange(r_ob, i);
-		check_slot_domain(r_ob, i);
+		slot_check_range(r_ob, i); 
+		slot_check_zrange(r_ob, i);
+		slot_check_domain(r_ob, i);
 	}
 	r_ob->num_background_slots = 0;
 	r_ob->num_popup_menu_slots = 0;

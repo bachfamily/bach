@@ -134,9 +134,12 @@ t_llll *llll_subllll(t_llllelem *from, t_llllelem *to)
 {
 	t_llll *ll;
 	t_llllelem *elem;
+    
+    if (!from || !to)
+        return llll_get();
 
 	if (from->l_parent != to->l_parent || !from->l_parent)
-		return NULL;
+		return llll_get();
 	
 	ll = llll_get();
 	for (elem = from; elem; elem = elem->l_next) {
