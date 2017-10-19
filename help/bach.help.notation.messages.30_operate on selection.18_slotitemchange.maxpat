@@ -78,7 +78,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 17.0, 108.5, 150.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 3 all 13"
+					"text" : "changeslotitem 3 all 13"
 				}
 
 			}
@@ -108,7 +108,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 42.0, 197.5, 229.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 9 1 highpass 400 0 2"
+					"text" : "changeslotitem 9 1 highpass 400 0 2"
 				}
 
 			}
@@ -139,7 +139,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 63.0, 328.5, 148.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 8 0 0 2"
+					"text" : "changeslotitem 8 0 0 2"
 				}
 
 			}
@@ -185,7 +185,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 56.5, 288.0, 190.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 8 0 Max.app 0"
+					"text" : "changeslotitem 8 0 Max.app 0"
 				}
 
 			}
@@ -292,7 +292,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 24.0, 136.0, 144.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 3 0 25"
+					"text" : "changeslotitem 3 0 25"
 				}
 
 			}
@@ -307,7 +307,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 50.0, 223.5, 295.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue \"amplitude envelope\" 2 0.5 10 0."
+					"text" : "changeslotitem \"amplitude envelope\" 2 0.5 10 0."
 				}
 
 			}
@@ -337,7 +337,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 59.0, 248.0, 207.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue active 2 0.5 10 0."
+					"text" : "changeslotitem active 2 0.5 10 0."
 				}
 
 			}
@@ -368,7 +368,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 35.0, 167.0, 180.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 1 2 0.5 10 0."
+					"text" : "changeslotitem 1 2 0.5 10 0."
 				}
 
 			}
@@ -398,7 +398,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 83.5, 144.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 3 2 13"
+					"text" : "changeslotitem 3 2 13"
 				}
 
 			}
@@ -445,7 +445,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "See Also: changeslotvalue, slot+content+syntax",
+					"text" : "See Also: changeslotitem, slot+content+syntax",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -493,7 +493,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 593.0, 19.0 ],
 					"style" : "",
-					"text" : "Tags: message, operate, on, selection, slot, change, single, value, changeslotvalue, all",
+					"text" : "Tags: message, operate, on, selection, slot, change, single, value, changeslotitem, all",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -512,7 +512,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 32.0, 596.53064, 50.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "To change a slot specific value (e.g. only the second integer in a intlist slot), you need to use the \"changeslotvalue\" message. The syntax requires: <slot_number> <position> <new_value>. The <new_value> is the unwrapped #slot+content+syntax of a single slot item (e.g. function point, filter...)",
+					"text" : "To change a slot specific value (e.g. only the second integer in a intlist slot), you need to use the \"changeslotitem\" message. The syntax requires: <slot_number> <position> <new_value>. The <new_value> is the unwrapped #slot+content+syntax of a single slot item (e.g. function point, filter...)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

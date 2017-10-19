@@ -273,7 +273,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 336.458344, 447.358643, 190.0, 23.0 ],
 					"style" : "",
-					"text" : "lambda changeslotvalue 2 1 $1"
+					"text" : "lambda changeslotitem 2 1 $1"
 				}
 
 			}

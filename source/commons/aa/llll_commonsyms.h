@@ -212,6 +212,11 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_timeatpixel;
 	t_symbol	*s_width;
 	t_symbol	*s_temporal;
+    t_symbol	*s_temporalmode;
+    t_symbol	*s_extend;
+    t_symbol	*s_relative;
+    t_symbol	*s_milliseconds;
+    t_symbol	*s_timepoints;
 	t_symbol	*s_abr_none_abr;
 	t_symbol	*s_legato;
     t_symbol	*s_legatotrim;
@@ -226,6 +231,12 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_tail;
 	t_symbol	*s_eraseslot;
 	t_symbol	*s_changeslotvalue;
+    t_symbol	*s_changeslotitem;
+    t_symbol	*s_addslotitem;
+    t_symbol	*s_appendslotitem;
+    t_symbol	*s_prependslotitem;
+    t_symbol	*s_insertslotitem;
+    t_symbol	*s_deleteslotitem;
 	t_symbol	*s_addslot;
 	t_symbol	*s_addbreakpoint;
 	t_symbol	*s_erasebreakpoints;
@@ -316,6 +327,7 @@ typedef struct _llllobj_common_symbols_table
     t_symbol	*s_quartertempo;
 	t_symbol	*s_figure;
 	t_symbol	*s_interp;
+    t_symbol	*s_prepad;
 	t_symbol	*s_lockrhythmictree;
 	t_symbol	*s_clef;
 	t_symbol	*s_mode;
@@ -586,6 +598,11 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_timeatpixel	(_llllobj_common_symbols->s_timeatpixel)
 #define _llllobj_sym_width			(_llllobj_common_symbols->s_width)
 #define _llllobj_sym_temporal		(_llllobj_common_symbols->s_temporal)
+#define _llllobj_sym_temporalmode		(_llllobj_common_symbols->s_temporalmode)
+#define _llllobj_sym_extend		(_llllobj_common_symbols->s_extend)
+#define _llllobj_sym_relative		(_llllobj_common_symbols->s_relative)
+#define _llllobj_sym_milliseconds		(_llllobj_common_symbols->s_milliseconds)
+#define _llllobj_sym_timepoints		(_llllobj_common_symbols->s_timepoints)
 #define _llllobj_sym_abr_none_abr	(_llllobj_common_symbols->s_abr_none_abr)
 #define _llllobj_sym_legato			(_llllobj_common_symbols->s_legato)
 #define _llllobj_sym_legatotrim		(_llllobj_common_symbols->s_legatotrim)
@@ -600,6 +617,12 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_tail			(_llllobj_common_symbols->s_tail)
 #define _llllobj_sym_eraseslot		(_llllobj_common_symbols->s_eraseslot)
 #define _llllobj_sym_changeslotvalue	(_llllobj_common_symbols->s_changeslotvalue)
+#define _llllobj_sym_changeslotitem	(_llllobj_common_symbols->s_changeslotitem)
+#define _llllobj_sym_addslotitem	(_llllobj_common_symbols->s_addslotitem)
+#define _llllobj_sym_appendslotitem	(_llllobj_common_symbols->s_appendslotitem)
+#define _llllobj_sym_prependslotitem	(_llllobj_common_symbols->s_prependslotitem)
+#define _llllobj_sym_insertslotitem	(_llllobj_common_symbols->s_insertslotitem)
+#define _llllobj_sym_deleteslotitem	(_llllobj_common_symbols->s_deleteslotitem)
 #define _llllobj_sym_addslot		(_llllobj_common_symbols->s_addslot)
 #define _llllobj_sym_addbreakpoint	(_llllobj_common_symbols->s_addbreakpoint)
 #define _llllobj_sym_erasebreakpoints	(_llllobj_common_symbols->s_erasebreakpoints)
@@ -692,6 +715,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_quartertempo	(_llllobj_common_symbols->s_quartertempo)
 #define _llllobj_sym_figure			(_llllobj_common_symbols->s_figure)
 #define _llllobj_sym_interp			(_llllobj_common_symbols->s_interp)
+#define _llllobj_sym_prepad			(_llllobj_common_symbols->s_prepad)
 #define _llllobj_sym_lockrhythmictree			(_llllobj_common_symbols->s_lockrhythmictree)
 #define _llllobj_sym_clef			(_llllobj_common_symbols->s_clef)
 #define _llllobj_sym_mode			(_llllobj_common_symbols->s_mode)

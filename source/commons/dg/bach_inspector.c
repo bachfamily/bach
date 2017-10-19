@@ -224,6 +224,12 @@ void get_slottypes_as_sym_list(t_notation_obj *r_ob, t_symbol **list)
         list[i] = slot_type_to_symbol((e_slot_types)i);
 }
 
+void get_slottemporalmodes_as_sym_list(t_notation_obj *r_ob, t_symbol **list)
+{
+    long i;
+    for (i = 0; i < k_NUM_SLOT_TEMPORALMODES; i++)
+        list[i] = slot_temporalmode_to_symbol((e_slot_temporalmodes)i);
+}
 void get_slotlinkages_as_sym_list(t_notation_obj *r_ob, t_symbol **list)
 {
 	list[k_SLOT_LINKAGE_NONE] = _llllobj_sym_none;
@@ -341,6 +347,7 @@ void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
 
 	// SLOTINFO ATTRIBUTES
 	t_symbol *slottypes[k_NUM_SLOT_TYPES];
+    t_symbol *slottemporalmodes[k_NUM_SLOT_TEMPORALMODES];
 	t_symbol *slotlinkages[k_NUM_SLOT_LINKAGES];
     t_symbol *accesstypes[3];
 	t_symbol *clefs[23];
@@ -355,6 +362,12 @@ void notation_obj_declare_bach_attributes(t_notation_obj *r_ob){
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_access, "Access", k_SLOTINFO, t_slotinfo, access_type, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
     get_access_types_as_sym_list(r_ob, accesstypes);
     bach_attribute_add_enumindex(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_access), 3, accesstypes);
+
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_temporalmode, "Temporal Mode", k_SLOTINFO, t_slotinfo, slot_temporalmode, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
+    get_slottemporalmodes_as_sym_list(r_ob, slottemporalmodes);
+    bach_attribute_add_enumindex(get_bach_attribute(man, k_SLOTINFO, _llllobj_sym_temporalmode), 3, slottemporalmodes);
+
+    DECLARE_BACH_ATTR(man, -1, _llllobj_sym_extend, "Extend Beyond Tails", k_SLOTINFO, t_slotinfo, extend_beyond_tails, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
 
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_domain, "Domain", k_SLOTINFO, t_slotinfo, slot_domain, k_BACH_ATTR_DOUBLE_ARRAY, 2, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
 	DECLARE_BACH_ATTR(man, -1, _llllobj_sym_domainslope, "Domain Slope", k_SLOTINFO, t_slotinfo, slot_domain_par, k_BACH_ATTR_DOUBLE, 1, k_BACH_ATTR_DISPLAY_TEXT, 0, 0);
@@ -562,7 +575,7 @@ void paint_bach_inspector_items(t_notation_obj *r_ob, t_bach_inspector_manager *
 		for (i = 0, ypos = 0; i < num_attributes; i++, ypos += ystep) {
 			char *content_txt = NULL;
 			t_bach_attribute *attr = &man->attr_manager->attr[obj_type][i];
-			char inactive = bach_inactive(man, obj, attr);
+			char inactive = bach_attr_inactive(man, obj, attr);
 			
 			if (i % 2)
 				paint_filledrectangle(g, build_jrgba(0.98, 0.98, 0.98, 1.), 0, ypos, rect.width, ystep);
@@ -918,7 +931,7 @@ void paint_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager *man, t
 
 void bach_default_preprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute *attr){
 	if (attr->owner_type == k_SLOTINFO) {
-		if (attr->name == _llllobj_sym_representation || attr->name == _llllobj_sym_range || attr->name == _llllobj_sym_domain || attr->name == _llllobj_sym_type)
+		if (attr->name == _llllobj_sym_representation || attr->name == _llllobj_sym_range || attr->name == _llllobj_sym_domain || attr->name == _llllobj_sym_type || attr->name == _llllobj_sym_extend || attr->name == _llllobj_sym_temporalmode)
 			(*r_ob->whole_obj_undo_tick_function)(r_ob);
 		else
 			create_header_undo_tick(r_ob, k_HEADER_SLOTINFO);
@@ -993,15 +1006,15 @@ void bach_preprocess_attr(t_bach_inspector_manager *man, void *obj, t_bach_attri
 void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute *attr){
 	if (attr->owner_type == k_SLOTINFO) {
 		if (attr->name == _llllobj_sym_domain)
-			check_slot_domain(r_ob, ((t_slotinfo *)obj)->slot_num);
+			slot_check_domain(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_range)
-			check_slot_range(r_ob, ((t_slotinfo *)obj)->slot_num);
+			slot_check_range(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_zrange)
-			check_slot_zrange(r_ob, ((t_slotinfo *)obj)->slot_num);
+			slot_check_zrange(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_representation)
 			set_matrix_parameters_from_slotinfo(r_ob, ((t_slotinfo *)obj)->slot_num);
         else if (attr->name == _llllobj_sym_access)
-            check_slot_access(r_ob, ((t_slotinfo *)obj)->slot_num);
+            slot_check_access(r_ob, ((t_slotinfo *)obj)->slot_num);
 		else if (attr->name == _llllobj_sym_color) {
 			t_atom av[4];
 			t_jrgba color = get_bach_attribute_as_color(&r_ob->m_inspector, obj, attr);
@@ -1061,7 +1074,7 @@ void bach_postprocess_attr(t_bach_inspector_manager *man, void *obj, t_bach_attr
 		bach_default_postprocess(r_ob, obj, attr);
     
 	if (r_ob && r_ob->m_inspector.attr_manager->miniature[attr->owner_type]) {
-		invalidate_notation_static_layer_and_repaint(r_ob);
+		notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 	}
 }
 
@@ -1121,8 +1134,13 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
                 return 0;
             return 1;
         }
+        
         // slot is writable
-		if ((attr->name == _llllobj_sym_domain || attr->name == _llllobj_sym_domainslope) &&
+        if (attr->name == _llllobj_sym_temporalmode && r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
+            return 1;
+        else if (attr->name == _llllobj_sym_extend && !slot_is_temporal(r_ob, ((t_slotinfo *)elem)->slot_num))
+            return 1;
+		else if ((attr->name == _llllobj_sym_domain || attr->name == _llllobj_sym_domainslope) &&
 			(slot_type != k_SLOT_TYPE_FUNCTION && slot_type != k_SLOT_TYPE_FILTER && slot_type != k_SLOT_TYPE_DYNFILTER))
 			return 1;
 		else if ((attr->name == _llllobj_sym_zrange || attr->name == _llllobj_sym_zslope) && slot_type != k_SLOT_TYPE_3DFUNCTION)
@@ -1131,8 +1149,14 @@ long bach_default_attr_inactive(t_notation_obj *r_ob, void *elem, t_bach_attribu
 			return 1;
 		else if (attr->name == _llllobj_sym_zsnap && slot_type != k_SLOT_TYPE_3DFUNCTION)
 			return 1;
+        else if (attr->name == _llllobj_sym_domainslope && ((t_slotinfo *)elem)->slot_temporalmode != k_SLOT_TEMPORALMODE_NONE)
+            return 1;
+        else if (attr->name == _llllobj_sym_domain && (((t_slotinfo *)elem)->slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS || ((t_slotinfo *)elem)->slot_temporalmode == k_SLOT_TEMPORALMODE_TIMEPOINTS))
+            return 1;
 		else if ((attr->name == _llllobj_sym_width || attr->name == _llllobj_sym_height) && r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			return 1;
+//        else if (attr->name == _llllobj_sym_width && ((t_slotinfo *)elem)->slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE)
+//            return 1;
 		else if (attr->name == _llllobj_sym_height && (slot_type == k_SLOT_TYPE_INTLIST || slot_type == k_SLOT_TYPE_FLOATLIST || slot_type == k_SLOT_TYPE_FILELIST))
 			return 1;
 		else if (attr->name == _llllobj_sym_default && 
@@ -1177,13 +1201,22 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 		} else if (attr->name == _llllobj_sym_default) {
 			clip_atom(av, r_ob->slotinfo[slotnum].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1]);
 		} else if (attr->name == _llllobj_sym_type) {
-			t_llll *slots_to_erase = llll_get();
-			change_slot_type(r_ob, slotnum, slot_type_to_symbol((e_slot_types)atom_getlong(av)), slots_to_erase);
-			notationobj_erase_slots_from_llll(r_ob, slots_to_erase);
-			llll_free(slots_to_erase);
+			change_slot_type(r_ob, slotnum, slot_type_to_symbol((e_slot_types)atom_getlong(av)));
+        } else if (attr->name == _llllobj_sym_temporalmode) {
+            change_slot_temporalmode(r_ob, slotnum, slot_temporalmode_to_symbol((e_slot_temporalmodes)atom_getlong(av)));
+        } else if (attr->name == _llllobj_sym_extend) {
+            r_ob->slotinfo[slotnum].extend_beyond_tails = atom_getlong(av);
+            notationobj_slot_remove_extensions(r_ob, slotnum);
+            slot_check_domain(r_ob, slotnum);
 		} else if (attr->name == _llllobj_sym_width || attr->name == _llllobj_sym_height) {
-			if (atom_gettype(av) == A_SYM)
-				atom_setfloat(av, -1.);
+            if (atom_gettype(av) == A_SYM) {
+                if (atom_getsym(av) == _llllobj_sym_auto)
+                    atom_setfloat(av, -2.);
+                else if (atom_getsym(av) == _llllobj_sym_duration)
+                    atom_setfloat(av, -3.);
+                else
+                    atom_setfloat(av, -1.);
+            }
 		}
 	} else if (attr->owner_type == k_CHORD) {
 		if (attr->name == _llllobj_sym_onset) {
@@ -1479,7 +1512,7 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 	}
 }
 
-long bach_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr)
+long bach_attr_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr)
 {
     t_notation_obj *r_ob = (man->bach_managing ? (t_notation_obj *)man->owner : NULL);
 	if (attr->inactive)
@@ -1510,8 +1543,17 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 			if (attr->attr_type == k_BACH_ATTR_DOUBLE && *((double *)field) < 0) {
 				*ac = 1;
 				*av = (t_atom *)bach_newptr(sizeof(t_atom));
-				atom_setsym(*av, _llllobj_sym_temporal);
+                atom_setsym(*av, *((double *)field) == -2 ? _llllobj_sym_auto : _llllobj_sym_duration);
 				return;
+            } else {
+                t_slotinfo *slotinfo = (t_slotinfo *)obj;
+                if (slotinfo->slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
+                    *ac = 2;
+                    *av = (t_atom *)bach_newptr(2 * sizeof(t_atom));
+                    atom_setfloat(*av, *((double *)field));
+                    atom_setsym(*av + 1, gensym("ms"));
+                    return;
+                }
 			}
 		} else if (attr->name == _llllobj_sym_height) {
 			if (attr->attr_type == k_BACH_ATTR_DOUBLE && *((double *)field) < 0) {
@@ -1725,7 +1767,7 @@ void close_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager *man)
 		
     if (r_ob) {
         recompute_total_length(r_ob);
-        invalidate_notation_static_layer_and_repaint(r_ob);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }
 }
 
@@ -1737,7 +1779,7 @@ long handle_mousewheel_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_
         if (pt.y >= CONST_BACH_INSPECTOR_ITEM_UY_START_PAD * (r_ob ? r_ob->zoom_y : 1)) {
 			man->bach_inspector_scrollbar_pos -= y_inc/5;
 			clip_double(&man->bach_inspector_scrollbar_pos, 0, 1);
-			if (r_ob) invalidate_notation_static_layer_and_repaint(r_ob);
+			if (r_ob) notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 			jbox_redraw((t_jbox *)man->inspector_ui);
 			return 1;
 		}
@@ -1750,7 +1792,7 @@ long handle_doubleclick_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector
 {
 	if (man->active_bach_inspector_item) {
 		t_bach_attribute *attr = pt_to_attribute_to_edit(man, patcherview, pt);
-		if (attr && (attr->display_type == k_BACH_ATTR_DISPLAY_CHAR || attr->display_type == k_BACH_ATTR_DISPLAY_TEXT) && !bach_inactive(man, man->active_bach_inspector_item, attr)) {
+		if (attr && (attr->display_type == k_BACH_ATTR_DISPLAY_CHAR || attr->display_type == k_BACH_ATTR_DISPLAY_TEXT) && !bach_attr_inactive(man, man->active_bach_inspector_item, attr)) {
 			start_editing_bach_attribute(r_ob, man, patcherview, attr);
 			return 1;
 		}
@@ -1773,7 +1815,7 @@ long handle_mousemove_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			if ((t_jbox *)man->inspector_ui)
 				jbox_redraw((t_jbox *)man->inspector_ui);
 			else 
-				invalidate_notation_static_layer_and_repaint(r_ob);
+				notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 		}
 	}
 	return 0;
@@ -1799,7 +1841,7 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			}
 		} 
 		
-		if (man->active_inspector_enumindex && !bach_inactive(man, man->active_bach_inspector_item, man->active_inspector_enumindex)) {
+		if (man->active_inspector_enumindex && !bach_attr_inactive(man, man->active_bach_inspector_item, man->active_inspector_enumindex)) {
 			if (pt.y > man->active_inspector_enumindex_rect.y && pt.y < man->active_inspector_enumindex_rect.y + man->active_inspector_enumindex_rect.height &&
 				pt.x > man->active_inspector_enumindex_rect.x && pt.x < man->active_inspector_enumindex_rect.x + man->active_inspector_enumindex_rect.width) {
 				t_atom av;
@@ -1809,14 +1851,14 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 				set_bach_attr_and_process_from_ac_av(man, man->active_bach_inspector_item, man->active_inspector_enumindex, 1, &av, true);
 				man->active_inspector_enumindex = NULL;
                 if (r_ob)
-                    invalidate_notation_static_layer_and_repaint(r_ob);
+                    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 				return 1;
 			} else {
 				man->active_inspector_enumindex = NULL;
                 if (r_ob)
-                    invalidate_notation_static_layer_and_repaint(r_ob);
+                    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 			}
-		} else if (man->active_inspector_color && !bach_inactive(man, man->active_bach_inspector_item, man->active_inspector_color)) {
+		} else if (man->active_inspector_color && !bach_attr_inactive(man, man->active_bach_inspector_item, man->active_inspector_color)) {
 			// to do
 			
 			if (pt.y > man->active_inspector_color_palette_rect.y && pt.y < man->active_inspector_color_palette_rect.y + man->active_inspector_color_palette_rect.height &&
@@ -1834,7 +1876,7 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			} else {
 				man->active_inspector_color = NULL;
                 if (r_ob)
-                    invalidate_notation_static_layer_and_repaint(r_ob);
+                    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 			}
 		} else {
 			
@@ -1843,7 +1885,7 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			t_atom *av = NULL;
 			void *elem = man->active_bach_inspector_item;
 			
-			if (attr && !bach_inactive(man, elem, attr)) {
+			if (attr && !bach_attr_inactive(man, elem, attr)) {
 				
 				if (r_ob)
 					set_mousedown(r_ob, attr, k_BACH_INSPECTOR_ITEM);
@@ -1864,7 +1906,7 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 						atom_setlong(av, atom_getlong(av) ? 0 : 1);
 					set_bach_attr_and_process_from_ac_av(man, elem, attr, ac, av, true);
                     if (r_ob)
-                        invalidate_notation_static_layer_and_repaint(r_ob);
+                        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 					bach_freeptr(av);
 					return 1;
 				
@@ -1872,14 +1914,14 @@ long handle_mousedown_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 					man->active_inspector_enumindex = attr;
 					man->active_inspector_enumindex_mouseover_idx = -1;
                     if (r_ob)
-                        invalidate_notation_static_layer_and_repaint(r_ob);
+                        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 					
 				} else if (attr->display_type == k_BACH_ATTR_DISPLAY_COLOR) {
 					t_jrgba color = get_bach_attribute_as_color(man, elem, attr);
 					man->active_inspector_color = attr;
 					man->active_inspector_top_right_color = get_01normalized_color(color);
                     if (r_ob)
-                        invalidate_notation_static_layer_and_repaint(r_ob);
+                        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 				}
 				
 				bach_freeptr(av);
@@ -1947,7 +1989,7 @@ long handle_mousedrag_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 					atom_setlong(&av, attr->float_dragging_value);
 				
 				bach_set_attr(man, elem, attr, 1, &av);
-				invalidate_notation_static_layer_and_repaint(r_ob);
+				notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 				
 				if (man->inspector_ui)
 					man->inspector_ui->floatdragging_y = pt.y;
@@ -1960,7 +2002,7 @@ long handle_mousedrag_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			
 			man->bach_inspector_scrollbar_delta_y += pt.y - (man->inspector_ui ? man->inspector_ui->floatdragging_y : r_ob->floatdragging_y);
 			man->bach_inspector_scrollbar_pos = CLAMP(man->bach_inspector_scrollbar_delta_y/(needed_height - real_height), 0., 1.);
-			invalidate_notation_static_layer_and_repaint(r_ob);
+			notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 
 			if (man->inspector_ui)
 				man->inspector_ui->floatdragging_y = pt.y;
@@ -1994,7 +2036,7 @@ long handle_mousedrag_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			atom_setfloat(av+2, newcolor.blue);
 			atom_setfloat(av+3, newcolor.alpha);
 			bach_set_attr(man, man->active_bach_inspector_item, man->active_inspector_color, 4, av);
-			invalidate_notation_static_layer_and_repaint(r_ob);
+			notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 		} else if (mousedown_obj_type == k_BACH_INSPECTOR_COLOR_SPECTRUM && man->active_inspector_color) {
 			t_atom av[4];
 			double xx, yy;
@@ -2014,7 +2056,7 @@ long handle_mousedrag_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_m
 			atom_setfloat(av+2, newcolor.blue);
 			atom_setfloat(av+3, newcolor.alpha);
 			bach_set_attr(man, man->active_bach_inspector_item, man->active_inspector_color, 4, av);
-			invalidate_notation_static_layer_and_repaint(r_ob);
+			notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
 		}
 	}
 	return 0;
@@ -2141,7 +2183,7 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                             switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)firstmeasure);
                     }
                 }
-                invalidate_notation_static_layer_and_repaint(r_ob);
+                notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
             }
 			return 1;
             
@@ -2164,7 +2206,7 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                 } else if (man->active_bach_inspector_obj_type == k_MEASURE) {
                     switch_bach_inspector_for_notation_item(r_ob, (t_notation_item *)((t_measure *)item)->voiceparent);
                 }
-                invalidate_notation_static_layer_and_repaint(r_ob);
+                notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
             } else
                 close_bach_inspector(r_ob, man);
 			return 1;
@@ -2200,7 +2242,7 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                     long num = ((t_slotinfo *)item)->slot_num;
                     switch_bach_inspector(r_ob, man, &r_ob->slotinfo[MAX(0, num - 1)], k_SLOTINFO);
                 }
-                invalidate_notation_static_layer_and_repaint(r_ob);
+                notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
             }
 			return 1;
         } else if (keycode == JKEY_RIGHTARROW || (keycode == JKEY_TAB && modifiers == eShiftKey && man->active_bach_inspector_obj_type == k_SLOTINFO)) {
@@ -2234,7 +2276,7 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
                     long num = ((t_slotinfo *)item)->slot_num;
                     switch_bach_inspector(r_ob, man, &r_ob->slotinfo[MIN(CONST_MAX_SLOTS - 1, num + 1)], k_SLOTINFO);
                 }
-                invalidate_notation_static_layer_and_repaint(r_ob);
+                notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
             }
 			return 1;
         } else if (keycode == JKEY_DOWNARROW) {

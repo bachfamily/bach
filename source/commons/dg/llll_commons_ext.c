@@ -134,9 +134,12 @@ t_llll *llll_subllll(t_llllelem *from, t_llllelem *to)
 {
 	t_llll *ll;
 	t_llllelem *elem;
+    
+    if (!from || !to)
+        return llll_get();
 
 	if (from->l_parent != to->l_parent || !from->l_parent)
-		return NULL;
+		return llll_get();
 	
 	ll = llll_get();
 	for (elem = from; elem; elem = elem->l_next) {
@@ -1585,7 +1588,7 @@ double get_integral_distance_with_original(t_pts *points, char *taken, long num_
 
 		if (i < num_points) {
 			for (j = i_fix + 1; j <= i; j++) {
-				double interp = rescale_with_slope(points[j].x, points[i_fix].x, points[i].x, points[i_fix].y, points[i].y, 0., false); // no slope
+				double interp = rescale(points[j].x, points[i_fix].x, points[i].x, points[i_fix].y, points[i].y); // no slope
 				diff_with_interpolation[j] = points[j];
 				diff_with_interpolation[j].y = fabs(diff_with_interpolation[j].y - interp);
 			}
@@ -2239,7 +2242,7 @@ t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values,
 		while (right + 1 < size && pts[right].x < this_x)
 			right ++;
 		
-		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, false);
+		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
 		
 		if (elem->l_prev) {
 			res += (this_y + prev_y) * (this_x - prev_x)/2.;
@@ -2301,7 +2304,7 @@ t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, 
 		for (i = 0; i < num_samples; i++) {
 			double this_x, this_y;
 			
-			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0, false);
+			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0);
 			
 			// finding left and right element 
 			while (left + 1 < size && pts[left+1].x < this_x)
@@ -2309,7 +2312,7 @@ t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, 
 			while (right + 1 < size && pts[right].x < this_x)
 				right ++;
 			
-			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, false);
+			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
 			
 			if (i >= 1) {
 				res += (this_y + prev_y) * (this_x - prev_x)/2.;
@@ -2362,7 +2365,7 @@ t_llll *derive_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, ch
 		while (right + 1 < size && pts[right].x < this_x)
 			right ++;
 		
-		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, false);
+		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
 		
 		if (elem->l_prev) {
 			res = (this_y - prev_y) / (this_x - prev_x);
@@ -2451,7 +2454,7 @@ t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, lon
 		for (i = 0; i < num_samples; i++) {
 			double this_x, this_y;
 			
-			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0, false);
+			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0);
 			
 			// finding left and right element 
 			while (left + 1 < size && pts[left+1].x < this_x)
@@ -2459,7 +2462,7 @@ t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, lon
 			while (right + 1 < size && pts[right].x < this_x)
 				right ++;
 			
-			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, false);
+			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
 			
 			if (i >= 1)
 				res = (this_y - prev_y) / (this_x - prev_x);

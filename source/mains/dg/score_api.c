@@ -538,7 +538,7 @@ void scoreapi_set_zoom(t_score *x, double z)
 {
 	change_zoom((t_notation_obj *) x, (z > 1.) ? z : 1.);
 	redraw_hscrollbar((t_notation_obj *)x, 0);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void scoreapi_set_vzoom(t_score *x, double z)
@@ -552,7 +552,7 @@ void scoreapi_set_vzoom(t_score *x, double z)
 	x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
 	//		post("supposed: %f. this: %f.--> zoom %f", supposedheight, height, x->r_ob.zoom_y);
 	calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void scoreapi_set_noteheads_font(t_score *x, t_symbol *font)
@@ -996,7 +996,7 @@ void recompute_all_except_for_beamings_and_autocompletion(t_score *x)
 	recalculate_all_utf_measure_timesignatures(x);
 	check_all_measures_ties(x);
 	set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	x->r_ob.need_recompute_chords_double_onset = true;
 }
 
@@ -1013,20 +1013,20 @@ void recompute_all(t_score *x)
 	recalculate_all_utf_measure_timesignatures(x);
 	check_all_measures_ties(x);
 	set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	x->r_ob.need_recompute_chords_double_onset = true;
 }
 
 void recompute_all_except_for_beamings_and_autocompletion_and_redraw(t_score *x)
 {
 	recompute_all_except_for_beamings_and_autocompletion(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void recompute_all_and_redraw(t_score *x) 
 {
 	recompute_all(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 /*
@@ -2891,7 +2891,7 @@ t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av){
 	compute_all_notes_approximations(x, true); 
 	recalculate_all_chord_parameters(x);
 	recalculate_all_beams_positions(x); // by calling this it will also validate the accidentals for all measures.
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	return err;
 }
 
@@ -3234,11 +3234,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
 						t_symbol *pivotsym = hatom_getsym(&pivot->l_hatom);
 						if (pivotsym == _llllobj_sym_slotinfo) {
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the set_slotinfo function
-							if (firstllll && firstllll->l_head) {
-								t_llll *slots_to_erase = set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
-								notationobj_erase_slots_from_llll((t_notation_obj *)x, slots_to_erase);
-								llll_free(slots_to_erase);
-							}
+							if (firstllll && firstllll->l_head)
+								set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
 						} else if (pivotsym == _llllobj_sym_commands) {
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the function
 							if (firstllll && firstllll->l_head)
@@ -3421,7 +3418,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
  	llll_free(wholescore);
 	
 	update_hscrollbar((t_notation_obj *)x, 0);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 
 #ifdef CONFIGURATION_Development
 	verbose_print(x);
@@ -3487,7 +3484,7 @@ void score_snap_pitch_to_grid(t_score *x, t_symbol *s, long argc, t_atom *argv)
 		}
 	}
 	unlock_general_mutex((t_notation_obj *)x);	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 
@@ -3550,7 +3547,7 @@ void clear_score_body(t_score *x, long voicenum)
 #endif
 	update_hscrollbar((t_notation_obj *)x, 0);
 	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 
@@ -4011,7 +4008,7 @@ void turn_chord_into_rest_or_into_note(t_score *x, t_chord *chord, double mc) {
 		x->r_ob.notation_cursor.measure->need_recompute_beamings = true;
 		set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
 		perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_TIES + k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	}
 }
 
@@ -4116,7 +4113,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
 		curr_nt = curr_nt->next;
 	}
 	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	
 	return this_ch;
 }
@@ -4271,7 +4268,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 							if (atom_gettype(slots + s + 2) == A_SYM) { // it MUST be a A_SYM
 								if (strcmp(atom_getsym(slots + s + 2)->s_name, "function") == 0) { // slot function
 									long num_pts = atom_getlong(slots + s + 3);
-									temp->slot[j].length = 0; // we'll put it at the end (just to avoid that append_slotitem get crazy)
+									temp->slot[j].length = 0; // we'll put it at the end (just to avoid that slotitem_append get crazy)
 									s += 4;
 									for (i = 0; i < num_pts; i++) { // add each point 
 										double x_val, y_val, slope;
@@ -4284,7 +4281,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 										point = (t_pts *)bach_newptr(sizeof(t_pts));
 										point->x = x_val; point->y = y_val; point->slope = slope;
 										thisitem->item = point;
-										append_slotitem(thisitem); // points are ordered! we just have to append them
+										slotitem_append(thisitem); // points are ordered! we just have to append them
 									}
 									temp->slot[j].length = num_pts; // number of points
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "long") == 0) { // slot long
@@ -4294,7 +4291,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 									*val = atom_getlong(slots + s + 3);
 									s += 4;
 									thisitem->item = val;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "float") == 0) { // slot float
 									double *val = (double *)bach_newptr(sizeof(double));
 									t_slotitem *thisitem = build_slotitem((t_notation_obj *)x, &(temp->slot[j]));
@@ -4302,7 +4299,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 									s += 4;
 									thisitem->item = val;
 									temp->slot[j].length = 0;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "longlist") == 0) { // slot longlist
 									long num_numbers = atom_getlong(slots + s + 3); // number of numbers
 									temp->slot[j].length = 0;
@@ -4313,7 +4310,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 										*val = atom_getlong(slots + s);
 										s += 1;
 										thisitem->item = val;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
 									}
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "floatlist") == 0) { // slot floatlist
 									long num_numbers = atom_getlong(slots + s + 3); // number of numbers
@@ -4325,7 +4322,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 										*val = atom_getfloat(slots + s);
 										s += 1;
 										thisitem->item = val;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
 									}
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "text") == 0) { // slot text
 									long num_chars = atom_getlong(slots + s + 3); // number of chars
@@ -4334,8 +4331,8 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 									strncpy_zero(text, atom_getsym(slots + 4)->s_name, num_chars + 1);
 									s += 5;
 									bach_copyptr(thisitem->item, text, num_chars * sizeof(char));
-									temp->slot[j].length = 0; // just to avoid that append_slotitem (which incrase automatically the # of items) get crazy
-									append_slotitem(thisitem);
+									temp->slot[j].length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+									slotitem_append(thisitem);
 									temp->slot[j].length = num_chars;
 									bach_freeptr(text);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "filelist") == 0) { // slot filelist
@@ -4359,7 +4356,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 										thisitem->item = file;
 										if (i + 1 == act_file_index)
                                             slot_set_active_item(&temp->slot[j], thisitem);
-										append_slotitem(thisitem); // files are ordered! we just have to append them
+										slotitem_append(thisitem); // files are ordered! we just have to append them
 									}
 								} else { // undefined or wrongly defined slot
 									s += 3;
@@ -4774,7 +4771,7 @@ char merge(t_score *x, t_rational threshold_sym, double threshold_cents, char ga
 	
 	if (changed) {
 		check_correct_scheduling((t_notation_obj *)x, false);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	}
 	
 	return changed;
@@ -5288,7 +5285,7 @@ long score_oksize(t_score *x, t_rect *newrect)
 		reset_all_slurs_position(x);
 		
 		x->r_ob.firsttime = true;
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		return 1;
 	}
 	return 0;
@@ -5377,7 +5374,7 @@ void scoreapi_initscore_step02(t_score *x)
 	x->can_need_repaint = false;
 	
 	recompute_all(x); // needed here, to have the right domain (after a draw)
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void delete_measure_tempi(t_score *x, t_measure *measure)
@@ -10512,17 +10509,33 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 case k_NOTE:
                 {
                     t_note *activenote = (t_note *)x->r_ob.active_slot_notationitem;
-                    if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth < 0) { //temporal slot
-                        x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
+                    
+                    x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
+
+                    if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1. ||
+                        (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && !slot_can_extend_beyond_note_tail((t_notation_obj *)x, x->r_ob.active_slot_num))) { // duration
                         if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_singleslotfortiednotes) {
                             t_note *lasttied = note_get_last_in_tieseq(activenote);
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, lasttied->parent->parent->tuttipoint_reference->offset_ux + lasttied->parent->stem_offset_ux + lasttied->parent->duration_ux);
                         } else {
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux + activenote->parent->duration_ux);
                         }
+                        
+                    } else if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { // auto
+                        double max_x = slot_get_max_x((t_notation_obj *)x, notation_item_get_slot((t_notation_obj *)x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num), x->r_ob.active_slot_num);
+                        
+                        if (slot_is_temporal_absolute((t_notation_obj *)x, x->r_ob.active_slot_num)) {
+                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + MAX(max_x, notation_item_get_duration_ms((t_notation_obj *)x, (t_notation_item *)activenote)));
+                        } else {
+                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + rescale(MAX(max_x, 1.), x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[0], x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[1], 0, notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem)));
+                        }
+                        
                     } else {
-                        x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
-                        x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
+                        if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
+                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth);
+                        } else {
+                            x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
+                        }
                     }
                 }
                     break;
@@ -10533,7 +10546,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux));
                         x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->parent->width_ux);
                     } else {
-                        if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth < 0) { //temporal slot
+                        if (slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
                             x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->stem_offset_ux));
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->stem_offset_ux + activechord->duration_ux);
                         } else {
@@ -10665,7 +10678,7 @@ void scoreapi_paint(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
 	
 	if (x->need_repaint) { // in some very special cases (particular tuplets) we need to draw at least 2 times to have the correct result
 		x->can_need_repaint = false;
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	} else if (x->r_ob.need_send_rebuild_done_after_paint) {
 #ifdef BACH_MAX
 		// sending rebuild done (will be deferred_low!!!)
@@ -11278,10 +11291,10 @@ void score_delete_voice(t_score *x, t_scorevoice *voice)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 	recompute_all(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
 
@@ -11370,7 +11383,7 @@ void score_swap_voices(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
 
@@ -11497,7 +11510,7 @@ void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this
             perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_FROM_SCRATCH);
         }
         
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 }
 

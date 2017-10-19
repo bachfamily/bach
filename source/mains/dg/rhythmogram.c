@@ -3284,7 +3284,7 @@ void rhythmogram_paint(t_rhythmogram *x, t_object *view){
 		else if (x->mode == k_MODE_RHYTHMOGRAM || x->mode == k_MODE_AUTOCORRELOGRAM)
 			paint_line(g, build_jrgba(0.5, 0.5, 0.5, 1.), 0, x->curr_mouse_pt.y, rect.width, x->curr_mouse_pt.y, 0.5);
 		else if (x->mode == k_MODE_RHYTHMOSCOPE || x->mode == k_MODE_AUTOCORRELATION) {
-			double yy = rescale_with_slope(x->sampling_vals[this_idx_for_rhythmoscope_circle], 0, x->max_displayed_amplitude_rhythmoscope, rect.height, 0, 0, 0);
+			double yy = rescale_with_slope(x->sampling_vals[this_idx_for_rhythmoscope_circle], 0, x->max_displayed_amplitude_rhythmoscope, rect.height, 0, 0);
 			paint_line(g, build_jrgba(0.5, 0.5, 0.5, 1.), x->curr_mouse_pt.x, 0, x->curr_mouse_pt.x, rect.height, 0.5);
 			paint_circle_filled(g, x->j_color, x->curr_mouse_pt.x, yy, 2.3);
 			if (samples_graphical_delta_x >= 3) {
@@ -3339,9 +3339,9 @@ void rhythmogram_mousemove(t_rhythmogram *x, t_object *patcherview, t_pt pt, lon
 		
 	if (x->show_hint){
 		if (x->mode == k_MODE_RHYTHMOGRAM || x->mode == k_MODE_AUTOCORRELOGRAM || x->mode == k_MODE_PARTIAL_TRACKING || x->mode == k_MODE_TS_DETECTOR) {
-			x->curr_hint_bpm = rescale_with_slope(pt.y, 0, x->height, x->max_displayed_bpm, 0, 0, 0);
+			x->curr_hint_bpm = rescale_with_slope(pt.y, 0, x->height, x->max_displayed_bpm, 0, 0);
 		} else if (x->mode == k_MODE_RHYTHMOSCOPE || x->mode == k_MODE_AUTOCORRELATION){
-			x->curr_hint_bpm = rescale_with_slope(pt.x, 0, x->width, x->min_displayed_bpm, x->max_displayed_bpm, 0, 0);
+			x->curr_hint_bpm = rescale_with_slope(pt.x, 0, x->width, x->min_displayed_bpm, x->max_displayed_bpm, 0);
 		}
 		x->curr_hint_hz = x->curr_hint_bpm / 60;
 		
