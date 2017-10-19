@@ -2241,8 +2241,22 @@
 					"tags" : [ "message", "operate", "on", "selection", "slot", "moveslot", "copyslot", "move", "copy" ],
 					"title" : [ "Copying or moving slots" ]
 				},
-				"Slotchange" : {
-					"filename" : [ "bach.help.notation.messages.30_operate on selection.18_slotchange.maxpat" ],
+				"A_slotitemadddelete" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.17a_slotitemadddelete.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "changeslotitem", "slot+content+syntax", "eraseslot" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "append", "prepend", "delete", "add", "erase", "clear", "single", "value", "element", "item", "slotitem", "point", "number", "function", "insert", "appendslotitem", "slotitem", "prependslotitem", "deleteslotitem", "insertslotitem" ],
+					"title" : [ "Inserting or deleting slot elements" ]
+				},
+				"B_slotitemadddeletefunc" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.17b_slotitemadddeletefunc.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "insertslotitem", "changeslotitem" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "append", "prepend", "insert", "function", "point", "time", "tag", "temporal", "spat", "3dfunction", "dynfilter", "insertslotitem" ],
+					"title" : [ "Inserting function points" ]
+				},
+				"Slotitemchange" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.18_slotitemchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "changeslotitem", "slot+content+syntax" ],
 					"tags" : [ "message", "operate", "on", "selection", "slot", "change", "single", "value", "changeslotitem", "all" ],

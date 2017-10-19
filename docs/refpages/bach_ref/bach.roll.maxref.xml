@@ -1292,6 +1292,19 @@
 				of the notes near the beginning can be properly displayed. Also see the <m>additionalstartpad</m> attribute.
 			</description>
 		</method>
+		<method name="appendslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Append a slot element at the end of a slot
+			</digest>
+			<description>
+				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+			</description>
+		</method>
 		<method name="bang">
 			<arglist />
 			<digest>
@@ -1452,7 +1465,7 @@
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
-				<br />				See also:<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="checkdynamics">
@@ -1696,6 +1709,18 @@
 				The name(s) can be introduced as a list, as argument. If more than one marker match such name(s), only the first
 				one (in temporal order) is deleted.
 				<br />				See also:<m>addmarker</m>,<m>clearmarkers</m>,<m>delete</m><br />
+			</description>
+		</method>
+		<method name="deleteslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="element_position" optional="0" type="int" />
+			<digest>
+				Delete the slot element at a given position of a slot
+			</digest>
+			<description>
+				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> </b><br />				<br />
+				A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="deletevoice">
@@ -3344,6 +3369,22 @@
 				<br />				See also:<m>inscreen</m><br />
 			</description>
 		</method>
+		<method name="insertslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="element_position" optional="0" type="int" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Insert a slot element at a given position in a slot
+			</digest>
+			<description>
+				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
+				The position may be specified explicitly (for slots that do not bear X-axis information) or
+				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+			</description>
+		</method>
 		<method name="insertvoice">
 			<arg name="voice_number" optional="0" type="int" />
 			<arg name="voice_or_ref" optional="1" type="llll" />
@@ -4738,6 +4779,19 @@
 				<br />				See also:<m>stop</m>,<m>pause</m>,<m>play</m><br />
 			</description>
 		</method>
+		<method name="prependslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Prepend a slot element at the beginning of a slot
+			</digest>
+			<description>
+				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+			</description>
+		</method>
 		<method name="quantize">
 			<arg name="selective_quantize_options" optional="1" type="list" />
 			<digest>
@@ -5735,7 +5789,7 @@
 				• <b>voice = 2</b>   <i>→ exactly the same</i><br />
 				• <b>voice = voice + 1</b>   <i>→ shift voices</i><br />
 				• <b>voice = "random(1, 4)"</b>   <i>→ assign voice randomly between 1 and 3</i><br />
-				• <b>voice = (3 - voice)*(voice &lt;= 2) + voice * (voice &gt; 2)fe</b>   <i>→ swap first two voices</i><br />
+				• <b>voice = (3 - voice)*(voice &lt;= 2) + voice * (voice &gt; 2)</b>   <i>→ swap first two voices</i><br />
 				<br />
 				The word <m>voice</m>, followed by a number, sets the new voice number for all
 				the selected notes or chords.
@@ -5881,6 +5935,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidentals Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6160,6 +6215,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulations Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6270,7 +6326,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="7" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="8" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Background Slot Font Size" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
@@ -7205,6 +7261,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Region" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -7426,6 +7483,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -9101,6 +9159,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Staff Lines" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -9277,6 +9336,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Spacing" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>

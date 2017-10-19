@@ -1809,6 +1809,19 @@
 				<br />				See also:<m>llll</m>,<m>appendmeasure</m>,<m>insertmeasure</m>,<m>insertmeasures</m>,<m>deletemeasures</m><br />
 			</description>
 		</method>
+		<method name="appendslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Append a slot element at the end of a slot
+			</digest>
+			<description>
+				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+			</description>
+		</method>
 		<method name="autobeam">
 			<arglist />
 			<digest>
@@ -1874,6 +1887,63 @@
 				If the voice have the same tempi and time signatures, this message force all voices to end together
 				(otherwise this is not necessarily the case). <br />
 				If an integer argument is provided, then all voices are padded so to have that number of measures.
+			</description>
+		</method>
+		<method name="cents">
+			<arg name="velocity" optional="0" type="number/llll/anything" />
+			<digest>
+				Modify the pitch of selected items
+			</digest>
+			<description>
+				Syntax: <b>cents <m>&lt;number/llll/anything: velocity&gt;</m> </b><br />
+				Examples:<br />
+				• <b>cents 6000</b>   <i>→ change selected notes to middle C's</i><br />
+				• <b>cents = 6000</b>   <i>→ exactly the same</i><br />
+				• <b>cents = cents * 1.2</b>   <i>→ stretch pitches</i><br />
+				• <b>cents = "random(48, 73)*100"</b>   <i>→ assign pitch randomly</i><br />
+				• <b>cents = 6000 + (cents % 1200)</b>   <i>→ collapse to middle octave</i><br />
+				<br />
+				The word <m>cents</m>, followed by a number, sets the new pitch, in midicents, for all
+				the selected notation items.
+				If a list of numbers is given as arguments, this is applied to selected chords notewise: bottommost note will be assigned
+				the first value, the one above will be assigned the next one, and so on. If less values than selected notes in the chord
+				are given, last value is padded. <br /> <br />
+				Instead of MIDIcents (or cents), one can also instert pitches.
+				The syntax for the single note must be an unique symbol (no spaces) with:
+				<b><m>notename</m>-<m>optional:accidental</m>-<m>octave_number</m></b>.
+				Dashes are only set in order to separate parts of the symbol, but must not be included in the symbol. <br /> <br />
+				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
+				They and should be immediately followed by the possible accidentals and the
+				octave number, without any space (e.g. <b>D#4</b>). <br />
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
+				middle C, 1/16 tone up.
+				<br /> <br />
+				Any of the numbers in the cents syntax can be replaced by an llll containing a relative modification of the existing cents.
+				If a single number is inserted, this can be replaced by a generic equation.
+				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
+				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
+				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
+				value of the parameter, while <b>(2. times)</b> multiplies it by two.
+				<br /> <br />
+				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
+				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
+				The standard symbolic variables are available. <br />
+				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
+				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
+				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
+				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
+				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
+				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
+				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
+				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
+				one cannot apply different equations to different notes inside the chord.
+				<br /> <br />
 			</description>
 		</method>
 		<method name="cents">
@@ -1953,63 +2023,6 @@
 				Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
-				<br /> <br />
-			</description>
-		</method>
-		<method name="cents">
-			<arg name="velocity" optional="0" type="number/llll/anything" />
-			<digest>
-				Modify the pitch of selected items
-			</digest>
-			<description>
-				Syntax: <b>cents <m>&lt;number/llll/anything: velocity&gt;</m> </b><br />
-				Examples:<br />
-				• <b>cents 6000</b>   <i>→ change selected notes to middle C's</i><br />
-				• <b>cents = 6000</b>   <i>→ exactly the same</i><br />
-				• <b>cents = cents * 1.2</b>   <i>→ stretch pitches</i><br />
-				• <b>cents = "random(48, 73)*100"</b>   <i>→ assign pitch randomly</i><br />
-				• <b>cents = 6000 + (cents % 1200)</b>   <i>→ collapse to middle octave</i><br />
-				<br />
-				The word <m>cents</m>, followed by a number, sets the new pitch, in midicents, for all
-				the selected notation items.
-				If a list of numbers is given as arguments, this is applied to selected chords notewise: bottommost note will be assigned
-				the first value, the one above will be assigned the next one, and so on. If less values than selected notes in the chord
-				are given, last value is padded. <br /> <br />
-				Instead of MIDIcents (or cents), one can also instert pitches.
-				The syntax for the single note must be an unique symbol (no spaces) with:
-				<b><m>notename</m>-<m>optional:accidental</m>-<m>octave_number</m></b>.
-				Dashes are only set in order to separate parts of the symbol, but must not be included in the symbol. <br /> <br />
-				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
-				They and should be immediately followed by the possible accidentals and the
-				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
-				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
-				middle C, 1/16 tone up.
-				<br /> <br />
-				Any of the numbers in the cents syntax can be replaced by an llll containing a relative modification of the existing cents.
-				If a single number is inserted, this can be replaced by a generic equation.
-				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
-				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
-				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
-				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
-				value of the parameter, while <b>(2. times)</b> multiplies it by two.
-				<br /> <br />
-				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
-				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
-				The standard symbolic variables are available. <br />
-				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
-				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
-				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
-				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
-				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
-				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
-				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
-				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
-				one cannot apply different equations to different notes inside the chord.
 				<br /> <br />
 			</description>
 		</method>
@@ -2464,6 +2477,18 @@
 				The <m>deletemeasures</m> message simply deletes all the selected measures.
 				Differently from the <m>delete</m> command, all the measures will be deleted, not just their content.
 				<br />				See also:<m>delete</m><br />
+			</description>
+		</method>
+		<method name="deleteslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="element_position" optional="0" type="int" />
+			<digest>
+				Delete the slot element at a given position of a slot
+			</digest>
+			<description>
+				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> </b><br />				<br />
+				A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="deletevoice">
@@ -4773,6 +4798,22 @@
 				<br />				See also:<m>appendmeasure</m>,<m>appendmeasures</m>,<m>insertmeasure</m>,<m>deletemeasures</m><br />
 			</description>
 		</method>
+		<method name="insertslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="element_position" optional="0" type="int" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Insert a slot element at a given position in a slot
+			</digest>
+			<description>
+				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
+				The position may be specified explicitly (for slots that do not bear X-axis information) or
+				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+			</description>
+		</method>
 		<method name="insertvoice">
 			<arg name="voice_number" optional="0" type="int" />
 			<arg name="voice_or_ref" optional="1" type="int/llll" />
@@ -5891,22 +5932,6 @@
 		<method name="name">
 			<arg name="names" optional="0" type="llll" />
 			<digest>
-				Append name(s) to selected items
-			</digest>
-			<description>
-				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
-				Examples:<br />
-				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
-				• <b>name (Ringo Starr) ((Low High Snare) (Sizzle Crash))</b>   <i>→ append complex llll name</i><br />
-				<br />
-				Works like the <m>name</m> message, but appends the given names
-				to the already existing ones (see <m>name</m>).
-				<br />				See also:<m>name</m>,<m>clearnames</m><br />
-			</description>
-		</method>
-		<method name="name">
-			<arg name="names" optional="0" type="llll" />
-			<digest>
 				Assign name(s) to selected items
 			</digest>
 			<description>
@@ -5933,6 +5958,22 @@
 				If a <b>@progeny 1</b> attribute is added and chords are selected, not only the chord name is changed, but also the name of all its notes.
 				This is handy for instance, if one needs to send <b>name @progeny 1</b> to delete all names of selected chords and notes.
 				<br />				See also:<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
+			</description>
+		</method>
+		<method name="name">
+			<arg name="names" optional="0" type="llll" />
+			<digest>
+				Append name(s) to selected items
+			</digest>
+			<description>
+				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
+				Examples:<br />
+				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
+				• <b>name (Ringo Starr) ((Low High Snare) (Sizzle Crash))</b>   <i>→ append complex llll name</i><br />
+				<br />
+				Works like the <m>name</m> message, but appends the given names
+				to the already existing ones (see <m>name</m>).
+				<br />				See also:<m>name</m>,<m>clearnames</m><br />
 			</description>
 		</method>
 		<method name="nametoslot">
@@ -6543,6 +6584,19 @@
 				- redraw is only performed at each new event;  <br />
 				- the "pause" message won't work.  <br />
 				<br />				See also:<m>stop</m>,<m>pause</m>,<m>play</m><br />
+			</description>
+		</method>
+		<method name="prependslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Prepend a slot element at the beginning of a slot
+			</digest>
+			<description>
+				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="quantize">
@@ -8565,7 +8619,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="7" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="8" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Background Slot Font Size" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />

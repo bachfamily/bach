@@ -1556,7 +1556,27 @@
 	// to the point <b>(0.5 20 0)</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
 	
-	
+
+#define BACH_DOC_MESSAGE_APPENDSLOTITEM
+    // A <m>appendslotitem</m> message will append a specific element at the end of a slot.
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+
+#define BACH_DOC_MESSAGE_PREPENDSLOTITEM
+    // A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+#define BACH_DOC_MESSAGE_INSERTSLOTITEM
+    // A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
+    // The position may be specified explicitly (for slots that do not bear X-axis information) or
+    // dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+#define BACH_DOC_MESSAGE_DELETESLOTITEM
+    // A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+
+
+
 #define BACH_DOC_MESSAGE_LAMBDA
 	// The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 	// <m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,

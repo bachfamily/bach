@@ -298,6 +298,19 @@
 				<br />				See also:<m>changeslotitem</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
+		<method name="appendslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Append a slot element at the end of a slot
+			</digest>
+			<description>
+				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+			</description>
+		</method>
 		<method name="changeslotitem">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<arg name="element_index" optional="0" type="int" />
@@ -461,6 +474,18 @@
 				The behavior and arguments of <m>cut</m> are exaclty as <m>copy</m>, with the addition that the copied
 				content is subsequently deleted (see <m>copy</m> to know more).
 				<br />				See also:<m>copy</m>,<m>paste</m><br />
+			</description>
+		</method>
+		<method name="deleteslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="element_position" optional="0" type="int" />
+			<digest>
+				Delete the slot element at a given position of a slot
+			</digest>
+			<description>
+				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> </b><br />				<br />
+				A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="domain">
@@ -733,6 +758,22 @@
 				<br />				See also:<m>droplastundo</m>,<m>undo</m>,<m>redo</m><br />
 			</description>
 		</method>
+		<method name="insertslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="element_position" optional="0" type="int" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Insert a slot element at a given position in a slot
+			</digest>
+			<description>
+				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
+				The position may be specified explicitly (for slots that do not bear X-axis information) or
+				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+			</description>
+		</method>
 		<method name="int">
 			<arglist />
 			<digest>
@@ -981,6 +1022,19 @@
 				This number can be replaced with the "active" symbol, and the
 				slot content will be applied to the open slot window.
 				<br />				See also:<m>cut</m>,<m>copy</m><br />
+			</description>
+		</method>
+		<method name="prependslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Prepend a slot element at the beginning of a slot
+			</digest>
+			<description>
+				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="prev">
