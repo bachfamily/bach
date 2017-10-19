@@ -309,6 +309,7 @@
 #define CONST_SLOT_ARTICULATIONS_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_ARTICULATIONS
 #define CONST_SLOT_NOTEHEAD_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_NOTEHEAD
 #define CONST_SLOT_DYNAMICS_DEFAULT_UWIDTH 70				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_DYNAMICS
+#define CONST_SLOT_FUNCTION_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FUNCTION (when static)
 #define CONST_SLOT_FILELIST_DEFAULT_UWIDTH 150			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FILELIST
 #define CONST_SLOT_MATRIX_DEFAULT_UWIDTH 150			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_TOGGLEMATRIX, #k_SLOT_TYPE_INTMATRIX, #k_SLOT_TYPE_FLOATMATRIX
 #define CONST_SLOT_FILTER_DEFAULT_UWIDTH 200			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FILTER 
@@ -1339,6 +1340,20 @@ typedef enum _slot_types {
 } e_slot_types;
 
 
+/** Slot temporal modes.
+	@ingroup	slots
+ */
+
+typedef enum _slot_temporalmodes
+{
+    k_SLOT_TEMPORALMODE_NONE = 0,               ///< The slot is static (not temporal)
+    k_SLOT_TEMPORALMODE_RELATIVE = 1,           ///< The slot is temporal, and the temporal position is a relative value between the domain start (= note beginning) and the domain end (note end)
+    k_SLOT_TEMPORALMODE_MILLISECONDS = 2,       ///< The slot is temporal, and the temporal position is a ms position (0 being the note start)
+    k_SLOT_TEMPORALMODE_TIMEPOINTS = 3,         ///< The slot is temporal, and the temporal position is a timepoint (not yet supported)
+    k_NUM_SLOT_TEMPORALMODES                    ///< Number of slot temporal modes (NONE-type included).
+} e_slot_temporalmodes;
+
+
 /** Things to which a slot can be linked with.
 	@ingroup	slots
  */
@@ -1855,6 +1870,22 @@ typedef enum _slot_access_types
     k_SLOT_ACCESS_READONLY = 1,		///< Slot content can only be seen in slot window, can't be modified from the interface
     k_SLOT_ACCESS_CANT = 2,         ///< Slot window and slot content are not accessible
 } e_slot_access_types;
+
+
+/** Used by notation_item_change_slotitem()
+	@ingroup	slots
+ */
+typedef enum _slot_changeslotitem_modes
+{
+    k_CHANGESLOTITEM_MODE_MODIFY_ONE = 0,	///< Modify a single item
+    k_CHANGESLOTITEM_MODE_MODIFY_ALL = 1,	///< Modify all items
+    k_CHANGESLOTITEM_MODE_INSERT = 2,       ///< Insert an item at a given position
+    k_CHANGESLOTITEM_MODE_INSERT_AUTO = 3,       ///< Insert an item and automatically find the right position if needed (e.g. for function points)
+    k_CHANGESLOTITEM_MODE_APPEND = 4,       ///< Append an item
+    k_CHANGESLOTITEM_MODE_PREPEND = 5,      ///< Prepend an item
+    k_CHANGESLOTITEM_MODE_DELETE_ONE = 6,       ///< Delete an item
+    k_CHANGESLOTITEM_MODE_DELETE_ALL = 7,	///< Delete all items
+} e_slot_changeslotitem_modes;
 
 
 /** Play modes.
@@ -3593,6 +3624,8 @@ typedef struct _slotinfo
 	long		slot_num;								///< 0-based slot number
 	t_symbol	*slot_name;								///< Name of the slot
 	char		slot_type;								///< Type of the slot, must be one of #e_slot_types
+    char        slot_temporalmode;                      ///< Temporal mode of the slot, must be one of the #e_slot_temporalmodes
+    char        extend_beyond_tails;                    ///< Temporal slots can extend beyond note tails
     
 	double		slot_domain[2];							///< Domain of the slot (minimum and maximum value, only for #k_SLOT_TYPE_FUNCTION slots)
 	double		slot_domain_par;						///< Slope parameter (-1 to 1) which can desplay exponentially the slot domain
@@ -3600,7 +3633,8 @@ typedef struct _slotinfo
 	double		slot_range_par;							///< Slope parameter (-1 to 1) which can display exponentially the slot range (see #t_pts to know more about the slope)
 	double		slot_zrange[2];							///< Range of the 3rd dimension (the one "coming out from the screen) for #k_SLOT_TYPE_3DFUNCTION slots (minimum and maximum value)
 	double		slot_zrange_par;						///< Slope parameter (-1 to 1) which can display exponentially the of the 3rd dimension (the one "coming out from the screen) for #k_SLOT_TYPE_3DFUNCTION slots
-	
+
+    
     t_llll		*slot_repr;								///< Slot representation. This can be:
 														///< - a single symbol, such as "Hz", and will be understood as unit of measurement;
 														///< - a plain llll, such as "(John George Ringo)", which will be understood as enumeration content for
@@ -4581,8 +4615,8 @@ typedef struct _notation_obj
 												///< very same item. If nothing is being output, this is 0. 
 												///< More precisely, before outputting any thing from the playout, the #lambda_selected_item_ID is set, then its values are output,
 												///< and then the #lambda_selected_item_ID is unset (= set to 0). If the user closes the lambda loop, the #lambda_selected_item_ID is 
-												///< still set, and can be retrieven by any message accepting the lambda prefix (such as "lambda cents" or "lambda changeslotvalue").
-												///< This is thread safe, since if another thread deletes the object, when the "cents" or "changeslotvalue" function tries to retrieve
+												///< still set, and can be retrieven by any message accepting the lambda prefix (such as "lambda cents" or "lambda changeslotitem").
+												///< This is thread safe, since if another thread deletes the object, when the "cents" or "changeslotitem" function tries to retrieve
 												///< the notation item from its ID, it fails (item has been deleted).
 	
 	// expression evaluations
@@ -7627,7 +7661,7 @@ void quick_notation_obj_recompute_all_chord_parameters(t_notation_obj *r_ob);
 	@param		tempo		The tempo
 	@return		1 if the tempo is necessary, 0 if the score timings remain exactly the same without the tempo.
 */ 
-char is_tempo_necessary(t_tempo *tempo);
+char tempo_is_necessary(t_tempo *tempo);
 
 
 /**	Simply build a time signature from a numerator/denominator couple.
@@ -7717,6 +7751,27 @@ t_marker *get_marker_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllele
 // -----------------------------------
 
 
+/**	Tell if a given slot is temporal (of any kind).
+	@ingroup			slots
+	@param r_ob			The notation object
+	@param slotnum		The 0-based slot number
+	@return				1 if the slot is temporal, 0 otherwise
+ */
+char slot_is_temporal(t_notation_obj *r_ob, long slotnum);
+
+
+/**	Tell if a given slot is temporal in absolute mode (i.e. non-relative).
+	@ingroup			slots
+	@param r_ob			The notation object
+	@param slotnum		The 0-based slot number
+	@return				1 if the slot is temporal in absolute mode, 0 otherwise
+ */
+char slot_is_temporal_absolute(t_notation_obj *r_ob, long slotnum);
+
+// TBD
+char slot_can_extend_beyond_note_tail(t_notation_obj *r_ob, long slotnum);
+
+
 /**	Allocates the memory for a new #t_slotitem.
 	@ingroup			slots
 	@param r_ob			The notation object
@@ -7742,10 +7797,8 @@ t_slotitem *build_default_slotitem(t_notation_obj *r_ob, t_slot *parent, long sl
 	@param r_ob				The notation object
 	@param slot_num			Number (0-based) of the slot to modify
 	@param new_type			New type of the slot (as symbol)
-	@param slots_to_erase	llll which will be filled to (just declare it as t_llll *slot_to_erase, and then pass it to the function which will fill it)
-							If you don't need this list, just pass NULL
  */
-void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type, t_llll *slots_to_erase);
+void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type);
 
 
 /**	Convert the content of a slot (i.e. convert each note's slot content for a given slot) 
@@ -7758,7 +7811,7 @@ void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type, t
 	@return					1 if the conversion could not be performed (incompatible slots) and thus the slot content should be deleted.,
 							0 otherwise.
  */
-char convert_slot(t_notation_obj *r_ob, long slot_num, long old_slottype, long new_slottype);
+char convert_slot_type(t_notation_obj *r_ob, long slot_num, long old_slottype, long new_slottype);
 
 
 /**	Convert the content of a note's slot so that it matches a newly defined slot type.
@@ -7768,7 +7821,7 @@ char convert_slot(t_notation_obj *r_ob, long slot_num, long old_slottype, long n
 	@param slot_num			Number (0-based) of the slot to modify
 	@param conversion_type	0 for no conversion, 1 for conversion from long to double, 2 for conversion from double to long.
  */
-void convert_note_slot(t_notation_obj *r_ob, t_note *note, long slot_num, long conversion_type);
+void convert_note_slot_type(t_notation_obj *r_ob, t_note *note, long slot_num, long conversion_type);
 
 
 /**	Retrieve slot type as symbol from slot type as #e_slot_types
@@ -7785,6 +7838,14 @@ t_symbol *slot_type_to_symbol(e_slot_types slot_type);
 	@return		One of the #e_slot_types (e.g. #k_SLOT_TYPE_FUNCTION)
  */
 e_slot_types slot_symbol_to_type(t_symbol *type);
+
+
+
+// TBD
+void change_slot_temporalmode(t_notation_obj *r_ob, long slot_num, t_symbol *new_temporalmode);
+t_symbol *slot_temporalmode_to_symbol(e_slot_temporalmodes slot_temporalmode);
+e_slot_temporalmodes slot_symbol_to_temporalmode(t_symbol *temporalmode);
+void notationobj_slot_remove_extensions(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Get last item of a slot.
@@ -7816,7 +7877,7 @@ void slot_set_active_item(t_slot *slot, t_slotitem *item_to_be_set_as_active);
 	@param item			Pointer to the slotitem to insert
 	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void prepend_slotitem(t_slotitem *item);
+void slotitem_prepend(t_slotitem *item);
 
 
 /**	Insert a slotitem at the end of a slot.
@@ -7824,7 +7885,11 @@ void prepend_slotitem(t_slotitem *item);
 	@param item			Pointer to the slotitem to insert
  	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void append_slotitem(t_slotitem *item);
+void slotitem_append(t_slotitem *item);
+
+
+/// TBD
+void slotitem_insert_extended(t_notation_obj *r_ob, long slotnum, t_slotitem *item, e_slot_changeslotitem_modes mode, long insertion_position_0based);
 
 
 /**	Insert a slotitem between two existing slotitems.
@@ -7834,7 +7899,7 @@ void append_slotitem(t_slotitem *item);
 	@param next_item	Pointer to the right slotitem
 	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void insert_slotitem(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_item);
+void slotitem_insert(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_item);
 
 
 /**	Delete a slotitem from slot.
@@ -7843,7 +7908,7 @@ void insert_slotitem(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_i
 	@param	slot_num	The 0-based number of the slot
 	@param	item		Pointer to the slotitem to delete
  */
-void delete_slotitem(t_notation_obj *r_ob, long slot_num, t_slotitem *item);
+void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item);
 
 
 /**	Retrieve the index (0-based) index of a slotitem (in in the parent slot linked list) 
@@ -7989,18 +8054,29 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_note *note, int slot_num,
 void change_slot_matrix_value(t_notation_obj *r_ob, t_note *note, int slot_num, t_slotitem *slotitem, long row, long col, double new_val, char val_given_as_delta);
 
 
-/**	Change the value of a generic slot; new value is expressed as an llll.
+/**	Change a specific slotitem of a note; new item is expressed as an llll.
 	@ingroup					slots
 	@param	r_ob				The notation object
 	@param	note				The note which owns the slot
 	@param	slot_num			The slot number (0-based!)
 	@param	position			The 1-based index of the item which you want to change (e.g. to change second value in a #k_SLOT_TYPE_INTLIST, set <position> = 2)
-	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotvalue' message syntax)
+	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
+    @param  mode                The operation mode, one of the #e_slot_changeslotitem_modes
  */
-void change_note_slot_value(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll);
+void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE);
 
-// TBD
-void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position, t_llll *new_values_as_llll);
+
+/**	Change a specific slotitem of a notation item; new item is expressed as an llll.
+	@ingroup					slots
+	@param	r_ob				The notation object
+	@param	note				The note which owns the slot
+	@param	slot_num			The slot number (0-based!)
+	@param	position_1based		The 1-based index of the item which you want to change (e.g. to change second value in a #k_SLOT_TYPE_INTLIST, set <position> = 2)
+	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
+ @param  mode                The operation mode, one of the #e_slot_changeslotitem_modes
+ */
+void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE);
+
 
 /**	Completely erase a note's slot.
 	@ingroup					slots
@@ -8009,10 +8085,10 @@ void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nite
 	@param	slot_number			The slot number (0-based!)
 	@param	also_check_slot_recomputations			Also checks slot recomputation and linkages
  */
-void erase_note_slot(t_notation_obj *r_ob, t_note *note, int slot_number, char also_check_slot_recomputations = 1);
+void note_clear_slot(t_notation_obj *r_ob, t_note *note, int slot_number, char also_check_slot_recomputations = 1);
 
 // TBD
-void erase_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_number, char also_check_slot_recomputations = 1);
+void notation_item_clear_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_number, char also_check_slot_recomputations = 1);
 void erase_all_notationitem_slots(t_notation_obj *r_ob, t_notation_item *nitem, char also_check_slot_recomputations = 1);
 
 
@@ -8025,6 +8101,7 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
 // TBD
 void move_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_from, int slot_to, char keep_original, char also_check_slot_recomputations = 1);
 void move_note_slot(t_notation_obj *r_ob, t_note *note, int slot_from, int slot_to, char keep_original, char also_check_slot_recomputations = 1);
+void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args, char lambda, e_slot_changeslotitem_modes mode);
 
 
 /**	Check if all the slot data in a notation object correctly lie within the slot domain. If not, it forces data to lie within the slot domain.
@@ -8033,7 +8110,7 @@ void move_note_slot(t_notation_obj *r_ob, t_note *note, int slot_from, int slot_
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_domain(t_notation_obj *r_ob, long slot_num);
+void slot_check_domain(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Check if all the slot data in a notation object correclty lie within the slot range. If not, it forces data to lie within the slot range.
@@ -8042,7 +8119,7 @@ void check_slot_domain(t_notation_obj *r_ob, long slot_num);
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_range(t_notation_obj *r_ob, long slot_num);
+void slot_check_range(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Check if all the slot data in a notation object correclty lie within the slot zrange (the range of the 3rd dimension). If not, it forces data to lie within the slot range.
@@ -8051,10 +8128,10 @@ void check_slot_range(t_notation_obj *r_ob, long slot_num);
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_zrange(t_notation_obj *r_ob, long slot_num);
+void slot_check_zrange(t_notation_obj *r_ob, long slot_num);
 
 // TBD
-void check_slot_access(t_notation_obj *r_ob, long slot_num);
+void slot_check_access(t_notation_obj *r_ob, long slot_num);
 
 
 // -----------------------------------
@@ -8120,17 +8197,17 @@ void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1
 t_llll *get_default_slots_to_transfer_1based(t_notation_obj * r_ob);
 
 
-/**	Get the complete information about the content of all the slots of a portion of note in a llll form.
+/**	Get the complete information about the content of all the slots of a portion of a notation item in a llll form.
 	@ingroup					slots
 	@param	r_ob				The notation object
-	@param	note				The note
+	@param	nitem				The notation item
 	@param	mode				One of the #e_data_considering_types, informing on the aim for which you want to collect the information
 	@param	force_all_slots		If this is 1 the algorithm will return all the note slots, if this is 0 (advised) only the one containing real slot information, and not the empty ones.
 	@param	start_rel_x_pos		The starting point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@param	end_rel_x_pos		The ending point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@return						An llll containing all the note slots information.
  */
-t_llll* get_partialnote_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, char force_all_slots, double start_rel_x_pos, double end_rel_x_pos);
+t_llll* notation_item_get_partial_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char force_all_slots, double start_rel_x_pos, double end_rel_x_pos);
 
 
 /**	Get the information about the content of a given slot of a given note in a llll form.
@@ -8151,17 +8228,17 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 t_notation_item *notation_item_get_bearing_dynamics(t_notation_obj *r_ob, t_notation_item *nitem, long dynamics_slot_num);
 t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notation_obj *r_ob, t_notation_item *nitem);
 
-/**	Get the information about the content of a part given slot of a given note in a llll form.
+/**	Get the information about the content of a part given slot of a given notation item in a llll form.
 	@ingroup					slots
 	@param	r_ob				The notation object
-	@param	note				The note
+	@param	nitem				The notation item
 	@param	mode				One of the #e_data_considering_types, informing on the aim for which you want to collect the information
 	@param	slotnum				The 0-based slot number in which we are interested
 	@param	start_rel_x_pos		The starting point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@param	end_rel_x_pos		The ending point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@return						An llll containing the specified slot information.
  */
-t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, double start_rel_x_pos, double end_rel_x_pos);
+t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, double start_rel_x_pos, double end_rel_x_pos);
 
 
 /**	Retrieve all the information about the slotinfo of a given notation object.
@@ -8177,7 +8254,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
     @param bw_compatible      Guarantees backward compatibility with bach 0.7.9 or previous (i.e. only outputs 30 slots)
 	@return				An llll containing the slotinfo information for the notation object.
  */
-t_llll* get_slotinfo_values_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible);
+t_llll* get_slotinfo_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible);
 
 
 /**	Just like note_get_slots_values_as_llll() but it removes the gensym("slots") symbol.
@@ -8245,10 +8322,10 @@ t_llll *get_biquad_as_full_llll(t_notation_obj *r_ob, t_biquad *bqd);
 t_llll *find_sublist_with_router(t_notation_obj *r_ob, t_llll *note_llll, t_symbol *sym);
 void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver, t_llll *slot_llll, long slotnum,
 										  double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
-										  double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
+										  double portion_duration_ratio_to_receiver, char direction, double smooth_ms, double giver_duration, double final_duration);
 void glue_portion_of_temporal_slots(t_notation_obj *r_ob, t_note *receiver, t_llll *note_llll, 
 									double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
-									double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
+									double portion_duration_ratio_to_receiver, char direction, double smooth_ms, double giver_duration, double final_duration);
 void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll *note_llll, t_note *dummy_giver,
 								 double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
 								 double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
@@ -8266,6 +8343,8 @@ t_slot *get_activeitem_slot(t_notation_obj *r_ob, long slotnumber);
 t_slot *notation_item_get_slot(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber);
 t_slot *notation_item_get_slot_extended(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, char force_get_for_chords);
 t_slotitem *notation_item_get_slot_firstitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber);
+t_slotitem *notation_item_get_slot_nth_item(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, long n);
+t_slotitem *slot_get_nth_item(t_slot *s, long n);
 t_chord *notation_item_chord_get_parent(t_notation_obj *r_ob, t_notation_item *nitem);
 long notation_item_get_slot_numitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber); // private
 
@@ -8387,6 +8466,9 @@ t_slotitem *pt_to_function_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_n
  */
 t_slotitem *pt_to_3dfunction_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_number);
 
+// TBD
+t_slotitem *pt_to_spat_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_number);
+
 
 /**	Retrieve the clicked biquad filter in a dynfilter type of slot window, starting from a screen point (pixels).
 	@ingroup			slot_graphic
@@ -8402,6 +8484,7 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
 /**	Convert a screen point (pixels) into its coordinates in a function slot, by retrieving the x and y coordinates.
 	@ingroup			slot_graphic
 	@param r_ob			The notation object
+    @param nitem        The notation item owning the slot
 	@param pt			The point on the screen (in pixels) as a #t_pt structure
 	@param slot_number	Number (0-based) of the (function) slot
 	@param active_slot_window	The rectangle containing the pixels for the active part of the slotwindow
@@ -8411,12 +8494,13 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
 	@remark				It works like pt_to_function_slot_point() but it doesn't allocate memory for a slotitem, it just fills the <xval> and <yval> pointers.
 	@see				pt_to_function_slot_point()
  */
-void pt_to_function_xy_values(t_notation_obj *r_ob, t_pt pt, long slot_number, t_rect active_slot_window, double *xval, double *yval);
+void pt_to_function_xy_values(t_notation_obj *r_ob, t_notation_item *nitem, t_pt pt, long slot_number, t_rect active_slot_window, double *xval, double *yval);
 
 
 /**	Convert the coordinates of a point in a function slot into its screen coordinates (in pixels).
 	@ingroup					slot_graphic
 	@param r_ob					The notation object
+    @param nitem                The notation item owning the slot
 	@param xval					x coordinate of the function point
 	@param yval					y coordinate of the function point
 	@param slot_number			Number (0-based) of the (function) slot
@@ -8426,12 +8510,13 @@ void pt_to_function_xy_values(t_notation_obj *r_ob, t_pt pt, long slot_number, t
 	@see						pt_to_function_xy_values()
 	@see						function_xyz_values_to_pt()
  */
-void function_xy_values_to_pt(t_notation_obj *r_ob, double xval, double yval, long slot_number, t_rect active_slot_window, t_pt *pt);
+void function_xy_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, double xval, double yval, long slot_number, t_rect active_slot_window, t_pt *pt);
 
 
 /**	Convert the coordinates of a point in a 3d-function slot into its screen coordinates (in pixels).
 	@ingroup					slot_graphic
 	@param r_ob					The notation object
+    @param nitem                The notation item owning the slot
 	@param xval					x coordinate of the function point
 	@param yval					y coordinate of the function point
 	@param zval					z coordinate of the function point
@@ -8444,7 +8529,7 @@ void function_xy_values_to_pt(t_notation_obj *r_ob, double xval, double yval, lo
 	
 	@see						function_xy_values_to_pt()
  */
-void function_xyz_values_to_pt(t_notation_obj *r_ob, double xval, double yval, double zval, long slot_number, t_rect active_slot_window, t_pt *pt, double slot_zoom);
+void function_xyz_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, double xval, double yval, double zval, long slot_number, t_rect active_slot_window, t_pt *pt, double slot_zoom);
 
 
 // TBD
@@ -9497,7 +9582,7 @@ void handle_dilation_rectangle_mouse_cursor(t_notation_obj *r_ob, t_object *patc
 	@ingroup		notation_paint
 	@param	r_ob	The notation object
 */
-void invalidate_notation_static_layer_and_repaint(t_notation_obj *r_ob);
+void notationobj_invalidate_notation_static_layer_and_redraw(t_notation_obj *r_ob);
 
 
 /** Call jbox_redraw() to repaint the notation object.
@@ -10511,7 +10596,7 @@ void append_note_breakpoints_formatted_for_pwgl(t_notation_obj *r_ob, t_llll *th
 	@param		bpt		The breakpoint
 	@return				The absolute onset of the breakpoint in milliseconds.
 */
-double get_breakpoint_absolute_onset(t_bpt *bpt);
+double breakpoint_get_absolute_onset(t_bpt *bpt);
 
 
 /** Obtain a part of duration line, as breakpoints llll.
@@ -10523,7 +10608,7 @@ double get_breakpoint_absolute_onset(t_bpt *bpt);
 	@param	new_start_midicents	Pointer which will be filled with the midicents value at the beginning of the extrapolated part, or NULL if not needed.
 	@return				The partial breakpoints as llll
  */
-t_llll* get_partialnote_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, double start_rel_x_pos, double end_rel_x_pos, double *new_start_midicents);
+t_llll* note_get_partial_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, double start_rel_x_pos, double end_rel_x_pos, double *new_start_midicents);
 
 
 
@@ -12978,6 +13063,14 @@ char chord_has_a_tie_from(t_chord *ch);
 void check_ties_around_measure(t_measure *measure);
 
 
+/**	Get the first note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
+	@ingroup		notation
+	@param	note	The note
+	@return	The first note tied to the given note.
+ */
+t_note *note_get_first_in_tieseq(t_note *note);
+
+
 /**	Get the last note of the sequence of tied notes containing a given note. If the given note has no starting ties, the note itself is returned.
 	@ingroup		notation
 	@param	note	The note
@@ -12986,12 +13079,22 @@ void check_ties_around_measure(t_measure *measure);
 t_note *note_get_last_in_tieseq(t_note *note);
 
 
-/**	Get the first note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
+/**	Get the first selected note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
 	@ingroup		notation
+    @param  r_ob    The notation object
 	@param	note	The note
-	@return	The first note tied to the given note.
+	@return	The first selected note tied to the given note.
  */
-t_note *note_get_first_in_tieseq(t_note *note);
+t_note *note_get_first_selected_in_tieseq(t_notation_obj *r_ob, t_note *note);
+
+
+/**	Get the last selected note of the sequence of tied notes containing a given note. If the given note has no starting ties, the note itself is returned.
+	@ingroup		notation
+ @param  r_ob    The notation object
+	@param	note	The note
+	@return	The last selected note tied to the given note.
+ */
+t_note *note_get_last_selected_in_tieseq(t_notation_obj *r_ob, t_note *note);
 
 
 /**	Get the last chord of the sequence of completely-tied chords containing a given chord. If the given chord is not completely tied to the
@@ -13343,7 +13446,7 @@ void recompute_all_for_tuttipoint_region(t_notation_obj *r_ob, t_tuttipoint *tpt
 	For bach.roll: this sets the t_chord::need_recompute_parameters flags for all the chords in a given measure, 
 	forcing the chord parameters to be recomputed at the next paint cycle.
 	For bach.score: this calls recompute_all_for_measure() for all measures.
-	In any case, the t_notation_obj::need_perform_analysis_and_change flag is set, then the invalidate_notation_static_layer_and_repaint() function is called
+	In any case, the t_notation_obj::need_perform_analysis_and_change flag is set, then the notationobj_invalidate_notation_static_layer_and_redraw() function is called
 	in order to repaint (all parameters will be actually calculated inside the paint cycle).
 	@ingroup								notation
 	@param	r_ob							The notation object
@@ -13926,6 +14029,9 @@ char change_selection_breakpoint_pitch(t_notation_obj *r_ob, double delta_mc);
  */
 void trim_note_end(t_notation_obj *r_ob, t_note *nt, double delta_ms);
 
+// TBD
+void trim_note_slots(t_notation_obj *r_ob, t_note *nt, double delta_ms, char trim_absolute_slots_only);
+
 /**	Change the position of the note heads preserving the absolute position of all breakpoints and temporal slot elements.
     Only usable in bach.roll.
 	@ingroup interface
@@ -14035,6 +14141,7 @@ t_llll* get_function_slot_sampling(t_notation_obj *r_ob, t_note *note, long slot
 t_llll* get_function_slot_sampling_delta(t_notation_obj *r_ob, t_note *note, long slot_num, double delta);
 
 
+
 /**	Paste slot items from an llll (currently this only works for function slots).
 	The function inserts the slot items at the appropriate places inside the llll.
 	@ingroup slot_interface
@@ -14050,6 +14157,11 @@ void paste_slotitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum,
 
 // TBD
 t_llll *slots_develop_ranges(t_notation_obj *r_ob, t_llll *ll);
+double slot_get_max_x(t_notation_obj *r_ob, t_slot *slot, long slot_num);
+double notationobj_get_slot_max_x(t_notation_obj *r_ob, long slot_num);
+double slot_get_domain_min(t_notation_obj *r_ob, long slot_num);
+double slot_get_domain_max(t_notation_obj *r_ob, long slot_num, t_notation_item *nitem);
+double slot_get_domain_max_force_default_duration(t_notation_obj *r_ob, long slot_num, double default_duration);
 
 
 
@@ -15453,7 +15565,7 @@ long handle_articulations_popup(t_notation_obj *r_ob, t_articulation *art, long 
 				@code
 				assign_local_spacing_width_multiplier(r_ob, tpt, 2.);
 				recompute_all_for_tuttipoint_region(r_ob, tpt);
-				invalidate_notation_static_layer_and_repaint(r_ob);	// or perform_analysis_and_change(...)
+				notationobj_invalidate_notation_static_layer_and_redraw(r_ob);	// or perform_analysis_and_change(...)
 				@endcode
 	
  */
@@ -17555,7 +17667,7 @@ void bach_get_attr(t_bach_inspector_manager *man, void *obj, t_bach_attribute *a
 	@param	obj		Pointer to the object being inspected
 	@param	attr	The bach attribute
  */
-long bach_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+long bach_attr_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Preprocessor for a bach attribute. This function is called BEFORE the attribute is set. 

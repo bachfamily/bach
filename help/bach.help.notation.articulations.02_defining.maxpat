@@ -92,7 +92,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 23.5, 183.0, 337.0, 38.0 ],
 					"style" : "",
-					"text" : "sel note if symduration == 1/8, changeslotvalue 22 0 trill, clearselection"
+					"text" : "sel note if symduration == 1/8, changeslotitem 22 0 trill, clearselection"
 				}
 
 			}
@@ -298,7 +298,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 19.0 ],
 					"style" : "",
-					"text" : "Tags: articulation, define, assign, introduce, slot, addslot, changeslotvalue, delete, clear, cleararticulations",
+					"text" : "Tags: articulation, define, assign, introduce, slot, addslot, changeslotitem, delete, clear, cleararticulations",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

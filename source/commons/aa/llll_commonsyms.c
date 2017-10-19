@@ -629,6 +629,11 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_timeatpixel = gensym("timeatpixel");
 	x->s_width = gensym("width");
 	x->s_temporal = gensym("temporal");
+    x->s_relative = gensym("relative");
+    x->s_temporalmode = gensym("temporalmode");
+    x->s_extend = gensym("extend");
+    x->s_milliseconds = gensym("milliseconds");
+    x->s_timepoints = gensym("timepoints");
 	x->s_abr_none_abr = gensym("<none>");
 	x->s_legato = gensym("legato");
     x->s_legatotrim = gensym("legatotrim");
@@ -643,6 +648,12 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_tail = gensym("tail");
 	x->s_eraseslot = gensym("eraseslot");
 	x->s_changeslotvalue = gensym("changeslotvalue");
+    x->s_changeslotitem = gensym("changeslotitem");
+    x->s_addslotitem = gensym("addslotitem");
+    x->s_appendslotitem = gensym("appendslotitem");
+    x->s_prependslotitem = gensym("prependslotitem");
+    x->s_insertslotitem = gensym("insertslotitem");
+    x->s_deleteslotitem = gensym("deleteslotitem");
 	x->s_addslot = gensym("addslot");
 	x->s_addbreakpoint = gensym("addbreakpoint");
 	x->s_erasebreakpoints = gensym("erasebreakpoints");
@@ -734,6 +745,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
     x->s_quartertempo = gensym("quartertempo");
 	x->s_figure = gensym("figure");
 	x->s_interp = gensym("interp");
+    x->s_prepad = gensym("prepad");
 	x->s_lockrhythmictree = gensym("lockrhythmictree");
 	x->s_clef = gensym("clef");
 	x->s_mode = gensym("mode");

@@ -866,12 +866,17 @@
     //  - <b>access</b>: sets the slot accessibility, and expects a symbol. Default is "readandwrite" (slot is readable and writable);
     // you can also use "readonly" (slot is only readable, not writable via interface), or "none" (slot window can't even be opened, slot
     // content cannot be accessed).<br />
+    //  - <b>temporalmode</b>: sets whether the slot contains temporal information, and if so in which form.
+    //  It expects one of the following symbols: "none" (the information is not temporal), "relative" (the information is temporal, and the X value
+    //  of each slot item is a relative position inside the note duration, usually between 0 and 1), "milliseconds" (the information is temporal, and the X
+    //  value of each slot item is defined as a position milliseconds with respect to the note onset). <br />
+    //  - <b>extend</b>: toggles the ability for temporal slots to extend their content beyond the end of each corresponding note (might be also useful,
+    //  in combination with the "milliseconds" temporalmode, in order to define continuous parameters, independently from a note duration). <br />
 	//  – <b>range</b>: followed by two numbers, sets the minimum and maximum values the slot range (vertical axis for function and 3dfunction slots, or number
 	//  range for number slots) may assume. <br />
 	//  – <b>key</b>: expects the character or the ASCII value of a key to be mapped as a hotkey for the slot. <br />
 	//  – <b>slope</b>: expects a parameter (-1 to 1, 0 = linear) to exponentially represent the displayed range values of the slot. <br />
-	//  – <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). You can also put "temporal" 
-	//  if you want the window to correspond exactly to the note length, which is handy when dealing e.g. with envelopes or spatializations. <br />
+	//  – <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). <br />
 	//  – <b>height</b>: a value determining the height of the slot window (scaled according to the object's vertical zoom). You can also put "auto" 
 	//  if you want to leave an automatically calculated height (default). <br />
 	//  – <b>ysnap</b>: sets, for function or 3dfunction slots, some privileged Y points to which the points will be snapped
@@ -1538,24 +1543,44 @@
     // Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
 
 
-#define BACH_DOC_MESSAGE_CHANGESLOTVALUE
-	// A <m>changeslotvalue</m> message will change a specific value inside a slot (possibly containing more than one element, such as
+#define BACH_DOC_MESSAGE_CHANGESLOTITEM
+	// A <m>changeslotitem</m> message will change a specific element inside a slot (possibly containing more than one element, such as
 	// a <m>function</m> slot, or an <m>intlist</m> slot...) of any selected note.
-	// The syntax is <b>changeslotvalue <m>slot_number</m> <m>element_index</m> <m>SLOT_ELEMENT_CONTENT</m></b>. <br />
+	// The syntax is <b>changeslotitem <m>slot_number</m> <m>element_index</m> <m>SLOT_ELEMENT_CONTENT</m></b>. <br />
 	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
 	// The <m>element_index</m> is the number identifying the position of the element to be changed (e.g., for a <m>function</m> slot: 1 for the first point, 2 for the second, and so on).
     // The symbol "all" can replace the element index, in order to change all elements. 
 	// The element content is a single element in the lists of the slot content syntax: a single point for a slot <m>function</m>, a single number for an <m>intlist</m> or <m>floatlist</m> slot,
 	// and so on. Such element must be unwrapped from its outer level of parentheses (if any). For instance, for a function,
-	// a good syntax is <b>changeslotvalue 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
+	// a good syntax is <b>changeslotitem 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
 	// to the point <b>(0.5 20 0)</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
 	
-	
+
+#define BACH_DOC_MESSAGE_APPENDSLOTITEM
+    // A <m>appendslotitem</m> message will append a specific element at the end of a slot.
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+
+#define BACH_DOC_MESSAGE_PREPENDSLOTITEM
+    // A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+#define BACH_DOC_MESSAGE_INSERTSLOTITEM
+    // A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
+    // The position may be specified explicitly (for slots that do not bear X-axis information) or
+    // dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+#define BACH_DOC_MESSAGE_DELETESLOTITEM
+    // A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+
+
+
 #define BACH_DOC_MESSAGE_LAMBDA
 	// The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 	// <m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,
-    // <m>addslot</m>, <m>changeslotvalue</m>, <m>eraseslot</m>, <m>name</m>.
+    // <m>addslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
 	// If such router is prepended, the corresponding operation will apply on the currently output selected item.
 	// The idea is that when a selection dump is asked or a command is sent (also see <m>dumpselection</m> or <m>sendcommand</m>), the notation
 	// elements are output one by one from the playout (notewise or chordwise depending on the <m>playmode</m>): if you put a feedback loop from the playout
@@ -1714,9 +1739,9 @@
 	//    ↪ Add the <m>Shift</m> key to change duration more rapidly. <br />
 	// • <m>Alt+←</m>: Decrease duration for selected notes (possible breakpoint positions are rescaled). <br /> 
 	//    ↪ Add the <m>Shift</m> key to change duration more rapidly. <br />
-	// • <m>Alt+Ctrl+→</m> (mac) or <m>Alt+Shift+Ctrl+→</m> (win): Increase note duration, preserving the absolute position of each pitch breakpoint. <br />
+	// • <m>Alt+Ctrl+→</m> (mac) or <m>Alt+Shift+Ctrl+→</m> (win): Increase note duration, preserving the absolute position of each relative breakpoint. <br />
 	//    ↪ Add the <m>Shift</m> key (mac) to change duration more rapidly. <br />
-	// • <m>Alt+Ctrl+←</m> (mac) or <m>Alt+Shift+Ctrl+←</m> (win): Decrease note duration, preserving the absolute position of each pitch breakpoint. <br />
+    // • <m>Alt+Ctrl+←</m> (mac) or <m>Alt+Shift+Ctrl+←</m> (win): Decrease note duration, preserving the absolute position of each relative breakpoint. <br />
 	//    ↪ Add the <m>Shift</m> key (mac) to change duration more rapidly. <br />
 	// • <m>↑</m>: Raise pitch of selection by one step. <br /> 
 	//    ↪ Add the <m>Shift</m> key to raise the pitch by one octave. <br />
@@ -1942,9 +1967,7 @@
 	// • <m>Backspace</m>: Delete all selected items, except for selected note tails, for which the backspace key reverts their pitch to the 
 	// original notehead pitch (no glissando). <br /> 
     //    ↪ Add the <m>Shift</m> key to delete selected measures; otherwise simple <m>Backspace</m> will clear the measure content. <br />
-	// • <m>→</m>: Shift selection onsets to the right; for selected tails: increase corresponding note duration <br />
-	// • <m>←</m>: Shift selection onsets to the left; for selected tails: decrease corresponding note duration <br /> 
-	// • <m>↑</m>: Raise pitch of selection by one step. <br /> 
+	// • <m>↑</m>: Raise pitch of selection by one step. <br />
 	//    ↪ Add the <m>Shift</m> key to raise the pitch by one octave. <br />
 	//    ↪ Add the <m>Ctrl+Shift</m> key to prevent notes from being assigned to different voices. <br />
 	// • <m>↓</m>: Lower pitch of selection by one step. <br /> 

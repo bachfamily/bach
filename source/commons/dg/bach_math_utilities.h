@@ -94,8 +94,11 @@ double rescale(double value, double min, double max, double new_min, double new_
 	@remark						The -1 to 1 slope mapping is similar, but NOT identical, to the one used in Max by the [curve~] object.
 	@see						rescale_same_boundaries_with_slope(), rescale()
  */
-double rescale_with_slope(double value, double min, double max, double new_min, double new_max, double slope, char admit_mirroring);
+double rescale_with_slope(double value, double min, double max, double new_min, double new_max, double slope);
 
+
+// Same as rescale_with_slope, but performs inverse mapping
+double rescale_with_slope_inv(double value, double min, double max, double new_min, double new_max, double slope);
 
 /**	Rescale a double (which ranged from a minimum and a maximum) to a new range. 
 	Also takes into account a slope factor, corresponding to a sort of "exponent" for the rescaling, and computes the derivative in the point.
@@ -114,7 +117,11 @@ double rescale_with_slope(double value, double min, double max, double new_min, 
 	@remark						The -1 to 1 slope mapping is similar, but NOT identical, to the one used in Max by the [curve~] object.
 	@see						rescale_same_boundaries_with_slope(), rescale()
  */
-double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char admit_mirroring);
+double rescale_with_slope_and_get_derivative(double value, double min, double max, double new_min, double new_max, double slope, double *derivative);
+
+
+// Same, with inverse mapping
+double rescale_with_slope_and_get_derivative_inv(double value, double min, double max, double new_min, double new_max, double slope, double *derivative);
 
 
 /**	Rescale a double (which ranged from a minimum and a maximum) to the same range, but taking a slope factor into account, corresponding to a
@@ -125,13 +132,12 @@ double rescale_with_slope_and_get_derivative(double value, double min, double ma
 	@param	max					The current maximum.
 	@param	slope				The slope factor, ranging from -1 to 1. If slope is 0, the rescaling is linear, as slope increase towards 1 the 
 								curve becomes "simil-exponential", as the slope decrease towards -1 the curve becomes "simil-logarithmic".
-	@param	admit_mirroring		If this is 1, and the slope is positive, the algorithm will reverse the slope, rescale the value, and then mirror the value
 								with respect to the new range. Let this to 0 if you don't want this mirroring-behavior (adviced!)
 	@return						The rescaled value.
 	@remark						The -1 to 1 slope mapping is similar, but NOT identical, to the one used in Max by the [curve~] object.
 	@see						rescale_with_slope()
  */
-double rescale_same_boundaries_with_slope(double value, double min, double max, double slope, char admit_mirroring);
+double rescale_same_boundaries_with_slope(double value, double min, double max, double slope);
 
 
 /**	Calculate the determinant of a 3x3 matrix of doubles.

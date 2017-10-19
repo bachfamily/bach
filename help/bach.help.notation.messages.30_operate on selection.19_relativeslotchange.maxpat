@@ -64,7 +64,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 68.25, 308.0, 154.5, 38.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 9 1 nil (20 plus) (10 minus) 4"
+					"text" : "changeslotitem 9 1 nil (20 plus) (10 minus) 4"
 				}
 
 			}
@@ -81,7 +81,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 32.0, 568.0, 36.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "The \"changeslotvalue\" message also supports the relative modification syntax used by standard parameter change messages (see #relative+modify)",
+					"text" : "The \"changeslotitem\" message also supports the relative modification syntax used by standard parameter change messages (see #relative+modify)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -130,7 +130,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 56.5, 262.0, 232.0, 38.0 ],
 					"style" : "",
-					"text" : "changeslotvalue \"amplitude envelope\" 2 0.5 (10 minus) (0.2 times)"
+					"text" : "changeslotitem \"amplitude envelope\" 2 0.5 (10 minus) (0.2 times)"
 				}
 
 			}
@@ -175,7 +175,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 56.5, 176.0, 178.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 3 2 (2.1 div)"
+					"text" : "changeslotitem 3 2 (2.1 div)"
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 36.0, 149.0, 192.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 3 2 (2.1 times)"
+					"text" : "changeslotitem 3 2 (2.1 times)"
 				}
 
 			}
@@ -235,7 +235,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.0, 122.0, 198.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 3 all (13 minus)"
+					"text" : "changeslotitem 3 all (13 minus)"
 				}
 
 			}
@@ -265,7 +265,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 94.0, 181.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotvalue 3 2 (13 plus)"
+					"text" : "changeslotitem 3 2 (13 plus)"
 				}
 
 			}
@@ -452,7 +452,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 593.0, 19.0 ],
 					"style" : "",
-					"text" : "Tags: message, operate, on, selection, slot, relative, modify, changeslotvalue, `nil",
+					"text" : "Tags: message, operate, on, selection, slot, relative, modify, changeslotitem, `nil",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

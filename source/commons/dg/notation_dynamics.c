@@ -860,7 +860,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 reassemble_dynamics_buf(r_ob, num_dynamics, dyn_text_dep, hairpins, buf, CONST_MAX_NUM_DYNAMICS_PER_CHORD * CONST_MAX_NUM_DYNAMICS_CHARS);
                 create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
                 if (num_dynamics <= 0) {
-                    delete_slotitem(r_ob, slot_num, slotitem);
+                    slotitem_delete(r_ob, slot_num, slotitem);
                     slotitem = NULL;
                 } else
                     slotitem->item = gensym(buf);
@@ -878,7 +878,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
     if (fix_unnecessary || fix_inconsistent) {
         if (r_ob->link_dynamics_to_slot - 1 >= 0 && r_ob->link_dynamics_to_slot - 1 < CONST_MAX_SLOTS)
             check_slot_linkage_recomputations_for_everything(r_ob, r_ob->link_dynamics_to_slot - 1);
-        invalidate_notation_static_layer_and_repaint(r_ob);
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     }
     
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_FIX_DYNAMICS);
@@ -1382,7 +1382,7 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                 } else {
                                     if (!dynamics_to_velocity(r_ob, left_dyns[idx1], &left_velocity, dyn_vel_associations, params, 1)) {
                                         if (!dynamics_to_velocity(r_ob, left_dyns[idx2], &right_velocity, dyn_vel_associations, params, -1)) {
-                                            bpt->velocity = rescale_with_slope(CLAMP(idx_dyn - idx1, 0., 1.), 0., 1., left_velocity, right_velocity, hairpins[idx1] > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (hairpins[idx1] < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.), false);
+                                            bpt->velocity = rescale_with_slope_inv(CLAMP(idx_dyn - idx1, 0., 1.), 0., 1., left_velocity, right_velocity, hairpins[idx1] > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (hairpins[idx1] < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                         } else
                                             object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamics '%s'. Skipping dynamic marking.", left_dyns[idx2]->s_name);
                                     } else
@@ -1402,7 +1402,7 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
             if (!dynamics_to_velocity(r_ob, left_dyns[num_left_dyns - 1], &left_velocity, dyn_vel_associations, params,  -1)) {
                 if (!dynamics_to_velocity(r_ob, right_dyn, &right_velocity, dyn_vel_associations, params, 1)) {
                     if (last_hairpin * (right_velocity - left_velocity) > 0) {
-                        velocity = rescale_with_slope(CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.), false);
+                        velocity = rescale_with_slope(CLAMP(ch_onset, left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                         for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
                             nt->velocity = velocity;
                             if (r_ob->breakpoints_have_velocity) {
@@ -1410,7 +1410,7 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                                     if (!bpt->prev)
                                         bpt->velocity = velocity;
                                     else {
-                                        bpt->velocity = rescale_with_slope(CLAMP(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? -DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.), false);
+                                        bpt->velocity = rescale_with_slope_inv(CLAMP(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), left_onset, right_onset), left_onset, right_onset, left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
                                     }
                                 }
                             }
@@ -1506,7 +1506,7 @@ void erase_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char
             undo_tick_added = true;
             create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
         }
-        erase_notationitem_slot(r_ob, (t_notation_item *)ch, slot_num);
+        notation_item_clear_slot(r_ob, (t_notation_item *)ch, slot_num);
     }
     
     for (t_note *nt = ch->firstnote; nt; nt = nt->next){
@@ -1515,7 +1515,7 @@ void erase_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char
                 undo_tick_added = true;
                 create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
             }
-            erase_notationitem_slot(r_ob, (t_notation_item *)nt, slot_num);
+            notation_item_clear_slot(r_ob, (t_notation_item *)nt, slot_num);
         }
     }
 }
@@ -1649,7 +1649,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
     check_slot_linkage_recomputations_for_everything(r_ob, slot_num);
     unlock_general_mutex(r_ob);
 
-    invalidate_notation_static_layer_and_repaint(r_ob);
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ASSIGN_DYNAMICS);
 
     return 0;

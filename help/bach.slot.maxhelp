@@ -353,7 +353,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 303.0, 393.0, 197.0, 23.0 ],
 									"style" : "",
-									"text" : "changeslotvalue 1 1 (0.5 20 0.5)"
+									"text" : "changeslotitem 1 1 (0.5 20 0.5)"
 								}
 
 							}
