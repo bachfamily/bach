@@ -44,10 +44,9 @@ typedef struct _backtick
 {
     t_llllobj_object 	n_ob;
     long                n_autoattrs;
-    long                n_argsbackticknull;
-    long                n_attrsbackticknull;
-    t_hashtab           *n_argsymbols;
-    t_hashtab           *n_attrsymbols;
+    t_hashtab           *n_symbols;
+    t_object            *n_tempobj;
+    t_llll              *n_deathrow;
 } t_backtick;
 
 void backtick_assist(t_backtick *x, void *b, long m, long a, char *s);
@@ -61,6 +60,8 @@ void backtick_int(t_backtick *x, t_atom_long v);
 void backtick_float(t_backtick *x, double v);
 void backtick_anything(t_backtick *x, t_symbol *msg, long ac, t_atom *av);
 t_max_err backtick_notify(t_backtick *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
+void backtick_patchlineupdate(t_backtick *x, t_object *line, t_patchline_updatetype updatetype, t_object *src, long srcout, t_object *dst, long dstin);
+void backtick_add_symbol_and_objectlist(t_backtick *x, t_symbol *sym, t_object *obj);
 
 
 t_class *backtick_class;
@@ -101,6 +102,9 @@ int T_EXPORT main()
     
     class_addmethod(c, (method)backtick_assist,		"assist",		A_CANT,		0);
     class_addmethod(c, (method)backtick_inletinfo,	"inletinfo",	A_CANT,		0);
+    
+    class_addmethod(c, (method)backtick_patchlineupdate,	"patchlineupdate",	A_CANT,		0);
+
     
     /*
     CLASS_ATTR_LONG(c, "autoattrs",	0,	t_backtick, n_autoattrs);
@@ -144,20 +148,21 @@ void backtick_anything(t_backtick *x, t_symbol *msg, long ac, t_atom *av)
     t_llll *ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_CLONE);
     
     switch (ll->l_size) {
-        case 0:
-            if (x->n_argsbackticknull || x->n_attrsbackticknull) {
+        case 0: {
+            t_object *found = NULL;
+            hashtab_lookup(x->n_symbols, _llllobj_sym_null, &found);
+            if (found) {
                 llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, 0, gensym("`null"), 0, NULL);
             } else {
                 llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, 0, _llllobj_sym_null, 0, NULL);
             }
             break;
+        }
         case 1:
             if (ll->l_head->l_hatom.h_type == H_SYM) {
                 t_object *found = NULL;
                 t_symbol *sym = hatom_getsym(&ll->l_head->l_hatom);
-                hashtab_lookup(x->n_argsymbols, sym, &found);
-                if (!found)
-                    hashtab_lookup(x->n_attrsymbols, sym, &found);
+                hashtab_lookup(x->n_symbols, sym, &found);
                 if (found) {
                     llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, 0, sym_addquote(sym->s_name), 0, NULL);;
                 } else
@@ -170,9 +175,7 @@ void backtick_anything(t_backtick *x, t_symbol *msg, long ac, t_atom *av)
             if (ll->l_head->l_hatom.h_type == H_SYM) {
                 t_object *found = NULL;
                 t_symbol *sym = hatom_getsym(&ll->l_head->l_hatom);
-                hashtab_lookup(x->n_argsymbols, sym, &found);
-                if (!found)
-                    hashtab_lookup(x->n_attrsymbols, sym, &found);
+                hashtab_lookup(x->n_symbols, sym, &found);
                 if (found) {
                     t_atom *atoms = NULL;
                     long ac;
@@ -215,6 +218,8 @@ void backtick_inletinfo(t_backtick *x, void *b, long a, char *t)
 
 void backtick_free(t_backtick *x)
 {
+    object_free(x->n_symbols);
+    llll_free(x->n_deathrow);
     llllobj_obj_free((t_llllobj_object *) x);
 }
 
@@ -256,19 +261,25 @@ t_backtick *backtick_new(t_symbol *s, short ac, t_atom *av)
         atom_setsym(&out, _llllobj_sym_t);
         llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, &out);
         llllobj_obj_setup((t_llllobj_object *) x, 0, "4");
-        
-        x->n_argsymbols = hashtab_new(0);
-        x->n_attrsymbols = hashtab_new(0);
-        object_method(x->n_argsymbols, gensym("readonly"), 1);
-        object_method(x->n_attrsymbols, gensym("readonly"), 1);
-       for (i = 0; i < true_ac; i++, av++) {
+        x->n_deathrow = llll_get();
+        x->n_symbols = hashtab_new(0);
+        object_method(x->n_symbols, gensym("readonly"), 1);
+        for (i = 0; i < true_ac; i++, av++) {
             long type = atom_gettype(av);
             switch (type) {
-                case A_SYM:
-                    hashtab_store(x->n_argsymbols, atom_getsym(av), (t_object *) WHITENULL);
-                    if (atom_getsym(av) == _llllobj_sym_null)
-                        x->n_argsbackticknull = 1;
+                case A_SYM: {
+                    t_object *dummy = NULL;
+                    t_symbol *sym = atom_getsym(av);
+                    hashtab_lookup(x->n_symbols, sym, &dummy);
+                    if (!dummy) {
+                        t_hashtab *objects = hashtab_new(0);
+                        object_method(objects, gensym("readonly"), 1);
+                        hashtab_flags(objects, OBJ_FLAG_DATA | OBJ_FLAG_SILENT);
+                        hashtab_store(objects, (t_symbol *) x, (t_object *) x);
+                        hashtab_store(x->n_symbols, sym, (t_object *) objects);
+                    }
                     break;
+                }
                 case A_LONG:
                     object_warn((t_object *) x, "ignoring argument %ld", atom_getlong(av));
                     break;
@@ -285,6 +296,58 @@ t_backtick *backtick_new(t_symbol *s, short ac, t_atom *av)
     if (x && err == MAX_ERR_NONE)
         return x;
     
-    object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL
+    object_free_debug(x);
     return NULL;
+}
+
+void backtick_remove_object(t_hashtab_entry *e, t_backtick *x)
+{
+    t_hashtab *objects = (t_hashtab *) e->value;
+    t_object *dummy = NULL;
+    hashtab_lookup(objects, (t_symbol *) x->n_tempobj, &dummy);
+    if (dummy) {
+        hashtab_delete(objects, (t_symbol *) x->n_tempobj);
+        llll_appendsym(x->n_deathrow, e->key);
+    }
+}
+
+void backtick_patchlineupdate(t_backtick *x, t_object *line, t_patchline_updatetype updatetype, t_object *src, long srcout, t_object *dst, long dstin)
+{
+    if (!x->n_autoattrs)
+        return;
+    if (updatetype == JPATCHLINE_CONNECT) {
+        if (src == (t_object *) x) {
+            long argc = 0, i;
+            t_symbol **argv = NULL;
+            object_attr_getnames(dst, &argc, &argv);
+            for (i = 0; i < argc; i++) {
+                t_symbol *sym = argv[i];
+                t_hashtab *objects = NULL;
+                hashtab_lookup(x->n_symbols, sym, (t_object **) &objects);
+                if (objects) {
+                    hashtab_store(objects, (t_symbol *) x, (t_object *) x);
+                } else {
+                    backtick_add_symbol_and_objectlist(x, sym, dst);
+                }
+            }
+        }
+    } else if (updatetype == JPATCHLINE_DISCONNECT) {
+        if (src == (t_object *) x) {
+            t_llllelem *elem;
+            x->n_tempobj = dst;
+            hashtab_funall(x->n_symbols, (method) backtick_remove_object, x);
+            for (elem = x->n_deathrow->l_head; elem; elem = elem->l_next)
+                hashtab_delete(x->n_symbols, hatom_getsym(&elem->l_hatom));
+            llll_clear(x->n_deathrow);
+        }
+    }
+}
+
+void backtick_add_symbol_and_objectlist(t_backtick *x, t_symbol *sym, t_object *obj)
+{
+    t_hashtab *objects = hashtab_new(0);
+    object_method(objects, gensym("readonly"), 1);
+    hashtab_flags(objects, OBJ_FLAG_DATA | OBJ_FLAG_SILENT);
+    hashtab_store(objects, (t_symbol *) obj, obj);
+    hashtab_store(x->n_symbols, sym, (t_object *) objects);
 }
