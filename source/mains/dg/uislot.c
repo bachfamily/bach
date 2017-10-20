@@ -691,6 +691,8 @@ int T_EXPORT main(void){
     // @description @copy BACH_DOC_MESSAGE_APPENDSLOTITEM
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @marg 1 @name slot_element @optional 0 @type llll
+    // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
+    // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
     // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
     class_addmethod(c, (method) uislot_append_slot_item, "appendslotitem", A_GIMME, 0);
     
@@ -698,6 +700,8 @@ int T_EXPORT main(void){
     // @description @copy BACH_DOC_MESSAGE_PREPENDSLOTITEM
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @marg 1 @name slot_element @optional 0 @type llll
+    // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
+    // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
     // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
     class_addmethod(c, (method) uislot_prepend_slot_item, "prependslotitem", A_GIMME, 0);
     
@@ -706,13 +710,19 @@ int T_EXPORT main(void){
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @marg 1 @name element_position @optional 0 @type int
     // @marg 2 @name slot_element @optional 0 @type llll
+    // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
+    // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
     // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, addslot, eraseslot
     class_addmethod(c, (method) uislot_insert_slot_item, "insertslotitem", A_GIMME, 0);
     
     // @method deleteslotitem @digest Delete the slot element at a given position of a slot
     // @description @copy BACH_DOC_MESSAGE_DELETESLOTITEM
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
-    // @marg 1 @name element_position @optional 0 @type int
+    // @marg 1 @name element_position_or_wrapped_xcoord @optional 0 @type int/llll
+    // @mattr thresh @type float @default 0. @digest Tolerance threshold for X matching
+    // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
+    // @example deleteslotitem 3 (0.7) @caption delete item 3rd slot matching X = 0.7
+    // @example deleteslotitem 3 (0.7) @thresh 0.1 @caption the same, with a tolerance of 0.1
     // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
     class_addmethod(c, (method) uislot_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 

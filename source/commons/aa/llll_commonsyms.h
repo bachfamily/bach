@@ -377,6 +377,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_modify;
 	t_symbol	*s_position;
 	t_symbol	*s_value;
+    t_symbol	*s_thresh;
 	
 	t_symbol	*s_names;
 	t_symbol	*s_usecustomnumber;
@@ -766,6 +767,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_modify		(_llllobj_common_symbols->s_modify)
 #define _llllobj_sym_position	(_llllobj_common_symbols->s_position)
 #define _llllobj_sym_value		(_llllobj_common_symbols->s_value)
+#define _llllobj_sym_thresh		(_llllobj_common_symbols->s_thresh)
 
 #define _llllobj_sym_names		(_llllobj_common_symbols->s_names)
 #define _llllobj_sym_usecustomnumber		(_llllobj_common_symbols->s_usecustomnumber)

@@ -127,6 +127,7 @@ v0.8b
 			If you named markers or items "next", "prev" or "time", you might run into trouble.
 			New important features for slots: "temporalmode" (none, relative or milliseconds) and "extend" (to extend the slot content beyond the note tail)
 				In particular, you may now define millisecond-based behaviors for slots.
+			"sel chord N" now selects the Nth chord in voice 1 (independently of measure barlines)
 
 
 

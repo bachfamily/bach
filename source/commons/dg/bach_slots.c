@@ -4601,6 +4601,102 @@ void slotitem_insert(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_i
 
 
 
+t_slotitem *slot_xcoord_to_slotitem(t_notation_obj *r_ob, long slotnum, t_slot *s, double x_val, double thresh, long *idx, double *dist)
+{
+    t_slotitem *tmp, *res = NULL;
+    double distance = 0;
+    long count = 0, pos = -1;
+    switch (r_ob->slotinfo[slotnum].slot_type) {
+        case k_SLOT_TYPE_FUNCTION:
+        {
+            for (tmp = s->firstitem; tmp; tmp = tmp->next, count++) {
+                if (tmp->item) {
+                    t_pts *p = (t_pts *)tmp->item;
+                    double this_difference = p->x - x_val;
+                    double this_distance = fabs(this_difference);
+                    if (this_distance <= thresh && (!res || this_distance < distance)) {
+                        distance = this_distance;
+                        res = tmp;
+                        pos = count;
+                    } else if (this_difference > thresh)
+                        break;
+                }
+            }
+        }
+            break;
+ 
+            
+        case k_SLOT_TYPE_3DFUNCTION:
+        {
+            for (tmp = s->firstitem; tmp; tmp = tmp->next, count++) {
+                if (tmp->item) {
+                    t_pts3d *p = (t_pts3d *)tmp->item;
+                    double this_difference = p->x - x_val;
+                    double this_distance = fabs(this_difference);
+                    if (this_distance <= thresh && (!res || this_distance < distance)) {
+                        distance = this_distance;
+                        res = tmp;
+                        pos = count;
+                    } else if (this_difference > thresh)
+                        break;
+                }
+            }
+        }
+            break;
+
+        case k_SLOT_TYPE_SPAT:
+        {
+            for (tmp = s->firstitem; tmp; tmp = tmp->next, count++) {
+                if (tmp->item) {
+                    t_spatpt *p = (t_spatpt *)tmp->item;
+                    double this_difference = p->t - x_val;
+                    double this_distance = fabs(this_difference);
+                    if (this_distance <= thresh && (!res || this_distance < distance)) {
+                        distance = this_distance;
+                        res = tmp;
+                        pos = count;
+                    } else if (this_difference > thresh)
+                        break;
+                }
+            }
+        }
+            break;
+
+            
+        case k_SLOT_TYPE_DYNFILTER:
+        {
+            for (tmp = s->firstitem; tmp; tmp = tmp->next, count++) {
+                if (tmp->item) {
+                    t_biquad *p = (t_biquad *)tmp->item;
+                    double this_difference = p->t - x_val;
+                    double this_distance = fabs(this_difference);
+                    if (this_distance <= thresh && (!res || this_distance < distance)) {
+                        distance = this_distance;
+                        res = tmp;
+                        pos = count;
+                    } else if (this_difference > thresh)
+                        break;
+                }
+            }
+        }
+            break;
+            
+            
+        default:
+            break;
+    }
+    
+    if (dist)
+        *dist = distance;
+    
+    if (idx)
+        *idx = pos;
+    
+    return res;
+}
+
+
+
 long slotitem_find_insertion_point(t_notation_obj *r_ob, long slotnum, t_slotitem *item)
 {
     t_slotitem *tmp;
@@ -5655,12 +5751,12 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_notation_item *nitem, int
 
 
 // position == -1 means ALL
-void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode)
+void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode, char modify_existing, double modification_x_thresh)
 {
     long position = position_1based;
 
     /*
-    // old bw compatibility stuff ?
+    // old bw compatibility stuff ? NO, let's drop this
     if (BW_COMPATIBILITY && position < 0)
         mode = k_CHANGESLOTITEM_MODE_MODIFY_ALL;
     */
@@ -5682,15 +5778,35 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
     
     long slot_type = r_ob->slotinfo[slotnum].slot_type;
    
+    if (position < 0) // handling negative positions
+        position = slot->length + position + 1;
+
     if (mode == k_CHANGESLOTITEM_MODE_DELETE_ALL) {
         // delete all slot items
         notation_item_clear_slot(r_ob, nitem, slotnum);
 
     } else if (mode == k_CHANGESLOTITEM_MODE_DELETE_ONE) {
         // delete a given slot item
-        t_slotitem *it = notation_item_get_slot_nth_item(r_ob, nitem, slotnum, position - 1);
+        t_slotitem *it = NULL;
+        
+        if (new_values_as_llll && new_values_as_llll->l_head && hatom_gettype(&new_values_as_llll->l_head->l_hatom) == H_LLLL) {
+            // deletion from X position
+            t_llll *tmpll = hatom_getllll(&new_values_as_llll->l_head->l_hatom);
+            if (tmpll && tmpll->l_head) {
+                double xpos = hatom_getdouble(&tmpll->l_head->l_hatom);
+                it = slot_xcoord_to_slotitem(r_ob, slotnum, slot, xpos, modification_x_thresh, NULL, NULL);
+            } else {
+                object_warn((t_object *)r_ob, "Wrong syntax for slotitem deletion!");
+            }
+        } else {
+            // deletion from index
+            it = notation_item_get_slot_nth_item(r_ob, nitem, slotnum, position - 1);
+        }
+
         if (it)
             slotitem_delete(r_ob, slotnum, it);
+        else
+            object_warn((t_object *)r_ob, "Warning: there's no slotitem to delete!");
 
     } else {
         
@@ -5715,13 +5831,21 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                     break;
             }
  
-            if (position < 0) // handling negative positions
-                position = slot->length + position + 1;
-            
             if (position > slot->length)
                 mode = k_CHANGESLOTITEM_MODE_APPEND;
             
             llll_flatten(values_as_llll, 1, 0); // possibly removing the outer level of paraentheses
+            
+            
+            if ((mode == k_CHANGESLOTITEM_MODE_APPEND || mode == k_CHANGESLOTITEM_MODE_PREPEND || mode == k_CHANGESLOTITEM_MODE_INSERT || mode == k_CHANGESLOTITEM_MODE_INSERT_AUTO) && modify_existing && values_as_llll->l_head) {
+                // see if we can modify an existing point
+                long idx = -1;
+                t_slotitem *it = slot_xcoord_to_slotitem(r_ob, slotnum, slot, hatom_getdouble(&values_as_llll->l_head->l_hatom), modification_x_thresh, &idx, NULL);
+                if (it) {
+                    mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE;
+                    position = idx + 1;
+                }
+            }
             
             if (mode == k_CHANGESLOTITEM_MODE_APPEND || mode == k_CHANGESLOTITEM_MODE_PREPEND || mode == k_CHANGESLOTITEM_MODE_INSERT || mode == k_CHANGESLOTITEM_MODE_INSERT_AUTO) {
                 
@@ -5730,7 +5854,7 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         
                     case k_SLOT_TYPE_FUNCTION:
                     {
-                        if ((values_as_llll->l_size >= 2)  && (values_as_llll->l_size <= 3)) {
+                        if ((values_as_llll->l_size >= 2) && (values_as_llll->l_size <= 3)) {
                             double x_val, y_val, slope;
                             t_pts *point;
                             t_slotitem *thisitem = build_slotitem(r_ob, slot);
@@ -6200,9 +6324,9 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
 	
 }
 
-void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode)
+void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode, char modify_existing, double modification_x_thresh)
 {
-    notation_item_change_slotitem(r_ob, (t_notation_item *)note, slotnum, position, new_values_as_llll, mode);
+    notation_item_change_slotitem(r_ob, (t_notation_item *)note, slotnum, position, new_values_as_llll, mode, modify_existing, modification_x_thresh);
 }
 
 void set_biquad_coeffs(t_biquad *biquad, t_llll *llll){
@@ -9881,6 +10005,8 @@ t_llll* get_function_slot_sampling(t_notation_obj *r_ob, t_note *note, long slot
 }
 
 
+
+    
 double slot_get_max_x(t_notation_obj *r_ob, t_slot *slot, long slot_num)
 {
     t_slotitem *li = slot_get_last_item(slot);
@@ -10175,52 +10301,53 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
 
 
 // arguments are: slot#, position, new value (as llll).
-void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args, char lambda, e_slot_changeslotitem_modes mode)
+void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args_orig, char lambda, e_slot_changeslotitem_modes mode)
 {
     long slotnum, position;
-    t_llll *new_values_as_llll;
+    t_llll *args = llll_clone(args_orig);
     char changed = 0;
 
     if (!args || !args->l_head)
         return;
     
+    long voice = 0, modify = 0;
+    double thresh = 0.;
+    llll_parseattrs((t_object *)r_ob, args, true, "iid", _llllobj_sym_voice, &voice, _llllobj_sym_modify, &modify, _llllobj_sym_thresh, &thresh);
+    voice -= 1;
+    
     if (mode == k_CHANGESLOTITEM_MODE_INSERT_AUTO && args->l_size <= 2)
         llll_insertlong_after(1, args->l_head); // dummy position for auto-insertion mode
-    
-    t_llllelem *args_el = args->l_head;
-    if (!args_el || !args_el->l_next)
+
+    if (mode == k_CHANGESLOTITEM_MODE_DELETE_ONE && args->l_size == 2 && hatom_gettype(&args->l_head->l_next->l_hatom) == H_LLLL)
+        llll_insertlong_after(1, args->l_head); // dummy position for deletion from X value
+
+    if (!args->l_head || !args->l_head->l_next)
         return;
     
-    slotnum = llllelem_to_slotnum(r_ob, args_el, true);
+    slotnum = llllelem_to_slotnum(r_ob, args->l_head, true);
     if (slotnum < 0)
         return;
     
-    args_el = args_el->l_next;
+    llll_behead(args);
     
-    if (hatom_gettype(&args_el->l_hatom) == H_SYM) {
-        if (hatom_getsym(&args_el->l_hatom) == _llllobj_sym_all) {
+    if (hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
+        if (hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_all) {
             if (mode == k_CHANGESLOTITEM_MODE_MODIFY_ONE)
                 mode = k_CHANGESLOTITEM_MODE_MODIFY_ALL;
             else if (mode == k_CHANGESLOTITEM_MODE_DELETE_ONE)
                 mode = k_CHANGESLOTITEM_MODE_DELETE_ALL;
-        } else if (hatom_getsym(&args_el->l_hatom) == _llllobj_sym_auto) {
+        } else if (hatom_getsym(&args->l_head->l_hatom) == _llllobj_sym_auto) {
             if (mode == k_CHANGESLOTITEM_MODE_INSERT)
                 mode = k_CHANGESLOTITEM_MODE_INSERT_AUTO;
         }
         position = 1;
     } else {
-        position = hatom_getlong(&args_el->l_hatom);
+        position = hatom_getlong(&args->l_head->l_hatom);
     }
     
-    args_el = args_el->l_next;
+    llll_behead(args);
     
-    new_values_as_llll = llll_subllll(args_el, args_el ? args->l_tail : NULL);
-    
-    long voice = 0;
-    llll_parseattrs((t_object *)r_ob, new_values_as_llll, true, "i", _llllobj_sym_voice, &voice);
-    voice -= 1;
-    
-    if (new_values_as_llll) {
+    if (args) {
         t_notation_item *curr_it;
 
         lock_general_mutex(r_ob);
@@ -10232,7 +10359,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                 if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                     if (voice < 0 || voice == notation_item_get_voicenumber(r_ob, (t_notation_item *)nt)) {
                         create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)nt->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                        note_change_slot_item(r_ob, nt, slotnum, position, new_values_as_llll, mode);
+                        note_change_slot_item(r_ob, nt, slotnum, position, args, mode, modify, thresh);
                         changed = 1;
                     }
                 }
@@ -10242,7 +10369,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                     if (!ch->firstnote) {
 #ifdef BACH_CHORDS_HAVE_SLOTS
                         create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                        notation_item_change_slotitem(r_ob, (t_notation_item *)ch, slotnum, position, new_values_as_llll, mode);
+                        notation_item_change_slotitem(r_ob, (t_notation_item *)ch, slotnum, position, args, mode, modify, thresh);
                         changed = 1;
 #endif
                     } else {
@@ -10250,7 +10377,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                         for (nt=ch->firstnote; nt; nt = nt->next) {
                             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                                 create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                                note_change_slot_item(r_ob, nt, slotnum, position, new_values_as_llll, mode);
+                                note_change_slot_item(r_ob, nt, slotnum, position, args, mode, modify, thresh);
                                 changed = 1;
                             }
                         }
@@ -10265,7 +10392,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
                         for (nt=ch->firstnote; nt; nt = nt->next) {
                             if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
                                 create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-                                note_change_slot_item(r_ob, nt, slotnum, position, new_values_as_llll, mode);
+                                note_change_slot_item(r_ob, nt, slotnum, position, args, mode, modify, thresh);
                                 changed = 1;
                             }
                         }
@@ -10279,7 +10406,7 @@ void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *
         unlock_general_mutex(r_ob);
     }
     
-    llll_free(new_values_as_llll);
+    llll_free(args);
     
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTS_FOR_SELECTION);
 }

@@ -234,7 +234,7 @@ void reducefunction_anything(t_reducefunction *x, t_symbol *msg, long ac, t_atom
 		llll_free(trans);
 	}
 	
-	t_llll *out_ll = llll_approximate_breakpoint_function(ll, x->max_num_points, thresh, is_atom_number(&x->p) ? atom_getlong(&x->p) : 0, x->algorithm, x->slopes);
+	t_llll *out_ll = llll_approximate_breakpoint_function(ll, x->max_num_points, thresh, is_atom_number(&x->p) ? atom_getlong(&x->p) : 0, x->algorithm, x->slopes, 0, (t_object *)x);
 	llll_release(ll);
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, out_ll, 0);
 	reducefunction_bang(x);

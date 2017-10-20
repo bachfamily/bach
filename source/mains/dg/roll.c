@@ -4230,6 +4230,8 @@ int T_EXPORT main(void){
     // @description @copy BACH_DOC_MESSAGE_APPENDSLOTITEM
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @marg 1 @name slot_element @optional 0 @type llll
+    // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
+    // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
     // @seealso changeslotitem, prependslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
     class_addmethod(c, (method) roll_sel_append_slot_item, "appendslotitem", A_GIMME, 0);
 
@@ -4237,6 +4239,8 @@ int T_EXPORT main(void){
     // @description @copy BACH_DOC_MESSAGE_PREPENDSLOTITEM
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @marg 1 @name slot_element @optional 0 @type llll
+    // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
+    // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
     // @seealso appendslotitem, changeslotitem, insertslotitem, deleteslotitem, addslot, eraseslot
     class_addmethod(c, (method) roll_sel_prepend_slot_item, "prependslotitem", A_GIMME, 0);
 
@@ -4245,13 +4249,19 @@ int T_EXPORT main(void){
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
     // @marg 1 @name element_position @optional 0 @type int
     // @marg 2 @name slot_element @optional 0 @type llll
+    // @mattr modify @type int @default 0 @digest If there is a point at the introduced X coordinate, modify it instead of adding a new one
+    // @mattr thresh @type float @default 0. @digest X coordinate threshold for the <m>modify</m> attribute
     // @seealso appendslotitem, prependslotitem, changeslotitem, deleteslotitem, addslot, eraseslot
     class_addmethod(c, (method) roll_sel_insert_slot_item, "insertslotitem", A_GIMME, 0);
 
     // @method deleteslotitem @digest Delete the slot element at a given position of a slot
     // @description @copy BACH_DOC_MESSAGE_DELETESLOTITEM
     // @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
-    // @marg 1 @name element_position @optional 0 @type int
+    // @marg 1 @name element_position_or_wrapped_xcoord @optional 0 @type int/llll
+    // @mattr thresh @type float @default 0. @digest Tolerance threshold for X matching
+    // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
+    // @example deleteslotitem 3 (0.7) @caption delete item 3rd slot matching X = 0.7
+    // @example deleteslotitem 3 (0.7) @thresh 0.1 @caption the same, with a tolerance of 0.1
     // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
     class_addmethod(c, (method) roll_sel_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 
@@ -6782,7 +6792,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                             slot_num = hatom_getlong(&inputlist->l_head->l_hatom) - 1;
                             llll_behead(inputlist);
                         }
-                        llll_parseargs_and_attrs((t_object *)x, inputlist, "lidid", gensym("mapping"), &mapping_ll, gensym("maxchars"), &maxchars, gensym("exp"), &a_exp, gensym("unnecessary"), &delete_unnecessary, gensym("thresh"), &approx_thresh);
+                        llll_parseargs_and_attrs((t_object *)x, inputlist, "lidid", gensym("mapping"), &mapping_ll, gensym("maxchars"), &maxchars, gensym("exp"), &a_exp, gensym("unnecessary"), &delete_unnecessary, _llllobj_sym_thresh, &approx_thresh);
                         if (slot_num >= 0 && slot_num < CONST_MAX_SLOTS)
                             notationobj_velocities2dynamics((t_notation_obj *)x, slot_num, mapping_ll, selection_only, MAX(0, maxchars + 1), a_exp, delete_unnecessary, approx_thresh);
                         llll_free(mapping_ll);

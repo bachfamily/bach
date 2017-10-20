@@ -20373,8 +20373,10 @@ void fill_chord_path_from_llllelem_range(t_notation_obj *r_ob, t_llllelem *first
 		
 	} else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
 		if (tot_size == 1 && is_hatom_number(&first_llllelem->l_hatom)) {
-			*chord_num = hatom_getlong(&first_llllelem->l_hatom);
-            
+//			*chord_num = hatom_getlong(&first_llllelem->l_hatom);
+            long global_chord_num = hatom_getlong(&first_llllelem->l_hatom);
+            global_chord_number_to_measure_and_chord_index(r_ob, *voice_num, global_chord_num, chord_num, meas_num);
+
         } else if (tot_size >= 2) {
             if (tot_size >= 3) {
                 if (is_hatom_number(&first_llllelem->l_hatom))

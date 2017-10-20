@@ -7890,6 +7890,7 @@ void slotitem_append(t_slotitem *item);
 
 /// TBD
 void slotitem_insert_extended(t_notation_obj *r_ob, long slotnum, t_slotitem *item, e_slot_changeslotitem_modes mode, long insertion_position_0based);
+t_slotitem *slot_xcoord_to_slotitem(t_notation_obj *r_ob, long slotnum, t_slot *s, double x_val, double thresh, long *idx, double *dist);
 
 
 /**	Insert a slotitem between two existing slotitems.
@@ -8062,8 +8063,11 @@ void change_slot_matrix_value(t_notation_obj *r_ob, t_note *note, int slot_num, 
 	@param	position			The 1-based index of the item which you want to change (e.g. to change second value in a #k_SLOT_TYPE_INTLIST, set <position> = 2)
 	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
     @param  mode                The operation mode, one of the #e_slot_changeslotitem_modes
+    @param  modify_existing     If non-zero, it'll try to modify existing function points whenever the nex X coordinate coincides with an existing X coordinate
+                                up to the #modification_x_thresh
+    @param  modification_x_thresh   Threshold for X coordinates to be modified (if #modify_existing is non-zero)
  */
-void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE);
+void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE, char modify_existing = 0, double modification_x_thresh = 0.);
 
 
 /**	Change a specific slotitem of a notation item; new item is expressed as an llll.
@@ -8075,7 +8079,7 @@ void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, lon
 	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
  @param  mode                The operation mode, one of the #e_slot_changeslotitem_modes
  */
-void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE);
+void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE, char modify_existing = 0, double modification_x_thresh = 0.);
 
 
 /**	Completely erase a note's slot.

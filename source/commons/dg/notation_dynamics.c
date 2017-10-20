@@ -1600,7 +1600,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
         t_llll *pivot_chords_ll = ll;
         char must_free_pivot_chords_ll = false;
         if (approx_thresh > 0) {
-            pivot_chords_ll = llll_approximate_breakpoint_function(ll, 0, approx_thresh, 2, 1, false, true);
+            pivot_chords_ll = llll_approximate_breakpoint_function(ll, 0, approx_thresh, 2, 1, false, true, (t_object *)r_ob);
             must_free_pivot_chords_ll = true;
         }
         

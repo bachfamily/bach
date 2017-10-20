@@ -1742,7 +1742,7 @@ t_llll *rect_to_llll(t_rect rect)
 // the input llll is expected to be in the form (x y slope anything else...) (x y slope anything else...)
 // the "anything else" is also merged with respect to the given input mode.
 // slopehandling = 0: ignore them, slopehandling = 1: approximate
-t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, char markmode)
+t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, char markmode, t_object *culprit)
 {
 	t_llll *ll = llll_get();
 	t_llllelem *elem;
@@ -1750,8 +1750,10 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 	
 	// Convert slopes to linear, and if |slope| > threshold add a mid-point!
 	for (elem = in_ll->l_head; elem; elem = elem->l_next) {
-        if (hatom_gettype(&elem->l_hatom) != H_LLLL)
+        if (hatom_gettype(&elem->l_hatom) != H_LLLL) {
+            object_warn(culprit, "Warning: all function points must be lllls. A non-llll element has been dropped.");
             continue;
+        }
         
 		double pt_x, pt_y, pt_slope, prev_x, prev_y, prev_slope;
 		double fabs_pt_slope = 0;
@@ -1973,7 +1975,7 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 	} else if (algorithm == 1) {
 		// clustering algorithm, greedy
 		
-		double pivot_x, pivot_y, pivot_slope, pt_x, pt_y, pt_slope;
+		double pivot_x = 0, pivot_y = 0, pivot_slope = 0, pt_x, pt_y, pt_slope;
 		t_llllelem *elem, *pivotelem;
 		
 		elem = ll->l_head;
@@ -1985,36 +1987,49 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 		}
 		
 		elem = ll->l_head;
-		unpack_llll_to_double_triplet(hatom_getllll(&elem->l_hatom), &pivot_x, &pivot_y, &pivot_slope);	
-		pivotelem = elem;
-		elem = elem->l_next;
+        
+        if (elem && hatom_gettype(&elem->l_hatom) == H_LLLL) {
+            unpack_llll_to_double_triplet(hatom_getllll(&elem->l_hatom), &pivot_x, &pivot_y, &pivot_slope);
+            pivotelem = elem;
+            elem = elem->l_next;
+        } else {
+            object_error(culprit, "Error: wrong function syntax found (three floats expected)!");
+            goto end;
+        }
 		
 		while (elem) {
 			
 			double dist = 0;
 			while (elem) {
-				// clustering following points
-				unpack_llll_to_double_triplet(hatom_getllll(&elem->l_hatom), &pt_x, &pt_y, &pt_slope);	
-				if (elem == pivotelem->l_next)
-					dist = 0;
-				else {
-					t_llllelem *temp;
-					double tot_dist = 0;
-					long count = 0;
-					double temp_x, temp_y, temp_slope;
-					for (temp = pivotelem->l_next; temp; temp = temp->l_next) {
-						if (temp == elem)
-							break;
-						else {
-							unpack_llll_to_double_triplet(hatom_getllll(&temp->l_hatom), &temp_x, &temp_y, &temp_slope);	
-							tot_dist += fabs(pt_line_distance_vertical(temp_x, temp_y, pivot_x, pivot_y, pt_x, pt_y));
-							count++;
-						}
-					}
-					tot_dist /= count;
-					if (tot_dist > thresh)
-						break;
-				}
+                
+                if (!elem || hatom_gettype(&elem->l_hatom) != H_LLLL) {
+                    object_error(culprit, "Error: wrong function syntax found (three floats expected)!");
+                    goto end;
+                } else {
+                    
+                    // clustering following points
+                    unpack_llll_to_double_triplet(hatom_getllll(&elem->l_hatom), &pt_x, &pt_y, &pt_slope);
+                    if (elem == pivotelem->l_next)
+                        dist = 0;
+                    else {
+                        t_llllelem *temp;
+                        double tot_dist = 0;
+                        long count = 0;
+                        double temp_x, temp_y, temp_slope;
+                        for (temp = pivotelem->l_next; temp; temp = temp->l_next) {
+                            if (temp == elem)
+                                break;
+                            else {
+                                unpack_llll_to_double_triplet(hatom_getllll(&temp->l_hatom), &temp_x, &temp_y, &temp_slope);
+                                tot_dist += fabs(pt_line_distance_vertical(temp_x, temp_y, pivot_x, pivot_y, pt_x, pt_y));
+                                count++;
+                            }
+                        }
+                        tot_dist /= count;
+                        if (tot_dist > thresh)
+                            break;
+                    }
+                }
 				elem = elem->l_next;
 			}
 			
@@ -2181,7 +2196,8 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 		llll_free(malus_ll);
 		
 	}
-	
+
+end:
 	return ll;
 }
 

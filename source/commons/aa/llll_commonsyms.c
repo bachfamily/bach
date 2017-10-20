@@ -796,6 +796,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_modify =  gensym("modify");
 	x->s_position =  gensym("position");
 	x->s_value =  gensym("value");
+    x->s_thresh =  gensym("thresh");
 	
 
 	x->s_names = gensym("names");

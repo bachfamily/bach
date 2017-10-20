@@ -1574,6 +1574,9 @@
 
 #define BACH_DOC_MESSAGE_DELETESLOTITEM
     // A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+    // Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
+    // wrapped X coordinate of the element to delete (use the <m>thresh</m> message argument to set a tolerance
+    // threshold for the X coordinate matching).
 
 
 

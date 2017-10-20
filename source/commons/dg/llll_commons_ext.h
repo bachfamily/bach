@@ -1018,7 +1018,7 @@ t_llll *pt_to_llll(t_pt pt, char add_zero_slope);
 t_llll *rect_to_llll(t_rect rect);
 t_rect llll_to_rect(t_llll *ll);
 t_pt llll_to_pt(t_llll *ll);
-t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, char markmode = 0);
+t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, char markmode = 0, t_object *culprit = NULL);
 t_llll *double_triplet_to_llll(double d1, double d2, double d3);
 t_llll *double_couple_to_llll(double d1, double d2);
 t_llll *long_couple_to_llll(long c1, long c2);
