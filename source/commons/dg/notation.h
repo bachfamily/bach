@@ -3237,6 +3237,7 @@ typedef struct _marker
 	
 	// utility
 	char				name_painted_direction;					///< Field filled at painttime telling if a marker's name has been painted at the LEFT of the marker line (value -1) or at the right of the marker line (value 1). Value 0 means "still unset".
+    long                name_line;                  ///< Filled at painttime telling on which "line" a markername is
 	double				ux_difference_with_mousedown_marker;	///< Used by handling mousedragging in [bach.score], difference in unscaled horizontal pixels of the marker position with respect to the marker on which the mouse is down. 
 	
 	// dummy fields
@@ -4355,7 +4356,7 @@ typedef struct _notation_obj
 	double		head_vertical_additional_uspace;	///< Unscaled additional vertical space at the top of the object. 
 													///< This value is retreived and synchronized with the first element of #voiceuspacing_as_floatlist. 
 	double		key_signature_uwidth;				///< Unscaled width (in pixels) of the space needed to paint the key signature after the clefs
-	
+    char        smart_markername_placement;         ///< Toggles smart multi-line marker names placement
 	
 	// page view fields (THESE ARE STILL UNSUPPORTED)
 	char		view;							///< (UNSUPPORTED) Current type of view, one of the #e_views
@@ -9504,6 +9505,9 @@ int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, lon
 int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, long point_y);
 
 
+// TBD
+double notationobj_get_marker_voffset(t_notation_obj *r_ob, t_marker *mk);
+
 /**	Tell if a point is on the loop region (or on the loop region extremes).
 	@ingroup			notation_graphic
 	@param 	r_ob		The notation object
@@ -9705,9 +9709,10 @@ void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double
 	@param	marker_y2			The ending y (pixel) of the marker line
 	@param	width				The width of the marker line
 	@param	also_paint_name		This has to be 1 if we also need to paint the name of the marker, 0 otherwise 
+    @param  namewidth           Pointer that will be filled with the width of the marker name (can be NULL)
  */ 
 void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* jf, t_marker *marker, 
-					double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name);
+					double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name, double *namewidth);
 
 /**	Paint the loop region.
 	@ingroup					notation_paint

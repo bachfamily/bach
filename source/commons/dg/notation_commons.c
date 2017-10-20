@@ -353,17 +353,20 @@ void get_voicenames_as_text(t_notation_obj *r_ob, t_voice *voice, char *buf, lon
         
 }
 
-void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* jf, t_marker *marker, double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name)
+void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* jf, t_marker *marker, double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name, double *namewidth)
 {
     
 	char name_direction = marker->name_painted_direction;
-	
+    double height = 0;
+    
 	paint_line(g, color, marker_x, marker_y1, marker_x, marker_y2, linewidth);
 	
 	if (marker->role != k_MARKER_ROLE_NONE) {
 		t_jfont *jf_special_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(6 * r_ob->zoom_y));  // text font for markers
         t_jrgba specialcolor = marker->role == k_MARKER_ROLE_TEMPO ? build_jrgba(0.6, 0.2, 0.2, 1) : (marker->role == k_MARKER_ROLE_TIME_SIGNATURE ? build_jrgba(0.2, 0.2, 0.6, 1) : (marker->role == k_MARKER_ROLE_MEASURE_BARLINE ? build_jrgba(0.2, 0.6, 0.6, 1) : (marker->role == k_MARKER_ROLE_MEASURE_DIVISION ? build_jrgba(0.6, 0.6, 0.2, 1) : build_jrgba(0.6, 0.2, 0.6, 1))));
 		paint_dashed_y_line(g, specialcolor, marker_x, marker_y1, marker_y2, linewidth, 3 * r_ob->zoom_y);
+        if (namewidth)
+            *namewidth = 0;
 		write_text_in_vertical(g, jf_special_text_markers, specialcolor, marker->role == k_MARKER_ROLE_TEMPO ? "TEMPO" : (marker->role == k_MARKER_ROLE_TIME_SIGNATURE ? "TIME SIG" : (marker->role == k_MARKER_ROLE_MEASURE_BARLINE ? "BARLINE" : (marker->role == k_MARKER_ROLE_MEASURE_DIVISION ? "DIVISION" : "SUBDIVISION"))), name_direction < 0 ? marker_x : marker_x - 10 * r_ob->zoom_y, marker_y1 + 3 * r_ob->zoom_y, 10 * r_ob->zoom_y, marker_y2 - marker_y1 - 6 * r_ob->zoom_y, (marker->role == k_MARKER_ROLE_TEMPO ? JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM : JGRAPHICS_TEXT_JUSTIFICATION_TOP) + JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED, 0.8);
 		jfont_destroy_debug(jf_special_text_markers);
 	}
@@ -373,14 +376,17 @@ void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* 
 			if (marker && marker->r_it.names && marker->r_it.names->l_size > 0) {
 				char buf[1000];
 				get_names_as_text(marker->r_it.names, buf, 1000);
-				write_text_account_for_vinset(r_ob, g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y: marker_x + 3 * r_ob->zoom_y, marker_y1 + 3 * r_ob->zoom_y);
+                if (namewidth)
+                    jfont_text_measure(jf, buf, namewidth, &height);
+				write_text_account_for_vinset(r_ob, g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y: marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker));
 			}
 		} else if ((marker->role == k_MARKER_ROLE_TEMPO || marker->role == k_MARKER_ROLE_TIME_SIGNATURE) && marker->content) {
 			char *buf = NULL;
 			llll_to_text_buf(marker->content, &buf, 0, 2, 0, NULL);
-			write_text(g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y, marker_y1 + 3 * r_ob->zoom_y, 200 * r_ob->zoom_y, marker_y2 - marker_y1 - 6 * r_ob->zoom_y, 
+            if (namewidth)
+                jfont_text_measure(jf, buf, namewidth, &height);
+			write_text(g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker), 200 * r_ob->zoom_y, marker_y2 - marker_y1 - 6 * r_ob->zoom_y,
 								(marker->role == k_MARKER_ROLE_TEMPO ? JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM : JGRAPHICS_TEXT_JUSTIFICATION_TOP) + JGRAPHICS_TEXT_JUSTIFICATION_LEFT, true, true);
-//			write_text_account_for_vinset(r_ob, g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y: marker_x + 3 * r_ob->zoom_y, marker->role == k_MARKER_ROLE_TEMPO ? marker_y2 - 3 * r_ob->zoom_y : marker_y1 + 3 * r_ob->zoom_y);
 			bach_freeptr(buf);
 		}
 	}
@@ -25243,6 +25249,22 @@ int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, lon
 
 
 
+double notationobj_get_marker_voffset(t_notation_obj *r_ob, t_marker *mk)
+{
+    double ypos = 0;
+    if (r_ob->ruler % 2) {
+        if (r_ob->show_ruler_labels)
+            ypos = 9 * r_ob->zoom_y;
+        else
+            ypos = 6 * r_ob->zoom_y;
+    } else
+        ypos = 3 * r_ob->zoom_y;
+    
+    if (r_ob->smart_markername_placement)
+        ypos += r_ob->markers_font_size * r_ob->zoom_y * mk->name_line;
+    
+    return ypos;
+}
 
 
 // returns 1 if the point (point_x, point_y) is on the markername
@@ -25265,12 +25287,12 @@ int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x,
             marker_x = ms_to_xposition(r_ob, marker->position_ms, 1); */
         
         marker_namewidth = marker->name_uwidth * r_ob->zoom_y;
-        marker_name_y_start = r_ob->j_inset_y + 10 * r_ob->zoom_y + 3 * r_ob->zoom_y;
+        marker_name_y_start = r_ob->j_inset_y + 10 * r_ob->zoom_y + notationobj_get_marker_voffset(r_ob, marker);
         marker_nameheight = r_ob->markers_font_size * r_ob->zoom_y;
     } else {
         marker_x = onset_to_xposition(r_ob, marker->position_ms, NULL);
         marker_namewidth = marker->name_uwidth * r_ob->zoom_y;
-        marker_name_y_start = r_ob->j_inset_y + 10 * r_ob->zoom_y + 3 * r_ob->zoom_y;
+        marker_name_y_start = r_ob->j_inset_y + 10 * r_ob->zoom_y + notationobj_get_marker_voffset(r_ob, marker);
         marker_nameheight = r_ob->markers_font_size * r_ob->zoom_y;
     }
     
@@ -33108,7 +33130,7 @@ void recalculate_marker_name_uwidth(t_notation_obj *r_ob, t_marker *marker)
 {
 	if (marker) {
 		double width = 0, height = 0;
-		t_jfont *jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(r_ob->markers_font_size));
+		t_jfont *jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, r_ob->markers_font_size);
 		if (marker->role == k_MARKER_ROLE_NONE) {
 			if (marker->r_it.names->l_size > 0) {
 				char buf[1000];
@@ -33144,6 +33166,7 @@ t_marker *build_marker(t_notation_obj *r_ob, t_llll *names, double ms, t_timepoi
 	marker->content = content;
 	marker->name_painted_direction = 0;
     marker->measure_attach_ID = 0;
+    marker->name_line = 0;
     marker->r_sym_pim_attach = long2rat(0);
 
     if (attach_to == k_MARKER_ATTACH_TO_MEASURE) {

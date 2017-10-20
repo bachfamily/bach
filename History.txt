@@ -297,8 +297,8 @@ v0.8b
 			Now "dumpselection" message also supports a @router attribute (e.g. "dumpselection @router foo")  
 			Now "play preschedule" feature, ensuring best timing (with some limitations): see #play+preschedule
 			Now the "play" message is output *before* partial notes also in offline mode
-
-
+			Smart marker names placement
+			
 - bach.score		Fixed bug causing lost slots on syncopations
 			Fixed bug possibly causing crashes while changing number of voices
 			Autobeam: now works actually differently from autorhythm (as expected) 

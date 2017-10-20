@@ -10305,8 +10305,9 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 		if (x->r_ob.show_markers && x->r_ob.firstmarker) {
 			t_marker *marker;
 
-            lock_markers_mutex((t_notation_obj *)x);;
+            lock_markers_mutex((t_notation_obj *)x);
             markers_check_update_name_uwidth((t_notation_obj *)x);
+            double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0;
 			for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
 				double marker_onset = 0;
 				t_timepoint tp = build_timepoint(0, long2rat(0));
@@ -10334,16 +10335,31 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
 				is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
 				if (marker_ux >= x->r_ob.screen_ux_start - 200 / x->r_ob.zoom_x && marker_ux < x->r_ob.screen_ux_end) {
-					double marker_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_ux);
+					this_marker_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_ux);
 					
 					marker->name_painted_direction = (marker_ux + marker->name_uwidth > x->r_ob.screen_ux_end ? -1 : 1);
-					paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : marker_color, 
-								 jf_text_markers, marker, marker_x, 
-								 playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker);
+                    
+                    if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
+                        marker->name_line = marker->prev->name_line + 1;
+                        if (marker->prev->name_line > 0) {
+                            for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
+                                if (tempmk->name_line == 0) {
+                                    if (onset_to_xposition((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                        marker->name_line = 0;
+                                    break;
+                                }
+                        }
+                    } else
+                        marker->name_line = 0;
+                    
+					paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : marker_color,
+								 jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
 					if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
 						double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)nth_scorevoice(x, tp.voice_num), false);
-						paint_circle(g, change_alpha(marker_color, 1), marker_color, marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
+						paint_circle(g, change_alpha(marker_color, 1), marker_color, this_marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
 					}
+                    
+                    prev_marker_x = this_marker_x;
 				} else if (marker_ux >= x->r_ob.screen_ux_end)
                     break;
 			}

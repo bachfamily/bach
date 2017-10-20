@@ -1926,7 +1926,14 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 
 	
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
-		CLASS_ATTR_DOUBLE(c, "additionalstartpad", 0, t_notation_obj, additional_ux_start_pad); 
+        CLASS_ATTR_CHAR(c,"smartmarkernames",0, t_notation_obj, smart_markername_placement);
+        CLASS_ATTR_STYLE_LABEL(c,"smartmarkernames",0,"onoff","Smart Marker Names Placement");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"smartmarkernames",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the ability to display the marker names on multiple lines to avoid collisions.
+
+        
+        CLASS_ATTR_DOUBLE(c, "additionalstartpad", 0, t_notation_obj, additional_ux_start_pad);
 		CLASS_ATTR_STYLE_LABEL(c,"additionalstartpad",0,"text","Additional Start Pad");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"additionalstartpad",0,"0.");
 		// @exclude bach.slot
@@ -1934,6 +1941,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 		// This pad is located right after each clef, before the music content starts. 
 		// @copyif bach.roll BACH_DOC_ROLL_START_PAD
 
+        
         CLASS_ATTR_CHAR(c, "enhancedstems", 0, t_notation_obj, forceround_stems_to_semiinteger);
         CLASS_ATTR_STYLE_LABEL(c,"enhancedstems",0,"onoff","Enhanced Stem Display");
         CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"enhancedstems",0,"0");
@@ -4367,7 +4375,7 @@ void start_editing_markername(t_notation_obj *r_ob, t_object *patcherview, t_mar
 	
 	r_ob->is_editing_type = k_MARKERNAME;
 	r_ob->is_editing_marker = marker;
-	top = r_ob->j_inset_y + 13 * r_ob->zoom_y;
+	top = r_ob->j_inset_y + 10 * r_ob->zoom_y + notationobj_get_marker_voffset(r_ob, marker);
 	left = textfield_left_position; 
 	
 	textfield_set_wordwrap(textfield, 0);
