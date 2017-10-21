@@ -862,329 +862,355 @@ myobject_end_preset
 
 void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
-	// we send a message like
-	// quantize <cents> <durations> <velocities> <ties> <extras>
-	// formatted for quantization
-	
-	t_llll *out_llll = llll_get();
-	
-	t_llll *out_cents = llll_get();
-	t_llll *out_durations = llll_get();
-	t_llll *out_velocities = llll_get();
-	t_llll *out_ties = llll_get();
-	t_llll *out_graphic = llll_get();
-	t_llll *out_breakpoints = llll_get();
-	t_llll *out_slots = llll_get();
-	t_llll *out_extras = llll_get();
-
-	t_llll *what_to_dump_llll;
-	long what_to_dump = k_HEADER_ALL;
-
-	t_chord *chord;
-	t_rollvoice *voice;
-
-	llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
-	llll_appendsym(out_breakpoints, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
-	llll_appendsym(out_slots, _llllobj_sym_slots, 0, WHITENULL_llll);
-
-	lock_general_mutex((t_notation_obj *)x);
-	for (voice = x->firstvoice;	voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
-		t_llll *out_voice_cents = llll_get();
-		t_llll *out_voice_durations = llll_get();
-		t_llll *out_voice_velocities = llll_get();
-		t_llll *out_voice_ties = llll_get();
-		t_llll *out_voice_graphic = llll_get();
-		t_llll *out_voice_breakpoints = llll_get();
-		t_llll *out_voice_slots = llll_get();
-
-		t_llll *active_cents = llll_get();
-		t_llll *active_velocities = llll_get();
-		t_llll *active_graphic = llll_get();
-		t_llll *active_slots = llll_get();
-		t_llll *active_until = llll_get(); // ms of end activity
-		double curr_onset = 0;
-
-		// is there a pause before the beginning of the first chord ?
-		if (voice->firstchord && voice->firstchord->onset > 0) {
-			// add a pause
-			llll_appendllll(out_voice_cents, llll_get(), 0, WHITENULL_llll); 
-			llll_appenddouble(out_voice_durations, -voice->firstchord->onset, 0, WHITENULL_llll); // pause: negative
-			llll_appendllll(out_voice_velocities, llll_get(), 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_ties, llll_get(), 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_graphic, llll_get(), 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_breakpoints, llll_get(), 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_slots, llll_get(), 0, WHITENULL_llll); 
-		}
-
-		for (chord = voice->firstchord; chord; chord = chord->next) {
-			t_note *note;
-			t_llll *this_event_cents = llll_get();
-			t_llll *this_event_velocities = llll_get();
-			t_llll *this_event_ties = llll_get();
-			t_llll *this_event_graphic = llll_get();
-			t_llll *this_event_breakpoints = llll_get();
-			t_llll *this_event_slots = llll_get();
-			double next_onset;
-			t_chord *tmp_chord;
-
-			t_llllelem *active_cents_elem, *active_velocities_elem, *active_until_elem, *active_graphic_elem, *active_slots_elem;
-			t_chord *lastchord_of_group = voice->lastchord;
-			t_llllelem *temp1, *temp2, *temp3, *temp4, *temp5;
-
-			curr_onset = chord->onset;
-			
-			// first: we find next event start
-			next_onset = chord->onset + chord->firstnote->duration; // just to inizialize properly
-			tmp_chord = chord;
-			while (tmp_chord->next) {
-				if (tmp_chord->next->onset > chord->onset) {
-					if (tmp_chord->next->onset < next_onset) 
-						next_onset = tmp_chord->next->onset;
-					lastchord_of_group = tmp_chord;
-					break; // otherwise we gather all the chords having the same onset
-				}
-				tmp_chord = tmp_chord->next;
-			}
-			
-			for (tmp_chord = chord; tmp_chord; tmp_chord = tmp_chord->next){
-				for (note = tmp_chord->firstnote; note; note = note->next){
-					if (tmp_chord->onset + note->duration < next_onset)
-						next_onset = tmp_chord->onset + note->duration;
-				}
-				if (tmp_chord == lastchord_of_group)
-					break;
-			}
-			
-			for (active_until_elem = active_until->l_head; active_until_elem; active_until_elem = active_until_elem->l_next) {
-				double this_onset = hatom_getdouble(&active_until_elem->l_hatom);
-				if (this_onset < next_onset)
-					next_onset = this_onset;
-			}
-
-			// third: we build our event-lists
-			active_cents_elem = active_cents->l_head; 
-			active_velocities_elem = active_velocities->l_head; 
-			active_graphic_elem = active_graphic->l_head; 
-			active_slots_elem = active_slots->l_head; 
-			active_until_elem = active_until->l_head;
-			while (active_cents_elem && active_velocities_elem && active_until_elem && active_graphic_elem && active_slots_elem) {
-				double end_of_this_event = hatom_getdouble(&active_until_elem->l_hatom);
-				llll_appenddouble(this_event_cents, hatom_getdouble(&active_cents_elem->l_hatom), 0, WHITENULL_llll);
-				llll_appendlong(this_event_velocities, hatom_getdouble(&active_velocities_elem->l_hatom), 0, WHITENULL_llll);
-				llll_appendhatom_clone(this_event_graphic, &active_graphic_elem->l_hatom, 0, WHITENULL_llll);
-				llll_appendllll(this_event_breakpoints, llll_get(), 0, WHITENULL_llll);
-				llll_appendhatom_clone(this_event_slots, &active_slots_elem->l_hatom, 0, WHITENULL_llll);
-				if (end_of_this_event == next_onset) {
-					llll_appendlong(this_event_ties, 0, 0, WHITENULL_llll);
-					// the event is no more active!
-					temp1 = active_cents_elem->l_next;
-					temp2 = active_velocities_elem->l_next;
-					temp3 = active_graphic_elem->l_next;
-					temp4 = active_until_elem->l_next;
-					temp5 = active_slots_elem->l_next;
-					llll_destroyelem(active_cents_elem);
-					llll_destroyelem(active_velocities_elem);
-					llll_destroyelem(active_graphic_elem);
-					llll_destroyelem(active_slots_elem);
-					llll_destroyelem(active_until_elem);
-					active_cents_elem = temp1; 
-					active_velocities_elem = temp2; 
-					active_graphic_elem = temp3;
-					active_until_elem = temp4;
-					active_slots_elem = temp5;
-				} else {
-					llll_appendlong(this_event_ties, 1, 0, WHITENULL_llll);
-					active_cents_elem = active_cents_elem->l_next; 
-					active_velocities_elem = active_velocities_elem->l_next; 
-					active_slots_elem = active_slots_elem->l_next; 
-					active_graphic_elem = active_graphic_elem->l_next; 
-					active_until_elem = active_until_elem->l_next;
-				}
-			}
-			tmp_chord = chord;
-			while (tmp_chord) {
-				for (note = tmp_chord->firstnote; note; note = note->next){
-					llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
-					llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
-					llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
-					llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
-					llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
-					if (tmp_chord->onset + note->duration == next_onset) {
-						llll_appendlong(this_event_ties, 0, 0, WHITENULL_llll);
-					} else {
-						llll_appendlong(this_event_ties, 1, 0, WHITENULL_llll);
-						// we put the note into the active list
-						llll_appenddouble(active_cents, note->midicents, 0, WHITENULL_llll);
-						llll_appendlong(active_velocities, note->velocity, 0, WHITENULL_llll);
-						llll_appendllll(active_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
-						llll_appendllll(active_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
-						llll_appenddouble(active_until, tmp_chord->onset + note->duration, 0, WHITENULL_llll);
-					}
-				}
-				if (tmp_chord == lastchord_of_group)
-					break;
-				tmp_chord = tmp_chord->next;
-			}
-
-/*			char debug1[1000], debug2[1000], debug3[1000], debug4[1000], debug5[1000], debug6[1000];
-			llll_to_char_array(this_event_cents, debug1, 999);
-			llll_to_char_array(this_event_velocities, debug2, 999); 
-			llll_to_char_array(this_event_ties, debug3, 999); 
-			llll_to_char_array(this_event_graphic, debug4, 999); 
-			llll_to_char_array(this_event_breakpoints, debug5, 999); 
-			llll_to_char_array(this_event_slots, debug6, 999); */
-			
-			llll_appendllll(out_voice_cents, this_event_cents, 0, WHITENULL_llll); 
-			llll_appenddouble(out_voice_durations, next_onset - curr_onset, 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_velocities, this_event_velocities, 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_ties, this_event_ties, 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_graphic, this_event_graphic, 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_breakpoints, this_event_breakpoints, 0, WHITENULL_llll); 
-			llll_appendllll(out_voice_slots, this_event_slots, 0, WHITENULL_llll); 
-			curr_onset = next_onset;
-			
-			// we do the same for all the middle-events (if any)
-			while (active_until->l_size > 0) {
-				t_llll *this_middle_event_cents, *this_middle_event_velocities, *this_middle_event_ties, *this_middle_event_graphic, *this_middle_event_breakpoints, *this_middle_event_slots;
-				char then_break = false;
-				
-				// first: we find the next event start among the active events
-				next_onset = -1;
-				for (active_until_elem = active_until->l_head; active_until_elem; active_until_elem = active_until_elem->l_next) {
-					double this_onset = hatom_getdouble(&active_until_elem->l_hatom);
-					if (next_onset < 0 || this_onset < next_onset)
-						next_onset = this_onset;
-				}
-
-				if (lastchord_of_group->next && next_onset >= lastchord_of_group->next->onset) {
-					next_onset = lastchord_of_group->next->onset;
-					if (curr_onset >= next_onset)
-						break;
-					else
-						then_break = true;
-				}
-				
-				// else: we build a new event
-				this_middle_event_cents = llll_get();
-				this_middle_event_velocities = llll_get();
-				this_middle_event_ties = llll_get();
-				this_middle_event_graphic = llll_get();
-				this_middle_event_breakpoints = llll_get();
-				this_middle_event_slots = llll_get();
-				active_cents_elem = active_cents->l_head; 
-				active_velocities_elem = active_velocities->l_head; 
-				active_graphic_elem = active_graphic->l_head; 
-				active_slots_elem = active_slots->l_head; 
-				active_until_elem = active_until->l_head;
-				while (active_cents_elem && active_velocities_elem && active_graphic_elem && active_slots_elem && active_until_elem) {
-					double end_of_this_event = hatom_getdouble(&active_until_elem->l_hatom);
-					llll_appenddouble(this_middle_event_cents, hatom_getdouble(&active_cents_elem->l_hatom), 0, WHITENULL_llll);
-					llll_appendlong(this_middle_event_velocities, hatom_getdouble(&active_velocities_elem->l_hatom), 0, WHITENULL_llll);
-					llll_appendhatom_clone(this_middle_event_graphic, &active_graphic_elem->l_hatom, 0, WHITENULL_llll);
-					llll_appendllll(this_middle_event_breakpoints, llll_get(), 0, WHITENULL_llll);
-					llll_appendhatom_clone(this_middle_event_slots, &active_slots_elem->l_hatom, 0, WHITENULL_llll);
-					if (end_of_this_event == next_onset) {
-						llll_appendlong(this_middle_event_ties, 0, 0, WHITENULL_llll);
-						// the event is no more active!
-						temp1 = active_cents_elem->l_next;
-						temp2 = active_velocities_elem->l_next;
-						temp3 = active_graphic_elem->l_next;
-						temp4 = active_until_elem->l_next;
-						temp5 = active_slots_elem->l_next;
-						llll_destroyelem(active_cents_elem);
-						llll_destroyelem(active_velocities_elem);
-						llll_destroyelem(active_graphic_elem);
-						llll_destroyelem(active_until_elem);
-						llll_destroyelem(active_slots_elem);
-						active_cents_elem = temp1; 
-						active_velocities_elem = temp2; 
-						active_graphic_elem = temp3; 
-						active_until_elem = temp4;
-						active_slots_elem = temp5;
-					} else {
-						llll_appendlong(this_middle_event_ties, 1, 0, WHITENULL_llll);
-						active_cents_elem = active_cents_elem->l_next; 
-						active_velocities_elem = active_velocities_elem->l_next; 
-						active_graphic_elem = active_graphic_elem->l_next;
-						active_slots_elem = active_slots_elem->l_next;
-						active_until_elem = active_until_elem->l_next;
-					}
-				}
-
-/*				llll_to_char_array(this_middle_event_cents, debug1, 999);
-				llll_to_char_array(this_middle_event_velocities, debug2, 999); 
-				llll_to_char_array(this_middle_event_ties, debug3, 999); 
-				llll_to_char_array(this_middle_event_graphic, debug4, 999); 
-				llll_to_char_array(this_middle_event_breakpoints, debug5, 999); 
-				llll_to_char_array(this_middle_event_slots, debug6, 999); */
-				
-				llll_appendllll(out_voice_cents, this_middle_event_cents, 0, WHITENULL_llll); 
-				llll_appenddouble(out_voice_durations, next_onset - curr_onset, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_velocities, this_middle_event_velocities, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_ties, this_middle_event_ties, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_graphic, this_middle_event_graphic, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_breakpoints, this_middle_event_breakpoints, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_slots, this_middle_event_slots, 0, WHITENULL_llll); 
-				
-				curr_onset = next_onset;
-				
-				if (then_break) break;
-			}
-			
-			chord = lastchord_of_group;
-			
-			// is there some pause before the beginning of the next chord ?
-			if (active_until->l_size == 0 && chord->next && chord->next->onset > curr_onset) {
-				// add a pause
-				llll_appendllll(out_voice_cents, llll_get(), 0, WHITENULL_llll); 
-				llll_appenddouble(out_voice_durations, -(chord->next->onset - curr_onset), 0, WHITENULL_llll); // pause: negative
-				llll_appendllll(out_voice_velocities, llll_get(), 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_ties, llll_get(), 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_graphic, llll_get(), 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_breakpoints, llll_get(), 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_slots, llll_get(), 0, WHITENULL_llll); 
-			}
-			
-		}
-
-		llll_appendllll(out_cents, out_voice_cents, 0, WHITENULL_llll);
-		llll_appendllll(out_durations, out_voice_durations, 0, WHITENULL_llll);
-		llll_appendllll(out_velocities, out_voice_velocities, 0, WHITENULL_llll);
-		llll_appendllll(out_ties, out_voice_ties, 0, WHITENULL_llll);
-		llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
-		llll_appendllll(out_breakpoints, out_voice_breakpoints, 0, WHITENULL_llll);
-		llll_appendllll(out_slots, out_voice_slots, 0, WHITENULL_llll);
-
-		llll_free(active_until);
-		llll_free(active_velocities);
-		llll_free(active_graphic);
-		llll_free(active_slots);
-		llll_free(active_cents);
-	}
-	
-	// building extras
-	llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);	
-	llll_appendllll(out_extras, out_breakpoints, 0, WHITENULL_llll);	
-	llll_appendllll(out_extras, out_slots, 0, WHITENULL_llll);	
-	
-	what_to_dump_llll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
-	what_to_dump = header_objects_to_long(what_to_dump_llll);
-	if (what_to_dump == 0)
-		what_to_dump = k_HEADER_ALL;
-	llll_free(what_to_dump_llll);
-		
-	llll_appendsym(out_llll, gensym("quantize"), 0, WHITENULL_llll);
-	llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING));
-	llll_appendllll(out_llll, out_cents, 0, WHITENULL_llll);
-	llll_appendllll(out_llll, out_durations, 0, WHITENULL_llll);
-	llll_appendllll(out_llll, out_velocities, 0, WHITENULL_llll);
-	llll_appendllll(out_llll, out_ties, 0, WHITENULL_llll);
-	llll_appendllll(out_llll, out_extras, 0, WHITENULL_llll);
-	
-	unlock_general_mutex((t_notation_obj *)x);
-
-	llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
-	llll_free(out_llll);
+    // we send a message like
+    // quantize <cents> <durations> <velocities> <ties> <extras>
+    // formatted for quantization
+    
+    t_llll *out_llll = llll_get();
+    
+    t_llll *out_cents = llll_get();
+    t_llll *out_durations = llll_get();
+    t_llll *out_velocities = llll_get();
+    t_llll *out_ties = llll_get();
+    t_llll *out_graphic = llll_get();
+    t_llll *out_breakpoints = llll_get();
+    t_llll *out_slots = llll_get();
+    t_llll *out_extras = llll_get();
+    t_llll *out_IDs = llll_get();
+    
+    t_llll *what_to_dump_llll;
+    long what_to_dump = k_HEADER_ALL;
+    
+    t_chord *chord;
+    t_rollvoice *voice;
+    
+    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
+    llll_appendsym(out_breakpoints, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
+    llll_appendsym(out_slots, _llllobj_sym_slots, 0, WHITENULL_llll);
+    
+    lock_general_mutex((t_notation_obj *)x);
+    for (voice = x->firstvoice;	voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
+        t_llll *out_voice_cents = llll_get();
+        t_llll *out_voice_durations = llll_get();
+        t_llll *out_voice_velocities = llll_get();
+        t_llll *out_voice_ties = llll_get();
+        t_llll *out_voice_graphic = llll_get();
+        t_llll *out_voice_breakpoints = llll_get();
+        t_llll *out_voice_slots = llll_get();
+        t_llll *out_voice_IDs = llll_get();
+        
+        t_llll *active_cents = llll_get();
+        t_llll *active_velocities = llll_get();
+        t_llll *active_graphic = llll_get();
+        t_llll *active_slots = llll_get();
+        t_llll *active_IDs = llll_get();
+        t_llll *active_until = llll_get(); // ms of end activity
+        double curr_onset = 0;
+        
+        // is there a pause before the beginning of the first chord ?
+        if (voice->firstchord && voice->firstchord->onset > 0) {
+            // add a pause
+            llll_appendllll(out_voice_cents, llll_get(), 0, WHITENULL_llll);
+            llll_appenddouble(out_voice_durations, -voice->firstchord->onset, 0, WHITENULL_llll); // pause: negative
+            llll_appendllll(out_voice_velocities, llll_get(), 0, WHITENULL_llll);
+            llll_appendllll(out_voice_ties, llll_get(), 0, WHITENULL_llll);
+            llll_appendllll(out_voice_graphic, llll_get(), 0, WHITENULL_llll);
+            llll_appendllll(out_voice_breakpoints, llll_get(), 0, WHITENULL_llll);
+            llll_appendllll(out_voice_slots, llll_get(), 0, WHITENULL_llll);
+            llll_appendllll(out_voice_IDs, llll_get(), 0, WHITENULL_llll);
+        }
+        
+        for (chord = voice->firstchord; chord; chord = chord->next) {
+            t_note *note;
+            t_llll *this_event_cents = llll_get();
+            t_llll *this_event_velocities = llll_get();
+            t_llll *this_event_ties = llll_get();
+            t_llll *this_event_graphic = llll_get();
+            t_llll *this_event_breakpoints = llll_get();
+            t_llll *this_event_slots = llll_get();
+            t_llll *this_event_IDs = llll_get();
+            double next_onset;
+            t_chord *tmp_chord;
+            
+            t_llllelem *active_cents_elem, *active_velocities_elem, *active_until_elem, *active_graphic_elem, *active_slots_elem, *active_IDs_elem;
+            t_chord *lastchord_of_group = voice->lastchord;
+            t_llllelem *temp1, *temp2, *temp3, *temp4, *temp5, *temp6;
+            
+            curr_onset = chord->onset;
+            
+            // first: we find next event start
+            next_onset = chord->onset + chord->firstnote->duration; // just to inizialize properly
+            tmp_chord = chord;
+            while (tmp_chord->next) {
+                if (tmp_chord->next->onset > chord->onset) {
+                    if (tmp_chord->next->onset < next_onset)
+                        next_onset = tmp_chord->next->onset;
+                    lastchord_of_group = tmp_chord;
+                    break; // otherwise we gather all the chords having the same onset
+                }
+                tmp_chord = tmp_chord->next;
+            }
+            
+            for (tmp_chord = chord; tmp_chord; tmp_chord = tmp_chord->next){
+                for (note = tmp_chord->firstnote; note; note = note->next){
+                    if (tmp_chord->onset + note->duration < next_onset)
+                        next_onset = tmp_chord->onset + note->duration;
+                }
+                if (tmp_chord == lastchord_of_group)
+                    break;
+            }
+            
+            for (active_until_elem = active_until->l_head; active_until_elem; active_until_elem = active_until_elem->l_next) {
+                double this_onset = hatom_getdouble(&active_until_elem->l_hatom);
+                if (this_onset < next_onset)
+                    next_onset = this_onset;
+            }
+            
+            // third: we build our event-lists
+            active_cents_elem = active_cents->l_head;
+            active_velocities_elem = active_velocities->l_head;
+            active_graphic_elem = active_graphic->l_head;
+            active_slots_elem = active_slots->l_head;
+            active_IDs_elem = active_IDs->l_head;
+            active_until_elem = active_until->l_head;
+            while (active_cents_elem && active_velocities_elem && active_until_elem && active_graphic_elem && active_slots_elem && active_IDs_elem) {
+                double end_of_this_event = hatom_getdouble(&active_until_elem->l_hatom);
+                llll_appenddouble(this_event_cents, hatom_getdouble(&active_cents_elem->l_hatom), 0, WHITENULL_llll);
+                llll_appendlong(this_event_velocities, hatom_getdouble(&active_velocities_elem->l_hatom), 0, WHITENULL_llll);
+                llll_appendhatom_clone(this_event_graphic, &active_graphic_elem->l_hatom, 0, WHITENULL_llll);
+                llll_appendllll(this_event_breakpoints, llll_get(), 0, WHITENULL_llll);
+                llll_appendhatom_clone(this_event_slots, &active_slots_elem->l_hatom, 0, WHITENULL_llll);
+                llll_appendlong(this_event_IDs, hatom_getlong(&active_IDs_elem->l_hatom), 0, WHITENULL_llll);
+                if (end_of_this_event == next_onset) {
+                    llll_appendlong(this_event_ties, 0, 0, WHITENULL_llll);
+                    // the event is no more active!
+                    temp1 = active_cents_elem->l_next;
+                    temp2 = active_velocities_elem->l_next;
+                    temp3 = active_graphic_elem->l_next;
+                    temp4 = active_until_elem->l_next;
+                    temp5 = active_slots_elem->l_next;
+                    temp6 = active_IDs_elem->l_next;
+                    llll_destroyelem(active_cents_elem);
+                    llll_destroyelem(active_velocities_elem);
+                    llll_destroyelem(active_graphic_elem);
+                    llll_destroyelem(active_slots_elem);
+                    llll_destroyelem(active_IDs_elem);
+                    llll_destroyelem(active_until_elem);
+                    active_cents_elem = temp1;
+                    active_velocities_elem = temp2;
+                    active_graphic_elem = temp3;
+                    active_until_elem = temp4;
+                    active_slots_elem = temp5;
+                    active_IDs_elem = temp6;
+                } else {
+                    llll_appendlong(this_event_ties, 1, 0, WHITENULL_llll);
+                    active_cents_elem = active_cents_elem->l_next;
+                    active_velocities_elem = active_velocities_elem->l_next;
+                    active_slots_elem = active_slots_elem->l_next;
+                    active_graphic_elem = active_graphic_elem->l_next;
+                    active_IDs_elem = active_IDs_elem->l_next;
+                    active_until_elem = active_until_elem->l_next;
+                }
+            }
+            tmp_chord = chord;
+            while (tmp_chord) {
+                for (note = tmp_chord->firstnote; note; note = note->next){
+                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
+                    llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
+                    llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
+                    llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
+                    llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
+                    llll_appendlong(this_event_IDs, note->r_it.ID, 0, WHITENULL_llll);
+                    if (tmp_chord->onset + note->duration == next_onset) {
+                        llll_appendlong(this_event_ties, 0, 0, WHITENULL_llll);
+                    } else {
+                        llll_appendlong(this_event_ties, 1, 0, WHITENULL_llll);
+                        // we put the note into the active list
+                        llll_appenddouble(active_cents, note->midicents, 0, WHITENULL_llll);
+                        llll_appendlong(active_velocities, note->velocity, 0, WHITENULL_llll);
+                        llll_appendllll(active_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
+                        llll_appendllll(active_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
+                        llll_appendlong(active_IDs, note->r_it.ID, 0, WHITENULL_llll);
+                        llll_appenddouble(active_until, tmp_chord->onset + note->duration, 0, WHITENULL_llll);
+                    }
+                }
+                if (tmp_chord == lastchord_of_group)
+                    break;
+                tmp_chord = tmp_chord->next;
+            }
+            
+            /*			char debug1[1000], debug2[1000], debug3[1000], debug4[1000], debug5[1000], debug6[1000];
+             llll_to_char_array(this_event_cents, debug1, 999);
+             llll_to_char_array(this_event_velocities, debug2, 999);
+             llll_to_char_array(this_event_ties, debug3, 999);
+             llll_to_char_array(this_event_graphic, debug4, 999);
+             llll_to_char_array(this_event_breakpoints, debug5, 999);
+             llll_to_char_array(this_event_slots, debug6, 999); */
+            
+            llll_appendllll(out_voice_cents, this_event_cents, 0, WHITENULL_llll);
+            llll_appenddouble(out_voice_durations, next_onset - curr_onset, 0, WHITENULL_llll);
+            llll_appendllll(out_voice_velocities, this_event_velocities, 0, WHITENULL_llll);
+            llll_appendllll(out_voice_ties, this_event_ties, 0, WHITENULL_llll);
+            llll_appendllll(out_voice_graphic, this_event_graphic, 0, WHITENULL_llll);
+            llll_appendllll(out_voice_breakpoints, this_event_breakpoints, 0, WHITENULL_llll);
+            llll_appendllll(out_voice_slots, this_event_slots, 0, WHITENULL_llll);
+            llll_appendllll(out_voice_IDs, this_event_IDs, 0, WHITENULL_llll);
+            curr_onset = next_onset;
+            
+            // we do the same for all the middle-events (if any)
+            while (active_until->l_size > 0) {
+                t_llll *this_middle_event_cents, *this_middle_event_velocities, *this_middle_event_ties, *this_middle_event_graphic, *this_middle_event_breakpoints, *this_middle_event_slots, *this_middle_event_IDs;
+                char then_break = false;
+                
+                // first: we find the next event start among the active events
+                next_onset = -1;
+                for (active_until_elem = active_until->l_head; active_until_elem; active_until_elem = active_until_elem->l_next) {
+                    double this_onset = hatom_getdouble(&active_until_elem->l_hatom);
+                    if (next_onset < 0 || this_onset < next_onset)
+                        next_onset = this_onset;
+                }
+                
+                if (lastchord_of_group->next && next_onset >= lastchord_of_group->next->onset) {
+                    next_onset = lastchord_of_group->next->onset;
+                    if (curr_onset >= next_onset)
+                        break;
+                    else
+                        then_break = true;
+                }
+                
+                // else: we build a new event
+                this_middle_event_cents = llll_get();
+                this_middle_event_velocities = llll_get();
+                this_middle_event_ties = llll_get();
+                this_middle_event_graphic = llll_get();
+                this_middle_event_breakpoints = llll_get();
+                this_middle_event_slots = llll_get();
+                this_middle_event_IDs = llll_get();
+                active_cents_elem = active_cents->l_head;
+                active_velocities_elem = active_velocities->l_head;
+                active_graphic_elem = active_graphic->l_head;
+                active_slots_elem = active_slots->l_head;
+                active_IDs_elem = active_IDs->l_head;
+                active_until_elem = active_until->l_head;
+                while (active_cents_elem && active_velocities_elem && active_graphic_elem && active_slots_elem && active_until_elem) {
+                    double end_of_this_event = hatom_getdouble(&active_until_elem->l_hatom);
+                    llll_appenddouble(this_middle_event_cents, hatom_getdouble(&active_cents_elem->l_hatom), 0, WHITENULL_llll);
+                    llll_appendlong(this_middle_event_velocities, hatom_getdouble(&active_velocities_elem->l_hatom), 0, WHITENULL_llll);
+                    llll_appendhatom_clone(this_middle_event_graphic, &active_graphic_elem->l_hatom, 0, WHITENULL_llll);
+                    llll_appendllll(this_middle_event_breakpoints, llll_get(), 0, WHITENULL_llll);
+                    llll_appendhatom_clone(this_middle_event_slots, &active_slots_elem->l_hatom, 0, WHITENULL_llll);
+                    llll_appendlong(this_middle_event_IDs, hatom_getlong(&active_IDs_elem->l_hatom), 0, WHITENULL_llll);
+                    if (end_of_this_event == next_onset) {
+                        llll_appendlong(this_middle_event_ties, 0, 0, WHITENULL_llll);
+                        // the event is no more active!
+                        temp1 = active_cents_elem->l_next;
+                        temp2 = active_velocities_elem->l_next;
+                        temp3 = active_graphic_elem->l_next;
+                        temp4 = active_until_elem->l_next;
+                        temp5 = active_slots_elem->l_next;
+                        temp6 = active_IDs_elem->l_next;
+                        llll_destroyelem(active_cents_elem);
+                        llll_destroyelem(active_velocities_elem);
+                        llll_destroyelem(active_graphic_elem);
+                        llll_destroyelem(active_until_elem);
+                        llll_destroyelem(active_slots_elem);
+                        llll_destroyelem(active_IDs_elem);
+                        active_cents_elem = temp1;
+                        active_velocities_elem = temp2;
+                        active_graphic_elem = temp3;
+                        active_until_elem = temp4;
+                        active_slots_elem = temp5;
+                        active_IDs_elem = temp6;
+                    } else {
+                        llll_appendlong(this_middle_event_ties, 1, 0, WHITENULL_llll);
+                        active_cents_elem = active_cents_elem->l_next;
+                        active_velocities_elem = active_velocities_elem->l_next;
+                        active_graphic_elem = active_graphic_elem->l_next;
+                        active_slots_elem = active_slots_elem->l_next;
+                        active_IDs_elem = active_IDs_elem->l_next;
+                        active_until_elem = active_until_elem->l_next;
+                    }
+                }
+                
+                /*				llll_to_char_array(this_middle_event_cents, debug1, 999);
+                 llll_to_char_array(this_middle_event_velocities, debug2, 999);
+                 llll_to_char_array(this_middle_event_ties, debug3, 999);
+                 llll_to_char_array(this_middle_event_graphic, debug4, 999);
+                 llll_to_char_array(this_middle_event_breakpoints, debug5, 999);
+                 llll_to_char_array(this_middle_event_slots, debug6, 999); */
+                
+                llll_appendllll(out_voice_cents, this_middle_event_cents, 0, WHITENULL_llll);
+                llll_appenddouble(out_voice_durations, next_onset - curr_onset, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_velocities, this_middle_event_velocities, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_ties, this_middle_event_ties, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_graphic, this_middle_event_graphic, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_breakpoints, this_middle_event_breakpoints, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_slots, this_middle_event_slots, 0, WHITENULL_llll); 
+                llll_appendllll(out_voice_IDs, this_middle_event_IDs, 0, WHITENULL_llll);
+                
+                curr_onset = next_onset;
+                
+                if (then_break) break;
+            }
+            
+            chord = lastchord_of_group;
+            
+            // is there some pause before the beginning of the next chord ?
+            if (active_until->l_size == 0 && chord->next && chord->next->onset > curr_onset) {
+                // add a pause
+                llll_appendllll(out_voice_cents, llll_get(), 0, WHITENULL_llll); 
+                llll_appenddouble(out_voice_durations, -(chord->next->onset - curr_onset), 0, WHITENULL_llll); // pause: negative
+                llll_appendllll(out_voice_velocities, llll_get(), 0, WHITENULL_llll); 
+                llll_appendllll(out_voice_ties, llll_get(), 0, WHITENULL_llll); 
+                llll_appendllll(out_voice_graphic, llll_get(), 0, WHITENULL_llll); 
+                llll_appendllll(out_voice_breakpoints, llll_get(), 0, WHITENULL_llll); 
+                llll_appendllll(out_voice_slots, llll_get(), 0, WHITENULL_llll); 
+                llll_appendllll(out_voice_IDs, llll_get(), 0, WHITENULL_llll);
+            }
+            
+        }
+        
+        llll_appendllll(out_cents, out_voice_cents, 0, WHITENULL_llll);
+        llll_appendllll(out_durations, out_voice_durations, 0, WHITENULL_llll);
+        llll_appendllll(out_velocities, out_voice_velocities, 0, WHITENULL_llll);
+        llll_appendllll(out_ties, out_voice_ties, 0, WHITENULL_llll);
+        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
+        llll_appendllll(out_breakpoints, out_voice_breakpoints, 0, WHITENULL_llll);
+        llll_appendllll(out_slots, out_voice_slots, 0, WHITENULL_llll);
+        llll_appendllll(out_IDs, out_voice_IDs, 0, WHITENULL_llll);
+        
+        llll_free(active_until);
+        llll_free(active_velocities);
+        llll_free(active_graphic);
+        llll_free(active_slots);
+        llll_free(active_cents);
+        llll_free(active_IDs);
+    }
+    
+    // building extras
+    llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);	
+    llll_appendllll(out_extras, out_breakpoints, 0, WHITENULL_llll);	
+    llll_appendllll(out_extras, out_slots, 0, WHITENULL_llll);	
+    
+    what_to_dump_llll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    what_to_dump = header_objects_to_long(what_to_dump_llll);
+    if (what_to_dump == 0)
+        what_to_dump = k_HEADER_ALL;
+    llll_free(what_to_dump_llll);
+    
+    llll_appendsym(out_llll, gensym("quantize"), 0, WHITENULL_llll);
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING));
+    llll_appendllll(out_llll, out_cents, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_durations, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_velocities, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_ties, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_extras, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_IDs, 0, WHITENULL_llll);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
+    llll_free(out_llll);
 }
 
 void roll_send_current_chord(t_roll *x){
@@ -3906,12 +3932,35 @@ int T_EXPORT main(void){
 
 
     // @method goto @digest Move selection
-    // @description The <m>goto</m> message moves the selection to a new item, i.e. clears the selection and select the new item.
-    // The first argument is the movement type: <br />
-    // <b>prev</b>: select previous notation item, if any; <br />
-    // <b>next</b>: select next notation item, if any. <br />
-    // @example sel next @caption select next notation item
-    // @example sel prev @caption select previous notation item
+    // @description @copy BACH_DOC_GOTO
+    // @marg 0 @name command @optional 0 @type symbol
+    // @marg 1 @name arguments @optional 1 @type llll
+    // @mattr inscreen @type int @default 0 @digest If non-zero, shows selected elements inside the domain
+    // @mattr skiprests @type int @default 0 @digest If non-zero, avoids rest
+    // @mattr repeat @type int @default 1 @digest Repeat command a certain number of times
+    // @mattr nullmode @type int @default 1 @digest If non-zero, notifies when no more elements are selected
+    // @mattr voices @type llll @default null @digest Sets the voices to be affected by selection (if <b>null</b>: all voices)
+    // @mattr type @type llll @default smart @digest Sets the notation item types to be accounted for
+    // @mattr include @type symbol/llll @default head @digest Sets which element (head or tail) to include as boundary for "time" command
+    // @mattr tiemode @type symbol @default all @digest If "all", select all tied sequences if any of their element is selected; if "each", select tied elements separately
+    // @mattr voicemode @type symbol @default anyactive @digest Sets how selection should be handled across voices for "next" and "prev" commands
+    // @mattr polymode @type symbol @default overlap @digest Sets how polyphony should be handled across voices for "next" and "prev" commands
+    // @mattr from @type symbol @default auto @digest Sets start computation point (either "head" or "tail") for "next" and "prev" commands
+    // @mattr to  @type symbol @default auto @digest Sets end computation point (either "head" or "tail") for "next" and "prev" commands
+    // @mattr graceshavedur @type int @default 0 @digest If non-zero, grace elements have playback duration
+    // @mattr markershavevoices @type int @default 0 @digest If non-zero, measure-attached markers undergo the voice attributes conditions
+    // @mattr where @type llll @default null @digest Sets a condition to be matched by selected items (the other ones are discarded)
+    // @mattr until @type llll @default null @digest Sets a condition to be matched, otherwise perform the command again, until condition is met
+    // @example goto 1000 @caption set selection to items which are active at 1sec
+    // @example goto next @caption select next notation item
+    // @example goto prev @caption select previous notation item
+    // @example goto next @repeat 10 @caption select the 10th next notation item
+    // @example goto next @type marker @caption select the next marker
+    // @example goto next @until cents > 6000 @type note @caption select next note above middle C
+    // @example goto up @caption move selection up
+    // @example goto right @caption move selection right
+    // @example goto next @voicemode any @polymode overlap @caption navigate through score polyphonically
+    // @example goto 1000 @include tail @caption set selection to items which are active at 1sec, including their tails (but not their heads)
     // @seealso sel, select, unsel
     class_addmethod(c, (method) roll_anything, "goto", A_GIMME, 0);
 
@@ -6154,7 +6203,6 @@ void roll_openslotwin(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
 
 
-///// ACCIDENTALS HANDLING IN ROLL
 
 
 // QUERYING STUFF

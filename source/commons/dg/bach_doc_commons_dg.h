@@ -2281,3 +2281,61 @@
     // - lambda+modifications won't work;  <br />
     // - redraw is only performed at each new event;  <br />
     // - the "pause" message won't work.  <br />
+
+
+
+#define BACH_DOC_GOTO
+    // The <m>goto</m> message moves the selection to new items, i.e. clears the selection and select the new item. <br />
+    // The first argument is the go-to command, which can be one of the following symbols: <br />
+    // • "up", "down", "left", "right": move selection up/down/left/right, as you would with the editing
+    // keyboard arrows (+ Command or Control) <br />
+    // • "next", "prev": move selection to the following or previous elements <br />
+    // • "time" or "timepoint": move selection to a given point in time (either in milliseconds or as a timepoint).
+    // An argument is expected, either a number (millisecond position) or a timepoint, in llll form (see below for timepoint syntax). <br />
+    // <br />
+    // In addition, a certain number of behaviors can be changed via the following message attributes:
+    // • "repeat": expects an integer, setting the number of times for the command to be repeated. <br />
+    // • "nullmode": if non-zero, also notifies when there is no (longer) selection, e.g. at the end of a "next" go-to chain. <br />
+    // • "skiprests": if non-zero, avoids the rest while performing the selection. <br />
+    // • "inscreen": if non-zero, also puts the selected items inside the displayed portion of the domain. <br />
+    // • "voices": sets the voicenumbers for the voices to be accounted for; default is the empty llll, meaning: all voices. <br />
+    // • "where": sets a mathematical condition to be applied to sieve the selection each time the command is performed. Variables are the same
+    // as in the <m>sel note if</m> case. <br />
+    // • "until": sets a mathematical condition that, if not matched, will cause the command to be re-executed, until the condition is met.
+    // Variables are the same as in the <m>sel note if</m> case. <br />
+    // • "untilmode": a symbol, either "any" or "all", determining whether the <m>until</m> condition should be applied to all selected elements in order
+    // to be considered met, or to anyone of them (i.e. at least one). <br />
+    // • "type": sets a list of notation item types (as symbols) to be accounted for, among: "note", "rest", "marker", "tempo", "measure", "voice". <br />
+    // • "markershavevoices": if non-zero, considers measure-attached markers as belonging to the corresponding voice (and hence accounts for it
+    // while using the <m>voicemode</m> and <m>voices</m> message attributes). <br />
+    // • "graceshavedur": if non-zero, considers grace notes as having a (minimal) duration, precisely the one attributed to them by the <o>bach.score</o>
+    // playback system, and controllable via the related attributes. <br />
+    // • "tiemode": one of the following symbols, defining how selection behaves with respect to ties: <br />
+    //   - "each": each element in a tie sequence is independent, and can be independently selected; <br />
+    //   - "all" (default): whenever an element in a tie sequence is to be selected, all the other elements are selected too. <br />
+    // <br />
+    // For the "time" command only: <br />
+    // • "include": for the "time" command only: expects one or two symbols among "head" and "tail" in order to determine what extreme should be included
+    // when it falls exactly on the timepoint (default: head). <br />
+    // For the "next"/"prev" commands only: <br />
+    // • "voicemode": a symbol determining how the selection should be performed across different voices. Allowed values are: <br />
+    //   - "each": go-to command is performed in each voice independently (e.g.: all voices go to next selected chord, independently); <br />
+    //   - "any": go-to command is performed on the next/previous element, no matter in which voice it is. The sequence will walk through all
+    // chords in all voices; <br />
+    //   - "all": go-to command is performed accounting for selection in all voices, but selection is allowed to always jump, starting from the
+    // last reached onset or tail; <br />
+    //   - "anyactive" (default): like "any", but only applied on the voices having some selected element; <br />
+    //   - "allactive": like "all", but only applied on the voices having some selected element. <br />
+    // • "polymode": a symbol determining how the polyphony should be handled. Allowed values are: <br />
+    //   - "none": don't account for polyphony, i.e. don't "hold" (keep selected) previously selected chords; <br />
+    //   - "overlap" (default): keep previously selected chords if they overlap with the new selection. This yields a standard walkthrough of the score; <br />
+    //   - "overhang": keep previously selected chords if they are "temporally contained" in the new selection (i.e. if the new selection starts before
+    // their onset and ends after their tail). <br />
+    // • "from", "to": symbols (among "auto", "head" and "tail") determining from and to which point the selection should be computed.
+    // For instance going to the "next" chord from a given selection means, by default, looking at the farthermost selected notehead
+    // and searching for the first chords
+    // whose notehead lies after that, i.e. we search from a head to another head. The opposite is true, by default, when going to "prev" chords:
+    // we search from the leftmost tail the nearest previous one. This is the behavior with "from" and "to" attributes set to "auto".
+    // One could change these behaviors by setting "from" and "to" explicitly to some other element ("head" or "tail"). <br />
+    // <br />
+    // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE

@@ -1243,6 +1243,9 @@ t_llll *notationobj_goto_do(t_notation_obj *r_ob, t_goto_params *par, long *erro
     char do_this_again = false;
     long count = 0;
     
+    if (par->repeat <= 0)
+        return NULL;
+
     do {
         
         count++;
@@ -1262,7 +1265,7 @@ t_llll *notationobj_goto_do(t_notation_obj *r_ob, t_goto_params *par, long *erro
             toselect = goto_get_lrud_notation_item(r_ob, par, &err);
             //        } else if (par->command == _sym_index) {
             //            res = set_selection_to_notation_item_with_index(r_ob, par);
-        } else if (par->command == _llllobj_sym_time) {
+        } else if (par->command == _llllobj_sym_time || par->command == _llllobj_sym_timepoint) {
             toselect = goto_time(r_ob, par, &err);
         } else {
             err = k_GOTO_ERROR_WRONGCOMMAND;

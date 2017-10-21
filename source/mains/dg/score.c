@@ -746,121 +746,129 @@ void score_preset(t_score *x){
 
 void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
-	// we send a message like
-	// quantize <cents> <durations> <velocities> <ties> <extras>
-	// formatted for quantization
-	
-	t_llll *out_llll = llll_get();
-	
-	t_llll *out_cents = llll_get();
-	t_llll *out_durations = llll_get();
-	t_llll *out_velocities = llll_get();
-	t_llll *out_ties = llll_get();
-	t_llll *out_graphic = llll_get();
-	t_llll *out_breakpoints = llll_get();
-	t_llll *out_slots = llll_get();
-	t_llll *out_extras = llll_get();
-
-	t_llll *what_to_dump_llll;
-	long what_to_dump = k_HEADER_ALL;
-
-	t_chord *chord;
-	t_scorevoice *voice;
-
-	llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
-	llll_appendsym(out_breakpoints, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
-	llll_appendsym(out_slots, _llllobj_sym_slots, 0, WHITENULL_llll);
-
-	lock_general_mutex((t_notation_obj *)x);
-	for (voice = x->firstvoice;	voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
-		t_llll *out_voice_cents = llll_get();
-		t_llll *out_voice_durations = llll_get();
-		t_llll *out_voice_velocities = llll_get();
-		t_llll *out_voice_ties = llll_get();
-		t_llll *out_voice_graphic = llll_get();
-		t_llll *out_voice_breakpoints = llll_get();
-		t_llll *out_voice_slots = llll_get();
-
-		for (chord = voice->firstmeasure ? voice->firstmeasure->firstchord : NULL; chord; chord = chord_get_next(chord)) {
-			if (chord->r_sym_duration.r_num > 0) { // real chord
-				t_note *note;
-				t_llll *this_event_cents = llll_get();
-				t_llll *this_event_velocities = llll_get();
-				t_llll *this_event_ties = llll_get();
-				t_llll *this_event_graphic = llll_get();
-				t_llll *this_event_breakpoints = llll_get();
-				t_llll *this_event_slots = llll_get();
-				
-				for (note = chord->firstnote; note; note = note->next){
-					llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
-					llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
-					llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
-					llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
-					llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
-					llll_appendlong(this_event_ties, note->tie_to ? 1 : 0, 0, WHITENULL_llll);
-				}
-				
-/*				char debug1[1000], debug2[1000], debug3[1000], debug4[1000], debug5[1000], debug6[1000];
-				llll_to_char_array(this_event_cents, debug1, 999);
-				llll_to_char_array(this_event_velocities, debug2, 999); 
-				llll_to_char_array(this_event_ties, debug3, 999); 
-				llll_to_char_array(this_event_graphic, debug4, 999); 
-				llll_to_char_array(this_event_breakpoints, debug5, 999); 
-				llll_to_char_array(this_event_slots, debug6, 999); */
-				
-				llll_appendllll(out_voice_cents, this_event_cents, 0, WHITENULL_llll); 
-				llll_appenddouble(out_voice_durations, chord->duration_ms, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_velocities, this_event_velocities, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_ties, this_event_ties, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_graphic, this_event_graphic, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_breakpoints, this_event_breakpoints, 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_slots, this_event_slots, 0, WHITENULL_llll); 
-			} else {
-				// add a pause
-				llll_appendllll(out_voice_cents, llll_get(), 0, WHITENULL_llll); 
-				llll_appenddouble(out_voice_durations, -chord->duration_ms, 0, WHITENULL_llll); // pause: negative
-				llll_appendllll(out_voice_velocities, llll_get(), 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_ties, llll_get(), 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_graphic, llll_get(), 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_breakpoints, llll_get(), 0, WHITENULL_llll); 
-				llll_appendllll(out_voice_slots, llll_get(), 0, WHITENULL_llll); 
-			}
-		}
-		
-		llll_appendllll(out_cents, out_voice_cents, 0, WHITENULL_llll);
-		llll_appendllll(out_durations, out_voice_durations, 0, WHITENULL_llll);
-		llll_appendllll(out_velocities, out_voice_velocities, 0, WHITENULL_llll);
-		llll_appendllll(out_ties, out_voice_ties, 0, WHITENULL_llll);
-		llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
-		llll_appendllll(out_breakpoints, out_voice_breakpoints, 0, WHITENULL_llll);
-		llll_appendllll(out_slots, out_voice_slots, 0, WHITENULL_llll);
-	}
-	
-	// building extras
-	llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);	
-	llll_appendllll(out_extras, out_breakpoints, 0, WHITENULL_llll);	
-	llll_appendllll(out_extras, out_slots, 0, WHITENULL_llll);	
-	
-	what_to_dump_llll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
-	what_to_dump = header_objects_to_long(what_to_dump_llll);
-	if (what_to_dump == 0)
-		what_to_dump = k_HEADER_ALL;
-	llll_free(what_to_dump_llll);
-	
-	
-
-	llll_appendsym(out_llll, gensym("quantize"), 0, WHITENULL_llll);
-	llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING));
-	llll_appendllll(out_llll, out_cents, 0, WHITENULL_llll);
-	llll_appendllll(out_llll, out_durations, 0, WHITENULL_llll);
-	llll_appendllll(out_llll, out_velocities, 0, WHITENULL_llll);
-	llll_appendllll(out_llll, out_ties, 0, WHITENULL_llll);
-	llll_appendllll(out_llll, out_extras, 0, WHITENULL_llll);
-	
-	unlock_general_mutex((t_notation_obj *)x);
-
-	llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
-	llll_free(out_llll);
+    // we send a message like
+    // quantize <cents> <durations> <velocities> <ties> <extras>
+    // formatted for quantization
+    
+    t_llll *out_llll = llll_get();
+    
+    t_llll *out_cents = llll_get();
+    t_llll *out_durations = llll_get();
+    t_llll *out_velocities = llll_get();
+    t_llll *out_ties = llll_get();
+    t_llll *out_graphic = llll_get();
+    t_llll *out_breakpoints = llll_get();
+    t_llll *out_slots = llll_get();
+    t_llll *out_extras = llll_get();
+    t_llll *out_IDs = llll_get();
+    
+    t_llll *what_to_dump_llll;
+    long what_to_dump = k_HEADER_ALL;
+    
+    t_chord *chord;
+    t_scorevoice *voice;
+    
+    llll_appendsym(out_graphic, _llllobj_sym_graphic, 0, WHITENULL_llll);
+    llll_appendsym(out_breakpoints, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
+    llll_appendsym(out_slots, _llllobj_sym_slots, 0, WHITENULL_llll);
+    
+    lock_general_mutex((t_notation_obj *)x);
+    for (voice = x->firstvoice;	voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
+        t_llll *out_voice_cents = llll_get();
+        t_llll *out_voice_durations = llll_get();
+        t_llll *out_voice_velocities = llll_get();
+        t_llll *out_voice_ties = llll_get();
+        t_llll *out_voice_graphic = llll_get();
+        t_llll *out_voice_breakpoints = llll_get();
+        t_llll *out_voice_slots = llll_get();
+        t_llll *out_voice_IDs = llll_get();
+        
+        for (chord = voice->firstmeasure ? voice->firstmeasure->firstchord : NULL; chord; chord = chord_get_next(chord)) {
+            if (chord->r_sym_duration.r_num > 0) { // real chord
+                t_note *note;
+                t_llll *this_event_cents = llll_get();
+                t_llll *this_event_velocities = llll_get();
+                t_llll *this_event_ties = llll_get();
+                t_llll *this_event_graphic = llll_get();
+                t_llll *this_event_breakpoints = llll_get();
+                t_llll *this_event_slots = llll_get();
+                t_llll *this_event_IDs = llll_get();
+                
+                for (note = chord->firstnote; note; note = note->next){
+                    llll_appenddouble(this_event_cents, note->midicents, 0, WHITENULL_llll);
+                    llll_appendlong(this_event_velocities, note->velocity, 0, WHITENULL_llll);
+                    llll_appendllll(this_event_graphic, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
+                    llll_appendllll(this_event_breakpoints, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, note), 0, WHITENULL_llll);
+                    llll_appendllll(this_event_slots, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, note, false), 0, WHITENULL_llll);
+                    llll_appendlong(this_event_ties, note->tie_to ? 1 : 0, 0, WHITENULL_llll);
+                    llll_appendlong(this_event_IDs, note->r_it.ID, 0, WHITENULL_llll);
+                }
+                
+                /*				char debug1[1000], debug2[1000], debug3[1000], debug4[1000], debug5[1000], debug6[1000];
+                 llll_to_char_array(this_event_cents, debug1, 999);
+                 llll_to_char_array(this_event_velocities, debug2, 999);
+                 llll_to_char_array(this_event_ties, debug3, 999);
+                 llll_to_char_array(this_event_graphic, debug4, 999);
+                 llll_to_char_array(this_event_breakpoints, debug5, 999);
+                 llll_to_char_array(this_event_slots, debug6, 999); */
+                
+                llll_appendllll(out_voice_cents, this_event_cents, 0, WHITENULL_llll);
+                llll_appenddouble(out_voice_durations, chord->duration_ms, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_velocities, this_event_velocities, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_ties, this_event_ties, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_graphic, this_event_graphic, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_breakpoints, this_event_breakpoints, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_slots, this_event_slots, 0, WHITENULL_llll);
+                llll_appendllll(out_voice_IDs, this_event_IDs, 0, WHITENULL_llll);
+            } else {
+                // add a pause
+                llll_appendllll(out_voice_cents, llll_get(), 0, WHITENULL_llll);
+                llll_appenddouble(out_voice_durations, -chord->duration_ms, 0, WHITENULL_llll); // pause: negative
+                llll_appendllll(out_voice_velocities, llll_get(), 0, WHITENULL_llll);
+                llll_appendllll(out_voice_ties, llll_get(), 0, WHITENULL_llll);
+                llll_appendllll(out_voice_graphic, llll_get(), 0, WHITENULL_llll);
+                llll_appendllll(out_voice_breakpoints, llll_get(), 0, WHITENULL_llll);
+                llll_appendllll(out_voice_slots, llll_get(), 0, WHITENULL_llll);
+                llll_appendllll(out_voice_IDs, llll_get(), 0, WHITENULL_llll);
+            }
+        }
+        
+        llll_appendllll(out_cents, out_voice_cents, 0, WHITENULL_llll);
+        llll_appendllll(out_durations, out_voice_durations, 0, WHITENULL_llll);
+        llll_appendllll(out_velocities, out_voice_velocities, 0, WHITENULL_llll);
+        llll_appendllll(out_ties, out_voice_ties, 0, WHITENULL_llll);
+        llll_appendllll(out_graphic, out_voice_graphic, 0, WHITENULL_llll);
+        llll_appendllll(out_breakpoints, out_voice_breakpoints, 0, WHITENULL_llll);
+        llll_appendllll(out_slots, out_voice_slots, 0, WHITENULL_llll);
+        llll_appendllll(out_IDs, out_voice_IDs, 0, WHITENULL_llll);
+    }
+    
+    // building extras
+    llll_appendllll(out_extras, out_graphic, 0, WHITENULL_llll);
+    llll_appendllll(out_extras, out_breakpoints, 0, WHITENULL_llll);
+    llll_appendllll(out_extras, out_slots, 0, WHITENULL_llll);
+    
+    what_to_dump_llll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
+    what_to_dump = header_objects_to_long(what_to_dump_llll);
+    if (what_to_dump == 0)
+        what_to_dump = k_HEADER_ALL;
+    llll_free(what_to_dump_llll);
+    
+    
+    
+    llll_appendsym(out_llll, gensym("quantize"), 0, WHITENULL_llll);
+    llll_chain(out_llll, get_notation_obj_header_as_llll((t_notation_obj *)x, what_to_dump, false, false, true, k_CONSIDER_FOR_DUMPING));
+    llll_appendllll(out_llll, out_cents, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_durations, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_velocities, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_ties, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_extras, 0, WHITENULL_llll);
+    llll_appendllll(out_llll, out_IDs, 0, WHITENULL_llll);
+    
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
+    llll_free(out_llll);
 }
 
 
@@ -5267,14 +5275,37 @@ int T_EXPORT main(void){
     
     
     // @method goto @digest Move selection
-    // @description The <m>goto</m> message moves the selection to a new item, i.e. clears the selection and select the new item.
-    // The first argument is the movement type: <br />
-    // <b>prev</b>: select previous notation item, if any; <br />
-    // <b>next</b>: select next notation item, if any. <br />
-    // @mattr skiprests @type int @default 0 @digest If non-zero, skip rests when selecting previous chords
-    // @example sel next @caption select next notation item
-    // @example sel prev @caption select previous notation item
-    // @example sel next @skiprests 1 @caption select next item, skip rests
+    // @description @copy BACH_DOC_GOTO
+    // @marg 0 @name command @optional 0 @type symbol
+    // @marg 1 @name arguments @optional 1 @type llll
+    // @mattr inscreen @type int @default 0 @digest If non-zero, shows selected elements inside the domain
+    // @mattr skiprests @type int @default 0 @digest If non-zero, avoids rest
+    // @mattr repeat @type int @default 1 @digest Repeat command a certain number of times
+    // @mattr nullmode @type int @default 1 @digest If non-zero, notifies when no more elements are selected
+    // @mattr voices @type llll @default null @digest Sets the voices to be affected by selection (if <b>null</b>: all voices)
+    // @mattr type @type llll @default smart @digest Sets the notation item types to be accounted for
+    // @mattr include @type symbol/llll @default head @digest Sets which element (head or tail) to include as boundary for "time" command
+    // @mattr tiemode @type symbol @default all @digest If "all", select all tied sequences if any of their element is selected; if "each", select tied elements separately
+    // @mattr voicemode @type symbol @default anyactive @digest Sets how selection should be handled across voices for "next" and "prev" commands
+    // @mattr polymode @type symbol @default overlap @digest Sets how polyphony should be handled across voices for "next" and "prev" commands
+    // @mattr from @type symbol @default auto @digest Sets start computation point (either "head" or "tail") for "next" and "prev" commands
+    // @mattr to  @type symbol @default auto @digest Sets end computation point (either "head" or "tail") for "next" and "prev" commands
+    // @mattr graceshavedur @type int @default 0 @digest If non-zero, grace elements have playback duration
+    // @mattr markershavevoices @type int @default 0 @digest If non-zero, measure-attached markers undergo the voice attributes conditions
+    // @mattr where @type llll @default null @digest Sets a condition to be matched by selected items (the other ones are discarded)
+    // @mattr until @type llll @default null @digest Sets a condition to be matched, otherwise perform the command again, until condition is met
+    // @example goto 1000 @caption set selection to items which are active at 1sec
+    // @example goto (5 7/8) @caption set selection to items which are active at measure 5, after 7/8
+    // @example goto (() 71/8) @caption set selection to items which are active after 71/8 from the beginning (disregarding the measure)
+    // @example goto next @caption select next notation item
+    // @example goto prev @caption select previous notation item
+    // @example goto next @repeat 10 @caption select the 10th next notation item
+    // @example goto next @type marker @caption select the next marker
+    // @example goto next @until cents > 6000 @type note @caption select next note above middle C
+    // @example goto up @caption move selection up
+    // @example goto right @caption move selection right
+    // @example goto next @voicemode any @polymode overlap @caption navigate through score polyphonically
+    // @example goto 1000 @include tail @caption set selection to items which are active at 1sec, including their tails (but not their heads)
     // @seealso sel, select, unsel
     class_addmethod(c, (method) score_anything, "goto", A_GIMME, 0);
     
