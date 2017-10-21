@@ -126,7 +126,7 @@
 <refpage name='bach.ivec.maxref.xml'/>
 <refpage name='bach.linearsolve.maxref.xml'/>
 <refpage name='bach.llll2dict.maxref.xml'/>
-<refpage name='bach.mc2o.maxref.xml'/>
+<refpage name='bach.mc2p.maxref.xml'/>
 <refpage name='bach.minfo.maxref.xml'/>
 <refpage name='bach.mtimes.maxref.xml'/>
 <refpage name='bach.omtree2bachtree.maxref.xml'/>
@@ -136,6 +136,7 @@
 <refpage name='bach.playkeys.maxref.xml'/>
 <refpage name='bach.poset.maxref.xml'/>
 <refpage name='bach.primeform.maxref.xml'/>
+<refpage name='bach.quantize.maxref.xml'/>
 <refpage name='bach.quantize.maxref.xml'/>
 <refpage name='bach.ratnum.maxref.xml'/>
 <refpage name='bach.reducefunction.maxref.xml'/>
@@ -230,7 +231,6 @@
 <refpage name='bach.stream.maxref.xml'/>
 <refpage name='bach.tierev.maxref.xml'/>
 <refpage name='bach.toc&amp;r.maxref.xml'/>
-<refpage name='bach.transcribe.maxref.xml'/>
 <refpage name='bach.urn.maxref.xml'/>
 <refpage name='bach.variance.maxref.xml'/>
 <refpage name='bach.wellshape.maxref.xml'/>

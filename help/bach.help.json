@@ -572,6 +572,13 @@
 					"title" : [ "Grid and ruler colors" ]
 				}
 			},
+			"Markernames" : {
+				"filename" : [ "bach.help.notation.appearance.37_markernames.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "marker", "ruler", "grid" ],
+				"tags" : [ "appearance", "ruler", "label", "marker", "name", "markername", "line", "smart" ],
+				"title" : [ "Marker names" ]
+			},
 			"Slots" : {
 				"Backgroundslots" : {
 					"filename" : [ "bach.help.notation.appearance.40_slots.01_backgroundslots.maxpat" ],
@@ -2248,12 +2255,19 @@
 					"tags" : [ "message", "operate", "on", "selection", "slot", "append", "prepend", "delete", "add", "erase", "clear", "single", "value", "element", "item", "slotitem", "point", "number", "function", "insert", "appendslotitem", "slotitem", "prependslotitem", "deleteslotitem", "insertslotitem" ],
 					"title" : [ "Inserting or deleting slot elements" ]
 				},
-				"B_slotitemadddeletefunc" : {
-					"filename" : [ "bach.help.notation.messages.30_operate on selection.17b_slotitemadddeletefunc.maxpat" ],
+				"B_slotiteminsertfunctionpoint" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.17b_slotiteminsertfunctionpoint.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "insertslotitem", "changeslotitem", "deleteslotitem" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "insert", "function", "point", "insertslotitem", "modify", "thresh", "spat", "3dfunction", "dynfilter", "temporal" ],
+					"title" : [ "Inserting function points" ]
+				},
+				"C_slotitemdeletefunctionpoint" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.17c_slotitemdeletefunctionpoint.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 					"seealso" : [ "insertslotitem", "changeslotitem" ],
-					"tags" : [ "message", "operate", "on", "selection", "slot", "append", "prepend", "insert", "function", "point", "time", "tag", "temporal", "spat", "3dfunction", "dynfilter", "insertslotitem" ],
-					"title" : [ "Inserting function points" ]
+					"tags" : [ "message", "operate", "on", "selection", "slot", "delete", "point", "function", "coordinate", "x", "find", "element", "item", "slotitem", "deleteslotitem" ],
+					"title" : [ "Deleting function points" ]
 				},
 				"Slotitemchange" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.18_slotitemchange.maxpat" ],

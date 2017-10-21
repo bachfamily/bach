@@ -9,5 +9,4 @@ max objectfile bach.!/ bach.rdiv;
 max objectfile bach.% bach.remainder;
 max objectfile bach.!- bach.rminus;
 max objectfile bach.* bach.times;
-max objectfile bach.mc2p bach.mc2o;
 max objectfile bach.mod* bach.modtimes;

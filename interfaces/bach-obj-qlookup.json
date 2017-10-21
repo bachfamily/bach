@@ -3159,6 +3159,40 @@
       "Real Time Stories"
     ]
   },
+  "bach.quantize": {
+    "digest": "Perform quantization tasks",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "quantize",
+      "measureinfo",
+      "convert",
+      "measured",
+      "proportional",
+      "marker",
+      "minimal units",
+      "grace notes",
+      "box",
+      "approximate",
+      "distance",
+      "time signature",
+      "tempo",
+      "barline"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.score",
+      "bach.beatbox",
+      "bach.beatunbox",
+      "bach.score2roll",
+      "bach.mono",
+      "Real Time Stories"
+    ]
+  },
   "bach.ratnum": {
     "digest": "Display and output rational numbers",
     "module": "bach",
@@ -5566,38 +5600,6 @@
       "bach.chordrev",
       "bach.restrot bach.score",
       "Through The Looking Glass"
-    ]
-  },
-  "bach.transcribe": {
-    "digest": "Fills a <o>bach.roll</o> according to incoming MIDI data",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "transcribe",
-      "write",
-      "fill",
-      "MIDI",
-      "stream",
-      "pitch",
-      "velocity",
-      "cent",
-      "midicent",
-      "voice",
-      "number",
-      "duration",
-      "insert",
-      "note",
-      "proportional"
-    ],
-    "seealso": [
-      "bach.roll",
-      "bach.quantize",
-      "bach.ezmidiplay",
-      "Real Time Stories"
     ]
   },
   "bach.urn": {

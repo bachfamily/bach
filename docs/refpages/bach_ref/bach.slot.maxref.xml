@@ -305,7 +305,13 @@
 				Append a slot element at the end of a slot
 			</digest>
 			<description>
-				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
 				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
 				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
@@ -478,13 +484,25 @@
 		</method>
 		<method name="deleteslotitem">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
-			<arg name="element_position" optional="0" type="int" />
+			<arg name="element_position_or_wrapped_xcoord" optional="0" type="int/llll" />
 			<digest>
 				Delete the slot element at a given position of a slot
 			</digest>
 			<description>
-				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> </b><br />				<br />
+				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int/llll: element_position_or_wrapped_xcoord&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>deleteslotitem 3 2</b>   <i>→ delete 2nd item of 3rd slot</i><br />
+				• <b>deleteslotitem 3 (0.7)</b>   <i>→ delete item 3rd slot matching X = 0.7</i><br />
+				• <b>deleteslotitem 3 (0.7) @thresh 0.1</b>   <i>→ the same, with a tolerance of 0.1</i><br />
+				<br />
+				Message attributes:<br />
+				
+<m>@thresh</m> (float, default: 0.): Tolerance threshold for X matching<br />
+				<br />
 				A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+				Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
+				wrapped X coordinate of the element to delete (use the <m>thresh</m> message argument to set a tolerance
+				threshold for the X coordinate matching).
 				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
@@ -766,7 +784,13 @@
 				Insert a slot element at a given position in a slot
 			</digest>
 			<description>
-				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
 				A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
 				The position may be specified explicitly (for slots that do not bear X-axis information) or
 				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
@@ -1031,7 +1055,13 @@
 				Prepend a slot element at the beginning of a slot
 			</digest>
 			<description>
-				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
 				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
 				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />

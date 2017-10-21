@@ -321,7 +321,7 @@
 			</digest>
 			<description>
 				In first inlet: Sets the measureinfo and performs the quantization (outputting the result). <br />
-				In second inlet: Receives the result of bach.roll's "quantize" message (from bach.roll's or bach.score's first outlet). In "separate" mode: Sets the Pitches or cents to be quantized. <br />
+				In second inlet: Receives the result of bach.roll's "quantize" message (from bach.roll's or bach.score's first outlet). In "separate" mode: Sets the Cents to be quantized. <br />
 				In third inlet: Sets the regularity boxes for the quantization. In "separate" mode: Sets the absolute Durations (in milliseconds) to be quantized. <br />
 				In fourth inlet ("separate" mode only): Sets the Velocities to be quantized. <br />
 				In fifth inlet ("separate" mode only): Sets the Ties to be quantized. <br />

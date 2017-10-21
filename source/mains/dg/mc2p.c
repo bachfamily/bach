@@ -6,7 +6,7 @@
 	bach.mc2p
 	
 	@realname 
-	bach.mc2o
+	bach.mc2p
 
 	@type
 	object

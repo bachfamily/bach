@@ -1816,7 +1816,13 @@
 				Append a slot element at the end of a slot
 			</digest>
 			<description>
-				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
 				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
 				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
@@ -2481,13 +2487,25 @@
 		</method>
 		<method name="deleteslotitem">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
-			<arg name="element_position" optional="0" type="int" />
+			<arg name="element_position_or_wrapped_xcoord" optional="0" type="int/llll" />
 			<digest>
 				Delete the slot element at a given position of a slot
 			</digest>
 			<description>
-				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> </b><br />				<br />
+				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int/llll: element_position_or_wrapped_xcoord&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>deleteslotitem 3 2</b>   <i>→ delete 2nd item of 3rd slot</i><br />
+				• <b>deleteslotitem 3 (0.7)</b>   <i>→ delete item 3rd slot matching X = 0.7</i><br />
+				• <b>deleteslotitem 3 (0.7) @thresh 0.1</b>   <i>→ the same, with a tolerance of 0.1</i><br />
+				<br />
+				Message attributes:<br />
+				
+<m>@thresh</m> (float, default: 0.): Tolerance threshold for X matching<br />
+				<br />
 				A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+				Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
+				wrapped X coordinate of the element to delete (use the <m>thresh</m> message argument to set a tolerance
+				threshold for the X coordinate matching).
 				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
@@ -4157,24 +4175,137 @@
 			</description>
 		</method>
 		<method name="goto">
-			<arglist />
+			<arg name="command" optional="0" type="symbol" />
+			<arg name="arguments" optional="1" type="llll" />
 			<digest>
 				Move selection
 			</digest>
 			<description>
+				Syntax: <b>goto <m>&lt;symbol: command&gt;</m> <m>[&lt;llll: arguments&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
-				• <b>sel next</b>   <i>→ select next notation item</i><br />
-				• <b>sel prev</b>   <i>→ select previous notation item</i><br />
-				• <b>sel next @skiprests 1</b>   <i>→ select next item, skip rests</i><br />
+				• <b>goto 1000</b>   <i>→ set selection to items which are active at 1sec</i><br />
+				• <b>goto (5 7/8)</b>   <i>→ set selection to items which are active at measure 5, after 7/8</i><br />
+				• <b>goto (() 71/8)</b>   <i>→ set selection to items which are active after 71/8 from the beginning (disregarding the measure)</i><br />
+				• <b>goto next</b>   <i>→ select next notation item</i><br />
+				• <b>goto prev</b>   <i>→ select previous notation item</i><br />
+				• <b>goto next @repeat 10</b>   <i>→ select the 10th next notation item</i><br />
+				• <b>goto next @type marker</b>   <i>→ select the next marker</i><br />
+				• <b>goto next @until cents &gt; 6000 @type note</b>   <i>→ select next note above middle C</i><br />
+				• <b>goto up</b>   <i>→ move selection up</i><br />
+				• <b>goto right</b>   <i>→ move selection right</i><br />
+				• <b>goto next @voicemode any @polymode overlap</b>   <i>→ navigate through score polyphonically</i><br />
 				<br />
 				Message attributes:<br />
 				
-<m>@skiprests</m> (int, default: 0): If non-zero, skip rests when selecting previous chords<br />
+<m>@inscreen</m> (int, default: 0): If non-zero, shows selected elements inside the domain<br />
+				
+<m>@skiprests</m> (int, default: 0): If non-zero, avoids rest<br />
+				
+<m>@repeat</m> (int, default: 1): Repeat command a certain number of times<br />
+				
+<m>@nullmode</m> (int, default: 1): If non-zero, notifies when no more elements are selected<br />
+				
+<m>@voices</m> (llll, default: null): Sets the voices to be affected by selection (if <b>null</b>: all voices)<br />
+				
+<m>@type</m> (llll, default: smart): Sets the notation item types to be accounted for<br />
+				
+<m>@include</m> (symbol/llll, default: head): Sets which element (head or tail) to include as boundary for "time" command<br />
+				
+<m>@tiemode</m> (symbol, default: all): If "all", select all tied sequences if any of their element is selected; if "each", select tied elements separately<br />
+				
+<m>@voicemode</m> (symbol, default: anyactive): Sets how selection should be handled across voices for "next" and "prev" commands<br />
+				
+<m>@polymode</m> (symbol, default: overlap): Sets how polyphony should be handled across voices for "next" and "prev" commands<br />
+				
+<m>@from</m> (symbol, default: auto): Sets start computation point (either "head" or "tail") for "next" and "prev" commands<br />
+				
+<m>@to</m> (symbol, default: auto): Sets end computation point (either "head" or "tail") for "next" and "prev" commands<br />
+				
+<m>@graceshavedur</m> (int, default: 0): If non-zero, grace elements have playback duration<br />
+				
+<m>@markershavevoices</m> (int, default: 0): If non-zero, measure-attached markers undergo the voice attributes conditions<br />
+				
+<m>@where</m> (llll, default: null): Sets a condition to be matched by selected items (the other ones are discarded)<br />
+				
+<m>@until</m> (llll, default: null): Sets a condition to be matched, otherwise perform the command again, until condition is met<br />
 				<br />
-				The <m>goto</m> message moves the selection to a new item, i.e. clears the selection and select the new item.
-				The first argument is the movement type: <br />
-				<b>prev</b>: select previous notation item, if any; <br />
-				<b>next</b>: select next notation item, if any. <br />
+				The <m>goto</m> message moves the selection to new items, i.e. clears the selection and select the new item. <br />
+				The first argument is the go-to command, which can be one of the following symbols: <br />
+				• "up", "down", "left", "right": move selection up/down/left/right, as you would with the editing
+				keyboard arrows (+ Command or Control) <br />
+				• "next", "prev": move selection to the following or previous elements <br />
+				• "time" or "timepoint": move selection to a given point in time (either in milliseconds or as a timepoint).
+				An argument is expected, either a number (millisecond position) or a timepoint, in llll form (see below for timepoint syntax). <br />
+				<br />
+				In addition, a certain number of behaviors can be changed via the following message attributes:
+				• "repeat": expects an integer, setting the number of times for the command to be repeated. <br />
+				• "nullmode": if non-zero, also notifies when there is no (longer) selection, e.g. at the end of a "next" go-to chain. <br />
+				• "skiprests": if non-zero, avoids the rest while performing the selection. <br />
+				• "inscreen": if non-zero, also puts the selected items inside the displayed portion of the domain. <br />
+				• "voices": sets the voicenumbers for the voices to be accounted for; default is the empty llll, meaning: all voices. <br />
+				• "where": sets a mathematical condition to be applied to sieve the selection each time the command is performed. Variables are the same
+				as in the <m>sel note if</m> case. <br />
+				• "until": sets a mathematical condition that, if not matched, will cause the command to be re-executed, until the condition is met.
+				Variables are the same as in the <m>sel note if</m> case. <br />
+				• "untilmode": a symbol, either "any" or "all", determining whether the <m>until</m> condition should be applied to all selected elements in order
+				to be considered met, or to anyone of them (i.e. at least one). <br />
+				• "type": sets a list of notation item types (as symbols) to be accounted for, among: "note", "rest", "marker", "tempo", "measure", "voice". <br />
+				• "markershavevoices": if non-zero, considers measure-attached markers as belonging to the corresponding voice (and hence accounts for it
+				while using the <m>voicemode</m> and <m>voices</m> message attributes). <br />
+				• "graceshavedur": if non-zero, considers grace notes as having a (minimal) duration, precisely the one attributed to them by the <o>bach.score</o>
+				playback system, and controllable via the related attributes. <br />
+				• "tiemode": one of the following symbols, defining how selection behaves with respect to ties: <br />
+				- "each": each element in a tie sequence is independent, and can be independently selected; <br />
+				- "all" (default): whenever an element in a tie sequence is to be selected, all the other elements are selected too. <br />
+				<br />
+				For the "time" command only: <br />
+				• "include": for the "time" command only: expects one or two symbols among "head" and "tail" in order to determine what extreme should be included
+				when it falls exactly on the timepoint (default: head). <br />
+				For the "next"/"prev" commands only: <br />
+				• "voicemode": a symbol determining how the selection should be performed across different voices. Allowed values are: <br />
+				- "each": go-to command is performed in each voice independently (e.g.: all voices go to next selected chord, independently); <br />
+				- "any": go-to command is performed on the next/previous element, no matter in which voice it is. The sequence will walk through all
+				chords in all voices; <br />
+				- "all": go-to command is performed accounting for selection in all voices, but selection is allowed to always jump, starting from the
+				last reached onset or tail; <br />
+				- "anyactive" (default): like "any", but only applied on the voices having some selected element; <br />
+				- "allactive": like "all", but only applied on the voices having some selected element. <br />
+				• "polymode": a symbol determining how the polyphony should be handled. Allowed values are: <br />
+				- "none": don't account for polyphony, i.e. don't "hold" (keep selected) previously selected chords; <br />
+				- "overlap" (default): keep previously selected chords if they overlap with the new selection. This yields a standard walkthrough of the score; <br />
+				- "overhang": keep previously selected chords if they are "temporally contained" in the new selection (i.e. if the new selection starts before
+				their onset and ends after their tail). <br />
+				• "from", "to": symbols (among "auto", "head" and "tail") determining from and to which point the selection should be computed.
+				For instance going to the "next" chord from a given selection means, by default, looking at the farthermost selected notehead
+				and searching for the first chords
+				whose notehead lies after that, i.e. we search from a head to another head. The opposite is true, by default, when going to "prev" chords:
+				we search from the leftmost tail the nearest previous one. This is the behavior with "from" and "to" attributes set to "auto".
+				One could change these behaviors by setting "from" and "to" explicitly to some other element ("head" or "tail"). <br />
+				<br />
+				A timepoint represents a given instant inside <o>bach.score</o>, as a measure-attached position.
+				It identifies such point according to a measure, a position inside such measure,
+				and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
+				Differently from absolute millisecond positions,
+				timepoints are represented by lllls, in one of the following syntaxes: <br />
+				- <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
+				For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
+				- <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+				- <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number,
+				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+				important if voices don't have the same tempi or time signatures.
+				<br />
+				A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
+				point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1.
+				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
+				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+				<br />
+				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
+				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>(3 any 27/4)</b> does the same for voice 3.
+				<br /> <br />
 				<br />				See also:<m>sel</m>,<m>select</m>,<m>unsel</m><br />
 			</description>
 		</method>
@@ -4806,7 +4937,13 @@
 				Insert a slot element at a given position in a slot
 			</digest>
 			<description>
-				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
 				A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
 				The position may be specified explicitly (for slots that do not bear X-axis information) or
 				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
@@ -6593,7 +6730,13 @@
 				Prepend a slot element at the beginning of a slot
 			</digest>
 			<description>
-				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />				<br />
+				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
 				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
 				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
@@ -6989,8 +7132,9 @@
 				• <b>sel tails</b>   <i>→ select all tails</i><br />
 				• <b>sel measures</b>   <i>→ select all measures</i><br />
 				• <b>sel chord 3 2</b>   <i>→ select 2rd chord of 3nd measure (of 1st voice)</i><br />
-				• <b>sel chord () 20</b>   <i>→ select 20th chord of 1st voice (in any measure)</i><br />
+				• <b>sel chord any 20</b>   <i>→ select 20th chord of 1st voice (in any measure)</i><br />
 				• <b>sel chord 2 5 4</b>   <i>→ select 4th chord of 5th measure 2nd voice</i><br />
+				• <b>sel chord 4 any 21</b>   <i>→ select 21th chord of 4st voice (in any measure)</i><br />
 				• <b>sel chord -1 -2 -1</b>   <i>→ select last chord of one-but-last measure of last voice</i><br />
 				• <b>sel note 3 4 1 -1</b>   <i>→ select last note of 1st chord of 4th measure of 3rd voice</i><br />
 				• <b>sel measure 2</b>   <i>→ select measure 2 in 1st voice</i><br />
@@ -12443,6 +12587,22 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="smartmarkernames" get="1" set="1" type="int" size="1">
+			<digest>
+				Smart Marker Names Placement
+			</digest>
+			<description>
+				Toggles the ability to display the marker names on multiple lines to avoid collisions.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Smart Marker Names Placement" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="snappitch" get="1" set="1" type="int" size="1">

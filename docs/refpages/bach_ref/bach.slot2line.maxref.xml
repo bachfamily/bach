@@ -209,6 +209,19 @@
 				<br /> <br />
 			</description>
 		</method>
+		<method name="milliseconds">
+			<arglist />
+			<digest>
+				Convert Slot in Milliseconds Mode
+			</digest>
+			<description>
+				A <m>milliseconds</m> message in the first inlet will consider
+				the slot information coming from the second inlet as a slot in "Milliseconds"
+				temporal mode (see <m>temporalmode</m> specification of the slotinfo),
+				and will trigger the output of the conversion of the slot content into messages for <o>line~</o>,
+				output from the first outlet. <br />
+			</description>
+		</method>
 	</methodlist>
 
 	<!--ATTRIBUTES-->
