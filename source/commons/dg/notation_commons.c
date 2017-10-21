@@ -27835,11 +27835,16 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
         case k_SLOT_TYPE_TEXT: {
             if (slot->firstitem) {
                 long num_letters = slot->length;
-                char *text = (char *) bach_newptr(MAX(num_letters + 1, 1));
+                char *text = (char *) bach_newptr(MAX(num_letters + 1, 1)*sizeof(char));
                 if (slot->firstitem->item) {
                     char *first_letter = ((char *)slot->firstitem->item);
-                    strncpy(text, first_letter, num_letters);
-                    text[num_letters]='\0'; // we manually add the ending character (which is NOT automatically added by strncpy)
+                    if (!first_letter) {
+                        dev_post("Slot error.");
+                        text[0] = 0;
+                    } else {
+                        strncpy(text, first_letter, num_letters);
+                        text[num_letters]='\0'; // we manually add the ending character (which is NOT automatically added by strncpy)
+                    }
                 } else {
                     text[0] = 0;
                 }
@@ -34268,51 +34273,57 @@ void add_custom_articulation_from_llllelem(t_object *x, t_articulations_typo_pre
                        gensym("xmltechnical"), &artpr->xmltechnical,
                        gensym("xmlarticulations"), &artpr->xmlarticulations);
         
+        // checking names
+        if (artpr->fullname != NULL) {
         
-        // position
-        if (position == gensym("manual")) artpr->positioning = k_ARTICULATION_POSITIONING_MANUAL;
-        else if (position == gensym("noteside")) artpr->positioning = k_ARTICULATION_POSITIONING_NOTE_SIDE;
-        else if (position == gensym("stemside") || position == gensym("stemsidenearnotehead")) artpr->positioning = k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_NOTEHEAD;
-        else if (position == gensym("stemsidenearflag")) artpr->positioning = k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_FLAG;
-        else if (position == gensym("abovenote")) artpr->positioning = k_ARTICULATION_POSITIONING_ABOVE_NOTE;
-        else if (position == gensym("belownote")) artpr->positioning = k_ARTICULATION_POSITIONING_BELOW_NOTE;
-        else artpr->positioning = k_ARTICULATION_POSITIONING_MANUAL;
-        
-        // options
-        if (is_symbol_in_llll_first_level(options_ll, gensym("avoidlines")))
-            artpr->options |= k_ARTICULATION_OPTION_AVOID_STAFF_LINES;
-        if (is_symbol_in_llll_first_level(options_ll, gensym("outsidestaff")))
-            artpr->options |= k_ARTICULATION_OPTION_OUTSIDE_STAFF;
-        if (is_symbol_in_llll_first_level(options_ll, gensym("centerovernote")))
-            artpr->options |= k_ARTICULATION_OPTION_CENTER_OVER_NOTE;
-        if (is_symbol_in_llll_first_level(options_ll, gensym("centeroverstem")))
-            artpr->options |= k_ARTICULATION_OPTION_CENTER_OVER_STEM;
-        if (is_symbol_in_llll_first_level(options_ll, gensym("spanties")))
-            artpr->options |= k_ARTICULATION_OPTION_SPAN_TIES;
-        if (is_symbol_in_llll_first_level(options_ll, gensym("copywhencloned")))
-            artpr->options |= k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_NEW_CHORD;
-        if (is_symbol_in_llll_first_level(options_ll, gensym("copywhenclonedtosamechord")))
-            artpr->options |= k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_SAME_CHORD;
-        if (is_symbol_in_llll_first_level(options_ll, gensym("copywhensplit")))
-            artpr->options |= k_ARTICULATION_OPTION_COPY_WHEN_SPLIT;
-        if (is_symbol_in_llll_first_level(options_ll, gensym("shiftwithbeams")))
-            artpr->options |= k_ARTICULATION_OPTION_SHIFT_WITH_BEAMS;
-        
-        
-        // aliases
-        t_llllelem *el;
-        if (alias) {
-            long i;
-            for (i = 0, el = alias->l_head; el && i < 5; el = el->l_next) {
-                if (hatom_gettype(&el->l_hatom) == H_SYM) {
-                    artpr->alias[i] = hatom_getsym(&el->l_hatom);
-                    i++;
+            if (artpr->shortname == NULL)
+                artpr->shortname = artpr->fullname;
+            
+            // position
+            if (position == gensym("manual")) artpr->positioning = k_ARTICULATION_POSITIONING_MANUAL;
+            else if (position == gensym("noteside")) artpr->positioning = k_ARTICULATION_POSITIONING_NOTE_SIDE;
+            else if (position == gensym("stemside") || position == gensym("stemsidenearnotehead")) artpr->positioning = k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_NOTEHEAD;
+            else if (position == gensym("stemsidenearflag")) artpr->positioning = k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_FLAG;
+            else if (position == gensym("abovenote")) artpr->positioning = k_ARTICULATION_POSITIONING_ABOVE_NOTE;
+            else if (position == gensym("belownote")) artpr->positioning = k_ARTICULATION_POSITIONING_BELOW_NOTE;
+            else artpr->positioning = k_ARTICULATION_POSITIONING_MANUAL;
+            
+            // options
+            if (is_symbol_in_llll_first_level(options_ll, gensym("avoidlines")))
+                artpr->options |= k_ARTICULATION_OPTION_AVOID_STAFF_LINES;
+            if (is_symbol_in_llll_first_level(options_ll, gensym("outsidestaff")))
+                artpr->options |= k_ARTICULATION_OPTION_OUTSIDE_STAFF;
+            if (is_symbol_in_llll_first_level(options_ll, gensym("centerovernote")))
+                artpr->options |= k_ARTICULATION_OPTION_CENTER_OVER_NOTE;
+            if (is_symbol_in_llll_first_level(options_ll, gensym("centeroverstem")))
+                artpr->options |= k_ARTICULATION_OPTION_CENTER_OVER_STEM;
+            if (is_symbol_in_llll_first_level(options_ll, gensym("spanties")))
+                artpr->options |= k_ARTICULATION_OPTION_SPAN_TIES;
+            if (is_symbol_in_llll_first_level(options_ll, gensym("copywhencloned")))
+                artpr->options |= k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_NEW_CHORD;
+            if (is_symbol_in_llll_first_level(options_ll, gensym("copywhenclonedtosamechord")))
+                artpr->options |= k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_SAME_CHORD;
+            if (is_symbol_in_llll_first_level(options_ll, gensym("copywhensplit")))
+                artpr->options |= k_ARTICULATION_OPTION_COPY_WHEN_SPLIT;
+            if (is_symbol_in_llll_first_level(options_ll, gensym("shiftwithbeams")))
+                artpr->options |= k_ARTICULATION_OPTION_SHIFT_WITH_BEAMS;
+            
+            
+            // aliases
+            t_llllelem *el;
+            if (alias) {
+                long i;
+                for (i = 0, el = alias->l_head; el && i < 5; el = el->l_next) {
+                    if (hatom_gettype(&el->l_hatom) == H_SYM) {
+                        artpr->alias[i] = hatom_getsym(&el->l_hatom);
+                        i++;
+                    }
                 }
             }
+            
+            atp->num_articulations++;
+            
         }
-        
-        atp->num_articulations++;
-        
         
         llll_free(options_ll);
         llll_free(alias);
@@ -34364,69 +34375,71 @@ t_llll *get_articulationinfo_as_llll(t_notation_obj *r_ob)
     t_llll *ll = llll_get();
     llll_appendsym(ll, _llllobj_sym_articulationinfo);
     for (i = k_NUM_STANDARD_ARTICULATIONS; i < r_ob->articulations_typo_preferences.num_articulations; i++) {
-        t_llll *this_art = llll_get();
         t_articulation_preferences *artpr = &r_ob->articulations_typo_preferences.artpref[i];
-        llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("fullname"), artpr->fullname));
-        llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("shortname"), artpr->shortname));
-        {
-            t_llll *aliases = llll_get();
-            llll_appendsym(aliases, gensym("alias"));
-            if (artpr->alias[0]) llll_appendsym(aliases, artpr->alias[0]);
-            if (artpr->alias[1]) llll_appendsym(aliases, artpr->alias[1]);
-            if (artpr->alias[2]) llll_appendsym(aliases, artpr->alias[2]);
-            if (artpr->alias[3]) llll_appendsym(aliases, artpr->alias[3]);
-            if (artpr->alias[4]) llll_appendsym(aliases, artpr->alias[4]);
-            llll_appendllll(this_art, aliases);
+        if (artpr->fullname != NULL) {
+            t_llll *this_art = llll_get();
+            llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("fullname"), artpr->fullname));
+            llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("shortname"), artpr->shortname ? artpr->shortname : artpr->fullname));
+            {
+                t_llll *aliases = llll_get();
+                llll_appendsym(aliases, gensym("alias"));
+                if (artpr->alias[0]) llll_appendsym(aliases, artpr->alias[0]);
+                if (artpr->alias[1]) llll_appendsym(aliases, artpr->alias[1]);
+                if (artpr->alias[2]) llll_appendsym(aliases, artpr->alias[2]);
+                if (artpr->alias[3]) llll_appendsym(aliases, artpr->alias[3]);
+                if (artpr->alias[4]) llll_appendsym(aliases, artpr->alias[4]);
+                llll_appendllll(this_art, aliases);
+            }
+            llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("font"), artpr->font));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("basept"), artpr->base_pt));
+            llll_appendllll(this_art, symbol_and_long_to_llll(gensym("mainchar"), artpr->main_char));
+            llll_appendllll(this_art, symbol_and_long_to_llll(gensym("flippedchar"), artpr->flipped_char));
+            llll_appendllll(this_art, symbol_and_long_to_llll(gensym("extchar"), artpr->extension_line_char));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("mainxshift"), artpr->main_char_ux_shift));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("mainyshift"), artpr->main_char_uy_shift));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("flippedxshift"), artpr->flipped_char_ux_shift));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("flippedyshift"), artpr->flipped_char_uy_shift));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("outsidestaffynudge"), artpr->outside_staff_uy_nudge));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("mainheight"), artpr->main_uheight));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("flippedheight"), artpr->flipped_uheight));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("mainycenter"), artpr->main_uy_center));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("flippedycenter"), artpr->flipped_uy_center));
+            llll_appendllll(this_art, symbol_and_double_to_llll(gensym("extyshift"), artpr->extension_line_uy_offset));
+            
+            {
+                t_llll *options = llll_get();
+                llll_appendsym(options, gensym("options"));
+                if (artpr->options & k_ARTICULATION_OPTION_AVOID_STAFF_LINES) llll_appendsym(options, gensym("avoidlines"));
+                if (artpr->options & k_ARTICULATION_OPTION_OUTSIDE_STAFF) llll_appendsym(options, gensym("outsidestaff"));
+                if (artpr->options & k_ARTICULATION_OPTION_CENTER_OVER_NOTE) llll_appendsym(options, gensym("centerovernote"));
+                if (artpr->options & k_ARTICULATION_OPTION_CENTER_OVER_STEM) llll_appendsym(options, gensym("centeroverstem"));
+                if (artpr->options & k_ARTICULATION_OPTION_SPAN_TIES) llll_appendsym(options, gensym("spanties"));
+                if (artpr->options & k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_NEW_CHORD) llll_appendsym(options, gensym("copywhencloned"));
+                if (artpr->options & k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_SAME_CHORD) llll_appendsym(options, gensym("copywhenclonedtosamechord"));
+                if (artpr->options & k_ARTICULATION_OPTION_COPY_WHEN_SPLIT) llll_appendsym(options, gensym("copywhensplit"));
+                if (artpr->options & k_ARTICULATION_OPTION_SHIFT_WITH_BEAMS) llll_appendsym(options, gensym("shiftwithbeams"));
+                llll_appendllll(this_art, options);
+            }
+            
+            {
+                t_llll *position = llll_get();
+                llll_appendsym(position, gensym("position"));
+                if (artpr->positioning == k_ARTICULATION_POSITIONING_MANUAL) llll_appendsym(position, gensym("manual"));
+                if (artpr->positioning == k_ARTICULATION_POSITIONING_NOTE_SIDE) llll_appendsym(position, gensym("noteside"));
+                if (artpr->positioning == k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_NOTEHEAD) llll_appendsym(position, gensym("stemsidenearnotehead"));
+                if (artpr->positioning == k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_FLAG) llll_appendsym(position, gensym("stemsidenearflag"));
+                if (artpr->positioning == k_ARTICULATION_POSITIONING_ABOVE_NOTE) llll_appendsym(position, gensym("abovenote"));
+                if (artpr->positioning == k_ARTICULATION_POSITIONING_BELOW_NOTE) llll_appendsym(position, gensym("belownote"));
+                llll_appendllll(this_art, position);
+            }
+            
+            // xml export
+            llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("xmlornament"), artpr->xmlornament));
+            llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("xmltechincal"), artpr->xmltechnical));
+            llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("xmlarticulations"), artpr->xmlarticulations));
+            
+            llll_appendllll(ll, this_art);
         }
-        llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("font"), artpr->font));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("basept"), artpr->base_pt));
-        llll_appendllll(this_art, symbol_and_long_to_llll(gensym("mainchar"), artpr->main_char));
-        llll_appendllll(this_art, symbol_and_long_to_llll(gensym("flippedchar"), artpr->flipped_char));
-        llll_appendllll(this_art, symbol_and_long_to_llll(gensym("extchar"), artpr->extension_line_char));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("mainxshift"), artpr->main_char_ux_shift));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("mainyshift"), artpr->main_char_uy_shift));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("flippedxshift"), artpr->flipped_char_ux_shift));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("flippedyshift"), artpr->flipped_char_uy_shift));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("outsidestaffynudge"), artpr->outside_staff_uy_nudge));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("mainheight"), artpr->main_uheight));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("flippedheight"), artpr->flipped_uheight));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("mainycenter"), artpr->main_uy_center));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("flippedycenter"), artpr->flipped_uy_center));
-        llll_appendllll(this_art, symbol_and_double_to_llll(gensym("extyshift"), artpr->extension_line_uy_offset));
-        
-        {
-            t_llll *options = llll_get();
-            llll_appendsym(options, gensym("options"));
-            if (artpr->options & k_ARTICULATION_OPTION_AVOID_STAFF_LINES) llll_appendsym(options, gensym("avoidlines"));
-            if (artpr->options & k_ARTICULATION_OPTION_OUTSIDE_STAFF) llll_appendsym(options, gensym("outsidestaff"));
-            if (artpr->options & k_ARTICULATION_OPTION_CENTER_OVER_NOTE) llll_appendsym(options, gensym("centerovernote"));
-            if (artpr->options & k_ARTICULATION_OPTION_CENTER_OVER_STEM) llll_appendsym(options, gensym("centeroverstem"));
-            if (artpr->options & k_ARTICULATION_OPTION_SPAN_TIES) llll_appendsym(options, gensym("spanties"));
-            if (artpr->options & k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_NEW_CHORD) llll_appendsym(options, gensym("copywhencloned"));
-            if (artpr->options & k_ARTICULATION_OPTION_COPY_WHEN_CLONED_TO_SAME_CHORD) llll_appendsym(options, gensym("copywhenclonedtosamechord"));
-            if (artpr->options & k_ARTICULATION_OPTION_COPY_WHEN_SPLIT) llll_appendsym(options, gensym("copywhensplit"));
-            if (artpr->options & k_ARTICULATION_OPTION_SHIFT_WITH_BEAMS) llll_appendsym(options, gensym("shiftwithbeams"));
-            llll_appendllll(this_art, options);
-        }
-
-        {
-            t_llll *position = llll_get();
-            llll_appendsym(position, gensym("position"));
-            if (artpr->positioning == k_ARTICULATION_POSITIONING_MANUAL) llll_appendsym(position, gensym("manual"));
-            if (artpr->positioning == k_ARTICULATION_POSITIONING_NOTE_SIDE) llll_appendsym(position, gensym("noteside"));
-            if (artpr->positioning == k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_NOTEHEAD) llll_appendsym(position, gensym("stemsidenearnotehead"));
-            if (artpr->positioning == k_ARTICULATION_POSITIONING_STEM_SIDE_NEAR_FLAG) llll_appendsym(position, gensym("stemsidenearflag"));
-            if (artpr->positioning == k_ARTICULATION_POSITIONING_ABOVE_NOTE) llll_appendsym(position, gensym("abovenote"));
-            if (artpr->positioning == k_ARTICULATION_POSITIONING_BELOW_NOTE) llll_appendsym(position, gensym("belownote"));
-            llll_appendllll(this_art, position);
-        }
-        
-        // xml export
-        llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("xmlornament"), artpr->xmlornament));
-        llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("xmltechincal"), artpr->xmltechnical));
-        llll_appendllll(this_art, symbol_and_symbol_to_llll(gensym("xmlarticulations"), artpr->xmlarticulations));
-
-        llll_appendllll(ll, this_art);
     }
     
     return ll;
@@ -40045,13 +40058,13 @@ t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, ch
 		if (dump_what & k_HEADER_COMMANDS) 
 			llll_appendllll(out_llll, get_commands_values_as_llll(r_ob, for_what == k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY), 0, WHITENULL_llll); // command
 		
-		if (dump_what & k_HEADER_CLEFS) 
+		if (dump_what & k_HEADER_CLEFS)
 			llll_appendllll(out_llll, get_clefs_as_llll(r_ob, true), 0, WHITENULL_llll);
 		
-		if (dump_what & k_HEADER_KEYS) 
+        if (dump_what & k_HEADER_KEYS)
 			llll_appendllll(out_llll, get_keys_as_llll(r_ob, true), 0, WHITENULL_llll);
 		
-		if (dump_what & k_HEADER_VOICENAMES) 
+        if (dump_what & k_HEADER_VOICENAMES)
 			llll_appendllll(out_llll, get_voicenames_as_llll(r_ob, true), 0, WHITENULL_llll);
 		
 		if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
@@ -40059,15 +40072,15 @@ t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, ch
 				llll_appendllll(out_llll, get_groups_for_dump_as_llll(r_ob, 0, 0, 0), 0, WHITENULL_llll);
 		}
 
-		if (dump_what & k_HEADER_MARKERS) 
+		if (dump_what & k_HEADER_MARKERS)
 			llll_appendllll(out_llll, get_markers_as_llll(r_ob, 0, 0, 0, false, for_what, 0), 0, WHITENULL_llll);
-		
-		if (dump_what & k_HEADER_STAFFLINES) 
+
+		if (dump_what & k_HEADER_STAFFLINES)
 			llll_appendllll(out_llll, get_stafflines_as_llll(r_ob, true), 0, WHITENULL_llll);
 
-		if (dump_what & k_HEADER_MIDICHANNELS) 
+		if (dump_what & k_HEADER_MIDICHANNELS)
 			llll_appendllll(out_llll, get_midichannels_as_llll(r_ob, true), 0, WHITENULL_llll);
-		
+
         if (dump_what & k_HEADER_ARTICULATIONINFO)
             llll_appendllll(out_llll, get_articulationinfo_as_llll(r_ob));
 
@@ -40079,6 +40092,7 @@ t_llll *get_notation_obj_header_as_llll(t_notation_obj *r_ob, long dump_what, ch
 
         if (dump_what & k_HEADER_LOOP)
             llll_appendllll(out_llll, get_loop_region_as_llll(r_ob, true), 0, WHITENULL_llll);
+
 
     }
 	return out_llll;

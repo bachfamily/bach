@@ -1215,10 +1215,14 @@ if (llll_check_phonenumber(ll))
 				case H_DOUBLE:
 				case H_RAT:
                 case H_PITCH:
-				case H_SYM:
 				case H_OBJ:
 					elem = elem->l_next;
 					break;
+                case H_SYM:
+                    if (elem->l_hatom.h_w.w_sym == NULL) // if a symbol is NULL, this causes lots of troubles when deparsing!!
+                        return llll_check_error(stack, depths_arr, lengths_arr);
+                    elem = elem->l_next;
+                    break;
 				case H_LLLL:
 					ll = elem->l_hatom.h_w.w_llll;
 					llll_stack_push(stack, elem); // watch out! this is different from what happens usually!
