@@ -76,7 +76,7 @@
 		//#define BACH_RHYTHMIC_TREE_DEBUG				///< Print verbosely rhythmic trees at each step, and do additional checking for debug. Only works on Mac
 		//#define BACH_POST_IDS_IN_RHYTHMIC_TREE_DEBUG	///< Also post IDs in rhythmic tree debug
 		//#define BACH_PLAY_DEBUG						///< Debug the playing task with messages about next scheduled chords
-        //#define BACH_QUANTIZE_DEBUG					///< Debug the quantize task
+        #define BACH_QUANTIZE_DEBUG					///< Debug the quantize task
 		//#define BACH_SPACING_DEBUG					///< Debug the spacing task (and display alignment points)
 		//#define BACH_PAINT_IDS						///< Paint the IDs for all elements having one
         //#define BACH_UNDO_DEBUG						///< Debug the undo task
