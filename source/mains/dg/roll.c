@@ -4436,7 +4436,9 @@ int T_EXPORT main(void){
 	// @method explodechords @digest Turn all chords into 1-note-chords
 	// @description The <m>explodechords</m> message turns any chord having more than 1 note
 	// in a sequence of overlapping chords each having just one note. In the end, the number
-	// of notes and the number of chords will coincide.
+	// of notes and the number of chords will coincide. If a "selection" symbol is given as argument, then
+    // the message only operates on selected content
+    // @marg 0 @name selection @optional 1 @type symbol
     // @example explodechords @caption Explode chords for whole score
     // @example explodechords selection @caption Explode selected chords only
     // @seealso merge
@@ -10803,10 +10805,16 @@ void roll_paint(t_roll *x, t_object *view)
 	if (USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS) // building surfaces for most common graphic notation elements
 		notationobj_build_notation_item_surfaces((t_notation_obj *)x, view, rect);
 	
-	
+    if (x->r_ob.highlight_domain) {
+        double x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
+        double x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL);
+        paint_rectangle(g, change_alpha(x->r_ob.j_selection_rgba, 0.1), change_alpha(x->r_ob.j_selection_rgba, 0.1), x1, 0, x2-x1, rect.height, 0);
+    }
+    
 	// setting alpha to 1 before painting layers! otherwise we have blending issues
 	jgraphics_set_source_rgba(g, 0, 0, 0, 1);
-	paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus);
+
+    paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus);
 
 
 	// do we have to print the play_head line?
@@ -10944,7 +10952,7 @@ void roll_mousemove(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
 	x->r_ob.j_mouse_y = pt.y;
 	
     if (x->r_ob.mouse_hover) {
-        handle_slot_mousemove((t_notation_obj *) x, patcherview, pt, modifiers, &redraw, &mousepointerchanged);
+        slot_handle_mousemove((t_notation_obj *) x, patcherview, pt, modifiers, &redraw, &mousepointerchanged);
         
         if (!x->r_ob.active_slot_notationitem && !mousepointerchanged)
             notationobj_handle_change_cursors_on_mousemove((t_notation_obj *)x, patcherview, pt, modifiers, rect);
@@ -11026,7 +11034,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     
 	// first of all: are we in a slot mode???? Cause if we are in a slot mode, we gotta handle that separately
 	if (x->r_ob.active_slot_num > -1 && !is_editable((t_notation_obj *)x, k_SLOT, k_ELEMENT_ACTIONS_NONE)) return;
-	slot_dragged = handle_slot_mousedrag((t_notation_obj *) x, patcherview, pt, modifiers, &changed, &redraw);
+	slot_dragged = slot_handle_mousedrag((t_notation_obj *) x, patcherview, pt, modifiers, &changed, &redraw);
 
 	if (redraw) {
 		handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
@@ -12235,7 +12243,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 		return;
 	}
 
-	clicked_slot = handle_slot_mousedown((t_notation_obj *) x, patcherview, pt, modifiers, &clicked_obj, &clicked_ptr, &changed, need_popup);
+	clicked_slot = slot_handle_mousedown((t_notation_obj *) x, patcherview, pt, modifiers, &clicked_obj, &clicked_ptr, &changed, need_popup);
 	
 	if (clicked_slot) {
 		unlock_general_mutex((t_notation_obj *)x);	
@@ -13545,7 +13553,7 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
 
 	lock_general_mutex((t_notation_obj *)x);	
 	handle_mouseup_in_bach_inspector((t_notation_obj *) x, &x->r_ob.m_inspector, patcherview, pt);
-	handle_slot_mouseup((t_notation_obj *)x, patcherview, pt, modifiers);
+	slot_handle_mouseup((t_notation_obj *)x, patcherview, pt, modifiers);
 	unlock_general_mutex((t_notation_obj *)x);	
 	
 	there_are_free_undo_ticks = are_there_free_undo_ticks((t_notation_obj *) x, false);
@@ -13731,7 +13739,7 @@ void roll_mousewheel(t_roll *x, t_object *view, t_pt pt, long modifiers, double 
     llll_format_modifiers(&modifiers, NULL);
 
 	lock_general_mutex((t_notation_obj *)x);	
-	res = handle_slot_mousewheel((t_notation_obj *) x, view, pt, modifiers, x_inc, y_inc);
+	res = slot_handle_mousewheel((t_notation_obj *) x, view, pt, modifiers, x_inc, y_inc);
 	unlock_general_mutex((t_notation_obj *)x);	
 
 	if (res)
@@ -13797,7 +13805,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
 	if (x->r_ob.active_slot_num > -1 && !is_editable((t_notation_obj *)x, k_SLOT, k_ELEMENT_ACTIONS_NONE)) return;
 
 	lock_general_mutex((t_notation_obj *)x);	
-	clicked_slot = handle_slot_mousedoubleclick((t_notation_obj *) x, patcherview, pt, modifiers, &changed);
+	clicked_slot = slot_handle_mousedoubleclick((t_notation_obj *) x, patcherview, pt, modifiers, &changed);
 	
 	if (clicked_slot) {
 		unlock_general_mutex((t_notation_obj *)x);	

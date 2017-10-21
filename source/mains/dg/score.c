@@ -3490,7 +3490,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 					continue;
 				
 				for (temp_ch = temp_meas->firstchord; temp_ch; temp_ch = temp_ch->next) {
-					if (temp_ch->onset > start_ms || (temp_ch->onset == start_ms && !is_all_chord_tied_from(temp_ch, false))) {
+					if (temp_ch->onset > start_ms || (temp_ch->onset == start_ms && !chord_is_all_tied_from(temp_ch, false))) {
 						break;
 					} else if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)temp_ch) &&
 							   temp_ch->onset + temp_ch->duration_ms - CONST_EPSILON1 > start_ms) {
@@ -3520,7 +3520,7 @@ void score_do_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
 						// and we set as played all the tied notes
 						if (!x->r_ob.play_tied_elements_separately) {
 							t_chord *tmp = temp_ch;
-							while (tmp && (next = chord_get_next(tmp)) && is_all_chord_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
+							while (tmp && (next = chord_get_next(tmp)) && chord_is_all_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
 								next->played = true;
 								tmp = next;
 							}
@@ -3714,7 +3714,7 @@ void score_task(t_score *x)
 					long voice_num = CLAMP(((t_chord *)items_to_send[0])->parent->voiceparent->v_ob.number, 0, CONST_MAX_VOICES - 1);
 					x->r_ob.chord_play_cursor[voice_num] = (t_chord *)items_to_send[0];
                     
-                    if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && !x->r_ob.play_tied_elements_separately && is_all_chord_tied_to((t_notation_obj *)x, (t_chord *)items_to_send[0], false, NULL))
+                    if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE && !x->r_ob.play_tied_elements_separately && chord_is_all_tied_to((t_notation_obj *)x, (t_chord *)items_to_send[0], false, NULL))
                         x->r_ob.chord_play_cursor[voice_num] = chord_get_last_in_tieseq((t_chord *)items_to_send[0]);
                     
                 } else if (items_to_send[0]->type == k_TEMPO) {
@@ -3893,7 +3893,7 @@ void score_task(t_score *x)
 							if (!temp_nt->tie_from) // we don't keep track of notes continuing ties in the "notes_being_played" llll
 								llll_appendobj(x->r_ob.notes_being_played, temp_nt, 0, WHITENULL_llll);
 						}
-						while (tmp && (next = chord_get_next(tmp)) && is_all_chord_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
+						while (tmp && (next = chord_get_next(tmp)) && chord_is_all_tied_to((t_notation_obj *) x, tmp, 0, NULL)) {
 							if (next->num_notes == tmp->num_notes)
 								next->played = true;
 							tmp = next;
@@ -9551,7 +9551,7 @@ void score_mousemove(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 	x->r_ob.j_mouse_y = pt.y; //track mouse position
 	
     if (x->r_ob.mouse_hover) {
-        handle_slot_mousemove((t_notation_obj *) x, patcherview, pt, modifiers, &redraw, &mousepointerchanged);
+        slot_handle_mousemove((t_notation_obj *) x, patcherview, pt, modifiers, &redraw, &mousepointerchanged);
         
         if (!x->r_ob.active_slot_notationitem && !mousepointerchanged)
             notationobj_handle_change_cursors_on_mousemove((t_notation_obj *)x, patcherview, pt, modifiers, rect);
@@ -9625,7 +9625,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
 	// first of all: are we in a slot mode???? Cause if we are in a slot mode, we gotta handle that separately
 	if (x->r_ob.active_slot_num > -1 && !is_editable((t_notation_obj *)x, k_SLOT, k_ELEMENT_ACTIONS_NONE)) return;
-	slot_dragged = handle_slot_mousedrag((t_notation_obj *) x, patcherview, pt, modifiers, &changed, &redraw);
+	slot_dragged = slot_handle_mousedrag((t_notation_obj *) x, patcherview, pt, modifiers, &changed, &redraw);
 	if (slot_dragged) {
 		handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_REDRAW_STATIC_LAYER, k_UNDO_OP_UNKNOWN);
 		x->r_ob.changed_while_dragging = true;
@@ -10878,10 +10878,10 @@ char gather_all_selected_chords_with_merge_flag(t_score *x, t_chord *chord, char
 	t_chord *to = chord;
 	char changed = 0;
 	while (from && (from->prev) && (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)from->prev)) && 
-			(from->prev->r_it.flags & k_FLAG_MERGE) && (!only_tied_ones || is_all_chord_tied_from(from, true)))
+			(from->prev->r_it.flags & k_FLAG_MERGE) && (!only_tied_ones || chord_is_all_tied_from(from, true)))
 		from = from->prev;
 	while (to && (to->next) && (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)to->next)) && 
-			(to->next->r_it.flags & k_FLAG_MERGE) && (!only_tied_ones || is_all_chord_tied_to((t_notation_obj *) x, to, true, to->next)))
+			(to->next->r_it.flags & k_FLAG_MERGE) && (!only_tied_ones || chord_is_all_tied_to((t_notation_obj *) x, to, true, to->next)))
 		to = to->next;
 	if (from != to) {
 		t_chord *tmp = from->next;
@@ -11640,7 +11640,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 		return;
 	}
 
-	clicked_slot = handle_slot_mousedown((t_notation_obj *) x, patcherview, pt, modifiers, &clicked_obj, &clicked_ptr, &changed, need_popup);
+	clicked_slot = slot_handle_mousedown((t_notation_obj *) x, patcherview, pt, modifiers, &clicked_obj, &clicked_ptr, &changed, need_popup);
 	
 	if (clicked_slot && is_editable((t_notation_obj *)x, k_SLOT, k_ELEMENT_ACTIONS_NONE)) {
 		unlock_general_mutex((t_notation_obj *)x);	
@@ -13568,7 +13568,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 	
 	lock_general_mutex((t_notation_obj *)x);	
 	handle_mouseup_in_bach_inspector((t_notation_obj *) x, &x->r_ob.m_inspector, patcherview, pt);
-	handle_slot_mouseup((t_notation_obj *)x, patcherview, pt, modifiers);
+	slot_handle_mouseup((t_notation_obj *)x, patcherview, pt, modifiers);
 	unlock_general_mutex((t_notation_obj *)x);	
 
 	verbose_post_rhythmic_tree((t_notation_obj *)x, x->firstvoice->lastmeasure, gensym("before"), 1);
@@ -13813,7 +13813,7 @@ void score_mousewheel(t_score *x, t_object *view, t_pt pt, long modifiers, doubl
 	llll_format_modifiers(&modifiers, NULL);
 
 	lock_general_mutex((t_notation_obj *)x);	
-	res = handle_slot_mousewheel((t_notation_obj *) x, view, pt, modifiers, x_inc, y_inc);
+	res = slot_handle_mousewheel((t_notation_obj *) x, view, pt, modifiers, x_inc, y_inc);
 	unlock_general_mutex((t_notation_obj *)x);	
 
 	if (res)
@@ -13896,7 +13896,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
 	if (x->r_ob.active_slot_num > -1 && !is_editable((t_notation_obj *)x, k_SLOT, k_ELEMENT_ACTIONS_NONE)) return;
 
 	lock_general_mutex((t_notation_obj *)x);	
-	clicked_slot = handle_slot_mousedoubleclick((t_notation_obj *) x, patcherview, pt, modifiers, &changed);
+	clicked_slot = slot_handle_mousedoubleclick((t_notation_obj *) x, patcherview, pt, modifiers, &changed);
 
 	if (clicked_slot) {
 		unlock_general_mutex((t_notation_obj *)x);	
@@ -14180,7 +14180,7 @@ t_chord *make_chord_or_note_sharp_or_flat_on_linear_edit(t_score *x, char direct
 	
 	if (chord) {
 		
-		while (orig_chord && is_all_chord_tied_from(orig_chord, false))
+		while (orig_chord && chord_is_all_tied_from(orig_chord, false))
 			orig_chord = chord_get_prev(orig_chord);
 		
 		for (temp = orig_chord; temp; temp = chord_get_next(temp)) {
@@ -14238,7 +14238,7 @@ t_chord *change_pitch_from_linear_edit(t_score *x, long diatonic_step)
 
 	if (chord) {
 		
-		while (orig_chord && is_all_chord_tied_from(orig_chord, false))
+		while (orig_chord && chord_is_all_tied_from(orig_chord, false))
 			orig_chord = chord_get_prev(orig_chord);
 		
 		for (temp = orig_chord; temp; temp = chord_get_next(temp)) {

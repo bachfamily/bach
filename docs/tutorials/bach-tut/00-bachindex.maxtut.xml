@@ -43,6 +43,7 @@ bach Tutorials - Table of Contents
     <li><link type="tutorial" module="bach" name="18-Graphical Synchronization">Graphical Synchronization</link> - Synchronizing domain and zoom with other objects</li>
     <li><link type="tutorial" module="bach" name="19-Filter Filter Little Star">Filter Filter Little Star</link> — Meet the filter and dynfilter slots</li>
     <li><link type="tutorial" module="bach" name="20-Edit Path">Edit Path</link> — Discover how to customize or prevent editing for some items</li>
+    <li><link type="tutorial" module="bach" name="21-Standalone Applications">Standalone Applications</link> — Discover how to embed bach modules in standalone applications</li>
 </ul>
 
 </p>

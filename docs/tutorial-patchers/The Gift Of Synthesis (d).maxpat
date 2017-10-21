@@ -209,7 +209,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "comment",
-					"text" : "we cannot use [pack] with a llll, thus we use bach.append to pack everything (in text format), and give it to the \"note\" message.",
+					"text" : "we cannot use [pack] with a llll, thus we use bach.join to pack everything (in text format), and give it to the \"note\" message.",
 					"linecount" : 3,
 					"fontsize" : 12.0,
 					"numinlets" : 1,
@@ -252,7 +252,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 4 @out t",
+					"text" : "bach.join 4 @out t",
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
 					"numinlets" : 4,

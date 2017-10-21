@@ -122,7 +122,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 251.0, 299.0, 240.0, 20.0 ],
-					"text" : "bach.append @inwrap 1"
+					"text" : "bach.join @inwrap 1"
 				}
 
 			}
@@ -196,7 +196,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 472.0, 261.0, 157.0, 33.0 ],
-					"text" : "bach.append 3 @set diag nil vars @triggers 2"
+					"text" : "bach.join 3 @set diag nil vars @triggers 2"
 				}
 
 			}
@@ -1789,7 +1789,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.append.mxo",
+				"name" : "bach.join.mxo",
 				"type" : "iLaX"
 			}
 , 			{

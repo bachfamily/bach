@@ -8507,7 +8507,7 @@ t_llll* measure_get_durations_values_as_llll(t_score *x, t_measure *measure, cha
 		llll_appendrat(out_llll, (tree == 0 && temp_chord->is_grace_chord) ? long2rat(0) : temp_chord->r_sym_duration, 0, WHITENULL_llll);	
 
 		// adding ties, if needed to output the whole rhythmic tree
-		if (tree == 2 && is_all_chord_tied_to((t_notation_obj *) x, temp_chord, false, NULL))
+		if (tree == 2 && chord_is_all_tied_to((t_notation_obj *) x, temp_chord, false, NULL))
 			llll_appendsym(out_llll, _llllobj_sym_t, 0, WHITENULL_llll);	
 		
 		temp_chord = temp_chord->next;
@@ -10526,25 +10526,28 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 {
                     t_note *activenote = (t_note *)x->r_ob.active_slot_notationitem;
                     
-                    x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
+                    x->r_ob.slot_window_x1 = round_to_semiinteger(chord_get_alignment_x((t_notation_obj *)x, activenote->parent));
 
                     if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1. ||
                         (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && !slot_can_extend_beyond_note_tail((t_notation_obj *)x, x->r_ob.active_slot_num))) { // duration
-                        if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_singleslotfortiednotes) {
-                            t_note *lasttied = note_get_last_in_tieseq(activenote);
-                            x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, lasttied->parent->parent->tuttipoint_reference->offset_ux + lasttied->parent->stem_offset_ux + lasttied->parent->duration_ux);
-                        } else {
-                            x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux + activenote->parent->duration_ux);
-                        }
+                        double ms_end = notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + notation_item_get_duration_ms_for_slots_account_for_ties((t_notation_obj *)x, x->r_ob.active_slot_num, (t_notation_item *)activenote);
+                        double x_end = ms_to_xposition((t_notation_obj *)x, ms_end, 0);
+                        x->r_ob.slot_window_x2 = x_end;
                         
                     } else if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { // auto
+                        double ms_start = notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote);
+                        double ms_end = ms_start + notation_item_get_duration_ms_for_slots_account_for_ties((t_notation_obj *)x, x->r_ob.active_slot_num, (t_notation_item *)activenote);
+                        double x_end;
                         double max_x = slot_get_max_x((t_notation_obj *)x, notation_item_get_slot((t_notation_obj *)x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num), x->r_ob.active_slot_num);
                         
                         if (slot_is_temporal_absolute((t_notation_obj *)x, x->r_ob.active_slot_num)) {
-                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + MAX(max_x, notation_item_get_duration_ms((t_notation_obj *)x, (t_notation_item *)activenote)));
-                        } else {
-                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + rescale(MAX(max_x, 1.), x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[0], x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[1], 0, notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem)));
-                        }
+                            x_end = ms_to_xposition((t_notation_obj *)x, ms_start + MAX(ms_end - ms_start, max_x), 0);
+                         } else {
+                             x_end = ms_to_xposition((t_notation_obj *)x, MAX(ms_end, rescale(MAX(max_x, 1.), x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[0], x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[1], 0, notation_item_get_duration_ms_for_slots_account_for_ties((t_notation_obj *)x, x->r_ob.active_slot_num, x->r_ob.active_slot_notationitem))), 0);
+                         }
+                        
+                        x->r_ob.slot_window_x2 = x_end;
+
                         
                     } else {
                         if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
@@ -10639,6 +10642,11 @@ void scoreapi_paint(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
 	if (USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS) // building surfaces for most common graphic notation elements
 		notationobj_build_notation_item_surfaces((t_notation_obj *)x, view, rect);
 
+    if (x->r_ob.highlight_domain) {
+        double x1 = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start);
+        double x2 = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_end);
+        paint_rectangle(g, change_alpha(x->r_ob.j_selection_rgba, 0.1), change_alpha(x->r_ob.j_selection_rgba, 0.1), x1, 0, x2-x1, rect.height, 0);
+    }
 	
 	// setting alpha to 1 before painting layers! otherwise we have blending issues
 	jgraphics_set_source_rgba(g, 0, 0, 0, 1);

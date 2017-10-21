@@ -96,7 +96,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 565.0, 319.0, 152.0, 40.0 ],
-									"presentation_rect" : [ 582.0, 308.833313, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Pad at the left of the first inserted point"
 								}
@@ -297,6 +296,7 @@
 									"maxclass" : "kslider",
 									"numinlets" : 2,
 									"numoutlets" : 2,
+									"offset" : 48,
 									"outlettype" : [ "int", "int" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 222.0, 110.5, 224.0, 38.0 ],
@@ -811,7 +811,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 742.0, 561.0 ],
+						"rect" : [ 0.0, 26.0, 742.0, 561.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2784,7 +2784,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 742.0, 561.0 ],
+						"rect" : [ 100.0, 126.0, 742.0, 561.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,

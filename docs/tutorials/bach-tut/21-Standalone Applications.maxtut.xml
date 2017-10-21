@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<?xml-stylesheet href="./_c74_tut.xsl" type="text/xsl"?>
+
+<chapter name="bach Tutorial 21: Standalone Applications">
+
+<openfile name="Standalone Applications" patch="Standalone Applications (a).maxpat"/>
+
+<header>bach Tutorial 21: Standalone Applications</header>
+
+<subhead>Discover how to embed bach modules into standalone applications</subhead>
+<body>You can easily embed bach objects and abstractions inside standalone application, if you follow a few simple rules, explained in this tutorial.</body>
+<body><openpatchlink>Open the tutorial</openpatchlink>.</body>
+
+<seealsolist>
+<seealso name="bach.roll">Display and edit a score in proportional notation</seealso>
+<seealso name="bach.score">Display and edit a score in classical notation</seealso>
+</seealsolist>
+
+</chapter>

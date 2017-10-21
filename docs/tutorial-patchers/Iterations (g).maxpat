@@ -124,7 +124,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append",
+					"text" : "bach.join",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -341,7 +341,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append",
+					"text" : "bach.join",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

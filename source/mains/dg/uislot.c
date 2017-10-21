@@ -1630,7 +1630,7 @@ void uislot_mousemove(t_uislot *x, t_object *patcherview, t_pt pt, long modifier
         new_cursor = BACH_CURSOR_DEFAULT;
     
 	if (x->r_ob.mouse_hover)
-		handle_slot_mousemove((t_notation_obj *) x, patcherview, pt, modifiers, &redraw, &mousepointerchanged);
+		slot_handle_mousemove((t_notation_obj *) x, patcherview, pt, modifiers, &redraw, &mousepointerchanged);
     
     if (!mousepointerchanged && new_cursor >= 0)
         bach_set_cursor((t_object *)x, &x->r_ob.j_mouse_cursor, patcherview, (e_bach_mouse_cursors)new_cursor);
@@ -1674,7 +1674,7 @@ void uislot_mousedrag(t_uislot *x, t_object *patcherview, t_pt pt, long modifier
 	}
 	
 	// first of all: are we in a slot mode???? Cause if we are in a slot mode, we gotta handle that separately
-	slot_dragged = handle_slot_mousedrag((t_notation_obj *) x, patcherview, pt, modifiers, &changed, &redraw);
+	slot_dragged = slot_handle_mousedrag((t_notation_obj *) x, patcherview, pt, modifiers, &changed, &redraw);
 	if (slot_dragged) {
 		jbox_redraw((t_jbox *) x);
 		handle_change((t_notation_obj *) x, x->r_ob.continuously_output_changed_bang ? k_CHANGED_STANDARD_SEND_BANG : k_CHANGED_DO_NOTHING, k_UNDO_OP_UNKNOWN);
@@ -1732,7 +1732,7 @@ void uislot_mousedown(t_uislot *x, t_object *patcherview, t_pt pt, long modifier
 	this_y = pt.y; // click-point coordinates
 
 	lock_general_mutex((t_notation_obj *)x);	
-	clicked_slot = handle_slot_mousedown((t_notation_obj *) x, patcherview, pt, modifiers, &clicked_obj, &clicked_ptr, &changed, need_popup);
+	clicked_slot = slot_handle_mousedown((t_notation_obj *) x, patcherview, pt, modifiers, &clicked_obj, &clicked_ptr, &changed, need_popup);
 	unlock_general_mutex((t_notation_obj *)x);	
 
 	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_SEND_BANG, k_UNDO_OP_CHANGE_SLOT);
@@ -1804,7 +1804,7 @@ void uislot_mouseup(t_uislot *x, t_object *patcherview, t_pt pt, long modifiers)
 	
 	lock_general_mutex((t_notation_obj *)x);	
 	handle_mouseup_in_bach_inspector((t_notation_obj *) x, &x->r_ob.m_inspector, patcherview, pt);
-	handle_slot_mouseup((t_notation_obj *)x, patcherview, pt, modifiers);
+	slot_handle_mouseup((t_notation_obj *)x, patcherview, pt, modifiers);
 	unlock_general_mutex((t_notation_obj *)x);	
 
 	x->r_ob.j_mouse_is_down = false;
@@ -1915,7 +1915,7 @@ void uislot_mousewheel(t_uislot *x, t_object *view, t_pt pt, long modifiers, dou
     char res = 0;
 	
 	lock_general_mutex((t_notation_obj *)x);
-	res = handle_slot_mousewheel((t_notation_obj *) x, view, pt, modifiers, x_inc, y_inc);
+	res = slot_handle_mousewheel((t_notation_obj *) x, view, pt, modifiers, x_inc, y_inc);
 	unlock_general_mutex((t_notation_obj *)x);
 	
     if (res) {
@@ -1929,7 +1929,7 @@ void uislot_mousedoubleclick(t_uislot *x, t_object *patcherview, t_pt pt, long m
 	char clicked_slot;
 	
 	lock_general_mutex((t_notation_obj *)x);	
-	clicked_slot = handle_slot_mousedoubleclick((t_notation_obj *) x, patcherview, pt, modifiers, &changed);
+	clicked_slot = slot_handle_mousedoubleclick((t_notation_obj *) x, patcherview, pt, modifiers, &changed);
 
 	if (clicked_slot) {
 		unlock_general_mutex((t_notation_obj *)x);	

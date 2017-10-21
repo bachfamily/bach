@@ -298,6 +298,7 @@ v0.8b
 			Now "play preschedule" feature, ensuring best timing (with some limitations): see #play+preschedule
 			Now the "play" message is output *before* partial notes also in offline mode
 			Smart marker names placement
+			New @highlightdomain attribute
 			
 - bach.score		Fixed bug causing lost slots on syncopations
 			Fixed bug possibly causing crashes while changing number of voices

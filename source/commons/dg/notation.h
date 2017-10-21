@@ -4115,7 +4115,7 @@ typedef struct _notation_obj
 									///< the displayed portion of score 
 	double		length_ux;			///< Length of the whole score in unscaled pixels
                                     ///< Beware: operations like inscreenpos etc. might change this length, in order to appropriately show more portion of score.
-	
+    char        highlight_domain;   ///< If toggled, highlights the domain portion of the notation item (useful to align other Max UI objects on top of it).
 	
 	// horizontal scrolling
 	char		show_hscrollbar;		///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
@@ -7462,6 +7462,10 @@ double notation_item_get_play_tail_ms_accurate(t_notation_obj *r_ob, t_notation_
 double notation_item_get_play_duration_ms_accurate(t_notation_obj *r_ob, t_notation_item *it);
 
 
+/// TBD
+double notation_item_get_duration_ms_for_slots_account_for_ties(t_notation_obj *r_ob, long slotnum, t_notation_item *it);
+
+
 /** Obtain the pitch in cents of a given notation item (or zero if none).
 	@ingroup		notation
 	@param	r_ob	The notation object
@@ -8558,7 +8562,7 @@ t_slotitem *notehead_id_to_slotitem(t_notation_obj *r_ob, t_note *note, long slo
  
 	@remark				The function does NOT redraw automatically the jbox, you have to do it after.
  */
-char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed, char *redraw);
+char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed, char *redraw);
 
 
 /**	Handle the action of clicking (mouse-down) on a slot.
@@ -8578,11 +8582,11 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						so ALWAYS do something like this:
 	@code
 	lock_general_mutex(r_ob);
-	handle_slot_mousedown(...);
+	slot_handle_mousedown(...);
 	unlock_general_mutex(r_ob);
 	@endcode
 */
-char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, e_element_types *clicked_obj, void **clicked_ptr, char *changed, char need_popup);
+char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, e_element_types *clicked_obj, void **clicked_ptr, char *changed, char need_popup);
 
 
 /**	Handle the action of releasing the click (mouse-up) on a slot.
@@ -8595,11 +8599,11 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						so ALWAYS do something like this:
 						@code
 						lock_general_mutex(r_ob);
-						handle_slot_mouseup(...);
+						slot_handle_mouseup(...);
 						unlock_general_mutex(r_ob);
 						@endcode
  */
-void handle_slot_mouseup(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers);
+void slot_handle_mouseup(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers);
 
 
 /**	Handle the action of scrolling the mousewheel on a slot window.
@@ -8615,11 +8619,11 @@ void handle_slot_mouseup(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, l
 						so ALWAYS do something like this:
 						@code
 						lock_general_mutex(r_ob);
-						handle_slot_mousewheel(...);
+						slot_handle_mousewheel(...);
 						unlock_general_mutex(r_ob);
 						@endcode
  */
-char handle_slot_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc);
+char slot_handle_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc);
 
 
 /**	Handle the action of doubleclicking on a slot.
@@ -8633,7 +8637,7 @@ char handle_slot_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long 
 
 	@remark				The function does NOT redraw automatically the jbox, you have to do it after.
  */
-char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed);
+char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed);
 
 
 /**	Handle the action of mouse-hovering on a slot. Currently it only handles the #k_SLOT_TYPE_FUNCTION types of slot (hovering will update legend and show bigger circles on function points)
@@ -8648,7 +8652,7 @@ char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 
 	@remark				The function does NOT redraw automatically the jbox, you have to do it after.
  */
-char handle_slot_mousemove(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *redraw, char *mousepointer_changed);
+char slot_handle_mousemove(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *redraw, char *mousepointer_changed);
 
 
 /**	Delete all the selected function points from a given slot
@@ -12151,6 +12155,11 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
 t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode);
 
 
+// TBD
+char should_play_tied_notes_separately(t_notation_obj *r_ob, t_chord *chord);
+char should_play_tied_chords_separately(t_notation_obj *r_ob, t_chord *chord);
+
+
 /**	Obtain all the information about a bach.score chord, in gathered syntax.
 	@ingroup			notation_data
 	@param	r_ob		The notation object
@@ -13015,7 +13024,7 @@ void check_tuplets(t_notation_obj *r_ob, t_llll *rhythm, t_llll *infos, t_llll *
 							If #next_chord is NULL, each WHITENULL in the t_note::tie_to field of the given chord will be accounted as a tie.
 	@return			1 if the chord is completely tied to the next one, 0 otherwise
  */
-char is_all_chord_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_measure, t_chord *next_chord);
+char chord_is_all_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_measure, t_chord *next_chord);
 
 
 /**	Tell if a chord is completely tied to the previous one.
@@ -13028,7 +13037,7 @@ char is_all_chord_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_meas
 							If #next_chord is NULL, each WHITENULL in the t_note::tie_to field of the given chord will be accounted as a tie.
 	@return			1 if the chord is completely tied to the previous one, 0 otherwise
  */
-char is_all_chord_tied_from(t_chord *chord, char within_measure);
+char chord_is_all_tied_from(t_chord *chord, char within_measure);
 
 
 /**	Tell if a chord is followed by a rest

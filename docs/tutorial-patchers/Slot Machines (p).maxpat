@@ -238,7 +238,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 6 @inwrap 1",
+					"text" : "bach.join 6 @inwrap 1",
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 382.0, 381.0, 280.0, 20.0 ],

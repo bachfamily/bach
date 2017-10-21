@@ -625,7 +625,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append 3 @outwrap 1",
+									"text" : "bach.join 3 @outwrap 1",
 									"patching_rect" : [ 183.0, 646.0, 247.0, 20.0 ],
 									"id" : "obj-32",
 									"fontname" : "Arial",
@@ -789,7 +789,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append 2 @outwrap 1",
+									"text" : "bach.join 2 @outwrap 1",
 									"patching_rect" : [ 297.0, 595.0, 158.0, 20.0 ],
 									"id" : "obj-11",
 									"fontname" : "Arial",
@@ -817,7 +817,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append @triggers 2",
+									"text" : "bach.join @triggers 2",
 									"patching_rect" : [ 29.0, 728.0, 145.0, 20.0 ],
 									"id" : "obj-53",
 									"fontname" : "Arial",

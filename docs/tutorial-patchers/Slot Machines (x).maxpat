@@ -222,7 +222,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 2 @triggers 2 @out t @outwrap 1",
+					"text" : "bach.join 2 @triggers 2 @out t @outwrap 1",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

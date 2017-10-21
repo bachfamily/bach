@@ -2846,13 +2846,13 @@ char are_only_all_tied_chords_selected(t_notation_obj *r_ob, t_chord **first_sel
         else
             *all_chords_have_one_note = true;
         
-        while (right && chord_get_next(right) &&  is_all_chord_tied_to(r_ob, right, false, NULL) && notation_item_is_selected(r_ob, (t_notation_item *)chord_get_next(right))) {
+        while (right && chord_get_next(right) &&  chord_is_all_tied_to(r_ob, right, false, NULL) && notation_item_is_selected(r_ob, (t_notation_item *)chord_get_next(right))) {
             right = chord_get_next(right);
             if (right->num_notes != 1)
                 *all_chords_have_one_note = false;
         }
         
-        while (left && chord_get_prev(left) && is_all_chord_tied_from(left, false) && notation_item_is_selected(r_ob, (t_notation_item *)chord_get_prev(left))) {
+        while (left && chord_get_prev(left) && chord_is_all_tied_from(left, false) && notation_item_is_selected(r_ob, (t_notation_item *)chord_get_prev(left))) {
             left = chord_get_prev(left);
             if (right->num_notes != 1)
                 *all_chords_have_one_note = false;
@@ -13800,7 +13800,7 @@ void tie_untie_note(t_note *note)
 t_chord *chord_get_first_in_tieseq(t_chord *chord)
 {
 	t_chord *outchord = chord;
-	while (outchord && is_all_chord_tied_from(outchord, false))
+	while (outchord && chord_is_all_tied_from(outchord, false))
 		outchord = chord_get_prev(outchord);
 	return outchord;
 }
@@ -13808,7 +13808,7 @@ t_chord *chord_get_first_in_tieseq(t_chord *chord)
 t_chord *chord_get_last_in_tieseq(t_chord *chord)
 {
 	t_chord *outchord = chord;
-	while (outchord && is_all_chord_tied_to(NULL, outchord, false, NULL))
+	while (outchord && chord_is_all_tied_to(NULL, outchord, false, NULL))
 		outchord = chord_get_next(outchord);
 	return outchord;
 }
@@ -13851,14 +13851,14 @@ t_note *note_get_last_selected_in_tieseq(t_notation_obj *r_ob, t_note *note)
 
 t_chord *last_all_tied_chord(t_chord *chord, char within_measure){
 	t_chord *outchord = chord;
-	while (outchord && is_all_chord_tied_to(NULL, outchord, 0, NULL) && (!within_measure || outchord->next))
+	while (outchord && chord_is_all_tied_to(NULL, outchord, 0, NULL) && (!within_measure || outchord->next))
 		outchord = chord_get_next(outchord);
 	return outchord;
 }
 
 t_chord *first_all_tied_chord(t_chord *chord, char within_measure){
 	t_chord *outchord = chord;
-	while (outchord && is_all_chord_tied_from(outchord, 0) && (!within_measure || outchord->prev))
+	while (outchord && chord_is_all_tied_from(outchord, 0) && (!within_measure || outchord->prev))
 		outchord = chord_get_prev(outchord);
 	return outchord;
 }
@@ -14293,7 +14293,7 @@ long substitute_chords_with_rduration_fn(void *data, t_hatom *a, const t_llll *a
 	if (hatom_gettype(a) == H_OBJ){
 		t_chord *ch = (t_chord *)hatom_getobj(a);
 		hatom_setrational(a, ch->r_sym_duration);
-		if (hack_ties && is_all_chord_tied_to(r_ob, ch, true, NULL)){
+		if (hack_ties && chord_is_all_tied_to(r_ob, ch, true, NULL)){
 			a->h_w.w_rat.r_num *= -1;
 			a->h_w.w_rat.r_den *= -1;
 		}
@@ -15241,7 +15241,7 @@ long simplify_tuplets_for_level_fn(void *data, t_hatom *a, const t_llll *address
 						t_llllelem *leftstartdur = durselem, *rightenddur = durselem;
 						
 						while (rightend && rightend->l_next && (node_is_good_for_processing_tuplets(r_ob, rightend, k_RHYTHM_LEVEL_FORCE_TUPLET | k_RHYTHM_LEVEL_ORIGINAL, true) || hatom_gettype(&rightend->l_hatom) == H_OBJ) &&
-							   (endch = get_leaf_end_chord(rightend, false)) && is_all_chord_tied_to(r_ob, endch, true, NULL) &&
+							   (endch = get_leaf_end_chord(rightend, false)) && chord_is_all_tied_to(r_ob, endch, true, NULL) &&
 							   (!only_accept_tuplets_inside_wrapped_level || (node_is_good_for_processing_tuplets(r_ob, rightend->l_next, k_RHYTHM_LEVEL_FORCE_TUPLET | k_RHYTHM_LEVEL_ORIGINAL, true)))){
 							rightend = rightend->l_next;
 							rightenddur = rightenddur->l_next;
@@ -15249,7 +15249,7 @@ long simplify_tuplets_for_level_fn(void *data, t_hatom *a, const t_llll *address
 								num_beams = ((t_rhythm_level_properties *)hatom_getllll(&rightend->l_hatom)->l_thing.w_obj)->beam_number;
 						}
 						while (leftstart && leftstart->l_prev && (node_is_good_for_processing_tuplets(r_ob, leftstart, k_RHYTHM_LEVEL_FORCE_TUPLET | k_RHYTHM_LEVEL_ORIGINAL, true) || hatom_gettype(&leftstart->l_hatom) == H_OBJ) &&
-							   (startch = get_leaf_start_chord(leftstart, false)) && is_all_chord_tied_from(startch, true) &&
+							   (startch = get_leaf_start_chord(leftstart, false)) && chord_is_all_tied_from(startch, true) &&
 							   (!only_accept_tuplets_inside_wrapped_level || (node_is_good_for_processing_tuplets(r_ob, leftstart->l_prev, k_RHYTHM_LEVEL_FORCE_TUPLET | k_RHYTHM_LEVEL_ORIGINAL, true)))){
 							leftstart = leftstart->l_prev;
 							leftstartdur = leftstartdur->l_prev;
@@ -15904,7 +15904,7 @@ void merge_rests_and_alltied_chords_one_step(t_notation_obj *r_ob, t_measure *me
                     *changed = true;
                 }
 			} else if (is_simple_chord && rhythm_elem_sign > 0 && box_elem->l_next && hatom_gettype(&box_elem->l_next->l_hatom) == H_OBJ &&
-					   is_all_chord_tied_to(r_ob, this_chord, 1, this_chord->next)) {
+					   chord_is_all_tied_to(r_ob, this_chord, 1, this_chord->next)) {
                 // An all-tied-chord sequence
                 if (can_merge(r_ob, rhythm_elem_rat, this_chord->next->r_sym_duration, merge_when) ) {
                     this_chord->next->r_sym_duration = rat_rat_sum(this_chord->next->r_sym_duration, rhythm_elem_rat);
@@ -17830,7 +17830,7 @@ char scan_single_box_for_syncopations(t_notation_obj *r_ob, t_measure *measure, 
 				if (hatom_gettype(&elem->l_next->l_hatom) == H_OBJ){
 					t_chord *right = (t_chord *) hatom_getobj(&elem->l_next->l_hatom);
 					if (rat_rat_cmp(right->overall_tuplet_ratio, left->overall_tuplet_ratio) == 0 &&			// < should always be true, elements are in the same level!
-						((left->r_sym_duration.r_num > 0 && right->r_sym_duration.r_num > 0 && is_all_chord_tied_to(r_ob, left, true, NULL)) ||
+						((left->r_sym_duration.r_num > 0 && right->r_sym_duration.r_num > 0 && chord_is_all_tied_to(r_ob, left, true, NULL)) ||
 						 (left->r_sym_duration.r_num < 0 && right->r_sym_duration.r_num < 0))) {
 						t_rational sum = rat_rat_sum(rat_abs(left->r_sym_duration), rat_abs(right->r_sym_duration));
 						t_rational sum_figure = rat_rat_sum(figure_and_dots_to_figure_sym_duration(left->figure, left->num_dots), figure_and_dots_to_figure_sym_duration(right->figure, right->num_dots));
@@ -17870,7 +17870,7 @@ char scan_single_box_for_syncopations(t_notation_obj *r_ob, t_measure *measure, 
 
 					if (next_llll && next_llll->l_head && right && right_nograce && right == right_nograce && !is_level_tuplet(next_llll)) {
 						if (rat_rat_cmp(right->overall_tuplet_ratio, left->overall_tuplet_ratio) == 0 &&
-							((left->r_sym_duration.r_num > 0 && right->r_sym_duration.r_num > 0 && is_all_chord_tied_to(r_ob, left, true, NULL)) ||
+							((left->r_sym_duration.r_num > 0 && right->r_sym_duration.r_num > 0 && chord_is_all_tied_to(r_ob, left, true, NULL)) ||
 							 (left->r_sym_duration.r_num < 0 && right->r_sym_duration.r_num < 0)) &&
 							(!next_llll->l_thing.w_obj || !(((t_rhythm_level_properties *)next_llll->l_thing.w_obj)->is_tuplet))) {
 							t_rational sum = rat_rat_sum(rat_abs(left->r_sym_duration), rat_abs(right->r_sym_duration));
@@ -17928,7 +17928,7 @@ char scan_single_box_for_syncopations(t_notation_obj *r_ob, t_measure *measure, 
 					if (hatom_gettype(&elem->l_next->l_hatom) == H_OBJ){
 						t_chord *right = (t_chord *) hatom_getobj(&elem->l_next->l_hatom);
 						if (rat_rat_cmp(right->overall_tuplet_ratio, left->overall_tuplet_ratio) == 0 &&
-							((left->r_sym_duration.r_num > 0 && right->r_sym_duration.r_num > 0 && is_all_chord_tied_to(r_ob, left, true, NULL)) ||
+							((left->r_sym_duration.r_num > 0 && right->r_sym_duration.r_num > 0 && chord_is_all_tied_to(r_ob, left, true, NULL)) ||
 							 (left->r_sym_duration.r_num < 0 && right->r_sym_duration.r_num < 0)) &&
 							(!this_llll->l_thing.w_obj || !(((t_rhythm_level_properties *)this_llll->l_thing.w_obj)->is_tuplet))) {
 							t_rational sum = rat_rat_sum(rat_abs(left->r_sym_duration), rat_abs(right->r_sym_duration));
@@ -17981,7 +17981,7 @@ char scan_single_box_for_syncopations(t_notation_obj *r_ob, t_measure *measure, 
 						if (next_llll && next_llll->l_head && right && right_nograce && right == right_nograce && !is_level_tuplet(next_llll)) {
 							
 							if (rat_rat_cmp(right->overall_tuplet_ratio, left->overall_tuplet_ratio) == 0 &&
-								((left->r_sym_duration.r_num > 0 && right->r_sym_duration.r_num > 0 && is_all_chord_tied_to(r_ob, left, true, NULL)) ||
+								((left->r_sym_duration.r_num > 0 && right->r_sym_duration.r_num > 0 && chord_is_all_tied_to(r_ob, left, true, NULL)) ||
 								 (left->r_sym_duration.r_num < 0 && right->r_sym_duration.r_num < 0)) &&
 								(!this_llll->l_thing.w_obj || !(((t_rhythm_level_properties *)this_llll->l_thing.w_obj)->is_tuplet)) &&
 								(!next_llll->l_thing.w_obj || !(((t_rhythm_level_properties *)next_llll->l_thing.w_obj)->is_tuplet))) {
@@ -18417,14 +18417,14 @@ char* get_strings_for_rhythmic_tree_elements_options(t_hatom *h, char verbosity_
 		out = (char *)bach_newptr(21 * sizeof(char));
 		#ifdef BACH_POST_IDS_IN_RHYTHMIC_TREE_DEBUG // also print IDs
 		if (verbosity_level == 3)
-			snprintf_zero(out, 20, is_all_chord_tied_to(NULL, chord, false, NULL) ? "id%ld.%ld/%ld.%p t" : "id%ld.%ld/%ld.%p", chord->r_it.ID, chord->r_sym_duration.r_num, chord->r_sym_duration.r_den, chord->rhythmic_tree_elem);
+			snprintf_zero(out, 20, chord_is_all_tied_to(NULL, chord, false, NULL) ? "id%ld.%ld/%ld.%p t" : "id%ld.%ld/%ld.%p", chord->r_it.ID, chord->r_sym_duration.r_num, chord->r_sym_duration.r_den, chord->rhythmic_tree_elem);
 		else
-			snprintf_zero(out, 20, is_all_chord_tied_to(NULL, chord, false, NULL) ? "id%ld.%ld/%ld t" : "id%ld.%ld/%ld", chord->r_it.ID, chord->r_sym_duration.r_num, chord->r_sym_duration.r_den);
+			snprintf_zero(out, 20, chord_is_all_tied_to(NULL, chord, false, NULL) ? "id%ld.%ld/%ld t" : "id%ld.%ld/%ld", chord->r_it.ID, chord->r_sym_duration.r_num, chord->r_sym_duration.r_den);
 		#else
 		if (verbosity_level == 3)
-			snprintf_zero(out, 20, is_all_chord_tied_to(NULL, chord, false, NULL) ? "%ld/%ld.%p t" : "%ld/%ld.%p", chord->r_sym_duration.r_num, chord->r_sym_duration.r_den, chord->rhythmic_tree_elem);
+			snprintf_zero(out, 20, chord_is_all_tied_to(NULL, chord, false, NULL) ? "%ld/%ld.%p t" : "%ld/%ld.%p", chord->r_sym_duration.r_num, chord->r_sym_duration.r_den, chord->rhythmic_tree_elem);
 		else
-			snprintf_zero(out, 20, is_all_chord_tied_to(NULL, chord, false, NULL) ? "%ld/%ld t" : "%ld/%ld", chord->r_sym_duration.r_num, chord->r_sym_duration.r_den);
+			snprintf_zero(out, 20, chord_is_all_tied_to(NULL, chord, false, NULL) ? "%ld/%ld t" : "%ld/%ld", chord->r_sym_duration.r_num, chord->r_sym_duration.r_den);
 		#endif
 		return out;
 	} else if (hatom_gettype(h) == H_LLLL && hatom_getllll(h)->l_thing.w_obj) {
@@ -20741,7 +20741,7 @@ void update_measure_chordnumbers(t_measure *measure) {
 
 // if next_chord != NULL, the next_chord will be accounted in case the tie was WHITENULL (to define)
 // leave NULL also r_ob if not needed
-char is_all_chord_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_measure, t_chord *next_chord) {
+char chord_is_all_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_measure, t_chord *next_chord) {
 	t_note *note = chord->firstnote;
 	t_note *tmp;
 
@@ -20787,7 +20787,7 @@ char is_all_chord_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_meas
 	return true;
 }
 
-char is_all_chord_tied_from(t_chord *chord, char within_measure) {
+char chord_is_all_tied_from(t_chord *chord, char within_measure) {
 	t_note *note = chord->firstnote;
 	
 	if (!note) 
@@ -29015,7 +29015,7 @@ long add_t_after_all_tied_chords_fn(void *data, t_hatom *a, const t_llll *addres
 	t_llll *root = (t_llll *) ((void **)data)[1];
 	if (hatom_gettype(a) == H_OBJ){
 		t_chord *ch = (t_chord *)hatom_getobj(a);
-		if (is_all_chord_tied_to(r_ob, ch, false, NULL)) {
+		if (chord_is_all_tied_to(r_ob, ch, false, NULL)) {
 			llll_insertsym_after(_llllobj_sym_t, llll_nth_one(root, (t_llll *)address), 0, WHITENULL_llll);
 		}
 	}
@@ -29089,7 +29089,8 @@ t_llll* measure_get_values_as_llll(t_notation_obj *r_ob, t_measure *measure, e_d
 	return out_llll;
 }
 
-t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, char put_grace_chord_sym_duration_to_zero){ // retrieve the chord values as a symbolic chord, i.e. for [score]
+t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_data_considering_types mode, char put_grace_chord_sym_duration_to_zero){
+    // retrieve the chord values as a symbolic chord, i.e. for [score]
 	t_llll* out_llll = llll_get(); 
 	t_note *temp_note;
 	t_rational r_sym_duration = (put_grace_chord_sym_duration_to_zero && chord->is_grace_chord) ? long2rat(0) : chord->r_sym_duration;
@@ -29097,11 +29098,16 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
  	t_rational non_grace_r_sym_duration = (chord->is_grace_chord) ? long2rat(0) : rat_abs(chord->r_sym_duration);
 	double ms_duration = chord->duration_ms;
 	
-	if (mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) {
+	if (mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_EVALUATION) {
 		if ((!is_rest && !r_ob->play_tied_elements_separately) || (is_rest && !r_ob->play_rests_separately)) {
 			t_chord *tmp_chord = chord;
-			while (tmp_chord && (is_rest ? is_chord_followed_by_rest(r_ob, tmp_chord, 0) : is_all_chord_tied_to(r_ob, tmp_chord, 0, NULL))) {
-				tmp_chord = chord_get_next(tmp_chord);
+			while (tmp_chord && (is_rest ? is_chord_followed_by_rest(r_ob, tmp_chord, 0) : chord_is_all_tied_to(r_ob, tmp_chord, 0, NULL))) {
+                t_chord *next_chord = chord_get_next(tmp_chord);
+                
+                if (mode == k_CONSIDER_FOR_EVALUATION && !notation_item_is_globally_selected(r_ob, (t_notation_item *)next_chord))
+                    break;
+                
+				tmp_chord = next_chord;
 				if (tmp_chord) {
 					r_sym_duration = rat_rat_sum(r_sym_duration, rat_abs(tmp_chord->r_sym_duration));
 					if (!tmp_chord->is_grace_chord)
@@ -29175,6 +29181,7 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
 	return out_llll;
 }
 
+
 char should_play_tied_notes_separately(t_notation_obj *r_ob, t_chord *chord)
 {
     if (r_ob->play_mode == k_PLAYMODE_NOTEWISE) 
@@ -29182,7 +29189,7 @@ char should_play_tied_notes_separately(t_notation_obj *r_ob, t_chord *chord)
     else {
         if (r_ob->play_tied_elements_separately)
             return 1;
-        else if (is_all_chord_tied_to(r_ob, chord, false, NULL))
+        else if (chord_is_all_tied_to(r_ob, chord, false, NULL))
             return 0;
         else
             return 1;
@@ -29197,9 +29204,11 @@ t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, 
 	t_rational r_sym_duration = chord->r_sym_duration;
 	t_rational non_grace_r_sym_duration = chord->is_grace_chord ? long2rat(0) : chord->r_sym_duration;
 	double ms_duration = chord->duration_ms;
-	if ((mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) && (!should_play_tied_notes_separately(r_ob, note->parent))) {
+	if ((mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_EVALUATION) && (!should_play_tied_notes_separately(r_ob, note->parent))) {
 		t_note *tmpnote = note;
 		while (tmpnote && tmpnote->tie_to && (tmpnote->tie_to != (t_note *) WHITENULL_llll)) {
+            if (mode == k_CONSIDER_FOR_EVALUATION && !notation_item_is_globally_selected(r_ob, (t_notation_item *)tmpnote->tie_to))
+                break;
 			tmpnote = tmpnote->tie_to;
 			if (tmpnote) {
 				r_sym_duration = rat_rat_sum(r_sym_duration, tmpnote->parent->r_sym_duration);
@@ -35164,6 +35173,54 @@ double notation_item_get_duration_ms_accurate(t_notation_obj *r_ob, t_notation_i
 }
 
 
+double notation_item_get_duration_ms_for_slots_account_for_ties(t_notation_obj *r_ob, long slotnum, t_notation_item *it)
+{
+    switch (it->type) {
+        case k_NOTE:
+        {
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && r_ob->slotinfo[slotnum].slot_singleslotfortiednotes) {
+                t_note *nt = (t_note *)it;
+                double duration = nt->duration;
+                while (nt->tie_to && nt->tie_to != WHITENULL) {
+                    nt = nt->tie_to;
+                    duration += nt->duration;
+                }
+                return duration;
+            } else {
+                return ((t_note *)it)->duration;
+            }
+        }
+        case k_CHORD:
+        {
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && r_ob->slotinfo[slotnum].slot_singleslotfortiednotes) {
+                t_chord *ch = (t_chord *)it;
+                double duration = chord_get_max_duration(r_ob, ch);
+                while (ch && chord_is_all_tied_to(r_ob, ch, false, NULL)) {
+                    ch = chord_get_next(ch);
+                    duration += chord_get_max_duration(r_ob, ch);
+                }
+                return duration;
+            } else {
+                return chord_get_max_duration(r_ob, (t_chord *)it);
+            }
+        }
+        case k_PITCH_BREAKPOINT: return 0;
+        case k_DURATION_LINE: return notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slotnum, (t_notation_item *)((t_duration_line *)it)->owner);
+        case k_LYRICS: return 0;
+        case k_DYNAMICS: return 0;
+        case k_MEASURE: return ((t_measure *)it)->total_duration_ms;
+        case k_TEMPO: return 0;
+        case k_VOICE: return 0;
+        case k_MARKER: return 0;
+        case k_LOOP_START: return 0;
+        case k_LOOP_END: return 0;
+        case k_LOOP_REGION: return r_ob->loop_region.end.position_ms - r_ob->loop_region.start.position_ms;
+        default: return 0;
+    }
+}
+
+
+
 
 double notation_item_get_tail_ms_accurate(t_notation_obj *r_ob, t_notation_item *it)
 {
@@ -35565,7 +35622,7 @@ long notation_item_get_tie_for_lexpr(t_notation_obj *r_ob, t_notation_item *it)
 	
 	switch (it->type) {
 		case k_NOTE: return (((t_note *)it)->tie_to != NULL) * 1 + (((t_note *)it)->tie_from != NULL) * 2;
-		case k_CHORD: return is_all_chord_tied_to(r_ob, (t_chord *) it, false, NULL) * 1 + is_all_chord_tied_from((t_chord *) it, false) * 2;
+		case k_CHORD: return chord_is_all_tied_to(r_ob, (t_chord *) it, false, NULL) * 1 + chord_is_all_tied_from((t_chord *) it, false) * 2;
 		case k_PITCH_BREAKPOINT: return 0;
 		case k_DURATION_LINE: return notation_item_get_tie_for_lexpr(r_ob, (t_notation_item *)(((t_duration_line *)it)->owner));
 		case k_LYRICS: return 0;
@@ -37681,7 +37738,7 @@ t_notation_item *get_next_item_to_play(t_notation_obj *r_ob, double current_ms){
                     notationobj_throw_issue(r_ob);
 			} else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE &&
 					   ((temp_ch->r_sym_duration.r_num < 0 && !r_ob->play_rests_separately && is_chord_preceded_by_rest(r_ob, temp_ch, 0)) || 
-						(temp_ch->r_sym_duration.r_num >= 0 && !r_ob->play_tied_elements_separately && is_all_chord_tied_from(temp_ch, 0)))) {
+						(temp_ch->r_sym_duration.r_num >= 0 && !r_ob->play_tied_elements_separately && chord_is_all_tied_from(temp_ch, 0)))) {
 				// nothing to do, actually, this is a tied-from chord, we ignore it. 
 				// but we do NOT update the cursor, since we're not sure the first of the tied-chord-sequence starts before the cursor
 			} else {
@@ -39862,7 +39919,7 @@ void bach2pwgl_measure_level(t_notation_obj *r_ob, t_llll *box, char *need_set_d
 				}
 				hatom_change_to_llll_and_free(&elem->l_hatom, chord_llll);
 				
-				if (is_all_chord_tied_to(r_ob, ch, false, NULL))
+				if (chord_is_all_tied_to(r_ob, ch, false, NULL))
 					*need_set_double = true;
 			}
 		}
@@ -40112,7 +40169,7 @@ void toggle_grace_for_chord(t_notation_obj *r_ob, t_chord *chord, char grace){
 	} else {
 		t_llllelem *orig_elem, *last_elem;
 		
-		while (orig_chord && is_all_chord_tied_from(orig_chord, true))
+		while (orig_chord && chord_is_all_tied_from(orig_chord, true))
 			orig_chord = orig_chord->prev;
 		
 		if (orig_chord) {

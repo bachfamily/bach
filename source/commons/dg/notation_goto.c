@@ -255,7 +255,7 @@ double get_max_head(t_notation_obj *r_ob, t_goto_params *par, t_llll *toselect)
     char no_tie_from = (par->tiemode == k_GOTO_TIEMODE_TO || par->tiemode == k_GOTO_TIEMODE_ALL);
     for (t_llllelem *elem = toselect->l_head; elem; elem = elem->l_next) {
         t_notation_item *it = (t_notation_item *)hatom_getobj(&elem->l_hatom);
-        if (no_tie_from && ((it->type == k_CHORD && is_all_chord_tied_from((t_chord *)it, false)) ||
+        if (no_tie_from && ((it->type == k_CHORD && chord_is_all_tied_from((t_chord *)it, false)) ||
                             (it->type == k_NOTE && ((t_note *) it)->tie_from)))
             continue;
         double this_onset = goto_notation_item_get_onset(r_ob, par, it);
@@ -276,7 +276,7 @@ double get_min_tail(t_notation_obj *r_ob, t_goto_params *par, t_llll *toselect)
     char no_tie_to = (par->tiemode == k_GOTO_TIEMODE_FROM || par->tiemode == k_GOTO_TIEMODE_ALL);
     for (t_llllelem *elem = toselect->l_head; elem; elem = elem->l_next) {
         t_notation_item *it = (t_notation_item *)hatom_getobj(&elem->l_hatom);
-        if (no_tie_to && ((it->type == k_CHORD && is_all_chord_tied_to(r_ob, (t_chord *)it, false, NULL)) ||
+        if (no_tie_to && ((it->type == k_CHORD && chord_is_all_tied_to(r_ob, (t_chord *)it, false, NULL)) ||
                             (it->type == k_NOTE && ((t_note *) it)->tie_to)))
             continue;
         double this_onset = goto_notation_item_get_tail(r_ob, par, it);
@@ -322,14 +322,14 @@ t_llll *goto_get_tied_items(t_notation_obj *r_ob, t_notation_item *it, char tie_
         {
             t_chord *ch = (t_chord *)it;
             if (tie_from) {
-                while (ch && is_all_chord_tied_from(ch, false)) {
+                while (ch && chord_is_all_tied_from(ch, false)) {
                     ch = chord_get_prev(ch);
                     llll_appendobj(out, ch);
                 }
             }
             ch = (t_chord *)it;
             if (tie_to) {
-                while (ch && is_all_chord_tied_to(r_ob, ch, false, NULL)) {
+                while (ch && chord_is_all_tied_to(r_ob, ch, false, NULL)) {
                     ch = chord_get_next(ch);
                     llll_appendobj(out, ch);
                 }
@@ -602,7 +602,7 @@ t_llll *goto_get_first_notation_item_after_ms(t_notation_obj *r_ob, t_goto_param
                         continue;
                     if (unselected_only && allowed_types[k_CHORD] && notation_item_is_selected(r_ob, (t_notation_item *)chord))
                         continue;
-                    if (not_tied_from && allowed_types[k_CHORD] && is_all_chord_tied_from(chord, false))
+                    if (not_tied_from && allowed_types[k_CHORD] && chord_is_all_tied_from(chord, false))
                         continue;
                     double onset = goto_notation_item_get_onset(r_ob, par, (t_notation_item *)chord);
                     double duration = goto_notation_item_get_duration(r_ob, par, (t_notation_item *)chord);
@@ -753,7 +753,7 @@ t_llll *goto_get_first_notation_item_before_ms(t_notation_obj *r_ob, t_goto_para
                         continue;
                     if (unselected_only && allowed_types[k_CHORD] && notation_item_is_selected(r_ob, (t_notation_item *)chord))
                         continue;
-                    if (allowed_types[k_CHORD] && not_tied_from && is_all_chord_tied_from(chord, false))
+                    if (allowed_types[k_CHORD] && not_tied_from && chord_is_all_tied_from(chord, false))
                         continue;
                     double onset = goto_notation_item_get_onset(r_ob, par, (t_notation_item *)chord);
                     double duration = goto_notation_item_get_duration(r_ob, par, (t_notation_item *)chord);
@@ -903,7 +903,7 @@ t_llll *goto_get_nextprev_notation_item(t_notation_obj *r_ob, t_goto_params *par
         t_notation_item *tmp_it;
         if (direction > 0) {
             while (curr_cur) {
-                if (curr_cur->type == k_CHORD && is_all_chord_tied_from((t_chord *)curr_cur, false) &&
+                if (curr_cur->type == k_CHORD && chord_is_all_tied_from((t_chord *)curr_cur, false) &&
                     (tmp_it = (t_notation_item *)chord_get_prev((t_chord *)curr_cur)) && notation_item_is_selected(r_ob, tmp_it)) {
                     curr_cur = tmp_it;
                 } else if (curr_cur->type == k_NOTE && ((t_note *)curr_cur)->tie_from && ((t_note *)curr_cur)->tie_from != WHITENULL &&

@@ -3350,7 +3350,7 @@ long articulation_to_lilypond_buf(t_notation_obj *r_ob, long articulation_ID, ch
 long chord_to_lilypond_buf(t_notation_obj *r_ob, t_chord *ch, char **buf)
 {
 	long cur = 0, j;
-	char is_all_chord_tie_to_next = is_all_chord_tied_to(r_ob, ch, false, NULL);
+	char is_all_chord_tie_to_next = chord_is_all_tied_to(r_ob, ch, false, NULL);
 	
 	// estimating (upper bound!) on length of the string
 	long estimated_buffer_length = 0;

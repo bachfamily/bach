@@ -164,7 +164,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 697.0, 930.071411, 50.0 ],
-									"text" : "We might think to translate the x-append object in a bach.append object. A crucial point is that this would not work - at least not in this patch. The reason is due to the fact that x-append requires the evaluation of random data: each time that F is evaluated, a different data is set in one of x-append inlets. But in bach information goes from top to bottom, so that bach.append is \"static\": if you append 4 times the result of a random process, that will always be the SAME result!"
+									"text" : "We might think to translate the x-append object in a bach.join object. A crucial point is that this would not work - at least not in this patch. The reason is due to the fact that x-append requires the evaluation of random data: each time that F is evaluated, a different data is set in one of x-append inlets. But in bach information goes from top to bottom, so that bach.join is \"static\": if you append 4 times the result of a random process, that will always be the SAME result!"
 								}
 
 							}

@@ -167,7 +167,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append @triggers 2",
+					"text" : "bach.join @triggers 2",
 					"numoutlets" : 1,
 					"patching_rect" : [ 297.0, 294.0, 145.0, 20.0 ],
 					"id" : "obj-28",

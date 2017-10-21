@@ -8,6 +8,11 @@
 
 #define CONST_SLOT_CARD_UWIDTH 20
 
+
+
+
+
+
 void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 {
 	int i;
@@ -529,6 +534,8 @@ char slot_is_writable(t_notation_obj *r_ob, long slotnum)
 }
 
 
+
+
 t_llll* get_slotinfo_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible){
 	t_llll* out_llll = llll_get();
 	int j;
@@ -738,7 +745,6 @@ t_llll* get_slotinfo_as_llll(t_notation_obj *r_ob, char explicitly_get_also_defa
 	return out_llll;
 	
 }
-
 
 
 char can_slot_be_hzoomed(t_notation_obj *r_ob, long slot_num)
@@ -1669,8 +1675,11 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 					}
 				}
 
+                if (r_ob->slotinfo[s].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS)
+                    snprintf_zero(domain_unit, 30, "ms");
+                    
 				if (slope == 0)
-					snprintf_zero(legend, CONST_SLOT_MAX_LEGEND_CHARS, "(%.2f%s %.2f%s)", x_val, domain_unit, y_val, unit);
+                    snprintf_zero(legend, CONST_SLOT_MAX_LEGEND_CHARS, "(%.2f%s %.2f%s)", x_val, domain_unit, y_val, unit);
 				else
 					snprintf_zero(legend, CONST_SLOT_MAX_LEGEND_CHARS, "(%.2f%s %.2f%s C%.2f)", x_val, domain_unit, y_val, unit, slope);
 
@@ -2555,7 +2564,7 @@ void slot_clip_domain_value(t_notation_obj *r_ob, t_notation_item *nitem, long s
         double max = r_ob->slotinfo[slotnum].slot_domain[1];
         if (r_ob->slotinfo[slotnum].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
             min = 0;
-            max = notation_item_get_duration_ms(r_ob, nitem);
+            max = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slotnum, nitem);
         }
         clip_double(val, min, max);
     }
@@ -4248,7 +4257,7 @@ void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type)
 
 void slot_convert_ms_to_relative(t_notation_obj *r_ob, t_notation_item *nitem, long slot_num, double new_domain_min, double new_domain_max)
 {
-    double duration = notation_item_get_duration_ms(r_ob, nitem);
+    double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slot_num, nitem);
     t_slot *slot = notation_item_get_slot(r_ob, nitem, slot_num);
     if (slot) {
         for (t_slotitem *it = slot->firstitem; it; it = it->next) {
@@ -4297,7 +4306,7 @@ void notationobj_convert_slot_ms_to_relative(t_notation_obj *r_ob, long slot_num
 
 void slot_convert_relative_to_ms(t_notation_obj *r_ob, t_notation_item *nitem, long slot_num, double old_domain_min, double old_domain_max)
 {
-    double duration = notation_item_get_duration_ms(r_ob, nitem);
+    double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slot_num, nitem);
     t_slot *slot = notation_item_get_slot(r_ob, nitem, slot_num);
     if (slot) {
         for (t_slotitem *it = slot->firstitem; it; it = it->next) {
@@ -6913,7 +6922,7 @@ void select_slotitem(t_notation_obj *r_ob, t_slotitem *item, e_selection_modes m
 	}
 }
 
-char handle_slot_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc)
+char slot_handle_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc)
 {
 	long s = r_ob->active_slot_num;
 	
@@ -6956,7 +6965,7 @@ char handle_slot_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long 
 
 // returns 1 if something has been found (and thus the main function must return), 0 otherwise
 // changed and redraw come from the main function
-void handle_slot_mouseup(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers){
+void slot_handle_mouseup(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers){
 	long s = r_ob->active_slot_num;
 
     if (!slot_is_writable(r_ob, s))
@@ -7103,7 +7112,7 @@ t_slotitem *append_new_numberlist_elem(t_notation_obj *r_ob, t_notation_item *ni
 
 // returns 1 if something has been found (and thus the main function must return), 0 otherwise
 // changed and redraw come from the main function
-char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, e_element_types *clicked_obj, 
+char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, e_element_types *clicked_obj, 
 						   void **clicked_ptr, char *changed, char need_popup)
 {
 	double this_x = pt.x, this_y = pt.y;
@@ -7182,6 +7191,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									clear_slot_window_selection(r_ob);
 									pt_to_function_xy_values(r_ob, r_ob->active_slot_notationitem, pt, s, r_ob->slot_window_active, &x_val, &y_val);
 									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
+                                    slot_clip_domain_value(r_ob, r_ob->active_slot_notationitem, s, &x_val);
 									newitem = insert_new_slot_function_point(r_ob, s, x_val, y_val, 0., true, NULL);
 									
 									r_ob->hovered_slotitem = newitem;
@@ -7242,6 +7252,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
 									
 									pt_to_function_xy_values(r_ob, r_ob->active_slot_notationitem, pt, s, r_ob->slot_window_active, &x_val, &y_val);
+                                    slot_clip_domain_value(r_ob, r_ob->active_slot_notationitem, s, &x_val);
 									z_val = 0; // by default
 									
 									thispts->x = x_val;	
@@ -7336,6 +7347,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                 t_val = rescale_with_slope(this_x, r_ob->slot_window_active.x, r_ob->slot_window_active.x + r_ob->slot_window_active.width, r_ob->slotinfo[s].slot_domain[0], r_ob->slotinfo[s].slot_domain[1], r_ob->slotinfo[s].slot_domain_par);
 								r_val = rescale_with_slope((r_ob->slot_window_active.y + r_ob->slot_window_active.height) - this_y, 0, r_ob->slot_window_active.height, slot_min, slot_max, r_ob->slotinfo[s].slot_range_par);
  */
+                                slot_clip_domain_value(r_ob, r_ob->active_slot_notationitem, s, &t_val);
                                 
 								thispts->t = t_val;	thispts->radius = r_val; thispts->angle = 0.; thispts->interp = k_SPAT_INTERPOLATION_ARC;
 								thisitem->item = thispts; // correctly assign the point to the item
@@ -7429,7 +7441,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 									r_ob->changed_while_dragging = true;
 								} else {
 									if (!(modifiers & eShiftKey)) { // Shift key is for relative modifications
-										handle_slot_mousedrag(r_ob, patcherview, pt, modifiers, changed, &redraw);
+										slot_handle_mousedrag(r_ob, patcherview, pt, modifiers, changed, &redraw);
 										*changed = redraw = 1;
 										r_ob->changed_while_dragging = true;
 									}
@@ -7481,7 +7493,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 												if (!(modifiers & eShiftKey)) {
 													char redraw = false;
 													create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-													handle_slot_mousedrag(r_ob, patcherview, pt, modifiers, changed, &redraw);
+													slot_handle_mousedrag(r_ob, patcherview, pt, modifiers, changed, &redraw);
 													
 													r_ob->changed_while_dragging = true;
 													*changed = 1;
@@ -7555,7 +7567,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 											change_slot_matrix_value(r_ob, r_ob->active_slot_notationitem, s, temp2, r_ob->slot_clicked_row, r_ob->slot_clicked_col, CLAMP(r_ob->slotinfo[s].slot_default, r_ob->slotinfo[s].slot_range[0], r_ob->slotinfo[s].slot_range[1]), 0);
 										redraw = true;
 									} else 
-										handle_slot_mousedrag(r_ob, patcherview, pt, modifiers, changed, &redraw);
+										slot_handle_mousedrag(r_ob, patcherview, pt, modifiers, changed, &redraw);
 									
 									r_ob->changed_while_dragging = true;
 									*changed = true;
@@ -7759,7 +7771,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
 								if (!(modifiers & eControlKey)) { 
 									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-									handle_slot_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
+									slot_handle_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
 								}
 							} else if (pt.x >= r_ob->slot_window_spectrum_x && pt.x <= r_ob->slot_window_spectrum_x + r_ob->slot_window_spectrum_width) {
 								*clicked_obj = k_SLOT_COLOR_SPECTRUM;
@@ -7767,7 +7779,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								set_mousedown(r_ob, *clicked_ptr, (e_element_types) *clicked_obj);
 								if (!(modifiers & eControlKey)) { 
 									create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
-									handle_slot_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
+									slot_handle_mousedrag(r_ob, patcherview, pt, 0, changed, &redraw);
 								}
 							}
 						}
@@ -7874,7 +7886,7 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 
 // returns 1 if something has been found (and thus the main function must return), 0 otherwise
 // changed and redraw come from the main function
-char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed)
+char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed)
 {
 	double this_x = pt.x, this_y = pt.y;
     t_slot *activeslot = get_activeitem_activeslot(r_ob);
@@ -8251,7 +8263,7 @@ char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 }
 
 
-void handle_slot_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *activeslotitem, t_pt pt, long modifiers, 
+void slot_handle_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *activeslotitem, t_pt pt, long modifiers, 
 											char *changed, char *redraw, t_notation_item *undo_item, char changing_segment) 
 {
 	long s = r_ob->active_slot_num;
@@ -8279,7 +8291,7 @@ void handle_slot_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
 
             case k_SLOT_TEMPORALMODE_RELATIVE:
             {
-                double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, s, r_ob->active_slot_notationitem);
                 new_x_value = (xposition_to_ms(r_ob, xpt, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/(duration == 0 ? 1 : duration);
             }
                 break;
@@ -8319,7 +8331,7 @@ void handle_slot_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
 
             case k_SLOT_TEMPORALMODE_RELATIVE:
             {
-                double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, s, r_ob->active_slot_notationitem);
                 new_x_value = changing_segment ? thisbpt->x : (xposition_to_ms(r_ob, xpt, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/(duration == 0 ? 1 : duration);
             }
                 break;
@@ -8341,7 +8353,11 @@ void handle_slot_mousedrag_function_point(t_notation_obj *r_ob, t_slotitem *acti
 	*changed = 1;
 }
 
-void handle_slot_mousedrag_function_selection(t_notation_obj *r_ob, t_slotitem *activeslotitem, t_pt pt, long modifiers, char *changed, char *redraw, t_notation_item *undo_item) {
+
+
+
+
+void slot_handle_mousedrag_function_selection(t_notation_obj *r_ob, t_slotitem *activeslotitem, t_pt pt, long modifiers, char *changed, char *redraw, t_notation_item *undo_item) {
 	
 	double delta_y_pixel = r_ob->floatdragging_y - pt.y;
 	double delta_x_pixel = r_ob->floatdragging_x - pt.x;
@@ -8388,7 +8404,7 @@ void handle_slot_mousedrag_function_selection(t_notation_obj *r_ob, t_slotitem *
 		function_xy_values_to_pt(r_ob, r_ob->active_slot_notationitem, function_point->x, function_point->y, r_ob->active_slot_num, r_ob->slot_window_active, &point_coordinates);
 		point_coordinates.y -= delta_y_pixel;
 		point_coordinates.x -= delta_x_pixel;
-		handle_slot_mousedrag_function_point(r_ob, item, point_coordinates, modifiers, changed, redraw, undo_item, false);
+		slot_handle_mousedrag_function_point(r_ob, item, point_coordinates, modifiers, changed, redraw, undo_item, false);
 	}
 	r_ob->floatdragging_x = pt.x;	
 	r_ob->floatdragging_y = pt.y;
@@ -8396,7 +8412,7 @@ void handle_slot_mousedrag_function_selection(t_notation_obj *r_ob, t_slotitem *
 
 // returns 1 if something has been found (and thus the main function must return), 0 otherwise
 // changed and redraw come from the main function
-char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed, char *redraw){
+char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed, char *redraw){
 	double zoom_y = r_ob->zoom_y * (r_ob->slot_window_zoom / 100.);
 
     if (!slot_is_writable(r_ob, r_ob->active_slot_num))
@@ -8433,11 +8449,11 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								*changed = 1;
 							}
 						} else
-							handle_slot_mousedrag_function_point(r_ob, (t_slotitem *) r_ob->j_mousedown_ptr, pt, modifiers, changed, redraw, undo_item, false);
+							slot_handle_mousedrag_function_point(r_ob, (t_slotitem *) r_ob->j_mousedown_ptr, pt, modifiers, changed, redraw, undo_item, false);
 						
 					} else if (r_ob->j_mousedown_obj_type == k_SLOT_FUNCTION_SEGMENT) {
 						if (modifiers & eControlKey) { // change slope
-							handle_slot_mousedrag_function_point(r_ob, (t_slotitem *) r_ob->j_mousedown_ptr, pt, modifiers, changed, redraw, undo_item, false);
+							slot_handle_mousedrag_function_point(r_ob, (t_slotitem *) r_ob->j_mousedown_ptr, pt, modifiers, changed, redraw, undo_item, false);
 						} else {
 							t_slotitem *activeitem = (t_slotitem *) r_ob->j_mousedown_ptr;
 							if (activeitem && activeitem->prev) {
@@ -8448,14 +8464,14 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 								function_xy_values_to_pt(r_ob, r_ob->active_slot_notationitem, end->x, end->y, s, r_ob->slot_window_active, &end_pt);
 								start_pt.y -= r_ob->floatdragging_y - pt.y;
 								end_pt.y -= r_ob->floatdragging_y - pt.y;
-								handle_slot_mousedrag_function_point(r_ob, activeitem->prev, start_pt, modifiers, changed, redraw, undo_item, true);
-								handle_slot_mousedrag_function_point(r_ob, activeitem, end_pt, modifiers, changed, redraw, undo_item, true);
+								slot_handle_mousedrag_function_point(r_ob, activeitem->prev, start_pt, modifiers, changed, redraw, undo_item, true);
+								slot_handle_mousedrag_function_point(r_ob, activeitem, end_pt, modifiers, changed, redraw, undo_item, true);
 								r_ob->floatdragging_x = pt.x;	
 								r_ob->floatdragging_y = pt.y;
 							}
 						}
 					} else if (r_ob->j_mousedown_obj_type == k_SLOT_SELECTION) {
-						handle_slot_mousedrag_function_selection(r_ob, (t_slotitem *) r_ob->j_mousedown_ptr, pt, modifiers, changed, redraw, undo_item);
+						slot_handle_mousedrag_function_selection(r_ob, (t_slotitem *) r_ob->j_mousedown_ptr, pt, modifiers, changed, redraw, undo_item);
 					} else if (r_ob->j_mousedown_obj_type == k_SLOT_REGION) {
 						*redraw = 1;
 						*changed = 0;
@@ -8488,7 +8504,7 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                     
                                 case k_SLOT_TEMPORALMODE_RELATIVE:
                                 {
-                                    double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                    double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, s, r_ob->active_slot_notationitem);
                                     delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (xposition_to_ms(r_ob, pt.x, 0) - xposition_to_ms(r_ob, r_ob->floatdragging_x, 0))/(duration = 0 ? 1 : duration);
                                 }
 
@@ -8521,7 +8537,7 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                                     
                                 case k_SLOT_TEMPORALMODE_RELATIVE:
                                 {
-                                    double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                    double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, s, r_ob->active_slot_notationitem);
                                     delta_x_value = (modifiers & eControlKey && modifiers & eAltKey ? 0 : 1) * (xposition_to_ms(r_ob, pt.x, 0) - xposition_to_ms(r_ob, r_ob->floatdragging_x, 0)) / (duration == 0 ? 1 : duration);
                                 }
                                     break;
@@ -8575,7 +8591,7 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 
                                 case k_SLOT_TEMPORALMODE_RELATIVE:
                                 {
-                                    double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                    double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, s, r_ob->active_slot_notationitem);
                                     new_t_value = (xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/(duration == 0 ? 1 : duration);
                                 }
                                     break;
@@ -8611,7 +8627,7 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 
                                 case k_SLOT_TEMPORALMODE_RELATIVE:
                                 {
-                                    double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                    double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, s, r_ob->active_slot_notationitem);
                                     new_t_value = (xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/(duration == 0 ? 1 : duration);
                                 }
                                     break;
@@ -8887,7 +8903,7 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 
                                     case k_SLOT_TEMPORALMODE_RELATIVE:
                                     {
-                                        double duration = notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem);
+                                        double duration = notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, s, r_ob->active_slot_notationitem);
                                         new_pos = (xposition_to_ms(r_ob, pt.x, 0) - notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem))/duration;
                                     }
                                         break;
@@ -9003,7 +9019,7 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
                     break;
 
                 case k_SLOT_TEMPORALMODE_RELATIVE:
-                    thisx = ms_to_xposition(r_ob, ((t_biquad *)temp->item)->t * notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem) + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
+                    thisx = ms_to_xposition(r_ob, ((t_biquad *)temp->item)->t * notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slot_number, r_ob->active_slot_notationitem) + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
                     break;
 
                 default:
@@ -9035,7 +9051,7 @@ t_slotitem *pt_to_function_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_n
                 break;
 
             case k_SLOT_TEMPORALMODE_RELATIVE:
-                item_x_pixel = ms_to_xposition(r_ob, item_x_val * notation_item_get_duration_ms(r_ob, r_ob->active_slot_notationitem) + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
+                item_x_pixel = ms_to_xposition(r_ob, item_x_val * notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slot_number, r_ob->active_slot_notationitem) + notation_item_get_onset_ms(r_ob, r_ob->active_slot_notationitem), NULL);
                 break;
 
             default:
@@ -9109,7 +9125,7 @@ void pt_to_function_xy_values(t_notation_obj *r_ob, t_notation_item *nitem, t_pt
             
         case k_SLOT_TEMPORALMODE_RELATIVE:
         {
-            double duration = (nitem ? notation_item_get_duration_ms(r_ob, nitem) : 1);
+            double duration = (nitem ? notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slot_number, nitem) : 1);
             *xval = (xposition_to_ms(r_ob, pt.x, 0) - (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0))/(duration == 0 ? 1 : duration);
         }
             break;
@@ -9129,7 +9145,7 @@ void function_xy_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, doub
             break;
             
         case k_SLOT_TEMPORALMODE_RELATIVE:
-            pt->x = ms_to_xposition(r_ob, xval * (nitem ? notation_item_get_duration_ms(r_ob, nitem) : 1) + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
+            pt->x = ms_to_xposition(r_ob, xval * (nitem ? notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slot_number, nitem) : 1) + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
             break;
             
         default:
@@ -9150,7 +9166,7 @@ void function_xyz_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, dou
             break;
             
         case k_SLOT_TEMPORALMODE_RELATIVE:
-            pt->x = ms_to_xposition(r_ob, xval * notation_item_get_duration_ms(r_ob, nitem) + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
+            pt->x = ms_to_xposition(r_ob, xval * notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slot_number, nitem) + (nitem ? notation_item_get_onset_ms(r_ob, nitem) : 0), NULL);
             break;
 
         default:
@@ -9243,7 +9259,7 @@ t_slotitem *pt_to_notehead_slotitem(t_notation_obj *r_ob, t_pt pt, long slot_num
 
 //mouse hover on slots
 // returns 1 if something has been found
-char handle_slot_mousemove(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *redraw, char *mousepointer_changed)
+char slot_handle_mousemove(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *redraw, char *mousepointer_changed)
 {
     *mousepointer_changed = false;
 
@@ -10062,7 +10078,7 @@ double slot_get_domain_max(t_notation_obj *r_ob, long slot_num, t_notation_item 
     if (r_ob->slotinfo[slot_num].slot_temporalmode != k_SLOT_TEMPORALMODE_MILLISECONDS)
         return r_ob->slotinfo[slot_num].slot_domain[1];
     else
-        return notation_item_get_duration_ms(r_ob, nitem);
+        return notation_item_get_duration_ms_for_slots_account_for_ties(r_ob, slot_num, nitem);
 }
 
 double slot_get_domain_max_force_default_duration(t_notation_obj *r_ob, long slot_num, double default_duration)

@@ -546,7 +546,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append @triggers 2",
+									"text" : "bach.join @triggers 2",
 									"patching_rect" : [ 14.0, 208.0, 145.0, 20.0 ],
 									"id" : "obj-29",
 									"fontname" : "Arial",
@@ -574,7 +574,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append 3 @triggers 0",
+									"text" : "bach.join 3 @triggers 0",
 									"patching_rect" : [ 140.0, 172.0, 445.0, 20.0 ],
 									"id" : "obj-19",
 									"fontname" : "Arial",
@@ -1290,7 +1290,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append @triggers 2",
+									"text" : "bach.join @triggers 2",
 									"patching_rect" : [ 437.0, 600.0, 145.0, 20.0 ],
 									"id" : "obj-82",
 									"fontname" : "Arial",
