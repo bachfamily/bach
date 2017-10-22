@@ -13,7 +13,7 @@
 #include "lexpr.h"
 
 #ifdef CONFIGURATION_Development
-//#define parserpost post
+#define parserpost post
 #define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
@@ -25,6 +25,7 @@ typedef struct _exprparser_data {
     long subs_count;
     const char **substitutions;
     char **offending;
+    method lastfunction;
 } t_exprparser_data;
 
 

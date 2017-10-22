@@ -246,7 +246,11 @@ v0.8b
 			New "appendslotitem", "prependslotitem" and "deleteslotitem" messages
 				Also the "changeslotvalue" message now is called "changeslotitem" (old syntax kept for backward compatibility)
 
-- bach.roll, bach.score	Now support "parts", via the "voice ensembles". 
+- bach.roll, bach.score, bach.expr, bach.graph
+            Expressions support pitches
+            New functions for dealing with pitches: "pitch", "degree", "octave", "alter", "cents", "makepitch"
+
+- bach.roll, bach.score	Now support "parts", via the "voice ensembles".
 				Voices can be gathered in voice ensembles to display different parts on the same staff
 				See the new @part attribute (see #part in the help center)
 				Also: new @activepart, @showpartcolors attributes
