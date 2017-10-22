@@ -2705,18 +2705,20 @@
 			</description>
 		</method>
 		<method name="explodechords">
-			<arglist />
+			<arg name="selection" optional="1" type="symbol" />
 			<digest>
 				Turn all chords into 1-note-chords
 			</digest>
 			<description>
+				Syntax: <b>explodechords <m>[&lt;symbol: selection&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>explodechords</b>   <i>→ Explode chords for whole score</i><br />
 				• <b>explodechords selection</b>   <i>→ Explode selected chords only</i><br />
 				<br />
 				The <m>explodechords</m> message turns any chord having more than 1 note
 				in a sequence of overlapping chords each having just one note. In the end, the number
-				of notes and the number of chords will coincide.
+				of notes and the number of chords will coincide. If a "selection" symbol is given as argument, then
+				the message only operates on selected content
 				<br />				See also:<m>merge</m><br />
 			</description>
 		</method>
@@ -6950,6 +6952,23 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="highlightdomain" get="1" set="1" type="int" size="1">
+			<digest>
+				Highlight Domain
+			</digest>
+			<description>
+				Toggles the ability to highlight the domain with the <m>selectioncolor</m>. This is useful, for instance, in order to
+				align other Max UI objects on the top of bach notation objects.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Highlight Domain" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="highlightplay" get="1" set="1" type="int" size="1">

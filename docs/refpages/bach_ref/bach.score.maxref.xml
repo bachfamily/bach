@@ -9505,6 +9505,23 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="highlightdomain" get="1" set="1" type="int" size="1">
+			<digest>
+				Highlight Domain
+			</digest>
+			<description>
+				Toggles the ability to highlight the domain with the <m>selectioncolor</m>. This is useful, for instance, in order to
+				align other Max UI objects on the top of bach notation objects.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Highlight Domain" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="highlightplay" get="1" set="1" type="int" size="1">
 			<digest>
 				Highlight Played Notes

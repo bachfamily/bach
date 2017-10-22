@@ -7169,7 +7169,7 @@
 									"preventedit" : 1,
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"vinset" : 0.0,
-									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path" ],
+									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path", "21 – Standalone Applications" ],
 									"whole_tree_data_count" : [ 1 ]
 								}
 
@@ -8843,6 +8843,7 @@
 					"angle" : 0.0,
 					"background" : 1,
 					"border" : 1,
+					"bordercolor" : [ 0.803922, 0.898039, 0.909804, 0.0 ],
 					"grad1" : [ 0.980392, 0.980392, 0.980392, 1.0 ],
 					"grad2" : [ 0.490196, 0.65098, 0.219608, 1.0 ],
 					"id" : "obj-12",
@@ -9012,7 +9013,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.notation.sequencing.26_prescheduledplay.maxpat",
+				"name" : "bach.help.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
 				"type" : "JSON",
@@ -9159,18 +9160,6 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.roll.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.keys.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.score.mxo",
-				"type" : "iLaX"
-			}
-, 			{
 				"name" : "bach.iter.mxo",
 				"type" : "iLaX"
 			}
@@ -9180,6 +9169,10 @@
 			}
 , 			{
 				"name" : "bach.collect.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.keys.mxo",
 				"type" : "iLaX"
 			}
 , 			{

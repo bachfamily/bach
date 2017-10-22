@@ -579,6 +579,13 @@
 				"tags" : [ "appearance", "ruler", "label", "marker", "name", "markername", "line", "smart" ],
 				"title" : [ "Marker names" ]
 			},
+			"Highlightdomain" : {
+				"filename" : [ "bach.help.notation.appearance.38_highlightdomain.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "getdomainpixels", "domain" ],
+				"tags" : [ "appearance", "domain", "screen", "portion", "highlight", "show", "display", "underline", "ui", "align", "alignment", "synchronization", "graphic", "graphical", "waveform" ],
+				"title" : [ "Highlight domain" ]
+			},
 			"Slots" : {
 				"Backgroundslots" : {
 					"filename" : [ "bach.help.notation.appearance.40_slots.01_backgroundslots.maxpat" ],
@@ -649,7 +656,7 @@
 					"filename" : [ "bach.help.notation.appearance.50_spacing.05_spacingproportionalexample.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "spacing+proportional" ],
-					"tags" : [ "appearance", "score", "spacing", "proportional", "example", "align", "waveform", "synchronize", "display" ],
+					"tags" : [ "appearance", "score", "spacing", "proportional", "example", "align", "waveform", "synchronize", "display", "alignment", "graphic", "graphical" ],
 					"title" : [ "Proportional spacing example" ]
 				},
 				"Spacingspring" : {
@@ -1834,7 +1841,7 @@
 				"filename" : [ "bach.help.notation.messages.17_explodechords.maxpat" ],
 				"objects" : [ "bach.roll" ],
 				"seealso" : [ "getnumchords", "merge" ],
-				"tags" : [ "message", "explode", "chord", "explodechords" ],
+				"tags" : [ "message", "explode", "chord", "explodechords", "selection" ],
 				"title" : [ "Exploding chords" ]
 			},
 			"Slicechordinroll" : {
