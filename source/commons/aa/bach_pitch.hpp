@@ -144,6 +144,8 @@ public:
 
     t_atom_long toSteps() const { return p_octave * 7 + p_degree; }
 
+    t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
+
     t_bool operator==(const t_pitch &b) {
         return p_degree == b.p_degree && p_octave == b.p_octave && p_alter == b.p_alter;
     }

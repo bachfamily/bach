@@ -58,6 +58,8 @@
     #define BACH_CHORDS_HAVE_SLOTS
     #define BACH_MARKERS_HAVE_SLOTS
 
+    // #define BACH_SUPPORT_SLURS       ///< Not yet ready for this!
+
     // THESE THREE SHOULD NOT BE DEFINED; they increase the size of the t_note without actually gaining that much in CPU speed.
     //#define BACH_SLOTS_HAVE_LASTITEM              ///< Last item is saved inside slot structure
     //#define BACH_SLOTS_HAVE_ACTIVEITEM            ///< Active item is saved inside slot structure
@@ -2016,8 +2018,8 @@ typedef struct _notation_item
 	
 	char					selected;			///< Is the notation element selected?
 	struct _notation_item	*next_selected;		///< Pointer to the next selected notation item
-	struct _notation_item	*prev_selected;		///< Pointer to the previous selected notation item
-
+    struct _notation_item	*prev_selected;		///< Pointer to the previous selected notation item
+    
 	char					preselected;		///< Is the notation element preselected?
 	struct _notation_item	*next_preselected;	///< Pointer to the next preselected notation item
 	struct _notation_item	*prev_preselected;	///< Pointer to the previous preselected notation item
@@ -2339,23 +2341,21 @@ typedef struct _note
     t_pitch         pitch_original;     ///< Original introduced pitch. This can also be a "NotAPitch" (t_pitch::NaP), if the user has only introduced midicents, i.e. if the enharmonicity is automatic and not user-defined
     t_pitch         pitch_displayed;    ///< Displayed pitch, possibly quantized to the microtonal grid.
     
-    char			show_accidental;					///< Flag saying if we show the accidental or not, depending on the key signature, on previous score content, on cautionary accidentals handling, and so on.
-                                                        ///< For instance, a natural accidental is obtained by setting #screen_accidental to 0, and #show_accidental to 1.
-
-    
-    
-    
 	long			velocity;			///< MIDIVelocity of the note, from #CONST_MIN_VELOCITY to #CONST_MAX_VELOCITY
 	double			duration;			///< Duration of the note in milliseconds. Please notice that this is only used in [bach.roll]; 
 										///< if you need to retrieve the duration in ms of a [bach.score] note, it is saved in the duration_ms field of the parent chord.
 	
 	// ties
-	struct _note	*tie_to;			///< Pointer to the next tied note. If the note has no tie starting from it, this is NULL. This can also be WHITENULL if the
+	struct _note	*tie_to;			///< Pointer to the next tied note. If the note has no tie starting from it, this is NULL. This can also beo WHITENULL if the
 										///< tie to next chord is set, but hasn't be validated yet via the check_measure_ties() function. When this function is called, the
 										///< WHITENULL is changed to the proper note pointer.
 	struct _note	*tie_from;			///< Pointer to the previous tied note. If the note has no tie ending on it, this is NULL
 	char			tie_direction;		///< Direction of the *starting* tie, if any. 1 = tie is over, -1 = ties is under, 0 = tie direction is undefined (or not yet defined)
 	
+    char			show_accidental;					///< Flag saying if we show the accidental or not, depending on the key signature, on previous score content, on cautionary accidentals handling, and so on.
+    ///< For instance, a natural accidental is obtained by setting #screen_accidental to 0, and #show_accidental to 1.
+    
+    
 	struct _chord	*parent;			///< Pointer to the parent chord
 	
 	// resize
@@ -2366,7 +2366,7 @@ typedef struct _note
 	double			draggingvelocity;			///< Private, for internal use (keeps track, only during mousedrag, of the velocity as a double precision floating number)
 
 	// pitch breakpoints
-	int						num_breakpoints;	///< Number of pitch breakpoints within the duration line (it is always at least 2, given that the note start and the note tail are breakpoints)
+	long					num_breakpoints;	///< Number of pitch breakpoints within the duration line (it is always at least 2, given that the note start and the note tail are breakpoints)
 	t_bpt					*firstbreakpoint;	///< Pointer to the first pitch breakpoint (since there are always at least 2 breakpoints, it should never be NULL)
 	t_bpt					*lastbreakpoint;	///< Pointer to the last pitch breakpoint (never NULL, again).
 	struct _duration_line	*durationline;		///< Pointer to the duration line structure for the note. This structure comes handy when used for selection and interface changes.
@@ -2384,42 +2384,41 @@ typedef struct _note
 	long				num_articulations;		///< Number of articulations really attached to the note
 	t_articulation		*articulation;			///< The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
 
+#ifdef BACH_SUPPORT_SLURS
 	// slurs, only ***for future compatibility***
 	long			num_slurs_to;							///< Number of slurs starting on the note
 	long			num_slurs_from;							///< Number of slurs ending on the note 
 	t_slur			*slur_to[CONST_MAX_SLURS_PER_NOTE];		///< The array containing the pointer to the slurs starting on the note (only num_slurs_to elements are meaningful)
 	t_slur			*slur_from[CONST_MAX_SLURS_PER_NOTE];	///< The array containing the pointer to the slurs ending on the note (only num_slurs_from elements are meaningful)
-
+#endif
     
 	// Fixed painting parameters (calculated at some point, and not recalculated if not needed)
-	long			scaleposition;								///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
+//	long			scaleposition;								///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
 																///< E.g. for the F# above the middle C, this is 3 (C->D->E->F). For the B just below the middle C, this is -1.
-	char			num_accidentals;							///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
+    char			num_accidentals;							///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
+    char			need_auxiliary_stem;						///< Flag telling if the notehead is attached to the stem (0) or not (1, and thus needs the auxiliary stem)
 	unicodeChar		accidental_text[CONST_MAX_ACCIDENTALS + 1]; ///< Unicode chararcters for the text of the accidental
 	double			notecenter_stem_delta_ux;					///< Unscaled horizontal deplacement of the x of the notehead center pixel, with respect to the stem position
-	char			need_auxiliary_stem;						///< Flag telling if the notehead is attached to the stem (0) or not (1, and thus needs the auxiliary stem)
-	
+
     
     // nonstandard noteheads
     long            notehead_ID;                                ///< Notehead type, one of the #e_noteheads
     double			notehead_uwidth;							///< Unscaled width of the notehead
     
 	double			accidental_stem_delta_ux;					///< Unscaled horizontal deplacement of the RIGHT boundary of the accidental text field, with respect to the stem position. Should be always negative.
-    double			accidental_uwidth;                          ///< Unscaled width of the accidental (or 0 if none).
-	double			accidental_top_uextension;					///< Unscaled vertical extension of the accidental, from its align vertical center to its topmost point.
+//    double			accidental_uwidth;                          ///< Unscaled width of the accidental (or 0 if none).
+//	double			accidental_top_uextension;					///< Unscaled vertical extension of the accidental, from its align vertical center to its topmost point.
 																///< The align vertical center is the vertical y position of the center of the notehead to which it is referred. 
 																///< Notice that the align vertical center of the accidental usually does not coincide with the center of the accidental bounding rectangle. 
 																///< For instance, for a flat, the align vertical center is much lower than the center of the bounding rectangle.
-	double			accidental_bottom_uextension;				///< Unscaled vertical extension of the accidental, from its align center to its bottommost point.
+//	double			accidental_bottom_uextension;				///< Unscaled vertical extension of the accidental, from its align center to its bottommost point.
 																///< See #accidental_top_uextension for more information.
 
 	// Windowed painting parameters (in real pixels, and only calculated when the note is inside the window and painted)
 	t_pt			center;										///< Center of the note (it is in real pixels, and not an unscaled ones)
 	double			center_stafftop_uy;							///< Unscaled distance of the y of the notehead center from the topmost staff point
-	t_pt			notehead_textbox_left_corner;				///< Left corner of the notehead textbox
+//	t_pt			notehead_textbox_left_corner;				///< Left corner of the notehead textbox
 	
-	char			note_name[5];								///< (DUMMY) Dummy field needed in order to declare the note name (and not only the note pitch) as bach-attribute for each note
-
 	// double linked list
 	struct _note	*next;				///< Pointer to the next note
 	struct _note	*prev;				///< Pointer to the previous note
@@ -2545,19 +2544,12 @@ typedef struct _chord
 										///< (the algorithm fills automatically the direction when the chord parameters are recomputed)
 										///< This value can NOT be set, only get: the direction is automatically calculated and cannot be changed (for the moment)
 	
-	struct _rollvoice	*voiceparent;	///< Pointer to the chord parent, if the chord parent is a #t_rollvoice - only used by [bach.roll]
-	struct _measure		*parent;		///< Pointer to the chord parent, if the chord parent is a #t_measure - only used by [bach.score]
-	
 	// flags
 	char		is_score_chord;					///< Flag telling if the chord is a [bach.score] chord (1) or a [bach.roll] chord (0)
 	char		imposed_direction;				///< Internal flag, private use, to impose a direction to the chord stem (then calculate_chord_parameters() will set the direction flag), as before 1 = stem up, -1 = stem down.
 	char		need_recompute_parameters;		///< Flag telling if we need to recompute the chord parameters. If yes, as soon as needed, some functions are run: assign_chord_lyrics(), assign_chord_dynamics() and calculate_chord_parameters(),
 												///< which sets the chord lyrics from the slot content (if any) andall the chord parameters such as direction, left_uextension, right_uextension... 
 	char		need_recalculate_onset;			///< Internal flag, privat use, telling if we need to recalculate the onset of the chord. Only used by score, where the
-	
-	long		beaming_group;					///< (OBSOLETE, UNUSED) ID of the beaming group to which the chord belongs (unique within the measure), 0 if the chord is not beamed to anything
-	long		beaming_bits;					///< (OBSOLETE, UNUSED) A bit field telling which flags are actually beamed. For instance ...0001110 means (right to left): 4th flag is off, 8th flag is on, 16th flag is on, 32th flag is on. 
-												///< (The rightmost bit is left unused)
 	
 	char		locked;							///< Flag telling if the chord is locked
 	char		muted;							///< Flag telling if the chord is muted
@@ -2566,6 +2558,12 @@ typedef struct _chord
 
 	char		just_added_from_separate_parameters;		///< Private flag, used in [bach.roll], telling if the chord has just been added from a separate parameters input
 	
+
+    // parents
+    struct _rollvoice	*voiceparent;	///< Pointer to the chord parent, if the chord parent is a #t_rollvoice - only used by [bach.roll]
+    struct _measure		*parent;		///< Pointer to the chord parent, if the chord parent is a #t_measure - only used by [bach.score]
+
+    
 	// These are only used by [bach.score] and ignored by [bach.roll]
 	t_rational		r_sym_onset;				///< Symbolic onset (rational) of the chord with respect to the measure beginning. A chord starting 7/8 after the beginning of the measure, has r_sym_onset = 7/8. 
 	t_rational		r_sym_duration;				///< Symbolic duration of the chord. By convention, if this is negative, it means that the element is a rest lasting the absolute value of this r_sym_duration.
@@ -2611,12 +2609,11 @@ typedef struct _chord
 	double			bottommost_stafftop_uy;				///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top
 	double			topmost_stafftop_uy_noacc;			///< Unscaled vertical shift (in pixels) of the topmost point in the chord, if we ignore the accidentals
 	double			bottommost_stafftop_uy_noacc;		///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, if we ignore the accidentals
-	double			beam_stafftop_uy;					///< Unscaled vertical shift (in pixels) of the point of the flag or beam nearest to the a note
+//	double			beam_stafftop_uy;					///< Unscaled vertical shift (in pixels) of the point of the flag or beam nearest to the a note
 	double			topmostnote_stafftop_uy;			///< Unscaled vertical shift (in pixels) of the topmost note center, with respect to the staff top
 	double			bottommostnote_stafftop_uy;			///< Unscaled vertical shift (in pixels) of the bottommost note center, with respect to the staff top
     
 	// painting parameters only used by [bach.score]:
-	t_pt			beaming_average_point;				///< Average point of a beaming slope, if a beaming starts with this chord
 	double			beam_y;								///< y pixel of the point of the main flag or beam
 	double			alignment_ux;						///< Offset (in pixels) of the chord alignment point with respect to the tuttipoint start point
 	double			stem_offset_ux;						///< Unscaled horizontal offset (in pixels) of the stem with respect to the tuttipoint start point
@@ -2643,9 +2640,6 @@ typedef struct _chord
 	// beamings
 	long			beams_depth;				///< Number of beaming lines over the chord
 	
-	// grace?
-	char			is_grace_chord;				///< Is the chord a grace chord?
-
 	// articulations (for the moment, only implemented in [bach.score])
     // These are deprecated: use the articulation-typed slots instead
 	long			num_articulations;		///< (DEPRECATED) Number of articulations really attached to the note
@@ -2654,9 +2648,12 @@ typedef struct _chord
 	struct _lyrics      *lyrics;				///< The chord piece of lyrics (it is always allocated).
     struct _dynamics	*dynamics;				///< The chord piece of dynamics (it is always allocated).
 
-	// rhythmic tree
-	t_llllelem		*rhythmic_tree_elem;		///< Pointer to the #t_llllelem corresponding to the chord in the measure beaming tree 
-	char			dont_split_for_ts_boxes;	///< Don't split this chord when gathering into ts boxes
+    // grace?
+    char			is_grace_chord;				///< Is the chord a grace chord?
+
+    // rhythmic tree
+    char			dont_split_for_ts_boxes;	///< Don't split this chord when gathering into ts boxes
+	t_llllelem		*rhythmic_tree_elem;		///< Pointer to the #t_llllelem corresponding to the chord in the measure beaming tree
     
 #ifdef BACH_CHORDS_HAVE_SLOTS
     t_slot		slot[CONST_MAX_SLOTS];          ///< The array containing the slot content for the chord (for each slot)
@@ -6011,6 +6008,11 @@ double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental
 	@return				Unscaled bottom exension of the accidental
  */
 double get_accidental_bottom_uextension(t_notation_obj *r_ob, t_rational accidental);
+
+
+//TBD
+double note_get_accidental_top_uextension(t_notation_obj *r_ob, t_note *note);
+double note_get_accidental_bottom_uextension(t_notation_obj *r_ob, t_note *note);
 
 
 /**	Returns the unscaled width of an accidental, given the current <accidentals_typo_preferences> of the notation object.
@@ -12240,23 +12242,6 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 
 
 
-/**	Obtain the maximum index of the beam of a chord. This always coincides (at least for now) with the number of beams a chord has over/under itself
-	(e.g. if a chord has 2 beams over/under itself, it'll return 2). 
-	@remark				This does NOT include the chords flags: if the chord is unbeamed, this function will return 0.
-	@ingroup			notation_data
-	@param	r_ob		The notation object
-	@param	chord		The chord
-	@return				The maximum index of the beam of the chord, i.e. the number of beams of the chord.
-*/
-long chord_get_max_beaming_index(t_chord *chord);
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-// OBSOLETE!
-void set_beaming_chords_directions(t_notation_obj *r_ob, t_measure *measure);
-#endif
-
-
 
 
 /** Obtain the selected notation item with smallest onset.
@@ -12832,7 +12817,6 @@ t_rational ts_to_division(t_notation_obj *r_ob, t_timesignature *ts);
 // THESE ALL REFER TO THE OLD BEAMING PARSING (with no beaming tree below)
 void calculate_measure_beamings(t_notation_obj *r_ob, t_measure *measure, long flags, t_llll *garbage);
 void properly_retranscribe_tuplets(t_notation_obj *r_ob, t_measure *measure, t_llll *garbage);
-void correct_beaming_orphans(t_notation_obj *r_ob, t_measure *meas);
 char get_num_dots_with_tuplet_info(t_notation_obj *r_ob, t_rational duration, t_rational tuplet_group_unit, t_rational tuplet_group_figure);
 char is_duration_drawable_with_tuplet_info(t_notation_obj *r_ob, t_rational duration, t_rational *screen_duration, char *num_dots, t_rational tuplet_group_unit, t_rational tuplet_group_unit_figure);
 void get_rhythm_drawable(t_notation_obj *r_ob, t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, 

@@ -423,11 +423,13 @@ void score_slice(t_score *x, t_symbol *s, long argc, t_atom *argv);
 // new play
 void set_everything_unplayed(t_score *x);
 
+#ifdef BACH_SUPPORT_SLURS
 // slurs
 t_slur *add_slur(t_score *x, t_note *start_note, t_note *end_note);
 char delete_slurs_in_selection(t_score *x);
 void change_slur_starting_note(t_score *x, t_slur *slur, t_note *newnote);
 void change_slur_ending_note(t_score *x, t_slur *slur, t_note *newnote);
+#endif
 
 // selections
 void preselect_elements_in_region_for_mouse_selection(t_score *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2);
@@ -9731,6 +9733,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 			redraw = 0; // already redrawn in redraw_hscrollbar
 			changed = 0;
 		}
+#ifdef BACH_SUPPORT_SLURS
 	} else if (x->r_ob.j_mousedown_obj_type == k_SLUR_START_POINT) { // the start point of a slur is being drawn
 		t_slur *slur = (t_slur *) x->r_ob.j_mousedown_ptr;
 		if (!is_editable((t_notation_obj *)x, k_SLUR, k_MODIFICATION_GENERIC)) return;
@@ -9759,7 +9762,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 				changed = 1;
 			} 
 		} 
-		
+#endif
 	} else if (x->r_ob.selection_type == k_MARKER && x->r_ob.j_mousedown_obj_type == k_MARKER) { // only markers are selected
 		double delta_ms = unscaled_xposition_to_ms((t_notation_obj *)x, xposition_to_unscaled_xposition((t_notation_obj *)x, pt.x), 1) -
 								unscaled_xposition_to_ms((t_notation_obj *)x, xposition_to_unscaled_xposition((t_notation_obj *)x, x->r_ob.floatdragging_x), 1);
@@ -11767,6 +11770,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         }
     }
     
+#ifdef BACH_SUPPORT_SLURS
 	// clicked control point of slur
 	if (!clicked_ptr && x->r_ob.show_slurs && is_editable((t_notation_obj *)x, k_SLUR, k_MODIFICATION_GENERIC)) { 
 		long a;
@@ -11791,7 +11795,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 								}
 							}
 	}
-	
+#endif
+    
 	// clicked tail?
 	if (!clicked_ptr && x->r_ob.show_durations && modifiers != eCommandKey) {
 		t_scorevoice *voice = x->firstvoice;
@@ -12276,6 +12281,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 		}
 	}
 
+#ifdef BACH_SUPPORT_SLURS
 	// clicked slurs?
 	if (!clicked_ptr) { 
 		long a;
@@ -12301,7 +12307,8 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 							}
 						}
 	}
-	
+#endif
+    
 	// start editing in linear editing system?
 	if (!clicked_ptr && !(modifiers & eAltKey) && !(modifiers & eCommandKey) && (modifiers & eControlKey) && x->r_ob.allow_linear_edit){
 		long voicenum = yposition_to_voicenumber((t_notation_obj *)x, this_y, -1, k_VOICEENSEMBLE_INTERFACE_ACTIVE);
@@ -12621,6 +12628,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 	unlock_markers_mutex((t_notation_obj *)x);;	
 
 
+#ifdef BACH_SUPPORT_SLURS
 	if (!clicked_ptr && modifiers == eControlKey && is_editable((t_notation_obj *)x, k_SLUR, k_CREATION) && false) { // add a slur
 		t_note *nt = find_nearest_note(x, pt.x, pt.y);
 		if (nt) {
@@ -12631,7 +12639,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 			}
 		}
 	}
-
+#endif
 	
 	
 	
@@ -15634,13 +15642,14 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 		delete_articulations_in_selection((t_notation_obj *) x);
 		handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_ARTICULATIONS_FOR_SELECTION); 
 		return 1;
+#ifdef BACH_SUPPORT_SLURS
 	} else if ((x->r_ob.selection_type == k_SLUR_START_POINT || x->r_ob.selection_type == k_SLUR_END_POINT || x->r_ob.selection_type == k_SLUR) && (keycode == JKEY_BACKSPACE || keycode == JKEY_DELETE)) {
 		if (!is_editable((t_notation_obj *)x, k_SLUR, k_DELETION)) return 0;
 		delete_slurs_in_selection(x);
 		handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_SLURS_FOR_SELECTION); 
 		return 1;
-	} 
-	
+#endif
+	}
 	if (handle_keys_for_articulations((t_notation_obj *) x, patcherview, keycode, modifiers, textcharacter) && is_editable((t_notation_obj *)x, k_ARTICULATION, k_CREATION)) {
 		handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_ADD_ARTICULATION_TO_SELECTION); 
 		return 1;
@@ -16475,6 +16484,7 @@ char duplicate_selected_measures(t_score *x)
 }
 
 
+#ifdef BACH_SUPPORT_SLURS
 t_slur *add_slur(t_score *x, t_note *start_note, t_note *end_note){
 	if (start_note->num_slurs_to < CONST_MAX_SLURS_PER_NOTE - 1 && end_note->num_slurs_from < CONST_MAX_SLURS_PER_NOTE - 1) {
 		t_slur *this_slur = (t_slur *)bach_newptr(sizeof(t_slur));
@@ -16554,7 +16564,7 @@ char delete_slurs_in_selection(t_score *x){
 	unlock_general_mutex((t_notation_obj *)x);	
 	return changed;
 }
-
+#endif
 
 void score_fixvzoom(t_score *x){
 	t_atom av[1];

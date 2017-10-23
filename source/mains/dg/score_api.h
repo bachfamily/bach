@@ -274,7 +274,10 @@ long get_num_chords(t_score *x);
 t_chord* ID_to_chord(t_score *x, long ID_to_find);
 void refresh_measure_numbers(t_score *x, t_scorevoice *voice);
 void reset_all_articulations_position(t_score *x);
+
+#ifdef BACH_SUPPORT_SLURS
 void reset_all_slurs_position(t_score *x);
+#endif
 
 
 char are_all_tempi_synchronous(t_score *x);

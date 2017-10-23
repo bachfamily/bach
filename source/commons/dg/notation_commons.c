@@ -1668,8 +1668,8 @@ void paint_notehead(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jfon
 
 //    dev_post("note: x_real: %.2f, textbox: %.2f", note_x_real, note_x_textbox);
     
-    curr_nt->notehead_textbox_left_corner.x = note_x_textbox;
-    curr_nt->notehead_textbox_left_corner.y = note_y_textbox;
+//    curr_nt->notehead_textbox_left_corner.x = note_x_textbox;
+//    curr_nt->notehead_textbox_left_corner.y = note_y_textbox;
 
     
 	if (r_ob->link_notehead_to_slot > 0 && r_ob->slotinfo[r_ob->link_notehead_to_slot - 1].slot_type == k_SLOT_TYPE_INT && curr_nt->slot[r_ob->link_notehead_to_slot - 1].firstitem) {
@@ -2611,7 +2611,7 @@ void paint_slur(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_slur *slu
 						double topmost = chord->lastnote->center.y;
 						double delta_ux_candidate = 0.;
 						for (nt = end->parent->firstnote; nt; nt = nt->next) {
-							double new_candidate = nt->center.y - nt->accidental_top_uextension * r_ob->zoom_y;
+							double new_candidate = nt->center.y - note_get_accidental_top_uextension(r_ob, nt) * r_ob->zoom_y;
 							if (new_candidate < topmost) {
 								topmost = new_candidate;
 								delta_ux_candidate = nt->accidental_stem_delta_ux;
@@ -9860,8 +9860,10 @@ t_note *build_note_from_ac_av(t_notation_obj *r_ob, long argc, double *argv){
 	note->num_articulations = 0;
 	note->articulation = NULL;
 	
+#ifdef BACH_SUPPORT_SLURS
 	note->num_slurs_to = 0;
 	note->num_slurs_from = 0;
+#endif
 	note->notehead_resize = note->accidentals_resize = 1.;
 	
 	// breakpoints
@@ -10191,11 +10193,12 @@ t_note* clone_note(t_notation_obj *r_ob, t_note *note, e_clone_for_types clone_f
 	cloned_nt->notehead_resize = cloned_nt->notehead_resize;
 	cloned_nt->accidentals_resize = cloned_nt->accidentals_resize;
 
+#ifdef BACH_SUPPORT_SLURS
 	// we don't clone slurs
 	cloned_nt->num_slurs_to = 0;
 	cloned_nt->num_slurs_from = 0;
-
-	// technical (we don't clone that, we'll recalculate that later)
+    // technical (we don't clone that, we'll recalculate that later)
+#endif
 
 	// breakpoints
 	cloned_nt->num_breakpoints = 2; // first two bpts are dealt separately with
@@ -11123,7 +11126,8 @@ unicodeChar get_accidental_character(t_notation_obj *r_ob, t_rational accidental
 
 
 
-double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental){ 
+double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental)
+{
 //returns the accidental_top_uextension in the BASE CASE (i.e. for the base_pt, e.g. Maestro 24, Sonora 40, ...)
 
 	if (r_ob->accidentals_display_type == k_ACCIDENTALS_NO_DISPLAY)
@@ -11174,7 +11178,16 @@ double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental
 		return 0;
 }
 
-double get_accidental_bottom_uextension(t_notation_obj *r_ob, t_rational accidental){
+double note_get_accidental_top_uextension(t_notation_obj *r_ob, t_note *note)
+{
+    if (note->num_accidentals > 0)
+        return get_accidental_top_uextension(r_ob, note->pitch_displayed.p_alter) * (note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.);
+    else
+        return 0;
+}
+
+double get_accidental_bottom_uextension(t_notation_obj *r_ob, t_rational accidental)
+{
 //returns the accidental_bottom_uextension in the BASE CASE (i.e. for the base_pt, e.g. Maestro 24, Sonora 40, ...)
 
 	if (r_ob->accidentals_display_type == k_ACCIDENTALS_NO_DISPLAY)
@@ -11223,6 +11236,15 @@ double get_accidental_bottom_uextension(t_notation_obj *r_ob, t_rational acciden
 		return 3.5;
 	else
 		return 0;
+}
+
+
+double note_get_accidental_bottom_uextension(t_notation_obj *r_ob, t_note *note)
+{
+    if (note->num_accidentals > 0)
+        return get_accidental_bottom_uextension(r_ob, note->pitch_displayed.p_alter) * (note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.);
+    else
+        return 0;
 }
 
 double get_accidental_uwidth(t_notation_obj *r_ob, t_rational accidental, char always_classical_display){
@@ -11897,56 +11919,6 @@ double get_default_uwidth(t_notation_obj *r_ob, t_rational density, t_rational s
 	return uwidth; 
 }
 
-//OBSOLETE
-void set_beaming_chords_directions(t_notation_obj *r_ob, t_measure *measure) {
-// sets the chords directions in the beamings
-	t_chord *curr_ch = measure->firstchord; 
-	long active_group = 0;
-	long i = 1; // the 1st beaming will be enough!
-	while (curr_ch) {
-		if ((curr_ch->beaming_group > 0) && (rat_rat_cmp(curr_ch->figure, RAT_1OVER8) <= 0) && (curr_ch->beaming_bits & (1 << i)) && (curr_ch->beaming_group != active_group)) { // the beaming starts
-			t_chord *last_i_beaming_chord = curr_ch;
-			long beaming_direction = 0; t_chord *tmp;
-			long count = 0; double scalepos_average = 0.; t_note *tmp_nt; 
-			t_chord *temp_ch; 
-
-			active_group = curr_ch->beaming_group;
-			
-			// we find the end of the beaming 
-			
-			while (last_i_beaming_chord && (last_i_beaming_chord->beaming_group == curr_ch->beaming_group) && (last_i_beaming_chord->beaming_bits & (1 << i)))
-				last_i_beaming_chord = last_i_beaming_chord->next;
-
-			if (last_i_beaming_chord) 
-				last_i_beaming_chord = last_i_beaming_chord->prev;
-			else
-				last_i_beaming_chord = measure->lastchord;
-			
-			// computing beaming direction
-			for (tmp = curr_ch; (tmp && (tmp->prev != last_i_beaming_chord)); tmp = tmp->next)
-				for (tmp_nt = tmp->firstnote; tmp_nt; tmp_nt = tmp_nt->next) {
-					note_compute_approximation(r_ob, tmp_nt);
-					scalepos_average += midicents_to_diatsteps_from_middleC(r_ob, note_get_screen_midicents(tmp_nt));
-					count++;
-				}
-			scalepos_average /= count;
-
-			if (scalepos_average >= get_middle_scaleposition(get_voice_clef(r_ob, (t_voice *)measure->voiceparent)))
-				beaming_direction = -1; // down
-			else 
-				beaming_direction = 1; // up
-			
-			// imposing direction to all chords (should have already been done) 
-
-			for (temp_ch = curr_ch; (temp_ch && ((temp_ch == curr_ch) || (temp_ch->prev && (temp_ch->prev != last_i_beaming_chord)))); temp_ch = temp_ch->next)
-				temp_ch->imposed_direction = beaming_direction; // we impose the direction
-			
-			curr_ch = last_i_beaming_chord->next;
-		} else {
-			curr_ch = curr_ch->next;
-		}
-	}
-}
 
 
 char notation_item_is_globally_locked(t_notation_obj *r_ob, t_notation_item *item){
@@ -19467,7 +19439,7 @@ long build_measure_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addr
 								temp_ch->bottommost_stafftop_uy = temp_ch->stemtip_stafftop_uy;
 								temp_ch->bottommost_stafftop_uy_noacc = temp_ch->stemtip_stafftop_uy;
 							}
-							temp_ch->beam_stafftop_uy = temp_ch->stemtip_stafftop_uy + MAX(0, temp_ch->beams_depth - 1) * CONST_BEAMINGS_UDISTANCE * (temp_ch->direction == 1 ? 1 : -1);
+//							temp_ch->beam_stafftop_uy = temp_ch->stemtip_stafftop_uy + MAX(0, temp_ch->beams_depth - 1) * CONST_BEAMINGS_UDISTANCE * (temp_ch->direction == 1 ? 1 : -1);
 						}
 						
 						// adding floating rests step values
@@ -19670,13 +19642,13 @@ void reset_stemtip_topmost_bottommost_stafftop_uy_positions(t_notation_obj *r_ob
 			double grace_ratio = chord->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1;
 			if (chord->direction == -1) {
 				chord->stemtip_stafftop_uy = MAX(CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION, chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * grace_ratio);
-				chord->topmost_stafftop_uy = chord->topmostnote_stafftop_uy - MAX(CONST_STEP_UY, chord->lastnote->accidental_top_uextension);
+				chord->topmost_stafftop_uy = chord->topmostnote_stafftop_uy - MAX(CONST_STEP_UY, note_get_accidental_top_uextension(r_ob, chord->lastnote));
 				chord->topmost_stafftop_uy_noacc = chord->topmostnote_stafftop_uy - CONST_STEP_UY;
 				chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = chord->stemtip_stafftop_uy;
 			} else if (chord->direction == 1) {
 				chord->stemtip_stafftop_uy = MIN(num_staff_steps * CONST_STEP_UY - CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION, chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * grace_ratio);
 				chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = chord->stemtip_stafftop_uy;
-				chord->bottommost_stafftop_uy = chord->bottommostnote_stafftop_uy + MAX(CONST_STEP_UY, chord->firstnote->accidental_bottom_uextension);
+				chord->bottommost_stafftop_uy = chord->bottommostnote_stafftop_uy + MAX(CONST_STEP_UY, note_get_accidental_top_uextension(r_ob, chord->firstnote));
 				chord->bottommost_stafftop_uy_noacc = chord->bottommostnote_stafftop_uy + CONST_STEP_UY;
 			}
 		} else {
@@ -20052,30 +20024,6 @@ void calculate_chords_and_tempi_measure_onsets(t_notation_obj *r_ob, t_measure *
 
 
 
-void correct_beaming_orphans(t_notation_obj *r_ob, t_measure *measure){
-	
-	// ******* beaming-orphanes *********
-	// for every chord, we see if it is left beamed-"orphane" by some syncopation. If so, it is will not be beamed
-	t_chord *curr_ch = measure->firstchord;
-	while (curr_ch) {
-		if (curr_ch->beaming_group > 0) {
-			if ((!curr_ch->next && !curr_ch->prev) ||
-				(curr_ch->next && !curr_ch->prev && curr_ch->next->beaming_group != curr_ch->beaming_group) ||
-				(curr_ch->prev && !curr_ch->next && curr_ch->prev->beaming_group != curr_ch->beaming_group) ||
-				(curr_ch->prev && curr_ch->next && curr_ch->prev->beaming_group != curr_ch->beaming_group && curr_ch->next->beaming_group != curr_ch->beaming_group) ||
-				(curr_ch->r_sym_duration.r_num < 0 && (!curr_ch->prev || curr_ch->prev->beaming_group != curr_ch->beaming_group ||
-												   !curr_ch->next || curr_ch->next->beaming_group != curr_ch->beaming_group)) ||
-				(curr_ch->next && curr_ch->next->r_sym_duration.r_num < 0 && (!curr_ch->next->next || curr_ch->next->next->beaming_group != curr_ch->beaming_group)
-				 && (!curr_ch->prev || curr_ch->prev->beaming_group != curr_ch->beaming_group)) ||
-				(curr_ch->prev && curr_ch->prev->r_sym_duration.r_num < 0 && (!curr_ch->prev->prev || curr_ch->prev->prev->beaming_group != curr_ch->beaming_group)
-				 && (!curr_ch->next || curr_ch->next->beaming_group != curr_ch->beaming_group))) {
-					curr_ch->beaming_group = 0;
-					curr_ch->beaming_bits = 0;
-				}
-		}
-		curr_ch = curr_ch->next;
-	}
-}
 
 double chord_get_onset_ms(t_chord *chord){
 	if (!chord->is_score_chord)
@@ -20851,7 +20799,7 @@ char is_chord_preceded_by_rest(t_notation_obj *r_ob, t_chord *chord, char within
 	return false;
 }
 
-
+#ifdef BACH_SUPPORT_SLURS
 void delete_slur(t_notation_obj *r_ob, t_slur *slur)
 {
 	long i;
@@ -20886,7 +20834,7 @@ void delete_slur(t_notation_obj *r_ob, t_slur *slur)
 		bach_freeptr(slur);
 	}
 }
-
+#endif
 
 // returns 1 if needs to check correct scheduling, 0 otherwise
 char tempo_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_tempo *tempo)
@@ -21024,11 +20972,13 @@ void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *no
 		if (note->tie_from && note->tie_from != (t_note *) WHITENULL)
 			note->tie_from->tie_to = (!note->tie_from->tie_to || also_remove_previous_ties) ? NULL : (t_note *) WHITENULL;
 
+#ifdef BACH_SUPPORT_SLURS
 		// deleting slurs, if any
 		for (i = 0; i < note->num_slurs_to; i++)
 			delete_slur(r_ob, note->slur_to[i]);
 		for (i = 0; i < note->num_slurs_from; i++)
 			delete_slur(r_ob, note->slur_from[i]);
+#endif
 	}
 	
 	if (note->played) {
@@ -23318,14 +23268,6 @@ void get_rhythm_drawable(t_notation_obj *r_ob, t_llll *rhythm, t_llll *infos, t_
 	}
 }
 
-long chord_get_max_beaming_index(t_chord *chord) {
-	long i;
-	for (i = CONST_MAX_BEAMS; i > 0; i--) {
-		if (chord->beaming_bits & (1 << i))
-			return i;
-	}
-	return -1;
-}
 
 int get_middle_scaleposition(int clef) {
 	switch (clef) { // if clef is a combination of clefs, the chord will cross the staves
@@ -23594,7 +23536,6 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 		char *show_accidental;
 		t_rational *accidental;
 		long num_notes = chord->num_notes;
-		long onset = 1000; // not at all the real onset, just a default onset for calculation (at the end, we'll take the difference with this, since we're interested in delta-values) 
 		// building arrays of midicents and accidentals:
 		long i, j; 
 		long proxy_count;
@@ -24297,10 +24238,10 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 			curr_nt->accidental_text[j] = 0; // <accidental_text> is sized CONST_MAX_ACCIDENTALS+1
 			curr_nt->num_accidentals = note_num_accidentals[reordered_i];
 			curr_nt->accidental_stem_delta_ux = (curr_nt->num_accidentals > 0) ? (accidental_x_real[reordered_i] - this_stem_x) * ratio : this_stem_x;
-            curr_nt->accidental_uwidth = (curr_nt->num_accidentals > 0) ? accidental_width[reordered_i] * ratio : 0;
-			curr_nt->accidental_top_uextension = (curr_nt->num_accidentals > 0) ? get_accidental_top_uextension(r_ob, accidental[reordered_i]) * ratio : 0.;
-			curr_nt->accidental_bottom_uextension = (curr_nt->num_accidentals > 0) ? get_accidental_bottom_uextension(r_ob, accidental[reordered_i]) * ratio : 0.;
-			curr_nt->scaleposition = scaleposition[reordered_i];
+//            curr_nt->accidental_uwidth = (curr_nt->num_accidentals > 0) ? accidental_width[reordered_i] * ratio : 0;
+//			curr_nt->accidental_top_uextension = (curr_nt->num_accidentals > 0) ? get_accidental_top_uextension(r_ob, accidental[reordered_i]) * ratio : 0.;
+//			curr_nt->accidental_bottom_uextension = (curr_nt->num_accidentals > 0) ? get_accidental_bottom_uextension(r_ob, accidental[reordered_i]) * ratio : 0.;
+//			curr_nt->scaleposition = scaleposition[reordered_i];
 			
 			note_y = mc_to_yposition(r_ob, note_get_screen_midicents(curr_nt), voice);
 			curr_nt->center_stafftop_uy = (note_y - staff_top_y)/r_ob->zoom_y;
@@ -24313,7 +24254,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 				chord->bottommostnote_stafftop_uy = curr_nt->center_stafftop_uy;
 				if (chord->direction == 1) {
 					chord->bottommost_stafftop_uy_noacc = chord->bottommostnote_stafftop_uy + CONST_STEP_UY * ratio;
-					chord->bottommost_stafftop_uy = chord->bottommostnote_stafftop_uy + MAX(CONST_STEP_UY * ratio, curr_nt->accidental_bottom_uextension);
+					chord->bottommost_stafftop_uy = chord->bottommostnote_stafftop_uy + MAX(CONST_STEP_UY * ratio, note_get_accidental_bottom_uextension(r_ob,curr_nt));
 				} else {
 					if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 						chord->bottommost_stafftop_uy = chord->bottommost_stafftop_uy_noacc = MAX(0, chord->bottommostnote_stafftop_uy + 7 * CONST_STEP_UY * ratio);
@@ -24327,7 +24268,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 				chord->topmostnote_stafftop_uy = curr_nt->center_stafftop_uy;
 				if (chord->direction == -1) {
 					chord->topmost_stafftop_uy_noacc = chord->topmostnote_stafftop_uy - CONST_STEP_UY * ratio;
-					chord->topmost_stafftop_uy = chord->topmostnote_stafftop_uy - MAX(CONST_STEP_UY * ratio, curr_nt->accidental_top_uextension);
+					chord->topmost_stafftop_uy = chord->topmostnote_stafftop_uy - MAX(CONST_STEP_UY * ratio, note_get_accidental_top_uextension(r_ob, curr_nt));
 				} else {
 					if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 						chord->topmost_stafftop_uy = chord->topmost_stafftop_uy_noacc = MIN(staff_bottom_y - staff_top_y - CONST_MIN_TOPSTAFF_STEMTIP_UPOSITION, chord->topmostnote_stafftop_uy - 7 * CONST_STEP_UY * ratio);
@@ -25614,12 +25555,6 @@ void clear_selection(t_notation_obj *r_ob)
 	t_notation_item *temp = r_ob->firstselecteditem;
 	while (temp){
 		t_notation_item *next = temp->next_selected;
-#ifdef CONFIGURATION_Development
-        if (next) {
-            t_notation_item *foo = next->prev_selected;
-            t_notation_item *fee = next->prev_selected;
-        }
-#endif
 		temp->prev_selected = temp->next_selected = NULL;
 		temp->selected = false;
 		temp = next;
@@ -25632,22 +25567,14 @@ void clear_selection(t_notation_obj *r_ob)
 
 void clear_preselection(t_notation_obj *r_ob)
 {
-// clear all the "selection"-linkedlist
-//    post("bach test – position 1 reached; r_ob is: %p", r_ob);
     t_notation_item *temp = r_ob->firstpreselecteditem;
-//    post("bach test – position 2 reached; r_ob->firstpreselecteditem is: %p", r_ob->firstpreselecteditem);
 	while (temp){
 		t_notation_item *next = temp->next_preselected;
-//        post("bach test – position 3 reached");
 		temp->prev_preselected = temp->next_preselected = NULL;
-//        post("bach test – position 4 reached");
 		temp->preselected = false;
-//        post("bach test – position 5 reached");
 		temp = next;
 	}
-//    post("bach test – position 6 reached");
 	r_ob->firstpreselecteditem = NULL;
-//    post("bach test – position 7 reached");
 	r_ob->lastpreselecteditem = NULL;
 }
 

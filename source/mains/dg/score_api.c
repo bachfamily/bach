@@ -4078,7 +4078,6 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
 	this_ch->float_steps = 0;
 //    this_ch->min_float_steps = LONG_MIN;
 //    this_ch->max_float_steps = LONG_MAX;
-	this_ch->beaming_group = 0;
 	this_ch->is_score_chord = true;
 	this_ch->system_index = 0;
 	this_ch->direction = 0;
@@ -4154,7 +4153,6 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 
 			this_ch->just_added_from_separate_parameters = false;
 			this_ch->voiceparent = NULL;
-			this_ch->beaming_group = 0;
 			this_ch->float_steps = 0;
 //            this_ch->min_float_steps = LONG_MIN;
 //            this_ch->max_float_steps = LONG_MAX;
@@ -5258,6 +5256,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
 
 
 
+#ifdef BACH_SUPPORT_SLURS
 void reset_all_slurs_position(t_score *x)
 {
 	t_scorevoice *voice; t_measure *measure; t_chord *chord; t_note *note; long i;
@@ -5268,7 +5267,7 @@ void reset_all_slurs_position(t_score *x)
 					for (i = 0; i < note->num_slurs_to; i++)
 						note->slur_to[i]->need_recompute_position = true;
 }
-
+#endif
 
 
 long score_oksize(t_score *x, t_rect *newrect)
@@ -5282,8 +5281,9 @@ long score_oksize(t_score *x, t_rect *newrect)
         x->r_ob.inner_width = newrect->width - (2 * x->r_ob.j_inset_x);
 
 		reset_all_articulations_positions((t_notation_obj *)x);
+#ifdef BACH_SUPPORT_SLURS
 		reset_all_slurs_position(x);
-		
+#endif
 		x->r_ob.firsttime = true;
 		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		return 1;
@@ -7539,15 +7539,17 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 				else
 					chord->duration_ux = this_meas->start_barline_offset_ux + this_meas->width_ux - chord->stem_offset_ux - CONST_SAFETY_USEPARATION_TAIL_NEXT_OBJ * x->r_ob.zoom_x * x->r_ob.zoom_y;
 				
+#ifdef BACH_SUPPORT_SLURS
 				for (nt = chord->firstnote; nt; nt = nt->next) { // and setting flag to recompute slur position
 					for (j = 0; j < nt->num_slurs_to; j++)
 						nt->slur_to[j]->need_recompute_position = true;
 					for (j = 0; j < nt->num_slurs_from; j++)
 						nt->slur_from[j]->need_recompute_position = true;
 				}
+#endif
 			}
 
-	ct = 0;	
+	ct = 0;
 #ifdef CONFIGURATION_Development	
 	// check the number of alignment points
 	t_alignmentpoint *temp1;
@@ -7786,10 +7788,12 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                         acc_shift_for_note = shift;
                         if (n->show_accidental && note->show_accidental) {
                             double n_uy = scaleposition_to_uyposition((t_notation_obj *)x, n_steps, v);
-                            if (!((n_uy - n->accidental_top_uextension < note_uy + note->accidental_bottom_uextension &&
-                                 n_uy + n->accidental_bottom_uextension < note_uy - note->accidental_top_uextension) ||
-                                (n_uy - n->accidental_top_uextension > note_uy + note->accidental_bottom_uextension &&
-                                 n_uy + n->accidental_bottom_uextension > note_uy - note->accidental_top_uextension))) {
+                            double n_top = note_get_accidental_top_uextension((t_notation_obj *)x, n);
+                            double n_bottom = note_get_accidental_top_uextension((t_notation_obj *)x, n);
+                            double note_top = note_get_accidental_top_uextension((t_notation_obj *)x, note);
+                            double note_bottom = note_get_accidental_top_uextension((t_notation_obj *)x, note);
+                            if (!((n_uy - n_top < note_uy + note_bottom && n_uy + n_bottom < note_uy - note_top) ||
+                                (n_uy - n_top > note_uy + note_bottom && n_uy + n_bottom > note_uy - note_top))) {
                                     acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + CONST_UX_ACC_SEPARATION_FROM_NOTE);
                             }
                         }
@@ -9364,7 +9368,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 												   note_y_real - (1.3 * x->r_ob.slot_background_font_size - 0.5) * slot_zoom_y + x->r_ob.background_slot_text_ushift[1] * slot_zoom_y, -1);
 						
 						// draw ledger lines if needed
-						scaleposition = curr_nt->scaleposition;
+						scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
 						
 						additional_notehead_correction = (rat_rat_cmp(curr_ch->figure, RAT_1OVER2) <= 0) ? 0. : 2.;
 
@@ -9708,7 +9712,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
                                 t_jrgba annotationcolor = get_annotation_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
-                                paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, curr_nt->notehead_textbox_left_corner.x, s, jf_ann, staff_top);
+                                double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
+                                paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top);
                             }
                         }
                     }
@@ -10287,6 +10292,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 			
 		unlock_general_mutex((t_notation_obj *)x);
 
+#ifdef BACH_SUPPORT_SLURS
 		// painting slurs
 		for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
 			if (voice->v_ob.hidden)
@@ -10301,7 +10307,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 								paint_slur((t_notation_obj *) x, g, x->r_ob.j_note_rgba, curr_nt->slur_to[i], false, build_jrgba(0,0,1,1), build_jrgba(1,0,1,1), 2, 0.5, 1);
 						}
 		}
-
+#endif
 		if (x->r_ob.show_markers && x->r_ob.firstmarker) {
 			t_marker *marker;
 

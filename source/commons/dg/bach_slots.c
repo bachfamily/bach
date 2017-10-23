@@ -5840,10 +5840,10 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                     break;
             }
  
-            if (position > slot->length)
+            if (slot_type != k_SLOT_TYPE_TEXT && position > slot->length)
                 mode = k_CHANGESLOTITEM_MODE_APPEND;
             
-            llll_flatten(values_as_llll, 1, 0); // possibly removing the outer level of paraentheses
+            llll_flatten(values_as_llll, 1, 0); // possibly removing the outer level of parentheses
             
             
             if ((mode == k_CHANGESLOTITEM_MODE_APPEND || mode == k_CHANGESLOTITEM_MODE_PREPEND || mode == k_CHANGESLOTITEM_MODE_INSERT || mode == k_CHANGESLOTITEM_MODE_INSERT_AUTO) && modify_existing && values_as_llll->l_head) {
