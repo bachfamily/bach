@@ -52,22 +52,22 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_RAT;
 }
 
-^{NOTENAME}{ACCIDENTAL}?{INTEGER} {
+^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER} {
     parserpost("typecheck: pitch");
     return H_PITCH;
 }
 
-^{NOTENAME}{INTEGER}{ACCIDENTAL} {
+^[-+]?{NOTENAME}{INTEGER}{ACCIDENTAL} {
     parserpost("typecheck: pitch");
     return H_PITCH;
 }
 
-^{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
+^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
     parserpost("typecheck: pitch");
     return H_PITCH;
 }
 
-^{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
     parserpost("typecheck: pitch");
     return H_PITCH;
 }

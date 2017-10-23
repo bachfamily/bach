@@ -343,7 +343,7 @@ extern int pitchparser_lex (yyscan_t yyscanner);
 #undef YY_DECL
 #endif
 
-#line 94 "pitchparser.l"
+#line 76 "pitchparser.l"
 
 
 #line 350 "pitchparser.lex.h"
