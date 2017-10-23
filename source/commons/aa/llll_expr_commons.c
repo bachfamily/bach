@@ -194,25 +194,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     exprparser_free(scanner);
     scanner = NULL;
     scannerbuf = NULL;
-    
-    
-    if (substitutions) {
-        t_lexpr_lexeme *pitchlex = NULL;
-        t_lexpr_lexeme *endlex = lexs + lexc + 1;
-        for (this_lex = lexs + 1; this_lex <= endlex; this_lex++) {
-            if (this_lex->l_type == L_TOKEN &&
-                this_lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh == hatom_fn_pitch) {
-                pitchlex = this_lex;
-            } else {
-                if (pitchlex && this_lex->l_type != L_OPEN) {
-                    lexpr_append_lexeme_VAR_substitution(pitchlex, (char *) "pitch", subs_count, substitutions, &numvars, NULL);
-                }
-                pitchlex = NULL;
-            }
-        }
-    }
-    
-    
+
     lexstack_ptr = lexstack - 1; // always points to the last valid argument
     tokqueue_ptr = tokqueue;
     //	post("SHUNTING-YARD:");
@@ -838,7 +820,7 @@ long lexpr_append_lexeme_VAR(t_lexpr_lexeme *lex, char type, long index, short *
     return err;
 }
 
-long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, char *txt, long subs_count, const char *substitutions[], short *numvars, char **offending)
+long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, const char *txt, long subs_count, const char *substitutions[], short *numvars, char **offending)
 {
     long idx;
     for (idx = 0; idx < subs_count; idx++) {
@@ -854,6 +836,15 @@ long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, char *txt, long s
         strcpy(*offending, txt);
     }
     return E_BAD_NAME;
+}
+
+long lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(t_lexpr_lexeme *lex, long subs_count, const char *substitutions[], short *numvars, char **offending) {
+    if (substitutions &&
+        lex->l_type == L_TOKEN &&
+        lex->l_token.t_type == TT_FUNC)
+        return lexpr_append_lexeme_VAR_substitution(lex, lex->l_token.t_contents.c_func.f_name, subs_count, substitutions, numvars, offending);
+    else
+        return E_OK;
 }
 
 long lexpr_append_lexeme_BITOR(t_lexpr_lexeme *lex)
@@ -1208,7 +1199,7 @@ long lexpr_append_lexeme_PITCH(t_lexpr_lexeme *lex, t_pitch p)
 
 
 
-long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a))
+long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
@@ -1218,37 +1209,40 @@ long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(doubl
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a, double b))
+long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a, double b), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 1;
     lex->l_token.t_contents.c_func.f_ptrs.p_dptr_dd = f;
     lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_unary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *r))
+long lexpr_append_lexeme_FUNC_unary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *r), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 1;
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = f;
     lex->l_token.t_contents.c_func.f_type = H_ALL;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_binary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r))
+long lexpr_append_lexeme_FUNC_binary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 2;
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = f;
     lex->l_token.t_contents.c_func.f_type = H_ALL;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r))
+long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
@@ -1256,16 +1250,18 @@ long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = f;
     lex->l_token.t_contents.c_func.f_type = H_ALL;
     lex->l_token.t_contents.c_func.f_dontfold = 1;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_ternary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *c, t_hatom *r))
+long lexpr_append_lexeme_FUNC_ternary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *c, t_hatom *r), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 3;
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhhh = f;
     lex->l_token.t_contents.c_func.f_type = H_ALL;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 

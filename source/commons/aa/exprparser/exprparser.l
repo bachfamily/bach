@@ -43,12 +43,18 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 \) {
     BEGIN BINARY;
-    return lexpr_append_lexeme_CLOSED(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_CLOSED(epd->lexeme);
+    return err;
 }
 
 \, {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_COMMA(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+    err = lexpr_append_lexeme_COMMA(epd->lexeme);
+    return err;
 }
 
 \$[ifrpx][0-9]+ {
@@ -58,123 +64,195 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 "|" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_BITOR(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+    err = lexpr_append_lexeme_BITOR(epd->lexeme);
+    return err;
 }
 
 "||" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_LOGOR(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_LOGOR(epd->lexeme);
+    return err;
 }
 
 "&" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_BITAND(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_BITAND(epd->lexeme);
+    return err;
 }
 
 "&&" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_LOGAND(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_LOGAND(epd->lexeme);
+    return err;
 }
 
 "^" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_BITXOR(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_BITXOR(epd->lexeme);
+    return err;
 }
 
 "^^" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_LOGXOR(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_LOGXOR(epd->lexeme);
+    return err;
 }
 
 "~" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_BITNOT(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_BITNOT(epd->lexeme);
+    return err;
 }
 
 "!" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_LOGNOT(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_LOGNOT(epd->lexeme);
+    return err;
 }
 
 "!=" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_NEQ(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_NEQ(epd->lexeme);
+    return err;
 }
 
 "!==" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_NEQMATCH(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_NEQMATCH(epd->lexeme);
+    return err;
 }
 
 "==" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_EQ(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_EQ(epd->lexeme);
+    return err;
 }
 
 "===" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_EQMATCH(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_EQMATCH(epd->lexeme);
+    return err;
 }
 
 "<" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_LT(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_LT(epd->lexeme);
+    return err;
 }
 
 "<<" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_LSHIFT(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_LSHIFT(epd->lexeme);
+    return err;
 }
 
 "<=" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_LE(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_LE(epd->lexeme);
+    return err;
 }
 
 ">" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_GT(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_GT(epd->lexeme);
+    return err;
 }
 
 ">>" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_RSHIFT(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_RSHIFT(epd->lexeme);
+    return err;
 }
 
 ">=" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_GE(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_GE(epd->lexeme);
+    return err;
 }
 
 "*" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_TIMES(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_TIMES(epd->lexeme);
+    return err;
 }
 
 "**" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_POW(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_POW(epd->lexeme);
+    return err;
 }
 
 "%" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_MOD(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_MOD(epd->lexeme);
+    return err;
 }
 
 "/" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_DIV(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+        err = lexpr_append_lexeme_DIV(epd->lexeme);
+    return err;
 }
 
 "//" {
     BEGIN INITIAL;
-    return lexpr_append_lexeme_DIVDIV(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+    err = lexpr_append_lexeme_DIVDIV(epd->lexeme);
+    return err;
 }
 
 <BINARY>"+" {
     BEGIN INITIAL;
     parserpost(" lex: binary +");
-    return lexpr_append_lexeme_PLUS(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+    err = lexpr_append_lexeme_PLUS(epd->lexeme);
+    return err;
 }
 
 <INITIAL>"+"/[^ /n/t] {
@@ -184,7 +262,10 @@ ACCIDENTAL ([#bxdq\^v]+)
 <BINARY>"-" {
     BEGIN INITIAL;
     parserpost(" lex: binary -");
-    return lexpr_append_lexeme_MINUS(epd->lexeme);
+    long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
+    if (err == E_OK)
+    err = lexpr_append_lexeme_MINUS(epd->lexeme);
+    return err;
 }
 
 <INITIAL>"-" {
@@ -280,52 +361,52 @@ t {
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_pitch::dblsharp, 0));
 }
 
-"cos" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cos); }
-"sin" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sin); }
-"tan" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tan); }
-"exp" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp); }
-"log" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log); }
-"pow" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_pow); }
-"int" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_int); }
-"rat" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_rat); }
-"num" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_num); }
-"den" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_den); }
-"abs" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_abs); }
-"sgn" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_sgn); }
-"mod" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_mod); }
+"cos" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cos, "cos"); }
+"sin" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sin, "sin"); }
+"tan" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tan, "tan"); }
+"exp" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp, "exp"); }
+"log" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log, "log"); }
+"pow" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_pow, "pow"); }
+"int" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_int, "int"); }
+"rat" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_rat, "rat"); }
+"num" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_num, "num"); }
+"den" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_den, "den"); }
+"abs" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_abs, "abs"); }
+"sgn" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_sgn, "sgn"); }
+"mod" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_mod, "mod"); }
 
-"acos" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acos); }
-"asin" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asin); }
-"atan" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atan); }
-"cosh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cosh); }
-"sinh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sinh); }
-"tanh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tanh); }
-"exp2" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp2); }
-"log2" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log2); }
-"sqrt" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sqrt); }
-"ceil" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, ceil); }
-"fmod" { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, fmod); }
+"acos" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acos, "acos"); }
+"asin" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asin, "asin"); }
+"atan" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atan, "atan"); }
+"cosh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cosh, "cosh"); }
+"sinh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sinh, "sinh"); }
+"tanh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tanh, "tanh"); }
+"exp2" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp2, "exp2"); }
+"log2" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log2, "log2"); }
+"sqrt" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sqrt, "sqrt"); }
+"ceil" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, ceil, "ceil"); }
+"fmod" { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, fmod, "fmod"); }
 
-"atan2" { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, atan2); }
-"acosh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acosh); }
-"asinh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asinh); }
-"atanh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atanh); }
-"log10" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log10); }
-"hypot" { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, hypot); }
-"floor" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, floor); }
-"round" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, round); }
-"trunc" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, trunc); }
-"float" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_float); }
+"atan2" { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, atan2, "atan2"); }
+"acosh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acosh, "acosh"); }
+"asinh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asinh, "asinh"); }
+"atanh" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atanh, "atanh"); }
+"log10" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log10, "log10"); }
+"hypot" { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, hypot, "hypot"); }
+"floor" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, floor, "floor"); }
+"round" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, round, "round"); }
+"trunc" { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, trunc, "trunc"); }
+"float" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_float, "float"); }
 
-"random" { return lexpr_append_lexeme_FUNC_binary_ALL_dontfold(epd->lexeme, hatom_fn_random); }
-"bessel" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn); }
+"random" { return lexpr_append_lexeme_FUNC_binary_ALL_dontfold(epd->lexeme, hatom_fn_random, "random"); }
+"bessel" { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn, "bessel"); }
 
-"pitch" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_pitch); }
-"degree" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_degree); }
-"octave" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_octave); }
-"alter" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_alter); }
-"cents" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_cents); }
-"makepitch" { return lexpr_append_lexeme_FUNC_ternary_ALL(epd->lexeme, hatom_fn_makepitch); }
+"pitch" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_pitch, "pitch"); }
+"degree" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_degree, "degree"); }
+"octave" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_octave, "octave"); }
+"alter" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_alter, "alter"); }
+"cents" { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_cents, "cents"); }
+"makepitch" { return lexpr_append_lexeme_FUNC_ternary_ALL(epd->lexeme, hatom_fn_makepitch, "makepitch"); }
 
 ([A-Z]|[a-z]|_)+ {
     BEGIN BINARY;
