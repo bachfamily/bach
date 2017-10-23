@@ -3124,8 +3124,8 @@ void quantize_assist(t_quantize *x, void *b, long m, long a, char *s)
     if (m == ASSIST_INLET) {
         if (a == 0)															// @in 0 @type llll/bang @digest Measureinfo or bang
             sprintf(s, "llll: Measureinfo or auto or bang to Trigger");		// @description @copy BACH_DOC_MEASUREINFO_SYNTAX
-        else if (a == 1)	// @in 1 @type llll @digest The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or cents
-            sprintf(s, x->output_separate ? "llll: Pitches" : "llll from bach.roll or bach.score");
+        else if (a == 1)	// @in 1 @type llll @digest The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or MIDIcents
+            sprintf(s, x->output_separate ? "llll: Pitches or Cents" : "llll from bach.roll or bach.score");
         else if (a == 2)	// @in 2 @type llll @digest The Regularity Boxes for the quantization – or in <m>separate</m> mode: Durations
             // @description @copy BACH_DOC_REGULARITYBOXES
             sprintf(s, x->output_separate ? "llll: Durations" : "llll: Regularity Boxes");

@@ -510,9 +510,9 @@ void beatunbox_assist(t_beatunbox *x, void *b, long m, long a, char *s)
 		char *type = NULL;
 		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
 		if (a == 0)
-			sprintf(s, x->input_separate ? "llll (%s): Pitches" : "llll (%s): Measureinfo", type);  // @out 0 @type llll @digest Measureinfo – in "separate" mode: Pitches or cents
+			sprintf(s, x->input_separate ? "llll (%s): Pitches or Cents" : "llll (%s): Measureinfo", type);  // @out 0 @type llll @digest Measureinfo – in "separate" mode: Pitches or MIDIcents
 		else if (a == 1)
-			sprintf(s, x->input_separate ? "llll (%s): Durations" : "llll (%s): Pitches", type);  // @out 1 @type llll @digest Pitches or cents – in "separate" mode: Durations
+			sprintf(s, x->input_separate ? "llll (%s): Durations" : "llll (%s): Pitches or Cents", type);  // @out 1 @type llll @digest Pitches or MIDIcents – in "separate" mode: Durations
 		else if (a == 2)
 			sprintf(s, x->input_separate ? "llll (%s): Velocities" : "llll (%s): Durations", type);  // @out 2 @type llll @digest Durations – in "separate" mode: Velocities
 		else if (a == 3)

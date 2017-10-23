@@ -289,7 +289,7 @@ t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, 
 t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_meas, long end_meas, char tree, char also_get_level_information);
 t_llll* get_scorevoice_values_as_llll(t_score *x, t_scorevoice *voice, e_data_considering_types for_what, char tree, char also_get_level_information);
 t_llll* get_all_measuresinfo_values_as_llll(t_score *x);
-t_llll* get_all_cents_values_as_llll(t_score *x, char tree);
+t_llll* get_all_cents_values_as_llll(t_score *x, char tree, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 t_llll* get_all_durations_values_as_llll(t_score *x, char tree);
 t_llll* get_all_velocities_values_as_llll(t_score *x, char tree);
 t_llll* get_all_ties_values_as_llll(t_score *x, char tree);
@@ -298,7 +298,7 @@ t_llll* get_all_pixel_values_as_llll(t_score *x);
 t_llll* get_all_measure_pixel_values_as_llll(t_score *x);
 t_llll* get_timesignature_as_llll(t_timesignature *ts);
 t_llll* get_voice_measuresinfo_values_as_llll(t_scorevoice *voice);
-t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree);
+t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 t_llll* get_voice_ties_values_as_llll(t_scorevoice *voice, char tree);
 t_llll* get_voice_durations_values_as_llll(t_score *x, t_scorevoice *voice, char tree);
 t_llll* measure_get_durations_values_as_llll(t_score *x, t_measure *measure, char tree);

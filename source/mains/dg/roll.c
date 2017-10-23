@@ -329,13 +329,13 @@ t_chord* nth_marker(t_rollvoice *voice, long n);	/// 1-based!!!!
 // llll communication functions
 t_llll* get_rollvoice_values_as_llll(t_roll *x, t_rollvoice *voice, e_data_considering_types for_what);
 t_llll* get_onsets_values_as_llll(t_roll *x);
-t_llll* get_cents_values_as_llll(t_roll *x);
+t_llll* get_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 t_llll* get_durations_values_as_llll(t_roll *x);
 t_llll* get_velocities_values_as_llll(t_roll *x);
 t_llll* get_extras_values_as_llll(t_roll *x);
 t_llll* get_pixel_values_as_llll(t_roll *x);
 t_llll* get_voice_onsets_values_as_llll(t_rollvoice *voice);
-t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice);
+t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 t_llll* get_voice_durations_values_as_llll(t_rollvoice *voice);
 t_llll* get_voice_velocities_values_as_llll(t_rollvoice *voice);
 t_llll* get_voice_pixel_values_as_llll(t_roll *x, t_rollvoice *voice);
@@ -348,7 +348,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
 t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_ms, double end_ms, char subroll_type);
 void send_roll_values_as_llll(t_roll *x, e_header_elems send_what);
 void send_onsets_values_as_llll(t_roll *x);
-void send_cents_values_as_llll(t_roll *x);
+void send_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 void send_durations_values_as_llll(t_roll *x);
 void send_velocities_values_as_llll(t_roll *x);
 void send_extras_values_as_llll(t_roll *x);
@@ -4679,7 +4679,10 @@ int T_EXPORT main(void){
 	// about gathered and separate syntaxes. <br />
 	// The <m>dump</m> message also accepts as argument one of the following symbols, which will only dump a portion of the global information: <br />
 	// - <b>onsets</b>: only dump the onsets (in separate syntax) from the second outlet. <br />
-	// - <b>cents</b>: only dump the cents (in separate syntax) from the third outlet. <br />
+	// - <b>cents</b>: only dump the pitches in MIDIcents form (in separate syntax) from the third outlet
+    // (this overrides the <m>outputpitchesseparate</m>, forcing the output to be in Cents), <br />
+    // - <b>pitches</b>: only dump the pitches as diatonic pitches (in separate syntax) from the third outlet
+    // (this overrides the <m>outputpitchesseparate</m>, forcing the output to be always diatonic pitches), <br />
 	// - <b>durations</b>: only dump the durations (in separate syntax) from the fourth outlet. <br />
 	// - <b>velocities</b>: only dump the velocities (in separate syntax) from the fifth outlet. <br />
 	// - <b>extras</b>: only dump the extras (in separate syntax) from the sixth outlet. <br />
@@ -4704,6 +4707,8 @@ int T_EXPORT main(void){
     // @example dump roll @caption dump first outlet only (gathered syntax)
     // @example dump onsets @caption dump onsets only
     // @example dump velocities @caption dump velocities only
+    // @example dump pitches @caption dump pitch information as diatonic pitches
+    // @example dump cents @caption dump pitch information as MIDIcents
     // @example dump body @caption dump first outlet only, but without dumping the header
     // @example dump header @caption the same, but only dumping the header
     // @example dump keys clefs body @caption dump keys, clefs and body from first outlet
@@ -6118,7 +6123,7 @@ void roll_assist(t_roll *x, void *b, long m, long a, char *s){
 				sprintf(s, "llll: Onsets"); // @description See the <m>llll</m> method for more information.
 				break;
 			case 2:			// @in 2 @type llll @digest Pitches or MIDIcents in separate syntax.
-				sprintf(s,  "llll: Pitches"); // @description See the <m>llll</m> method for more information.
+				sprintf(s,  "llll: Pitches or Cents"); // @description See the <m>llll</m> method for more information.
 				break;
 			case 3:			// @in 3 @type llll @digest Durations (in milliseconds) in separate syntax
 				sprintf(s, "llll: Durations"); // @description See the <m>llll</m> method for more information.
@@ -6142,8 +6147,8 @@ void roll_assist(t_roll *x, void *b, long m, long a, char *s){
 			case 1:	// @out 1 @type llll @digest Onsets		
 				sprintf(s, "llll (%s): Onsets", type);	// @description The onsets (in milliseconds) in separate syntax.
 				break;									// @copy BACH_DOC_ROLL_SEPARATE_SYNTAX
-			case 2: // @out 2 @type llll @digest Pitches
-				sprintf(s, "llll (%s): Pitches", type);	// @description The pitches or MIDIcents in separate syntax (see <m>outputpitchesseparate</m>).
+			case 2: // @out 2 @type llll @digest Pitches or MIDIcents
+				sprintf(s, "llll (%s): Pitches or Cents", type);	// @description The pitches or MIDIcents in separate syntax (see <m>outputpitchesseparate</m>).
 				break;									// @copy BACH_DOC_ROLL_SEPARATE_SYNTAX
 			case 3: // @out 3 @type llll @digest Durations
 				sprintf(s, "llll (%s): Durations", type);	// @description The durations (in milliseconds) in separate syntax.
@@ -6564,8 +6569,11 @@ void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 			send_onsets_values_as_llll(x);
 			return;
 		} else if ((sym == _llllobj_sym_cents) || (sym == _llllobj_sym_cent)) {
-			send_cents_values_as_llll(x);
+			send_cents_values_as_llll(x, k_OUTPUT_PITCHES_NEVER);
 			return;
+        } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
+            send_cents_values_as_llll(x, k_OUTPUT_PITCHES_ALWAYS);
+            return;
 		} else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
 			send_durations_values_as_llll(x);
 			return;
@@ -13040,8 +13048,9 @@ void send_durations_values_as_llll(t_roll *x){
 	llll_free(out_llll);
 }
 
-void send_cents_values_as_llll(t_roll *x){
-	t_llll* out_llll = get_cents_values_as_llll(x);
+void send_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode)
+{
+	t_llll* out_llll = get_cents_values_as_llll(x, pitch_output_mode);
 	llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 2, out_llll);
 	llll_free(out_llll);
 }
@@ -13306,13 +13315,14 @@ t_llll* get_onsets_values_as_llll(t_roll *x){
 	return out_llll;
 }
 
-t_llll* get_cents_values_as_llll(t_roll *x){
+t_llll* get_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode)
+{
 	t_llll* out_llll = llll_get();
 	t_rollvoice *voice;
 	lock_general_mutex((t_notation_obj *)x);	
 	voice = x->firstvoice;
 	while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-		llll_appendllll(out_llll, get_voice_cents_values_as_llll(x, voice), 0, WHITENULL_llll);
+		llll_appendllll(out_llll, get_voice_cents_values_as_llll(x, voice, pitch_output_mode), 0, WHITENULL_llll);
 		voice = voice->next;
 	}
 	unlock_general_mutex((t_notation_obj *)x);	
@@ -13411,7 +13421,8 @@ t_llll* get_voice_onsets_values_as_llll(t_rollvoice *voice){
 	return out_llll;
 }
 
-t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice){
+t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice, e_output_pitches pitch_output_mode)
+{
 // get all the information concerning the onsets and put it in a llll
 
 // the output is given as a long text-like llll formatted as
@@ -13424,7 +13435,7 @@ t_llll* get_voice_cents_values_as_llll(t_roll *x, t_rollvoice *voice){
 		t_note *temp_note = temp_chord->firstnote;
 		t_llll* in_llll = llll_get();
 		while (temp_note) { // append chord lllls
-            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note);
+            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
 			temp_note = temp_note->next;
 		}
 		llll_appendllll(out_llll, in_llll, 0, WHITENULL_llll);	
@@ -14233,9 +14244,7 @@ t_chord *roll_change_pitch_from_linear_edit(t_roll *x, long diatonic_step)
         
         for (nt = chord->firstnote; nt; nt = nt->next) {
             if (!cursor_nt || cursor_nt == nt) {
-                nt->midicents = mc;
-                nt->pitch_displayed.set(nt->pitch_displayed.degree(), long2rat(0), nt->pitch_displayed.octave());
-                note_set_auto_enharmonicity(nt);
+                note_set_user_enharmonicity_from_screen_representation(nt, mc, long2rat(0), true);
                 note_compute_approximation((t_notation_obj *)x, nt);
                 calculate_chord_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->voiceparent), true);
             }
@@ -14308,7 +14317,7 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
     double argv[2];
     
     if (x->r_ob.notation_cursor.chord) {
-        argv[0] = x->r_ob.notation_cursor.chord->num_notes >= 1 ? x->r_ob.notation_cursor.chord->firstnote->duration :roll_linear_edit_get_duration(x, number);
+        argv[0] = x->r_ob.notation_cursor.chord->num_notes >= 1 ? x->r_ob.notation_cursor.chord->firstnote->duration : roll_linear_edit_get_duration(x, number);
         if (force_diatonic_step >= 0) {
             long oct = x->r_ob.notation_cursor.midicents / 1200;
             long mc = diatonicstep2midicents(force_diatonic_step, oct);
@@ -14329,6 +14338,7 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
         if (add_undo_tick)
             create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_CHANGE);
         
+        note_set_user_enharmonicity_from_screen_representation(this_nt, argv[1], long2rat(0), true);
         insert_note((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
         note_compute_approximation((t_notation_obj *) x, this_nt);
         calculate_chord_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->voiceparent), false);
@@ -14341,7 +14351,7 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
 t_chord *roll_add_new_chord_from_linear_edit(t_roll *x, char number, long force_diatonic_step)
 {
     if (x->r_ob.notation_cursor.voice) {
-        t_chord *new_chord =addchord_from_notes(x, x->r_ob.notation_cursor.voice->number, x->r_ob.notation_cursor.onset, 0, 0, NULL, NULL, false, 0);
+        t_chord *new_chord = addchord_from_notes(x, x->r_ob.notation_cursor.voice->number, x->r_ob.notation_cursor.onset, 0, 0, NULL, NULL, false, 0);
         x->r_ob.notation_cursor.chord = new_chord;
         roll_add_note_to_chord_from_linear_edit(x, number, force_diatonic_step, false);
         calculate_chord_parameters((t_notation_obj *) x, new_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)new_chord->voiceparent), true);

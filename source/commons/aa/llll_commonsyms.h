@@ -368,6 +368,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_selection;
 	t_symbol	*s_group;
 	t_symbol	*s_pitch;
+    t_symbol	*s_pitches;
 	t_symbol	*s_rhythmictree;
 	t_symbol	*s_dilationrectangle;
 	t_symbol	*s_popupmenu;
@@ -758,6 +759,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_selection		(_llllobj_common_symbols->s_selection)
 #define _llllobj_sym_group		(_llllobj_common_symbols->s_group)
 #define _llllobj_sym_pitch		(_llllobj_common_symbols->s_pitch)
+#define _llllobj_sym_pitches		(_llllobj_common_symbols->s_pitches)
 #define _llllobj_sym_rhythmictree		(_llllobj_common_symbols->s_rhythmictree)
 #define _llllobj_sym_dilationrectangle		(_llllobj_common_symbols->s_dilationrectangle)
 #define _llllobj_sym_popupmenu		(_llllobj_common_symbols->s_popupmenu)

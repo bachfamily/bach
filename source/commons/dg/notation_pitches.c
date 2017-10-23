@@ -99,9 +99,9 @@ void note_appendpitch_to_llll(t_notation_obj *r_ob, t_llll *ll, t_note *note, lo
 }
 
 
-void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note)
+void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode)
 {
-    note_appendpitch_to_llll(r_ob, ll, note, r_ob->output_pitches_separate);
+    note_appendpitch_to_llll(r_ob, ll, note, pitch_output_mode == k_OUTPUT_PITCHES_DEFAULT ? r_ob->output_pitches_separate : pitch_output_mode);
 }
 
 

@@ -280,7 +280,7 @@ t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_
 t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_meas, long end_meas, char tree, char also_get_level_information);
 void send_score_values_as_llll(t_score *x, long send_what);
 void send_measuresinfo_values_as_llll(t_score *x);
-void send_cents_values_as_llll(t_score *x, char tree);
+void send_cents_values_as_llll(t_score *x, char tree, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 void send_durations_values_as_llll(t_score *x, char tree);
 void send_velocities_values_as_llll(t_score *x, char tree);
 void send_ties_values_as_llll(t_score *x, char tree);
@@ -4447,7 +4447,10 @@ int T_EXPORT main(void){
 	// about gathered and separate syntaxes. <br />
 	// The <m>dump</m> message also accepts as argument one of the following symbols, which will only dump a portion of the global information: <br />
 	// - <b>measureinfo</b>: only dump the onsets (in separate syntax) from the second outlet. <br />
-	// - <b>cents</b>: only dump the cents (in separate syntax) from the third outlet. <br />
+    // - <b>cents</b>: only dump the pitches in MIDIcents form (in separate syntax) from the third outlet
+    // (this overrides the <m>outputpitchesseparate</m>, forcing the output to be in Cents), <br />
+    // - <b>pitches</b>: only dump the pitches as diatonic pitches (in separate syntax) from the third outlet
+    // (this overrides the <m>outputpitchesseparate</m>, forcing the output to be always diatonic pitches), <br />
 	// - <b>durations</b>: only dump the durations (in separate syntax) from the fourth outlet. <br />
 	// - <b>velocities</b>: only dump the velocities (in separate syntax) from the fifth outlet. <br />
 	// - <b>ties</b>: only dump the velocities (in separate syntax) from the fifth outlet. <br />
@@ -4473,6 +4476,8 @@ int T_EXPORT main(void){
     // @example dump roll @caption dump first outlet only (gathered syntax)
     // @example dump measureinfo @caption dump measureinfo only
     // @example dump velocities @caption dump velocities only
+    // @example dump pitches @caption dump pitch information as diatonic pitches
+    // @example dump cents @caption dump pitch information as MIDIcents
     // @example dump body @caption dump first outlet only, but without dumping the header
     // @example dump header @caption the same, but only dumping the header
     // @example dump keys clefs body @caption dump keys, clefs and body from first outlet
@@ -7676,7 +7681,7 @@ void score_assist(t_score *x, void *b, long m, long a, char *s){
 													// @copy BACH_DOC_MEASUREINFO_SYNTAX
 				break;
 			case 2:									// @in 2 @type llll @digest Pitches or MIDIcents in separate syntax.
-				sprintf(s, "llll: Pitches");			// @description See the <m>llll</m> method for more information.
+				sprintf(s, "llll: Pitches or Cents");			// @description See the <m>llll</m> method for more information.
 				break;
 			case 3:									// @in 3 @type llll @digest Durations (in symbolic units, fractions of the whole note) in separate syntax
 				sprintf(s, "llll: Durations");		// @description See the <m>llll</m> method for more information.
@@ -7704,8 +7709,8 @@ void score_assist(t_score *x, void *b, long m, long a, char *s){
 				sprintf(s, "llll (%s): Measureinfo", type);	// @description The measureinfo in separate syntax 
 				break;										// @copy BACH_DOC_SCORE_SEPARATE_SYNTAX
 															// @copy BACH_DOC_MEASUREINFO_SYNTAX
-			case 2: // @out 2 @type llll @digest Pitches
-				sprintf(s, "llll (%s): Pitches", type);		// @description The pitches or MIDIcents in separate syntax (see <m>outputpitchesseparate</m>).
+			case 2: // @out 2 @type llll @digest Pitches or MIDIcents
+				sprintf(s, "llll (%s): Pitches or Cents", type);		// @description The pitches or MIDIcents in separate syntax (see <m>outputpitchesseparate</m>).
 				break;										// @copy BACH_DOC_SCORE_SEPARATE_SYNTAX
 			case 3: // @out 3 @type llll @digest Durations
 				sprintf(s, "llll (%s): Durations", type);	// @description The durations (in symbolic units, fractions of the whole note) in separate syntax
@@ -8269,8 +8274,11 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
 			send_measuresinfo_values_as_llll(x);
 			return;
 		} else if ((sym == _llllobj_sym_cents) || (sym == _llllobj_sym_cent)) {
-			send_cents_values_as_llll(x, x->r_ob.output_trees == 2);
+			send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_NEVER);
 			return;
+        } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_ALWAYS);
+            return;
 		} else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
 			send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
 			return;
@@ -13265,8 +13273,9 @@ void send_velocities_values_as_llll(t_score *x, char tree){
 	llll_free(out_llll);
 }
 
-void send_cents_values_as_llll(t_score *x, char tree){
-	t_llll* out_llll = get_all_cents_values_as_llll(x, tree);
+void send_cents_values_as_llll(t_score *x, char tree, e_output_pitches pitch_output_mode)
+{
+	t_llll* out_llll = get_all_cents_values_as_llll(x, tree, pitch_output_mode);
 	llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 2, out_llll);
 	llll_free(out_llll);
 }
@@ -14257,10 +14266,7 @@ t_chord *change_pitch_from_linear_edit(t_score *x, long diatonic_step)
 
 			for (nt = temp->firstnote; nt; nt = nt->next) {
 				if (!cursor_nt || cursor_nt == nt) {
-
-                    nt->pitch_displayed.set(diatonic_step, long2rat(0), oct);
-                    note_set_auto_enharmonicity(nt);
-
+                    note_set_user_enharmonicity_from_screen_representation(nt, mc, long2rat(0), true);
 					note_compute_approximation((t_notation_obj *)x, nt);
 					calculate_chord_parameters((t_notation_obj *) x, nt->parent, get_voice_clef((t_notation_obj *)x, (t_voice *)nt->parent->parent->voiceparent), true);
 				}
@@ -14303,6 +14309,8 @@ void add_note_to_chord_from_linear_edit(t_score *x, long force_diatonic_step){
 		create_simple_notation_item_undo_tick((t_notation_obj *) x, x->r_ob.notation_cursor.chord->r_sym_duration.r_num < 0 ? (t_notation_item *)x->r_ob.notation_cursor.chord->parent : (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_CHANGE);
 		
 		x->r_ob.notation_cursor.chord->r_sym_duration = rat_abs(x->r_ob.notation_cursor.chord->r_sym_duration);
+
+        note_set_user_enharmonicity_from_screen_representation(this_nt, argv[1], long2rat(0), true);
 		insert_note((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
 		note_compute_approximation((t_notation_obj *) x, this_nt);
 		calculate_chord_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->parent->voiceparent), false);

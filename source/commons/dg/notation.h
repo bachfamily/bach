@@ -1980,7 +1980,8 @@ typedef enum _ms_to_tp_modes {
 	@ingroup	attributes
  */
 typedef enum _output_pitches {
-    k_OUTPUT_PITCHES_NEVER,       ///< Always output MIDIcents
+    k_OUTPUT_PITCHES_DEFAULT = -1,       ///< Always output MIDIcents
+    k_OUTPUT_PITCHES_NEVER = 0,       ///< Always output MIDIcents
     k_OUTPUT_PITCHES_WHEN_USER_DEFINED,      ///< Output pitches only when they are user-defined
     k_OUTPUT_PITCHES_ALWAYS,    ///< Force output pitches
 } e_output_pitches;
@@ -5161,7 +5162,7 @@ void note_set_displayed_user_enharmonicity_from_screen_representation(t_note *nt
 void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch);
 
 void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode);
-void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note);
+void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 
 
 

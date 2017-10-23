@@ -8293,14 +8293,14 @@ t_llll* get_all_measuresinfo_values_as_llll(t_score *x)
 	return out_llll;
 }
 
-t_llll* get_all_cents_values_as_llll(t_score *x, char tree)
+t_llll* get_all_cents_values_as_llll(t_score *x, char tree, e_output_pitches pitch_output_mode)
 {
 	t_llll* out_llll = llll_get();
 	t_scorevoice *voice;
 	lock_general_mutex((t_notation_obj *)x);	
 	voice = x->firstvoice;
 	while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-		llll_appendllll(out_llll, get_voice_cents_values_as_llll(x, voice, tree), 0, WHITENULL_llll);
+		llll_appendllll(out_llll, get_voice_cents_values_as_llll(x, voice, tree, pitch_output_mode), 0, WHITENULL_llll);
 		voice = voice->next;
 	}
 	unlock_general_mutex((t_notation_obj *)x);	
@@ -8412,7 +8412,7 @@ t_llll* get_voice_measuresinfo_values_as_llll(t_scorevoice *voice)
 	return out_llll;
 }
 
-t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tree)
+t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tree, e_output_pitches pitch_output_mode)
 {
 	t_chord *temp_chord = measure->firstchord;
 	t_llll* meas_llll = llll_get();
@@ -8420,7 +8420,7 @@ t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tr
 		t_note *temp_note = temp_chord->firstnote;
 		t_llll* in_llll = llll_get();
 		while (temp_note) { // append chord lllls
-            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note);
+            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
 			temp_note = temp_note->next;
 		}
 		llll_appendllll(meas_llll, in_llll, 0, WHITENULL_llll);	
@@ -8432,7 +8432,7 @@ t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tr
 	return meas_llll;
 }
 
-t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree)
+t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree, e_output_pitches pitch_output_mode)
 {
 	// get all the information concerning the cents and put it in a llll
 	
@@ -8444,7 +8444,7 @@ t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tre
 	t_llll* out_llll = llll_get();
 	t_measure *temp_meas = voice->firstmeasure;
 	while (temp_meas) {
-		t_llll* meas_llll = measure_get_cents_values_as_llll(x, temp_meas, tree);
+		t_llll* meas_llll = measure_get_cents_values_as_llll(x, temp_meas, tree, pitch_output_mode);
 		llll_appendllll(out_llll, meas_llll, 0, WHITENULL_llll);	
 		temp_meas = temp_meas->next;
 	}

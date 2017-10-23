@@ -723,7 +723,7 @@ void beatbox_assist(t_beatbox *x, void *b, long m, long a, char *s)
 		if (a == 0)
 			sprintf(s, "llll: Measureinfo or bang to Trigger"); // @in 0 @type llll @digest Measureinfo or bang
 		else if (a == 1)										// @description Set Measureinfo and trigger the output. A bang outputs the last boxed result.
-			sprintf(s, "llll: Pitches");			// @in 1 @type llll @digest Pitches
+			sprintf(s, "llll: Pitches or cents");			// @in 1 @type llll @digest Pitches or MIDIcents
 		else if (a == 2)						// @description A list of pitches or cents for each voice.
                                                 //              The pitches can be assigned chord-wisely (a single element
 												//				for each chord) or note-wisely (a plain list for each chord). Thus a 2-depth or 3-depth llll is expected.
@@ -752,8 +752,8 @@ void beatbox_assist(t_beatbox *x, void *b, long m, long a, char *s)
 				sprintf(s, "llll (%s): Score in Gathered Syntax", type);
 		} else if (a == 1)									// @out 1 @type llll @digest Measureinfo (in <m>separate</m> mode only)
 			sprintf(s, "llll (%s): Measureinfo", type);		// @description If the <m>separate</m> attribute is set, the measureinfo is output.
-		else if (a == 2)									// @out 2 @type llll @digest Pitches or cents (in <m>separate</m> mode only)
-			sprintf(s, "llll (%s): Pitches", type);			// @description If the <m>separate</m> attribute is set, the cents are output.
+		else if (a == 2)									// @out 2 @type llll @digest Pitches or MIDIcents (in <m>separate</m> mode only)
+			sprintf(s, "llll (%s): Pitches or Cents", type);			// @description If the <m>separate</m> attribute is set, the cents are output.
 		else if (a == 3)									// @out 3 @type llll @digest Durations (in <m>separate</m> mode only)
 			sprintf(s, "llll (%s): Durations", type);		// @description If the <m>separate</m> attribute is set, the durations are output.
 		else if (a == 4)									// @out 4 @type llll @digest Velocities (in <m>separate</m> mode only)
