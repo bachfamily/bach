@@ -286,6 +286,8 @@
 		912BC1CB1A3728BF00D84A76 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		912BC1CC1A3728BF00D84A76 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		912BC1D41A3728F300D84A76 /* dict2llll.c in Sources */ = {isa = PBXBuildFile; fileRef = 912BC1D31A3728F300D84A76 /* dict2llll.c */; };
+		912F0CF31F9E415A0060D3FA /* parsers_commons.c in Sources */ = {isa = PBXBuildFile; fileRef = 912F0CF11F9E415A0060D3FA /* parsers_commons.c */; };
+		912F0CF41F9E415A0060D3FA /* parsers_commons.h in Headers */ = {isa = PBXBuildFile; fileRef = 912F0CF21F9E415A0060D3FA /* parsers_commons.h */; };
 		91300095125DAE0D00ABD22C /* step.c in Sources */ = {isa = PBXBuildFile; fileRef = 91300094125DAE0D00ABD22C /* step.c */; };
 		9134EB9513A1FC9300427397 /* score_api.h in Headers */ = {isa = PBXBuildFile; fileRef = 9134EB9313A1FC9300427397 /* score_api.h */; };
 		9134EB9613A1FC9300427397 /* score_api.c in Sources */ = {isa = PBXBuildFile; fileRef = 9134EB9413A1FC9300427397 /* score_api.c */; };
@@ -3011,6 +3013,8 @@
 		912AB4A414FD3F100081E2B5 /* bach.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach.c; sourceTree = "<group>"; };
 		912BC1D11A3728BF00D84A76 /* bach.dict2llll.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.dict2llll.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		912BC1D31A3728F300D84A76 /* dict2llll.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dict2llll.c; sourceTree = "<group>"; };
+		912F0CF11F9E415A0060D3FA /* parsers_commons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parsers_commons.c; sourceTree = "<group>"; };
+		912F0CF21F9E415A0060D3FA /* parsers_commons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parsers_commons.h; sourceTree = "<group>"; };
 		9130008A125DADB100ABD22C /* bach.step.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.step.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91300094125DAE0D00ABD22C /* step.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = step.c; sourceTree = "<group>"; };
 		9134EB9313A1FC9300427397 /* score_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = score_api.h; sourceTree = "<group>"; };
@@ -5554,6 +5558,8 @@
 				91B62BB81F4FEBE200B9FC63 /* llll_hatom_change.h */,
 				91B62BBB1F501A3800B9FC63 /* llll_lifecycle.h */,
 				91B62BC01F5218A200B9FC63 /* bach_mem.h */,
+				912F0CF11F9E415A0060D3FA /* parsers_commons.c */,
+				912F0CF21F9E415A0060D3FA /* parsers_commons.h */,
 			);
 			path = aa;
 			sourceTree = "<group>";
@@ -6336,6 +6342,7 @@
 				91C6044018C0D9F50027BB79 /* host_architecture.h in Headers */,
 				91C6044118C0D9F50027BB79 /* sdif_portability.h in Headers */,
 				91B62BAC1F4EE6D400B9FC63 /* bach_pitch.hpp in Headers */,
+				912F0CF41F9E415A0060D3FA /* parsers_commons.h in Headers */,
 				91C6044518C0D9F50027BB79 /* SdifErrMess.h in Headers */,
 				91C6044718C0D9F50027BB79 /* SdifFGet.h in Headers */,
 				91C6044918C0D9F50027BB79 /* SdifFile.h in Headers */,
@@ -12245,6 +12252,7 @@
 				91C6046618C0D9F50027BB79 /* SdifPreTypes.c in Sources */,
 				91C6046718C0D9F50027BB79 /* SdifPrint.c in Sources */,
 				91C6046818C0D9F50027BB79 /* SdifRWLowLevel.c in Sources */,
+				912F0CF31F9E415A0060D3FA /* parsers_commons.c in Sources */,
 				91DB2EA01BBE8D0C003DCC81 /* neuralNetwork.cpp in Sources */,
 				917388B31F69609000FF3971 /* notation_pitches.c in Sources */,
 				91C6046A18C0D9F50027BB79 /* SdifSelect.c in Sources */,

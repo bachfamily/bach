@@ -371,11 +371,11 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[25] =
+static yyconst flex_int16_t yy_accept[30] =
     {   0,
         0,    0,    8,    5,    6,    5,    5,    0,    0,    0,
-        0,    0,    1,    0,    0,    1,    2,    0,    0,    3,
-        0,    0,    4,    0
+        1,    0,    0,    1,    0,    1,    2,    0,    0,    1,
+        0,    0,    0,    0,    3,    0,    0,    4,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
@@ -412,45 +412,49 @@ static yyconst YY_CHAR yy_ec[256] =
 
 static yyconst YY_CHAR yy_meta[11] =
     {   0,
-        1,    1,    2,    1,    1,    1,    1,    1,    2,    1
+        1,    1,    2,    1,    1,    1,    3,    3,    4,    1
     } ;
 
-static yyconst flex_uint16_t yy_base[27] =
+static yyconst flex_uint16_t yy_base[33] =
     {   0,
-        0,    8,   22,   61,   61,   15,   22,    0,   14,   28,
-       31,    8,   35,    7,    6,    5,    0,   40,   47,   61,
-        0,   48,   61,   61,   58,    1
+       27,    0,   25,   74,   74,    0,    7,   14,   20,   16,
+       24,   30,   15,   33,   13,   36,    0,    9,    8,   39,
+        6,   41,   46,   53,   74,    0,   54,   74,   74,   64,
+       66,   69
     } ;
 
-static yyconst flex_int16_t yy_def[27] =
+static yyconst flex_int16_t yy_def[33] =
     {   0,
-       25,   25,   24,   24,   24,   24,   24,    6,   24,   24,
-        7,   24,   24,   24,   24,   10,   26,   24,   24,   24,
-       24,   24,   24,    0,   24,   24
+       30,   30,   29,   29,   29,   31,   29,   29,    7,   29,
+       29,    8,   29,   11,   29,   29,   32,   29,   29,   29,
+       29,   29,   29,   29,   29,   29,   29,   29,    0,   29,
+       29,   29
     } ;
 
-static yyconst flex_uint16_t yy_nxt[72] =
+static yyconst flex_uint16_t yy_nxt[85] =
     {   0,
-       24,    5,   17,   24,   24,   22,    6,    6,    6,    5,
-       16,   16,   18,   13,    7,    7,    7,    8,    9,   10,
-       10,   24,   24,    8,   11,   12,   24,   13,   24,   24,
-       11,   14,   24,   10,   15,   24,   16,   17,   14,   24,
-       13,   24,   24,   17,   19,   18,   24,   24,   24,   20,
-       21,   24,   22,   22,   24,   24,   24,   23,    4,    4,
-        3,   24,   24,   24,   24,   24,   24,   24,   24,   24,
-       24
+       29,    5,   29,    6,   29,   27,    7,    7,    7,    9,
+       10,   23,   11,   20,   22,    9,   12,   13,   16,   14,
+       14,   11,   12,   15,   29,   16,   17,   18,    5,   11,
+       29,   29,   17,   19,   29,   20,   21,   29,   14,   18,
+       29,   16,   21,   29,   20,   24,   22,   29,   29,   29,
+       25,   23,   29,   29,   29,   25,   26,   29,   27,   27,
+       29,   29,   29,   28,    4,    4,    4,    4,    8,    8,
+       17,   29,   17,    3,   29,   29,   29,   29,   29,   29,
+       29,   29,   29,   29
     } ;
 
-static yyconst flex_int16_t yy_chk[72] =
+static yyconst flex_int16_t yy_chk[85] =
     {   0,
-        0,    1,   26,    0,    0,   21,    1,    1,    1,    2,
-       16,   15,   14,   12,    2,    2,    2,    6,    6,    9,
-        6,    3,    0,    6,    7,    7,    0,    7,    0,    0,
-        7,   10,    0,   10,   11,    0,   11,   13,   13,    0,
-       13,    0,    0,   13,   18,   18,    0,    0,    0,   18,
-       19,    0,   19,   22,    0,    0,    0,   22,   25,   25,
-       24,   24,   24,   24,   24,   24,   24,   24,   24,   24,
-       24
+        0,    2,    0,    2,    0,   26,    2,    2,    2,    7,
+        7,   21,    7,   19,   18,    7,    8,    8,   15,    8,
+       13,   10,    8,    9,    3,    9,   11,   11,    1,   11,
+        0,    0,   11,   12,    0,   12,   14,    0,   14,   16,
+        0,   16,   20,    0,   20,   22,   22,    0,    0,    0,
+       22,   23,    0,    0,    0,   23,   24,    0,   24,   27,
+        0,    0,    0,   27,   30,   30,   30,   30,   31,   31,
+       32,    0,   32,   29,   29,   29,   29,   29,   29,   29,
+       29,   29,   29,   29
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -479,7 +483,7 @@ static yyconst flex_int16_t yy_chk[72] =
         P_MORE,
         P_ERROR
     } e_pitchparser_rv;
-#line 483 "pitchparser.c"
+#line 487 "pitchparser.c"
 
 #define INITIAL 0
 
@@ -748,7 +752,7 @@ YY_DECL
     t_pitch *p = yyextra;
 
 
-#line 752 "pitchparser.c"
+#line 756 "pitchparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -776,13 +780,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 25 )
+				if ( yy_current_state >= 30 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 61 );
+		while ( yy_base[yy_current_state] != 74 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -810,59 +814,41 @@ case 1:
 YY_RULE_SETUP
 #line 42 "pitchparser.l"
 {
-    long degree = t_pitch::text2degree(*yytext);
-    char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-    long octave = strtol(next, NULL, 10);
+    *p = parse_pitch_as_name_acc_int(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-    p->set(degree, alter, octave);
     return P_MORE;
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 52 "pitchparser.l"
+#line 48 "pitchparser.l"
 {
-    long degree = t_pitch::text2degree(*yytext);
-    char *acc;
-    long octave = strtol(yytext + 1, &acc, 10);
-    t_shortRational alter = t_pitch::text2alter(&acc);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-    p->set(degree, alter, octave);
+    *p = parse_pitch_as_name_int_acc(yytext);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 62 "pitchparser.l"
+#line 54 "pitchparser.l"
 {
-    long degree = t_pitch::text2degree(*yytext);
-    char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-    long octave = strtol(next, &next, 10);
-    alter += t_shortRational(strtol(next, NULL, 10), 1);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-    p->set(degree, alter, octave);
+    *p = parse_pitch_as_name_acc_int_int_t(yytext);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 73 "pitchparser.l"
+#line 60 "pitchparser.l"
 {
-    long degree = t_pitch::text2degree(*yytext);
-    char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-    long octave = strtol(next, &next, 10);
-    alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
-    p->set(degree, alter, octave);
+    *p = parse_pitch_as_name_acc_int_rat_t(yytext);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 84 "pitchparser.l"
+#line 66 "pitchparser.l"
 {
     parserpost(" lex: unrecognized character %s", yytext);
     return P_ERROR;
@@ -871,7 +857,7 @@ YY_RULE_SETUP
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 89 "pitchparser.l"
+#line 71 "pitchparser.l"
 {
     parserpost(" lex: unrecognized character \\n", yytext);
     return P_ERROR;
@@ -879,10 +865,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 94 "pitchparser.l"
+#line 76 "pitchparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 886 "pitchparser.c"
+#line 872 "pitchparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1178,7 +1164,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 25 )
+			if ( yy_current_state >= 30 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1207,11 +1193,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 25 )
+		if ( yy_current_state >= 30 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 24);
+	yy_is_jam = (yy_current_state == 29);
 
 	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;
@@ -2054,7 +2040,7 @@ void pitchparser_free (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 94 "pitchparser.l"
+#line 76 "pitchparser.l"
 
 
 

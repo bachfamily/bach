@@ -351,7 +351,7 @@ extern int strparser_lex \
 #undef YY_DECL
 #endif
 
-#line 144 "strparser.l"
+#line 122 "strparser.l"
 
 
 #line 358 "strparser.lex.h"
