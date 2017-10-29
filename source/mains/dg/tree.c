@@ -764,6 +764,7 @@ int T_EXPORT main(void){
 	
 	
 	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+//    llllobj_class_add_version_number_attr(c, LLLL_OBJ_UI);
 
 
 	CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 200 120"); // new dimensions
@@ -1806,7 +1807,9 @@ void tree_anything(t_tree *x, t_symbol *s, long argc, t_atom *argv){ //argv+1
 	jbox_redraw((t_jbox *) x);
 }
 
-t_tree* tree_new(t_symbol *s, long argc, t_atom *argv){
+
+t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
+{
 	t_tree* x = NULL;
 	t_max_err err = MAX_ERR_GENERIC;
 	t_dictionary *d;
@@ -1886,6 +1889,9 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv){
 	jbox_ready(&x->j_box.l_box);
 
 	if (x) {
+        
+//        if (llllobj_versionnumber_get(x, d) == 0) { // nuovo
+        
 		// retrieving saved values?
 		t_llll *llll_for_rebuild = llll_retrieve_from_dictionary_with_leveltypes(d, "whole_tree_data");
 		if (llll_for_rebuild) { 
@@ -1902,6 +1908,13 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv){
             jbox_redraw((t_jbox *) x);
 		}
 
+//      } else {
+        
+        
+//      } // endif
+        
+        
+        /// llllobj_versionnumber_set(x, LLLL_OBJ_UI)
 		return x;
 	}
 
