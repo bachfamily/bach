@@ -211,6 +211,8 @@ public:
     
     static t_pitch fromMC(double mc)
     {
+        // to do: return pitch at maximum precision
+        
         return fromMC(mc, 2, k_ACC_AUTO, NULL, NULL);
     }
     

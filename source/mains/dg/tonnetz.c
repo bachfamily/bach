@@ -358,7 +358,7 @@ t_max_err tonnetz_setattr_diatonic_center(t_tonnetz *x, t_object *attr, long ac,
             if (hatom_gettype(&args->l_head->l_hatom) == H_PITCH) {
                 x->pitch_center = hatom_getpitch(&args->l_head->l_hatom);
             } else if (is_hatom_number(&args->l_head->l_hatom)) {
-                x->pitch_center = t_pitch::fromMC(hatom_getdouble(&args->l_head->l_hatom));
+                x->pitch_center = t_pitch::fromMC(hatom_getdouble(&args->l_head->l_hatom), x->modulo/6, k_ACC_AUTO);
                 
 /*				long screen_mc;
 				t_rational screen_acc;

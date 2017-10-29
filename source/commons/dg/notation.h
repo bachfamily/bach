@@ -2207,7 +2207,7 @@ typedef struct _biquad
 typedef struct _bpt{
 	t_notation_item		r_it;		///< Notation item, containing common stuff for all notation items.
 
-	double	delta_mc;				///< The difference of midicents with respect to the parent note midicents 
+	double	delta_mc;				///< The difference of midicents with respect to the parent note midicents
 	double	rel_x_pos;				///< The x relative position within the note duration line, ranging from 0. = beginning to 1. = end
 	double	slope;					///< The slope of the portion of segment before the breakpoint (from -1. to 1.; 0 = linear)
 
