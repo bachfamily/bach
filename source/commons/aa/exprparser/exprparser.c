@@ -1324,60 +1324,37 @@ case 35:
 YY_RULE_SETUP
 #line 297 "exprparser.l"
 {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-	long octave = strtol(next, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int(yytext));
 }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 307 "exprparser.l"
+#line 302 "exprparser.l"
 {
-	long degree = t_pitch::text2degree(*yytext);
-	char *acc;
-	long octave = strtol(yytext + 1, &acc, 10);
-	t_shortRational alter = t_pitch::text2alter(&acc);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_int_acc(yytext));
 }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 317 "exprparser.l"
+#line 307 "exprparser.l"
 {
-    long degree = t_pitch::text2degree(*yytext);
-    char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-    long octave = strtol(next, &next, 10);
-    alter += t_shortRational(strtol(next, NULL, 10), 1);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int_int_t(yytext));
 }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 328 "exprparser.l"
+#line 312 "exprparser.l"
 {
-    long degree = t_pitch::text2degree(*yytext);
-    char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-    long octave = strtol(next, &next, 10);
-    alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
-
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int_rat_t(yytext));
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 340 "exprparser.l"
+#line 317 "exprparser.l"
 {
     t_shortRational alter = t_shortRational(atoi(yytext), 1);
     BEGIN BINARY;
@@ -1386,18 +1363,16 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 346 "exprparser.l"
+#line 323 "exprparser.l"
 {
     char *textend;
-    long num = strtol(yytext, &textend, 10);
-    long den = strtol(textend + 1, NULL, 10);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(num, den), 0));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(parse_rational(yytext)), 0));
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 354 "exprparser.l"
+#line 329 "exprparser.l"
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(atof(yytext)), 0));
@@ -1405,7 +1380,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 359 "exprparser.l"
+#line 334 "exprparser.l"
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_pitch::dblsharp, 0));
@@ -1413,217 +1388,217 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 364 "exprparser.l"
+#line 339 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cos, "cos"); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 365 "exprparser.l"
+#line 340 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sin, "sin"); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 366 "exprparser.l"
+#line 341 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tan, "tan"); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 367 "exprparser.l"
+#line 342 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp, "exp"); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 368 "exprparser.l"
+#line 343 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log, "log"); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 369 "exprparser.l"
+#line 344 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_pow, "pow"); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 370 "exprparser.l"
+#line 345 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_int, "int"); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 371 "exprparser.l"
+#line 346 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_rat, "rat"); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 372 "exprparser.l"
+#line 347 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_num, "num"); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 373 "exprparser.l"
+#line 348 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_den, "den"); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 374 "exprparser.l"
+#line 349 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_abs, "abs"); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 375 "exprparser.l"
+#line 350 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_sgn, "sgn"); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 376 "exprparser.l"
+#line 351 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_mod, "mod"); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 378 "exprparser.l"
+#line 353 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acos, "acos"); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 379 "exprparser.l"
+#line 354 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asin, "asin"); }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 380 "exprparser.l"
+#line 355 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atan, "atan"); }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 381 "exprparser.l"
+#line 356 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cosh, "cosh"); }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 382 "exprparser.l"
+#line 357 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sinh, "sinh"); }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 383 "exprparser.l"
+#line 358 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tanh, "tanh"); }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 384 "exprparser.l"
+#line 359 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp2, "exp2"); }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 385 "exprparser.l"
+#line 360 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log2, "log2"); }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 386 "exprparser.l"
+#line 361 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sqrt, "sqrt"); }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 387 "exprparser.l"
+#line 362 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, ceil, "ceil"); }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 388 "exprparser.l"
+#line 363 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, fmod, "fmod"); }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 390 "exprparser.l"
+#line 365 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, atan2, "atan2"); }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 391 "exprparser.l"
+#line 366 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acosh, "acosh"); }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 392 "exprparser.l"
+#line 367 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asinh, "asinh"); }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 393 "exprparser.l"
+#line 368 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atanh, "atanh"); }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 394 "exprparser.l"
+#line 369 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log10, "log10"); }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 395 "exprparser.l"
+#line 370 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, hypot, "hypot"); }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 396 "exprparser.l"
+#line 371 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, floor, "floor"); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 397 "exprparser.l"
+#line 372 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, round, "round"); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 398 "exprparser.l"
+#line 373 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, trunc, "trunc"); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 399 "exprparser.l"
+#line 374 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_float, "float"); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 401 "exprparser.l"
+#line 376 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_ALL_dontfold(epd->lexeme, hatom_fn_random, "random"); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 402 "exprparser.l"
+#line 377 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn, "bessel"); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 404 "exprparser.l"
+#line 379 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_pitch, "pitch"); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 405 "exprparser.l"
+#line 380 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_degree, "degree"); }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 406 "exprparser.l"
+#line 381 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_octave, "octave"); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 407 "exprparser.l"
+#line 382 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_alter, "alter"); }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 408 "exprparser.l"
+#line 383 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_cents, "cents"); }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 409 "exprparser.l"
+#line 384 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_ternary_ALL(epd->lexeme, hatom_fn_makepitch, "makepitch"); }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 411 "exprparser.l"
+#line 386 "exprparser.l"
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_VAR_substitution(epd->lexeme, yytext, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1632,14 +1607,14 @@ YY_RULE_SETUP
 case 86:
 /* rule 86 can match eol */
 YY_RULE_SETUP
-#line 416 "exprparser.l"
+#line 391 "exprparser.l"
 {
 	parserpost(" lex: whitespace\n");
 }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 420 "exprparser.l"
+#line 395 "exprparser.l"
 {
     parserpost(" lex: unrecognized character %s", yytext);
     return E_BAD_EXPR;
@@ -1647,10 +1622,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 425 "exprparser.l"
+#line 400 "exprparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1654 "exprparser.c"
+#line 1629 "exprparser.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(BINARY):
 	yyterminate();
@@ -2820,7 +2795,7 @@ void exprparser_free (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 425 "exprparser.l"
+#line 400 "exprparser.l"
 
 
 

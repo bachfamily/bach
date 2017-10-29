@@ -295,46 +295,23 @@ ACCIDENTAL ([#bxdq\^v]+)
 }
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {
-	long degree = t_pitch::text2degree(*yytext);
-	char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-	long octave = strtol(next, NULL, 10);
-	parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int(yytext));
 }
 
 {NOTENAME}[-+]?{UINT}{ACCIDENTAL} {
-	long degree = t_pitch::text2degree(*yytext);
-	char *acc;
-	long octave = strtol(yytext + 1, &acc, 10);
-	t_shortRational alter = t_pitch::text2alter(&acc);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_int_acc(yytext));
 }
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t {
-    long degree = t_pitch::text2degree(*yytext);
-    char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-    long octave = strtol(next, &next, 10);
-    alter += t_shortRational(strtol(next, NULL, 10), 1);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int_int_t(yytext));
 }
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
-    long degree = t_pitch::text2degree(*yytext);
-    char *next = yytext + 1;
-    t_shortRational alter = t_pitch::text2alter(&next);
-    long octave = strtol(next, &next, 10);
-    alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
-
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(degree, alter, octave));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int_rat_t(yytext));
 }
 
 {UINT}t {
@@ -345,10 +322,8 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 {URAT}t {
     char *textend;
-    long num = strtol(yytext, &textend, 10);
-    long den = strtol(textend + 1, NULL, 10);
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(num, den), 0));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(parse_rational(yytext)), 0));
 }
 
 {UFLOAT}t {

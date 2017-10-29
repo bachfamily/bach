@@ -9,6 +9,7 @@
 #ifndef alterparser_h
 #define alterparser_h
 
+#include "parsers_commons.h"
 #include "llll_commons.h"
 
 #ifdef CONFIGURATION_Development

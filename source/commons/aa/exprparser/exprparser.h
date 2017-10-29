@@ -9,6 +9,7 @@
 #ifndef exprparser_h
 #define exprparser_h
 
+#include "parsers_commons.h"
 #include "llll_commons.h"
 #include "lexpr.h"
 
