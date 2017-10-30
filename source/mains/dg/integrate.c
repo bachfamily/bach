@@ -287,10 +287,16 @@ void integrate_anything(t_integrate *x, t_symbol *msg, long ac, t_atom *av)
 					llll_free(ll);
 					
 					t_hatom start, end, step;
+                    double step_double = (domain_end-domain_start)/(this_num_sampling_points - 1);
 					hatom_setdouble(&start, domain_start);
 					hatom_setdouble(&end, domain_end);
-					hatom_setdouble(&step, (domain_end-domain_start)/(this_num_sampling_points - 1));
-					ll = llll_arithmser(start, end, step, 0, (t_object *) x);
+					hatom_setdouble(&step, step_double);
+                    if (step_double == 0) {
+                        ll = llll_get();
+                        for (long i = 0; i < this_num_sampling_points; i++)
+                            llll_appendhatom_clone(ll, &start);
+                    } else
+                        ll = llll_arithmser(start, end, step, 0, (t_object *) x);
 				}
 				
 				double this_origin = x->origin[0];
