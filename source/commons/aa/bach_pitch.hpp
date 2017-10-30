@@ -264,6 +264,20 @@ public:
             tone_division = lcm(2, this->alter().r_den);
         return this->autoenharm(tone_division, k_ACC_AUTO, NULL, NULL);
     }
+    
+    
+    
+    static t_pitch approx(t_pitch p, long tone_division)
+    {
+        if (tone_division <= 0)
+            return p;
+        
+        t_rational alter = p.alter();
+        t_rational temp = alter * tone_division;
+        t_rational new_alter_down = genrat(temp.r_num / temp.r_den, tone_division);
+        t_rational new_alter_up = genrat((temp.r_num / temp.r_den) + 1, tone_division);
+        return t_pitch(p.degree(), (new_alter_up - alter < alter - new_alter_down) ? new_alter_up : new_alter_down, p.octave());
+    }
 
     
     
