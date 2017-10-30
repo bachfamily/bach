@@ -90,19 +90,20 @@ t_rational hatom_getrational(const t_hatom *h)
 	return r;
 }
 
-t_pitch hatom_getpitch(const t_hatom *h)
+
+t_pitch hatom_getpitch(const t_hatom *h, long tonedivision, e_accidentals_preferences pref)
 {
     switch (hatom_gettype(h)) {
         case H_LONG:
-            return t_pitch::fromMC(h->h_w.w_long);
+            return t_pitch::fromMC(h->h_w.w_long, tonedivision, pref);
             break;
         case H_DOUBLE:
-            return t_pitch::fromMC(h->h_w.w_double);
+            return t_pitch::fromMC(h->h_w.w_double, tonedivision, pref);
             break;
         case H_RAT: // TODO: can be improved!
         {
             double d = h->h_w.w_rat;
-            return t_pitch::fromMC(d);
+            return t_pitch::fromMC(d, tonedivision, pref);
         }
         case H_PITCH:
             return h->h_w.w_pitch;

@@ -331,6 +331,7 @@ void score_sel_change_onset(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_change_velocity(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_change_cents(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_change_pitch(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_sel_change_poc(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_change_measureinfo(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_change_tie(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_add_breakpoint(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -1767,6 +1768,86 @@ void score_sel_change_pitch(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             t_pitch pitch = note_get_pitch((t_notation_obj *)x, nt);
                             change_pitch((t_notation_obj *)x, &pitch, lexpr, thiselem, (t_notation_item *)nt);
                             note_set_user_enharmonicity(nt, pitch);
+                            if (thiselem && thiselem->l_next)
+                                thiselem = thiselem->l_next;
+                            changed = 1;
+                        }
+                    }
+                    ch->need_recompute_parameters = true;
+                    ch = ch->next;
+                }
+                recompute_all_for_measure((t_notation_obj *)x, meas, false);
+            }
+                break;
+            default:
+                break;
+        }
+        curr_it = lambda ? NULL : curr_it->next_selected;
+    }
+    
+    set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
+    perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_FROM_SCRATCH);
+    
+    close_slot_window((t_notation_obj *)x); // if we were in slot view...
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    if (new_pitch)
+        llll_free(new_pitch);
+    if (lexpr)
+        lexpr_free(lexpr);
+    
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
+}
+
+
+void score_sel_change_poc(t_score *x, t_symbol *s, long argc, t_atom *argv){
+    t_lexpr *lexpr = NULL;
+    t_llll *new_pitch = NULL;
+    char changed = 0;
+    char lambda = (s == _llllobj_sym_lambda);
+    t_notation_item *curr_it;
+    
+    if (argc <= 0)
+        return;
+    
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("="))
+        lexpr = notation_obj_lexpr_new(argc - 1, argv + 1);
+    else
+        new_pitch = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    
+    lock_general_mutex((t_notation_obj *)x);
+    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    changed = 0;
+    while (curr_it) {
+        switch (curr_it->type) {
+            case k_NOTE:
+                changed |= change_note_poc_from_lexpr_or_llll((t_notation_obj *)x, (t_note *) curr_it, lexpr, new_pitch);
+                break;
+                //            case k_PITCH_BREAKPOINT:
+                //                changed |= change_breakpoint_cents_from_lexpr_or_llll((t_notation_obj *)x, (t_bpt *) curr_it, lexpr, new_pitch);
+                //                break;
+            case k_CHORD:
+                changed |= change_chord_poc_from_lexpr_or_llll((t_notation_obj *)x, (t_chord *) curr_it, lexpr, new_pitch);
+                break;
+            case k_MEASURE:
+            {
+                t_measure *meas = (t_measure *) curr_it;
+                t_chord *ch = meas->firstchord;
+                while (ch) {
+                    t_note *nt;
+                    t_llllelem *thiselem = (new_pitch) ? new_pitch->l_head : NULL;
+                    for (nt=ch->firstnote; nt; nt = nt->next) {
+                        if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt) && thiselem) {
+                            create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                            t_hatom poc;
+                            note_get_poc((t_notation_obj *)x, nt, &poc);
+                            change_poc((t_notation_obj *)x, &poc, lexpr, thiselem, (t_notation_item *)nt);
+                            if (hatom_gettype(&poc) == H_PITCH)
+                                note_set_user_enharmonicity(nt, hatom_getpitch(&poc));
+                            else {
+                                note_set_auto_enharmonicity(nt);
+                                nt->midicents = hatom_getdouble(&poc);
+                            }
                             if (thiselem && thiselem->l_next)
                                 thiselem = thiselem->l_next;
                             changed = 1;
@@ -5469,7 +5550,12 @@ int T_EXPORT main(void){
     // @example pitch = pitch - C1 @caption transpose one octave down
     // @example pitch = (pitch % C1) + C5 @caption collapse to middle octave
     class_addmethod(c, (method) score_sel_change_pitch, "pitch", A_GIMME, 0);
+
     
+    // @method pitch @digest Modify the pitch or cents of selected items
+    // @description @copy BACH_DOC_MESSAGE_POC
+    // @marg 0 @name pitch_or_cents @optional 0 @type number/pitch/llll/anything
+    class_addmethod(c, (method) score_sel_change_poc, "poc", A_GIMME, 0);
     
     // @method cents @digest Modify the measureinfo of selected measures
     // @description Modifies the measureinfo of select measures. The expected syntax is the standard measureinfo syntax,
@@ -8281,6 +8367,9 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
         } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
             send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_ALWAYS);
             return;
+        } else if (sym == _llllobj_sym_poc) {
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
+            return;
 		} else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
 			send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
 			return;
@@ -8472,6 +8561,8 @@ void score_lambda(t_score *x, t_symbol *s, long argc, t_atom *argv){
             score_sel_change_cents(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_pitch){
             score_sel_change_pitch(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_poc){
+            score_sel_change_poc(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_velocity){
 			score_sel_change_velocity(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_tie){

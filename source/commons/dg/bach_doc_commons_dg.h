@@ -1480,8 +1480,17 @@
     // @copy BACH_DOC_RELATIVE_MODIFICATIONS
     // @copy BACH_DOC_EQUATION_MODIFICATIONS
 
+
+#define BACH_DOC_MESSAGE_POC
+    // The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
+    // depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
+    // essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
+    // @copy BACH_DOC_RELATIVE_MODIFICATIONS
+    // @copy BACH_DOC_EQUATION_MODIFICATIONS
+
+
 #define BACH_DOC_MESSAGE_VOICE
-	// The word <m>voice</m>, followed by a number, sets the new voice number for all 
+	// The word <m>voice</m>, followed by a number, sets the new voice number for all
 	// the selected notes or chords. 
 	// Any of the numbers in the voice syntax can be replaced by an llll containing a relative modification of the existing voice. 
 	// If a single number is inserted, this can be replaced by a generic equation.
@@ -1497,7 +1506,8 @@
 	// Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
     // They and should be immediately followed by the possible accidentals and the
 	// octave number, without any space (e.g. <b>D#4</b>). <br />
-    // Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+    // Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+    // <b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
     // One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
     // middle C, 1/16 tone up.
 	// <br /> <br />

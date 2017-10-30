@@ -24571,6 +24571,15 @@ t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note)
         return note->pitch_original;
 }
 
+void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h)
+{
+    if (note_is_enharmonicity_userdefined(note))
+        hatom_setpitch(h, note_get_pitch(r_ob, note));
+    else
+        hatom_setdouble(h, note->midicents);
+}
+
+
 void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch)
 {
     note->pitch_original = pitch;
@@ -29310,27 +29319,40 @@ void change_long_from_llllelem(long *number, t_llllelem *modify, char convert_de
 	}
 }
 
-void change_pitch_from_llllelem(t_pitch *pitch, t_llllelem *modify) {
+void change_pitch_from_llllelem(t_notation_obj *r_ob, t_pitch *pitch, t_llllelem *modify) {
     if (hatom_gettype(&modify->l_hatom) == H_LLLL) {
         t_llll *thisllll = hatom_getllll(&modify->l_hatom);
         if (thisllll->l_size > 0) {
             if (thisllll->l_size == 1)
-                *pitch = hatom_getpitch(&thisllll->l_head->l_hatom);
+                *pitch = hatom_getpitch(&thisllll->l_head->l_hatom, r_ob->tone_division, r_ob->accidentals_preferences);
             else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("plus")))
-                *pitch += hatom_getpitch(&thisllll->l_head->l_hatom);
+                *pitch += hatom_getpitch(&thisllll->l_head->l_hatom, r_ob->tone_division, r_ob->accidentals_preferences);
             else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("minus")))
-                *pitch -= hatom_getpitch(&thisllll->l_head->l_hatom);
+                *pitch -= hatom_getpitch(&thisllll->l_head->l_hatom, r_ob->tone_division, r_ob->accidentals_preferences);
             else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("times")))
                 *pitch *= hatom_getlong(&thisllll->l_head->l_hatom);
             else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("div")))
                 *pitch /= hatom_getrational(&thisllll->l_head->l_hatom);
             else
-                *pitch = hatom_getpitch(&thisllll->l_head->l_hatom);
+                *pitch = hatom_getpitch(&thisllll->l_head->l_hatom, r_ob->tone_division, r_ob->accidentals_preferences);
         }
     } else {
-        *pitch = hatom_getpitch(&modify->l_hatom);
+        *pitch = hatom_getpitch(&modify->l_hatom, r_ob->tone_division, r_ob->accidentals_preferences);
     }
 }
+
+void change_poc_from_llllelem(t_notation_obj *r_ob, t_hatom *poc, t_llllelem *modify) {
+    if (hatom_gettype(poc) == H_PITCH) {
+        t_pitch p = hatom_getpitch(poc);
+        change_pitch_from_llllelem(r_ob, &p, modify);
+        hatom_setpitch(poc, p);
+    } else {
+        double d = hatom_getdouble(poc);
+        change_double_from_llllelem(&d, modify, false);
+        hatom_setdouble(poc, d);
+    }
+}
+
 
 
 
@@ -29363,10 +29385,25 @@ void change_pitch(t_notation_obj *r_ob, t_pitch *pitch, t_lexpr *lexpr, t_llllel
     // if modify is a list it can be of the type (new_value +) or (new_value *)
     if (lexpr) {
         t_hatom *res = lexpr_eval_for_notation_item(r_ob, (t_notation_item *)lexpr_argument, lexpr);
-        *pitch = hatom_getpitch(res);
+        *pitch = hatom_getpitch(res, r_ob->tone_division, r_ob->accidentals_preferences);
         bach_freeptr(res);
     } else if (modify) {
-        change_pitch_from_llllelem(pitch, modify);
+        change_pitch_from_llllelem(r_ob, pitch, modify);
+    }
+}
+
+void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument) {
+    // we modify a pitch via a llllelem (which could be a float itself or a list)
+    // if modify is a list it can be of the type (new_value +) or (new_value *)
+    if (lexpr) {
+        t_hatom *res = lexpr_eval_for_notation_item(r_ob, (t_notation_item *)lexpr_argument, lexpr);
+        if (hatom_gettype(res) == H_PITCH)
+            hatom_setpitch(poc, hatom_getpitch(res, r_ob->tone_division, r_ob->accidentals_preferences));
+        else
+            hatom_setdouble(poc, hatom_getdouble(res));
+        bach_freeptr(res);
+    } else if (modify) {
+        change_poc_from_llllelem(r_ob, poc, modify);
     }
 }
 
@@ -32698,6 +32735,66 @@ char change_chord_pitch_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord,
     
     return changed;
 }
+
+
+
+char change_note_poc_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note, t_lexpr *lexpr, t_llll *new_poc)
+{
+    char changed = 0;
+    if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)note)) && (lexpr || (new_poc && new_poc->l_head))) {
+        t_hatom poc;
+        note_get_poc(r_ob, note, &poc);
+        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)note, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+        change_poc(r_ob, &poc, lexpr, new_poc ? new_poc->l_head : NULL, (t_notation_item *)note);
+        if (hatom_gettype(&poc) == H_PITCH)
+            note_set_user_enharmonicity(note, hatom_getpitch(&poc));
+        else {
+            note_set_auto_enharmonicity(note);
+            note->midicents = hatom_getdouble(&poc);
+        }
+        changed = 1;
+    }
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+        note->parent->need_recompute_parameters = true;
+    else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+        recompute_all_for_measure(r_ob, note->parent->parent, false);
+    
+    set_need_perform_analysis_and_change_flag(r_ob);
+    
+    return changed;
+}
+
+char change_chord_poc_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_poc){
+    char changed = 0;
+    t_note *nt;
+    t_llllelem *thiselem = new_poc ? new_poc->l_head : NULL;
+    for (nt=chord->firstnote; nt; nt = nt->next) {
+        if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) && (lexpr || thiselem)) {
+            t_hatom poc;
+            note_get_poc(r_ob, nt, &poc);
+            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            change_poc(r_ob, &poc, lexpr, thiselem, (t_notation_item *)nt);
+            if (hatom_gettype(&poc) == H_PITCH)
+                note_set_user_enharmonicity(nt, hatom_getpitch(&poc));
+            else {
+                note_set_auto_enharmonicity(nt);
+                nt->midicents = hatom_getdouble(&poc);
+            }
+            if (thiselem && thiselem->l_next)
+                thiselem = thiselem->l_next;
+            changed = 1;
+        }
+    }
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+        chord->need_recompute_parameters = true;
+    else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+        recompute_all_for_measure(r_ob, chord->parent, false);
+    
+    set_need_perform_analysis_and_change_flag(r_ob);
+    
+    return changed;
+}
+
 
 
 char change_note_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note, t_lexpr *lexpr, t_llll *new_duration){
@@ -39289,6 +39386,9 @@ char *undo_op_to_string(long undo_op)
 			break;
         case k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION:
             sprintf(buf, "Change Pitch");
+            break;
+        case k_UNDO_OP_CHANGE_POC_FOR_SELECTION:
+            sprintf(buf, "Change Pitch Or Cents");
             break;
         case k_UNDO_OP_CHANGE_MEASUREINFO_FOR_SELECTION:
             sprintf(buf, "Change Measureinfo");

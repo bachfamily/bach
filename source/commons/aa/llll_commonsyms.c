@@ -786,6 +786,7 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_selection =  gensym("selection");
 	x->s_group = gensym("group");
 	x->s_pitch = gensym("pitch");
+    x->s_poc = gensym("poc");
     x->s_pitches = gensym("pitches");
 	x->s_rhythmictree = gensym("rhythmictree");
 	x->s_dilationrectangle = gensym("dilationrectangle");

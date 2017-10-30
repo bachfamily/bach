@@ -171,6 +171,7 @@ void roll_sel_change_onset(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_change_velocity(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_change_cents(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_change_pitch(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_sel_change_poc(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_change_voice(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_change_duration(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_sel_change_tail(t_roll *x, t_symbol *s, long argc, t_atom *argv);
@@ -2318,6 +2319,43 @@ void roll_sel_change_pitch(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 }
 
 
+void roll_sel_change_poc(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_lexpr *lexpr = NULL;
+    t_llll *new_pitch = NULL;
+    t_notation_item *curr_it;
+    char changed = 0;
+    char lambda = (s == _llllobj_sym_lambda);
+    
+    if (argc <= 0) return;
+    
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("="))
+        lexpr = notation_obj_lexpr_new(argc - 1, argv + 1);
+    else
+        new_pitch = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    
+    lock_general_mutex((t_notation_obj *)x);
+    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    while (curr_it) {
+        if (curr_it->type == k_NOTE) {
+            changed |= change_note_poc_from_lexpr_or_llll((t_notation_obj *)x, (t_note *) curr_it, lexpr, new_pitch);
+        } else if (curr_it->type == k_CHORD) {
+            changed |= change_chord_poc_from_lexpr_or_llll((t_notation_obj *)x, (t_chord *) curr_it, lexpr, new_pitch);
+        }
+        curr_it = lambda ? NULL : curr_it->next_selected;
+    }
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    if (new_pitch)
+        llll_free(new_pitch);
+    if (lexpr)
+        lexpr_free(lexpr);
+    
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_POC_FOR_SELECTION);
+}
+
+
+
 void roll_sel_change_voice(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 	t_lexpr *lexpr = NULL;
 	t_llll *new_voice = NULL;
@@ -4176,7 +4214,13 @@ int T_EXPORT main(void){
     // @example pitch = pitch - C1 @caption transpose one octave down
     // @example pitch = (pitch % C1) + C5 @caption collapse to middle octave
     class_addmethod(c, (method) roll_sel_change_pitch, "pitch", A_GIMME, 0);
+
     
+    // @method poc @digest Modify the pitch or cents of selected items
+    // @description @copy BACH_DOC_MESSAGE_POC
+    // @marg 0 @name pitch_or_cents @optional 0 @type number/pitch/llll/anything
+    class_addmethod(c, (method) roll_sel_change_poc, "poc", A_GIMME, 0);
+
 	
 	// @method voice @digest Modify the voice of selected items
 	// @description @copy BACH_DOC_MESSAGE_VOICE
@@ -6574,6 +6618,9 @@ void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
         } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
             send_cents_values_as_llll(x, k_OUTPUT_PITCHES_ALWAYS);
             return;
+        } else if (sym == _llllobj_sym_poc) {
+            send_cents_values_as_llll(x, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
+            return;
 		} else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
 			send_durations_values_as_llll(x);
 			return;
@@ -6639,6 +6686,8 @@ void roll_lambda(t_roll *x, t_symbol *s, long argc, t_atom *argv){
             roll_sel_change_cents(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_pitch){
             roll_sel_change_pitch(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_poc){
+            roll_sel_change_poc(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_duration){
             roll_sel_change_duration(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_onset){

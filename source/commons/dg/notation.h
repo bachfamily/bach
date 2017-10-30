@@ -1697,6 +1697,7 @@ typedef enum _undo_operations
 	k_UNDO_OP_CHANGE_TAIL_FOR_SELECTION,
 	k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION,
     k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION,
+    k_UNDO_OP_CHANGE_POC_FOR_SELECTION,
     k_UNDO_OP_CHANGE_MEASUREINFO_FOR_SELECTION,
 	k_UNDO_OP_CHANGE_VOICE_FOR_SELECTION,
 	k_UNDO_OP_CHANGE_VELOCITY_FOR_SELECTION,
@@ -9106,6 +9107,9 @@ void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch);
 t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note);
 
 
+// TBD: pitch-or-cents
+void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h);
+
 /**	Revert the enharmony of a note to its default value (e.g. turns Eb to D#, and leaves D# to D#, differently from enharmonically_retranscribe_note())
 	@ingroup		notation_actions
 	@param	r_ob	The notation object
@@ -13796,6 +13800,10 @@ char change_chord_cents_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord,
 // TBD, Same, with pitches
 char change_chord_pitch_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_pitch);
 char change_note_pitch_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note, t_lexpr *lexpr, t_llll *new_pitch);
+
+// TBD, Same, with pitches/or/cents
+char change_chord_poc_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_poc);
+char change_note_poc_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note, t_lexpr *lexpr, t_llll *new_poc);
 
 
 /**	Change the cents of a pitch breakpoint, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
@@ -18661,6 +18669,9 @@ void change_double(t_notation_obj *r_ob, double *number, t_lexpr *lexpr, t_lllle
 	@ingroup				math
  */
 void change_pitch(t_notation_obj *r_ob, t_pitch *pitch, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
+
+
+void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
 
 

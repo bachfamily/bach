@@ -297,7 +297,7 @@ t_uint32 hatom_gettype(const t_hatom *h);
 t_atom_long hatom_getlong(const t_hatom *h);
 double hatom_getdouble(const t_hatom *h);
 t_rational hatom_getrational(const t_hatom *h);
-t_pitch hatom_getpitch(const t_hatom *h);
+t_pitch hatom_getpitch(const t_hatom *h, long tonedivision = 0, e_accidentals_preferences pref = k_ACC_AUTO);
 t_symbol *hatom_getsym(const t_hatom *h);
 t_llll *hatom_getllll(const t_hatom *h); // no check is performed, and the reference count of the llll is left untouched
 void *hatom_getobj(const t_hatom *h);
