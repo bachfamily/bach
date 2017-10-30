@@ -8467,9 +8467,11 @@ void score_score2roll(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
 void score_lambda(t_score *x, t_symbol *s, long argc, t_atom *argv){ 
 	if (argc && atom_gettype(argv) == A_SYM){
-		t_symbol *router = atom_getsym(argv);
-		if (router == _llllobj_sym_cents){
-			score_sel_change_cents(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        t_symbol *router = atom_getsym(argv);
+        if (router == _llllobj_sym_cents){
+            score_sel_change_cents(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_pitch){
+            score_sel_change_pitch(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_velocity){
 			score_sel_change_velocity(x, _llllobj_sym_lambda, argc - 1, argv + 1);
         } else if (router == _llllobj_sym_tie){

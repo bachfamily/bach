@@ -6635,10 +6635,12 @@ void clear_voice(t_roll *x, t_rollvoice *voice) {
 void roll_lambda(t_roll *x, t_symbol *s, long argc, t_atom *argv){ 
 	if (argc && atom_gettype(argv) == A_SYM){
 		t_symbol *router = atom_getsym(argv);
-		if (router == _llllobj_sym_cents){
-			roll_sel_change_cents(x, _llllobj_sym_lambda, argc - 1, argv + 1);
-		} else if (router == _llllobj_sym_duration){
-			roll_sel_change_duration(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        if (router == _llllobj_sym_cents){
+            roll_sel_change_cents(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_pitch){
+            roll_sel_change_pitch(x, _llllobj_sym_lambda, argc - 1, argv + 1);
+        } else if (router == _llllobj_sym_duration){
+            roll_sel_change_duration(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_onset){
 			roll_sel_change_onset(x, _llllobj_sym_lambda, argc - 1, argv + 1);
 		} else if (router == _llllobj_sym_velocity){
