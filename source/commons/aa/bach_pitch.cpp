@@ -281,6 +281,11 @@ std::string t_pitch::toString(char include_octave)
 
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
 {
+    long original_tone_division = tone_division;
+    
+    if (tone_division == 0)
+        tone_division = 8;
+    
     // converts a midicents number in the accidentals, with respect to the given full_accidental_representation (representing for each note)
     double fl = floor(mc/1200);
     double step_mc = 200. / tone_division;
@@ -433,6 +438,14 @@ t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences
     grid_ratio.r_den = numsteps;
     
     t_rational accidental = rat_rat_diff(grid_ratio, natural_ratio) * 6;
+    
+    if (original_tone_division == 0) {
+        // obtaining the most precise alteration possible
+        t_pitch p1 = t_pitch(steps % 7, long2rat(0), steps / 7);
+        t_rational mc1 = p1.toMC();
+        t_rational mc_orig = approx_double_with_rat_fixed_den(mc, 100, 0, NULL);
+        accidental = (mc_orig - mc1)/200;
+    }
     
     return t_pitch(steps % 7, accidental, steps / 7);
 }

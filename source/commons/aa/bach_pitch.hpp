@@ -202,6 +202,7 @@ public:
         else return -(*this % b);
     }
 
+    // use tone_division == 0 to return pitches at maximum precision
     static t_pitch fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr);
     
     static t_pitch fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences)
@@ -211,9 +212,8 @@ public:
     
     static t_pitch fromMC(double mc)
     {
-        // to do: return pitch at maximum precision
-        
-        return fromMC(mc, 2, k_ACC_AUTO, NULL, NULL);
+        // return pitch at maximum precision
+        return fromMC(mc, 0, k_ACC_AUTO, NULL, NULL);
     }
     
 

@@ -109,6 +109,7 @@ int T_EXPORT main()
 	CLASS_ATTR_STYLE_LABEL(c,"tonedivision",0,"text","Microtonal Division");
 	CLASS_ATTR_BASIC(c,"tonedivision",0);
 	// @description @copy BACH_DOC_TONEDIVISION
+    // Set <m>tonedivision</m> to 0 (default) in order to perform the conversion at maximum precision.
 
 	CLASS_ATTR_CHAR(c, "accidentalspreferences", 0, t_mc2p, accidentals_preferences); 
 	CLASS_ATTR_STYLE_LABEL(c,"accidentalspreferences",0,"enumindex","Accidental Preferences");
@@ -236,7 +237,7 @@ t_mc2p *mc2p_new(t_symbol *s, short ac, t_atom *av)
 	
 		x->accidentals_preferences = 0;
 		x->print_octave = 1;
-		x->tone_division = 2;
+		x->tone_division = 0;
 
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "4");
