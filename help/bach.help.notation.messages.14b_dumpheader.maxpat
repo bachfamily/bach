@@ -38,141 +38,17 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-43",
-					"linecount" : 2,
+					"id" : "obj-3",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 134.5, 205.0, 231.0, 40.0 ],
+					"patching_rect" : [ 6.0, 411.0, 603.0, 21.0 ],
+					"presentation_rect" : [ 4.0, 411.0, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "Dump pitches (if user-introduced) or cents (otherwise)"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-42",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 143.357147, 180.0, 107.0, 25.0 ],
-					"style" : "",
-					"text" : "Dump pitches"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-41",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 109.35714, 155.0, 97.0, 25.0 ],
-					"style" : "",
-					"text" : "Dump cents"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-35",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 64.5, 205.0, 68.0, 23.0 ],
-					"style" : "",
-					"text" : "dump poc"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontface" : 0,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-8",
-					"linecount" : 2,
-					"maxclass" : "bach.hypercomment",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 372.285706, 174.5, 147.0, 36.0 ],
-					"sendto" : "bach.help.filtertags",
-					"text" : "This overrides #outputpitchesseparate",
+					"text" : "This works for all notation objects.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-17",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 49.0, 180.0, 88.0, 23.0 ],
-					"style" : "",
-					"text" : "dump pitches"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-18",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 27.35714, 155.0, 78.0, 23.0 ],
-					"style" : "",
-					"text" : "dump cents"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-31",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 469.785706, 256.0, 123.0, 40.0 ],
-					"style" : "",
-					"text" : "Only dump separate outlets"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-33",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 366.785706, 264.5, 97.0, 23.0 ],
-					"style" : "",
-					"text" : "dump separate"
 				}
 
 			}
@@ -185,7 +61,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 122.0, 303.5, 87.0, 23.0 ],
+					"patching_rect" : [ 89.0, 62.5, 87.0, 23.0 ],
 					"style" : "",
 					"text" : "dump header"
 				}
@@ -201,7 +77,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 453.0, 312.0, 147.0, 21.0 ],
+					"patching_rect" : [ 300.5, 89.5, 147.0, 21.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "see #body and #header",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -214,13 +90,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
-					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 216.0, 293.0, 237.0, 40.0 ],
+					"patching_rect" : [ 180.5, 62.5, 267.0, 25.0 ],
 					"style" : "",
-					"text" : "The same as \"dump roll\", but only dumps either the body or the header"
+					"text" : "Only dumps either the body or the header"
 				}
 
 			}
@@ -233,7 +108,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 35.0, 303.5, 76.0, 23.0 ],
+					"patching_rect" : [ 10.0, 62.5, 76.0, 23.0 ],
 					"style" : "",
 					"text" : "dump body"
 				}
@@ -241,46 +116,17 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-22",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 338.0, 113.0, 82.0, 23.0 ],
-					"style" : "",
-					"text" : "dump extras"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 430.5, 448.0, 109.0, 23.0 ],
-					"style" : "",
-					"text" : "bach.print Extras"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-16",
+					"id" : "obj-32",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 100.25, 254.0, 246.0, 40.0 ],
+					"patching_rect" : [ 259.0, 236.5, 169.0, 40.0 ],
 					"style" : "",
-					"text" : "Only dump the whole object gathered syntax from the first outlet"
+					"text" : "And you can list header elements and \"body\""
 				}
 
 			}
@@ -288,14 +134,14 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-15",
+					"id" : "obj-25",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 264.5, 79.0, 23.0 ],
+					"patching_rect" : [ 48.5, 247.0, 205.0, 23.0 ],
 					"style" : "",
-					"text" : "dump score"
+					"text" : "dump markers midichannels body"
 				}
 
 			}
@@ -303,44 +149,14 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-9",
+					"id" : "obj-24",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 320.0, 88.0, 100.0, 23.0 ],
+					"patching_rect" : [ 28.0, 220.0, 136.0, 23.0 ],
 					"style" : "",
-					"text" : "dump velocities"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-7",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 258.5, 113.0, 67.0, 23.0 ],
-					"style" : "",
-					"text" : "dump ties"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-6",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 155.285721, 113.0, 100.0, 23.0 ],
-					"style" : "",
-					"text" : "dump durations"
+					"text" : "dump keys clefs body"
 				}
 
 			}
@@ -349,14 +165,14 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-3",
+					"id" : "obj-23",
 					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 424.785706, 88.0, 179.0, 54.0 ],
+					"patching_rect" : [ 314.785706, 124.0, 276.0, 54.0 ],
 					"style" : "",
-					"text" : "Dump a single parameter: only the corresponding llll will be output"
+					"text" : "Dump a single element of the header: only the corresponding llll will be output through the first outlet, preceeded by the word \"roll\""
 				}
 
 			}
@@ -364,29 +180,14 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-5",
+					"id" : "obj-21",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 35.0, 113.0, 118.0, 23.0 ],
+					"patching_rect" : [ 177.5, 152.0, 86.0, 23.0 ],
 					"style" : "",
-					"text" : "dump measureinfo"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-28",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 52.428558, 82.0, 235.0, 25.0 ],
-					"style" : "",
-					"text" : "Dump all the content from all outlets"
+					"text" : "dump groups"
 				}
 
 			}
@@ -394,14 +195,59 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-4",
+					"id" : "obj-20",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 85.0, 44.0, 23.0 ],
+					"patching_rect" : [ 73.5, 152.0, 94.0, 23.0 ],
 					"style" : "",
-					"text" : "dump"
+					"text" : "dump markers"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-19",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 195.0, 129.0, 123.0, 23.0 ],
+					"style" : "",
+					"text" : "dump midichannels"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-18",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 113.0, 129.0, 73.0, 23.0 ],
+					"style" : "",
+					"text" : "dump clefs"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-17",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 28.0, 129.0, 73.0, 23.0 ],
+					"style" : "",
+					"text" : "dump keys"
 				}
 
 			}
@@ -426,7 +272,7 @@
 					"numvoices" : 1,
 					"out" : "nnnnnnnn",
 					"outlettype" : [ "", "", "", "", "", "", "", "", "bang" ],
-					"patching_rect" : [ 6.0, 346.0, 585.0, 68.333328 ],
+					"patching_rect" : [ 6.0, 284.0, 585.0, 68.333328 ],
 					"pitcheditrange" : [ "null" ],
 					"stafflines" : [ 5 ],
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
@@ -448,79 +294,9 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 448.0, 131.0, 23.0 ],
+					"patching_rect" : [ 6.0, 374.0, 68.0, 23.0 ],
 					"style" : "",
-					"text" : "bach.print WholeRoll"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-40",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 359.75, 423.0, 95.0, 23.0 ],
-					"style" : "",
-					"text" : "bach.print Ties"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-39",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 289.0, 448.0, 127.0, 23.0 ],
-					"style" : "",
-					"text" : "bach.print Velocities"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-38",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 218.25, 423.0, 128.0, 23.0 ],
-					"style" : "",
-					"text" : "bach.print Durations"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-37",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 76.75, 423.0, 144.0, 23.0 ],
-					"style" : "",
-					"text" : "bach.print Measureinfo"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-36",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 147.5, 448.0, 106.0, 23.0 ],
-					"style" : "",
-					"text" : "bach.print Cents"
+					"text" : "bach.print"
 				}
 
 			}
@@ -534,7 +310,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "See Also: header, body, outputpitchesseparate",
+					"text" : "See Also: header, body, selective+dump",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -550,7 +326,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "Objects: bach.score",
+					"text" : "Objects: bach.roll, bach.score, bach.slot",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -567,7 +343,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 403.0, 23.0 ],
 					"style" : "",
-					"text" : "Selective dump for bach.score",
+					"text" : "Selective dump for header content",
 					"varname" : "title"
 				}
 
@@ -581,9 +357,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
+					"patching_rect" : [ 6.0, 477.0, 585.0, 31.0 ],
 					"style" : "",
-					"text" : "Tags: message, dump, single, outlet, header, body, separate, gathered, selective, measureinfo, duration, tie, cents, velocity, velocities, extras, pitch, cents, pitches, poc, pitchorcents",
+					"text" : "Tags: message, dump, single, outlet, header, body, separate, gathered, midichannels, clefs, keys, markers, groups, selective,",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -594,13 +370,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 603.0, 50.0 ],
+					"patching_rect" : [ 6.0, 32.0, 603.0, 21.0 ],
 					"style" : "",
-					"text" : "Dumping information is a heavy operation, which can require a lot of time: all the lllls must be created and output through the outlets. If you don't need all such llll, it is a good rule to dump only the outlet(s) you need. This is easily accomplished by adding arguments to the dump message. For bach.score:",
+					"text" : "Header elements can be dumped separately",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -609,13 +384,7 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-15", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
+					"midpoints" : [ 37.5, 196.0, 15.5, 196.0 ],
 					"source" : [ "obj-17", 0 ]
 				}
 
@@ -623,7 +392,16 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
+					"midpoints" : [ 122.5, 199.0, 15.5, 199.0 ],
 					"source" : [ "obj-18", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"midpoints" : [ 204.5, 205.0, 15.5, 205.0 ],
+					"source" : [ "obj-19", 0 ]
 				}
 
 			}
@@ -636,58 +414,38 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-14", 0 ],
-					"source" : [ "obj-2", 6 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-36", 0 ],
-					"source" : [ "obj-2", 2 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-37", 0 ],
-					"source" : [ "obj-2", 1 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-38", 0 ],
-					"source" : [ "obj-2", 3 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-39", 0 ],
-					"source" : [ "obj-2", 4 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-40", 0 ],
-					"source" : [ "obj-2", 5 ]
+					"destination" : [ "obj-2", 0 ],
+					"midpoints" : [ 83.0, 196.5, 15.5, 196.5 ],
+					"source" : [ "obj-20", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 347.5, 140.0, 15.5, 140.0 ],
-					"source" : [ "obj-22", 0 ]
+					"midpoints" : [ 187.0, 200.5, 15.5, 200.5 ],
+					"source" : [ "obj-21", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 131.5, 335.75, 15.5, 335.75 ],
+					"source" : [ "obj-24", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"source" : [ "obj-25", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"midpoints" : [ 98.5, 96.25, 15.5, 96.25 ],
 					"source" : [ "obj-26", 0 ]
 				}
 
@@ -696,60 +454,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"source" : [ "obj-30", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 376.285706, 295.25, 15.5, 295.25 ],
-					"source" : [ "obj-33", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-35", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-4", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 44.5, 144.0, 15.5, 144.0 ],
-					"source" : [ "obj-5", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 164.785721, 140.0, 15.5, 140.0 ],
-					"source" : [ "obj-6", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 268.0, 145.0, 15.5, 145.0 ],
-					"source" : [ "obj-7", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 329.5, 143.5, 15.5, 143.5 ],
-					"source" : [ "obj-9", 0 ]
 				}
 
 			}

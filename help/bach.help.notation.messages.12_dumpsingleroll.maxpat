@@ -38,6 +38,71 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-43",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 134.5, 205.0, 231.0, 40.0 ],
+					"presentation_rect" : [ 132.357147, 218.0, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "Dump pitches (if user-introduced) or cents (otherwise)"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-42",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 143.357147, 180.0, 107.0, 25.0 ],
+					"presentation_rect" : [ 143.357147, 189.0, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "Dump pitches"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-41",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 109.35714, 155.0, 97.0, 25.0 ],
+					"presentation_rect" : [ 107.0, 159.5, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "Dump cents"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-35",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 64.5, 205.0, 68.0, 23.0 ],
+					"presentation_rect" : [ 209.5, 178.0, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "dump poc"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
@@ -47,26 +112,10 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 467.785706, 140.5, 147.0, 36.0 ],
+					"patching_rect" : [ 372.285706, 174.5, 147.0, 36.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "This overrides #outputpitchesseparate",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-33",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 248.571426, 139.5, 217.0, 40.0 ],
-					"style" : "",
-					"text" : "Only dump pitches, forcing them to be in cents/diatonic pitch form"
 				}
 
 			}
@@ -79,7 +128,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 155.5, 148.0, 88.0, 23.0 ],
+					"patching_rect" : [ 49.0, 180.0, 88.0, 23.0 ],
 					"style" : "",
 					"text" : "dump pitches"
 				}
@@ -95,7 +144,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 479.785706, 178.5, 123.0, 40.0 ],
+					"patching_rect" : [ 481.142853, 261.5, 123.0, 40.0 ],
 					"style" : "",
 					"text" : "Only dump separate outlets"
 				}
@@ -110,7 +159,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 376.785706, 183.5, 97.0, 23.0 ],
+					"patching_rect" : [ 378.142853, 266.5, 97.0, 23.0 ],
 					"style" : "",
 					"text" : "dump separate"
 				}
@@ -125,7 +174,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 113.0, 219.5, 87.0, 23.0 ],
+					"patching_rect" : [ 114.35714, 302.5, 87.0, 23.0 ],
 					"style" : "",
 					"text" : "dump header"
 				}
@@ -141,26 +190,10 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 444.0, 228.0, 147.0, 21.0 ],
+					"patching_rect" : [ 445.357147, 311.0, 147.0, 21.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "see #body and #header",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-32",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 422.0, 305.5, 169.0, 40.0 ],
-					"style" : "",
-					"text" : "And you can list header elements and \"body\""
 				}
 
 			}
@@ -174,7 +207,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 207.0, 209.0, 237.0, 40.0 ],
+					"patching_rect" : [ 208.357147, 292.0, 237.0, 40.0 ],
 					"style" : "",
 					"text" : "The same as \"dump roll\", but only dumps either the body or the header"
 				}
@@ -189,130 +222,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 26.0, 219.5, 76.0, 23.0 ],
+					"patching_rect" : [ 27.35714, 302.5, 76.0, 23.0 ],
 					"style" : "",
 					"text" : "dump body"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-25",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 211.5, 316.0, 205.0, 23.0 ],
-					"style" : "",
-					"text" : "dump markers midichannels body"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-24",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 52.428558, 316.0, 136.0, 23.0 ],
-					"style" : "",
-					"text" : "dump keys clefs body"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-23",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 326.785706, 251.0, 276.0, 54.0 ],
-					"style" : "",
-					"text" : "Dump a single element of the header: only the corresponding llll will be output through the first outlet, preceeded by the word \"roll\""
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-21",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 189.5, 279.0, 86.0, 23.0 ],
-					"style" : "",
-					"text" : "dump groups"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-20",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 85.5, 279.0, 94.0, 23.0 ],
-					"style" : "",
-					"text" : "dump markers"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-19",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 207.0, 256.0, 123.0, 23.0 ],
-					"style" : "",
-					"text" : "dump midichannels"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-18",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 125.0, 256.0, 73.0, 23.0 ],
-					"style" : "",
-					"text" : "dump clefs"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-17",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 40.0, 256.0, 73.0, 23.0 ],
-					"style" : "",
-					"text" : "dump keys"
 				}
 
 			}
@@ -326,7 +238,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 85.5, 173.0, 246.0, 40.0 ],
+					"patching_rect" : [ 86.85714, 256.0, 246.0, 40.0 ],
 					"style" : "",
 					"text" : "Only dump the whole object gathered syntax from the first outlet"
 				}
@@ -341,7 +253,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 183.5, 64.0, 23.0 ],
+					"patching_rect" : [ 19.35714, 266.5, 64.0, 23.0 ],
 					"style" : "",
 					"text" : "dump roll"
 				}
@@ -371,7 +283,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 71.5, 148.0, 78.0, 23.0 ],
+					"patching_rect" : [ 27.35714, 155.0, 78.0, 23.0 ],
 					"style" : "",
 					"text" : "dump cents"
 				}
@@ -512,7 +424,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.000003, 448.0, 131.0, 23.0 ],
+					"patching_rect" : [ 6.0, 449.0, 131.0, 23.0 ],
 					"style" : "",
 					"text" : "bach.print WholeRoll"
 				}
@@ -540,7 +452,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 329.428558, 448.0, 127.0, 23.0 ],
+					"patching_rect" : [ 329.428558, 449.0, 127.0, 23.0 ],
 					"style" : "",
 					"text" : "bach.print Velocities"
 				}
@@ -582,7 +494,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 167.714279, 448.0, 106.0, 23.0 ],
+					"patching_rect" : [ 167.714279, 449.0, 106.0, 23.0 ],
 					"style" : "",
 					"text" : "bach.print Cents"
 				}
@@ -647,7 +559,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
 					"style" : "",
-					"text" : "Tags: message, dump, single, outlet, separate, gathered, header, body, midichannels, clefs, keys, markers, groups, onset, duration, extra, velocity, velocities, cents, pitches, pitch, selective",
+					"text" : "Tags: message, dump, single, outlet, separate, gathered, header, body, onset, duration, extra, velocity, velocities, cents, pitches, pitch, selective, poc, pitchorcents",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -674,30 +586,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"source" : [ "obj-15", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 49.5, 306.0, 15.5, 306.0 ],
-					"source" : [ "obj-17", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 134.5, 306.0, 15.5, 306.0 ],
-					"source" : [ "obj-18", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 216.5, 306.0, 15.5, 306.0 ],
-					"source" : [ "obj-19", 0 ]
 				}
 
 			}
@@ -746,38 +634,8 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 95.0, 306.5, 15.5, 306.5 ],
-					"source" : [ "obj-20", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 199.0, 307.5, 15.5, 307.5 ],
-					"source" : [ "obj-21", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 122.5, 248.0, 15.5, 248.0 ],
+					"midpoints" : [ 123.85714, 333.0, 15.5, 333.0 ],
 					"source" : [ "obj-22", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-24", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-25", 0 ]
 				}
 
 			}
@@ -791,7 +649,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 386.285706, 210.75, 15.5, 210.75 ],
+					"midpoints" : [ 387.642853, 298.75, 15.5, 298.75 ],
 					"source" : [ "obj-30", 0 ]
 				}
 
@@ -799,8 +657,14 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 165.0, 178.0, 15.5, 178.0 ],
 					"source" : [ "obj-31", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"source" : [ "obj-35", 0 ]
 				}
 
 			}
@@ -838,7 +702,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"midpoints" : [ 81.0, 176.5, 15.5, 176.5 ],
 					"source" : [ "obj-8", 0 ]
 				}
 
