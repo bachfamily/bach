@@ -2271,13 +2271,13 @@ void symparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 void *symparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b = ((t_symParser *) yyscanner)->getPtr(bytes);
-    post(" symparser_alloc: %d bytes requested, returning %p", bytes, b);
+    parserpost(" symparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 
 void *symparser_realloc(void *ptr,size_t bytes, void *yyscanner)
 {
-    post(" symparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    parserpost(" symparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
     return ptr;
 }
 

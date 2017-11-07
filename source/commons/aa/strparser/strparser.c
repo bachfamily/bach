@@ -2165,13 +2165,13 @@ void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 void *strparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b = ((t_strParser *) yyscanner)->getPtr(bytes);
-    post(" strparser_alloc: %d bytes requested, returning %p", bytes, b);
+    parserpost(" strparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 
 void *strparser_realloc(void *ptr,size_t bytes, void *yyscanner)
 {
-    post(" strparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    parserpost(" strparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
     return ptr;
 }
 

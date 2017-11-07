@@ -47,7 +47,7 @@
 #include "pitchparser.h"
 #include "alterparser.h"
 
-#define parsertests
+//#define parsertests
 
 typedef struct _reg
 {

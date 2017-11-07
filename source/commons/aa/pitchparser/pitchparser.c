@@ -2036,13 +2036,13 @@ t_pitch t_pitchParser::parse(char *buf)
 void *pitchparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b = ((t_pitchParser *) yyscanner)->getPtr(bytes);
-    post(" pitchparser_alloc: %d bytes requested, returning %p", bytes, b);
+    parserpost(" pitchparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 
 void *pitchparser_realloc(void *ptr,size_t bytes, void *yyscanner)
 {
-    post(" pitchparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    parserpost(" pitchparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
     return ptr;
 }
 

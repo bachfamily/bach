@@ -127,13 +127,13 @@ t_shortRational t_alterParser::parse(char *buf)
 void *alterparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b = ((t_alterParser *) yyscanner)->getPtr(bytes);
-    post(" alterparser_alloc: %d bytes requested, returning %p", bytes, b);
+    parserpost(" alterparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 
 void *alterparser_realloc(void *ptr,size_t bytes, void *yyscanner)
 {
-    post(" alterparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    parserpost(" alterparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
     return ptr;
 }
 

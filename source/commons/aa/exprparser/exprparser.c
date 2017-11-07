@@ -2717,13 +2717,13 @@ int t_exprParser::lex()
 void *exprparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b = ((t_exprParser *) yyscanner)->getPtr(bytes);
-    post(" exprparser_alloc: %d bytes requested, returning %p", bytes, b);
+    parserpost(" exprparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 
 void *exprparser_realloc(void *ptr,size_t bytes, void *yyscanner)
 {
-    post(" exprparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    parserpost(" exprparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
     return ptr;
 }
 
