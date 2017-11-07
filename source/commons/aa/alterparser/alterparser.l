@@ -1,4 +1,5 @@
 %option noyywrap nodefault reentrant
+%option noyyalloc noyyrealloc noyyfree
 %option header-file="alterparser.lex.h"
 %option outfile="alterparser.c"
 %option prefix="alterparser_"
@@ -81,40 +82,62 @@ int main(int argc, char **argv)
 }
 #endif
 
-void alterparser_new(t_alterparser_wrapper *apw)
+t_alterParser::t_alterParser() : t_parser()
 {
-    apw->a = new(t_shortRational);
-    yylex_init_extra(apw->a, (yyscan_t *) &apw->scanner);
+    
+    a = new(t_shortRational);
+    
+    struct yyguts_t dummy_yyguts;
+    alterparser_set_extra(a, &dummy_yyguts);
+    
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    alterparser_set_extra (a, (yyscan_t) this);
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-t_shortRational alterparser_scan_string(t_alterparser_wrapper *apw, char *buf)
+t_shortRational t_alterParser::parse(char *buf)
 {
-    t_shortRational a;
-    yyscan_t scanner = (yyscan_t) apw->scanner;
-    YY_BUFFER_STATE bp = yy_scan_string(buf, scanner);
-    yy_switch_to_buffer(bp, scanner);
-    switch (yylex(scanner)) {
+    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) this);
+    yy_switch_to_buffer(bp, (yyscan_t) this);
+    switch (yylex((yyscan_t) this)) {
         case A_ERROR:
         case A_END:
-            a = t_shortRational(0, 0);
+            *a = t_pitch::illegal;
             break;
         case A_MORE:
-            a = *apw->a;
-            if (yylex(scanner) != A_END)
-                a = t_shortRational(0, 0);
+            if (yylex((yyscan_t) this) != A_END)
+                *a = t_pitch::illegal;
             break;
     }
-    yy_flush_buffer(bp, scanner);
-    yy_delete_buffer(bp, scanner);
-    return a;
+    yy_flush_buffer(bp, (yyscan_t) this);
+    yy_delete_buffer(bp, (yyscan_t) this);
+    return *a;
 }
 
-void alterparser_free(t_alterparser_wrapper *apw)
+
+
+
+void *alterparser_alloc(size_t bytes, void *yyscanner)
 {
-    delete apw->a;
-    alterparser_lex_destroy(apw->scanner);
+    void *b = ((t_alterParser *) yyscanner)->getPtr(bytes);
+    post(" alterparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
 }
 
+void *alterparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    post(" alterparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
 
-
-
+void alterparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}

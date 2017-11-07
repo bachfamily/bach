@@ -47,6 +47,8 @@
 #include "pitchparser.h"
 #include "alterparser.h"
 
+#define parsertests
+
 typedef struct _reg
 {
 	struct llllobj_object 	n_ob;
@@ -55,10 +57,6 @@ typedef struct _reg
 	long					n_in;
     
     t_object                *m_editor;
-#ifdef parsertests
-    t_pitchparser_wrapper   ppw;
-    t_alterparser_wrapper   apw;
-#endif
 } t_reg;
 
 //DEFINE_LLLL_ATTR_DEFAULT_GETTER_AND_SETTER(t_reg, dummy, reg_getattr_dummy, reg_setattr_dummy)
@@ -300,10 +298,12 @@ void reg_anything(t_reg *x, t_symbol *msg, long ac, t_atom *av)
 //#define testtest
 #ifdef parsertests
 
-    t_pitch p = pitchparser_scan_string(&x->ppw, msg->s_name);
+    t_pitchParser pitchParser;
+    t_alterParser alterParser;
+    t_pitch p = pitchParser.parse(msg->s_name);
     post(" -- as pitch: %s", p.toCString());
     
-    t_shortRational a = alterparser_scan_string(&x->apw, msg->s_name);
+    t_shortRational a = alterParser.parse(msg->s_name);
     post(" -- as alter: %ld/%ld", a.num(), a.den());
 #endif // parsertests
     
@@ -612,11 +612,6 @@ void reg_appendtodictionary(t_reg *x, t_dictionary *d)
 
 void reg_free(t_reg *x)
 {
-#ifdef parsertests
-    pitchparser_free(&x->ppw);
-    alterparser_free(&x->apw);
-#endif
-    
 	object_free_debug(x->n_proxy);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
@@ -629,10 +624,6 @@ t_reg *reg_new(t_symbol *s, short ac, t_atom *av)
 	t_dictionary *d;
 	
 	if ((x = (t_reg *) object_alloc_debug(reg_class))) {
-#ifdef parsertests
-        pitchparser_new(&x->ppw);
-        alterparser_new(&x->apw);
-#endif
         x->m_editor = NULL;
 
         // @arg 0 @name default @optional 1 @type llll @digest Default llll

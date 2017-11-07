@@ -70,6 +70,9 @@ public:
     static const t_shortRational flat;
     static const t_shortRational qrtrflat;
     static const t_shortRational eighthflat;
+    
+    static const t_shortRational illegal;
+    
     static t_pitchMatrices &pm;
 
 private:

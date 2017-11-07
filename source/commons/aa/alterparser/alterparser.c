@@ -1,6 +1,5 @@
-#line 2 "alterparser.c"
 
-#line 4 "alterparser.c"
+#line 3 "alterparser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -447,8 +446,6 @@ static yyconst flex_int16_t yy_chk[31] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "alterparser.l"
-#line 15 "alterparser.l"
     #define BACH_MAX
     #ifdef BACH_MAX
     #include "llllobj.h"
@@ -466,7 +463,6 @@ static yyconst flex_int16_t yy_chk[31] =
         A_MORE,
         A_ERROR
     } e_alterparser_rv;
-#line 470 "alterparser.c"
 
 #define INITIAL 0
 
@@ -728,14 +724,8 @@ YY_DECL
 		}
 
 	{
-#line 36 "alterparser.l"
-
-
 
     t_shortRational *a = yyextra;
-
-
-#line 739 "alterparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -795,7 +785,6 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 42 "alterparser.l"
 {
     char *next = yytext;
     *a = t_pitch::text2alter(&next);
@@ -805,7 +794,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 49 "alterparser.l"
 {
     char *next = yytext;
     *a = t_pitch::text2alter(&next);
@@ -816,7 +804,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 57 "alterparser.l"
 {
     char *next = yytext;
     *a = t_pitch::text2alter(&next);
@@ -827,7 +814,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 65 "alterparser.l"
 {
     parserpost(" lex: unrecognized character %s", yytext);
     return A_ERROR;
@@ -836,7 +822,6 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 70 "alterparser.l"
 {
     parserpost(" lex: unrecognized character \\n", yytext);
     return A_ERROR;
@@ -844,10 +829,8 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 75 "alterparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 851 "alterparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1988,40 +1971,7 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *alterparser_alloc (yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	return (void *) malloc( size );
-}
-
-void *alterparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
-}
-
-void alterparser_free (void * ptr , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	free( (char *) ptr );	/* see alterparser_realloc() for (char *) cast */
-}
-
 #define YYTABLES_NAME "yytables"
-
-#line 75 "alterparser.l"
-
-
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)
@@ -2030,41 +1980,59 @@ int main(int argc, char **argv)
 }
 #endif
 
-void alterparser_new(t_alterparser_wrapper *apw)
+t_alterParser::t_alterParser() : t_parser()
 {
-    apw->a = new(t_shortRational);
-    alterparser_lex_init_extra(apw->a,(yyscan_t *) &apw->scanner);
+    
+    a = new(t_shortRational);
+    
+    struct yyguts_t dummy_yyguts;
+    alterparser_set_extra(a, &dummy_yyguts);
+    
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    alterparser_set_extra (a, (yyscan_t) this);
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-t_shortRational alterparser_scan_string(t_alterparser_wrapper *apw, char *buf)
+t_shortRational t_alterParser::parse(char *buf)
 {
-    t_shortRational a;
-    yyscan_t scanner = (yyscan_t) apw->scanner;
-    YY_BUFFER_STATE bp = alterparser__scan_string(buf,scanner);
-    alterparser__switch_to_buffer(bp,scanner);
-    switch (alterparser_lex(scanner)) {
+    YY_BUFFER_STATE bp = alterparser__scan_string(buf,(yyscan_t) this);
+    alterparser__switch_to_buffer(bp,(yyscan_t) this);
+    switch (alterparser_lex((yyscan_t) this)) {
         case A_ERROR:
         case A_END:
-            a = t_shortRational(0, 0);
+            *a = t_pitch::illegal;
             break;
         case A_MORE:
-            a = *apw->a;
-            if (alterparser_lex(scanner) != A_END)
-                a = t_shortRational(0, 0);
+            if (alterparser_lex((yyscan_t) this) != A_END)
+                *a = t_pitch::illegal;
             break;
     }
-    alterparser__flush_buffer(bp,scanner);
-    alterparser__delete_buffer(bp,scanner);
-    return a;
+    alterparser__flush_buffer(bp,(yyscan_t) this);
+    alterparser__delete_buffer(bp,(yyscan_t) this);
+    return *a;
 }
 
-void alterparser_free(t_alterparser_wrapper *apw)
+void *alterparser_alloc(size_t bytes, void *yyscanner)
 {
-    delete apw->a;
-    alterparser_lex_destroy(apw->scanner);
+    void *b = ((t_alterParser *) yyscanner)->getPtr(bytes);
+    post(" alterparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
 }
 
+void *alterparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    post(" alterparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
 
-
-
-
+void alterparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}

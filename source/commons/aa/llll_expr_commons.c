@@ -95,8 +95,6 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     t_max_err err = MAX_ERR_NONE;
     t_exprparser_data exprparser_data;
     char *offending;
-    void *scanner = NULL;
-    void *scannerbuf = NULL;
     
     //	post("creating lexpr");
     
@@ -120,7 +118,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     exprparser_data.substitutions = substitutions;
     exprparser_data.offending = &offending;
     
-    scanner = exprparser_new(&exprparser_data);
+    t_exprParser exprParser(&exprparser_data);
     
     
     lexs[0].l_type = L_NONE;
@@ -150,9 +148,9 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                 lexc++;
                 break;
             case A_SYM: {
-                scannerbuf = exprparser_scan_string(scanner, atom_getsym(av)->s_name);
+                exprParser.setBuffer(atom_getsym(av)->s_name);
                 exprparser_data.lexeme = this_lex;
-                while (long err = exprparser_lex(scanner)) {
+                while (long err = exprParser.lex()) {
                     switch (err) {
                         case E_OK:
                             this_lex++;
@@ -175,25 +173,22 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                             break;
                     }
                 }
-                exprparser_flush_and_delete_buffer(scanner, scannerbuf);
+                exprParser.reset();
             }
         }
         
         long ltype = (this_lex - 1)->l_type;
         if (ltype == L_COMMA || ltype == L_OPEN ||
             (ltype == L_TOKEN && (this_lex - 1)->l_token.t_type == TT_OP))
-            exprparser_set_start_condition(scanner, INITIAL);
+            exprParser.setStartCondition(INITIAL);
         else
-            exprparser_set_start_condition(scanner, BINARY);
+            exprParser.setStartCondition(BINARY);
 
         if (lexc >= L_MAX_LEXEMES) {
             object_error(culprit, "Expression is too long");
             goto lexpr_new_error;
         }
     }
-    exprparser_free(scanner);
-    scanner = NULL;
-    scannerbuf = NULL;
 
     lexstack_ptr = lexstack - 1; // always points to the last valid argument
     tokqueue_ptr = tokqueue;
@@ -440,12 +435,6 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     return MAX_ERR_NONE;
     
 lexpr_new_error:
-    if (scanner) {
-        if (scannerbuf)
-            exprparser_flush_and_delete_buffer(scanner, scannerbuf);
-        exprparser_free(scanner);
-    }
-    
     bach_freeptr(lexs);
     bach_freeptr(lexstack);
     return MAX_ERR_GENERIC;
