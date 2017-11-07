@@ -19,6 +19,8 @@
     #include <stdio.h>
     #define parserpost printf
     #endif
+    
+    #define YYSTACK_USE_ALLOCA 1
 
 %}
 
@@ -97,15 +99,13 @@ term: LONG {
  
 %%
 
-void symbol_parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
+void t_symParser::parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
 {
-    yyscan_t myscanner;
     YY_BUFFER_STATE bp;
-    symparser_lex_init(&myscanner);
- 	bp = symparser_scan_string(myscanner, buf);
-    symparser_parse(myscanner, ll, stack, depth);
-    symparser_flush_and_delete_buffer(myscanner, bp);
-    symparser_lex_destroy(myscanner);
+ 	bp = symparser_scan_string((yyscan_t) this, buf);
+    symparser_parse((yyscan_t) this, ll, stack, depth);
+    symparser_flush_and_delete_buffer((yyscan_t) this, bp);
+    reset();
 }
 
 #ifndef BACH_MAX

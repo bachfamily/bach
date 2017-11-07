@@ -62,7 +62,7 @@ extern int symparser_debug;
 
 union YYSTYPE
 {
-#line 25 "symparser.y" /* yacc.c:1909  */
+
 
 	long l;
 	double d;
@@ -70,7 +70,7 @@ union YYSTYPE
 	t_pitch p;
 	t_symbol *sym;
 
-#line 74 "symparser.tab.h" /* yacc.c:1909  */
+
 };
 
 typedef union YYSTYPE YYSTYPE;

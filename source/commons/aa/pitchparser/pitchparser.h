@@ -9,7 +9,7 @@
 #ifndef pitchparser_h
 #define pitchparser_h
 
-#include "parsers_commons.h"
+#include "bach_parser.hpp"
 #include "llll_commons.h"
 
 #ifdef CONFIGURATION_Development
@@ -19,13 +19,13 @@
 #define parserpost(...) ((void) 0)
 #endif
 
-typedef struct _pitchparser_wrapper {
-    void *scanner;
+class t_pitchParser : public t_parser {
+private:
     t_pitch *p;
-} t_pitchparser_wrapper;
-
-void pitchparser_new(t_pitchparser_wrapper *ppw);
-t_pitch pitchparser_scan_string(t_pitchparser_wrapper *ppw, char *buf);
-void pitchparser_free(t_pitchparser_wrapper *ppw);
+public:
+    t_pitchParser();
+    ~t_pitchParser() { delete p; };
+    t_pitch parse(char *buf);
+};
 
 #endif /* pitchparser_h */

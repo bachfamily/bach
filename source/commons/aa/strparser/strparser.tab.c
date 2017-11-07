@@ -1574,15 +1574,13 @@ yyreturn:
 #line 98 "strparser.y" /* yacc.c:1906  */
 
 
-void string_parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
+void t_strParser::parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
 {
-    yyscan_t myscanner;
     YY_BUFFER_STATE bp;
-    strparser_lex_init(&myscanner);
-    bp = strparser_scan_string(myscanner, buf);
-    strparser_parse(myscanner, ll, stack, depth);
-    strparser_flush_and_delete_buffer(myscanner, bp);
-    strparser_lex_destroy(myscanner);
+    bp = strparser_scan_string((yyscan_t) this, buf);
+    strparser_parse((yyscan_t) this, ll, stack, depth);
+    strparser_flush_and_delete_buffer((yyscan_t) this, bp);
+    reset();
 }
 
 #ifndef BACH_MAX
