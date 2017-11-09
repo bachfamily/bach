@@ -9901,7 +9901,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
         
         // N.B.: The version_number attribute is actually EXTREMELY useful: when an object is created in Max its dictionary has 0 as its default value when the
         // new() method is called for the first time, and something > 0 when e.g. it was already saved.
-        x->r_ob.version_number = BACH_CURRENT_VERSION;
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
         x->r_ob.creatingnewobj = 0;
 
         return x;

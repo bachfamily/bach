@@ -233,7 +233,7 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) wordcloud_assist, "assist", A_CANT, 0);
 	class_addmethod(c, (method) wordcloud_oksize, "oksize", A_CANT, 0);
 	
-//	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
+	llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_UI);
 	
 	CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 200 300"); // new dimensions
 	// @exclude bach.wordcloud
@@ -642,7 +642,8 @@ void wordcloud_anything(t_wordcloud *x, t_symbol *s, long argc, t_atom *argv){
 
 
 
-t_wordcloud* wordcloud_new(t_symbol *s, short argc, t_atom *argv){
+t_wordcloud* wordcloud_new(t_symbol *s, short argc, t_atom *argv)
+{
 	t_wordcloud* x = NULL;
 	t_max_err err = MAX_ERR_GENERIC;
 	t_dictionary *d;
@@ -716,6 +717,7 @@ t_wordcloud* wordcloud_new(t_symbol *s, short argc, t_atom *argv){
 		}
 		
 		x->creating_new_obj = false; 
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 		return x;
 	}
 	

@@ -2840,7 +2840,8 @@ void rhythmogram_anything(t_rhythmogram *x, t_symbol *s, long argc, t_atom *argv
 }
 
 
-t_rhythmogram* rhythmogram_new(t_symbol *s, long argc, t_atom *argv){
+t_rhythmogram* rhythmogram_new(t_symbol *s, long argc, t_atom *argv)
+{
 	t_rhythmogram* x = NULL;
 	t_max_err err = MAX_ERR_GENERIC;
 	t_dictionary *d;
@@ -2915,6 +2916,7 @@ t_rhythmogram* rhythmogram_new(t_symbol *s, long argc, t_atom *argv){
 
 	x->recalled_attributes = 1;
 
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 	if (x)
 		return x;
 

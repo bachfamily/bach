@@ -1815,7 +1815,8 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
     t_dictionary *d;
     t_object *textfield;
     long flags;
-    
+    char brand_new_creation = 0;
+
     if (!(d=object_dictionaryarg(argc,argv)))
         return NULL;
     
@@ -1868,6 +1869,23 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
     x->undo_llll = llll_get();
     x->redo_llll = llll_get();
     
+    
+    t_symbol *testsym = NULL;
+    if (dictionary_hasentry(d, gensym("versionnumber"))) {
+        t_atom_long vn;
+        dictionary_getlong(d, gensym("versionnumber"), &vn);
+        if (vn == 0) {
+            if (dictionary_hasentry(d, gensym("out"))) {
+                dictionary_getsym(d, (t_symbol *)gensym("out"), &testsym);
+                if (testsym == _llllobj_sym_empty_symbol)
+                    brand_new_creation = true;
+            }
+        }
+    }
+    
+
+    
+    
     // retrieve saved attribute values
     attr_dictionary_process(x, d);
     
@@ -1890,31 +1908,32 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
     
     if (x) {
         
-        //        if (llllobj_versionnumber_get(x, d) == 0) { // nuovo
-        
-        // retrieving saved values?
-        t_llll *llll_for_rebuild = llll_retrieve_from_dictionary_with_leveltypes(d, "whole_tree_data");
-        if (llll_for_rebuild) {
-            llllobj_manage_dict_llll((t_object *)x, LLLL_OBJ_UI, llll_for_rebuild);
-            x->tree_as_llll = llll_for_rebuild;
-            x->need_rebuid_tree_nodes = true;
+        if (llllobj_get_version_number((t_object *) x, LLLL_OBJ_UI) == 0 && !brand_new_creation) {
+            // need backward compatibility!!
             
-            if (x->mode == k_TREE_CHECKEDOUTLINE) {
-                t_llll *check_for_rebuild = llll_retrieve_from_dictionary_with_leveltypes(d, "tree_check_data");
-                if (check_for_rebuild)
-                    set_checkvalues_from_llll(x, check_for_rebuild);
+            // retrieving saved values?
+            t_llll *llll_for_rebuild = llll_retrieve_from_dictionary_with_leveltypes(d, "whole_tree_data");
+            if (llll_for_rebuild) {
+                llllobj_manage_dict_llll((t_object *)x, LLLL_OBJ_UI, llll_for_rebuild);
+                x->tree_as_llll = llll_for_rebuild;
+                x->need_rebuid_tree_nodes = true;
+                
+                if (x->mode == k_TREE_CHECKEDOUTLINE) {
+                    t_llll *check_for_rebuild = llll_retrieve_from_dictionary_with_leveltypes(d, "tree_check_data");
+                    if (check_for_rebuild)
+                        set_checkvalues_from_llll(x, check_for_rebuild);
+                }
+                
+                jbox_redraw((t_jbox *) x);
             }
             
-            jbox_redraw((t_jbox *) x);
+        } else {
+            
+            
         }
         
-        //      } else {
         
-        
-        //      } // endif
-        
-        
-        /// llllobj_versionnumber_set(x, LLLL_OBJ_UI)
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
         return x;
     }
     

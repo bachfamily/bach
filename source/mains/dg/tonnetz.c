@@ -2255,7 +2255,8 @@ void tonnetz_anything(t_tonnetz *x, t_symbol *s, long argc, t_atom *argv){ //arg
 	jbox_redraw((t_jbox *) x);
 }
 
-t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv){
+t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv)
+{
 	t_tonnetz* x = NULL;
 	t_max_err err = MAX_ERR_GENERIC;
 	t_dictionary *d;
@@ -2355,6 +2356,7 @@ t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv){
 		calculate_static_tonnetz(x);
 
 		x->creating_new_obj = false;
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 		return x;
 	}
 

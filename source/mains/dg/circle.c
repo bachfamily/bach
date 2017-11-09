@@ -862,6 +862,7 @@ t_circle* circle_new(t_symbol *s, long argc, t_atom *argv){
 
 	jbox_ready(&x->j_box.l_box);
 
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 	if (x)
 		return x;
 	else 

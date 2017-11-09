@@ -1364,7 +1364,8 @@ long uislot_oksize(t_uislot *x, t_rect *newrect)
 	return 0;
 }
 	
-t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv){
+t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
+{
 	int i;
 	t_uislot* x = NULL;
 	t_max_err err = MAX_ERR_GENERIC;
@@ -1473,7 +1474,7 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv){
 		
 		x->r_ob.last_undo_time = systime_ms();
 
-        x->r_ob.version_number = BACH_CURRENT_VERSION;
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
         x->r_ob.creatingnewobj = 0;
 
 		return x;

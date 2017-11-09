@@ -1078,7 +1078,9 @@ t_graph* graph_new(t_symbol *s, long argc, t_atom *argv){
 			x->num_points = count;
 			llll_free(llll_for_rebuild);
 		} 
-		return x;
+
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
+        return x;
 	}
 
 	object_free_debug(x);
