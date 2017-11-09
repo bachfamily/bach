@@ -115,7 +115,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)join_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)join_inletinfo,	"inletinfo",	A_CANT,		0);
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA); // every object with llll outlets must call this function in its main() function
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA); // every object with llll outlets must call this function in its main() function
 	
     CLASS_ATTR_LLLL(c, "triggers", 0, t_join, n_triggers, join_getattr_triggers, join_setattr_triggers);
     CLASS_ATTR_LABEL(c, "triggers", 0, "Triggers");
@@ -386,6 +386,8 @@ t_join *join_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

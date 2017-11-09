@@ -3281,7 +3281,7 @@ t_quantize *quantize_new(t_symbol *s, short ac, t_atom *av)
          x->minimal_units = default_minimal_units_llll;*/
         
         //		x->minimal_units = llll_from_text_buf("1/16 1/12"); // static, old default
-        x->minimal_units = llll_from_text_buf((char *)"dynamic ( 1/16 1/12 ) 10 ( 1/16 1/24 ) 15 ( 1/32 1/24 )", false); // dynamic: new default
+        x->minimal_units = llll_from_text_buf((char *)"dynamic ( 1/16 1/12 ) 10 ( 1/16 1/24 ) 15 ( 1/32 1/24 )"); // dynamic: new default
         x->use_dynamic_minimal_units = true;
         
         x->dynamic_minimal_units = NULL;

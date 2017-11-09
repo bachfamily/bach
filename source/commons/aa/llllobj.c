@@ -174,6 +174,30 @@ t_symbol *llllobj_get_outtypes(t_object *x, e_llllobj_obj_types type)
 	return NULL;
 }
 
+
+long llllobj_get_versionnumber(t_object *x, e_llllobj_obj_types type)
+{
+	switch (type) {
+		case LLLL_OBJ_VANILLA:
+			return ((t_llllobj_object *) x)->l_versionnumber;
+			break;
+		case LLLL_OBJ_MSP:
+			return ((t_llllobj_pxobject *) x)->l_versionnumber;
+			break;
+		case LLLL_OBJ_UI:
+			return ((t_llllobj_jbox *) x)->l_versionnumber;
+			break;
+		case LLLL_OBJ_UIMSP:
+			return ((t_llllobj_pxjbox *) x)->l_versionnumber;
+			break;
+		default:
+			return NULL;
+			break;
+	}
+	return NULL;
+}
+
+
 t_hashtab *llllobj_get_release(t_object *x, e_llllobj_obj_types type)
 {
 	switch (type) {
@@ -239,6 +263,7 @@ e_llllobj_outlet_types llllobj_get_outlet_type(t_object *x, e_llllobj_obj_types 
 	}
 	return LLLL_O_DISABLED;
 }
+
 
 t_llll **llllobj_get_dictll_ptr(t_object *x, e_llllobj_obj_types type)
 {
@@ -2094,6 +2119,70 @@ void llllobj_class_add_out_attr(t_class *c, e_llllobj_obj_types type)
 	CLASS_ATTR_BASIC(c, "out", 0);
 }
 
+void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type)
+{
+	switch (type) {
+		case LLLL_OBJ_VANILLA:
+			CLASS_ATTR_LONG(c, "versionnumber", 0, t_llllobj_object, l_versionnumber);
+			break;
+		case LLLL_OBJ_UI:
+			CLASS_ATTR_LONG(c, "versionnumber", 0, t_llllobj_jbox, l_versionnumber);
+			break;
+		case LLLL_OBJ_MSP:
+			CLASS_ATTR_LONG(c, "versionnumber", 0, t_llllobj_pxobject, l_versionnumber);
+			break;
+		case LLLL_OBJ_UIMSP:
+			CLASS_ATTR_LONG(c, "versionnumber", 0, t_llllobj_pxjbox, l_versionnumber);
+			break;
+		default:
+			break;
+	}
+	CLASS_ATTR_DEFAULT_SAVE(c,"versionnumber", 0, "0");
+	CLASS_ATTR_INVISIBLE(c, "versionnumber", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute
+	// @exclude all
+}
+
+void llllobj_class_add_default_bach_attrs(t_class *c, e_llllobj_obj_types type)
+{
+	llllobj_class_add_out_attr(c, type);
+	llllobj_class_add_versionnumber_attr(c, type);
+}
+
+
+t_atom_long llllobj_get_object_version_number(t_object *x, e_llllobj_obj_types type)
+{
+	t_atom_long vn = 0;
+	t_dictionary *d = (t_dictionary *) gensym("#D")->s_thing;
+	if (d) {
+		t_dictionary *savedattrs = NULL;
+		dictionary_getdictionary(d, gensym("saved_object_attributes"), (t_object **) &savedattrs);
+		if (savedattrs) {
+			dictionary_getlong(savedattrs, gensym("versionnumber"), &vn);
+		}
+	}
+	return vn;
+}
+
+
+void llllobj_set_current_version_number(t_object *x, e_llllobj_obj_types type)
+{
+	switch (type) {
+		case LLLL_OBJ_VANILLA:
+			((t_llllobj_object *) x)->l_versionnumber = BACH_CURRENT_VERSION;
+			break;
+		case LLLL_OBJ_MSP:
+			((t_llllobj_pxobject *) x)->l_versionnumber = BACH_CURRENT_VERSION;
+			break;
+		case LLLL_OBJ_UI:
+			((t_llllobj_jbox *) x)->l_versionnumber = BACH_CURRENT_VERSION;
+			break;
+		case LLLL_OBJ_UIMSP:
+			((t_llllobj_pxjbox *) x)->l_versionnumber = BACH_CURRENT_VERSION;
+			break;
+		default:
+			break;
+	}
+}
 
 void llllobj_cleanup_vanilla(t_object *x)
 {

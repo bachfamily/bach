@@ -392,17 +392,6 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags);
 
 
-// backticks a t_symbol if necessary, that is:
-// if the received symbol
-
-// (of course the t_symbol is left unaffected, and you get a new one if needed!)
-t_symbol *llll_quoteme(t_symbol *s);
-
-// backticks a t_symbol without checking
-t_symbol *sym_addquote(const char *txt);
-
-
-
 // returns a t_symbol with the backticked txt
 t_symbol *sym_addquote(const char *txt);
 
@@ -1039,7 +1028,7 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 t_atom_long llll_to_native_buf(t_llll *in_llll, char **buf);
 
 // creates a llll from a text buffer
-t_llll *llll_from_text_buf(const char *txtbuf, t_bool leveltypes);
+t_llll *llll_from_text_buf(const char *txtbuf);
 
 
 // retrieve a list from a native buffer of ac size

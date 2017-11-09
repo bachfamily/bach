@@ -1,4 +1,5 @@
 %option noyywrap nodefault reentrant
+%option noyyalloc noyyrealloc noyyfree
 %option header-file="pitchparser.lex.h"
 %option outfile="pitchparser.c"
 %option prefix="pitchparser_"
@@ -40,25 +41,25 @@ ACCIDENTAL ([#bxdq\^v]+)
 %}
 
 ^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {
-    *p = parse_pitch_as_name_acc_int(yytext);
+    *p = t_parser::eatPitchAsNameAccInt(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     return P_MORE;
 }
 
 ^[-+]?{NOTENAME}[-+]?{UINT}{ACCIDENTAL} {
-    *p = parse_pitch_as_name_int_acc(yytext);
+    *p = t_parser::eatPitchAsNameIntAcc(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
 
 ^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t {
-    *p = parse_pitch_as_name_acc_int_int_t(yytext);
+    *p = t_parser::eatPitchAsNameAccIntIntT(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
 
-^{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
-    *p = parse_pitch_as_name_acc_int_rat_t(yytext);
+^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
+    *p = t_parser::eatPitchAsNameAccIntRatT(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
@@ -82,40 +83,62 @@ int main(int argc, char **argv)
 }
 #endif
 
-void pitchparser_new(t_pitchparser_wrapper *ppw)
+
+t_pitchParser::t_pitchParser() : t_parser()
 {
-    ppw->p = new(t_pitch);
-    yylex_init_extra(ppw->p, (yyscan_t *) &ppw->scanner);
+    
+    p = new(t_pitch);
+    
+    struct yyguts_t dummy_yyguts;
+    pitchparser_set_extra(p, &dummy_yyguts);
+    
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    pitchparser_set_extra (p, (yyscan_t) this);
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-t_pitch pitchparser_scan_string(t_pitchparser_wrapper *ppw, char *buf)
+t_pitch t_pitchParser::parse(char *buf)
 {
-    t_pitch p;
-    yyscan_t scanner = (yyscan_t) ppw->scanner;
-    YY_BUFFER_STATE bp = yy_scan_string(buf, scanner);
-    yy_switch_to_buffer(bp, scanner);
-    switch (yylex(scanner)) {
+    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) this);
+    yy_switch_to_buffer(bp, (yyscan_t) this);
+    switch (yylex((yyscan_t) this)) {
         case P_ERROR:
         case P_END:
-            p = t_pitch::NaP;
+            *p = t_pitch::NaP;
             break;
         case P_MORE:
-            p = *ppw->p;
-            if (yylex(scanner) != P_END)
-                p = t_pitch::NaP;
+            if (yylex((yyscan_t) this) != P_END)
+                *p = t_pitch::NaP;
             break;
     }
-    yy_flush_buffer(bp, scanner);
-    yy_delete_buffer(bp, scanner);
-    return p;
+    yy_flush_buffer(bp, (yyscan_t) this);
+    yy_delete_buffer(bp, (yyscan_t) this);
+    return *p;
 }
 
-void pitchparser_free(t_pitchparser_wrapper *ppw)
+
+
+void *pitchparser_alloc(size_t bytes, void *yyscanner)
 {
-    delete ppw->p;
-    pitchparser_lex_destroy(ppw->scanner);
+    void *b = ((t_pitchParser *) yyscanner)->getPtr(bytes);
+    parserpost(" pitchparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
 }
 
+void *pitchparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" pitchparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
 
-
-
+void pitchparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}

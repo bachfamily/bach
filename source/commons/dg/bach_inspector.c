@@ -1676,7 +1676,7 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 				atom_setlong(*av, voice->num_staff_lines);
 			} else {
 				char *string = char_array_to_string(voice->staff_lines, voice->num_staff_lines, true);
-				t_llll *ll = llll_from_text_buf(string, false);
+				t_llll *ll = llll_from_text_buf(string);
 				*ac = llll_deparse(ll, av, 0, 0);
 				bach_freeptr(string);
 				llll_free(ll);

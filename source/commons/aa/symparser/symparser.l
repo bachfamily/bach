@@ -1,4 +1,5 @@
 %option noyywrap nodefault reentrant bison-bridge
+%option noyyalloc noyyrealloc noyyfree
 %option header-file="symparser.lex.h"
 %option outfile="symparser.c"
 %option prefix="symparser_"
@@ -24,6 +25,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     
     #include "symparser.tab.h"
     #define YY_DECL int yylex(YYSTYPE *yylval_param, yyscan_t yyscanner)
+    
 %}
 
 %%
@@ -45,7 +47,7 @@ ACCIDENTAL ([#bxdq\^v]+)
 }
 
 {RATIONAL} {
-    yylval->r = parse_rational(yytext);
+    yylval->r = t_parser::eatRational(yytext);
     parserpost(" lex: RATIONAL %ld / %ld\n", yylval->r.num(), yylval->r.den());
     return RAT;
 }
@@ -57,25 +59,25 @@ ACCIDENTAL ([#bxdq\^v]+)
 }
 
 [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER} {
-    yylval->p = parse_pitch_as_name_acc_int(yytext);
+    yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return PITCH;
 }
 
 [-+]?{NOTENAME}{INTEGER}{ACCIDENTAL} {
-    yylval->p = parse_pitch_as_name_int_acc(yytext);
+    yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return PITCH;
 }
 
 [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
-    yylval->p = parse_pitch_as_name_acc_int_int_t(yytext);
+    yylval->p = t_parser::eatPitchAsNameAccIntIntT(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return PITCH;
 }
 
-{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
-    yylval->p = parse_pitch_as_name_acc_int_rat_t(yytext);
+[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+    yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return PITCH;
 }
@@ -87,9 +89,9 @@ ACCIDENTAL ([#bxdq\^v]+)
 }
 
 \"\" {
-parserpost(" lex: QUOTED EMPTY SYMBOL %s\n", yytext);
-yylval->sym = gensym("");
-return SYMBOL;
+    parserpost(" lex: QUOTED EMPTY SYMBOL %s\n", yytext);
+    yylval->sym = gensym("");
+    return SYMBOL;
 }
 
 ["]("\\\""|[^"` \t\n\r\f\v])("\\\""|[^" \t\n\r\f\v])*[^\\ \t\n\r\f\v]["] {
@@ -135,6 +137,18 @@ int main(int argc, char **argv)
 }
 #endif
 
+
+t_symParser::t_symParser() : t_parser()
+{
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    yy_init_globals ((yyscan_t) this);
+}
+
 YY_BUFFER_STATE symparser_scan_string(yyscan_t myscanner, char *buf)
 {
     YY_BUFFER_STATE bp = yy_scan_string(buf, myscanner);
@@ -146,4 +160,24 @@ void symparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 {
     yy_flush_buffer(bp, myscanner);
     yy_delete_buffer(bp, myscanner);
+}
+
+
+
+void *symparser_alloc(size_t bytes, void *yyscanner)
+{
+    void *b = ((t_symParser *) yyscanner)->getPtr(bytes);
+    parserpost(" symparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
+}
+
+void *symparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" symparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
+
+void symparser_free(void *ptr,void *yyscanner)
+{
+    return;
 }

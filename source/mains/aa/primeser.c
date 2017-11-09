@@ -116,7 +116,7 @@ int T_EXPORT main()
 	class_register(CLASS_BOX, c);
 	primeser_class = c;
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 
 	dev_post("bach.primeser compiled %s %s", __DATE__, __TIME__);
@@ -302,7 +302,8 @@ t_primeser *primeser_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
-	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

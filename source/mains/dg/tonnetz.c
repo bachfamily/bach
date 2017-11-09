@@ -550,7 +550,7 @@ t_max_err tonnetz_setattr_scaleintervals(t_tonnetz *x, t_object *attr, long ac, 
 				if (ll->l_size == 1 && ll->l_depth == 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
 					t_symbol *sym = hatom_getsym(&ll->l_head->l_hatom);
 					llll_free(ll);
-					ll = llll_from_text_buf(sym->s_name, false);
+					ll = llll_from_text_buf(sym->s_name);
 				}
 				
 				llll_free(x->purely_diatonic_scale_intervals);
@@ -580,7 +580,7 @@ t_max_err tonnetz_setattr_scalefreqratios(t_tonnetz *x, t_object *attr, long ac,
 			if (ll->l_size == 1 && ll->l_depth == 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
 				t_symbol *sym = hatom_getsym(&ll->l_head->l_hatom);
 				llll_free(ll);
-				ll = llll_from_text_buf(sym->s_name, false);
+				ll = llll_from_text_buf(sym->s_name);
 			}
 
 			llll_free(x->purely_diatonic_scale_freq_ratios);
@@ -678,7 +678,7 @@ t_max_err tonnetz_setattr_generators(t_tonnetz *x, t_object *attr, long ac, t_at
 			if (ll->l_size == 1 && ll->l_depth == 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
 				t_symbol *sym = hatom_getsym(&ll->l_head->l_hatom);
 				llll_free(ll);
-				ll = llll_from_text_buf(sym->s_name, false);
+				ll = llll_from_text_buf(sym->s_name);
 			}
 			
 			
@@ -2286,8 +2286,8 @@ t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv){
 	err = jbox_new(&x->j_box.l_box, flags, argc, argv); 
 	x->j_box.l_box.b_firstin = (t_object*) x;
 	x->creating_new_obj = true;
-	x->purely_diatonic_scale_intervals = llll_from_text_buf((char *) "200 200 100 200 200 200 100", false);
-	x->purely_diatonic_scale_freq_ratios = llll_from_text_buf((char *) "9/8 5/4 4/3 3/2 5/3 15/8 2/1", false);
+	x->purely_diatonic_scale_intervals = llll_from_text_buf((char *) "200 200 100 200 200 200 100");
+	x->purely_diatonic_scale_freq_ratios = llll_from_text_buf((char *) "9/8 5/4 4/3 3/2 5/3 15/8 2/1");
 
     x->diatonic_center_as_llll = llll_get();
     
@@ -2307,7 +2307,7 @@ t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv){
 	x->show_focus = 1;
 	x->velocity_handling = 1;
 	x->is_velocity_dragging = -1;
-	x->generators_as_llll = llll_from_text_buf((char *)"(4 7) (2 4)", false);
+	x->generators_as_llll = llll_from_text_buf((char *)"(4 7) (2 4)");
 	x->generators[0].diatonic_steps = 4;
 	x->generators[0].chromatic_steps = 7;
 	x->generators[0].frequency_ratio = genrat(3, 2);

@@ -9,12 +9,12 @@
 #ifndef exprparser_h
 #define exprparser_h
 
-#include "parsers_commons.h"
+#include "bach_parser.hpp"
 #include "llll_commons.h"
 #include "lexpr.h"
 
 #ifdef CONFIGURATION_Development
-#define parserpost post
+//#define parserpost post
 #define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
@@ -29,12 +29,16 @@ typedef struct _exprparser_data {
     method lastfunction;
 } t_exprparser_data;
 
-
-void *exprparser_new(t_exprparser_data *data);
-void *exprparser_scan_string(void *myscanner, char *buf);
-void exprparser_flush_and_delete_buffer(void *myscanner, void *bp);
-void exprparser_free(void *myscanner);
-void exprparser_set_start_condition(void *myscanner, int condition);
+class t_exprParser : public t_parser {
+private:
+    void *buffer;
+public:
+    t_exprParser(t_exprparser_data *data);
+    void setBuffer(char *buf);
+    void setStartCondition(int condition);
+    void reset();
+    int lex();
+};
 
 
 #endif /* exprparser_h */

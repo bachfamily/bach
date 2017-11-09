@@ -192,7 +192,8 @@ int T_EXPORT main()
 	eq_class = c;
 	
 	
-	
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
 	
 	
 	// posts a message when compiled in development configuration
@@ -481,6 +482,8 @@ t_eq *eq_new(t_symbol *s, short ac, t_atom *av)
 		
 		// Should never happen...
 		error(BACH_CANT_INSTANTIATE);
+
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

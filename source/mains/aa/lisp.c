@@ -118,7 +118,7 @@ int T_EXPORT main()
     // and also manages the notify method for managing the l_rebuild field.
     // Always put this in the main() function of an object with llll outlets.
     
-    llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
     
 
     

@@ -1686,9 +1686,9 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                             if (velocity_el)
                                                 velocity = hatom_getlong(&velocity_el->l_hatom);
                                             snprintf(buf, 512, "(0. 0. 0. %ld) (1. 0. 0. %ld)", velocity, velocity);
-                                            llll_appendllll(found, llll_from_text_buf(buf, false));
+                                            llll_appendllll(found, llll_from_text_buf(buf));
                                         } else {
-                                            llll_appendllll(found, llll_from_text_buf("(0. 0. 0.) (1. 0. 0.)", false));
+                                            llll_appendllll(found, llll_from_text_buf("(0. 0. 0.) (1. 0. 0.)"));
                                         }
                                     } else
                                         llll_appendllll(found, llll_get());

@@ -25,7 +25,6 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 	t_llll_stack *stack;
 	t_atom_long depth = 1;
 	long deepenough;
-	long leveltype = L_STANDARD;
 	char *txt = NULL, *pos;
 	
 	if (!ll)
@@ -117,9 +116,8 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 						snprintf_zero(postline, 256, "%s ###NULL###", header);
 					this_elem = this_elem->l_next;
 				} else {
-					leveltype = sub_ll->l_leveltype;
 					if (depth > 0 && (depth < maxdepth || (maxdepth < 0 && sub_ll->l_depth >= -maxdepth))) { // if we are within maxdepth
-						snprintf_zero(postline, 256, "%s %c ", header, _open_parentheses[leveltype]);
+						snprintf_zero(postline, 256, "%s ( ", header);
 						if (txt)
 							strncat_zero(postline, txt, 256);
 						llll_stack_push(stack, this_elem);
@@ -131,9 +129,9 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 							strncat_zero(header, "•", 256);
 					} else {
 						if (deepenough) {
-							snprintf_zero(postline, 256, "%s %c ", header, _open_parentheses[leveltype]);				
+							snprintf_zero(postline, 256, "%s ( ", header);
 							llll_to_text_buf(sub_ll, &postline, strlen(postline), max_decimals, LLLL_T_NO_BACKSLASH, fn);
-							snprintf_zero(postline, sysmem_ptrsize(postline), "%s %c", postline, _closed_parentheses[leveltype]);
+							snprintf_zero(postline, sysmem_ptrsize(postline), "%s )", postline);
 						}
 						this_elem = this_elem->l_next;
 					}
@@ -152,14 +150,13 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 		
 		if (deepenough) {
 			if (client)
-				object_post((t_object *) client, "%s %c", header, _closed_parentheses[leveltype]);
+				object_post((t_object *) client, "%s )", header);
 			else 
-				post("%s %c", header, _closed_parentheses[leveltype]);
+				post("%s )", header);
 		}
 		
 		depth--;
 		this_elem = (t_llllelem *) llll_stack_pop(stack);
-		leveltype = this_elem->l_parent->l_leveltype;
 		deepenough = (mindepth > 0 && depth >= mindepth) || (this_elem->l_parent->l_depth <= -mindepth);
 		this_elem = this_elem->l_next;
 		snprintf_zero(header, 256, "%3" ATOM_LONG_FMT_MODIFIER "d: ", depth);
@@ -270,13 +267,13 @@ void llll_print_named_do(void *dummy, t_symbol *name, long ac, t_atom *av)
 
 
 // creates a llll from a text buffer
-t_llll *llll_from_text_buf(const char *txtbuf, t_bool leveltypes)
+t_llll *llll_from_text_buf(const char *txtbuf)
 {
 	t_llll *ll;
 	t_atom av;
 	atom_setobj(&av, (t_object *) txtbuf);
 	// llll_text2atoms(txtbuf, &ac, &av);
-	ll = leveltypes ? llll_parse_with_leveltypes(1, &av) : llll_parse(1, &av);
+	ll = llll_parse(1, &av);
 	// bach_freeptr(av);
 	return ll;
 }

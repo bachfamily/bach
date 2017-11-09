@@ -211,8 +211,8 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 	t_llll_stack *stack;
 	t_symbol *checked;
 	t_atom_long outsize;
-	long leveltype = L_STANDARD;
 	t_atom *new_out, *this_out;
+    t_chkParser chkParser;
 	
 	if (*out == NULL) {
 		*out = (t_atom *) bach_newptr(ATOM_LIST_LENGTH_STEP * sizeof (t_atom));
@@ -305,8 +305,8 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
                     if (ac == 0 && (flags & LLLL_D_MAX) && (sym == _sym_int || sym == _sym_float || sym == _sym_list)) {
                         checked = sym_addquote(sym->s_name);
                     } else if (flags & LLLL_D_QUOTE) {
-                        checked = llll_quoteme(sym);
-					} else 
+                        checked = chkParser.addQuoteIfNeeded(sym);
+					} else
 						checked = sym;
 					
 					atom_setsym(this_out++, checked);
@@ -316,8 +316,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
                 }
 				case H_LLLL:
 					subll = elem->l_hatom.h_w.w_llll;
-					leveltype = subll->l_leveltype;
-					atom_setsym(this_out++, _open_parentheses_sym[leveltype]);
+					atom_setsym(this_out++, _llllobj_sym_open_round_bracket);
 					ac ++;
 					llll_stack_push(stack, elem);
 					elem = subll->l_head;
@@ -346,32 +345,13 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 		}
 		if (!stack->s_items)
 			break;
-		atom_setsym(this_out++, _closed_parentheses_sym[leveltype]);
+		atom_setsym(this_out++, _llllobj_sym_closed_round_bracket);
 		ac ++;
 		elem = (t_llllelem *) llll_stack_pop(stack);
-		leveltype = elem->l_parent->l_leveltype;
 		elem = elem->l_next;
 	}
 	llll_stack_destroy(stack);
 	return ac;
-}
-
-// TODO:
-// replace with a call to the parser
-// if it returns anything different from one symbol, it should be quoted
-t_symbol *llll_quoteme(t_symbol *s)
-{
-    if (s == _llllobj_sym_nil || s == _llllobj_sym_null) {
-		return sym_addquote(s->s_name);
-    } else {
-        long tct;
-        long type = typecheck_parse(s->s_name, &tct);
-        if (type != H_SYM || tct & E_TT_BACKTICK ||
-            ((tct & E_TT_PAREN) && !(tct & E_TT_RESERVED))) {
-            return sym_addquote(s->s_name);
-        } else
-            return s;
-    }
 }
 
 t_symbol *sym_addquote(const char *txt)
@@ -551,7 +531,6 @@ t_max_err llll_clone_upon(const t_llll *inll, t_llll *outll)
 		outll->l_depth = inll->l_depth;
 		outll->l_size = inll->l_size;
 		outll->l_thing.w_whole = inll->l_thing.w_whole;
-		outll->l_leveltype = inll->l_leveltype;
 		if (!instack->s_items)
 			break;
 		inelem = (t_llllelem *) llll_stack_pop(instack);
@@ -7233,8 +7212,6 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 	t_llllelem *elem;
 	t_llll_stack *stack;
 	t_atom_long outsize;
-	long leveltype = L_STANDARD;
-	t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
 	t_atom_long len;
 	char *new_buf, *pos = NULL, *txt = NULL;
 	
@@ -7432,8 +7409,7 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 			
 			if (elem->l_hatom.h_type == H_LLLL) {
 				subll = elem->l_hatom.h_w.w_llll;
-				leveltype = subll->l_leveltype;
-				*pos++ = special_parentheses ? _open_parentheses[leveltype] : '(';
+				*pos++ = '(';
 				*pos++ = ' ';
 				*pos = 0;
 				ac += 2;
@@ -7446,7 +7422,7 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 		
 		if (!stack->s_items)
 			break;
-		*pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+		*pos++ = ')';
 		*pos++ = ' ';
 		*pos = 0;
 		
@@ -7464,7 +7440,6 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 			}
 		}
 		elem = (t_llllelem *) llll_stack_pop(stack);
-		leveltype = elem->l_parent->l_leveltype;
 		elem = elem->l_next;
 	}
     if (!leave_final_space) {
@@ -7523,8 +7498,6 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
     t_llllelem *elem;
     t_llll_stack *stack;
     t_atom_long outsize;
-    long leveltype = L_STANDARD;
-    t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
     t_atom_long len;
     t_atom_long linesize = 0;
     t_atom_long indent_depth = 1;
@@ -7838,8 +7811,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
                             }
                             just_closed_indented_sublist = false;
                         }
-                        leveltype = subll->l_leveltype;
-                        *pos++ = special_parentheses ? _open_parentheses[leveltype] : '(';
+                        *pos++ = '(';
                         *pos++ = ' ';
                         //*pos = 0; // we don't really need this
                         count += 2;
@@ -7881,16 +7853,16 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
             if (indent_depth <= maxdepth || (maxdepth < 0 && subll->l_depth >= -maxdepth)) { // if we are within maxdepth
                 manage_wrap_and_indent(1, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                 --indent_depth;
-                *pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+                *pos++ = ')';
                 *pos++ = '\n';
                 just_closed_indented_sublist = true;
             } else {
-                *pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+                *pos++ = ')';
                 *pos++ = ' ';
                 //just_closed_indented_sublist = false;
             }
         } else {
-            *pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+            *pos++ = ')';
             *pos++ = ' ';
         }
         //*pos = 0; // we don't really need this
@@ -7910,7 +7882,6 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
         }
         elem = (t_llllelem *) llll_stack_pop(stack);
         subll = elem->l_parent;
-        leveltype = subll->l_leveltype;
         elem = elem->l_next;
         //if (!elem && (depth <= maxdepth || (maxdepth < 0 && subll->l_depth >= -maxdepth)))
           //  manage_indent(&pos, &linesize, &count, depth, indent);
@@ -7930,8 +7901,6 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 	t_llll *subll;
 	t_llllelem *elem;
 	t_llll_stack *stack;
-	long leveltype = L_STANDARD;
-	t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
 	t_atom_long len;
 	char *pos = NULL, *txt = NULL;
 	
@@ -8125,9 +8094,8 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 			
 			if (elem->l_hatom.h_type == H_LLLL) {
 				subll = elem->l_hatom.h_w.w_llll;
-				leveltype = subll->l_leveltype;
 				if (max_size > 2) {
-					*pos++ = special_parentheses ? _open_parentheses[leveltype] : '(';
+					*pos++ = '(';
 					*pos++ = ' ';
 					*pos = 0;
 					ac += 2;
@@ -8143,7 +8111,7 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 		if (!stack->s_items)
 			break;
 		if (max_size > 2) {
-			*pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+			*pos++ = ')';
 			*pos++ = ' ';
 			*pos = 0;
 			ac += 2;
@@ -8151,7 +8119,6 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 		}
 
 		elem = (t_llllelem *) llll_stack_pop(stack);
-		leveltype = elem->l_parent->l_leveltype;
 		elem = elem->l_next;
 	}
 	if (*pos == ' ') {

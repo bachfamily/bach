@@ -1526,7 +1526,7 @@ t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob
     par.lineoffifth_bias = 2.;
     par.discard_altered_repetitions = true;
     
-    t_llll *stdev_thresh_ll = llll_from_text_buf("21/(numnotes+1)", false);
+    t_llll *stdev_thresh_ll = llll_from_text_buf("21/(numnotes+1)");
     t_atom *stdev_thresh_av = NULL;
     long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, 0);
     par.stdev_thresh = lexpr_new(stdev_thresh_ac, stdev_thresh_av, subs_count, subs, (t_object *)r_ob);
@@ -1551,7 +1551,7 @@ long llll_to_pos_helper(t_llll *ll)
                 t_symbol *s = hatom_getsym(&ll->l_head->l_hatom);
                 char temp[2048];
                 snprintf_zero(temp, 2048, "%s0", s ? s->s_name : "C");
-                t_llll *temp_ll = llll_from_text_buf(temp, false);
+                t_llll *temp_ll = llll_from_text_buf(temp);
                 if (temp_ll && temp_ll->l_head) {
                     if (hatom_gettype(&temp_ll->l_head->l_hatom) == H_PITCH)
                         res = pitch_to_position_on_line_of_fifths(hatom_getpitch(&temp_ll->l_head->l_hatom));

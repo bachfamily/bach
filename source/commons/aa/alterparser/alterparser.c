@@ -1,6 +1,5 @@
-#line 2 "alterparser.c"
 
-#line 4 "alterparser.c"
+#line 3 "alterparser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -362,8 +361,8 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 6
-#define YY_END_OF_BUFFER 7
+#define YY_NUM_RULES 8
+#define YY_END_OF_BUFFER 9
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -371,10 +370,11 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[19] =
+static yyconst flex_int16_t yy_accept[27] =
     {   0,
-        0,    0,    7,    4,    5,    4,    4,    1,    0,    0,
-        0,    1,    0,    2,    0,    0,    3,    0
+        0,    0,    9,    6,    7,    6,    6,    6,    1,    0,
+        0,    0,    0,    4,    1,    0,    0,    0,    2,    0,
+        0,    0,    0,    5,    3,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
@@ -414,30 +414,34 @@ static yyconst YY_CHAR yy_meta[8] =
         1,    1,    1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_uint16_t yy_base[19] =
+static yyconst flex_uint16_t yy_base[27] =
     {   0,
-        0,   19,   21,   23,   23,    5,   14,   16,    0,   12,
-        5,    0,    9,   23,    8,   10,   23,   23
+        0,   29,   31,   33,   33,    5,   24,    4,   26,    0,
+       22,    7,    0,   33,    0,   10,   14,   17,   33,   16,
+       18,   13,   20,   33,   33,   33
     } ;
 
-static yyconst flex_int16_t yy_def[19] =
+static yyconst flex_int16_t yy_def[27] =
     {   0,
-       18,    1,   18,   18,   18,   18,   18,    6,    6,   18,
-       18,    8,   18,   18,   18,   18,   18,    0
+       26,    1,   26,   26,   26,   26,   26,   26,    6,    6,
+       26,   26,    8,   26,    9,   26,   26,   26,   26,   26,
+       26,   26,   26,   26,   26,    0
     } ;
 
-static yyconst flex_uint16_t yy_nxt[31] =
+static yyconst flex_uint16_t yy_nxt[41] =
     {   0,
-        4,    5,    6,    7,    4,    4,    4,    9,   10,   13,
-       11,   14,   15,   16,   16,   16,   17,   11,   12,   11,
-       18,    8,    3,   18,   18,   18,   18,   18,   18,   18
+        4,    5,    6,    7,    4,    8,    4,   10,   11,   13,
+       14,   17,   12,   14,   18,   16,   19,   20,   23,   21,
+       22,   21,   23,   21,   24,   23,   25,   16,   15,   12,
+       26,    9,    3,   26,   26,   26,   26,   26,   26,   26
     } ;
 
-static yyconst flex_int16_t yy_chk[31] =
+static yyconst flex_int16_t yy_chk[41] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    6,    6,   11,
-       11,   11,   13,   15,   13,   16,   16,   10,    8,    7,
-        3,    2,   18,   18,   18,   18,   18,   18,   18,   18
+        1,    1,    1,    1,    1,    1,    1,    6,    6,    8,
+        8,   12,   12,   12,   16,   16,   16,   17,   22,   17,
+       18,   20,   18,   21,   21,   23,   23,   11,    9,    7,
+        3,    2,   26,   26,   26,   26,   26,   26,   26,   26
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -447,8 +451,6 @@ static yyconst flex_int16_t yy_chk[31] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "alterparser.l"
-#line 15 "alterparser.l"
     #define BACH_MAX
     #ifdef BACH_MAX
     #include "llllobj.h"
@@ -466,7 +468,6 @@ static yyconst flex_int16_t yy_chk[31] =
         A_MORE,
         A_ERROR
     } e_alterparser_rv;
-#line 470 "alterparser.c"
 
 #define INITIAL 0
 
@@ -728,14 +729,8 @@ YY_DECL
 		}
 
 	{
-#line 36 "alterparser.l"
-
-
 
     t_shortRational *a = yyextra;
-
-
-#line 739 "alterparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -763,13 +758,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 19 )
+				if ( yy_current_state >= 27 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 23 );
+		while ( yy_base[yy_current_state] != 33 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -795,7 +790,6 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 42 "alterparser.l"
 {
     char *next = yytext;
     *a = t_pitch::text2alter(&next);
@@ -805,7 +799,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 49 "alterparser.l"
 {
     char *next = yytext;
     *a = t_pitch::text2alter(&next);
@@ -816,7 +809,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 57 "alterparser.l"
 {
     char *next = yytext;
     *a = t_pitch::text2alter(&next);
@@ -827,27 +819,40 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 65 "alterparser.l"
+{
+    *a = t_shortRational(strtol(yytext, NULL, 10), 1);
+    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    return A_MORE;
+}
+	YY_BREAK
+case 5:
+YY_RULE_SETUP
+{
+    char *next = yytext;
+    *a = t_shortRational(strtol(next, &next, 10), strtol(next + 1, NULL, 10));
+    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    return A_MORE;
+}
+	YY_BREAK
+case 6:
+YY_RULE_SETUP
 {
     parserpost(" lex: unrecognized character %s", yytext);
     return A_ERROR;
 }
 	YY_BREAK
-case 5:
-/* rule 5 can match eol */
+case 7:
+/* rule 7 can match eol */
 YY_RULE_SETUP
-#line 70 "alterparser.l"
 {
     parserpost(" lex: unrecognized character \\n", yytext);
     return A_ERROR;
 }
 	YY_BREAK
-case 6:
+case 8:
 YY_RULE_SETUP
-#line 75 "alterparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 851 "alterparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1143,7 +1148,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 19 )
+			if ( yy_current_state >= 27 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1172,11 +1177,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 19 )
+		if ( yy_current_state >= 27 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 18);
+	yy_is_jam = (yy_current_state == 26);
 
 	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;
@@ -1988,40 +1993,7 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *alterparser_alloc (yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	return (void *) malloc( size );
-}
-
-void *alterparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
-}
-
-void alterparser_free (void * ptr , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	free( (char *) ptr );	/* see alterparser_realloc() for (char *) cast */
-}
-
 #define YYTABLES_NAME "yytables"
-
-#line 75 "alterparser.l"
-
-
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)
@@ -2030,41 +2002,59 @@ int main(int argc, char **argv)
 }
 #endif
 
-void alterparser_new(t_alterparser_wrapper *apw)
+t_alterParser::t_alterParser() : t_parser()
 {
-    apw->a = new(t_shortRational);
-    alterparser_lex_init_extra(apw->a,(yyscan_t *) &apw->scanner);
+    
+    a = new(t_shortRational);
+    
+    struct yyguts_t dummy_yyguts;
+    alterparser_set_extra(a, &dummy_yyguts);
+    
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    alterparser_set_extra (a, (yyscan_t) this);
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-t_shortRational alterparser_scan_string(t_alterparser_wrapper *apw, char *buf)
+t_shortRational t_alterParser::parse(char *buf)
 {
-    t_shortRational a;
-    yyscan_t scanner = (yyscan_t) apw->scanner;
-    YY_BUFFER_STATE bp = alterparser__scan_string(buf,scanner);
-    alterparser__switch_to_buffer(bp,scanner);
-    switch (alterparser_lex(scanner)) {
+    YY_BUFFER_STATE bp = alterparser__scan_string(buf,(yyscan_t) this);
+    alterparser__switch_to_buffer(bp,(yyscan_t) this);
+    switch (alterparser_lex((yyscan_t) this)) {
         case A_ERROR:
         case A_END:
-            a = t_shortRational(0, 0);
+            *a = t_pitch::illegal;
             break;
         case A_MORE:
-            a = *apw->a;
-            if (alterparser_lex(scanner) != A_END)
-                a = t_shortRational(0, 0);
+            if (alterparser_lex((yyscan_t) this) != A_END)
+                *a = t_pitch::illegal;
             break;
     }
-    alterparser__flush_buffer(bp,scanner);
-    alterparser__delete_buffer(bp,scanner);
-    return a;
+    alterparser__flush_buffer(bp,(yyscan_t) this);
+    alterparser__delete_buffer(bp,(yyscan_t) this);
+    return *a;
 }
 
-void alterparser_free(t_alterparser_wrapper *apw)
+void *alterparser_alloc(size_t bytes, void *yyscanner)
 {
-    delete apw->a;
-    alterparser_lex_destroy(apw->scanner);
+    void *b = ((t_alterParser *) yyscanner)->getPtr(bytes);
+    parserpost(" alterparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
 }
 
+void *alterparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" alterparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
 
-
-
-
+void alterparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}

@@ -58,6 +58,7 @@
 #include "ext_systhread.h"
 #include "ext_dictionary.h"
 #include "jpatcher_api.h"
+#include "chkparser.h"
 
 #define MAX_ATTRS 256
 
@@ -191,7 +192,7 @@ int T_EXPORT main()
 	// @description An optional set of keywords to be considered as attributes, and therefore output as attribute-style arguments. <br />
 	// @copy BACH_DOC_STATIC_ATTR
  
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 */
 	class_register(CLASS_BOX, c);
@@ -465,6 +466,7 @@ t_args *args_new(t_symbol *s, short ac, t_atom *av)
 		error(BACH_CANT_INSTANTIATE);
 	
 	//object_post((t_object *) x, "instantiated bach.args: %p", x);
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;
@@ -479,6 +481,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 	t_jbox *pfftbox; 
 	t_object *box; // the box containing the patcher
 	t_atombuf *patcherargs;
+    t_chkParser chkParser;
 
 	long i;
 	long ac = 0;
@@ -559,7 +562,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 				if (*this_arg)
 					attrsym = sym_addquote(attrsym->s_name);
 				else
-					attrsym = llll_quoteme(attrsym);
+					attrsym = chkParser.addQuoteIfNeeded(attrsym);
 			}
 			llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, x->n_proxies + 2, attrsym, outargsac, outargsav + 1);	
 		}
@@ -605,7 +608,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 					if (*this_arg)
 						attrsym = sym_addquote(attrsym->s_name);
 					else
-						attrsym = llll_quoteme(attrsym);
+                        attrsym = chkParser.addQuoteIfNeeded(attrsym);
 				}
 				llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, x->n_proxies + 2, attrsym, outargsac, outargsav + 1);	
 			}

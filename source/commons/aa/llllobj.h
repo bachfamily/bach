@@ -49,22 +49,24 @@ typedef struct llllobj_out // the structure for an outlet and its cached data - 
 // TO BE CLEANED UP!
 typedef struct llllobj_object
 {
-	t_object				l_ob;			// the t_object from which we inherit
+	t_object				l_ob;               // the t_object from which we inherit
 	
-	t_int32					l_numstores;	// how many stores we have
-	struct llllobj_store	*l_incache;		// the stores
+	t_int32					l_numstores;        // how many stores we have
+	struct llllobj_store	*l_incache;         // the stores
 	
-	t_int32					l_numouts;		// how many outlets
-	t_int32					l_numllllouts;	// how many llll outlets
-	t_symbol				*l_outtypes;	// the value of the out attribute, when relevant
-	struct llllobj_out		*l_out;			// the outs
-	t_object				*l_send;		// unused
+	t_int32					l_numouts;          // how many outlets
+	t_int32					l_numllllouts;      // how many llll outlets
+	t_symbol				*l_outtypes;        // the value of the out attribute, when relevant
+	struct llllobj_out		*l_out;             // the outs
+	t_object				*l_send;            // unused
 	
-	t_bool					l_running;		// always 1 except during the instance creation - used for some exoteric initialization stuff - don't touch this!
-	t_bool					l_rebuild;		// can be managed by the standard notify method
-	t_llll					*l_dictll;		// unused
-	t_hashtab				*l_release;		// the release pool
-	t_bach_atomic_lock		l_release_lock; // threadlock for the release pool
+	t_bool					l_running;          // always 1 except during the instance creation - used for some exoteric initialization stuff - don't touch this!
+	t_bool					l_rebuild;          // can be managed by the standard notify method
+	t_llll					*l_dictll;          // unused
+	t_hashtab				*l_release;         // the release pool
+	t_bach_atomic_lock		l_release_lock;     // threadlock for the release pool
+    
+    t_atom_long             l_versionnumber;    // the number of the bach version under which the object was created or last saved
 } t_llllobj_object;
 
 
@@ -90,6 +92,8 @@ typedef struct llllobj_pxobject
 	t_llll					*l_dictll;		// unused
 	t_hashtab				*l_release;		// the release pool
 	t_bach_atomic_lock		l_release_lock; // threadlock for the release pool
+
+    t_atom_long             l_versionnumber;    // the number of the bach version under which the object was created or last saved
 } t_llllobj_pxobject;
 
 
@@ -115,6 +119,8 @@ typedef struct llllobj_jbox
 	t_llll					*l_dictll;		// Optionally set by llllobj_is_help
 	t_hashtab				*l_release;		// stuff to be released when the object is freed
 	t_bach_atomic_lock		l_release_lock;
+
+    t_atom_long             l_versionnumber;    // the number of the bach version under which the object was created or last saved
 } t_llllobj_jbox;
 
 
@@ -141,6 +147,8 @@ typedef struct llllobj_pxjbox
 	t_llll					*l_dictll;		// Optionally set by llllobj_is_help
 	t_hashtab				*l_release;		// stuff to be released when the object is freed
 	t_bach_atomic_lock		l_release_lock;
+
+    t_atom_long             l_versionnumber;    // the number of the bach version under which the object was created or last saved
 } t_llllobj_pxjbox;
 
 
@@ -615,7 +623,23 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 // that will be called by the standard notify method.
 void llllobj_class_add_out_attr(t_class *c, e_llllobj_obj_types type);
 
+// add the invisible versionnumber attr
+void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type);
 
+// add the out and versionnumber attrs
+void llllobj_class_add_default_bach_attrs(t_class *c, e_llllobj_obj_types type);
+
+// to be called from the object constructor
+// returns the object version number, as stored in the object dictionary,
+// or 0 if the version number is not stored
+// (meaning that the object was saved with bach pre-0.8,
+// or that is being typed now)
+// if process is true, the arguments stored in the object dictionary will be processed
+t_atom_long llllobj_get_object_version_number(t_object *x, e_llllobj_obj_types types);
+
+// sets the object version number as the current one
+// should be called by each object at the end of its constructor
+void llllobj_set_current_version_number(t_object *x, e_llllobj_obj_types type);
 
 
 // clean all the stores and outlets of an object

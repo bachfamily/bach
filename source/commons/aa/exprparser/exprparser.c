@@ -1,6 +1,5 @@
-#line 2 "exprparser.c"
 
-#line 4 "exprparser.c"
+#line 3 "exprparser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -615,9 +614,7 @@ static yyconst flex_int16_t yy_chk[483] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "exprparser.l"
 
-#line 16 "exprparser.l"
 	#define BACH_MAX
 	#ifdef BACH_MAX
     #include "llllobj.h"
@@ -631,7 +628,6 @@ static yyconst flex_int16_t yy_chk[483] =
     #include <ctype.h>
     #define parserpost printf
     #endif
-#line 635 "exprparser.c"
 
 #define INITIAL 0
 #define BINARY 1
@@ -891,14 +887,8 @@ YY_DECL
 		}
 
 	{
-#line 33 "exprparser.l"
-
-
 
     t_exprparser_data *epd = yyextra;
-
-
-#line 902 "exprparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -957,7 +947,6 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 39 "exprparser.l"
 {
     BEGIN INITIAL;
     return lexpr_append_lexeme_OPEN(epd->lexeme);
@@ -965,7 +954,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 44 "exprparser.l"
 {
     BEGIN BINARY;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -976,7 +964,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 52 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -987,7 +974,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 60 "exprparser.l"
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_VAR(epd->lexeme, *(yytext + 1), atol(yytext + 2) - 1, epd->numvars, yytext, epd->offending);
@@ -995,7 +981,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 65 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1006,7 +991,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 73 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1017,7 +1001,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 81 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1028,7 +1011,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 89 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1039,7 +1021,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 97 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1050,7 +1031,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 105 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1061,7 +1041,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 113 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1072,7 +1051,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 121 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1083,7 +1061,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 129 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1094,7 +1071,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 137 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1105,7 +1081,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 145 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1116,7 +1091,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 153 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1127,7 +1101,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 161 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1138,7 +1111,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 169 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1149,7 +1121,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 177 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1160,7 +1131,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 185 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1171,7 +1141,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 193 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1182,7 +1151,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 201 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1193,7 +1161,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 209 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1204,7 +1171,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 217 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1215,7 +1181,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 225 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1226,7 +1191,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 233 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1237,7 +1201,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 241 "exprparser.l"
 {
     BEGIN INITIAL;
     long err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(epd->lexeme - 1, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1248,7 +1211,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 249 "exprparser.l"
 {
     BEGIN INITIAL;
     parserpost(" lex: binary +");
@@ -1265,14 +1227,12 @@ YY_LINENO_REWIND_TO(yy_bp + 1);
 yyg->yy_c_buf_p = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 258 "exprparser.l"
 {
     parserpost(" lex: unary + (ignored)");
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 262 "exprparser.l"
 {
     BEGIN INITIAL;
     parserpost(" lex: binary -");
@@ -1284,7 +1244,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 271 "exprparser.l"
 {
     parserpost(" lex: unary -");
     return lexpr_append_lexeme_UMINUS(epd->lexeme);
@@ -1292,7 +1251,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 276 "exprparser.l"
 {
     parserpost(" lex: UINT %d\n", atoi(yytext));
     BEGIN BINARY;
@@ -1301,7 +1259,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 282 "exprparser.l"
 {
     char *textend;
 	long num = strtol(yytext, &textend, 10);
@@ -1313,7 +1270,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 291 "exprparser.l"
 {
     parserpost(" lex: DOUBLE %lf\n", atof(yytext));
     BEGIN BINARY;
@@ -1322,39 +1278,34 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 297 "exprparser.l"
 {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int(yytext));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccInt(yytext));
 }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 302 "exprparser.l"
 {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_int_acc(yytext));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameIntAcc(yytext));
 }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 307 "exprparser.l"
 {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int_int_t(yytext));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntIntT(yytext));
 }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 312 "exprparser.l"
 {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int_rat_t(yytext));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntRatT(yytext));
 }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 317 "exprparser.l"
 {
     t_shortRational alter = t_shortRational(atoi(yytext), 1);
     BEGIN BINARY;
@@ -1363,16 +1314,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 323 "exprparser.l"
 {
     char *textend;
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(parse_rational(yytext)), 0));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(t_parser::eatRational(yytext)), 0));
 }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 329 "exprparser.l"
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(atof(yytext)), 0));
@@ -1380,7 +1329,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 334 "exprparser.l"
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_pitch::dblsharp, 0));
@@ -1388,217 +1336,174 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 339 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cos, "cos"); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 340 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sin, "sin"); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 341 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tan, "tan"); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 342 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp, "exp"); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 343 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log, "log"); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 344 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_pow, "pow"); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 345 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_int, "int"); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 346 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_rat, "rat"); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 347 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_num, "num"); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 348 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_den, "den"); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 349 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_abs, "abs"); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 350 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_sgn, "sgn"); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 351 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_mod, "mod"); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 353 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acos, "acos"); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 354 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asin, "asin"); }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 355 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atan, "atan"); }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 356 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cosh, "cosh"); }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 357 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sinh, "sinh"); }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 358 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tanh, "tanh"); }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 359 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp2, "exp2"); }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 360 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log2, "log2"); }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 361 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sqrt, "sqrt"); }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 362 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, ceil, "ceil"); }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 363 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, fmod, "fmod"); }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 365 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, atan2, "atan2"); }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 366 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acosh, "acosh"); }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 367 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asinh, "asinh"); }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 368 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atanh, "atanh"); }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 369 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log10, "log10"); }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 370 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, hypot, "hypot"); }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 371 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, floor, "floor"); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 372 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, round, "round"); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 373 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, trunc, "trunc"); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 374 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_float, "float"); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 376 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_ALL_dontfold(epd->lexeme, hatom_fn_random, "random"); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 377 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn, "bessel"); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 379 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_pitch, "pitch"); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 380 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_degree, "degree"); }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 381 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_octave, "octave"); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 382 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_alter, "alter"); }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 383 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_cents, "cents"); }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 384 "exprparser.l"
 { return lexpr_append_lexeme_FUNC_ternary_ALL(epd->lexeme, hatom_fn_makepitch, "makepitch"); }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 386 "exprparser.l"
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_VAR_substitution(epd->lexeme, yytext, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
@@ -1607,14 +1512,12 @@ YY_RULE_SETUP
 case 86:
 /* rule 86 can match eol */
 YY_RULE_SETUP
-#line 391 "exprparser.l"
 {
 	parserpost(" lex: whitespace\n");
 }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 395 "exprparser.l"
 {
     parserpost(" lex: unrecognized character %s", yytext);
     return E_BAD_EXPR;
@@ -1622,10 +1525,8 @@ YY_RULE_SETUP
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 400 "exprparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1629 "exprparser.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(BINARY):
 	yyterminate();
@@ -2764,40 +2665,7 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *exprparser_alloc (yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	return (void *) malloc( size );
-}
-
-void *exprparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
-}
-
-void exprparser_free (void * ptr , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	free( (char *) ptr );	/* see exprparser_realloc() for (char *) cast */
-}
-
 #define YYTABLES_NAME "yytables"
-
-#line 400 "exprparser.l"
-
-
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)
@@ -2806,38 +2674,61 @@ int main(int argc, char **argv)
 }
 #endif
 
-void *exprparser_new(t_exprparser_data *data)
+t_exprParser::t_exprParser(t_exprparser_data *data) : t_parser()
 {
-    yyscan_t scanner;
-    exprparser_lex_init_extra(data,&scanner);
-    return (void *) scanner;
+    struct yyguts_t dummy_yyguts;
+    exprparser_set_extra(data, &dummy_yyguts);
+    
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    exprparser_set_extra (data, (yyscan_t) this);
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-void *exprparser_scan_string(void *myscanner, char *buf)
+void t_exprParser::setBuffer(char *buf)
 {
-    YY_BUFFER_STATE bp = exprparser__scan_string(buf,(yyscan_t) myscanner);
-    exprparser__switch_to_buffer(bp,(yyscan_t) myscanner);
-    return (void *) bp;
+    buffer = exprparser__scan_string(buf,(yyscan_t) this);
+    exprparser__switch_to_buffer((YY_BUFFER_STATE) buffer,(yyscan_t) this);
 }
 
-void exprparser_flush_and_delete_buffer(void *myscanner, void *bp)
+void t_exprParser::setStartCondition(int condition)
 {
-    exprparser__flush_buffer((YY_BUFFER_STATE) bp,(yyscan_t) myscanner);
-    exprparser__delete_buffer((YY_BUFFER_STATE) bp,(yyscan_t) myscanner);
-}
-
-void exprparser_free(void *myscanner)
-{
-    exprparser_lex_destroy((yyscan_t) myscanner);
-}
-
-void exprparser_set_start_condition(void *myscanner, int condition)
-{
-    struct yyguts_t *yyg = (struct yyguts_t*) myscanner;
+    struct yyguts_t *yyg = (struct yyguts_t*) this;
     BEGIN condition;
 }
 
+void t_exprParser::reset()
+{
+    exprparser__flush_buffer((YY_BUFFER_STATE) buffer,(yyscan_t) this);
+    exprparser__delete_buffer((YY_BUFFER_STATE) buffer,(yyscan_t) this);
+}
 
+int t_exprParser::lex()
+{
+    return exprparser_lex((yyscan_t) this);
+}
 
+void *exprparser_alloc(size_t bytes, void *yyscanner)
+{
+    void *b = ((t_exprParser *) yyscanner)->getPtr(bytes);
+    parserpost(" exprparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
+}
 
+void *exprparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" exprparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
+
+void exprparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}
 

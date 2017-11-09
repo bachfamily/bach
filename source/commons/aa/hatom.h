@@ -116,7 +116,16 @@ typedef enum _hatom_types {
     H_POP		= 0x00000080,	// special type, used by llll_from_native_buf() and the deprecated llll_save_as_native_buf()
     H_PITCH     = 0x00000100,
     H_STRING    = 0x00000200,
-    H_ALL		= 0xFFFFFFFF,	// special type, only used for bitmasking
+    
+    H_PAREN     = 0x10000000,   // modifier, indicating that a symbol contains parens
+    H_RESERVED  = 0x20000000,   // modifier, indicating that a symbol contains reserved characters (whitespace, comma, semicolon)
+    H_BACKTICK  = 0x40000000,   // modifier, indicating that a symbol starts with a backtick
+    
+    H_PLAINTYPE = 0x0000FFFF,   // bitmask for only retrieving the plain type
+    
+    H_MODIFIERS = 0xFFFF0000,   // bitmask for only retrieving the modifiers
+    
+    H_ALL		= 0xFFFFFFFF,	// special type, only used by lexpr
 } e_hatom_types;
 
 //#define H_NUMBER (H_LONG | H_RAT | H_DOUBLE)

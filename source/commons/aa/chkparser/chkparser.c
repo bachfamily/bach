@@ -395,7 +395,7 @@ static yyconst YY_CHAR yy_ec[256] =
 
        16,   14,   14,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    5,    1,    1,   17,    1,    5,    1,    5,
-        1,    1,    1,   18,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -412,20 +412,20 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst YY_CHAR yy_meta[19] =
+static yyconst YY_CHAR yy_meta[18] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1
+        1,    1,    1,    1,    1,    1,    1
     } ;
 
 static yyconst flex_uint16_t yy_base[54] =
     {   0,
-        0,    0,  115,  132,   17,   18,   23,   27,   44,   47,
-       59,  132,  104,   45,  103,   73,   54,  106,   76,    0,
-        0,    0,   49,   55,   63,   74,   75,   99,   81,  104,
-       80,   97,   96,   95,   94,   92,   93,  107,   91,   87,
-       85,  114,   82,   84,   83,   81,   73,  132,   71,   67,
-       61,   52,   51
+        0,    0,  116,  117,   16,   17,   22,   26,   42,   45,
+       57,  117,  105,   43,  103,   71,   52,  108,   74,    0,
+        0,    0,   47,   53,   61,   72,   73,  101,   79,  106,
+       78,   99,   98,   94,   93,   92,   80,   90,   91,   89,
+       87,   97,   82,   86,   83,   81,   71,  117,   69,   65,
+       59,   50,   49
     } ;
 
 static yyconst flex_int16_t yy_def[54] =
@@ -438,44 +438,42 @@ static yyconst flex_int16_t yy_def[54] =
        48,   48,   48
     } ;
 
-static yyconst flex_uint16_t yy_nxt[151] =
+static yyconst flex_uint16_t yy_nxt[135] =
     {   0,
         5,    6,    6,    5,    5,    7,    8,    9,    5,   10,
-       11,   11,   12,   11,   11,   11,    5,    5,   14,   14,
-       15,   17,   16,   18,   18,   18,   19,   13,   14,   14,
-       15,   13,   16,   13,   20,   13,   21,   22,   22,   13,
-       22,   22,   22,   13,   13,   14,   14,   15,   17,   16,
-       18,   18,   16,   23,   24,   25,   21,   17,   26,   18,
-       31,   14,   26,   27,   31,   28,   31,   13,   29,   32,
-       31,    4,   33,   27,   18,   18,   19,   18,   18,   19,
-       34,   36,   13,   35,   37,   38,   40,   39,   45,   41,
-       46,   46,   46,   13,   41,   38,   41,   47,   39,   39,
+       11,   11,   12,   11,   11,   11,    5,   14,   14,   15,
+       17,   16,   18,   18,   18,   19,   13,   14,   14,   15,
+       13,   16,   13,   20,   13,   21,   22,   22,   13,   22,
+       22,   22,   13,   14,   14,   15,   17,   16,   18,   18,
+       16,   23,   24,   25,   21,   17,   26,   18,   31,   14,
+       26,   27,   31,   28,   31,   13,   29,   32,   31,    4,
+       33,   27,   18,   18,   19,   18,   18,   19,   34,   36,
+       13,   35,   37,   38,   40,   39,   39,   41,   45,   37,
+       46,   46,   46,   38,   38,   13,   41,   47,   41,   13,
 
-       42,   37,   37,   35,   35,   33,   33,   30,   29,   30,
-       39,   38,   13,   13,   48,   48,   13,   48,   48,   48,
-       48,   38,   43,   42,   48,   48,   48,   48,   48,   48,
-       44,    3,   48,   48,   48,   48,   48,   48,   48,   48,
-       48,   48,   48,   48,   48,   48,   48,   48,   48,   48
+       42,   37,   35,   35,   38,   43,   42,   33,   33,   30,
+       29,   30,   13,   44,   13,   48,    3,   48,   48,   48,
+       48,   48,   48,   48,   48,   48,   48,   48,   48,   48,
+       48,   48,   48,   48
     } ;
 
-static yyconst flex_int16_t yy_chk[151] =
+static yyconst flex_int16_t yy_chk[135] =
     {   0,
         2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
-        2,    2,    2,    2,    2,    2,    2,    2,    5,    5,
-        5,    6,    5,    6,    7,    7,    7,    8,    8,    8,
+        2,    2,    2,    2,    2,    2,    2,    5,    5,    5,
+        6,    5,    6,    7,    7,    7,    8,    8,    8,    8,
         8,    8,    8,    8,    8,    8,    8,    8,    8,    8,
-        8,    8,    8,    8,    8,    9,    9,    9,   14,    9,
-       14,   53,   52,    9,   10,   10,   10,   17,   10,   17,
-       23,   51,   10,   11,   23,   11,   24,   50,   11,   25,
-       24,   49,   25,   11,   16,   16,   16,   19,   19,   19,
-       26,   27,   47,   26,   27,   29,   31,   29,   43,   31,
-       46,   43,   45,   44,   41,   29,   40,   46,   29,   37,
+        8,    8,    8,    9,    9,    9,   14,    9,   14,   53,
+       52,    9,   10,   10,   10,   17,   10,   17,   23,   51,
+       10,   11,   23,   11,   24,   50,   11,   25,   24,   49,
+       25,   11,   16,   16,   16,   19,   19,   19,   26,   27,
+       47,   26,   27,   29,   31,   29,   37,   31,   43,   37,
+       46,   43,   45,   29,   38,   44,   41,   46,   40,   38,
 
-       39,   36,   37,   35,   34,   33,   32,   30,   28,   18,
-       37,   38,   15,   13,    3,    0,   38,    0,    0,    0,
-        0,   38,   42,   42,    0,    0,    0,    0,    0,    0,
-       42,   48,   48,   48,   48,   48,   48,   48,   48,   48,
-       48,   48,   48,   48,   48,   48,   48,   48,   48,   48
+       39,   36,   35,   34,   38,   42,   42,   33,   32,   30,
+       28,   18,   15,   42,   13,    3,   48,   48,   48,   48,
+       48,   48,   48,   48,   48,   48,   48,   48,   48,   48,
+       48,   48,   48,   48
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -486,7 +484,7 @@ static yyconst flex_int16_t yy_chk[151] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "chkparser.l"
-#line 13 "chkparser.l"
+#line 14 "chkparser.l"
 	#define BACH_MAX
 	#ifdef BACH_MAX
     #include "llllobj.h"
@@ -498,7 +496,7 @@ static yyconst flex_int16_t yy_chk[151] =
     #include <ctype.h>
     #define parserpost printf
     #endif
-#line 502 "chkparser.c"
+#line 500 "chkparser.c"
 
 #define INITIAL 0
 
@@ -510,7 +508,9 @@ static yyconst flex_int16_t yy_chk[151] =
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE long *
+#ifndef YY_EXTRA_TYPE
+#define YY_EXTRA_TYPE void *
+#endif
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -760,14 +760,11 @@ YY_DECL
 		}
 
 	{
-#line 28 "chkparser.l"
+#line 27 "chkparser.l"
 
 
 
-    long *tct = yyextra;
-
-
-#line 771 "chkparser.c"
+#line 768 "chkparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -801,7 +798,7 @@ yy_match:
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 132 );
+		while ( yy_base[yy_current_state] != 117 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -827,16 +824,15 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 34 "chkparser.l"
+#line 30 "chkparser.l"
 {
     parserpost("typecheck: starting backtick");
-    *tct = E_TT_BACKTICK;
-    return H_SYM; // because backtick wins, if we're here we don't need to scan any longer
+    return H_SYM | H_BACKTICK; // because backtick wins, if we're here we don't need to scan any longer
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 40 "chkparser.l"
+#line 35 "chkparser.l"
 {
     parserpost("typecheck: long");
     return H_LONG;
@@ -844,7 +840,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 45 "chkparser.l"
+#line 40 "chkparser.l"
 {
     parserpost("typecheck: double");
     return H_DOUBLE;
@@ -852,7 +848,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 50 "chkparser.l"
+#line 45 "chkparser.l"
 {
     parserpost("typecheck: rational");
     return H_RAT;
@@ -860,7 +856,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 55 "chkparser.l"
+#line 50 "chkparser.l"
 {
     parserpost("typecheck: pitch");
     return H_PITCH;
@@ -868,7 +864,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 60 "chkparser.l"
+#line 55 "chkparser.l"
 {
     parserpost("typecheck: pitch");
     return H_PITCH;
@@ -876,7 +872,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 65 "chkparser.l"
+#line 60 "chkparser.l"
 {
     parserpost("typecheck: pitch");
     return H_PITCH;
@@ -884,7 +880,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 70 "chkparser.l"
+#line 65 "chkparser.l"
 {
     parserpost("typecheck: pitch");
     return H_PITCH;
@@ -892,7 +888,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 75 "chkparser.l"
+#line 70 "chkparser.l"
 {
     parserpost("typecheck: plain old symbol");
     return H_SYM;
@@ -900,39 +896,36 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 80 "chkparser.l"
+#line 75 "chkparser.l"
 {
-    *tct = E_TT_PAREN;
     parserpost("typecheck: parens, no reserved chars");
-    return H_SYM;
+    return H_SYM | H_PAREN;
 }
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 86 "chkparser.l"
+#line 80 "chkparser.l"
 {
-    *tct = E_TT_RESERVED;
     parserpost("typecheck: reserved chars, no parens");
-    return H_SYM;
+    return H_SYM | H_RESERVED;
 }
 	YY_BREAK
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 92 "chkparser.l"
+#line 85 "chkparser.l"
 {
-    *tct = E_TT_PAREN | E_TT_RESERVED;
     parserpost("typecheck: reserved chars parens");
-    return H_SYM;
+    return H_SYM | H_PAREN | H_RESERVED;
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 98 "chkparser.l"
+#line 90 "chkparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 936 "chkparser.c"
+#line 929 "chkparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2073,38 +2066,9 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *chkparser_alloc (yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	return (void *) malloc( size );
-}
-
-void *chkparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
-}
-
-void chkparser_free (void * ptr , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	free( (char *) ptr );	/* see chkparser_realloc() for (char *) cast */
-}
-
 #define YYTABLES_NAME "yytables"
 
-#line 98 "chkparser.l"
+#line 90 "chkparser.l"
 
 
 
@@ -2115,32 +2079,75 @@ int main(int argc, char **argv)
 }
 #endif
 
-void chkparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
+
+
+
+t_chkParser::t_chkParser() : t_parser()
 {
-    chkparser__flush_buffer(bp,myscanner);
-    chkparser__delete_buffer(bp,myscanner);
+
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-long typecheck_parse(char *buf, long *tct)
+long t_chkParser::parse(char *buf)
 {
-    yyscan_t myscanner;
-    YY_BUFFER_STATE bp;
-    *tct = 0;
-    chkparser_lex_init_extra(tct, &myscanner);
-    bp = chkparser__scan_string(buf,myscanner);
-    long t = chkparser_lex(myscanner);
-    if (t == H_NOTHING)
-        t = H_SYM;
-    chkparser_flush_and_delete_buffer(myscanner, bp);
-    chkparser_lex_destroy(myscanner);
-    return t;
+    long type;
+    YY_BUFFER_STATE bp = chkparser__scan_string(buf,(yyscan_t) this);
+    chkparser__switch_to_buffer(bp,(yyscan_t) this);
+    type = chkparser_lex((yyscan_t) this);
+    chkparser__flush_buffer(bp,(yyscan_t) this);
+    chkparser__delete_buffer(bp,(yyscan_t) this);
+    return type != H_NOTHING ? type : H_SYM;
 }
 
-YY_BUFFER_STATE chkparser_scan_string(yyscan_t myscanner, char *buf)
+t_bool t_chkParser::wantsBacktick(t_symbol *s)
 {
-    YY_BUFFER_STATE bp = chkparser__scan_string(buf,myscanner);
-    chkparser__switch_to_buffer(bp,myscanner);
-    return bp;
+    if (s == _llllobj_sym_nil || s == _llllobj_sym_null) {
+        return true;
+    } else {
+        long type = parse(s->s_name);
+        long mods = type & H_MODIFIERS;
+        if ((type & H_PLAINTYPE) != H_SYM ||
+            (mods & H_BACKTICK) ||
+            ((mods & H_PAREN) && !(mods & H_RESERVED))) {
+            return true;
+        } else
+            return false;
+    }
 }
 
+t_symbol *t_chkParser::addQuoteIfNeeded(t_symbol *s)
+{
+    if (wantsBacktick(s))
+        return sym_addquote(s->s_name);
+    else
+        return s;
+}
+
+
+
+
+void *chkparser_alloc(size_t bytes, void *yyscanner)
+{
+    void *b = ((t_chkParser *) yyscanner)->getPtr(bytes);
+    parserpost(" chkparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
+}
+
+void *chkparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" chkparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
+
+void chkparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}
 

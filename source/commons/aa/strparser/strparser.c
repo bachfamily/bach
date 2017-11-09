@@ -1,6 +1,5 @@
-#line 2 "strparser.c"
 
-#line 4 "strparser.c"
+#line 3 "strparser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -508,8 +507,6 @@ static yyconst flex_int16_t yy_chk[221] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "strparser.l"
-#line 13 "strparser.l"
 	#define BACH_MAX
 	#ifdef BACH_MAX
     #include "llllobj.h"
@@ -525,7 +522,6 @@ static yyconst flex_int16_t yy_chk[221] =
     #include "strparser.tab.h"
     #define YY_DECL int strparser_lex \
             (YYSTYPE *yylval_param, yyscan_t yyscanner)
-#line 529 "strparser.c"
 
 #define INITIAL 0
 
@@ -800,10 +796,6 @@ YY_DECL
 		}
 
 	{
-#line 30 "strparser.l"
-
-
-#line 807 "strparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -862,7 +854,6 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 32 "strparser.l"
 {
     parserpost(" lex: PUSH\n");
     return PUSH;
@@ -870,7 +861,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 37 "strparser.l"
 {
     parserpost(" lex: POP\n");
     return POP;
@@ -878,7 +868,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 42 "strparser.l"
 {
     parserpost(" lex: INTEGER %d\n", atoi(yytext));
     yylval->l = atol(yytext);
@@ -887,16 +876,14 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 48 "strparser.l"
 {
-    yylval->r = parse_rational(yytext);
+    yylval->r = t_parser::eatRational(yytext);
     parserpost(" lex: RATIONAL %ld / %ld\n", yylval->r.num(), yylval->r.den());
     return RAT;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 54 "strparser.l"
 {
     yylval->d = atof(yytext);
     parserpost(" lex: DOUBLE %lf\n", yylval->d);
@@ -905,43 +892,38 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 60 "strparser.l"
 {
-    yylval->p = parse_pitch_as_name_acc_int(yytext);
+    yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return PITCH;
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 66 "strparser.l"
 {
-    yylval->p = parse_pitch_as_name_int_acc(yytext);
+    yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
 	return PITCH;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 72 "strparser.l"
 {
-    yylval->p = parse_pitch_as_name_acc_int_int_t(yytext);
+    yylval->p = t_parser::eatPitchAsNameAccIntIntT(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return PITCH;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 78 "strparser.l"
 {
-    yylval->p = parse_pitch_as_name_acc_int_rat_t(yytext);
+    yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return PITCH;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 84 "strparser.l"
 {
     parserpost(" lex: BACKTICKED ELEMENT %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
@@ -950,7 +932,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 90 "strparser.l"
 {
     parserpost(" lex: QUOTED NON-WHITESPACED SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -960,7 +941,6 @@ YY_RULE_SETUP
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 96 "strparser.l"
 {
     parserpost(" lex: QUOTED WHITESPACED SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -969,7 +949,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 102 "strparser.l"
 {
     parserpost(" lex: null\n");
     return BACHNULL;
@@ -977,7 +956,6 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 107 "strparser.l"
 {
     parserpost(" lex: nil\n");
     return BACHNIL;
@@ -986,14 +964,12 @@ YY_RULE_SETUP
 case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
-#line 112 "strparser.l"
 {
 	parserpost(" lex: Whitespace\n");
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 116 "strparser.l"
 {
     parserpost(" lex: SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
@@ -1002,10 +978,8 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 122 "strparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 1009 "strparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2155,40 +2129,7 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *strparser_alloc (yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	return (void *) malloc( size );
-}
-
-void *strparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
-}
-
-void strparser_free (void * ptr , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	free( (char *) ptr );	/* see strparser_realloc() for (char *) cast */
-}
-
 #define YYTABLES_NAME "yytables"
-
-#line 122 "strparser.l"
-
-
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)
@@ -2196,6 +2137,17 @@ int main(int argc, char **argv)
 	strparser_lex();
 }
 #endif
+
+t_strParser::t_strParser() : t_parser()
+{
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    yy_init_globals ((yyscan_t) this);
+}
 
 YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, char *buf)
 {
@@ -2208,5 +2160,23 @@ void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 {
     strparser__flush_buffer(bp,myscanner);
     strparser__delete_buffer(bp,myscanner);
+}
+
+void *strparser_alloc(size_t bytes, void *yyscanner)
+{
+    void *b = ((t_strParser *) yyscanner)->getPtr(bytes);
+    parserpost(" strparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
+}
+
+void *strparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" strparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
+
+void strparser_free(void *ptr,void *yyscanner)
+{
+    return;
 }
 

@@ -5198,7 +5198,7 @@ void parse_fullaccpattern_to_voices(t_notation_obj *r_ob)
 	long v;
 	for (voice = r_ob->firstvoice, v = 0; voice && voice->number < r_ob->num_voices && v < r_ob->num_voices; v++, voice = voice_get_next(r_ob, voice)) {
 		if (r_ob->full_acc_repr[v]) {
-			t_llll *fap = llll_from_text_buf(r_ob->full_acc_repr[v]->s_name, false);	// full accidental pattern
+			t_llll *fap = llll_from_text_buf(r_ob->full_acc_repr[v]->s_name);	// full accidental pattern
 			if (fap && fap->l_head) {
 				if (hatom_gettype(&fap->l_head->l_hatom) == H_SYM && (hatom_getsym(&fap->l_head->l_hatom) == _llllobj_sym_default || hatom_getsym(&fap->l_head->l_hatom) == _llllobj_sym_none)) {
 					fill_default_full_repr(r_ob, voice->full_repr, voice->key, voice->mode, voice->acc_pattern);
@@ -34751,11 +34751,11 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     if (obj_type == k_NOTATION_OBJECT_ROLL) {
         r_ob->loop_region.start.position_ms = 0;
         r_ob->loop_region.end.position_ms = 1000;
-        r_ob->loop_region_as_llll = llll_from_text_buf("0 1000", false);
+        r_ob->loop_region_as_llll = llll_from_text_buf("0 1000");
     } else if (obj_type == k_NOTATION_OBJECT_SCORE) {
         r_ob->loop_region.start.timepoint = build_timepoint_with_voice(0, long2rat(0), 0);
         r_ob->loop_region.end.timepoint = build_timepoint_with_voice(1, long2rat(0), 0);
-        r_ob->loop_region_as_llll = llll_from_text_buf("(1 1 0) (1 2 0)", false);
+        r_ob->loop_region_as_llll = llll_from_text_buf("(1 1 0) (1 2 0)");
     } else
         r_ob->loop_region_as_llll = llll_get();
     
@@ -36788,7 +36788,7 @@ t_llllelem *get_voice_stafflines_as_llllelem(t_notation_obj *r_ob, t_voice *voic
 		hatom_setlong(&elem->l_hatom, voice->num_staff_lines);
 	} else {
 		char *string = char_array_to_string(voice->staff_lines, voice->num_staff_lines, true);
-		t_llll *ll = llll_from_text_buf(string, false);
+		t_llll *ll = llll_from_text_buf(string);
 		if (ll)
 			llll_flatten(ll, 1, 0);
 		hatom_setllll(&elem->l_hatom, ll);

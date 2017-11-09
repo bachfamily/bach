@@ -1,4 +1,5 @@
 %option noyywrap nodefault reentrant
+%option noyyalloc noyyrealloc noyyfree
 %option header-file="exprparser.lex.h"
 %option outfile="exprparser.c"
 %option prefix="exprparser_"
@@ -296,22 +297,22 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int(yytext));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccInt(yytext));
 }
 
 {NOTENAME}[-+]?{UINT}{ACCIDENTAL} {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_int_acc(yytext));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameIntAcc(yytext));
 }
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int_int_t(yytext));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntIntT(yytext));
 }
 
 {NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, parse_pitch_as_name_acc_int_rat_t(yytext));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntRatT(yytext));
 }
 
 {UINT}t {
@@ -323,7 +324,7 @@ ACCIDENTAL ([#bxdq\^v]+)
 {URAT}t {
     char *textend;
     BEGIN BINARY;
-    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(parse_rational(yytext)), 0));
+    return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(t_parser::eatRational(yytext)), 0));
 }
 
 {UFLOAT}t {
@@ -406,37 +407,60 @@ int main(int argc, char **argv)
 }
 #endif
 
-void *exprparser_new(t_exprparser_data *data)
+t_exprParser::t_exprParser(t_exprparser_data *data) : t_parser()
 {
-    yyscan_t scanner;
-    yylex_init_extra(data, &scanner);
-    return (void *) scanner;
+    struct yyguts_t dummy_yyguts;
+    exprparser_set_extra(data, &dummy_yyguts);
+    
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    exprparser_set_extra (data, (yyscan_t) this);
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-void *exprparser_scan_string(void *myscanner, char *buf)
+void t_exprParser::setBuffer(char *buf)
 {
-    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) myscanner);
-    yy_switch_to_buffer(bp, (yyscan_t) myscanner);
-    return (void *) bp;
+    buffer = yy_scan_string(buf, (yyscan_t) this);
+    yy_switch_to_buffer((YY_BUFFER_STATE) buffer, (yyscan_t) this);
 }
 
-void exprparser_flush_and_delete_buffer(void *myscanner, void *bp)
+void t_exprParser::setStartCondition(int condition)
 {
-    yy_flush_buffer((YY_BUFFER_STATE) bp, (yyscan_t) myscanner);
-    yy_delete_buffer((YY_BUFFER_STATE) bp, (yyscan_t) myscanner);
-}
-
-void exprparser_free(void *myscanner)
-{
-    exprparser_lex_destroy((yyscan_t) myscanner);
-}
-
-void exprparser_set_start_condition(void *myscanner, int condition)
-{
-    struct yyguts_t *yyg = (struct yyguts_t*) myscanner;
+    struct yyguts_t *yyg = (struct yyguts_t*) this;
     BEGIN condition;
 }
 
+void t_exprParser::reset()
+{
+    yy_flush_buffer((YY_BUFFER_STATE) buffer, (yyscan_t) this);
+    yy_delete_buffer((YY_BUFFER_STATE) buffer, (yyscan_t) this);
+}
 
+int t_exprParser::lex()
+{
+    return exprparser_lex((yyscan_t) this);
+}
 
+void *exprparser_alloc(size_t bytes, void *yyscanner)
+{
+    void *b = ((t_exprParser *) yyscanner)->getPtr(bytes);
+    parserpost(" exprparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
+}
 
+void *exprparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" exprparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
+
+void exprparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}

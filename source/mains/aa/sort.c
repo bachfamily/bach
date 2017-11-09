@@ -146,7 +146,7 @@ int T_EXPORT main()
 	// in case of equality the second sorting key is the third element;
 	// and in case of further equality the third sorting key is the third element of the second element of each sublist.
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 
 	class_register(CLASS_BOX, c);
@@ -543,6 +543,8 @@ t_sort *sort_new(t_symbol *s, short ac, t_atom *av)
 		x->n_proxy = proxy_new_debug((t_object *) x, 1, &x->n_in);
 	} else 
 		error(BACH_CANT_INSTANTIATE);
+
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

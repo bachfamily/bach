@@ -1,6 +1,5 @@
-#line 2 "pitchparser.c"
 
-#line 4 "pitchparser.c"
+#line 3 "pitchparser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -371,11 +370,11 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[30] =
+static yyconst flex_int16_t yy_accept[23] =
     {   0,
         0,    0,    8,    5,    6,    5,    5,    0,    0,    0,
-        1,    0,    0,    1,    0,    1,    2,    0,    0,    1,
-        0,    0,    0,    0,    3,    0,    0,    4,    0
+        1,    0,    1,    2,    0,    0,    0,    3,    0,    0,
+        4,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
@@ -415,46 +414,40 @@ static yyconst YY_CHAR yy_meta[11] =
         1,    1,    2,    1,    1,    1,    3,    3,    4,    1
     } ;
 
-static yyconst flex_uint16_t yy_base[33] =
+static yyconst flex_uint16_t yy_base[26] =
     {   0,
-       27,    0,   25,   74,   74,    0,    7,   14,   20,   16,
-       24,   30,   15,   33,   13,   36,    0,    9,    8,   39,
-        6,   41,   46,   53,   74,    0,   54,   74,   74,   64,
-       66,   69
+       20,    0,   18,   53,   53,    0,    7,    0,   13,    9,
+       17,    8,   23,    0,    6,   25,   32,   53,    0,   33,
+       53,   53,   43,   45,   48
     } ;
 
-static yyconst flex_int16_t yy_def[33] =
+static yyconst flex_int16_t yy_def[26] =
     {   0,
-       30,   30,   29,   29,   29,   31,   29,   29,    7,   29,
-       29,    8,   29,   11,   29,   29,   32,   29,   29,   29,
-       29,   29,   29,   29,   29,   29,   29,   29,    0,   29,
-       29,   29
+       23,   23,   22,   22,   22,   24,   22,    7,    7,   22,
+       22,   22,   22,   25,   22,   22,   22,   22,   22,   22,
+       22,    0,   22,   22,   22
     } ;
 
-static yyconst flex_uint16_t yy_nxt[85] =
+static yyconst flex_uint16_t yy_nxt[64] =
     {   0,
-       29,    5,   29,    6,   29,   27,    7,    7,    7,    9,
-       10,   23,   11,   20,   22,    9,   12,   13,   16,   14,
-       14,   11,   12,   15,   29,   16,   17,   18,    5,   11,
-       29,   29,   17,   19,   29,   20,   21,   29,   14,   18,
-       29,   16,   21,   29,   20,   24,   22,   29,   29,   29,
-       25,   23,   29,   29,   29,   25,   26,   29,   27,   27,
-       29,   29,   29,   28,    4,    4,    4,    4,    8,    8,
-       17,   29,   17,    3,   29,   29,   29,   29,   29,   29,
-       29,   29,   29,   29
+       22,    5,   22,    6,   22,   20,    7,    7,    7,    9,
+       10,   16,   11,   13,   11,    9,   12,   22,   13,   14,
+       15,    5,   11,   22,   22,   14,   15,   22,   13,   17,
+       16,   22,   22,   22,   18,   19,   22,   20,   20,   22,
+       22,   22,   21,    4,    4,    4,    4,    8,    8,   14,
+       22,   14,    3,   22,   22,   22,   22,   22,   22,   22,
+       22,   22,   22
     } ;
 
-static yyconst flex_int16_t yy_chk[85] =
+static yyconst flex_int16_t yy_chk[64] =
     {   0,
-        0,    2,    0,    2,    0,   26,    2,    2,    2,    7,
-        7,   21,    7,   19,   18,    7,    8,    8,   15,    8,
-       13,   10,    8,    9,    3,    9,   11,   11,    1,   11,
-        0,    0,   11,   12,    0,   12,   14,    0,   14,   16,
-        0,   16,   20,    0,   20,   22,   22,    0,    0,    0,
-       22,   23,    0,    0,    0,   23,   24,    0,   24,   27,
-        0,    0,    0,   27,   30,   30,   30,   30,   31,   31,
-       32,    0,   32,   29,   29,   29,   29,   29,   29,   29,
-       29,   29,   29,   29
+        0,    2,    0,    2,    0,   19,    2,    2,    2,    7,
+        7,   15,    7,   12,   10,    7,    9,    3,    9,   11,
+       11,    1,   11,    0,    0,   11,   13,    0,   13,   16,
+       16,    0,    0,    0,   16,   17,    0,   17,   20,    0,
+        0,    0,   20,   23,   23,   23,   23,   24,   24,   25,
+        0,   25,   22,   22,   22,   22,   22,   22,   22,   22,
+       22,   22,   22
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -464,8 +457,6 @@ static yyconst flex_int16_t yy_chk[85] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "pitchparser.l"
-#line 15 "pitchparser.l"
     #define BACH_MAX
     #ifdef BACH_MAX
     #include "llllobj.h"
@@ -483,7 +474,6 @@ static yyconst flex_int16_t yy_chk[85] =
         P_MORE,
         P_ERROR
     } e_pitchparser_rv;
-#line 487 "pitchparser.c"
 
 #define INITIAL 0
 
@@ -745,14 +735,8 @@ YY_DECL
 		}
 
 	{
-#line 36 "pitchparser.l"
-
-
 
     t_pitch *p = yyextra;
-
-
-#line 756 "pitchparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -780,13 +764,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 30 )
+				if ( yy_current_state >= 23 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 74 );
+		while ( yy_base[yy_current_state] != 53 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -812,43 +796,38 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 42 "pitchparser.l"
 {
-    *p = parse_pitch_as_name_acc_int(yytext);
+    *p = t_parser::eatPitchAsNameAccInt(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
     return P_MORE;
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 48 "pitchparser.l"
 {
-    *p = parse_pitch_as_name_int_acc(yytext);
+    *p = t_parser::eatPitchAsNameIntAcc(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 54 "pitchparser.l"
 {
-    *p = parse_pitch_as_name_acc_int_int_t(yytext);
+    *p = t_parser::eatPitchAsNameAccIntIntT(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 60 "pitchparser.l"
 {
-    *p = parse_pitch_as_name_acc_int_rat_t(yytext);
+    *p = t_parser::eatPitchAsNameAccIntRatT(yytext);
     parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
     return P_MORE;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 66 "pitchparser.l"
 {
     parserpost(" lex: unrecognized character %s", yytext);
     return P_ERROR;
@@ -857,7 +836,6 @@ YY_RULE_SETUP
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 71 "pitchparser.l"
 {
     parserpost(" lex: unrecognized character \\n", yytext);
     return P_ERROR;
@@ -865,10 +843,8 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 76 "pitchparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 872 "pitchparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1164,7 +1140,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 30 )
+			if ( yy_current_state >= 23 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1193,11 +1169,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 30 )
+		if ( yy_current_state >= 23 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 29);
+	yy_is_jam = (yy_current_state == 22);
 
 	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;
@@ -2009,40 +1985,7 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *pitchparser_alloc (yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	return (void *) malloc( size );
-}
-
-void *pitchparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
-}
-
-void pitchparser_free (void * ptr , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	free( (char *) ptr );	/* see pitchparser_realloc() for (char *) cast */
-}
-
 #define YYTABLES_NAME "yytables"
-
-#line 76 "pitchparser.l"
-
-
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)
@@ -2051,41 +1994,60 @@ int main(int argc, char **argv)
 }
 #endif
 
-void pitchparser_new(t_pitchparser_wrapper *ppw)
+t_pitchParser::t_pitchParser() : t_parser()
 {
-    ppw->p = new(t_pitch);
-    pitchparser_lex_init_extra(ppw->p,(yyscan_t *) &ppw->scanner);
+    
+    p = new(t_pitch);
+    
+    struct yyguts_t dummy_yyguts;
+    pitchparser_set_extra(p, &dummy_yyguts);
+    
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    pitchparser_set_extra (p, (yyscan_t) this);
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-t_pitch pitchparser_scan_string(t_pitchparser_wrapper *ppw, char *buf)
+t_pitch t_pitchParser::parse(char *buf)
 {
-    t_pitch p;
-    yyscan_t scanner = (yyscan_t) ppw->scanner;
-    YY_BUFFER_STATE bp = pitchparser__scan_string(buf,scanner);
-    pitchparser__switch_to_buffer(bp,scanner);
-    switch (pitchparser_lex(scanner)) {
+    YY_BUFFER_STATE bp = pitchparser__scan_string(buf,(yyscan_t) this);
+    pitchparser__switch_to_buffer(bp,(yyscan_t) this);
+    switch (pitchparser_lex((yyscan_t) this)) {
         case P_ERROR:
         case P_END:
-            p = t_pitch::NaP;
+            *p = t_pitch::NaP;
             break;
         case P_MORE:
-            p = *ppw->p;
-            if (pitchparser_lex(scanner) != P_END)
-                p = t_pitch::NaP;
+            if (pitchparser_lex((yyscan_t) this) != P_END)
+                *p = t_pitch::NaP;
             break;
     }
-    pitchparser__flush_buffer(bp,scanner);
-    pitchparser__delete_buffer(bp,scanner);
-    return p;
+    pitchparser__flush_buffer(bp,(yyscan_t) this);
+    pitchparser__delete_buffer(bp,(yyscan_t) this);
+    return *p;
 }
 
-void pitchparser_free(t_pitchparser_wrapper *ppw)
+void *pitchparser_alloc(size_t bytes, void *yyscanner)
 {
-    delete ppw->p;
-    pitchparser_lex_destroy(ppw->scanner);
+    void *b = ((t_pitchParser *) yyscanner)->getPtr(bytes);
+    parserpost(" pitchparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
 }
 
+void *pitchparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" pitchparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
 
-
-
+void pitchparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}
 
