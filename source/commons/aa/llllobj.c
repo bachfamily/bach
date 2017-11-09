@@ -2154,10 +2154,16 @@ t_atom_long llllobj_get_version_number(t_object *x, e_llllobj_obj_types type)
 	t_atom_long vn = 0;
 	t_dictionary *d = (t_dictionary *) gensym("#D")->s_thing;
 	if (d) {
-		t_dictionary *savedattrs = NULL;
-		dictionary_getdictionary(d, gensym("saved_object_attributes"), (t_object **) &savedattrs);
-		if (savedattrs) {
-			dictionary_getlong(savedattrs, gensym("versionnumber"), &vn);
+		if (type == LLLL_OBJ_UI || type == LLLL_OBJ_UIMSP) {
+			if (dictionary_hasentry(d, gensym("versionnumber")))
+				dictionary_getlong(d, gensym("versionnumber"), &vn);
+			
+		} else {
+			t_dictionary *savedattrs = NULL;
+			dictionary_getdictionary(d, gensym("saved_object_attributes"), (t_object **) &savedattrs);
+			if (savedattrs) {
+				dictionary_getlong(savedattrs, gensym("versionnumber"), &vn);
+			}
 		}
 	}
 	return vn;

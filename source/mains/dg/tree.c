@@ -300,10 +300,19 @@ t_llllelem *get_prev_open_llllelem(t_tree *x, t_llllelem *elem, char force_open_
 
 void set_checkvalues_from_llll(t_tree *x, t_llll *values);
 void tree_setcheckvalues(t_tree *x, t_symbol *s, long argc, t_atom *argv, char mode);
-void tree_sendcheckvalues(t_tree *x, t_symbol *s, long argc, t_atom *argv, char mode);
-void tree_sendcheckitems(t_tree *x, t_symbol *s, long argc, t_atom *argv, char mode);
+void tree_sendcheckvalues(t_tree *x, t_symbol *s, long argc, t_atom *argv);
+void tree_sendcheckitems(t_tree *x, t_symbol *s, long argc, t_atom *argv);
 t_llll *get_checkvalues_as_llll(t_tree *x, char checked_elements_only);
 
+void tree_send_openstate(t_tree *x, t_symbol *s, long argc, t_atom *argv);
+void set_openstate_from_llll(t_tree *x, t_llll *values);
+
+
+
+long tree_get_llll_openstate(t_llll *ll)
+{
+    return 1 - ll->l_thing.w_long;
+}
 
 // PRESET AND SAVING
 void tree_jsave(t_tree *x, t_dictionary *d)
@@ -664,6 +673,16 @@ int T_EXPORT main(void){
     // @example switch (1 4 2) @caption switch node at address (1 4 2)
     // @seealso open, close, click
     class_addmethod(c, (method) tree_switch, "switch", A_GIMME, 0);
+
+    
+    // @method getopenstate @digest Get the open state of each element (in Checkbox Outline mode)
+    // @description In the Checkbox Outline <m>mode</m>, obtains the llll containing 1's and 0's
+    // depending on whether levels are open or closed. Each level of parenthesis has one more element
+    // among its children, the former one, being 1 if the level is open and 0 otherwise.
+    // The result llll is output through the fourth outlet, preceded by the "openstate" symbol.
+    class_addmethod(c, (method) tree_send_openstate, "getopenstate", A_GIMME, 0);
+
+    
     
     // @method getcheck @digest Get check values (in Checkbox Outline mode)
     // @description In the Checkbox Outline <m>mode</m>, obtains the llll containing the
@@ -674,7 +693,7 @@ int T_EXPORT main(void){
     class_addmethod(c, (method) tree_sendcheckvalues, "getcheck", A_GIMME, 0);
     
     
-    // @method getcheck @digest Get checked items (in Checkbox Outline mode)
+    // @method getcheckitems @digest Get checked items (in Checkbox Outline mode)
     // @description In the Checkbox Outline <m>mode</m>, obtains the llll containing the
     // checked elements for each element in the llll (0 = unchecked, 1 = checked).
     // The result llll is output through the fourth outlet, preceded by the "checkitems" symbol.
@@ -1138,7 +1157,7 @@ long tree_iter_lamdba_function(t_tree *x, t_llll *lambda)
  }*/
 
 t_treenode *append_dummy_node_under_node(t_tree *x, t_treenode *parent){
-    t_treenode *dummytnd = (t_treenode *)bach_newptr(sizeof(t_treenode));
+    t_treenode *dummytnd = (t_treenode *)bach_newptrclear(sizeof(t_treenode));
     dummytnd->is_dummy_node = true;
     dummytnd->text = NULL;
     dummytnd->elem = NULL;
@@ -1171,7 +1190,7 @@ long build_all_tree_nodes_fn(void *data, t_hatom *a, const t_llll *address){
         return 1;
     }
     
-    tnd = (t_treenode *)bach_newptr(sizeof(t_treenode));
+    tnd = (t_treenode *)bach_newptrclear(sizeof(t_treenode));
     tnd->text = NULL;
     tnd->is_dummy_node = false;
     
@@ -1198,7 +1217,7 @@ long build_all_tree_nodes_fn(void *data, t_hatom *a, const t_llll *address){
             if (ll->l_size == 0) {
                 tnd->show_triangle = false;
             } else {
-                tnd->closed = (ll->l_leveltype == CLOSED_LEVEL_LEVELTYPE ? 1 : 0);
+                tnd->closed = (tree_get_llll_openstate(ll) == 0 ? 1 : 0);
                 tnd->show_triangle = true;
                 if (x->first_elem_in_llll_is_llll_name) {
                     if (ll->l_head) {
@@ -1269,7 +1288,7 @@ long tree_iter_address_and_data(t_tree *x, long list, t_llll *ll, char isaddress
             return 0;
         }
         
-        tnd = (t_treenode *)bach_newptr(sizeof(t_treenode));
+        tnd = (t_treenode *)bach_newptrclear(sizeof(t_treenode));
         tnd->text = NULL;
         tnd->is_dummy_node = false;
         tnd->address = llll_clone(ll);
@@ -1281,7 +1300,7 @@ long tree_iter_address_and_data(t_tree *x, long list, t_llll *ll, char isaddress
             long i;
             for (i = 1; i <= x->last_cmd; i++){
                 t_jfont *font;
-                t_treenode *fathertnd = (t_treenode *)bach_newptr(sizeof(t_treenode));
+                t_treenode *fathertnd = (t_treenode *)bach_newptrclear(sizeof(t_treenode));
                 fathertnd->is_dummy_node = false;
                 fathertnd->text = NULL;
                 fathertnd->elem = NULL;
@@ -1425,7 +1444,7 @@ void rebuild_treenodes(t_tree *x, t_rect view_rect){
     // first node if needed!
     if (x->show_first_node && x->tree_as_llll && x->mode == k_TREE_NODELINK){
         t_jfont *font;
-        t_treenode *firsttnd = (t_treenode *)bach_newptr(sizeof(t_treenode));
+        t_treenode *firsttnd = (t_treenode *)bach_newptrclear(sizeof(t_treenode));
         firsttnd->is_dummy_node = false;
         firsttnd->text = NULL;
         firsttnd->elem = NULL;
@@ -1656,11 +1675,11 @@ void rebuild_treenodes(t_tree *x, t_rect view_rect){
 void open_close_switch_llll(t_llll *ll, char mode)
 {
     if (mode == 1)
-        ll->l_leveltype = L_STANDARD;
+        ll->l_thing.w_long = 0;
     else if (mode == 2)
-        ll->l_leveltype = CLOSED_LEVEL_LEVELTYPE;
+        ll->l_thing.w_long = 1;
     else if (mode == 3)
-        ll->l_leveltype = (ll->l_leveltype == L_STANDARD ? CLOSED_LEVEL_LEVELTYPE : L_STANDARD);
+        ll->l_thing.w_long = tree_get_llll_openstate(ll);
 }
 
 // *data -> 1 = open, 2 = close, 3 = switch
@@ -1686,11 +1705,11 @@ void tree_open_close_switch(t_tree *x, t_symbol *s, long argc, t_atom *argv, cha
             t_llll *ll = hatom_getllll(&elem->l_hatom);
             if (ll) {
                 if (mode == 1)
-                    ll->l_leveltype = L_STANDARD;
+                    ll->l_thing.w_long = 0;
                 else if (mode == 2)
-                    ll->l_leveltype = CLOSED_LEVEL_LEVELTYPE;
+                    ll->l_thing.w_long = 1;
                 else if (mode == 3)
-                    ll->l_leveltype = (ll->l_leveltype == L_STANDARD ? CLOSED_LEVEL_LEVELTYPE : L_STANDARD);
+                    ll->l_thing.w_long = tree_get_llll_openstate(ll);
             }
         }
     } else if (args->l_size >= 1 && is_hatom_number(&args->l_head->l_hatom)) {
@@ -1759,7 +1778,7 @@ void click_on_node(t_tree *x, t_llll *node_address, char also_send_clicked_elem,
             if (also_open_node_if_needed && elem && elem != WHITENULL_llllelem) {
                 t_llllelem *temp = elem;
                 while (temp && temp->l_parent) {
-                    temp->l_parent->l_leveltype = L_STANDARD;
+                    temp->l_parent->l_thing.w_long = 0;
                     temp = temp->l_parent->l_owner;
                 }
                 x->need_rebuid_tree_nodes = true;
@@ -1806,6 +1825,18 @@ void tree_anything(t_tree *x, t_symbol *s, long argc, t_atom *argv){ //argv+1
     x->need_rebuid_tree_nodes = true;
     jbox_redraw((t_jbox *) x);
 }
+
+
+
+long clip_lthing_between_zero_and_one(void *data, t_hatom *a, const t_llll *address)
+{
+    if (hatom_gettype(a) == H_LLLL) {
+        t_llll *ll = hatom_getllll(a);
+        ll->l_thing.w_long = CLAMP(ll->l_thing.w_long, 0, 1);
+    }
+    return 0;
+}
+
 
 
 t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
@@ -1908,11 +1939,12 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
     
     if (x) {
         
-        if (llllobj_get_version_number((t_object *) x, LLLL_OBJ_UI) == 0 && !brand_new_creation) {
+        if (llllobj_get_version_number((t_object *) x, LLLL_OBJ_UI) < 70911 && !brand_new_creation) {
             // need backward compatibility!!
             
             // retrieving saved values?
             t_llll *llll_for_rebuild = llll_retrieve_from_dictionary_with_leveltypes(d, "whole_tree_data");
+            llll_funall(llll_for_rebuild, clip_lthing_between_zero_and_one, NULL, 1, -1, FUNALL_SKIP_ATOMS + FUNALL_PROCESS_WHOLE_SUBLISTS);
             if (llll_for_rebuild) {
                 llllobj_manage_dict_llll((t_object *)x, LLLL_OBJ_UI, llll_for_rebuild);
                 x->tree_as_llll = llll_for_rebuild;
@@ -1929,6 +1961,27 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
             
         } else {
             
+            // new routine
+            t_llll *llll_for_rebuild = llll_retrieve_from_dictionary(d, "whole_tree_data");
+            if (llll_for_rebuild) {
+                llllobj_manage_dict_llll((t_object *)x, LLLL_OBJ_UI, llll_for_rebuild);
+                x->tree_as_llll = llll_for_rebuild;
+                x->need_rebuid_tree_nodes = true;
+                
+                if (x->mode == k_TREE_CHECKEDOUTLINE || x->mode == k_TREE_OUTLINE) {
+                    t_llll *openstate_for_rebuild = llll_retrieve_from_dictionary(d, "tree_openstate_data");
+                    if (openstate_for_rebuild)
+                        set_openstate_from_llll(x, openstate_for_rebuild);
+                }
+                
+                if (x->mode == k_TREE_CHECKEDOUTLINE) {
+                    t_llll *check_for_rebuild = llll_retrieve_from_dictionary(d, "tree_check_data");
+                    if (check_for_rebuild)
+                        set_checkvalues_from_llll(x, check_for_rebuild);
+                }
+                
+                jbox_redraw((t_jbox *) x);
+            }
             
         }
         
@@ -2383,6 +2436,125 @@ void send_clicked_node_address_and_content(t_tree *x)
 }
 
 
+
+//// OPEN/CLOSE PARENTHESES STUFF
+
+
+
+t_llll *get_openstate_as_llll(t_tree *x, char get_checked_elems_only)
+{
+    t_llll *values = NULL;
+    
+    systhread_mutex_lock(x->c_mutex);
+    
+    if (x->tree_as_llll) {
+        values = llll_clone(x->tree_as_llll);
+        
+        t_llll_stack *elem_stack;
+        t_llllelem *elem, *nextelem;
+        char destroyed = false;
+        
+        elem_stack = llll_stack_new();
+        elem = values->l_head;
+        
+        while (1) {
+            while (elem) {
+                if (elem->l_hatom.h_type != H_LLLL) {
+                    nextelem = elem->l_next;
+                    hatom_change_to_long_and_free(&elem->l_hatom, 0);
+                    elem = nextelem;
+                } else {
+                    llll_stack_push(elem_stack, elem->l_next); // just to be sure, or we'll lose ourselves!
+                    destroyed = false;
+                    llll_prependlong(elem->l_hatom.h_w.w_llll, tree_get_llll_openstate(elem->l_hatom.h_w.w_llll)); // prepending "openness" state
+                    elem = elem->l_hatom.h_w.w_llll->l_head;
+                    if (elem) elem = elem->l_next;
+                 }
+            }
+            if (elem_stack->s_items == 0)
+                break;
+            elem = (t_llllelem *) llll_stack_pop(elem_stack);
+        }
+        
+        llll_stack_destroy(elem_stack);
+        
+    } else {
+        values = llll_get();
+    }
+    
+    systhread_mutex_unlock(x->c_mutex);
+    
+    return values;
+}
+
+void tree_send_openstate(t_tree *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_llll *values = get_openstate_as_llll(x, true);
+    llll_prependsym(values, gensym("openstate"));
+    llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 3, values);
+    llll_free(values);
+}
+
+
+
+
+
+void set_openstate_from_llll(t_tree *x, t_llll *values)
+{
+    t_llll_stack *elem_stack, *values_stack;
+    t_llllelem *elem, *value;
+    
+    if (!x->tree_as_llll || !values)
+        return;
+    
+    systhread_mutex_lock(x->c_mutex);
+    
+    elem_stack = llll_stack_new();
+    values_stack = llll_stack_new();
+    elem = x->tree_as_llll->l_head;
+    value = values->l_head;
+    
+    while (1) {
+        while (value) {
+            if (value->l_hatom.h_type != H_LLLL) {
+                value = value->l_next;
+                if (elem) elem = elem->l_next;
+            } else {
+                llll_stack_push(values_stack, value->l_next); // just to be sure, or we'll lose ourselves!
+                if (elem) llll_stack_push(elem_stack, elem->l_next);
+                value = value->l_hatom.h_w.w_llll->l_head;
+                if (elem && hatom_gettype(&elem->l_hatom) == H_LLLL) {
+                    if (value) {
+                        hatom_getllll(&elem->l_hatom)->l_thing.w_long = hatom_getlong(&value->l_hatom);
+                        value = value->l_next;
+                    }
+                    elem = elem->l_hatom.h_w.w_llll->l_head;
+                }
+            }
+        }
+        if (values_stack->s_items == 0)
+            break;
+        elem = (t_llllelem *) llll_stack_pop(elem_stack);
+        value = (t_llllelem *) llll_stack_pop(values_stack);
+    }
+    
+    llll_stack_destroy(elem_stack);
+    llll_stack_destroy(values_stack);
+    
+    systhread_mutex_unlock(x->c_mutex);
+    
+    jbox_redraw((t_jbox *)x);
+}
+
+
+
+
+
+
+
+
+///// CHECKBOX STUFF
+
 long change_node_click_on_checkbox_no_firstelems_fn(void *data, t_hatom *a, const t_llll *address)
 {
     if (address->l_size > 0) {
@@ -2506,6 +2678,7 @@ long mark_all_first_elements_to_be_deleted_fn(void *data, t_hatom *a, const t_ll
     return 0;
 }
 
+
 t_llll *get_checkvalues_as_llll(t_tree *x, char get_checked_elems_only)
 {
     t_llll *values = NULL;
@@ -2558,7 +2731,7 @@ t_llll *get_checkvalues_as_llll(t_tree *x, char get_checked_elems_only)
     return values;
 }
 
-void tree_sendcheckitems(t_tree *x, t_symbol *s, long argc, t_atom *argv, char mode)
+void tree_sendcheckitems(t_tree *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *values = get_checkvalues_as_llll(x, true);
     llll_prependsym(values, gensym("checkitems"));
@@ -2566,7 +2739,7 @@ void tree_sendcheckitems(t_tree *x, t_symbol *s, long argc, t_atom *argv, char m
     llll_free(values);
 }
 
-void tree_sendcheckvalues(t_tree *x, t_symbol *s, long argc, t_atom *argv, char mode)
+void tree_sendcheckvalues(t_tree *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *values = get_checkvalues_as_llll(x, false);
     llll_prependsym(values, gensym("check"));
@@ -2736,7 +2909,7 @@ void tree_mousedown(t_tree *x, t_object *patcherview, t_pt pt, long modifiers){
             t_llll *clicked_node_address = x->clicked_node ? llll_clone(x->clicked_node->address) : NULL;
             
             // notifying open/close
-            send_sym_lllls_notification((t_object *)x, 3, ll->l_leveltype == CLOSED_LEVEL_LEVELTYPE ? _sym_close : _sym_open, 1, the_clicked_node->address);
+            send_sym_lllls_notification((t_object *)x, 3, tree_get_llll_openstate(ll) ? _sym_open : _sym_close, 1, the_clicked_node->address);
             
             // rebuilding nodes
             rebuild_treenodes(x, rect);
@@ -2998,7 +3171,7 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
                 } else {
                     if (hatom_gettype(&x->clicked_node->elem->l_hatom) == H_LLLL) {
                         t_llll *ll = hatom_getllll(&x->clicked_node->elem->l_hatom);
-                        if (ll->l_leveltype == CLOSED_LEVEL_LEVELTYPE) {
+                        if (tree_get_llll_openstate(ll) == 0) {
                             if (ll->l_owner && ll->l_owner->l_parent) {
                                 send_sym_lllls_notification_and_free((t_object *)x, 3, _sym_close, 1, llll_betail(llll_clone(x->clicked_node->address)));;
                                 open_close_switch_llll(ll->l_owner->l_parent, 2);
@@ -3331,8 +3504,7 @@ t_llll *get_outermost_closed_level(t_tree *x, t_llllelem *elem)
 {
     t_llll *ans = NULL;
     while (elem && elem->l_parent) {
-        if ((x->show_first_node || (!x->show_first_node && elem->l_parent->l_owner)) &&
-            elem->l_parent->l_leveltype == CLOSED_LEVEL_LEVELTYPE)
+        if ((x->show_first_node || (!x->show_first_node && elem->l_parent->l_owner)) && tree_get_llll_openstate(elem->l_parent) == 0)
             ans = elem->l_parent;
         elem = elem->l_parent->l_owner;
     }
@@ -3344,7 +3516,7 @@ t_llllelem *get_next_open_llllelem(t_tree *x, t_llllelem *elem, char force_open_
     t_llllelem *temp = NULL;
     
     if (!elem) { // whole llll
-        if (x->tree_as_llll->l_leveltype == CLOSED_LEVEL_LEVELTYPE)
+        if (tree_get_llll_openstate(x->tree_as_llll) == 0)
             temp = force_open_levels ? x->tree_as_llll->l_head : NULL;
         else
             temp = x->tree_as_llll->l_head;
@@ -3356,7 +3528,7 @@ t_llllelem *get_next_open_llllelem(t_tree *x, t_llllelem *elem, char force_open_
         if (hatom_gettype(&elem->l_hatom) == H_LLLL && !x->first_elem_in_llll_is_llll_name && hatom_getllll(&elem->l_hatom)->l_head)
             temp = hatom_getllll(&elem->l_hatom)->l_head;
         else if (hatom_gettype(&elem->l_hatom) == H_LLLL && x->first_elem_in_llll_is_llll_name && 
-                 ((ll = hatom_getllll(&elem->l_hatom))->l_head && ll->l_head->l_next && (ll->l_leveltype != CLOSED_LEVEL_LEVELTYPE || force_open_levels)))
+                 ((ll = hatom_getllll(&elem->l_hatom))->l_head && ll->l_head->l_next && (tree_get_llll_openstate(ll) > 0 || force_open_levels)))
             temp = hatom_getllll(&elem->l_hatom)->l_head->l_next;
         else {
             if (outermost_closed_level) 
@@ -3377,7 +3549,7 @@ t_llllelem *get_next_open_llllelem(t_tree *x, t_llllelem *elem, char force_open_
         if (!x->only_allow_click_on_leaves)
             return temp;
         
-        if (ll->l_leveltype == CLOSED_LEVEL_LEVELTYPE && !force_open_levels) {
+        if (tree_get_llll_openstate(ll) == 0 && !force_open_levels) {
             if (temp->l_next)
                 temp = temp->l_next;
             else if (temp->l_parent && temp->l_parent->l_owner)
@@ -3423,7 +3595,7 @@ t_llllelem *get_prev_open_llllelem(t_tree *x, t_llllelem *elem, char force_open_
     while (temp && hatom_gettype(&temp->l_hatom) == H_LLLL) {
         t_llll *ll = hatom_getllll(&temp->l_hatom);
         
-        if (ll->l_leveltype == CLOSED_LEVEL_LEVELTYPE && !force_open_levels) {
+        if (tree_get_llll_openstate(ll) == 0 && !force_open_levels) {
             if (!x->only_allow_click_on_leaves) {
                 return temp;
             } else if (temp->l_prev) {
