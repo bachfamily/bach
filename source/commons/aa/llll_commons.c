@@ -213,6 +213,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 	t_atom_long outsize;
 	long leveltype = L_STANDARD;
 	t_atom *new_out, *this_out;
+    t_chkParser chkParser;
 	
 	if (*out == NULL) {
 		*out = (t_atom *) bach_newptr(ATOM_LIST_LENGTH_STEP * sizeof (t_atom));
@@ -305,8 +306,8 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
                     if (ac == 0 && (flags & LLLL_D_MAX) && (sym == _sym_int || sym == _sym_float || sym == _sym_list)) {
                         checked = sym_addquote(sym->s_name);
                     } else if (flags & LLLL_D_QUOTE) {
-                        checked = llll_quoteme(sym);
-					} else 
+                        checked = chkParser.addQuoteIfNeeded(sym);
+					} else
 						checked = sym;
 					
 					atom_setsym(this_out++, checked);
@@ -354,24 +355,6 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 	}
 	llll_stack_destroy(stack);
 	return ac;
-}
-
-// TODO:
-// replace with a call to the parser
-// if it returns anything different from one symbol, it should be quoted
-t_symbol *llll_quoteme(t_symbol *s)
-{
-    if (s == _llllobj_sym_nil || s == _llllobj_sym_null) {
-		return sym_addquote(s->s_name);
-    } else {
-        long tct;
-        long type = typecheck_parse(s->s_name, &tct);
-        if (type != H_SYM || tct & E_TT_BACKTICK ||
-            ((tct & E_TT_PAREN) && !(tct & E_TT_RESERVED))) {
-            return sym_addquote(s->s_name);
-        } else
-            return s;
-    }
 }
 
 t_symbol *sym_addquote(const char *txt)

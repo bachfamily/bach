@@ -392,17 +392,6 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags);
 
 
-// backticks a t_symbol if necessary, that is:
-// if the received symbol
-
-// (of course the t_symbol is left unaffected, and you get a new one if needed!)
-t_symbol *llll_quoteme(t_symbol *s);
-
-// backticks a t_symbol without checking
-t_symbol *sym_addquote(const char *txt);
-
-
-
 // returns a t_symbol with the backticked txt
 t_symbol *sym_addquote(const char *txt);
 

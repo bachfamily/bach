@@ -9,6 +9,7 @@
 #ifndef chkparser_h
 #define chkparser_h
 
+#include "bach_parser.hpp"
 #include "llll_commons.h"
 
 #ifdef CONFIGURATION_Development
@@ -18,14 +19,21 @@
 #define parserpost(...) ((void) 0)
 #endif
 
-typedef enum _typecheck_traits {
-    E_TT_PAREN = 0x01, // contains at least one paren
-    E_TT_RESERVED = 0x02, // contains whitespace, comma, semicolon
-    E_TT_BACKTICK = 0x04, // begins with a backtick
-} e_typecheck_traits;
 
-// returns an #e_hatom_types indicating the inferred type for the text
-// tct is a pointer to #e_typecheck_traits
-long typecheck_parse(char *buf, long *tct);
+class t_chkParser : public t_parser {
+private:
+    
+    
+public:
+    t_chkParser();
+    
+    
+    // returns a #e_hatom_types indicating the inferred type for the text
+    // tct is a pointer to #e_typecheck_traits
+    long parse(char *buf);
+    t_bool wantsBacktick(t_symbol *s);
+    
+    t_symbol *addQuoteIfNeeded(t_symbol *sym);
+};
 
 #endif /* chkparser_h */

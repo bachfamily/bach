@@ -113,8 +113,9 @@ public:
         char *next = pos + 1;
         t_shortRational alter = t_pitch::text2alter(&next);
         long octave = strtol(next, &next, 10);
-        alter += t_shortRational(strtol(next, NULL, 10), 1);
-        return adjustPitchSign(t_pitch(degree, alter, octave), sign);
+        t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
+        p.p_alter += t_shortRational(strtol(next, NULL, 10), 1);
+        return p;
     }
     
     static t_pitch eatPitchAsNameAccIntRatT(char *pos)
@@ -124,8 +125,9 @@ public:
         char *next = pos + 1;
         t_shortRational alter = t_pitch::text2alter(&next);
         long octave = strtol(next, &next, 10);
-        alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
-        return adjustPitchSign(t_pitch(degree, alter, octave), sign);
+        t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
+        p.p_alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
+        return p;
     }
 
 };

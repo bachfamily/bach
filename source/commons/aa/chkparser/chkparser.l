@@ -1,4 +1,5 @@
 %option noyywrap nodefault reentrant
+%option noyyalloc noyyrealloc noyyfree
 %option outfile="chkparser.c"
 %option prefix="chkparser_"
 
@@ -23,18 +24,12 @@ ACCIDENTAL ([#bxdq\^v]+)
     #endif
 %}
 
-%option extra-type="long *"
-
 %%
 
-%{
-    long *tct = yyextra;
-%}
 
 ^` {
     parserpost("typecheck: starting backtick");
-    *tct = E_TT_BACKTICK;
-    return H_SYM; // because backtick wins, if we're here we don't need to scan any longer
+    return H_SYM | H_BACKTICK; // because backtick wins, if we're here we don't need to scan any longer
 }
 
 ^{INTEGER} {
@@ -62,12 +57,12 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_PITCH;
 }
 
-^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
+^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[-+][0-9]+t {
     parserpost("typecheck: pitch");
     return H_PITCH;
 }
 
-^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[-+][0-9]+[/]{INTEGER}t {
     parserpost("typecheck: pitch");
     return H_PITCH;
 }
@@ -78,21 +73,18 @@ ACCIDENTAL ([#bxdq\^v]+)
 }
 
 ^[^` \t\n\,\;][^ \t\n\,\;]* {
-    *tct = E_TT_PAREN;
     parserpost("typecheck: parens, no reserved chars");
-    return H_SYM;
+    return H_SYM | H_PAREN;
 }
 
 ^[^`\(\)][^\(\)]* {
-    *tct = E_TT_RESERVED;
     parserpost("typecheck: reserved chars, no parens");
-    return H_SYM;
+    return H_SYM | H_RESERVED;
 }
 
 ^[^`](.|\n|\r)* {
-    *tct = E_TT_PAREN | E_TT_RESERVED;
     parserpost("typecheck: reserved chars parens");
-    return H_SYM;
+    return H_SYM | H_PAREN | H_RESERVED;
 }
 
 %%
@@ -104,31 +96,74 @@ int main(int argc, char **argv)
 }
 #endif
 
-void chkparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
+
+
+
+t_chkParser::t_chkParser() : t_parser()
 {
-    yy_flush_buffer(bp, myscanner);
-    yy_delete_buffer(bp, myscanner);
+
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    
+    yy_init_globals ((yyscan_t) this);
 }
 
-long typecheck_parse(char *buf, long *tct)
+long t_chkParser::parse(char *buf)
 {
-    yyscan_t myscanner;
-    YY_BUFFER_STATE bp;
-    *tct = 0;
-    chkparser_lex_init_extra(tct, &myscanner);
-    bp = yy_scan_string(buf, myscanner);
-    long t = yylex(myscanner);
-    if (t == H_NOTHING)
-        t = H_SYM;
-    chkparser_flush_and_delete_buffer(myscanner, bp);
-    chkparser_lex_destroy(myscanner);
-    return t;
+    long type;
+    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) this);
+    yy_switch_to_buffer(bp, (yyscan_t) this);
+    type = yylex((yyscan_t) this);
+    yy_flush_buffer(bp, (yyscan_t) this);
+    yy_delete_buffer(bp, (yyscan_t) this);
+    return type != H_NOTHING ? type : H_SYM;
 }
 
-YY_BUFFER_STATE chkparser_scan_string(yyscan_t myscanner, char *buf)
+t_bool t_chkParser::wantsBacktick(t_symbol *s)
 {
-    YY_BUFFER_STATE bp = yy_scan_string(buf, myscanner);
-    yy_switch_to_buffer(bp, myscanner);
-    return bp;
+    if (s == _llllobj_sym_nil || s == _llllobj_sym_null) {
+        return true;
+    } else {
+        long type = parse(s->s_name);
+        long mods = type & H_MODIFIERS;
+        if ((type & H_PLAINTYPE) != H_SYM ||
+            (mods & H_BACKTICK) ||
+            ((mods & H_PAREN) && !(mods & H_RESERVED))) {
+            return true;
+        } else
+            return false;
+    }
 }
 
+t_symbol *t_chkParser::addQuoteIfNeeded(t_symbol *s)
+{
+    if (wantsBacktick(s))
+        return sym_addquote(s->s_name);
+    else
+        return s;
+}
+
+
+
+
+void *chkparser_alloc(size_t bytes, void *yyscanner)
+{
+    void *b = ((t_chkParser *) yyscanner)->getPtr(bytes);
+    parserpost(" chkparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
+}
+
+void *chkparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" chkparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
+
+void chkparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}

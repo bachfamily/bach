@@ -361,8 +361,8 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 6
-#define YY_END_OF_BUFFER 7
+#define YY_NUM_RULES 8
+#define YY_END_OF_BUFFER 9
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -370,10 +370,11 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[19] =
+static yyconst flex_int16_t yy_accept[27] =
     {   0,
-        0,    0,    7,    4,    5,    4,    4,    1,    0,    0,
-        0,    1,    0,    2,    0,    0,    3,    0
+        0,    0,    9,    6,    7,    6,    6,    6,    1,    0,
+        0,    0,    0,    4,    1,    0,    0,    0,    2,    0,
+        0,    0,    0,    5,    3,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
@@ -413,30 +414,34 @@ static yyconst YY_CHAR yy_meta[8] =
         1,    1,    1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_uint16_t yy_base[19] =
+static yyconst flex_uint16_t yy_base[27] =
     {   0,
-        0,   19,   21,   23,   23,    5,   14,   16,    0,   12,
-        5,    0,    9,   23,    8,   10,   23,   23
+        0,   29,   31,   33,   33,    5,   24,    4,   26,    0,
+       22,    7,    0,   33,    0,   10,   14,   17,   33,   16,
+       18,   13,   20,   33,   33,   33
     } ;
 
-static yyconst flex_int16_t yy_def[19] =
+static yyconst flex_int16_t yy_def[27] =
     {   0,
-       18,    1,   18,   18,   18,   18,   18,    6,    6,   18,
-       18,    8,   18,   18,   18,   18,   18,    0
+       26,    1,   26,   26,   26,   26,   26,   26,    6,    6,
+       26,   26,    8,   26,    9,   26,   26,   26,   26,   26,
+       26,   26,   26,   26,   26,    0
     } ;
 
-static yyconst flex_uint16_t yy_nxt[31] =
+static yyconst flex_uint16_t yy_nxt[41] =
     {   0,
-        4,    5,    6,    7,    4,    4,    4,    9,   10,   13,
-       11,   14,   15,   16,   16,   16,   17,   11,   12,   11,
-       18,    8,    3,   18,   18,   18,   18,   18,   18,   18
+        4,    5,    6,    7,    4,    8,    4,   10,   11,   13,
+       14,   17,   12,   14,   18,   16,   19,   20,   23,   21,
+       22,   21,   23,   21,   24,   23,   25,   16,   15,   12,
+       26,    9,    3,   26,   26,   26,   26,   26,   26,   26
     } ;
 
-static yyconst flex_int16_t yy_chk[31] =
+static yyconst flex_int16_t yy_chk[41] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    6,    6,   11,
-       11,   11,   13,   15,   13,   16,   16,   10,    8,    7,
-        3,    2,   18,   18,   18,   18,   18,   18,   18,   18
+        1,    1,    1,    1,    1,    1,    1,    6,    6,    8,
+        8,   12,   12,   12,   16,   16,   16,   17,   22,   17,
+       18,   20,   18,   21,   21,   23,   23,   11,    9,    7,
+        3,    2,   26,   26,   26,   26,   26,   26,   26,   26
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -753,13 +758,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 19 )
+				if ( yy_current_state >= 27 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 23 );
+		while ( yy_base[yy_current_state] != 33 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -815,19 +820,36 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 {
+    *a = t_shortRational(strtol(yytext, NULL, 10), 1);
+    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    return A_MORE;
+}
+	YY_BREAK
+case 5:
+YY_RULE_SETUP
+{
+    char *next = yytext;
+    *a = t_shortRational(strtol(next, &next, 10), strtol(next + 1, NULL, 10));
+    parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
+    return A_MORE;
+}
+	YY_BREAK
+case 6:
+YY_RULE_SETUP
+{
     parserpost(" lex: unrecognized character %s", yytext);
     return A_ERROR;
 }
 	YY_BREAK
-case 5:
-/* rule 5 can match eol */
+case 7:
+/* rule 7 can match eol */
 YY_RULE_SETUP
 {
     parserpost(" lex: unrecognized character \\n", yytext);
     return A_ERROR;
 }
 	YY_BREAK
-case 6:
+case 8:
 YY_RULE_SETUP
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
@@ -1126,7 +1148,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 19 )
+			if ( yy_current_state >= 27 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1155,11 +1177,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 19 )
+		if ( yy_current_state >= 27 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 18);
+	yy_is_jam = (yy_current_state == 26);
 
 	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;

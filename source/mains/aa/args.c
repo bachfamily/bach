@@ -58,6 +58,7 @@
 #include "ext_systhread.h"
 #include "ext_dictionary.h"
 #include "jpatcher_api.h"
+#include "chkparser.h"
 
 #define MAX_ATTRS 256
 
@@ -479,6 +480,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 	t_jbox *pfftbox; 
 	t_object *box; // the box containing the patcher
 	t_atombuf *patcherargs;
+    t_chkParser chkParser;
 
 	long i;
 	long ac = 0;
@@ -559,7 +561,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 				if (*this_arg)
 					attrsym = sym_addquote(attrsym->s_name);
 				else
-					attrsym = llll_quoteme(attrsym);
+					attrsym = chkParser.addQuoteIfNeeded(attrsym);
 			}
 			llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, x->n_proxies + 2, attrsym, outargsac, outargsav + 1);	
 		}
@@ -605,7 +607,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 					if (*this_arg)
 						attrsym = sym_addquote(attrsym->s_name);
 					else
-						attrsym = llll_quoteme(attrsym);
+                        attrsym = chkParser.addQuoteIfNeeded(attrsym);
 				}
 				llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, x->n_proxies + 2, attrsym, outargsac, outargsav + 1);	
 			}
