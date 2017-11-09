@@ -100,6 +100,10 @@ int T_EXPORT main()
 	class_addmethod(c, (method)post_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)post_inletinfo,	"inletinfo",	A_CANT,		0);
 	
+    
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
+    
 	CLASS_ATTR_LONG(c, "mindepth",	0,	t_post, n_mindepth);
 	CLASS_ATTR_LABEL(c, "mindepth", 0, "Minimum Depth");
 	CLASS_ATTR_BASIC(c, "mindepth", 0);

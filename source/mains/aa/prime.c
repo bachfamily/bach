@@ -96,6 +96,8 @@ int T_EXPORT main()
 	class_addmethod(c, (method)prime_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)prime_inletinfo,		"inletinfo",	A_CANT,		0);
 
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
 	class_register(CLASS_BOX, c);
 	prime_class = c;
 

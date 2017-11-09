@@ -102,10 +102,12 @@ int T_EXPORT main()
 	class_addmethod(c, (method)minfo_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)minfo_inletinfo,	"inletinfo",	A_CANT,		0);
 
-//	NO NEED TO ADD out ATTRIBUTE!
+
+    // no @out attribute, only versionnumber (hidden)
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_UI);
 
 
-	CLASS_ATTR_CHAR(c, "matchtype", 0, t_minfo, match_type); 
+	CLASS_ATTR_CHAR(c, "matchtype", 0, t_minfo, match_type);
 	CLASS_ATTR_STYLE_LABEL(c,"matchtype",0,"onoff","Match Type for Symmetricity");
 	CLASS_ATTR_BASIC(c,"matchtype",0);
 	// @discussion If this flag is set, the symmetricity check for a matrix will take 

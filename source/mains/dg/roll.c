@@ -5558,7 +5558,7 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) roll_getmaxID, "getmaxid", 0); // undocumented
 	class_addmethod(c, (method) roll_notify, "bachnotify", A_CANT, 0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
 
 
 	notation_class_add_notation_attributes(c, k_NOTATION_OBJECT_ROLL);

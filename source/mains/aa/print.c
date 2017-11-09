@@ -96,6 +96,8 @@ int T_EXPORT main()
 	class_addmethod(c, (method)print_assist,	"assist",		A_CANT,		0);
 	class_addmethod(c, (method)print_inletinfo,	"inletinfo",	A_CANT,		0);
 	
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
 	CLASS_ATTR_CHAR(c, "error",	0,	t_print, n_error);
 	CLASS_ATTR_STYLE_LABEL(c, "error", 0, "enumindex", "Error Message");
 	CLASS_ATTR_ENUMINDEX(c, "error", 0, "None Error Warning");

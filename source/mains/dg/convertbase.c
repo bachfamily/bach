@@ -162,7 +162,7 @@ int T_EXPORT main()
     // otherwise it is output as a standard number; <br />
     // - Always: the digits are always output as symbols.
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 
 	class_register(CLASS_BOX, c);

@@ -1323,7 +1323,11 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     t_atom_long versionnumber = 0;
 	if (dictionary_hasentry(d, gensym("versionnumber"))) {
 		dictionary_getlong(d, gensym("versionnumber"), &versionnumber);
-        r_ob->version_number = versionnumber;
+        
+        // Setting retrieved version number (because it will be accounted for when the data is loaded in the new() method, after this subroutine has returned
+        // At the end of the new() method the CURRENT version number will finally be stored
+        llllobj_set_version_number((t_object *)r_ob, LLLL_OBJ_UI, versionnumber);
+        
         if (versionnumber == 0)
             brand_new_creation = true;
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && versionnumber > 0 && versionnumber <= 7200)
@@ -2016,12 +2020,14 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 void notation_class_add_settings_attributes(t_class *c, char obj_type){
 	CLASS_STICKY_ATTR(c,"category",0,"Settings");
 
+    /*
 	CLASS_ATTR_LONG(c,"versionnumber",0, t_notation_obj, version_number);
 	CLASS_ATTR_STYLE_LABEL(c,"versionnumber",0,"text","Version Number");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"versionnumber", 0, "0");
 	CLASS_ATTR_INVISIBLE(c, "versionnumber", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE); // invisible attribute
 	// @exclude all
-
+     */
+     
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		
 		CLASS_ATTR_LONG(c, "numvoices", 0, t_notation_obj, num_voices);

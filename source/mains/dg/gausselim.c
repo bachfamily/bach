@@ -111,7 +111,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)gausselim_assist,					"assist",				A_CANT,		0);
 	class_addmethod(c, (method)gausselim_inletinfo,					"inletinfo",			A_CANT,		0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 
 	CLASS_ATTR_CHAR(c, "mode", 0, t_gausselim, mode); 

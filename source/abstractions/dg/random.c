@@ -42,7 +42,7 @@
 // METHODS
 // ---------------
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 // @method llll @digest Set pool llll and output randomly picked elements
 // @description <o>bach.random</o> sets the incoming llll as the pool from which elements
@@ -73,7 +73,7 @@ llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
 
 void main_foo() {
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 CLASS_ATTR_CHAR(c, "unwrap", 0, t_random, unwrap); 
 CLASS_ATTR_STYLE_LABEL(c,"unwrap",0,"text","Automatically Unwrap lllls When Picked");

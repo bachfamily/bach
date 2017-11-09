@@ -70,7 +70,7 @@
  
 void main_foo() {
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 CLASS_ATTR_CHAR(c, "nullmode", 0, t_unpacknote, nullmode); 
 CLASS_ATTR_STYLE_LABEL(c,"nullmode",0,"onoff","Send null Pitch Breakpoints Instead Of Trivial Ones");

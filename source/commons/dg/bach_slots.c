@@ -5312,7 +5312,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                 case k_SLOT_TYPE_TOGGLEMATRIX:
 								{
 #ifdef BACH_NEW_LLLLSLOT_SYNTAX
-                                    if (r_ob->creatingnewobj && r_ob->version_number <= 70908) {
+                                    if (r_ob->creatingnewobj && llllobj_get_version_number((t_object *)r_ob, LLLL_OBJ_UI) <= 70908) {
                                         t_llllelem *subelem = this_slot->l_head->l_next;
                                         t_llll *this_llll = (hatom_gettype(&subelem->l_hatom) == H_LLLL) ? hatom_getllll(&subelem->l_hatom) : NULL;
                                         if (this_llll) {

@@ -104,6 +104,9 @@ int T_EXPORT main()
 	class_addmethod(c, (method)contains_notify,		"notify",		A_CANT,		0);
 
 	
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
+    
 	CLASS_ATTR_LONG(c, "maxdepth",	0,	t_contains, n_maxdepth);
 	CLASS_ATTR_LABEL(c, "maxdepth", 0, "Maximum Depth");
 	CLASS_ATTR_BASIC(c, "maxdepth", 0);

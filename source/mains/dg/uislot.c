@@ -851,7 +851,7 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) uislot_assist, "assist", A_CANT, 0);
 	class_addmethod(c, (method) jbox_notify, "notify", A_CANT, 0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
 
 
 	notation_class_add_notation_attributes(c, k_NOTATION_OBJECT_SLOT);

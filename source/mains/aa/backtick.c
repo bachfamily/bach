@@ -106,6 +106,8 @@ int T_EXPORT main()
     class_addmethod(c, (method)backtick_patchlineupdate,	"patchlineupdate",	A_CANT,		0);
 
     
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
     /*
     CLASS_ATTR_LONG(c, "autoattrs",	0,	t_backtick, n_autoattrs);
     CLASS_ATTR_FILTER_CLIP(c, "autoattrs", 0, 1);

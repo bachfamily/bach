@@ -635,11 +635,15 @@ void llllobj_class_add_default_bach_attrs(t_class *c, e_llllobj_obj_types type);
 // (meaning that the object was saved with bach pre-0.8,
 // or that is being typed now)
 // if process is true, the arguments stored in the object dictionary will be processed
-t_atom_long llllobj_get_object_version_number(t_object *x, e_llllobj_obj_types types);
+t_atom_long llllobj_get_version_number(t_object *x, e_llllobj_obj_types types);
 
 // sets the object version number as the current one
 // should be called by each object at the end of its constructor
 void llllobj_set_current_version_number(t_object *x, e_llllobj_obj_types type);
+
+
+// sets the object version number as a specified one (useful before handling backward compatibility routines)
+void llllobj_set_version_number(t_object *x, e_llllobj_obj_types type, long version_number);
 
 
 // clean all the stores and outlets of an object

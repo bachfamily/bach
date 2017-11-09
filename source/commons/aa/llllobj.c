@@ -2149,7 +2149,7 @@ void llllobj_class_add_default_bach_attrs(t_class *c, e_llllobj_obj_types type)
 }
 
 
-t_atom_long llllobj_get_object_version_number(t_object *x, e_llllobj_obj_types type)
+t_atom_long llllobj_get_version_number(t_object *x, e_llllobj_obj_types type)
 {
 	t_atom_long vn = 0;
 	t_dictionary *d = (t_dictionary *) gensym("#D")->s_thing;
@@ -2164,24 +2164,29 @@ t_atom_long llllobj_get_object_version_number(t_object *x, e_llllobj_obj_types t
 }
 
 
-void llllobj_set_current_version_number(t_object *x, e_llllobj_obj_types type)
+void llllobj_set_version_number(t_object *x, e_llllobj_obj_types type, long version_number)
 {
 	switch (type) {
 		case LLLL_OBJ_VANILLA:
-			((t_llllobj_object *) x)->l_versionnumber = BACH_CURRENT_VERSION;
+			((t_llllobj_object *) x)->l_versionnumber = version_number;
 			break;
 		case LLLL_OBJ_MSP:
-			((t_llllobj_pxobject *) x)->l_versionnumber = BACH_CURRENT_VERSION;
+			((t_llllobj_pxobject *) x)->l_versionnumber = version_number;
 			break;
 		case LLLL_OBJ_UI:
-			((t_llllobj_jbox *) x)->l_versionnumber = BACH_CURRENT_VERSION;
+			((t_llllobj_jbox *) x)->l_versionnumber = version_number;
 			break;
 		case LLLL_OBJ_UIMSP:
-			((t_llllobj_pxjbox *) x)->l_versionnumber = BACH_CURRENT_VERSION;
+			((t_llllobj_pxjbox *) x)->l_versionnumber = version_number;
 			break;
 		default:
 			break;
 	}
+}
+
+void llllobj_set_current_version_number(t_object *x, e_llllobj_obj_types type)
+{
+	llllobj_set_version_number(x, type, BACH_CURRENT_VERSION);
 }
 
 void llllobj_cleanup_vanilla(t_object *x)

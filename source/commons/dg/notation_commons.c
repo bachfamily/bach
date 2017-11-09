@@ -29225,7 +29225,7 @@ t_llll* get_single_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 
 void set_graphic_values_to_note(t_notation_obj *r_ob, t_note *note, long screen_midicents, t_rational accidental)
 {
-    if (r_ob->version_number <= 70910) {
+    if (llllobj_get_version_number((t_object *)r_ob, LLLL_OBJ_UI) <= 70910) {
         // backward compatibility, graphics sets the pitch and the midicents
         note_set_user_enharmonicity_from_screen_representation(note, screen_midicents, accidental);
         note->midicents = note->pitch_original.toMC();

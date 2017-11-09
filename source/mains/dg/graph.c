@@ -459,7 +459,7 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) graph_inletinfo, "inletinfo", A_CANT, 0);
 	class_addmethod(c, (method) graph_assist, "assist", A_CANT, 0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
 
 
 	CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 260 260");

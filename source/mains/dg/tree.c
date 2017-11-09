@@ -763,7 +763,7 @@ int T_EXPORT main(void){
     
     
     
-    llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
     //    llllobj_class_add_version_number_attr(c, LLLL_OBJ_UI);
     
     

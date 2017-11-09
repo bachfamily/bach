@@ -147,7 +147,7 @@
 
 void main_foo() {
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 CLASS_ATTR_CHAR(c, "size", 0, t_counter, size); 
 CLASS_ATTR_STYLE_LABEL(c,"size",0,"int","Number Of Indices");

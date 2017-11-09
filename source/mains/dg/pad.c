@@ -160,7 +160,7 @@ int T_EXPORT main()
     // - If <m>roundalign</m> is 1 = <b>Right</b>, one more element is given at the left padding side. <br />
     
     
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 
 	class_register(CLASS_BOX, c);

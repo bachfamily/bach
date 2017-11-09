@@ -108,7 +108,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)mc2n_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)mc2n_inletinfo,	"inletinfo",	A_CANT,		0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 	
 	CLASS_ATTR_LONG(c, "tonedivision", 0, t_mc2n, tone_division); 
