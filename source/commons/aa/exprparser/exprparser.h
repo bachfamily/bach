@@ -14,7 +14,7 @@
 #include "lexpr.h"
 
 #ifdef CONFIGURATION_Development
-#define parserpost post
+//#define parserpost post
 #define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)

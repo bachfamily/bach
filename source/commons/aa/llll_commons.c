@@ -7212,7 +7212,6 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 	t_llllelem *elem;
 	t_llll_stack *stack;
 	t_atom_long outsize;
-	t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
 	t_atom_long len;
 	char *new_buf, *pos = NULL, *txt = NULL;
 	
@@ -7499,7 +7498,6 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
     t_llllelem *elem;
     t_llll_stack *stack;
     t_atom_long outsize;
-    t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
     t_atom_long len;
     t_atom_long linesize = 0;
     t_atom_long indent_depth = 1;
@@ -7903,7 +7901,6 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 	t_llll *subll;
 	t_llllelem *elem;
 	t_llll_stack *stack;
-	t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
 	t_atom_long len;
 	char *pos = NULL, *txt = NULL;
 	

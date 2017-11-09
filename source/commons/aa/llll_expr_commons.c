@@ -89,7 +89,6 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     int i, lexc = 0;
     long chk = 0;
     short numvars = 0;
-    char *this_char, *next_char;
     char again;
     t_hatom result_hatom;
     t_max_err err = MAX_ERR_NONE;
