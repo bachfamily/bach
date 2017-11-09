@@ -102,7 +102,7 @@ int T_EXPORT main()
 	// @description
 	// Number of output sublists in mono mode; ignored in standard mode.
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 
 	class_register(CLASS_BOX, c);
@@ -228,6 +228,8 @@ t_delace *delace_new(t_symbol *s, short ac, t_atom *av)
 		
 	} else
 		error(BACH_CANT_INSTANTIATE);
+
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

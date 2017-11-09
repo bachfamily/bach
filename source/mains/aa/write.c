@@ -130,6 +130,8 @@ int T_EXPORT main()
 	
 	dev_post("bach.write compiled %s %s", __DATE__, __TIME__);
 	
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
 	return 0;
 }
 
@@ -216,6 +218,8 @@ t_write *write_new(t_symbol *s, short ac, t_atom *av)
 		x->n_proxy = proxy_new_debug((t_object *) x, 1, &x->n_in);
 	}
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

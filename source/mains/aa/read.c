@@ -97,7 +97,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)read_acceptsdrag, "acceptsdrag_locked", A_CANT, 0);
 	class_addmethod(c, (method)read_acceptsdrag, "acceptsdrag_unlocked", A_CANT, 0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	CLASS_ATTR_LONG(c, "auto",	0,	t_read, n_auto);
 	CLASS_ATTR_FILTER_CLIP(c, "auto", 0, 1);
@@ -180,6 +180,8 @@ t_read *read_new(t_symbol *s, short ac, t_atom *av)
 		llllobj_obj_setup((t_llllobj_object *) x, 0, "b4");
 	}
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

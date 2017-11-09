@@ -101,6 +101,8 @@ int T_EXPORT main()
 
 	dev_post("bach.prime compiled %s %s", __DATE__, __TIME__);
 
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
 	return 0;
 }
 
@@ -145,6 +147,7 @@ t_prime *prime_new(t_symbol *s, short ac, t_atom *av)
 	
 	if ((x = (t_prime *) object_alloc(prime_class))) {
 		x->n_out = intout(x);
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 		return x;
 	} else
 		error(BACH_CANT_INSTANTIATE);

@@ -291,6 +291,8 @@ int T_EXPORT main()
 	
 	dev_post("bach.shelf compiled %s %s", __DATE__, __TIME__);
 	
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
 	return 0;
 }
 
@@ -944,6 +946,8 @@ t_shelf *shelf_new(t_symbol *s, short ac, t_atom *av)
 		}
 	} else 
 		error(BACH_CANT_INSTANTIATE);
+
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

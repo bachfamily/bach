@@ -192,7 +192,7 @@ int T_EXPORT main()
 	// @description An optional set of keywords to be considered as attributes, and therefore output as attribute-style arguments. <br />
 	// @copy BACH_DOC_STATIC_ATTR
  
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 */
 	class_register(CLASS_BOX, c);
@@ -466,6 +466,7 @@ t_args *args_new(t_symbol *s, short ac, t_atom *av)
 		error(BACH_CANT_INSTANTIATE);
 	
 	//object_post((t_object *) x, "instantiated bach.args: %p", x);
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

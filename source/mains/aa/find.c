@@ -202,7 +202,7 @@ int T_EXPORT main()
 	// Moreover, with the <m>recursive</m> attribute set to 0, the <b>(2 (3))</b> sublist would not be entered and <b>3</b> would not be found.
 	// If a lambda loop is present, the <m>depthpolicy</m> attribute is ignored.
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 
 	class_register(CLASS_BOX, c);
@@ -450,6 +450,8 @@ t_find *find_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

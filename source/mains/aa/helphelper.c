@@ -53,7 +53,9 @@ t_helphelper *helphelper_new(t_symbol *s, short ac, t_atom *av)
 		if (hashtab_store_safe(bach->b_helppatches, (t_symbol *) x->n_patcher, (t_object *) x))
 			object_warn((t_object *) x, "More than one bach.helphelper being created in patch %p!", x->n_patcher);
 	}
-	
+    
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

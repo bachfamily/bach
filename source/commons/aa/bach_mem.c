@@ -536,7 +536,7 @@ t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll fr
                             leveltype = L_CURLY;
                             break;
                     }
-                    temp_llll->l_leveltype = leveltype;
+                    temp_llll->l_thing.w_long = leveltype;
                     cursor++;
                     break;
                     
@@ -552,7 +552,7 @@ t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll fr
                     if (temp_llll->l_depth <= this_llll->l_depth)
                         temp_llll->l_depth = 1 + this_llll->l_depth;
                     this_llll = temp_llll;
-                    leveltype = this_llll->l_leveltype;
+                    leveltype = this_llll->l_thing.w_long;
                     cursor++;
                     break;
                     
@@ -733,7 +733,6 @@ void llll_dispose(t_llll *x)
 	x->l_size = 0;
 	x->l_depth = 1;
 	x->l_flags = 0;
-	x->l_leveltype = L_STANDARD;
 #ifdef BACH_USE_MAGIC_NUMBER
     x->l_magic = BACH_MAGIC_BAD;
 #endif

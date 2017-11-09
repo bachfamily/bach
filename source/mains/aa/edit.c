@@ -65,7 +65,7 @@ int T_EXPORT main(void)
 	
 //	class_addmethod(c, (method)edit_mousedownonchar,	"mousedownonchar",	A_LONG, 0);
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
 	
 	CLASS_ATTR_RGBA(c, "textcolor", 0, t_edit, j_textcolor);
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "textcolor", 0, "0. 0. 0. 0.");
@@ -372,5 +372,8 @@ t_edit *edit_new(t_symbol *name, short argc, t_atom *argv)
 		jbox_set_fontsize((t_object *) x, 12);
 		jbox_ready((t_jbox *) &x->j_box);
 	}
+    
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	return x;
 }

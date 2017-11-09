@@ -141,7 +141,7 @@ int T_EXPORT main()
 	// The <m>set</m> attribute allows setting the insertion elements.
 	// This is especially useful when used in the object box.
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	
 	
@@ -319,6 +319,8 @@ t_subs *subs_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	
