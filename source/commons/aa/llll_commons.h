@@ -1028,7 +1028,7 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 t_atom_long llll_to_native_buf(t_llll *in_llll, char **buf);
 
 // creates a llll from a text buffer
-t_llll *llll_from_text_buf(const char *txtbuf, t_bool leveltypes);
+t_llll *llll_from_text_buf(const char *txtbuf);
 
 
 // retrieve a list from a native buffer of ac size

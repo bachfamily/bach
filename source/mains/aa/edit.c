@@ -203,7 +203,7 @@ void edit_bang(t_edit *x)
 
 	object_method(textfield, gensym("gettextptr"), &text, &size);
 	
-	ll = llll_from_text_buf(text, 0);
+	ll = llll_from_text_buf(text);
 	if (ll) {
 		llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, ll);
 		llll_free(ll);

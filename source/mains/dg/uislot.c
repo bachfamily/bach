@@ -1968,7 +1968,7 @@ void uislot_enter(t_uislot *x)	// enter is triggerd at "endeditbox time"
         llll_free(new_text_as_llll);
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
 	} else if (x->r_ob.is_editing_type == k_LLLL_IN_SLOT) {
-		t_llll *my_llll = llll_from_text_buf(text, false);
+		t_llll *my_llll = llll_from_text_buf(text);
 		if (my_llll) {
 			create_whole_uislot_undo_tick(x);
 #ifdef BACH_NEW_LLLLSLOT_SYNTAX
@@ -1981,7 +1981,7 @@ void uislot_enter(t_uislot *x)	// enter is triggerd at "endeditbox time"
 			handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
 		}
     } else if (x->r_ob.is_editing_type == k_NUMBER_IN_SLOT) {
-        t_llll *ll = llll_from_text_buf(text, false);
+        t_llll *ll = llll_from_text_buf(text);
         create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
         notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, ll);
         llll_free(ll);
