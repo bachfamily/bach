@@ -13,11 +13,13 @@
 #include "llll_commons.h"
 #include "lexpr.h"
 
+#ifndef parserpost
 #ifdef CONFIGURATION_Development
 //#define parserpost post
 #define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
+#endif
 #endif
 
 typedef struct _exprparser_data {

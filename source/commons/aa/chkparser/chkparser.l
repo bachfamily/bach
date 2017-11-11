@@ -1,5 +1,6 @@
 %option noyywrap nodefault reentrant
 %option noyyalloc noyyrealloc noyyfree
+%option debug
 %option outfile="chkparser.c"
 %option prefix="chkparser_"
 
@@ -104,22 +105,26 @@ t_chkParser::t_chkParser() : t_parser()
 
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
-    
+    reset();
+}
+
+void t_chkParser::reset()
+{
+    t_parser::reset();
     /* By setting to 0xAA, we expose bugs in
      yy_init_globals. Leave at 0x00 for releases. */
     memset(this,0x00,sizeof(struct yyguts_t));
-    
-    yy_init_globals ((yyscan_t) this);
+    //yy_init_globals ((yyscan_t) this);
 }
 
 long t_chkParser::parse(char *buf)
 {
+    parserpost("chkparser: parsing %s", buf);
     long type;
-    YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) this);
-    yy_switch_to_buffer(bp, (yyscan_t) this);
-    type = yylex((yyscan_t) this);
-    yy_flush_buffer(bp, (yyscan_t) this);
-    yy_delete_buffer(bp, (yyscan_t) this);
+    YY_BUFFER_STATE bp = chkparser__scan_string(buf, (yyscan_t) this);
+    chkparser__switch_to_buffer(bp, (yyscan_t) this);
+    type = chkparser_lex((yyscan_t) this);
+    reset();
     return type != H_NOTHING ? type : H_SYM;
 }
 

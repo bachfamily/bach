@@ -42,25 +42,25 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 ^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT} {
     *p = t_parser::eatPitchAsNameAccInt(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", degree, alter.num(), alter.den(), octave);
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", p->degree(), p->alter().num(), p->alter().den(), p->octave());
     return P_MORE;
 }
 
 ^[-+]?{NOTENAME}[-+]?{UINT}{ACCIDENTAL} {
     *p = t_parser::eatPitchAsNameIntAcc(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", p->degree(), p->alter().num(), p->alter().den(), p->octave());
     return P_MORE;
 }
 
 ^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}+t {
     *p = t_parser::eatPitchAsNameAccIntIntT(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", p->degree(), p->alter().num(), p->alter().den(), p->octave());
     return P_MORE;
 }
 
 ^[-+]?{NOTENAME}{ACCIDENTAL}?[-+]?{UINT}[-+]{UINT}[/][-+]?{UINT}t {
     *p = t_parser::eatPitchAsNameAccIntRatT(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", p->degree(), p->alter().num(), p->alter().den(), p->octave());
     return P_MORE;
 }
 
@@ -95,17 +95,24 @@ t_pitchParser::t_pitchParser() : t_parser()
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
     
-    /* By setting to 0xAA, we expose bugs in
-     yy_init_globals. Leave at 0x00 for releases. */
-    memset(this,0x00,sizeof(struct yyguts_t));
+    reset();
     
     pitchparser_set_extra (p, (yyscan_t) this);
     
+}
+
+
+void t_pitchParser::reset()
+{
+    t_parser::reset();
+    //memset(this,0x00,sizeof(struct yyguts_t));
     yy_init_globals ((yyscan_t) this);
+    
 }
 
 t_pitch t_pitchParser::parse(char *buf)
 {
+    parserpost("pitchparser: parsing %s", buf);
     YY_BUFFER_STATE bp = yy_scan_string(buf, (yyscan_t) this);
     yy_switch_to_buffer(bp, (yyscan_t) this);
     switch (yylex((yyscan_t) this)) {

@@ -12,11 +12,13 @@
 #include "bach_parser.hpp"
 #include "llll_commons.h"
 
+#ifndef parserpost
 #ifdef CONFIGURATION_Development
 //#define parserpost post
 #define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
+#endif
 #endif
 
 
@@ -27,6 +29,7 @@ public:
     t_alterParser();
     ~t_alterParser() { delete a; };
     t_shortRational parse(char *buf);
+    void reset();
 };
 
 

@@ -1576,10 +1576,10 @@ yyreturn:
 
 void t_strParser::parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
 {
+    parserpost("strparser: parsing %s", buf);
     YY_BUFFER_STATE bp;
     bp = strparser_scan_string((yyscan_t) this, buf);
     strparser_parse((yyscan_t) this, ll, stack, depth);
-    strparser_flush_and_delete_buffer((yyscan_t) this, bp);
     reset();
 }
 

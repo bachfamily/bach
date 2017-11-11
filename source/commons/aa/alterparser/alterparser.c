@@ -2013,17 +2013,21 @@ t_alterParser::t_alterParser() : t_parser()
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
     
-    /* By setting to 0xAA, we expose bugs in
-     yy_init_globals. Leave at 0x00 for releases. */
-    memset(this,0x00,sizeof(struct yyguts_t));
-    
+    reset();
     alterparser_set_extra (a, (yyscan_t) this);
-    
+}
+
+void t_alterParser::reset()
+{
+    t_parser::reset();
+    //memset(this,0x00,sizeof(struct yyguts_t));
     yy_init_globals ((yyscan_t) this);
+    
 }
 
 t_shortRational t_alterParser::parse(char *buf)
 {
+    parserpost("alterparser: parsing %s", buf);
     YY_BUFFER_STATE bp = alterparser__scan_string(buf,(yyscan_t) this);
     alterparser__switch_to_buffer(bp,(yyscan_t) this);
     switch (alterparser_lex((yyscan_t) this)) {

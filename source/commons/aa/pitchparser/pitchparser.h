@@ -12,11 +12,13 @@
 #include "bach_parser.hpp"
 #include "llll_commons.h"
 
+#ifndef parserpost
 #ifdef CONFIGURATION_Development
 //#define parserpost post
 #define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
+#endif
 #endif
 
 class t_pitchParser : public t_parser {
@@ -26,6 +28,7 @@ public:
     t_pitchParser();
     ~t_pitchParser() { delete p; };
     t_pitch parse(char *buf);
+    void reset();
 };
 
 #endif /* pitchparser_h */

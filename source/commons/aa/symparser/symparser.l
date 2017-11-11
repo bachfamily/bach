@@ -142,11 +142,14 @@ t_symParser::t_symParser() : t_parser()
 {
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
-    
-    /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
+    reset();
+}
+
+void t_symParser::reset()
+{
+    t_parser::reset();
     memset(this,0x00,sizeof(struct yyguts_t));
-    
-    yy_init_globals ((yyscan_t) this);
+    //yy_init_globals ((yyscan_t) this);
 }
 
 YY_BUFFER_STATE symparser_scan_string(yyscan_t myscanner, char *buf)
