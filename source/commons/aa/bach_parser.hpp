@@ -11,6 +11,20 @@
 
 #include "llll_commons.h"
 
+
+#ifdef CONFIGURATION_Development
+#define parserpost post
+//#define parserpost(...) ((void) 0)
+#else
+#define parserpost(...) ((void) 0)
+#endif
+
+
+
+#define YY_FATAL_ERROR(msg) t_parser::fatalError(msg)
+
+
+
 class t_parser {
 private:
     char pool[4096];
@@ -128,6 +142,12 @@ public:
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
         p.p_alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
         return p;
+    }
+    
+    
+    static void fatalError(const char *msg)
+    {
+        error("%s", msg);
     }
 
 };

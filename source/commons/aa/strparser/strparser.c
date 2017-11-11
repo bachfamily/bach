@@ -2142,11 +2142,16 @@ t_strParser::t_strParser() : t_parser()
 {
     setPtr(sizeof(struct yyguts_t));
     setBasePtr();
-    
+    reset();
     /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
+
+}
+
+void t_strParser::reset()
+{
+    t_parser::reset();
     memset(this,0x00,sizeof(struct yyguts_t));
-    
-    yy_init_globals ((yyscan_t) this);
+    //yy_init_globals ((yyscan_t) this);
 }
 
 YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, char *buf)

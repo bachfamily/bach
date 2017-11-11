@@ -417,15 +417,13 @@ t_exprParser::t_exprParser(t_exprparser_data *data) : t_parser()
 
     /* By setting to 0xAA, we expose bugs in
      yy_init_globals. Leave at 0x00 for releases. */
-    memset(this,0x00,sizeof(struct yyguts_t));
-    
+    reset();
     exprparser_set_extra (data, (yyscan_t) this);
-    
-    yy_init_globals ((yyscan_t) this);
 }
 
 void t_exprParser::setBuffer(char *buf)
 {
+    parserpost("exprparser: setting to buffer %s", buf);
     buffer = yy_scan_string(buf, (yyscan_t) this);
     yy_switch_to_buffer((YY_BUFFER_STATE) buffer, (yyscan_t) this);
 }
@@ -438,8 +436,10 @@ void t_exprParser::setStartCondition(int condition)
 
 void t_exprParser::reset()
 {
-    yy_flush_buffer((YY_BUFFER_STATE) buffer, (yyscan_t) this);
-    yy_delete_buffer((YY_BUFFER_STATE) buffer, (yyscan_t) this);
+    t_parser::reset();
+    //memset(this,0x00,sizeof(struct yyguts_t));
+    yy_init_globals ((yyscan_t) this);
+    
 }
 
 int t_exprParser::lex()
