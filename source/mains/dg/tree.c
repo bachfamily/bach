@@ -306,6 +306,7 @@ t_llll *get_checkvalues_as_llll(t_tree *x, char checked_elements_only);
 
 void tree_send_openstate(t_tree *x, t_symbol *s, long argc, t_atom *argv);
 void set_openstate_from_llll(t_tree *x, t_llll *values);
+t_llll *get_openstate_as_llll(t_tree *x);
 
 
 
@@ -323,6 +324,13 @@ void tree_jsave(t_tree *x, t_dictionary *d)
         } else {
             if (x->tree_as_llll) {
                 llll_store_in_dictionary(x->tree_as_llll, d, "whole_tree_data", NULL);
+                
+                if (x->mode == k_TREE_CHECKEDOUTLINE || x->mode == k_TREE_OUTLINE) {
+                    t_llll *openstate = get_openstate_as_llll(x);
+                    llll_store_in_dictionary(openstate, d, "tree_openstate_data", NULL);
+                    llll_free(openstate);
+                }
+                
                 if (x->mode == k_TREE_CHECKEDOUTLINE) {
                     t_llll *check = get_checkvalues_as_llll(x, false);
                     llll_store_in_dictionary(check, d, "tree_check_data", NULL);
@@ -1944,7 +1952,7 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
             
             // retrieving saved values?
             t_llll *llll_for_rebuild = llll_retrieve_from_dictionary_with_leveltypes(d, "whole_tree_data");
-            llll_funall(llll_for_rebuild, clip_lthing_between_zero_and_one, NULL, 1, -1, FUNALL_SKIP_ATOMS + FUNALL_PROCESS_WHOLE_SUBLISTS);
+            llll_funall(llll_for_rebuild, clip_lthing_between_zero_and_one, NULL, 1, -1, FUNALL_PROCESS_WHOLE_SUBLISTS);
             if (llll_for_rebuild) {
                 llllobj_manage_dict_llll((t_object *)x, LLLL_OBJ_UI, llll_for_rebuild);
                 x->tree_as_llll = llll_for_rebuild;
@@ -2441,7 +2449,7 @@ void send_clicked_node_address_and_content(t_tree *x)
 
 
 
-t_llll *get_openstate_as_llll(t_tree *x, char get_checked_elems_only)
+t_llll *get_openstate_as_llll(t_tree *x)
 {
     t_llll *values = NULL;
     
@@ -2489,7 +2497,7 @@ t_llll *get_openstate_as_llll(t_tree *x, char get_checked_elems_only)
 
 void tree_send_openstate(t_tree *x, t_symbol *s, long argc, t_atom *argv)
 {
-    t_llll *values = get_openstate_as_llll(x, true);
+    t_llll *values = get_openstate_as_llll(x);
     llll_prependsym(values, gensym("openstate"));
     llllobj_outlet_llll((t_object *)x, LLLL_OBJ_UI, 3, values);
     llll_free(values);
@@ -2525,7 +2533,7 @@ void set_openstate_from_llll(t_tree *x, t_llll *values)
                 value = value->l_hatom.h_w.w_llll->l_head;
                 if (elem && hatom_gettype(&elem->l_hatom) == H_LLLL) {
                     if (value) {
-                        hatom_getllll(&elem->l_hatom)->l_thing.w_long = hatom_getlong(&value->l_hatom);
+                        hatom_getllll(&elem->l_hatom)->l_thing.w_long = 1 - hatom_getlong(&value->l_hatom);
                         value = value->l_next;
                     }
                     elem = elem->l_hatom.h_w.w_llll->l_head;
