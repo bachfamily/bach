@@ -426,6 +426,18 @@ void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res)
 }
 
 
+void hatom_fn_approx(t_hatom *a1, t_hatom *a2, t_hatom *res)
+{
+    hatom_setpitch(res, t_pitch::approx(hatom_getpitch(a1), hatom_getlong(a2)));
+}
+
+void hatom_fn_enharm(t_hatom *a1, t_hatom *a2, t_hatom *res)
+{
+    t_pitch p = hatom_getpitch(a1);
+    hatom_setpitch(res, p.enharm(hatom_getlong(a2)));
+}
+
+
 
 
 
