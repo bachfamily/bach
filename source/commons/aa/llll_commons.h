@@ -282,12 +282,13 @@ void bach_setup(t_bach *x);
 
 // create a new llll from an array of atoms containing its textual representation
 //
-// special case:
-// if ac == 1 and av is A_OBJ then atom_getobj(av) is cast to a char* from which the whole string is built
-// but you are advised against using this feature (its details might change in some future)
-// if you need to convert a string into a llll, use llll_from_text_buf instead
-//
 t_llll *llll_parse(long ac, t_atom *av);
+
+
+// create a new llll from a c string (txt)
+// if the string is or can be longer than about 2048 chars (there's some tolerance anyway),
+// big must be set to true. This, on the other hand, will make the operation significantly slower.
+t_llll *llll_from_text_buf(const char *txt, t_bool big = false); // creates a new llll from a list contained in a string
 
 
 // still uses the old, non-flex parser
@@ -1026,9 +1027,6 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 // DEPRECATED! use llll_store_in_dictionary() instead
 // convert an llll to a native buffer
 t_atom_long llll_to_native_buf(t_llll *in_llll, char **buf);
-
-// creates a llll from a text buffer
-t_llll *llll_from_text_buf(const char *txtbuf);
 
 
 // retrieve a list from a native buffer of ac size

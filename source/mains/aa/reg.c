@@ -167,9 +167,7 @@ void reg_edclose(t_reg *x, char **ht, long size)
 {
     // do something with the text
     if (ht) {
-        t_atom av;
-        atom_setobj(&av, *ht);
-        t_llll *ll = llll_parse(1, &av);
+        t_llll *ll = llll_from_text_buf(*ht, size > 2048);
         if (ll) {
             llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);
             llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);
@@ -310,9 +308,7 @@ void reg_anything(t_reg *x, t_symbol *msg, long ac, t_atom *av)
 #ifdef testtest
     if (msg == gensym("testtest")) {
         const char *txt = "12345 678 1/2 1/4 \"foo bar\" foo bar 10 (c#4 d4-2/10t)";
-        atom a;
-        atom_setobj(&a, (void *) txt);
-        in_llll = llll_parse(1, &a);
+        t_llll *ll = llll_from_text_buf(txt, size > 2048);
         llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, in_llll);
         llll_free(in_llll);
         

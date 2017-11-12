@@ -2138,11 +2138,14 @@ int main(int argc, char **argv)
 }
 #endif
 
-t_strParser::t_strParser() : t_parser()
+t_strParser::t_strParser(t_bool bigString) : t_parser()
 {
-    setPtr(sizeof(struct yyguts_t));
-    setBasePtr();
-    reset();
+    if (!bigString) {
+        setPtr(sizeof(struct yyguts_t));
+        setBasePtr();
+        reset();
+    }
+    big = bigString;
     /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
 
 }
@@ -2154,7 +2157,7 @@ void t_strParser::reset()
     //yy_init_globals ((yyscan_t) this);
 }
 
-YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, char *buf)
+YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf)
 {
     YY_BUFFER_STATE bp = strparser__scan_string(buf,myscanner);
     strparser__switch_to_buffer(bp,myscanner);
@@ -2169,19 +2172,36 @@ void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 
 void *strparser_alloc(size_t bytes, void *yyscanner)
 {
-    void *b = ((t_strParser *) yyscanner)->getPtr(bytes);
+    void *b;
+    if (!yyscanner || ((t_strParser *) yyscanner)->isBig()) {
+        b = bach_newptr(bytes);
+    } else {
+        b = ((t_strParser *) yyscanner)->getPtr(bytes);
+    }
     parserpost(" strparser_alloc: %d bytes requested, returning %p", bytes, b);
     return b;
 }
 
-void *strparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+void *strparser_realloc(void *ptr, size_t bytes, void *yyscanner)
 {
-    parserpost(" strparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
-    return ptr;
+    if (((t_strParser *) yyscanner)->isBig()) {
+        void *b = bach_resizeptr(ptr, bytes);
+        parserpost(" strparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, b);
+        return b;
+    } else {
+        parserpost(" strparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+        return ptr;
+    }
 }
 
 void strparser_free(void *ptr,void *yyscanner)
 {
-    return;
+    if (((t_strParser *) yyscanner)->isBig()) {
+        parserpost(" strparser_free: freeing %ptr", ptr);
+        bach_freeptr(ptr);
+    } else {
+        parserpost(" strparser_free: requested to free %ptr but doing nothing", ptr);
+    }
+    
 }
 

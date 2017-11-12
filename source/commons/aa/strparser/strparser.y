@@ -37,7 +37,7 @@
     
     int yylex(YYSTYPE *yylval_param, yyscan_t myscanner);
     int yyerror(yyscan_t myscanner, t_llll **ll, t_llll_stack *stack, long *depth, char *s);
-    YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, char *buf);
+    YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf);
     void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
     %}
 
@@ -97,14 +97,25 @@ term: LONG {
  
 %%
 
-void t_strParser::parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
+void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
 {
     parserpost("strparser: parsing %s", buf);
-    YY_BUFFER_STATE bp;
-    bp = strparser_scan_string((yyscan_t) this, buf);
-    strparser_parse((yyscan_t) this, ll, stack, depth);
-    reset();
+    if (!big) {
+        YY_BUFFER_STATE bp;
+        bp = strparser_scan_string((yyscan_t) this, buf);
+        strparser_parse((yyscan_t) this, ll, stack, depth);
+        reset();
+    } else {
+        yyscan_t myscanner;
+        YY_BUFFER_STATE bp;
+        strparser_lex_init(&myscanner);
+        bp = strparser_scan_string(myscanner, buf);
+        strparser_parse(myscanner, ll, stack, depth);
+        strparser_flush_and_delete_buffer(myscanner, bp);
+        strparser_lex_destroy(myscanner);
+    }
 }
+
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)

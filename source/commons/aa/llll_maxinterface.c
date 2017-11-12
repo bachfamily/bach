@@ -265,19 +265,6 @@ void llll_print_named_do(void *dummy, t_symbol *name, long ac, t_atom *av)
 	defer_low(printobj, (method) llll_printobject_free, NULL, 0, NULL);
 }
 
-
-// creates a llll from a text buffer
-t_llll *llll_from_text_buf(const char *txtbuf)
-{
-	t_llll *ll;
-	t_atom av;
-	atom_setobj(&av, (t_object *) txtbuf);
-	// llll_text2atoms(txtbuf, &ac, &av);
-	ll = llll_parse(1, &av);
-	// bach_freeptr(av);
-	return ll;
-}
-
 void llll_text2atoms(char *text, long *ac, t_atom **av)
 {
 	char outstr[256];

@@ -188,9 +188,7 @@ void pv_edclose(t_pv *x, char **ht, long size)
 {
     // do something with the text
     if (ht) {
-        t_atom av;
-        atom_setobj(&av, *ht);
-        t_llll *ll = llll_parse(1, &av);
+        t_llll *ll = llll_from_text_buf(*ht, size > 2048);
         if (ll) {
             t_llll *freeme;
             t_pvitem *pvitem;

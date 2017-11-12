@@ -570,7 +570,7 @@ void notation_obj_edclose(t_notation_obj *r_ob, char **ht, long size)
 			ll = llll_get();
 			llll_appendsym(ll, gensym(*ht), 0, WHITENULL_llll);
         } else {
-            ll = llll_from_text_buf(*ht);
+            ll = llll_from_text_buf(*ht, size > 2048);
         }
         if (ll) {
             llll_prependlong(ll, r_ob->active_slot_num + 1, 0, WHITENULL_llll);

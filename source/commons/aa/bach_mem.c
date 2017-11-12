@@ -342,89 +342,114 @@ float parse_64bit_float(t_atom *av)
 t_llll *llll_parse(long ac, t_atom *av) // creates a new llll from a list in text format
 {
     long depth;
-	t_llll *this_llll;
-	t_llll_stack *stack;
-	t_llll *x;
-	const t_symbol *f64m = _llllobj_sym_float64_marker;
-	
+    t_llll *this_llll;
+    t_llll_stack *stack;
+    t_llll *x;
+    const t_symbol *f64m = _llllobj_sym_float64_marker;
+    
     x = llll_get();
-	
-	if (!ac)
-		return x;
+    
+    if (!ac)
+        return x;
     
     this_llll = x;
     stack = llll_stack_new();
     
     depth = 1;
     
-	if (ac == 1 && atom_gettype(av) == A_OBJ) {
-        t_strParser strParser;
-        strParser.parse((char *) av->a_w.w_obj, &this_llll, stack, &depth);
-        if (depth != 1)
-            goto llll_parse_err;
-        llll_stack_destroy(stack);
-        return x;
-    } else {
-        char dollarnum[2048];
-        t_symParser symParser;
-        long type;
-        long i;
-        
-        for (i = 0; i < ac || (i == 0 && ac < 0); i++, av++) {
-            switch (type = atom_gettype(av)) {
-                case A_LONG:
-                    llll_appendlong(this_llll, av->a_w.w_long, 0, WHITENULL_llll);
-                    break;
-                case A_FLOAT:
-                    llll_appenddouble(this_llll, av->a_w.w_float, 0, WHITENULL_llll);
-                    break;
-                case A_COMMA:
-                    llll_appendsym(this_llll, gensym(","), 0, WHITENULL_llll);
-                    break;
-                case A_SEMI:
-                    llll_appendsym(this_llll, gensym(";"), 0, WHITENULL_llll);
-                    break;
-                case A_DOLLSYM:
-                    llll_appendsym(this_llll, gensym("$"), 0, WHITENULL_llll);
-                    break;
-                case A_DOLLAR:
+    char dollarnum[2048];
+    t_symParser symParser;
+    long type;
+    long i;
+    
+    for (i = 0; i < ac || (i == 0 && ac < 0); i++, av++) {
+        switch (type = atom_gettype(av)) {
+            case A_LONG:
+                llll_appendlong(this_llll, av->a_w.w_long, 0, WHITENULL_llll);
+                break;
+            case A_FLOAT:
+                llll_appenddouble(this_llll, av->a_w.w_float, 0, WHITENULL_llll);
+                break;
+            case A_COMMA:
+                llll_appendsym(this_llll, gensym(","), 0, WHITENULL_llll);
+                break;
+            case A_SEMI:
+                llll_appendsym(this_llll, gensym(";"), 0, WHITENULL_llll);
+                break;
+            case A_DOLLSYM:
+                llll_appendsym(this_llll, gensym("$"), 0, WHITENULL_llll);
+                break;
+            case A_DOLLAR:
 #ifdef BACH_MAX
-                    snprintf_zero(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
+                snprintf_zero(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
 #else
-                    snprintf(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
+                snprintf(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
 #endif
-                    llll_appendsym(this_llll, gensym(dollarnum), 0, WHITENULL_llll);
-                    break;
-                case A_SYM: {
-                    t_symbol *s = av->a_w.w_sym;
-                    if (s == f64m) {
-                        double f = parse_64bit_float(av);
-                        llll_appenddouble(this_llll, f, 0, WHITENULL_llll);
-                        av += 2;
-                        i += 2;
-                    } /*else if (llll_contains_separators(s->s_name)) {
-                       llll_appendsym(this_llll, s);
-                       } */else {
-                           symParser.parse(s->s_name, &this_llll, stack, &depth);
-                           if (depth < 1)
-                               goto llll_parse_err;
-                       }
-                    break;
-                }
+                llll_appendsym(this_llll, gensym(dollarnum), 0, WHITENULL_llll);
+                break;
+            case A_SYM: {
+                t_symbol *s = av->a_w.w_sym;
+                if (s == f64m) {
+                    double f = parse_64bit_float(av);
+                    llll_appenddouble(this_llll, f, 0, WHITENULL_llll);
+                    av += 2;
+                    i += 2;
+                } /*else if (llll_contains_separators(s->s_name)) {
+                   llll_appendsym(this_llll, s);
+                   } */else {
+                       symParser.parse(s->s_name, &this_llll, stack, &depth);
+                       if (depth < 1)
+                           goto llll_parse_err;
+                   }
+                break;
             }
-            
         }
         
-        if (stack->s_items)
-            goto llll_parse_err;
-        llll_stack_destroy(stack);
-        return x;
     }
-	
+    
+    if (stack->s_items)
+        goto llll_parse_err;
+    llll_stack_destroy(stack);
+    return x;
+    
+    
 llll_parse_err:
-	llll_stack_destroy(stack);
-	llll_free(x);
-	return NULL;
+    llll_stack_destroy(stack);
+    llll_free(x);
+    return NULL;
+}
+
+
+t_llll *llll_from_text_buf(const char *txt, t_bool big) // creates a new llll from a list contained in a string
+{
+    long depth;
+    t_llll *this_llll;
+    t_llll_stack *stack;
+    t_llll *x;
+    
+    x = llll_get();
+    
+    if (!txt)
+        return x;
+    
+    this_llll = x;
+    stack = llll_stack_new();
+    
+    depth = 1;
+    
+    t_strParser strParser(big);
+    strParser.parse(txt, &this_llll, stack, &depth);
+
+    if (depth != 1)
+        goto llll_parse_string_err;
+    llll_stack_destroy(stack);
+    return x;
+    
+    
+llll_parse_string_err:
+    llll_stack_destroy(stack);
+    llll_free(x);
+    return NULL;
 }
 
 
