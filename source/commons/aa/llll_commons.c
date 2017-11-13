@@ -7213,6 +7213,7 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 	t_llll_stack *stack;
 	t_atom_long outsize;
 	t_atom_long len;
+    t_chkParser chkParser;
 	char *new_buf, *pos = NULL, *txt = NULL;
 	
 	if (*buf == NULL) {
@@ -7312,17 +7313,22 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
                         ac += len;
                         pos += len;
                         break;
-					case H_SYM: 
+					case H_SYM:
 						if (flags & LLLL_T_COPYSYMBOLS) {
 							len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_sym->s_name);
 							ac += len;
 							pos += len;
 						} else {
+                            t_symbol *sym = elem->l_hatom.h_w.w_sym;
 							t_atom_long symlen = 0;
-							char *symname = elem->l_hatom.h_w.w_sym->s_name;
+							char *symname = sym->s_name;
 							char *symnamepos = symname;
 							char *thispos = pos;
 							char *contains_spaces = NULL;
+                            if ((flags & LLLL_T_BACKTICKS) && chkParser.wantsBacktick(sym)) {
+                                *thispos++ = '`';
+                                symlen++;
+                            }
                             if (flags & LLLL_T_FORCE_SINGLE_QUOTES) {
                                 *thispos++ = '\'';
                                 symlen++;
@@ -7341,7 +7347,7 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 							while (*symnamepos && symlen < TEXT_BUF_SIZE_STEP - 6) {
 								switch (*symnamepos) {
 									case ',':
-									case ';':
+                                    case ';':
 										if (contains_spaces || (flags & LLLL_T_NO_BACKSLASH)) {
 											*thispos++ = *symnamepos++;
 											symlen ++;
@@ -7351,17 +7357,13 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 											symlen += 2;
 										}
 										break;
-									case '"':
-									case '\\':
-										if (contains_spaces || (flags & LLLL_T_NO_BACKSLASH)) {
-											*thispos++ = *symnamepos++;
-											symlen ++;
-										} else {
-											*thispos++ = '\\';
-											*thispos++ = *symnamepos++;
-											symlen += 2;
-										}
-										break;
+                                    case '"':
+                                    case '\\':
+                                        *thispos++ = '\\';
+                                        *thispos++ = *symnamepos++;
+                                        symlen += 2;
+                                        break;
+                                        
 									default:
 										*thispos++ = *symnamepos++;
 										symlen ++;
@@ -7503,6 +7505,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
     t_atom_long indent_depth = 1;
     t_bool just_closed_indented_sublist = false;
     char *new_buf, *pos = NULL;
+    t_chkParser chkParser;
     
     if (*buf == NULL) {
         outsize = 2 * TEXT_BUF_SIZE_STEP + offset;
@@ -7680,8 +7683,9 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
                             pos += len;
                             linesize += len;
                         } else {
+                            t_symbol *sym = elem->l_hatom.h_w.w_sym;
                             t_atom_long len = 0;
-                            char *symname = elem->l_hatom.h_w.w_sym->s_name;
+                            char *symname = sym->s_name;
                             char *symnamepos = symname;
                             long txtlen = strlen(symname) * 2;
                             char *this_txt, *txt;
@@ -7695,6 +7699,10 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
                             
                             //char *thispos = pos;
                             char *contains_spaces = NULL;
+                            if ((flags & LLLL_T_BACKTICKS) && chkParser.wantsBacktick(sym)) {
+                                *this_txt++ = '`';
+                                len++;
+                            }
                             if (flags & LLLL_T_FORCE_SINGLE_QUOTES) {
                                 *this_txt++ = '\'';
                                 len++;
