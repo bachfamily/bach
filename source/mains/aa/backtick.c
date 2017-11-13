@@ -43,7 +43,6 @@
 typedef struct _backtick
 {
     t_llllobj_object 	n_ob;
-    long                n_autoattrs;
     t_hashtab           *n_symbols;
     t_object            *n_tempobj;
     t_llll              *n_deathrow;
@@ -87,8 +86,7 @@ int T_EXPORT main()
     // as with all the bach objects. <br/>
     // - The first element is a rational or a pitch, as with all the bach objects. <br/>
     // - The first element is one of the symbols provided as <o>bach.backtick</o>'s arguments.
-    // - The <m>autoattrs</m> attribute is not explicitly set to 0, and the first element is an attribute of one of the objects
-    // connected to <o>bach.backtick</o>.
+    // - The first element is an attribute of one of the objects connected to the second outlet of <o>bach.backtick</o>.
 
     class_addmethod(c, (method)backtick_anything,	"anything",		A_GIMME,	0);
     
@@ -206,8 +204,10 @@ void backtick_assist(t_backtick *x, void *b, long m, long a, char *s)
                 // @description The incoming llll is returned in text format,
                 // with its first element preceded by a backtick in the standard cases,
                 // if it is one of the supplied arguments,
-                // or if it is an attribute of one of the objects it is connected to
-                // (unless the autoattrs attribute is set to 0)
+                // or if it is an attribute of one of the objects the second outlet is connected to.
+            case 1: sprintf(s, "Connect to objects whose attributes you want to backtick");   break;
+                // @out 0 @type llll @digest All the attributes of all the objects connected to the second outlet
+                // will be added to the list of the symbols to be backticked if they appear as the first element of the incoming llll.
         }
     }
 }
@@ -238,35 +238,15 @@ t_backtick *backtick_new(t_symbol *s, short ac, t_atom *av)
         // @description The symbols that have to be backticked if found at the first position of the incoming lllls.
 
         long i;
-        long true_ac = attr_args_offset(ac, av);
-        x->n_autoattrs = 1;
-        
-        for (i = true_ac; i < ac - 1; i++) {
-            t_symbol *symattr = atom_getsym(av + i);
-            if (!symattr || *symattr->s_name != '@') {
-                object_error((t_object *) x, "Bad argument at position %ld", i);
-                i++;
-                break;
-            }
-            const char *attrname = symattr->s_name + 1;
-            i++;
-            if (!strcmp(attrname, "autoattrs")) {
-                x->n_autoattrs = atom_getlong(av);
-                i++;
-            } else
-                object_error((t_object *) x, "Unknown attribute %s", attrname);
-        }
-        if (i < ac)
-            object_error((t_object *) x, "Bad argument list");
         
         t_atom out;
         atom_setsym(&out, _llllobj_sym_t);
         llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, &out);
-        llllobj_obj_setup((t_llllobj_object *) x, 0, "4");
+        llllobj_obj_setup((t_llllobj_object *) x, 0, "4a");
         x->n_deathrow = llll_get();
         x->n_symbols = hashtab_new(0);
         object_method(x->n_symbols, gensym("readonly"), 1);
-        for (i = 0; i < true_ac; i++, av++) {
+        for (i = 0; i < ac; i++, av++) {
             long type = atom_gettype(av);
             switch (type) {
                 case A_SYM: {
@@ -317,10 +297,8 @@ void backtick_remove_object(t_hashtab_entry *e, t_backtick *x)
 
 void backtick_patchlineupdate(t_backtick *x, t_object *line, t_patchline_updatetype updatetype, t_object *src, long srcout, t_object *dst, long dstin)
 {
-    if (!x->n_autoattrs)
-        return;
     if (updatetype == JPATCHLINE_CONNECT) {
-        if (src == (t_object *) x) {
+        if (src == (t_object *) x && srcout == 1) {
             long argc = 0, i;
             t_symbol **argv = NULL;
             object_attr_getnames(dst, &argc, &argv);
@@ -336,7 +314,7 @@ void backtick_patchlineupdate(t_backtick *x, t_object *line, t_patchline_updatet
             }
         }
     } else if (updatetype == JPATCHLINE_DISCONNECT) {
-        if (src == (t_object *) x) {
+        if (src == (t_object *) x && srcout == 1) {
             t_llllelem *elem;
             x->n_tempobj = dst;
             hashtab_funall(x->n_symbols, (method) backtick_remove_object, x);
