@@ -425,10 +425,24 @@ void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res)
     hatom_setdouble(res, bach_jn(order, x));
 }
 
-
 void hatom_fn_approx(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
-    hatom_setpitch(res, t_pitch::approx(hatom_getpitch(a1), hatom_getlong(a2)));
+    switch (hatom_gettype(a1)) {
+        case H_PITCH: {
+            t_pitch p = hatom_getpitch(a1);
+            if (hatom_gettype(a2) == H_LONG)
+                hatom_setpitch(res, p.approx(hatom_getlong(a2)));
+            else
+                hatom_setpitch(res, p.approx(t_shortRational(hatom_getrational(a2))));
+            break;
+        }
+        case H_DOUBLE:
+            hatom_setdouble(res, t_pitch::approx(hatom_getdouble(a1), hatom_getdouble(a2)));
+            break;
+        default:
+            hatom_setrational(res, t_pitch::approx(hatom_getrational(a1), hatom_getrational(a2)));
+            break;
+    }
 }
 
 void hatom_fn_enharm(t_hatom *a1, t_hatom *a2, t_hatom *res)

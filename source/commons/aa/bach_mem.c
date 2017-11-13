@@ -178,7 +178,6 @@ void llll_init(t_llll *x)
 	x->l_head = x->l_tail = x->l_owner = NULL;
 	x->l_size = 0;
 	x->l_depth = 1;
-	x->l_leveltype = L_STANDARD;
 	x->l_flags = 0;
 	x->l_thing.w_obj = NULL;
 }
@@ -192,7 +191,6 @@ void llll_reset(t_llll *x)
 	x->l_head = x->l_tail = x->l_owner = NULL;
 	x->l_size = 0;
 	x->l_depth = 1;
-	x->l_leveltype = L_STANDARD;
 	x->l_flags = 0;
 	x->l_thing.w_obj = NULL;
 }

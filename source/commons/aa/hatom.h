@@ -267,7 +267,6 @@ typedef struct _llll
 #endif
 	t_int32_atomic		l_count;			// reference count - you should never touch this directly!
 	t_int32				l_flags;			// OBJ_FLAG_OBJ: free the elements it contains - OBJ_FLAG_DATA: don't
-	t_uint8				l_leveltype;		// one of the #e_llll_leveltypes flags, indicating the type of parenthesis surrounding the llll
 #ifdef BACH_SAVE_STACK_WITH_MEMORY_LOGS
 #ifdef BACH_SAVE_STACK_IN_LLLLS
 	t_mframe			l_alloc_stack[16];	// for badass debugging purposes

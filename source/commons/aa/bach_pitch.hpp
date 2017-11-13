@@ -268,21 +268,52 @@ public:
         return this->autoenharm(tone_division, k_ACC_AUTO, NULL, NULL);
     }
     
+    t_pitch approx(t_atom_long tone_division)
+    {
+        if (tone_division <= 0)
+            return *this;
+        t_shortRational temp = p_alter * tone_division;
+        t_shortRational new_alter_down(temp.r_num / temp.r_den, tone_division);
+        t_shortRational new_alter_up((temp.r_num / temp.r_den) + 1, tone_division);
+        return t_pitch(p_degree, (new_alter_up - p_alter < p_alter - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
+    }
+
+    t_pitch approx(t_shortRational tone_division)
+    {
+        if (tone_division <= 0)
+            return *this;
+        t_shortRational temp = p_alter * tone_division;
+        t_shortRational new_alter_down = (temp.r_num / temp.r_den) / tone_division;
+        t_shortRational new_alter_up = ((temp.r_num / temp.r_den) + 1) / tone_division;
+        return t_pitch(p_degree, (new_alter_up - p_alter < p_alter - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
+    }
     
-    
-    static t_pitch approx(t_pitch p, long tone_division)
+    static t_rational approx(t_rational p, t_rational tone_division)
     {
         if (tone_division <= 0)
             return p;
-        
-        t_rational alter = p.alter();
-        t_rational temp = alter * tone_division;
-        t_rational new_alter_down = genrat(temp.r_num / temp.r_den, tone_division);
-        t_rational new_alter_up = genrat((temp.r_num / temp.r_den) + 1, tone_division);
-        return t_pitch(p.degree(), (new_alter_up - alter < alter - new_alter_down) ? new_alter_up : new_alter_down, p.octave());
+        long notches;
+        t_rational resol = 200 / tone_division;
+        if (p > 0)
+            notches = t_atom_long((p / resol) + t_rational(1, 2));
+        else
+            notches = t_atom_long((p / resol) + t_rational(1, 2));
+        return notches * resol;
     }
-
     
+    
+    static double approx(double p, double tone_division)
+    {
+        if (tone_division <= 0)
+            return p;
+        long notches;
+        double resol = 200. / tone_division;
+        if (p > 0)
+            notches = t_atom_long((p / resol) + 0.5);
+        else
+            notches = t_atom_long((p / resol) + 0.5);
+        return notches * resol;
+    }
     
     t_bool isNaP() const {
         return (p_alter.r_den == 0);
