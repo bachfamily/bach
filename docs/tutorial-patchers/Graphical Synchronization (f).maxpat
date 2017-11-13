@@ -631,7 +631,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.mcapprox 2 @out t",
+									"text" : "bach.approx 2 @out t",
 									"id" : "obj-13",
 									"fontname" : "Arial",
 									"numinlets" : 2,

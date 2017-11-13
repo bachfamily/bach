@@ -35,7 +35,7 @@
 	pitch-class, cent, midicent, convert, pitch
 
 	@seealso
-	bach.pc2mc, bach.mcapprox, bach.pcsetinfo, bach.expr
+	bach.pc2mc, bach.approx, bach.pcsetinfo, bach.expr
 	
 	@owner
 	Daniele Ghisi

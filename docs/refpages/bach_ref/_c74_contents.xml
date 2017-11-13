@@ -151,6 +151,7 @@
 <refpage name='bach.slot.maxref.xml'/>
 <refpage name='bach.wordcloud.maxref.xml'/>
 <refpage name='bach.zsearch.maxref.xml'/>
+<refpage name='bach.approx.maxref.xml'/>
 <refpage name='bach.belong.maxref.xml'/>
 <refpage name='bach.bin.maxref.xml'/>
 <refpage name='bach.cartopol.maxref.xml'/>
@@ -167,6 +168,7 @@
 <refpage name='bach.divisors.maxref.xml'/>
 <refpage name='bach.drip.maxref.xml'/>
 <refpage name='bach.dsort.maxref.xml'/>
+<refpage name='bach.enharm.maxref.xml'/>
 <refpage name='bach.ezmidiplay.maxref.xml'/>
 <refpage name='bach.f2mc.maxref.xml'/>
 <refpage name='bach.fact.maxref.xml'/>
@@ -193,7 +195,6 @@
 <refpage name='bach.matrixctrl2m.maxref.xml'/>
 <refpage name='bach.mc2f.maxref.xml'/>
 <refpage name='bach.mc2pc.maxref.xml'/>
-<refpage name='bach.mcapprox.maxref.xml'/>
 <refpage name='bach.mean.maxref.xml'/>
 <refpage name='bach.median.maxref.xml'/>
 <refpage name='bach.mod+.maxref.xml'/>

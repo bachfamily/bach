@@ -231,6 +231,10 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 330.125, 402.0, 130.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
 					"style" : "",
 					"text" : "bach.pick 1 2 @out t"
 				}
@@ -246,6 +250,10 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"patching_rect" : [ 369.125, 353.0, 116.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
 					"style" : "",
 					"text" : "bach.keys domain"
 				}
@@ -332,6 +340,7 @@
 				"box" : 				{
 					"allowdrag" : 0,
 					"buffername" : "goldberg",
+					"chanoffset" : 0,
 					"id" : "obj-5",
 					"maxclass" : "waveform~",
 					"numinlets" : 5,
@@ -703,7 +712,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.mcapprox.maxpat",
+				"name" : "bach.approx.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
@@ -766,6 +775,10 @@
 			}
 , 			{
 				"name" : "bach.portal.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.gt.mxo",
 				"type" : "iLaX"
 			}
 , 			{

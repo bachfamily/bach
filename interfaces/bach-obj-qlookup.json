@@ -3705,6 +3705,30 @@
       "bach.modtimes"
     ]
   },
+  "bach.approx": {
+    "digest": "Snap pitches or MIDIcents to microtonal grid",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "cent",
+      "midicent",
+      "approximate",
+      "snap",
+      "grid",
+      "microtone",
+      "nearest",
+      "pitch"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.mc2pc",
+      "bach.pc2mc"
+    ]
+  },
   "bach.belong": {
     "digest": "Tell if some elements belong to a llll",
     "module": "bach",
@@ -4060,6 +4084,27 @@
       "bach.sort",
       "bach.ssort",
       "bach.msort"
+    ]
+  },
+  "bach.enharm": {
+    "digest": "Handle enharmonicity",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "pitch",
+      "enharmonicity",
+      "retranscribe",
+      "respell",
+      "note"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.mc2pc",
+      "bach.pc2mc"
     ]
   },
   "bach.ezmidiplay": {
@@ -4672,30 +4717,6 @@
       "bach.mcapprox",
       "bach.pcsetinfo",
       "bach.expr"
-    ]
-  },
-  "bach.mcapprox": {
-    "digest": "Snap midicents to microtonal grid",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "cent",
-      "midicent",
-      "approximate",
-      "snap",
-      "grid",
-      "microtone",
-      "nearest",
-      "pitch"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.mc2pc",
-      "bach.pc2mc"
     ]
   },
   "bach.mean": {

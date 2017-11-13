@@ -111,7 +111,7 @@
 		</outlet>
 		<outlet id="2" type="INLET_TYPE">
 			<digest>
-				Pitches
+				Pitches or MIDIcents
 			</digest>
 			<description>
 				The pitches or MIDIcents in separate syntax (see <m>outputpitchesseparate</m>).
@@ -358,7 +358,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -901,7 +902,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -1052,7 +1054,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -1355,7 +1358,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -1813,6 +1817,8 @@
 				• <b>dump roll</b>   <i>→ dump first outlet only (gathered syntax)</i><br />
 				• <b>dump onsets</b>   <i>→ dump onsets only</i><br />
 				• <b>dump velocities</b>   <i>→ dump velocities only</i><br />
+				• <b>dump pitches</b>   <i>→ dump pitch information as diatonic pitches</i><br />
+				• <b>dump cents</b>   <i>→ dump pitch information as MIDIcents</i><br />
 				• <b>dump body</b>   <i>→ dump first outlet only, but without dumping the header</i><br />
 				• <b>dump header</b>   <i>→ the same, but only dumping the header</i><br />
 				• <b>dump keys clefs body</b>   <i>→ dump keys, clefs and body from first outlet</i><br />
@@ -1823,7 +1829,10 @@
 				about gathered and separate syntaxes. <br />
 				The <m>dump</m> message also accepts as argument one of the following symbols, which will only dump a portion of the global information: <br />
 				- <b>onsets</b>: only dump the onsets (in separate syntax) from the second outlet. <br />
-				- <b>cents</b>: only dump the cents (in separate syntax) from the third outlet. <br />
+				- <b>cents</b>: only dump the pitches in MIDIcents form (in separate syntax) from the third outlet
+				(this overrides the <m>outputpitchesseparate</m>, forcing the output to be in Cents), <br />
+				- <b>pitches</b>: only dump the pitches as diatonic pitches (in separate syntax) from the third outlet
+				(this overrides the <m>outputpitchesseparate</m>, forcing the output to be always diatonic pitches), <br />
 				- <b>durations</b>: only dump the durations (in separate syntax) from the fourth outlet. <br />
 				- <b>velocities</b>: only dump the velocities (in separate syntax) from the fifth outlet. <br />
 				- <b>extras</b>: only dump the extras (in separate syntax) from the sixth outlet. <br />
@@ -2117,7 +2126,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -2441,7 +2451,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -3203,7 +3214,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -3574,7 +3586,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -3705,7 +3718,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -4142,7 +4156,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -4797,7 +4812,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -4919,6 +4935,41 @@
 				- redraw is only performed at each new event;  <br />
 				- the "pause" message won't work.  <br />
 				<br />				See also:<m>stop</m>,<m>pause</m>,<m>play</m><br />
+			</description>
+		</method>
+		<method name="poc">
+			<arg name="pitch_or_cents" optional="0" type="number/pitch/llll/anything" />
+			<digest>
+				Modify the pitch or cents of selected items
+			</digest>
+			<description>
+				Syntax: <b>poc <m>&lt;number/pitch/llll/anything: pitch_or_cents&gt;</m> </b><br />				<br />
+				The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
+				depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
+				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
+				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
+				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
+				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
+				value of the parameter, while <b>(2. times)</b> multiplies it by two.
+				<br /> <br />
+				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
+				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
+				The standard symbolic variables are available. <br />
+				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
+				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
+				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
+				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
+				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
+				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
+				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
+				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
+				one cannot apply different equations to different notes inside the chord.
+				<br /> <br />
 			</description>
 		</method>
 		<method name="prependslotitem">
@@ -5045,15 +5096,11 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the slotinfo to the default one
+				Reset the custom notehead definition to the default one
 			</digest>
 			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
+				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
+				all the user-defined noteheads.
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -5069,11 +5116,15 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom notehead definition to the default one
+				Reset the slotinfo to the default one
 			</digest>
 			<description>
-				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
-				all the user-defined noteheads.
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="respell">
@@ -5386,7 +5437,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -6083,6 +6135,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidentals Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -6362,6 +6415,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulations Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -7424,6 +7478,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Play" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Region" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -7645,6 +7700,7 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="\" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notation Font" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
@@ -7960,7 +8016,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -8199,7 +8256,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -9336,6 +9394,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Staff Lines" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
@@ -9512,6 +9571,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Voice Spacing" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
@@ -9654,7 +9714,7 @@
 		</entry>
 		<entry name ="Outlet 3 (llll)">
 			<description>
-				Pitches.
+				Pitches or MIDIcents.
 				The pitches or MIDIcents in separate syntax (see <m>outputpitchesseparate</m>).
 				The separate synax of a given parameter is nothing but an llll containing the value of such parameter for each notation item
 				to which it can be applied. The llll should be properly structured depending on the hierarchical structure. <br />
@@ -9891,7 +9951,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />

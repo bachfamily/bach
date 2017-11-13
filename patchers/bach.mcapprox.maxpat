@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 553.0, 79.0, 456.0, 346.0 ],
+		"rect" : [ 553.0, 79.0, 683.0, 377.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -38,6 +38,49 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-69",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 357.0, 67.0, 60.0, 22.0 ],
+					"style" : "",
+					"text" : "loadbang"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-68",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 357.0, 147.5, 114.0, 22.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
+					"style" : "",
+					"text" : "bach.print @error 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-65",
+					"linecount" : 2,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 357.0, 101.5, 215.0, 35.0 ],
+					"style" : "",
+					"text" : "bach.mcapprox is deprecated. Please replace me with bach.approx!"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-6",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
@@ -57,6 +100,10 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
 					"patching_rect" : [ 30.0, 134.0, 57.0, 22.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
 					"style" : "",
 					"text" : "bach.> 0"
 				}
@@ -113,6 +160,10 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
 					"patching_rect" : [ 30.0, 261.0, 112.0, 22.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
 					"style" : "",
 					"text" : "bach.portal @out p"
 				}
@@ -128,6 +179,10 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 91.0, 227.0, 334.0, 22.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
 					"style" : "",
 					"text" : "bach.expr (200./$i2) * round($f1/(200./$i2)) @scalarmode 1"
 				}
@@ -263,6 +318,20 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"source" : [ "obj-6", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-68", 0 ],
+					"source" : [ "obj-65", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-65", 0 ],
+					"source" : [ "obj-69", 0 ]
 				}
 
 			}

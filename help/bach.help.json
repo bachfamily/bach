@@ -1805,15 +1805,15 @@
 			"Dumpsingleroll" : {
 				"filename" : [ "bach.help.notation.messages.12_dumpsingleroll.maxpat" ],
 				"objects" : [ "bach.roll" ],
-				"seealso" : [ "header", "body" ],
-				"tags" : [ "message", "dump", "single", "outlet", "separate", "gathered", "header", "body", "midichannels", "clefs", "keys", "markers", "groups" ],
+				"seealso" : [ "header", "body", "outputpitchesseparate" ],
+				"tags" : [ "message", "dump", "single", "outlet", "separate", "gathered", "header", "body", "onset", "duration", "extra", "velocity", "velocities", "cents", "pitches", "pitch", "selective", "poc", "pitchorcents" ],
 				"title" : [ "Selective dump for bach.roll" ]
 			},
 			"Dumpsinglescore" : {
 				"filename" : [ "bach.help.notation.messages.13_dumpsinglescore.maxpat" ],
 				"objects" : [ "bach.score" ],
-				"seealso" : [ "header", "body" ],
-				"tags" : [ "message", "dump", "single", "outlet", "header", "body", "separate", "gathered", "midichannels", "clefs", "keys", "markers", "groups" ],
+				"seealso" : [ "header", "body", "outputpitchesseparate" ],
+				"tags" : [ "message", "dump", "single", "outlet", "header", "body", "separate", "gathered", "selective", "measureinfo", "duration", "tie", "cents", "velocity", "velocities", "extras", "pitch", "cents", "pitches", "poc", "pitchorcents" ],
 				"title" : [ "Selective dump for bach.score" ]
 			},
 			"Dumpsingleslot" : {
@@ -1822,6 +1822,13 @@
 				"seealso" : [ "header", "body" ],
 				"tags" : [ "message", "dump", "selective" ],
 				"title" : [ "Selective dump for bach.slot" ]
+			},
+			"B_dumpheader" : {
+				"filename" : [ "bach.help.notation.messages.14b_dumpheader.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "header", "body", "selective+dump" ],
+				"tags" : [ "message", "dump", "single", "outlet", "header", "body", "separate", "gathered", "midichannels", "clefs", "keys", "markers", "groups", "selective" ],
+				"title" : [ "Selective dump for header content" ]
 			},
 			"Mergeroll" : {
 				"filename" : [ "bach.help.notation.messages.15_mergeroll.maxpat" ],

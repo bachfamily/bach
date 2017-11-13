@@ -27,6 +27,10 @@ v0.8b
 				Again: bach.unpacknote will remain, but it is deprecated. You should start using bach.playkeys,
 					which doesn't work in the exact same way, but which is way more flexible.
 
+- bach.mcapprox -> bach.approx
+				Again: bach.mcapprox will remain, but it is deprecated. You should start using bach.approx, which supports both MIDIcents and pitches
+
+
 - bach.roll, bach.score		Default slot linkages have changed!!!
 					Now by default lyrics are stored in slot 20, popping up with 'l'
 						       dynamics are stored in slot 21, popping up with 'd'

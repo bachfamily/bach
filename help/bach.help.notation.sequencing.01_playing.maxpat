@@ -507,7 +507,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.mcapprox.maxpat",
+				"name" : "bach.approx.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"type" : "JSON",
 				"implicit" : 1

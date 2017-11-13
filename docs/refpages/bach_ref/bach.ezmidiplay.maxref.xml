@@ -83,7 +83,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -584,7 +585,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -1071,7 +1073,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />

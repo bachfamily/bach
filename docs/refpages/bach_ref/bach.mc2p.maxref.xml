@@ -134,6 +134,7 @@
 				By increasing this value, the microtonal grid gets more dense: for instance, 4 is the quartertonal grid
 				(where each tone is divided in 4 quartertones); 8 is the eight-tonal grid, and so on.
 				<br /> <br />
+				Set <m>tonedivision</m> to 0 (default) in order to perform the conversion at maximum precision.
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Microtonal Division" />

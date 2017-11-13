@@ -35,7 +35,7 @@
 		</inlet>
 		<inlet id="1" type="INLET_TYPE">
 			<digest>
-				Pitches
+				Pitches or MIDIcents
 			</digest>
 			<description>
 				A list of pitches or cents for each voice.
@@ -104,7 +104,7 @@
 		</outlet>
 		<outlet id="2" type="INLET_TYPE">
 			<digest>
-				Pitches or cents (in <m>separate</m> mode only)
+				Pitches or MIDIcents (in <m>separate</m> mode only)
 			</digest>
 			<description>
 				If the <m>separate</m> attribute is set, the cents are output.
@@ -254,6 +254,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Autoclear" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -269,6 +270,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -299,7 +301,7 @@
 		</entry>
 		<entry name ="Inlet 2 (llll)">
 			<description>
-				Pitches.
+				Pitches or MIDIcents.
 				A list of pitches or cents for each voice.
 				The pitches can be assigned chord-wisely (a single element
 				for each chord) or note-wisely (a plain list for each chord). Thus a 2-depth or 3-depth llll is expected.
@@ -353,7 +355,7 @@
 		</entry>
 		<entry name ="Outlet 3 (llll)">
 			<description>
-				Pitches or cents (in <m>separate</m> mode only).
+				Pitches or MIDIcents (in <m>separate</m> mode only).
 				If the <m>separate</m> attribute is set, the cents are output.
 			</description>
 		</entry>

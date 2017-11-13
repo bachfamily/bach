@@ -94,7 +94,7 @@
 		</inlet>
 		<inlet id="1" type="INLET_TYPE">
 			<digest>
-				The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or cents
+				The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or MIDIcents
 			</digest>
 			<description>
 			</description>
@@ -916,7 +916,7 @@
 		</entry>
 		<entry name ="Inlet 2 (llll)">
 			<description>
-				The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or cents.
+				The llll output by bach.roll's or bach.score's first outlet after a <m>quantize</m> message – or in <m>separate</m> mode: Pitches or MIDIcents.
 			</description>
 		</entry>
 		<entry name ="Inlet 3 (llll)">

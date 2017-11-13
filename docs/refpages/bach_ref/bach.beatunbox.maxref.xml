@@ -66,14 +66,14 @@
 	<outletlist>
 		<outlet id="0" type="INLET_TYPE">
 			<digest>
-				Measureinfo – in "separate" mode: Pitches or cents
+				Measureinfo – in "separate" mode: Pitches or MIDIcents
 			</digest>
 			<description>
 			</description>
 		</outlet>
 		<outlet id="1" type="INLET_TYPE">
 			<digest>
-				Pitches or cents – in "separate" mode: Durations
+				Pitches or MIDIcents – in "separate" mode: Durations
 			</digest>
 			<description>
 			</description>
@@ -163,6 +163,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Merge Chords" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
@@ -178,6 +179,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -233,12 +235,12 @@
 	<misc name = "Output">
 		<entry name ="Outlet 1 (llll)">
 			<description>
-				Measureinfo – in "separate" mode: Pitches or cents.
+				Measureinfo – in "separate" mode: Pitches or MIDIcents.
 			</description>
 		</entry>
 		<entry name ="Outlet 2 (llll)">
 			<description>
-				Pitches or cents – in "separate" mode: Durations.
+				Pitches or MIDIcents – in "separate" mode: Durations.
 			</description>
 		</entry>
 		<entry name ="Outlet 3 (llll)">

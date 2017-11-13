@@ -233,7 +233,7 @@
 				mixed checking. The result llll is output through the fourth outlet, preceded by the "check" symbol.
 			</description>
 		</method>
-		<method name="getcheck">
+		<method name="getcheckitems">
 			<arglist />
 			<digest>
 				Get checked items (in Checkbox Outline mode)
@@ -255,6 +255,18 @@
 				and <m>lower_y</m> is the lower last visible pixel of the tree.
 				If no vertical scrollbar is present, it simply returns the Y pixels of the upper and lower side of the object box.
 				It only works in Outline or Checkbox Outline mode (nothing will happen in Node/Link mode).
+			</description>
+		</method>
+		<method name="getopenstate">
+			<arglist />
+			<digest>
+				Get the open state of each element (in Checkbox Outline mode)
+			</digest>
+			<description>
+				In the Checkbox Outline <m>mode</m>, obtains the llll containing 1's and 0's
+				depending on whether levels are open or closed. Each level of parenthesis has one more element
+				among its children, the former one, being 1 if the level is open and 0 otherwise.
+				The result llll is output through the fourth outlet, preceded by the "openstate" symbol.
 			</description>
 		</method>
 		<method name="llll">
@@ -753,6 +765,7 @@
 				The <m>out</m> attribute is a sequence of characters identifying the outlet types (one character for each llll outlet). Characters can be one of the following: <br />
 				<m>n</m> (default): 'native' output: faster and more precise between bach objects, but unreadable by standard Max objects (an "bach.llll" message appears instead). <br />
 				<m>t</m>: 'text' output: slower and limited in size, but readable by standard Max objects. A plain llll in text format is a generic Max message. To keep the representation invertible (i.e., to allow a bach object receiving a text-format llll to interpret it exactly as if it was native format, e
+				llllobj_class_add_version_number_attr(c, LLLL_OBJ_UI);
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
