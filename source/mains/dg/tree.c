@@ -2965,7 +2965,7 @@ void start_editing_node(t_tree *x, t_treenode *tnd, t_object *patcherview)
             } else
                 llll_appendhatom_clone(temp_ll, &tnd->elem->l_hatom, 0, WHITENULL_llll);
         }
-        llll_to_text_buf(temp_ll, &text, 0, BACH_DEFAULT_MAXDECIMALS, x->mode == k_TREE_NODELINK ? LLLL_T_ONLY_STANDARD_PARENTHESES : LLLL_T_NONE, NULL);
+        llll_to_text_buf(temp_ll, &text, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, NULL);
         llll_free(temp_ll);
         
         relative_centers_to_pixel_coordinates(x, rect, tnd->center_x, tnd->center_y, &real_center_x, &real_center_y);
