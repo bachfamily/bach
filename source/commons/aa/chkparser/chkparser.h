@@ -31,7 +31,6 @@ public:
     
     
     // returns a #e_hatom_types indicating the inferred type for the text
-    // tct is a pointer to #e_typecheck_traits
     long parse(char *buf);
     void reset();
     t_bool wantsBacktick(t_symbol *s);

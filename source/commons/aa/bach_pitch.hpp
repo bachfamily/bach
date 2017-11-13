@@ -297,7 +297,7 @@ public:
         if (p > 0)
             notches = t_atom_long((p / resol) + t_rational(1, 2));
         else
-            notches = t_atom_long((p / resol) + t_rational(1, 2));
+            notches = t_atom_long((p / resol) - t_rational(1, 2));
         return notches * resol;
     }
     
@@ -311,7 +311,7 @@ public:
         if (p > 0)
             notches = t_atom_long((p / resol) + 0.5);
         else
-            notches = t_atom_long((p / resol) + 0.5);
+            notches = t_atom_long((p / resol) - 0.5);
         return notches * resol;
     }
     

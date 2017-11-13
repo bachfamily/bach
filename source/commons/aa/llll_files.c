@@ -168,8 +168,8 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
         }
     }
     
-	//len = llll_to_text_buf(ll, &buf, 0, 10, LLLL_T_NULL, llll_add_trailing_zero);
-    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, LLLL_T_NULL, llll_add_trailing_zero);
+	//len = llll_to_text_buf(ll, &buf, 0, 10, LLLL_T_BACKTICKS, llll_add_trailing_zero);
+    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, LLLL_T_BACKTICKS, llll_add_trailing_zero);
     
     if (llll_write_text_file(filename_sym, &len, buf) == FILE_ERR_CANTOPEN) {
         if (filename_sym)
