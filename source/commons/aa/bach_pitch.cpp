@@ -206,82 +206,137 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     return t_pitch(sat);
 }
 
-std::string t_pitch::toString(char include_octave)
+std::string t_pitch::toString(char include_octave, char always_positive)
 {
     std::string s;
     if (p_alter == illegal) {
         s = "NaP";
-    } else {
+    } else if (p_octave >= 0 || always_positive) {
         s = degree2name[p_degree];
-        if (p_alter == natural) {
-            if (include_octave)
-                s += std::to_string(p_octave);
-        } else if (p_alter.den() == 1 || p_alter.den() == 2 || p_alter.den() == 4 || p_alter.den() == 8) {
-            if (p_alter > natural) { // sharps
-                t_shortRational remainder = p_alter;
-                
-                /* // this is probably not convenient, as it complicates simple cases
-                 s += std::string("x", t_atom_long(remainder / dblsharp));
-                 remainder %= dblsharp;
-                 
-                 s += std::string("#", t_atom_long(remainder / sharp));
-                 remainder %= sharp;
-                 
-                 s += std::string("q", t_atom_long(remainder / qrtrsharp));
-                 remainder %= qrtrsharp;
-                 
-                 s += std::string("^", t_atom_long(remainder / eighthsharp));
-                 remainder %= eighthsharp;
-                 */
-                
-                while (remainder != natural) {
-                    if (remainder >= dblsharp) {
-                        s += "x";
-                        remainder -= dblsharp;
-                    } else if (remainder >= sharp) {
-                        s += "#";
-                        remainder -= sharp;
-                    } else if (remainder >= qrtrsharp) {
-                        s += "q";
-                        remainder -= qrtrsharp;
-                    } else if (remainder >= eighthsharp) {
-                        s += "^";
-                        remainder -= eighthsharp;
-                    }
-                }
-                
-                
-            } else { // flats
-                t_shortRational remainder = p_alter;
-                while (remainder != natural) {
-                    if (remainder <= flat) {
-                        s += "b";
-                        remainder -= flat;
-                    } else if (remainder <= qrtrflat) {
-                        s += "d";
-                        remainder -= qrtrflat;
-                    } else if (remainder <= eighthflat) {
-                        s += "v";
-                        remainder -= eighthflat;
-                    }
+        t_shortRational remainder = p_alter;
+        if (remainder > natural) { // sharps
+            /* // this is probably not convenient, as it complicates simple cases
+             s += std::string("x", t_atom_long(remainder / dblsharp));
+             remainder %= dblsharp;
+             
+             s += std::string("#", t_atom_long(remainder / sharp));
+             remainder %= sharp;
+             
+             s += std::string("q", t_atom_long(remainder / qrtrsharp));
+             remainder %= qrtrsharp;
+             
+             s += std::string("^", t_atom_long(remainder / eighthsharp));
+             remainder %= eighthsharp;
+             */
+            
+            while (remainder >= eighthsharp) {
+                if (remainder >= dblsharp) {
+                    s += "x";
+                    remainder -= dblsharp;
+                } else if (remainder >= sharp) {
+                    s += "#";
+                    remainder -= sharp;
+                } else if (remainder >= qrtrsharp) {
+                    s += "q";
+                    remainder -= qrtrsharp;
+                } else if (remainder >= eighthsharp) {
+                    s += "^";
+                    remainder -= eighthsharp;
                 }
             }
-            if (include_octave)
-                s += std::to_string(p_octave);
-        } else {
-            if (include_octave) {
-                if (p_alter > natural)
-                    s += std::to_string(p_octave) + '+' + p_alter.to_string() + "t";
-                else
-                    s += std::to_string(p_octave) + p_alter.to_string() + "t";
-            } else {
-                if (p_alter > natural)
-                    s += '+' + p_alter.to_string() + "t";
-                else
-                    s += p_alter.to_string() + "t";
+        } else if (remainder < natural) { // flats
+            while (remainder <= eighthflat) {
+                if (remainder <= flat) {
+                    s += "b";
+                    remainder -= flat;
+                } else if (remainder <= qrtrflat) {
+                    s += "d";
+                    remainder -= qrtrflat;
+                } else if (remainder <= eighthflat) {
+                    s += "v";
+                    remainder -= eighthflat;
+                }
             }
         }
+        if (include_octave) {
+            if (remainder > natural)
+                s += std::to_string(p_octave) + '+' + remainder.to_string() + "t";
+            else if (remainder < natural)
+                s += std::to_string(p_octave) + remainder.to_string() + "t";
+            else
+                s += std::to_string(p_octave);
+        } else {
+            if (remainder > natural)
+                s += '+' + remainder.to_string() + "t";
+            else if (remainder < natural)
+                s += remainder.to_string() + "t";
+        }
+    } else { // if (octave < 0 && !always_positive)
+        t_pitch mirrored = -*this;
+        s = "-";
+        s += degree2name[mirrored.p_degree];
+        t_shortRational remainder = mirrored.p_alter;
+        if (remainder > natural) { // sharps
+            /* // this is probably not convenient, as it complicates simple cases
+             s += std::string("x", t_atom_long(remainder / dblsharp));
+             remainder %= dblsharp;
+             
+             s += std::string("#", t_atom_long(remainder / sharp));
+             remainder %= sharp;
+             
+             s += std::string("q", t_atom_long(remainder / qrtrsharp));
+             remainder %= qrtrsharp;
+             
+             s += std::string("^", t_atom_long(remainder / eighthsharp));
+             remainder %= eighthsharp;
+             */
+            
+            while (remainder >= eighthsharp) {
+                if (remainder >= dblsharp) {
+                    s += "x";
+                    remainder -= dblsharp;
+                } else if (remainder >= sharp) {
+                    s += "#";
+                    remainder -= sharp;
+                } else if (remainder >= qrtrsharp) {
+                    s += "q";
+                    remainder -= qrtrsharp;
+                } else if (remainder >= eighthsharp) {
+                    s += "^";
+                    remainder -= eighthsharp;
+                }
+            }
+            remainder *= -1;
+        } else if (remainder < natural) { // flats
+            while (remainder <= eighthflat) {
+                if (remainder <= flat) {
+                    s += "b";
+                    remainder -= flat;
+                } else if (remainder <= qrtrflat) {
+                    s += "d";
+                    remainder -= qrtrflat;
+                } else if (remainder <= eighthflat) {
+                    s += "v";
+                    remainder -= eighthflat;
+                }
+            }
+            remainder *= -1;
+        }
+        if (include_octave) {
+            if (remainder > natural)
+                s += std::to_string(mirrored.p_octave) + '+' + remainder.to_string() + "t";
+            else if (remainder < natural)
+                s += std::to_string(mirrored.p_octave) + remainder.to_string() + "t";
+            else
+                s += std::to_string(mirrored.p_octave);
+        } else {
+            if (remainder > natural)
+                s += '+' + remainder.to_string() + "t";
+            else if (remainder < natural)
+                s += remainder.to_string() + "t";
+        }
     }
+    
     return s;
 }
 

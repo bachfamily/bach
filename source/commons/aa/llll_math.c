@@ -189,16 +189,18 @@ void hatom_fn_alter(t_hatom *a1, t_hatom *res)
 
 void hatom_fn_makepitch(t_hatom *a1, t_hatom *a2, t_hatom *a3, t_hatom *res)
 {
+    long sign = 1;
     long degree = hatom_getlong(a1);
     long octave = hatom_getlong(a3);
     if (degree < 0) {
-        octave += (degree - 6) / 7;
-        degree = (degree % 7) + 7;
-    } else if (degree > 6) {
+        degree *= -1;
+        sign = -1;
+    }
+    if (degree > 6) {
         octave += degree / 7;
         degree %= 7;
     }
-    hatom_setpitch(res, t_pitch(degree, hatom_getrational(a2), octave));
+    hatom_setpitch(res, t_pitch(degree, hatom_getrational(a2), octave) * sign);
 }
 
 

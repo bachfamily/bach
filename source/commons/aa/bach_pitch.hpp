@@ -319,7 +319,7 @@ public:
         return (p_alter.r_den == 0);
     }
     
-    std::string toString(char include_octave = true);
+    std::string toString(char include_octave = true, char always_positive = false);
     
     const char* toCString(char include_octave = true) { return toString(include_octave).c_str(); }
 

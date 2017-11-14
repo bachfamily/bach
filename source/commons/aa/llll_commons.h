@@ -55,7 +55,6 @@ typedef enum _llll_text_flags {
 	LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES	= 0x10,
     LLLL_T_FORCE_SINGLE_QUOTES				= 0x20,
     LLLL_T_BACKTICKS                        = 0x40,
-    LLLL_T_ONLY_STANDARD_PARENTHESES        = 0x80
 } e_llll_text_flags;
 
 #define LLLL_T_COPYSYMBOLS (LLLL_T_NO_DOUBLE_QUOTES | LLLL_T_NO_BACKSLASH)
