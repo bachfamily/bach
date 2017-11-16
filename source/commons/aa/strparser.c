@@ -1,5 +1,5 @@
 
-#line 3 "strparser.c"
+#line 3 "../strparser.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -506,7 +506,7 @@ static yyconst flex_int16_t yy_chk[174] =
     #define parserpost printf
     #endif
     
-    #include "bach_strparser_tab.h"
+    #include "strparser.tab.h"
     #define YY_DECL int strparser_lex \
             (YYSTYPE *yylval_param, yyscan_t yyscanner)
 
@@ -2154,10 +2154,7 @@ void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 void *strparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b;
-    if (!yyscanner) {
-        b = bach_newptr(sizeof(t_strParser)); // it's much more than we actually need, but this lets us define a valid big field
-        ((t_strParser *) b)->makeBig();
-    } else if (((t_strParser *) yyscanner)->isBig()) {
+    if (!yyscanner || ((t_strParser *) yyscanner)->isBig()) {
         b = bach_newptr(bytes);
     } else {
         b = ((t_strParser *) yyscanner)->getPtr(bytes);

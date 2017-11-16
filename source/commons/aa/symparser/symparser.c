@@ -615,7 +615,7 @@ static yyconst flex_int16_t yy_chk[570] =
     #define parserpost printf
     #endif
     
-    #include "symparser.tab.h"
+    #include "bach_symparser_tab.h"
     #define YY_DECL int symparser_lex(YYSTYPE *yylval_param,yyscan_t yyscanner)
     
 #define INITIAL 0
