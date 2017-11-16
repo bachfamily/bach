@@ -49,12 +49,12 @@ typedef enum _llll_deparse_flags {
 typedef enum _llll_text_flags {
 	LLLL_T_NONE								= 0x00,
 	LLLL_T_NULL								= 0x01,	// null is returned if list is empty
-	LLLL_T_NO_DOUBLE_QUOTES					= 0x02,
-	LLLL_T_NO_BACKSLASH						= 0x04,
-	LLLL_T_FORCE_DOUBLE_QUOTES				= 0x08,
-	LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES	= 0x10,
-    LLLL_T_FORCE_SINGLE_QUOTES				= 0x20,
-    LLLL_T_BACKTICKS                        = 0x40,
+	LLLL_T_NO_DOUBLE_QUOTES					= 0x02, // no double quotes around symbols in any case
+	LLLL_T_NO_BACKSLASH						= 0x04, // no backslash before reserved characters
+	LLLL_T_FORCE_DOUBLE_QUOTES				= 0x08, // all symbols are double-quoted (useful for Lisp/PWGL)
+	LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES	= 0x10, // all double quotes (including the forced ones, and the ones around symbols containing whitespace) are preceded by backslash
+    LLLL_T_FORCE_SINGLE_QUOTES				= 0x20, // all symbols are single-quoted (useful for SQL, used by dada, not bach)
+    LLLL_T_BACKTICKS                        = 0x40, // backtick symbols that can be mistaken for other data types (e.g. `c0)
 } e_llll_text_flags;
 
 #define LLLL_T_COPYSYMBOLS (LLLL_T_NO_DOUBLE_QUOTES | LLLL_T_NO_BACKSLASH)
