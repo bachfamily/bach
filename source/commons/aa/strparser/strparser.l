@@ -88,15 +88,11 @@ ACCIDENTAL ([#bxdq\^v]+)
     return SYMBOL;
 }
 
-["]("\\\""|[^" \t\n\r\f\v])*[^\\ \t\n\r\f\v]["] {
-    parserpost(" lex: QUOTED NON-WHITESPACED SYMBOL %s\n", yytext);
-    yylval->sym = gensym(yytext);
-    return SYMBOL;
-}
-
 ["]("\\\""|[^"])*[^\\]["] {
     parserpost(" lex: QUOTED WHITESPACED SYMBOL %s\n", yytext);
-    yylval->sym = gensym(yytext);
+    *(yytext + yyleng - 1) = 0;
+    yylval->sym = gensym(yytext + 1);
+    *(yytext + yyleng - 1) = '"';
     return SYMBOL;
 }
 
