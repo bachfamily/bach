@@ -1,10 +1,7 @@
-#ifndef chkparser_HEADER_H
-#define chkparser_HEADER_H 1
-#define chkparser_IN_HEADER 1
+#ifndef exprparser_HEADER_H
+#define exprparser_HEADER_H 1
+#define exprparser_IN_HEADER 1
 
-#line 6 "chkparser.lex.h"
-
-#line 8 "chkparser.lex.h"
 
 #define  YY_INT_ALIGNED short int
 
@@ -204,31 +201,32 @@ struct yy_buffer_state
 	};
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
 
-void chkparser_restart (FILE *input_file ,yyscan_t yyscanner );
-void chkparser__switch_to_buffer (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
-YY_BUFFER_STATE chkparser__create_buffer (FILE *file,int size ,yyscan_t yyscanner );
-void chkparser__delete_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
-void chkparser__flush_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
-void chkparser_push_buffer_state (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
-void chkparser_pop_buffer_state (yyscan_t yyscanner );
+void exprparser_restart (FILE *input_file ,yyscan_t yyscanner );
+void exprparser__switch_to_buffer (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
+YY_BUFFER_STATE exprparser__create_buffer (FILE *file,int size ,yyscan_t yyscanner );
+void exprparser__delete_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
+void exprparser__flush_buffer (YY_BUFFER_STATE b ,yyscan_t yyscanner );
+void exprparser_push_buffer_state (YY_BUFFER_STATE new_buffer ,yyscan_t yyscanner );
+void exprparser_pop_buffer_state (yyscan_t yyscanner );
 
-YY_BUFFER_STATE chkparser__scan_buffer (char *base,yy_size_t size ,yyscan_t yyscanner );
-YY_BUFFER_STATE chkparser__scan_string (yyconst char *yy_str ,yyscan_t yyscanner );
-YY_BUFFER_STATE chkparser__scan_bytes (yyconst char *bytes,yy_size_t len ,yyscan_t yyscanner );
+YY_BUFFER_STATE exprparser__scan_buffer (char *base,yy_size_t size ,yyscan_t yyscanner );
+YY_BUFFER_STATE exprparser__scan_string (yyconst char *yy_str ,yyscan_t yyscanner );
+YY_BUFFER_STATE exprparser__scan_bytes (yyconst char *bytes,yy_size_t len ,yyscan_t yyscanner );
 
-void *chkparser_alloc (yy_size_t ,yyscan_t yyscanner );
-void *chkparser_realloc (void *,yy_size_t ,yyscan_t yyscanner );
-void chkparser_free (void * ,yyscan_t yyscanner );
+void *exprparser_alloc (yy_size_t ,yyscan_t yyscanner );
+void *exprparser_realloc (void *,yy_size_t ,yyscan_t yyscanner );
+void exprparser_free (void * ,yyscan_t yyscanner );
 
 /* Begin user sect3 */
 
-#define chkparser_wrap(yyscanner) (/*CONSTCOND*/1)
+#define exprparser_wrap(yyscanner) (/*CONSTCOND*/1)
 #define YY_SKIP_YYWRAP
 
 #define yytext_ptr yytext_r
 
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
 #define INITIAL 0
+#define BINARY 1
 
 #endif
 
@@ -240,48 +238,44 @@ void chkparser_free (void * ,yyscan_t yyscanner );
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE t_typecheck_res *
+#define YY_EXTRA_TYPE t_exprparser_data *
 
-int chkparser_lex_init (yyscan_t* scanner);
+int exprparser_lex_init (yyscan_t* scanner);
 
-int chkparser_lex_init_extra (YY_EXTRA_TYPE user_defined,yyscan_t* scanner);
+int exprparser_lex_init_extra (YY_EXTRA_TYPE user_defined,yyscan_t* scanner);
 
 /* Accessor methods to globals.
    These are made visible to non-reentrant scanners for convenience. */
 
-int chkparser_lex_destroy (yyscan_t yyscanner );
+int exprparser_lex_destroy (yyscan_t yyscanner );
 
-int chkparser_get_debug (yyscan_t yyscanner );
+int exprparser_get_debug (yyscan_t yyscanner );
 
-void chkparser_set_debug (int debug_flag ,yyscan_t yyscanner );
+void exprparser_set_debug (int debug_flag ,yyscan_t yyscanner );
 
-YY_EXTRA_TYPE chkparser_get_extra (yyscan_t yyscanner );
+YY_EXTRA_TYPE exprparser_get_extra (yyscan_t yyscanner );
 
-void chkparser_set_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
+void exprparser_set_extra (YY_EXTRA_TYPE user_defined ,yyscan_t yyscanner );
 
-FILE *chkparser_get_in (yyscan_t yyscanner );
+FILE *exprparser_get_in (yyscan_t yyscanner );
 
-void chkparser_set_in  (FILE * _in_str ,yyscan_t yyscanner );
+void exprparser_set_in  (FILE * _in_str ,yyscan_t yyscanner );
 
-FILE *chkparser_get_out (yyscan_t yyscanner );
+FILE *exprparser_get_out (yyscan_t yyscanner );
 
-void chkparser_set_out  (FILE * _out_str ,yyscan_t yyscanner );
+void exprparser_set_out  (FILE * _out_str ,yyscan_t yyscanner );
 
-yy_size_t chkparser_get_leng (yyscan_t yyscanner );
+yy_size_t exprparser_get_leng (yyscan_t yyscanner );
 
-char *chkparser_get_text (yyscan_t yyscanner );
+char *exprparser_get_text (yyscan_t yyscanner );
 
-int chkparser_get_lineno (yyscan_t yyscanner );
+int exprparser_get_lineno (yyscan_t yyscanner );
 
-void chkparser_set_lineno (int _line_number ,yyscan_t yyscanner );
+void exprparser_set_lineno (int _line_number ,yyscan_t yyscanner );
 
-int chkparser_get_column  (yyscan_t yyscanner );
+int exprparser_get_column  (yyscan_t yyscanner );
 
-void chkparser_set_column (int _column_no ,yyscan_t yyscanner );
-
-YYSTYPE * chkparser_get_lval (yyscan_t yyscanner );
-
-void chkparser_set_lval (YYSTYPE * yylval_param ,yyscan_t yyscanner );
+void exprparser_set_column (int _column_no ,yyscan_t yyscanner );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -289,9 +283,9 @@ void chkparser_set_lval (YYSTYPE * yylval_param ,yyscan_t yyscanner );
 
 #ifndef YY_SKIP_YYWRAP
 #ifdef __cplusplus
-extern "C" int chkparser_wrap (yyscan_t yyscanner );
+extern "C" int exprparser_wrap (yyscan_t yyscanner );
 #else
-extern int chkparser_wrap (yyscan_t yyscanner );
+extern int exprparser_wrap (yyscan_t yyscanner );
 #endif
 #endif
 
@@ -328,11 +322,9 @@ static int yy_flex_strlen (yyconst char * ,yyscan_t yyscanner);
 #ifndef YY_DECL
 #define YY_DECL_IS_OURS 1
 
-extern int chkparser_lex \
-               (YYSTYPE * yylval_param ,yyscan_t yyscanner);
+extern int exprparser_lex (yyscan_t yyscanner);
 
-#define YY_DECL int chkparser_lex \
-               (YYSTYPE * yylval_param , yyscan_t yyscanner)
+#define YY_DECL int exprparser_lex (yyscan_t yyscanner)
 #endif /* !YY_DECL */
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
@@ -349,9 +341,5 @@ extern int chkparser_lex \
 #undef YY_DECL
 #endif
 
-#line 70 "chkparser.l"
-
-
-#line 356 "chkparser.lex.h"
-#undef chkparser_IN_HEADER
-#endif /* chkparser_HEADER_H */
+#undef exprparser_IN_HEADER
+#endif /* exprparser_HEADER_H */

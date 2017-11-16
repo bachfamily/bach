@@ -16,7 +16,7 @@
 #include "exprparser.h"
 
 #define YY_HEADER_EXPORT_START_CONDITIONS
-#include "exprparser.lex.h"
+#include "bach_exprparser_lex.h"
 
 #ifdef WIN_VERSION
 #include <errno.h>

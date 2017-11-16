@@ -1,7 +1,6 @@
 %option noyywrap nodefault reentrant bison-bridge
 %option noyyalloc noyyrealloc noyyfree
 %option header-file="strparser.lex.h"
-%option outfile="strparser.c"
 %option prefix="strparser_"
 SEPARATOR ([ \t\n\(\)\[\]\{\}])
 INTEGER ([+-]?[0-9]+)
@@ -23,7 +22,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     #define parserpost printf
     #endif
     
-    #include "strparser.tab.h"
+    #include "bach_strparser_tab.h"
     #define YY_DECL int yylex \
             (YYSTYPE *yylval_param, yyscan_t yyscanner)
 %}
@@ -133,7 +132,7 @@ t_strParser::t_strParser(t_bool bigString) : t_parser()
         setBasePtr();
         reset();
     }
-    big = bigString;
+    big = bigString; 
     /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
 
 }
@@ -163,7 +162,10 @@ void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 void *strparser_alloc(size_t bytes, void *yyscanner)
 {
     void *b;
-    if (!yyscanner || ((t_strParser *) yyscanner)->isBig()) {
+    if (!yyscanner) {
+        b = bach_newptr(sizeof(t_strParser)); // it's much more than we actually need, but this lets us define a valid big field
+        ((t_strParser *) b)->makeBig();
+    } else if (((t_strParser *) yyscanner)->isBig()) {
         b = bach_newptr(bytes);
     } else {
         b = ((t_strParser *) yyscanner)->getPtr(bytes);

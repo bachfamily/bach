@@ -34,8 +34,8 @@
 
 
 %{
-    #include "symparser.tab.h"
-    #include "symparser.lex.h"
+    #include "bach_symparser_tab.h"
+    #include "bach_symparser_lex.h"
 
     int yylex(YYSTYPE *yylval_param, yyscan_t myscanner);
     int yyerror(yyscan_t myscanner, t_llll **ll, t_llll_stack *stack, long *depth, char *s);

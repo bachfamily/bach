@@ -60,26 +60,28 @@
 
 
 /* Substitute the variable and function names.  */
-#define yyparse         strparser_parse
-#define yylex           strparser_lex
-#define yyerror         strparser_error
-#define yydebug         strparser_debug
-#define yynerrs         strparser_nerrs
+#define yyparse         symparser_parse
+#define yylex           symparser_lex
+#define yyerror         symparser_error
+#define yydebug         symparser_debug
+#define yynerrs         symparser_nerrs
 
 
 /* Copy the first part of user declarations.  */
-#line 14 "strparser.y" /* yacc.c:339  */
+
 
 	//#define BACH_MAX
 	#ifdef BACH_MAX
-    #include "strparser.h"
+    #include "symparser.h"
     #else
     #include <stdio.h>
     #define parserpost printf
     #endif
+    
+    #define YYSTACK_USE_ALLOCA 1
 
 
-#line 83 "strparser.tab.c" /* yacc.c:339  */
+
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -98,15 +100,15 @@
 #endif
 
 /* In a future release of Bison, this section will be replaced
-   by #include "strparser.tab.h".  */
-#ifndef YY_STRPARSER_STRPARSER_TAB_H_INCLUDED
-# define YY_STRPARSER_STRPARSER_TAB_H_INCLUDED
+   by #include "symparser.tab.h".  */
+#ifndef YY_SYMPARSER_SYMPARSER_TAB_H_INCLUDED
+# define YY_SYMPARSER_SYMPARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
 #endif
 #if YYDEBUG
-extern int strparser_debug;
+extern int symparser_debug;
 #endif
 
 /* Token type.  */
@@ -131,7 +133,7 @@ extern int strparser_debug;
 
 union YYSTYPE
 {
-#line 25 "strparser.y" /* yacc.c:355  */
+
 
 	long l;
 	double d;
@@ -139,7 +141,7 @@ union YYSTYPE
 	t_pitch p;
 	t_symbol *sym;
 
-#line 143 "strparser.tab.c" /* yacc.c:355  */
+
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -149,23 +151,22 @@ typedef union YYSTYPE YYSTYPE;
 
 
 
-int strparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *depth);
+int symparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *depth);
 
-#endif /* !YY_STRPARSER_STRPARSER_TAB_H_INCLUDED  */
+#endif /* !YY_SYMPARSER_SYMPARSER_TAB_H_INCLUDED  */
 
 /* Copy the second part of user declarations.  */
-#line 34 "strparser.y" /* yacc.c:358  */
 
-    #include "bach_strparser_tab.h"
-    #include "bach_strparser_lex.h"
-    
+
+    #include "bach_symparser_tab.h"
+    #include "bach_symparser_lex.h"
+
     int yylex(YYSTYPE *yylval_param, yyscan_t myscanner);
     int yyerror(yyscan_t myscanner, t_llll **ll, t_llll_stack *stack, long *depth, char *s);
-    YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf);
-    void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
-    
+    YY_BUFFER_STATE symparser_scan_string(yyscan_t myscanner, char *buf);
+    void symparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
 
-#line 169 "strparser.tab.c" /* yacc.c:358  */
+
 
 #ifdef short
 # undef short
@@ -463,8 +464,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    54,    54,    55,    58,    61,    64,    67,    71,    74,
-      76,    79,    86
+       0,    56,    56,    57,    60,    63,    66,    69,    73,    76,
+      78,    81,    88
 };
 #endif
 
@@ -1251,70 +1252,70 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 58 "strparser.y" /* yacc.c:1646  */
+
     {
 	llll_appendlong(*ll, (yyvsp[0].l));
 	parserpost("parse: LONG %ld", (yyvsp[0].l));
 }
-#line 1260 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
   case 5:
-#line 61 "strparser.y" /* yacc.c:1646  */
+
     {
 	llll_appenddouble(*ll, (yyvsp[0].d));
 	parserpost("parse: DOUBLE %lf", (yyvsp[0].d));
 }
-#line 1269 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
   case 6:
-#line 64 "strparser.y" /* yacc.c:1646  */
+
     {
 	llll_appendrat(*ll, (yyvsp[0].r));
 	parserpost("parse: RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
 }
-#line 1278 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
   case 7:
-#line 67 "strparser.y" /* yacc.c:1646  */
+
     {
 	llll_appendpitch(*ll, (yyvsp[0].p));
 	parserpost("parse: degree: %c%d+%d/%d", 
 		t_pitch::degree2name[(yyvsp[0].p).degree()], (yyvsp[0].p).octave(), (yyvsp[0].p).alter().num(), (yyvsp[0].p).alter().den());
 }
-#line 1288 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
   case 8:
-#line 71 "strparser.y" /* yacc.c:1646  */
+
     {
 	llll_appendsym(*ll, (yyvsp[0].sym));
 	parserpost("parse: symbol %s", (yyvsp[0].sym)->s_name);
 }
-#line 1297 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
   case 9:
-#line 74 "strparser.y" /* yacc.c:1646  */
+
     {
     parserpost("parse: NULL");
 }
-#line 1305 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
   case 10:
-#line 76 "strparser.y" /* yacc.c:1646  */
+
     {
 	llll_appendllll(*ll, llll_get());
     parserpost("parse: NIL");
 }
-#line 1314 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
   case 11:
-#line 79 "strparser.y" /* yacc.c:1646  */
+
     {
 	(*depth)++;
 	t_llll *newll = llll_get();
@@ -1323,11 +1324,11 @@ yyreduce:
 	*ll = newll;
 	parserpost("parse: PUSH");
 }
-#line 1327 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
   case 12:
-#line 86 "strparser.y" /* yacc.c:1646  */
+
     {
 	(*depth)--;
 	if (*depth > 0) {
@@ -1337,13 +1338,13 @@ yyreduce:
 		*ll = parent;
 	} else
 		YYERROR;
-	parserpost("parse: POP");
+	parserpost("parse: POPPE");
 }
-#line 1343 "strparser.tab.c" /* yacc.c:1646  */
+
     break;
 
 
-#line 1347 "strparser.tab.c" /* yacc.c:1646  */
+
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1571,41 +1572,30 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 98 "strparser.y" /* yacc.c:1906  */
 
 
-void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
+
+void t_symParser::parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
 {
-    parserpost("strparser: parsing %s", buf);
-    if (!big) {
-        YY_BUFFER_STATE bp;
-        bp = strparser_scan_string((yyscan_t) this, buf);
-        strparser_parse((yyscan_t) this, ll, stack, depth);
-        reset();
-    } else {
-        yyscan_t myscanner;
-        YY_BUFFER_STATE bp;
-        strparser_lex_init(&myscanner);
-        bp = strparser_scan_string(myscanner, buf);
-        strparser_parse(myscanner, ll, stack, depth);
-        strparser_flush_and_delete_buffer(myscanner, bp);
-        strparser_lex_destroy(myscanner);
-    }
+    YY_BUFFER_STATE bp;
+ 	bp = symparser_scan_string((yyscan_t) this, buf);
+    symparser_parse((yyscan_t) this, ll, stack, depth);
+    symparser_flush_and_delete_buffer((yyscan_t) this, bp);
+    reset();
 }
-
 
 #ifndef BACH_MAX
 int main(int argc, char **argv)
 {
-    int result = scrisp_parse("(1+2*3)*(4+5) ");
-    
-    printf("result: %d\n", result);
-    return 0;
+	int result = scrisp_parse("(1+2*3)*(4+5) ");
+
+	printf("result: %d\n", result);
+	return 0;
 }
 #endif
 
 int yyerror(void *dummy, t_llll **ll, t_llll_stack *stack, long *depth, char *s)
 {
-    parserpost("error: %s\n", s);
-    return 0;
+	parserpost("error: %s\n", s);
+	return 0;
 }

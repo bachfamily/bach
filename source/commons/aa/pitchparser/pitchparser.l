@@ -1,6 +1,5 @@
 %option noyywrap nodefault reentrant
 %option noyyalloc noyyrealloc noyyfree
-%option header-file="pitchparser.lex.h"
 %option outfile="pitchparser.c"
 %option prefix="pitchparser_"
 

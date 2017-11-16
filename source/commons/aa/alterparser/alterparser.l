@@ -1,6 +1,5 @@
 %option noyywrap nodefault reentrant
 %option noyyalloc noyyrealloc noyyfree
-%option header-file="alterparser.lex.h"
 %option outfile="alterparser.c"
 %option prefix="alterparser_"
 

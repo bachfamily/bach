@@ -23,7 +23,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     #define parserpost printf
     #endif
     
-    #include "symparser.tab.h"
+    #include "bach_symparser_tab.h"
     #define YY_DECL int yylex(YYSTYPE *yylval_param, yyscan_t yyscanner)
     
 %}

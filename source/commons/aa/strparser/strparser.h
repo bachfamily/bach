@@ -30,6 +30,7 @@ public:
     void parse(const char *buf, t_llll **ll, t_llll_stack *stack, long *depth);
     void reset();
     t_bool isBig() { return big; }
+    void makeBig() { big = 1; }
 };
 
 #endif /* strparser_h */
