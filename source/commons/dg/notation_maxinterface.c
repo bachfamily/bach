@@ -2483,14 +2483,16 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
 			CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"snaponset",0,"0");
 			// @exclude bach.slot, bach.score
 			// @description Toggles the ability to automatically snap the onset of the edited chords and notes to the displayed grid
-			// (if any). By default this is off.
+			// (if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+            // before releasing the mouse button in order to prevent snapping.
 
             CLASS_ATTR_CHAR(c,"snaptail",0, t_notation_obj, snap_tail_to_grid_when_editing);
 			CLASS_ATTR_STYLE_LABEL(c,"snaptail",0,"onoff","Snap Tail To Grid When Editing");
 			CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"snaptail",0,"0");
 			// @exclude bach.slot, bach.score
 			// @description Toggles the ability to automatically snap the tails of the edited chords and notes to the displayed grid
-			// (if any). By default this is off.
+            // (if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+            // before releasing the mouse button in order to prevent snapping.
 
             CLASS_ATTR_CHAR(c,"snaplinearedit",0, t_notation_obj, snap_linear_edit_to_grid_when_editing);
             CLASS_ATTR_STYLE_LABEL(c,"snaplinearedit",0,"onoff","Snap Linear Editing To Grid");
@@ -2504,7 +2506,8 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
             CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"snapmarkers",0,"0");
             // @exclude bach.slot, bach.score
             // @description Toggles the ability to automatically snap the markers to the displayed grid
-            // (if any). By default this is off.
+            // (if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+            // before releasing the mouse button in order to prevent snapping.
 
         }
 		

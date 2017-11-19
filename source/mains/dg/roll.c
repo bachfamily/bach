@@ -13624,7 +13624,7 @@ void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
 	x->r_ob.j_mouse_is_down = false;
 	x->r_ob.j_isdragging = false;
 	
-	if (x->r_ob.changed_while_dragging && x->r_ob.active_slot_num < 0)
+	if (x->r_ob.changed_while_dragging && x->r_ob.active_slot_num < 0 && !(modifiers & eControlKey))
         snap_onset_tail_pitch_to_grid_for_selection_if_needed(x);
     
     if (x->r_ob.need_snap_some_nonselected_items) {
