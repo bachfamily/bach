@@ -176,7 +176,7 @@
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.mc2pc" />
-		<seealso name="bach.mcapprox" />
+		<seealso name="bach.approx" />
 		<seealso name="bach.pcsetinfo" />
 		<seealso name="bach.expr" />
 	</seealsolist>

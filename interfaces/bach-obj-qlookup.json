@@ -4714,7 +4714,7 @@
     ],
     "seealso": [
       "bach.pc2mc",
-      "bach.mcapprox",
+      "bach.approx",
       "bach.pcsetinfo",
       "bach.expr"
     ]
@@ -5051,7 +5051,7 @@
     ],
     "seealso": [
       "bach.mc2pc",
-      "bach.mcapprox",
+      "bach.approx",
       "bach.pcsetinfo",
       "bach.expr"
     ]

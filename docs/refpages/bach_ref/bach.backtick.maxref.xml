@@ -36,14 +36,13 @@
 	<outletlist>
 		<outlet id="0" type="INLET_TYPE">
 			<digest>
-				The text-format llll, with the first element backticked if required
+				All the attributes of all the objects connected to the second outlet
 			</digest>
 			<description>
 				The incoming llll is returned in text format,
 				with its first element preceded by a backtick in the standard cases,
 				if it is one of the supplied arguments,
-				or if it is an attribute of one of the objects it is connected to
-				(unless the autoattrs attribute is set to 0)
+				or if it is an attribute of one of the objects the second outlet is connected to.
 			</description>
 		</outlet>
 	</outletlist>
@@ -82,8 +81,7 @@
 				as with all the bach objects. <br/>
 				- The first element is a rational or a pitch, as with all the bach objects. <br/>
 				- The first element is one of the symbols provided as <o>bach.backtick</o>'s arguments.
-				- The <m>autoattrs</m> attribute is not explicitly set to 0, and the first element is an attribute of one of the objects
-				connected to <o>bach.backtick</o>.
+				- The first element is an attribute of one of the objects connected to the second outlet of <o>bach.backtick</o>.
 			</description>
 		</method>
 	</methodlist>
@@ -101,7 +99,6 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Retrieve attributes" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
@@ -123,12 +120,11 @@
 	<misc name = "Output">
 		<entry name ="Outlet 1 (llll)">
 			<description>
-				The text-format llll, with the first element backticked if required.
+				All the attributes of all the objects connected to the second outlet.
 				The incoming llll is returned in text format,
 				with its first element preceded by a backtick in the standard cases,
 				if it is one of the supplied arguments,
-				or if it is an attribute of one of the objects it is connected to
-				(unless the autoattrs attribute is set to 0)
+				or if it is an attribute of one of the objects the second outlet is connected to.
 			</description>
 		</entry>
 	</misc>

@@ -38,6 +38,7 @@
 #include "bach_math_utilities.h"
 #include "bach_cursors.h"
 #include "llll_commons_ext.h"
+#include "alterparser.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

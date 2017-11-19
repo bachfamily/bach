@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 7,
 			"minor" : 3,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -48,7 +48,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 104.0, 298.0, 189.0, 36.0 ],
-					"presentation_rect" : [ 6.0, 322.0, 0.0, 0.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "You can do arithmetics with it, see #pitch+arithmetics",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -66,7 +65,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 90.0, 246.0, 222.0, 54.0 ],
-					"presentation_rect" : [ 88.5, 258.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "This is a symbol for any Max object, but for any bach object is a real pitch!"
 				}
@@ -97,7 +95,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 132.5, 153.0, 164.0, 25.0 ],
-					"presentation_rect" : [ 170.5, 180.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Octave (C5 = middle C)"
 				}
@@ -113,7 +110,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 104.0, 153.0, 20.0, 23.0 ],
-					"presentation_rect" : [ 150.0, 180.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "4"
 				}
@@ -129,7 +125,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 99.0, 117.0, 144.0, 25.0 ],
-					"presentation_rect" : [ 140.0, 147.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Alteration (in tones)"
 				}
@@ -145,7 +140,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 64.75, 117.0, 29.5, 23.0 ],
-					"presentation_rect" : [ 111.0, 153.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "1/2"
 				}
@@ -194,7 +188,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 2.5, 375.0, 589.0, 36.0 ],
-					"presentation_rect" : [ 5.0, 240.0, 0.0, 0.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "...or use the makepitch(), degree(), alter() and octave() bach.expr functions on which they are based upon! Also, both abstractions also work with complex llll, preserving their structure.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -210,7 +203,10 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 467.0, 284.0, 126.0, 23.0 ],
-					"presentation_rect" : [ 331.0, 210.0, 0.0, 0.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
 					"style" : "",
 					"text" : "bach.print Alteration"
 				}
@@ -225,6 +221,10 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 413.0, 255.0, 127.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
 					"style" : "",
 					"text" : "bach.print Alteration"
 				}
@@ -239,6 +239,10 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 368.0, 221.0, 114.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 70911
+					}
+,
 					"style" : "",
 					"text" : "bach.print Degree"
 				}
@@ -254,7 +258,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 408.0, 142.0, 75.0, 23.0 ],
-					"presentation_rect" : [ 275.0, 71.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Dq5+1/32t"
 				}
@@ -330,7 +333,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 602.0, 19.0 ],
 					"style" : "",
-					"text" : "Objects: all",
+					"text" : "Objects: bach.roll, bach.score",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -389,8 +392,6 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-26", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-1", 0 ]
 				}
 
@@ -398,8 +399,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-16", 0 ]
 				}
 
@@ -407,8 +406,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-6", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-2", 0 ]
 				}
 
@@ -416,8 +413,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-2", 1 ]
 				}
 
@@ -425,8 +420,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-1", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-21", 0 ]
 				}
 
@@ -434,8 +427,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-1", 2 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-23", 0 ]
 				}
 
@@ -443,8 +434,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-4", 0 ]
 				}
 
@@ -452,8 +441,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-5", 0 ]
 				}
 
@@ -462,12 +449,14 @@
 		"dependency_cache" : [ 			{
 				"name" : "bach.pitchpack.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.pitchunpack.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}

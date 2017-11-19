@@ -2192,6 +2192,13 @@
 					"tags" : [ "message", "operate", "on", "selection", "change", "cent", "cents", "velocity", "velocities", "modify", "parameter", "pitch" ],
 					"title" : [ "Changing pitches or velocities" ]
 				},
+				"B_transp" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.04b_transp.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "sel", "pitch+interval", "pitch+syntax", "modify+existing+parameters", "modify+equation" ],
+					"tags" : [ "message", "operate", "on", "selection", "change", "cent", "cents", "pitch", "pitches", "transpose", "transposing", "chromatic", "diatonic" ],
+					"title" : [ "Transposing via pitches or cents" ]
+				},
 				"Tie" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.05_tie.maxpat" ],
 					"objects" : [ "bach.score" ],
@@ -4843,28 +4850,28 @@
 			"Pitches" : {
 				"Notenames" : {
 					"filename" : [ "bach.help.notation.syntax.90_pitches.01_notenames.maxpat" ],
-					"objects" : [ "all" ],
+					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "pitch+syntax" ],
 					"tags" : [ "syntax", "note", "name", "pitch", "middlecoctave", "notename" ],
 					"title" : [ "Inputting pitches" ]
 				},
 				"Pitchsyntax" : {
 					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
-					"objects" : [ "all" ],
+					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
 					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone" ],
 					"title" : [ "Pitch syntax" ]
 				},
 				"Intervals" : {
 					"filename" : [ "bach.help.notation.syntax.90_pitches.03_intervals.maxpat" ],
-					"objects" : [ "all" ],
+					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "pitch+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "arithmetics", "add", "divide", "multiply", "subtract", "subtract", "remainder" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "arithmetics", "add", "divide", "multiply", "subtract", "subtract", "remainder", "interval" ],
 					"title" : [ "Pitch arithmetics and intervals" ]
 				},
 				"Pack" : {
 					"filename" : [ "bach.help.notation.syntax.90_pitches.04_pack.maxpat" ],
-					"objects" : [ "all" ],
+					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "pitch+syntax" ],
 					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "create", "break", "build", "pack", "unpack", "pitchpack", "pitchunpack" ],
 					"title" : [ "Packing and unpacking pitches" ]

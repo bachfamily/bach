@@ -4724,17 +4724,31 @@ t_symbol *acc_to_symbol(t_rational acc){
 	}
 }
 
-t_rational symbol_to_acc(t_symbol *sym){
-	long len = strlen(sym->s_name);
-	char *temp = (char *) bach_newptr(len + 3); 
-	temp[0] = 'd';
-	temp[1] = 'o'; // dummy note, just need accidentals 
-	temp[len+2] = 0;
-	strncpy(temp + 2, sym->s_name, len);
-	long screen_mc, last_used_octave = 4;
-	t_rational acc = long2rat(0);
-	notename2midicents(4, &last_used_octave, temp, &screen_mc, &acc);
-	bach_freeptr(temp);
+t_rational symbol_to_acc(t_symbol *sym)
+{
+    t_rational acc = long2rat(0);
+    if (false) {
+        // old parser
+        
+        long len = strlen(sym->s_name);
+        char *temp = (char *) bach_newptr(len + 3);
+        temp[0] = 'd';
+        temp[1] = 'o'; // dummy note, just need accidentals
+        temp[len+2] = 0;
+        strncpy(temp + 2, sym->s_name, len);
+        long screen_mc, last_used_octave = 4;
+        notename2midicents(4, &last_used_octave, temp, &screen_mc, &acc);
+        bach_freeptr(temp);
+        
+    } else {
+        // new parser
+        t_alterParser p;
+        acc = p.parse(sym->s_name);
+        if (acc.r_den == 0)
+            acc = long2rat(0);
+    }
+
+    
 	return acc;
 }
 
@@ -4804,19 +4818,25 @@ void parse_sym_to_key_and_mode(t_notation_obj *r_ob, t_symbol *sym, char *key, c
 		p = strtok(name_cpy, " ");
 		*mode = k_MODE_NONSTANDARD;
 		*key = -100;
-		for (i = 0; i < 7; i++) // erase whole acc_pattern
-			acc_pattern[i] = long2rat(0);
-		i = 0;
-		temp = (char *) bach_newptr(len + 4); 
-		while (p && i < 7) {
-			temp[0] = 'd'; 
-			temp[1] = 'o'; // dummy note, just need accidentals 
-			strncpy_zero(temp + 2, p, len - 2);
-			temp[len+2] = 0;
-			screen_acc = long2rat(0);
-			notename2midicents(r_ob->middleC_octave, &r_ob->last_used_octave, temp, &screen_mc, &screen_acc);
-			acc_pattern[i] = screen_acc;
-			p = strtok(NULL, " ");
+        for (i = 0; i < 7; i++) // erase whole acc_pattern
+            acc_pattern[i] = long2rat(0);
+        i = 0;
+        temp = (char *) bach_newptr(len + 4);
+        while (p && i < 7) {
+            if (false) {
+                temp[0] = 'd';
+                temp[1] = 'o'; // dummy note, just need accidentals
+                strncpy_zero(temp + 2, p, len - 2);
+                temp[len+2] = 0;
+                screen_acc = long2rat(0);
+                notename2midicents(r_ob->middleC_octave, &r_ob->last_used_octave, temp, &screen_mc, &screen_acc);
+                acc_pattern[i] = screen_acc;
+            } else {
+                strncpy_zero(temp, p, len);
+                acc_pattern[i] = symbol_to_acc(gensym(temp));
+            }
+
+            p = strtok(NULL, " ");
 			i++;
 		}
 		bach_freeptr(temp);	
