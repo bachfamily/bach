@@ -1136,7 +1136,7 @@
 				"filename" : [ "bach.help.notation.editing.26_snaptemporal.maxpat" ],
 				"objects" : [ "bach.roll" ],
 				"seealso" : [ "snap+pitch", "snaponsettogrid", "snaptailtogrid" ],
-				"tags" : [ "editing", "edit", "interface", "snap", "onset", "tail", "snaponset", "snaptail" ],
+				"tags" : [ "editing", "edit", "interface", "snap", "onset", "tail", "snaponset", "snaptail", "prevent", "from", "control", "avoid", "snapmarkers", "marker" ],
 				"title" : [ "Snap onsets or tails to time grid" ]
 			},
 			"Markersinterface" : {

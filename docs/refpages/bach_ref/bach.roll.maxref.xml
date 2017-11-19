@@ -9260,7 +9260,8 @@
 			</digest>
 			<description>
 				Toggles the ability to automatically snap the markers to the displayed grid
-				(if any). By default this is off.
+				(if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+				before releasing the mouse button in order to prevent snapping.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
@@ -9277,7 +9278,8 @@
 			</digest>
 			<description>
 				Toggles the ability to automatically snap the onset of the edited chords and notes to the displayed grid
-				(if any). By default this is off.
+				(if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+				before releasing the mouse button in order to prevent snapping.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
@@ -9313,7 +9315,8 @@
 			</digest>
 			<description>
 				Toggles the ability to automatically snap the tails of the edited chords and notes to the displayed grid
-				(if any). By default this is off.
+				(if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+				before releasing the mouse button in order to prevent snapping.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
