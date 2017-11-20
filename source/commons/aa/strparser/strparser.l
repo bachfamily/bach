@@ -2,9 +2,13 @@
 %option noyyalloc noyyrealloc noyyfree
 %option header-file="strparser.lex.h"
 %option prefix="strparser_"
+
+%s NO_L NO_b NO_Lb NO_e NO_Le NO_be NO_Lbe NO_l NO_Ll NO_bl NO_Lbl NO_el NO_Lel NO_bel NO_Lbel NO_p NO_Lp NO_bp NO_Lbp NO_ep NO_Lep NO_bep NO_Lbep NO_lp NO_Llp NO_blp NO_Lblp NO_elp NO_Lelp NO_belp NO_Lbelp NO_r NO_Lr NO_br NO_Lbr NO_er NO_Ler NO_ber NO_Lber NO_lr NO_Llr NO_blr NO_Lblr NO_elr NO_Lelr NO_belr NO_Lbelr NO_pr NO_Lpr NO_bpr NO_Lbpr NO_epr NO_Lepr NO_bepr NO_Lbepr NO_lpr NO_Llpr NO_blpr NO_Lblpr NO_elpr NO_Lelpr NO_belpr NO_Lbelpr NO_s NO_Ls NO_bs NO_Lbs NO_es NO_Les NO_bes NO_Lbes NO_ls NO_Lls NO_bls NO_Lbls NO_els NO_Lels NO_bels NO_Lbels NO_ps NO_Lps NO_bps NO_Lbps NO_eps NO_Leps NO_beps NO_Lbeps NO_lps NO_Llps NO_blps NO_Lblps NO_elps NO_Lelps NO_belps NO_Lbelps NO_rs NO_Lrs NO_brs NO_Lbrs NO_ers NO_Lers NO_bers NO_Lbers NO_lrs NO_Llrs NO_blrs NO_Lblrs NO_elrs NO_Lelrs NO_belrs NO_Lbelrs NO_prs NO_Lprs NO_bprs NO_Lbprs NO_eprs NO_Leprs NO_beprs NO_Lbeprs NO_lprs NO_Llprs NO_blprs NO_Lblprs NO_elprs NO_Lelprs NO_belprs NO_Lbelprs
+
 SEPARATOR ([ \t\n\(\)\[\]\{\}])
 INTEGER ([+-]?[0-9]+)
 FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
+SIMPLEFLOAT ((-?)(([0-9]*\.[0-9]+)|([0-9]+\.)))
 RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
@@ -29,14 +33,16 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 %%
 
-\( {
-    parserpost(" lex: PUSH\n");
-    return PUSH;
-}
-
-\) {
-    parserpost(" lex: POP\n");
-    return POP;
+<INITIAL,NO_b,NO_e,NO_be,NO_l,NO_bl,NO_el,NO_bel,NO_p,NO_bp,NO_ep,NO_bep,NO_lp,NO_blp,NO_elp,NO_belp,NO_r,NO_br,NO_er,NO_ber,NO_lr,NO_blr,NO_elr,NO_belr,NO_pr,NO_bpr,NO_epr,NO_bepr,NO_lpr,NO_blpr,NO_elpr,NO_belpr,NO_s,NO_bs,NO_es,NO_bes,NO_ls,NO_bls,NO_els,NO_bels,NO_ps,NO_bps,NO_eps,NO_beps,NO_lps,NO_blps,NO_elps,NO_belps,NO_rs,NO_brs,NO_ers,NO_bers,NO_lrs,NO_blrs,NO_elrs,NO_belrs,NO_prs,NO_bprs,NO_eprs,NO_beprs,NO_lprs,NO_blprs,NO_elprs,NO_belprs>{
+    \( {
+        parserpost(" lex: PUSH\n");
+        return PUSH;
+    }
+    
+    \) {
+        parserpost(" lex: POP\n");
+        return POP;
+    }
 }
 
 {INTEGER} {
@@ -45,43 +51,51 @@ ACCIDENTAL ([#bxdq\^v]+)
     return LONG;
 }
 
-{RATIONAL} {
+<INITIAL,NO_L,NO_b,NO_Lb,NO_e,NO_Le,NO_be,NO_Lbe,NO_l,NO_Ll,NO_bl,NO_Lbl,NO_el,NO_Lel,NO_bel,NO_Lbel,NO_p,NO_Lp,NO_bp,NO_Lbp,NO_ep,NO_Lep,NO_bep,NO_Lbep,NO_lp,NO_Llp,NO_blp,NO_Lblp,NO_elp,NO_Lelp,NO_belp,NO_Lbelp,NO_s,NO_Ls,NO_bs,NO_Lbs,NO_es,NO_Les,NO_bes,NO_Lbes,NO_ls,NO_Lls,NO_bls,NO_Lbls,NO_els,NO_Lels,NO_bels,NO_Lbels,NO_ps,NO_Lps,NO_bps,NO_Lbps,NO_eps,NO_Leps,NO_beps,NO_Lbeps,NO_lps,NO_Llps,NO_blps,NO_Lblps,NO_elps,NO_Lelps,NO_belps,NO_Lbelps>{RATIONAL} {
     yylval->r = t_parser::eatRational(yytext);
     parserpost(" lex: RATIONAL %ld / %ld\n", yylval->r.num(), yylval->r.den());
     return RAT;
 }
 
-{FLOAT} {
+<INITIAL,NO_L,NO_b,NO_Lb,NO_l,NO_Ll,NO_bl,NO_Lbl,NO_p,NO_Lp,NO_bp,NO_Lbp,NO_lp,NO_Llp,NO_blp,NO_Lblp,NO_r,NO_Lr,NO_br,NO_Lbr,NO_lr,NO_Llr,NO_blr,NO_Lblr,NO_pr,NO_Lpr,NO_bpr,NO_Lbpr,NO_lpr,NO_Llpr,NO_blpr,NO_Lblpr,NO_s,NO_Ls,NO_bs,NO_Lbs,NO_ls,NO_Lls,NO_bls,NO_Lbls,NO_ps,NO_Lps,NO_bps,NO_Lbps,NO_lps,NO_Llps,NO_blps,NO_Lblps,NO_rs,NO_Lrs,NO_brs,NO_Lbrs,NO_lrs,NO_Llrs,NO_blrs,NO_Lblrs,NO_prs,NO_Lprs,NO_bprs,NO_Lbprs,NO_lprs,NO_Llprs,NO_blprs,NO_Lblprs>{FLOAT} {
     yylval->d = atof(yytext);
     parserpost(" lex: DOUBLE %lf\n", yylval->d);
     return DOUBLE;
 }
 
-[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER} {
-    yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
-    return PITCH;
+<NO_e,NO_Le,NO_be,NO_Lbe,NO_el,NO_Lel,NO_bel,NO_Lbel,NO_ep,NO_Lep,NO_bep,NO_Lbep,NO_elp,NO_Lelp,NO_belp,NO_Lbelp,NO_er,NO_Ler,NO_ber,NO_Lber,NO_elr,NO_Lelr,NO_belr,NO_Lbelr,NO_epr,NO_Lepr,NO_bepr,NO_Lbepr,NO_elpr,NO_Lelpr,NO_belpr,NO_Lbelpr,NO_es,NO_Les,NO_bes,NO_Lbes,NO_els,NO_Lels,NO_bels,NO_Lbels,NO_eps,NO_Leps,NO_beps,NO_Lbeps,NO_elps,NO_Lelps,NO_belps,NO_Lbelps,NO_ers,NO_Lers,NO_bers,NO_Lbers,NO_elrs,NO_Lelrs,NO_belrs,NO_Lbelrs,NO_eprs,NO_Leprs,NO_beprs,NO_Lbeprs,NO_elprs,NO_Lelprs,NO_belprs,NO_Lbelprs>{SIMPLEFLOAT} {
+    yylval->d = atof(yytext);
+    parserpost(" lex: DOUBLE %lf\n", yylval->d);
+    return DOUBLE;
 }
 
-[-+]?{NOTENAME}{INTEGER}{ACCIDENTAL} {
-    yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
-	return PITCH;
+<INITIAL,NO_L,NO_b,NO_Lb,NO_e,NO_Le,NO_be,NO_Lbe,NO_l,NO_Ll,NO_bl,NO_Lbl,NO_el,NO_Lel,NO_bel,NO_Lbel,NO_r,NO_Lr,NO_br,NO_Lbr,NO_er,NO_Ler,NO_ber,NO_Lber,NO_lr,NO_Llr,NO_blr,NO_Lblr,NO_elr,NO_Lelr,NO_belr,NO_Lbelr,NO_s,NO_Ls,NO_bs,NO_Lbs,NO_es,NO_Les,NO_bes,NO_Lbes,NO_ls,NO_Lls,NO_bls,NO_Lbls,NO_els,NO_Lels,NO_bels,NO_Lbels,NO_rs,NO_Lrs,NO_brs,NO_Lbrs,NO_ers,NO_Lers,NO_bers,NO_Lbers,NO_lrs,NO_Llrs,NO_blrs,NO_Lblrs,NO_elrs,NO_Lelrs,NO_belrs,NO_Lbelrs>{
+    [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER} {
+        yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
+        parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+        return PITCH;
+    }
+    
+    [-+]?{NOTENAME}{INTEGER}{ACCIDENTAL} {
+        yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
+        parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+        return PITCH;
+    }
+    
+    [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
+        yylval->p = t_parser::eatPitchAsNameAccIntIntT(yytext);
+        parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+        return PITCH;
+    }
+    
+    [-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+        yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
+        parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
+        return PITCH;
+    }
 }
 
-[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+t {
-    yylval->p = t_parser::eatPitchAsNameAccIntIntT(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
-    return PITCH;
-}
-
-[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
-    yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
-    parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
-    return PITCH;
-}
-
-\`[^ \t\n\r\f\v]+ {
+<INITIAL,NO_L,NO_e,NO_Le,NO_l,NO_Ll,NO_el,NO_Lel,NO_p,NO_Lp,NO_ep,NO_Lep,NO_lp,NO_Llp,NO_elp,NO_Lelp,NO_r,NO_Lr,NO_er,NO_Ler,NO_lr,NO_Llr,NO_elr,NO_Lelr,NO_pr,NO_Lpr,NO_epr,NO_Lepr,NO_lpr,NO_Llpr,NO_elpr,NO_Lelpr,NO_s,NO_Ls,NO_es,NO_Les,NO_ls,NO_Lls,NO_els,NO_Lels,NO_ps,NO_Lps,NO_eps,NO_Leps,NO_lps,NO_Llps,NO_elps,NO_Lelps,NO_rs,NO_Lrs,NO_ers,NO_Lers,NO_lrs,NO_Llrs,NO_elrs,NO_Lelrs,NO_prs,NO_Lprs,NO_eprs,NO_Leprs,NO_lprs,NO_Llprs,NO_elprs,NO_Lelprs>\`.* {
     parserpost(" lex: BACKTICKED ELEMENT %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
     return SYMBOL;
@@ -95,21 +109,29 @@ ACCIDENTAL ([#bxdq\^v]+)
     return SYMBOL;
 }
 
-"null" {
-    parserpost(" lex: null\n");
-    return BACHNULL;
-}
-
-"nil" {
-    parserpost(" lex: nil\n");
-    return BACHNIL;
+<INITIAL,NO_L,NO_b,NO_Lb,NO_e,NO_Le,NO_be,NO_Lbe,NO_l,NO_Ll,NO_bl,NO_Lbl,NO_el,NO_Lel,NO_bel,NO_Lbel,NO_p,NO_Lp,NO_bp,NO_Lbp,NO_ep,NO_Lep,NO_bep,NO_Lbep,NO_lp,NO_Llp,NO_blp,NO_Lblp,NO_elp,NO_Lelp,NO_belp,NO_Lbelp,NO_r,NO_Lr,NO_br,NO_Lbr,NO_er,NO_Ler,NO_ber,NO_Lber,NO_lr,NO_Llr,NO_blr,NO_Lblr,NO_elr,NO_Lelr,NO_belr,NO_Lbelr,NO_pr,NO_Lpr,NO_bpr,NO_Lbpr,NO_epr,NO_Lepr,NO_bepr,NO_Lbepr,NO_lpr,NO_Llpr,NO_blpr,NO_Lblpr,NO_elpr,NO_Lelpr,NO_belpr,NO_Lbelpr>{
+    "null" {
+        parserpost(" lex: null\n");
+        return BACHNULL;
+    }
+    
+    "nil" {
+        parserpost(" lex: nil\n");
+        return BACHNIL;
+    }
 }
 
 [ \t\n] {
 	parserpost(" lex: Whitespace\n");
 }
 
-[^\(\) \t\n]* {
+<INITIAL,NO_b,NO_e,NO_be,NO_p,NO_bp,NO_ep,NO_bep,NO_r,NO_br,NO_er,NO_ber,NO_pr,NO_bpr,NO_epr,NO_bepr,NO_s,NO_bs,NO_es,NO_bes,NO_ps,NO_bps,NO_eps,NO_beps,NO_rs,NO_brs,NO_ers,NO_bers,NO_prs,NO_bprs,NO_eprs,NO_beprs>[^\(\) \t\n]* {
+    parserpost(" lex: SYMBOL %s\n", yytext);
+    yylval->sym = gensym(yytext);
+    return SYMBOL;
+}
+
+<NO_L,NO_Lb,NO_Le,NO_Lbe,NO_l,NO_Ll,NO_bl,NO_Lbl,NO_el,NO_Lel,NO_bel,NO_Lbel,NO_Lp,NO_Lbp,NO_Lep,NO_Lbep,NO_lp,NO_Llp,NO_blp,NO_Lblp,NO_elp,NO_Lelp,NO_belp,NO_Lbelp,NO_Lr,NO_Lbr,NO_Ler,NO_Lber,NO_lr,NO_Llr,NO_blr,NO_Lblr,NO_elr,NO_Lelr,NO_belr,NO_Lbelr,NO_Lpr,NO_Lbpr,NO_Lepr,NO_Lbepr,NO_lpr,NO_Llpr,NO_blpr,NO_Lblpr,NO_elpr,NO_Lelpr,NO_belpr,NO_Lbelpr,NO_Ls,NO_Lbs,NO_Les,NO_Lbes,NO_ls,NO_Lls,NO_bls,NO_Lbls,NO_els,NO_Lels,NO_bels,NO_Lbels,NO_Lps,NO_Lbps,NO_Leps,NO_Lbeps,NO_lps,NO_Llps,NO_blps,NO_Lblps,NO_elps,NO_Lelps,NO_belps,NO_Lbelps,NO_Lrs,NO_Lbrs,NO_Lers,NO_Lbers,NO_lrs,NO_Llrs,NO_blrs,NO_Lblrs,NO_elrs,NO_Lelrs,NO_belrs,NO_Lbelrs,NO_Lprs,NO_Lbprs,NO_Leprs,NO_Lbeprs,NO_lprs,NO_Llprs,NO_blprs,NO_Lblprs,NO_elprs,NO_Lelprs,NO_belprs,NO_Lbelprs>[^ \t\n]* {
     parserpost(" lex: SYMBOL %s\n", yytext);
     yylval->sym = gensym(yytext);
     return SYMBOL;
@@ -125,7 +147,7 @@ int main(int argc, char **argv)
 #endif
 
 
-t_strParser::t_strParser(t_bool bigString) : t_parser()
+t_strParser::t_strParser(t_bool bigString, long ignore) : t_parser()
 {
     if (!bigString) {
         setPtr(sizeof(struct yyguts_t));
@@ -133,21 +155,23 @@ t_strParser::t_strParser(t_bool bigString) : t_parser()
         reset();
     }
     big = bigString; 
-    /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
-
+    startCondition = ignore;
 }
 
 void t_strParser::reset()
 {
     t_parser::reset();
+    /* By setting to 0xAA, we expose bugs in yy_init_globals. Leave at 0x00 for releases. */
     memset(this,0x00,sizeof(struct yyguts_t));
     //yy_init_globals ((yyscan_t) this);
 }
 
 YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf)
 {
-    YY_BUFFER_STATE bp = yy_scan_string(buf, myscanner);
-    yy_switch_to_buffer(bp, myscanner);
+    struct yyguts_t *yyg = (struct yyguts_t*) myscanner;
+    BEGIN ((t_strParser *) myscanner)->getStartCondition();
+    YY_BUFFER_STATE bp = strparser__scan_string(buf,myscanner);
+    strparser__switch_to_buffer(bp,myscanner);
     return bp;
 }
 

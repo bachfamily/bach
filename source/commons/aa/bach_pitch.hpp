@@ -356,11 +356,14 @@ public:
                     
                 case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
                     
-                case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
-                case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                case '+': case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
+                    
+                case '-': case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
                     
                 case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
                 case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                    
+                case 'n':   (*pos)++;   break;
                     
                 default:	go = 0;	break;
             }

@@ -22,10 +22,13 @@
 #endif
 
 class t_symParser : public t_parser {
+private:
+    long startCondition;
 public:
-    t_symParser();
+    t_symParser(long ignore = 0);
     void parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth);
     void reset();
+    long getStartCondition() { return startCondition; }
 };
 
 

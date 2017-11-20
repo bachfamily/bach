@@ -60,6 +60,18 @@ typedef enum _llll_text_flags {
 #define LLLL_T_COPYSYMBOLS (LLLL_T_NO_DOUBLE_QUOTES | LLLL_T_NO_BACKSLASH)
 
 
+// flags telling llll_parse which bach-specific things should not be parsed,
+// but treated as plain symbols
+typedef enum _llll_parse_ignore_flags {
+    LLLL_I_NONE         = 0x00, // default behavior (everything is parsed)
+    LLLL_I_BIGPARENS    = 0x01, // ( and ) symbols are not treated as llll level markers
+    LLLL_I_BACKTICK     = 0x02, // starting backticks are parsed as a part of the symbol they are prepended to
+    LLLL_I_SCIENTIFIC   = 0x04, // scientific notation for floats is ignored
+    LLLL_I_SMALLPARENS  = 0x08, // parens in longer symbols are ignored
+    LLLL_I_PITCH        = 0x10, // pitches are ignored
+    LLLL_I_RATIONAL     = 0x20, // rationals are ignored
+    LLLL_I_SPECIAL      = 0x40  // null and nil are ignored
+} e_parse_ignore_flags;
 
 
 // outlet types (used in the llllobj_out structure)
@@ -280,14 +292,15 @@ void bach_setup(t_bach *x);
 
 
 // create a new llll from an array of atoms containing its textual representation
-//
-t_llll *llll_parse(long ac, t_atom *av);
+// for ignore, se #e_llll_parse_ignore
+t_llll *llll_parse(long ac, t_atom *av, long ignore = 0);
 
 
 // create a new llll from a c string (txt)
 // if the string is or can be longer than about 2048 chars (there's some tolerance anyway),
 // big must be set to true. This, on the other hand, will make the operation significantly slower.
-t_llll *llll_from_text_buf(const char *txt, t_bool big = false); // creates a new llll from a list contained in a string
+// for ignore, se #e_llll_parse_ignore
+t_llll *llll_from_text_buf(const char *txt, t_bool big = false, long ignore = 0); // creates a new llll from a list contained in a string
 
 
 // still uses the old, non-flex parser

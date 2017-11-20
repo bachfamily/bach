@@ -9,7 +9,7 @@ UINT ([0-9]+)
 UFLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
 URAT ({UINT}[/][+-]?{UINT})
 NOTENAME ([a-g]|[A-G])
-ACCIDENTAL ([#bxdq\^v]+)
+ACCIDENTAL ([n#bxdq+-\^v]+)
 
 %{
     #define BACH_MAX

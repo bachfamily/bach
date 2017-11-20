@@ -46,8 +46,9 @@
 
 typedef struct _read
 {
-	struct llllobj_object 	n_ob;
-	long					n_auto;
+	t_llllobj_object 	n_ob;
+	long				n_auto;
+    long                n_ignore;
 } t_read;
 
 void read_assist(t_read *x, void *b, long m, long a, char *s);
@@ -60,6 +61,9 @@ void read_bang(t_read *x);
 void read_read(t_read *x, t_symbol *s);
 void read_return(t_read *x, t_llll *ll);
 long read_acceptsdrag(t_read *x, t_object *drag, t_object *view);
+
+t_max_err read_setattr_ignore(t_read *x, t_object *attr, long ac, t_atom *av);
+t_max_err read_getattr_ignore(t_read *x, t_object *attr, long *ac, t_atom **av);
 
 t_class *read_class;
 
@@ -104,13 +108,58 @@ int T_EXPORT main()
 	CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
 	CLASS_ATTR_BASIC(c, "auto", 0);	
 	// @description When set to 1, the llll is automatically output immediately after being read from disk.
-
+    
+    CLASS_ATTR_SYM(c, "ignore",	0,	t_read, n_ignore);
+    CLASS_ATTR_ACCESSORS(c, "ignore", read_getattr_ignore, read_setattr_ignore);
+    
 	class_register(CLASS_BOX, c);
 	read_class = c;
 	
 	dev_post("bach.read compiled %s %s", __DATE__, __TIME__);
 	
 	return 0;
+}
+
+t_max_err read_setattr_ignore(t_read *x, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        char *ignore_txt = atom_getsym(av)->s_name;
+        x->n_ignore = 0;
+        while (*ignore_txt) {
+            switch (*ignore_txt) {
+                case 'L':   x->n_ignore |= LLLL_I_BIGPARENS | LLLL_I_SMALLPARENS;   break;
+                case 'b':   x->n_ignore |= LLLL_I_BACKTICK;   break;
+                case 'e':   x->n_ignore |= LLLL_I_SCIENTIFIC;   break;
+                case 'l':   x->n_ignore |= LLLL_I_SMALLPARENS;   break;
+                case 'p':   x->n_ignore |= LLLL_I_PITCH;   break;
+                case 'r':   x->n_ignore |= LLLL_I_RATIONAL;   break;
+                case 's':   x->n_ignore |= LLLL_I_SPECIAL;   break;
+                default:    object_warn((t_object *) x, "ignoring unknown %c specifier for ignore attribute", *ignore_txt); break;
+            }
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+t_max_err read_getattr_ignore(t_read *x, t_object *attr, long *ac, t_atom **av)
+{
+    char alloc;
+    char ignore_txt[7];
+    char *this_ignore_txt = ignore_txt;
+    atom_alloc(ac, av, &alloc);     // allocate return atom
+    
+    if (x->n_ignore & LLLL_I_BIGPARENS)        *(this_ignore_txt++) = 'L';
+    if (x->n_ignore & LLLL_I_BACKTICK)      *(this_ignore_txt++) = 'b';
+    if (x->n_ignore & LLLL_I_SCIENTIFIC)    *(this_ignore_txt++) = 'e';
+    if (x->n_ignore & LLLL_I_SMALLPARENS &&
+        !(x->n_ignore & LLLL_I_BIGPARENS))  *(this_ignore_txt++) = 'l';
+    if (x->n_ignore & LLLL_I_PITCH)         *(this_ignore_txt++) = 'p';
+    if (x->n_ignore & LLLL_I_RATIONAL)      *(this_ignore_txt++) = 'r';
+    if (x->n_ignore & LLLL_I_SPECIAL)       *(this_ignore_txt++) = 's';
+    *this_ignore_txt = 0;
+    
+    atom_setsym(*av, gensym(ignore_txt));
+    return 0;
 }
 
 void read_bang(t_read *x)
