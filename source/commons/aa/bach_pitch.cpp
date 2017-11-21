@@ -206,7 +206,7 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     return t_pitch(sat);
 }
 
-std::string t_pitch::toString(char include_octave, char always_positive)
+std::string t_pitch::toString(t_bool include_octave, t_bool always_positive)
 {
     std::string s;
     if (p_alter == illegal) {

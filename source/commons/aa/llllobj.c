@@ -822,7 +822,7 @@ void llllobj_outlet_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type,
 	}
 }
 
-void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll)
+void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll, long flags)
 {
 	t_atom outatom;
 	long ac = 0;
@@ -839,7 +839,7 @@ void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_l
 			t_atom *outlist;
 			if (in_ll) {
 				out_aa = llll_deparse_to_aa(in_ll,
-											cache->b_type == LLLL_O_TEXT ? LLLL_D_QUOTE | LLLL_D_MAX : LLLL_D_MAX);
+											(cache->b_type == LLLL_O_TEXT ? LLLL_D_QUOTE | LLLL_D_MAX : LLLL_D_MAX) | flags);
 				atomarray_getatoms(out_aa, &ac, &outlist);
 				
 				if (ac == 0) {

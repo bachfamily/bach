@@ -246,11 +246,12 @@ t_max_err llll_write_text_file(t_symbol *filename_sym, t_ptr_size *count, const 
 
 //////////////////////////
 
-void llll_read(t_object *x, t_symbol *s, read_fn outfn)
+void llll_read(t_object *x, t_symbol *s, read_fn outfn, long ignore)
 {
-	t_atom av;
-	atom_setobj(&av, (void *) outfn);
-	defer(x, (method)llll_doread, s, 1, &av);
+	t_atom av[2];
+	atom_setobj(av, (void *) outfn);
+    atom_setlong(av + 1, ignore);
+	defer(x, (method)llll_doread, s, 2, av);
 }
 
 void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
@@ -258,6 +259,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 	t_fourcc outtype = 0;
 	t_llll *ll;
 	void (*outfn)(t_object *x, t_llll *outll) = (read_fn) atom_getobj(av);
+    long ignore = atom_getlong(av + 1);
 	t_fourcc filetype[] = {'LLLL', 'TEXT'};
 	t_filehandle fh;
 	short path;
@@ -274,7 +276,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 	} else {
 		if (bach_readfile(x, filename, path, &fh) != MAX_ERR_NONE)
 			return;
-		ll = llll_readfile(x, fh);
+		ll = llll_readfile(x, fh, ignore);
 	}
 
 	// we have a file
@@ -282,7 +284,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 }
 
 
-t_llll *llll_readfile(t_object *x, t_filehandle fh)
+t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore)
 {
 	t_ptr_size size;
 	char *buffer;
@@ -299,7 +301,7 @@ t_llll *llll_readfile(t_object *x, t_filehandle fh)
 
 	if (strncmp(buffer, "\nbach", 5)) { // it's text format
 		*(buffer + size) = 0;
-		ll = llll_from_text_buf(buffer, size > 2048);
+		ll = llll_from_text_buf(buffer, size > 2048, ignore);
 	} else { // it's in old native format
 		ll = llll_from_native_buf(buffer, size);
 	}

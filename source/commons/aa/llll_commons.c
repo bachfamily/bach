@@ -81,6 +81,8 @@ t_uint32 *llllelem_pool_size;
 t_bach_atomic_lock *llllelem_pool_lock;
 t_llllelem_numbered *llllelem_model;
 
+t_hashtab *reservedselectors;
+
 
 
 int llll_compare_elems_by_thing(t_llllelem **a, t_llllelem **b);
@@ -109,6 +111,8 @@ void bach_setup(t_bach *x)
 	llllelem_pool_size = &bach->b_llllelem_pool_size;
 	llllelem_pool_lock = &x->b_llllelem_pool_lock;
 	llllelem_model = &x->b_llllelem_model;
+    
+    reservedselectors = bach->b_reservedselectors;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +213,6 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 	t_llllelem *elem;
 	char txt[256];
 	t_llll_stack *stack;
-	t_symbol *checked;
 	t_atom_long outsize;
 	t_atom *new_out, *this_out;
     t_chkParser chkParser;
@@ -294,7 +297,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 					break;
                 
                 case H_PITCH:
-                    atom_setsym(this_out++, gensym(elem->l_hatom.h_w.w_pitch.toString().c_str()));
+                    atom_setsym(this_out++, gensym(elem->l_hatom.h_w.w_pitch.toString(true, flags & LLLL_D_NEGOCTAVES).c_str()));
                     ac ++;
                     elem = elem->l_next;
                     break;
@@ -302,14 +305,18 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
                 case H_SYM: {
                     t_symbol *sym = elem->l_hatom.h_w.w_sym;
 
-                    if (ac == 0 && (flags & LLLL_D_MAX) && (sym == _sym_int || sym == _sym_float || sym == _sym_list)) {
-                        checked = sym_addquote(sym->s_name);
+                    if (ac == 0 && (flags & (LLLL_D_MAX | LLLL_D_QUOTE))) {
+                        t_object *dummy = NULL;
+                        hashtab_lookup(reservedselectors, sym, &dummy);
+                        if (dummy)
+                            sym = sym_addquote(sym->s_name);
+                        else if (flags & LLLL_D_QUOTE)
+                            sym = chkParser.addQuoteIfNeeded(sym);
                     } else if (flags & LLLL_D_QUOTE) {
-                        checked = chkParser.addQuoteIfNeeded(sym);
-					} else
-						checked = sym;
+                        sym = chkParser.addQuoteIfNeeded(sym);
+					}
 					
-					atom_setsym(this_out++, checked);
+					atom_setsym(this_out++, sym);
 					ac ++;
 					elem = elem->l_next;
 					break;

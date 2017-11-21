@@ -297,7 +297,8 @@ void llllobj_outlet_symbol_couple_as_llll(t_object *x, e_llllobj_obj_types llllo
 // it manages native / text format
 // each object receiving the llll retains it if needed, so you should free the list after outputting it
 // outlets are counted from 0
-void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll);
+// flags are e_llll_deparse_flags
+void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll, long flags = 0);
 
 
 // (unused)

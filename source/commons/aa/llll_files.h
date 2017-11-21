@@ -43,9 +43,9 @@ void llll_writenative(t_object *x, t_symbol *s, t_llll *ll);
 // s contains the file name, or NULL to open a save dialog
 // after read is finished, outfn is called with x and the newly created ll as its arguments
 // the ll is not destroyed thereafter - outfn owns it
-void llll_read(t_object *x, t_symbol *s, read_fn outfn);
+void llll_read(t_object *x, t_symbol *s, read_fn outfn, long ignore = 0);
 
-t_llll *llll_readfile(t_object *x, t_filehandle fh);
+t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore = 0);
 
 t_max_err bach_write_binary_file(t_symbol *filename_sym, const char *default_filename, t_fourcc filetype, t_ptr_size *count, const void *buffer);
 t_max_err llll_write_text_file(t_symbol *filename_sym, t_ptr_size *count, const void *buffer);

@@ -514,6 +514,43 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     x->b_portalpatchers = hashtab_new(0);
     hashtab_flags(x->b_helppatches, OBJ_FLAG_REF);
 	systhread_mutex_new(&x->b_memmap_lock, 0);
+    
+    x->b_reservedselectors = hashtab_new(0);
+    object_method(x->b_reservedselectors, gensym("readonly"), 1);
+    
+    hashtab_store(x->b_reservedselectors, _sym_bang, (t_object *) x);
+    
+    hashtab_store(x->b_reservedselectors, _sym_int, (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in1"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in2"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in3"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in4"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in5"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in6"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in7"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in8"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in9"), (t_object *) x);
+    
+    hashtab_store(x->b_reservedselectors, _sym_float, (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft1"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft2"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft3"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft4"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft5"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft6"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft7"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft8"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft9"), (t_object *) x);
+    
+    hashtab_store(x->b_reservedselectors, _sym_list, (t_object *) x);
+    hashtab_store(x->b_reservedselectors, _sym_symbol, (t_object *) x);
+    
+    hashtab_store(x->b_reservedselectors, _llllobj_sym_bach_llll, (t_object *) x);
+    hashtab_store(x->b_reservedselectors, _llllobj_sym_null, (t_object *) x);
+
+    
+    
+    
 	bach_setup(x);
 
 	/*

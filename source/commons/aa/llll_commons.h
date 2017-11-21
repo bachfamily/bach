@@ -37,10 +37,11 @@
 // flags for llll_deparse()
 // NB: for cross-architecture compatibility, 64-bit floats are stored as two longs even under 64-bit architecture
 typedef enum _llll_deparse_flags {
-	LLLL_D_NONE		= 0x00,
-	LLLL_D_QUOTE	= 0x01, // backtick symbols if they can be interpreted as other data types
-    LLLL_D_MAX      = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
-	LLLL_D_FLOAT64	= 0x04	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
+	LLLL_D_NONE         = 0x00,
+	LLLL_D_QUOTE        = 0x01, // backtick symbols if they can be interpreted as other data types
+    LLLL_D_MAX          = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
+	LLLL_D_FLOAT64      = 0x04,	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
+    LLLL_D_NEGOCTAVES   = 0x08  // pitches with negative octaves can be output
 } e_llll_deparse_flags;
 
 
@@ -70,7 +71,8 @@ typedef enum _llll_parse_ignore_flags {
     LLLL_I_SMALLPARENS  = 0x08, // parens in longer symbols are ignored
     LLLL_I_PITCH        = 0x10, // pitches are ignored
     LLLL_I_RATIONAL     = 0x20, // rationals are ignored
-    LLLL_I_SPECIAL      = 0x40  // null and nil are ignored
+    LLLL_I_SPECIAL      = 0x40,  // null and nil are ignored
+    LLLL_I_ALL          = 0x7F
 } e_parse_ignore_flags;
 
 
@@ -249,6 +251,8 @@ typedef struct _bach {
 	
 	t_hashtab			*b_helppatches;
 	t_bool				b_loadtime;
+    
+    t_hashtab           *b_reservedselectors;
 } t_bach;
 
 
