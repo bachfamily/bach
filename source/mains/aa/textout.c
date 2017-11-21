@@ -244,8 +244,7 @@ void textout_assist(t_textout *x, void *b, long m, long a, char *s)
 
 void textout_inletinfo(t_textout *x, void *b, long a, char *t)
 {
-    if (a)
-        *t = 1;
+    *t = 0;
 }
 
 void textout_free(t_textout *x)
@@ -259,9 +258,6 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
 {
     t_textout *x = NULL;
     t_max_err err = 0;
-    //long true_ac;
-    
-    //true_ac = attr_args_offset(ac, av);
     
     if ((x = (t_textout *) object_alloc_debug(textout_class))) {
 		// @arg 0 @name inlets @optional 1 @type int @digest Number of llll inlets/outlets
