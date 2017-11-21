@@ -286,6 +286,7 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
             }
         }
         
+        x->n_flags = LLLL_D_QUOTE;
         for (i = true_ac ; i < ac - 1; i++) {
             t_symbol *symattr = atom_getsym(av + i);
             if (!symattr || *symattr->s_name != '@') {
@@ -309,8 +310,8 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
                 }
             } else if (!strcmp(attrname, "backticks")) {
                 if (i < ac) {
-                    if (atom_getlong(av + i))
-                        x->n_flags |= LLLL_D_QUOTE;
+                    if (!atom_getlong(av + i))
+                        x->n_flags &= ~LLLL_D_QUOTE;
                } else
                     object_error((t_object *) x, "Missing attribute value for @backticks");
             } else if (!strcmp(attrname, "negativeoctaves")) {

@@ -173,7 +173,7 @@ void pv_dblclick(t_pv *x)
     
     char *buf = NULL;
     bach_atomic_lock(&pvitem->p_lock);
-    llll_to_text_buf_pretty(pvitem->p_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, 0, NULL);
+    llll_to_text_buf_pretty(pvitem->p_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_D_QUOTE, NULL);
     bach_atomic_unlock(&pvitem->p_lock);
     object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
     object_attr_setsym(x->m_editor, gensym("title"), gensym("llll"));

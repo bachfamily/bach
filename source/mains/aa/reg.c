@@ -152,7 +152,7 @@ void reg_dblclick(t_reg *x)
     
     char *buf = NULL;
     t_llll *ll = llllobj_get_store_contents((t_object *)x, LLLL_OBJ_VANILLA, 0, 0);
-    llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, 0, NULL);
+    llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_BACKTICKS, NULL);
     object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
     object_attr_setsym(x->m_editor, gensym("title"), gensym("llll"));
     llll_release(ll);
