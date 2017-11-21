@@ -7942,7 +7942,8 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_DUMPING, r_ob->active_slot_num, false);
 						char *buf = NULL;
 						llll_behead(ll);
-                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, 0, NULL);
+                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_BACKTICKS, NULL);
+//                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, 0, NULL);
 //						llll_to_text_buf(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
 						object_method(r_ob->m_editor, _sym_settext, buf, _sym_utf_8); 
 						r_ob->changed_while_dragging = true;
@@ -8111,7 +8112,8 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             
                             this_llll = (t_llll *) get_activeitem_slot_firstitem(r_ob, s)->item;
                             if (this_llll) {
-                                textlength = llll_to_text_buf(this_llll, &text, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
+//                                textlength = llll_to_text_buf(this_llll, &text, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
+                                textlength = llll_to_text_buf_pretty(this_llll, &text, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_BACKTICKS, NULL);
                                 
                                 object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);
                                 r_ob->changed_while_dragging = true;
