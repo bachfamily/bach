@@ -3552,6 +3552,7 @@
 		91EED5A11237C07E003C05FC /* roll.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = roll.c; sourceTree = "<group>"; };
 		91F39FEC1432B3F200F3234A /* reshape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reshape.c; sourceTree = "<group>"; };
 		91F3A0031432B59700F3234A /* bach.reshape.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.reshape.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		91F58B1D1FC474DF008156B7 /* tools */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tools; path = source/tools; sourceTree = "<group>"; };
 		91F6A60A1DDDDE2900237E9F /* bach.convertbase.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.convertbase.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F6A60E1DDDDED700237E9F /* convertbase.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = convertbase.c; sourceTree = "<group>"; };
 		91F6A6101DE6D8B200237E9F /* join.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = join.c; sourceTree = "<group>"; };
@@ -5652,6 +5653,7 @@
 		91BA46AC1F71585E0002D515 /* package */ = {
 			isa = PBXGroup;
 			children = (
+				91F58B1D1FC474DF008156B7 /* tools */,
 				91BA46BB1F715A990002D515 /* .gitattributes */,
 				91BA46BC1F715A990002D515 /* .gitignore */,
 				91BA46AD1F71599E0002D515 /* docs */,
