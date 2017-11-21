@@ -46,8 +46,9 @@
 
 typedef struct _read
 {
-	struct llllobj_object 	n_ob;
-	long					n_auto;
+	t_llllobj_object 	n_ob;
+	long				n_auto;
+    long                n_ignore;
 } t_read;
 
 void read_assist(t_read *x, void *b, long m, long a, char *s);
@@ -60,6 +61,9 @@ void read_bang(t_read *x);
 void read_read(t_read *x, t_symbol *s);
 void read_return(t_read *x, t_llll *ll);
 long read_acceptsdrag(t_read *x, t_object *drag, t_object *view);
+
+t_max_err read_setattr_ignore(t_read *x, t_object *attr, long ac, t_atom *av);
+t_max_err read_getattr_ignore(t_read *x, t_object *attr, long *ac, t_atom **av);
 
 t_class *read_class;
 
@@ -104,13 +108,106 @@ int T_EXPORT main()
 	CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
 	CLASS_ATTR_BASIC(c, "auto", 0);	
 	// @description When set to 1, the llll is automatically output immediately after being read from disk.
-
+    
+    CLASS_ATTR_SYM(c, "ignore",	0,	t_read, n_ignore);
+    CLASS_ATTR_ACCESSORS(c, "ignore", read_getattr_ignore, read_setattr_ignore);
+    // @description The <m>ignore</m> attribute allows preventing certain categories
+    // of elements to be interpreted according to the bach syntax.
+    // Categories are expressed by letters, according to the following table:<br />
+    // - <b>L</b> stands for all the open and closed parens marking llll sublists:
+    // if this category is set, parens and symbols containing parens
+    // are read just as symbols, as if they were preceded by a backtick. <br />
+    // - <b>l</b> stands for open and closed parens marking llll sublists,
+    // only if they do not appear in a symbol of their own
+    // (i.e., with the <b>l</b> category set,
+    // <b>(</b> is interpreted as the beginning of a sublist,
+    // whereas <b>(1</b> is interpreted just as a plain symbol,
+    // as opposed to what would happen normally,
+    // when it would mark the beginning of a sublist
+    // whose first element is <b>1</b>). <br />
+    // - <b>r</b> stands for rationals. <br />
+    // - <b>p</b> stands for pitches. <br />
+    // - <b>e</b> stands for floating-point numbers in scientific notation. <br />
+    // - <b>s</b> stands for the special symbols <b>nil</b> and <b>null</b>. <br />
+    // - <b>b</b> causes symbols beginning with a backtick
+    // to be interpreted with the backtick included
+    // (e.g., the <b>`foo</b> symbol is read as it is, including the backtick,
+    // as opposed to what would happen normally, when it would be read as <b>foo</b>). <br />
+    // - <b>a</b> stands for ignoring all the above categories.
+    // If it is present alongside other specifiers (e.g., <b>alp</b>), it overrides them. <br />
+    // - <b>-</b> stands for no category, and it is the default.
+    // If it is present alongside other specifiers (e.g., <b>-p</b>), it is ignored. <br />
+    // For example, the <m>ignore</m> attribute could be set to <b>lp</b>,
+    // which would cause a file containing <b>( a001 Mahler(Bernstein).aif )</b>
+    // to be read as an llll containing a sublist, containing in turn the symbols <b>a001</b> and
+    // <b>Mahler(Bernstein).aif</b>.
+    // Without setting the <m>ignore</m> attribute, the same file would be interpreted
+    // as an llll containing a sublist containing the pitch <b>A1</b>,
+    // the symbol <b>Mahler</b>,
+    // a further sublist only containing the symbol <b>Bernstein</b>,
+    // and finally the symbol <b>.aif</b>. <br />
+    // As a final note, it should be remarked that symbols in double quotes
+    // are always interpreted literally: for example, the symbol
+    // <b>"Mahler (Bernstein).aif"</b> would be interpreted as the single symbol
+    // <b>Mahler (Bernstein).aif</b> even if the <m>ignore</m> attribute is not set.
+    
 	class_register(CLASS_BOX, c);
 	read_class = c;
 	
 	dev_post("bach.read compiled %s %s", __DATE__, __TIME__);
 	
 	return 0;
+}
+
+t_max_err read_setattr_ignore(t_read *x, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        char *ignore_txt = atom_getsym(av)->s_name;
+        x->n_ignore = 0;
+        while (*ignore_txt) {
+            switch (*ignore_txt) {
+                case 'L':   x->n_ignore |= LLLL_I_BIGPARENS | LLLL_I_SMALLPARENS;   break;
+                case 'b':   x->n_ignore |= LLLL_I_BACKTICK;   break;
+                case 'e':   x->n_ignore |= LLLL_I_SCIENTIFIC;   break;
+                case 'l':   x->n_ignore |= LLLL_I_SMALLPARENS;   break;
+                case 'p':   x->n_ignore |= LLLL_I_PITCH;   break;
+                case 'r':   x->n_ignore |= LLLL_I_RATIONAL;   break;
+                case 's':   x->n_ignore |= LLLL_I_SPECIAL;   break;
+                case 'a': case 'A': x->n_ignore = LLLL_I_ALL;   break;
+                case '-':   break;
+                default:    object_warn((t_object *) x, "ignoring unknown %c specifier for ignore attribute", *ignore_txt); break;
+            }
+            ignore_txt++;
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+t_max_err read_getattr_ignore(t_read *x, t_object *attr, long *ac, t_atom **av)
+{
+    char alloc;
+    char ignore_txt[7];
+    char *this_ignore_txt = ignore_txt;
+    atom_alloc(ac, av, &alloc);     // allocate return atom
+    
+    switch (x->n_ignore) {
+        case LLLL_I_NONE:   *(this_ignore_txt++) = 'a';    break;
+        case LLLL_I_ALL:    *(this_ignore_txt++) = '-';    break;
+        default:
+            if (x->n_ignore & LLLL_I_BIGPARENS)     *(this_ignore_txt++) = 'L';
+            if (x->n_ignore & LLLL_I_BACKTICK)      *(this_ignore_txt++) = 'b';
+            if (x->n_ignore & LLLL_I_SCIENTIFIC)    *(this_ignore_txt++) = 'e';
+            if (x->n_ignore & LLLL_I_SMALLPARENS &&
+                !(x->n_ignore & LLLL_I_BIGPARENS))  *(this_ignore_txt++) = 'l';
+            if (x->n_ignore & LLLL_I_PITCH)         *(this_ignore_txt++) = 'p';
+            if (x->n_ignore & LLLL_I_RATIONAL)      *(this_ignore_txt++) = 'r';
+            if (x->n_ignore & LLLL_I_SPECIAL)       *(this_ignore_txt++) = 's';
+            break;
+    }
+
+    *this_ignore_txt = 0;
+    atom_setsym(*av, gensym(ignore_txt));
+    return 0;
 }
 
 void read_bang(t_read *x)
@@ -120,7 +217,7 @@ void read_bang(t_read *x)
 
 void read_read(t_read *x, t_symbol *s)
 {
-	llll_read((t_object *) x, s, (read_fn) read_return);	
+	llll_read((t_object *) x, s, (read_fn) read_return, x->n_ignore);
 }
 
 void read_return(t_read *x, t_llll *ll)

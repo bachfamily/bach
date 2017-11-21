@@ -337,7 +337,7 @@ float parse_64bit_float(t_atom *av)
     return *f;
 }
 
-t_llll *llll_parse(long ac, t_atom *av) // creates a new llll from a list in text format
+t_llll *llll_parse(long ac, t_atom *av, long ignore) // creates a new llll from a list in text format
 {
     long depth;
     t_llll *this_llll;
@@ -356,7 +356,7 @@ t_llll *llll_parse(long ac, t_atom *av) // creates a new llll from a list in tex
     depth = 1;
     
     char dollarnum[2048];
-    t_symParser symParser;
+    t_symParser symParser(ignore);
     long type;
     long i;
     
@@ -418,7 +418,7 @@ llll_parse_err:
 }
 
 
-t_llll *llll_from_text_buf(const char *txt, t_bool big) // creates a new llll from a list contained in a string
+t_llll *llll_from_text_buf(const char *txt, t_bool big, long ignore) // creates a new llll from a list contained in a string
 {
     long depth;
     t_llll *this_llll;
@@ -435,7 +435,7 @@ t_llll *llll_from_text_buf(const char *txt, t_bool big) // creates a new llll fr
     
     depth = 1;
     
-    t_strParser strParser(big);
+    t_strParser strParser(big, ignore);
     strParser.parse(txt, &this_llll, stack, &depth);
 
     if (depth != 1)

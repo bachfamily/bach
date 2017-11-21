@@ -109,16 +109,17 @@ void llll_write(t_object *x, t_llll *ll, t_llll *msg, long default_maxdecimals, 
     }
 }
 
-void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth)
+void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth, long flags)
 {
-	t_atom atoms[6];
+	t_atom atoms[7];
 	atom_setobj(atoms, ll);
     atom_setobj(atoms + 1, arguments);
     atom_setlong(atoms + 2, default_maxdecimals);
     atom_setlong(atoms + 3, default_wrap);
     atom_setobj(atoms + 4, (void *) default_indent);
     atom_setlong(atoms + 5, default_maxdepth);
-	defer(x, (method)llll_dowritetxt, NULL, 6, atoms);
+    atom_setlong(atoms + 6, flags);
+	defer(x, (method)llll_dowritetxt, NULL, 7, atoms);
 }
 
 t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
@@ -131,6 +132,7 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     long wrap = atom_getlong(av + 3);
     char *default_indent = (char *) (av + 4)->a_w.w_obj;
     long maxdepth = atom_getlong(av + 5);
+    long flags = atom_getlong(av + 6);
     char *indent;
 
     t_symbol *filename_sym = NULL;
@@ -169,7 +171,7 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     }
     
 	//len = llll_to_text_buf(ll, &buf, 0, 10, LLLL_T_BACKTICKS, llll_add_trailing_zero);
-    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, LLLL_T_BACKTICKS, llll_add_trailing_zero);
+    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, flags, llll_add_trailing_zero);
     
     if (llll_write_text_file(filename_sym, &len, buf) == FILE_ERR_CANTOPEN) {
         if (filename_sym)
@@ -246,11 +248,12 @@ t_max_err llll_write_text_file(t_symbol *filename_sym, t_ptr_size *count, const 
 
 //////////////////////////
 
-void llll_read(t_object *x, t_symbol *s, read_fn outfn)
+void llll_read(t_object *x, t_symbol *s, read_fn outfn, long ignore)
 {
-	t_atom av;
-	atom_setobj(&av, (void *) outfn);
-	defer(x, (method)llll_doread, s, 1, &av);
+	t_atom av[2];
+	atom_setobj(av, (void *) outfn);
+    atom_setlong(av + 1, ignore);
+	defer(x, (method)llll_doread, s, 2, av);
 }
 
 void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
@@ -258,6 +261,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 	t_fourcc outtype = 0;
 	t_llll *ll;
 	void (*outfn)(t_object *x, t_llll *outll) = (read_fn) atom_getobj(av);
+    long ignore = atom_getlong(av + 1);
 	t_fourcc filetype[] = {'LLLL', 'TEXT'};
 	t_filehandle fh;
 	short path;
@@ -274,7 +278,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 	} else {
 		if (bach_readfile(x, filename, path, &fh) != MAX_ERR_NONE)
 			return;
-		ll = llll_readfile(x, fh);
+		ll = llll_readfile(x, fh, ignore);
 	}
 
 	// we have a file
@@ -282,7 +286,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 }
 
 
-t_llll *llll_readfile(t_object *x, t_filehandle fh)
+t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore)
 {
 	t_ptr_size size;
 	char *buffer;
@@ -299,7 +303,7 @@ t_llll *llll_readfile(t_object *x, t_filehandle fh)
 
 	if (strncmp(buffer, "\nbach", 5)) { // it's text format
 		*(buffer + size) = 0;
-		ll = llll_from_text_buf(buffer, size > 2048);
+		ll = llll_from_text_buf(buffer, size > 2048, ignore);
 	} else { // it's in old native format
 		ll = llll_from_native_buf(buffer, size);
 	}

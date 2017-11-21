@@ -33,7 +33,7 @@ void llll_write(t_object *x, t_llll *ll, t_llll *msg, long default_maxdecimals =
 // ll is the llll to write
 // arguments is everything that follows the "writetxt" message, including the file name
 // llll_writetxt takes ownership of ll and arguments, and destroys them (possibly asynchronously)
-void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals = 10, long default_wrap = 0, const char *default_indent = "\t", long default_maxdepth = -1);
+void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals = 10, long default_wrap = 0, const char *default_indent = "\t", long default_maxdepth = -1, long flags = LLLL_T_BACKTICKS);
 
 // write a llll in native (binary) format
 // s contains the file name, or NULL to open a save dialog
@@ -43,9 +43,9 @@ void llll_writenative(t_object *x, t_symbol *s, t_llll *ll);
 // s contains the file name, or NULL to open a save dialog
 // after read is finished, outfn is called with x and the newly created ll as its arguments
 // the ll is not destroyed thereafter - outfn owns it
-void llll_read(t_object *x, t_symbol *s, read_fn outfn);
+void llll_read(t_object *x, t_symbol *s, read_fn outfn, long ignore = 0);
 
-t_llll *llll_readfile(t_object *x, t_filehandle fh);
+t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore = 0);
 
 t_max_err bach_write_binary_file(t_symbol *filename_sym, const char *default_filename, t_fourcc filetype, t_ptr_size *count, const void *buffer);
 t_max_err llll_write_text_file(t_symbol *filename_sym, t_ptr_size *count, const void *buffer);

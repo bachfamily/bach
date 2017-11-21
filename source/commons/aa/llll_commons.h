@@ -37,10 +37,11 @@
 // flags for llll_deparse()
 // NB: for cross-architecture compatibility, 64-bit floats are stored as two longs even under 64-bit architecture
 typedef enum _llll_deparse_flags {
-	LLLL_D_NONE		= 0x00,
-	LLLL_D_QUOTE	= 0x01, // backtick symbols if they can be interpreted as other data types
-    LLLL_D_MAX      = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
-	LLLL_D_FLOAT64	= 0x04	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
+	LLLL_D_NONE         = 0x00,
+	LLLL_D_QUOTE        = 0x01, // backtick symbols if they can be interpreted as other data types
+    LLLL_D_MAX          = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
+	LLLL_D_FLOAT64      = 0x04,	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
+    LLLL_D_NEGOCTAVES   = 0x08  // pitches with negative octaves can be output
 } e_llll_deparse_flags;
 
 
@@ -55,11 +56,25 @@ typedef enum _llll_text_flags {
 	LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES	= 0x10, // all double quotes (including the forced ones, and the ones around symbols containing whitespace) are preceded by backslash
     LLLL_T_FORCE_SINGLE_QUOTES				= 0x20, // all symbols are single-quoted (useful for SQL, used by dada, not bach)
     LLLL_T_BACKTICKS                        = 0x40, // backtick symbols that can be mistaken for other data types (e.g. `c0)
+    LLLL_T_NEGATIVE_OCTAVES                 = 0x80, // negative octaves are allowed (i.e., pitches are always positive)
 } e_llll_text_flags;
 
 #define LLLL_T_COPYSYMBOLS (LLLL_T_NO_DOUBLE_QUOTES | LLLL_T_NO_BACKSLASH)
 
 
+// flags telling llll_parse which bach-specific things should not be parsed,
+// but treated as plain symbols
+typedef enum _llll_parse_ignore_flags {
+    LLLL_I_NONE         = 0x00, // default behavior (everything is parsed)
+    LLLL_I_BIGPARENS    = 0x01, // ( and ) symbols are not treated as llll level markers
+    LLLL_I_BACKTICK     = 0x02, // starting backticks are parsed as a part of the symbol they are prepended to
+    LLLL_I_SCIENTIFIC   = 0x04, // scientific notation for floats is ignored
+    LLLL_I_SMALLPARENS  = 0x08, // parens in longer symbols are ignored
+    LLLL_I_PITCH        = 0x10, // pitches are ignored
+    LLLL_I_RATIONAL     = 0x20, // rationals are ignored
+    LLLL_I_SPECIAL      = 0x40,  // null and nil are ignored
+    LLLL_I_ALL          = 0x7F
+} e_parse_ignore_flags;
 
 
 // outlet types (used in the llllobj_out structure)
@@ -237,6 +252,8 @@ typedef struct _bach {
 	
 	t_hashtab			*b_helppatches;
 	t_bool				b_loadtime;
+    
+    t_hashtab           *b_reservedselectors;
 } t_bach;
 
 
@@ -280,14 +297,15 @@ void bach_setup(t_bach *x);
 
 
 // create a new llll from an array of atoms containing its textual representation
-//
-t_llll *llll_parse(long ac, t_atom *av);
+// for ignore, se #e_llll_parse_ignore
+t_llll *llll_parse(long ac, t_atom *av, long ignore = 0);
 
 
 // create a new llll from a c string (txt)
 // if the string is or can be longer than about 2048 chars (there's some tolerance anyway),
 // big must be set to true. This, on the other hand, will make the operation significantly slower.
-t_llll *llll_from_text_buf(const char *txt, t_bool big = false); // creates a new llll from a list contained in a string
+// for ignore, se #e_llll_parse_ignore
+t_llll *llll_from_text_buf(const char *txt, t_bool big = false, long ignore = 0); // creates a new llll from a list contained in a string
 
 
 // still uses the old, non-flex parser

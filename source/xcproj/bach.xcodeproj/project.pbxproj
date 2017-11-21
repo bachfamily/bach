@@ -29,7 +29,6 @@
 			buildPhases = (
 			);
 			dependencies = (
-				91A5EC241F7D04DD0052FBF6 /* PBXTargetDependency */,
 				916336331CBB745B00A77708 /* PBXTargetDependency */,
 				916336351CBB745B00A77708 /* PBXTargetDependency */,
 				916336371CBB745B00A77708 /* PBXTargetDependency */,
@@ -97,6 +96,7 @@
 				916336B11CBB745B00A77708 /* PBXTargetDependency */,
 				916336B31CBB745B00A77708 /* PBXTargetDependency */,
 				916336B51CBB745B00A77708 /* PBXTargetDependency */,
+				91A5EC241F7D04DD0052FBF6 /* PBXTargetDependency */,
 				916336B71CBB745B00A77708 /* PBXTargetDependency */,
 				916336B91CBB745B00A77708 /* PBXTargetDependency */,
 				916336BB1CBB745B00A77708 /* PBXTargetDependency */,
@@ -613,7 +613,7 @@
 		919E6EDF17D9CD9300F44FAE /* thin.c in Sources */ = {isa = PBXBuildFile; fileRef = 919E6EDE17D9CD9300F44FAE /* thin.c */; };
 		91A5EC191F7CE55D0052FBF6 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		91A5EC1A1F7CE55D0052FBF6 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
-		91A5EC221F7CE5EF0052FBF6 /* backtick.c in Sources */ = {isa = PBXBuildFile; fileRef = 91A5EC211F7CE5EF0052FBF6 /* backtick.c */; };
+		91A5EC221F7CE5EF0052FBF6 /* textout.c in Sources */ = {isa = PBXBuildFile; fileRef = 91A5EC211F7CE5EF0052FBF6 /* textout.c */; };
 		91AF1C5017BCFA7E0071A497 /* bach_128bit.h in Headers */ = {isa = PBXBuildFile; fileRef = 91AF1C4E17BCFA7E0071A497 /* bach_128bit.h */; };
 		91AF1C5117BCFA7E0071A497 /* bach_128bit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91AF1C4F17BCFA7E0071A497 /* bach_128bit.cpp */; };
 		91B0EB78150BD3A70069A206 /* uislot.c in Sources */ = {isa = PBXBuildFile; fileRef = 91B0EB54150BD3360069A206 /* uislot.c */; };
@@ -3225,8 +3225,8 @@
 		919BF81B1E01AB0200CDEA02 /* bach.partition.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.partition.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		919BF81D1E01AB3800CDEA02 /* partition.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = partition.c; sourceTree = "<group>"; };
 		919E6EDE17D9CD9300F44FAE /* thin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = thin.c; sourceTree = "<group>"; };
-		91A5EC1F1F7CE55D0052FBF6 /* bach.backtick.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.backtick.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		91A5EC211F7CE5EF0052FBF6 /* backtick.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = backtick.c; sourceTree = "<group>"; };
+		91A5EC1F1F7CE55D0052FBF6 /* bach.textout.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.textout.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		91A5EC211F7CE5EF0052FBF6 /* textout.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = textout.c; sourceTree = "<group>"; };
 		91A5EC3C1F7D68150052FBF6 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		91A5EC3E1F7D68150052FBF6 /* pitchparser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pitchparser.h; sourceTree = "<group>"; };
 		91A5EC3F1F7D68150052FBF6 /* pitchparser.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = pitchparser.l; sourceTree = "<group>"; };
@@ -3552,6 +3552,7 @@
 		91EED5A11237C07E003C05FC /* roll.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = roll.c; sourceTree = "<group>"; };
 		91F39FEC1432B3F200F3234A /* reshape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reshape.c; sourceTree = "<group>"; };
 		91F3A0031432B59700F3234A /* bach.reshape.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.reshape.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		91F58B1D1FC474DF008156B7 /* tools */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tools; path = source/tools; sourceTree = "<group>"; };
 		91F6A60A1DDDDE2900237E9F /* bach.convertbase.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.convertbase.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F6A60E1DDDDED700237E9F /* convertbase.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = convertbase.c; sourceTree = "<group>"; };
 		91F6A6101DE6D8B200237E9F /* join.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = join.c; sourceTree = "<group>"; };
@@ -4950,7 +4951,7 @@
 				91DF79F11E919230000EB3B8 /* bach.resample.mxo */,
 				1ED51E191F73F5940021C2D5 /* bach.mc2p.mxo */,
 				1ED51E291F73F5B40021C2D5 /* bach.p2mc.mxo */,
-				91A5EC1F1F7CE55D0052FBF6 /* bach.backtick.mxo */,
+				91A5EC1F1F7CE55D0052FBF6 /* bach.textout.mxo */,
 				1ED42DBB1F8A9D17008EC1D9 /* bach.transcribe.mxo */,
 			);
 			name = Products;
@@ -5421,7 +5422,6 @@
 				917F0AA217E1BCD100814766 /* arithmser.c */,
 				91D7C8891233A1AB00D767D4 /* append.c */,
 				912AB4A414FD3F100081E2B5 /* bach.c */,
-				91A5EC211F7CE5EF0052FBF6 /* backtick.c */,
 				911289FD17E08FDB008381E3 /* cartesianprod.c */,
 				91D261AA1CC64C8B00C75E35 /* classify.c */,
 				91D7C9551233C2D500D767D4 /* collect.c */,
@@ -5494,6 +5494,7 @@
 				91D7C82A12339B9E00D767D4 /* subs.c */,
 				91C1E7D21A39A8030001297A /* swap.c */,
 				914EB2631250E4CC00413C39 /* symdiff.c */,
+				91A5EC211F7CE5EF0052FBF6 /* textout.c */,
 				919E6EDE17D9CD9300F44FAE /* thin.c */,
 				916291C312C7EC7A00FEA25C /* trans.c */,
 				918C3C68124B35EA003D216B /* union.c */,
@@ -5652,6 +5653,7 @@
 		91BA46AC1F71585E0002D515 /* package */ = {
 			isa = PBXGroup;
 			children = (
+				91F58B1D1FC474DF008156B7 /* tools */,
 				91BA46BB1F715A990002D515 /* .gitattributes */,
 				91BA46BC1F715A990002D515 /* .gitignore */,
 				91BA46AD1F71599E0002D515 /* docs */,
@@ -8122,9 +8124,9 @@
 			productReference = 919BF81B1E01AB0200CDEA02 /* bach.partition.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
-		91A5EC111F7CE55D0052FBF6 /* bach.backtick */ = {
+		91A5EC111F7CE55D0052FBF6 /* bach.textout */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 91A5EC1C1F7CE55D0052FBF6 /* Build configuration list for PBXNativeTarget "bach.backtick" */;
+			buildConfigurationList = 91A5EC1C1F7CE55D0052FBF6 /* Build configuration list for PBXNativeTarget "bach.textout" */;
 			buildPhases = (
 				91A5EC141F7CE55D0052FBF6 /* Headers */,
 				91A5EC151F7CE55D0052FBF6 /* Resources */,
@@ -8137,9 +8139,9 @@
 			dependencies = (
 				91A5EC121F7CE55D0052FBF6 /* PBXTargetDependency */,
 			);
-			name = bach.backtick;
+			name = bach.textout;
 			productName = iterator;
-			productReference = 91A5EC1F1F7CE55D0052FBF6 /* bach.backtick.mxo */;
+			productReference = 91A5EC1F1F7CE55D0052FBF6 /* bach.textout.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
 		91B0EB5F150BD3770069A206 /* bach.slot */ = {
@@ -9772,7 +9774,6 @@
 				91D7C86F1233A16600D767D4 /* bach.append */,
 				9151A3F5131EDBAC0019DF19 /* bach.args */,
 				917F0A8917E1BC2300814766 /* bach.arithmser */,
-				91A5EC111F7CE55D0052FBF6 /* bach.backtick */,
 				1E5F43E91526150E0085FA87 /* bach.bachtree2omtree */,
 				91C9725312722FF6008F76B6 /* bach.beatbox */,
 				91E8F4AC1275C6C2007E7A0A /* bach.beatunbox */,
@@ -9884,6 +9885,7 @@
 				91D18ADC130EC51C00A2E668 /* bach.submatrix */,
 				91C1E7C21A39A71A0001297A /* bach.swap */,
 				914EB1DA1250E0C500413C39 /* bach.symdiff */,
+				91A5EC111F7CE55D0052FBF6 /* bach.textout */,
 				91B0ECDC150D20DA0069A206 /* bach.thin */,
 				9112234818B0B3EA00B6B86A /* bach.tonnetz */,
 				91D18AF9130EC55300A2E668 /* bach.trace */,
@@ -12308,7 +12310,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91A5EC221F7CE5EF0052FBF6 /* backtick.c in Sources */,
+				91A5EC221F7CE5EF0052FBF6 /* textout.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14019,7 +14021,7 @@
 		};
 		91A5EC241F7D04DD0052FBF6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 91A5EC111F7CE55D0052FBF6 /* bach.backtick */;
+			target = 91A5EC111F7CE55D0052FBF6 /* bach.textout */;
 			targetProxy = 91A5EC231F7D04DD0052FBF6 /* PBXContainerItemProxy */;
 		};
 		91A5EC491F7D89D10052FBF6 /* PBXTargetDependency */ = {
@@ -19807,7 +19809,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;
 		};
-		91A5EC1C1F7CE55D0052FBF6 /* Build configuration list for PBXNativeTarget "bach.backtick" */ = {
+		91A5EC1C1F7CE55D0052FBF6 /* Build configuration list for PBXNativeTarget "bach.textout" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				91A5EC1D1F7CE55D0052FBF6 /* Development */,

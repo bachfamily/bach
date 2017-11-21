@@ -319,7 +319,7 @@ public:
         return (p_alter.r_den == 0);
     }
     
-    std::string toString(char include_octave = true, char always_positive = false);
+    std::string toString(t_bool include_octave = true, t_bool always_positive = false);
     
     const char* toCString(char include_octave = true) { return toString(include_octave).c_str(); }
 
@@ -356,11 +356,35 @@ public:
                     
                 case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
                     
-                case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
-                case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
+                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                    
+                default:	go = 0;	break;
+            }
+        }
+        return alter;
+    }
+    
+    // upon return, pos points to the first character after the sequence of accidentals
+    static t_shortRational text2alter_legacy(char **pos)
+    {
+        t_shortRational alter = {0, 1};
+        int go = 1;
+        while (go) {
+            switch (**pos) {
+                case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
+                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                    
+                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                    
+                case '+': case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
+                    
+                case '-': case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
                     
                 case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
                 case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                    
+                case 'n':   (*pos)++;   break;
                     
                 default:	go = 0;	break;
             }

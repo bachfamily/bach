@@ -56,7 +56,7 @@
 
 typedef struct _portal
 {
-	struct llllobj_object 	n_ob;
+	t_llllobj_object 	n_ob;
 	long				n_proxies;	
 	void				**n_proxy;
     long				n_in;

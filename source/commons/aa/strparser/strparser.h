@@ -25,12 +25,14 @@
 class t_strParser : public t_parser {
 private:
     t_bool big;
+    long startCondition;
 public:
-    t_strParser(t_bool bigString = false);
+    t_strParser(t_bool bigString = false, long ignore = 0);
     void parse(const char *buf, t_llll **ll, t_llll_stack *stack, long *depth);
     void reset();
     t_bool isBig() { return big; }
     void makeBig() { big = 1; }
+    long getStartCondition() { return startCondition; }
 };
 
 #endif /* strparser_h */

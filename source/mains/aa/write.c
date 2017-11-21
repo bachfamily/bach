@@ -47,9 +47,11 @@
 
 typedef struct _write
 {
-	struct llllobj_object 	n_ob;
-	void					*n_proxy;
-	long					n_in;
+	t_llllobj_object 	n_ob;
+	void                *n_proxy;
+	long				n_in;
+    long                n_backticks;
+    long                n_negativeoctaves;
 } t_write;
 
 void write_assist(t_write *x, void *b, long m, long a, char *s);
@@ -125,6 +127,34 @@ int T_EXPORT main()
 	
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 	
+    CLASS_ATTR_LONG(c, "backticks",	0,	t_write, n_backticks);
+    CLASS_ATTR_FILTER_CLIP(c, "backticks", 0, 1);
+    CLASS_ATTR_LABEL(c, "backticks", 0, "Add Backticks");
+    CLASS_ATTR_STYLE(c, "backticks", 0, "onoff");
+    // @description When set to 1 (default), all the symbols that could be interpreted as different data types
+    // (e.g., the symbol <b>12</b>, the symbol <b>1/3</b> or the symbol <b>A1</b>,
+    // distinct from the corresponding integer, rational or pitch, but potentially interpreted as such by any bach object)
+    // are written to text with a preceding backtick (in the above example, respectively <b>`12</b>, <b>`1/3</b>, <b>`A1</b>).
+    // This is the normal behavior for the llll text format.<br />
+    // When set to 0, no backtick is added.
+    // The attribute has no effect when the file is saved in native format,
+    // through the <m>write</m> message.
+    
+    CLASS_ATTR_LONG(c, "negativeoctaves",	0,	t_write, n_negativeoctaves);
+    CLASS_ATTR_FILTER_CLIP(c, "negativeoctaves", 0, 1);
+    CLASS_ATTR_LABEL(c, "negativeoctaves", 0, "Allow Negative Octaves");
+    CLASS_ATTR_STYLE(c, "negativeoctaves", 0, "onoff");
+    // @description When set to 0 (default), pitches at octaves lower than octave 0
+    // are written to text as negative pitches, that is, as the inversion of the interval they form with C0.
+    // For example, the pitch A-1 (one minor third below C0) is returned as its equivalent form -Eb0 (still one minor third below C0).
+    // This is the normal behavior for the llll text format,
+    // and is more likely to be convenient as very low pitches are usually employed to denote descending intervals.
+    // Notice that the pitch class of -Eb0 is A anyway.<br />
+    // When set to 1, pitches at octaves lower then octave 0 are represented as positive pitches with negative octaves.
+    // For example, the pitch A-1 and its equivalent form -Eb0 are both represented as A-1.
+    // The attribute has no effect when the file is saved in native format,
+    // through the <m>write</m> message.
+    
 	class_register(CLASS_BOX, c);
 	write_class = c;
 	
@@ -182,7 +212,9 @@ void write_anything(t_write *x, t_symbol *msg, long ac, t_atom *av)
         llll_writenative((t_object *) x, path, to_write);
     } else if (writemsg == gensym("writetxt")) {
         llll_destroyelem(arguments->l_head);
-        llll_writetxt((t_object *) x, to_write, arguments);
+        llll_writetxt((t_object *) x, to_write, arguments, 10, 0, "\t", -1,
+                      (x->n_backticks ? LLLL_T_BACKTICKS : 0) |
+                      (x->n_negativeoctaves ? LLLL_T_NEGATIVE_OCTAVES : 0));
     } else {
         object_error((t_object *) x, "Invalid message");
         return;
@@ -213,6 +245,7 @@ t_write *write_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;
 	
 	if ((x = (t_write *) object_alloc_debug(write_class))) {
+        x->n_backticks = 1;
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "");		
 		x->n_proxy = proxy_new_debug((t_object *) x, 1, &x->n_in);

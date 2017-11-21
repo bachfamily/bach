@@ -556,13 +556,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 		
 		if (x->n_outout || attrsym != _llllobj_sym_out) {
 			if (x->n_backtick) {
-				for (this_arg = _llllobj_attributes; *this_arg; this_arg++)
-					if (attrsym == *this_arg)
-						break;
-				if (*this_arg)
-					attrsym = sym_addquote(attrsym->s_name);
-				else
-					attrsym = chkParser.addQuoteIfNeeded(attrsym);
+                attrsym = chkParser.addQuoteIfNeeded(attrsym);
 			}
 			llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, x->n_proxies + 2, attrsym, outargsac, outargsav + 1);	
 		}
@@ -601,15 +595,9 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 				}
 			if (shootit) {
 				attrsym = gensym(attrsym->s_name + 1);
-				if (x->n_backtick) {
-					for (this_arg = _llllobj_attributes; *this_arg; this_arg++)
-						if (attrsym == *this_arg)
-							break;
-					if (*this_arg)
-						attrsym = sym_addquote(attrsym->s_name);
-					else
-                        attrsym = chkParser.addQuoteIfNeeded(attrsym);
-				}
+                if (x->n_backtick) {
+                    attrsym = chkParser.addQuoteIfNeeded(attrsym);
+                }
 				llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, x->n_proxies + 2, attrsym, outargsac, outargsav + 1);	
 			}
 		}
