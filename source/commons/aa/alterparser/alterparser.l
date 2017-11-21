@@ -41,14 +41,14 @@ ACCIDENTAL ([n#bxdq+-\^v]+)
 
 ^{ACCIDENTAL} {
     char *next = yytext;
-    *a = t_pitch::text2alter(&next);
+    *a = t_pitch::text2alter_legacy(&next);
     parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
     return A_MORE;
 }
 
 {ACCIDENTAL}[-+]{UINT}+t {
     char *next = yytext;
-    *a = t_pitch::text2alter(&next);
+    *a = t_pitch::text2alter_legacy(&next);
     *a += t_shortRational(strtol(next, NULL, 10), 1);
     parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
     return A_MORE;
@@ -56,7 +56,7 @@ ACCIDENTAL ([n#bxdq+-\^v]+)
 
 {ACCIDENTAL}[-+]{UINT}[/][-+]?{UINT}t {
     char *next = yytext;
-    *a = t_pitch::text2alter(&next);
+    *a = t_pitch::text2alter_legacy(&next);
     *a += t_shortRational(strtol(next, &next, 10), strtol(next + 1, NULL, 10));
     parserpost(" lex: ALTER: %ld/%ld\n", a->num(), a->den());
     return A_MORE;

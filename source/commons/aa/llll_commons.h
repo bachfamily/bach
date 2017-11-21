@@ -56,6 +56,7 @@ typedef enum _llll_text_flags {
 	LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES	= 0x10, // all double quotes (including the forced ones, and the ones around symbols containing whitespace) are preceded by backslash
     LLLL_T_FORCE_SINGLE_QUOTES				= 0x20, // all symbols are single-quoted (useful for SQL, used by dada, not bach)
     LLLL_T_BACKTICKS                        = 0x40, // backtick symbols that can be mistaken for other data types (e.g. `c0)
+    LLLL_T_NEGATIVE_OCTAVES                 = 0x80, // negative octaves are allowed (i.e., pitches are always positive)
 } e_llll_text_flags;
 
 #define LLLL_T_COPYSYMBOLS (LLLL_T_NO_DOUBLE_QUOTES | LLLL_T_NO_BACKSLASH)

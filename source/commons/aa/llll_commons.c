@@ -7316,7 +7316,7 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 						pos += len;
 						break;
                     case H_PITCH:
-                        len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString().c_str());
+                        len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString(true, flags & LLLL_T_NEGATIVE_OCTAVES).c_str());
                         ac += len;
                         pos += len;
                         break;
@@ -7663,12 +7663,12 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
                     case H_PITCH:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
                             char txt[256];
-                            len = snprintf_zero(txt, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString().c_str());
+                            len = snprintf_zero(txt, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString(true, flags & LLLL_T_NEGATIVE_OCTAVES).c_str());
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
                             len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", txt);
                         } else {
-                            len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString().c_str());
+                            len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString(true, flags & LLLL_T_NEGATIVE_OCTAVES).c_str());
                         }
                         count += len;
                         pos += len;

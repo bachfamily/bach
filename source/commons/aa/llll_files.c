@@ -109,16 +109,17 @@ void llll_write(t_object *x, t_llll *ll, t_llll *msg, long default_maxdecimals, 
     }
 }
 
-void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth)
+void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth, long flags)
 {
-	t_atom atoms[6];
+	t_atom atoms[7];
 	atom_setobj(atoms, ll);
     atom_setobj(atoms + 1, arguments);
     atom_setlong(atoms + 2, default_maxdecimals);
     atom_setlong(atoms + 3, default_wrap);
     atom_setobj(atoms + 4, (void *) default_indent);
     atom_setlong(atoms + 5, default_maxdepth);
-	defer(x, (method)llll_dowritetxt, NULL, 6, atoms);
+    atom_setlong(atoms + 6, flags);
+	defer(x, (method)llll_dowritetxt, NULL, 7, atoms);
 }
 
 t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
@@ -131,6 +132,7 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     long wrap = atom_getlong(av + 3);
     char *default_indent = (char *) (av + 4)->a_w.w_obj;
     long maxdepth = atom_getlong(av + 5);
+    long flags = atom_getlong(av + 6);
     char *indent;
 
     t_symbol *filename_sym = NULL;
@@ -169,7 +171,7 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     }
     
 	//len = llll_to_text_buf(ll, &buf, 0, 10, LLLL_T_BACKTICKS, llll_add_trailing_zero);
-    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, LLLL_T_BACKTICKS, llll_add_trailing_zero);
+    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, flags, llll_add_trailing_zero);
     
     if (llll_write_text_file(filename_sym, &len, buf) == FILE_ERR_CANTOPEN) {
         if (filename_sym)

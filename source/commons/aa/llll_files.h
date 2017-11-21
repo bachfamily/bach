@@ -33,7 +33,7 @@ void llll_write(t_object *x, t_llll *ll, t_llll *msg, long default_maxdecimals =
 // ll is the llll to write
 // arguments is everything that follows the "writetxt" message, including the file name
 // llll_writetxt takes ownership of ll and arguments, and destroys them (possibly asynchronously)
-void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals = 10, long default_wrap = 0, const char *default_indent = "\t", long default_maxdepth = -1);
+void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals = 10, long default_wrap = 0, const char *default_indent = "\t", long default_maxdepth = -1, long flags = LLLL_T_BACKTICKS);
 
 // write a llll in native (binary) format
 // s contains the file name, or NULL to open a save dialog
