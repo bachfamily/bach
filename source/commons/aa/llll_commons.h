@@ -54,29 +54,56 @@ typedef enum _llll_text_flags {
     LLLL_T_NEGATIVE_OCTAVES                 = 0x0002,   // negative octaves are used (i.e., pitches are always positive)
 } e_llll_text_flags;
 
-typedef enum _llll_text_escape_flags {
+
+// options controlling how symbols are globally escaped
+// (with backticks, double quotes or other)
+typedef enum _llll_text_escape_options {
     LLLL_TE_NONE = 0,
-    LLLL_TE_BACKTICK, // backtick "dangerous" types
-    LLLL_TE_DOUBLE_QUOTE, // double-quote "dangerous" types
-    LLLL_TE_SMART,  // double-quote "dangerous" types when possible, otherwise backtick
+    
+    // backtick "dangerous" symbols
+    // usually goes with LLLL_TB_SPECIAL_AND_SEPARATORS
+    LLLL_TE_BACKTICK,
+    
+    // double-quote "dangerous" symbols
+    // usually goes with LLLL_TE_DOUBLE_QUOTE
+    LLLL_TE_DOUBLE_QUOTE,
+    
+    // double-quote "dangerous" types when compatible with the message box syntax,
+    // otherwise backtick
+    // works fine with LLLL_TE_SMART
+    LLLL_TE_SMART,
     
     // special styles for export
     LLLL_TE_PWGL_STYLE, // all symbols are surrounded by double quotes, and double quotes, backslashes and whitespace within symbols are escaped with a backslash; use it only in conjunction with LLLL_TB_PWGL_STYLE
     LLLL_TE_SQL_STYLE, // all symbols are surrounded by single quotes, and single quotes within symbols are escaped by doubling; use it only in conjunction with LLLL_TB_SQL_STYLE
     
-} e_llll_text_escape_flags;
+} e_llll_text_escape_options;
 
-typedef enum _llll_text_backslash_flags {
+
+// options controlling how single characters are escaped (usually with a backslash)
+typedef enum _llll_text_backslash_options {
+    // no character is escaped
     LLLL_TB_NONE = 0,
-    LLLL_TB_SPECIAL, // backslash double quotes and backslashes
-    LLLL_TB_SPECIAL_AND_SEPARATORS, // backslash the above plus whitespace, commas, semicolons
+    
+    // backslash double quotes, backslashes, whitespace, commas, semicolons
+    // usually goes with LLLL_TE_BACKTICK
+    LLLL_TB_SPECIAL_AND_SEPARATORS,
+    
+    // backslash double quotes and backslashes only
+    // usually goes with LLLL_TE_DOUBLE_QUOTE
+    LLLL_TB_SPECIAL,
+    
+    // choose between LLLL_TB_SPECIAL_AND_SEPARATORS and LLLL_TE_DOUBLE_QUOTE
+    // according to the value of #e_llll_text_escape_options
+    // works fine with LLLL_TE_SMART
     LLLL_TB_SMART,
 
     // special styles for export
+    // use them only in conjunction with the corresponding value of #e_llll_text_escape_options
     LLLL_TB_PWGL_STYLE,
     LLLL_TB_SQL_STYLE
     
-} e_llll_text_backslash_flags;
+} e_llll_text_backslash_options;
 
 
 // flags telling llll_parse which bach-specific things should not be parsed,

@@ -383,7 +383,7 @@ t_llll *llllobj_get_retained_native_llll_from_args(long ac, t_atom *av)
  But if you want to store the incoming llll in one of your object's stores, then you have to use llllobj_parse_and_store or llllobj_parse_retain_and_store
  */
 
-t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, e_llllobj_parse_flags flags)
+t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, e_llllobj_parse_flags flags, long ignore)
 {
 	long new_ac;
 	t_atom *new_av, *this_new_av;
@@ -420,7 +420,7 @@ t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg,
 			atom_setsym(new_av, msg);
 			this_new_av = new_av + 1;
 			sysmem_copyptr(av, new_av + 1, ac * sizeof(t_atom)); // can't use bach_copyptr here, as new_av + 1 has not an entry in the memory map
-			inlist = llll_parse(new_ac, new_av); 
+			inlist = llll_parse(new_ac, new_av, ignore);
 			bach_freeptr(new_av);
 		}
 		if (!inlist) 

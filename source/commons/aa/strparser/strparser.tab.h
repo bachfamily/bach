@@ -34,7 +34,7 @@
 # define YY_STRPARSER_STRPARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int strparser_debug;
@@ -62,7 +62,7 @@ extern int strparser_debug;
 
 union YYSTYPE
 {
-#line 25 "strparser.y" /* yacc.c:1909  */
+#line 23 "strparser.y" /* yacc.c:1909  */
 
 	long l;
 	double d;

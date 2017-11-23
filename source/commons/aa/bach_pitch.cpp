@@ -280,7 +280,7 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
         if (++count == bufSize) { *buf = 0; return count - 1; }
         *(buf++) = '-';
         if (++count == bufSize) { *buf = 0; return count - 1; }
-        *(buf++) = degree2name[p_degree];
+        *(buf++) = degree2name[mirrored.p_degree];
         t_shortRational remainder = mirrored.p_alter;
         if (remainder > natural) { // sharps
             /* // this is probably not convenient, as it complicates simple cases
@@ -329,24 +329,29 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
             }
             remainder *= -1;
         }
+        
+        long len = 0;
+
         if (include_octave) {
             if (remainder > natural)
-                count += snprintf_zero(buf, bufSize - count, "%d+%d/%dt", mirrored.octave(), remainder.num(), remainder.den());
+                len = snprintf_zero(buf, bufSize - count, "%d+%d/%dt", mirrored.octave(), remainder.num(), remainder.den());
             else if (remainder < natural)
-                count += snprintf_zero(buf, bufSize - count, "%d%d/%dt", mirrored.octave(), remainder.num(), remainder.den());
+                len = snprintf_zero(buf, bufSize - count, "%d%d/%dt", mirrored.octave(), remainder.num(), remainder.den());
             else
-                count += snprintf_zero(buf, bufSize - count, "%d", mirrored.octave());
+                len = snprintf_zero(buf, bufSize - count, "%d", mirrored.octave());
         } else {
             if (remainder > natural)
-                count += snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
+                len = snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
             else if (remainder < natural)
-                count += snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
+                len = snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
         }
+        buf += len;
+        count += len;
     }
     if (!addTrailingSpace || count == bufSize - 1)
         return count;
-    *(buf + count) = ' ';
-    *(buf + count + 1) = 0;
+    *(buf) = ' ';
+    *(buf + 1) = 0;
     return count + 1;
 }
 

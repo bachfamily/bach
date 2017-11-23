@@ -331,7 +331,7 @@ void llllobj_outlet_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type,
  If you set LLLL_PARSE_CLONE you also have the right to perform destructive operations on the llll.
  But if you are about to store the incoming llll in one of your object's stores, then you have to use llllobj_parse_and_store() or llllobj_parse_retain_and_store()
  */
-t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, e_llllobj_parse_flags flags);
+t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, e_llllobj_parse_flags flags, long ignore = LLLL_I_NONE);
 
 /*
  A workaround for dealing with how text-format lllls are passed to objects

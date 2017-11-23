@@ -34,7 +34,7 @@
 # define YY_STRPARSER_STRPARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int strparser_debug;
