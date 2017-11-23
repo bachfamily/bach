@@ -19,11 +19,7 @@
 #define parserpost(...) ((void) 0)
 #endif
 
-
-
 #define YY_FATAL_ERROR(msg) t_parser::fatalError(msg)
-
-
 
 class t_parser {
 private:

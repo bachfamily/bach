@@ -206,21 +206,21 @@ void score_writetxt(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *score_as_llll = get_score_values_as_llll(x, k_CONSIDER_FOR_SAVING, k_HEADER_ALL, x->r_ob.write_trees, x->r_ob.write_trees && x->r_ob.output_and_save_level_types, true, false); // we save the clefs as well
-	llll_writetxt((t_object *) x, score_as_llll, arguments);
+	llll_writetxt((t_object *) x, score_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART);
 }
 
 void score_exportom(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *score_as_llll_for_om = get_score_values_as_llll(x, k_CONSIDER_FOR_EXPORT_OM, k_HEADER_ALL, false, false, true, false);
-	llll_writetxt((t_object *) x, score_as_llll_for_om, arguments);
+	llll_writetxt((t_object *) x, score_as_llll_for_om, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void score_exportpwgl(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *score_as_llll_for_pwgl = get_score_values_as_llll_for_pwgl(x);
-	llll_writetxt((t_object *) x, score_as_llll_for_pwgl, arguments);
+	llll_writetxt((t_object *) x, score_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void score_exportmidi(t_score *x, t_symbol *s, long argc, t_atom *argv)
@@ -1960,7 +1960,7 @@ t_max_err score_dowritexml(const t_score *score, t_symbol *s, long ac, t_atom *a
                             if (slot_contents->l_size > 1 && !(note->tie_from && single)) {
 								llll_destroyelem(slot_contents->l_head);
 								char *text = NULL;
-								llll_to_text_buf(slot_contents, &text, 0, 10, LLLL_T_COPYSYMBOLS, NULL);
+                                llll_to_text_buf(slot_contents, &text, 0, 10, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_SPECIAL, NULL);
                                 if (*text) {
                                     mxml_node_t *directionxml = mxmlNewElement(measurexml, "direction");
                                     mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");

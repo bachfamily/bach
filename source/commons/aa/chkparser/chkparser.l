@@ -27,12 +27,6 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 %%
 
-
-^` {
-    parserpost("typecheck: starting backtick");
-    return H_SYM | H_BACKTICK; // because backtick wins, if we're here we don't need to scan any longer
-}
-
 ^{INTEGER} {
     parserpost("typecheck: long");
     return H_LONG;
@@ -68,25 +62,95 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_PITCH;
 }
 
-^[^`\(\) \t\n\,\;][^\(\) \t\n\,\;]* {
-    parserpost("typecheck: plain old symbol");
+
+
+^[^`\(\) \t\n\,\;\"\\][^\(\) \t\n\,\;\"\\]* {
+    parserpost("typecheck: no parens, no separators, no double quotes / backslashes");
     return H_SYM;
 }
 
-^[^` \t\n\,\;][^ \t\n\,\;]* {
-    parserpost("typecheck: parens, no reserved chars");
+^[^` \t\n\,\;\"\\][^ \t\n\,\;\"\\]* {
+    parserpost("typecheck: parens, no separators, no double quotes / backslashes");
     return H_SYM | H_PAREN;
 }
 
-^[^`\(\)][^\(\)]* {
-    parserpost("typecheck: reserved chars, no parens");
-    return H_SYM | H_RESERVED;
+^[^`\(\)\"\\][^\(\)\"\\]* {
+    parserpost("typecheck: no parens, separators, no double quotes / backslashes");
+    return H_SYM | H_SEPARATOR;
 }
 
-^[^`](.|\n|\r)* {
-    parserpost("typecheck: reserved chars parens");
-    return H_SYM | H_PAREN | H_RESERVED;
+^[^`\"\\][^\"\\]* {
+    parserpost("typecheck: parens, separators, no double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SEPARATOR;
 }
+
+
+
+
+^[^`\(\) \t\n\,\;][^\(\) \t\n\,\;]* {
+    parserpost("typecheck: no parens, no separators, double quotes / backslashes");
+    return H_SYM | H_SPECIAL;
+}
+
+^[^` \t\n\,\;][^ \t\n\,\;]* {
+    parserpost("typecheck: parens, no separators, double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SPECIAL;
+}
+
+^[^`\(\)][^\(\)]* {
+    parserpost("typecheck: no parens, separators, double quotes / backslashes");
+    return H_SYM | H_SEPARATOR | H_SPECIAL;
+}
+
+^[^`].* {
+    parserpost("typecheck: parens, separators, double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SEPARATOR | H_SPECIAL;
+}
+
+
+
+
+^`[^\(\) \t\n\,\;\"\\]* {
+    parserpost("typecheck: backtick, no parens, no separators, no double quotes / backslashes");
+    return H_SYM | H_BACKTICK;
+}
+
+^`[ \t\n\,\;\"\\]* {
+    parserpost("typecheck: backtick, parens, no separators, no double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_PAREN;
+}
+
+^`[^\(\)\"\\]* {
+    parserpost("typecheck: backtick, no parens, separators, no double quotes / backslashes");
+return H_SYM | H_BACKTICK | H_SEPARATOR;
+}
+
+
+^`[^\"\\]* {
+    parserpost("typecheck: backtick, parens, separators, no double quotes / backslashes");
+return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
+}
+
+^`[^\(\) \t\n\,\;]* {
+    parserpost("typecheck: backtick, no parens, no separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SPECIAL;
+}
+
+^`[^ \t\n\,\;]* {
+    parserpost("typecheck: backtick, parens, no separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SPECIAL;
+}
+
+^`[^\(\)]* {
+    parserpost("typecheck: backtick, no parens, separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SEPARATOR | H_SPECIAL;
+}
+
+^`.* {
+    parserpost("typecheck: backtick, parens, separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_PAREN | H_SPECIAL;
+}
+
 
 %%
 
@@ -117,7 +181,7 @@ void t_chkParser::reset()
     //yy_init_globals ((yyscan_t) this);
 }
 
-long t_chkParser::parse(char *buf)
+long t_chkParser::parse(const char *buf)
 {
     parserpost("chkparser: parsing %s", buf);
     long type;
@@ -137,7 +201,7 @@ t_bool t_chkParser::wantsBacktick(t_symbol *s)
         long mods = type & H_MODIFIERS;
         if ((type & H_PLAINTYPE) != H_SYM ||
             (mods & H_BACKTICK) ||
-            ((mods & H_PAREN) && !(mods & H_RESERVED))) {
+            ((mods & H_PAREN) && !(mods & H_SEPARATOR))) {
             return true;
         } else
             return false;

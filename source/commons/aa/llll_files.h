@@ -25,15 +25,14 @@ t_max_err bach_openfile_write(t_symbol *filename_sym, const char *default_filena
 typedef void (*read_fn)(t_object *x, t_llll *ll);
 
 
-// write a llll as text
-// s contains the file name, or NULL to open a save dialog
-void llll_write(t_object *x, t_llll *ll, t_llll *msg, long default_maxdecimals = 10, long default_wrap = 0, const char *default_indent = "\t", long default_maxdepth = -1);
 
 // write a llll as text
 // ll is the llll to write
 // arguments is everything that follows the "writetxt" message, including the file name
 // llll_writetxt takes ownership of ll and arguments, and destroys them (possibly asynchronously)
-void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals = 10, long default_wrap = 0, const char *default_indent = "\t", long default_maxdepth = -1, long flags = LLLL_T_BACKTICKS);
+void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth, long general_flags, long escape_flags, long backslash_flags);
+
+//void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals = 10, long default_wrap = 0, const char *default_indent = "\t", long default_maxdepth = -1, long flags = LLLL_TE_BACKTICK);
 
 // write a llll in native (binary) format
 // s contains the file name, or NULL to open a save dialog

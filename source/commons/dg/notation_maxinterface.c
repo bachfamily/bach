@@ -3689,7 +3689,7 @@ void start_editing_textslot(t_notation_obj *r_ob, t_object *patcherview, t_notat
 		else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_LLLL) {
 			char *buf = NULL;
 //            llll_to_text_buf_pretty((t_llll *)notation_item_get_slot_firstitem(r_ob, nitem, slot_num)->item, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, 0, NULL);
-			llll_to_text_buf((t_llll *)notation_item_get_slot_firstitem(r_ob, nitem, slot_num)->item, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
+			llll_to_text_buf((t_llll *)notation_item_get_slot_firstitem(r_ob, nitem, slot_num)->item, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 			object_method(patcherview, _sym_insertboxtext, r_ob, buf);
 			bach_freeptr(buf);
 		}
@@ -4494,7 +4494,7 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
         t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, r_ob->is_editing_slot_number), k_CONSIDER_FOR_DUMPING, r_ob->is_editing_slot_number, false);
         char *buf = NULL;
         llll_behead(ll);
-        llll_to_text_buf(ll, &buf, 0, 6, LLLL_T_NO_DOUBLE_QUOTES);
+        llll_to_text_buf(ll, &buf, 0, 6, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
         
         object_method(patcherview, gensym("insertboxtext"), r_ob, buf);
         
@@ -4609,7 +4609,7 @@ char *get_bach_attribute_as_string(t_bach_inspector_manager *man, void *elem, t_
 
 /*	t_llll *ll = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
 	if (ll) {
-		llll_to_text_buf(ll, &text, 0, 2, 0, NULL);
+		llll_to_text_buf(ll, &text, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 		llll_free(ll);
 	} else {
 		text = (char *)bach_newptr(1 * sizeof(char));

@@ -2291,10 +2291,10 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                         char *voice_ratdurations_buf = NULL;
                         object_post((t_object *) x, "****** Quantizing voice No.%ld ******", v);
                         object_post((t_object *) x, "Incoming milliseconds: ");
-                        llll_to_text_buf(voice_durations, &voice_durations_buf, 0, 4, 0, NULL);
+                        llll_to_text_buf(voice_durations, &voice_durations_buf, 0, 4, 0, 0, 0, NULL);
                         object_post((t_object *) x, "  %s", voice_durations_buf);
                         object_post((t_object *) x, "Rational durations: ");
-                        llll_to_text_buf(voice_ratdurations, &voice_ratdurations_buf, 0, 4, 0, NULL);
+                        llll_to_text_buf(voice_ratdurations, &voice_ratdurations_buf, 0, 4, 0, 0, 0, NULL);
                         object_post((t_object *) x, "  %s", voice_ratdurations_buf);
                         bach_freeptr(voice_durations_buf);
                         bach_freeptr(voice_ratdurations_buf);
@@ -2382,10 +2382,10 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                                 lls[0] = ties;
                                 lls[1] = llll_clone(hatom_getllll(&elem->l_hatom));
                                 t_llll *laced = llll_lace(lls, 2, 0);
-                                llll_to_text_buf(laced, &unquantized_boxed_voice_durations_buf, 0, 1, 0, NULL);
+                                llll_to_text_buf(laced, &unquantized_boxed_voice_durations_buf, 0, 1, 0, 0, 0, NULL);
                                 llll_free(laced);
                             } else {
-                                llll_to_text_buf(hatom_getllll(&elem->l_hatom), &unquantized_boxed_voice_durations_buf, 0, 1, 0, NULL);
+                                llll_to_text_buf(hatom_getllll(&elem->l_hatom), &unquantized_boxed_voice_durations_buf, 0, 1, 0, 0, 0, NULL);
                             }
                             object_post((t_object *)x, " %s", unquantized_boxed_voice_durations_buf);
                             bach_freeptr(unquantized_boxed_voice_durations_buf);
@@ -2484,10 +2484,10 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                             lls[0] = ties;
                             lls[1] = llll_clone(quantized_durations);
                             t_llll *laced = llll_lace(lls, 2, 0);
-                            llll_to_text_buf(laced, &quantized_boxed_voice_durations_buf, 0, 1, 0, NULL);
+                            llll_to_text_buf(laced, &quantized_boxed_voice_durations_buf, 0, 1, 0, 0, 0, NULL);
                             llll_free(laced);
                         } else {
-                            llll_to_text_buf(quantized_durations, &quantized_boxed_voice_durations_buf, 0, 1, 0, NULL);
+                            llll_to_text_buf(quantized_durations, &quantized_boxed_voice_durations_buf, 0, 1, 0, 0, 0, NULL);
                         }
                         object_post((t_object *)x, " %s", quantized_boxed_voice_durations_buf);
                         bach_freeptr(quantized_boxed_voice_durations_buf);
@@ -2526,10 +2526,10 @@ void quantize_anything(t_quantize *x, t_symbol *msg, long ac, t_atom *av)
                                 lls[0] = ties;
                                 lls[1] = llll_clone(hatom_getllll(&elem->l_hatom));
                                 t_llll *laced = llll_lace(lls, 2, 0);
-                                llll_to_text_buf(laced, &boxed_voice_durations_buf, 0, 1, 0, NULL);
+                                llll_to_text_buf(laced, &boxed_voice_durations_buf, 0, 1, 0, 0, 0, NULL);
                                 llll_free(laced);
                             } else {
-                                llll_to_text_buf(hatom_getllll(&elem->l_hatom), &boxed_voice_durations_buf, 0, 1, 0, NULL);
+                                llll_to_text_buf(hatom_getllll(&elem->l_hatom), &boxed_voice_durations_buf, 0, 1, 0, 0, 0, NULL);
                             }
                             object_post((t_object *)x, " %s", boxed_voice_durations_buf);
                             bach_freeptr(boxed_voice_durations_buf);
@@ -2832,7 +2832,7 @@ void quantize_collapse(t_llll **measureinfo, t_llll **cents, t_llll **durations,
     }
     
     //	char *buf5 = NULL;
-    //	llll_to_text_buf(tot, &buf5, 0, 2, 0, NULL);
+    //	llll_to_text_buf(tot, &buf5, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SPECIAL_AND_SEPARATORS, NULL);
     
     // in case graphic, breakpoints and slots had been allocated individually with llll_get(), and NOT just taken from the extras list by reference
     if (*need_free_graphic)
@@ -3487,7 +3487,7 @@ void post_approximation_tree(t_quantize *x, t_llll *box_durations, t_llll *appro
             t_llll *combination = hatom_getllll(&possib->l_head->l_next->l_next->l_hatom);
             char *possib_string;
             char *possib_comb = NULL;
-            llll_to_text_buf(combination, &possib_comb, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_COPYSYMBOLS, NULL);
+            llll_to_text_buf(combination, &possib_comb, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
             mu_combination_to_string(x, combination, &possib_string, minimal_units);
             object_post((t_object *) x, "   Choice [%ld] > coeffs: ( %s), error: %ld/%ld, approx: %ld/%ld = %s", i, possib_comb, rat_num(hatom_getrational(&possib->l_head->l_hatom)), rat_den(hatom_getrational(&possib->l_head->l_hatom)),
                         rat_num(hatom_getrational(&possib->l_head->l_next->l_hatom)), rat_den(hatom_getrational(&possib->l_head->l_next->l_hatom)), possib_string);
@@ -3632,8 +3632,8 @@ char quantize_box_single_step(t_quantize *x, t_llll *box_durations, t_llll **qua
     if (x->verbose){
         char *rhythm_string = NULL, *mu_string = NULL;
         t_rational width = llll_sum_abs_of_rat_llll(box_durations);
-        llll_to_text_buf(box_durations, &rhythm_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_COPYSYMBOLS, NULL);
-        llll_to_text_buf(minimal_units, &mu_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_COPYSYMBOLS, NULL);
+        llll_to_text_buf(box_durations, &rhythm_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
+        llll_to_text_buf(minimal_units, &mu_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
         object_post((t_object *) x, "• Rhythm will be quantized in the order: %s", rhythm_string);
         object_post((t_object *) x, "• Density: %.2f", rat2double(long_rat_div(box_durations->l_size, width)));
         object_post((t_object *) x, "• Minimal units: %s", mu_string);
@@ -3931,7 +3931,7 @@ char quantize_box_single_step(t_quantize *x, t_llll *box_durations, t_llll **qua
             if (x->verbose >= 2) {
                 char *curr_durations_string = NULL;
                 object_post((t_object *) x, "     -- Seems good, so far. Approximation accepted.");
-                llll_to_text_buf(curr_durations, &curr_durations_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_COPYSYMBOLS, NULL);
+                llll_to_text_buf(curr_durations, &curr_durations_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
                 object_post((t_object *) x, "     -- Current durations: %s", curr_durations_string);
                 if ((x->algorithm == k_QUANTIZE_ALGORITHM_GREEDY || x->algorithm == k_QUANTIZE_ALGORITHM_EXHAUSTIVE_GREEDY_FIRST) && x->verbose >= 3) {
                     object_post((t_object *) x, "----- New sorted approximation tree: -----");
@@ -3951,7 +3951,7 @@ char quantize_box_single_step(t_quantize *x, t_llll *box_durations, t_llll **qua
             
             if (x->verbose) {
                 char *quantization_string = NULL;
-                llll_to_text_buf(curr_durations, &quantization_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_COPYSYMBOLS, NULL);
+                llll_to_text_buf(curr_durations, &quantization_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
                 object_post((t_object *) x, "      > Possible quantization found: %s", quantization_string);
                 object_post((t_object *) x, "      > Euclidean distance: %.8f", this_euclidean_distance);
                 bach_freeptr(quantization_string);
@@ -4006,7 +4006,7 @@ char quantize_box_single_step(t_quantize *x, t_llll *box_durations, t_llll **qua
         
         if (x->verbose) {
             char *rhythm_string = NULL;
-            llll_to_text_buf(*quantized_box_durations, &rhythm_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_COPYSYMBOLS, NULL);
+            llll_to_text_buf(*quantized_box_durations, &rhythm_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
             object_post((t_object *) x, "• Quantization found.");
             object_post((t_object *) x, "• Rhythm out in quantization order: %s", rhythm_string);
             bach_freeptr(rhythm_string);
@@ -4990,7 +4990,7 @@ char quantize_box_single_step_inplace(t_quantize *x, t_llll **rhythm, t_llll *mi
     
     if (x->verbose){
         char *rhythm_string = NULL;
-        llll_to_text_buf(*rhythm, &rhythm_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_COPYSYMBOLS, NULL);
+        llll_to_text_buf(*rhythm, &rhythm_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
         object_post((t_object *) x, "• Rhythm in: %s", rhythm_string);
         bach_freeptr(rhythm_string);
     }
@@ -5025,7 +5025,7 @@ char quantize_box_single_step_inplace(t_quantize *x, t_llll **rhythm, t_llll *mi
     }
     if (x->verbose){
         char *rhythm_string = NULL;
-        llll_to_text_buf(rhythm_quantized, &rhythm_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_COPYSYMBOLS, NULL);
+        llll_to_text_buf(rhythm_quantized, &rhythm_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
         object_post((t_object *) x, "• Rhythm out: %s", rhythm_string);
         bach_freeptr(rhythm_string);
     }

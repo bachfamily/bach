@@ -607,7 +607,7 @@ void autospell_respell_note_wr_to_SCE(t_notation_obj *r_ob, t_autospell_params *
             for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
                 t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
                 char notename[128];
-                snprintf_zero(notename, 128, "%s", thispitch.toCString());
+                thispitch.toTextBuf(notename, 128);
                 object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, sqrt(pt3d_distance_squared(SCE, pitch_to_position_on_spiral_array(r_ob, par, thispitch))), el->l_prev ? "" : " <-- chosen");
             }
         }
@@ -634,7 +634,7 @@ long autospell_respell_note_wr_to_LCE(t_notation_obj *r_ob, t_autospell_params *
             for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
                 t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
                 char notename[128];
-                snprintf_zero(notename, 128, "%s", thispitch.toCString());
+                thispitch.toTextBuf(notename, 128);
                 object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, fabs(LCE - pitch_to_position_on_line_of_fifths(thispitch)), el->l_prev ? "" : " <-- chosen");
             }
         }
@@ -699,8 +699,11 @@ void notationobj_autospell_chew_and_chen_do(t_notation_obj *r_ob, t_autospell_pa
             long starts = hatom_getlong(&ll->l_head->l_next->l_next->l_hatom);
             
             if (starts) { // we must spell it
-                if (par->verbose)
-                    object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", note->pitch_displayed.toCString(), notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
+                if (par->verbose) {
+                    char txt[256];
+                    note->pitch_displayed.toTextBuf(txt, 256);
+                    object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", txt, notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
+                }
                 
                 autospell_respell_note_wr_to_SCE(r_ob, par, note, sliding_win_CE);
             }
@@ -736,8 +739,11 @@ void notationobj_autospell_chew_and_chen_do(t_notation_obj *r_ob, t_autospell_pa
                 long starts = hatom_getlong(&ll->l_head->l_next->l_next->l_hatom);
                 
                 if (starts) { // we must spell it
-                    if (par->verbose)
-                        object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", note->pitch_displayed.toCString(), notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
+                    if (par->verbose) {
+                        char txt[256];
+                        note->pitch_displayed.toTextBuf(txt, 256);
+                        object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", txt, notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
+                    }
                     
                     autospell_respell_note_wr_to_SCE(r_ob, par, note, weighted_CE);
                 }
@@ -1275,8 +1281,10 @@ void notes_llll_to_text_buf(t_notation_obj *r_ob, t_llll *ll, char *buf, long bu
 {
     long cur = 0;
     for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
+        char txt[256];
         t_note *nt = (t_note *)hatom_getobj(&el->l_hatom);
-        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", nt->pitch_displayed.toCString(), el->l_next ? " " : "");
+        nt->pitch_displayed.toTextBuf(txt, 256);
+        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", txt, el->l_next ? " " : "");
     }
 }
 
@@ -1284,8 +1292,10 @@ void positions_llll_to_text_buf(t_notation_obj *r_ob, t_llll *ll, char *buf, lon
 {
     long cur = 0;
     for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
+        char txt[256];
         t_pitch p = position_on_line_of_fifths_to_pitch(hatom_getlong(&el->l_hatom));
-        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", p.toCString(false), el->l_next ? " " : "");
+        p.toTextBuf(txt, 256, false);
+        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", txt, el->l_next ? " " : "");
     }
 }
 

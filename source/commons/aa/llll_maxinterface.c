@@ -97,9 +97,12 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 					case H_RAT:
 						snprintf_zero(postline, 256, "%s " ATOM_LONG_PRINTF_FMT "/" ATOM_LONG_PRINTF_FMT, header, this_elem->l_hatom.h_w.w_rat.r_num, this_elem->l_hatom.h_w.w_rat.r_den);
 						break;
-                    case H_PITCH:
-                        snprintf_zero(postline, 256, "%s %s", header, this_elem->l_hatom.h_w.w_pitch.toString().c_str());
+                    case H_PITCH: {
+                        char txt[256];
+                        this_elem->l_hatom.h_w.w_pitch.toTextBuf(txt, 256);
+                        snprintf_zero(postline, 256, "%s %s", header, txt);
                         break;
+                    }
 					case H_LLLL:
 						break;
 					case H_OBJ:
@@ -130,7 +133,7 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 					} else {
 						if (deepenough) {
 							snprintf_zero(postline, 256, "%s ( ", header);
-							llll_to_text_buf(sub_ll, &postline, strlen(postline), max_decimals, LLLL_T_NO_BACKSLASH, fn);
+							llll_to_text_buf(sub_ll, &postline, strlen(postline), max_decimals, 0, 0, 0, fn);
 							snprintf_zero(postline, sysmem_ptrsize(postline), "%s )", postline);
 						}
 						this_elem = this_elem->l_next;
@@ -217,7 +220,7 @@ void llll_print(t_llll *ll, t_object *client, long error_message_type, t_atom_lo
 	if (!ll)
 		return;
 	
-	llll_to_text_buf(ll, &buf, 0, max_decimals, LLLL_T_NULL | LLLL_T_NO_BACKSLASH, fn);
+	llll_to_text_buf(ll, &buf, 0, max_decimals, LLLL_T_NULL, 0, 0, fn);
 	if (client) {
 		switch (error_message_type) {
 			case 1:
@@ -587,7 +590,7 @@ void llll_posthatom(t_hatom *hatom)
 			atom_setsym(newatom_ptr, gensym(rat_txt));
 			break;
         case H_PITCH:
-            atom_setsym(newatom_ptr, gensym(hatom->h_w.w_pitch.toString().c_str()));
+            atom_setsym(newatom_ptr, hatom->h_w.w_pitch.toSym());
 		default:
 			break;
 	}

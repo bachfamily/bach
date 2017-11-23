@@ -49,7 +49,7 @@ char *field2string(void *field, char type, long size, long max_decimals){
                 llll_appendsym(temp, *((t_symbol **)field));
             else
                 llll_appendsym(temp, _llllobj_sym_none);
-			llll_to_text_buf(temp, &res, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
+			llll_to_text_buf(temp, &res, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 			llll_free(temp);
 			break;
 		}
@@ -60,7 +60,7 @@ char *field2string(void *field, char type, long size, long max_decimals){
 			break;
 		}
 		case k_BACH_ATTR_LLLL:
-			llll_to_text_buf(*((t_llll **)field), &res, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
+			llll_to_text_buf(*((t_llll **)field), &res, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 			break;
 		case k_BACH_ATTR_OBJ:
 			res = (char *)bach_newptr(80 * sizeof(char));

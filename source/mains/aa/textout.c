@@ -117,7 +117,7 @@ int T_EXPORT main()
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
 
     /*
-     CLASS_ATTR_LONG(c, "backticks",	0,	t_textout, n_flags);
+     CLASS_ATTR_LONG(c, "escape",	0,	t_textout, n_flags);
      // @description When set to 1 (default), all the symbols that could be interpreted as different data types
      // (e.g., the symbol <b>12</b>, the symbol <b>1/3</b> or the symbol <b>A1</b>,
      // distinct from the corresponding integer, rational or pitch, but potentially interpreted as such by any bach object)
@@ -140,14 +140,14 @@ int T_EXPORT main()
      */
     
     /*
-     CLASS_ATTR_SYM_VARSIZE(c, "selectors", 0, t_textout, foo, foo, 12345)
+     CLASS_ATTR_SYM_VARSIZE(c, "selectors", 0, t_textout, foo, foo, 12345);
      // @description Through the <m>selectors</m> attribute, it is possible to specify a list
      // of symbols that, when encountered at the beginning of an llll, 
      // are output with a preceding backtick.
      // This list adds up to the names of the attributes of the objects connected to <o>bach.textout</o>'s rightmost outlet,
      // and to the usual set of reserved symbols that are backticked anyway.
      */
-    CLASS_ATTR_LONG(c, "negativeoctaves",	0,	t_textout, n_flags);
+
     class_register(CLASS_BOX, c);
     textout_class = c;
     
@@ -308,7 +308,7 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
                         sym = gensym(sym->s_name + 1);
                     textout_add_symbol_to_this(x, sym);
                 }
-            } else if (!strcmp(attrname, "backticks")) {
+            } else if (!strcmp(attrname, "escape")) {
                 if (i < ac) {
                     if (!atom_getlong(av + i))
                         x->n_flags &= ~LLLL_D_QUOTE;

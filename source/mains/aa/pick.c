@@ -201,7 +201,7 @@ void pick_assist(t_pick *x, void *b, long m, long a, char *s)
 			}
 		} else {
 			char *txt = NULL;
-			llll_to_text_buf(idx_hatom->h_w.w_llll, &txt, 0, 0, 0, NULL);
+			llll_to_text_buf(idx_hatom->h_w.w_llll, &txt, 0, 0, 0, 0, 0, NULL);
 			sprintf(s, "llll (%s): Element at position %s", type, txt);
 		}
 		// @out 0 @loop 1 @digest Extracted elements

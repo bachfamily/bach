@@ -319,11 +319,15 @@ public:
         return (p_alter.r_den == 0);
     }
     
-    std::string toString(t_bool include_octave = true, t_bool always_positive = false);
+    long toTextBuf(char *buf, long bufSize, t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false);
     
-    const char* toCString(char include_octave = true) { return toString(include_octave).c_str(); }
-
-    t_symbol* toSym() { return gensym(toString().c_str()); }
+    
+    t_symbol* toSym(t_bool include_octave = true, t_bool always_positive = false)
+    {
+        char buf[2048];
+        toTextBuf(buf, 2048, include_octave, always_positive);
+        return gensym(buf);
+    }
 
 /*
     t_pitch fromSym(t_symbol *s)

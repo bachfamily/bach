@@ -149,7 +149,7 @@ void value_dblclick(t_value *x)
     char *buf = NULL;
     
     bach_atomic_lock(&vault->v_lock);
-    llll_to_text_buf_pretty(vault->v_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_D_QUOTE, NULL);
+    llll_to_text_buf_pretty(vault->v_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
     bach_atomic_unlock(&vault->v_lock);
     
     object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));

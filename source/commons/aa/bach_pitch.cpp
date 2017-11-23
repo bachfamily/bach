@@ -206,13 +206,16 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     return t_pitch(sat);
 }
 
-std::string t_pitch::toString(t_bool include_octave, t_bool always_positive)
+long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace)
 {
-    std::string s;
+    long count = 0;
+    if (!buf || bufSize == 0)
+        return -1;
     if (p_alter == illegal) {
-        s = "NaP";
+        return snprintf_zero(buf, bufSize, "NaP");
     } else if (p_octave >= 0 || always_positive) {
-        s = degree2name[p_degree];
+        if (++count == bufSize) { *buf = 0; return count - 1; }
+        *(buf++) = degree2name[p_degree];
         t_shortRational remainder = p_alter;
         if (remainder > natural) { // sharps
             /* // this is probably not convenient, as it complicates simple cases
@@ -230,51 +233,54 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive)
              */
             
             while (remainder >= eighthsharp) {
+                if (++count == bufSize) { *buf = 0; return count - 1; }
                 if (remainder >= dblsharp) {
-                    s += "x";
+                    *(buf++) = 'x';
                     remainder -= dblsharp;
                 } else if (remainder >= sharp) {
-                    s += "#";
-                    remainder -= sharp;
+                    *(buf++) = '#';
                 } else if (remainder >= qrtrsharp) {
-                    s += "q";
+                    *(buf++) = 'q';
                     remainder -= qrtrsharp;
                 } else if (remainder >= eighthsharp) {
-                    s += "^";
+                    *(buf++) = '^';
                     remainder -= eighthsharp;
                 }
             }
         } else if (remainder < natural) { // flats
             while (remainder <= eighthflat) {
+                if (++count == bufSize) { *buf = 0; return count - 1; }
                 if (remainder <= flat) {
-                    s += "b";
+                    *(buf++) = 'b';
                     remainder -= flat;
                 } else if (remainder <= qrtrflat) {
-                    s += "d";
+                    *(buf++) = 'd';
                     remainder -= qrtrflat;
                 } else if (remainder <= eighthflat) {
-                    s += "v";
+                    *(buf++) = 'v';
                     remainder -= eighthflat;
                 }
             }
         }
         if (include_octave) {
             if (remainder > natural)
-                s += std::to_string(p_octave) + '+' + remainder.to_string() + "t";
+                count += snprintf_zero(buf, bufSize - count, "%d+%d/%dt", p_octave, remainder.num(), remainder.den());
             else if (remainder < natural)
-                s += std::to_string(p_octave) + remainder.to_string() + "t";
+                count += snprintf_zero(buf, bufSize - count, "%d%d/%dt", p_octave, remainder.num(), remainder.den());
             else
-                s += std::to_string(p_octave);
+                count += snprintf_zero(buf, bufSize - count, "%d", p_octave);
         } else {
             if (remainder > natural)
-                s += '+' + remainder.to_string() + "t";
+                count += snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
             else if (remainder < natural)
-                s += remainder.to_string() + "t";
+                count += snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
         }
     } else { // if (octave < 0 && !always_positive)
         t_pitch mirrored = -*this;
-        s = "-";
-        s += degree2name[mirrored.p_degree];
+        if (++count == bufSize) { *buf = 0; return count - 1; }
+        *(buf++) = '-';
+        if (++count == bufSize) { *buf = 0; return count - 1; }
+        *(buf++) = degree2name[p_degree];
         t_shortRational remainder = mirrored.p_alter;
         if (remainder > natural) { // sharps
             /* // this is probably not convenient, as it complicates simple cases
@@ -292,31 +298,32 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive)
              */
             
             while (remainder >= eighthsharp) {
+                if (++count == bufSize) { *buf = 0; return count - 1; }
                 if (remainder >= dblsharp) {
-                    s += "x";
+                    *(buf++) = 'x';
                     remainder -= dblsharp;
                 } else if (remainder >= sharp) {
-                    s += "#";
-                    remainder -= sharp;
+                    *(buf++) = '#';
                 } else if (remainder >= qrtrsharp) {
-                    s += "q";
+                    *(buf++) = 'q';
                     remainder -= qrtrsharp;
                 } else if (remainder >= eighthsharp) {
-                    s += "^";
+                    *(buf++) = '^';
                     remainder -= eighthsharp;
                 }
             }
             remainder *= -1;
         } else if (remainder < natural) { // flats
             while (remainder <= eighthflat) {
+                if (++count == bufSize) { *buf = 0; return count - 1; }
                 if (remainder <= flat) {
-                    s += "b";
+                    *(buf++) = 'b';
                     remainder -= flat;
                 } else if (remainder <= qrtrflat) {
-                    s += "d";
+                    *(buf++) = 'd';
                     remainder -= qrtrflat;
                 } else if (remainder <= eighthflat) {
-                    s += "v";
+                    *(buf++) = 'v';
                     remainder -= eighthflat;
                 }
             }
@@ -324,20 +331,23 @@ std::string t_pitch::toString(t_bool include_octave, t_bool always_positive)
         }
         if (include_octave) {
             if (remainder > natural)
-                s += std::to_string(mirrored.p_octave) + '+' + remainder.to_string() + "t";
+                count += snprintf_zero(buf, bufSize - count, "%d+%d/%dt", mirrored.octave(), remainder.num(), remainder.den());
             else if (remainder < natural)
-                s += std::to_string(mirrored.p_octave) + remainder.to_string() + "t";
+                count += snprintf_zero(buf, bufSize - count, "%d%d/%dt", mirrored.octave(), remainder.num(), remainder.den());
             else
-                s += std::to_string(mirrored.p_octave);
+                count += snprintf_zero(buf, bufSize - count, "%d", mirrored.octave());
         } else {
             if (remainder > natural)
-                s += '+' + remainder.to_string() + "t";
+                count += snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
             else if (remainder < natural)
-                s += remainder.to_string() + "t";
+                count += snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
         }
     }
-    
-    return s;
+    if (!addTrailingSpace || count == bufSize - 1)
+        return count;
+    *(buf + count) = ' ';
+    *(buf + count + 1) = 0;
+    return count + 1;
 }
 
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)

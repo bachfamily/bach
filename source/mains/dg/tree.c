@@ -1219,7 +1219,7 @@ long build_all_tree_nodes_fn(void *data, t_hatom *a, const t_llll *address){
             tnd->num_sons = 0;
             tnd->closed = false;
             tnd->show_triangle = false;
-            llll_to_text_buf(ll, &tnd->text, 0, x->decimals, 0, NULL);
+            llll_to_text_buf(ll, &tnd->text, 0, x->decimals, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
         } else {
             tnd->num_sons = ll->l_size;
             if (ll->l_size == 0) {
@@ -1231,7 +1231,7 @@ long build_all_tree_nodes_fn(void *data, t_hatom *a, const t_llll *address){
                     if (ll->l_head) {
                         t_llll *dummy = llll_get();
                         llll_appendhatom_clone(dummy, &ll->l_head->l_hatom, 0, WHITENULL_llll);
-                        llll_to_text_buf(dummy, &tnd->text, 0, x->decimals, LLLL_T_COPYSYMBOLS, NULL);
+                        llll_to_text_buf(dummy, &tnd->text, 0, x->decimals, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
                         llll_free(dummy);
                         
                         tnd->num_sons --;
@@ -1248,7 +1248,7 @@ long build_all_tree_nodes_fn(void *data, t_hatom *a, const t_llll *address){
         
         t_llll *dummy = llll_get();
         llll_appendhatom_clone(dummy, a, 0, WHITENULL_llll);
-        llll_to_text_buf(dummy, &tnd->text, 0, x->decimals, LLLL_T_COPYSYMBOLS, NULL);
+        llll_to_text_buf(dummy, &tnd->text, 0, x->decimals, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
         llll_free(dummy);
     }
     
@@ -1331,7 +1331,7 @@ long tree_iter_address_and_data(t_tree *x, long list, t_llll *ll, char isaddress
                                 llll_appendhatom_clone(towrite, &thisllll->l_head->l_hatom, 0, WHITENULL_llll);
                         }
                     }
-                    llll_to_text_buf(towrite, &fathertnd->text, 0, x->decimals, LLLL_T_COPYSYMBOLS, NULL);
+                    llll_to_text_buf(towrite, &fathertnd->text, 0, x->decimals, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
                     llll_free(babyllll);
                     llll_free(towrite);
                 }
@@ -1386,7 +1386,7 @@ long tree_iter_address_and_data(t_tree *x, long list, t_llll *ll, char isaddress
             // creating dummy node at 1 level deeper
             append_dummy_node_under_node(x, x->active_treenode);
         } else
-            llll_to_text_buf(ll, &x->active_treenode->text, 0, x->decimals, LLLL_T_COPYSYMBOLS, NULL);
+            llll_to_text_buf(ll, &x->active_treenode->text, 0, x->decimals, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
         
         font = jfont_create_debug(jbox_get_fontname((t_object *)x)->s_name, (t_jgraphics_font_slant)jbox_get_font_slant((t_object *)x),
                                   (t_jgraphics_font_weight)jbox_get_font_weight((t_object *)x), jbox_get_fontsize((t_object *)x));
@@ -1464,7 +1464,7 @@ void rebuild_treenodes(t_tree *x, t_rect view_rect){
         } else { // first element in llll is the name!
             t_llll *towrite = llll_get();
             llll_appendhatom_clone(towrite, &x->tree_as_llll->l_head->l_hatom, 0, WHITENULL_llll);
-            llll_to_text_buf(towrite, &firsttnd->text, 0, x->decimals, LLLL_T_COPYSYMBOLS, NULL);
+            llll_to_text_buf(towrite, &firsttnd->text, 0, x->decimals, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
             llll_free(towrite);
         }
         
@@ -2965,7 +2965,7 @@ void start_editing_node(t_tree *x, t_treenode *tnd, t_object *patcherview)
             } else
                 llll_appendhatom_clone(temp_ll, &tnd->elem->l_hatom, 0, WHITENULL_llll);
         }
-        llll_to_text_buf(temp_ll, &text, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, NULL);
+        llll_to_text_buf(temp_ll, &text, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
         llll_free(temp_ll);
         
         relative_centers_to_pixel_coordinates(x, rect, tnd->center_x, tnd->center_y, &real_center_x, &real_center_y);
