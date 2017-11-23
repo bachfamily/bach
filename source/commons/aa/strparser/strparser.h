@@ -33,6 +33,7 @@ public:
     t_bool isBig() { return big; }
     void makeBig() { big = 1; }
     long getStartCondition() { return startCondition; }
+    void setStartCondition(long s) { startCondition = s; }
 };
 
 #endif /* strparser_h */

@@ -78,7 +78,6 @@
     #endif
 
 
-
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
 #   define YY_NULLPTR nullptr
@@ -101,7 +100,7 @@
 # define YY_STRPARSER_STRPARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int strparser_debug;
@@ -457,8 +456,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    54,    54,    55,    58,    61,    64,    67,    71,    74,
-      76,    79,    86
+       0,    53,    53,    54,    57,    60,    63,    66,    70,    73,
+      75,    78,    85
 };
 #endif
 
@@ -1560,6 +1559,8 @@ void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long 
         yyscan_t myscanner;
         YY_BUFFER_STATE bp;
         strparser_lex_init(&myscanner);
+        ((t_strParser *) myscanner)->makeBig();
+        ((t_strParser *) myscanner)->setStartCondition(startCondition);
         bp = strparser_scan_string(myscanner, buf);
         strparser_parse(myscanner, ll, stack, depth);
         strparser_flush_and_delete_buffer(myscanner, bp);

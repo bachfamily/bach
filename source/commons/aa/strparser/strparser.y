@@ -9,7 +9,6 @@
 %token PUSH POP
 %token BACHNULL BACHNIL
 
-%debug
 
 %{
 	//#define BACH_MAX
@@ -19,7 +18,6 @@
     #include <stdio.h>
     #define parserpost printf
     #endif
-
 %}
 
 %union {
@@ -39,7 +37,8 @@
     int yyerror(yyscan_t myscanner, t_llll **ll, t_llll_stack *stack, long *depth, char *s);
     YY_BUFFER_STATE strparser_scan_string(yyscan_t myscanner, const char *buf);
     void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp);
-    %}
+    
+%}
 
 
 %lex-param {void *scanner}
@@ -109,6 +108,8 @@ void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long 
         yyscan_t myscanner;
         YY_BUFFER_STATE bp;
         strparser_lex_init(&myscanner);
+        ((t_strParser *) myscanner)->makeBig();
+        ((t_strParser *) myscanner)->setStartCondition(startCondition);
         bp = strparser_scan_string(myscanner, buf);
         strparser_parse(myscanner, ll, stack, depth);
         strparser_flush_and_delete_buffer(myscanner, bp);
