@@ -32,7 +32,7 @@
  text, backtick, attributes, pitch
  
  @seealso
- bach.portal, bach.write
+ bach.portal, bach.textin, bach.write
  
  @owner
  Andrea Agostini

@@ -132,7 +132,7 @@ int T_EXPORT main()
     CLASS_ATTR_LABEL(c, "escape", 0, "Escaping style");
     CLASS_ATTR_ENUMINDEX(c,"escape", 0, "None Backtick Double Smart");
 
-    // @description When set to 1 (default), all the symbols that could be interpreted as different data types
+    // @description When set to 1, all the symbols that could be interpreted as different data types
     // (e.g., the symbol <b>12</b>, the symbol <b>1/3</b> or the symbol <b>A1</b>,
     // distinct from the corresponding integer, rational or pitch, but potentially interpreted as such by any bach object)
     // are written to text with a preceding backtick
@@ -141,7 +141,7 @@ int T_EXPORT main()
     // When set to 2, all the symbols that could be interpreted as different data types
     // are written to text surrounded by double quotes
     // (in the example above, respectively <b>"12"</b>, <b>"1/3"</b>, <b>"A1"</b>).<br />
-    // When set to 3, symbols that could be interpreted as different data types
+    // When set to 3 (default), symbols that could be interpreted as different data types
     // are written to text either surrounded by double quotes, or preceded by a backtick,
     // according to their features, so as to improve readability and, at the same time,
     // maintaining compatibility with the <o>message</o> object (see below).
@@ -283,7 +283,7 @@ t_write *write_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;
 	
 	if ((x = (t_write *) object_alloc_debug(write_class))) {
-        x->n_escape = 1;
+        x->n_escape = 3;
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "");		
 		x->n_proxy = proxy_new_debug((t_object *) x, 1, &x->n_in);

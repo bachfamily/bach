@@ -112,7 +112,7 @@ int T_EXPORT main()
     CLASS_ATTR_SYM(c, "ignore",	0,	t_read, n_ignore);
     CLASS_ATTR_ACCESSORS(c, "ignore", read_getattr_ignore, read_setattr_ignore);
     // @description The <m>ignore</m> attribute allows preventing certain categories
-    // of elements to be interpreted according to the bach syntax.
+    // of elements to be interpreted according to the usual bach syntax.
     // Categories are expressed by letters, according to the following table:<br />
     // - <b>L</b> stands for all the open and closed parens marking llll sublists:
     // if this category is set, parens and symbols containing parens
