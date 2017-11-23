@@ -96,6 +96,7 @@
 				916336B11CBB745B00A77708 /* PBXTargetDependency */,
 				916336B31CBB745B00A77708 /* PBXTargetDependency */,
 				916336B51CBB745B00A77708 /* PBXTargetDependency */,
+				91F58B351FC6F1D2008156B7 /* PBXTargetDependency */,
 				91A5EC241F7D04DD0052FBF6 /* PBXTargetDependency */,
 				916336B71CBB745B00A77708 /* PBXTargetDependency */,
 				916336B91CBB745B00A77708 /* PBXTargetDependency */,
@@ -825,6 +826,9 @@
 		91EA231616EA4BEB00020760 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		91EED5A21237C07E003C05FC /* roll.c in Sources */ = {isa = PBXBuildFile; fileRef = 91EED5A11237C07E003C05FC /* roll.c */; };
 		91F3A0671432B5FE00F3234A /* reshape.c in Sources */ = {isa = PBXBuildFile; fileRef = 91F39FEC1432B3F200F3234A /* reshape.c */; };
+		91F58B291FC6E698008156B7 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
+		91F58B2A1FC6E698008156B7 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		91F58B311FC6E6D7008156B7 /* textin.c in Sources */ = {isa = PBXBuildFile; fileRef = 91F58B201FC6E644008156B7 /* textin.c */; };
 		91F6A6041DDDDE2900237E9F /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		91F6A6051DDDDE2900237E9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		91F6A60F1DDDDED700237E9F /* convertbase.c in Sources */ = {isa = PBXBuildFile; fileRef = 91F6A60E1DDDDED700237E9F /* convertbase.c */; };
@@ -2713,6 +2717,20 @@
 			remoteGlobalIDString = 91E8F4D51275C8FE007E7A0A;
 			remoteInfo = dg;
 		};
+		91F58B231FC6E698008156B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918129441611AEA700473F86;
+			remoteInfo = lib_bach;
+		};
+		91F58B341FC6F1D2008156B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91F58B211FC6E698008156B7;
+			remoteInfo = bach.textin;
+		};
 		91F6A5FE1DDDDE2900237E9F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -3553,6 +3571,9 @@
 		91F39FEC1432B3F200F3234A /* reshape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reshape.c; sourceTree = "<group>"; };
 		91F3A0031432B59700F3234A /* bach.reshape.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.reshape.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F58B1D1FC474DF008156B7 /* tools */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tools; path = source/tools; sourceTree = "<group>"; };
+		91F58B201FC6E644008156B7 /* textin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = textin.c; sourceTree = "<group>"; };
+		91F58B2F1FC6E698008156B7 /* bach.textin.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.textin.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		91F58B301FC6E699008156B7 /* bach.symdiff copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.symdiff copy-Info.plist"; path = "/Users/andreaagostini/Documents/Max 7/Packages/bach/source/xcproj/bach.symdiff copy-Info.plist"; sourceTree = "<absolute>"; };
 		91F6A60A1DDDDE2900237E9F /* bach.convertbase.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.convertbase.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F6A60E1DDDDED700237E9F /* convertbase.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = convertbase.c; sourceTree = "<group>"; };
 		91F6A6101DE6D8B200237E9F /* join.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = join.c; sourceTree = "<group>"; };
@@ -4743,6 +4764,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		91F58B281FC6E698008156B7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91F58B291FC6E698008156B7 /* lib_bach.a in Frameworks */,
+				91F58B2A1FC6E698008156B7 /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91F6A6031DDDDE2900237E9F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4793,6 +4823,7 @@
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				913F87961C21702E00C9CAE0 /* stuff */,
 				91BA46AC1F71585E0002D515 /* package */,
+				91F58B301FC6E699008156B7 /* bach.symdiff copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -4953,6 +4984,7 @@
 				1ED51E291F73F5B40021C2D5 /* bach.p2mc.mxo */,
 				91A5EC1F1F7CE55D0052FBF6 /* bach.textout.mxo */,
 				1ED42DBB1F8A9D17008EC1D9 /* bach.transcribe.mxo */,
+				91F58B2F1FC6E698008156B7 /* bach.textin.mxo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5494,6 +5526,7 @@
 				91D7C82A12339B9E00D767D4 /* subs.c */,
 				91C1E7D21A39A8030001297A /* swap.c */,
 				914EB2631250E4CC00413C39 /* symdiff.c */,
+				91F58B201FC6E644008156B7 /* textin.c */,
 				91A5EC211F7CE5EF0052FBF6 /* textout.c */,
 				919E6EDE17D9CD9300F44FAE /* thin.c */,
 				916291C312C7EC7A00FEA25C /* trans.c */,
@@ -6940,6 +6973,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		91F39FEE1432B59600F3234A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91F58B241FC6E698008156B7 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -9642,6 +9682,26 @@
 			productReference = 91F3A0031432B59700F3234A /* bach.reshape.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
+		91F58B211FC6E698008156B7 /* bach.textin */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91F58B2C1FC6E698008156B7 /* Build configuration list for PBXNativeTarget "bach.textin" */;
+			buildPhases = (
+				91F58B241FC6E698008156B7 /* Headers */,
+				91F58B251FC6E698008156B7 /* Resources */,
+				91F58B261FC6E698008156B7 /* Sources */,
+				91F58B281FC6E698008156B7 /* Frameworks */,
+				91F58B2B1FC6E698008156B7 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				91F58B221FC6E698008156B7 /* PBXTargetDependency */,
+			);
+			name = bach.textin;
+			productName = iterator;
+			productReference = 91F58B2F1FC6E698008156B7 /* bach.textin.mxo */;
+			productType = "com.apple.product-type.bundle";
+		};
 		91F6A5FC1DDDDE2900237E9F /* bach.convertbase */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 91F6A6071DDDDE2900237E9F /* Build configuration list for PBXNativeTarget "bach.convertbase" */;
@@ -9885,6 +9945,7 @@
 				91D18ADC130EC51C00A2E668 /* bach.submatrix */,
 				91C1E7C21A39A71A0001297A /* bach.swap */,
 				914EB1DA1250E0C500413C39 /* bach.symdiff */,
+				91F58B211FC6E698008156B7 /* bach.textin */,
 				91A5EC111F7CE55D0052FBF6 /* bach.textout */,
 				91B0ECDC150D20DA0069A206 /* bach.thin */,
 				9112234818B0B3EA00B6B86A /* bach.tonnetz */,
@@ -10838,6 +10899,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		91F58B251FC6E698008156B7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		91F6A6001DDDDE2900237E9F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11752,6 +11820,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		91F39FFF1432B59600F3234A /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91F58B2B1FC6E698008156B7 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -12916,6 +12991,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				91F3A0671432B5FE00F3234A /* reshape.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91F58B261FC6E698008156B7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91F58B311FC6E6D7008156B7 /* textin.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14283,6 +14366,16 @@
 			isa = PBXTargetDependency;
 			target = 91E8F4D51275C8FE007E7A0A /* dg */;
 			targetProxy = 91E8F4ED1275C991007E7A0A /* PBXContainerItemProxy */;
+		};
+		91F58B221FC6E698008156B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 918129441611AEA700473F86 /* lib_bach */;
+			targetProxy = 91F58B231FC6E698008156B7 /* PBXContainerItemProxy */;
+		};
+		91F58B351FC6F1D2008156B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 91F58B211FC6E698008156B7 /* bach.textin */;
+			targetProxy = 91F58B341FC6F1D2008156B7 /* PBXContainerItemProxy */;
 		};
 		91F6A5FD1DDDDE2900237E9F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -19170,6 +19263,41 @@
 			};
 			name = Deployment;
 		};
+		91F58B2D1FC6E698008156B7 /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/Library/Frameworks\"",
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = "bach.symdiff copy-Info.plist";
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		91F58B2E1FC6E698008156B7 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/Library/Frameworks\"",
+				);
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				INFOPLIST_FILE = "bach.symdiff copy-Info.plist";
+				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
 		91F6A6081DDDDE2900237E9F /* Development */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
@@ -20597,6 +20725,15 @@
 			buildConfigurations = (
 				91F3A0011432B59600F3234A /* Development */,
 				91F3A0021432B59600F3234A /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		91F58B2C1FC6E698008156B7 /* Build configuration list for PBXNativeTarget "bach.textin" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91F58B2D1FC6E698008156B7 /* Development */,
+				91F58B2E1FC6E698008156B7 /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;
