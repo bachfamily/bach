@@ -2,7 +2,6 @@
 <root>
 <refpage name='bach.args.maxref.xml'/>
 <refpage name='bach.arithmser.maxref.xml'/>
-<refpage name='bach.backtick.maxref.xml'/>
 <refpage name='bach.cartesianprod.maxref.xml'/>
 <refpage name='bach.classify.maxref.xml'/>
 <refpage name='bach.collect.maxref.xml'/>
@@ -62,6 +61,8 @@
 <refpage name='bach.subs.maxref.xml'/>
 <refpage name='bach.swap.maxref.xml'/>
 <refpage name='bach.symdiff.maxref.xml'/>
+<refpage name='bach.textin.maxref.xml'/>
+<refpage name='bach.textout.maxref.xml'/>
 <refpage name='bach.thin.maxref.xml'/>
 <refpage name='bach.trans.maxref.xml'/>
 <refpage name='bach.tree.maxref.xml'/>

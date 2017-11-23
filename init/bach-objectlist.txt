@@ -1,6 +1,5 @@
 max oblist "bach objects" bach.args;
 max oblist "bach objects" bach.arithmser;
-max oblist "bach objects" bach.backtick;
 max oblist "bach objects" bach.cartesianprod;
 max oblist "bach objects" bach.classify;
 max oblist "bach objects" bach.collect;
@@ -60,6 +59,8 @@ max oblist "bach objects" bach.step;
 max oblist "bach objects" bach.subs;
 max oblist "bach objects" bach.swap;
 max oblist "bach objects" bach.symdiff;
+max oblist "bach objects" bach.textin;
+max oblist "bach objects" bach.textout;
 max oblist "bach objects" bach.thin;
 max oblist "bach objects" bach.trans;
 max oblist "bach objects" bach.tree;

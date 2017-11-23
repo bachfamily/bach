@@ -41,23 +41,6 @@
       "bach.geomser"
     ]
   },
-  "bach.backtick": {
-    "digest": "Backticks the first element of a text-format llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "text",
-      "backtick",
-      "attributes"
-    ],
-    "seealso": [
-      "bach.portal"
-    ]
-  },
   "bach.cartesianprod": {
     "digest": "Cartesian product",
     "module": "bach",
@@ -1318,6 +1301,46 @@
       "bach.union",
       "bach.diff",
       "bach.intersection"
+    ]
+  },
+  "bach.textin": {
+    "digest": "Accept variants of the llll text format",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "text",
+      "native",
+      "backtick",
+      "llll"
+    ],
+    "seealso": [
+      "bach.portal",
+      "bach.textout",
+      "bach.read"
+    ]
+  },
+  "bach.textout": {
+    "digest": "Produces variants of the llll text format",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "text",
+      "backtick",
+      "attributes",
+      "pitch"
+    ],
+    "seealso": [
+      "bach.portal",
+      "bach.textin",
+      "bach.write"
     ]
   },
   "bach.thin": {
