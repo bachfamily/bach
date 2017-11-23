@@ -2758,7 +2758,7 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
 					if (slot && slot->firstitem && slot->firstitem->item) {
 						double width, height;
 						char *buf = NULL;
-						llll_to_text_buf((t_llll *) slot->firstitem->item, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_BACKTICK, LLLL_TB_SPECIAL_AND_SEPARATORS, NULL);
+						llll_to_text_buf((t_llll *) slot->firstitem->item, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 						jfont_text_measure(jf_slottext, buf, &width, &height);
 						write_text_account_for_vinset(r_ob, g, jf_slottext, slot_color, buf, pos_x_for_text + x_deplacement_text, pos_y_for_text);
 						x_deplacement_text += width + 4 * zoom_y;
@@ -7942,7 +7942,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_DUMPING, r_ob->active_slot_num, false);
 						char *buf = NULL;
 						llll_behead(ll);
-                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, 0, LLLL_TE_BACKTICK, LLLL_TB_SPECIAL_AND_SEPARATORS, NULL);
+                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 //						llll_to_text_buf(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
 						object_method(r_ob->m_editor, _sym_settext, buf, _sym_utf_8); 
 						r_ob->changed_while_dragging = true;
@@ -8111,7 +8111,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             
                             this_llll = (t_llll *) get_activeitem_slot_firstitem(r_ob, s)->item;
                             if (this_llll) {
-                                textlength = llll_to_text_buf(this_llll, &text, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_BACKTICK, LLLL_TB_SPECIAL_AND_SEPARATORS, NULL);
+                                textlength = llll_to_text_buf(this_llll, &text, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
                                 
                                 object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);
                                 r_ob->changed_while_dragging = true;

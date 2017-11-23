@@ -4606,7 +4606,7 @@ char *get_bach_attribute_as_string(t_bach_inspector_manager *man, void *elem, t_
 
 /*	t_llll *ll = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
 	if (ll) {
-		llll_to_text_buf(ll, &text, 0, 2, 0, LLLL_TE_BACKTICK, LLLL_TB_SPECIAL_AND_SEPARATORS, NULL);
+		llll_to_text_buf(ll, &text, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 		llll_free(ll);
 	} else {
 		text = (char *)bach_newptr(1 * sizeof(char));

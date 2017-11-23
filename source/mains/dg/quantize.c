@@ -2832,7 +2832,7 @@ void quantize_collapse(t_llll **measureinfo, t_llll **cents, t_llll **durations,
     }
     
     //	char *buf5 = NULL;
-    //	llll_to_text_buf(tot, &buf5, 0, 2, 0, LLLL_TE_BACKTICK, LLLL_TB_SPECIAL_AND_SEPARATORS, NULL);
+    //	llll_to_text_buf(tot, &buf5, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SPECIAL_AND_SEPARATORS, NULL);
     
     // in case graphic, breakpoints and slots had been allocated individually with llll_get(), and NOT just taken from the extras list by reference
     if (*need_free_graphic)

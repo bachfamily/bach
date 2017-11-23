@@ -137,7 +137,7 @@ void edit_anything(t_edit *x, t_symbol *msg, long ac, t_atom *av)
 	if (!(in_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, msg, ac, av, 0)))
 		return;
 	
-	llll_to_text_buf(in_llll, &buff, 0, 10, LLLL_T_NULL, LLLL_TE_BACKTICK, LLLL_TB_SPECIAL_AND_SEPARATORS, NULL);
+	llll_to_text_buf(in_llll, &buff, 0, 10, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 
 	object_method(jbox_get_textfield((t_object *)x), gensym("settext"), buff);
 
