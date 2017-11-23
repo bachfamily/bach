@@ -25,13 +25,11 @@
 class t_chkParser : public t_parser {
 private:
     
-    
 public:
     t_chkParser();
     
-    
     // returns a #e_hatom_types indicating the inferred type for the text
-    long parse(char *buf);
+    long parse(const char *buf);
     void reset();
     t_bool wantsBacktick(t_symbol *s);
     

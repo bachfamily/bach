@@ -50,7 +50,7 @@ typedef struct _write
 	t_llllobj_object 	n_ob;
 	void                *n_proxy;
 	long				n_in;
-    long                n_backticks;
+    long                n_escape;
     long                n_negativeoctaves;
 } t_write;
 
@@ -127,22 +127,41 @@ int T_EXPORT main()
 	
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 	
-    CLASS_ATTR_LONG(c, "backticks",	0,	t_write, n_backticks);
-    CLASS_ATTR_FILTER_CLIP(c, "backticks", 0, 1);
-    CLASS_ATTR_LABEL(c, "backticks", 0, "Add Backticks");
-    CLASS_ATTR_STYLE(c, "backticks", 0, "onoff");
+    CLASS_ATTR_LONG(c, "escape",	0,	t_write, n_escape);
+    CLASS_ATTR_FILTER_CLIP(c, "escape", 0, 2);
+    CLASS_ATTR_LABEL(c, "escape", 0, "Escaping style");
+    CLASS_ATTR_ENUMINDEX(c,"escape", 0, "None Backtick Double Smart");
+
     // @description When set to 1 (default), all the symbols that could be interpreted as different data types
     // (e.g., the symbol <b>12</b>, the symbol <b>1/3</b> or the symbol <b>A1</b>,
     // distinct from the corresponding integer, rational or pitch, but potentially interpreted as such by any bach object)
-    // are written to text with a preceding backtick (in the above example, respectively <b>`12</b>, <b>`1/3</b>, <b>`A1</b>).
+    // are written to text with a preceding backtick
+    // (in the above example, respectively <b>`12</b>, <b>`1/3</b>, <b>`A1</b>).
     // This is the normal behavior for the llll text format.<br />
-    // When set to 0, no backtick is added.
+    // When set to 2, all the symbols that could be interpreted as different data types
+    // are written to text surrounded by double quotes
+    // (in the example above, respectively <b>"12"</b>, <b>"1/3"</b>, <b>"A1"</b>).<br />
+    // When set to 3, symbols that could be interpreted as different data types
+    // are written to text either surrounded by double quotes, or preceded by a backtick,
+    // according to their features, so as to improve readability and, at the same time,
+    // maintaining compatibility with the <o>message</o> object (see below).
+    // When set to 0, no backtick is added. <br />
+    // Notice that text files written with the <m>escape</m> attribute set to 1, 2 or 3
+    // will be interpreted correctly by all the bach objects capable to import text files.
+    // On the contrary, text files written with the <m>escape</m> attribute set to 0
+    // will be potentially interpreted differently from the original,
+    // and even be considered broken. <br />
+    // On the other hand, the contents of text files written with the <m>escape</m> attribute
+    // set to 1 or 3 can be safely pasted in a <o>message</o> object,
+    // whereas doing the same with the contents of a text file
+    // written with the <m>escape</m> attribute set to 0 or 2
+    // may result in an llll different from the original.<br />
     // The attribute has no effect when the file is saved in native format,
     // through the <m>write</m> message.
     
     CLASS_ATTR_LONG(c, "negativeoctaves",	0,	t_write, n_negativeoctaves);
     CLASS_ATTR_FILTER_CLIP(c, "negativeoctaves", 0, 1);
-    CLASS_ATTR_LABEL(c, "negativeoctaves", 0, "Allow Negative Octaves");
+    CLASS_ATTR_LABEL(c, "negativeoctaves", 0, "Use Negative Octaves");
     CLASS_ATTR_STYLE(c, "negativeoctaves", 0, "onoff");
     // @description When set to 0 (default), pitches at octaves lower than octave 0
     // are written to text as negative pitches, that is, as the inversion of the interval they form with C0.
@@ -211,10 +230,29 @@ void write_anything(t_write *x, t_symbol *msg, long ac, t_atom *av)
         path = arguments->l_size ? hatom_getsym(&arguments->l_head->l_hatom) : gensym("");
         llll_writenative((t_object *) x, path, to_write);
     } else if (writemsg == gensym("writetxt")) {
+        long general_flags = x->n_negativeoctaves ? LLLL_T_NEGATIVE_OCTAVES : 0;
+        long escape_flags = 0;
+        long backslash_flags = 0;
+
+        switch (x->n_escape) {
+            case 0:
+                break;
+            case 1:
+                escape_flags = LLLL_TE_BACKTICK;
+                backslash_flags = LLLL_TB_SPECIAL_AND_SEPARATORS;
+                break;
+            case 2:
+                escape_flags = LLLL_TE_DOUBLE_QUOTE;
+                backslash_flags = LLLL_TB_SPECIAL;
+                break;
+            case 3:
+                escape_flags = LLLL_TE_SMART;
+                backslash_flags = LLLL_TB_SMART;
+                break;
+        }
+        
         llll_destroyelem(arguments->l_head);
-        llll_writetxt((t_object *) x, to_write, arguments, 10, 0, "\t", -1,
-                      (x->n_backticks ? LLLL_T_BACKTICKS : 0) |
-                      (x->n_negativeoctaves ? LLLL_T_NEGATIVE_OCTAVES : 0));
+        llll_writetxt((t_object *) x, to_write, arguments, 10, 0, "\t", -1, general_flags, escape_flags, backslash_flags);
     } else {
         object_error((t_object *) x, "Invalid message");
         return;
@@ -245,7 +283,7 @@ t_write *write_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;
 	
 	if ((x = (t_write *) object_alloc_debug(write_class))) {
-        x->n_backticks = 1;
+        x->n_escape = 1;
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "");		
 		x->n_proxy = proxy_new_debug((t_object *) x, 1, &x->n_in);

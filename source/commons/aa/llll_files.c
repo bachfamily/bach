@@ -86,40 +86,19 @@ t_max_err bach_openfile_write(t_symbol *filename_sym, const char *default_filena
 	return err;
 }
 
-void llll_write(t_object *x, t_llll *ll, t_llll *msg, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth)
+void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth, long general_flags, long escape_flags, long backslash_flags)
 {
-    if (msg->l_size < 1) {
-        object_error((t_object *) x, "Invalid message");
-        llll_free(msg);
-        llll_free(ll);
-        return;
-    }
-    
-    t_symbol *writemsg = hatom_getsym(&msg->l_head->l_hatom);
-    if (writemsg == _sym_write) {
-        llll_destroyelem(msg->l_head);
-        t_symbol *path = msg->l_size ? hatom_getsym(&msg->l_head->l_hatom) : gensym("");
-        llll_writenative((t_object *) x, path, ll);
-    } else if (writemsg == gensym("writetxt")) {
-        llll_destroyelem(msg->l_head);
-        llll_writetxt((t_object *) x, ll, msg);
-    } else {
-        object_error((t_object *) x, "Invalid message");
-        return;
-    }
-}
-
-void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth, long flags)
-{
-	t_atom atoms[7];
+	t_atom atoms[9];
 	atom_setobj(atoms, ll);
     atom_setobj(atoms + 1, arguments);
     atom_setlong(atoms + 2, default_maxdecimals);
     atom_setlong(atoms + 3, default_wrap);
     atom_setobj(atoms + 4, (void *) default_indent);
     atom_setlong(atoms + 5, default_maxdepth);
-    atom_setlong(atoms + 6, flags);
-	defer(x, (method)llll_dowritetxt, NULL, 7, atoms);
+    atom_setlong(atoms + 6, general_flags);
+    atom_setlong(atoms + 7, escape_flags);
+    atom_setlong(atoms + 8, backslash_flags);
+	defer(x, (method)llll_dowritetxt, NULL, 9, atoms);
 }
 
 t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
@@ -132,7 +111,9 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     long wrap = atom_getlong(av + 3);
     char *default_indent = (char *) (av + 4)->a_w.w_obj;
     long maxdepth = atom_getlong(av + 5);
-    long flags = atom_getlong(av + 6);
+    long general_flags = atom_getlong(av + 6);
+    long escape_flags = atom_getlong(av + 7);
+    long backslash_flags = atom_getlong(av + 8);
     char *indent;
 
     t_symbol *filename_sym = NULL;
@@ -171,7 +152,7 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     }
     
 	//len = llll_to_text_buf(ll, &buf, 0, 10, LLLL_T_BACKTICKS, llll_add_trailing_zero);
-    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, flags, llll_add_trailing_zero);
+    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, general_flags, escape_flags, backslash_flags, llll_add_trailing_zero);
     
     if (llll_write_text_file(filename_sym, &len, buf) == FILE_ERR_CANTOPEN) {
         if (filename_sym)

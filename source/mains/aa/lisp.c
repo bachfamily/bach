@@ -179,7 +179,7 @@ void lisp_anything(t_lisp *x, t_symbol *msg, long ac, t_atom *av)
         // the 1 at the end means that a clone of the store contents must be returned
         ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 0);
     }
-    llll_to_text_buf(ll, &buf);
+    ////////////llll_to_text_buf(ll, &buf);
     
     cl_object result = lisp_lisp(buf);
     llll_release(ll);

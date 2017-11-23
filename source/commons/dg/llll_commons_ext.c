@@ -1066,7 +1066,7 @@ void llll_cpost(t_llll *ll)
 {
 #ifdef CONFIGURATION_Development
     char *buf1 = NULL;
-    llll_to_text_buf(ll, &buf1);
+    llll_to_text_buf(ll, &buf1, 0, 6, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
     cpost(buf1);
     bach_freeptr(buf1);
 #endif

@@ -49,18 +49,34 @@ typedef enum _llll_deparse_flags {
 
 // flags for llll_to_text_buf
 typedef enum _llll_text_flags {
-	LLLL_T_NONE								= 0x00,
-	LLLL_T_NULL								= 0x01,	// null is returned if list is empty
-	LLLL_T_NO_DOUBLE_QUOTES					= 0x02, // no double quotes around symbols in any case
-	LLLL_T_NO_BACKSLASH						= 0x04, // no backslash before reserved characters
-	LLLL_T_FORCE_DOUBLE_QUOTES				= 0x08, // all symbols are double-quoted (useful for Lisp/PWGL)
-	LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES	= 0x10, // all double quotes (including the forced ones, and the ones around symbols containing whitespace) are preceded by backslash
-    LLLL_T_FORCE_SINGLE_QUOTES				= 0x20, // all symbols are single-quoted (useful for SQL, used by dada, not bach)
-    LLLL_T_BACKTICKS                        = 0x40, // backtick symbols that can be mistaken for other data types (e.g. `c0)
-    LLLL_T_NEGATIVE_OCTAVES                 = 0x80, // negative octaves are allowed (i.e., pitches are always positive)
+	LLLL_T_NONE								= 0x0000,
+	LLLL_T_NULL								= 0x0001,	// null is returned if list is empty
+    LLLL_T_NEGATIVE_OCTAVES                 = 0x0002,   // negative octaves are used (i.e., pitches are always positive)
 } e_llll_text_flags;
 
-#define LLLL_T_COPYSYMBOLS (LLLL_T_NO_DOUBLE_QUOTES | LLLL_T_NO_BACKSLASH)
+typedef enum _llll_text_escape_flags {
+    LLLL_TE_NONE = 0,
+    LLLL_TE_BACKTICK, // backtick "dangerous" types
+    LLLL_TE_DOUBLE_QUOTE, // double-quote "dangerous" types
+    LLLL_TE_SMART,  // double-quote "dangerous" types when possible, otherwise backtick
+    
+    // special styles for export
+    LLLL_TE_PWGL_STYLE, // all symbols are surrounded by double quotes, and double quotes, backslashes and whitespace within symbols are escaped with a backslash; use it only in conjunction with LLLL_TB_PWGL_STYLE
+    LLLL_TE_SQL_STYLE, // all symbols are surrounded by single quotes, and single quotes within symbols are escaped by doubling; use it only in conjunction with LLLL_TB_SQL_STYLE
+    
+} e_llll_text_escape_flags;
+
+typedef enum _llll_text_backslash_flags {
+    LLLL_TB_NONE = 0,
+    LLLL_TB_SPECIAL, // backslash double quotes and backslashes
+    LLLL_TB_SPECIAL_AND_SEPARATORS, // backslash the above plus whitespace, commas, semicolons
+    LLLL_TB_SMART,
+
+    // special styles for export
+    LLLL_TB_PWGL_STYLE,
+    LLLL_TB_SQL_STYLE
+    
+} e_llll_text_backslash_flags;
 
 
 // flags telling llll_parse which bach-specific things should not be parsed,
@@ -404,11 +420,11 @@ void llll_printobject_free(t_object *printobj, t_symbol *name, long ac, t_atom *
 // otherwise, it will be considered initialized - but it could be relocated by llll_deparse.
 // offset is referred to *out (leaves some atoms at the beginning, useful for preset)
 // flags are LLLL_D_QUOTE, LLLL_D_MAX and LLLL_D_FLOAT64
-t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flags);
+t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flags);
 
 
 // same as before, but directly deparses to an atomarray
-t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags);
+t_atomarray *llll_deparse_to_aa(t_llll *ll, long flags);
 
 
 // returns a t_symbol with the backticked txt
@@ -1024,19 +1040,33 @@ void *llll_stack_pop(t_llll_stack *x);
 // fn must return a char* to be put in the buffer instead of the standard thing,
 // or NULL (in which case the standard format will be used)
 // the return value of fn will then be freed by llll_to_text_buf
-t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset = 0, t_atom_long max_decimals = 6,
-                             long flags = 0, text_buf_fn fn = NULL, t_bool leave_final_space = false);
+t_atom_long llll_to_text_buf(t_llll *ll,
+                             char **buf,
+                             t_atom_long offset,
+                             t_atom_long max_decimals,
+                             long general_flags,
+                             long escape_flags,
+                             long backslash_flags,
+                             text_buf_fn fn);
 
 // as llll_to_text_buf, with some extra formatting:
 // wrap is the maximum length of one line of the output buffer; if wrap == 0, no word wrapping is performed
 // indent is the indentation string per llll level (it will usually be a tab or a sequence of spaces)
 //   if indent set to NULL, sublists are not placed in new lines; to go to newlines without indenting, use ""
 // maxdepth is the maximum depth at which sublists should be placed in new lines
-t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset = 0, t_atom_long max_decimals = 6,
-                                    t_atom_long wrap = 0, const char *indent = NULL, t_atom_long maxdepth = -1,
-                                    long flags = 0, text_buf_fn fn = NULL);
+t_atom_long llll_to_text_buf_pretty(t_llll *ll,
+                                    char **buf,
+                                    t_atom_long offset,
+                                    t_atom_long max_decimals,
+                                    t_atom_long wrap,
+                                    const char *indent,
+                                    t_atom_long maxdepth,
+                                    long general_flags,
+                                    long escape_flags,
+                                    long backslash_flags,
+                                    text_buf_fn fn);
 
-t_atom_long hatom_to_text_buf(t_hatom *a, char **buf, t_atom_long offset = 0, t_atom_long max_decimals = 6, long flags = 0, text_buf_fn fn = NULL);
+t_atom_long hatom_to_text_buf(t_hatom *a, char **buf, t_atom_long offset = 0, t_atom_long max_decimals = 6, text_buf_fn fn = NULL);
 
 // not working
 t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_atom_long offset = 0, t_atom_long max_decimals = 6, long flags = 0, text_buf_fn fn = NULL);

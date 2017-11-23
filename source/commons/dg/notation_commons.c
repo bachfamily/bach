@@ -324,7 +324,7 @@ int get_names_as_text(t_llll *ll, char *buf, long buf_size)
 	// llll_to_text_buf_limited(ll, buf, buf_size, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
 
 	char *temp = NULL;
-	llll_to_text_buf(ll, &temp, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
+	llll_to_text_buf(ll, &temp, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 	long size = snprintf_zero(buf, buf_size, "%s", temp);
 	bach_freeptr(temp);
     return size;
@@ -382,7 +382,7 @@ void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* 
 			}
 		} else if ((marker->role == k_MARKER_ROLE_TEMPO || marker->role == k_MARKER_ROLE_TIME_SIGNATURE) && marker->content) {
 			char *buf = NULL;
-			llll_to_text_buf(marker->content, &buf, 0, 2, 0, NULL);
+			llll_to_text_buf(marker->content, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
             if (namewidth)
                 jfont_text_measure(jf, buf, namewidth, &height);
 			write_text(g, jf, color, buf, name_direction < 0 ? marker_x - 3 * r_ob->zoom_y - marker->name_uwidth * r_ob->zoom_y : marker_x + 3 * r_ob->zoom_y, marker_y1 + notationobj_get_marker_voffset(r_ob, marker), 200 * r_ob->zoom_y, marker_y2 - marker_y1 - 6 * r_ob->zoom_y,
@@ -2473,7 +2473,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
         else {
             t_llll *ll = note_get_single_slot_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, slot, false);
             if (ll) llll_behead(ll);
-            llll_to_text_buf(ll, &buf);
+            llll_to_text_buf(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
             llll_free(ll);
             must_free = true;
         }
@@ -2770,7 +2770,8 @@ void get_legend(t_notation_obj *r_ob, t_note *curr_nt, t_bpt *selected_breakpoin
         time_to_char_buf(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? temp_nt->parent->duration_ms : temp_nt->duration, dur_text, 256);
 
 		if (r_ob->show_note_names) {
-            const char *notename = note_get_pitch(r_ob, temp_nt).toCString();
+            char notename[255];
+            note_get_pitch(r_ob, temp_nt).toTextBuf(notename, 255);
 			if (obj_type == k_NOTATION_OBJECT_SCORE)
 				snprintf(legend_text, 255, "%s   Cents %.1f   Duration " RATIONAL_PRINTF_FMT "   Velocity %ld   Onset %s   Duration %s", notename, temp_nt->midicents, temp_nt->parent->r_sym_duration.r_num, temp_nt->parent->r_sym_duration.r_den, temp_nt->velocity, onset_text, dur_text);
 			else if (obj_type == k_NOTATION_OBJECT_ROLL)
@@ -2988,7 +2989,7 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
         } else {
             t_llll *ll = voiceensemble_get_voicenumbers(r_ob, voice, true);
             char *llbuf = NULL;
-            llll_to_text_buf(ll, &llbuf);
+            llll_to_text_buf(ll, &llbuf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
             snprintf_zero(legend_text, 256, "Voices %s", llbuf, buf);
             bach_freeptr(llbuf);
             llll_free(ll);
@@ -3037,7 +3038,8 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
         time_to_char_buf(r_ob, obj_type == k_NOTATION_OBJECT_SCORE ? nt->parent->duration_ms : nt->duration, dur_text, 256);
         
         if (r_ob->show_note_names) {
-            const char *notename = note_get_pitch(r_ob, nt).toCString();
+            char notename[255];
+            note_get_pitch(r_ob, nt).toTextBuf(notename, 255);
             if (obj_type == k_NOTATION_OBJECT_SCORE)
                 snprintf(legend_text, 255, "%s   Cents %.1f   Duration " RATIONAL_PRINTF_FMT "   Velocity %ld   Onset %s   Duration %s", notename, nt->midicents, nt->parent->r_sym_duration.r_num, nt->parent->r_sym_duration.r_den, nt->velocity, onset_text, dur_text);
             else if (obj_type == k_NOTATION_OBJECT_ROLL)
@@ -3114,7 +3116,8 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
                 if (all_chords_have_one_note && start->firstnote) {
                     t_note *nt = start->firstnote;
                     if (r_ob->show_note_names) {
-                        const char *notename = note_get_pitch(r_ob, nt).toCString();
+                        char notename[255];
+                        note_get_pitch(r_ob, nt).toTextBuf(notename, 255);
                         if (obj_type == k_NOTATION_OBJECT_SCORE)
                             snprintf(legend_text, 255, "%s   Cents %.1f   Duration " RATIONAL_PRINTF_FMT "   Velocity %ld   Onset %s   Duration %s", notename, nt->midicents, sym_duration.r_num, sym_duration.r_den, nt->velocity, onset_text, dur_text);
                         else if (obj_type == k_NOTATION_OBJECT_ROLL)
@@ -3150,7 +3153,8 @@ void notationobj_get_legend(t_notation_obj *r_ob, char *legend_text)
 
                 t_note *nt = startnt;
                 if (r_ob->show_note_names) {
-                    const char *notename = note_get_pitch(r_ob, nt).toCString();
+                    char notename[255];
+                    note_get_pitch(r_ob, nt).toTextBuf(notename, 255);
                     if (obj_type == k_NOTATION_OBJECT_SCORE)
                         snprintf(legend_text, 255, "%s   Cents %.1f   Duration " RATIONAL_PRINTF_FMT "   Velocity %ld   Onset %s   Duration %s", notename, nt->midicents, sym_duration.r_num, sym_duration.r_den, nt->velocity, onset_text, dur_text);
                     else if (obj_type == k_NOTATION_OBJECT_ROLL)
@@ -14670,7 +14674,7 @@ char refine_beams_for_level_once(t_notation_obj *r_ob, t_llll *box, char for_sub
 	
 	#ifdef BACH_RHYTHMIC_TREE_DEBUG
 		char *buf = NULL;
-		llll_to_text_buf(box, &buf, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+		llll_to_text_buf(box, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 		bach_freeptr(buf);
 	#endif
 	
@@ -14823,7 +14827,7 @@ char refine_beams_for_level_once(t_notation_obj *r_ob, t_llll *box, char for_sub
 	
 	#ifdef BACH_RHYTHMIC_TREE_DEBUG
 		char *buf2 = NULL;
-		llll_to_text_buf(box, &buf2, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+		llll_to_text_buf(box, &buf2, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 		bach_freeptr(buf2);
 	#endif	
 	
@@ -15000,7 +15004,7 @@ long regroup_tuplets_into_larger_multipliers_for_level_fn(void *data, t_hatom *a
 		
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
 			char *buf = NULL;
-			llll_to_text_buf(box, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+			llll_to_text_buf(box, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 			bach_freeptr(buf);
 		#endif
 			
@@ -15143,7 +15147,7 @@ void cpost_llll_rt(t_llll *ll, const char *pre)
 {
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
     char *buf = NULL;
-    llll_to_text_buf(ll, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1); //buf+150
+    llll_to_text_buf(ll, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1); //buf+150
     cpost("%s: %s", pre, buf);
     bach_freeptr(buf);
 #endif
@@ -15154,12 +15158,12 @@ void cpost_llllelem_rt(t_llllelem *llel, const char *pre)
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
     char *buf = NULL;
     if (hatom_gettype(&llel->l_hatom) == H_LLLL) {
-        llll_to_text_buf(hatom_getllll(&llel->l_hatom), &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1); //buf+150
+        llll_to_text_buf(hatom_getllll(&llel->l_hatom), &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1); //buf+150
         cpost("%s (llll): %s", pre, buf);
     } else {
         t_llll *ll = llll_get();
         llll_appendhatom_clone(ll, &llel->l_hatom);
-        llll_to_text_buf(ll, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1); //buf+150
+        llll_to_text_buf(ll, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1); //buf+150
         cpost("%s (single elem): %s", pre, buf);
         llll_free(ll);
     }
@@ -15395,7 +15399,7 @@ void correct_tuplets(t_notation_obj *r_ob, t_measure *measure, char beaming_calc
 	
 	#ifdef BACH_RHYTHMIC_TREE_DEBUG
 		char *buf = NULL;
-		llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 2, 0, NULL);
+		llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 		bach_freeptr(buf);
 	#endif
 	
@@ -15414,7 +15418,7 @@ void correct_tuplets(t_notation_obj *r_ob, t_measure *measure, char beaming_calc
 	
 	#ifdef BACH_RHYTHMIC_TREE_DEBUG
 		char *buf2 = NULL;
-		llll_to_text_buf(measure->rhythmic_tree, &buf2, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+		llll_to_text_buf(measure->rhythmic_tree, &buf2, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 		bach_freeptr(buf2);
 	#endif
 	
@@ -15467,7 +15471,7 @@ void assign_default_beam_numbers_and_refine_beams(t_notation_obj *r_ob, t_measur
 		
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
 			char *buf = NULL;
-			llll_to_text_buf(box, &buf, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+			llll_to_text_buf(box, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 			bach_freeptr(buf);
 		#endif
 
@@ -15479,7 +15483,7 @@ void assign_default_beam_numbers_and_refine_beams(t_notation_obj *r_ob, t_measur
 					
 					#ifdef BACH_RHYTHMIC_TREE_DEBUG
 						char *buf = NULL;
-						llll_to_text_buf(this_llll, &buf, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+						llll_to_text_buf(this_llll, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 						bach_freeptr(buf);
 					#endif
 					
@@ -15501,7 +15505,7 @@ void assign_default_beam_numbers_and_refine_beams(t_notation_obj *r_ob, t_measur
 
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
 			char *buf2 = NULL;
-			llll_to_text_buf(box, &buf2, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+			llll_to_text_buf(box, &buf2, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 			bach_freeptr(buf2);
 		#endif
 		
@@ -15692,7 +15696,7 @@ void get_rhythm_drawable_one_step(t_notation_obj *r_ob, t_llll *box, char only_c
 				llll_flatten(drawablellll, 0, 0);
 				#ifdef BACH_RHYTHMIC_TREE_DEBUG
 				char *buf = NULL;
-				llll_to_text_buf(drawablellll, &buf, 0, 0, 0, NULL);
+				llll_to_text_buf(drawablellll, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 				#endif 
 				// We filter the zeros which might have appeared via the recursion of get_duration_drawable (and the negatives, which - in turn - should never appear)
 				llll_filter_zeros_and_negatives(drawablellll);
@@ -15851,8 +15855,8 @@ void merge_rests_and_alltied_chords_one_step(t_notation_obj *r_ob, t_measure *me
 
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
 		char *buf = NULL, *buf2 = NULL;
-		llll_to_text_buf(box, &buf2, 0, 0, 0, NULL); //buf2 + 90
-		llll_to_text_buf(box, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+		llll_to_text_buf(box, &buf2, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL); //buf2 + 90
+		llll_to_text_buf(box, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 #endif
 
 		while (box_elem && box_elem->l_next) { // cycle on the rhythm
@@ -16093,7 +16097,7 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
 	#ifdef BACH_RHYTHMIC_TREE_DEBUG
 		char *buf = NULL;
 		llll_check(measure->rhythmic_tree);
-		llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity0); //buf + 50
+		llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0); //buf + 50
 		bach_freeptr(buf);
 	#endif
 	
@@ -16196,8 +16200,8 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
 				
 				#ifdef BACH_RHYTHMIC_TREE_DEBUG
 					char *buf = NULL;
-					llll_to_text_buf(this_box_level, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
-					llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+					llll_to_text_buf(this_box_level, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
+					llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 					llll_print_named(this_box_level, gensym("funall"), 0, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
 					llll_check(measure->rhythmic_tree);
 					bach_freeptr(buf);
@@ -16273,7 +16277,7 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
 				
 				#ifdef BACH_RHYTHMIC_TREE_DEBUG
 					char *buf2 = NULL;
-					llll_to_text_buf(this_box_level, &buf2, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+					llll_to_text_buf(this_box_level, &buf2, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 					bach_freeptr(buf2);
 				#endif
 			} else
@@ -16401,8 +16405,8 @@ void flatten_level_if_singleton(t_notation_obj *r_ob, t_llll *box, t_measure *me
 				#ifdef BACH_RHYTHMIC_TREE_DEBUG
 					char *buf = NULL;
 					char *buf2 = NULL;
-					llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
-					llll_to_text_buf(box, &buf2, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+					llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
+					llll_to_text_buf(box, &buf2, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 					bach_freeptr(buf);
 					bach_freeptr(buf2);
 					llll_check(measure->rhythmic_tree);
@@ -16460,8 +16464,7 @@ void flatten_singleton_levels(t_notation_obj *r_ob, t_measure *measure, long exc
 			t_llllelem *elem = (t_llllelem *)hatom_getobj(&scannedelem->l_hatom);
 			if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
 				#ifdef BACH_RHYTHMIC_TREE_DEBUG
-					char *buf = NULL;
-					llll_to_text_buf(hatom_getllll(&elem->l_hatom), &buf, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+					char *buf = NULL;LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 					llll_check(tree);
 					bach_freeptr(buf);
 				#endif
@@ -16734,7 +16737,7 @@ long flatten_ignore_levels_fn(void *data, t_hatom *a, const t_llll *address){
 
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
 			char *buf = NULL;
-			llll_to_text_buf(box, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1); //buf +50
+			llll_to_text_buf(box, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1); //buf +50
 			bach_freeptr(buf);
 		#endif
 
@@ -16743,7 +16746,7 @@ long flatten_ignore_levels_fn(void *data, t_hatom *a, const t_llll *address){
 
 			#ifdef BACH_RHYTHMIC_TREE_DEBUG
 				char *buf = NULL;
-				llll_to_text_buf(box, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+				llll_to_text_buf(box, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 				bach_freeptr(buf);
 			#endif
 			
@@ -16780,7 +16783,7 @@ long remove_force_tuplet_levels_fn(void *data, t_hatom *a, const t_llll *address
 
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
         char *buf2 = NULL;
-        llll_to_text_buf(box, &buf2, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+        llll_to_text_buf(box, &buf2, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
         rhythmic_tree_debug_post(NULL, "Removing force tuplet levels: ", buf2);
         bach_freeptr(buf2);
 #endif
@@ -16798,7 +16801,7 @@ void re_check_beams_for_lower_levels(t_notation_obj *r_ob, t_measure *meas, t_ll
 		
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
 			char *buf2 = NULL;
-			llll_to_text_buf(dad, &buf2, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+			llll_to_text_buf(dad, &buf2, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 			rhythmic_tree_debug_post((t_object *) r_ob, "  > Wait: DAD %s is UNBEAMED, so we check if some inner beamings change", buf2);
 			bach_freeptr(buf2);
 		#endif
@@ -16829,7 +16832,7 @@ void re_check_beams_for_lower_levels(t_notation_obj *r_ob, t_measure *meas, t_ll
 
 					#ifdef BACH_RHYTHMIC_TREE_DEBUG
 						char *buf2 = NULL;
-						llll_to_text_buf(sonll, &buf2, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+						llll_to_text_buf(sonll, &buf2, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 						rhythmic_tree_debug_post((t_object *) r_ob, "  > Wait: indeed SON %s beam number has been changed to %d", buf2, son_prop->max_beam_number);
 						bach_freeptr(buf2);
 					#endif
@@ -16924,7 +16927,7 @@ void check_correct_beaming(t_notation_obj *r_ob, t_measure *meas){
 						
 						#ifdef BACH_RHYTHMIC_TREE_DEBUG
 							char *buf1 = NULL;
-							llll_to_text_buf(dad_llll, &buf1, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+							llll_to_text_buf(dad_llll, &buf1, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 							rhythmic_tree_debug_post((t_object *) r_ob, "Setting to LEAST SON %s beam_number %d", buf1, littlest_son_prop->beam_number);
 							verbose_post_rhythmic_tree(r_ob, meas, gensym("step - partial"), 2);
 							bach_freeptr(buf1);
@@ -16939,7 +16942,7 @@ void check_correct_beaming(t_notation_obj *r_ob, t_measure *meas){
 						
 						#ifdef BACH_RHYTHMIC_TREE_DEBUG
 							char *buf1 = NULL;
-							llll_to_text_buf(dad_llll, &buf1, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+							llll_to_text_buf(dad_llll, &buf1, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 							rhythmic_tree_debug_post((t_object *) r_ob, "Analyzing DAD %s", buf1); //buf1 + 70
 							bach_freeptr(buf1);
 						#endif
@@ -16957,7 +16960,7 @@ void check_correct_beaming(t_notation_obj *r_ob, t_measure *meas){
 								
 								#ifdef BACH_RHYTHMIC_TREE_DEBUG
 									char *buf2 = NULL;
-									llll_to_text_buf(sonll, &buf2, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+									llll_to_text_buf(sonll, &buf2, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 									rhythmic_tree_debug_post((t_object *) r_ob, "  - SON %s has beam_number %d", buf2, son_prop->beam_number);
 									bach_freeptr(buf2);
 								#endif
@@ -16992,7 +16995,7 @@ void check_correct_beaming(t_notation_obj *r_ob, t_measure *meas){
 						
 						#ifdef BACH_RHYTHMIC_TREE_DEBUG
 							char *buf3 = NULL;
-							llll_to_text_buf(dad_llll, &buf3, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+							llll_to_text_buf(dad_llll, &buf3, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 							rhythmic_tree_debug_post((t_object *) r_ob, "After further refining DAD is %s", buf3);
 							bach_freeptr(buf3);
 						#endif
@@ -17304,7 +17307,7 @@ long find_tuplets_for_level_fn(void *data, t_hatom *a, const t_llll *address)
 		{
 			char *buf = NULL;
 			object_post((t_object *) r_ob, "    --------- ");
-			llll_to_text_buf(box, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1); // buf +60
+			llll_to_text_buf(box, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1); // buf +60
 			object_post((t_object *) r_ob, "Scanning for tuplet box: %s", buf);
 			bach_freeptr(buf);
 		}
@@ -17767,7 +17770,7 @@ char scan_single_box_for_syncopations(t_notation_obj *r_ob, t_measure *measure, 
  
  	#ifdef BACH_RHYTHMIC_TREE_DEBUG
 		char *buf = NULL;
-		llll_to_text_buf(box, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+		llll_to_text_buf(box, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 		bach_freeptr(buf);
 	#endif
 	
@@ -18588,8 +18591,8 @@ void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beamin
 
 	#ifdef BACH_RHYTHMIC_TREE_DEBUG
 	char *buff = NULL, *buff2 = NULL;
-	llll_to_text_buf(measure->rhythmic_tree, &buff, 0, 2, 0, NULL); 
-	llll_to_text_buf(measure->rhythmic_tree, &buff2, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0); 
+	llll_to_text_buf(measure->rhythmic_tree, &buff, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
+	llll_to_text_buf(measure->rhythmic_tree, &buff2, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
 	bach_freeptr(buff);
 	bach_freeptr(buff2);
 	#endif
@@ -19326,7 +19329,7 @@ long build_measure_beams_for_level_fn(void *data, t_hatom *a, const t_llll *addr
 		
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
 			char *foo = NULL;
-			llll_to_text_buf(box, &foo, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+			llll_to_text_buf(box, &foo, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 			bach_freeptr(foo);
 		#endif
 		
@@ -19845,7 +19848,7 @@ void build_measure_tuplet_beams(t_notation_obj *r_ob, t_measure *measure){
 			if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
 				#ifdef BACH_RHYTHMIC_TREE_DEBUG
 					char *buf = NULL;
-					llll_to_text_buf(hatom_getllll(&elem->l_hatom), &buf, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+					llll_to_text_buf(hatom_getllll(&elem->l_hatom), &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
 					bach_freeptr(buf);
 				#endif
 				
@@ -33178,7 +33181,7 @@ void recalculate_marker_name_uwidth(t_notation_obj *r_ob, t_marker *marker)
 		} else {
 			if (marker->content) {
 				char *buf = NULL;
-				llll_to_text_buf(marker->content, &buf, 0, 2, 0, NULL);
+				llll_to_text_buf(marker->content, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 				jfont_text_measure(jf_text_markers, buf, &width, &height);
 				bach_freeptr(buf);
 			}
@@ -36484,7 +36487,7 @@ void verbose_post_label_families(t_notation_obj *r_ob)
 	for (i = 0, elem = r_ob->m_labels.families->l_head; elem; elem = elem->l_next, i++) {
 		t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&elem->l_hatom);
 		char *buf = NULL;
-		llll_to_text_buf(fam->label, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
+		llll_to_text_buf(fam->label, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 		dev_post("- Family %ld: name %s (%ld elements)", i, buf, fam->items->l_size);
 		bach_freeptr(buf);
 	}
@@ -38871,7 +38874,7 @@ long header_types_to_undo_op(long header_types){
 void post_undo_redo_tick(t_notation_obj *r_ob, long what, t_undo_redo_information *info)
 {
 	char *buf = NULL, *buf2 = NULL; 
-	llll_to_text_buf(info->n_it_content, &buf, 0, 2, 0, NULL);
+	llll_to_text_buf(info->n_it_content, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 	object_post((t_object *) r_ob, " > %s", what == k_UNDO ? "UNDO" : (what == k_REDO ? "REDO" : "UNKNOWN OPERATION"));
 	object_post((t_object *) r_ob, " > ID = %ld", info->n_it_ID);
 	object_post((t_object *) r_ob, " > TYPE = %s", info->n_it_type == k_CHORD ? "chord" : (info->n_it_type == k_VOICE ? "voice" : (info->n_it_type == k_MEASURE ? "measure" : (info->n_it_type == k_HEADER_DATA ? "header data" : (info->n_it_type == k_WHOLE_NOTATION_OBJECT ? "whole notation object" : "unknown")))));

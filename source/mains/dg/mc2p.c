@@ -173,7 +173,7 @@ long substitute_mc_with_pitches_fn(void *data, t_hatom *a, const t_llll *address
     
     if (x->print_octave == 0) {
         // output symbol without octave
-        hatom_setsym(a, gensym(p.toCString(false)));
+        hatom_setsym(a, p.toSym(false));
     }
     
 	return 0;
