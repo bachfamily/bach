@@ -128,9 +128,9 @@ int T_EXPORT main()
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 	
     CLASS_ATTR_LONG(c, "escape",	0,	t_write, n_escape);
-    CLASS_ATTR_FILTER_CLIP(c, "escape", 0, 2);
+    CLASS_ATTR_FILTER_CLIP(c, "escape", 0, 3);
     CLASS_ATTR_LABEL(c, "escape", 0, "Escaping style");
-    CLASS_ATTR_ENUMINDEX(c,"escape", 0, "None Backtick Double Smart");
+    CLASS_ATTR_ENUMINDEX(c,"escape", 0, "None Backtick Double Smart");
 
     // @description When set to 1, all the symbols that could be interpreted as different data types
     // (e.g., the symbol <b>12</b>, the symbol <b>1/3</b> or the symbol <b>A1</b>,

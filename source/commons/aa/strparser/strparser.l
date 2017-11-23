@@ -12,6 +12,7 @@ SIMPLEFLOAT ((-?)(([0-9]*\.[0-9]+)|([0-9]+\.)))
 RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
+ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
 
 %{
 	#define BACH_MAX
@@ -112,13 +113,13 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 <INITIAL,NO_L,NO_e,NO_Le,NO_l,NO_Ll,NO_el,NO_Lel,NO_p,NO_Lp,NO_ep,NO_Lep,NO_lp,NO_Llp,NO_elp,NO_Lelp,NO_r,NO_Lr,NO_er,NO_Ler,NO_lr,NO_Llr,NO_elr,NO_Lelr,NO_pr,NO_Lpr,NO_epr,NO_Lepr,NO_lpr,NO_Llpr,NO_elpr,NO_Lelpr,NO_s,NO_Ls,NO_es,NO_Les,NO_ls,NO_Lls,NO_els,NO_Lels,NO_ps,NO_Lps,NO_eps,NO_Leps,NO_lps,NO_Llps,NO_elps,NO_Lelps,NO_rs,NO_Lrs,NO_ers,NO_Lers,NO_lrs,NO_Llrs,NO_elrs,NO_Lelrs,NO_prs,NO_Lprs,NO_eprs,NO_Leprs,NO_lprs,NO_Llprs,NO_elprs,NO_Lelprs>{
     
-    \`[^\\]* {
+    \`[^\\ \t\n]* {
         parserpost(" lex: BACKTICKED ELEMENT %s\n", yytext + 1);
         yylval->sym = gensym(yytext + 1);
         return SYMBOL;
     }
     
-    \`.* {
+    \`([^ \t\n]|("\\"(.|\n)))*"\\"? {
         parserpost(" lex: BACKTICKED ELEMENT %s\n", yytext + 1);
         yylval->sym = gensym_unescape(yytext + 1);
         return SYMBOL;
@@ -166,7 +167,7 @@ ACCIDENTAL ([#bxdq\^v]+)
         return SYMBOL;
     }
     
-    [^\(\) \t\n]* {
+    ([^\(\) \t\n]|("\\"[^\(\)]))*"\\"? {
         parserpost(" lex: SYMBOL %s\n", yytext);
         yylval->sym = gensym_unescape(yytext);
         return SYMBOL;
@@ -181,7 +182,7 @@ ACCIDENTAL ([#bxdq\^v]+)
         return SYMBOL;
     }
     
-    [^ \t\n]* {
+    ([^ \t\n]|("\\"(.|\n)))*"\\"? {
         parserpost(" lex: SYMBOL %s\n", yytext);
         yylval->sym = gensym_unescape(yytext);
         return SYMBOL;
