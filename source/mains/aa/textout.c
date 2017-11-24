@@ -346,7 +346,7 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
         for (i = x->n_proxies; i >= 0; i--, this_outlets++)
             *this_outlets = '4';
         *this_outlets = 0;
-        llllobj_obj_setup((t_llllobj_object *) x, 0, outlets);
+        llllobj_obj_setup((t_llllobj_object *) x, 0, outlets, NULL);
         llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, &out);
 
     } else
