@@ -63,6 +63,8 @@ double hatom_getdouble(const t_hatom *h)
 	}
 }
 
+#define DOUBLE_TO_RATIONAL_DENOMINATOR (1000*27*7)
+
 t_rational hatom_getrational(const t_hatom *h)
 {
 	t_rational r = {0,0};
@@ -73,8 +75,9 @@ t_rational hatom_getrational(const t_hatom *h)
 			return r;
 			break;
 		case H_DOUBLE: // TODO: can be greatly improved!!!!
-			r.r_num = h->h_w.w_double;
-			r.r_den = 1;
+            r.r_num = h->h_w.w_double * DOUBLE_TO_RATIONAL_DENOMINATOR;
+			r.r_den = DOUBLE_TO_RATIONAL_DENOMINATOR;
+            r.reduce();
 			return r;
 			break;
 		case H_RAT:
