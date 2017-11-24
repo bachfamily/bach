@@ -93,18 +93,19 @@
 	<attributelist>
 		<attribute name="auto" get="1" set="1" type="int" size="1">
 			<digest>
-				
+				Output llll Automatically
 			</digest>
 			<description>
 				When set to 1, the llll is automatically output immediately after being read from disk.
 			</description>
 			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output llll Automatically" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="ignore" get="1" set="1" type="symbol" size="1">
 			<digest>
-				
+				Ignore Categories
 			</digest>
 			<description>
 				The <m>ignore</m> attribute allows preventing certain categories
@@ -148,6 +149,7 @@
 				<b>Mahler (Bernstein).aif</b> even if the <m>ignore</m> attribute is not set.
 			</description>
 			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Ignore Categories" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>

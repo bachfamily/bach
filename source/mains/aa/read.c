@@ -104,12 +104,14 @@ int T_EXPORT main()
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	CLASS_ATTR_LONG(c, "auto",	0,	t_read, n_auto);
+    CLASS_ATTR_LABEL(c, "auto", 0, "Output llll Automatically");
 	CLASS_ATTR_FILTER_CLIP(c, "auto", 0, 1);
 	CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
 	CLASS_ATTR_BASIC(c, "auto", 0);	
 	// @description When set to 1, the llll is automatically output immediately after being read from disk.
     
     CLASS_ATTR_SYM(c, "ignore",	0,	t_read, n_ignore);
+    CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
     CLASS_ATTR_ACCESSORS(c, "ignore", read_getattr_ignore, read_setattr_ignore);
     // @description The <m>ignore</m> attribute allows preventing certain categories
     // of elements to be interpreted according to the usual bach syntax.

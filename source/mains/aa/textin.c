@@ -111,6 +111,7 @@ int T_EXPORT main()
     
     /*
      CLASS_ATTR_LONG(c, "ignore",	0,	t_textin, n_flags);
+     CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
      // @description The <m>ignore</m> attribute allows preventing certain categories
      // of elements to be interpreted according to the usual bach syntax.
      // Categories are expressed by letters, according to the following table:<br />
