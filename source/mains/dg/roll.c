@@ -3144,7 +3144,12 @@ void roll_play(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         } else if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE) {
             object_warn((t_object *)x, "Can't play: already playing in preschedule mode");
         } else {
-            object_warn((t_object *)x, "Can't play: already playing!");
+            // normal play called when a previous normal play was already ongoing.
+            // For bw compatibility this will stop the existing play and trigger a new play
+            roll_do_stop(x, s, argc, argv);
+            x->r_ob.playing_scheduling_type = k_SCHEDULING_STANDARD;
+            schedule_delay(x, (method) roll_do_play, 0, s, argc, argv);
+//            object_warn((t_object *)x, "Can't play: already playing!");
         }
 	} else {
         x->r_ob.playing_scheduling_type = k_SCHEDULING_STANDARD;
