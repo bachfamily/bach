@@ -301,7 +301,7 @@ void llllelem_reset(t_llllelem *x)
 	x->l_thing.w_obj = NULL;
 }
 
-float parse_64bit_float(t_atom *av)
+double parse_64bit_float(t_atom *av)
 {
     t_uint64 l;
     double *f = (double *) &l;
