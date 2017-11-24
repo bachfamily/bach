@@ -181,6 +181,8 @@ void textin_anything(t_textin *x, t_symbol *msg, long ac, t_atom *av)
     long inlet = proxy_getinlet((t_object *) x);
     
     t_llll *ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_CLONE, x->n_ignore);
+    if (!ll)
+        return;
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, inlet, ll, x->n_ignore);
     llll_release(ll);
 }

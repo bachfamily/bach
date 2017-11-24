@@ -239,6 +239,7 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
                     remainder -= dblsharp;
                 } else if (remainder >= sharp) {
                     *(buf++) = '#';
+                    remainder -= sharp;
                 } else if (remainder >= qrtrsharp) {
                     *(buf++) = 'q';
                     remainder -= qrtrsharp;
@@ -262,19 +263,24 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
                 }
             }
         }
+        
+        long len = 0;
+        
         if (include_octave) {
             if (remainder > natural)
-                count += snprintf_zero(buf, bufSize - count, "%d+%d/%dt", p_octave, remainder.num(), remainder.den());
+                len = snprintf_zero(buf, bufSize - count, "%d+%d/%dt", p_octave, remainder.num(), remainder.den());
             else if (remainder < natural)
-                count += snprintf_zero(buf, bufSize - count, "%d%d/%dt", p_octave, remainder.num(), remainder.den());
+                len = snprintf_zero(buf, bufSize - count, "%d%d/%dt", p_octave, remainder.num(), remainder.den());
             else
-                count += snprintf_zero(buf, bufSize - count, "%d", p_octave);
+                len= snprintf_zero(buf, bufSize - count, "%d", p_octave);
         } else {
             if (remainder > natural)
-                count += snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
+                len = snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
             else if (remainder < natural)
-                count += snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
+                len = snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
         }
+        buf += len;
+        count += len;
     } else { // if (octave < 0 && !always_positive)
         t_pitch mirrored = -*this;
         if (++count == bufSize) { *buf = 0; return count - 1; }
@@ -304,6 +310,7 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
                     remainder -= dblsharp;
                 } else if (remainder >= sharp) {
                     *(buf++) = '#';
+                    remainder -= sharp;
                 } else if (remainder >= qrtrsharp) {
                     *(buf++) = 'q';
                     remainder -= qrtrsharp;
