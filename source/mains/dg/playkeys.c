@@ -477,6 +477,8 @@ int T_EXPORT main()
     CLASS_ATTR_ENUMINDEX(c,"nullmode", 0, "Never For Empty Keys For Unmatched Keys");
     CLASS_ATTR_BASIC(c, "nullmode", 0);
     // @description Handles when <b>null</b> is output from a given key outlet.
+    // 0 = Never; 1 = only for keys without any content (default); 2 = also for unmatched keys (e.g. keys that has no meaning for the specific notation item,
+    // such as velocity for markers, etc.).
 
     
     CLASS_ATTR_LONG(c, "defaultbreakpoints",		0,	t_playkeys, n_use_default_breakpoints);

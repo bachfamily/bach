@@ -495,7 +495,6 @@ long parse_string_to_dynamics_once(t_notation_obj *r_ob, char *buf, char *dynami
 
 
 
-// returns 1 if has crescendo, -1 if it has diminuendo, 0 otherwise
 void parse_string_to_dynamics_ext(t_notation_obj *r_ob, char *buf, char dynamics[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, char *complete_deparsed_string, long complete_deparsed_string_alloc)
 {
     if (!buf || !buf[0]) {
