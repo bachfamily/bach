@@ -1890,6 +1890,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 				long num_dots = chord->num_dots;
 				char chordtype[16], normal_type[16];
 				t_rational screen_accidental;
+                char we_have_already_exported_dynamics_for_this_chord = false;
 				
 				xml_value_to_name(chord->figure.r_den, chordtype);
 				
@@ -1909,7 +1910,10 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 				if (num_tuplets)
 					xml_value_to_name(tuplet_info[0].tuplet_actual_type.r_den, normal_type);
 					
+                
+                // cycle on notes
 				for (isfirstnote = 1, note = chord->firstnote; isfirstnote || note; isfirstnote = 0, note = note ? note->next : NULL) {
+                    
 					// dynamics and slots
 					if (note) {
 						char dynamics_txt[16];
@@ -1925,32 +1929,72 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 							snprintf_zero(dynamics_txt, 16, "%lf", (double) (note->velocity * 100. / 90.));
 							mxmlElementSetAttr(soundxml, "dynamics", dynamics_txt);
 						}
-						if (dynamics_slot >= 0) {
+                        
+                        
+                        /// EXPORT FOR DYNAMICS
+						if (dynamics_slot >= 0) { // *if* we export the dynamics
 							t_slot *slot = &note->slot[dynamics_slot];
                             t_bool single = x->r_ob.slotinfo[dynamics_slot].slot_singleslotfortiednotes;
-							if (slot->firstitem && slot->firstitem->item && !(note->tie_from && single)) {
+                            
+							if (slot->firstitem && slot->firstitem->item &&             // if there are dynamics...
+                                !we_have_already_exported_dynamics_for_this_chord &&    // ... and we haven't already exported dynamcis from another note
+                                                                                        //     of the same chord (first note having dynamics wins in
+                                                                                        //     the dynamics display!)...
+                                !(note->tie_from && single)) {                          // ... unless the slot is marked as "single slot for tied notes"
+                                                                                        // and the note has a tie arriving to it
+                                
+                                // we need to export the dynamics
 								char text[2048];
                                 
+                                // is there an hairpin that is currently "open"? e.g. did a previous dynamics end with < or > ?
+                                // then the hairpin has to end on the current note
                                 if (currently_open_hairpin)
                                     xmlwrite_close_hairpin(measurexml, &currently_open_hairpin, 0);
                                 
                                 if (dynamics_slot_is_text) {
+                                    
+                                    // if the dynamics slot is of TEXT type, we just copy the dynamics
                                     strncpy_zero(text, (char *) slot->firstitem->item, 2048);
                                     strip_final_ws(text);
                                     xmlwrite_add_dynamics(measurexml, text, 0);
+                                
                                 } else {
-                                    char hairpin = 0;
+                                    
+                                    // otherwise, the slot is surely of type dynamics (or it would have been nullified previously, with an error).
                                     char dyn_text[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
                                     char dyn_text_dep[CONST_MAX_NUM_DYNAMICS_CHARS];
                                     long hairpins[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
                                     long num_dynamics = 0;
                                     char open_hairpin = 0;
                                     
-
+                                    // we fill all the information about dynamics for the current chord
+                                    // this fills:
+                                    // - num_dynamics: with the number of dynamics found for the chord (a chord might have more than one dynamic attached,
+                                    // e.g. when a note has something like "p<ff>>p>pppp")
+                                    // - dyn_text: with the all dynamics, as string – but beware: with the glyphs used by the notation fonts in bach!
+                                    //   this is not a human readable form!
+                                    // - hairpins: with an array of hairpins (one for each dynamics of the chord), that can be 0 (no hairpin),
+                                    //   1 (crescendo), 2 (exponential crescendo), -1 (diminuendo), -2 (exponential diminuendo).
+                                    // - open_hairpin: 1 only if there's an open hairpin (e.g. "p<ff>>p<"), false otherwise
+                                    // For instance, a chord having one note with a dynamics slot containing "p<ff>>p>pppp", will be parsed as
+                                    // num_dynamics: 4
+                                    // dyn_text: array of C-strings with the codepoints of "p", "ff", "p", "pppp" for November for bach
+                                    // hairpins: array of 1, -2, -1, 0
+                                    // open_hairpin: false
                                     parse_chord_dynamics((t_notation_obj *)x, chord, dynamics_slot, dyn_text, hairpins, &num_dynamics, &open_hairpin, NULL);
        
+                                    // obtaining the rational duration of the entire sequence of possibly tied chords
+                                    t_rational dur_with_ties = note_get_tieseq_symduration(note);
+                                    
+                                    // for each dynamics, we need to deparse into human readable form and put it as dynamics marking
                                     for (long di = 0; di < num_dynamics; di++) {
-                                        long offset = (num_dynamics <= 1 ? 0 : round(((double)di * (dur.r_num * divisions / dur.r_den))/(num_dynamics - 1)));
+                                        // each piece of dynamics has an offset. E.g. if a note has "p<ff>>p>0", this is assumed as if "p"
+                                        // was at the beginning, "ff" was after 1/3 of its duration, "p" again after 2/3 of its duration and 0 at the end.
+                                        long offset = 0;
+                                        if (num_dynamics > 1)
+                                            offset = round(((double)di * (dur_with_ties.r_num * divisions / dur_with_ties.r_den))/(num_dynamics - 1));
+                                        
+                                        // This deparses dyn_text to a human-readable string representing the dynamics (such as "mp", "sfz", etc.)
                                         deparse_dynamics_to_string_once((t_notation_obj *)x, dyn_text[di], dyn_text_dep);
                                         if (currently_open_hairpin)
                                             xmlwrite_close_hairpin(measurexml, &currently_open_hairpin, offset);
@@ -1959,9 +2003,13 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                             xmlwrite_open_hairpin(measurexml, hairpins[di], &currently_open_hairpin, offset);
                                     }
                                 }
+                                
+                                // we won't export dynamics for this chord any longer, even if other notes of the same chord should have dynamics.
+                                we_have_already_exported_dynamics_for_this_chord = true;
 
 							}
 						}
+                        
 						for (this_slotnum_elem = export_slots->l_head; this_slotnum_elem; this_slotnum_elem = this_slotnum_elem->l_next) {
 							long slotnum = hatom_getlong(&this_slotnum_elem->l_hatom);
 							t_llll *slot_contents = note_get_single_slot_values_as_llll((t_notation_obj *) x, note, k_CONSIDER_FOR_DUMPING, slotnum, false);
@@ -1980,6 +2028,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 							llll_free(slot_contents);
 						}
 					}
+                    
 					mxml_node_t *notexml = mxmlNewElement(measurexml, "note");
 					long screen_midicents = 0;
 					long i;

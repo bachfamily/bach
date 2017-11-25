@@ -14935,7 +14935,7 @@ t_notation_item *are_all_selected_items_tied(t_score *x)
     return first;
 }
 
-void select_only_first_item_if_tied_sequence_is_selected(t_score *x)
+void select_only_first_item_if_tieseq_is_selected(t_score *x)
 {
     if (x->r_ob.num_selecteditems > 1) {
         t_notation_item *first = are_all_selected_items_tied(x);
@@ -14966,7 +14966,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 					x->r_ob.firstselecteditem->type == k_TEMPO || x->r_ob.firstselecteditem->type == k_MARKER ||
                    x->r_ob.firstselecteditem->type == k_PITCH_BREAKPOINT)) {
             
-            select_only_first_item_if_tied_sequence_is_selected(x);
+            select_only_first_item_if_tieseq_is_selected(x);
             
             if (x->r_ob.num_selecteditems == 1) {
                 if (x->r_ob.m_inspector.inspector_patcher)
@@ -15532,7 +15532,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 				// change slot view
 				// detect the selection type
                 
-                select_only_first_item_if_tied_sequence_is_selected(x);
+                select_only_first_item_if_tieseq_is_selected(x);
                 
 				if ((x->r_ob.num_selecteditems == 1) && ((x->r_ob.firstselecteditem->type == k_NOTE) || (x->r_ob.firstselecteditem->type == k_CHORD))) 	{
 					open_slot_window((t_notation_obj *) x, j, notation_item_to_notation_item_for_slot_win_opening((t_notation_obj *)x, x->r_ob.firstselecteditem));
@@ -15893,7 +15893,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 				handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SPLIT_SELECTION); 
 				return 1;
             } else if (!(modifiers & eCommandKey) && !(modifiers & eAltKey) && !(modifiers & eControlKey)) {
-                 select_only_first_item_if_tied_sequence_is_selected(x);
+                 select_only_first_item_if_tieseq_is_selected(x);
                  if (((x->r_ob.num_selecteditems == 1) && ((x->r_ob.firstselecteditem->type == k_NOTE) || (x->r_ob.firstselecteditem->type == k_CHORD))) && is_editable((t_notation_obj *)x, k_SLOT, k_ELEMENT_ACTIONS_NONE)) {
                     open_slot_window((t_notation_obj *) x, (keycode == 48) ? 9 : keycode - 49, notation_item_to_notation_item_for_slot_win_opening((t_notation_obj *)x, x->r_ob.firstselecteditem));
                     return 1;

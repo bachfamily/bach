@@ -13086,6 +13086,14 @@ t_note *note_get_first_in_tieseq(t_note *note);
 t_note *note_get_last_in_tieseq(t_note *note);
 
 
+/**	Get the symbolic duration of a sequence of completely tied notes (given any note in the sequence)
+	@ingroup		notation
+	@param	note	Any note in the sequence
+	@return			The symbolic duration of the sequence of completely tied notes
+ */
+t_rational note_get_tieseq_symduration(t_note *note);
+
+
 /**	Get the first selected note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
 	@ingroup		notation
     @param  r_ob    The notation object
@@ -13107,7 +13115,7 @@ t_note *note_get_last_selected_in_tieseq(t_notation_obj *r_ob, t_note *note);
 /**	Get the last chord of the sequence of completely-tied chords containing a given chord. If the given chord is not completely tied to the
 	next one or to the previous one, the chord itself is returned.
  	@ingroup		notation
-	@param	note	The chord
+	@param	chord	The chord
 	@return			The last chord of the sequence of completely-tied chords (if any, the chord itself otherwise).
  */
 t_chord *chord_get_last_in_tieseq(t_chord *chord);
@@ -13120,6 +13128,14 @@ t_chord *chord_get_last_in_tieseq(t_chord *chord);
 	@return			The first chord of the sequence of completely-tied chords (if any, the chord itself otherwise).
  */
 t_chord *chord_get_first_in_tieseq(t_chord *chord);
+
+
+/**	Get the symbolic duration of a sequence of completely tied chords (given any chord in the sequence)
+	@ingroup		notation
+	@param	note	Any chord in the sequence
+	@return			The symbolic duration of the sequence of completely tied chords
+ */
+t_rational chord_get_tieseq_symduration(t_chord *chord);
 
 
 /**	Get the last chord of the sequence of completely tied chords (i.e. whose notes are all completely tied to each other) 

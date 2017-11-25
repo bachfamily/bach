@@ -13790,6 +13790,20 @@ t_chord *chord_get_last_in_tieseq(t_chord *chord)
 }
 
 
+// get the duration for a tied sequence for any chord included in such sequence
+t_rational chord_get_tieseq_symduration(t_chord *chord)
+{
+    t_chord *tmp = chord_get_first_in_tieseq(chord);
+    t_rational dur = rat_abs(tmp->r_sym_duration);
+    while (tmp && chord_is_all_tied_to(NULL, tmp, false, NULL)) {
+        tmp = chord_get_next(tmp);
+        if (tmp)
+            dur = dur + rat_abs(tmp->r_sym_duration);
+    }
+    return dur;
+}
+
+
 t_note *note_get_first_in_tieseq(t_note *note)
 {
 	t_note *outnote = note;
@@ -13805,6 +13819,21 @@ t_note *note_get_last_in_tieseq(t_note *note)
 		outnote = outnote->tie_to;
 	return outnote;
 }
+
+
+// get the duration for a tied sequence for any note included in such sequence
+t_rational note_get_tieseq_symduration(t_note *note)
+{
+    t_note *tmp = note_get_first_in_tieseq(note);
+    t_rational dur = rat_abs(tmp->parent->r_sym_duration);
+    while (tmp && (tmp->tie_to) && (tmp->tie_to != (t_note *) WHITENULL_llll)) {
+        tmp = tmp->tie_to;
+        if (tmp)
+            dur = dur + rat_abs(tmp->parent->r_sym_duration);
+    }
+    return dur;
+}
+
 
 t_note *note_get_first_selected_in_tieseq(t_notation_obj *r_ob, t_note *note)
 {
