@@ -63,6 +63,7 @@
 	#define dev_object_warn(...) ((void) 0)
 	#define dev_llll_print(ll, cl, e, md, fn) ((void) 0)
 	#define pedantic_llll_check(ll) ((void) 0)
+    #define dev_llll_post(ll, mindepth, maxdepth, max_decimals, client, fn) ((void) 0)
 
 
 	#define dev_cprintf(...) ((void) 0)
@@ -97,6 +98,10 @@
 			#define dev_object_warn(...) object_warn(__VA_ARGS__)
 			#undef dev_llll_print
 			#define dev_llll_print(ll, cl, e, md, fn) llll_print(ll, cl, e, md, fn)
+            #undef dev_llll_post
+            #define dev_llll_post(ll, mindepth, maxdepth, max_decimals, client, fn) llll_post(ll, mindepth, maxdepth, max_decimals, (t_object *) client, fn)
+
+
 
 #ifdef BACH_PEDANTICALLY_CHECK_LLLLS
 			#undef pedantic_llll_check

@@ -606,37 +606,56 @@ t_llll *score_readxml(t_score *x,
 	t_llll *keysll = llll_get();
 	llll_appendsym(keysll, _llllobj_sym_keys, 0, WHITENULL_llll);
 	llll_appendllll(scorell, keysll, 0, WHITENULL_llll);
-	
+    
+    t_llll *numpartsll = llll_get();
+    llll_appendsym(numpartsll, _llllobj_sym_numparts, 0, WHITENULL_llll);
+    llll_appendllll(scorell, numpartsll);
+
 	// iterate on the parts
 	mxml_node_t *partXML;
 	for (partXML = mxmlFindElement(score_partwiseXML, score_partwiseXML, "part", NULL, NULL, MXML_DESCEND_FIRST);
 		 partXML;
 		 partXML = mxmlFindElement(partXML, score_partwiseXML, "part", NULL, NULL, MXML_NO_DESCEND)) {
 	
-		t_llll *partll = llll_get();
+        t_llll *voicell[CONST_MAX_VOICES];
+        voicell[0] = llll_get();
+        voicell[1] = llll_get();
+        
+        long voices_for_this_xml_part = 1;
+        
+        
 		long divisions = 0;
 		long velocity = 90;
 		t_llll *timell = NULL;
 		t_llll *tempill = NULL;
 		// iterate on the measures for this part
 		mxml_node_t *measureXML;
-		long firstmeasure = 1;
+		long isfirstmeasure = 1;
 		long measure_number = 1;
         
         char dynamics_text[CONST_DYNAMICS_TEXT_ALLOC_SIZE];
         
         dynamics_text[0] = 0;
         t_llll *words = NULL;
+        t_symbol *clefsym, *keysym;
         
 		for (measureXML = mxmlFindElement(partXML, partXML, "measure", NULL, NULL, MXML_DESCEND_FIRST);
 			 measureXML;
 			 measureXML = mxmlFindElement(measureXML, partXML, "measure", NULL, NULL, MXML_NO_DESCEND), measure_number++) {
+            
+            t_llll *measurell[CONST_MAX_VOICES];
+            t_rational used_duration[CONST_MAX_VOICES];
+
+            for (long i = 0; i <= voices_for_this_xml_part; i++) {
+                measurell[i] = llll_get();
+                used_duration[i] = t_rational(0);
+            }
+
 			t_llll *measureinfoll = llll_get();
 			mxml_node_t *attributesXML = mxmlFindElement(measureXML, measureXML, "attributes", NULL, NULL, MXML_DESCEND_FIRST);
-			t_llll *measurell = llll_get();
 			// parse the attributes:
 			if (attributesXML) {
-				if (firstmeasure) {
+				if (isfirstmeasure) {
 					
 					// clef
 					long numclefs;
@@ -707,8 +726,8 @@ t_llll *score_readxml(t_score *x,
 						} else
 							clef = k_CLEF_FF;
 					}
-					
-					llll_appendsym(clefsll, clef_number_to_clef_symbol((t_notation_obj *) x, clef), 0, WHITENULL_llll);
+                    clefsym = clef_number_to_clef_symbol((t_notation_obj *) x, clef);
+					llll_appendsym(clefsll, clefsym, 0, WHITENULL_llll);
 
 					// key signature
 					
@@ -722,7 +741,8 @@ t_llll *score_readxml(t_score *x,
 							const char *mode_txt = mxmlGetText(modeXML, NULL);
 							if (mode_txt && !strcmp(mode_txt, "minor"))
 								mode = k_MODE_MINOR;
-							llll_appendsym(keysll, key_and_mode_to_sym((t_notation_obj *) x, fifths, mode, NULL), 0, WHITENULL_llll);
+							keysym = key_and_mode_to_sym((t_notation_obj *) x, fifths, mode, NULL);
+                            // we're gonna append this later
 						} else {
 							t_rational acc_pattern[7];
 							long i;
@@ -739,10 +759,13 @@ t_llll *score_readxml(t_score *x,
 								long step = (key_char + 5) % 7;
 								acc_pattern[step] = approx_double_with_rat_fixed_den(alter_dbl, 100, 1, NULL);
 							}
-							llll_appendsym(keysll, key_and_mode_to_sym((t_notation_obj *) x, 0, k_MODE_NONSTANDARD, acc_pattern), 0, WHITENULL_llll);
-						} 					
-					} else
-						llll_appendsym(keysll, gensym("CM"), 0, NULL);
+                            keysym = key_and_mode_to_sym((t_notation_obj *) x, 0, k_MODE_NONSTANDARD, acc_pattern);
+                            // we're gonna append this later
+						}
+                    } else {
+                        keysym = gensym("CM");
+                        // we're gonna append this later
+                    }
 
 				}
 				
@@ -789,7 +812,7 @@ t_llll *score_readxml(t_score *x,
 					llll_appendlong(timell, beat_den, 0, WHITENULL_llll);
 				} else {
 					llll_free(timenumll);
-					if (firstmeasure) {
+					if (isfirstmeasure) {
 						llll_appendlong(timell, 4, 0, WHITENULL_llll);
 						llll_appendlong(timell, 4, 0, WHITENULL_llll);
 					}
@@ -804,7 +827,7 @@ t_llll *score_readxml(t_score *x,
 					divisions = 4;
 				}
 
-			} else if (firstmeasure) {
+			} else if (isfirstmeasure) {
 				object_warn((t_object *) x, "Tag <divisions> missing or corrupted");
 				divisions = 4;
 				llll_appendsym(clefsll, _llllobj_sym_G, 0, WHITENULL_llll);
@@ -874,7 +897,7 @@ t_llll *score_readxml(t_score *x,
                                 }
                                 llll_appendrat(onetempoll, offset, 0, WHITENULL_llll);
                                 llll_appendlong(onetempoll, 0, 0, WHITENULL_llll); // tempo interpolation
-                                if (firstmeasure && !maintempo_ll && offset.r_num == 0) {
+                                if (isfirstmeasure && !maintempo_ll && offset.r_num == 0) {
                                     maintempo_ll = llll_get();
                                     llll_appendllll_clone(maintempo_ll, onetempoll);
                                 }
@@ -898,7 +921,7 @@ t_llll *score_readxml(t_score *x,
                         offset = genrat(0, 1);
                     }
                     llll_appendrat(onetempoll, offset, 0, WHITENULL_llll);
-                    if (firstmeasure && !maintempo_ll && offset.r_num == 0) {
+                    if (isfirstmeasure && !maintempo_ll && offset.r_num == 0) {
                         maintempo_ll = llll_get();
                         llll_appendllll_clone(maintempo_ll, onetempoll);
                     }
@@ -915,26 +938,48 @@ t_llll *score_readxml(t_score *x,
 				tempill = NULL;
 			}
 			
-			llll_appendllll(measurell, measureinfoll, 0, WHITENULL_llll);
-
-			
 			// chords and notes
-			mxml_node_t *noteXML, *nextnoteXML = NULL, *firstnoteXML = mxmlFindElement(measureXML, measureXML, "note", NULL, NULL, MXML_DESCEND_FIRST);
+            mxml_node_t *noteXML;
+            mxml_node_t *nextnoteXML = NULL;
+  
+            mxml_node_t *firstnoteXML = mxmlFindElement(measureXML, measureXML, "note", NULL, NULL, MXML_DESCEND_FIRST);
 			t_llll *chordll = NULL;
-			t_llll *chord_parentll = measurell;
+            t_llll *chord_parentll[CONST_MAX_VOICES];
+            for (long i = 0; i < voices_for_this_xml_part; i++)
+                chord_parentll[i] = measurell[i];
+//            chord_parentll[0] = measurell[0];
 			long grace_group = 0, grace = 0;
 			long pops = 0;
             t_llll *chordslotsll = NULL;
             
-#ifdef __old_articulations
-			t_llll *chord_articll = llll_get();
-#endif
-            
-            
+            long current_voice_in_part = 0;
+
 			for (noteXML = firstnoteXML; noteXML; noteXML = nextnoteXML) {
-                nextnoteXML = mxmlFindElement(noteXML, measureXML, "note", NULL, NULL, MXML_NO_DESCEND);
+                t_bool go = true;
+                mxml_node_t *backupXML, *node;
+                mxml_node_t *nextnode = noteXML;
+                nextnoteXML = backupXML = NULL;
+                while (go) {
+                    nextnode = mxmlWalkNext(nextnode, measureXML, MXML_NO_DESCEND);
+                    if (!nextnode)
+                        go = false;
+                    else {
+                        const char *nextname = mxmlGetElement(nextnode);
+                        if (nextname) {
+                            if (!strcmp(nextname, "note")) {
+                                nextnoteXML = nextnode;
+                                go = 0;
+                            } else if (!strcmp(nextname, "backup")) {
+                                nextnoteXML = mxmlFindElement(noteXML, measureXML, "note", NULL, NULL, MXML_NO_DESCEND);
+                                backupXML = nextnode;
+                                go = 0;
+                            }
+                        }
+                    }
+                }
                 
-                if (noteXML == firstnoteXML && !nextnoteXML) { // just 1 note
+                if (noteXML == firstnoteXML && (!nextnoteXML || backupXML)) { // just 1 note,
+                    // assuming that this is the right thing to do when we switch to another voice
                     xml_get_dynamics(measureXML->child, NULL, dynamics_text);
                     words = xml_get_words(measureXML->child, NULL, NULL);
                 }
@@ -942,7 +987,7 @@ t_llll *score_readxml(t_score *x,
                     xml_get_dynamics(measureXML->child, firstnoteXML, dynamics_text);
                     words = xml_get_words(measureXML->child, firstnoteXML, NULL);
                 }
-                else if (!nextnoteXML) {
+                else if (!nextnoteXML || backupXML) {
                     char temp_dynamics_text[CONST_DYNAMICS_TEXT_ALLOC_SIZE];
                     temp_dynamics_text[0] = 0;
                     xml_get_dynamics(noteXML->next, NULL, temp_dynamics_text);
@@ -973,38 +1018,28 @@ t_llll *score_readxml(t_score *x,
 
 				if (!chordXML) {
 					if (chordll) { // if there was a previous chord, append its flags to it
-#ifdef __old_articulations
-						if (chord_articll->l_size) {
-							chord_articll = llll_thin_simple(chord_articll, 1);
-							llll_prependsym(chord_articll, _llllobj_sym_articulations, 0, WHITENULL_llll);
-							llll_appendllll(chordll, chord_articll, 0, WHITENULL_llll);
-						} else
-							llll_free(chord_articll);
-						chord_articll = llll_get();
-#endif
                         if (chordslotsll) {
                             llll_appendllll(chordll, chordslotsll);
                             chordslotsll = NULL;
                         }
 						llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
-//						llll_appendllll(chord_parentll, chordll, 0, WHITENULL_llll);
 					}
 					grace = mxmlFindElement(noteXML, noteXML, "grace", NULL, NULL, MXML_DESCEND_FIRST) != 0;
 					if (grace && !grace_group) { // that is, we're starting a new grace group
 						chordll = llll_get();
-						llll_appendllll(chord_parentll, chordll, 0, WHITENULL_llll);
+						llll_appendllll(chord_parentll[current_voice_in_part], chordll, 0, WHITENULL_llll);
 						llll_appendsym(chordll, _llllobj_sym_g, 0, WHITENULL_llll);
-						chord_parentll = chordll;
+						chord_parentll[current_voice_in_part] = chordll;
 						grace_group = 1;
 					} else if (!grace && grace_group) { // that is, this is the first note outside a grace group
-						if (chord_parentll != measurell) // don't climb too much, even if there is a mistake!
-							chord_parentll = chord_parentll->l_owner->l_parent;
+						if (chord_parentll[current_voice_in_part] != measurell[current_voice_in_part]) // don't climb too much, even if there is a mistake!
+							chord_parentll[current_voice_in_part] = chord_parentll[current_voice_in_part]->l_owner->l_parent;
 						grace_group = 0;
 					}
 
 					while (pops) {
-						if (chord_parentll != measurell) { // don't climb too much, even if there is a mistake!
-							chord_parentll = chord_parentll->l_owner->l_parent;
+						if (chord_parentll[current_voice_in_part] != measurell[current_voice_in_part]) { // don't climb too much, even if there is a mistake!
+							chord_parentll[current_voice_in_part] = chord_parentll[current_voice_in_part]->l_owner->l_parent;
 							pops--;
 						} else
 							pops = 0;
@@ -1018,8 +1053,8 @@ t_llll *score_readxml(t_score *x,
 						const char *beamtxt = mxmlGetText(beamXML, NULL);
 						if (!strcmp(beamtxt, "begin")) {
 							chordll = llll_get();
-							llll_appendllll(chord_parentll, chordll, 0, WHITENULL_llll);
-							chord_parentll = chordll;	
+							llll_appendllll(chord_parentll[current_voice_in_part], chordll, 0, WHITENULL_llll);
+							chord_parentll[current_voice_in_part] = chordll;
 						} else if (!strcmp(beamtxt, "end")) {
 							pops++;
 						}
@@ -1032,36 +1067,19 @@ t_llll *score_readxml(t_score *x,
 						const char *tuplettypetxt = mxmlElementGetAttr(tupletXML, "type");
 						if (!strcmp(tuplettypetxt, "start")) {
 							chordll = llll_get();
-							llll_appendllll(chord_parentll, chordll, 0, WHITENULL_llll);
-							chord_parentll = chordll;	
+							llll_appendllll(chord_parentll[current_voice_in_part], chordll, 0, WHITENULL_llll);
+							chord_parentll[current_voice_in_part] = chordll;
 						} else if (!strcmp(tuplettypetxt, "stop")) {
 							pops++;
 						}
 					}
 					
 					chordll = llll_get();
-					llll_appendllll(chord_parentll, chordll, 0, WHITENULL_llll);
+					llll_appendllll(chord_parentll[current_voice_in_part], chordll, 0, WHITENULL_llll);
 					
 					mxml_node_t *restXML = mxmlFindElement(noteXML, noteXML, "rest", NULL, NULL, MXML_DESCEND_FIRST);
 					t_rational duration;
-/*					if (!grace) {
-						mxml_node_t *durationXML = mxmlFindElement(noteXML, noteXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
-						duration = genrat(mxmlGetInteger(durationXML), divisions);
-					} else { 
-						mxml_node_t *typeXML = mxmlFindElement(noteXML, noteXML, "type", NULL, NULL, MXML_DESCEND_FIRST);
-						if (typeXML) {
-							const char *typetxt = mxmlGetText(typeXML, NULL);
-							long dots = 0;
-							mxml_node_t *dotXML;
-							for (dotXML = mxmlFindElement(typeXML, noteXML, "dot", NULL, NULL, MXML_NO_DESCEND);
-								 dotXML;
-								 dotXML = mxmlFindElement(dotXML, noteXML, "dot", NULL, NULL, MXML_NO_DESCEND))
-								dots++;
-							
-							duration = xml_name_and_dots_to_value(typetxt, dots);
-						} else // use a dummy duration
-							duration = genrat(1, 8);
-					} */
+
 					mxml_node_t *typeXML = mxmlFindElement(noteXML, noteXML, "type", NULL, NULL, MXML_DESCEND_FIRST);
 					if (typeXML) {
 						const char *typetxt = mxmlGetText(typeXML, NULL);
@@ -1100,7 +1118,11 @@ t_llll *score_readxml(t_score *x,
 						}
 						duration = rat_long_prod(duration, normal_notes);
 						duration = rat_long_div(duration, actual_notes);
-					} 
+					}
+                    
+                    if (!grace)
+                        used_duration[current_voice_in_part] += duration;
+                    
 					if (restXML) {
 						duration.r_num *= -1;
 						isrest = 1;
@@ -1193,137 +1215,7 @@ t_llll *score_readxml(t_score *x,
 					llll_appendlong(graphicll, screen_midicents, 0, WHITENULL_llll);
 					llll_appendrat(graphicll, acc, 0, WHITENULL_llll);
 					llll_appendllll(notell, graphicll, 0, WHITENULL_llll);
-	
-#ifdef __old_articulations
-					// articulations & c
-					// trill, mordent, gruppetto, harmonic, lhpizz
-					t_llll *note_articll = llll_get();
-					mxml_node_t *ornamentsXML, *technicalXML, *articulationsXML;
-					
-					/* <!ELEMENT ornaments
-					 (((trill-mark | turn | delayed-turn | inverted-turn |
-					 delayed-inverted-turn | vertical-turn | shake |
-					 wavy-line | mordent | inverted-mordent | schleifer |
-					 tremolo | other-ornament), accidental-mark*)*)> 
-					 */
-					for (ornamentsXML = mxmlFindElement(notationsXML, notationsXML, "ornaments", NULL, NULL, MXML_DESCEND_FIRST);
-						 ornamentsXML;
-						 ornamentsXML = mxmlFindElement(ornamentsXML, notationsXML, "ornaments", NULL, NULL, MXML_NO_DESCEND)) {
-						mxml_node_t *this_ornamentXML;
-						for (this_ornamentXML = mxmlWalkNext(ornamentsXML, ornamentsXML, MXML_DESCEND_FIRST);
-							 this_ornamentXML;
-							 this_ornamentXML = mxmlWalkNext(this_ornamentXML, ornamentsXML, MXML_NO_DESCEND)) {
-							char *ornament_txt = NULL;
-							if (this_ornamentXML->type == MXML_ELEMENT)
-								ornament_txt = this_ornamentXML->value.element.name;
-							if (ornament_txt) {
-								if (!strcmp(ornament_txt, "trill-mark"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_TRILL), 0, WHITENULL_llll);
-								else if (!strcmp(ornament_txt, "turn") || 
-										 !strcmp(ornament_txt, "delayed-turn") || 
-										 !strcmp(ornament_txt, "vertical-turn") ||
-										 !strcmp(ornament_txt, "inverted-turn") || 
-										 !strcmp(ornament_txt, "delayed-inverted-turn"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_GRUPPETTO), 0, WHITENULL_llll);
-								else if (!strcmp(ornament_txt, "mordent"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_MORDENT_UP), 0, WHITENULL_llll);
-								else if (!strcmp(ornament_txt, "inverted-mordent"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_MORDENT_DOWN), 0, WHITENULL_llll);
-								else if (!strcmp(ornament_txt, "wavy-line"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_DOUBLE_MORDENT), 0, WHITENULL_llll);
-								else if (!strcmp(ornament_txt, "tremolo")) {
-									switch (mxmlGetInteger(this_ornamentXML)) {
-										case 1:
-											llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_TREMOLO1), 0, WHITENULL_llll);
-											break;
-										case 2:
-											llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_TREMOLO2), 0, WHITENULL_llll);
-											break;
-										default:
-											llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_TREMOLO3), 0, WHITENULL_llll);
-											break;
-									}
-								}
-							}
-						}
-					}
-                    
 
-					/*
-					  <!ELEMENT technical
-					 ((up-bow | down-bow | harmonic | open-string |
-					 thumb-position | fingering | pluck | double-tongue |
-					 triple-tongue | stopped | snap-pizzicato | fret |
-					 string | hammer-on | pull-off | bend | tap | heel |
-					 toe | fingernails | hole | arrow | handbell | 
-					 other-technical)*)>
-					*/
-					
-					for (technicalXML = mxmlFindElement(notationsXML, notationsXML, "technical", NULL, NULL, MXML_DESCEND_FIRST);
-						 technicalXML;
-						 technicalXML = mxmlFindElement(technicalXML, notationsXML, "technical", NULL, NULL, MXML_NO_DESCEND)) {
-						mxml_node_t *this_technicalXML;
-						for (this_technicalXML = mxmlWalkNext(technicalXML, technicalXML, MXML_DESCEND_FIRST);
-							 this_technicalXML;
-							 this_technicalXML = mxmlWalkNext(this_technicalXML, technicalXML, MXML_NO_DESCEND)) {
-							char *technical_txt = NULL;
-							if (this_technicalXML->type == MXML_ELEMENT)
-								technical_txt = this_technicalXML->value.element.name;
-							if (technical_txt) {
-								if (!strcmp(technical_txt, "harmonic"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_HARMONIC), 0, WHITENULL_llll);
-								else if (!strcmp(technical_txt, "tap"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_LEFT_HAND_PIZZICATO), 0, WHITENULL_llll);
-								else if (!strcmp(technical_txt, "up-bow"))
-									llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_BOWING_UP), 0, WHITENULL_llll);
-								else if (!strcmp(technical_txt, "down-bow"))
-									llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_BOWING_DOWN), 0, WHITENULL_llll);
-							}
-						}
-					}
-					
-					/*
-					 <!ELEMENT articulations
-					 ((accent | strong-accent | staccato | tenuto |
-					 detached-legato | staccatissimo | spiccato |
-					 scoop | plop | doit | falloff | breath-mark | 
-					 caesura | stress | unstress | other-articulation)*)>
-					 
-					 <!ELEMENT fermata  (#PCDATA)>
-					 */
-					for (articulationsXML = mxmlFindElement(notationsXML, notationsXML, "articulations", NULL, NULL, MXML_DESCEND_FIRST);
-						 articulationsXML;
-						 articulationsXML = mxmlFindElement(articulationsXML, notationsXML, "articulations", NULL, NULL, MXML_NO_DESCEND)) {
-						mxml_node_t *this_articulationsXML;
-						for (this_articulationsXML = mxmlWalkNext(articulationsXML, articulationsXML, MXML_DESCEND_FIRST);
-							 this_articulationsXML;
-							 this_articulationsXML = mxmlWalkNext(this_articulationsXML, articulationsXML, MXML_NO_DESCEND)) {
-							char *articulations_txt = NULL;
-							if (this_articulationsXML->type == MXML_ELEMENT)
-								articulations_txt = this_articulationsXML->value.element.name;
-							if (articulations_txt) {
-								if (!strcmp(articulations_txt, "staccato"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_STACCATO), 0, WHITENULL_llll);
-								else if (!strcmp(articulations_txt, "tap"))
-									llll_appendsym(note_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_LEFT_HAND_PIZZICATO), 0, WHITENULL_llll);
-								else if (!strcmp(articulations_txt, "accent"))
-									llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_ACCENT), 0, WHITENULL_llll);
-								else if (!strcmp(articulations_txt, "tenuto"))
-									llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_PORTATO), 0, WHITENULL_llll);
-								else if (!strcmp(articulations_txt, "staccatissimo"))
-									llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_STACCATISSIMO), 0, WHITENULL_llll);
-								else if (!strcmp(articulations_txt, "spiccato"))
-									llll_appendsym(chord_articll, articulation_id2symbol(&x->r_ob.articulations_typo_preferences, k_ARTICULATION_MARTELLATO), 0, WHITENULL_llll);
-							}
-						}
-					}
-					
-					if (note_articll->l_size) {
-						llll_prependsym(note_articll, _llllobj_sym_articulations, 0, WHITENULL_llll);
-						llll_appendllll(notell, note_articll, 0, WHITENULL_llll);
-					} else
-						llll_free(note_articll);
-#endif // __old_articulations
                     
                     t_llll *slotsll = llll_get();
                     llll_appendsym(slotsll, gensym("slots"));
@@ -1414,9 +1306,54 @@ t_llll *score_readxml(t_score *x,
                             chordslotsll = llll_get();
                             llll_appendsym(chordslotsll, _llllobj_sym_slots);
                             llll_appendllll(chordslotsll, articulationsll);
- //                           llll_appendllll(chordll, chordslotsll);
                         }
                     }
+                }
+                
+                // if there is a chord and we're closing (even if temporarily) this voice,
+                // append to it its articulations and flags
+                if (chordll && (backupXML || !nextnoteXML)) {
+                    if (chordslotsll) {
+                        llll_appendllll(chordll, chordslotsll);
+                    }
+                    llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
+                    chordll = NULL;
+                }
+                
+                if (backupXML) {
+                    
+                    mxml_node_t *durationXML = mxmlFindElement(backupXML, backupXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
+                    t_rational backupdur = t_rational(mxmlGetInteger(durationXML), divisions);
+                    t_rational getHere = used_duration[current_voice_in_part] - backupdur;
+                    if (getHere < 0) {
+                        object_warn((t_object *) x, "<backup> tag wants to backup too far");
+                        getHere = t_rational(0);
+                    }
+                    long v;
+                    for (v = 0; v <= voices_for_this_xml_part; v++) {
+                        if (used_duration[v] <= getHere)
+                            break;
+                    }
+                    
+                    if (v == voices_for_this_xml_part) {
+                        voicell[v + 1] = llll_clone(voicell[v]);
+                        measurell[v + 1] = llll_clone(measurell[v]);
+                        used_duration[v + 1] = t_rational(0);
+                        
+                        chord_parentll[v] = measurell[v];
+                        ++voices_for_this_xml_part;
+                    }
+                    
+                    if (used_duration[v] < getHere) {
+                        t_rational restdur = - (getHere - used_duration[v]);
+                        chordll = llll_get();
+                        llll_appendrat(chordll, restdur);
+                        llll_appendlong(chordll, 0);
+                        llll_appendllll(chord_parentll[v], chordll);
+                        used_duration[v] = getHere;
+                    }
+                    
+                    current_voice_in_part = v;
                 }
                 
                 xml_get_dynamics(noteXML->next, nextnoteXML, dynamics_text);
@@ -1444,29 +1381,31 @@ t_llll *score_readxml(t_score *x,
 					llll_appendlong(barlinell, 0, 0, WHITENULL_llll);
 				llll_appendllll(measureinfoll, barlinell, 0, WHITENULL_llll);
 			}
-			
-			if (chordll) { // if there is a chord, append it its articulations and flags
-#ifdef __old_articulations
-				if (chord_articll->l_size) {
-					chord_articll = llll_thin_simple(chord_articll, 1);
-					llll_prependsym(chord_articll, _llllobj_sym_articulations, 0, WHITENULL_llll);
-					llll_appendllll(chordll, chord_articll, 0, WHITENULL_llll);
-				} else
-					llll_free(chord_articll);
-#endif
-                if (chordslotsll) {
-                    llll_appendllll(chordll, chordslotsll);
-                }
-                llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
-			}
-			
-			llll_appendlong(measurell, 0, 0, WHITENULL_llll); // measure flags
-			llll_appendllll(partll, measurell, 0, WHITENULL_llll);
-			firstmeasure = 0;
+            
+            llll_prependllll(measurell[0], measureinfoll, 0, WHITENULL_llll);
+            llll_appendlong(measurell[0], 0, 0, WHITENULL_llll); // measure flags
+
+            for (long i = 1; i < voices_for_this_xml_part; i++) {
+                llll_prependllll_clone(measurell[i], measureinfoll);
+                llll_appendlong(measurell[i], 0, 0, WHITENULL_llll); // measure flags
+            }
+
+            for (long i = 0; i < voices_for_this_xml_part; i++)
+                llll_appendllll(voicell[i], measurell[i]);
+
+			isfirstmeasure = 0;
 		}
-		llll_appendlong(partll, 0, 0, WHITENULL_llll); // part flags
-		llll_appendllll(scorell, partll, 0, WHITENULL_llll);
         
+        for (long i = 0; i < voices_for_this_xml_part; i++) {
+            llll_appendlong(voicell[i], 0, 0, WHITENULL_llll); // part flags
+            llll_appendllll(scorell, voicell[i], 0, WHITENULL_llll);
+            llll_appendsym(clefsll, clefsym);
+            llll_appendsym(keysll, keysym);
+        }
+        
+        llll_free(voicell[voices_for_this_xml_part]);
+        llll_appendlong(numpartsll, voices_for_this_xml_part + 1); // numparts has been added to scorell at the beginning
+
         llll_free(words);
 	}
 	mxmlDelete(scoreXML);
@@ -1479,7 +1418,7 @@ t_llll *score_readxml(t_score *x,
 		}
 	}
 	
-	dev_llll_print(scorell, NULL, 0, 10, NULL);
+	dev_llll_post(scorell, 1, -1, 10, x, NULL);
 	return scorell;
 }
 
@@ -1703,9 +1642,6 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 
     // first, pass through all the score to calculate a value of the division attribute that is valid for every measure
     // this is not too elegant, but makes things much simpler with voice ensembles
-    
-    
-    
     divisions = 16;
     for (voiceidx = 1, voice = x->firstvoice; voice && voiceidx <= numparts; voiceidx++, voice = voice->next) {
         for (measure = voice->firstmeasure; measure; measure = measure->next) {
