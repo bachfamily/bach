@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 97.0, 79.0, 854.0, 544.0 ],
+		"rect" : [ 55.0, 79.0, 854.0, 544.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -43,7 +43,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 575.0, 334.0, 76.0, 22.0 ],
+					"patching_rect" : [ 575.0, 326.0, 76.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 70911
 					}
@@ -77,7 +77,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 653.0, 301.5, 173.0, 87.0 ],
+					"patching_rect" : [ 653.0, 301.5, 174.0, 87.0 ],
 					"style" : "",
 					"text" : "bach.playkeys has a \"nullmode\": by default if a note has NO slot defined, a \"null\" is output, and we'll be able to intercept this in the poly, and set it to a default value! "
 				}
