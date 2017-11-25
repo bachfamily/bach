@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 71.0, 79.0, 831.0, 505.0 ],
+		"rect" : [ 71.0, 79.0, 989.0, 505.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -38,15 +38,59 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"attr" : "outputpitchesseparate",
+					"id" : "obj-37",
+					"maxclass" : "attrui",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"orientation" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 755.5, 410.0, 171.0, 44.0 ],
+					"style" : ""
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"id" : "obj-28",
+					"id" : "obj-30",
+					"linecount" : 13,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 600.0, 181.454544, 183.0, 20.0 ],
+					"patching_rect" : [ 748.0, 224.5, 186.0, 181.0 ],
 					"style" : "",
-					"text" : "This will respect enharmonicities"
+					"text" : "In this case [bach.+ 0] will receive a pitch in its right inlet, and cents in its left inlet. This is not enought to interpret enharmonicities: a sum of cents + pitch will always yield cents. We need to have bach.score output pitches instead of cents from its third outlet, in order to have [bach.+] operating on pitch + pitch. To do that, try to set the \"outputpitchesseparate\" attribute to \"2: Always\", and then redump"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-18",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 748.0, 49.5, 183.0, 20.0 ],
+					"style" : "",
+					"text" : "DIATONIC TRANSPOSITION:"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-28",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 748.0, 65.5, 183.0, 47.0 ],
+					"style" : "",
+					"text" : "You might want to respect enharmonicities and to perform diatonic transpositions"
 				}
 
 			}
@@ -58,7 +102,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 634.0, 159.454544, 164.0, 20.0 ],
+					"patching_rect" : [ 782.0, 177.5, 164.0, 20.0 ],
 					"style" : "",
 					"text" : "Transpose by minor third"
 				}
@@ -72,7 +116,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 634.0, 132.454544, 185.0, 20.0 ],
+					"patching_rect" : [ 782.0, 150.5, 185.0, 20.0 ],
 					"style" : "",
 					"text" : "Transpose by augmented unison"
 				}
@@ -86,7 +130,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 592.0, 155.954544, 41.0, 27.0 ],
+					"patching_rect" : [ 740.0, 174.0, 41.0, 27.0 ],
 					"style" : "",
 					"text" : "Eb0"
 				}
@@ -101,7 +145,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 619.0, 92.600006, 164.0, 33.0 ],
+					"patching_rect" : [ 767.0, 110.645462, 164.0, 33.0 ],
 					"style" : "",
 					"text" : "You can use diatonic pitches instead of cents in [bach.+]."
 				}
@@ -115,7 +159,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 592.0, 130.0, 40.0, 27.0 ],
+					"patching_rect" : [ 740.0, 148.045456, 40.0, 27.0 ],
 					"style" : "",
 					"text" : "C#0"
 				}
@@ -425,7 +469,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 600.0, 108.0, 91.0, 22.0 ],
+					"patching_rect" : [ 748.0, 126.045456, 91.0, 22.0 ],
 					"style" : "",
 					"text" : "loadmess set 0"
 				}
@@ -547,8 +591,6 @@
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
 					"id" : "obj-5",
-					"linkarticulationstoslot" : 0,
-					"linkdynamicstoslot" : 0,
 					"linklyricstoslot" : 7,
 					"loop" : [ "(", 1, 1, 0, ")", "(", 1, 1, 0, ")" ],
 					"maxclass" : "bach.score",
@@ -622,6 +664,7 @@
 					"numvoices" : 1,
 					"out" : "nnnnnnnn",
 					"outlettype" : [ "", "", "", "", "", "", "", "", "bang" ],
+					"outputpitchesseparate" : 2,
 					"patching_rect" : [ 20.0, 166.0, 460.0, 87.0 ],
 					"pitcheditrange" : [ "null" ],
 					"stafflines" : [ 5 ],
@@ -643,7 +686,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 676.0, 605.0, 140.0, 22.0 ],
+					"patching_rect" : [ 834.0, 605.0, 140.0, 18.0 ],
 					"style" : "",
 					"text" : "pcontrol",
 					"varname" : "pcontrolB"
@@ -658,7 +701,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 676.0, 580.0, 140.0, 22.0 ],
+					"patching_rect" : [ 834.0, 580.0, 140.0, 18.0 ],
 					"style" : "",
 					"text" : "prepend load",
 					"varname" : "prependB"
@@ -673,7 +716,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 676.0, 555.0, 140.0, 22.0 ],
+					"patching_rect" : [ 834.0, 555.0, 140.0, 18.0 ],
 					"style" : "",
 					"text" : "tosymbol",
 					"varname" : "tosymbolB"
@@ -684,11 +727,12 @@
 				"box" : 				{
 					"hidden" : 1,
 					"id" : "obj-10",
+					"linecount" : 2,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 676.0, 530.0, 174.0, 22.0 ],
+					"patching_rect" : [ 834.0, 530.0, 140.0, 18.0 ],
 					"style" : "",
 					"text" : "Through The Looking Glass (b)",
 					"varname" : "messageB"
@@ -703,7 +747,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "bang" ],
-					"patching_rect" : [ 676.0, 505.0, 40.0, 22.0 ],
+					"patching_rect" : [ 834.0, 505.0, 40.0, 18.0 ],
 					"style" : "",
 					"text" : "t b b",
 					"varname" : "triggerB"
@@ -721,7 +765,7 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "int" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 676.0, 480.0, 151.0, 20.0 ],
+					"patching_rect" : [ 834.0, 480.0, 151.0, 20.0 ],
 					"style" : "",
 					"text" : "Continue to section (b)",
 					"varname" : "textbuttonB"
@@ -903,6 +947,14 @@
 				"patchline" : 				{
 					"destination" : [ "obj-34", 0 ],
 					"source" : [ "obj-33", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"midpoints" : [ 765.0, 464.0, 5.25, 464.0, 5.25, 162.0, 29.5, 162.0 ],
+					"source" : [ "obj-37", 0 ]
 				}
 
 			}

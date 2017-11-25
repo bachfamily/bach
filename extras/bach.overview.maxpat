@@ -421,7 +421,7 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, 0.0 ],
+					"offset" : [ 0.0, -3785.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
@@ -805,7 +805,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 389.0, 4083.063477, 525.0, 20.0 ],
 									"style" : "",
-									"text" : "12",
+									"text" : "17",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -927,12 +927,13 @@
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-14",
+									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 389.0, 4103.063477, 525.0, 20.0 ],
+									"patching_rect" : [ 389.0, 4103.063477, 525.0, 60.0 ],
 									"style" : "",
-									"text" : "displaying lllls, creating lllls, modifying lllls, handling lllls",
+									"text" : "matrix definition and operations, matrix transposition, eigenvalues and eigenvectors, kernel of a matrix, linear combinations, vector spaces, basis and dimensions, orthogonality and orthonormality, determinant of a matrix, inverse of a matrix, rank of a matrix, image of a matrix, solving linear systems of equations",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -1116,6 +1117,10 @@
 													"numoutlets" : 2,
 													"outlettype" : [ "", "bang" ],
 													"patching_rect" : [ 190.929688, 191.0, 117.0, 21.0 ],
+													"saved_object_attributes" : 													{
+														"versionnumber" : 70911
+													}
+,
 													"style" : "",
 													"text" : "bach.portal @out t"
 												}
@@ -1356,15 +1361,15 @@
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-122",
-									"linecount" : 2,
-									"linkend" : [ ":,;()[]{}" ],
+									"linecount" : 3,
+									"linkend" : [ " ", "\u002c" ],
 									"linkstart" : [ "b" ],
 									"maxclass" : "bach.hypercomment",
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 389.0, 4163.063477, 525.0, 33.0 ],
-									"text" : "bach.tree, bach.print, bach.portal, bach.reg, bach.length, bach.depth, bach.nth, bach.find, bach.filternull, bach.roll, bach.score",
+									"patching_rect" : [ 389.0, 4163.063477, 525.0, 47.0 ],
+									"text" : "bach.m2jitcellblock, bach.wellshape, bach.minfo, bach.mrandom, bach.diag, bach.idmatrix, bach.trans, bach.expr, bach.mtimes, bach.mpow, bach.graph, bach.eig, bach.ker, bach.extractbasis, bach.norm, bach.det, bach.inv, bach.rank, bach.im, bach.linearsolve",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -1488,6 +1493,10 @@
 													"numoutlets" : 3,
 													"outlettype" : [ "", "", "" ],
 													"patching_rect" : [ 56.0, 233.0, 101.0, 20.0 ],
+													"saved_object_attributes" : 													{
+														"versionnumber" : 70911
+													}
+,
 													"style" : "",
 													"text" : "bach.iter @out tx"
 												}
@@ -1548,6 +1557,10 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 50.0, 126.0, 90.0, 20.0 ],
+													"saved_object_attributes" : 													{
+														"versionnumber" : 70911
+													}
+,
 													"style" : "",
 													"text" : "bach.arithmser"
 												}
@@ -1675,13 +1688,13 @@
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-46",
-									"linecount" : 2,
+									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 389.0, 3864.0, 525.0, 33.0 ],
+									"patching_rect" : [ 389.0, 3864.0, 525.0, 47.0 ],
 									"style" : "",
-									"text" : "In this tutorial you'll move your first steps with the Lisp-like linked lists (lllls for short), which are the standard communication mechanism throughout all the bach environment",
+									"text" : "Having the possibility to define a list of lists (an llll of depth 2) means having the possibility to define a matrix. Indeed, bach has an extended library aimed to bring the power of the matrix calculus and linear algebra into Max. This tutorial will guide you through its discovery. ",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -1713,6 +1726,10 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"patching_rect" : [ 296.0, 4258.0, 109.0, 22.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 70911
+									}
+,
 									"style" : "",
 									"text" : "bach.portal @out t"
 								}
@@ -1744,7 +1761,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 389.0, 3795.0, 525.0, 44.0 ],
 									"style" : "",
-									"text" : "Hello World"
+									"text" : "Into The Matrix"
 								}
 
 							}
@@ -1772,7 +1789,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 288.0, 3795.0, 74.0, 44.0 ],
 									"style" : "",
-									"text" : "1",
+									"text" : "16",
 									"textjustification" : 2
 								}
 
@@ -1820,6 +1837,10 @@
 									"numoutlets" : 7,
 									"outlettype" : [ "", "", "", "", "", "", "bang" ],
 									"patching_rect" : [ 382.0, 3715.0, 372.0, 22.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 70911
+									}
+,
 									"style" : "",
 									"text" : "bach.keys digest description title numsections seealso topics @out t"
 								}
@@ -1897,7 +1918,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 389.0, 3839.0, 525.0, 23.0 ],
 									"style" : "",
-									"text" : "First steps with the bach nested lists (lllls)",
+									"text" : "An overview of the bach matrix calculus library",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -1907,7 +1928,7 @@
 									"allowdrag" : 0,
 									"fontsize" : 15.0,
 									"id" : "obj-21",
-									"items" : [ "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f", ",", "g", ",", "h", ",", "i", ",", "j", ",", "k", ",", "l" ],
+									"items" : [ "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f", ",", "g", ",", "h", ",", "i", ",", "j", ",", "k", ",", "l", ",", "m", ",", "n", ",", "o", ",", "p", ",", "q" ],
 									"maxclass" : "umenu",
 									"numinlets" : 1,
 									"numoutlets" : 3,
@@ -2070,6 +2091,10 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 75.5, 122.0, 76.0, 20.0 ],
+													"saved_object_attributes" : 													{
+														"versionnumber" : 70911
+													}
+,
 													"style" : "",
 													"text" : "bach.dict2llll"
 												}
@@ -2255,6 +2280,10 @@
 													"numoutlets" : 2,
 													"outlettype" : [ "", "bang" ],
 													"patching_rect" : [ 227.0, 435.0, 125.0, 20.0 ],
+													"saved_object_attributes" : 													{
+														"versionnumber" : 70911
+													}
+,
 													"style" : "",
 													"text" : "bach.keys title @out t"
 												}
@@ -2328,6 +2357,10 @@
 													"numoutlets" : 2,
 													"outlettype" : [ "", "" ],
 													"patching_rect" : [ 12.5, 528.0, 361.0, 20.0 ],
+													"saved_object_attributes" : 													{
+														"versionnumber" : 70911
+													}
+,
 													"style" : "",
 													"text" : "bach.collect 2"
 												}
@@ -2358,6 +2391,10 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "int" ],
 													"patching_rect" : [ 105.5, 138.0, 70.0, 20.0 ],
+													"saved_object_attributes" : 													{
+														"versionnumber" : 70911
+													}
+,
 													"style" : "",
 													"text" : "bach.depth"
 												}
@@ -2373,6 +2410,10 @@
 													"numoutlets" : 3,
 													"outlettype" : [ "", "", "" ],
 													"patching_rect" : [ 71.0, 76.0, 184.0, 20.0 ],
+													"saved_object_attributes" : 													{
+														"versionnumber" : 70911
+													}
+,
 													"style" : "",
 													"text" : "bach.iter @maxdepth -3 @out nt"
 												}
@@ -7168,6 +7209,9 @@
 									"patching_rect" : [ 2.0, 3818.0, 286.0, 428.0 ],
 									"preventedit" : 1,
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
+									"tree_openstate_data_0000000000" : [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+									"tree_openstate_data_count" : [ 1 ],
+									"versionnumber" : 70911,
 									"vinset" : 0.0,
 									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path", "21 – Standalone Applications" ],
 									"whole_tree_data_count" : [ 1 ]
@@ -9100,7 +9144,7 @@
 				"name" : "bach.explorer.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
-				"type" : "TEXT",
+				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{

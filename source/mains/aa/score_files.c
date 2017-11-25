@@ -51,7 +51,7 @@ void strip_final_ws(char *text);
 char strip_cresc_decresc(char *text);
 
 
-const char* const xml_accepted_dynamics[] = { "p", "pp", "ppp", "pppp", "ppppp", "pppppp", "f", "ff", "fff", "ffff", "fffff", "ffffff", "mp", "mf", "sf", "sfp", "sfpp", "fp", "rf", "rfz", "sfz", "sffz", "fz"};
+const char* const xml_accepted_dynamics[] = { "p", "pp", "ppp", "pppp", "ppppp", "pppppp", "f", "ff", "fff", "ffff", "fffff", "ffffff", "mp", "mf", "sf", "sfp", "sfpp", "fp", "rf", "rfz", "sfz", "sffz", "fz", "0", "n"};
 long num_xml_accepted_dynamics = sizeof(xml_accepted_dynamics)/sizeof(xml_accepted_dynamics[0]);
 
 
@@ -496,6 +496,7 @@ void xml_get_dynamics(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
                 if (mxmlFindElement(dynamicXML, dynamicXML, xml_accepted_dynamics[di], NULL, NULL, MXML_DESCEND_FIRST))
                     dynamics_text_cur += snprintf_zero(dynamics_text + dynamics_text_cur, CONST_DYNAMICS_TEXT_ALLOC_SIZE - dynamics_text_cur, "%s_", xml_accepted_dynamics[di]);
             }
+            
         } else if ((wedgeXML = mxmlFindElement(tempXML, tempXML, "wedge", NULL, NULL, MXML_DESCEND))) {
             char hairpin = 0;
             const char *wedgetypetxt = mxmlElementGetAttr(wedgeXML, "type");
@@ -519,9 +520,6 @@ void xml_get_dynamics(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
         dynamics_text[dynamics_text_cur - 1] = 0;
         dynamics_text_cur--;
     }
-
-    long foo = 7;
-    foo++;
 }
 
 t_llll *xml_get_words(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_node, t_llll *words)
@@ -978,6 +976,7 @@ t_llll *score_readxml(t_score *x,
                     }
                 }
                 
+                // IMPORTING DYNAMICS
                 if (noteXML == firstnoteXML && (!nextnoteXML || backupXML)) { // just 1 note,
                     // assuming that this is the right thing to do when we switch to another voice
                     xml_get_dynamics(measureXML->child, NULL, dynamics_text);

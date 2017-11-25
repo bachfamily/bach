@@ -76,8 +76,8 @@
 		"filename" : [ "The Minimal Way (a).maxpat" ],
 		"digest" : [ "Using a pattern to build larger structures" ],
 		"description" : [ "In this tutorial you'll learn an example of how to build a score starting from a little pattern." ],
-		"numsections" : [ 6 ],
-		"topics" : [ "autoclear, handling enharmonicity, handling syncopations, using slots as probabilities, defining the slotinfo, assigning slot values as separate parameters, querying the number of chords, flatting a single level of an llll" ],
+		"numsections" : [ 7 ],
+		"topics" : [ "autoclear, handling enharmonicity, handling syncopations, using slots as probabilities, defining the slotinfo, assigning slot values as separate parameters, querying the number of chords, flatting a single level of an llll, dealing with pitches instead of cents" ],
 		"seealso": [ "bach.score" ]
 	},
 	"10" : {
