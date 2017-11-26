@@ -13,8 +13,8 @@
 
 
 #ifdef CONFIGURATION_Development
-//#define parserpost post
-#define parserpost(...) ((void) 0)
+#define parserpost post
+//#define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
 #endif
@@ -23,7 +23,7 @@
 
 class t_parser {
 private:
-    char pool[4096];
+    char pool[65535];
     char *basepoolptr;
     char *poolptr;
     
