@@ -8661,7 +8661,8 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                 if (hatom_gettype(&firstelem->l_hatom) == H_LLLL || !router || (router == _llllobj_sym_score)) {
                     create_whole_score_undo_tick(x);
                     set_score_from_llll(x, inputlist, true);
-                    handle_rebuild_done((t_notation_obj *) x);
+                    if (!append_via_gathered_syntax)
+                        handle_rebuild_done((t_notation_obj *) x);
                     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SCORE);
                     
                 } else if (is_firstelem_symbol) {
@@ -8766,9 +8767,11 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         }
                         
                         create_whole_score_undo_tick(x);
+                        
                         insert_measures_from_message(x, voice_start, voice_end, meas_num, meas, router == _llllobj_sym_insertmeasures);
                         
-                        perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS + k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS + k_BEAMING_CALCULATION_DONT_CHANGE_TIES);
+                        perform_analysis_and_change(x, NULL, NULL, x->r_ob.take_rhythmic_tree_for_granted ? k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING : k_BEAMING_CALCULATION_FROM_SCRATCH);
+
                         handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, router == _llllobj_sym_insertmeasures ? k_UNDO_OP_INSERT_MEASURES : k_UNDO_OP_INSERT_MEASURE);
                         
                         
