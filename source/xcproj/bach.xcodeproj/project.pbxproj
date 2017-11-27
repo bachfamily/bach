@@ -3573,7 +3573,6 @@
 		91F58B1D1FC474DF008156B7 /* tools */ = {isa = PBXFileReference; lastKnownFileType = folder; name = tools; path = source/tools; sourceTree = "<group>"; };
 		91F58B201FC6E644008156B7 /* textin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = textin.c; sourceTree = "<group>"; };
 		91F58B2F1FC6E698008156B7 /* bach.textin.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.textin.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		91F58B301FC6E699008156B7 /* bach.symdiff copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.symdiff copy-Info.plist"; path = "/Users/andreaagostini/Documents/Max 7/Packages/bach/source/xcproj/bach.symdiff copy-Info.plist"; sourceTree = "<absolute>"; };
 		91F6A60A1DDDDE2900237E9F /* bach.convertbase.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.convertbase.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F6A60E1DDDDED700237E9F /* convertbase.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = convertbase.c; sourceTree = "<group>"; };
 		91F6A6101DE6D8B200237E9F /* join.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = join.c; sourceTree = "<group>"; };
@@ -4823,7 +4822,6 @@
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				913F87961C21702E00C9CAE0 /* stuff */,
 				91BA46AC1F71585E0002D515 /* package */,
-				91F58B301FC6E699008156B7 /* bach.symdiff copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -8045,6 +8043,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 918129531611AEAE00473F86 /* Build configuration list for PBXNativeTarget "lib_bach" */;
 			buildPhases = (
+				1EEBD5561FCC82D300771A1A /* ShellScript */,
 				918129411611AEA700473F86 /* Headers */,
 				918129421611AEA700473F86 /* Sources */,
 				918129431611AEA700473F86 /* Frameworks */,
@@ -11863,6 +11862,22 @@
 		};
 /* End PBXRezBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1EEBD5561FCC82D300771A1A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\nbuildNumber=$(date +%s)\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$INFOPLIST_FILE\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		1E5F435C1526109A0085FA87 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -14571,9 +14586,11 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
+				LLLL_VERSION = 0.8.0.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_VERSION = 0.8.0.0;
 				SDKROOT = macosx;
 			};
 			name = Development;
@@ -14583,9 +14600,11 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "compiler-default";
+				LLLL_VERSION = 0.8.0.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_VERSION = 0.8.0.0;
 				SDKROOT = macosx;
 			};
 			name = Deployment;
@@ -15003,7 +15022,6 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(EXT_INSTALL_PATH)";
-				PRODUCT_VERSION = 0.7.5;
 			};
 			name = Development;
 		};
@@ -15016,7 +15034,6 @@
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(EXT_INSTALL_PATH)";
-				PRODUCT_VERSION = 0.7.5;
 			};
 			name = Deployment;
 		};
@@ -16265,7 +16282,6 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -16282,7 +16298,6 @@
 					/Library/Frameworks,
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -19275,7 +19290,6 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INFOPLIST_FILE = "bach.symdiff copy-Info.plist";
 				INSTALL_PATH = "$(AA_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -19292,7 +19306,6 @@
 					"\"/Library/Frameworks\"",
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
-				INFOPLIST_FILE = "bach.symdiff copy-Info.plist";
 				INSTALL_PATH = "$(AA_INSTALL_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

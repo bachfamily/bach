@@ -75,7 +75,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -234,7 +234,7 @@ void subs_anything(t_subs *x, t_symbol *msg, long ac, t_atom *av)
             if (x->n_multi == 0) {
                 address = llll_get();
                 llll_appendllll(address, llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 1), 0, WHITENULL_llll);
-                model = llll_get();
+                model = llll_get ();
                 llll_appendllll(model, llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 2, 1), 0, WHITENULL_llll);
             } else {
                 address = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 1);

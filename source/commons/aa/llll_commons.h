@@ -270,7 +270,15 @@ typedef struct _simpllelem {
 // the bach NOBOX object
 typedef struct _bach {
 	t_object			b_ob;
+    
+// version data, saved inside the bach object in the main() routine
+    unsigned long       b_version;
+    char                b_version_string[128];
+    char                b_version_string_verbose[128];
+    char                b_version_string_verbose_with_build[128];
 	unsigned long		b_llll_version;
+    char                b_llll_version_string[128];
+    unsigned long       b_buildnumber;
 	
 	t_llll				**b_llll_book; // an array of arrays of lllls
 	t_uint32			**b_llll_phonebook;
@@ -337,6 +345,11 @@ BEGIN_CHECK_LINKAGE
 // set some important global variables
 void bach_setup(t_bach *x);
 
+// obtain versions
+unsigned long bach_get_current_version(void);
+unsigned long bach_get_current_llll_version(void);
+char *bach_get_current_version_string_verbose(void);
+char *bach_get_current_version_string_verbose_with_build(void);
 
 
 

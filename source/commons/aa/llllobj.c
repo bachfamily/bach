@@ -2192,7 +2192,7 @@ void llllobj_set_version_number(t_object *x, e_llllobj_obj_types type, long vers
 
 void llllobj_set_current_version_number(t_object *x, e_llllobj_obj_types type)
 {
-	llllobj_set_version_number(x, type, BACH_CURRENT_VERSION);
+	llllobj_set_version_number(x, type, bach_get_current_version());
 }
 
 void llllobj_cleanup_vanilla(t_object *x)

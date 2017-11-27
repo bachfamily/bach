@@ -34776,7 +34776,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
         r_ob->part_colors[i] = partidx_to_color(i);
 	
 	r_ob->obj_type = obj_type;
-    r_ob->bwcompatible = BACH_CURRENT_VERSION;
+    r_ob->bwcompatible = bach_get_current_version();
 
 	systhread_mutex_new_debug(&r_ob->c_general_mutex, 0);
 	systhread_mutex_new_debug(&r_ob->c_markers_mutex, 0);

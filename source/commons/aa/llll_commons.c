@@ -115,6 +115,38 @@ void bach_setup(t_bach *x)
     reservedselectors = bach->b_reservedselectors;
 }
 
+
+
+
+
+unsigned long bach_get_current_version(void)
+{
+    return ((t_bach *)gensym("bach")->s_thing)->b_version;
+}
+
+
+unsigned long bach_get_current_llll_version(void)
+{
+    return ((t_bach *)gensym("bach")->s_thing)->b_llll_version;
+}
+
+char *bach_get_current_version_string_verbose(void)
+{
+    return ((t_bach *)gensym("bach")->s_thing)->b_version_string_verbose;
+}
+
+char *bach_get_current_version_string_verbose_with_build(void)
+{
+    return ((t_bach *)gensym("bach")->s_thing)->b_version_string_verbose_with_build;
+}
+
+
+
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create a new legal llll from text (but s is ignored, so all the list must be inside av[])
 // or an illegal llll if ac == 0
