@@ -8,7 +8,7 @@
 #define LLLL_BUF_SIZE_STEP 16384		// the dynamic allocation step for text buffers
 #define LLLL_IDX2PTR_SLOTS	1048576		// the number of slots for the llll_phonebook p_idx2ptr hash table (the hashing is just a modulo, so a power of 2 is fine)
 #define BACH_SHASHTABLE_SLOTS 1024
-#define MAX_SYM_LENGTH 2048				// the supposed maximum length for a symbol name
+#define MAX_SYM_LENGTH ATOM_MAX_STRLEN	// the supposed maximum length for a symbol name
 #define	QUOTE_CHAR ('`')				// the special character for quoting
 #define LLLL_NATIVE_MSG	(_llllobj_sym_bach_llll)
 
