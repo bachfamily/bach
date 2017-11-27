@@ -13,13 +13,12 @@
 	#define BACH_MAGIC_GOOD	3282844379u
 	#define BACH_MAGIC_BAD	666 // hahaha!!!
 	
-	#define BACH_CURRENT_VERSION 70911
-	#define BACH_CURRENT_VERSION_TEXT "v0.7.9.11 beta"
-	#define BACH_LLLL_VERSION 8000
+//	#define BACH_CURRENT_VERSION 70911
+//	#define BACH_CURRENT_VERSION_TEXT "v0.7.9.11 beta"
+//	#define BACH_LLLL_VERSION 8000
 
 	////////////////////#define BACH_MAX
 	//#define BACH_JUCE
-
 
     #ifdef __cplusplus
         #define BEGIN_CHECK_LINKAGE \
@@ -153,5 +152,6 @@
 #endif
 
 extern struct _bach *bach;
+
 
 #endif // _BACH_H_

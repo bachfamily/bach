@@ -374,7 +374,7 @@ int T_EXPORT main(void){
 
 	bach_inspector_ui_classinit();
 
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}

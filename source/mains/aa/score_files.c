@@ -1486,7 +1486,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     char datetxt[512];
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
-    snprintf_zero(bachversiontxt, 512, "bach for Max %s", BACH_CURRENT_VERSION_TEXT);
+    snprintf_zero(bachversiontxt, 512, "bach for Max %s", bach_get_current_version_string_verbose());
     snprintf_zero(datetxt, 512, "%.4d-%.2d-%.2d", tm.tm_year+1900, tm.tm_mon + 1, tm.tm_mday);
     mxml_node_t *identificationxml = mxmlNewElement(scorepartwisexml, "identification");
     mxml_node_t *encodingxml = mxmlNewElement(identificationxml, "encoding");

@@ -11,7 +11,7 @@
 
 // Name & Version
 //PRODUCT_NAME = $(PROJECT_NAME)
-PRODUCT_VERSION = 0.7.9
+//PRODUCT_VERSION = 0.7.9
 
 // Paths
 C74SUPPORT = $(SRCROOT)/../../../max-sdk-7.3.3/source/c74support
