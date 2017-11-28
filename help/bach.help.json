@@ -1734,7 +1734,7 @@
 				"Appendsinglemeasure" : {
 					"filename" : [ "bach.help.notation.messages.06_measures.12_appendsinglemeasure.maxpat" ],
 					"objects" : [ "bach.score" ],
-					"seealso" : [ "appendmeasure", "appendmeasures", "insertmeasure", "insertmeasures", "measure+gathered+syntax" ],
+					"seealso" : [ "appendmeasure", "insertmeasure", "insertmeasures", "measure+gathered+syntax", "ceilmeasures" ],
 					"tags" : [ "message", "appendmeasure", "append", "add", "addmeasure", "measure", "single", "end" ],
 					"title" : [ "Appending a single measure" ]
 				},

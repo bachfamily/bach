@@ -156,6 +156,50 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
+		<attribute name="indent" get="1" set="1" type="atom" size="1">
+			<digest>
+				Indentation
+			</digest>
+			<description>
+				If the <m>indent</m> attribute is set to an integer,
+				it sets the number of spaces per depth level used for indentation.
+				If it is set to <m>tab</m>, a tab character is used instead.
+				The default is <m>tab</m>. <br />
+				The attribute has no effect when the file is saved in native format.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Indentation" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="maxdecimals" get="1" set="1" type="int" size="1">
+			<digest>
+				Maximum Decimal Digits
+			</digest>
+			<description>
+				The maximum number of decimal digits for the text format. Default is 10. <br />
+				The attribute has no effect when the file is saved in native format.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Decimal Digits" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="maxdepth" get="1" set="1" type="int" size="1">
+			<digest>
+				Maximum Indentation Depth
+			</digest>
+			<description>
+				<m>maxdepth</m> sets the maximum depth level at which text indentation is performed.
+				If negative, the depth level is counted from the innermost level of each branch of the tree.
+				Defaults to -1, i.e. there is no limitation. <br />
+				The attribute has no effect when the file is saved in native format.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Indentation Depth" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="negativeoctaves" get="1" set="1" type="int" size="1">
 			<digest>
 				Use Negative Octaves
@@ -175,6 +219,20 @@
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Use Negative Octaves" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="wrap" get="1" set="1" type="int" size="1">
+			<digest>
+				Hard Wrap
+			</digest>
+			<description>
+				<m>wrap</m> sets the column at which the text should be hard-wrapped.
+				The default is 0, that is, no wrapping. <br />
+				The attribute has no effect when the file is saved in native format.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Hard Wrap" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 	</attributelist>

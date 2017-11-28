@@ -184,6 +184,8 @@
 			</digest>
 			<description>
 				Handles when <b>null</b> is output from a given key outlet.
+				0 = Never; 1 = only for keys without any content (default); 2 = also for unmatched keys (e.g. keys that has no meaning for the specific notation item,
+				such as velocity for markers, etc.).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
