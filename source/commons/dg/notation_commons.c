@@ -34779,6 +34779,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->bwcompatible = bach_get_current_version();
 
 	systhread_mutex_new_debug(&r_ob->c_general_mutex, 0);
+    systhread_mutex_new_debug(&r_ob->c_deparse_mutex, SYSTHREAD_MUTEX_RECURSIVE);
 	systhread_mutex_new_debug(&r_ob->c_markers_mutex, 0);
 	systhread_mutex_new_debug(&r_ob->c_undo_mutex, 0);
 	
@@ -42640,16 +42641,23 @@ void notation_obj_openslotwin(t_notation_obj *r_ob, t_symbol *s, long argc, t_at
 }
 
 
+void lock_deparse_mutex(t_notation_obj *r_ob)
+{
+    systhread_mutex_lock(r_ob->c_deparse_mutex);
+}
+
+void unlock_deparse_mutex(t_notation_obj *r_ob)
+{
+    systhread_mutex_unlock(r_ob->c_deparse_mutex);
+}
 
 void lock_general_mutex(t_notation_obj *r_ob)
 {
-//	bach_atomic_lock(&r_ob->c_inuse);
 	systhread_mutex_lock(r_ob->c_general_mutex);
 }
 
 void unlock_general_mutex(t_notation_obj *r_ob)
 {
-//	bach_atomic_unlock(&r_ob->c_inuse);
 	systhread_mutex_unlock(r_ob->c_general_mutex);
 }
 

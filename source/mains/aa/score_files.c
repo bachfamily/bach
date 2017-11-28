@@ -1497,7 +1497,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     
 	mxml_node_t *partlistxml = mxmlNewElement(scorepartwisexml, "part-list");
 	
-	systhread_mutex_lock(x->r_ob.c_general_mutex);
+    lock_general_mutex((t_notation_obj *)x);
 
 	// prepare the slot export
 	t_llllelem *this_slotnum_elem, *next_elem;
@@ -2486,7 +2486,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	}
     
     
-	systhread_mutex_unlock(x->r_ob.c_general_mutex);
+    unlock_general_mutex((t_notation_obj *)x);
 	
 	t_filehandle fh;
 	//bach_fix_filename_extension(&filename_sym, "xml");
@@ -2983,7 +2983,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             llll_behead(arguments);
     }
     
-	systhread_mutex_lock(x->r_ob.c_general_mutex);
+    lock_general_mutex((t_notation_obj *)x);
 	
 	prepare_voices_to_write((t_notation_obj *) x, &voices_to_write);
 	num_voices = voices_to_write->l_size;
@@ -3141,7 +3141,8 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
 			}
 		}
 	}
-	systhread_mutex_unlock(x->r_ob.c_general_mutex);
+    
+    unlock_general_mutex((t_notation_obj *)x);
 	
 	// if there are notes before 0, then we have to fix up some stuff
 	if (first_onset < 0) {
@@ -3782,7 +3783,7 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
     }
     
 
-	systhread_mutex_lock(x->r_ob.c_general_mutex);
+    lock_general_mutex((t_notation_obj *)x);
 	
 	prepare_voices_to_write((t_notation_obj *) x, &voices_to_write);
 	long num_voices = voices_to_write->l_size;
@@ -4037,7 +4038,7 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
 	sysfile_close(f);
 	
 score_dowritelilypond_error:
-	systhread_mutex_unlock(x->r_ob.c_general_mutex);
+    unlock_general_mutex((t_notation_obj *)x);
 	if (arguments)
 		llll_free(arguments);
 	return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;

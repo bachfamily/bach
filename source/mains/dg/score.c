@@ -3416,12 +3416,12 @@ void score_play(t_score *x, t_symbol *s, long argc, t_atom *argv)
      llll_free(args); */
 
     if (offline) {
-		if (bach_atomic_trylock(&x->r_ob.c_atomic_lock)) {
+		if (bach_atomic_trylock(&x->r_ob.c_atomic_lock_play)) {
 			object_warn((t_object *) x, "Already playing offline!");
 			return;
 		}
 		score_play_offline(x, s, argc - 1, argv + 1);
-		bach_atomic_unlock(&x->r_ob.c_atomic_lock);
+		bach_atomic_unlock(&x->r_ob.c_atomic_lock_play);
 		return;
 	}
     
@@ -8996,8 +8996,8 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             }
                         }
                         
-                    } else if (s == _llllobj_sym_bach_llll){
-                        bach_atomic_lock(&x->r_ob.c_atomic_lock);
+                    } else if (s == _llllobj_sym_bach_llll){ // native llll: we might try to deparse it and send it as textual
+                        lock_deparse_mutex((t_notation_obj *)x);
                         if ((!x->r_ob.itsme || router == _llllobj_sym_lambda) && router != _llllobj_sym_bach_llll) {
                             // send deparsed message to score
                             t_atom *av = NULL, rv;
@@ -9009,7 +9009,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             }
                             bach_freeptr(av);
                         }
-                        bach_atomic_unlock(&x->r_ob.c_atomic_lock);
+                        unlock_deparse_mutex((t_notation_obj *)x);
                     } else {
                         post_unknown_message((t_object *) x, inputlist);
                     }
