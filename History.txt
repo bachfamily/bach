@@ -218,7 +218,7 @@ v0.8b
 - bach.pad, bach.partition
 			Are now externals
 
-- bach.classify, bach.playkeys, bach.resample, bach.backtick
+- bach.classify, bach.playkeys, bach.resample, bach.textin, bach.textout
 			New externals
 
 - bach.postpend, bach.pitchpack, bach.pitchunpack, bach.remainder	
@@ -231,6 +231,12 @@ v0.8b
 
 - bach.reg, bach.value, bach.pv
 			Now lllls can be edited via double clicking
+
+- bach.read         New ignore attribute
+
+- bach.write        New escape attribute
+                    New negativeoctaves attribute and message attribute
+                    The message attributes wrap, indent, maxdecimals and maxdepth can now be set as object attributes as well
 
 - bach.pv		Fixed crashes happening when freeing the object
 
@@ -253,7 +259,7 @@ v0.8b
 
 - bach.roll, bach.score, bach.expr, bach.graph
             Expressions support pitches
-            New functions for dealing with pitches: "pitch", "degree", "octave", "alter", "cents", "makepitch"
+            New functions for dealing with pitches: "pitch", "degree", "octave", "alter", "cents", "makepitch", "enharm", "approx"
 
 - bach.roll, bach.score	Now support "parts", via the "voice ensembles".
 				Voices can be gathered in voice ensembles to display different parts on the same staff

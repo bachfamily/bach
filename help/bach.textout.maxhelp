@@ -160,7 +160,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 522.0, 356.0, 211.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -247,7 +247,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 178.0, 357.0, 81.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -584,7 +584,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 306.0, 160.0, 81.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -987,7 +987,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 496.5, 299.0, 211.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -1086,7 +1086,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 33.0, 243.0, 290.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -1273,7 +1273,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
+						"rect" : [ 100.0, 126.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1367,7 +1367,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 21.0, 328.0, 203.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -1440,7 +1440,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 77.0, 557.0, 65.0 ],
 									"style" : "",
-									"text" : "By default bach displays negative pitches with the leading minus (e.g.: -E0). This is convenient when negative pitches represent intervals (in this case: a major third downwards).\nIf you prefer, you can instead display pitches without the leadin minus and with a negative octave (in this case: Ab-1).",
+									"text" : "By default bach displays negative pitches with the leading minus (e.g.: -E0). This is convenient when negative pitches represent intervals (in this case: a major third downwards).\nIf you prefer, you can instead display pitches without the leading minus and with a negative octave (in this case: Ab-1).",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -1453,7 +1453,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 235.0, 328.0, 203.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -1702,7 +1702,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 2,
 									"numoutlets" : 3,
-									"outlettype" : [ "", "", "\b\b-0" ],
+									"outlettype" : [ "", "", "" ],
 									"patching_rect" : [ 26.0, 301.0, 162.333328, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -1837,7 +1837,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 851.0, 467.0 ],
+						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1985,7 +1985,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 569.0, 222.0, 81.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -2098,7 +2098,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 174.5, 245.0, 151.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
@@ -2160,7 +2160,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 2,
-									"outlettype" : [ "", "\b\b-0" ],
+									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 26.0, 210.0, 151.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911

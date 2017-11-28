@@ -53,6 +53,7 @@ typedef enum _llll_text_flags {
 	LLLL_T_NONE								= 0x0000,
 	LLLL_T_NULL								= 0x0001,	// null is returned if list is empty
     LLLL_T_NEGATIVE_OCTAVES                 = 0x0002,   // negative octaves are used (i.e., pitches are always positive)
+    LLLL_T_ALL                              = 0x0003,
 } e_llll_text_flags;
 
 
