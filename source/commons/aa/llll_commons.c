@@ -7289,7 +7289,7 @@ long prepare_string_for_text_buf(const t_symbol *sym, char *dst, long escape_fla
         case LLLL_TE_BACKTICK:
             inferred_type = parser->parse(sym->s_name);
             if ((inferred_type & H_PLAINTYPE) != H_SYM ||
-                (inferred_type & H_PAREN)) {
+                (inferred_type & (H_PAREN | H_BACKTICK))) {
                 *(dst++) = '`';
                 ac++;
                 if (backslash_flags == LLLL_TB_SMART)
@@ -7299,7 +7299,7 @@ long prepare_string_for_text_buf(const t_symbol *sym, char *dst, long escape_fla
         case LLLL_TE_DOUBLE_QUOTE:
             inferred_type = parser->parse(sym->s_name);
             if ((inferred_type & H_PLAINTYPE) != H_SYM ||
-                (inferred_type & (H_PAREN | H_SEPARATOR))) {
+                (inferred_type & (H_PAREN | H_SEPARATOR | H_BACKTICK))) {
                 *(dst++) = '\"';
                 ac++;
                 closing = "\"";
@@ -7310,7 +7310,7 @@ long prepare_string_for_text_buf(const t_symbol *sym, char *dst, long escape_fla
         case LLLL_TE_SMART:
             inferred_type = parser->parse(sym->s_name);
             if ((inferred_type & H_PLAINTYPE) != H_SYM ||
-                ((inferred_type & H_PAREN) && (inferred_type | ~H_SEPARATOR))) {
+                ((inferred_type & (H_PAREN | H_BACKTICK)) && (inferred_type | ~H_SEPARATOR))) {
                 *(dst++) = '`';
                 ac++;
                 if (backslash_flags == LLLL_TB_SMART)

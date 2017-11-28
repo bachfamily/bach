@@ -165,6 +165,7 @@ t_max_err read_setattr_ignore(t_read *x, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
         char *ignore_txt;
+        x->n_ignore = 0;
         switch (atom_gettype(av)) {
             case A_SYM:
                 ignore_txt = atom_getsym(av)->s_name;
