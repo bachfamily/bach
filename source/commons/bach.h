@@ -15,7 +15,7 @@
 	
 //	#define BACH_CURRENT_VERSION 70911
 //	#define BACH_CURRENT_VERSION_TEXT "v0.7.9.11 beta"
-//	#define BACH_LLLL_VERSION 8000
+//	#define bach_get_current_llll_version() 8000
 
 	////////////////////#define BACH_MAX
 	//#define BACH_JUCE

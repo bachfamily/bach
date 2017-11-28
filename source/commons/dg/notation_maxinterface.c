@@ -4789,7 +4789,10 @@ void notation_obj_free(t_notation_obj *r_ob)
 	
 	if (r_ob->c_general_mutex)
 		systhread_mutex_free_debug(r_ob->c_general_mutex);
-	
+
+    if (r_ob->c_deparse_mutex)
+        systhread_mutex_free_debug(r_ob->c_deparse_mutex);
+
 	if (r_ob->c_markers_mutex)
 		systhread_mutex_free_debug(r_ob->c_markers_mutex);
 

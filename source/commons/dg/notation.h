@@ -4076,9 +4076,11 @@ typedef struct _notation_obj
 
 	// mutex
 	t_systhread_mutex	c_general_mutex;	///< General mutex for all the operations on the score content, except for markers
+    t_systhread_mutex	c_deparse_mutex;	///< Recursive mutex for deparsing lllls in the anything method
 	t_systhread_mutex	c_markers_mutex;	///< Specific mutex for the markers operations
 	t_systhread_mutex	c_undo_mutex;		///< Specific mutex for the undo llll
 	t_bach_atomic_lock	c_atomic_lock;		///< An atomic lock, for some rare circumstances where it is needed. We usually use the mutex, yet this atomic lock has the advantage that we can call llllobj_output_llll from inside a locked region.
+    t_bach_atomic_lock	c_atomic_lock_play;		///< An atomic lock for the play system, for some rare circumstances where it is needed. We need a dedicated one
 
 	// atomic increments
 	t_bach_atomic_lock		c_inuse;			///< Number for atomic locks, which are currently UNUSED (mutexes are used instead)
@@ -18183,6 +18185,10 @@ void lock_general_mutex(t_notation_obj *r_ob);
  */
 void unlock_general_mutex(t_notation_obj *r_ob);
 
+
+// Internal
+void lock_deparse_mutex(t_notation_obj *r_ob);
+void unlock_deparse_mutex(t_notation_obj *r_ob);
 
 /** Lock the notation object's marker mutex, corresponding to the field t_notation_obj::c_markers_mutex.
 	@ingroup	miscellanea
