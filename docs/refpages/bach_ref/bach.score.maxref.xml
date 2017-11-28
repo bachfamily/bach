@@ -7208,13 +7208,13 @@
 				• <b>sel note if cents == 6000</b>   <i>→ select all middle C's</i><br />
 				• <b>sel note if (cents % 1200) == 0</b>   <i>→ select all C's</i><br />
 				• <b>sel note if (cents &lt; 6000) &amp;&amp; (duration &lt; 1000)</b>   <i>→ select all notes &lt;1s below middle C</i><br />
-				• <b>sel note if symduration &gt; 1/4</b>   <i>→ select all notes longer than 1/4</i><br />
+				• <b>sel note if symduration &gt; 1/4_</b>   <i>→ select all notes longer than 1/4</i><br />
 				• <b>sel note if (symonset &gt; 1/4) &amp;&amp; (tie == 0)</b>   <i>→ select all notes whose onset in their measure is greater than 1/4 and have no starting or ending tie</i><br />
 				• <b>sel note if tie == 1</b>   <i>→ select notes that start a tie but do not end one</i><br />
 				• <b>sel note if tie == 2</b>   <i>→ select notes that end a tie but do not start one</i><br />
 				• <b>sel note if tie == 3</b>   <i>→ select notes that both start and end a tie</i><br />
 				• <b>sel note if tie == 0</b>   <i>→ select notes with no ties</i><br />
-				• <b>sel note if (measure == 4) &amp;&amp; (velocity &gt; 100)</b>   <i>→ select notes in measure 4 with velocity &gt; 100</i><br />
+				• <b>sel note if (measure == 4) &amp;&amp; (velocity &gt; 100)@</b>   <i>→ select notes in measure 4 with velocity &gt; 100</i><br />
 				• <b>sel rest if symduration &lt;= 1/8</b>   <i>→ select all rests shorter than 1/8</i><br />
 				• <b>sel marker if onset &gt; 5000</b>   <i>→ select all markers with onset &gt;5s</i><br />
 				• <b>sel breakpoint if (cents &gt; 7200) &amp;&amp; (velocity &gt; 100)</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
@@ -10534,7 +10534,7 @@
 				representations of numbers or pitches, or beginning with a backtick, plus the symbols "null" and "nil" (distinct from the reserved words
 				"null" and "nil" representing the empty list and the empty sublist) are preceded by a backtick. Moreover, the symbols "int", "float" or "list"
 				are preceded by a backtick only if they are the first element of an llll, to distinguish them from the corresponding reserved messages of Max. <br />
-				<m>m</m>: 'max' output: mostly equivalent to the <t> specifier, but no symbol is backticket except "int", "float" and "list" at the beginning of an llll.
+				<m>m</m>: 'max' output: mostly equivalent to the "t" specifier, but no symbol is backticket except "int", "float" and "list" at the beginning of an llll.
 				It is important to notice that, differently from text-format lllls proper, Max-format lllls might not be invertible even if they do not reach the size
 				limit for Max message. This means that a bach object receiving a Max-format llll output from another bach object might interpret it differently
 				from the original, or in some cases might even reject it. <br />

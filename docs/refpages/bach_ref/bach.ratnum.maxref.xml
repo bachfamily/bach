@@ -254,7 +254,7 @@
 				representations of numbers or pitches, or beginning with a backtick, plus the symbols "null" and "nil" (distinct from the reserved words
 				"null" and "nil" representing the empty list and the empty sublist) are preceded by a backtick. Moreover, the symbols "int", "float" or "list"
 				are preceded by a backtick only if they are the first element of an llll, to distinguish them from the corresponding reserved messages of Max. <br />
-				<m>m</m>: 'max' output: mostly equivalent to the <t> specifier, but no symbol is backticket except "int", "float" and "list" at the beginning of an llll.
+				<m>m</m>: 'max' output: mostly equivalent to the "t" specifier, but no symbol is backticket except "int", "float" and "list" at the beginning of an llll.
 				It is important to notice that, differently from text-format lllls proper, Max-format lllls might not be invertible even if they do not reach the size
 				limit for Max message. This means that a bach object receiving a Max-format llll output from another bach object might interpret it differently
 				from the original, or in some cases might even reject it. <br />
