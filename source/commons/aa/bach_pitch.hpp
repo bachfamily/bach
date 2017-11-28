@@ -324,8 +324,8 @@ public:
     
     t_symbol* toSym(t_bool include_octave = true, t_bool always_positive = false)
     {
-        char buf[2048];
-        toTextBuf(buf, 2048, include_octave, always_positive);
+        char buf[MAX_SYM_LENGTH];
+        toTextBuf(buf, MAX_SYM_LENGTH, include_octave, always_positive);
         return gensym(buf);
     }
 

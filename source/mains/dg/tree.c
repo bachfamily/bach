@@ -3368,7 +3368,7 @@ void tree_enter(t_tree *x)	// enter is triggerd at "endeditbox time"
     if (size) {
         
         //		dev_post("This is the new text: %s", text);
-        t_llll *this_ll = llll_from_text_buf(text, size > 2048);
+        t_llll *this_ll = llll_from_text_buf(text, size > MAX_SYM_LENGTH);
         
         if (this_ll) { 
             t_llllelem *new_clicked_node_elem = NULL;

@@ -113,7 +113,7 @@ int T_EXPORT main()
      CLASS_ATTR_LONG(c, "ignore",	0,	t_textin, n_flags);
      CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
      // @description The <m>ignore</m> attribute allows preventing certain categories
-     // of elements to be interpreted according to the usual bach syntax.
+     // of elements from being interpreted according to the usual bach syntax.
      // Categories are expressed by letters, according to the following table:<br />
      // - <b>L</b> stands for all the open and closed parens marking llll sublists:
      // if this category is set, parens and symbols containing parens
@@ -134,9 +134,11 @@ int T_EXPORT main()
      // to be interpreted with the backtick included
      // (e.g., the <b>`foo</b> symbol is read as it is, including the backtick,
      // as opposed to what would happen normally, when it would be read as <b>foo</b>). <br />
-     // - <b>a</b> stands for ignoring all the above categories.
+     // - <b>-</b> reverses the selection, that is, makes the characters detailed above
+     // indicate the categories <i>not</i> to be ignored. <br />
+     // - <b>1</b> stands for ignoring all the above categories.
      // If it is present alongside other specifiers (e.g., <b>alp</b>), it overrides them. <br />
-     // - <b>-</b> stands for no category, and it is the default.
+     // - <b>0</b> stands for no category, and is the default.
      // If it is present alongside other specifiers (e.g., <b>-p</b>), it is ignored. <br />
      // For example, the <m>ignore</m> attribute could be set to <b>lp</b>,
      // which would cause a message containing <b>( a001 Mahler(Bernstein).aif )</b>
@@ -256,7 +258,33 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
             const char *attrname = symattr->s_name + 1;
             i++;
             if (!strcmp(attrname, "ignore")) {
-                char *ignore_txt = atom_getsym(av + i)->s_name;
+                char *ignore_txt;
+                switch (atom_gettype(av + i)) {
+                    case A_SYM:
+                        ignore_txt = atom_getsym(av + i)->s_name;
+                        break;
+                    case A_LONG:
+                        switch (atom_getlong(av + i)) {
+                            case 0:
+                                ignore_txt = (char *) "0";
+                                break;
+                            case 1:
+                                ignore_txt = (char *) "1";
+                                break;
+                            default:
+                                object_error((t_object *) x, "Bad value %ld for ignore attribute", atom_getlong(av + i));
+                                ignore_txt = "";
+                                break;
+                        }
+                        break;
+                    case A_FLOAT:
+                        object_error((t_object *) x, "Bad value %lf for ignore attribute", atom_getfloat(av + i));
+                        ignore_txt = "";
+                        break;
+                }
+                
+                
+                long negative = 0;
                 while (*ignore_txt) {
                     switch (*ignore_txt) {
                         case 'L':   x->n_ignore |= LLLL_I_BIGPARENS | LLLL_I_SMALLPARENS;   break;
@@ -266,12 +294,17 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
                         case 'p':   x->n_ignore |= LLLL_I_PITCH;   break;
                         case 'r':   x->n_ignore |= LLLL_I_RATIONAL;   break;
                         case 's':   x->n_ignore |= LLLL_I_SPECIAL;   break;
-                        case 'a': case 'A': x->n_ignore = LLLL_I_ALL;   break;
-                        case '-':   break;
-                        default:    object_warn((t_object *) x, "ignoring unknown %c specifier for ignore attribute", *ignore_txt); break;
+                        case '1':   x->n_ignore = LLLL_I_ALL;   break;
+                        case '0':   break;
+                        case '-':   negative = 1;   break;
+                        default:    object_warn((t_object *) x, "Ignoring unknown %c specifier for ignore attribute", *ignore_txt); break;
                     }
                     ignore_txt++;
                 }
+                if (negative) {
+                    x->n_ignore = LLLL_I_ALL ^ x->n_ignore;
+                }
+                
             } else if (!strcmp(attrname, "out")) {
                 llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, av + i);
 

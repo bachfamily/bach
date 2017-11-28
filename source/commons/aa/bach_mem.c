@@ -355,7 +355,7 @@ t_llll *llll_parse(long ac, t_atom *av, long ignore) // creates a new llll from 
     
     depth = 1;
     
-    char dollarnum[2048];
+    char dollarnum[256];
     t_symParser symParser(ignore);
     long type;
     long i;
@@ -379,9 +379,9 @@ t_llll *llll_parse(long ac, t_atom *av, long ignore) // creates a new llll from 
                 break;
             case A_DOLLAR:
 #ifdef BACH_MAX
-                snprintf_zero(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
+                snprintf_zero(dollarnum, 256, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
 #else
-                snprintf(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
+                snprintf(dollarnum, 256, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
 #endif
                 llll_appendsym(this_llll, gensym(dollarnum), 0, WHITENULL_llll);
                 break;
@@ -465,7 +465,7 @@ t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll fr
     long type;
     long leveltype = L_STANDARD;
     long a, b;
-    char dollarnum[2048];
+    char dollarnum[256];
     t_llll *x;
     
     t_symbol *f64m = _llllobj_sym_float64_marker;
@@ -502,9 +502,9 @@ t_llll *llll_parse_with_leveltypes(long ac, t_atom *av) // creates a new llll fr
                     break;
                 case A_DOLLAR:
 #ifdef BACH_MAX
-                    snprintf_zero(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
+                    snprintf_zero(dollarnum, 256, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
 #else
-                    snprintf(dollarnum, 2048, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
+                    snprintf(dollarnum, 256, "$" ATOM_LONG_PRINTF_FMT, av->a_w.w_long);
 #endif
                     llll_appendsym(this_llll, gensym(dollarnum), 0, WHITENULL_llll);
                     break;

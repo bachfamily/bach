@@ -165,7 +165,7 @@ void value_edclose(t_value *x, char **ht, long size)
 {
     // do something with the text
     if (ht) {
-        t_llll *ll = llll_from_text_buf(*ht, size > 2048);
+        t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         
         if (ll) {
             t_llll *freeme;

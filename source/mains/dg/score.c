@@ -14202,7 +14202,7 @@ void score_enter(t_score *x)	// enter is triggerd at "endeditbox time"
         unlock_general_mutex((t_notation_obj *)x);
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
 	} else if (x->r_ob.is_editing_type == k_MARKERNAME && x->r_ob.is_editing_marker) {
-		t_llll *names = llll_from_text_buf(text, size > 2048);
+		t_llll *names = llll_from_text_buf(text, size > MAX_SYM_LENGTH);
 		lock_markers_mutex((t_notation_obj *)x);
 		create_header_undo_tick((t_notation_obj *)x, k_HEADER_MARKERS);
 		change_marker_names((t_notation_obj *) x, x->r_ob.is_editing_marker, names);
@@ -14218,7 +14218,7 @@ void score_enter(t_score *x)	// enter is triggerd at "endeditbox time"
         set_textfield_info_to_dynamics_slot((t_notation_obj *) x, text);
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DYNAMICS);
 	} else if (x->r_ob.is_editing_type == k_LLLL_IN_SLOT) {
-		t_llll *my_llll = llll_from_text_buf(text, size > 2048);
+		t_llll *my_llll = llll_from_text_buf(text, size > MAX_SYM_LENGTH);
 		if (my_llll) {
             lock_general_mutex((t_notation_obj *)x);
 			create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
@@ -14233,7 +14233,7 @@ void score_enter(t_score *x)	// enter is triggerd at "endeditbox time"
 			handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
 		}
     } else if (x->r_ob.is_editing_type == k_NUMBER_IN_SLOT) {
-        t_llll *ll = llll_from_text_buf(text, size > 2048);
+        t_llll *ll = llll_from_text_buf(text, size > MAX_SYM_LENGTH);
         lock_general_mutex((t_notation_obj *)x);
         create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
         notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, ll);

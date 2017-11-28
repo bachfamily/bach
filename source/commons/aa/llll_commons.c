@@ -395,9 +395,9 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
 
 t_symbol *sym_addquote(const char *txt)
 {
-	char quoted[2048];
+	char quoted[MAX_SYM_LENGTH];
 	*quoted = QUOTE_CHAR;
-	strncpy_zero(quoted + 1, txt, 2048);
+	strncpy_zero(quoted + 1, txt, MAX_SYM_LENGTH);
 	return gensym(quoted);
 }
 

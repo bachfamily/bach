@@ -284,7 +284,7 @@ t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore)
 
 	if (strncmp(buffer, "\nbach", 5)) { // it's text format
 		*(buffer + size) = 0;
-		ll = llll_from_text_buf(buffer, size > 2048, ignore);
+		ll = llll_from_text_buf(buffer, size > MAX_SYM_LENGTH, ignore);
 	} else { // it's in old native format
 		ll = llll_from_native_buf(buffer, size);
 	}

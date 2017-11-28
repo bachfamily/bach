@@ -165,7 +165,7 @@ void reg_edclose(t_reg *x, char **ht, long size)
 {
     // do something with the text
     if (ht) {
-        t_llll *ll = llll_from_text_buf(*ht, size > 2048);
+        t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         if (ll) {
             llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);
             llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);

@@ -2908,11 +2908,11 @@ void strparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
 
 t_symbol *gensym_unescape(const char *txt)
 {
-    char name[2048];
+    char name[MAX_SYM_LENGTH];
     char *this_name = name;
     long count = 0;
     t_bool justescaped = false;
-    while (*txt && count < 2047) {
+    while (*txt && count < MAX_SYM_LENGTH - 1) {
         if (*txt == '\\' && !justescaped) {
             txt++;
             justescaped = true;

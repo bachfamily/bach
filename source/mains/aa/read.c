@@ -110,7 +110,7 @@ int T_EXPORT main()
 	CLASS_ATTR_BASIC(c, "auto", 0);	
 	// @description When set to 1, the llll is automatically output immediately after being read from disk.
     
-    CLASS_ATTR_SYM(c, "ignore",	0,	t_read, n_ignore);
+    CLASS_ATTR_ATOM(c, "ignore",	0,	t_read, n_ignore);
     CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
     CLASS_ATTR_ACCESSORS(c, "ignore", read_getattr_ignore, read_setattr_ignore);
     // @description The <m>ignore</m> attribute allows preventing certain categories
@@ -164,8 +164,33 @@ int T_EXPORT main()
 t_max_err read_setattr_ignore(t_read *x, t_object *attr, long ac, t_atom *av)
 {
     if (ac && av) {
-        char *ignore_txt = atom_getsym(av)->s_name;
-        x->n_ignore = 0;
+        char *ignore_txt;
+        switch (atom_gettype(av)) {
+            case A_SYM:
+                ignore_txt = atom_getsym(av)->s_name;
+                break;
+            case A_LONG:
+                switch (atom_getlong(av)) {
+                    case 0:
+                        ignore_txt = (char *) "0";
+                        break;
+                    case 1:
+                        ignore_txt = (char *) "1";
+                        break;
+                    default:
+                        object_error((t_object *) x, "Bad value %ld for ignore attribute", atom_getlong(av));
+                        ignore_txt = (char *) "";
+                        break;
+                }
+                break;
+            case A_FLOAT:
+                object_error((t_object *) x, "Bad value %lf for ignore attribute", atom_getfloat(av));
+                ignore_txt = (char *) "";
+                break;
+        }
+        
+        
+        long negative = 0;
         while (*ignore_txt) {
             switch (*ignore_txt) {
                 case 'L':   x->n_ignore |= LLLL_I_BIGPARENS | LLLL_I_SMALLPARENS;   break;
@@ -175,12 +200,17 @@ t_max_err read_setattr_ignore(t_read *x, t_object *attr, long ac, t_atom *av)
                 case 'p':   x->n_ignore |= LLLL_I_PITCH;   break;
                 case 'r':   x->n_ignore |= LLLL_I_RATIONAL;   break;
                 case 's':   x->n_ignore |= LLLL_I_SPECIAL;   break;
-                case 'a': case 'A': x->n_ignore = LLLL_I_ALL;   break;
-                case '-':   break;
-                default:    object_warn((t_object *) x, "ignoring unknown %c specifier for ignore attribute", *ignore_txt); break;
+                case '1':   x->n_ignore = LLLL_I_ALL;   break;
+                case '0':   break;
+                case '-':   negative = 1;   break;
+                default:    object_warn((t_object *) x, "Ignoring unknown %c specifier for ignore attribute", *ignore_txt); break;
             }
             ignore_txt++;
         }
+        if (negative) {
+            x->n_ignore = LLLL_I_ALL ^ x->n_ignore;
+        }
+        
     }
     return MAX_ERR_NONE;
 }
@@ -189,12 +219,19 @@ t_max_err read_getattr_ignore(t_read *x, t_object *attr, long *ac, t_atom **av)
 {
     char alloc;
     char ignore_txt[7];
+    long ignore_long;
     char *this_ignore_txt = ignore_txt;
     atom_alloc(ac, av, &alloc);     // allocate return atom
     
     switch (x->n_ignore) {
-        case LLLL_I_NONE:   *(this_ignore_txt++) = 'a';    break;
-        case LLLL_I_ALL:    *(this_ignore_txt++) = '-';    break;
+        case LLLL_I_NONE:
+            *ignore_txt = 0;
+            ignore_long = 0;
+            break;
+        case LLLL_I_ALL:
+            *ignore_txt = 0;
+            ignore_long = 1;
+            break;
         default:
             if (x->n_ignore & LLLL_I_BIGPARENS)     *(this_ignore_txt++) = 'L';
             if (x->n_ignore & LLLL_I_BACKTICK)      *(this_ignore_txt++) = 'b';
@@ -206,9 +243,11 @@ t_max_err read_getattr_ignore(t_read *x, t_object *attr, long *ac, t_atom **av)
             if (x->n_ignore & LLLL_I_SPECIAL)       *(this_ignore_txt++) = 's';
             break;
     }
-
-    *this_ignore_txt = 0;
-    atom_setsym(*av, gensym(ignore_txt));
+    if (*ignore_txt) {
+        *this_ignore_txt = 0;
+        atom_setsym(*av, gensym(ignore_txt));
+    } else
+        atom_setlong(*av, ignore_long);
     return 0;
 }
 
