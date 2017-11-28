@@ -539,6 +539,60 @@ t_llll *xml_get_words(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
     return words;
 }
 
+t_shortRational xml_get_accidental(mxml_node_t *accXML)
+{
+    t_shortRational alter;
+    if (!accXML)
+        return t_pitch::natural;
+    const char *accidentaltxt = mxmlGetText(accXML, NULL);
+    
+    if (!strcmp(accidentaltxt, "sharp"))
+        alter = t_pitch::sharp;
+    else if (!strcmp(accidentaltxt, "natural"))
+        alter = t_pitch::natural;
+    else if (!strcmp(accidentaltxt, "flat"))
+        alter = t_pitch::flat;
+    else if (!strcmp(accidentaltxt, "double-sharp"))
+        alter = t_pitch::dblsharp;
+    else if (!strcmp(accidentaltxt, "sharp-sharp"))
+        alter = t_pitch::dblsharp;
+    else if (!strcmp(accidentaltxt, "flat-flat"))
+        alter = 2 * t_pitch::flat;
+    else if (!strcmp(accidentaltxt, "sharp-sharp"))
+        alter = t_pitch::dblsharp;
+    else if (!strcmp(accidentaltxt, "natural-sharp"))
+        alter = t_pitch::sharp;
+    else if (!strcmp(accidentaltxt, "natural-flat"))
+        alter = t_pitch::flat;
+    else if (!strcmp(accidentaltxt, "quarter-flat"))
+        alter = t_pitch::qrtrflat;
+    else if (!strcmp(accidentaltxt, "quarter-sharp"))
+        alter = t_pitch::qrtrsharp;
+    else if (!strcmp(accidentaltxt, "three-quarters-flat"))
+        alter = t_pitch::flat +  t_pitch::qrtrflat;
+    else if (!strcmp(accidentaltxt, "three-quarters-sharp"))
+        alter = t_pitch::sharp + t_pitch::qrtrsharp;
+    else if (!strcmp(accidentaltxt, "sharp-down"))
+        alter = t_pitch::qrtrsharp - t_pitch::eighthsharp;
+    else if (!strcmp(accidentaltxt, "sharp-up"))
+        alter = t_pitch::qrtrsharp + t_pitch::eighthsharp;
+    else if (!strcmp(accidentaltxt, "natural-down"))
+        alter = t_pitch::eighthflat;
+    else if (!strcmp(accidentaltxt, "natural-up"))
+        alter = t_pitch::eighthsharp;
+    else if (!strcmp(accidentaltxt, "flat-down"))
+        alter = t_pitch::qrtrflat + t_pitch::eighthflat;
+    else if (!strcmp(accidentaltxt, "flat-up"))
+        alter = t_pitch::eighthflat;
+    else if (!strcmp(accidentaltxt, "triple-sharp"))
+        alter = 3 * t_pitch::sharp;
+    else if (!strcmp(accidentaltxt, "triple-flat"))
+        alter = 3 * t_pitch::flat;
+    else
+        alter = t_pitch::natural;
+    return alter;
+}
+
 t_llll *score_readxml(t_score *x,
                       t_filehandle fh,
                       long parenthesizedquartertones,
@@ -550,7 +604,7 @@ t_llll *score_readxml(t_score *x,
 {
 	t_ptr_size size;
 	unsigned char *buffer;
-	long quartertones = 0;
+    long new_tonedivision = 2;
     t_llll *maintempo_ll = NULL;
     
 	// allocate memory block that is the size of the file
@@ -1131,42 +1185,32 @@ t_llll *score_readxml(t_score *x,
 				
 				if (!isrest) {
 					mxml_node_t *pitchXML = mxmlFindElement(noteXML, noteXML, "pitch", NULL, NULL, MXML_DESCEND_FIRST);
-					double alter = 0;
 					const char *steptxt = NULL;
 					long octave = 0;
+                    short degree = 0;
+                    t_shortRational alter;
+
 					if (pitchXML) {
 						mxml_node_t *stepXML = mxmlFindElement(pitchXML, pitchXML, "step", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *alterXML = mxmlFindElement(pitchXML, pitchXML, "alter", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *octaveXML = mxmlFindElement(pitchXML, pitchXML, "octave", NULL, NULL, MXML_DESCEND_FIRST);
 						steptxt = mxmlGetText(stepXML, NULL);
-						alter = mxmlGetReal(alterXML);
-						octave = mxmlGetInteger(octaveXML);
+						alter = approx_double_with_rat_fixed_den(mxmlGetReal(alterXML) / 2., 8, 0, nullptr);
+						octave = mxmlGetInteger(octaveXML) + 1;
 						mxml_node_t *accidentalXML = mxmlFindElement(noteXML, noteXML, "accidental", NULL, NULL, MXML_DESCEND_FIRST);
-						if (accidentalXML) {
-							const char *accidentaltxt = mxmlGetText(accidentalXML, NULL);
-							if (!strcmp(accidentaltxt, "quarter-sharp")) {
-								alter = 0.5;
-							} else if (!strcmp(accidentaltxt, "sharp")) {
-								alter = 1;
-							} else if (!strcmp(accidentaltxt, "three-quarters-sharp")) {
-								alter = 1.5;
-							} else if (!strcmp(accidentaltxt, "quarter-flat")) {
-								alter = -0.5;
-							} else if (!strcmp(accidentaltxt, "flat")) {
-								alter = -1;
-							} else if (!strcmp(accidentaltxt, "three-quarters-flat")) {
-								alter = -1.5;
-							}
-						}
-						if (alter != floor(alter)) {
-							quartertones = 1;
-						} else if (parenthesizedquartertones) {
-							const char *parentheses = mxmlElementGetAttr(accidentalXML, "parentheses");
-							if (parentheses && !strcmp(parentheses, "yes")) {
-								alter += 0.5;
-								quartertones = 1;
-							}
-						}
+                        if (accidentalXML)
+                            alter = xml_get_accidental(accidentalXML);
+                        short den = alter.den();
+                        if (den > new_tonedivision)
+                            new_tonedivision = den;
+                        if (den <= 2 && parenthesizedquartertones) {
+                            const char *parentheses = mxmlElementGetAttr(accidentalXML, "parentheses");
+                            if (parentheses && !strcmp(parentheses, "yes")) {
+                                alter += t_pitch::qrtrsharp;
+                                if (new_tonedivision < 4)
+                                    new_tonedivision = 4;
+                            }
+                        }
 					} else {
 						mxml_node_t *unpitchedXML = mxmlFindElement(noteXML, noteXML, "unpitched", NULL, NULL, MXML_DESCEND_FIRST);
 						if (unpitchedXML) {
@@ -1174,32 +1218,20 @@ t_llll *score_readxml(t_score *x,
 							if (display_stepXML) {
 								mxml_node_t *display_octaveXML = mxmlFindElement(unpitchedXML, unpitchedXML, "display-octave", NULL, NULL, MXML_DESCEND_FIRST);
 								steptxt = mxmlGetText(display_stepXML, NULL);
-								octave = mxmlGetInteger(display_octaveXML);
+								octave = mxmlGetInteger(display_octaveXML) + 1;
 							} else {
 								steptxt = "B";
-								octave = 4;
+								octave = 5;
 							}
-
 						}
 					}
 					
-					t_rational acc = approx_double_with_rat_fixed_den(alter / 2., 8, -1, NULL);
-					long screen_midicents = 0;
-					if (steptxt) {
-						switch (*steptxt) {
-							case 'C':	screen_midicents = 0;		break;
-							case 'D':	screen_midicents = 200;		break;
-							case 'E':	screen_midicents = 400;		break;
-							case 'F':	screen_midicents = 500;		break;
-							case 'G':	screen_midicents = 700;		break;
-							case 'A':	screen_midicents = 900;		break;
-							case 'B':	screen_midicents = 1100;	break;
-						}
-					}
-					screen_midicents += (octave + 1) * 1200;
-					double midicents = screen_midicents + alter * 100.;
+                    if (steptxt) {
+                        degree = toupper(*steptxt) - 'C';
+                        CLAMP(degree, 0, 6);
+                    }
 					t_llll *notell = llll_get();
-					llll_appenddouble(notell, midicents, 0, WHITENULL_llll);
+                    llll_appendpitch(notell, t_pitch(degree, alter, octave));
 					mxml_node_t *soundXML = mxmlFindElement(noteXML, noteXML, "sound", NULL, NULL, MXML_DESCEND_FIRST);
 					mxml_node_t *dynamicsXML = mxmlFindElement(soundXML, soundXML, "dynamics", NULL, NULL, MXML_DESCEND_FIRST);
 					if (dynamicsXML)
@@ -1209,13 +1241,7 @@ t_llll *score_readxml(t_score *x,
 						llll_appendlong(notell, 1, 0, WHITENULL_llll);
 					else
 						llll_appendlong(notell, 0, 0, WHITENULL_llll);
-					t_llll *graphicll = llll_get();
-					llll_appendsym(graphicll, _llllobj_sym_graphic, 0, WHITENULL_llll);
-					llll_appendlong(graphicll, screen_midicents, 0, WHITENULL_llll);
-					llll_appendrat(graphicll, acc, 0, WHITENULL_llll);
-					llll_appendllll(notell, graphicll, 0, WHITENULL_llll);
 
-                    
                     t_llll *slotsll = llll_get();
                     llll_appendsym(slotsll, gensym("slots"));
                     
@@ -1408,16 +1434,14 @@ t_llll *score_readxml(t_score *x,
         llll_free(words);
 	}
 	mxmlDelete(scoreXML);
-	
-	if (quartertones) {
-		long tone_division = x->r_ob.tone_division;
-		if (tone_division % 4 != 0) {
-			object_warn((t_object *) x, "Changed microtonal division!");
-			object_attr_setlong(x, gensym("tonedivision"), lcm(tone_division, 4));
-		}
-	}
-	
-	dev_llll_post(scorell, 1, -1, 10, x, NULL);
+    
+    long tone_division = x->r_ob.tone_division;
+    if (tone_division % new_tonedivision != 0) {
+        object_warn((t_object *) x, "Changed microtonal division!");
+        object_attr_setlong(x, gensym("tonedivision"), lcm(tone_division, 4));
+    }
+
+	//dev_llll_post(scorell, 1, -1, 10, x, NULL);
 	return scorell;
 }
 
