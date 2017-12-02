@@ -1272,7 +1272,7 @@ YY_RULE_SETUP
 case 34:
 YY_RULE_SETUP
 {
-    parserpost(" lex: DOUBLE %lf\n", atof(yytext));
+    parserpost(" lex: BACH_DOUBLE %lf\n", atof(yytext));
     BEGIN BINARY;
     return lexpr_append_lexeme_FLOAT(epd->lexeme, atof(yytext));
 }

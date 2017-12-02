@@ -1291,15 +1291,15 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 {
-        parserpost(" lex: PUSH\n");
-        return PUSH;
+        parserpost(" lex: BACH_PUSH\n");
+        return BACH_PUSH;
     }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 {
         parserpost(" lex: POPPE\n");
-        return POP;
+        return BACH_POP;
     }
 	YY_BREAK
 
@@ -1308,31 +1308,31 @@ YY_RULE_SETUP
 {
     parserpost(" lex: INTEGER %d\n", atoi(yytext));
     yylval->l = atol(yytext);
-    return LONG;
+    return BACH_LONG;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 {
     yylval->r = t_parser::eatRational(yytext);
-    parserpost(" lex: RATIONAL %ld / %ld\n", yylval->r.num(), yylval->r.den());
-    return RAT;
+    parserpost(" lex: BACH_RATIONAL %ld / %ld\n", yylval->r.num(), yylval->r.den());
+    return BACH_RAT;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 {
     yylval->d = atof(yytext);
-    parserpost(" lex: DOUBLE %lf\n", yylval->d);
-    return DOUBLE;
+    parserpost(" lex: BACH_DOUBLE %lf\n", yylval->d);
+    return BACH_DOUBLE;
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 {
     yylval->d = atof(yytext);
-    parserpost(" lex: DOUBLE %lf\n", yylval->d);
-    return DOUBLE;
+    parserpost(" lex: BACH_DOUBLE %lf\n", yylval->d);
+    return BACH_DOUBLE;
 }
 	YY_BREAK
 
@@ -1341,7 +1341,7 @@ YY_RULE_SETUP
 {
         yylval->p = t_parser::eatPitchAsNameAccInt(yytext);
         parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
-        return PITCH;
+        return BACH_PITCH;
     }
 	YY_BREAK
 case 8:
@@ -1349,7 +1349,7 @@ YY_RULE_SETUP
 {
         yylval->p = t_parser::eatPitchAsNameIntAcc(yytext);
         parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
-        return PITCH;
+        return BACH_PITCH;
     }
 	YY_BREAK
 case 9:
@@ -1357,7 +1357,7 @@ YY_RULE_SETUP
 {
         yylval->p = t_parser::eatPitchAsNameAccIntIntT(yytext);
         parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
-        return PITCH;
+        return BACH_PITCH;
     }
 	YY_BREAK
 case 10:
@@ -1365,24 +1365,24 @@ YY_RULE_SETUP
 {
         yylval->p = t_parser::eatPitchAsNameAccIntRatT(yytext);
         parserpost(" lex: NOTE: degree %ld, alter %ld/%ld, octave %ld\n", yylval->p.degree(), yylval->p.alter().num(), yylval->p.alter().den(), yylval->p.octave());
-        return PITCH;
+        return BACH_PITCH;
     }
 	YY_BREAK
 
 case 11:
 YY_RULE_SETUP
 {
-    parserpost(" lex: BACKTICKED SYMBOL %s\n", yytext + 1);
+    parserpost(" lex: BACKTICKED BACH_SYMBOL %s\n", yytext + 1);
     yylval->sym = gensym(yytext + 1);
-    return SYMBOL;
+    return BACH_SYMBOL;
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 {
-    parserpost(" lex: QUOTED EMPTY SYMBOL %s\n", yytext);
+    parserpost(" lex: QUOTED EMPTY BACH_SYMBOL %s\n", yytext);
     yylval->sym = gensym("");
-    return SYMBOL;
+    return BACH_SYMBOL;
 }
 	YY_BREAK
 
@@ -1390,14 +1390,14 @@ case 13:
 YY_RULE_SETUP
 {
         parserpost(" lex: null\n");
-        return BACHNULL;
+        return BACH_NULL;
     }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 {
         parserpost(" lex: nil\n");
-        return BACHNIL;
+        return BACH_NIL;
     }
 	YY_BREAK
 
@@ -1405,27 +1405,27 @@ case 15:
 /* rule 15 can match eol */
 YY_RULE_SETUP
 {
-        parserpost(" lex: SYMBOL %s\n", yytext);
+        parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym(yytext);
-        return SYMBOL;
+        return BACH_SYMBOL;
     }
 	YY_BREAK
 case 16:
 /* rule 16 can match eol */
 YY_RULE_SETUP
 {
-        parserpost(" lex: SYMBOL %s\n", yytext);
+        parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym(yytext);
-        return SYMBOL;
+        return BACH_SYMBOL;
     }
 	YY_BREAK
 
 case 17:
 YY_RULE_SETUP
 {
-        parserpost(" lex: SYMBOL %s\n", yytext);
+        parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym(yytext);
-        return SYMBOL;
+        return BACH_SYMBOL;
     }
 	YY_BREAK
 
