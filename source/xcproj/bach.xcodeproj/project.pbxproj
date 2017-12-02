@@ -3579,11 +3579,11 @@
 		91F6A61F1DE6E33100237E9F /* bach.join.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.join.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91FC6EAD148BF84D009FD4E6 /* bach.shelf.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.shelf.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91FDDC1B1FBE249F0040D803 /* bach_strparser_lex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_strparser_lex.h; sourceTree = "<group>"; };
-		91FDDC1C1FBE249F0040D803 /* bach_strparser_tab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_strparser_tab.c; sourceTree = "<group>"; };
-		91FDDC1D1FBE249F0040D803 /* bach_strparser_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_strparser_tab.h; sourceTree = "<group>"; };
-		91FDDC1E1FBE249F0040D803 /* bach_strparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_strparser.c; sourceTree = "<group>"; };
+		91FDDC1C1FBE249F0040D803 /* bach_strparser_tab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = bach_strparser_tab.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		91FDDC1D1FBE249F0040D803 /* bach_strparser_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = bach_strparser_tab.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		91FDDC1E1FBE249F0040D803 /* bach_strparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = bach_strparser.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		91FDDC291FBE2B2F0040D803 /* bach_exprparser_lex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_exprparser_lex.h; sourceTree = "<group>"; };
-		91FDDC2A1FBE2B2F0040D803 /* bach_exprparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_exprparser.c; sourceTree = "<group>"; };
+		91FDDC2A1FBE2B2F0040D803 /* bach_exprparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = bach_exprparser.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		91FDDC2D1FBE2BAF0040D803 /* symparser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = symparser.h; sourceTree = "<group>"; };
 		91FDDC2E1FBE2BAF0040D803 /* symparser.l */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.lex; path = symparser.l; sourceTree = "<group>"; };
 		91FDDC2F1FBE2BAF0040D803 /* symparser.y */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.yacc; path = symparser.y; sourceTree = "<group>"; };
@@ -3592,7 +3592,7 @@
 		91FDDC321FBE2BC90040D803 /* bach_symparser_tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_symparser_tab.h; sourceTree = "<group>"; };
 		91FDDC331FBE2BC90040D803 /* bach_symparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_symparser.c; sourceTree = "<group>"; };
 		91FDDC381FBE2D060040D803 /* bach_pitchparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_pitchparser.c; sourceTree = "<group>"; };
-		91FDDC3A1FBE2D4C0040D803 /* bach_chkparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_chkparser.c; sourceTree = "<group>"; };
+		91FDDC3A1FBE2D4C0040D803 /* bach_chkparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = bach_chkparser.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		91FDDC3C1FBE2DF90040D803 /* bach_alterparser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_alterparser.c; sourceTree = "<group>"; };
 		91FE0ECE190AAB57007B6BED /* llll_comparisons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = llll_comparisons.h; sourceTree = "<group>"; };
 		91FE0ECF190AAB57007B6BED /* llll_comparisons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = llll_comparisons.c; sourceTree = "<group>"; };

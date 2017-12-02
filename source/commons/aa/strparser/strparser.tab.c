@@ -113,15 +113,15 @@ extern int strparser_debug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    LONG = 258,
-    DOUBLE = 259,
-    RAT = 260,
-    PITCH = 261,
-    SYMBOL = 262,
-    PUSH = 263,
-    POP = 264,
-    BACHNULL = 265,
-    BACHNIL = 266
+    BACH_LONG = 258,
+    BACH_DOUBLE = 259,
+    BACH_RAT = 260,
+    BACH_PITCH = 261,
+    BACH_SYMBOL = 262,
+    BACH_PUSH = 263,
+    BACH_POP = 264,
+    BACH_NULL = 265,
+    BACH_NIL = 266
   };
 #endif
 
@@ -472,9 +472,9 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "LONG", "DOUBLE", "RAT", "PITCH",
-  "SYMBOL", "PUSH", "POP", "BACHNULL", "BACHNIL", "$accept", "sequence",
-  "term", YY_NULLPTR
+  "$end", "error", "$undefined", "BACH_LONG", "BACH_DOUBLE", "BACH_RAT",
+  "BACH_PITCH", "BACH_SYMBOL", "BACH_PUSH", "BACH_POP", "BACH_NULL",
+  "BACH_NIL", "$accept", "sequence", "term", YY_NULLPTR
 };
 #endif
 
@@ -1253,7 +1253,7 @@ yyreduce:
 #line 57 "strparser.y" /* yacc.c:1646  */
     {
 	llll_appendlong(*ll, (yyvsp[0].l));
-	parserpost("parse: LONG %ld", (yyvsp[0].l));
+	parserpost("parse: BACH_LONG %ld", (yyvsp[0].l));
 }
 #line 1259 "strparser.tab.c" /* yacc.c:1646  */
     break;
@@ -1262,7 +1262,7 @@ yyreduce:
 #line 60 "strparser.y" /* yacc.c:1646  */
     {
 	llll_appenddouble(*ll, (yyvsp[0].d));
-	parserpost("parse: DOUBLE %lf", (yyvsp[0].d));
+	parserpost("parse: BACH_DOUBLE %lf", (yyvsp[0].d));
 }
 #line 1268 "strparser.tab.c" /* yacc.c:1646  */
     break;
@@ -1271,7 +1271,7 @@ yyreduce:
 #line 63 "strparser.y" /* yacc.c:1646  */
     {
 	llll_appendrat(*ll, (yyvsp[0].r));
-	parserpost("parse: RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
+	parserpost("parse: BACH_RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
 }
 #line 1277 "strparser.tab.c" /* yacc.c:1646  */
     break;
@@ -1290,7 +1290,7 @@ yyreduce:
 #line 70 "strparser.y" /* yacc.c:1646  */
     {
 	llll_appendsym(*ll, (yyvsp[0].sym));
-	parserpost("parse: symbol %s", (yyvsp[0].sym)->s_name);
+	parserpost("parse: BACH_SYMBOL %s", (yyvsp[0].sym)->s_name);
 }
 #line 1296 "strparser.tab.c" /* yacc.c:1646  */
     break;
@@ -1320,7 +1320,7 @@ yyreduce:
 	llll_appendllll(*ll, newll, 0, WHITENULL_llll);
 	llll_stack_push(stack, *ll);
 	*ll = newll;
-	parserpost("parse: PUSH");
+	parserpost("parse: BACH_PUSH");
 }
 #line 1326 "strparser.tab.c" /* yacc.c:1646  */
     break;
@@ -1336,7 +1336,7 @@ yyreduce:
 		*ll = parent;
 	} else
 		YYERROR;
-	parserpost("parse: POP");
+	parserpost("parse: BACH_POP");
 }
 #line 1342 "strparser.tab.c" /* yacc.c:1646  */
     break;
