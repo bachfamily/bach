@@ -834,6 +834,8 @@ static yyconst flex_int16_t yy_chk[1122] =
     #include "bach_symparser_tab.h"
     #define YY_DECL int symparser_lex(YYSTYPE *yylval_param,yyscan_t yyscanner)
     
+    #define YY_NO_UNISTD_H
+
 #define INITIAL 0
 #define NO_L 1
 #define NO_b 2
@@ -1266,16 +1268,12 @@ yy_match:
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 1098 );
+		while ( yy_current_state != 395 );
+		yy_cp = yyg->yy_last_accepting_cpos;
+		yy_current_state = yyg->yy_last_accepting_state;
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
-		if ( yy_act == 0 )
-			{ /* have to back up */
-			yy_cp = yyg->yy_last_accepting_cpos;
-			yy_current_state = yyg->yy_last_accepting_state;
-			yy_act = yy_accept[yy_current_state];
-			}
 
 		YY_DO_BEFORE_ACTION;
 
@@ -1628,7 +1626,8 @@ case YY_STATE_EOF(NO_Lbelprs):
 
 			else
 				{
-				yy_cp = yyg->yy_c_buf_p;
+				yy_cp = yyg->yy_last_accepting_cpos;
+				yy_current_state = yyg->yy_last_accepting_state;
 				goto yy_find_action;
 				}
 			}
@@ -2150,7 +2149,7 @@ static void symparser__load_buffer_state  (yyscan_t yyscanner)
         b->yy_bs_column = 0;
     }
 
-        b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+        b->yy_is_interactive = 0;
     
 	errno = oerrno;
 }

@@ -1,5 +1,6 @@
 %option noyywrap nodefault reentrant bison-bridge
 %option noyyalloc noyyrealloc noyyfree
+%option never-interactive
 %option header-file="strparser.lex.h"
 %option prefix="strparser_"
 
@@ -33,6 +34,7 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
             
     t_symbol *gensym_unescape(const char *txt);
 
+    #define YY_NO_UNISTD_H
 %}
 
 %%
