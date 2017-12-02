@@ -21,6 +21,7 @@
     #endif
     
     #define YYSTACK_USE_ALLOCA 1
+    #define YY_NO_UNISTD_H
 
 %}
 

@@ -62,7 +62,7 @@ extern int strparser_debug;
 
 union YYSTYPE
 {
-#line 23 "strparser.y" /* yacc.c:1909  */
+#line 25 "strparser.y" /* yacc.c:1909  */
 
 	long l;
 	double d;
