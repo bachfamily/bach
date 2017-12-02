@@ -144,7 +144,7 @@
 #ifdef WIN_VERSION
 // note that this is the required syntax on windows regardless of whether the compiler is msvc or gcc
 #define T_EXPORT __declspec(dllexport)
-#define snprintf sprintf_s
+//#define snprintf sprintf_s
 #define strncasecmp _strnicmp
 #else // MAC_VERSION
 // the mac uses the standard gcc syntax, you should also set the -fvisibility=hidden flag to hide the non-marked symbols
