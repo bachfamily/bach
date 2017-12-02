@@ -18,6 +18,8 @@
     #include <stdio.h>
     #define parserpost printf
     #endif
+    #define YY_NO_UNISTD_H
+
 %}
 
 %union {

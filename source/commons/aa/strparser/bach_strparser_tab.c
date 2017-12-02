@@ -76,6 +76,8 @@
     #include <stdio.h>
     #define parserpost printf
     #endif
+    #define YY_NO_UNISTD_H
+
 
 
 # ifndef YY_NULLPTR
@@ -456,8 +458,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    53,    53,    54,    57,    60,    63,    66,    70,    73,
-      75,    78,    85
+       0,    55,    55,    56,    59,    62,    65,    68,    72,    75,
+      77,    80,    87
 };
 #endif
 
