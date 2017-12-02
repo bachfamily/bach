@@ -91,7 +91,7 @@ long llll_leq_hatom(t_hatom *a_hatom, t_hatom *b_hatom)
                             return a_hatom->h_w.w_pitch.toMC() <= b_hatom->h_w.w_rat;
                             break;
                         case H_DOUBLE:
-                            return a_hatom->h_w.w_pitch.toMC() <= double(b_hatom->h_w.w_double);
+                            return double(a_hatom->h_w.w_pitch.toMC()) <= double(b_hatom->h_w.w_double);
                             break;
                         case H_PITCH:
                             return a_hatom->h_w.w_pitch <= b_hatom->h_w.w_pitch;
