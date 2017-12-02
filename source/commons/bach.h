@@ -20,14 +20,14 @@
 	////////////////////#define BACH_MAX
 	//#define BACH_JUCE
 
-    #ifdef __cplusplus
+    #ifdef __cplusplus_WEDONTNEEDTHIS
         #define BEGIN_CHECK_LINKAGE \
             extern "C" {
     #else
         #define BEGIN_CHECK_LINKAGE
     #endif // __cplusplus
 
-    #ifdef __cplusplus
+    #ifdef __cplusplus_WEDONTNEEDTHIS
         #define END_CHECK_LINKAGE \
             }
     #else

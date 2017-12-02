@@ -1,5 +1,6 @@
 %option noyywrap nodefault reentrant
 %option noyyalloc noyyrealloc noyyfree
+%option never-interactive
 %option outfile="alterparser.c"
 %option prefix="alterparser_"
 
@@ -29,6 +30,9 @@ ACCIDENTAL ([n#bxdq+-\^v]+)
         A_MORE,
         A_ERROR
     } e_alterparser_rv;
+    
+    #define YY_NO_UNISTD_H
+    
 %}
 
 %option extra-type = "t_shortRational *"

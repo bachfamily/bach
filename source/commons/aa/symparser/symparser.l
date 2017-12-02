@@ -1,5 +1,6 @@
 %option noyywrap nodefault reentrant bison-bridge
 %option noyyalloc noyyrealloc noyyfree
+%option never-interactive
 %option header-file="symparser.lex.h"
 %option outfile="symparser.c"
 %option prefix="symparser_"
@@ -30,6 +31,8 @@ ACCIDENTAL ([#bxdq\^v]+)
     #include "bach_symparser_tab.h"
     #define YY_DECL int yylex(YYSTYPE *yylval_param, yyscan_t yyscanner)
     
+    #define YY_NO_UNISTD_H
+
 %}
 
 %%
