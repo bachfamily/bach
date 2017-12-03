@@ -67,10 +67,14 @@
 
 	#define dev_cprintf(...) ((void) 0)
 
-
-
 		#ifdef WIN_VERSION
-			#define CONFIGURATION_Deployment
+			#ifdef _DEBUG
+				#define CONFIGURATION_Development
+			#else
+				#define CONFIGURATION_Deployment
+			#endif
+			#define BACH_LLLL_VERSION "0.8.0.0"
+			#define BACH_VERSION "0.8.0.0"
 		#endif
 		
 		#ifdef CONFIGURATION_Development
