@@ -1,5 +1,6 @@
 %option noyywrap nodefault reentrant
 %option noyyalloc noyyrealloc noyyfree
+%option never-interactive
 %option header-file="exprparser.lex.h"
 %option outfile="exprparser.c"
 %option prefix="exprparser_"
@@ -27,6 +28,8 @@ ACCIDENTAL ([#bxdq\^v]+)
     #include <ctype.h>
     #define parserpost printf
     #endif
+
+    #define YY_NO_UNISTD_H
 %}
 
 %option extra-type = "t_exprparser_data *"
@@ -290,7 +293,7 @@ ACCIDENTAL ([#bxdq\^v]+)
 }
 
 {UFLOAT} {
-    parserpost(" lex: DOUBLE %lf\n", atof(yytext));
+    parserpost(" lex: BACH_DOUBLE %lf\n", atof(yytext));
     BEGIN BINARY;
     return lexpr_append_lexeme_FLOAT(epd->lexeme, atof(yytext));
 }

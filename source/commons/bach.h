@@ -20,14 +20,14 @@
 	////////////////////#define BACH_MAX
 	//#define BACH_JUCE
 
-    #ifdef __cplusplus
+    #ifdef __cplusplus_WEDONTNEEDTHIS
         #define BEGIN_CHECK_LINKAGE \
             extern "C" {
     #else
         #define BEGIN_CHECK_LINKAGE
     #endif // __cplusplus
 
-    #ifdef __cplusplus
+    #ifdef __cplusplus_WEDONTNEEDTHIS
         #define END_CHECK_LINKAGE \
             }
     #else
@@ -67,10 +67,14 @@
 
 	#define dev_cprintf(...) ((void) 0)
 
-
-
 		#ifdef WIN_VERSION
-			#define CONFIGURATION_Deployment
+			#ifdef _DEBUG
+				#define CONFIGURATION_Development
+			#else
+				#define CONFIGURATION_Deployment
+			#endif
+			#define BACH_LLLL_VERSION "0.8.0.0"
+			#define BACH_VERSION "0.8.0.0"
 		#endif
 		
 		#ifdef CONFIGURATION_Development
@@ -144,7 +148,7 @@
 #ifdef WIN_VERSION
 // note that this is the required syntax on windows regardless of whether the compiler is msvc or gcc
 #define T_EXPORT __declspec(dllexport)
-#define snprintf sprintf_s
+//#define snprintf sprintf_s
 #define strncasecmp _strnicmp
 #else // MAC_VERSION
 // the mac uses the standard gcc syntax, you should also set the -fvisibility=hidden flag to hide the non-marked symbols

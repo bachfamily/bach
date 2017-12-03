@@ -1,5 +1,5 @@
 #include "notation.h"
-#include "score_api.h"
+//#include "score_api.h"
 #include "llll_files.h"
 #include "ext_strings.h"
 

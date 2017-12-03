@@ -1,6 +1,6 @@
 %option noyywrap nodefault reentrant
 %option noyyalloc noyyrealloc noyyfree
-%option debug
+%option never-interactive
 %option outfile="chkparser.c"
 %option prefix="chkparser_"
 
@@ -23,6 +23,9 @@ ACCIDENTAL ([#bxdq\^v]+)
     #include <ctype.h>
     #define parserpost printf
     #endif
+    
+    #define YY_NO_UNISTD_H
+
 %}
 
 %%

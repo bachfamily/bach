@@ -2123,16 +2123,16 @@ void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type)
 {
 	switch (type) {
 		case LLLL_OBJ_VANILLA:
-			CLASS_ATTR_LONG(c, "versionnumber", 0, t_llllobj_object, l_versionnumber);
+			CLASS_ATTR_ATOM_LONG(c, "versionnumber", 0, t_llllobj_object, l_versionnumber);
 			break;
 		case LLLL_OBJ_UI:
-			CLASS_ATTR_LONG(c, "versionnumber", 0, t_llllobj_jbox, l_versionnumber);
+			CLASS_ATTR_ATOM_LONG(c, "versionnumber", 0, t_llllobj_jbox, l_versionnumber);
 			break;
 		case LLLL_OBJ_MSP:
-			CLASS_ATTR_LONG(c, "versionnumber", 0, t_llllobj_pxobject, l_versionnumber);
+			CLASS_ATTR_ATOM_LONG(c, "versionnumber", 0, t_llllobj_pxobject, l_versionnumber);
 			break;
 		case LLLL_OBJ_UIMSP:
-			CLASS_ATTR_LONG(c, "versionnumber", 0, t_llllobj_pxjbox, l_versionnumber);
+			CLASS_ATTR_ATOM_LONG(c, "versionnumber", 0, t_llllobj_pxjbox, l_versionnumber);
 			break;
 		default:
 			break;

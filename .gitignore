@@ -1,8 +1,6 @@
 # Compiled source #
 ###################
 *.mxo
-*.mxe
-*.mxe64
 *.a
 
 
@@ -22,6 +20,10 @@ source/xcproj/bach.xcodeproj/project.xcworkspace
 source/xcproj/bach.xcodeproj/xcuserdata
 source/xcproj/bach.xcodeproj/*.pbxuser
 source/xcproj/bach.xcodeproj/*.mode*
+
+# Info.plist #
+##############
+*.plist
 
 
 # Plist Data: we need to unsync this otherwise we have constant conflicts #
