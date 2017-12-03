@@ -85,7 +85,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.mxe</TargetExt>
-    <OutDir>..\..\extensions</OutDir>
+    <OutDir>..\..\..\extensions</OutDir>
     <IntDir>..\vs_stuff\ext_temp\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;$(IncludePath)</IncludePath>
@@ -94,7 +94,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.mxe64</TargetExt>
-    <OutDir>..\..\extensions</OutDir>
+    <OutDir>..\..\..\extensions</OutDir>
     <IntDir>..\vs_stuff\ext_temp\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;$(IncludePath)</IncludePath>
@@ -103,7 +103,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.mxe</TargetExt>
-    <OutDir>..\..\extensions</OutDir>
+    <OutDir>..\..\..\extensions</OutDir>
     <IntDir>..\vs_stuff\ext_temp\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;$(IncludePath)</IncludePath>
@@ -112,7 +112,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetExt>.mxe64</TargetExt>
-    <OutDir>..\..\extensions</OutDir>
+    <OutDir>..\..\..\extensions</OutDir>
     <IntDir>..\vs_stuff\ext_temp\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
     <IncludePath>..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;$(IncludePath)</IncludePath>
