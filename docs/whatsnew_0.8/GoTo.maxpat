@@ -48,7 +48,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 2023.5, 562.5, 47.0 ],
-					"presentation_rect" : [ 15.0, 2023.5, 0.0, 0.0 ],
 					"text" : "There is much more you can do with goto, that you can check in the bach Help Center. As an example, you can use voicemodes to handle how voices should be navigated, and you can add \"where\" or \"until\" clauses to be respected by the selection:"
 				}
 
@@ -151,7 +150,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 34.75, 909.885803, 227.0, 33.0 ],
-					"presentation_rect" : [ 198.0, 897.5, 0.0, 0.0 ],
 					"text" : "We can use goto also to move up/down.\nHere we select the first note above the C"
 				}
 
@@ -209,8 +207,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 1032.5, 583.0, 33.0 ],
-					"presentation_rect" : [ 17.25, 895.5, 0.0, 0.0 ],
-					"text" : "As an example of a more complex usage, suppose you wanted to develop a system to detect minor chords.\nYou might want to do something along these lines:"
+					"text" : "As an example of a more complex usage, suppose you wanted to develop a system to detect minor chords.\nYou might want to do something along these lines: (bang and look at the max window!)"
 				}
 
 			}
@@ -264,7 +261,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 40.0, 1709.5, 153.0, 47.0 ],
-					"presentation_rect" : [ 26.0, 1401.5, 0.0, 0.0 ],
 					"text" : "When the navigation is completed, the a \"goto none\" message is output"
 				}
 
@@ -508,7 +504,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 26.0, 1593.5, 297.0, 47.0 ],
-					"presentation_rect" : [ 74.25, 1241.5, 0.0, 0.0 ],
 					"text" : "Incidentally, notice that now we can more easily output commands via the \"@router\" attribute, and that we can easily retrieve them via bach.playkeys"
 				}
 
@@ -592,7 +587,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 259.0, 1257.385742, 225.0, 22.0 ],
-					"presentation_rect" : [ 109.25, 925.385803, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto next, dumpselection @router check"
 				}
@@ -625,7 +619,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 1257.385742, 235.0, 22.0 ],
-					"presentation_rect" : [ 18.0, 920.385803, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto time 0, dumpselection @router check"
 				}
@@ -663,7 +656,6 @@
 					"patching_rect" : [ 15.0, 1362.0, 579.0, 216.666656 ],
 					"pitcheditrange" : [ "null" ],
 					"playoutfullpath" : 1,
-					"presentation_rect" : [ 15.0, 964.0, 0.0, 0.0 ],
 					"showmeasurenumbers" : [ 1, 0, 0, 0 ],
 					"stafflines" : [ 5, 5, 5, 5 ],
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
@@ -685,7 +677,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 34.75, 609.385803, 236.0, 22.0 ],
-					"presentation_rect" : [ 33.0, 609.385803, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto next @skiprests 1 @voicemode each"
 				}
@@ -755,7 +746,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 478.25, 277.0, 61.0, 22.0 ],
-					"presentation_rect" : [ 505.25, 292.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto right"
 				}
@@ -769,7 +759,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 424.25, 277.0, 53.0, 22.0 ],
-					"presentation_rect" : [ 452.25, 292.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto left"
 				}
@@ -787,7 +776,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 548.0, 243.0, 165.0, 60.0 ],
-					"presentation_rect" : [ 111.0, 293.5, 0.0, 0.0 ],
 					"text" : "the up/down/left/right messages will navigate as you do with keyboard commands"
 				}
 
@@ -800,7 +788,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 477.25, 247.0, 66.0, 22.0 ],
-					"presentation_rect" : [ 516.25, 270.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto down"
 				}
@@ -818,7 +805,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.25, 529.5, 528.0, 47.0 ],
-					"presentation_rect" : [ 18.0, 491.5, 0.0, 0.0 ],
 					"text" : "Notice in the previous example how polyphony is by default handled if you have different voices.\nA large number of message attributes handle a large amount of different behaviors, that can lead to complex scenarios."
 				}
 
@@ -831,7 +817,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 424.25, 247.0, 51.0, 22.0 ],
-					"presentation_rect" : [ 304.25, 271.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto up"
 				}
@@ -845,7 +830,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 230.25, 256.0, 61.0, 22.0 ],
-					"presentation_rect" : [ 228.25, 271.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto prev"
 				}
@@ -859,7 +843,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 168.25, 256.0, 60.0, 22.0 ],
-					"presentation_rect" : [ 112.25, 310.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto next"
 				}
@@ -893,7 +876,7 @@
 					"keys" : [ "CM", "CM" ],
 					"loop" : [ "(", 1, 1, 0, ")", "(", 1, 2, 0, ")" ],
 					"maxclass" : "bach.score",
-					"midichannels" : [ 1, 2 ],
+					"midichannels" : [ 1, 1 ],
 					"numinlets" : 7,
 					"numoutlets" : 9,
 					"numparts" : [ 1, 1 ],
@@ -902,7 +885,6 @@
 					"outlettype" : [ "", "", "", "", "", "", "", "", "bang" ],
 					"patching_rect" : [ 84.25, 309.0, 526.0, 207.666672 ],
 					"pitcheditrange" : [ "null" ],
-					"presentation_rect" : [ 0.0, 0.0, 0.0, 207.666667 ],
 					"showmeasurenumbers" : [ 1, 1 ],
 					"stafflines" : [ 5, 5 ],
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
@@ -963,8 +945,7 @@
 					"maxclass" : "live.line",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 15.0, 75.18367, 279.0, 38.009224 ],
-					"presentation_rect" : [ 15.75, 58.18367, 0.0, 0.0 ]
+					"patching_rect" : [ 15.0, 75.18367, 279.0, 38.009224 ]
 				}
 
 			}
@@ -1000,7 +981,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 19.0, 14.183674, 692.375, 82.0 ],
-					"presentation_rect" : [ 294.75, 30.183674, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "goto",
 					"textcolor" : [ 0.34, 0.45, 0.16, 1.0 ],
