@@ -3103,7 +3103,6 @@ void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll,
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
 			char *buf = NULL;
 			llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL); //buf+50
-			llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
 			verbose_post_rhythmic_tree((t_notation_obj *) x, measure, gensym("score_set"), 1);
 			bach_freeptr(buf);
 		#endif
@@ -3785,7 +3784,7 @@ void merge_chords_and_sum_durations(t_score *x, t_chord *chord1, t_chord *chord2
                 
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
                 char *buf = NULL;
-                llll_to_text_buf(common_relative, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SPECIAL_AND_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
+                llll_to_text_buf(common_relative, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
                 llll_check(chord1->parent->rhythmic_tree);
                 bach_freeptr(buf);
 #endif
