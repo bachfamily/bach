@@ -6507,8 +6507,8 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 					
 					// grace chords info
 					for (temp_grace = chords_to_align[i]->prev; temp_grace && temp_grace->is_grace_chord; temp_grace = temp_grace->prev) {
-						double add = (temp_grace == chords_to_align[i]->prev && temp_grace->direction == 1 && chords_to_align[i]->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0; 
-						chord_left_uext_for_grace_chords += temp_grace->left_uextension + temp_grace->right_uextension + add + has_chord_at_least_one_tie(temp_grace) * CONST_SCORE_TIE_ADDITIONAL_USPACING + CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
+						double add = (temp_grace == chords_to_align[i]->prev && temp_grace->direction == 1 && chords_to_align[i]->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0;
+						chord_left_uext_for_grace_chords += temp_grace->left_uextension + MAX(temp_grace->right_uextension + add + has_chord_at_least_one_tie(temp_grace) * CONST_SCORE_TIE_ADDITIONAL_USPACING, CONST_SCORE_MIN_USPACE_BETWEEN_GRACE_CHORDS) + CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
 					}
 					chord_left_uext += chord_left_uext_for_grace_chords;
 					
@@ -7429,7 +7429,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 						// grace chords
 						cursor = chord->stem_offset_ux - chord->left_uextension - CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
 						for (temp_grace = chord->prev; temp_grace && temp_grace->is_grace_chord; temp_grace = temp_grace->prev){
-							double add = (temp_grace == chord->prev && temp_grace->direction == 1 && chord->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0; 
+							double add = (temp_grace == chord->prev && temp_grace->direction == 1 && chord->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0;
 							temp_grace->stem_offset_ux = temp_grace->alignment_ux = cursor - MAX(temp_grace->right_uextension + add + has_chord_at_least_one_tie(temp_grace) * CONST_SCORE_TIE_ADDITIONAL_USPACING, CONST_SCORE_MIN_USPACE_BETWEEN_GRACE_CHORDS);
 							cursor = temp_grace->stem_offset_ux - temp_grace->left_uextension - CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
 						}
@@ -9477,7 +9477,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         if (curr_nt->r_it.ID > 0) {
                             char text[140];
                             snprintf_zero(text, 140, "%ld", curr_nt->r_it.ID);
-                            write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + stem_adj_x + notehead_uwidth * x->r_ob.zoom_y,
+                            write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
                                        note_y_real, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
                         }
 #endif

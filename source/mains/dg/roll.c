@@ -10345,7 +10345,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                             if (curr_nt->r_it.ID > 0) {
                                 char text[140];
                                 snprintf_zero(text, 140, "%ld", curr_nt->r_it.ID);
-                                write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + stem_adj_x + notehead_uwidth * x->r_ob.zoom_y,
+                                write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
                                            note_y_real, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
                             }
 #endif
