@@ -1801,13 +1801,13 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-14",
-					"linecount" : 5,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 338.25, 179.5, 361.0, 74.0 ],
+					"patching_rect" : [ 338.25, 179.5, 366.0, 100.0 ],
 					"style" : "",
-					"text" : "Pitches are no longer just midicents, but they contain enharmonic information — they distinguish, say, between C# and Db.\n\nYou can output pitches instead of midicents from the separate outlet by changing the \"outputpitchesseparate\" attribute to Always."
+					"text" : "Pitches are no longer just midicents, but they contain enharmonic information — they distinguish, say, between C# and Db.\n\nYou can output pitches instead of midicents from the separate outlet by changing the \"outputpitchesseparate\" attribute to Always.\n(Notice that this is not the default: the default is \"NEVER\" to preserve backward compatibility.)"
 				}
 
 			}
