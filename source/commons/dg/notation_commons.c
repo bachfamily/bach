@@ -16513,7 +16513,7 @@ void flatten_singleton_levels(t_notation_obj *r_ob, t_measure *measure, long exc
 			t_llllelem *elem = (t_llllelem *)hatom_getobj(&scannedelem->l_hatom);
 			if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
 				#ifdef BACH_RHYTHMIC_TREE_DEBUG
-					char *buf = NULL;LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity1);
+					char *buf = NULL;
 					llll_check(tree);
 					bach_freeptr(buf);
 				#endif
@@ -17111,7 +17111,30 @@ char level_contains_tuplet(t_llll *box){
 	llll_funall(box, level_contains_tuplet_fn, &res, 1, -1, FUNALL_SKIP_ATOMS);
 	return res;
 }
-			
+
+long level_contains_nongrace_tuplet_fn(void *data, t_hatom *a, const t_llll *address){
+    if (hatom_gettype(a) == H_LLLL) {
+        if (is_level_grace(hatom_getllll(a))) {
+            return 1; // don't enter
+        } else if (is_level_tuplet(hatom_getllll(a))) {
+            *((char *)data) = 1;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+char level_contains_nongrace_tuplet(t_llll *box){
+    char res = 0;
+    
+    if (is_level_tuplet(box) && !is_level_grace(box))
+        return 1;
+    
+    llll_funall(box, level_contains_nongrace_tuplet_fn, &res, 1, -1, FUNALL_SKIP_ATOMS);
+    return res;
+}
+
+
 long llll_gcd_of_rat_llll_fn(void *data, t_hatom *a, const t_llll *address){
 	if (hatom_gettype(a) == H_RAT || hatom_gettype(a) == H_LONG)
 		*((t_rational *)data) = rat_gcd(*((t_rational *)data), hatom_getrational(a));
@@ -17825,21 +17848,21 @@ char scan_single_box_for_syncopations(t_notation_obj *r_ob, t_measure *measure, 
 	
 		if (r_ob->tree_handling == k_RHYTHMIC_TREE_HANDLING_IGNORE || r_ob->tree_handling == k_RHYTHMIC_TREE_HANDLING_PROCESS) {
 			can_retranscribe = true;
-			if (!left_is_obj && (is_level_grace(hatom_getllll(&elem->l_hatom)) || level_contains_tuplet(hatom_getllll(&elem->l_hatom)) || is_level_locked(measure, (hatom_getllll(&elem->l_hatom)))))
+			if (!left_is_obj && (is_level_grace(hatom_getllll(&elem->l_hatom)) || level_contains_nongrace_tuplet(hatom_getllll(&elem->l_hatom)) || is_level_locked(measure, (hatom_getllll(&elem->l_hatom)))))
 				can_retranscribe = false;
-			else if (!right_is_obj && (is_level_grace(hatom_getllll(&elem->l_next->l_hatom)) || level_contains_tuplet(hatom_getllll(&elem->l_next->l_hatom)) || is_level_locked(measure, (hatom_getllll(&elem->l_next->l_hatom)))))
+			else if (!right_is_obj && (is_level_grace(hatom_getllll(&elem->l_next->l_hatom)) || level_contains_nongrace_tuplet(hatom_getllll(&elem->l_next->l_hatom)) || is_level_locked(measure, (hatom_getllll(&elem->l_next->l_hatom)))))
 				can_retranscribe = false;
 		} else if ((r_ob->tree_handling == k_RHYTHMIC_TREE_HANDLING_REFINE_ONLY_GRAPHICALLY || r_ob->tree_handling == k_RHYTHMIC_TREE_HANDLING_REFINE)){
 			char left_is_breakable_llll = false; 
 			char right_is_breakable_llll = false; 
 			if (hatom_gettype(&elem->l_hatom) == H_LLLL){
 				t_llll *left = hatom_getllll(&elem->l_hatom);
-				if (!is_level_original(left) && !is_level_grace(left) && !level_contains_tuplet(left) && !is_level_locked(measure, left))
+				if (!is_level_original(left) && !is_level_grace(left) && !level_contains_nongrace_tuplet(left) && !is_level_locked(measure, left))
 					left_is_breakable_llll = true;
 			}
 			if (hatom_gettype(&elem->l_next->l_hatom) == H_LLLL){
 				t_llll *right = hatom_getllll(&elem->l_next->l_hatom);
-				if (!is_level_original(right) && !is_level_grace(right) && !level_contains_tuplet(right) && !is_level_locked(measure, right))
+				if (!is_level_original(right) && !is_level_grace(right) && !level_contains_nongrace_tuplet(right) && !is_level_locked(measure, right))
 					right_is_breakable_llll = true;
 			}
 			if ((left_is_obj && right_is_obj) || (left_is_breakable_llll && right_is_obj) || (left_is_obj && right_is_breakable_llll) || (left_is_breakable_llll && right_is_breakable_llll))
