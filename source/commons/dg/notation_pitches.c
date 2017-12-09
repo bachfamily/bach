@@ -1427,10 +1427,10 @@ long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_para
 long is_range_included(t_notation_obj *r_ob, t_llll *contained, t_llll *container)
 {
     double contained_start = get_range_firstonset(r_ob, contained);
-    double contained_end = get_range_firstonset(r_ob, contained);
+    double contained_end = get_range_lastonset(r_ob, contained);
     double container_start = get_range_firstonset(r_ob, container);
-    double container_end = get_range_firstonset(r_ob, container);
-    if (container_start < contained_start && container_end > contained_end)
+    double container_end = get_range_lastonset(r_ob, container);
+    if (container_start <= contained_start && container_end >= contained_end)
         return 1;
     return 0;
 }
@@ -1440,9 +1440,10 @@ void autospell_dg_delete_container_ranges(t_notation_obj *r_ob, t_llll *range, t
 {
     t_llllelem *temp = range_el->l_next, *tempnext;
     while (temp) {
+        t_llllelem *range_el_ok = (t_llllelem *)hatom_getobj(&temp->l_hatom);
         tempnext = temp->l_next;
-        if (hatom_gettype(&temp->l_hatom) == H_LLLL) {
-            t_llll *temp_range = llll_clone(hatom_getllll(&temp->l_hatom));
+        if (hatom_gettype(&range_el_ok->l_hatom) == H_LLLL) {
+            t_llll *temp_range = llll_clone(hatom_getllll(&range_el_ok->l_hatom));
             llll_flatten(temp_range, -1, 0);
             if (is_range_included(r_ob, range, temp_range))
                 llll_destroyelem(temp);
@@ -1466,10 +1467,8 @@ void notationobj_autospell_dg_do(t_notation_obj *r_ob, t_autospell_params *par, 
     llll_flatten(scanned, 1, 0);
     llll_rev(scanned, 1, 1);
     
-    t_llllelem *nextel;
-    for (t_llllelem *el = scanned->l_head; el; el = nextel) {
+    for (t_llllelem *el = scanned->l_head; el; el = el->l_next) {
         t_llllelem *this_el = (t_llllelem *)hatom_getobj(&el->l_hatom);
-        nextel = el->l_next;
         if (hatom_gettype(&this_el->l_hatom) == H_LLLL) {
             t_llll *range = llll_clone(hatom_getllll(&this_el->l_hatom));
             llll_flatten(range, -1, 0);
