@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 297.0, 79.0, 941.0, 639.0 ],
+		"rect" : [ 112.0, 135.0, 941.0, 639.0 ],
 		"bgcolor" : [ 0.941176, 0.941176, 0.941176, 1.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -40,6 +40,23 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"fontname" : "Arial",
+					"fontsize" : 11.595187,
+					"hidden" : 1,
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ -436.571442, 374.0, 81.0, 21.0 ],
+					"presentation_rect" : [ -436.571442, 374.0, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "offset 0 -5381"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-21",
 					"maxclass" : "comment",
@@ -47,7 +64,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 789.0, 9.0, 141.0, 19.0 ],
 					"style" : "",
-					"text" : "(build 1511804706)",
+					"text" : "(build 1512414430)",
 					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
 					"textjustification" : 2,
 					"varname" : "autohelp_top_digest[1]"
@@ -77,7 +94,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 458.0, -26.0, 43.0, 22.0 ],
-					"presentation_rect" : [ 390.0, -33.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "set $1"
 				}
@@ -197,7 +213,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 174.0, 19.0 ],
 					"style" : "",
-					"text" : "v0.7.9.11 beta",
+					"text" : "v0.8.0.0 beta",
 					"textcolor" : [ 0.109804, 0.109804, 0.109804, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -337,12 +353,12 @@
 					"hidden" : 1,
 					"id" : "obj-44",
 					"maxclass" : "newobj",
-					"numinlets" : 8,
-					"numoutlets" : 8,
-					"outlettype" : [ "bang", "bang", "bang", "bang", "bang", "bang", "bang", "" ],
+					"numinlets" : 9,
+					"numoutlets" : 9,
+					"outlettype" : [ "bang", "bang", "bang", "bang", "bang", "bang", "bang", "bang", "" ],
 					"patching_rect" : [ -480.0, 270.0, 449.0, 21.0 ],
 					"style" : "",
-					"text" : "sel 0 1 2 3 4 5 6"
+					"text" : "sel 0 1 2 3 4 5 6 7"
 				}
 
 			}
@@ -414,7 +430,7 @@
 					"spacing_y" : 0.0,
 					"style" : "",
 					"tabcolor" : [ 0.337255, 0.45098, 0.156863, 0.058824 ],
-					"tabs" : [ "Help Center", "Explorer", "Tutorials", "Feedback", "Licence and credits" ],
+					"tabs" : [ "Help Center", "What's new in bach 0.8", "Explorer", "Tutorials", "Feedback", "Licence and credits" ],
 					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
 					"valign" : 2
 				}
@@ -476,7 +492,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 240.0, 264.0, 929.0, 476.0 ],
+						"rect" : [ 519.0, 196.0, 528.0, 476.0 ],
 						"bgcolor" : [ 0.94, 0.94, 0.94, 1.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -505,6 +521,271 @@
 						"style" : "",
 						"subpatcher_template" : "",
 						"boxes" : [ 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 15.0,
+									"id" : "obj-384",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 16.0, 5814.0, 635.0, 40.0 ],
+									"presentation_rect" : [ 15.0, 6049.0, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "...but this is just the tip of the iceberg. \nAs usual, have a look at the History.txt file to know what else has changed.",
+									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"id" : "obj-382",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 102.0, 5711.320312, 277.0, 24.0 ],
+									"presentation_rect" : [ 102.0, 5711.320312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Now voices can be displayed on the same staff"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 25.257102,
+									"id" : "obj-383",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 24.0, 5703.820312, 69.0, 37.0 ],
+									"presentation_rect" : [ 24.0, 5704.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Parts"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"id" : "obj-381",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 102.0, 5761.320312, 236.0, 24.0 ],
+									"presentation_rect" : [ 105.0, 5697.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "A brand new system to navigate scores"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"id" : "obj-380",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 83.0, 5646.820312, 423.0, 51.0 ],
+									"presentation_rect" : [ 83.0, 5644.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Our internal llll parsing has been completely rewritten. We have improved some important points, and if you ever are annoyed by backticks, you should definitely read this"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"id" : "obj-379",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 188.0, 5593.820312, 334.0, 51.0 ],
+									"presentation_rect" : [ 185.0, 5584.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Some modules have been deprecated in favour of new ones, and you'll need to change some of your habits! In exchange for that, your bach life will be easier ;-)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"id" : "obj-378",
+									"linecount" : 3,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 102.0, 5540.820312, 363.0, 51.0 ],
+									"presentation_rect" : [ 100.0, 5548.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Slots have improved! They support dynamics, articulations, noteheads, lyrics. Also you can use temporal slots in the new \"milliseconds\" mode"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"id" : "obj-377",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 130.0, 5499.820312, 150.0, 37.0 ],
+									"style" : "",
+									"text" : "Yes, we do have REAL pitches now :-)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 25.257102,
+									"id" : "obj-375",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 24.0, 5601.820312, 156.0, 37.0 ],
+									"presentation_rect" : [ 429.0, 5474.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "NewModules"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-374",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 193.5, 5860.0, 187.0, 22.0 ],
+									"style" : "",
+									"text" : "sprintf symout WhatsNew0.8_%s"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 25.257102,
+									"id" : "obj-373",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 24.0, 5550.820312, 67.0, 37.0 ],
+									"presentation_rect" : [ 244.0, 5476.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Slots"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 25.257102,
+									"id" : "obj-372",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 24.0, 5652.820312, 54.0, 37.0 ],
+									"presentation_rect" : [ 168.0, 5474.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Lllls"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 25.257102,
+									"id" : "obj-371",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 24.0, 5499.820312, 93.0, 37.0 ],
+									"presentation_rect" : [ 52.0, 5476.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Pitches"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 25.257102,
+									"id" : "obj-370",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 24.0, 5754.820312, 70.0, 37.0 ],
+									"style" : "",
+									"text" : "GoTo"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 33.493256,
+									"id" : "obj-367",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 16.0, 5398.0, 525.0, 44.0 ],
+									"style" : "",
+									"text" : "What's new in bach 0.8"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 15.0,
+									"id" : "obj-368",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 16.0, 5442.0, 542.0, 40.0 ],
+									"style" : "",
+									"text" : "Here's a collection of things that you need to know when upgrading to bach 0.8.\nClick on each message to open the corresponding scrolldown primer!",
+									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-362",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 193.5, 5891.0, 81.0, 22.0 ],
+									"style" : "",
+									"text" : "prepend load"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"hidden" : 1,
+									"id" : "obj-335",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 193.5, 5923.0, 53.0, 22.0 ],
+									"style" : "",
+									"text" : "pcontrol"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
@@ -849,7 +1130,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 389.0, 4083.063477, 525.0, 20.0 ],
 									"style" : "",
-									"text" : "17",
+									"text" : "12",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -975,9 +1256,9 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 389.0, 4103.063477, 525.0, 60.0 ],
+									"patching_rect" : [ 389.0, 4103.063477, 127.0, 60.0 ],
 									"style" : "",
-									"text" : "matrix definition and operations, matrix transposition, eigenvalues and eigenvectors, kernel of a matrix, linear combinations, vector spaces, basis and dimensions, orthogonality and orthonormality, determinant of a matrix, inverse of a matrix, rank of a matrix, image of a matrix, solving linear systems of equations",
+									"text" : "displaying lllls, creating lllls, modifying lllls, handling lllls",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -1405,15 +1686,15 @@
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-122",
-									"linecount" : 3,
+									"linecount" : 2,
 									"linkend" : [ " ", "\u002c" ],
 									"linkstart" : [ "b" ],
 									"maxclass" : "bach.hypercomment",
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 389.0, 4163.063477, 525.0, 47.0 ],
-									"text" : "bach.m2jitcellblock, bach.wellshape, bach.minfo, bach.mrandom, bach.diag, bach.idmatrix, bach.trans, bach.expr, bach.mtimes, bach.mpow, bach.graph, bach.eig, bach.ker, bach.extractbasis, bach.norm, bach.det, bach.inv, bach.rank, bach.im, bach.linearsolve",
+									"patching_rect" : [ 389.0, 4163.063477, 525.0, 33.0 ],
+									"text" : "bach.tree, bach.print, bach.portal, bach.reg, bach.length, bach.depth, bach.nth, bach.find, bach.filternull, bach.roll, bach.score",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -1736,9 +2017,9 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 389.0, 3864.0, 525.0, 47.0 ],
+									"patching_rect" : [ 389.0, 3864.0, 471.0, 47.0 ],
 									"style" : "",
-									"text" : "Having the possibility to define a list of lists (an llll of depth 2) means having the possibility to define a matrix. Indeed, bach has an extended library aimed to bring the power of the matrix calculus and linear algebra into Max. This tutorial will guide you through its discovery. ",
+									"text" : "In this tutorial you'll move your first steps with the Lisp-like linked lists (lllls for short), which are the standard communication mechanism throughout all the bach environment",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -1805,7 +2086,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 389.0, 3795.0, 525.0, 44.0 ],
 									"style" : "",
-									"text" : "Into The Matrix"
+									"text" : "Hello World"
 								}
 
 							}
@@ -1833,7 +2114,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 288.0, 3795.0, 74.0, 44.0 ],
 									"style" : "",
-									"text" : "16",
+									"text" : "1",
 									"textjustification" : 2
 								}
 
@@ -1962,7 +2243,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 389.0, 3839.0, 525.0, 23.0 ],
 									"style" : "",
-									"text" : "An overview of the bach matrix calculus library",
+									"text" : "First steps with the bach nested lists (lllls)",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -1972,7 +2253,7 @@
 									"allowdrag" : 0,
 									"fontsize" : 15.0,
 									"id" : "obj-21",
-									"items" : [ "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f", ",", "g", ",", "h", ",", "i", ",", "j", ",", "k", ",", "l", ",", "m", ",", "n", ",", "o", ",", "p", ",", "q" ],
+									"items" : [ "a", ",", "b", ",", "c", ",", "d", ",", "e", ",", "f", ",", "g", ",", "h", ",", "i", ",", "j", ",", "k", ",", "l" ],
 									"maxclass" : "umenu",
 									"numinlets" : 1,
 									"numoutlets" : 3,
@@ -7255,7 +7536,7 @@
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"tree_openstate_data_0000000000" : [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
 									"tree_openstate_data_count" : [ 1 ],
-									"versionnumber" : 70911,
+									"versionnumber" : 80000,
 									"vinset" : 0.0,
 									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path", "21 – Standalone Applications" ],
 									"whole_tree_data_count" : [ 1 ]
@@ -8630,6 +8911,70 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-335", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-362", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-374", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-370", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-374", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-371", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-374", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-372", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-374", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-373", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-362", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-374", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-374", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-375", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-374", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-383", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-47", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-42", 0 ]
@@ -9032,7 +9377,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-11", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-44", 3 ]
+					"source" : [ "obj-44", 4 ]
 				}
 
 			}
@@ -9040,7 +9385,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-44", 4 ]
+					"source" : [ "obj-44", 5 ]
 				}
 
 			}
@@ -9048,7 +9393,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-44", 1 ]
+					"source" : [ "obj-44", 2 ]
 				}
 
 			}
@@ -9056,7 +9401,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-51", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-44", 2 ]
+					"source" : [ "obj-44", 3 ]
 				}
 
 			}
@@ -9065,6 +9410,14 @@
 					"destination" : [ "obj-52", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-44", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-8", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-44", 1 ]
 				}
 
 			}
@@ -9105,6 +9458,14 @@
 					"destination" : [ "obj-17", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-6", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-53", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}
