@@ -73,8 +73,9 @@
 			#else
 				#define CONFIGURATION_Deployment
 			#endif
-			#define BACH_LLLL_VERSION "0.8.0.0"
-			#define BACH_VERSION "0.8.0.0"
+			#define BACH_LLLL_VERSION "0.8.0.1"
+			#define BACH_VERSION "0.8.0.1"
+			#define MAXAPI_USE_MSCRT
 		#endif
 		
 		#ifdef CONFIGURATION_Development
