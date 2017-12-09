@@ -355,8 +355,10 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
         buf += len;
         count += len;
     }
-    if (!addTrailingSpace || count == bufSize - 1)
+    if (!addTrailingSpace || count == bufSize - 1) {
+        *(buf) = 0;
         return count;
+    }
     *(buf) = ' ';
     *(buf + 1) = 0;
     return count + 1;
