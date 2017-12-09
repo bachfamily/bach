@@ -1340,6 +1340,7 @@ char autospell_dg_respell_is_acceptable(t_notation_obj *r_ob, t_autospell_params
 long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_params *params, t_llll *notes)
 {
     char pitches_str[2048];
+    pitches_str[0] = 0;
     
     if (!notes->l_head)
         return 0;
