@@ -9805,6 +9805,47 @@ void change_popupmenu_slot_flag(t_notation_obj *r_ob, long slot_num_0_based, cha
 }
 
 
+
+
+t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->lyrics_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->annotations_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+
 t_max_err notation_obj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
 {
     if (ac) {

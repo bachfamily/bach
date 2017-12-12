@@ -4269,6 +4269,8 @@ typedef struct _notation_obj
 	t_symbol	*noteheads_font;	///< Name of the font (as symbol) used for the notation elements (all but accidentals and articulations)
 	t_symbol	*accidentals_font;	///< Name of the font (as symbol) used for the accidentals
     t_symbol	*articulations_font;///< Name of the font (as symbol) used for the articuations
+    t_symbol	*lyrics_font;///< Name of the font (as symbol) used for the articuations
+    t_symbol	*annotations_font;///< Name of the font (as symbol) used for the articuations
 	double		legend_font_size;	///< Size in pt of the legend (fixed!)
 
 	
@@ -17108,6 +17110,8 @@ t_max_err notation_obj_set_voicespacing(t_notation_obj *r_ob, long ac, double *v
 t_max_err notation_obj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
 t_max_err notation_obj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);

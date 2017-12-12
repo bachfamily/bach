@@ -2252,6 +2252,12 @@
     // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set. Not all articulations are supported by all fonts.
     // You can however always define custom articulations with any font of your choice.
 
+#define BACH_DOC_LYRICS_FONT
+    // @description Sets the font used to display lyrics (default is Arial).
+
+#define BACH_DOC_ANNOTATIONS_FONT
+    // @description Sets the font used to display annotations (default is Arial).
+
 #define BACH_DOC_DYNAMICS_SPECTRUM
     // The dynamics spectrum is the sequence of standard dynamics in the piano-to-forte range.
     // It is characterized by its "maxchars", i.e. the maximum number of p's and f's of the elements it contains ("mp" and "mf"

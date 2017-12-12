@@ -6825,6 +6825,18 @@ int T_EXPORT main(void){
     CLASS_ATTR_ACCESSORS(c, "articulationsfont", (method)NULL, (method)score_set_articulations_font);
     // @description @copy BACH_DOC_ARTICULATIONS_FONT
 
+    CLASS_ATTR_SYM(c,"lyricsfont", 0, t_notation_obj, lyrics_font);
+    CLASS_ATTR_STYLE_LABEL(c, "lyricsfont", 0, "font", "Lyrics Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"lyricsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "lyricsfont", (method)NULL, (method)notation_obj_setattr_lyrics_font);
+    // @description @copy BACH_DOC_LYRICS_FONT
+    
+    CLASS_ATTR_SYM(c,"annotationsfont", 0, t_notation_obj, annotations_font);
+    CLASS_ATTR_STYLE_LABEL(c, "annotationsfont", 0, "font", "Annotations Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"annotationsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "annotationsfont", (method)NULL, (method)notation_obj_setattr_annotations_font);
+    // @description @copy BACH_DOC_ANNOTATIONS_FONT
+
 	CLASS_ATTR_DOUBLE(c,"measurenumberfontsize",0, t_notation_obj, measure_numbers_font_size);
 	CLASS_ATTR_STYLE_LABEL(c,"measurenumberfontsize",0,"text","Measure Numbers Font Size");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"measurenumberfontsize", 0, "9");
