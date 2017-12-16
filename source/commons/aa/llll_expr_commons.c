@@ -1195,6 +1195,7 @@ long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(doubl
     lex->l_token.t_operands = 1;
     lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = f;
     lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
