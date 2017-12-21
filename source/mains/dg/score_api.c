@@ -5398,7 +5398,7 @@ void delete_voice_tempi(t_score *x, t_scorevoice *voice)
 void deletetuttipoint(t_score *x, t_tuttipoint *pt)
 {
 	if (pt){
-		free_alignmentpoints_for_tuttipoint((t_notation_obj *)x, pt);
+		tuttipoint_free_alignmentpoints((t_notation_obj *)x, pt);
 		
 		x->num_tuttipoints--;
 		if (pt->prev) { // not the first pt
@@ -6010,13 +6010,13 @@ double get_interpolated_offset_ux(t_score *x, t_tuttipoint *tpt, void *obj_ptr, 
 }
 
 // this does NOT space things properly: only refines the EXISTING spacing
-void refine_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt) 
+void tuttipoint_refine_spacing(t_score *x, t_tuttipoint *tpt) 
 { 
 	long i;
 	t_measure *this_meas;
 	
 	if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL)
-		calculate_tuttipoint_spacing(x, tpt);
+		tuttipoint_calculate_spacing(x, tpt);
 		
 	for (i = 0; i < x->r_ob.num_voices; i++) // cycle on the voices
 		for (this_meas = tpt->measure[i]; ((tpt->next && this_meas != tpt->next->measure[i]) || (!tpt->next && this_meas)); this_meas = this_meas->next) { // cycle on the measures within the tuttipoin
@@ -6061,7 +6061,7 @@ t_chord *measure_get_first_non_grace_chord(t_measure *meas){
 
 
 // wf = width factor
-void calculate_tuttipoint_spacing_proportional(t_score *x, t_tuttipoint *tpt, double wf)
+void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt, double wf)
 { // No Need for alignment points
     // easy case! everything is just proportional
     double temp = 0.;
@@ -6109,7 +6109,7 @@ void calculate_tuttipoint_spacing_proportional(t_score *x, t_tuttipoint *tpt, do
 }
 
 // this really spaces all things properly
-void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt) 
+void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt) 
 { 
 	// this is the spacing function: assign, within the tuttipoint, to each chord an offset_ux, w.r. to the tuttipoint beginning.
 	
@@ -6136,10 +6136,10 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 	tpt->is_spacing_fixed = first_tpt_measure ? first_tpt_measure->is_spacing_fixed : 0;
 	
 	// first of all
-	free_alignmentpoints_for_tuttipoint((t_notation_obj *)x, tpt);
+	tuttipoint_free_alignmentpoints((t_notation_obj *)x, tpt);
 
     if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL) {
-        calculate_tuttipoint_spacing_proportional(x, tpt, wf);
+        tuttipoint_calculate_spacing_proportional(x, tpt, wf);
     } else {
 		
 		double delta_ux_start_next_tranche = 0;
@@ -7354,9 +7354,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 //was:						double coeff1 = onset_abs < CONST_EPSILON4 || tranche_sec_dur < CONST_EPSILON1 ? 0 : onset_abs/tranche_sec_dur;
 						double coeff1 = tranche_sec_dur < CONST_EPSILON1 ? 0 : onset_abs/tranche_sec_dur;
 						
-						temp_al_pt->offset_ux = start_tranche->offset_ux + mu * coeff1 * (width - grace_width) + 
-													(1 - mu) * tranche_width_no_graces_minwidth_no_graces_ratio * (original_offset_ux - start_tranche->offset_ux) +
-													curr_grace_width; 					
+						temp_al_pt->offset_ux = start_tranche->offset_ux + mu * coeff1 * (width - grace_width) + (1 - mu) * tranche_width_no_graces_minwidth_no_graces_ratio * (original_offset_ux - start_tranche->offset_ux) + curr_grace_width;
 						
 						if (temp_al_pt->next)
 							curr_grace_width += temp_al_pt->next->left_uext_due_to_grace_chords;
@@ -7558,11 +7556,21 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 		dev_post("Bug: aligned pt: %ld, but freed: %ld", num_align_pt, ct);
 #endif	
 
+#ifdef BACH_SPACING_DEBUG
+    dev_post("ALIGNMENT POINTS end of function");
+    for (al_pt = firstalignmentpoint; al_pt; al_pt = al_pt->next) {
+        dev_post(". offset_ux = %.2f, num_objs = %ld, firstobj = %ld",
+                 al_pt->offset_ux, al_pt->num_aligned_obj, al_pt->num_aligned_obj ? al_pt->aligned_obj[0]->type : 0);
+    }
+    dev_post("---------------");
+#endif
+    
+    
 	tpt->firstalignmentpoint = firstalignmentpoint;
 	tpt->lastalignmentpoint = lastalignmentpoint;
 	tpt->num_alignmentpoints = num_align_pt;
 	
-//	free_alignmentpoints_for_tuttipoint(tpt);
+//	tuttipoint_free_alignmentpoints(tpt);
 	
 	tpt->need_recompute_spacing = k_SPACING_DONT_RECALCULATE;
 	
@@ -8042,12 +8050,12 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
 					}
 				}
 			
-			calculate_tuttipoint_spacing(x, tmp_pt);
+			tuttipoint_calculate_spacing(x, tmp_pt);
             correct_tuttipoint_spacing_for_voiceensembles(x, tmp_pt);
 			tmp_pt->need_recompute_spacing = k_SPACING_DONT_RECALCULATE;
             
 		} else if (tmp_pt->need_recompute_spacing == k_SPACING_REFINE_ONLY) {
-			refine_tuttipoint_spacing(x, tmp_pt);
+			tuttipoint_refine_spacing(x, tmp_pt);
             correct_tuttipoint_spacing_for_voiceensembles(x, tmp_pt);
 			tmp_pt->need_recompute_spacing = k_SPACING_DONT_RECALCULATE;
 		}

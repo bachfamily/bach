@@ -34761,15 +34761,17 @@ t_llll *get_numparts_as_llll(t_notation_obj *r_ob)
 
 
 void check_alignment_points(t_alignmentpoint *firstalignmentpoint, t_alignmentpoint *lastalignmentpoint){
+#ifdef CONFIGURATION_Development
 	t_alignmentpoint *al;
 	for (al = firstalignmentpoint; al; )
 		al = al->next;
 	for (al = lastalignmentpoint; al; )
 		al = al->prev;
+#endif
 }
 
 
-void free_alignmentpoints_for_tuttipoint(t_notation_obj *r_ob, t_tuttipoint *tpt){
+void tuttipoint_free_alignmentpoints(t_notation_obj *r_ob, t_tuttipoint *tpt){
 	// free all the alignment points
 	t_alignmentpoint *temp2, *temp1 = tpt->lastalignmentpoint; // firstalignmentpoint
 	check_alignment_points(tpt->firstalignmentpoint, tpt->lastalignmentpoint);
@@ -37444,7 +37446,7 @@ t_max_err notation_obj_set_keys(t_notation_obj *r_ob, t_symbol **keys)
 /// LOCAL SPACING
 
 void assign_local_spacing_width_multiplier(t_notation_obj *r_ob, t_tuttipoint *tpt, double new_value){
-	if (tpt){
+	if (tpt) {
 		long i;
 		for (i = 0; i < r_ob->num_voices && i < CONST_MAX_VOICES; i++){
 			t_measure *tmp_meas;

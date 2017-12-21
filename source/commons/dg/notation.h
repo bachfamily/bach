@@ -57,7 +57,7 @@
 //    #define BACH_OUTPUT_SYMBOLIC_LEVELTYPES         ///< Are leveltypes to be output as symbols, instead of integers?
 
     #define BACH_CHORDS_HAVE_SLOTS
-    #define BACH_MARKERS_HAVE_SLOTS
+//    #define BACH_MARKERS_HAVE_SLOTS   ///< Not yet ready for this!
 
     // #define BACH_SUPPORT_SLURS       ///< Not yet ready for this!
 
@@ -3129,10 +3129,10 @@ typedef struct _tuttipoint
 
 /** The data structure representing an alignment point (only used in [bach.score]).
 	An alignment point is a sort of marker relying some musical entities which happen at the same time.
-	Alignment points are only used inside calculate_tuttipoint_spacing() to calculate the spacing of a tuttipoint region.
+	Alignment points are only used inside tuttipoint_calculate_spacing() to calculate the spacing of a tuttipoint region.
  
 	@remark		Alignment points are stored in each tuttipoint structure. They are just calculated innerly inside the function
-				calculate_tuttipoint_spacing(), which builds them, spaces them, sets the spacing values inside the chords and measure proper fields.
+				tuttipoint_calculate_spacing(), which builds them, spaces them, sets the spacing values inside the chords and measure proper fields.
 				But at any new spacing, their address change, so NEVER rely on a specific address of an alignment point!
  
 	@ingroup	notation
@@ -6159,7 +6159,7 @@ long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicode
 long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
 
 
-/**	Get the default width for a portion of score. This function is used inside calculate_tuttipoint_spacing() in order to determine the
+/**	Get the default width for a portion of score. This function is used inside tuttipoint_calculate_spacing() in order to determine the
 	width that each tuttipoint section might have. (If tuttipoints coincide with measures, we'll ask for the default unscaled width of the entire measure). 
 	@ingroup					typographical
 	@param	r_ob				The notation object
@@ -6909,7 +6909,7 @@ void free_slotinfos(t_notation_obj *r_ob);
 	@param r_ob		The notation object
 	@param tpt		The tuttipoint
  */
-void free_alignmentpoints_for_tuttipoint(t_notation_obj *r_ob, t_tuttipoint *tpt);
+void tuttipoint_free_alignmentpoints(t_notation_obj *r_ob, t_tuttipoint *tpt);
 
 	
 /**	Free the memory of a measure's rhythmic tree
