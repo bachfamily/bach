@@ -13,10 +13,10 @@
 
 
 #ifdef CONFIGURATION_Development
-#define parserpost post
-//#define parserpost(...) ((void) 0)
+//#define parserpost post // COMMENT EITHER THIS...
+#define parserpost(...) ((void) 0) // ...OR THIS...
 #else
-#define parserpost(...) ((void) 0)
+#define parserpost(...) ((void) 0) // ... BUT DON'T COMMENT THIS
 #endif
 
 #define YY_FATAL_ERROR(msg) t_parser::fatalError(msg)
