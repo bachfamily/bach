@@ -11,7 +11,6 @@
 #include "bach.h"
 
 #ifdef BACH_MAX
-
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
