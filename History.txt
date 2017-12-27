@@ -1,5 +1,19 @@
 VERSION NOTES:
 
+v0.8.1b
+
+Scroll down for very important things you should now about v0.8b (v0.8.1 being a minor update, fixing a few bugs)
+
+***********************
+*** VERSION CHANGES ***
+***********************
+
+- bach.score	Fixed possible crashes with "inscreenmeas"
+
+
+
+
+
 v0.8b
 
 ******************************************************************

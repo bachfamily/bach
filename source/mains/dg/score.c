@@ -8640,7 +8640,7 @@ void score_copy_slots_to_tied_noted_sequences(t_score *x)
 
 void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	long inlet = proxy_getinlet((t_object *) x); 
-
+    
 	if (x->r_ob.is_sending_automessage) // automessage loop; we don't want it
 		return;
 	
@@ -10351,7 +10351,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
 							if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)((t_note *)temp)->parent)) {
 								t_note *new_note = clone_note((t_notation_obj *) x, (t_note *)temp, k_CLONE_FOR_SAME_CHORD); // we clone the note
-								insert_note((t_notation_obj *) x, ((t_note *)temp)->parent, new_note, 0);
+								note_insert((t_notation_obj *) x, ((t_note *)temp)->parent, new_note, 0);
 								((t_note *)temp)->parent->parent->need_recompute_beams_positions = true;
 								recalculate_all_measure_chord_parameters((t_notation_obj *)x, ((t_note *)temp)->parent->parent);
 								set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
@@ -10540,7 +10540,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)note->parent->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)chord_for_note_insertion->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
 
-			insert_note((t_notation_obj *) x, chord_for_note_insertion, note_in_new_voice, 0);
+			note_insert((t_notation_obj *) x, chord_for_note_insertion, note_in_new_voice, 0);
 			note_compute_approximation((t_notation_obj *) x, note_in_new_voice);
 			if (chord_for_note_insertion->r_sym_duration.r_num < 0) chord_for_note_insertion->r_sym_duration = rat_abs(chord_for_note_insertion->r_sym_duration); 
 			newch = chord_for_note_insertion;
@@ -12078,7 +12078,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 #endif
                                     }
                                     
-                                    insert_note((t_notation_obj *)x, curr_ch, newnote, 0);
+                                    note_insert((t_notation_obj *)x, curr_ch, newnote, 0);
 									x->r_ob.item_changed_at_mousedown = 1;
 									curr_ch->r_sym_duration = rat_abs(curr_ch->r_sym_duration);
 									notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)curr_ch);
@@ -14432,7 +14432,7 @@ void add_note_to_chord_from_linear_edit(t_score *x, long force_diatonic_step){
 		x->r_ob.notation_cursor.chord->r_sym_duration = rat_abs(x->r_ob.notation_cursor.chord->r_sym_duration);
 
         note_set_user_enharmonicity_from_screen_representation(this_nt, argv[1], long2rat(0), true);
-		insert_note((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
+		note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
 		note_compute_approximation((t_notation_obj *) x, this_nt);
 		calculate_chord_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->parent->voiceparent), false);
 		validate_accidentals_for_measure((t_notation_obj *) x, x->r_ob.notation_cursor.measure);

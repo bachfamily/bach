@@ -2409,7 +2409,7 @@ t_note *roll_slice_note(t_roll *x, t_note *note, double ms_pos)
             create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *) right_ch, k_UNDO_MODIFICATION_DELETE);
         
         t_note *right_nt = slice_note((t_notation_obj *)x, note, ms_pos - note->parent->onset);
-        insert_note((t_notation_obj *)x, right_ch, right_nt, 0);
+        note_insert((t_notation_obj *)x, right_ch, right_nt, 0);
         return right_nt;
     }
     return NULL;
@@ -2441,7 +2441,7 @@ void slice_voice_at_position(t_roll *x, t_rollvoice *voice, double position)
 				t_note *nt = (t_note *)hatom_getobj(&note_el->l_hatom); // old note
 				t_note *right_nt = slice_note((t_notation_obj *)x, nt, position - ch->onset);
 				
-				insert_note((t_notation_obj *)x, right_ch, right_nt, 0);
+				note_insert((t_notation_obj *)x, right_ch, right_nt, 0);
 			}
 		}
 	}
@@ -7293,9 +7293,9 @@ void set_voice_cents_values_from_llll(t_roll *x, t_llll* midicents, t_rollvoice 
 								argv[1] = cents;
 								this_nt = build_note_from_ac_av((t_notation_obj *)x, 2, argv);
 								if (force_append_notes)
-									force_append_note((t_notation_obj *) x, chord, this_nt, 0);
+									note_append_force((t_notation_obj *) x, chord, this_nt, 0);
 								else
-									insert_note((t_notation_obj *) x, chord, this_nt, 0);
+									note_insert((t_notation_obj *) x, chord, this_nt, 0);
                                 
                                 note_set_enharmonicity(this_nt, pitch_in);
 							}
@@ -7414,7 +7414,7 @@ void set_voice_durations_values_from_llll(t_roll *x, t_llll* durations, t_rollvo
 									argv[0] = duration; 
 									argv[1] = CONST_DEFAULT_NEW_NOTE_CENTS;
 									this_nt = build_note_from_ac_av((t_notation_obj *)x, 2, argv);
-									insert_note((t_notation_obj *) x, chord, this_nt, 0);
+									note_insert((t_notation_obj *) x, chord, this_nt, 0);
 								}
 							}
 						}
@@ -7500,7 +7500,7 @@ void set_voice_velocities_values_from_llll(t_roll *x, t_llll* velocities, t_roll
 								argv[1] = CONST_DEFAULT_NEW_NOTE_CENTS;
 								argv[2] = velocity;
 								this_nt = build_note_from_ac_av((t_notation_obj *)x, 3, argv);
-								insert_note((t_notation_obj *) x, chord, this_nt, 0);
+								note_insert((t_notation_obj *) x, chord, this_nt, 0);
 							}
 						}
 					}
@@ -7640,7 +7640,7 @@ void set_voice_graphic_values_from_llll(t_roll *x, t_llll* graphic, t_rollvoice 
 										}
 										argv[1] = rat2double(rat_long_sum(rat_long_prod(screen_acc, 200), screen_mc));
 										this_nt = build_note_from_ac_av((t_notation_obj *)x, 2, argv);
-										insert_note((t_notation_obj *) x, chord, this_nt, 0);
+										note_insert((t_notation_obj *) x, chord, this_nt, 0);
 										set_graphic_values_to_note_from_llll((t_notation_obj *) x, this_nt, graphic);
 									}
 //								}
@@ -7764,7 +7764,7 @@ void set_voice_breakpoints_values_from_llll(t_roll *x, t_llll* breakpoints, t_ro
 										note = note->next;
 									} else { // we create a note within the same chord!
 										t_note *this_nt = build_default_note((t_notation_obj *) x);
-										insert_note((t_notation_obj *) x, chord, this_nt, 0);
+										note_insert((t_notation_obj *) x, chord, this_nt, 0);
 										set_breakpoints_values_to_note_from_llll((t_notation_obj *) x, this_nt, bpt);
 									}
 //								}
@@ -7886,7 +7886,7 @@ void set_voice_slots_values_from_llll(t_roll *x, t_llll* slots, t_rollvoice *voi
 										note = note->next;
 									} else { // we create a note within the same chord!
 										t_note *this_nt = build_default_note((t_notation_obj *) x);
-										insert_note((t_notation_obj *) x, chord, this_nt, 0);
+										note_insert((t_notation_obj *) x, chord, this_nt, 0);
 										set_slots_values_to_note_from_llll((t_notation_obj *) x, this_nt, slots);
 									}
 //								}
@@ -11665,7 +11665,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 									if (!(((t_note *)temp)->parent->r_it.flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
 										create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)(((t_note *)temp)->parent), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 									
-									insert_note((t_notation_obj *) x, ((t_note *)temp)->parent, new_note, 0);
+									note_insert((t_notation_obj *) x, ((t_note *)temp)->parent, new_note, 0);
 									((t_note *)temp)->parent->need_recompute_parameters = true; // we have to recalculate chord parameters 
 									x->r_ob.j_mousedrag_copy_ptr = new_note;
 									// checking if we have to transfer the mousedown pointer
@@ -11926,7 +11926,7 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
 		if (chord_for_note_insertion) { // there's already a chord with the same onset: we add the note to the chord!
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)chord_for_note_insertion, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 
-			insert_note((t_notation_obj *) x, temp_ch, note_in_new_voice, 0);
+			note_insert((t_notation_obj *) x, temp_ch, note_in_new_voice, 0);
 			newch = temp_ch;
 			temp_ch->need_recompute_parameters = true; // we have to recalculate chord parameters 
 			if (!notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)temp_ch) && !notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)temp_ch))
@@ -14411,7 +14411,7 @@ void roll_add_note_to_chord_from_linear_edit(t_roll *x, long number, long force_
             create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.chord, k_UNDO_MODIFICATION_CHANGE);
         
         note_set_user_enharmonicity_from_screen_representation(this_nt, argv[1], long2rat(0), true);
-        insert_note((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
+        note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
         note_compute_approximation((t_notation_obj *) x, this_nt);
         calculate_chord_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->voiceparent), false);
     }

@@ -5009,13 +5009,55 @@ void notation_item_check(t_notation_obj *r_ob, t_notation_item *nitem)
 #ifdef BACH_CHECK_NOTATION_ITEMS
     notation_item_check_against_tuttipoints(r_ob, nitem);
     notation_item_check_slots(r_ob, nitem);
-    if ((long)nitem->group > 0 && (long)nitem->group < 1000) {
-        long foo = 7;
-        foo++;
+    if ((long)nitem->group > 0 && (long)nitem->group < 1000)
         bach_breakpoint(0);
+    
+    switch (nitem->type) {
+        case k_NOTE:
+            if (!((t_note *)nitem)->firstbreakpoint || !((t_note *)nitem)->lastbreakpoint)
+                bach_breakpoint(0);
+            if (!((t_note *)nitem)->parent)
+                bach_breakpoint(0);
+            break;
+
+        case k_CHORD:
+            if (!((t_note *)nitem)->parent)
+                bach_breakpoint(0);
+            break;
+
+        default:
+            break;
     }
+    
 #endif
 }
+
+
+void notation_item_check_force(t_notation_obj *r_ob, t_notation_item *nitem)
+{
+/*    notation_item_check_against_tuttipoints(r_ob, nitem);
+    notation_item_check_slots(r_ob, nitem);
+    if ((long)nitem->group > 0 && (long)nitem->group < 1000)
+        bach_breakpoint(0);
+  */
+    switch (nitem->type) {
+        case k_NOTE:
+            if (!((t_note *)nitem)->firstbreakpoint || !((t_note *)nitem)->lastbreakpoint)
+                bach_breakpoint(0);
+            if (!((t_note *)nitem)->parent)
+                bach_breakpoint(0);
+            break;
+            
+        case k_CHORD:
+            if (!((t_note *)nitem)->parent)
+                bach_breakpoint(0);
+            break;
+            
+        default:
+            break;
+    }
+}
+
 
 void notation_obj_check(t_notation_obj *r_ob)
 {
@@ -5039,6 +5081,40 @@ void notation_obj_check(t_notation_obj *r_ob)
     }
 #endif
 }
+
+void notation_obj_check_force(t_notation_obj *r_ob, char also_lock_mutex)
+{
+//    return;
+#ifdef CONFIGURATION_Development
+    if (also_lock_mutex)
+        lock_general_mutex(r_ob);
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        t_scorevoice *voice;
+        t_measure *measure;
+        t_chord *chord;
+        t_note *note;
+        for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_scorevoice *)voice_get_next(r_ob, (t_voice *)voice)) {
+            notation_item_check_force(r_ob, (t_notation_item *)voice);
+            for (measure = voice->firstmeasure; measure; measure = measure->next) {
+                notation_item_check_force(r_ob, (t_notation_item *)measure);
+                for (chord = measure->firstchord; chord; chord = chord->next) {
+                    notation_item_check_force(r_ob, (t_notation_item *)chord);
+                    for (note = chord->firstnote; note; note = note->next) {
+                        if (!note->parent) {
+                            char foo = 7;
+                            foo++;
+                        }
+                        notation_item_check_force(r_ob, (t_notation_item *)note);
+                    }
+                }
+            }
+        }
+    }
+    if (also_lock_mutex)
+        unlock_general_mutex(r_ob);
+#endif
+}
+
 
 
 void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob)

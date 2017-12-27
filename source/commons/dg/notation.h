@@ -7059,7 +7059,7 @@ t_dynamics *build_dynamics(t_chord *owner);
 	@param note			The note to insert
 	@param forced_ID	An ID which the note will be forced to have
  */
-void insert_note(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned long forced_ID);
+void note_insert(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned long forced_ID);
 
 
 /**	Append a note to a chord (forcing the insertion as last element, and not depending on the pitch).
@@ -7071,7 +7071,7 @@ void insert_note(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned lo
 	@param note			The note to append
 	@param forced_ID	An ID which the note will be forced to have
  */
-void force_append_note(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned long force_ID);
+void note_append_force(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned long force_ID);
 
 
 /**	Slices a note into a left and right part. It modifies the origianl note, making it become the left part of the split, and returns 
@@ -7093,6 +7093,9 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
 	@return						The cloned note
  */
 t_note *clone_note(t_notation_obj *r_ob, t_note *note, e_clone_for_types clone_for);
+
+//Internal
+void check_note_breakpoints(t_note *note);
 
 
 /**	Clone a chord. 
@@ -8306,6 +8309,7 @@ void notation_item_check_against_tuttipoints(t_notation_obj *r_ob, t_notation_it
 void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob);
 void notation_obj_check_all_measure_tuttipoints(t_notation_obj *r_ob);
 void clear_all_measure_tuttipoint_references(t_notation_obj *r_ob);
+void notation_obj_check_force(t_notation_obj *r_ob, char also_lock_mutext);
 
 
 /**	Set a slot content (one of more slots) to all the selected notes in a notation object.

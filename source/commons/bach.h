@@ -90,7 +90,7 @@
 			//#define BACH_SAVE_STACK_WITH_MEMORY_LOGS // useless if BACH_TRACK_MEMORY_ALLOCATION is undefined, and anyway only works on a Mac
 			//#define BACH_BLOAT_FREED_MEMORY // useless if BACH_TRACK_MEMORY_ALLOCATION is undefined
 			//#define BACH_SAVE_STACK_IN_LLLLS // useless if BACH_TRACK_MEMORY_ALLOCATION and BACH_SAVE_STACK_WITH_MEMORY_LOGS are undefined
-			//#define BACH_ENABLE_BREAKPOINTS
+			#define BACH_ENABLE_BREAKPOINTS
 			//#define BACH_POST_STUFF_TO_CONSOLE
 
 			#undef dev_post
