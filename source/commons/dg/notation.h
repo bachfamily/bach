@@ -18755,7 +18755,7 @@ t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_obje
 long parse_string_to_dynamics(t_notation_obj *r_ob, t_symbol *sym, char *dynamics); // returns hairpin
 void parse_string_to_dynamics_ext(t_notation_obj *r_ob, char *buf, char dynamics[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, char *complete_deparsed_string, long complete_deparsed_string_alloc);
 long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_inconsistent, char check_unnecessary, char fix_inconsistent, char fix_unnecessary, char selection_only, char verbose);
-long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_to_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp);
+long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_to_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode);
 long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh);
 long dynamic_marking_cmp(char *mark1, char *mark2);
 void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char *buf);

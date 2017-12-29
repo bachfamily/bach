@@ -5513,6 +5513,7 @@ int T_EXPORT main(void){
     // @mattr maxchars @type int @default 4 @digest Width of the dynamics spectrum
     // @mattr exp @type float @default 0.8 @digest Exponent for the conversion
     // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs
+    // @mattr breakpointmode @type int @default 0 @digest Breakpoint handling (0 = handle existing ones, 1 = add new ones to match dynamics, 2 = also clear)
     // @seealso velocities2dynamics, checkdynamics, fixdynamics
     // @example dynamics2velocities @caption convert dynamics to velocities throughout the whole score
     // @example dynamics2velocities selection @caption same thing, for selected items only
@@ -6890,7 +6891,7 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                         char selection_only = false;
                         t_llll *mapping_ll = NULL;
                         llll_destroyelem(firstelem);
-                        long slot_num = x->r_ob.link_dynamics_to_slot - 1;
+                        long slot_num = x->r_ob.link_dynamics_to_slot - 1, bptmode = 1;
                         double a_exp = CONST_DEFAULT_DYNAMICS_TO_VELOCITY_EXPONENT;
                         long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
@@ -6901,9 +6902,9 @@ void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                             slot_num = hatom_getlong(&inputlist->l_head->l_hatom) - 1;
                             llll_behead(inputlist);
                         }
-                        llll_parseargs_and_attrs((t_object *)x, inputlist, "lid", gensym("mapping"), &mapping_ll, gensym("maxchars"), &maxchars, gensym("exp"), &a_exp);
+                        llll_parseargs_and_attrs((t_object *)x, inputlist, "lidi", gensym("mapping"), &mapping_ll, gensym("maxchars"), &maxchars, gensym("exp"), &a_exp, gensym("breakpointmode"), &bptmode);
                         if (slot_num >= 0 && slot_num < CONST_MAX_SLOTS)
-                            notationobj_dynamics2velocities((t_notation_obj *)x, slot_num, mapping_ll, selection_only, MAX(0, maxchars + 1), CLAMP(a_exp, 0.001, 1.));
+                            notationobj_dynamics2velocities((t_notation_obj *)x, slot_num, mapping_ll, selection_only, MAX(0, maxchars + 1), CLAMP(a_exp, 0.001, 1.), bptmode);
                         llll_free(mapping_ll);
                         
                     } else if (router == gensym("velocities2dynamics")) {

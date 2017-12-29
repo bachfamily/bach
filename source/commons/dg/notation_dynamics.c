@@ -1341,7 +1341,13 @@ char is_dynamics_local(t_notation_obj *r_ob, t_llll *dyn_vel_associations, t_sym
 }
 
 
-void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_llll *dyn_vel_associations, t_dynamics_params *params, t_chord *left_dyns_chord, long num_left_dyns, t_symbol **left_dyns, long *hairpins, t_symbol *right_dyn, double left_onset, double right_onset, char add_undo_tick)
+// bptmode = 0: don't add/delete breakpoints
+// bptmode = 1: add breakpoints to match dynamics
+// bptmode = 2: also delete existing breakpoints before adding new ones
+void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_llll *dyn_vel_associations, t_dynamics_params *params,
+                                           t_chord *left_dyns_chord, long num_left_dyns, t_symbol **left_dyns,
+                                           long *hairpins, t_symbol *right_dyn, double left_onset, double right_onset,
+                                           char add_undo_tick, char bptmode)
 {
     double velocity = 0;
     double left_velocity = 0, right_velocity = 0;
@@ -1364,6 +1370,28 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                 for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
                     nt->velocity = velocity;
                     if (r_ob->breakpoints_have_velocity) {
+                        
+                        if (bptmode >= 2)
+                            note_delete_breakpoints(r_ob, nt);
+                        
+                        if (bptmode >= 1 && num_left_dyns > 2) {
+                            // possibly creating internal breakpoints when dynamics are more than 2 for a single note
+                            // First dynamics will correspond to notehead, last dynamics will correspond to note tail
+                            for (long i = 1; i < num_left_dyns - 1; i++) {
+                                double relative_bpt_position = (((double)i)/(num_left_dyns - 1));
+                                // check whether there's a breakpoint around here (with threshold 1 ms)
+                                char found = false;
+                                for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next)
+                                    if (fabs(bpt->rel_x_pos * nt->duration - relative_bpt_position * nt->duration) < 1.) {
+                                        found = true;
+                                        break;
+                                    }
+                                if (!found)
+                                    add_breakpoint(r_ob, nt, relative_bpt_position, 0, 0, true, 0, true);
+                            }
+                        }
+                        
+
                         for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
                             if (!bpt->prev || num_left_dyns == 1)
                                 bpt->velocity = velocity;
@@ -1439,7 +1467,7 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
     }
 }
 
-long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp)
+long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode)
 {
     t_symbol *curr_dyn_sym[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
     t_symbol *next_dyn_sym[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
@@ -1476,7 +1504,7 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
                 continue;
             
-            assign_chord_velocities_from_dynamics(r_ob, ch, dyn_vel_associations, &params, curr_dyn_chord, curr_num_dynamics, curr_dyn_sym, curr_hairpins, next_dyn_chord && (next_num_dynamics > 0) ? next_dyn_sym[0] : NULL, curr_dyn_onset, next_dyn_onset, true);
+            assign_chord_velocities_from_dynamics(r_ob, ch, dyn_vel_associations, &params, curr_dyn_chord, curr_num_dynamics, curr_dyn_sym, curr_hairpins, next_dyn_chord && (next_num_dynamics > 0) ? next_dyn_sym[0] : NULL, curr_dyn_onset, next_dyn_onset, true, bptmode);
         }
         
     }
