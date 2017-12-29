@@ -364,6 +364,20 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
     return count + 1;
 }
 
+
+long mod_positive(long num, long mod)
+{
+    if (num >= 0)
+        return num % mod;
+    
+    return ((num % mod) + mod) % mod;
+}
+
+long floor_div_by_7(long num)
+{
+    return num / 7 - (num % 7 < 0);
+}
+
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
 {
     long original_tone_division = tone_division;
@@ -526,11 +540,11 @@ t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences
     
     if (original_tone_division == 0) {
         // obtaining the most precise alteration possible
-        t_pitch p1 = t_pitch(steps % 7, long2rat(0), steps / 7);
+        t_pitch p1 = t_pitch(mod_positive(steps, 7), long2rat(0), floor_div_by_7(steps));
         t_rational mc1 = p1.toMC();
         t_rational mc_orig = approx_double_with_rat_fixed_den(mc, 100, 0, NULL);
         accidental = (mc_orig - mc1)/200;
     }
     
-    return t_pitch(steps % 7, accidental, steps / 7);
+    return t_pitch(mod_positive(steps, 7), accidental, floor_div_by_7(steps));
 }
