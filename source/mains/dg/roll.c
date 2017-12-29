@@ -8277,6 +8277,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 			if (get_num_llll_no_first_attribute_sym_in_llll(chord) > 0) { // if there are still some notes
 				t_chord *ch = addchord_from_llll(x, chord, voice, true, true); 
                 if (ch) {
+                    compute_note_approximations_for_chord((t_notation_obj *)x, ch, false);
                     if (also_select && !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)ch))
                         notation_item_add_to_selection((t_notation_obj *)x, (t_notation_item *)ch);
 					create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)ch, k_UNDO_MODIFICATION_DELETE);
