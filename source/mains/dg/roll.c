@@ -8042,7 +8042,8 @@ t_chord *addchord_from_llll(t_roll *x, t_llll* chord, t_rollvoice* voice, char a
 			newchord = addchord_from_values(x, voice->v_ob.number, num_notes, onset, -1, 2 * num_notes, argv, NULL, NULL, 0, NULL, false, forced_chord_ID, forced_note_IDs, false);
 			if (newchord) {
 				set_rollchord_values_from_llll((t_notation_obj *) x, newchord, chord, 0., true, also_recompute_total_length, true);
-				newchord->need_recompute_parameters = true; 
+                compute_note_approximations_for_chord((t_notation_obj *)x, newchord, false);
+				newchord->need_recompute_parameters = true;
 			}
 			
 			if (also_lock_general_mutex)
