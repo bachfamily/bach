@@ -591,7 +591,7 @@ t_llllelem *llll_insertpitch_from_elems_before(t_atom_short degree, t_shortRatio
     hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, octave);
     outelem->l_flags = flags;
     llll_insert_before(outelem, before_what, adopter);
-    pedantic_llll_check(where);
+    pedantic_llll_check(before_what->l_parent);
     return outelem;
 }
 
@@ -756,7 +756,7 @@ t_llllelem *llll_insertpitch_after(t_pitch what, t_llllelem *after_what, long fl
     hatom_setpitch(&outelem->l_hatom, what);
     outelem->l_flags = flags;
     llll_insert_after(outelem, after_what, adopter);
-    pedantic_llll_check(before_what->l_parent);
+    pedantic_llll_check(after_what->l_parent);
     return outelem;
 }
 
@@ -769,7 +769,7 @@ t_llllelem *llll_insertpitch_from_elems_after(t_atom_short degree, t_shortRation
     hatom_setpitch_from_elems(&outelem->l_hatom, degree, alter, octave);
     outelem->l_flags = flags;
     llll_insert_after(outelem, after_what, adopter);
-    pedantic_llll_check(where);
+    pedantic_llll_check(after_what->l_parent);
     return outelem;
 }
 

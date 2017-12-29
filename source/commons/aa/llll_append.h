@@ -25,6 +25,10 @@ void llll_upgrade_depth(t_llll *son);
 void llll_downgrade_depth(t_llll *dad);
 
 
+// only used for debugging purposes -- returns the root llll
+t_llll *llll_root(const t_llll *ll);
+
+
 ///////////////////////////////////////////////////////////////////////
 // ADDING ELEMENTS TO lllls
 

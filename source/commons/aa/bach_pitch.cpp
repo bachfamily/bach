@@ -7,6 +7,7 @@
 //
 
 #include "bach_pitch.hpp"
+#include "bach_mem.h"
 
 const t_shortRational t_pitch::dblsharp = t_shortRational(1);
 const t_shortRational t_pitch::sharp = t_shortRational(1, 2);

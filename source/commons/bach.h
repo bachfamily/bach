@@ -144,6 +144,7 @@
 		#define BACH_LLLLELEM_PAGE_SIZE (2 << (BACH_LLLLELEM_PAGE_SIZE_EXPONENT - 1)) // 4
 		#define BACH_LLLLELEM_BOOK_SIZE (2 << (BACH_LLLLELEM_MAX_NUMBER_EXPONENT - BACH_LLLLELEM_PAGE_SIZE_EXPONENT - 1))
 
+
 #include <assert.h>
 
 // a macro to mark exported symbols in the code without requiring an external file to define them
@@ -156,6 +157,8 @@
 // the mac uses the standard gcc syntax, you should also set the -fvisibility=hidden flag to hide the non-marked symbols
 #define T_EXPORT __attribute__((visibility("default")))
 #endif
+
+#define MAX_SYM_LENGTH 32768	// the supposed maximum length for a symbol name
 
 extern struct _bach *bach;
 

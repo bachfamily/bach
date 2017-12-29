@@ -97,7 +97,6 @@ t_llll *llll_get(void)
 		x->l_owner != NULL ||
 		x->l_size != 0 ||
 		x->l_depth != 1 ||
-		x->l_leveltype != L_STANDARD ||
 		x->l_flags != 0 ||
 		x->l_thing.w_obj != NULL)
 		bach_error_break("bad llll from pool");
@@ -1490,10 +1489,12 @@ void *bach_newptr(size_t size)
 			bach_error_break("bach_newptr: NULL pointer allocation");
 		return NULL;
 	}
+    if (memmap) {
 	t_memmap_item *mmi = memmap_item_new(x, size, NULL);
 	t_max_err err = hashtab_store_safe(memmap, (t_symbol *) x, (t_object *) mmi);
 	if (err)
 		bach_error_break("bach_newptr: double allocation");
+    }
 	bach_bloat_ptr(x);
 	return x;
 }

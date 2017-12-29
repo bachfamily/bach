@@ -10,7 +10,6 @@
 #define bach_pitch_hpp
 
 #include <string>
-#include "bach_mem.h"
 #include "rational.h"
 
 
