@@ -26770,6 +26770,9 @@ void delete_item_type_from_selection(t_notation_obj *r_ob, long type) {
 void notation_item_delete_from_selection(t_notation_obj *r_ob, t_notation_item *item){
 	// delete an item from the "selection"-linkedlist
 	if (item && item->selected) {
+        if (r_ob->selectioncursor == item)
+            r_ob->selectioncursor = item->next_selected;
+        
 		if (item->prev_selected) {
 			item->prev_selected->next_selected = item->next_selected;
 		} else { // item is the first item in the list 

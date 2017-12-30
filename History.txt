@@ -8,8 +8,16 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 *** VERSION CHANGES ***
 ***********************
 
-- bach.score	Fixed possible crashes with "inscreenmeas"
+- all objects	Fixed issues with negative midicents
 
+- bach.roll, bach.score
+		Now "dynamics2velocities" handles breakpoints
+
+- bach.score	Fixed possible crashes with "inscreenmeas"
+		Fixed possible crashes in rare scenarios when the score was hidden.
+
+- bach.n2mc	Now handles pitches as well 
+			(this entailed compatibility breaks with older patches, but such issues is now fixed)
 
 
 

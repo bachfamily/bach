@@ -4097,6 +4097,7 @@ typedef struct _notation_obj
 	char			selection_type;			///< Type of the selection, will be one of the #e_element_types. 
 											///< E.g. if it is #k_CHORD it means that all selected items are chords,
 											///< and so on. If the selection is mixed, this will be #k_MIXED.
+    t_notation_item *selectioncursor;       ///< Internal cursor used for selection
 	
 	// current window attributes in ms (mostly, but not solely, used by [bach.roll])
 	double		screen_ms_start;			///< Position in ms of the beginning of the displayed portion of score

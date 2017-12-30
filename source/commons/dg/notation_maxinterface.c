@@ -5163,13 +5163,15 @@ t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, do
 // use command_number = -1 for standard dump
 char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_number, delete_item_fn delete_item_method, t_llll *forced_routers)
 {
-	t_notation_item *item, *nextitem;
+    t_notation_item *item; // *nextitem;
     
     // Important: selection might change due to lambda stuff, etc. New selection will be appended at the end.
     // Hence we break after the last selected item
     t_notation_item *lastselected = r_ob->lastselecteditem;
-    for (item = r_ob->firstselecteditem; item; item = nextitem) {
-        nextitem = item->next_selected;
+    for (item = r_ob->firstselecteditem; item; ) {
+        r_ob->selectioncursor = item->next_selected;
+//        nextitem = item->next_selected; // item might be deleted, so that might be nice to keep the pointer to nextitem.
+                                        // but what if nextitem is ALSO deleted???
 		if (item->type == k_NOTE)
 			send_note_as_llll((t_notation_obj *) r_ob, (t_note *)item, outlet, k_CONSIDER_FOR_EVALUATION, command_number, forced_routers);
 		else if (item->type == k_CHORD)
@@ -5184,6 +5186,9 @@ char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_num
         
         if (item == lastselected)
             break;
+        
+//        item = nextitem;
+        item = r_ob->selectioncursor;
 	}
 	
 	char changed = 0, need_check_scheduling = 0;

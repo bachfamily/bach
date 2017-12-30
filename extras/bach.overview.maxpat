@@ -48,7 +48,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ -436.571442, 374.0, 81.0, 21.0 ],
-					"presentation_rect" : [ -436.571442, 374.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "offset 0 -5381"
 				}
@@ -64,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 789.0, 9.0, 141.0, 19.0 ],
 					"style" : "",
-					"text" : "(build 1512414430)",
+					"text" : "(build 1514672433)",
 					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
 					"textjustification" : 2,
 					"varname" : "autohelp_top_digest[1]"
@@ -213,7 +212,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 174.0, 19.0 ],
 					"style" : "",
-					"text" : "v0.8.0.0 beta",
+					"text" : "v0.8.0.1 beta",
 					"textcolor" : [ 0.109804, 0.109804, 0.109804, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -530,7 +529,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 5814.0, 635.0, 40.0 ],
-									"presentation_rect" : [ 15.0, 6049.0, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "...but this is just the tip of the iceberg. \nAs usual, have a look at the History.txt file to know what else has changed.",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
@@ -545,7 +543,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 102.0, 5711.320312, 277.0, 24.0 ],
-									"presentation_rect" : [ 102.0, 5711.320312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Now voices can be displayed on the same staff"
 								}
@@ -560,7 +557,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 5703.820312, 69.0, 37.0 ],
-									"presentation_rect" : [ 24.0, 5704.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Parts"
 								}
@@ -574,7 +570,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 102.0, 5761.320312, 236.0, 24.0 ],
-									"presentation_rect" : [ 105.0, 5697.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "A brand new system to navigate scores"
 								}
@@ -589,7 +584,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 83.0, 5646.820312, 423.0, 51.0 ],
-									"presentation_rect" : [ 83.0, 5644.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Our internal llll parsing has been completely rewritten. We have improved some important points, and if you ever are annoyed by backticks, you should definitely read this"
 								}
@@ -604,7 +598,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 188.0, 5593.820312, 334.0, 51.0 ],
-									"presentation_rect" : [ 185.0, 5584.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Some modules have been deprecated in favour of new ones, and you'll need to change some of your habits! In exchange for that, your bach life will be easier ;-)"
 								}
@@ -619,7 +612,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 102.0, 5540.820312, 363.0, 51.0 ],
-									"presentation_rect" : [ 100.0, 5548.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Slots have improved! They support dynamics, articulations, noteheads, lyrics. Also you can use temporal slots in the new \"milliseconds\" mode"
 								}
@@ -648,7 +640,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 5601.820312, 156.0, 37.0 ],
-									"presentation_rect" : [ 429.0, 5474.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "NewModules"
 								}
@@ -677,7 +668,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 5550.820312, 67.0, 37.0 ],
-									"presentation_rect" : [ 244.0, 5476.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Slots"
 								}
@@ -692,7 +682,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 5652.820312, 54.0, 37.0 ],
-									"presentation_rect" : [ 168.0, 5474.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Lllls"
 								}
@@ -707,7 +696,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 5499.820312, 93.0, 37.0 ],
-									"presentation_rect" : [ 52.0, 5476.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Pitches"
 								}
@@ -7536,7 +7524,7 @@
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"tree_openstate_data_0000000000" : [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
 									"tree_openstate_data_count" : [ 1 ],
-									"versionnumber" : 80000,
+									"versionnumber" : 80001,
 									"vinset" : 0.0,
 									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path", "21 – Standalone Applications" ],
 									"whole_tree_data_count" : [ 1 ]
@@ -9486,9 +9474,16 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.welcome.maxpat",
+				"name" : "bach.help.notation.messages.30_operate on selection.42_lambdaexample.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.replace.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
@@ -9500,7 +9495,21 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.replace.maxpat",
+				"name" : "bach.dsort.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.-.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.abs.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
@@ -9543,13 +9552,6 @@
 			}
 , 			{
 				"name" : "bach.repeat.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.-.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
@@ -9633,15 +9635,11 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.iter.mxo",
+				"name" : "bach.score.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.depth.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.collect.mxo",
+				"name" : "bach.playkeys.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9649,7 +9647,19 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.nth.mxo",
+				"name" : "bach.find.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.iter.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.flat.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.subs.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9665,23 +9675,35 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.find.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.flat.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.subs.mxo",
-				"type" : "iLaX"
-			}
-, 			{
 				"name" : "bach.slice.mxo",
 				"type" : "iLaX"
 			}
 , 			{
 				"name" : "bach.rev.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.nth.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.sort.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.expr.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.leq.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.depth.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.collect.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9694,10 +9716,6 @@
 			}
 , 			{
 				"name" : "bach.join.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.expr.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9718,14 +9736,6 @@
 			}
 , 			{
 				"name" : "bach.intersection.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.sort.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.leq.mxo",
 				"type" : "iLaX"
 			}
 , 			{
