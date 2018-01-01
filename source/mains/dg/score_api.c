@@ -9115,7 +9115,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
                     // check if there's an hairpin ending on this chord
                     for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
-                        if (parse_chord_dynamics_easy((t_notation_obj *)x, temp, s, NULL, &curr_hairpin_type)) {
+                        if (chord_parse_dynamics_easy((t_notation_obj *)x, temp, s, NULL, &curr_hairpin_type)) {
                             curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
                             break;
                         }

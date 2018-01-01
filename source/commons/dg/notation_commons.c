@@ -28695,7 +28695,7 @@ t_chord *chord_get_next_with_dynamics(t_notation_obj *r_ob, t_chord *chord, long
     if (s >= 0 && s < CONST_MAX_SLOTS) {
         for (t_chord *temp = include_this_chord ? chord : chord_get_next(chord); temp; ) {
             t_chord *next_temp = chord_get_next(temp);
-            if (parse_chord_dynamics_easy(r_ob, temp, s, NULL, curr_hairpin_type)) {
+            if (chord_parse_dynamics_easy(r_ob, temp, s, NULL, curr_hairpin_type)) {
                 return temp;
             } else if (return_last_one_in_any_case && !next_temp) {
                 return temp;
