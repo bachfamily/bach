@@ -12,8 +12,8 @@
 
 // GLOBAL VARIABLE
 
-const char *notation_obj_lexpr_subs[] = {"onset", "cents", "duration", "velocity", "symduration", "symonset", "tail", "symtail", "voice", "measure", "tie", "noteindex", "chordindex", "index", "grace", "pitch"};
-const long notation_obj_lexpr_subs_count = 16;
+const char *notation_obj_lexpr_subs[] = {"onset", "cents", "duration", "velocity", "symduration", "symonset", "tail", "symtail", "voice", "measure", "tie", "noteindex", "chordindex", "index", "grace", "pitch", "part", "voiceensemble"};
+const long notation_obj_lexpr_subs_count = 18;
 
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, voicenames_as_llll, notation_obj_getattr_voicenames)
@@ -29425,6 +29425,8 @@ t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it,
     hatom_setlong(vars+13, notation_item_get_index_for_lexpr(r_ob, it));
     hatom_setlong(vars+14, notation_item_get_grace_for_lexpr(r_ob, it));
     hatom_setpitch(vars+15, notation_item_get_pitch(r_ob, it));
+    hatom_setlong(vars+16, notation_item_get_partnumber(r_ob, it) + 1);
+    hatom_setlong(vars+17, notation_item_get_voiceensemble(r_ob, it) + 1);
 	return lexpr_eval(lexpr, vars);
 }
 
@@ -32232,6 +32234,7 @@ void initialize_voice_by_default(t_notation_obj *r_ob, t_voice *v_ob, long numbe
 	v_ob->clef = k_CLEF_WRONG; // needed HERE in order to draw correctly the last used staff combination. 
 	v_ob->number = number;
     v_ob->part_index = 0;
+    v_ob->voiceensemble_index = 0;
     
 	change_single_midichannel(r_ob, v_ob, number + 1, false);
 	v_ob->hidden = 0;
@@ -35745,6 +35748,24 @@ long notation_item_get_voicenumber(t_notation_obj *r_ob, t_notation_item *it)
 	}
 }
 
+long notation_item_get_partnumber(t_notation_obj *r_ob, t_notation_item *it)
+{
+    t_voice *voice = notation_item_get_voice(r_ob, it);
+    if (voice)
+        return voice->part_index;
+    else
+        return -1;
+}
+
+long notation_item_get_voiceensemble(t_notation_obj *r_ob, t_notation_item *it)
+{
+    t_voice *voice = notation_item_get_voice(r_ob, it);
+    if (voice)
+        return voice->voiceensemble_index;
+    else
+        return -1;
+}
+
 // 0-based!!!
 long notation_item_get_measurenumber(t_notation_obj *r_ob, t_notation_item *it)
 {
@@ -37090,6 +37111,8 @@ t_max_err notation_obj_setattr_numvoices(t_notation_obj *r_ob, t_object *attr, l
 
 
 
+// part is an array of 1-based indices containing the part numbers for each voice, and terminating with value < 0, e.g.
+// 1, 2, 1, 2, -1
 t_max_err notation_obj_set_parts(t_notation_obj *r_ob, long *part)
 {
     long i;
@@ -37099,16 +37122,23 @@ t_max_err notation_obj_set_parts(t_notation_obj *r_ob, long *part)
     notation_obj_check(r_ob);
 #endif
 
+    long voiceens_count = 0;
+    long prev = -1;
     for (i = 0, voice = r_ob->firstvoice;
          *part >= 0 && voice && i < CONST_MAX_VOICES && voice->number < CONST_MAX_VOICES;
          i++, part++, voice = voice_get_next(r_ob, voice)) {
+        if (*part <= prev)
+            voiceens_count++;
         if (*part <= 1 || i == 0) {
             r_ob->voice_part[i] = 1;
             voice->part_index = 0;
+            voice->voiceensemble_index = voiceens_count;
         } else {
             r_ob->voice_part[i] = *part;
             voice->part_index = *part - 1;
+            voice->voiceensemble_index = voiceens_count;
         }
+        prev = *part;
     }
     
 #ifdef BACH_CHECK_NOTATION_ITEMS

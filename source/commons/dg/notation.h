@@ -3003,7 +3003,8 @@ typedef struct _voice
 	long			number;             ///< The number of the voice, 0-based
     
     /// Multivoicing stuff:
-    long            part_index;     ///< The index of the part inside the multivoice, 0-based
+    long            part_index;              ///< The index of the part inside the voiceensemble, 0-based
+    long            voiceensemble_index;     ///< The index of the voiceensemble that the voice belongs to, 0-based
     
 	double			middleC_y;		///< Y position (in pixels) of the middle C inside the voice. This is computed in compute_middleC_position_for_voice(),
 									///< and updated as the zoom or voice configuration change. This y position is the base to build stafflines and to place
@@ -7514,15 +7515,6 @@ t_rational notation_item_get_symonset(t_notation_obj *r_ob, t_notation_item *it)
 t_rational notation_item_get_symduration(t_notation_obj *r_ob, t_notation_item *it);
 
 
-/** Obtain the 0-based voice number of a given notation item, or -1 if the notation item is not assigned to any voice.
-	@ingroup		notation
-	@param	r_ob	The notation object
-	@param	it		The notation item
-	@return			The 0-based voice number of the notation item.
- */ 
-long notation_item_get_voicenumber(t_notation_obj *r_ob, t_notation_item *it);
-
-
 /** Obtain the t_voice of a given notation item, or NULL if the notation item is not assigned to any voice.
 	@ingroup		notation
 	@param	r_ob	The notation object
@@ -7530,6 +7522,33 @@ long notation_item_get_voicenumber(t_notation_obj *r_ob, t_notation_item *it);
 	@return			The voice
  */
 t_voice *notation_item_get_voice(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the 0-based voice number of a given notation item, or -1 if the notation item is not assigned to any voice.
+	@ingroup		notation
+	@param	r_ob	The notation object
+	@param	it		The notation item
+	@return			The 0-based voice number of the notation item.
+ */
+long notation_item_get_voicenumber(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the 0-based part number of a given notation item, or -1 if the notation item is not assigned to any voice.
+	@ingroup		notation
+	@param	r_ob	The notation object
+	@param	it		The notation item
+	@return			The 0-based part number of the notation item.
+ */
+long notation_item_get_partnumber(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the 0-based voice ensemble index of a given notation item, or -1 if the notation item is not assigned to any voice.
+	@ingroup		notation
+	@param	r_ob	The notation object
+	@param	it		The notation item
+	@return			The 0-based voice ensemble index of the notation item.
+ */
+long notation_item_get_voiceensemble(t_notation_obj *r_ob, t_notation_item *it);
 
 
 /** Obtain the 0-based measure namber of a given notation item, or -1 if the notation item is not assigned to any measure.
@@ -18351,7 +18370,7 @@ char change_notation_item_names(t_notation_obj *r_ob, t_notation_item *it, t_lll
 	@param	r_ob	The notation object
 	@param	newnames		The new names 
 	@param	only_change_this_elems	If this is not NULL, it can contain a list of symbols identifying the elements whose name has to be changed.
-									This list can contain symbols like "chord", "voice", "note", "measure", "marker.
+									This list can contain symbols like "chord", "voice", "note", "measure", "marker".
 	@param	incremental				If this flag is non-zero, markers are assigned incremental names (if such names were already used).
 	@param	append_names			If this flag is non-zero, the new names are appended to the existing ones
 	@param	also_assign_to_progeny_for_chords	If non-zero, if a chord is selected, the name is assigned BOTH to the chord and to each one of its notes

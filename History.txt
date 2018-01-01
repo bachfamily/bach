@@ -12,6 +12,8 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 
 - bach.roll, bach.score
 		Now "dynamics2velocities" handles breakpoints
+		Fixed bug causing wrong breakpoint handling for "dynamics2velocities" in some situations
+		Added "part" as a possible variable for selection expressions
 
 - bach.score	Fixed possible crashes with "inscreenmeas"
 		Fixed possible crashes in rare scenarios when the score was hidden.
