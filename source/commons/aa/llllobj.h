@@ -266,7 +266,9 @@ void llllobj_outlet_bang(t_object *x, e_llllobj_obj_types type, long outnum);
 void llllobj_outlet_int(t_object *x, e_llllobj_obj_types type, long outnum, t_atom_long n);
 void llllobj_outlet_float(t_object *x, e_llllobj_obj_types type, long outnum, double n);
 void llllobj_outlet_anything(t_object *x, e_llllobj_obj_types type, long outnum, t_symbol *msg, long ac, t_atom *av);
+void llllobj_outlet_anything_prudent(t_object *x, e_llllobj_obj_types type, long outnum, t_symbol *msg, long ac, t_atom *av);
 
+void outlet_anything_prudent(void *o, t_symbol *s, short ac, t_atom *av);
 
 
 /**     Send a given symbol as a unique element of an llll, through a
