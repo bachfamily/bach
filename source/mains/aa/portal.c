@@ -148,16 +148,42 @@ void portal_bang(t_portal *x)
 
 void portal_int(t_portal *x, t_atom_long v)
 {
-	t_atom outatom;
-	atom_setlong(&outatom, v);
-	portal_anything(x, _sym_int, 1, &outatom);
+    long inlet = proxy_getinlet((t_object *) x);
+    switch (x->n_ob.l_out[inlet].b_type) {
+        case LLLL_O_TEXT:
+        case LLLL_O_MAX:
+            outlet_int(x->n_ob.l_out[inlet].b_outlet, v);
+            break;
+        case LLLL_O_NATIVE: {
+            t_llll *inlist = llll_get();
+            llll_appendlong(inlist, v);
+            llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, inlet, inlist);
+            llll_free(inlist);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 void portal_float(t_portal *x, double v)
 {
-	t_atom outatom;
-	atom_setfloat(&outatom, v);
-	portal_anything(x, _sym_float, 1, &outatom);
+    long inlet = proxy_getinlet((t_object *) x);
+    switch (x->n_ob.l_out[inlet].b_type) {
+        case LLLL_O_TEXT:
+        case LLLL_O_MAX:
+            outlet_float(x->n_ob.l_out[inlet].b_outlet, v);
+            break;
+        case LLLL_O_NATIVE: {
+            t_llll *inlist = llll_get();
+            llll_appenddouble(inlist, v);
+            llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, inlet, inlist);
+            llll_free(inlist);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 void portal_anything(t_portal *x, t_symbol *msg, long ac, t_atom *av)

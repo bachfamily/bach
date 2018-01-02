@@ -358,7 +358,10 @@ public:
                 case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
                     
                 case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
-                    
+                
+                case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
+                case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                
                 case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
                 case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
                     

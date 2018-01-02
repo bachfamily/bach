@@ -438,10 +438,10 @@ long sort_func(t_sort *x, t_llllelem *a, t_llllelem *b)
     
     switch (x->n_ob.l_out[3].b_type) {
         case LLLL_O_TEXT:
-            outlet_anything(x->n_ob.l_out[3].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
+            outlet_anything_prudent(x->n_ob.l_out[3].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
             break;
         case LLLL_O_MAX:
-            outlet_anything(x->n_ob.l_out[3].b_outlet, b_item->n_m_sym, b_item->n_m_ac, b_item->n_m_av);
+            outlet_anything_prudent(x->n_ob.l_out[3].b_outlet, b_item->n_m_sym, b_item->n_m_ac, b_item->n_m_av);
             break;
         case LLLL_O_NATIVE:
             outlet_anything(x->n_ob.l_out[3].b_outlet, b_item->n_n_sym, 1, b_item->n_n_av);
@@ -452,10 +452,10 @@ long sort_func(t_sort *x, t_llllelem *a, t_llllelem *b)
 
     switch (x->n_ob.l_out[2].b_type) {
         case LLLL_O_TEXT:
-            outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_t_sym, a_item->n_t_ac, a_item->n_t_av);
+            outlet_anything_prudent(x->n_ob.l_out[2].b_outlet, a_item->n_t_sym, a_item->n_t_ac, a_item->n_t_av);
             break;
         case LLLL_O_MAX:
-            outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_m_sym, a_item->n_m_ac, a_item->n_m_av);
+            outlet_anything_prudent(x->n_ob.l_out[2].b_outlet, a_item->n_m_sym, a_item->n_m_ac, a_item->n_m_av);
             break;
         case LLLL_O_NATIVE:
             outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_n_sym, 1, a_item->n_n_av);
