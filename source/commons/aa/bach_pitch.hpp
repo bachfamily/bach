@@ -171,8 +171,10 @@ public:
     t_pitch operator%(const t_pitch &b) const;
     
     long divdiv(const t_pitch &b) const {
-        t_rational res = *this / b;
-        return res.num() / res.den();
+        return (*this).toSteps() / b.toSteps();
+        // wrong:
+//        t_rational res = *this / b;
+//        return res.num() / res.den();
     };
     
     friend t_pitch operator*(const t_atom_long a, const t_pitch b) { return b * a; }
