@@ -421,7 +421,7 @@ void roll_clear_all(t_roll *x);
 void force_notation_item_inscreen(t_roll *x, t_notation_item *it, void *dummy);
 
 // selections
-void preselect_elements_in_region_for_mouse_selection(t_roll *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2);
+void preselect_elements_in_region_for_mouse_selection(t_roll *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2, char correct_for_voiceensembles);
 
 // quantization
 void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv);
@@ -1958,13 +1958,13 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 			clear_preselection((t_notation_obj *)x);
 			if (!voice_numbers || voice_numbers->l_size == 0) {
 				for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
-					preselect_elements_in_region_for_mouse_selection(x, ms1, ms2, mc1, mc2, voice->v_ob.number, voice->v_ob.number);
+					preselect_elements_in_region_for_mouse_selection(x, ms1, ms2, mc1, mc2, voice->v_ob.number, voice->v_ob.number, false);
 			} else {
 				t_llllelem *elem;
 				for (elem = voice_numbers->l_head; elem; elem = elem->l_next)
 					if (hatom_gettype(&elem->l_hatom) == H_LONG) {
 						long this_voice_num = hatom_getlong(&elem->l_hatom);
-						preselect_elements_in_region_for_mouse_selection(x, ms1, ms2, mc1, mc2, this_voice_num, this_voice_num);
+						preselect_elements_in_region_for_mouse_selection(x, ms1, ms2, mc1, mc2, this_voice_num, this_voice_num, false);
 					}
 			}
 			preselect_markers_in_region((t_notation_obj *)x, ms1, ms2);
@@ -9608,7 +9608,7 @@ char ripple_delete_selection(t_roll *x, char only_editable_items)
     double right_ms = get_selection_rightmost_onset(x);
     double delta = left_ms - right_ms;
     char res = delete_selection(x, true);
-    preselect_elements_in_region_for_mouse_selection(x, right_ms, x->r_ob.length_ms + 1000, -320000, 36000, 0, x->r_ob.num_voices);
+    preselect_elements_in_region_for_mouse_selection(x, right_ms, x->r_ob.length_ms + 1000, -320000, 36000, 0, x->r_ob.num_voices, true);
     preselect_markers_in_region((t_notation_obj *)x, right_ms, x->r_ob.length_ms + 1000);
     move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
     change_selection_onset(x, &delta);
@@ -11384,7 +11384,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         
 		lock_general_mutex((t_notation_obj *)x);
 		clear_preselection((t_notation_obj *)x);
-		preselect_elements_in_region_for_mouse_selection(x, x->r_ob.j_selected_region_ms1, x->r_ob.j_selected_region_ms2, x->r_ob.j_selected_region_mc1, x->r_ob.j_selected_region_mc2, x->r_ob.j_selected_region_voice1, x->r_ob.j_selected_region_voice2);
+		preselect_elements_in_region_for_mouse_selection(x, x->r_ob.j_selected_region_ms1, x->r_ob.j_selected_region_ms2, x->r_ob.j_selected_region_mc1, x->r_ob.j_selected_region_mc2, x->r_ob.j_selected_region_voice1, x->r_ob.j_selected_region_voice2, true);
 		if ((x->r_ob.j_mousedown_point.y > 3 * x->r_ob.zoom_y && 3 * x->r_ob.zoom_y > pt.y) || (pt.y > 3 * x->r_ob.zoom_y && 3 * x->r_ob.zoom_y > x->r_ob.j_mousedown_point.y))
 			preselect_markers_in_region((t_notation_obj *)x, x->r_ob.j_selected_region_ms1, x->r_ob.j_selected_region_ms2);
 		if (!is_editable((t_notation_obj *)x, k_SELECTION, k_MULTIPLE_SELECTION)) {
@@ -13902,7 +13902,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
 	for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
 		if (is_in_clef_shape((t_notation_obj *)x, pt.x, pt.y, (t_voice *)voice)) {
 			clear_preselection((t_notation_obj *)x);
-			preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -1000, 16000, voice->v_ob.number, voice->v_ob.number);
+			preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
 			move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
 		}
 	}
@@ -15910,7 +15910,7 @@ void select_all(t_roll *x){
 // and beware this is thought to be used for mouse interaction, so v1 and v2 are unintuitively wrong...
 // v1 is the voice corresponding to mc1 and v2 is the voice orresponding to mc2. I.e. v1 >= 2
 // whereas mc1 <= mc2. This is unintuitive. Use the function above for most programmatical purposes
-void preselect_elements_in_region_for_mouse_selection(t_roll *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2){
+void preselect_elements_in_region_for_mouse_selection(t_roll *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2, char correct_for_voiceensembles){
 	// preselect (and then, at the mouseup: will select) all the elements in the region
 
 	t_rollvoice *voice;
@@ -15925,16 +15925,19 @@ void preselect_elements_in_region_for_mouse_selection(t_roll *x, double ms1, dou
 	//	long count_notes_in_region;
 		voicenum = voice->v_ob.number;
         
-        // correcting voicenum for voiceensembles
         char same_v1_v2 = (v1 == v2);
-        t_voice *v1v = nth_voice((t_notation_obj *)x, v1);
-        t_voice *v2v = nth_voice((t_notation_obj *)x, v2);
-        if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v1v))
-            voicenum = v1;
-        else if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v2v))
-            voicenum = v2;
-        if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, v1v, v2v))
-            same_v1_v2 = true;
+
+        // correcting voicenum for voiceensembles
+        if (correct_for_voiceensembles) {
+            t_voice *v1v = nth_voice((t_notation_obj *)x, v1);
+            t_voice *v2v = nth_voice((t_notation_obj *)x, v2);
+            if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v1v))
+                voicenum = v1;
+            else if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v2v))
+                voicenum = v2;
+            if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, v1v, v2v))
+                same_v1_v2 = true;
+        }
 
 		curr_chord = voice->firstchord;
 		//	post("----", curr_chord);

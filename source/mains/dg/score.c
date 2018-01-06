@@ -433,7 +433,7 @@ void change_slur_ending_note(t_score *x, t_slur *slur, t_note *newnote);
 #endif
 
 // selections
-void preselect_elements_in_region_for_mouse_selection(t_score *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2);
+void preselect_elements_in_region_for_mouse_selection(t_score *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2, char correct_for_voiceensembles);
 
 // quantization
 void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -1630,13 +1630,13 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 				clear_preselection((t_notation_obj *)x);
 				if (!voice_numbers || voice_numbers->l_size == 0) {
 					for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
-						preselect_elements_in_region_for_mouse_selection(x, ux1, ux2, mc1, mc2, voice->v_ob.number, voice->v_ob.number);
+						preselect_elements_in_region_for_mouse_selection(x, ux1, ux2, mc1, mc2, voice->v_ob.number, voice->v_ob.number, false);
 				} else {
 					t_llllelem *elem;
 					for (elem = voice_numbers->l_head; elem; elem = elem->l_next)
 						if (hatom_gettype(&elem->l_hatom) == H_LONG) {
 							long this_voice_num = hatom_getlong(&elem->l_hatom);
-							preselect_elements_in_region_for_mouse_selection(x, ux1, ux2, mc1, mc2, this_voice_num, this_voice_num);
+							preselect_elements_in_region_for_mouse_selection(x, ux1, ux2, mc1, mc2, this_voice_num, this_voice_num, false);
 						}
 				}
 				ms1 = unscaled_xposition_to_ms((t_notation_obj *)x, ux1, 1);
@@ -10132,7 +10132,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
 		lock_general_mutex((t_notation_obj *)x);
 		clear_preselection((t_notation_obj *)x);
-		preselect_elements_in_region_for_mouse_selection(x, x->r_ob.j_selected_region_ux1, x->r_ob.j_selected_region_ux2, x->r_ob.j_selected_region_mc1, x->r_ob.j_selected_region_mc2, x->r_ob.j_selected_region_voice1, x->r_ob.j_selected_region_voice2);
+		preselect_elements_in_region_for_mouse_selection(x, x->r_ob.j_selected_region_ux1, x->r_ob.j_selected_region_ux2, x->r_ob.j_selected_region_mc1, x->r_ob.j_selected_region_mc2, x->r_ob.j_selected_region_voice1, x->r_ob.j_selected_region_voice2, true);
 		if ((x->r_ob.j_mousedown_point.y > 3 * x->r_ob.zoom_y && 3 * x->r_ob.zoom_y > pt.y) || (pt.y > 3 * x->r_ob.zoom_y && 3 * x->r_ob.zoom_y > x->r_ob.j_mousedown_point.y)) {
 			double ms1 = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.j_selected_region_ux1, 1);
 			double ms2 = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.j_selected_region_ux2, 1);
@@ -14039,7 +14039,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
 	for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
 		if (is_in_clef_shape((t_notation_obj *)x, pt.x, pt.y, (t_voice *)voice)) {
 			clear_preselection((t_notation_obj *)x);
-			preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -1000, 16000, voice->v_ob.number, voice->v_ob.number);
+			preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
 			move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
 		}
 	}
@@ -16244,7 +16244,7 @@ void select_all(t_score *x){
 //	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }	
 
-void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, double ux2, double mc1, double mc2, long v1, long v2){
+void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, double ux2, double mc1, double mc2, long v1, long v2, char correct_for_voiceensembles){
 	// preselect (and then, at the mouseup: select) all the elements in the region. ux1 and ux2 are the unscaled x positions
 
 	t_scorevoice *voice;
@@ -16262,16 +16262,19 @@ void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, do
 
 		voicenum = voice->v_ob.number;
         
-        // correcting voicenum for voiceensembles
         char same_v1_v2 = (v1 == v2);
-        t_voice *v1v = nth_voice((t_notation_obj *)x, v1);
-        t_voice *v2v = nth_voice((t_notation_obj *)x, v2);
-        if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v1v))
-            voicenum = v1;
-        else if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v2v))
-            voicenum = v2;
-        if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, v1v, v2v))
-            same_v1_v2 = true;
+
+        // correcting voicenum for voiceensembles
+        if (correct_for_voiceensembles) {
+            t_voice *v1v = nth_voice((t_notation_obj *)x, v1);
+            t_voice *v2v = nth_voice((t_notation_obj *)x, v2);
+            if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v1v))
+                voicenum = v1;
+            else if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v2v))
+                voicenum = v2;
+            if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, v1v, v2v))
+                same_v1_v2 = true;
+        }
         
 		curr_measure = voice->firstmeasure;
 		while (curr_measure) {
