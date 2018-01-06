@@ -728,15 +728,25 @@ void llllobj_shoot_llll(t_object *x, e_llllobj_obj_types type, long outnum)
 		case LLLL_O_MAX: {
 			long out_ac = out->b_ac;
 			if (out_ac != 0) {
-				long out_size = out_ac * sizeof(t_atom);
-				t_atom *out_av = (t_atom *) bach_newptr(out_size);
-				bach_copyptr(out->b_av, out_av, out_size);
-				bach_atomic_unlock(&out->b_lock);
-				if (out_msg == _sym_list)
-					outlet_list(out->b_outlet, NULL, MIN(out_ac, 32767), out_av);
-				else
-					outlet_anything(out->b_outlet, out_msg, MIN(out_ac, 32767), out_av);
-				bach_freeptr(out_av);
+				if (out_msg == _sym_int) {
+					long v = atom_getlong(out->b_av);
+					bach_atomic_unlock(&out->b_lock);
+					outlet_int(out->b_outlet, v);
+				} else if (out_msg == _sym_float) {
+					double v = atom_getfloat(out->b_av);
+					bach_atomic_unlock(&out->b_lock);
+					outlet_float(out->b_outlet, v);
+				} else {
+					long out_size = out_ac * sizeof(t_atom);
+					t_atom *out_av = (t_atom *) bach_newptr(out_size);
+					bach_copyptr(out->b_av, out_av, out_size);
+					bach_atomic_unlock(&out->b_lock);
+					if (out_msg == _sym_list)
+						outlet_list(out->b_outlet, NULL, MIN(out_ac, 32767), out_av);
+					else
+						outlet_anything(out->b_outlet, out_msg, MIN(out_ac, 32767), out_av);
+					bach_freeptr(out_av);
+				}
 			} else {
 				bach_atomic_unlock(&out->b_lock);
 				outlet_anything(out->b_outlet, out_msg, 0, NULL);
@@ -775,6 +785,24 @@ void llllobj_outlet_anything(t_object *x, e_llllobj_obj_types type, long outnum,
 {
 	t_llllobj_out *out = llllobj_get_out(x, type);
 	outlet_anything(out[outnum].b_outlet, msg, ac, av);
+}
+
+void llllobj_outlet_anything_prudent(t_object *x, e_llllobj_obj_types type, long outnum, t_symbol *msg, long ac, t_atom *av)
+{
+	t_llllobj_out *out = llllobj_get_out(x, type);
+	outlet_anything_prudent(out[outnum].b_outlet, msg, ac, av);
+}
+
+void outlet_anything_prudent(void *o, t_symbol *s, short ac, t_atom *av)
+{
+	if (s == _sym_int)
+		outlet_int(o, atom_getlong(av));
+	else if (s == _sym_float)
+		outlet_float(o, atom_getfloat(av));
+	else if (s == _sym_list)
+		outlet_list(o, NULL, ac, av);
+	else
+		outlet_anything(o, s, ac, av);
 }
 
 void llllobj_outlet_symbol_as_llll(t_object *x, e_llllobj_obj_types llllobj_obj_type, long outlet_num, t_symbol *sym) 
@@ -852,13 +880,13 @@ void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_l
 						if (ac > 1)
 							outlet_list(cache->b_outlet, NULL, ac, outlist);
 						else
-							outlet_anything(cache->b_outlet, _sym_float, 1, outlist);
+							outlet_float(cache->b_outlet, atom_getfloat(outlist));
 						break;
 					case A_LONG:
 						if (ac > 1)
 							outlet_list(cache->b_outlet, NULL, ac, outlist);
 						else
-							outlet_anything(cache->b_outlet, _sym_int, 1, outlist);
+							outlet_int(cache->b_outlet, atom_getlong(outlist));
 						break;
 					case A_SYM:
 						outlet_anything(cache->b_outlet, atom_getsym(outlist), ac - 1, outlist + 1);
@@ -2223,7 +2251,6 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 	t_atomarray *destroy_aa = NULL, *deparsed_aa;
 	t_llll *destroy_ll = NULL;
 	t_atom_ulong phonenum;
-//	bach_atomic_lock(&cache->b_lock);
 	bach_atomic_lock(&cache->b_lock);
 	switch (cache->b_type) {
 			
@@ -2344,7 +2371,6 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 		default:
 			break;
 	}
-//	bach_atomic_unlock(&cache->b_lock);
 	bach_atomic_unlock(&cache->b_lock);
 	llll_free(empty_llll);
 	if (destroy_atom)
@@ -2500,10 +2526,11 @@ t_max_err llllobj_add_to_release_pool(t_object *x, e_llllobj_obj_types type, voi
 	if (err == MAX_ERR_NONE) { // there is already something here!
 		bach_atomic_unlock(release_lock);
 		return MAX_ERR_GENERIC;
+	} else {
+		hashtab_store(release, (t_symbol *) release_me, (t_object *) free_function);
+		bach_atomic_unlock(release_lock);
+		return MAX_ERR_NONE;
 	}
-	hashtab_store(release, (t_symbol *) release_me, (t_object *) free_function);
-	bach_atomic_unlock(release_lock);
-	return MAX_ERR_NONE;
 }
 
 t_max_err llllobj_remove_from_release_pool(t_object *x, e_llllobj_obj_types type, void *remove_me)
