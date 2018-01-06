@@ -9,6 +9,15 @@
 #include "bach_pitch.hpp"
 #include "bach_mem.h"
 
+
+inline long divdiv_floor(long a, long b) {
+    if (b < 0) {
+        a *= -1;
+        b *= -1;
+    }
+    return a / b - (a % b < 0);
+}
+
 const t_shortRational t_pitch::dblsharp = t_shortRational(1);
 const t_shortRational t_pitch::sharp = t_shortRational(1, 2);
 const t_shortRational t_pitch::qrtrsharp = t_shortRational(1, 4);
@@ -170,7 +179,7 @@ t_pitch t_pitch::operator/(const t_atom_long b) const
         return t_pitch::NaP;
     
     t_stepsAndMC sat = toStepsAndMC();
-    sat.steps /= b;
+    sat.steps = sat.steps / b; // or divdiv_floor(sat.steps, b);
     sat.mc /= b;
     return t_pitch(sat);
 }
@@ -181,7 +190,7 @@ t_pitch t_pitch::operator/(const t_rational &b) const
         return t_pitch::NaP;
 
     t_stepsAndMC sat = toStepsAndMC();
-    sat.steps = sat.steps * b.den() / b.num();
+    sat.steps = sat.steps * b.den(), b.num(); // or divdiv_floor(sat.steps * b.den(), b.num());
     sat.mc /= t_shortRational(b);
     return t_pitch(sat);
 }
@@ -191,7 +200,7 @@ t_pitch t_pitch::operator%(const t_pitch &b) const
     if (b.toMC() == 0)
         return t_pitch::NaP;
 
-    t_atom_long quotient = t_atom_long(double(*this / b));
+    t_atom_long quotient = t_atom_long((*this).divdiv(b));
     t_pitch t = b * quotient;
     return *this - t;
 }
@@ -201,10 +210,8 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     if (b == 0)
         return t_pitch::NaP;
     
-    t_stepsAndMC sat = toStepsAndMC();
-    sat.steps -= (sat.steps / b) * b;
-    sat.mc = t_shortRational(0);
-    return t_pitch(sat);
+    t_pitch temp = (*this / b);
+    return *this - b * temp;
 }
 
 long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace)
