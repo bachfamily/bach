@@ -1908,10 +1908,10 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             
 		// (un)sel(ect) by name
 		} else if (head_type == H_SYM || selectllll->l_size == 1) {
-			lock_markers_mutex((t_notation_obj *)x);;
+			lock_markers_mutex((t_notation_obj *)x);
 			preselect_notation_items_by_name((t_notation_obj *)x, selectllll);
 			move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
-			unlock_markers_mutex((t_notation_obj *)x);;
+			unlock_markers_mutex((t_notation_obj *)x);
 
 		// (un)sel(ect) by rectangle
 		} else {
@@ -16147,6 +16147,8 @@ char roll_sel_dilate_ms(t_roll *x, double ms_factor, double fixed_ms_point){
 		}
 		curr_it = curr_it->next_selected;
 	}
+    
+    recompute_total_length((t_notation_obj *)x);
 	unlock_general_mutex((t_notation_obj *)x);
 
 	// chord order check and length update are only done at the mouseup 
