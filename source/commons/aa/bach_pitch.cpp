@@ -216,7 +216,7 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
         if (addTrailingSpace)
             return snprintf_zero(buf, bufSize, "NaP ");
         else
-            return snprintf_zero(buf, bufSize, "NaP");
+            return snprintf_zero(buf, bufSize, "NaP ");
     } else if (p_octave >= 0 || always_positive) {
         if (++count == bufSize) { *buf = 0; return count - 1; }
         *(buf++) = degree2name[p_degree];
