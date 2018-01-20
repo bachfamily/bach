@@ -656,7 +656,7 @@ void paint_keysigaccidentals(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_a
 	}
 }
 
-long get_num_voiceensembles(t_notation_obj *r_ob)
+long notationobj_get_num_voiceensembles(t_notation_obj *r_ob)
 {
     t_voice *voice;
     long count = 0;

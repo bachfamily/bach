@@ -11381,6 +11381,11 @@ void score_delete_voice(t_score *x, t_scorevoice *voice)
 
 void score_delete_voiceensemble(t_score *x, t_voice *any_voice_in_voice_ensemble)
 {
+    if (notationobj_get_num_voiceensembles((t_notation_obj *)x) <= 1) {
+        object_error((t_object *)x, "Can't delete voice ensemble: object has just one voice ensemble.");
+        return;
+    }
+    
     t_voice *first = voiceensemble_get_firstvoice((t_notation_obj *)x, any_voice_in_voice_ensemble);
     t_voice *last = voiceensemble_get_lastvoice((t_notation_obj *)x, any_voice_in_voice_ensemble);
     if (first == last)

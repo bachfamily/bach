@@ -12660,7 +12660,7 @@ t_voice *voiceensemble_get_next(t_notation_obj *r_ob, t_voice *voice);
  */
 t_voice *voiceensemble_get_prev(t_notation_obj *r_ob, t_voice *voice);
 
-long get_num_voiceensembles(t_notation_obj *r_ob);
+long notationobj_get_num_voiceensembles(t_notation_obj *r_ob);
 char do_voices_belong_to_same_voiceensemble(t_notation_obj *r_ob, t_voice *v1, t_voice *v2);
 long voiceensemble_get_numparts(t_notation_obj *r_ob, t_voice *any_voice_in_voicenensemble);
 t_llll *voiceensemble_get_voicenumbers(t_notation_obj *r_ob, t_voice *any_voice_in_voicenensemble, char one_based);
