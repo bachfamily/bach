@@ -7099,7 +7099,7 @@ void set_onsets_values_from_llll(t_roll *x, t_llll* onsets, char also_check_chor
 			llll_wrap_once(&onsets_work);
 		
 		voice = x->firstvoice;
-        for (elem = onsets_work->l_head; elem && voice->v_ob.number < num_introduced_voices; elem = (elem && elem->l_next) ? elem->l_next : elem) {
+        for (elem = onsets_work->l_head; elem && voice && voice->v_ob.number < num_introduced_voices; elem = (elem && elem->l_next) ? elem->l_next : elem) {
 			if (voice) {
 				long type = hatom_gettype(&elem->l_hatom);
 				if (type == H_LLLL) {
@@ -7119,7 +7119,7 @@ void set_durations_values_from_llll(t_roll *x, t_llll* durations, long num_intro
 		t_llllelem *elem; 
 
 		t_rollvoice *voice = x->firstvoice;
-		for (elem = durations->l_head; elem && voice->v_ob.number < num_introduced_voices; elem = (elem && elem->l_next) ? elem->l_next : elem) {
+		for (elem = durations->l_head; elem && voice && voice->v_ob.number < num_introduced_voices; elem = (elem && elem->l_next) ? elem->l_next : elem) {
 			if (voice) {
 				long type = hatom_gettype(&elem->l_hatom);
 				if (type == H_LLLL) {
@@ -7137,7 +7137,7 @@ void set_cents_values_from_llll(t_roll *x, t_llll* cents, char force_append_note
 	if (cents) {
 		t_llllelem *elem; 
 		t_rollvoice *voice = x->firstvoice;
-		for (elem = cents->l_head; elem && voice->v_ob.number < num_introduced_voices; elem = (elem && elem->l_next) ? elem->l_next : elem) {
+		for (elem = cents->l_head; elem && voice && voice->v_ob.number < num_introduced_voices; elem = (elem && elem->l_next) ? elem->l_next : elem) {
 			if (voice) {
 				long type = hatom_gettype(&elem->l_hatom);
 				if (type == H_LLLL) {
@@ -7155,7 +7155,7 @@ void set_velocities_values_from_llll(t_roll *x, t_llll* velocities, long num_int
 	if (velocities) {
 		t_llllelem *elem;
 		t_rollvoice *voice = x->firstvoice;
-		for (elem = velocities->l_head; elem && voice->v_ob.number < num_introduced_voices; elem = (elem && elem->l_next) ? elem->l_next : elem) {
+		for (elem = velocities->l_head; elem && voice && voice->v_ob.number < num_introduced_voices; elem = (elem && elem->l_next) ? elem->l_next : elem) {
 			if (voice) {
 				long type = hatom_gettype(&elem->l_hatom);
 				if (type == H_LLLL) {
