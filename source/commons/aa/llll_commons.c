@@ -6668,6 +6668,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
     }
 }
 
+
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err)
 {
 	long start_type = hatom_gettype(&start_hatom);
@@ -6844,6 +6845,13 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
 		
 	}
 }
+
+
+
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /**

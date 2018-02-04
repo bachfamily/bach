@@ -33,7 +33,7 @@
  series, prime, number
 
  @seealso
- bach.factorize, bach.prime, bach.arithmser, bach.geomser
+ bach.factorize, bach.prime, bach.arithmser, bach.geomser, bach.recurser
  
  @owner
  Andrea Agostini

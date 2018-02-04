@@ -32,7 +32,7 @@
  series, arithmetic, step, compute, calculate
 
  @seealso
- bach.primeser, bach.geomser
+ bach.primeser, bach.geomser, bach.recurser
  
  @owner
  Andrea Agostini
@@ -119,7 +119,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)arithmser_anything,	"list",			A_GIMME,	0);
 	
 	// @method bang @digest Output the arithmetic series
-	// @description A bang outputs the arithmetic series of primes according to the most recently received parameters.
+	// @description A bang outputs the arithmetic series according to the most recently received parameters.
 	class_addmethod(c, (method)arithmser_bang,		"bang",			0);
 	class_addmethod(c, (method)arithmser_assist,	"assist",		A_CANT,		0);
 	class_addmethod(c, (method)arithmser_inletinfo,	"inletinfo",	A_CANT,		0);

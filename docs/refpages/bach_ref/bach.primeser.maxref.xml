@@ -177,6 +177,7 @@
 		<seealso name="bach.prime" />
 		<seealso name="bach.arithmser" />
 		<seealso name="bach.geomser" />
+		<seealso name="bach.recurser" />
 	</seealsolist>
 
 	<misc name = "Input">

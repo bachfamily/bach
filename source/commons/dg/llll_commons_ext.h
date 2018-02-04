@@ -950,7 +950,7 @@ char is_atom_in_atomarray(t_atom *atom, t_atom *atomarray, long atomarray_size);
 	@param	adopter	Adopter for appending, just like #llll_appendlong() or similars
 	@return			The appended llllelem, or NULL if none
 */
-t_llllelem *llll_appendatom(t_llll *where, t_atom *what, long flags, t_llll *adopter);
+t_llllelem *llll_appendatom(t_llll *where, t_atom *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 
 
 /**	Find the llllelem, up to a depth of 2 (2 levels of depth), which approximates best a given number
