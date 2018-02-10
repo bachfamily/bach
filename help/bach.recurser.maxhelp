@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 472.0, 99.0, 909.0, 523.0 ],
+		"rect" : [ 100.0, 100.0, 909.0, 523.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -56,7 +56,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 909.0, 497.0 ],
+						"rect" : [ 100.0, 126.0, 909.0, 497.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -95,7 +95,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 609.0, 94.0, 151.0, 40.0 ],
-									"presentation_rect" : [ 697.0, 72.0, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "A funny way to generate sinusoids"
 								}
@@ -546,7 +545,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 472.0, 125.0, 909.0, 497.0 ],
+						"rect" : [ 0.0, 26.0, 909.0, 497.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -579,13 +578,79 @@
 									"bubble" : 1,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
+									"id" : "obj-21",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 715.0, 270.0, 151.0, 40.0 ],
+									"presentation_rect" : [ 715.0, 269.0, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "CLICK (max_items defaults to 1000)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-22",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 679.5, 338.0, 68.0, 23.0 ],
+									"presentation_rect" : [ 679.5, 338.0, 0.0, 0.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80001
+									}
+,
+									"style" : "",
+									"text" : "bach.print"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-23",
+									"maxclass" : "button",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "bang" ],
+									"patching_rect" : [ 679.5, 278.0, 24.0, 24.0 ],
+									"presentation_rect" : [ 679.5, 269.0, 0.0, 0.0 ],
+									"style" : ""
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-27",
+									"maxclass" : "newobj",
+									"numinlets" : 4,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 679.5, 310.0, 174.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80001
+									}
+,
+									"style" : "",
+									"text" : "bach.recurser (0) 1 cos($x1)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
 									"id" : "obj-3",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 714.0, 379.0, 120.0, 25.0 ],
+									"patching_rect" : [ 712.5, 379.0, 123.0, 25.0 ],
 									"style" : "",
-									"text" : "DO NOT CLICK"
+									"text" : "DO NOT CLICK!"
 								}
 
 							}
@@ -645,7 +710,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 715.0, 267.0, 66.0, 25.0 ],
+									"patching_rect" : [ 715.0, 169.0, 66.0, 25.0 ],
 									"style" : "",
 									"text" : "CLICK"
 								}
@@ -657,7 +722,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 679.5, 336.0, 68.0, 23.0 ],
+									"patching_rect" : [ 679.5, 238.0, 68.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80001
 									}
@@ -674,7 +739,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 679.5, 267.0, 24.0, 24.0 ],
+									"patching_rect" : [ 679.5, 169.0, 24.0, 24.0 ],
 									"style" : ""
 								}
 
@@ -688,7 +753,7 @@
 									"numinlets" : 4,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 679.5, 299.0, 199.0, 23.0 ],
+									"patching_rect" : [ 679.5, 201.0, 199.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80001
 									}
@@ -732,7 +797,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 675.5, 133.0, 162.0, 21.0 ],
+									"patching_rect" : [ 675.5, 35.0, 162.0, 21.0 ],
 									"style" : "",
 									"text" : "IMPORTANT:",
 									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
@@ -748,7 +813,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 675.5, 148.0, 197.0, 94.0 ],
+									"patching_rect" : [ 675.5, 50.0, 197.0, 94.0 ],
 									"style" : "",
 									"text" : "Either the ending values or the maximum number of items should be different from \"none\".\nBeware: set the maximum number of items to \"none\" at your own risk! "
 								}
@@ -872,8 +937,8 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 286.0, 385.0, 100.0, 24.0 ],
-									"presentation_rect" : [ 286.0, 385.0, 100.0, 24.0 ]
+									"patching_rect" : [ 286.0, 385.0, 239.537476, 84.0 ],
+									"presentation_rect" : [ 286.0, 385.0, 239.537476, 84.0 ]
 								}
 
 							}
@@ -1079,8 +1144,22 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-27", 0 ],
+									"source" : [ "obj-23", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-1", 0 ],
 									"source" : [ "obj-26", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-22", 0 ],
+									"source" : [ "obj-27", 0 ]
 								}
 
 							}

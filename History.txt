@@ -10,6 +10,8 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 
 - all objects	Fixed issues with negative midicents
 
+- bach.recurser	New object
+
 - bach.roll, bach.score
 		Now "dynamics2velocities" handles breakpoints
 		Fixed bug causing wrong breakpoint handling for "dynamics2velocities" in some situations
