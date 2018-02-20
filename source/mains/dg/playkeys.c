@@ -115,7 +115,7 @@ typedef struct _playkeys_key
 {
     long        property;                   // one of the playkeys_items
     long        allowed_notationitems;     // a combination of playkeys_incoming
-    t_symbol    *allowed_command_router;     // a combination of playkeys_incoming
+    t_symbol    *allowed_command_router;     // a command router allowed to enter
     t_hatom     specification;              // content: e.g. slot number/name
     long        exists;                     // data actually exist for key
 } t_playkeys_key;
@@ -885,6 +885,10 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
             x->n_keys[outlet].exists = 0;
             
             if (incoming & x->n_keys[outlet].allowed_notationitems) { // must process key
+                
+                if ((incoming == k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCOREREST_COMMAND) && this_key->allowed_command_router != router)
+                    continue; // not the right command
+                
                 found = NULL;
                 switch (this_key->property) {
                     case k_PLAYKEYS_TYPE:
