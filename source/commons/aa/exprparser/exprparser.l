@@ -259,7 +259,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return err;
 }
 
-<INITIAL>"+"/[^ /n/t] {
+<INITIAL>"+"/[^ \n\t] {
     parserpost(" lex: unary + (ignored)");
 }
 

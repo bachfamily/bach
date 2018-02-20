@@ -6430,11 +6430,16 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         
         if (hatom_type_is_number(start_type)) {
             start = hatom_getdouble(&start_hatom);
+            if (maxcount == 1) {
+                end = start;
+                step = 1;
+            }
         } else {
             if (!(hatom_type_is_number(end_type))) {
                 return outll;
             } else if (maxcount == 1) {
                 start = end = hatom_getdouble(&end_hatom);
+                step = 1;
             } else if (step == 0 || maxcount <= 0) {
                 return outll;
             } else {
@@ -6497,11 +6502,16 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         
         if (hatom_type_is_number(start_type)) {
             start = hatom_getrational(&start_hatom);
+            if (maxcount == 1) {
+                end = start;
+                step = t_rational(1, 1);
+            }
         } else {
             if (!(hatom_type_is_number(end_type))) {
                 return outll;
             } else if (maxcount == 1) {
                 start = end = hatom_getrational(&end_hatom);
+                step = t_rational(1, 1);
             } else if (step.r_num == 0 || maxcount <= 0) {
                 return outll;
             } else {
@@ -6550,11 +6560,16 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 
         if (hatom_type_is_number(start_type)) {
             start = hatom_getlong(&start_hatom);
+            if (maxcount == 1) {
+                end = start;
+                step = 1;
+            }
         } else {
             if (!(hatom_type_is_number(end_type))) {
                 return outll;
             } else if (maxcount == 1) {
-                start = end = hatom_getdouble(&end_hatom);
+                start = end = hatom_getlong(&end_hatom);
+                step = 1;
             } else if (step == 0 || maxcount <= 0) {
                 return outll;
             } else {
@@ -6602,11 +6617,16 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         
         if (hatom_type_is_number(start_type)) {
             start = hatom_getpitch(&start_hatom);
+            if (maxcount == 1) {
+                end = start;
+                step = t_pitch(1, t_pitch::natural, 0);
+            }
         } else {
             if (!(hatom_type_is_number(end_type))) {
                 return outll;
             } else if (maxcount == 1) {
                 start = end = hatom_getpitch(&end_hatom);
+                step = t_pitch(1, t_pitch::natural, 0);
             } else if (step == t_pitch::C0 || maxcount <= 0) {
                 return outll;
             } else {
