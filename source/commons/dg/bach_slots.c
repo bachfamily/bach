@@ -5834,6 +5834,28 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_notation_item *nitem, int
 }
 
 
+char is_llll_relative_modification(t_llll *values_as_llll)
+{
+    char there_is_a_relative_modification = false;
+    if (values_as_llll->l_size >= 1) {
+        for (t_llllelem *el = values_as_llll->l_head; el; el = el->l_next) {
+            if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                t_llll *ll = hatom_getllll(&el->l_hatom);
+                if (ll && ll->l_tail && hatom_gettype(&ll->l_tail->l_hatom) == H_SYM) {
+                    t_symbol *s = hatom_getsym(&ll->l_tail->l_hatom);
+                    if (s == gensym("plus") || s == gensym("minus") || s == gensym("times") || s == gensym("div"))
+                        there_is_a_relative_modification = true;
+                    else
+                        return 0;
+                } else if (ll && ll->l_tail)
+                    return 0;
+            }
+        }
+    } else
+        return 0;
+
+    return there_is_a_relative_modification;
+}
 
 // position == -1 means ALL
 void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode, char modify_existing, double modification_x_thresh)
@@ -5919,8 +5941,9 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
             if (slot_type != k_SLOT_TYPE_TEXT && position > slot->length)
                 mode = k_CHANGESLOTITEM_MODE_APPEND;
             
-            if (slot_type != k_SLOT_TYPE_LLLL)
-                llll_flatten(values_as_llll, 1, 0); // possibly removing the outer level of parentheses
+            if (slot_type != k_SLOT_TYPE_LLLL && values_as_llll->l_depth > 1 && !is_llll_relative_modification(values_as_llll)) {
+                llll_flatten(values_as_llll, 1, 0); // possibly removing the outer level of parentheses [::: BUT WHY DID WE NEED THIS????]
+            }
             
             
             if ((mode == k_CHANGESLOTITEM_MODE_APPEND || mode == k_CHANGESLOTITEM_MODE_PREPEND || mode == k_CHANGESLOTITEM_MODE_INSERT || mode == k_CHANGESLOTITEM_MODE_INSERT_AUTO) && modify_existing && values_as_llll->l_head) {
