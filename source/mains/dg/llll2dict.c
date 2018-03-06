@@ -211,8 +211,11 @@ void llll2dict_fn(t_object *x, t_llll *ll, t_dictionary *d, char skip_first_elem
 								case H_OBJ:
 									dictionary_appendobject(d, key, (t_object *)hatom_getobj(&subll->l_head->l_next->l_hatom));
 									break;
+                                case H_FUNCTION:
+                                    dictionary_appendobject(d, key, (t_object *)hatom_getobj(&subll->l_head->l_next->l_hatom));
+                                    break;
 								default:
-									object_error(x, "Unknown atom type detected - could not be converted.");
+									object_error(x, "Unknown element detected - could not be converted.");
 									break;
 							}
 							

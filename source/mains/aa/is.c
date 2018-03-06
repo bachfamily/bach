@@ -141,15 +141,16 @@ void is_anything(t_is *x, t_symbol *msg, long ac, t_atom *av)
 		is = H_LLLL;
 	llll_release(in_llll);
 	switch (is) {
-		case H_NULL:	x->n_symout = _llllobj_sym_n;		break;
-		case H_LONG:	x->n_symout = _llllobj_sym_i;		break;
-		case H_RAT:		x->n_symout = _llllobj_sym_r;		break;
-		case H_DOUBLE:	x->n_symout = _llllobj_sym_f;		break;
-		case H_SYM:		x->n_symout = _llllobj_sym_s;		break;
-		case H_LLLL:	x->n_symout = _llllobj_sym_l;		break;
-		case H_OBJ:		x->n_symout = _llllobj_sym_o;		break;
-        case H_PITCH:	x->n_symout = _llllobj_sym_p;		break;
-		default:		x->n_symout = _llllobj_sym_unknown;	break;
+		case H_NULL:        x->n_symout = _llllobj_sym_n;		break;
+		case H_LONG:        x->n_symout = _llllobj_sym_i;		break;
+		case H_RAT:         x->n_symout = _llllobj_sym_r;		break;
+		case H_DOUBLE:      x->n_symout = _llllobj_sym_f;		break;
+		case H_SYM:         x->n_symout = _llllobj_sym_s;		break;
+		case H_LLLL:        x->n_symout = _llllobj_sym_l;		break;
+        case H_PITCH:       x->n_symout = _llllobj_sym_p;		break;
+        case H_OBJ:         x->n_symout = _llllobj_sym_o;		break;
+        case H_FUNCTION:	x->n_symout = _llllobj_sym_F;		break;
+		default:            x->n_symout = _llllobj_sym_unknown;	break;
 	}
 	x->n_longout = is;
 	is_bang(x);

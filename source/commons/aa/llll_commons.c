@@ -370,6 +370,12 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
 					ac++;
 					elem = elem->l_next;
 					break;
+                case H_FUNCTION:
+                    snprintf_zero(txt, 256, "[function:%p]", elem->l_hatom.h_w.w_obj);
+                    atom_setsym(this_out++, gensym(txt));
+                    ac++;
+                    elem = elem->l_next;
+                    break;
 				case H_NULL:
 					atom_setsym(this_out++, _llllobj_sym_null);
 					ac++;
@@ -7534,6 +7540,11 @@ t_atom_long llll_to_text_buf(t_llll *ll,
 						ac += len;
 						pos += len;
 						break;
+                    case H_FUNCTION:
+                        len = snprintf_zero(pos, 256, "[function:%p] ", elem->l_hatom.h_w.w_func);
+                        ac += len;
+                        pos += len;
+                        break;
 					case H_NULL:
 						strncpy_zero(pos, "null ", 5);
 						pos += 5;
@@ -7851,6 +7862,21 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                         linesize += len;
                         elem = elem->l_next;
                         break;
+                    case H_FUNCTION:
+                        if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
+                            char txt[256];
+                            len = snprintf_zero(txt, 256, "[function:%p]", elem->l_hatom.h_w.w_func);
+                            manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
+                            just_closed_indented_sublist = false;
+                            len = snprintf_zero(pos, 256, "%s ", txt);
+                        } else {
+                            len = snprintf_zero(pos, 256, "[function:%p] ", elem->l_hatom.h_w.w_func);
+                        }
+                        count += len;
+                        pos += len;
+                        linesize += len;
+                        elem = elem->l_next;
+                        break;
                     case H_LLLL:
                         subll = elem->l_hatom.h_w.w_llll;
                         if (indent) {
@@ -8126,6 +8152,12 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 						pos += len;
 						max_size -= len;
 						break;
+                    case H_FUNCTION:
+                        len = snprintf_zero(pos, max_size, "[function:%p] ", elem->l_hatom.h_w.w_func);
+                        ac += len;
+                        pos += len;
+                        max_size -= len;
+                        break;
 					case H_NULL:
 						len = snprintf_zero(pos, max_size, "null ");
 						pos += len;

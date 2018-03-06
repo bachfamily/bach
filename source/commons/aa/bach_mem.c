@@ -861,7 +861,7 @@ void llll_free(t_llll *ll)
 	llll_free_nocheck(ll);
 }
 
-void llll_retain(t_llll *ll)
+t_llll *llll_retain(t_llll *ll)
 {
 #ifdef BACH_CHECK_LLLLS
 	if (llll_check(ll)) {
@@ -870,11 +870,13 @@ void llll_retain(t_llll *ll)
 	}
 #endif // BACH_CHECK_LLLLS
 	ATOMIC_INCREMENT(&ll->l_count);
+    return ll;
 }
 
-void llll_retain_nocheck(t_llll *ll)
+t_llll *llll_retain_nocheck(t_llll *ll)
 {
 	ATOMIC_INCREMENT(&ll->l_count);
+    return ll;
 }
 
 void llll_release(t_llll *ll)
@@ -1236,6 +1238,7 @@ if (llll_check_phonenumber(ll))
 				case H_RAT:
                 case H_PITCH:
 				case H_OBJ:
+                case H_FUNCTION:
 					elem = elem->l_next;
 					break;
                 case H_SYM:
