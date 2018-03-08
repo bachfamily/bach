@@ -205,6 +205,9 @@ void llll2dict_fn(t_object *x, t_llll *ll, t_dictionary *d, char skip_first_elem
 								case H_RAT:		/// rationals are converted into doubles
 									dictionary_appendfloat(d, key, hatom_getdouble(&subll->l_head->l_next->l_hatom));
 									break;
+                                case H_PITCH:        /// pitches are converted into symbols
+                                    dictionary_appendsym(d, key, hatom_getpitch(&subll->l_head->l_next->l_hatom).toSym());
+                                    break;
 								case H_SYM:
 									dictionary_appendsym(d, key, hatom_getsym(&subll->l_head->l_next->l_hatom));
 									break;
