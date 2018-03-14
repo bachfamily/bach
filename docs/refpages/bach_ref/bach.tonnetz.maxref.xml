@@ -640,7 +640,19 @@
 				Diatonic Center
 			</digest>
 			<description>
-				Sets the diatonic center pitch
+				Sets the diatonic center pitch.
+				Instead of MIDIcents (or cents), one can also instert pitches.
+				The syntax for the single note must be an unique symbol (no spaces) with:
+				<b><m>notename</m>-<m>optional:accidental</m>-<m>octave_number</m></b>.
+				Dashes are only set in order to separate parts of the symbol, but must not be included in the symbol. <br /> <br />
+				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
+				They and should be immediately followed by the possible accidentals and the
+				octave number, without any space (e.g. <b>D#4</b>). <br />
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
+				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
+				middle C, 1/16 tone up.
+				<br /> <br />
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />

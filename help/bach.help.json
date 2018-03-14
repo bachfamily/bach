@@ -4120,6 +4120,13 @@
 					"seealso" : [ "slot+linkage", "slotinfo+inspector" ],
 					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "accidental", "linkannotationtoslot", "commentary", "text", "expression", "annotationfontsize", "font" ],
 					"title" : [ "Setting up annotations" ]
+				},
+				"Annotationmore" : {
+					"filename" : [ "bach.help.notation.slots.30_slot linkage.31_annotationmore.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "slot+linkage", "annotation" ],
+					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "linkannotationtoslot", "commentary", "text", "expression", "duplicate", "pizz", "arco", "pizzicato", "ord", "pont", "tasto", "technique", "remove", "filter", "bracket", "ordinario", "ponticello" ],
+					"title" : [ "Handling annotation duplicates" ]
 				}
 			}
 		},

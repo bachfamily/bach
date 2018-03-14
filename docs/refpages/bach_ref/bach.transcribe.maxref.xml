@@ -135,12 +135,9 @@
 				• <b>slot 1 0.1 @voice 3</b>   <i>→ The same, but only for notes in voice 3</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@voice</m> (int, default: 0): Limit slot assignment to a given voice (0 = all)<br />
-				
-<m>@interp</m> (int, default: 0): Interpolate linearly between values<br />
-				
-<m>@prepad</m> (int, default: 0): Prepad slots when first elements come in<br />
+				<m>@voice</m> (int, default: 0): Limit slot assignment to a given voice (0 = all)<br />
+				<m>@interp</m> (int, default: 0): Interpolate linearly between values<br />
+				<m>@prepad</m> (int, default: 0): Prepad slots when first elements come in<br />
 				<br />
 				A <m>slot</m> message followed by a slot number <m>N</m> and a value <m>V</m> will assume that slot <m>N</m> is a
 				temporal slot with <m>temporalmode</m> "Milliseconds" and will record the value <m>V</m> as its Y value, corresponding to the 'current'

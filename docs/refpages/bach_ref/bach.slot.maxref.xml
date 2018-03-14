@@ -307,10 +307,8 @@
 			<description>
 				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
 				Message attributes:<br />
-				
-<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
-				
-<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
 				<br />
 				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
@@ -496,8 +494,7 @@
 				• <b>deleteslotitem 3 (0.7) @thresh 0.1</b>   <i>→ the same, with a tolerance of 0.1</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@thresh</m> (float, default: 0.): Tolerance threshold for X matching<br />
+				<m>@thresh</m> (float, default: 0.): Tolerance threshold for X matching<br />
 				<br />
 				A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
 				Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
@@ -786,10 +783,8 @@
 			<description>
 				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
 				Message attributes:<br />
-				
-<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
-				
-<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
 				<br />
 				A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
 				The position may be specified explicitly (for slots that do not bear X-axis information) or
@@ -1057,10 +1052,8 @@
 			<description>
 				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
 				Message attributes:<br />
-				
-<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
-				
-<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
 				<br />
 				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
@@ -1195,12 +1188,9 @@
 				• <b>writetxt myfile.txt @maxdepth 1</b>   <i>→ no indentation is performed</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@indent</m> (atom, default: tab): Number of spaces for indentation or "tab" symbol<br />
-				
-<m>@maxdepth</m> (int, default: -1): Maximum depth for new lines<br />
-				
-<m>@wrap</m> (int, default: 0): Maximum number of characters per line (0 means: no wrapping)<br />
+				<m>@indent</m> (atom, default: tab): Number of spaces for indentation or "tab" symbol<br />
+				<m>@maxdepth</m> (int, default: -1): Maximum depth for new lines<br />
+				<m>@wrap</m> (int, default: 0): Maximum number of characters per line (0 means: no wrapping)<br />
 				<br />
 				A <m>writetxt</m> message will save the content of <o>bach.slot</o>, as llll, in a file, in readable text format.
 				Text format is easily editable in any text editor,

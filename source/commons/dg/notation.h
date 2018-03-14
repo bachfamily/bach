@@ -1992,6 +1992,19 @@ typedef enum _output_pitches {
 
 
 
+/** Annotation filtering duplicates modes
+ @ingroup    attributes
+ */
+typedef enum _annotations_filterdup_mode {
+    k_ANNOTATIONS_FILTERDUP_DONT = 0,           ///< Don't filter duplicates (default)
+    k_ANNOTATIONS_FILTERDUP_DO = 1,             ///< Don't show duplicates of annotations
+    k_ANNOTATIONS_FILTERDUP_DO_WITHCLEARINGSYM = 2,    ///< Don't show annotation duplicates and use a clearing sym to clear the annotation
+    k_ANNOTATIONS_FILTERDUP_DO_WITHLINE = 3,           ///< Show annotation duplicates with lines
+} e_annotations_filterdup_modes;
+
+
+
+
 #define k_INSPECTOR_MINIATURE_SHOW_BOTH_LINES (k_INSPECTOR_MINIATURE_SHOW_VERTICAL_LINE + k_INSPECTOR_MINIATURE_SHOW_HORIZONTAL_LINE)  ///< Show both lines in the inspector miniature @ingroup attributes 
 
 
@@ -4038,6 +4051,8 @@ typedef struct _notation_obj
     // annotations
     char		show_annotations;               ///< Flag telling if we want to show the textual annotations
     double		annotation_font_size;			///< Font size for the textual annotations over the staff (for zoom_y = 1)
+    char        thinannotations;                ///< Thinning annotation mode, on of the #e_annotations_filterdup_modes
+    t_symbol    *annotations_clearingsym;       ///< Symbol to be put automatically, depending on the #thinannotations mode, to clear an annotation
     
     // dynamics
     char		show_dynamics;                  ///< Flag telling if we want to show the dynamics
@@ -10057,7 +10072,10 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
 
 
 // TBD
-void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item, double stem_x, long slot, t_jfont *jf_ann, double staff_top_y);
+void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
+                                double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
+                                char **last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
+                                double *annotation_line_y_pos);
 
 void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                               double center_x, double duration_x, long slot, t_jfont *jf_dynamics, double font_size, double staff_bottom_y,

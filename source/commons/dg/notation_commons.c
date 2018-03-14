@@ -2459,15 +2459,21 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
     jfont_destroy_debug(jf_art); 
 }
 
+
 void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                                double x_pos, long slot, t_jfont *jf_ann, double staff_top_y)
+                                double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
+                                char **last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
+                                double *annotation_line_y_pos)
 {
+    e_annotations_filterdup_modes thinmode = (e_annotations_filterdup_modes)r_ob->thinannotations;
+    
     if (item->type == k_NOTE) {
         t_note *note = (t_note *)item;
         double pad = 1 * r_ob->zoom_y;
         t_chord *chord = note->parent;
         char *buf = NULL;
-        char must_free = false;
+        char must_free = false, must_show = false, must_use_clearing_symbol = false;
+        
         if (r_ob->slotinfo[slot].slot_type == k_SLOT_TYPE_TEXT)
             buf = note->slot[slot].firstitem ? (char *)note->slot[slot].firstitem->item : NULL;
         else {
@@ -2477,16 +2483,66 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             llll_free(ll);
             must_free = true;
         }
-        if (buf) {
+        
+        
+        must_show = true;
+        if (thinmode != k_ANNOTATIONS_FILTERDUP_DONT && last_annotation_text) {
+            if (buf && *last_annotation_text && !strcmp(*last_annotation_text, buf)) {
+                // we need to filter out this annotation, it's the same as the previous one
+                must_show = false;
+                *annotation_sequence_end_x_pos = x_pos;
+            } else {
+                switch (thinmode) {
+                    case k_ANNOTATIONS_FILTERDUP_DO_WITHCLEARINGSYM:
+                        if (*last_annotation_text)
+                            must_use_clearing_symbol = true;
+                        break;
+
+                    case k_ANNOTATIONS_FILTERDUP_DO_WITHLINE:
+                        if (*last_annotation_text && *annotation_sequence_start_x_pos < *annotation_sequence_end_x_pos) {
+                            double start_x = *annotation_sequence_start_x_pos + 1 * r_ob->zoom_y;
+                            double end_x = *annotation_sequence_end_x_pos + 4 * r_ob->zoom_y;
+                            double line_y = *annotation_line_y_pos;
+                            paint_line(g, *color, start_x, line_y, end_x, line_y, 1);
+                            paint_line(g, *color, end_x, line_y, end_x, line_y + 4 * r_ob->zoom_y, 1);
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+
+                *last_annotation_text = buf;
+                *annotation_sequence_start_x_pos = *annotation_sequence_end_x_pos = x_pos;
+            }
+        }
+        
+        if (buf && must_show) {
+            double ann_width, ann_height;
+            double y_pos = 0;
+            jfont_text_measure(jf_ann, buf, &ann_width, &ann_height);
+            if (chord->topmost_y_noacc > staff_top_y)
+                chord->topmost_y_noacc = staff_top_y;
+            y_pos = chord->topmost_y_noacc - pad - ann_height;
+            write_text_account_for_vinset(r_ob, g, jf_ann, *color, buf, x_pos, y_pos);
+            chord->topmost_y_noacc = chord->topmost_y_noacc - ann_height - 2 * pad;
+            
+            *annotation_line_y_pos = y_pos + 7 * r_ob->zoom_y;
+            *annotation_sequence_start_x_pos = x_pos + ann_width;
+
+        } else if (must_use_clearing_symbol) {
+            char buf_clearing_sym[2048];
+            snprintf_zero(buf_clearing_sym, 2048, "%s", r_ob->annotations_clearingsym ? r_ob->annotations_clearingsym->s_name : "ord.");
             double ann_width, ann_height;
             jfont_text_measure(jf_ann, buf, &ann_width, &ann_height);
             if (chord->topmost_y_noacc > staff_top_y)
                 chord->topmost_y_noacc = staff_top_y;
-            write_text_account_for_vinset(r_ob, g, jf_ann, *color, buf, x_pos, chord->topmost_y_noacc - pad - ann_height);
+            write_text_account_for_vinset(r_ob, g, jf_ann, *color, buf_clearing_sym, x_pos, chord->topmost_y_noacc - pad - ann_height);
             chord->topmost_y_noacc = chord->topmost_y_noacc - ann_height - 2 * pad;
-            if (must_free)
-                bach_freeptr(buf);
         }
+        
+        if (buf && must_free)
+            bach_freeptr(buf);
     }
 }
 

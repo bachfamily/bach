@@ -2012,6 +2012,27 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Toggles the ability to display pitch breakpoints as real notes (possibly with accidentals).
 		// If this is not set, pitch breakpoints are displayed as small diamonds.
+        
+        
+        CLASS_ATTR_CHAR(c, "thinannotations", 0, t_notation_obj, thinannotations);
+        CLASS_ATTR_STYLE_LABEL(c,"thinannotations",0,"enumindex","Handle Annotation Duplicates");
+        CLASS_ATTR_ENUMINDEX(c,"thinannotations", 0, "Keep Remove Remove With Clearing Symbol Remove With Bracket");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"thinannotations",0,"0");
+        // @exclude bach.slot
+        // @description Decides what to do with identical annotations put on nearby chords. <br />
+        // 0 = Keeps all the annotations; <br />
+        // 1 = Removes all the duplicates; <br />
+        // 2 = Removes all the duplicates and puts a symbol to clear the annotation at the end
+        // if no other annotation is present; <br />
+        // 3 = Removes all the duplicates and puts a bracket.
+
+        CLASS_ATTR_SYM(c, "thinannotationsclearsym", 0, t_notation_obj, annotations_clearingsym);
+        CLASS_ATTR_STYLE_LABEL(c,"thinannotationsclearsym",0,"text","Annotation Clearing Symbol");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"thinannotationsclearsym",0,"ord.");
+        // @exclude bach.slot
+        // @description If <m>thinannotations</m> is set to 2 (Remove With Clearing Symbol), this attribute
+        // sets the clearing symbol to remove the annotation label.
+
 	}
 	
 	CLASS_STICKY_ATTR_CLEAR(c, "category");
