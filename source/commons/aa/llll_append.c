@@ -234,7 +234,21 @@ t_llllelem *llll_appendobj(t_llll *where, void *what, long flags, t_llll *adopte
     if (!where)
         return NULL;
     outelem = llllelem_get();
-    hatom_setobj(&outelem->l_hatom, (t_object *) what);
+    hatom_setobj(&outelem->l_hatom, what);
+    outelem->l_flags = flags;
+    llll_append(where, outelem, adopter);
+    pedantic_llll_check(where);
+    return outelem;
+}
+
+// a new llllelem is created
+t_llllelem *llll_appendfunc(t_llll *where, void *what, long flags, t_llll *adopter)
+{
+    t_llllelem *outelem;
+    if (!where)
+        return NULL;
+    outelem = llllelem_get();
+    hatom_setfunc(&outelem->l_hatom, what);
     outelem->l_flags = flags;
     llll_append(where, outelem, adopter);
     pedantic_llll_check(where);
@@ -419,7 +433,20 @@ t_llllelem *llll_prependobj(t_llll *where, void *what, long flags, t_llll *adopt
     if (!where)
         return NULL;
     outelem = llllelem_get();
-    hatom_setobj(&outelem->l_hatom, (t_object *) what);
+    hatom_setobj(&outelem->l_hatom, what);
+    outelem->l_flags = flags;
+    llll_prepend(where, outelem, adopter);
+    pedantic_llll_check(where);
+    return outelem;
+}
+
+t_llllelem *llll_prependfunc(t_llll *where, void *what, long flags, t_llll *adopter)
+{
+    t_llllelem *outelem;
+    if (!where)
+        return NULL;
+    outelem = llllelem_get();
+    hatom_setfunc(&outelem->l_hatom, what);
     outelem->l_flags = flags;
     llll_prepend(where, outelem, adopter);
     pedantic_llll_check(where);
@@ -614,7 +641,20 @@ t_llllelem *llll_insertobj_before(void *what, t_llllelem *before_what, long flag
     if (!before_what)
         return NULL;
     outelem = llllelem_get();
-    hatom_setobj(&outelem->l_hatom, (t_object *) what);
+    hatom_setobj(&outelem->l_hatom, what);
+    outelem->l_flags = flags;
+    llll_insert_before(outelem, before_what, adopter);
+    pedantic_llll_check(before_what->l_parent);
+    return outelem;
+}
+
+t_llllelem *llll_insertfunc_before(void *what, t_llllelem *before_what, long flags, t_llll *adopter)
+{
+    t_llllelem *outelem;
+    if (!before_what)
+        return NULL;
+    outelem = llllelem_get();
+    hatom_setfunc(&outelem->l_hatom, what);
     outelem->l_flags = flags;
     llll_insert_before(outelem, before_what, adopter);
     pedantic_llll_check(before_what->l_parent);
@@ -792,7 +832,20 @@ t_llllelem *llll_insertobj_after(void *what, t_llllelem *after_what, long flags,
     if (!after_what)
         return NULL;
     outelem = llllelem_get();
-    hatom_setobj(&outelem->l_hatom, (t_object *) what);
+    hatom_setobj(&outelem->l_hatom, what);
+    outelem->l_flags = flags;
+    llll_insert_after(outelem, after_what, adopter);
+    pedantic_llll_check(after_what->l_parent);
+    return outelem;
+}
+
+t_llllelem *llll_insertfunc_after(void *what, t_llllelem *after_what, long flags, t_llll *adopter)
+{
+    t_llllelem *outelem;
+    if (!after_what)
+        return NULL;
+    outelem = llllelem_get();
+    hatom_setfunc(&outelem->l_hatom, what);
     outelem->l_flags = flags;
     llll_insert_after(outelem, after_what, adopter);
     pedantic_llll_check(after_what->l_parent);
