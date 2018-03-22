@@ -127,7 +127,9 @@ unsigned long bach_get_current_version(void)
 
 unsigned long bach_get_current_llll_version(void)
 {
-    return ((t_bach *)gensym("bach")->s_thing)->b_llll_version;
+    t_bach *b = ((t_bach *)gensym("bach")->s_thing);
+    unsigned long v = b->b_llll_version;
+    return v;
 }
 
 char *bach_get_current_version_string_verbose(void)
