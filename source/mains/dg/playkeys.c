@@ -647,6 +647,8 @@ void playkeys_handle_flattening_and_nullmode(t_playkeys *x, t_llll **ll, long in
             case k_PLAYKEYS_INCOMING_TEMPO:
             case k_PLAYKEYS_INCOMING_MARKER:
             case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+            case k_PLAYKEYS_INCOMING_SCOREREST:
+            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
                 if (x->n_flattenfornotes && (*ll)->l_size == 1)
                     llll_flatten(*ll, 1, 0);
                 if (x->n_nullmode == 0 && (*ll)->l_size == 0) {
@@ -655,6 +657,7 @@ void playkeys_handle_flattening_and_nullmode(t_playkeys *x, t_llll **ll, long in
                     x->n_keys[outlet].exists = 0;
                 }
                 break;
+                
                 
             case k_PLAYKEYS_INCOMING_ROLLCHORD:
             case k_PLAYKEYS_INCOMING_SCORECHORD:
@@ -1867,9 +1870,44 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 
                             case k_PLAYKEYS_INCOMING_SCOREREST:
                             case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
-                                // to do
-                                break;
+                                found = llll_get();
+                            {
+                                t_llllelem *restel = llll_getindex(in_ll, 4, I_STANDARD);
+                                if (!restel || hatom_gettype(&restel->l_hatom) != H_LLLL)
+                                    break;
                                 
+                                t_llll *restll = hatom_getllll(&restel->l_hatom);
+                                if ((target_el = root_find_el_with_sym_router(restll, _llllobj_sym_slots))) {
+                                    if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
+                                        break;
+                                    
+                                    t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
+                                    
+                                    t_hatom spec = this_key->specification;
+                                    if (this_key->property == k_PLAYKEYS_DYNAMICS)
+                                        hatom_setatom(&spec, &x->n_dynamicsslot);
+                                    if (this_key->property == k_PLAYKEYS_LYRICS)
+                                        hatom_setatom(&spec, &x->n_lyricsslot);
+                                    if (this_key->property == k_PLAYKEYS_ARTICULATIONS)
+                                        hatom_setatom(&spec, &x->n_articulationsslot);
+                                    if (this_key->property == k_PLAYKEYS_NOTEHEAD)
+                                        hatom_setatom(&spec, &x->n_noteheadslot);
+                                    if (spec.h_type == H_LONG) {
+                                        if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec))))
+                                            llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        else
+                                            llll_appendllll(found, llll_get());
+                                    } else if (spec.h_type == H_SYM) {
+                                        if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec))))
+                                            llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        else
+                                            llll_appendllll(found, llll_get());
+                                    }
+                                    
+                                } else
+                                    llll_appendllll(found, llll_get());
+                            }
+                                break;
                             default:
                                 break;
                         }
