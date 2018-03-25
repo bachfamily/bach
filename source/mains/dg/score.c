@@ -319,7 +319,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
 
 // modifying selection
 void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv);
-char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_check_scheduling, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false);
+char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_check_scheduling, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false, char transfer_slots_even_to_rests = false);
 void score_sel_deletemeasures(t_score *x);
 void score_clear_selection(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_rebeam(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -987,7 +987,7 @@ void score_getloop(t_score *x){
 // *******************************************************************************************
 
 
-char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_check_scheduling, t_llll *slots_to_transfer_to_next_note_in_chord_1based, char transfer_slots_even_if_empty)
+char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_check_scheduling, t_llll *slots_to_transfer_to_next_note_in_chord_1based, char transfer_slots_even_if_empty, char transfer_slots_even_to_rests)
 {
 	char changed = 0;
 	if (curr_it->type == k_NOTE) {
@@ -995,7 +995,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
 		notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
 		if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)){
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-            transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty);
+            transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
             note_delete((t_notation_obj *)x, nt, false);
 			changed = 1;
 		}
@@ -1050,15 +1050,15 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
 	char need_check_scheduling = false;
     
     t_llll *transfer_slots = NULL;
-    long even_if_empty = false;
+    long even_if_empty = false, even_to_rests = false;
     t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    llll_parseargs_and_attrs((t_object *) x, ll, "li", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty);
+    llll_parseargs_and_attrs((t_object *) x, ll, "lii", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty, gensym("torests"), &even_to_rests);
     llll_free(ll);
     
 	t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : NULL;
 	
 	// this must be here at the beginning, because it changes the selected items!
-	turn_selection_into_rests(x, true, true, true, transfer_slots, even_if_empty);
+	turn_selection_into_rests(x, true, true, true, transfer_slots, even_if_empty, even_to_rests);
 
 	lock_general_mutex((t_notation_obj *)x);
 
@@ -1074,7 +1074,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
 			continue;
 		}
 		
-		score_sel_delete_item(x, curr_it, &need_check_scheduling, transfer_slots, even_if_empty);
+		score_sel_delete_item(x, curr_it, &need_check_scheduling, transfer_slots, even_if_empty, even_to_rests);
 	}
 	
     if (transfer_slots)
@@ -5158,8 +5158,10 @@ int T_EXPORT main(void){
 	// @description @copy BACH_DOC_MESSAGE_DELETE
     // If measures are selected, only their notes and chords are deleted, and measure are preserved.
     // Use <m>deletemeasures</m> if you need to delete whole measures. <br />
-    // When deleting notes from a chord, use the "@transferslots" specification to define a set of slots to be transfered to a neighbour note in the same chord,
-    // whenever possible. Use also "all" to transfer all slots, and "auto" to transfer a standard set of slots (dynamics, lyrics, articulations, annotations);
+    // When deleting notes from a chord, use the "@transferslots" specification to define a set of slots
+    // to be transfered to a neighbour note in the same chord,
+    // whenever possible (if the "@torests" specification is added, slots will be transfered to the rest if the note was the only one in the chord).
+    // Use also "all" to transfer all slots, and "auto" to transfer a standard set of slots (dynamics, lyrics, articulations, annotations);
     // use "dynamics", "lyrics", "noteheads", "articulations", "annotation" instead of slot numbers.
     // Use the additional "@empty" message argument in order to tell with a 0/1 integer whether empty slots should also be transfered (by default: 0 = false).
     // @mattr transferslots @type llll @default null @digest If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible
@@ -5167,6 +5169,7 @@ int T_EXPORT main(void){
     // @example delete @caption delete current selection
     // @example delete @transferslots 20 21 @caption delete current selection, and transfer content of slot 20 and 21 to another chord note, if possible
     // @example delete @transferslots all @caption delete current selection, and transfer all slots
+    // @example delete @transferslots all @transfertorest 1 @caption delete current selection, and transfer all slots, even to rests
     // @example delete @transferslots all @empty 1 @caption delete current selection, and transfer all slots, even the empty ones
     // @seealso eraseslot, deletemeasures
 	class_addmethod(c, (method) score_sel_delete, "delete", A_GIMME, 0);
@@ -15811,7 +15814,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 				if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION))
 					delete_selected_markers(x); // x->r_ob.selection_type
                 t_llll *slots_to_transfer = get_default_slots_to_transfer_1based((t_notation_obj *)x);
-                turn_selection_into_rests(x, is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_DELETION), is_editable((t_notation_obj *)x, k_LYRICS, k_ELEMENT_ACTIONS_NONE), is_editable((t_notation_obj *)x, k_DYNAMICS, k_ELEMENT_ACTIONS_NONE), slots_to_transfer, false);
+                turn_selection_into_rests(x, is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_DELETION), is_editable((t_notation_obj *)x, k_LYRICS, k_ELEMENT_ACTIONS_NONE), is_editable((t_notation_obj *)x, k_DYNAMICS, k_ELEMENT_ACTIONS_NONE), slots_to_transfer, false, false);
                 llll_free(slots_to_transfer);
 				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 				handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TURN_SELECTION_INTO_RESTS); 

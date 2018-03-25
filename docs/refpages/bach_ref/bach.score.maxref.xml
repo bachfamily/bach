@@ -2427,6 +2427,7 @@
 				• <b>delete</b>   <i>→ delete current selection</i><br />
 				• <b>delete @transferslots 20 21</b>   <i>→ delete current selection, and transfer content of slot 20 and 21 to another chord note, if possible</i><br />
 				• <b>delete @transferslots all</b>   <i>→ delete current selection, and transfer all slots</i><br />
+				• <b>delete @transferslots all @transfertorest 1</b>   <i>→ delete current selection, and transfer all slots, even to rests</i><br />
 				• <b>delete @transferslots all @empty 1</b>   <i>→ delete current selection, and transfer all slots, even the empty ones</i><br />
 				<br />
 				Message attributes:<br />
@@ -2436,8 +2437,10 @@
 				The word <m>delete</m> simply deletes all the currently selected items.
 				If measures are selected, only their notes and chords are deleted, and measure are preserved.
 				Use <m>deletemeasures</m> if you need to delete whole measures. <br />
-				When deleting notes from a chord, use the "@transferslots" specification to define a set of slots to be transfered to a neighbour note in the same chord,
-				whenever possible. Use also "all" to transfer all slots, and "auto" to transfer a standard set of slots (dynamics, lyrics, articulations, annotations);
+				When deleting notes from a chord, use the "@transferslots" specification to define a set of slots
+				to be transfered to a neighbour note in the same chord,
+				whenever possible (if the "@torests" specification is added, slots will be transfered to the rest if the note was the only one in the chord).
+				Use also "all" to transfer all slots, and "auto" to transfer a standard set of slots (dynamics, lyrics, articulations, annotations);
 				use "dynamics", "lyrics", "noteheads", "articulations", "annotation" instead of slot numbers.
 				Use the additional "@empty" message argument in order to tell with a 0/1 integer whether empty slots should also be transfered (by default: 0 = false).
 				<br />				See also:<m>eraseslot</m>,<m>deletemeasures</m><br />

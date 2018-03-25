@@ -2182,7 +2182,7 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.02b_deletetransfer.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection" ],
-					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "keep", "slot", "transfer", "copy", "content", "dynamic", "articulation", "lyric", "notehead", "annotation", "empty", "transferslots" ],
+					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "keep", "slot", "transfer", "copy", "content", "dynamic", "articulation", "lyric", "notehead", "annotation", "empty", "transferslots", "torests", "to", "rest" ],
 					"title" : [ "Delete selection and transfer slots" ]
 				},
 				"Onsettailduration" : {

@@ -8247,8 +8247,9 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
 // TBD
 t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty);
 t_llll* notation_item_get_multiple_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty, t_llll *which_slots_1based);
+t_llll *notation_item_get_slots_to_be_copied(t_notation_obj *r_ob, t_notation_item *from, t_llll *which_slots_1based, char even_if_empty);// this one is private
 void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_notation_item *to, t_llll *which_slots_1based, char even_if_empty);
-void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty);
+void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests);
 t_llll *get_default_slots_to_transfer_1based(t_notation_obj * r_ob);
 
 

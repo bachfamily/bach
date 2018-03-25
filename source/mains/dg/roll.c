@@ -1328,7 +1328,7 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
 		notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
 		if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)){
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-            transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty);
+            transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, false);
 			note_delete((t_notation_obj *)x, nt, false);
             update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
 			changed = 1;
@@ -8292,7 +8292,7 @@ void gluechord_from_llll(t_roll *x, t_llll* chord, t_rollvoice *voice, double th
 void set_clefs_from_llll(t_roll *x, t_llll* clefs){
 	if (clefs) {
 		t_atom *av = NULL;
-		long ac = llll_deparse(clefs, &av, 0, 1);
+		long ac = llll_deparse(clefs, &av, 0, LLLL_D_NONE); // it's important that we do not backtick symbols, for instance G8vb can be interpreted as pitch and backticked!
 		roll_setattr_clefs(x, NULL, ac, av);
 		if (av) bach_freeptr(av);
 	}

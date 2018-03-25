@@ -31543,11 +31543,8 @@ t_llll *get_default_slots_to_transfer_1based(t_notation_obj * r_ob)
 }
 
 
-void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_notation_item *to, t_llll *which_slots_1based, char even_if_empty)
+t_llll *notation_item_get_slots_to_be_copied(t_notation_obj *r_ob, t_notation_item *from, t_llll *which_slots_1based, char even_if_empty)
 {
-    if (!which_slots_1based || !which_slots_1based->l_head)
-        return;
-    
     t_llll *temp = NULL;
     
     // we copy the entire slot
@@ -31559,12 +31556,21 @@ void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_not
         llll_free(sl);
     } else
         temp = notation_item_get_multiple_slots_values_as_llll(r_ob, from, k_CONSIDER_FOR_DUMPING, even_if_empty, which_slots_1based);
+    return temp;
+}
+
+void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_notation_item *to, t_llll *which_slots_1based, char even_if_empty)
+{
+    if (!which_slots_1based || !which_slots_1based->l_head)
+        return;
     
+    t_llll *temp = notation_item_get_slots_to_be_copied(r_ob, from, which_slots_1based, even_if_empty);
     set_slots_values_to_notationitem_from_llll(r_ob, to, temp);
     llll_free(temp);
 }
 
-void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty)
+
+void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests)
 {
     if (which_slots_1based) {
         t_notation_item *dest_it = NULL;
@@ -31574,6 +31580,10 @@ void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1
             dest_it = (t_notation_item *)nt->prev;
         if (dest_it)
             notation_item_copy_slots(r_ob, (t_notation_item *)nt, dest_it, which_slots_1based, even_if_empty);
+        else if (even_to_rests && r_ob->obj_type == k_NOTATION_OBJECT_SCORE && !nt->prev && !nt->next) {
+            // transfer slots to rest!!!
+            notation_item_copy_slots(r_ob, (t_notation_item *)nt, (t_notation_item *)nt->parent, which_slots_1based, even_if_empty);
+        }
     }
 }
 
