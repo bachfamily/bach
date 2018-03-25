@@ -8800,3 +8800,31 @@ void llll_remove_lllls_from_lthing(t_llll *ll)
 		elem->l_thing.w_llll = NULL;
 	}
 }  
+
+
+t_bool llll_istrue(const t_llll *ll)
+{
+    switch (ll->l_size) {
+        case 0:
+            return false;
+        case 1: {
+            t_llllelem *head = ll->l_head;
+            t_hatom *head_hatom = &head->l_hatom;
+            long type = hatom_gettype(head_hatom);
+            if (type != H_LONG && type != H_DOUBLE)
+                return true;
+            if (hatom_getdouble(head_hatom) != 0.)
+                return true;
+            return false;
+        }
+        default:
+            return true;
+    }
+}
+
+t_llll *get_num_ll(const t_atom_long n)
+{
+    t_llll *ll = llll_get();
+    llll_appendlong(ll, n);
+    return ll;
+}
