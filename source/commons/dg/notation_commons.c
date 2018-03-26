@@ -22020,7 +22020,7 @@ char is_all_llllelem_tied(t_llllelem *tie_elem, long num_next_chord_notes){
 }
 
 
-// auxiliary function for merge_rests_and_alltied_chords_from_separate_parameters()
+// auxiliary functions for merge_rests_and_alltied_chords_from_separate_parameters()
 void mergeauxfn_copy(t_rational rhythm_elem_rat, t_llllelem *infos_elem, t_llllelem *ties_elem, t_llll *new_rhythm, t_llll *new_infos, t_llll *new_ties)
 {
     llll_appendrat(new_rhythm, rhythm_elem_rat, 0, WHITENULL_llll);
@@ -22068,7 +22068,8 @@ void mergeauxfn_alltied_series_end(e_merge_when merge_when, t_rational *pivot_su
         llll_appendrat(new_rhythm, *pivot_sum, 0, WHITENULL_llll);
         if (pivot_info_elem) llll_appendelem_clone_preserve_lthing(new_infos, pivot_info_elem, 0, WHITENULL_llll);
         if (ties_elem) llll_appendhatom_clone(new_ties, &ties_elem->l_hatom, 0, WHITENULL_llll);
-        
+//        if (pivot_ties_elem) llll_appendhatom_clone(new_ties, &pivot_ties_elem->l_hatom, 0, WHITENULL_llll);
+
         // append discarded info
         for (tmp = pivot_rhythm_elem ? pivot_rhythm_elem->l_next : NULL, tmp_info = pivot_info_elem ? pivot_info_elem->l_next : NULL, tmp_ties = pivot_ties_elem ? pivot_ties_elem->l_next : NULL; tmp; tmp = tmp->l_next, tmp_info = tmp_info ? tmp_info->l_next: NULL, tmp_ties = tmp_ties ? tmp_ties->l_next : NULL) {
             if (tmp == rhythm_elem)
@@ -22193,7 +22194,7 @@ void merge_rests_and_alltied_chords_from_separate_parameters(t_llll *rhythm, t_l
                        
                         } else if (pivot_sum.r_num > 0) { // an all tied sequence has ended, but with THIS chord!
                             pivot_sum = rat_rat_sum(pivot_sum, rhythm_elem_rat);
-                            mergeauxfn_alltied_series_end(merge_when, &pivot_sum, pivot_rhythm_elem, pivot_info_elem, pivot_tie_elem, rhythm_elem->l_next, infos_elem ? infos_elem->l_next : NULL, ties_elem ? ties_elem->l_next : NULL, *new_rhythm, *new_infos, *new_ties, discarded_info ? *discarded_info : NULL, discarded_durations ? *discarded_durations : NULL);
+                            mergeauxfn_alltied_series_end(merge_when, &pivot_sum, pivot_rhythm_elem, pivot_info_elem, pivot_tie_elem, rhythm_elem->l_next, infos_elem ? infos_elem->l_next : NULL, ties_elem /*? ties_elem->l_next : NULL*/, *new_rhythm, *new_infos, *new_ties, discarded_info ? *discarded_info : NULL, discarded_durations ? *discarded_durations : NULL);
                         } else { // we just copy
                             mergeauxfn_copy(rhythm_elem_rat, infos_elem, ties_elem, *new_rhythm, *new_infos, *new_ties);
                         }

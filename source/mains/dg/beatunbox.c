@@ -347,15 +347,15 @@ void beatunbox_anything(t_beatunbox *x, t_symbol *msg, long ac, t_atom *av)
 //			llll_to_char_array(graphic, debug4, 1000);
 //			llll_to_char_array(voice_graphic, debug5, 1000);
 
-/*
-			llll_to_char_array(voice_cents, debug1, 1000);
-			llll_to_char_array(voice_durations, debug2, 1000);
-			llll_to_char_array(voice_velocities, debug3, 1000);
-			llll_to_char_array(voice_ties, debug4, 1000);
-			llll_to_char_array(voice_graphic, debug5, 1000);
-			llll_to_char_array(voice_breakpoints, debug6, 1000);
-			llll_to_char_array(voice_slots, debug7, 1000);
-			*/
+
+//			llll_to_char_array(voice_cents, debug1, 1000);
+//			llll_to_char_array(voice_durations, debug2, 1000);
+//			llll_to_char_array(voice_velocities, debug3, 1000);
+//			llll_to_char_array(voice_ties, debug4, 1000);
+//			llll_to_char_array(voice_graphic, debug5, 1000);
+//			llll_to_char_array(voice_breakpoints, debug6, 1000);
+//			llll_to_char_array(voice_slots, debug7, 1000);
+ 
 			
 			
 			// These llll_flatten aren't simple llll_flatten(***, 1) because we have to take into account the possibility of data being formatted in rhythmic tree form for each outlet.
