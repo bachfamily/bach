@@ -540,7 +540,7 @@ t_llll *llllobj_get_store_contents(t_object *x, e_llllobj_obj_types type, long n
 
 
 // called from every object's main() function
-// returns non-0 if the object version number doesn't match the framework version number
+// returns non-0 if the llll version number of the object doesn't match the llll version number of the global bach object
 // in which case the class should not be created
 t_max_err llllobj_check_version(t_atom_ulong version);
 

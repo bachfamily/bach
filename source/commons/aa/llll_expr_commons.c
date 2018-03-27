@@ -92,7 +92,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     short numvars = 0;
     char again;
     t_hatom result_hatom;
-    t_max_err err = MAX_ERR_NONE;
+    t_atom_long err;
     t_exprparser_data exprparser_data;
     char *offending;
     
@@ -189,6 +189,27 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
             goto lexpr_new_error;
         }
     }
+    
+    err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(this_lex - 1, subs_count, substitutions, &numvars, exprparser_data.offending);
+    
+    switch (err) {
+            case E_OK:
+                break;
+            case E_BAD_VAR_TYPE:
+                object_error(culprit, "Bad variable: %s", exprparser_data.offending);
+                bach_freeptr(*exprparser_data.offending);
+                goto lexpr_new_error;
+                break;
+            case E_BAD_NAME:
+                object_error(culprit, "Bad name: %s", *exprparser_data.offending);
+                bach_freeptr(*exprparser_data.offending);
+                goto lexpr_new_error;
+                break;
+            case E_BAD_EXPR:
+                object_error(culprit, "Bad expression");
+                goto lexpr_new_error;
+                break;
+    }
 
     lexstack_ptr = lexstack - 1; // always points to the last valid argument
     tokqueue_ptr = tokqueue;
@@ -197,7 +218,9 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     // the shunting-yard algorithm! (plus some error checking)
     // http://en.wikipedia.org/wiki/Shunting-yard_algorithm
     
-    for (i = 0, this_lex = lexs + 1; i < lexc && err == MAX_ERR_NONE; i++, this_lex++) {
+    for (i = 0, this_lex = lexs + 1, err = MAX_ERR_NONE;
+         i < lexc && err == MAX_ERR_NONE;
+         i++, this_lex++) {
         switch (this_lex->l_type) {
             case L_COMMA:
                 while (lexstack_ptr >= lexstack && (*lexstack_ptr)->l_type != L_OPEN) {

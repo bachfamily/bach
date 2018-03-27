@@ -869,13 +869,15 @@ t_llll *llll_retain(t_llll *ll)
 		llll_print(ll, NULL, 2, 6, NULL);
 	}
 #endif // BACH_CHECK_LLLLS
-	ATOMIC_INCREMENT(&ll->l_count);
+    if (ll)
+        ATOMIC_INCREMENT(&ll->l_count);
     return ll;
 }
 
 t_llll *llll_retain_nocheck(t_llll *ll)
 {
-	ATOMIC_INCREMENT(&ll->l_count);
+    if (ll)
+        ATOMIC_INCREMENT(&ll->l_count);
     return ll;
 }
 

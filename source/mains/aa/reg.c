@@ -118,7 +118,7 @@ int T_EXPORT main()
     // @description Doubleclicking on the object forces a text editor to open up, where the llll can be edited directly in text form.
     class_addmethod(c, (method)reg_dblclick,		"dblclick",		A_CANT, 0);
     class_addmethod(c, (method)reg_edclose,         "edclose",		A_CANT, 0);
-    class_addmethod(c, (method)reg_okclose,         "okclose",       A_CANT, 0);
+    class_addmethod(c, (method)reg_okclose,         "okclose",      A_CANT, 0);
     
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
