@@ -722,6 +722,10 @@
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.contains.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.hypercomment.mxo",
 				"type" : "iLaX"
 			}
