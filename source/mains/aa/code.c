@@ -48,7 +48,8 @@ typedef struct _code
     void **n_proxy;
     long n_in;
     t_mainFunction *n_main;
-    long n_maxvars;
+    t_atom_long n_inlets;
+    t_atom_long n_outlets;
     char *n_text;
     t_bach_atomic_lock n_lock;
     
@@ -70,7 +71,7 @@ void code_float(t_code *x, double v);
 void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av);
 
 long code_atoms2text(t_code *x, long ac, t_atom *av);
-long code_buildAst(t_code *x);
+void code_buildAst(t_code *x, t_atom_long *inlets, t_atom_long *outlets);
 
 
 // editor
@@ -80,7 +81,7 @@ void code_dblclick(t_code *x);
 long code_edsave(t_code *x, char **ht, long size);
 
 
-t_mainFunction *stringparser_parse_buffer(char *buf, t_safeTable<t_sharedVariable> *gvt, long *maxvars, std::unordered_map<std::string, t_function *> *bifs);
+t_mainFunction *stringparser_parse_buffer(char *buf, t_safeTable<t_sharedVariable> *gvt, t_atom_long *inlets, t_atom_long *outlets, std::unordered_map<std::string, t_function *> *bifs);
 void bifSetup();
 
 
@@ -176,7 +177,8 @@ void code_edclose(t_code *x, char **ht, long size)
             *(x->n_text + size) = ' ';
             *(x->n_text + size + 1) = 0;
         }
-        x->n_maxvars = code_buildAst(x);
+        t_atom_long dummy_inlets = 0, dummy_outlets = 0;
+        code_buildAst(x, &dummy_inlets, &dummy_outlets);
         bach_atomic_unlock(&x->n_lock);
     }
     x->n_editor = NULL;
@@ -191,14 +193,21 @@ void code_bang(t_code *x)
 {
     t_execContext context((t_llllobj_object *) x);
     
-    t_llll *argv[x->n_maxvars];
-    for (int i = 0; i < x->n_maxvars; i++) {
+    t_llll *argv[x->n_inlets];
+    for (int i = 0; i < x->n_inlets; i++) {
         argv[i] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
     }
     if (x->n_main) {
-        t_llll *result = x->n_main->call(x->n_maxvars, argv, context);
-        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, result);
+        t_llll *result = x->n_main->call(x->n_inlets, argv, context);
+        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, x->n_outlets, result);
         llll_free(result);
+        for (int i = x->n_outlets - 1; i >= 0; i--) {
+            t_llll *outll = x->n_main->getOutletData(i);
+            if (outll) {
+                llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, i, outll);
+                llll_free(outll);
+            }
+        }
     }
 }
 
@@ -226,7 +235,8 @@ void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av)
             code_bang(x);
     } else {
         code_atoms2text(x, ac, av);
-        code_buildAst(x);
+        t_atom_long dummy_inlets = 0, dummy_outlets = 0;
+        code_buildAst(x, &dummy_inlets, &dummy_outlets);
     }
 }
 
@@ -267,7 +277,7 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
 
         if (true_ac) {
             code_atoms2text(x, true_ac, av);
-            x->n_maxvars = code_buildAst(x);
+            code_buildAst(x, &x->n_inlets, &x->n_outlets);
         }
         
         long i = true_ac;
@@ -280,26 +290,40 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
             }
             const char *attrname = symattr->s_name + 1;
             i++;
-            if (!strcmp(attrname, "maxvars")) {
+            if (!strcmp(attrname, "inlets")) {
                 long type = atom_gettype(av + i);
                 if (type == A_LONG || type == A_FLOAT) {
                     t_atom_long val = atom_getlong(av + i);
-                    x->n_maxvars = CLAMP(val, 0, LLLL_MAX_INLETS);
+                    x->n_inlets = CLAMP(val, 0, LLLL_MAX_INLETS);
                     i++;
                 } else
-                    object_error((t_object *) x, "Bad value for maxvars attribute");
+                    object_error((t_object *) x, "Bad value for inlets attribute");
+            } else if (!strcmp(attrname, "outlets")) {
+                long type = atom_gettype(av + i);
+                if (type == A_LONG || type == A_FLOAT) {
+                    t_atom_long val = atom_getlong(av + i);
+                    x->n_outlets = CLAMP(val, 0, LLLL_MAX_INLETS);
+                    i++;
+                } else
+                    object_error((t_object *) x, "Bad value for inlets attribute");
             } else if (!strcmp(attrname, "out")) {
                 llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, av + i);
                 i++;
             } else
                 object_error((t_object *) x, "Unknown attribute %s", attrname);
         }
-        if (x->n_maxvars < 1)
-            x->n_maxvars = 1;
+        if (x->n_inlets < 1)
+            x->n_inlets = 1;
         
-        llllobj_obj_setup((t_llllobj_object *) x, x->n_maxvars, "4");
+        CLIP_ASSIGN(x->n_outlets, 0, 254);
+        char outlet_str[256];
+        for (i = 0; i <= x->n_outlets; i++)
+            outlet_str[i] = '4';
+        outlet_str[i] = 0;
         
-        x->n_proxies = CLAMP(x->n_maxvars - 1, 0, LLLL_MAX_INLETS);
+        llllobj_obj_setup((t_llllobj_object *) x, x->n_inlets, outlet_str);
+        
+        x->n_proxies = CLAMP(x->n_inlets - 1, 0, LLLL_MAX_INLETS);
         
         x->n_proxy = (void **) bach_newptr((x->n_proxies + 1) * sizeof (void *));
         for (i = x->n_proxies; i > 0; i--)
@@ -330,17 +354,15 @@ long code_atoms2text(t_code *x, long ac, t_atom *av)
     return textsize + 1;
 }
 
-long code_buildAst(t_code *x)
+void code_buildAst(t_code *x, t_atom_long *inlets, t_atom_long *outlets)
 {
-    long maxvars = 0;
     if (x->n_main)
         x->n_main->decrease();
-    t_mainFunction *newMain = stringparser_parse_buffer(x->n_text, gvt, &maxvars, bifTable);
+    t_mainFunction *newMain = stringparser_parse_buffer(x->n_text, gvt, inlets, outlets, bifTable);
     if (newMain)
         x->n_main = newMain;
     else
-        maxvars = -1;
-    return maxvars;
+        *inlets = -1;
 }
 
 void bifSetup()
@@ -351,5 +373,5 @@ void bifSetup()
     (*bifTable)["args"] = new t_fnArgs;
     (*bifTable)["nth"] = new t_fnNth;
     (*bifTable)["sort"] = new t_fnSort;
-
+    (*bifTable)["outlet"] = new t_fnOutlet;
 }
