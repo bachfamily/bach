@@ -5210,7 +5210,7 @@ int T_EXPORT main(void){
     // @mattr spiralh @type double @default 3.8729 @digest For Chew and Chen algorithm, sets the pitch spiral vertical step
     // @mattr numsliding @type int @default 8 @digest For Chew and Chen algorithm, sets the number of sliding windows
     // @mattr numselfreferential @type int @default 2 @digest For Chew and Chen algorithm, sets the number of selfreferential windows
-    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, avoids repetitions of the same diatonic step with different alterations
+    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations
     // @mattr stdevthresh @type llll/symbol @default 21/(numnotes+1) @digest For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth
     // @example respell @caption respell according to key and/or enharmonic tables
     // @example respell @algorithm atonal @caption respell via the atonal algorithm
