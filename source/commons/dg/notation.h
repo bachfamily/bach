@@ -75,7 +75,7 @@
 	#ifdef CONFIGURATION_Development
 
 		// Handy flags for debugging:
-		#define BACH_RHYTHMIC_TREE_DEBUG				///< Print verbosely rhythmic trees at each step, and do additional checking. Only works on Mac
+		//#define BACH_RHYTHMIC_TREE_DEBUG				///< Print verbosely rhythmic trees at each step, and do additional checking. Only works on Mac
 		//#define BACH_POST_IDS_IN_RHYTHMIC_TREE_DEBUG	///< Also post IDs in rhythmic tree debug
 		//#define BACH_PLAY_DEBUG						///< Debug the playing task with messages about next scheduled chords
         //#define BACH_QUANTIZE_DEBUG					///< Debug the quantize task
@@ -499,6 +499,7 @@
 													///< notes will be glued. This threshold can be changed, as a parameter in the message. (Only used by [bach.roll])
 
 #define BACH_MAX_TEMPO_DIGITS   6                   ///< Maximum tempo digits
+#define BACH_MAX_LAST_ANNOTATION_TEXT_CHARS 2048    ///< Maximum annotation text characters (only used for comparing with last annotation!)
 
 #ifdef C74_X64
 #define CONST_RAT_APPROX_TEMPI_DEN 100				///< Denominator used for tempi approximation. 
@@ -10075,7 +10076,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
 // TBD
 void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                                 double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
-                                char **last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
+                                char *last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
                                 double *annotation_line_y_pos);
 
 void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,

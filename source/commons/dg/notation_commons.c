@@ -2460,9 +2460,10 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
 }
 
 
+
 void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                                 double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
-                                char **last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
+                                char *last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
                                 double *annotation_line_y_pos)
 {
     e_annotations_filterdup_modes thinmode = (e_annotations_filterdup_modes)r_ob->thinannotations;
@@ -2486,22 +2487,22 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
         
         
         must_show = true;
-        if (thinmode != k_ANNOTATIONS_FILTERDUP_DONT && last_annotation_text) {
-            if (buf && *last_annotation_text && !strcmp(*last_annotation_text, buf)) {
+        if (thinmode != k_ANNOTATIONS_FILTERDUP_DONT) {
+            if (buf && !strcmp(last_annotation_text, buf)) {
                 // we need to filter out this annotation, it's the same as the previous one
                 must_show = false;
                 *annotation_sequence_end_x_pos = x_pos;
             } else {
                 switch (thinmode) {
                     case k_ANNOTATIONS_FILTERDUP_DO_WITHCLEARINGSYM:
-                        if (*last_annotation_text)
+                        if (last_annotation_text[0])
                             must_use_clearing_symbol = true;
                         break;
 
                     case k_ANNOTATIONS_FILTERDUP_DO_WITHLINE:
-                        if (*last_annotation_text && *annotation_sequence_start_x_pos < *annotation_sequence_end_x_pos) {
+                        if (last_annotation_text[0] && *annotation_sequence_start_x_pos < *annotation_sequence_end_x_pos) {
                             double start_x = *annotation_sequence_start_x_pos + 1 * r_ob->zoom_y;
-                            double end_x = *annotation_sequence_end_x_pos + 4 * r_ob->zoom_y;
+                            double end_x = *annotation_sequence_end_x_pos + 9 * r_ob->zoom_y;
                             double line_y = *annotation_line_y_pos;
                             paint_line(g, *color, start_x, line_y, end_x, line_y, 1);
                             paint_line(g, *color, end_x, line_y, end_x, line_y + 4 * r_ob->zoom_y, 1);
@@ -2512,7 +2513,10 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
                         break;
                 }
 
-                *last_annotation_text = buf;
+                if (buf)
+                    snprintf_zero(last_annotation_text, BACH_MAX_LAST_ANNOTATION_TEXT_CHARS, "%s", buf);
+                else
+                    last_annotation_text[0] = 0;
                 *annotation_sequence_start_x_pos = *annotation_sequence_end_x_pos = x_pos;
             }
         }
