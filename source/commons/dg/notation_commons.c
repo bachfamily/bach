@@ -15965,6 +15965,21 @@ char can_merge(t_notation_obj *r_ob, t_rational dur1, t_rational dur2, e_merge_w
     return false;
 }
 
+void chord_transfer_slots_before_deletion(t_notation_obj *r_ob, t_chord *giver, t_chord *receiver)
+{
+    t_llll *which_slots = llll_get();
+    llll_appendsym(which_slots, _sym_all);
+    if (giver->firstnote) {
+        t_note *n1, *n2;
+        for (n1 = giver->firstnote, n2 = receiver->firstnote; n1 && n2; n1 = n1->next, n2 = n2->next)
+            notation_item_copy_slots(r_ob, (t_notation_item *)n1, (t_notation_item *)n2, which_slots, false);
+    } else {
+        notation_item_copy_slots(r_ob, (t_notation_item *)giver, (t_notation_item *)receiver, which_slots, false);
+    }
+    llll_free(which_slots);
+}
+
+
 void merge_rests_and_alltied_chords_one_step(t_notation_obj *r_ob, t_measure *meas, char *changed, t_llll *box, t_chord **ref_chord, e_merge_when merge_when)
 {
     if (merge_when == k_MERGE_WHEN_NEVER)
@@ -15996,20 +16011,27 @@ void merge_rests_and_alltied_chords_one_step(t_notation_obj *r_ob, t_measure *me
                 if (can_merge(r_ob, rhythm_elem_rat, this_chord->next->r_sym_duration, merge_when) ) {
                     this_chord->next->r_sym_duration = rat_rat_sum(this_chord->next->r_sym_duration, rhythm_elem_rat);
                     transfer_selection_and_cursor(r_ob, this_chord, this_chord->next);
+                    chord_transfer_slots_before_deletion(r_ob, this_chord, this_chord->next);
                     if (ref_chord && *ref_chord == this_chord)
                         *ref_chord = this_chord->next;
                     chord_delete_from_measure(r_ob, this_chord, false);
+                    
                     *changed = true;
                 }
 			} else if (is_simple_chord && rhythm_elem_sign > 0 && box_elem->l_next && hatom_gettype(&box_elem->l_next->l_hatom) == H_OBJ &&
 					   chord_is_all_tied_to(r_ob, this_chord, 1, this_chord->next)) {
                 // An all-tied-chord sequence
                 if (can_merge(r_ob, rhythm_elem_rat, this_chord->next->r_sym_duration, merge_when) ) {
+                    // We are deleting the LEFT chord because we need to keep the right chord reference "in place" for the next boxelem.
+                    // but in doing so we need to be sure we're transferring the slot information
                     this_chord->next->r_sym_duration = rat_rat_sum(this_chord->next->r_sym_duration, rhythm_elem_rat);
                     transfer_selection_and_cursor(r_ob, this_chord, this_chord->next);
+                    chord_transfer_slots_before_deletion(r_ob, this_chord, this_chord->next);
                     if (ref_chord && *ref_chord == this_chord)
                         *ref_chord = this_chord->next;
                     chord_delete_from_measure(r_ob, this_chord, false);
+ 
+                    
                     *changed = true;
                 }
 			}
@@ -31571,7 +31593,7 @@ void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_not
 }
 
 
-void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests)
+void note_transfer_slots_to_siebling(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests)
 {
     if (which_slots_1based) {
         t_notation_item *dest_it = NULL;

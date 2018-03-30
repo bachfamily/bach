@@ -5221,7 +5221,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
 			t_chord *ch = nt->parent;
 			if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
 				create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)nt->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-                transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
+                note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
 				note_delete((t_notation_obj *)x, (t_note *) curr_it, false);
 				check_if_need_to_splatter_level_when_turning_note_to_rest(x, ch);
 				changed = 1;
@@ -5251,7 +5251,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
                                     if (slots_to_transfer_to_next_note_in_chord_1based && slots_to_transfer_to_next_note_in_chord_1based->l_head)
                                         temp = notation_item_get_slots_to_be_copied((t_notation_obj *)x, (t_notation_item *)nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty);
                                 } else
-                                    transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
+                                    note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
                             }
                             note_delete((t_notation_obj *)x, nt, false);
                             changed = 1;

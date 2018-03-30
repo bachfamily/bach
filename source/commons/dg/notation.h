@@ -75,14 +75,14 @@
 	#ifdef CONFIGURATION_Development
 
 		// Handy flags for debugging:
-		//#define BACH_RHYTHMIC_TREE_DEBUG				///< Print verbosely rhythmic trees at each step, and do additional checking for debug. Only works on Mac
+		#define BACH_RHYTHMIC_TREE_DEBUG				///< Print verbosely rhythmic trees at each step, and do additional checking. Only works on Mac
 		//#define BACH_POST_IDS_IN_RHYTHMIC_TREE_DEBUG	///< Also post IDs in rhythmic tree debug
 		//#define BACH_PLAY_DEBUG						///< Debug the playing task with messages about next scheduled chords
         //#define BACH_QUANTIZE_DEBUG					///< Debug the quantize task
 		//#define BACH_SPACING_DEBUG					///< Debug the spacing task (and display alignment points)
 		//#define BACH_PAINT_IDS						///< Paint the IDs for all elements having one
         //#define BACH_UNDO_DEBUG						///< Debug the undo task
-		//#define BACH_ARTICULATION_POSITION_DEBUG
+		//#define BACH_ARTICULATION_POSITION_DEBUG      ///< Debug for articulation position
         //#define BACH_CHECK_NOTATION_ITEMS               ///< Debug for notation items
 
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
@@ -8249,7 +8249,7 @@ t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_
 t_llll* notation_item_get_multiple_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty, t_llll *which_slots_1based);
 t_llll *notation_item_get_slots_to_be_copied(t_notation_obj *r_ob, t_notation_item *from, t_llll *which_slots_1based, char even_if_empty);// this one is private
 void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_notation_item *to, t_llll *which_slots_1based, char even_if_empty);
-void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests);
+void note_transfer_slots_to_siebling(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests);
 t_llll *get_default_slots_to_transfer_1based(t_notation_obj * r_ob);
 
 
