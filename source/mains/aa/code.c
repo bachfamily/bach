@@ -36,27 +36,8 @@
  Andrea Agostini
  */
 
-#include "llllobj.h"
+#include "code.h"
 #include "ast.hpp"
-#include "ext_common.h"
-#include "ext_globalsymbol.h"
-
-typedef struct _code
-{
-    t_llllobj_object n_ob;
-    long n_proxies;
-    void **n_proxy;
-    long n_in;
-    t_mainFunction *n_main;
-    t_atom_long n_inlets;
-    t_atom_long n_outlets;
-    char *n_text;
-    t_bach_atomic_lock n_lock;
-    
-    char *text;
-    t_object                *n_editor;
-
-} t_code;
 
 
 void code_assist(t_code *x, void *b, long m, long a, char *s);
@@ -81,7 +62,7 @@ void code_dblclick(t_code *x);
 long code_edsave(t_code *x, char **ht, long size);
 
 
-t_mainFunction *stringparser_parse_buffer(char *buf, t_safeTable<t_sharedVariable> *gvt, t_atom_long *inlets, t_atom_long *outlets, std::unordered_map<std::string, t_function *> *bifs);
+t_mainFunction *stringparser_parse_buffer(char *buf, t_safeTable<t_sharedVariable> *gvt, t_atom_long *inlets, t_atom_long *outlets, std::unordered_map<std::string, t_function *> *bifs, struct _code *owner);
 void bifSetup();
 
 
@@ -358,7 +339,7 @@ void code_buildAst(t_code *x, t_atom_long *inlets, t_atom_long *outlets)
 {
     if (x->n_main)
         x->n_main->decrease();
-    t_mainFunction *newMain = stringparser_parse_buffer(x->n_text, gvt, inlets, outlets, bifTable);
+    t_mainFunction *newMain = stringparser_parse_buffer(x->n_text, gvt, inlets, outlets, bifTable, x);
     if (newMain)
         x->n_main = newMain;
     else
