@@ -3217,6 +3217,7 @@
 		9156DC071D2958C500002A01 /* libgecodeint.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgecodeint.a; path = /usr/local/lib/libgecodeint.a; sourceTree = "<absolute>"; };
 		9156DC081D2958C500002A01 /* libgecodekernel.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgecodekernel.a; path = /usr/local/lib/libgecodekernel.a; sourceTree = "<absolute>"; };
 		9156DC091D2958C500002A01 /* libgecodesupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgecodesupport.a; path = /usr/local/lib/libgecodesupport.a; sourceTree = "<absolute>"; };
+		9156E449206E9C4000E461B2 /* code.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = code.h; sourceTree = "<group>"; };
 		915BC82918E1C3C80057DF18 /* bach.reducefunction.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.reducefunction.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		915BC83518E1C4910057DF18 /* reducefunction.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reducefunction.c; sourceTree = "<group>"; };
 		915D1DDC18D764F5005ED0A4 /* mc2r.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc2r.c; sourceTree = "<group>"; };
@@ -5498,6 +5499,7 @@
 				912AB4A414FD3F100081E2B5 /* bach.c */,
 				911289FD17E08FDB008381E3 /* cartesianprod.c */,
 				91D261AA1CC64C8B00C75E35 /* classify.c */,
+				9156E449206E9C4000E461B2 /* code.h */,
 				911B65D220684BAA00464E16 /* code.c */,
 				91D7C9551233C2D500D767D4 /* collect.c */,
 				9141D7FD12315932000EE69C /* collector.c */,
