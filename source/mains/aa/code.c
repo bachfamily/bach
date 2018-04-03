@@ -256,6 +256,9 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
     if ((x = (t_code *) object_alloc_debug(code_class))) {
         // @arg 0 @name default @optional 1 @digest Default comparison llll
 
+        x->n_directout = new t_fnDirectout(x);
+        x->n_directin = new t_fnDirectin(x);
+
         if (true_ac) {
             code_atoms2text(x, true_ac, av);
             code_buildAst(x, &x->n_inlets, &x->n_outlets);
