@@ -9,7 +9,7 @@
 #ifndef code_h
 #define code_h
 
-
+#include <unordered_map>
 #include "llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
@@ -24,13 +24,13 @@ typedef struct _code
     void **n_proxy;
     long n_in;
     t_mainFunction *n_main;
-    t_ownedFunction *n_directin;
-    t_ownedFunction *n_directout;
     t_atom_long n_inlets;
     t_atom_long n_outlets;
     char *n_text;
     t_bach_atomic_lock n_lock;
     
+    std::unordered_map<std::string, t_ownedFunction *> n_ofTable;
+
     char *text;
     t_object *n_editor;
     

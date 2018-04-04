@@ -64,6 +64,8 @@ long code_edsave(t_code *x, char **ht, long size);
 
 t_mainFunction *stringparser_parse_buffer(char *buf, t_safeTable<t_sharedVariable> *gvt, t_atom_long *inlets, t_atom_long *outlets, std::unordered_map<std::string, t_function *> *bifs, struct _code *owner);
 void bifSetup();
+void code_ownedFunctionsSetup(t_code *x);
+
 
 
 t_class *code_class;
@@ -256,8 +258,7 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
     if ((x = (t_code *) object_alloc_debug(code_class))) {
         // @arg 0 @name default @optional 1 @digest Default comparison llll
 
-        x->n_directout = new t_fnDirectout(x);
-        x->n_directin = new t_fnDirectin(x);
+        code_ownedFunctionsSetup(x);
 
         if (true_ac) {
             code_atoms2text(x, true_ac, av);
@@ -349,6 +350,13 @@ void code_buildAst(t_code *x, t_atom_long *inlets, t_atom_long *outlets)
         *inlets = -1;
 }
 
+void code_ownedFunctionsSetup(t_code *x)
+{
+    x->n_ofTable["directout"] = new t_fnDirectout(x);
+    x->n_ofTable["directin"] = new t_fnDirectin(x);
+    x->n_ofTable["print"] = new t_fnPrint(x);
+}
+
 void bifSetup()
 {
     bifTable = new std::unordered_map<std::string, t_function *>;
@@ -358,4 +366,7 @@ void bifSetup()
     (*bifTable)["nth"] = new t_fnNth;
     (*bifTable)["sort"] = new t_fnSort;
     (*bifTable)["outlet"] = new t_fnOutlet;
+    (*bifTable)["rev"] = new t_fnRev;
+    (*bifTable)["rot"] = new t_fnRot;
+    (*bifTable)["contains"] = new t_fnContains;
 }
