@@ -181,6 +181,7 @@ void code_bang(t_code *x)
         argv[i] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
     }
     if (x->n_main) {
+        x->n_main->clearOutletData(x->n_outlets);
         t_llll *result = x->n_main->call(x->n_inlets, argv, context);
         llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, x->n_outlets, result);
         llll_free(result);
