@@ -24,11 +24,12 @@ typedef struct _code
     void **n_proxy;
     long n_in;
     t_mainFunction *n_main;
-    t_atom_long n_inlets;
-    t_atom_long n_outlets;
+
     char *n_text;
     t_bach_atomic_lock n_lock;
     
+    t_atom_long n_inlets;
+    t_atom_long n_outlets;
     std::unordered_map<std::string, t_ownedFunction *> n_ofTable;
 
     char *text;

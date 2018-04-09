@@ -369,4 +369,8 @@ void bifSetup()
     (*bifTable)["rev"] = new t_fnRev;
     (*bifTable)["rot"] = new t_fnRot;
     (*bifTable)["contains"] = new t_fnContains;
+    (*bifTable)["trans"] = new t_fnTrans;
+    (*bifTable)["flat"] = new t_fnFlat;
+    (*bifTable)["left"] = new t_fnLeft;
+    (*bifTable)["right"] = new t_fnRight;
 }
