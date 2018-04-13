@@ -8828,3 +8828,8 @@ t_llll *get_num_ll(const t_atom_long n)
     llll_appendlong(ll, n);
     return ll;
 }
+
+t_atom_long llll_getlong(t_llll *ll, t_atom_long def)
+{
+    return ll->l_head ? hatom_getlong(&ll->l_head->l_hatom) : def;
+}
