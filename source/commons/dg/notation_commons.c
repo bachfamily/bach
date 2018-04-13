@@ -43404,6 +43404,50 @@ void notationobj_toggle_realtime_mode(t_notation_obj *r_ob, char realtime)
     }
 }
 
+t_chord *chord_get_first_strictly_before_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset)
+{
+    t_chord *ch;
+    for (ch = meas->firstchord; ch; ch = ch->next) {
+        if (ch->r_sym_onset >= r_sym_onset)
+            return ch->prev;
+    }
+    return meas->lastchord;
+}
+
+
+t_chord *chord_get_first_strictly_after_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset)
+{
+    t_chord *ch;
+    for (ch = meas->lastchord; ch; ch = ch->prev) {
+        if (ch->r_sym_onset <= r_sym_onset)
+            return ch->next;
+    }
+    return meas->firstchord;
+}
+
+
+t_chord *chord_get_first_before_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset)
+{
+    t_chord *ch;
+    for (ch = meas->firstchord; ch; ch = ch->next) {
+        if (ch->r_sym_onset > r_sym_onset)
+            return ch->prev;
+    }
+    return meas->lastchord;
+}
+
+
+t_chord *chord_get_first_after_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset)
+{
+    t_chord *ch;
+    for (ch = meas->lastchord; ch; ch = ch->prev) {
+        if (ch->r_sym_onset < r_sym_onset)
+            return ch->next;
+    }
+    return meas->firstchord;
+}
+
+
 
 t_chord *chord_get_first_before_ms(t_notation_obj *r_ob, t_voice *voice, double ms)
 {

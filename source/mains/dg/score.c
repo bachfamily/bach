@@ -8911,6 +8911,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             if (params->l_head) {
                                 parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head, NULL, NULL, &from_here, false);
                                 if (params->l_head->l_next) {
+                                    to_here = from_here;
                                     to_here_def = true;
                                     parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head->l_next, NULL, NULL, &to_here, false);
                                 }
@@ -9149,6 +9150,9 @@ t_chord *clear_region(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t
             cur = next_cur;
         }
         
+        if (!res) // we haven't deleted/changed/split anything
+            res = chord_get_first_strictly_before_symonset((t_notation_obj *)x, start_meas, from_here->pt_in_measure);
+        
     } else {
         
         // start measure
@@ -9302,10 +9306,11 @@ void overtype_voice(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t_t
             den = region_dur.r_den;
         }
         
-        t_llll *ts = long_couple_to_llll(num, den);
+        t_llll *ts = long_couple_to_llll(num > 0 ? num : 1, den);
         set_measure_ts_and_tempo_from_llll((t_notation_obj *) x, fakemeas, ts, NULL, 0, NULL, false);
         
-        check_measure_autocompletion(x, fakemeas); // we now count on autocompletion to trim stuff properly
+        if (num > 0)
+            check_measure_autocompletion(x, fakemeas); // we now count on autocompletion to trim stuff properly
         compute_note_approximations_for_measure((t_notation_obj *)x, fakemeas, false);
         validate_accidentals_for_measure((t_notation_obj *)x, fakemeas);
 
