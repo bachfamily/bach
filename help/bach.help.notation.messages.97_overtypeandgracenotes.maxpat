@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 174.0, 125.0, 617.0, 539.0 ],
+		"rect" : [ 590.0, 82.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -38,52 +38,80 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"fontface" : 0,
-					"fontname" : "Arial",
+					"bubble" : 1,
 					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 5,
-					"maxclass" : "bach.hypercomment",
+					"id" : "obj-6",
+					"linecount" : 2,
+					"maxclass" : "comment",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 127.0, 606.0, 79.0 ],
-					"sendto" : "bach.help.filtertags",
-					"text" : "Each timepoint is in standard or extended #timepoint+syntax. The region between the two timepoints is cleared, and then the new musical content is written over it. \nThe musical content is given in a measureless gathered syntax, i.e. in a standard bach.score gathered syntax omitting any measure llll level. Overtyping, indeed, doesn't need any measure specification, and it will simply use the existing ones.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"numoutlets" : 0,
+					"patching_rect" : [ 362.0, 192.0, 229.0, 40.0 ],
+					"presentation_rect" : [ 388.0, 187.5, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "Insert a grace note at the beginning of measure 3, voice 2"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-5",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 73.5, 204.0, 287.0, 23.0 ],
+					"presentation_rect" : [ 73.5, 188.0, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "overtype ((2 3 0) (2 3 0)) (((g (1/8 (D6 100 0)) )))"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontsize" : 13.0,
+					"id" : "obj-2",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 362.0, 145.5, 203.0, 40.0 ],
+					"presentation_rect" : [ 362.0, 130.5, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "Insert a grace note at the middle of measure 3, voice 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"maxclass" : "bach.hypercomment",
-					"numinlets" : 1,
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 107.0, 602.0, 21.0 ],
-					"sendto" : "bach.help.filtertags",
-					"text" : "overtype (<start_timepoint> <optional:end_timepoint>) ( <content_in_measureless_gathered_syntax> )",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 35.5, 154.0, 316.0, 23.0 ],
+					"presentation_rect" : [ 35.5, 138.0, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "overtype ((2 3 1/2) (2 3 1/2)) (((g (1/8 (D#5 100 0)) )))"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-20",
-					"maxclass" : "bach.hypercomment",
+					"id" : "obj-76",
+					"linecount" : 2,
+					"maxclass" : "comment",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 46.0, 295.0, 525.0, 21.0 ],
-					"sendto" : "bach.help.filtertags",
-					"text" : "Also see #advanced+overtyping.",
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 31.0, 603.0, 36.0 ],
+					"style" : "",
+					"text" : "You can insert grace notes at specific points of the score by setting the starting point equal to the ending point and introducing the grace content in a level starting with a \"g\" symbol.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -93,59 +121,13 @@
 					"bubble" : 1,
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 300.0, 228.0, 253.0, 54.0 ],
-					"style" : "",
-					"text" : "Overwrite voice 1 from measure 1, offset 3/8 to measure 2, offset 1/4, with the indicated new musical content"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontsize" : 13.0,
-					"id" : "obj-18",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 250.0, 313.5, 332.0, 40.0 ],
+					"patching_rect" : [ 305.0, 93.5, 203.0, 40.0 ],
 					"style" : "",
-					"text" : "You might want to run an autobeaming if the content you inserted isn't in perfect rhythmic tree form."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontsize" : 13.0,
-					"id" : "obj-9",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 46.0, 322.0, 194.0, 23.0 ],
-					"style" : "",
-					"text" : "sel all, autobeam, clearselection"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontface" : 0,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-7",
-					"maxclass" : "bach.hypercomment",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 84.0, 599.0, 21.0 ],
-					"sendto" : "bach.help.filtertags",
-					"text" : "The overtyping is restricted to the region between a starting and an ending timepoint, with syntax:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"text" : "Insert a grace note at the end of measure 1, voice 1"
 				}
 
 			}
@@ -153,15 +135,14 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-6",
-					"linecount" : 3,
+					"id" : "obj-21",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 229.0, 282.0, 52.0 ],
+					"patching_rect" : [ 9.5, 102.0, 287.0, 23.0 ],
 					"style" : "",
-					"text" : "overtype ((1 1 3/8) (1 2 1/4)) (((1/8 (C5 100 0)) (1/8 (E5 100 0)) (1/4 (G5 100 0)) (1/8 (C6 100 0)) (1/4 (E6 100 0)) ))"
+					"text" : "overtype ((1 1 1) (1 1 1)) (((g (1/8 (C5 100 0)) )))"
 				}
 
 			}
@@ -178,8 +159,6 @@
 					"hidevoices" : [ 0, 0 ],
 					"id" : "obj-4",
 					"keys" : [ "CM", "CM" ],
-					"linkarticulationstoslot" : 0,
-					"linkdynamicstoslot" : 0,
 					"linklyricstoslot" : 7,
 					"loop" : [ "(", 1, 1, 0, ")", "(", 1, 1, 0, ")" ],
 					"maxclass" : "bach.score",
@@ -190,8 +169,9 @@
 					"numvoices" : 2,
 					"out" : "nnnnnnnn",
 					"outlettype" : [ "", "", "", "", "", "", "", "", "bang" ],
-					"patching_rect" : [ 6.0, 347.0, 585.0, 120.333333 ],
+					"patching_rect" : [ 9.5, 272.0, 585.0, 120.333333 ],
 					"pitcheditrange" : [ "null" ],
+					"presentation_rect" : [ 0.0, 0.0, 0.0, 120.333333 ],
 					"showmeasurenumbers" : [ 1, 1 ],
 					"stafflines" : [ 5, 5 ],
 					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ],
@@ -213,7 +193,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "See Also: linear+edit, timepoint+syntax, advanced+overtyping",
+					"text" : "See Also: linear+edit, timepoint+syntax, overtyping, grace+syntax",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -246,7 +226,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 403.0, 23.0 ],
 					"style" : "",
-					"text" : "Basic overtyping",
+					"text" : "Inserting grace notes",
 					"varname" : "title"
 				}
 
@@ -256,32 +236,15 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
 					"style" : "",
-					"text" : "Tags: message, overtype, over, type, replace, content, music, linear, overwrite, write, overtyping, basic, simple",
+					"text" : "Tags: message, overtype, over, type, replace, content, music, linear, overwrite, write, advanced, overtyping, more, grace, note, insert, inserting, add, chord",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontface" : 0,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"linecount" : 3,
-					"maxclass" : "bach.hypercomment",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 32.0, 598.0, 50.0 ],
-					"sendto" : "bach.help.filtertags",
-					"text" : "In bach.score you can replace the musical content at some point with some other musical content via the \"overtype\" message. This somehow mimics the same behavior you have when using the #linear+edit system, only via message.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -289,23 +252,26 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-6", 0 ]
+					"source" : [ "obj-1", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-9", 0 ]
+					"source" : [ "obj-21", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-5", 0 ]
 				}
 
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "bach.hypercomment.mxo",
-				"type" : "iLaX"
-			}
-, 			{
 				"name" : "bach.score.mxo",
 				"type" : "iLaX"
 			}

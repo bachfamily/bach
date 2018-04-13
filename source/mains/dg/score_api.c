@@ -5221,7 +5221,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
 			t_chord *ch = nt->parent;
 			if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)) {
 				create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)nt->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-                transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
+                note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
 				note_delete((t_notation_obj *)x, (t_note *) curr_it, false);
 				check_if_need_to_splatter_level_when_turning_note_to_rest(x, ch);
 				changed = 1;
@@ -5251,7 +5251,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
                                     if (slots_to_transfer_to_next_note_in_chord_1based && slots_to_transfer_to_next_note_in_chord_1based->l_head)
                                         temp = notation_item_get_slots_to_be_copied((t_notation_obj *)x, (t_notation_item *)nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty);
                                 } else
-                                    transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
+                                    note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
                             }
                             note_delete((t_notation_obj *)x, nt, false);
                             changed = 1;
@@ -8964,8 +8964,10 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     char part_direction = is_in_voiceensemble ? (voice->v_ob.part_index % 2 == 1 ? -1 : 1) : 0;
     char dynamics_span_ties = do_dynamics_span_ties(x);
     
-    char *last_annotation_text = NULL;
+    char last_annotation_text[BACH_MAX_LAST_ANNOTATION_TEXT_CHARS];
     double annotation_sequence_start_x_pos = 0, annotation_sequence_end_x_pos = 0, annotation_line_y_pos = 0;
+    last_annotation_text[0] = 0;
+
     
 	if (voice->v_ob.hidden) // voice is hidden!
 		return;
@@ -9774,14 +9776,14 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         long s = x->r_ob.link_annotation_to_slot - 1;
                         for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) {
                             if (notation_item_get_slot_firstitem((t_notation_obj *)x, (t_notation_item *)curr_nt, s) ||
-                                (last_annotation_text && (e_annotations_filterdup_modes)x->r_ob.thinannotations != k_ANNOTATIONS_FILTERDUP_DONT)) {
+                                (last_annotation_text[0] && (e_annotations_filterdup_modes)x->r_ob.thinannotations != k_ANNOTATIONS_FILTERDUP_DONT)) {
                                 char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
                                 t_jrgba annotationcolor = get_annotation_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                                 double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
-                                paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top, &last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
+                                paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top, last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
                             }
                         }
                     }

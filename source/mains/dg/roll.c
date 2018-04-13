@@ -1328,7 +1328,7 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
 		notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
 		if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)){
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-            transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, false);
+            note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, false);
 			note_delete((t_notation_obj *)x, nt, false);
             update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
 			changed = 1;
@@ -4424,7 +4424,7 @@ int T_EXPORT main(void){
     // @mattr spiralh @type double @default 3.8729 @digest For Chew and Chen algorithm, sets the pitch spiral vertical step
     // @mattr numsliding @type int @default 8 @digest For Chew and Chen algorithm, sets the number of sliding windows
     // @mattr numselfreferential @type int @default 2 @digest For Chew and Chen algorithm, sets the number of selfreferential windows
-    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, avoids repetitions of the same diatonic step with different alterations
+    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations
     // @mattr stdevthresh @type llll/symbol @default 21/(numnotes+1) @digest For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth
     // @example respell @caption respell according to key and/or enharmonic tables
     // @example respell @algorithm atonal @caption respell via the atonal algorithm
@@ -10156,8 +10156,9 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             char is_in_voiceensemble = (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1);
             char part_direction = is_in_voiceensemble ? (voice->v_ob.part_index % 2 == 1 ? -1 : 1) : 0;
             
-            char *last_annotation_text = NULL;
+            char last_annotation_text[BACH_MAX_LAST_ANNOTATION_TEXT_CHARS];
             double annotation_sequence_start_x_pos = 0, annotation_sequence_end_x_pos = 0, annotation_line_y_pos = 0;
+            last_annotation_text[0] = 0;
 
             double curr_hairpin_start_x = -100;
             long curr_hairpin_type = 0;
@@ -10425,14 +10426,14 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                             long s = x->r_ob.link_annotation_to_slot - 1;
                             for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) {
                                 if (notation_item_get_slot_firstitem((t_notation_obj *)x, (t_notation_item *)curr_nt, s) ||
-                                    (last_annotation_text && (e_annotations_filterdup_modes)x->r_ob.thinannotations != k_ANNOTATIONS_FILTERDUP_DONT)) {
+                                    (last_annotation_text[0] && (e_annotations_filterdup_modes)x->r_ob.thinannotations != k_ANNOTATIONS_FILTERDUP_DONT)) {
                                     char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                     char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                     char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                     char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
                                     t_jrgba annotationcolor = get_annotation_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                                     double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
-                                    paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top_y, &last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
+                                    paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top_y, last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
                                 }
                             }
                         }
@@ -10602,9 +10603,10 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                 // paint tick
                 paint_line(g, x->r_ob.j_linear_edit_rgba, xpos - 2 * x->r_ob.zoom_y, ypos, xpos + 2 * x->r_ob.zoom_y, ypos, 2);
             }
-			
+
 			// TODO: repaint selection!
 			// the selction must be in the foreground
+            
 		}
         
 		unlock_general_mutex((t_notation_obj *)x);
