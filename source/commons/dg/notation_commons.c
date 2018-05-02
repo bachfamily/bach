@@ -2460,9 +2460,10 @@ void paint_articulation(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_
 }
 
 
+
 void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                                 double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
-                                char **last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
+                                char *last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
                                 double *annotation_line_y_pos)
 {
     e_annotations_filterdup_modes thinmode = (e_annotations_filterdup_modes)r_ob->thinannotations;
@@ -2486,22 +2487,22 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
         
         
         must_show = true;
-        if (thinmode != k_ANNOTATIONS_FILTERDUP_DONT && last_annotation_text) {
-            if (buf && *last_annotation_text && !strcmp(*last_annotation_text, buf)) {
+        if (thinmode != k_ANNOTATIONS_FILTERDUP_DONT) {
+            if (buf && !strcmp(last_annotation_text, buf)) {
                 // we need to filter out this annotation, it's the same as the previous one
                 must_show = false;
                 *annotation_sequence_end_x_pos = x_pos;
             } else {
                 switch (thinmode) {
                     case k_ANNOTATIONS_FILTERDUP_DO_WITHCLEARINGSYM:
-                        if (*last_annotation_text)
+                        if (last_annotation_text[0])
                             must_use_clearing_symbol = true;
                         break;
 
                     case k_ANNOTATIONS_FILTERDUP_DO_WITHLINE:
-                        if (*last_annotation_text && *annotation_sequence_start_x_pos < *annotation_sequence_end_x_pos) {
+                        if (last_annotation_text[0] && *annotation_sequence_start_x_pos < *annotation_sequence_end_x_pos) {
                             double start_x = *annotation_sequence_start_x_pos + 1 * r_ob->zoom_y;
-                            double end_x = *annotation_sequence_end_x_pos + 4 * r_ob->zoom_y;
+                            double end_x = *annotation_sequence_end_x_pos + 9 * r_ob->zoom_y;
                             double line_y = *annotation_line_y_pos;
                             paint_line(g, *color, start_x, line_y, end_x, line_y, 1);
                             paint_line(g, *color, end_x, line_y, end_x, line_y + 4 * r_ob->zoom_y, 1);
@@ -2512,7 +2513,10 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
                         break;
                 }
 
-                *last_annotation_text = buf;
+                if (buf)
+                    snprintf_zero(last_annotation_text, BACH_MAX_LAST_ANNOTATION_TEXT_CHARS, "%s", buf);
+                else
+                    last_annotation_text[0] = 0;
                 *annotation_sequence_start_x_pos = *annotation_sequence_end_x_pos = x_pos;
             }
         }
@@ -15965,6 +15969,21 @@ char can_merge(t_notation_obj *r_ob, t_rational dur1, t_rational dur2, e_merge_w
     return false;
 }
 
+void chord_transfer_slots_before_deletion(t_notation_obj *r_ob, t_chord *giver, t_chord *receiver)
+{
+    t_llll *which_slots = llll_get();
+    llll_appendsym(which_slots, _sym_all);
+    if (giver->firstnote) {
+        t_note *n1, *n2;
+        for (n1 = giver->firstnote, n2 = receiver->firstnote; n1 && n2; n1 = n1->next, n2 = n2->next)
+            notation_item_copy_slots(r_ob, (t_notation_item *)n1, (t_notation_item *)n2, which_slots, false);
+    } else {
+        notation_item_copy_slots(r_ob, (t_notation_item *)giver, (t_notation_item *)receiver, which_slots, false);
+    }
+    llll_free(which_slots);
+}
+
+
 void merge_rests_and_alltied_chords_one_step(t_notation_obj *r_ob, t_measure *meas, char *changed, t_llll *box, t_chord **ref_chord, e_merge_when merge_when)
 {
     if (merge_when == k_MERGE_WHEN_NEVER)
@@ -15996,20 +16015,27 @@ void merge_rests_and_alltied_chords_one_step(t_notation_obj *r_ob, t_measure *me
                 if (can_merge(r_ob, rhythm_elem_rat, this_chord->next->r_sym_duration, merge_when) ) {
                     this_chord->next->r_sym_duration = rat_rat_sum(this_chord->next->r_sym_duration, rhythm_elem_rat);
                     transfer_selection_and_cursor(r_ob, this_chord, this_chord->next);
+                    chord_transfer_slots_before_deletion(r_ob, this_chord, this_chord->next);
                     if (ref_chord && *ref_chord == this_chord)
                         *ref_chord = this_chord->next;
                     chord_delete_from_measure(r_ob, this_chord, false);
+                    
                     *changed = true;
                 }
 			} else if (is_simple_chord && rhythm_elem_sign > 0 && box_elem->l_next && hatom_gettype(&box_elem->l_next->l_hatom) == H_OBJ &&
 					   chord_is_all_tied_to(r_ob, this_chord, 1, this_chord->next)) {
                 // An all-tied-chord sequence
                 if (can_merge(r_ob, rhythm_elem_rat, this_chord->next->r_sym_duration, merge_when) ) {
+                    // We are deleting the LEFT chord because we need to keep the right chord reference "in place" for the next boxelem.
+                    // but in doing so we need to be sure we're transferring the slot information
                     this_chord->next->r_sym_duration = rat_rat_sum(this_chord->next->r_sym_duration, rhythm_elem_rat);
                     transfer_selection_and_cursor(r_ob, this_chord, this_chord->next);
+                    chord_transfer_slots_before_deletion(r_ob, this_chord, this_chord->next);
                     if (ref_chord && *ref_chord == this_chord)
                         *ref_chord = this_chord->next;
                     chord_delete_from_measure(r_ob, this_chord, false);
+ 
+                    
                     *changed = true;
                 }
 			}
@@ -31571,7 +31597,7 @@ void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_not
 }
 
 
-void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests)
+void note_transfer_slots_to_siebling(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests)
 {
     if (which_slots_1based) {
         t_notation_item *dest_it = NULL;
@@ -43377,6 +43403,50 @@ void notationobj_toggle_realtime_mode(t_notation_obj *r_ob, char realtime)
         r_ob->curr_realtime_mode = realtime;
     }
 }
+
+t_chord *chord_get_first_strictly_before_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset)
+{
+    t_chord *ch;
+    for (ch = meas->firstchord; ch; ch = ch->next) {
+        if (ch->r_sym_onset >= r_sym_onset)
+            return ch->prev;
+    }
+    return meas->lastchord;
+}
+
+
+t_chord *chord_get_first_strictly_after_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset)
+{
+    t_chord *ch;
+    for (ch = meas->lastchord; ch; ch = ch->prev) {
+        if (ch->r_sym_onset <= r_sym_onset)
+            return ch->next;
+    }
+    return meas->firstchord;
+}
+
+
+t_chord *chord_get_first_before_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset)
+{
+    t_chord *ch;
+    for (ch = meas->firstchord; ch; ch = ch->next) {
+        if (ch->r_sym_onset > r_sym_onset)
+            return ch->prev;
+    }
+    return meas->lastchord;
+}
+
+
+t_chord *chord_get_first_after_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset)
+{
+    t_chord *ch;
+    for (ch = meas->lastchord; ch; ch = ch->prev) {
+        if (ch->r_sym_onset < r_sym_onset)
+            return ch->next;
+    }
+    return meas->firstchord;
+}
+
 
 
 t_chord *chord_get_first_before_ms(t_notation_obj *r_ob, t_voice *voice, double ms)

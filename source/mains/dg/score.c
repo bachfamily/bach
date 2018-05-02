@@ -995,7 +995,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
 		notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
 		if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)){
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-            transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
+            note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
             note_delete((t_notation_obj *)x, nt, false);
 			changed = 1;
 		}
@@ -5210,7 +5210,7 @@ int T_EXPORT main(void){
     // @mattr spiralh @type double @default 3.8729 @digest For Chew and Chen algorithm, sets the pitch spiral vertical step
     // @mattr numsliding @type int @default 8 @digest For Chew and Chen algorithm, sets the number of sliding windows
     // @mattr numselfreferential @type int @default 2 @digest For Chew and Chen algorithm, sets the number of selfreferential windows
-    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, avoids repetitions of the same diatonic step with different alterations
+    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations
     // @mattr stdevthresh @type llll/symbol @default 21/(numnotes+1) @digest For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth
     // @example respell @caption respell according to key and/or enharmonic tables
     // @example respell @algorithm atonal @caption respell via the atonal algorithm
@@ -8911,6 +8911,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             if (params->l_head) {
                                 parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head, NULL, NULL, &from_here, false);
                                 if (params->l_head->l_next) {
+                                    to_here = from_here;
                                     to_here_def = true;
                                     parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head->l_next, NULL, NULL, &to_here, false);
                                 }
@@ -9149,6 +9150,9 @@ t_chord *clear_region(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t
             cur = next_cur;
         }
         
+        if (!res) // we haven't deleted/changed/split anything
+            res = chord_get_first_strictly_before_symonset((t_notation_obj *)x, start_meas, from_here->pt_in_measure);
+        
     } else {
         
         // start measure
@@ -9302,10 +9306,11 @@ void overtype_voice(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t_t
             den = region_dur.r_den;
         }
         
-        t_llll *ts = long_couple_to_llll(num, den);
+        t_llll *ts = long_couple_to_llll(num > 0 ? num : 1, den);
         set_measure_ts_and_tempo_from_llll((t_notation_obj *) x, fakemeas, ts, NULL, 0, NULL, false);
         
-        check_measure_autocompletion(x, fakemeas); // we now count on autocompletion to trim stuff properly
+        if (num > 0)
+            check_measure_autocompletion(x, fakemeas); // we now count on autocompletion to trim stuff properly
         compute_note_approximations_for_measure((t_notation_obj *)x, fakemeas, false);
         validate_accidentals_for_measure((t_notation_obj *)x, fakemeas);
 
