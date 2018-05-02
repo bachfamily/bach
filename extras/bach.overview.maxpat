@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 789.0, 9.0, 141.0, 19.0 ],
 					"style" : "",
-					"text" : "(build 1514672433)",
+					"text" : "(build 1523287179)",
 					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
 					"textjustification" : 2,
 					"varname" : "autohelp_top_digest[1]"
@@ -480,7 +480,7 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, 0.0 ],
+					"offset" : [ 0.0, -4856.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
@@ -9474,14 +9474,35 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.notation.messages.30_operate on selection.42_lambdaexample.maxpat",
+				"name" : "bach.help.notation.sequencing.06_playmode.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.replace.maxpat",
+				"name" : "bach.ezmidiplay.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.gcd.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.approx.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.filter.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
@@ -9495,21 +9516,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.dsort.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.-.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.abs.maxpat",
+				"name" : "bach.replace.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
@@ -9517,13 +9524,6 @@
 			}
 , 			{
 				"name" : "bach.sum.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.filter.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
@@ -9558,6 +9558,13 @@
 				"implicit" : 1
 			}
 , 			{
+				"name" : "bach.-.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "bach.+.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
@@ -9579,7 +9586,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.explorer.welcome.maxpat",
+				"name" : "bach.explorer.empty.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
 				"type" : "JSON",
@@ -9643,11 +9650,11 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.keys.mxo",
+				"name" : "bach.expr.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.find.mxo",
+				"name" : "bach.length.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9659,15 +9666,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.subs.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.reg.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.portal.mxo",
+				"name" : "bach.pick.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9675,47 +9674,23 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.slice.mxo",
+				"name" : "bach.reg.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.rev.mxo",
+				"name" : "bach.print.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.nth.mxo",
+				"name" : "bach.keys.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.sort.mxo",
+				"name" : "bach.portal.mxo",
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.expr.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.leq.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.depth.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.collect.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.length.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.eq.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.join.mxo",
+				"name" : "bach.gt.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9727,7 +9702,39 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.pick.mxo",
+				"name" : "bach.eq.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.nth.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.slice.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.depth.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.collect.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.find.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.subs.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.rev.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.join.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9736,6 +9743,14 @@
 			}
 , 			{
 				"name" : "bach.intersection.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.sort.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.leq.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9760,10 +9775,6 @@
 			}
 , 			{
 				"name" : "bach.geq.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.gt.mxo",
 				"type" : "iLaX"
 			}
 , 			{
