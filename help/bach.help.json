@@ -2684,6 +2684,13 @@
 				"seealso" : [ "linear+edit", "timepoint+syntax", "basic+overtyping" ],
 				"tags" : [ "message", "overtype", "over", "type", "replace", "content", "music", "linear", "overwrite", "write", "advanced", "overtyping", "more", "trim", "fill", "overflow", "rhythmic", "tree" ],
 				"title" : [ "Advanced overtyping" ]
+			},
+			"Overtypeandgracenotes" : {
+				"filename" : [ "bach.help.notation.messages.97_overtypeandgracenotes.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "linear+edit", "timepoint+syntax", "overtyping", "grace+syntax" ],
+				"tags" : [ "message", "overtype", "over", "type", "replace", "content", "music", "linear", "overwrite", "write", "advanced", "overtyping", "more", "grace", "note", "insert", "inserting", "add", "chord" ],
+				"title" : [ "Inserting grace notes" ]
 			}
 		},
 		"Naming" : {

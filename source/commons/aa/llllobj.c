@@ -1203,6 +1203,11 @@ t_max_err llllobj_obj_setup(t_llllobj_object *x, long stores, const char *outlet
 				this_out->b_msg = _sym_list;
 				this_out->b_type = LLLL_O_LIST;
 				break;
+			case 'z':
+				if (this_out->b_outlet == NULL)
+					this_out->b_outlet = outlet_new(x, NULL);
+				this_out->b_type = LLLL_O_ANYTHING;
+				break;
 			case 'a':
 				if (this_out->b_outlet == NULL)
 					this_out->b_outlet = outlet_new(x, va_arg(ap, char*));
@@ -1351,6 +1356,11 @@ t_max_err llllobj_pxobj_setup(t_llllobj_pxobject *x, long stores, const char *ou
 					this_out->b_outlet = listout(x);
 				this_out->b_msg = _sym_list;
 				this_out->b_type = LLLL_O_LIST;
+				break;
+			case 'z':
+				if (this_out->b_outlet == NULL)
+					this_out->b_outlet = outlet_new(x, NULL);
+				this_out->b_type = LLLL_O_ANYTHING;
 				break;
 			case 'a':
 				if (this_out->b_outlet == NULL)
@@ -1506,6 +1516,11 @@ t_max_err llllobj_jbox_setup(t_llllobj_jbox *x, long stores, const char *outlets
 				this_out->b_msg = _sym_list;
 				this_out->b_type = LLLL_O_LIST;
 				break;
+			case 'z':
+				if (this_out->b_outlet == NULL)
+					this_out->b_outlet = outlet_new(x, NULL);
+				this_out->b_type = LLLL_O_ANYTHING;
+				break;
 			case 'a':
 				if (this_out->b_outlet == NULL)
 					this_out->b_outlet = outlet_new(x, va_arg(ap, char*));
@@ -1654,6 +1669,11 @@ t_max_err llllobj_pxjbox_setup(t_llllobj_pxjbox *x, long stores, const char *out
 					this_out->b_outlet = listout(x);
 				this_out->b_msg = _sym_list;
 				this_out->b_type = LLLL_O_LIST;
+				break;
+			case 'z':
+				if (this_out->b_outlet == NULL)
+					this_out->b_outlet = outlet_new(x, NULL);
+				this_out->b_type = LLLL_O_ANYTHING;
 				break;
 			case 'a':
 				if (this_out->b_outlet == NULL)

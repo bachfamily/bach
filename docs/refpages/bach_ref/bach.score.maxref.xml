@@ -6985,7 +6985,7 @@
 				<m>@spiralh</m> (double, default: 3.8729): For Chew and Chen algorithm, sets the pitch spiral vertical step<br />
 				<m>@numsliding</m> (int, default: 8): For Chew and Chen algorithm, sets the number of sliding windows<br />
 				<m>@numselfreferential</m> (int, default: 2): For Chew and Chen algorithm, sets the number of selfreferential windows<br />
-				<m>@discardalteredrepetitions</m> (int, default: 1): For Atonal algorithm, avoids repetitions of the same diatonic step with different alterations<br />
+				<m>@discardalteredrepetitions</m> (int, default: 1): For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations<br />
 				<m>@stdevthresh</m> (llll/symbol, default: 21/(numnotes+1)): For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth<br />
 				<br />
 				The <m>respell</m> message reset the enharmonicity ("graphics") specification of each selected note to a default one.

@@ -1314,6 +1314,33 @@
       "God Solve the Queens"
     ]
   },
+  "bach.>=": {
+    "digest": "Compare two lllls for greater than or equal condition",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "compare",
+      "greater",
+      "equal",
+      "condition",
+      "lexicographical",
+      "order",
+      "numerical"
+    ],
+    "seealso": [
+      "bach.==",
+      "bach.!=",
+      "bach.&gt;",
+      "bach.&lt;",
+      "bach.&lt;=",
+      "bach.filter",
+      "bach.sieve"
+    ]
+  },
   "bach.find": {
     "digest": "Find elements",
     "module": "bach",

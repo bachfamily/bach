@@ -60,6 +60,7 @@ max oblist "bach objects" bach.slice;
 max oblist "bach objects" bach.step;
 max oblist "bach objects" bach.swap;
 max oblist "bach objects" bach.constraints;
+max oblist "bach objects" bach.>=;
 max oblist "bach objects" bach.find;
 max oblist "bach objects" bach.write;
 max oblist "bach objects" bach.rev;
