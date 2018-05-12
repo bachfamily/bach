@@ -2137,6 +2137,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                     {
                         long slotnum = hatom_getlong(&el->l_hatom);
                         this_keys->property = k_PLAYKEYS_SLOT;
+                        this_keys->allowed_command_router = allowed_command_router;
                         hatom_setlong(&this_keys->specification, slotnum);
                         this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
                         *this_outlets++ = '4';
@@ -2153,6 +2154,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                         if (router_is_sym && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
                             for (t_llllelem *tempel = ll->l_head->l_next; tempel; tempel = tempel->l_next) {
                                 this_keys->property = k_PLAYKEYS_SLOT;
+                                this_keys->allowed_command_router = allowed_command_router;
                                 this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
                                 if (hatom_gettype(&tempel->l_hatom) == H_SYM)
                                     hatom_setsym(&this_keys->specification, hatom_getsym(&tempel->l_hatom));
