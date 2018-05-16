@@ -171,7 +171,13 @@ public:
     t_pitch operator%(const t_pitch &b) const;
     
     long divdiv(const t_pitch &b) const {
-        return (*this).toSteps() / b.toSteps();
+        t_atom_long b_toSteps = b.toSteps();
+        if (b_toSteps != 0)
+            return (*this).toSteps() / b.toSteps();
+        else {
+            error("Error in pitch division detected");
+            return (*this).toSteps();
+        }
     };
     
     friend t_pitch operator*(const t_atom_long a, const t_pitch b) { return b * a; }
