@@ -166,7 +166,13 @@ public:
     t_pitch operator*(const t_rational &b) const;
     t_pitch operator/(const t_atom_long b) const;
     t_pitch operator/(const t_rational &b) const;
-    t_rational operator/(const t_pitch &b) const { return toMC() / b.toMC(); };
+    t_rational operator/(const t_pitch &b) const {
+        t_rational b_toMC = b.toMC();
+        if (b_toMC.r_num == 0)
+            error("Illegal division by C0 (or one of its enharmonic pitches) detected.");
+        return toMC() / b_toMC;
+    };
+    
     t_pitch operator%(const t_atom_long b) const;
     t_pitch operator%(const t_pitch &b) const;
     
