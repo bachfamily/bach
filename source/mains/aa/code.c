@@ -181,10 +181,13 @@ void code_bang(t_code *x)
         argv[i] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
     }
     if (x->n_main) {
+        long outlets = x->n_outlets;
+        if (outlets)
+            x->n_main->clearOutletData(outlets);
         t_llll *result = x->n_main->call(x->n_inlets, argv, context);
-        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, x->n_outlets, result);
+        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);
         llll_free(result);
-        for (int i = x->n_outlets - 1; i >= 0; i--) {
+        for (int i = outlets - 1; i >= 0; i--) {
             t_llll *outll = x->n_main->getOutletData(i);
             if (outll) {
                 llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, i, outll);
