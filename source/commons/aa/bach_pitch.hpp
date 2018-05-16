@@ -170,8 +170,8 @@ public:
     t_pitch operator%(const t_atom_long b) const;
     t_pitch operator%(const t_pitch &b) const;
     
-    long divdiv(const t_pitch &b) const {
-        return (*this).toSteps() / b.toSteps();
+    t_atom_long divdiv(const t_pitch &b) const {
+        return static_cast<t_atom_long>((*this) / b);
     };
     
     friend t_pitch operator*(const t_atom_long a, const t_pitch b) { return b * a; }
