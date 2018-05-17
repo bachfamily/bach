@@ -3,7 +3,7 @@
  code.c
  
  @name
- bach.>=
+ bach.code
  
  @realname
  bach.code
