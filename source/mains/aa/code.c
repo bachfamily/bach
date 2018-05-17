@@ -182,8 +182,8 @@ void code_bang(t_code *x)
     }
     if (x->n_main) {
         long outlets = x->n_outlets;
-//        if (outlets)
-//            x->n_main->clearOutletData(outlets);
+        if (outlets)
+            x->n_main->clearOutletData(outlets);
         t_llll *result = x->n_main->call(x->n_inlets, argv, context);
         llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);
         llll_free(result);
