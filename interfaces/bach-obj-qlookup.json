@@ -1314,7 +1314,7 @@
       "God Solve the Queens"
     ]
   },
-  "bach.>=": {
+  "bach.code": {
     "digest": "Compare two lllls for greater than or equal condition",
     "module": "bach",
     "category": [

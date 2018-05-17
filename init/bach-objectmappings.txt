@@ -4,7 +4,6 @@ max objectfile bach.!= bach.neq;
 max objectfile bach.<= bach.leq;
 max objectfile bach.< bach.lt;
 max objectfile bach.>= bach.geq;
-max objectfile bach.>= bach.code;
 max objectfile bach.!- bach.rminus;
 max objectfile bach./ bach.div;
 max objectfile bach.!/ bach.rdiv;

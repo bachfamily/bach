@@ -4173,7 +4173,7 @@
 				• <b>goto prev</b>   <i>→ select previous notation item</i><br />
 				• <b>goto next @repeat 10</b>   <i>→ select the 10th next notation item</i><br />
 				• <b>goto next @type marker</b>   <i>→ select the next marker</i><br />
-				• <b>goto next @until cents &gt; 6000 @type note</b>   <i>→ select next note above middle C</i><br />
+				• <b>goto next @until cents &gt; 6000 @type noteQ</b>   <i>→ select next note above middle C</i><br />
 				• <b>goto up</b>   <i>→ move selection up</i><br />
 				• <b>goto right</b>   <i>→ move selection right</i><br />
 				• <b>goto next @voicemode any @polymode overlap</b>   <i>→ navigate through score polyphonically</i><br />
@@ -7146,7 +7146,7 @@
 				• <b>sel note if cents == 6000</b>   <i>→ select all middle C's</i><br />
 				• <b>sel note if (cents % 1200) == 0</b>   <i>→ select all C's</i><br />
 				• <b>sel note if (cents &lt; 6000) &amp;&amp; (duration &lt; 1000)</b>   <i>→ select all notes &lt;1s below middle C</i><br />
-				• <b>sel note if symduration &gt; 1/4</b>   <i>→ select all notes longer than 1/4</i><br />
+				• <b>sel note if symduration &gt; 1/4,</b>   <i>→ select all notes longer than 1/4</i><br />
 				• <b>sel note if (symonset &gt; 1/4) &amp;&amp; (tie == 0)</b>   <i>→ select all notes whose onset in their measure is greater than 1/4 and have no starting or ending tie</i><br />
 				• <b>sel note if tie == 1</b>   <i>→ select notes that start a tie but do not end one</i><br />
 				• <b>sel note if tie == 2</b>   <i>→ select notes that end a tie but do not start one</i><br />
