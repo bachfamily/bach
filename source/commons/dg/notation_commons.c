@@ -27788,9 +27788,10 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 {
 	long j = slotnum;
 	t_llll* inner4_llll = llll_get();
+    char mode_is_playback_or_sortof = (mode == k_CONSIDER_FOR_EVALUATION || mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE  || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED);
 
 	if (mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_EXPORT_PWGL && mode != k_CONSIDER_FOR_SLOT_VALUES_ONLY) {
-		if (r_ob->output_slot_names && (mode == k_CONSIDER_FOR_EVALUATION || mode == k_CONSIDER_FOR_PLAYING || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE  || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED))
+		if (r_ob->output_slot_names && mode_is_playback_or_sortof)
 			llll_appendsym(inner4_llll, r_ob->slotinfo[j].slot_name, 0, WHITENULL_llll); // slot name
 		else
 			llll_appendlong(inner4_llll, j + 1, 0, WHITENULL_llll); // slot number, 1-based
@@ -27841,10 +27842,16 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 				while (temp_item && temp_item->item) {
 					if (!only_get_selected_items || temp_item->selected) {
 						t_llll* inner5_llll = llll_get();
+                        
+                        double slope = ((t_pts *)temp_item->item)->slope;
+                        double rangeslope = r_ob->slotinfo[slotnum].slot_range_par;
+                        if (temp_item->prev && mode_is_playback_or_sortof && rangeslope != 0 && r_ob->combine_range_slope_during_playback) {
+                            slope = combine_slopes(rangeslope, slope);
+                        }
 						
 						llll_appenddouble(inner5_llll, (((t_pts *)temp_item->item)->x - new_x_pos)/(1-new_x_pos), 0, WHITENULL_llll); // x
 						llll_appenddouble(inner5_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y
-						llll_appenddouble(inner5_llll, ((t_pts *)temp_item->item)->slope, 0, WHITENULL_llll); // slope
+						llll_appenddouble(inner5_llll, slope, 0, WHITENULL_llll); // slope
 						
 						llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
 					}

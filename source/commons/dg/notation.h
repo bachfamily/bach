@@ -3972,7 +3972,8 @@ typedef struct _notation_obj
     double      slot_window_active_unscrolled_width;    ///< Horizontal width of the slot window content, not clipped to the actual window, for slot zoom = 1.
 	char		output_slot_names;			///< If this is 1, the notation object always outputs slot names and NOT slot numbers from the playout (which means: for mode = #k_CONSIDER_FOR_EVALUATION or #k_CONSIDER_FOR_PLAYING or #k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE or #k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED)
 	double		slot_window_zoom;			///< Additional zoom (with respect to the #zoom_y field) for the slot windows, 100 being the default one. 
-	double		bgslot_zoom;				///< Additional zoom (with respect to the #zoom_y field) for the background displayed slots, 100 being the default one. 
+	double		bgslot_zoom;				///< Additional zoom (with respect to the #zoom_y field) for the background displayed slots, 100 being the default one.
+    double      combine_range_slope_during_playback;    ///< Combines the range slope with the existing slopes during playback
 	
 	// only used by color slots
 	double		slot_window_palette_width;		///< Width (in pixels) of the main palette in the slot window for slots of type #k_SLOT_TYPE_COLOR

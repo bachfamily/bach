@@ -1659,6 +1659,14 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Sets an horizontal and vertical shift coefficients for the slot text displayed
 		// for slots kept in background.
+        
+        
+        CLASS_ATTR_CHAR(c,"applyslope",0, t_notation_obj, combine_range_slope_during_playback);
+        CLASS_ATTR_STYLE_LABEL(c,"applyslope",0,"onoff","Apply Range Slopes During Playback");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"applyslope", 0, "1");
+        // @exclude bach.slot
+        // @description Toggle the ability to change the slopes in function slots in order to possibly apply range slopes.
+        // The new slopes will hence account for the visual range slope too. By default it is active.
 	}
 	
 	CLASS_ATTR_CHAR(c, "showslotnumbers", 0, t_notation_obj, show_slot_numbers);

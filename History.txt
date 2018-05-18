@@ -4,6 +4,20 @@ v0.8.1b
 
 Scroll down for very important things you should now about v0.8b (v0.8.1 being a minor update, fixing a few bugs)
 
+*****************
+*** IMPORTANT ***
+*****************
+
+*** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
+
+- bach.roll, bach.score
+		There's a new @applyslope attribute, by default set to 1, 
+			that applies range slopes in function slots automatically
+			to function segments or curves, to account for slot range slope
+		Your patches might then sound different than previously!
+			if you did NOT want this, simply set @applyslope to 0.
+
+
 ***********************
 *** VERSION CHANGES ***
 ***********************
