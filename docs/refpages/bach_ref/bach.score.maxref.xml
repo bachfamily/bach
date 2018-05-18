@@ -4173,7 +4173,7 @@
 				• <b>goto prev</b>   <i>→ select previous notation item</i><br />
 				• <b>goto next @repeat 10</b>   <i>→ select the 10th next notation item</i><br />
 				• <b>goto next @type marker</b>   <i>→ select the next marker</i><br />
-				• <b>goto next @until cents &gt; 6000 @type noteQ</b>   <i>→ select next note above middle C</i><br />
+				• <b>goto next @until cents &gt; 6000 @type note</b>   <i>→ select next note above middle C</i><br />
 				• <b>goto up</b>   <i>→ move selection up</i><br />
 				• <b>goto right</b>   <i>→ move selection right</i><br />
 				• <b>goto next @voicemode any @polymode overlap</b>   <i>→ navigate through score polyphonically</i><br />
@@ -7146,7 +7146,7 @@
 				• <b>sel note if cents == 6000</b>   <i>→ select all middle C's</i><br />
 				• <b>sel note if (cents % 1200) == 0</b>   <i>→ select all C's</i><br />
 				• <b>sel note if (cents &lt; 6000) &amp;&amp; (duration &lt; 1000)</b>   <i>→ select all notes &lt;1s below middle C</i><br />
-				• <b>sel note if symduration &gt; 1/4,</b>   <i>→ select all notes longer than 1/4</i><br />
+				• <b>sel note if symduration &gt; 1/4</b>   <i>→ select all notes longer than 1/4</i><br />
 				• <b>sel note if (symonset &gt; 1/4) &amp;&amp; (tie == 0)</b>   <i>→ select all notes whose onset in their measure is greater than 1/4 and have no starting or ending tie</i><br />
 				• <b>sel note if tie == 1</b>   <i>→ select notes that start a tie but do not end one</i><br />
 				• <b>sel note if tie == 2</b>   <i>→ select notes that end a tie but do not start one</i><br />
@@ -8561,6 +8561,23 @@
 				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="applyslope" get="1" set="1" type="int" size="1">
+			<digest>
+				Apply Range Slopes During Playback
+			</digest>
+			<description>
+				Toggle the ability to change the slopes in function slots in order to possibly apply range slopes.
+				The new slopes will hence account for the visual range slope too. By default it is active.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Apply Range Slopes During Playback" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="articulationcolor" get="1" set="1" type="rgba" size="1">

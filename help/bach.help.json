@@ -3901,6 +3901,13 @@
 				"tags" : [ "slot", "slotinfo", "range", "slope" ],
 				"title" : [ "Slot range" ]
 			},
+			"C_slotrangeslope" : {
+				"filename" : [ "bach.help.notation.slots.12c_slotrangeslope.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "range+slope" ],
+				"tags" : [ "slot", "slotinfo", "range", "slope", "apply", "warp", "combine", "modulate" ],
+				"title" : [ "Using slot range slope during playback" ]
+			},
 			"Slotzrange" : {
 				"filename" : [ "bach.help.notation.slots.13_slotzrange.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],

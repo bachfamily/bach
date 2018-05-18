@@ -2,8 +2,8 @@
  *  roll.h
  *  bach-fw
  *
- *  Created by andrea agostini on 10/6/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
+ *  Created by Daniele ghisi on 10/6/11.
+ *  Copyright 2011 Daniele Ghisi and Andrea Agostini. All rights reserved.
  *
  */
 
