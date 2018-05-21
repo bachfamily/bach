@@ -529,11 +529,11 @@ void llll_subs(t_llll *ll, t_llll *address, t_llll *subs_model);
 // a non-0 size will cause the corresponding number of elements to be replaced or removed, regardless of the size of the substitution
 void llll_multisubs(t_llll *ll, t_llll *addresses, t_llll *substitutions, t_llll *sizes);
 
-// --- DESTRUCTIVE on ll (elements are inserted), addresses (is sorted) and insertions (is sorted)
+// --- DESTRUCTIVE on ll (elements are inserted), addresses (is freed) and insertions (is freed)
 // the engine of bach.insert @mode 0
 void llll_multiinsert_a(t_llll *ll, t_llll *addresses, t_llll *insertions);
 
-// --- DESTRUCTIVE on ll (elements are inserted), addresses (is sorted) and insertions (is sorted)
+// --- DESTRUCTIVE on ll (elements are inserted), addresses (is freed) and insertions (is freed)
 // the engine of bach.insert @mode 1
 void llll_multiinsert_b(t_llll *ll, t_llll *addresses, t_llll *insertions);
 
@@ -867,12 +867,12 @@ void llll_insert_llll_at_address(t_llll *ll, t_llll *address, t_llll *subs_model
 // flatten ll between mindepth and maxdepth
 // spikemode 1 makes a () appear in place of a )(
 // freething sets whether and how the l_thing field of lllls must be freed
-void llll_flat(t_llll *ll, t_int32 minlevel, t_int32 maxlevel, long spikemode = 0, e_freething_modes freething = LLLL_FREETHING_DONT);
+void llll_flat(t_llll *ll, t_atom_long minlevel, t_atom_long maxlevel, long spikemode = 0, e_freething_modes freething = LLLL_FREETHING_DONT);
 
 // ---DESTRUCTIVE - inplace
 // flatten ll up to maxdepth
 // spikemode 1 makes a () appear in place of a )(
-void llll_flatten(t_llll *ll, t_int32 maxdepth, long spikemode);
+void llll_flatten(t_llll *ll, t_atom_long maxdepth, long spikemode);
 
 
 // ---DESTRUCTIVE
