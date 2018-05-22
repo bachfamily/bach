@@ -21,7 +21,7 @@
 	Compute integer or set partitions
 	
 	@description
-	Computes the integer partition of the incoming number or the partition of the incoming set
+	Computes the integer partition of the incoming non-negative number or the partition of the incoming set
 	
 	@discussion
 	Integer partition are often displayed in Young diagrams.
@@ -158,6 +158,9 @@ t_llll *long_array_to_llll(long *array, long size)
 
 t_llll *get_integer_partitions(long n)
 {
+    if (n == 0)
+        return llll_get();
+    
     long *a = (long *)bach_newptrclear((n+1) * sizeof(long));
     long k = 1;
     long x, y;
@@ -238,8 +241,14 @@ void partition_anything(t_partition *x, t_symbol *msg, long ac, t_atom *av)
     ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 0);
     
     if (mode == 0) {
-        if (ll && ll->l_head && is_hatom_number(&ll->l_head->l_hatom))
-            out = get_integer_partitions(hatom_getlong(&ll->l_head->l_hatom));
+        if (ll && ll->l_head && is_hatom_number(&ll->l_head->l_hatom)) {
+            long num = hatom_getlong(&ll->l_head->l_hatom);
+            if (num < 0) {
+                object_error((t_object *)x, "Incoming number must be non-negative!");
+            } else {
+                out = get_integer_partitions(num);
+            }
+        }
     } else {
         if (ll)
             out = get_set_partitions(ll, distinct);

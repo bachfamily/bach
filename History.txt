@@ -17,6 +17,8 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 		Your patches might then sound different than previously!
 			if you did NOT want this, simply set @applyslope to 0.
 
+- bach.partition
+		Now when partitions of 0 are requested a "null" list is output.
 
 ***********************
 *** VERSION CHANGES ***
