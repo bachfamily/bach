@@ -32,10 +32,10 @@
 	bach, bach objects, bach notation
 
 	@keywords
-	convert, midicent, cent, note, name, pitch
+	convert, midicent, cent, note, name, bach pitches
 
 	@seealso
-	bach.p2mc, bach.f2mc, bach.mc2f
+	bach.p2mc, bach.f2mc, bach.mc2f, bach.approx
 	
 	@owner
 	Daniele Ghisi

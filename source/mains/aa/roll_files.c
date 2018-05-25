@@ -646,7 +646,7 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 		}
 	}
 	
-	dev_llll_print(roll_ll, (t_object *) x, 0, 6, NULL);
+//	dev_llll_print(roll_ll, (t_object *) x, 0, 6, NULL);
 	
 readmidi_error:
 	if (!ok) {

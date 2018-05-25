@@ -120,7 +120,7 @@ long chord_parse_dynamics_easy(t_notation_obj *r_ob, t_chord *ch, long slot_num,
         if (num_dynamics) {
             if (dyn_text)
                 snprintf_zero(dyn_text, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", all_dynamics_text[0]);
-            if (open_hairpin)
+            if (hairpin && open_hairpin)
                 *hairpin = hairpins[0];
         }
         return 1;
