@@ -19,6 +19,7 @@
 		<metadata name="tag">bach</metadata>
 		<metadata name="tag">bach objects</metadata>
 		<metadata name="tag">bach notation</metadata>
+		<metadata name="tag">bach pitches</metadata>
 	</metadatalist>
 
 	<!--INLETS-->
@@ -125,6 +126,7 @@
 		<seealso name="bach.mc2p" />
 		<seealso name="bach.f2mc" />
 		<seealso name="bach.mc2f" />
+		<seealso name="bach.approx" />
 	</seealsolist>
 
 	<misc name = "Input">

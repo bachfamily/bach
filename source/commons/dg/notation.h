@@ -9167,15 +9167,17 @@ char reset_note_enharmonicity(t_notation_obj *r_ob, t_note *note);
 /**	Revert the enharmony of all the selected notes (works exactly as reset_note_enharmonicity(), but for all the notes in the current object selection)
 	@ingroup		notation_actions
 	@param	r_ob	The notation object
- */ 
-char reset_selection_enharmonicity(t_notation_obj *r_ob);
+    @param  ignore_locked_notes     If non-zero, does not respell locked notes
+ */
+char reset_selection_enharmonicity(t_notation_obj *r_ob, char ignore_locked_notes = true);
 
 
 /**	Revert the enharmony of all the notes
 	@ingroup		notation_actions
 	@param	r_ob	The notation object
+    @param  ignore_locked_notes     If non-zero, does not respell locked notes
  */
-char reset_all_enharmonicity(t_notation_obj *r_ob);
+char reset_all_enharmonicity(t_notation_obj *r_ob, char ignore_locked_notes = true);
 
 
 /**	Tie a note to a note of the next chord (if possible). 

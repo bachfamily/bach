@@ -4426,6 +4426,7 @@ int T_EXPORT main(void){
     // @mattr numselfreferential @type int @default 2 @digest For Chew and Chen algorithm, sets the number of selfreferential windows
     // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations
     // @mattr stdevthresh @type llll/symbol @default 21/(numnotes+1) @digest For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth
+    // @mattr ignorelocked @type int @default 1 @digest If non-zero, locked notes are left unchanged (default)
     // @example respell @caption respell according to key and/or enharmonic tables
     // @example respell @algorithm atonal @caption respell via the atonal algorithm
     // @example respell @algorithm atonal @flattest Gb @sharpest A# @caption the same, but avoid E#, B#, Cb, Fb

@@ -5115,6 +5115,7 @@
 				<m>@numselfreferential</m> (int, default: 2): For Chew and Chen algorithm, sets the number of selfreferential windows<br />
 				<m>@discardalteredrepetitions</m> (int, default: 1): For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations<br />
 				<m>@stdevthresh</m> (llll/symbol, default: 21/(numnotes+1)): For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth<br />
+				<m>@ignorelocked</m> (int, default: 1): If non-zero, locked notes are left unchanged (default)<br />
 				<br />
 				The <m>respell</m> message reset the enharmonicity ("graphics") specification of each selected note to a default one.
 				Three algorithms are available, which can be set using the "algorithm" message attribute: a default algorithm,

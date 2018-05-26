@@ -2494,6 +2494,13 @@
 					"seealso" : [ "respell", "pitch+message", "sel+message" ],
 					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect", "spell" ],
 					"title" : [ "Respelling scope" ]
+				},
+				"Keeplocked" : {
+					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.06_keeplocked.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "respell", "lock", "unlock" ],
+					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "lock", "keep", "keeping", "ignore", "ignorelocked", "note", "first" ],
+					"title" : [ "Keeping notes during respelling" ]
 				}
 			},
 			"Subroll" : {
@@ -3905,7 +3912,7 @@
 				"filename" : [ "bach.help.notation.slots.12c_slotrangeslope.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "range+slope" ],
-				"tags" : [ "slot", "slotinfo", "range", "slope", "apply", "warp", "combine", "modulate" ],
+				"tags" : [ "slot", "slotinfo", "range", "slope", "apply", "warp", "combine", "modulate", "applyslope" ],
 				"title" : [ "Using slot range slope during playback" ]
 			},
 			"Slotzrange" : {
