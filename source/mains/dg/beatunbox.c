@@ -93,7 +93,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -121,7 +121,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)beatunbox_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)beatunbox_inletinfo,	"inletinfo",	A_CANT,		0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 
     
@@ -510,9 +510,9 @@ void beatunbox_assist(t_beatunbox *x, void *b, long m, long a, char *s)
 		char *type = NULL;
 		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
 		if (a == 0)
-			sprintf(s, x->input_separate ? "llll (%s): Pitches" : "llll (%s): Measureinfo", type);  // @out 0 @type llll @digest Measureinfo – in "separate" mode: Pitches or cents
+			sprintf(s, x->input_separate ? "llll (%s): Pitches or Cents" : "llll (%s): Measureinfo", type);  // @out 0 @type llll @digest Measureinfo – in "separate" mode: Pitches or MIDIcents
 		else if (a == 1)
-			sprintf(s, x->input_separate ? "llll (%s): Durations" : "llll (%s): Pitches", type);  // @out 1 @type llll @digest Pitches or cents – in "separate" mode: Durations
+			sprintf(s, x->input_separate ? "llll (%s): Durations" : "llll (%s): Pitches or Cents", type);  // @out 1 @type llll @digest Pitches or MIDIcents – in "separate" mode: Durations
 		else if (a == 2)
 			sprintf(s, x->input_separate ? "llll (%s): Velocities" : "llll (%s): Durations", type);  // @out 2 @type llll @digest Durations – in "separate" mode: Velocities
 		else if (a == 3)
@@ -572,7 +572,8 @@ t_beatunbox *beatunbox_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
-	if (x && err == MAX_ERR_NONE)
+	llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    if (x && err == MAX_ERR_NONE)
 		return x;
 	
 	object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL

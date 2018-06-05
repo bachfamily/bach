@@ -95,7 +95,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}	
@@ -119,7 +119,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)reducefunction_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)reducefunction_inletinfo,	"inletinfo",	A_CANT,		0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 	
 	CLASS_ATTR_CHAR(c,"algorithm",0, t_reducefunction, algorithm);
@@ -234,7 +234,7 @@ void reducefunction_anything(t_reducefunction *x, t_symbol *msg, long ac, t_atom
 		llll_free(trans);
 	}
 	
-	t_llll *out_ll = llll_approximate_breakpoint_function(ll, x->max_num_points, thresh, is_atom_number(&x->p) ? atom_getlong(&x->p) : 0, x->algorithm, x->slopes);
+	t_llll *out_ll = llll_approximate_breakpoint_function(ll, x->max_num_points, thresh, is_atom_number(&x->p) ? atom_getlong(&x->p) : 0, x->algorithm, x->slopes, 0, (t_object *)x);
 	llll_release(ll);
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, out_ll, 0);
 	reducefunction_bang(x);
@@ -284,7 +284,8 @@ t_reducefunction *reducefunction_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
-	if (x && err == MAX_ERR_NONE)
+	llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    if (x && err == MAX_ERR_NONE)
 		return x;
 	
 	object_free_debug(x);

@@ -72,7 +72,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -104,6 +104,9 @@ int T_EXPORT main()
 	class_addmethod(c, (method)contains_notify,		"notify",		A_CANT,		0);
 
 	
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
+    
 	CLASS_ATTR_LONG(c, "maxdepth",	0,	t_contains, n_maxdepth);
 	CLASS_ATTR_LABEL(c, "maxdepth", 0, "Maximum Depth");
 	CLASS_ATTR_BASIC(c, "maxdepth", 0);
@@ -124,6 +127,8 @@ int T_EXPORT main()
 	class_register(CLASS_BOX, c);
 	contains_class = c;
 	
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
 	dev_post("bach.contains compiled %s %s", __DATE__, __TIME__);
 	
 	return 0;
@@ -184,10 +189,10 @@ void contains_anything(t_contains *x, t_symbol *msg, long ac, t_atom *av)
 		if (types & H_LONG)		llll_appendsym(types_llll, _llllobj_sym_i, 0, WHITENULL_llll);
 		if (types & H_RAT)		llll_appendsym(types_llll, _llllobj_sym_r, 0, WHITENULL_llll);
 		if (types & H_DOUBLE)	llll_appendsym(types_llll, _llllobj_sym_f, 0, WHITENULL_llll);
+        if (types & H_PITCH)	llll_appendsym(types_llll, _llllobj_sym_p, 0, WHITENULL_llll);
 		if (types & H_SYM)		llll_appendsym(types_llll, _llllobj_sym_s, 0, WHITENULL_llll);
 		if (types & H_LLLL)		llll_appendsym(types_llll, _llllobj_sym_l, 0, WHITENULL_llll);
 		if (types & H_OBJ)		llll_appendsym(types_llll, _llllobj_sym_o, 0, WHITENULL_llll);
-        if (types & H_PITCH)	llll_appendsym(types_llll, _llllobj_sym_p, 0, WHITENULL_llll);
 
 	}
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, types_llll, 1);
@@ -201,8 +206,6 @@ void contains_assist(t_contains *x, void *b, long m, long a, char *s)
 	if (m == ASSIST_INLET) {
 		sprintf(s, "llll"); // @in 0 @type llll @digest The llll whose contained data types will be reported
 	} else {
-		char *type = NULL;
-		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
 		switch (a) {
 			case 0:	sprintf(s, "int: Contained Types as a Bitfield");			break; 
 				// @out 0 @type int @digest The bitfield representation of the contained data types
@@ -265,6 +268,8 @@ t_contains *contains_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

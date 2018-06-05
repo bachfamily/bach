@@ -16,7 +16,8 @@
 #include "exprparser.h"
 
 #define YY_HEADER_EXPORT_START_CONDITIONS
-#include "exprparser.lex.h"
+#define YY_NO_UNISTD_H
+#include "bach_exprparser_lex.h"
 
 #ifdef WIN_VERSION
 #include <errno.h>
@@ -85,18 +86,15 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
 {
     t_lexpr_lexeme *this_lex, **lexstack_ptr;
     t_lexpr_lexeme *lexs, **lexstack;
-    t_lexpr_token *tokqueue, *tokqueue_ptr, *this_lex_token, *tokqueue_last, *nextarg, *nextarg2, temp_tok;
+    t_lexpr_token *tokqueue, *tokqueue_ptr, *this_lex_token, *tokqueue_last, *nextarg, *nextarg2, *nextarg3, temp_tok;
     int i, lexc = 0;
     long chk = 0;
     short numvars = 0;
-    char *this_char, *next_char;
     char again;
     t_hatom result_hatom;
     t_max_err err = MAX_ERR_NONE;
     t_exprparser_data exprparser_data;
     char *offending;
-    void *scanner = NULL;
-    void *scannerbuf = NULL;
     
     //	post("creating lexpr");
     
@@ -105,7 +103,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
         //		post("can't allocate tokens");
         return MAX_ERR_GENERIC;
     }
-    if (!(lexs = (t_lexpr_lexeme *) bach_newptrclear(L_MAX_LEXEMES * sizeof(t_lexpr_lexeme)))) {
+    if (!(lexs = (t_lexpr_lexeme *) bach_newptrclear((L_MAX_LEXEMES + 1) * sizeof(t_lexpr_lexeme)))) {
         return MAX_ERR_GENERIC;
     }
     if (!(lexstack = (t_lexpr_lexeme **) bach_newptrclear(L_MAX_LEXEMES * sizeof(t_lexpr_lexeme *)))) {
@@ -120,7 +118,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     exprparser_data.substitutions = substitutions;
     exprparser_data.offending = &offending;
     
-    scanner = exprparser_new(&exprparser_data);
+    t_exprParser exprParser(&exprparser_data);
     
     
     lexs[0].l_type = L_NONE;
@@ -150,9 +148,9 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                 lexc++;
                 break;
             case A_SYM: {
-                scannerbuf = exprparser_scan_string(scanner, atom_getsym(av)->s_name);
+                exprParser.setBuffer(atom_getsym(av)->s_name);
                 exprparser_data.lexeme = this_lex;
-                while (long err = exprparser_lex(scanner)) {
+                while (long err = exprParser.lex()) {
                     switch (err) {
                         case E_OK:
                             this_lex++;
@@ -175,28 +173,23 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                             break;
                     }
                 }
-                exprparser_flush_and_delete_buffer(scanner, scannerbuf);
+                exprParser.reset();
             }
         }
         
         long ltype = (this_lex - 1)->l_type;
         if (ltype == L_COMMA || ltype == L_OPEN ||
             (ltype == L_TOKEN && (this_lex - 1)->l_token.t_type == TT_OP))
-            exprparser_set_start_condition(scanner, INITIAL);
+            exprParser.setStartCondition(INITIAL);
         else
-            exprparser_set_start_condition(scanner, BINARY);
+            exprParser.setStartCondition(BINARY);
 
         if (lexc >= L_MAX_LEXEMES) {
             object_error(culprit, "Expression is too long");
             goto lexpr_new_error;
         }
     }
-    exprparser_free(scanner);
-    scanner = NULL;
-    scannerbuf = NULL;
-    
-    
-    
+
     lexstack_ptr = lexstack - 1; // always points to the last valid argument
     tokqueue_ptr = tokqueue;
     //	post("SHUNTING-YARD:");
@@ -327,8 +320,9 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
             
             if (nextarg->t_type == TT_HATOM) {	// if its first argument is an atom
                 switch(tokqueue_ptr->t_operands) {
+                        
                     case 1:	// and it has one only operand
-                        err |= lexpr_eval_one(tokqueue_ptr, &nextarg->t_contents.c_hatom, NULL, &result_hatom); // then simply evaluate it
+                        err |= lexpr_eval_one(tokqueue_ptr, &nextarg->t_contents.c_hatom, NULL, NULL, &result_hatom); // then simply evaluate it
                         nextarg->t_type = TT_HATOM;
                         nextarg->t_contents.c_hatom = result_hatom;
                         sysmem_copyptr(tokqueue_ptr + 1, tokqueue_ptr, (tokqueue_last - tokqueue_ptr) * sizeof(t_lexpr_token)); // and substitute func/op and operand with the result
@@ -340,7 +334,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                     case 2:	// if it has two operands
                         nextarg2 = nextarg - 1;
                         if (nextarg2->t_type == TT_HATOM) { // both operands are atoms, as in 1 2 +
-                            err |= lexpr_eval_one(tokqueue_ptr, &nextarg2->t_contents.c_hatom, &nextarg->t_contents.c_hatom, &result_hatom); // evaluate
+                            err |= lexpr_eval_one(tokqueue_ptr, &nextarg2->t_contents.c_hatom, &nextarg->t_contents.c_hatom, NULL, &result_hatom); // evaluate
                             nextarg2->t_type = TT_HATOM;
                             nextarg2->t_contents.c_hatom = result_hatom;
                             sysmem_copyptr(tokqueue_ptr + 1, nextarg, (tokqueue_last - tokqueue_ptr) * sizeof(t_lexpr_token)); // and substitute func/op and operands with the result
@@ -368,6 +362,21 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
                                 again = 1; // and we repeat
                             } else
                                 tokqueue_ptr = nextarg - 1;
+                        } else
+                            tokqueue_ptr = nextarg - 1;
+                        break;
+                        
+                    case 3: // if it has three operands (the only case for now is makepitch)
+                        nextarg2 = nextarg - 1;
+                        nextarg3 = nextarg - 2;
+                        if (nextarg2->t_type == TT_HATOM && nextarg3->t_type == TT_HATOM) { // all three operands are hatoms
+                            err |= lexpr_eval_one(tokqueue_ptr, &nextarg3->t_contents.c_hatom, &nextarg2->t_contents.c_hatom, &nextarg->t_contents.c_hatom, &result_hatom); // evaluate
+                            nextarg3->t_type = TT_HATOM;
+                            nextarg3->t_contents.c_hatom = result_hatom;
+                            sysmem_copyptr(tokqueue_ptr + 1, nextarg, (tokqueue_last - tokqueue_ptr) * sizeof(t_lexpr_token)); // and substitute func/op and operands with the result
+                            tokqueue_last -= 3;
+                            tokqueue_ptr = nextarg3 - 1;
+                            again = 1;
                         } else
                             tokqueue_ptr = nextarg - 1;
                         break;
@@ -426,12 +435,6 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     return MAX_ERR_NONE;
     
 lexpr_new_error:
-    if (scanner) {
-        if (scannerbuf)
-            exprparser_flush_and_delete_buffer(scanner, scannerbuf);
-        exprparser_free(scanner);
-    }
-    
     bach_freeptr(lexs);
     bach_freeptr(lexstack);
     return MAX_ERR_GENERIC;
@@ -475,11 +478,18 @@ t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
                 break;
             case TT_OP:
             case TT_FUNC:
-                if (thistok->t_operands == 1)
-                    lexpr_eval_one(thistok, thisstack - 1, NULL, thisstack - 1);
-                else {
-                    lexpr_eval_one(thistok, thisstack - 2, thisstack - 1, thisstack - 2);
-                    thisstack--;
+                switch (thistok->t_operands) {
+                    case 1:
+                        lexpr_eval_one(thistok, thisstack - 1, NULL, NULL, thisstack - 1);
+                        break;
+                    case 2:
+                        lexpr_eval_one(thistok, thisstack - 2, thisstack - 1, NULL, thisstack - 2);
+                        thisstack--;
+                        break;
+                    case 3:
+                        lexpr_eval_one(thistok, thisstack - 3, thisstack - 2, thisstack - 1, thisstack - 3);
+                        thisstack -= 2;
+                        break;
                 }
                 break;
             default:
@@ -493,7 +503,7 @@ t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
         return stack;
 }
 
-long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom *res)
+long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *res)
 {
     if (verb->t_type == TT_FUNC) {
         if (!h2) {
@@ -504,7 +514,7 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
                     case H_DOUBLE:	hatom_setdouble(res, (verb->t_contents.c_func.f_ptrs.p_dptr_d)(hatom_getdouble(h1)));	break;
                     case H_ALL:		(verb->t_contents.c_func.f_ptrs.p_vptr_hh)(h1, res);	break;
                 }
-        } else {
+        } else if (!h3) {
             if (!(hatom_is_number(h1)))
                 *res = *h1;
             else if (!(hatom_is_number(h2)))
@@ -513,6 +523,18 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
                 switch (verb->t_contents.c_func.f_type) {
                     case H_DOUBLE:	hatom_setdouble(res, (verb->t_contents.c_func.f_ptrs.p_dptr_dd)(hatom_getdouble(h1), hatom_getdouble(h2)));	break;
                     case H_ALL:		(verb->t_contents.c_func.f_ptrs.p_vptr_hhh)(h1, h2, res);	break;
+                }
+        } else {
+            if (!(hatom_is_number(h1)))
+                *res = *h1;
+            else if (!(hatom_is_number(h2)))
+                *res = *h2;
+            else if (!(hatom_is_number(h3)))
+                *res = *h3;
+            else
+                switch (verb->t_contents.c_func.f_type) {
+                    case H_DOUBLE:	hatom_setdouble(res, (verb->t_contents.c_func.f_ptrs.p_dptr_ddd)(hatom_getdouble(h1), hatom_getdouble(h2), hatom_getdouble(h3)));	break;
+                    case H_ALL:		(verb->t_contents.c_func.f_ptrs.p_vptr_hhhh)(h1, h2, h3, res);	break;
                 }
         }
         return errno;
@@ -657,7 +679,7 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
 
 /*
  OPERATOR PRECEDENCE AND ORDER OF EVALUATION:
- 14	! ~ ++ -- + - * (type) sizeof right to left
+ 14	! ~ ++ -- + - (unary) * (type) sizeof right to left
  13	** right to left
  12	* / % // left to right
  11	+ - left to right
@@ -674,608 +696,6 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
  0	= += -= *= /= %= &= ^= |= <<= >>= right to left
  */
 
-// writes the new lexeme into lex
-t_max_err lexpr_lex(char *this_pos, char **next_pos, t_lexpr_lexeme *lex, short *numvars, long subs_count, const char **substitutions)
-{
-    long len;
-    long idx, vartype;
-    
-    while (isspace(*this_pos))
-        this_pos++;
-    
-    *next_pos = this_pos;
-    
-    if (!*this_pos) {
-        lex->l_type = L_SKIP;
-        *next_pos = NULL;
-        return MAX_ERR_NONE;
-    }
-    
-    // parentheses
-    if (*this_pos == '(') {
-        lex->l_type = L_OPEN;
-        ++*next_pos;
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == ')') {
-        lex->l_type = L_CLOSED;
-        ++*next_pos;
-        return MAX_ERR_NONE;
-        
-        // comma
-    } else if (*this_pos == ',') {
-        lex->l_type = L_COMMA;
-        ++*next_pos;
-        return MAX_ERR_NONE;
-        
-        // variables
-    } else if (*this_pos == '$') {
-        lex->l_type = L_TOKEN;
-        lex->l_token.t_type = TT_VAR;
-        switch (*(this_pos + 1)) {
-            case 'i':	vartype = H_LONG;		break;
-            case 'f':	vartype = H_DOUBLE;		break;
-            case 'r':	vartype = H_RAT;		break;
-            case 'x':	vartype = H_ALL;		break;
-            default:	dev_post("bad var type: %c", *(this_pos + 1));	return MAX_ERR_GENERIC;	break;
-        }
-        
-        idx = strtol(this_pos + 2, next_pos, 10) - 1;
-        if (idx == -1) {
-            dev_post ("bad var index %ld", idx);
-            return MAX_ERR_GENERIC;
-        }
-        
-        lex->l_token.t_contents.c_var.v_index = idx;
-        if (idx >= *numvars)
-            *numvars = idx + 1;
-        lex->l_token.t_contents.c_var.v_type = vartype;
-        return MAX_ERR_NONE;
-        
-        // operators
-    } else if (*this_pos == '|') {
-        lex->l_type = L_TOKEN;
-        lex->l_order = O_L2R;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        lex->l_token.t_contents.c_op.o_properties = OP_COMM | OP_ASSOC;
-        if (*(this_pos + 1) == '|') {
-            lex->l_precedence = 2;
-            lex->l_token.t_contents.c_op.o_op = O_LOGOR;
-            *next_pos = this_pos + 2;
-        } else {
-            lex->l_precedence = 5;
-            lex->l_token.t_contents.c_op.o_op = O_BITOR;
-            *next_pos = this_pos + 1;
-        }
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '&') {
-        lex->l_type = L_TOKEN;
-        lex->l_order = O_L2R;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        lex->l_token.t_contents.c_op.o_properties = OP_COMM | OP_ASSOC;
-        if (*(this_pos + 1) == '&') {
-            lex->l_precedence = 4;
-            lex->l_token.t_contents.c_op.o_op = O_LOGAND;
-            *next_pos = this_pos + 2;
-        } else {
-            lex->l_precedence = 7;
-            lex->l_token.t_contents.c_op.o_op = O_BITAND;
-            *next_pos = this_pos + 1;
-        }
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '^') {
-        lex->l_type = L_TOKEN;
-        lex->l_order = O_L2R;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        lex->l_token.t_contents.c_op.o_properties = OP_COMM | OP_ASSOC;
-        if (*(this_pos + 1) == '^') {
-            lex->l_precedence = 3;
-            lex->l_token.t_contents.c_op.o_op = O_LOGXOR;
-            *next_pos = this_pos + 2;
-        } else {
-            lex->l_precedence = 6;
-            lex->l_token.t_contents.c_op.o_op = O_BITXOR;
-            *next_pos = this_pos + 1;
-        }
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '~') {
-        lex->l_type = L_TOKEN;
-        lex->l_precedence = 14;
-        lex->l_order = O_R2L;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 1;
-        lex->l_token.t_contents.c_op.o_op = O_BITNOT;
-        *next_pos = this_pos + 1;
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '!') {
-        lex->l_type = L_TOKEN;
-        lex->l_token.t_type = TT_OP;
-        if (*(this_pos + 1) == '=') {
-            lex->l_token.t_operands = 2;
-            lex->l_precedence = 8;
-            lex->l_order = O_L2R;
-            lex->l_token.t_contents.c_op.o_properties = OP_COMM;
-            if (*(this_pos + 2) == '=') {
-                lex->l_token.t_contents.c_op.o_op = O_NEQMATCH;
-                *next_pos = this_pos + 3;
-            } else {
-                lex->l_token.t_contents.c_op.o_op = O_NEQ;
-                *next_pos = this_pos + 2;
-            }
-            return MAX_ERR_NONE;
-        } else {
-            lex->l_token.t_operands = 1;
-            lex->l_precedence = 14;
-            lex->l_order = O_R2L;
-            lex->l_token.t_contents.c_op.o_op = O_LOGNOT;
-            *next_pos = this_pos + 1;
-            return MAX_ERR_NONE;
-        }
-        
-    } else if (*this_pos == '=' && *(this_pos + 1) == '=') {
-        lex->l_type = L_TOKEN;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        lex->l_precedence = 8;
-        lex->l_order = O_L2R;
-        lex->l_token.t_contents.c_op.o_properties = OP_COMM;
-        if (*(this_pos + 2) == '=') {
-            lex->l_token.t_contents.c_op.o_op = O_EQMATCH;
-            *next_pos = this_pos + 3;
-        } else {
-            lex->l_token.t_contents.c_op.o_op = O_EQ;
-            *next_pos = this_pos + 2;
-        }
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '<') {
-        lex->l_type = L_TOKEN;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        lex->l_token.t_contents.c_op.o_properties = OP_NONE;
-        lex->l_order = O_L2R;
-        switch (*(this_pos + 1)) {
-            case '<':
-                lex->l_precedence = 10;
-                lex->l_token.t_contents.c_op.o_op = O_LSHIFT;
-                *next_pos = this_pos + 2;
-                break;
-            case '=':
-                lex->l_precedence = 9;
-                lex->l_token.t_contents.c_op.o_op = O_LE;
-                *next_pos = this_pos + 2;
-                break;
-            default:
-                lex->l_precedence = 9;
-                lex->l_token.t_contents.c_op.o_op = O_LT;
-                *next_pos = this_pos + 1;
-        }
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '>') {
-        lex->l_type = L_TOKEN;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        lex->l_token.t_contents.c_op.o_properties = OP_NONE;
-        lex->l_order = O_L2R;
-        switch (*(this_pos + 1)) {
-            case '>':
-                lex->l_precedence = 10;
-                lex->l_token.t_contents.c_op.o_op = O_RSHIFT;
-                *next_pos = this_pos + 2;
-                break;
-            case '=':
-                lex->l_precedence = 9;
-                lex->l_token.t_contents.c_op.o_op = O_GE;
-                *next_pos = this_pos + 2;
-                break;
-            default:
-                lex->l_precedence = 9;
-                lex->l_token.t_contents.c_op.o_op = O_GT;
-                *next_pos = this_pos + 1;
-        }
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '*') {
-        lex->l_type = L_TOKEN;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        if (*(this_pos+1) == '*') {
-            lex->l_precedence = 13;
-            lex->l_order = O_L2R;
-            lex->l_token.t_contents.c_op.o_properties = OP_NONE;
-            lex->l_token.t_contents.c_op.o_op = O_POW;
-            *next_pos = this_pos + 2;
-        } else {
-            lex->l_precedence = 12;
-            lex->l_order = O_L2R;
-            lex->l_token.t_contents.c_op.o_properties = OP_COMM | OP_ASSOC;
-            lex->l_token.t_contents.c_op.o_op = O_TIMES;
-            *next_pos = this_pos + 1;
-        }
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '%') {
-        lex->l_type = L_TOKEN;
-        lex->l_precedence = 12;
-        lex->l_order = O_L2R;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        lex->l_token.t_contents.c_op.o_properties = OP_NONE;
-        lex->l_token.t_contents.c_op.o_op = O_MOD;
-        *next_pos = this_pos + 1;
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '/') {
-        lex->l_type = L_TOKEN;
-        lex->l_precedence = 12;
-        lex->l_order = O_L2R;
-        lex->l_token.t_type = TT_OP;
-        lex->l_token.t_operands = 2;
-        
-        if (*(this_pos + 1) == '/') {
-            lex->l_token.t_contents.c_op.o_properties = OP_NONE;
-            lex->l_token.t_contents.c_op.o_op = O_DIVDIV;
-            *next_pos = this_pos + 2;
-        } else {
-            lex->l_token.t_contents.c_op.o_properties = OP_INVERT;
-            lex->l_token.t_contents.c_op.o_op = O_DIV;
-            lex->l_token.t_contents.c_op.o_inv = O_TIMES;
-            *next_pos = this_pos + 1;
-        }
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '+') {
-        if ((lex-1)->l_type == L_CLOSED || ((lex-1)->l_type == L_TOKEN && (lex-1)->l_token.t_type != TT_OP && (lex-1)->l_token.t_type != TT_FUNC)) { // if it's a binary +
-            lex->l_type = L_TOKEN;
-            lex->l_precedence = 11;
-            lex->l_order = O_L2R;
-            lex->l_token.t_type = TT_OP;
-            lex->l_token.t_operands = 2;
-            lex->l_token.t_contents.c_op.o_properties = OP_COMM | OP_ASSOC;
-            lex->l_token.t_contents.c_op.o_op = O_PLUS;
-        } else
-            lex->l_type = L_SKIP;
-        *next_pos = this_pos + 1;
-        return MAX_ERR_NONE;
-        
-    } else if (*this_pos == '-') {
-        lex->l_type = L_TOKEN;
-        if ((lex-1)->l_type == L_CLOSED || ((lex-1)->l_type == L_TOKEN && (lex-1)->l_token.t_type != TT_OP && (lex-1)->l_token.t_type != TT_FUNC)) {
-            lex->l_precedence = 11;
-            lex->l_order = O_L2R;
-            lex->l_token.t_type = TT_OP;
-            lex->l_token.t_operands = 2;
-            lex->l_token.t_contents.c_op.o_properties = OP_INVERT;
-            lex->l_token.t_contents.c_op.o_op = O_MINUS;
-            lex->l_token.t_contents.c_op.o_inv = O_PLUS;
-            *next_pos = this_pos + 1;
-            return MAX_ERR_NONE;
-        } else {
-            lex->l_precedence = 14;
-            lex->l_order = O_R2L;
-            lex->l_token.t_type = TT_OP;
-            lex->l_token.t_operands = 1;
-            lex->l_token.t_contents.c_op.o_properties = OP_NONE;
-            lex->l_token.t_contents.c_op.o_op = O_UMINUS;
-            *next_pos = this_pos + 1;
-            return MAX_ERR_NONE;
-        }
-    }
-    
-    // substitutions and functions
-    if (isalpha(*this_pos)) {
-        char *temp;
-        lex->l_type = L_TOKEN;
-        lex->l_token.t_type = TT_FUNC;
-        
-        for (len = 0, temp = this_pos;
-             len < LEXPR_MAX_SUBSTITUTION_LENGTH && *temp && (isalnum(*temp) || *temp == '_');
-             temp++)
-            len++;
-        
-        if (len == LEXPR_MAX_SUBSTITUTION_LENGTH) { // why || !*temp?!?
-            dev_post("expr: bad token %s", this_pos);
-            return MAX_ERR_GENERIC;
-        }
-        *next_pos = this_pos + len;
-        
-        
-        // it's a substitution
-        for (idx = 0; idx < subs_count; idx++) {
-            if (!strncmp(this_pos, substitutions[idx], len)) {
-                lex->l_type = L_TOKEN;
-                lex->l_token.t_type = TT_VAR;
-                lex->l_token.t_contents.c_var.v_type = H_ALL;
-                lex->l_token.t_contents.c_var.v_index = idx;
-                if (idx >= *numvars)
-                    *numvars = idx + 1;
-                return MAX_ERR_NONE;
-            }
-        }
-        
-        switch (len) { // this should be a quite important optimization, by avoiding a lot of ifs and strcmps
-            case 3:
-                if (!strncmp(this_pos, "cos", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &cos;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "sin", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &sin;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "tan", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &tan;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "exp", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &exp;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "log", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &log;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "pow", 3)) {
-                    lex->l_token.t_operands = 2;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = &hatom_fn_pow;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "int", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = &hatom_fn_int;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "rat", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = &hatom_fn_rat;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "num", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = &hatom_fn_num;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "den", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = &hatom_fn_den;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "abs", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = &hatom_fn_abs;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "sgn", 3)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = &hatom_fn_sgn;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "mod", 3)) {
-                    lex->l_token.t_operands = 2;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = &hatom_fn_mod;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                dev_post("bad function: %s", this_pos);
-                return MAX_ERR_GENERIC;
-                break;
-                
-            case 4:
-                if (!strncmp(this_pos, "acos", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &acos;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "asin", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &asin;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "atan", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &atan;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "cosh", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &cosh;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "sinh", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &sinh;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "tanh", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &tanh;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "exp2", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &exp2;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "log2", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &log2;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "sqrt", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &sqrt;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "ceil", 4)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &ceil;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "fmod", 4)) {
-                    lex->l_token.t_operands = 2;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_dd = &fmod;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                dev_post("bad function: %s", this_pos);
-                return MAX_ERR_GENERIC;
-                break;
-                
-            case 5:
-                if (!strncmp(this_pos, "atan2", 5)) {
-                    lex->l_token.t_operands = 2;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_dd = &atan2;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "acosh", 5)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &acosh;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "asinh", 5)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &asinh;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "atanh", 5)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &atanh;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "log10", 5)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &log10;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "hypot", 5)) {
-                    lex->l_token.t_operands = 2;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_dd = &hypot;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "floor", 5)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &floor;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "round", 5)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &round;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "trunc", 5)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = &trunc;
-                    lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "float", 5)) {
-                    lex->l_token.t_operands = 1;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = &hatom_fn_float;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                dev_post("bad function: %s", this_pos);
-                return MAX_ERR_GENERIC;
-                break;
-                
-            case 6:
-                if (!strncmp(this_pos, "random", 6)) {
-                    lex->l_token.t_operands = 2;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = &hatom_fn_random;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    lex->l_token.t_contents.c_func.f_dontfold = 1;
-                    return MAX_ERR_NONE;
-                }
-                if (!strncmp(this_pos, "bessel", 6)) {
-                    lex->l_token.t_operands = 2;
-                    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = &hatom_fn_jn;
-                    lex->l_token.t_contents.c_func.f_type = H_ALL;
-                    return MAX_ERR_NONE;
-                }
-                dev_post("bad function: %s", this_pos);
-                return MAX_ERR_GENERIC;
-                break;
-            default:
-                dev_post("bad function: %s", this_pos);
-                return MAX_ERR_GENERIC;
-                break;
-        }
-    }
-    
-    // constants
-    
-    if (*this_pos == '.' || isdigit(*this_pos)) {
-        char is_float = 0;
-        double d_res;
-        char *temp;
-        lex->l_type = L_TOKEN;
-        errno = 0;
-        d_res = strtod(this_pos, next_pos);
-        if (*next_pos == this_pos) // this happens if it's only a .
-            *next_pos = this_pos + 1;
-        if (errno == EINVAL) {
-            dev_post("bad constant: %s", this_pos);
-            return MAX_ERR_GENERIC;
-        }
-        lex->l_token.t_type = TT_HATOM;
-        for (temp = this_pos; temp < *next_pos && !is_float; temp ++)
-            is_float = (*temp == '.') || (*temp == 'e') || (*temp == 'E');
-        if (is_float) {
-            lex->l_token.t_contents.c_hatom.h_type = H_DOUBLE;
-            lex->l_token.t_contents.c_hatom.h_w.w_double = d_res;
-        } else {
-            lex->l_token.t_contents.c_hatom.h_type = H_LONG;
-            lex->l_token.t_contents.c_hatom.h_w.w_long = strtol(this_pos, next_pos, 10);
-        }
-        
-        return MAX_ERR_NONE;
-    }
-    //	post("the end of lex");
-    return MAX_ERR_GENERIC;
-}
 
 long lexpr_invert(t_lexpr_token *verb, t_lexpr_token *arg2)
 {
@@ -1389,7 +809,7 @@ long lexpr_append_lexeme_VAR(t_lexpr_lexeme *lex, char type, long index, short *
     return err;
 }
 
-long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, char *txt, long subs_count, const char *substitutions[], short *numvars, char **offending)
+long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, const char *txt, long subs_count, const char *substitutions[], short *numvars, char **offending)
 {
     long idx;
     for (idx = 0; idx < subs_count; idx++) {
@@ -1405,6 +825,15 @@ long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, char *txt, long s
         strcpy(*offending, txt);
     }
     return E_BAD_NAME;
+}
+
+long lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(t_lexpr_lexeme *lex, long subs_count, const char *substitutions[], short *numvars, char **offending) {
+    if (substitutions &&
+        lex->l_type == L_TOKEN &&
+        lex->l_token.t_type == TT_FUNC)
+        return lexpr_append_lexeme_VAR_substitution(lex, lex->l_token.t_contents.c_func.f_name, subs_count, substitutions, numvars, offending);
+    else
+        return E_OK;
 }
 
 long lexpr_append_lexeme_BITOR(t_lexpr_lexeme *lex)
@@ -1482,7 +911,7 @@ long lexpr_append_lexeme_LOGXOR(t_lexpr_lexeme *lex)
 long lexpr_append_lexeme_BITNOT(t_lexpr_lexeme *lex)
 {
     lex->l_type = L_TOKEN;
-    lex->l_precedence = 14;
+    lex->l_precedence = 13;
     lex->l_order = O_R2L;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 1;
@@ -1495,7 +924,7 @@ long lexpr_append_lexeme_LOGNOT(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 1;
-    lex->l_precedence = 14;
+    lex->l_precedence = 13;
     lex->l_order = O_R2L;
     lex->l_token.t_contents.c_op.o_op = O_LOGNOT;
     return E_OK;
@@ -1638,7 +1067,7 @@ long lexpr_append_lexeme_POW(t_lexpr_lexeme *lex)
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 2;
-    lex->l_precedence = 13;
+    lex->l_precedence = 14;
     lex->l_order = O_L2R;
     lex->l_token.t_contents.c_op.o_properties = OP_NONE;
     lex->l_token.t_contents.c_op.o_op = O_POW;
@@ -1710,7 +1139,7 @@ long lexpr_append_lexeme_MINUS(t_lexpr_lexeme *lex)
 long lexpr_append_lexeme_UMINUS(t_lexpr_lexeme *lex)
 {
     lex->l_type = L_TOKEN;
-    lex->l_precedence = 14;
+    lex->l_precedence = 13;
     lex->l_order = O_R2L;
     lex->l_token.t_type = TT_OP;
     lex->l_token.t_operands = 1;
@@ -1759,7 +1188,7 @@ long lexpr_append_lexeme_PITCH(t_lexpr_lexeme *lex, t_pitch p)
 
 
 
-long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a))
+long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
@@ -1769,37 +1198,40 @@ long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(doubl
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a, double b))
+long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a, double b), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 1;
     lex->l_token.t_contents.c_func.f_ptrs.p_dptr_dd = f;
     lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_unary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *r))
+long lexpr_append_lexeme_FUNC_unary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *r), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 1;
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hh = f;
     lex->l_token.t_contents.c_func.f_type = H_ALL;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_binary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r))
+long lexpr_append_lexeme_FUNC_binary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
     lex->l_token.t_operands = 2;
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = f;
     lex->l_token.t_contents.c_func.f_type = H_ALL;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
-long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r))
+long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r), const char *name)
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
@@ -1807,6 +1239,18 @@ long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(
     lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhh = f;
     lex->l_token.t_contents.c_func.f_type = H_ALL;
     lex->l_token.t_contents.c_func.f_dontfold = 1;
+    lex->l_token.t_contents.c_func.f_name = name;
+    return E_OK;
+}
+
+long lexpr_append_lexeme_FUNC_ternary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *c, t_hatom *r), const char *name)
+{
+    lex->l_type = L_TOKEN;
+    lex->l_token.t_type = TT_FUNC;
+    lex->l_token.t_operands = 3;
+    lex->l_token.t_contents.c_func.f_ptrs.p_vptr_hhhh = f;
+    lex->l_token.t_contents.c_func.f_type = H_ALL;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 

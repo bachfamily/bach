@@ -111,7 +111,7 @@
 		</outlet>
 		<outlet id="2" type="INLET_TYPE">
 			<digest>
-				Pitches
+				Pitches or MIDIcents
 			</digest>
 			<description>
 				The pitches or MIDIcents in separate syntax (see <m>outputpitchesseparate</m>).
@@ -358,7 +358,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -501,9 +502,9 @@
 				   ↪ Add the <m>Shift</m> key to change duration more rapidly. <br />
 				• <m>Alt+←</m>: Decrease duration for selected notes (possible breakpoint positions are rescaled). <br />
 				   ↪ Add the <m>Shift</m> key to change duration more rapidly. <br />
-				• <m>Alt+Ctrl+→</m> (mac) or <m>Alt+Shift+Ctrl+→</m> (win): Increase note duration, preserving the absolute position of each pitch breakpoint. <br />
+				• <m>Alt+Ctrl+→</m> (mac) or <m>Alt+Shift+Ctrl+→</m> (win): Increase note duration, preserving the absolute position of each relative breakpoint. <br />
 				   ↪ Add the <m>Shift</m> key (mac) to change duration more rapidly. <br />
-				• <m>Alt+Ctrl+←</m> (mac) or <m>Alt+Shift+Ctrl+←</m> (win): Decrease note duration, preserving the absolute position of each pitch breakpoint. <br />
+				• <m>Alt+Ctrl+←</m> (mac) or <m>Alt+Shift+Ctrl+←</m> (win): Decrease note duration, preserving the absolute position of each relative breakpoint. <br />
 				   ↪ Add the <m>Shift</m> key (mac) to change duration more rapidly. <br />
 				• <m>↑</m>: Raise pitch of selection by one step. <br />
 				   ↪ Add the <m>Shift</m> key to raise the pitch by one octave. <br />
@@ -858,12 +859,17 @@
 				Add a chord
 			</digest>
 			<description>
-				Syntax: <b>addchord <m>[&lt;int: voice_number&gt;]</m> <m>&lt;llll: chord&gt;</m> </b><br />
+				Syntax: <b>addchord <m>[&lt;int: voice_number&gt;]</m> <m>&lt;llll: chord&gt;</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
-				• <b>addchord (1000 (6000 500 50))</b>   <i>→ add a middle c at 1s, lasting 0.5s and with velocity 50</i><br />
+				• <b>addchord (1000 (6000 500 50))</b>   <i>→ add a middle C at 1s, lasting 0.5s and with velocity 50</i><br />
 				• <b>addchord 2 (1000 (6000 500 50))</b>   <i>→ the same, in second voice</i><br />
+				• <b>addchord 2 (1000 (6000 500 50)) @sel 1</b>   <i>→ the same, also selecting the chord</i><br />
 				• <b>addchord 2 (1000 (6000 500 50) (7200 0.5 50))</b>   <i>→ add a chord with two notes</i><br />
 				• <b>addchord 2 (1000 (6000 500 50 (slots (3 10 20 30))) (7200 0.5 50 (breakpoints (0 0 0) (1 -500 0))))</b>   <i>→ and with extra information</i><br />
+				<br />
+				Message attributes:<br />
+				
+<m>@sel</m> (int, default: 0): Also select the added chord<br />
 				<br />
 				An <m>addchord</m> message will add a new chord to the existing ones.
 				The first optional integer argument is the number of the voice in which the chord should be placed.
@@ -896,7 +902,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -1047,7 +1054,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -1273,7 +1281,7 @@
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
-				<br />				See also:<m>changeslotvalue</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>changeslotitem</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="adjustadditionalstartpad">
@@ -1285,6 +1293,25 @@
 				The <m>adjustadditionalstartpad</m> adjusts automatically the additional
 				padding space at the beginning of the <o>bach.roll</o>, so that all accidentals
 				of the notes near the beginning can be properly displayed. Also see the <m>additionalstartpad</m> attribute.
+			</description>
+		</method>
+		<method name="appendslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Append a slot element at the end of a slot
+			</digest>
+			<description>
+				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
+				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>changeslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="bang">
@@ -1331,7 +1358,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -1362,34 +1390,34 @@
 				<br /> <br />
 			</description>
 		</method>
-		<method name="changeslotvalue">
+		<method name="changeslotitem">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<arg name="element_index" optional="0" type="int" />
 			<arg name="slot_element" optional="0" type="llll" />
 			<digest>
-				Change a specific value inside a slot for selected items
+				Change a specific slot element inside a specific slot of selected items
 			</digest>
 			<description>
-				Syntax: <b>changeslotvalue <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_index&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />
+				Syntax: <b>changeslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_index&gt;</m> <m>&lt;llll: slot_element&gt;</m> </b><br />
 				Examples:<br />
-				• <b>changeslotvalue 3 2 13</b>   <i>→ set the 2nd element of 3nd (int or float) slot to 13</i><br />
-				• <b>changeslotvalue 3 0 13</b>   <i>→ append 13 at the end of slot 3</i><br />
-				• <b>changeslotvalue 1 2 0.5 10 0</b>   <i>→ change the 2nd point of the 1st (function) slot to (0.5 10 0) in (x y slope) form</i><br />
-				• <b>changeslotvalue active 2 0.5 10 0</b>   <i>→ the same, for the currently open slot</i><br />
-				• <b>changeslotvalue spectrenv 2 0.5 10 0</b>   <i>→ the same, for the a slot named 'spectrenv'</i><br />
-				• <b>changeslotvalue 9 1 highpass 400 0 2</b>   <i>→ set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"</i><br />
-				• <b>changeslotvalue 8 0 Max.app 0</b>   <i>→ append the Max.app file in the 8th (filelist) slot, and make it active</i><br />
-				• <b>changeslotvalue 8 0 0 2</b>   <i>→ Make 2nd file active in 8th (filelist) slot</i><br />
+				• <b>changeslotitem 3 2 13</b>   <i>→ set the 2nd element of 3nd (int or float) slot to 13</i><br />
+				• <b>changeslotitem 3 0 13</b>   <i>→ append 13 at the end of slot 3</i><br />
+				• <b>changeslotitem 1 2 0.5 10 0</b>   <i>→ change the 2nd point of the 1st (function) slot to (0.5 10 0) in (x y slope) form</i><br />
+				• <b>changeslotitem active 2 0.5 10 0</b>   <i>→ the same, for the currently open slot</i><br />
+				• <b>changeslotitem spectrenv 2 0.5 10 0</b>   <i>→ the same, for the a slot named 'spectrenv'</i><br />
+				• <b>changeslotitem 9 1 highpass 400 0 2</b>   <i>→ set the 1st element of 9nd (dynfilter) slot to "highpass 400 0 2"</i><br />
+				• <b>changeslotitem 8 0 Max.app 0</b>   <i>→ append the Max.app file in the 8th (filelist) slot, and make it active</i><br />
+				• <b>changeslotitem 8 0 0 2</b>   <i>→ Make 2nd file active in 8th (filelist) slot</i><br />
 				<br />
-				A <m>changeslotvalue</m> message will change a specific value inside a slot (possibly containing more than one element, such as
+				A <m>changeslotitem</m> message will change a specific element inside a slot (possibly containing more than one element, such as
 				a <m>function</m> slot, or an <m>intlist</m> slot...) of any selected note.
-				The syntax is <b>changeslotvalue <m>slot_number</m> <m>element_index</m> <m>SLOT_ELEMENT_CONTENT</m></b>. <br />
+				The syntax is <b>changeslotitem <m>slot_number</m> <m>element_index</m> <m>SLOT_ELEMENT_CONTENT</m></b>. <br />
 				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot.
 				The <m>element_index</m> is the number identifying the position of the element to be changed (e.g., for a <m>function</m> slot: 1 for the first point, 2 for the second, and so on).
 				The symbol "all" can replace the element index, in order to change all elements.
 				The element content is a single element in the lists of the slot content syntax: a single point for a slot <m>function</m>, a single number for an <m>intlist</m> or <m>floatlist</m> slot,
 				and so on. Such element must be unwrapped from its outer level of parentheses (if any). For instance, for a function,
-				a good syntax is <b>changeslotvalue 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
+				a good syntax is <b>changeslotitem 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
 				to the point <b>(0.5 20 0)</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
@@ -1447,7 +1475,7 @@
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
-				<br />				See also:<m>addslot</m>,<m>eraseslot</m><br />
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="checkdynamics">
@@ -1625,7 +1653,7 @@
 				A <m>copyslot</m> message will copy the content of a given slot to another slot for any selected note.
 				The slot number of the source slot and of the target slot are given as arguments.
 				Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>moveslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotvalue</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>moveslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="cut">
@@ -1691,6 +1719,30 @@
 				The name(s) can be introduced as a list, as argument. If more than one marker match such name(s), only the first
 				one (in temporal order) is deleted.
 				<br />				See also:<m>addmarker</m>,<m>clearmarkers</m>,<m>delete</m><br />
+			</description>
+		</method>
+		<method name="deleteslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="element_position_or_wrapped_xcoord" optional="0" type="int/llll" />
+			<digest>
+				Delete the slot element at a given position of a slot
+			</digest>
+			<description>
+				Syntax: <b>deleteslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int/llll: element_position_or_wrapped_xcoord&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>deleteslotitem 3 2</b>   <i>→ delete 2nd item of 3rd slot</i><br />
+				• <b>deleteslotitem 3 (0.7)</b>   <i>→ delete item 3rd slot matching X = 0.7</i><br />
+				• <b>deleteslotitem 3 (0.7) @thresh 0.1</b>   <i>→ the same, with a tolerance of 0.1</i><br />
+				<br />
+				Message attributes:<br />
+				
+<m>@thresh</m> (float, default: 0.): Tolerance threshold for X matching<br />
+				<br />
+				A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+				Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
+				wrapped X coordinate of the element to delete (use the <m>thresh</m> message argument to set a tolerance
+				threshold for the X coordinate matching).
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>insertslotitem</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="deletevoice">
@@ -1765,6 +1817,8 @@
 				• <b>dump roll</b>   <i>→ dump first outlet only (gathered syntax)</i><br />
 				• <b>dump onsets</b>   <i>→ dump onsets only</i><br />
 				• <b>dump velocities</b>   <i>→ dump velocities only</i><br />
+				• <b>dump pitches</b>   <i>→ dump pitch information as diatonic pitches</i><br />
+				• <b>dump cents</b>   <i>→ dump pitch information as MIDIcents</i><br />
 				• <b>dump body</b>   <i>→ dump first outlet only, but without dumping the header</i><br />
 				• <b>dump header</b>   <i>→ the same, but only dumping the header</i><br />
 				• <b>dump keys clefs body</b>   <i>→ dump keys, clefs and body from first outlet</i><br />
@@ -1775,7 +1829,10 @@
 				about gathered and separate syntaxes. <br />
 				The <m>dump</m> message also accepts as argument one of the following symbols, which will only dump a portion of the global information: <br />
 				- <b>onsets</b>: only dump the onsets (in separate syntax) from the second outlet. <br />
-				- <b>cents</b>: only dump the cents (in separate syntax) from the third outlet. <br />
+				- <b>cents</b>: only dump the pitches in MIDIcents form (in separate syntax) from the third outlet
+				(this overrides the <m>outputpitchesseparate</m>, forcing the output to be in Cents), <br />
+				- <b>pitches</b>: only dump the pitches as diatonic pitches (in separate syntax) from the third outlet
+				(this overrides the <m>outputpitchesseparate</m>, forcing the output to be always diatonic pitches), <br />
 				- <b>durations</b>: only dump the durations (in separate syntax) from the fourth outlet. <br />
 				- <b>velocities</b>: only dump the velocities (in separate syntax) from the fifth outlet. <br />
 				- <b>extras</b>: only dump the extras (in separate syntax) from the sixth outlet. <br />
@@ -1890,12 +1947,17 @@
 				- <b>access</b>: sets the slot accessibility, and expects a symbol. Default is "readandwrite" (slot is readable and writable);
 				you can also use "readonly" (slot is only readable, not writable via interface), or "none" (slot window can't even be opened, slot
 				content cannot be accessed).<br />
+				- <b>temporalmode</b>: sets whether the slot contains temporal information, and if so in which form.
+				It expects one of the following symbols: "none" (the information is not temporal), "relative" (the information is temporal, and the X value
+				of each slot item is a relative position inside the note duration, usually between 0 and 1), "milliseconds" (the information is temporal, and the X
+				value of each slot item is defined as a position milliseconds with respect to the note onset). <br />
+				- <b>extend</b>: toggles the ability for temporal slots to extend their content beyond the end of each corresponding note (might be also useful,
+				in combination with the "milliseconds" temporalmode, in order to define continuous parameters, independently from a note duration). <br />
 				– <b>range</b>: followed by two numbers, sets the minimum and maximum values the slot range (vertical axis for function and 3dfunction slots, or number
 				range for number slots) may assume. <br />
 				– <b>key</b>: expects the character or the ASCII value of a key to be mapped as a hotkey for the slot. <br />
 				– <b>slope</b>: expects a parameter (-1 to 1, 0 = linear) to exponentially represent the displayed range values of the slot. <br />
-				– <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). You can also put "temporal"
-				if you want the window to correspond exactly to the note length, which is handy when dealing e.g. with envelopes or spatializations. <br />
+				– <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). <br />
 				– <b>height</b>: a value determining the height of the slot window (scaled according to the object's vertical zoom). You can also put "auto"
 				if you want to leave an automatically calculated height (default). <br />
 				– <b>ysnap</b>: sets, for function or 3dfunction slots, some privileged Y points to which the points will be snapped
@@ -2064,7 +2126,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -2388,7 +2451,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -2648,22 +2712,24 @@
 				An <m>eraseslot</m> message will clear the content of a specific slot for any selected note.
 				The slot number of the slot to clear is given as argument.
 				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>copyslot</m>,<m>moveslot</m>,<m>addslot</m>,<m>changeslotvalue</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>copyslot</m>,<m>moveslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="explodechords">
-			<arglist />
+			<arg name="selection" optional="1" type="symbol" />
 			<digest>
 				Turn all chords into 1-note-chords
 			</digest>
 			<description>
+				Syntax: <b>explodechords <m>[&lt;symbol: selection&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>explodechords</b>   <i>→ Explode chords for whole score</i><br />
 				• <b>explodechords selection</b>   <i>→ Explode selected chords only</i><br />
 				<br />
 				The <m>explodechords</m> message turns any chord having more than 1 note
 				in a sequence of overlapping chords each having just one note. In the end, the number
-				of notes and the number of chords will coincide.
+				of notes and the number of chords will coincide. If a "selection" symbol is given as argument, then
+				the message only operates on selected content
 				<br />				See also:<m>merge</m><br />
 			</description>
 		</method>
@@ -3099,10 +3165,15 @@
 				Glue a chord to the existing ones
 			</digest>
 			<description>
-				Syntax: <b>gluechord <m>[&lt;int: voice_number&gt;]</m> <m>&lt;llll: chord&gt;</m> <m>[&lt;float: threshold_ms&gt;]</m> <m>[&lt;float: threshold_cents&gt;]</m> <m>[&lt;atom: smooth_ms&gt;]</m> </b><br />
+				Syntax: <b>gluechord <m>[&lt;int: voice_number&gt;]</m> <m>&lt;llll: chord&gt;</m> <m>[&lt;float: threshold_ms&gt;]</m> <m>[&lt;float: threshold_cents&gt;]</m> <m>[&lt;atom: smooth_ms&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>gluechord (3000 (6210 1000 100))</b>   <i>→ glue the chord to a contiguous one, if any</i><br />
 				• <b>gluechord (3000 (6210 1000 100)) 10 30</b>   <i>→ ...only if they join seamlessly within 10ms and 30cents</i><br />
+				• <b>gluechord (3000 (6210 1000 100)) 10 30 @sel 1</b>   <i>→ ...and select the added or glued chord</i><br />
+				<br />
+				Message attributes:<br />
+				
+<m>@sel</m> (int, default: 0): Also select the added or glued chord<br />
 				<br />
 				A <m>gluechord</m> message acts exactly like an <m>addchord</m> message, which an important difference:
 				it glues the introduced chord, whenever possible, to existing notes. More precisely: if an already existing note is
@@ -3143,7 +3214,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -3241,19 +3313,135 @@
 			</description>
 		</method>
 		<method name="goto">
-			<arglist />
+			<arg name="command" optional="0" type="symbol" />
+			<arg name="arguments" optional="1" type="llll" />
 			<digest>
 				Move selection
 			</digest>
 			<description>
+				Syntax: <b>goto <m>&lt;symbol: command&gt;</m> <m>[&lt;llll: arguments&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
-				• <b>sel next</b>   <i>→ select next notation item</i><br />
-				• <b>sel prev</b>   <i>→ select previous notation item</i><br />
+				• <b>goto 1000</b>   <i>→ set selection to items which are active at 1sec</i><br />
+				• <b>goto next</b>   <i>→ select next notation item</i><br />
+				• <b>goto prev</b>   <i>→ select previous notation item</i><br />
+				• <b>goto next @repeat 10</b>   <i>→ select the 10th next notation item</i><br />
+				• <b>goto next @type marker</b>   <i>→ select the next marker</i><br />
+				• <b>goto next @until cents &gt; 6000 @type note</b>   <i>→ select next note above middle C</i><br />
+				• <b>goto up</b>   <i>→ move selection up</i><br />
+				• <b>goto right</b>   <i>→ move selection right</i><br />
+				• <b>goto next @voicemode any @polymode overlap</b>   <i>→ navigate through score polyphonically</i><br />
 				<br />
-				The <m>goto</m> message moves the selection to a new item, i.e. clears the selection and select the new item.
-				The first argument is the movement type: <br />
-				<b>prev</b>: select previous notation item, if any; <br />
-				<b>next</b>: select next notation item, if any. <br />
+				Message attributes:<br />
+				
+<m>@inscreen</m> (int, default: 0): If non-zero, shows selected elements inside the domain<br />
+				
+<m>@skiprests</m> (int, default: 0): If non-zero, avoids rest<br />
+				
+<m>@repeat</m> (int, default: 1): Repeat command a certain number of times<br />
+				
+<m>@nullmode</m> (int, default: 1): If non-zero, notifies when no more elements are selected<br />
+				
+<m>@voices</m> (llll, default: null): Sets the voices to be affected by selection (if <b>null</b>: all voices)<br />
+				
+<m>@type</m> (llll, default: smart): Sets the notation item types to be accounted for<br />
+				
+<m>@include</m> (symbol/llll, default: head): Sets which element (head or tail) to include as boundary for "time" command<br />
+				
+<m>@tiemode</m> (symbol, default: all): If "all", select all tied sequences if any of their element is selected; if "each", select tied elements separately<br />
+				
+<m>@voicemode</m> (symbol, default: anyactive): Sets how selection should be handled across voices for "next" and "prev" commands<br />
+				
+<m>@polymode</m> (symbol, default: overlap): Sets how polyphony should be handled across voices for "next" and "prev" commands<br />
+				
+<m>@from</m> (symbol, default: auto): Sets start computation point (either "head" or "tail") for "next" and "prev" commands<br />
+				
+<m>@to</m> (symbol, default: auto): Sets end computation point (either "head" or "tail") for "next" and "prev" commands<br />
+				
+<m>@graceshavedur</m> (int, default: 0): If non-zero, grace elements have playback duration<br />
+				
+<m>@markershavevoices</m> (int, default: 0): If non-zero, measure-attached markers undergo the voice attributes conditions<br />
+				
+<m>@where</m> (llll, default: null): Sets a condition to be matched by selected items (the other ones are discarded)<br />
+				
+<m>@until</m> (llll, default: null): Sets a condition to be matched, otherwise perform the command again, until condition is met<br />
+				<br />
+				The <m>goto</m> message moves the selection to new items, i.e. clears the selection and select the new item. <br />
+				The first argument is the go-to command, which can be one of the following symbols: <br />
+				• "up", "down", "left", "right": move selection up/down/left/right, as you would with the editing
+				keyboard arrows (+ Command or Control) <br />
+				• "next", "prev": move selection to the following or previous elements <br />
+				• "time" or "timepoint": move selection to a given point in time (either in milliseconds or as a timepoint).
+				An argument is expected, either a number (millisecond position) or a timepoint, in llll form (see below for timepoint syntax). <br />
+				<br />
+				In addition, a certain number of behaviors can be changed via the following message attributes:
+				• "repeat": expects an integer, setting the number of times for the command to be repeated. <br />
+				• "nullmode": if non-zero, also notifies when there is no (longer) selection, e.g. at the end of a "next" go-to chain. <br />
+				• "skiprests": if non-zero, avoids the rest while performing the selection. <br />
+				• "inscreen": if non-zero, also puts the selected items inside the displayed portion of the domain. <br />
+				• "voices": sets the voicenumbers for the voices to be accounted for; default is the empty llll, meaning: all voices. <br />
+				• "where": sets a mathematical condition to be applied to sieve the selection each time the command is performed. Variables are the same
+				as in the <m>sel note if</m> case. <br />
+				• "until": sets a mathematical condition that, if not matched, will cause the command to be re-executed, until the condition is met.
+				Variables are the same as in the <m>sel note if</m> case. <br />
+				• "untilmode": a symbol, either "any" or "all", determining whether the <m>until</m> condition should be applied to all selected elements in order
+				to be considered met, or to anyone of them (i.e. at least one). <br />
+				• "type": sets a list of notation item types (as symbols) to be accounted for, among: "note", "rest", "marker", "tempo", "measure", "voice". <br />
+				• "markershavevoices": if non-zero, considers measure-attached markers as belonging to the corresponding voice (and hence accounts for it
+				while using the <m>voicemode</m> and <m>voices</m> message attributes). <br />
+				• "graceshavedur": if non-zero, considers grace notes as having a (minimal) duration, precisely the one attributed to them by the <o>bach.score</o>
+				playback system, and controllable via the related attributes. <br />
+				• "tiemode": one of the following symbols, defining how selection behaves with respect to ties: <br />
+				- "each": each element in a tie sequence is independent, and can be independently selected; <br />
+				- "all" (default): whenever an element in a tie sequence is to be selected, all the other elements are selected too. <br />
+				<br />
+				For the "time" command only: <br />
+				• "include": for the "time" command only: expects one or two symbols among "head" and "tail" in order to determine what extreme should be included
+				when it falls exactly on the timepoint (default: head). <br />
+				For the "next"/"prev" commands only: <br />
+				• "voicemode": a symbol determining how the selection should be performed across different voices. Allowed values are: <br />
+				- "each": go-to command is performed in each voice independently (e.g.: all voices go to next selected chord, independently); <br />
+				- "any": go-to command is performed on the next/previous element, no matter in which voice it is. The sequence will walk through all
+				chords in all voices; <br />
+				- "all": go-to command is performed accounting for selection in all voices, but selection is allowed to always jump, starting from the
+				last reached onset or tail; <br />
+				- "anyactive" (default): like "any", but only applied on the voices having some selected element; <br />
+				- "allactive": like "all", but only applied on the voices having some selected element. <br />
+				• "polymode": a symbol determining how the polyphony should be handled. Allowed values are: <br />
+				- "none": don't account for polyphony, i.e. don't "hold" (keep selected) previously selected chords; <br />
+				- "overlap" (default): keep previously selected chords if they overlap with the new selection. This yields a standard walkthrough of the score; <br />
+				- "overhang": keep previously selected chords if they are "temporally contained" in the new selection (i.e. if the new selection starts before
+				their onset and ends after their tail). <br />
+				• "from", "to": symbols (among "auto", "head" and "tail") determining from and to which point the selection should be computed.
+				For instance going to the "next" chord from a given selection means, by default, looking at the farthermost selected notehead
+				and searching for the first chords
+				whose notehead lies after that, i.e. we search from a head to another head. The opposite is true, by default, when going to "prev" chords:
+				we search from the leftmost tail the nearest previous one. This is the behavior with "from" and "to" attributes set to "auto".
+				One could change these behaviors by setting "from" and "to" explicitly to some other element ("head" or "tail"). <br />
+				<br />
+				A timepoint represents a given instant inside <o>bach.score</o>, as a measure-attached position.
+				It identifies such point according to a measure, a position inside such measure,
+				and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
+				Differently from absolute millisecond positions,
+				timepoints are represented by lllls, in one of the following syntaxes: <br />
+				- <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
+				For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
+				- <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+				- <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number,
+				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
+				For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+				important if voices don't have the same tempi or time signatures.
+				<br />
+				A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
+				point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1.
+				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
+				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+				<br />
+				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
+				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>(3 any 27/4)</b> does the same for voice 3.
+				<br /> <br />
 				<br />				See also:<m>sel</m>,<m>select</m>,<m>unsel</m><br />
 			</description>
 		</method>
@@ -3329,6 +3517,28 @@
 				<br />				See also:<m>inscreen</m><br />
 			</description>
 		</method>
+		<method name="insertslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="element_position" optional="0" type="int" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Insert a slot element at a given position in a slot
+			</digest>
+			<description>
+				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
+				A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
+				The position may be specified explicitly (for slots that do not bear X-axis information) or
+				dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>appendslotitem</m>,<m>prependslotitem</m>,<m>changeslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
+			</description>
+		</method>
 		<method name="insertvoice">
 			<arg name="voice_number" optional="0" type="int" />
 			<arg name="voice_or_ref" optional="1" type="llll" />
@@ -3376,7 +3586,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -3507,7 +3718,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -3613,11 +3825,11 @@
 				Syntax: <b>lambda <m>&lt;llll: modification_message&gt;</m> </b><br />
 				Examples:<br />
 				• <b>lamdba cents $1</b>   <i>→ assign the incoming value as note cents</i><br />
-				• <b>lamdba changeslotvalue $1 $2 $3</b>   <i>→ the same, for some slot value</i><br />
+				• <b>lamdba changeslotitem $1 $2 $3</b>   <i>→ the same, for some slot value</i><br />
 				<br />
 				The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 				<m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,
-				<m>addslot</m>, <m>changeslotvalue</m>, <m>eraseslot</m>, <m>name</m>.
+				<m>addslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
 				If such router is prepended, the corresponding operation will apply on the currently output selected item.
 				The idea is that when a selection dump is asked or a command is sent (also see <m>dumpselection</m> or <m>sendcommand</m>), the notation
 				elements are output one by one from the playout (notewise or chordwise depending on the <m>playmode</m>): if you put a feedback loop from the playout
@@ -3626,7 +3838,7 @@
 				chords one by one, depending on their parameters, even by performing a collective selection dump.
 				Such feedback cycle must not have any <o>delay</o> nor <o>pipe</o> nor <o>defer</o> nor <o>deferlow</o>, nor anything which may change the thread
 				or defer the modification operation. See #lambda+operation in the help center to have some examples of usage.
-				<br />				See also:<m>cents</m>,<m>velocity</m>,<m>duration</m>,<m>onset</m>,<m>changeslotvalue</m>,<m>addslot</m>,<m>eraseslot</m>,<m>name</m>,<m>voice</m><br />
+				<br />				See also:<m>cents</m>,<m>velocity</m>,<m>duration</m>,<m>onset</m>,<m>changeslotitem</m>,<m>addslot</m>,<m>eraseslot</m>,<m>name</m>,<m>voice</m><br />
 			</description>
 		</method>
 		<method name="legato">
@@ -3765,12 +3977,17 @@
 				- <b>access</b>: sets the slot accessibility, and expects a symbol. Default is "readandwrite" (slot is readable and writable);
 				you can also use "readonly" (slot is only readable, not writable via interface), or "none" (slot window can't even be opened, slot
 				content cannot be accessed).<br />
+				- <b>temporalmode</b>: sets whether the slot contains temporal information, and if so in which form.
+				It expects one of the following symbols: "none" (the information is not temporal), "relative" (the information is temporal, and the X value
+				of each slot item is a relative position inside the note duration, usually between 0 and 1), "milliseconds" (the information is temporal, and the X
+				value of each slot item is defined as a position milliseconds with respect to the note onset). <br />
+				- <b>extend</b>: toggles the ability for temporal slots to extend their content beyond the end of each corresponding note (might be also useful,
+				in combination with the "milliseconds" temporalmode, in order to define continuous parameters, independently from a note duration). <br />
 				– <b>range</b>: followed by two numbers, sets the minimum and maximum values the slot range (vertical axis for function and 3dfunction slots, or number
 				range for number slots) may assume. <br />
 				– <b>key</b>: expects the character or the ASCII value of a key to be mapped as a hotkey for the slot. <br />
 				– <b>slope</b>: expects a parameter (-1 to 1, 0 = linear) to exponentially represent the displayed range values of the slot. <br />
-				– <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). You can also put "temporal"
-				if you want the window to correspond exactly to the note length, which is handy when dealing e.g. with envelopes or spatializations. <br />
+				– <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). <br />
 				– <b>height</b>: a value determining the height of the slot window (scaled according to the object's vertical zoom). You can also put "auto"
 				if you want to leave an automatically calculated height (default). <br />
 				– <b>ysnap</b>: sets, for function or 3dfunction slots, some privileged Y points to which the points will be snapped
@@ -3939,7 +4156,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -4230,7 +4448,7 @@
 				A <m>moveslot</m> message will move the content of a given slot to another slot for any selected note.
 				The slot number of the source slot and of the target slot are given as arguments.
 				Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
-				<br />				See also:<m>copyslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotvalue</m>,<m>resetslotinfo</m><br />
+				<br />				See also:<m>copyslot</m>,<m>eraseslot</m>,<m>addslot</m>,<m>changeslotitem</m>,<m>resetslotinfo</m><br />
 			</description>
 		</method>
 		<method name="mute">
@@ -4502,20 +4720,21 @@
 			</description>
 		</method>
 		<method name="play">
-			<arg name="offline_mode" optional="1" type="symbol" />
+			<arg name="scheduling_mode" optional="1" type="symbol" />
 			<arg name="start_ms" optional="1" type="float" />
 			<arg name="end_ms" optional="1" type="float" />
 			<digest>
 				Play
 			</digest>
 			<description>
-				Syntax: <b>play <m>[&lt;symbol: offline_mode&gt;]</m> <m>[&lt;float: start_ms&gt;]</m> <m>[&lt;float: end_ms&gt;]</m> </b><br />
+				Syntax: <b>play <m>[&lt;symbol: scheduling_mode&gt;]</m> <m>[&lt;float: start_ms&gt;]</m> <m>[&lt;float: end_ms&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>play</b>   <i>→ play from current playhead position</i><br />
 				• <b>play 2000</b>   <i>→ play starting from 2s till the end</i><br />
 				• <b>play 2000 4000</b>   <i>→ play starting from 2s, stop at 4s</i><br />
 				• <b>play offline</b>   <i>→ play in non-realtime mode ("uzi-like")</i><br />
 				• <b>play offline 2000 4000</b>   <i>→ play from 2s to 4s in non-realtime mode</i><br />
+				• <b>play preschedule</b>   <i>→ accurate prescheduled playback (with limitations)</i><br />
 				<br />
 				The <m>play</m> message plays a portion or all the <o>bach.roll</o>.
 				"Playing" means that <o>bach.roll</o> sends from the "playout" outlet, at the timing corresponding to each chord onset,
@@ -4529,6 +4748,14 @@
 				(by default: the beginning of the <o>bach.roll</o>) to the end. <br />
 				If you put as first argument the "offline" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
 				will be still output from the playout, but one after another, "immediately". <br />
+				If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+				Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
+				ensures the best possible timing. Prescheduled playback has some limitations: <br />
+				- no live modification to the roll or score is accounted for during playback; <br />
+				- loops won't work;  <br />
+				- lambda+modifications won't work;  <br />
+				- redraw is only performed at each new event;  <br />
+				- the "pause" message won't work.  <br />
 				If you give a single numeric argument, it will be the starting point in milliseconds
 				of the region to be played: <o>bach.roll</o> will play from that point to the end. If you give two numeric arguments, they will be the starting and
 				ending point in milliseconds of the region to be played.
@@ -4585,7 +4812,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -4683,12 +4911,12 @@
 			</description>
 		</method>
 		<method name="playselection">
-			<arg name="offline_mode" optional="1" type="symbol" />
+			<arg name="scheduling_mode" optional="1" type="symbol" />
 			<digest>
 				Only play selected items
 			</digest>
 			<description>
-				Syntax: <b>playselection <m>[&lt;symbol: offline_mode&gt;]</m> </b><br />
+				Syntax: <b>playselection <m>[&lt;symbol: scheduling_mode&gt;]</m> </b><br />
 				Examples:<br />
 				• <b>playselection</b>   <i>→ play selected items only</i><br />
 				• <b>playselection offline</b>   <i>→ the same, in non-realtime mode ("uzi-like")</i><br />
@@ -4698,7 +4926,69 @@
 				Mute and solo status are also taken into account (see <m>play</m>). <br />
 				If you put as first argument the "offset" symbol, all the playing will be done in non-real-time mode, i.e. with no sequencing involved; playing messages
 				will be still output from the playout, but one after another, "immediately", in the low-priority queue. <br />
+				If you put as first argument the "preschedule" symbol, all the playing events will be prescheduled.
+				Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
+				ensures the best possible timing. Prescheduled playback has some limitations: <br />
+				- no live modification to the roll or score is accounted for during playback; <br />
+				- loops won't work;  <br />
+				- lambda+modifications won't work;  <br />
+				- redraw is only performed at each new event;  <br />
+				- the "pause" message won't work.  <br />
 				<br />				See also:<m>stop</m>,<m>pause</m>,<m>play</m><br />
+			</description>
+		</method>
+		<method name="poc">
+			<arg name="pitch_or_cents" optional="0" type="number/pitch/llll/anything" />
+			<digest>
+				Modify the pitch or cents of selected items
+			</digest>
+			<description>
+				Syntax: <b>poc <m>&lt;number/pitch/llll/anything: pitch_or_cents&gt;</m> </b><br />				<br />
+				The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
+				depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
+				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
+				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
+				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
+				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
+				value of the parameter, while <b>(2. times)</b> multiplies it by two.
+				<br /> <br />
+				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
+				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
+				The standard symbolic variables are available. <br />
+				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
+				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
+				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
+				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
+				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
+				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
+				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
+				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
+				one cannot apply different equations to different notes inside the chord.
+				<br /> <br />
+			</description>
+		</method>
+		<method name="prependslotitem">
+			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
+			<arg name="slot_element" optional="0" type="llll" />
+			<digest>
+				Prepend a slot element at the beginning of a slot
+			</digest>
+			<description>
+				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
+				Message attributes:<br />
+				
+<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				
+<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<br />
+				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
+				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+				<br />				See also:<m>appendslotitem</m>,<m>changeslotitem</m>,<m>insertslotitem</m>,<m>deleteslotitem</m>,<m>addslot</m>,<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="quantize">
@@ -4806,15 +5096,11 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the slotinfo to the default one
+				Reset the custom notehead definition to the default one
 			</digest>
 			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
+				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
+				all the user-defined noteheads.
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -4830,11 +5116,15 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom notehead definition to the default one
+				Reset the slotinfo to the default one
 			</digest>
 			<description>
-				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
-				all the user-defined noteheads.
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="respell">
@@ -5147,7 +5437,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -6233,7 +6524,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
-				<attribute name="default" get="1" set="1" type="float" size="1" value="7" />
+				<attribute name="default" get="1" set="1" type="float" size="1" value="8" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Background Slot Font Size" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
@@ -6713,6 +7004,23 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="highlightdomain" get="1" set="1" type="int" size="1">
+			<digest>
+				Highlight Domain
+			</digest>
+			<description>
+				Toggles the ability to highlight the domain with the <m>selectioncolor</m>. This is useful, for instance, in order to
+				align other Max UI objects on the top of bach notation objects.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Highlight Domain" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="highlightplay" get="1" set="1" type="int" size="1">
@@ -7485,12 +7793,22 @@
 				Outlet Types
 			</digest>
 			<description>
-				The <m>out</m> attribute is a sequence of characters identifying the outlet types (one character for each llll outlet). Characters can be one of the followings: <br />
+				The <m>out</m> attribute is a sequence of characters identifying the outlet types (one character for each llll outlet). Characters can be one of the following: <br />
 				<m>n</m> (default): 'native' output: faster and more precise between bach objects, but unreadable by standard Max objects (an "bach.llll" message appears instead). <br />
-				<m>t</m>: 'text' output: slower and limited in size, but readable by standard Max objects. A plain llll in text format is a generic Max message. <br />
+				<m>t</m>: 'text' output: slower and limited in size, but readable by standard Max objects. A plain llll in text format is a generic Max message.
+				To keep the representation invertible (i.e., to allow a bach object receiving a text-format llll to interpret it exactly as if it was native format,
+				except for the size limitation), some specific kinds of symbols are preceded by a backtick: namely, symbols containing parens, or containing textual
+				representations of numbers or pitches, or beginning with a backtick, plus the symbols "null" and "nil" (distinct from the reserved words
+				"null" and "nil" representing the empty list and the empty sublist) are preceded by a backtick. Moreover, the symbols "int", "float" or "list"
+				are preceded by a backtick only if they are the first element of an llll, to distinguish them from the corresponding reserved messages of Max. <br />
+				<m>m</m>: 'max' output: mostly equivalent to the "t" specifier, but no symbol is backticket except "int", "float" and "list" at the beginning of an llll.
+				It is important to notice that, differently from text-format lllls proper, Max-format lllls might not be invertible even if they do not reach the size
+				limit for Max message. This means that a bach object receiving a Max-format llll output from another bach object might interpret it differently
+				from the original, or in some cases might even reject it. <br />
 				<m>x</m>: disabled output (nothing is output) <br />
 				<m>p</m>: 'portal' output: only used by bach.portal to intercept the @out attribute specified while creating the abstraction (see bach.portal). <br />
-				The native output is recommended, unless communication with standard Max messages is needed. Disabling unused outputs can be useful if extreme optimization of the patch is needed.
+				The native output is recommended, unless communication with standard Max messages is needed.
+				Disabling unused outputs can be useful if extreme optimization of the patch is needed.
 				<br /> <br />
 			</description>
 			<attributelist>
@@ -7708,7 +8026,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -7947,7 +8266,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
@@ -8915,6 +9235,22 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="smartmarkernames" get="1" set="1" type="int" size="1">
+			<digest>
+				Smart Marker Names Placement
+			</digest>
+			<description>
+				Toggles the ability to display the marker names on multiple lines to avoid collisions.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Smart Marker Names Placement" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="snaplinearedit" get="1" set="1" type="int" size="1">
 			<digest>
 				Snap Linear Editing To Grid
@@ -8938,7 +9274,8 @@
 			</digest>
 			<description>
 				Toggles the ability to automatically snap the markers to the displayed grid
-				(if any). By default this is off.
+				(if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+				before releasing the mouse button in order to prevent snapping.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
@@ -8955,7 +9292,8 @@
 			</digest>
 			<description>
 				Toggles the ability to automatically snap the onset of the edited chords and notes to the displayed grid
-				(if any). By default this is off.
+				(if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+				before releasing the mouse button in order to prevent snapping.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
@@ -8991,7 +9329,8 @@
 			</digest>
 			<description>
 				Toggles the ability to automatically snap the tails of the edited chords and notes to the displayed grid
-				(if any). By default this is off.
+				(if any). By default this is off. When it is on, one can press the <m>Ctrl</m> key (mac) or <m>Shift+Ctrl</m> key (win)
+				before releasing the mouse button in order to prevent snapping.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Edit" />
@@ -9386,7 +9725,7 @@
 		</entry>
 		<entry name ="Outlet 3 (llll)">
 			<description>
-				Pitches.
+				Pitches or MIDIcents.
 				The pitches or MIDIcents in separate syntax (see <m>outputpitchesseparate</m>).
 				The separate synax of a given parameter is nothing but an llll containing the value of such parameter for each notation item
 				to which it can be applied. The llll should be properly structured depending on the hierarchical structure. <br />
@@ -9623,7 +9962,8 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />

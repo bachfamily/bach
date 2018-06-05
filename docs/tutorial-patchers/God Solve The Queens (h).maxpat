@@ -893,7 +893,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 50.0, 313.0, 155.0, 22.0 ],
 									"style" : "",
-									"text" : "bach.append @inwrap 1"
+									"text" : "bach.join @inwrap 1"
 								}
 
 							}
@@ -2068,7 +2068,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.mcapprox.maxpat",
+				"name" : "bach.approx.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"type" : "JSON",
 				"implicit" : 1
@@ -2110,7 +2110,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.append.mxo",
+				"name" : "bach.join.mxo",
 				"type" : "iLaX"
 			}
 , 			{

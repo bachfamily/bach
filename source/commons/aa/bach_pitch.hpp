@@ -60,12 +60,19 @@ public:
     static const t_atom_short degree2PC[];
     static const t_atom_short PC2degree[];
     static const char degree2name[];
+    
     static const t_shortRational dblsharp;
     static const t_shortRational sharp;
     static const t_shortRational qrtrsharp;
+    static const t_shortRational eighthsharp;
+    
     static const t_shortRational natural;
-    static const t_shortRational qrtrflat;
     static const t_shortRational flat;
+    static const t_shortRational qrtrflat;
+    static const t_shortRational eighthflat;
+    
+    static const t_shortRational illegal;
+    
     static t_pitchMatrices &pm;
 
 private:
@@ -73,11 +80,11 @@ private:
 protected:
     
 public:
-    typedef struct _stepsAndTones {
+    typedef struct _stepsAndMC {
         t_atom_long steps;
         t_shortRational mc;
     } t_stepsAndMC;
-    
+
     t_atom_short p_degree; // 0-6, corresponding to the white keys from c to b
     t_atom_short p_octave; // middle C (MIDI note 60) starts octave 5
     t_shortRational p_alter; // in steps: # is +1/2
@@ -140,6 +147,8 @@ public:
 
     t_atom_long toSteps() const { return p_octave * 7 + p_degree; }
 
+    t_atom_long toStepsFromMiddleC() const { return toSteps() - 7*5; }
+
     t_bool operator==(const t_pitch &b) {
         return p_degree == b.p_degree && p_octave == b.p_octave && p_alter == b.p_alter;
     }
@@ -155,24 +164,30 @@ public:
     t_pitch operator+(const t_pitch &b) const;
     t_pitch operator-(const t_pitch &b) const;
     t_pitch operator*(t_atom_long b) const;
-    t_rational operator/(const t_rational &b) const { return toMC() / b; } ;
+    t_pitch operator*(const t_rational &b) const;
+    t_pitch operator/(const t_atom_long b) const;
+    t_pitch operator/(const t_rational &b) const;
     t_rational operator/(const t_pitch &b) const { return toMC() / b.toMC(); };
+    t_pitch operator%(const t_atom_long b) const;
+    t_pitch operator%(const t_pitch &b) const;
+    
     long divdiv(const t_pitch &b) const {
         t_rational res = *this / b;
         return res.num() / res.den();
     };
-    t_pitch divdiv(const t_rational &b) const;
-    t_pitch divdiv(const t_atom_long b) const;
-    t_pitch operator%(const t_atom_long b) const;
-    t_pitch operator%(const t_pitch &b) const;
     
     friend t_pitch operator*(const t_atom_long a, const t_pitch b) { return b * a; }
-    
+    friend t_pitch operator*(const t_rational &a, const t_pitch &b) { return b * a; }
+
     t_pitch operator+=(const t_pitch &b) { return *this = *this + b; }
     t_pitch operator-=(const t_pitch &b) { return *this = *this - b; }
-    t_pitch operator*=(t_atom_short b) { return *this = *this * b; }
+    t_pitch operator*=(t_atom_long b) { return *this = *this * b; }
+    t_pitch operator*=(t_rational &b) { return *this = *this * b; }
+    t_pitch operator/=(t_atom_long b) { return *this = *this / b; }
+    t_pitch operator/=(t_rational b) { return *this = *this / b; }
     t_pitch operator%=(const t_pitch &b) { return *this = *this % b; }
 
+    
     t_atom_short sgn() const {
         if (toMC() > 0) return 1;
         else if (toMC() == 0) return 0;
@@ -183,12 +198,14 @@ public:
         if (toMC() > 0) return *this;
         else return -*this;
     }
-    
+
+
     template <typename T> t_pitch mod(const T b) const {
         if (toMC() > 0) return *this % b;
         else return -(*this % b);
     }
 
+    // use tone_division == 0 to return pitches at maximum precision
     static t_pitch fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr);
     
     static t_pitch fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences)
@@ -198,10 +215,11 @@ public:
     
     static t_pitch fromMC(double mc)
     {
-        return fromMC(mc, 2, k_ACC_AUTO, NULL, NULL);
+        // return pitch at maximum precision
+        return fromMC(mc, 0, k_ACC_AUTO, NULL, NULL);
     }
     
-    
+
 /*    template <typename T> static t_pitch fromMC(const T mc) {
         t_pitch res;
         if (mc >= 0)
@@ -228,17 +246,88 @@ public:
     }
     
     
+    t_pitch enharm(long delta_steps) const {
+        t_stepsAndMC smc = this->toStepsAndMC();
+        smc.steps += delta_steps;
+        return t_pitch(smc);
+    }
+    
+    t_pitch autoenharm(long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr) const {
+        return fromMC(this->toMC(), tone_division, accidentals_preferences, key_acc_pattern, full_repr);
+    }
+
+    t_pitch autoenharm(long tone_division, e_accidentals_preferences accidentals_preferences) const {
+        return this->autoenharm(tone_division, accidentals_preferences, NULL, NULL);
+    }
+
+    t_pitch autoenharm() const {
+        long tone_division = 2;
+        // inferring minimal tone division from accidental
+        if (this->alter().r_den > tone_division)
+            tone_division = lcm(2, this->alter().r_den);
+        return this->autoenharm(tone_division, k_ACC_AUTO, NULL, NULL);
+    }
+    
+    t_pitch approx(t_atom_long tone_division)
+    {
+        if (tone_division <= 0)
+            return *this;
+        t_shortRational temp = p_alter * tone_division;
+        t_shortRational new_alter_down(temp.r_num / temp.r_den, tone_division);
+        t_shortRational new_alter_up((temp.r_num / temp.r_den) + 1, tone_division);
+        return t_pitch(p_degree, (new_alter_up - p_alter < p_alter - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
+    }
+
+    t_pitch approx(t_shortRational tone_division)
+    {
+        if (tone_division <= 0)
+            return *this;
+        t_shortRational temp = p_alter * tone_division;
+        t_shortRational new_alter_down = (temp.r_num / temp.r_den) / tone_division;
+        t_shortRational new_alter_up = ((temp.r_num / temp.r_den) + 1) / tone_division;
+        return t_pitch(p_degree, (new_alter_up - p_alter < p_alter - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
+    }
+    
+    static t_rational approx(t_rational p, t_rational tone_division)
+    {
+        if (tone_division <= 0)
+            return p;
+        long notches;
+        t_rational resol = 200 / tone_division;
+        if (p > 0)
+            notches = t_atom_long((p / resol) + t_rational(1, 2));
+        else
+            notches = t_atom_long((p / resol) - t_rational(1, 2));
+        return notches * resol;
+    }
+    
+    
+    static double approx(double p, double tone_division)
+    {
+        if (tone_division <= 0)
+            return p;
+        long notches;
+        double resol = 200. / tone_division;
+        if (p > 0)
+            notches = t_atom_long((p / resol) + 0.5);
+        else
+            notches = t_atom_long((p / resol) - 0.5);
+        return notches * resol;
+    }
+    
     t_bool isNaP() const {
         return (p_alter.r_den == 0);
     }
     
-    std::string toString();
-    std::string toString(char include_octave);
+    long toTextBuf(char *buf, long bufSize, t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false);
     
-    const char* toCString() { return toString().c_str(); }
-    const char* toCString(char include_octave) { return toString(include_octave).c_str(); }
-
-    t_symbol* toSym() { return gensym(toString().c_str()); }
+    
+    t_symbol* toSym(t_bool include_octave = true, t_bool always_positive = false)
+    {
+        char buf[MAX_SYM_LENGTH];
+        toTextBuf(buf, MAX_SYM_LENGTH, include_octave, always_positive);
+        return gensym(buf);
+    }
 
 /*
     t_pitch fromSym(t_symbol *s)
@@ -266,11 +355,41 @@ public:
         int go = 1;
         while (go) {
             switch (**pos) {
-                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
-                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
                 case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
-                case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
-                case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                    
+                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                    
+                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
+                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                    
+                default:	go = 0;	break;
+            }
+        }
+        return alter;
+    }
+    
+    // upon return, pos points to the first character after the sequence of accidentals
+    static t_shortRational text2alter_legacy(char **pos)
+    {
+        t_shortRational alter = {0, 1};
+        int go = 1;
+        while (go) {
+            switch (**pos) {
+                case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
+                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                    
+                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                    
+                case '+': case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
+                    
+                case '-': case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                    
+                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
+                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                    
+                case 'n':   (*pos)++;   break;
+                    
                 default:	go = 0;	break;
             }
         }

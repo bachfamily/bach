@@ -1,5 +1,5 @@
 #include "notation.h"
-#include "score_api.h"
+//#include "score_api.h"
 #include "llll_files.h"
 #include "ext_strings.h"
 
@@ -86,39 +86,19 @@ t_max_err bach_openfile_write(t_symbol *filename_sym, const char *default_filena
 	return err;
 }
 
-void llll_write(t_object *x, t_llll *ll, t_llll *msg, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth)
+void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth, long general_flags, long escape_flags, long backslash_flags)
 {
-    if (msg->l_size < 1) {
-        object_error((t_object *) x, "Invalid message");
-        llll_free(msg);
-        llll_free(ll);
-        return;
-    }
-    
-    t_symbol *writemsg = hatom_getsym(&msg->l_head->l_hatom);
-    if (writemsg == _sym_write) {
-        llll_destroyelem(msg->l_head);
-        t_symbol *path = msg->l_size ? hatom_getsym(&msg->l_head->l_hatom) : gensym("");
-        llll_writenative((t_object *) x, path, ll);
-    } else if (writemsg == gensym("writetxt")) {
-        llll_destroyelem(msg->l_head);
-        llll_writetxt((t_object *) x, ll, msg);
-    } else {
-        object_error((t_object *) x, "Invalid message");
-        return;
-    }
-}
-
-void llll_writetxt(t_object *x, t_llll *ll, t_llll *arguments, long default_maxdecimals, long default_wrap, const char *default_indent, long default_maxdepth)
-{
-	t_atom atoms[6];
+	t_atom atoms[9];
 	atom_setobj(atoms, ll);
     atom_setobj(atoms + 1, arguments);
     atom_setlong(atoms + 2, default_maxdecimals);
     atom_setlong(atoms + 3, default_wrap);
     atom_setobj(atoms + 4, (void *) default_indent);
     atom_setlong(atoms + 5, default_maxdepth);
-	defer(x, (method)llll_dowritetxt, NULL, 6, atoms);
+    atom_setlong(atoms + 6, general_flags);
+    atom_setlong(atoms + 7, escape_flags);
+    atom_setlong(atoms + 8, backslash_flags);
+	defer(x, (method)llll_dowritetxt, NULL, 9, atoms);
 }
 
 t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
@@ -131,18 +111,23 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     long wrap = atom_getlong(av + 3);
     char *default_indent = (char *) (av + 4)->a_w.w_obj;
     long maxdepth = atom_getlong(av + 5);
+    long general_flags = atom_getlong(av + 6);
+    long escape_flags = atom_getlong(av + 7);
+    long backslash_flags = atom_getlong(av + 8);
+    long negative_octaves = (general_flags & LLLL_T_NEGATIVE_OCTAVES) != 0;
     char *indent;
 
     t_symbol *filename_sym = NULL;
     t_hatom indent_hatom;
     indent_hatom.h_type = H_NOTHING;
     
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiih",
-                   _sym_filename, &filename_sym,
-                   gensym("maxdecimals"), &maxdecimals,
-                   gensym("wrap"), &wrap,
-                   gensym("maxdepth"), &maxdepth,
-                   gensym("indent"), &indent_hatom);
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiih",
+                                         _sym_filename, &filename_sym,
+                                         gensym("maxdecimals"), &maxdecimals,
+                                         gensym("wrap"), &wrap,
+                                         gensym("maxdepth"), &maxdepth,
+                                         gensym("negativeoctaves"), &negative_octaves,
+                                         gensym("indent"), &indent_hatom);
 
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -150,6 +135,11 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
             llll_destroyelem(arguments->l_head);
     }
     
+    if (negative_octaves)
+        general_flags |= negative_octaves;
+    else
+        general_flags &= ~LLLL_T_NEGATIVE_OCTAVES;
+
     
     if (indent_hatom.h_type == H_NOTHING) {
         indent = default_indent;
@@ -168,8 +158,8 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
         }
     }
     
-	//len = llll_to_text_buf(ll, &buf, 0, 10, LLLL_T_NULL, llll_add_trailing_zero);
-    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, LLLL_T_NULL, llll_add_trailing_zero);
+	//len = llll_to_text_buf(ll, &buf, 0, 10, LLLL_T_BACKTICKS, llll_add_trailing_zero);
+    len = llll_to_text_buf_pretty(ll, &buf, 0, maxdecimals, wrap, indent, maxdepth, general_flags, escape_flags, backslash_flags, llll_add_trailing_zero);
     
     if (llll_write_text_file(filename_sym, &len, buf) == FILE_ERR_CANTOPEN) {
         if (filename_sym)
@@ -246,11 +236,12 @@ t_max_err llll_write_text_file(t_symbol *filename_sym, t_ptr_size *count, const 
 
 //////////////////////////
 
-void llll_read(t_object *x, t_symbol *s, read_fn outfn)
+void llll_read(t_object *x, t_symbol *s, read_fn outfn, long ignore)
 {
-	t_atom av;
-	atom_setobj(&av, (void *) outfn);
-	defer(x, (method)llll_doread, s, 1, &av);
+	t_atom av[2];
+	atom_setobj(av, (void *) outfn);
+    atom_setlong(av + 1, ignore);
+	defer(x, (method)llll_doread, s, 2, av);
 }
 
 void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
@@ -258,6 +249,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 	t_fourcc outtype = 0;
 	t_llll *ll;
 	void (*outfn)(t_object *x, t_llll *outll) = (read_fn) atom_getobj(av);
+    long ignore = atom_getlong(av + 1);
 	t_fourcc filetype[] = {'LLLL', 'TEXT'};
 	t_filehandle fh;
 	short path;
@@ -274,7 +266,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 	} else {
 		if (bach_readfile(x, filename, path, &fh) != MAX_ERR_NONE)
 			return;
-		ll = llll_readfile(x, fh);
+		ll = llll_readfile(x, fh, ignore);
 	}
 
 	// we have a file
@@ -282,7 +274,7 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 }
 
 
-t_llll *llll_readfile(t_object *x, t_filehandle fh)
+t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore)
 {
 	t_ptr_size size;
 	char *buffer;
@@ -299,7 +291,7 @@ t_llll *llll_readfile(t_object *x, t_filehandle fh)
 
 	if (strncmp(buffer, "\nbach", 5)) { // it's text format
 		*(buffer + size) = 0;
-		ll = llll_from_text_buf(buffer, 0);
+		ll = llll_from_text_buf(buffer, size > MAX_SYM_LENGTH, ignore);
 	} else { // it's in old native format
 		ll = llll_from_native_buf(buffer, size);
 	}

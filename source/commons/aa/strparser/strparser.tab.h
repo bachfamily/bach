@@ -34,7 +34,7 @@
 # define YY_STRPARSER_STRPARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 1
+# define YYDEBUG 0
 #endif
 #if YYDEBUG
 extern int strparser_debug;
@@ -45,15 +45,15 @@ extern int strparser_debug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    LONG = 258,
-    DOUBLE = 259,
-    RAT = 260,
-    PITCH = 261,
-    SYMBOL = 262,
-    PUSH = 263,
-    POP = 264,
-    BACHNULL = 265,
-    BACHNIL = 266
+    BACH_LONG = 258,
+    BACH_DOUBLE = 259,
+    BACH_RAT = 260,
+    BACH_PITCH = 261,
+    BACH_SYMBOL = 262,
+    BACH_PUSH = 263,
+    BACH_POP = 264,
+    BACH_NULL = 265,
+    BACH_NIL = 266
   };
 #endif
 

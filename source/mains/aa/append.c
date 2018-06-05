@@ -86,7 +86,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -111,7 +111,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)append_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)append_inletinfo,	"inletinfo",	A_CANT,		0);
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA); // every object with llll outlets must call this function in its main() function
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA); // every object with llll outlets must call this function in its main() function
 	
 	
 	CLASS_ATTR_LONG_VARSIZE(c, "triggers",	0,	t_append, n_triggers, n_ntriggers, LLLL_MAX_INLETS);
@@ -340,6 +340,8 @@ t_append *append_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

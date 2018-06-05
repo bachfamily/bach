@@ -8,12 +8,13 @@
 #define LLLL_BUF_SIZE_STEP 16384		// the dynamic allocation step for text buffers
 #define LLLL_IDX2PTR_SLOTS	1048576		// the number of slots for the llll_phonebook p_idx2ptr hash table (the hashing is just a modulo, so a power of 2 is fine)
 #define BACH_SHASHTABLE_SLOTS 1024
-#define MAX_SYM_LENGTH 2048				// the supposed maximum length for a symbol name
 #define	QUOTE_CHAR ('`')				// the special character for quoting
 #define LLLL_NATIVE_MSG	(_llllobj_sym_bach_llll)
 
+
+
 #define TEXT_LIST_MAX_LENGTH		65536
-#define ATOM_LIST_LENGTH_STEP		4096
+#define ATOM_LIST_LENGTH_STEP		(4096*64)
 #define TEXT_BUF_SIZE_STEP			(4096*64)
 
 #include "llll_append.h"
@@ -37,43 +38,103 @@
 // flags for llll_deparse()
 // NB: for cross-architecture compatibility, 64-bit floats are stored as two longs even under 64-bit architecture
 typedef enum _llll_deparse_flags {
-	LLLL_D_NONE		= 0x00,
-	LLLL_D_QUOTE	= 0x01, // backtick symbols if they can be interpreted as other data types or attributes
-	LLLL_D_FLOAT64	= 0x02	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
+	LLLL_D_NONE         = 0x00,
+	LLLL_D_QUOTE        = 0x01, // backtick symbols if they can be interpreted as other data types
+    LLLL_D_MAX          = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
+	LLLL_D_FLOAT64      = 0x04,	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
+    LLLL_D_NEGOCTAVES   = 0x08,  // pitches with negative octaves can be output
+    LLLL_D_ALL          = 0x0F
 } e_llll_deparse_flags;
 
 
 
 // flags for llll_to_text_buf
 typedef enum _llll_text_flags {
-	LLLL_T_NONE								= 0x00,
-	LLLL_T_NULL								= 0x01,	// null is returned if list is empty
-	LLLL_T_NO_DOUBLE_QUOTES					= 0x02,
-	LLLL_T_NO_BACKSLASH						= 0x04,
-	LLLL_T_FORCE_DOUBLE_QUOTES				= 0x08,
-	LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES	= 0x10,
-    LLLL_T_FORCE_SINGLE_QUOTES				= 0x20,
-    //LLLL_T_BACKSLASH_BEFORE_SINGLE_QUOTES	= 0x40,
-	LLLL_T_ONLY_STANDARD_PARENTHESES		= 0x80
+	LLLL_T_NONE								= 0x0000,
+	LLLL_T_NULL								= 0x0001,	// null is returned if list is empty
+    LLLL_T_NEGATIVE_OCTAVES                 = 0x0002,   // negative octaves are used (i.e., pitches are always positive)
+    LLLL_T_ALL                              = 0x0003,
 } e_llll_text_flags;
 
-#define LLLL_T_COPYSYMBOLS (LLLL_T_NO_DOUBLE_QUOTES | LLLL_T_NO_BACKSLASH)
+
+// options controlling how symbols are globally escaped
+// (with backticks, double quotes or other)
+typedef enum _llll_text_escape_options {
+    LLLL_TE_NONE = 0,
+    
+    // backtick "dangerous" symbols
+    // usually goes with LLLL_TB_SPECIAL_AND_SEPARATORS
+    LLLL_TE_BACKTICK,
+    
+    // double-quote "dangerous" symbols
+    // usually goes with LLLL_TE_DOUBLE_QUOTE
+    LLLL_TE_DOUBLE_QUOTE,
+    
+    // double-quote "dangerous" types when compatible with the message box syntax,
+    // otherwise backtick
+    // works fine with LLLL_TE_SMART
+    LLLL_TE_SMART,
+    
+    // special styles for export
+    LLLL_TE_PWGL_STYLE, // all symbols are surrounded by double quotes, and double quotes, backslashes and whitespace within symbols are escaped with a backslash; use it only in conjunction with LLLL_TB_PWGL_STYLE
+    LLLL_TE_SQL_STYLE, // all symbols are surrounded by single quotes, and single quotes within symbols are escaped by doubling; use it only in conjunction with LLLL_TB_SQL_STYLE
+    
+} e_llll_text_escape_options;
 
 
+// options controlling how single characters are escaped (usually with a backslash)
+typedef enum _llll_text_backslash_options {
+    // no character is escaped
+    LLLL_TB_NONE = 0,
+    
+    // backslash double quotes, backslashes, whitespace, commas, semicolons
+    // usually goes with LLLL_TE_BACKTICK
+    LLLL_TB_SPECIAL_AND_SEPARATORS,
+    
+    // backslash double quotes and backslashes only
+    // usually goes with LLLL_TE_DOUBLE_QUOTE
+    LLLL_TB_SPECIAL,
+    
+    // choose between LLLL_TB_SPECIAL_AND_SEPARATORS and LLLL_TE_DOUBLE_QUOTE
+    // according to the value of #e_llll_text_escape_options
+    // works fine with LLLL_TE_SMART
+    LLLL_TB_SMART,
+
+    // special styles for export
+    // use them only in conjunction with the corresponding value of #e_llll_text_escape_options
+    LLLL_TB_PWGL_STYLE,
+    LLLL_TB_SQL_STYLE
+    
+} e_llll_text_backslash_options;
+
+
+// flags telling llll_parse which bach-specific things should not be parsed,
+// but treated as plain symbols
+typedef enum _llll_parse_ignore_flags {
+    LLLL_I_NONE         = 0x00, // default behavior (everything is parsed)
+    LLLL_I_BIGPARENS    = 0x01, // ( and ) symbols are not treated as llll level markers
+    LLLL_I_BACKTICK     = 0x02, // starting backticks are parsed as a part of the symbol they are prepended to
+    LLLL_I_SCIENTIFIC   = 0x04, // scientific notation for floats is ignored
+    LLLL_I_SMALLPARENS  = 0x08, // parens in longer symbols are ignored
+    LLLL_I_PITCH        = 0x10, // pitches are ignored
+    LLLL_I_RATIONAL     = 0x20, // rationals are ignored
+    LLLL_I_SPECIAL      = 0x40,  // null and nil are ignored
+    LLLL_I_ALL          = 0x7F
+} e_parse_ignore_flags;
 
 
 // outlet types (used in the llllobj_out structure)
 typedef enum _llllobj_outlet_types {
-	LLLL_O_DISABLED		= 0x00,
-	LLLL_O_BANG			= 0x01,
-	LLLL_O_LONG			= 0x02,
-	LLLL_O_FLOAT		= 0x04,
-	LLLL_O_LIST			= 0x08,
-	LLLL_O_ANYTHING		= 0x10,
-	LLLL_O_NATIVE		= 0x20,
-	LLLL_O_TEXT			= 0x40,
-	LLLL_O_SIGNAL		= 0x80,
-	LLLL_O_UNCHANGED	= 0xFF // only used in the out attribute setter
+	LLLL_O_DISABLED		= 0x0000,
+	LLLL_O_BANG         = 0x0001,
+	LLLL_O_LONG         = 0x0002,
+	LLLL_O_FLOAT        = 0x0004,
+	LLLL_O_LIST         = 0x0008,
+	LLLL_O_ANYTHING     = 0x0010,
+	LLLL_O_NATIVE       = 0x0020,
+	LLLL_O_TEXT         = 0x0080,
+    LLLL_O_MAX          = 0x0100,
+	LLLL_O_SIGNAL       = 0x0200 // unused for now
 } e_llllobj_outlet_types;
 
 
@@ -168,10 +229,18 @@ typedef struct _llll_sort_item {
 	t_symbol	*n_t_sym;	// the message selector
 	long		n_t_ac;		// ac
 	t_atom		*n_t_av;	// av
-	t_atom		*n_freeme;	// the atom* to free might not be n_t_av, so we use this instead
+	t_atom		*n_t_freeme;	// the atom* to free might not be n_t_av, so we use this instead
+    
+    
+    // fields if the outlet is max
+    t_symbol	*n_m_sym;	// the message selector
+    long		n_m_ac;		// ac
+    t_atom		*n_m_av;	// av
+    t_atom		*n_m_freeme;	// the atom* to free might not be n_t_av, so we use this instead
+    
 } t_llll_sort_item;
 // NB: in principle, bach.sort might have one of the two comparison outlet being native and the other being text
-// so we can't use an union for the two output format, because we might need them both} t_llll_sort_item;
+// so we can't use an union for the two output format, because we might need them both;
 
 
 
@@ -203,7 +272,15 @@ typedef struct _simpllelem {
 // the bach NOBOX object
 typedef struct _bach {
 	t_object			b_ob;
+    
+// version data, saved inside the bach object in the main() routine
+    unsigned long       b_version;
+    char                b_version_string[128];
+    char                b_version_string_verbose[128];
+    char                b_version_string_verbose_with_build[128];
 	unsigned long		b_llll_version;
+    char                b_llll_version_string[128];
+    unsigned long       b_buildnumber;
 	
 	t_llll				**b_llll_book; // an array of arrays of lllls
 	t_uint32			**b_llll_phonebook;
@@ -229,6 +306,8 @@ typedef struct _bach {
 	
 	t_hashtab			*b_helppatches;
 	t_bool				b_loadtime;
+    
+    t_hashtab           *b_reservedselectors;
 } t_bach;
 
 
@@ -268,17 +347,24 @@ BEGIN_CHECK_LINKAGE
 // set some important global variables
 void bach_setup(t_bach *x);
 
+// obtain versions
+unsigned long bach_get_current_version(void);
+unsigned long bach_get_current_llll_version(void);
+char *bach_get_current_version_string_verbose(void);
+char *bach_get_current_version_string_verbose_with_build(void);
 
 
 
 // create a new llll from an array of atoms containing its textual representation
-//
-// special case:
-// if ac == 1 and av is A_OBJ then atom_getobj(av) is cast to a char* from which the whole string is built
-// but you are advised against using this feature (its details might change in some future)
-// if you need to convert a string into a llll, use llll_from_text_buf instead
-//
-t_llll *llll_parse(long ac, t_atom *av);
+// for ignore, se #e_llll_parse_ignore
+t_llll *llll_parse(long ac, t_atom *av, long ignore = 0);
+
+
+// create a new llll from a c string (txt)
+// if the string is or can be longer than about 2048 chars (there's some tolerance anyway),
+// big must be set to true. This, on the other hand, will make the operation significantly slower.
+// for ignore, se #e_llll_parse_ignore
+t_llll *llll_from_text_buf(const char *txt, t_bool big = false, long ignore = 0); // creates a new llll from a list contained in a string
 
 
 // still uses the old, non-flex parser
@@ -375,24 +461,16 @@ void llll_printobject_free(t_object *printobj, t_symbol *name, long ac, t_atom *
 // if out is NULL, it will be initialized. 
 // otherwise, it will be considered initialized - but it could be relocated by llll_deparse.
 // offset is referred to *out (leaves some atoms at the beginning, useful for preset)
-// flags are LLLL_D_QUOTE and LLLL_D_FLOAT64
-t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flags);
+// flags are LLLL_D_QUOTE, LLLL_D_MAX and LLLL_D_FLOAT64
+t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flags);
 
 
 // same as before, but directly deparses to an atomarray
-t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags);
-
-
-// backticks a t_symbol if necessary, that is:
-// if the received symbol
-
-// (of course the t_symbol is left unaffected, and you get a new one if needed!)
-t_symbol *llll_quoteme(t_symbol *s);
-
+t_atomarray *llll_deparse_to_aa(t_llll *ll, long flags);
 
 
 // returns a t_symbol with the backticked txt
-t_symbol *llll_addquote(const char *txt);
+t_symbol *sym_addquote(const char *txt);
 
 
 
@@ -621,7 +699,7 @@ void llll_mergesort_with_lthings(t_llll *in, t_llll **out, sort_fn cmpfn, void *
 
 // used by bach.sort and bach.msort
 // formats a llll before the sorting algorithm for outputting its elements one by one
-void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, e_llllobj_outlet_types outtypes);
+void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, long outtypes);
 
 
 
@@ -886,7 +964,7 @@ t_llll *llll_primeser(long min, long max, long maxcount);
 
 
 // return an arithmetic series (see bach.arithmser)
-t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount);
+t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount, t_object *culprit = NULL);
 
 // return a geometric series (see bach.arithmser)
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err);
@@ -1004,19 +1082,33 @@ void *llll_stack_pop(t_llll_stack *x);
 // fn must return a char* to be put in the buffer instead of the standard thing,
 // or NULL (in which case the standard format will be used)
 // the return value of fn will then be freed by llll_to_text_buf
-t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset = 0, t_atom_long max_decimals = 6,
-                             long flags = 0, text_buf_fn fn = NULL, t_bool leave_final_space = false);
+t_atom_long llll_to_text_buf(t_llll *ll,
+                             char **buf,
+                             t_atom_long offset,
+                             t_atom_long max_decimals,
+                             long general_flags,
+                             long escape_flags,
+                             long backslash_flags,
+                             text_buf_fn fn);
 
 // as llll_to_text_buf, with some extra formatting:
 // wrap is the maximum length of one line of the output buffer; if wrap == 0, no word wrapping is performed
 // indent is the indentation string per llll level (it will usually be a tab or a sequence of spaces)
 //   if indent set to NULL, sublists are not placed in new lines; to go to newlines without indenting, use ""
 // maxdepth is the maximum depth at which sublists should be placed in new lines
-t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset = 0, t_atom_long max_decimals = 6,
-                                    t_atom_long wrap = 0, const char *indent = NULL, t_atom_long maxdepth = -1,
-                                    long flags = 0, text_buf_fn fn = NULL);
+t_atom_long llll_to_text_buf_pretty(t_llll *ll,
+                                    char **buf,
+                                    t_atom_long offset,
+                                    t_atom_long max_decimals,
+                                    t_atom_long wrap,
+                                    const char *indent,
+                                    t_atom_long maxdepth,
+                                    long general_flags,
+                                    long escape_flags,
+                                    long backslash_flags,
+                                    text_buf_fn fn);
 
-t_atom_long hatom_to_text_buf(t_hatom *a, char **buf, t_atom_long offset = 0, t_atom_long max_decimals = 6, long flags = 0, text_buf_fn fn = NULL);
+t_atom_long hatom_to_text_buf(t_hatom *a, char **buf, t_atom_long offset = 0, t_atom_long max_decimals = 6, text_buf_fn fn = NULL);
 
 // not working
 t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_atom_long offset = 0, t_atom_long max_decimals = 6, long flags = 0, text_buf_fn fn = NULL);
@@ -1025,9 +1117,6 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 // DEPRECATED! use llll_store_in_dictionary() instead
 // convert an llll to a native buffer
 t_atom_long llll_to_native_buf(t_llll *in_llll, char **buf);
-
-// creates a llll from a text buffer
-t_llll *llll_from_text_buf(const char *txtbuf, t_bool leveltypes);
 
 
 // retrieve a list from a native buffer of ac size

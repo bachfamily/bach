@@ -44,6 +44,10 @@
 #include "ext_globalsymbol.h"
 
 #include "bach_rat.hpp"
+#include "pitchparser.h"
+#include "alterparser.h"
+
+//#define parsertests
 
 typedef struct _reg
 {
@@ -86,7 +90,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -115,10 +119,8 @@ int T_EXPORT main()
     class_addmethod(c, (method)reg_dblclick,		"dblclick",		A_CANT, 0);
     class_addmethod(c, (method)reg_edclose,         "edclose",		A_CANT, 0);
     class_addmethod(c, (method)reg_okclose,         "okclose",       A_CANT, 0);
-
     
-    
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	CLASS_ATTR_LONG(c, "embed",	0,	t_reg, n_embed);
 	CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);
@@ -148,7 +150,7 @@ void reg_dblclick(t_reg *x)
     
     char *buf = NULL;
     t_llll *ll = llllobj_get_store_contents((t_object *)x, LLLL_OBJ_VANILLA, 0, 0);
-    llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, 0, NULL);
+    llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
     object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
     object_attr_setsym(x->m_editor, gensym("title"), gensym("llll"));
     llll_release(ll);
@@ -163,9 +165,7 @@ void reg_edclose(t_reg *x, char **ht, long size)
 {
     // do something with the text
     if (ht) {
-        t_atom av;
-        atom_setobj(&av, *ht);
-        t_llll *ll = llll_parse(1, &av);
+        t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         if (ll) {
             llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);
             llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);
@@ -175,102 +175,10 @@ void reg_edclose(t_reg *x, char **ht, long size)
     x->m_editor = NULL;
 }
 
-
-
-
 void reg_bang(t_reg *x)
 {
 	if (proxy_getinlet((t_object *) x) == 0)
 		llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
-/*
-    t_rat<t_int16> r(2,4);
-    post("%ld", r.num());
-    t_urrat<t_int32> u = r;
-    t_rat<t_atom_long> s = t_rat<t_atom_long>(r);
-    t_rat<t_atom_long> t(3,4);
-    s += t;
-    s += t_rat<t_atom_long> (3, 4);
-    post("%ld/%ld", s.num(), s.den());
-    s += t_rat<t_atom_long>(3);
-    ++s;
-    --s;
-    t_rat<t_atom_long> w = s + t_rat<t_atom_long>(r) + t_rat<t_atom_long>(2);
-    double d = w;
-    t_rat<t_atom_long> fd = t_rat<t_atom_long>(0.5);
-    post("%lf", d);
-    t_rat<t_int32> a = t_rat<t_int32>(2,3);
-    t_rat<t_int32> b = t_rat<t_int32>(2,3);
-    t_rat<t_int32> c = a + b;
-    t_rat<t_int32> e = a;
-    e += 2;
-    //e = e.plusEqual(2);
-    int uno = 1;
-    //post("is_integral: %ld", std::is_integral<double>::value);
-    //post("int 2: %ld", foofoo(uno, 1));
-    c = a + t_rat<t_int32>(1);
-    c = a + 3;
-    c = 3 + a;
-    c = 3 - a;
-    c = 3 * a;
-    c = 3 / a;
-    bool boo;
-    boo = a == b;
-    boo = a == 1;
-    boo = a != 1;
-    boo = a < b;
-
-    //c = 3 * a.inv();
- */
-    /*
-    t_rat<t_int32> r1(3, 9);
-    t_rat<t_int32> r2(1, 2);
-    t_rat<t_int32> r3;
-    r3 = r1 + r2;
-    r3 = r1 - r2;
-    r3 = r1 * r2;
-    r3 = r1 / r2;
-    
-    long i1 = 2;
-    r3 = r1 + i1;
-    r3 = r1 - i1;
-    r3 = r1 * i1;
-    r3 = r1 / i1;
-    
-    t_bool b1;
-    b1 = r1 == r2;
-    b1 = r1 != r2;
-    b1 = r1 < r2;
-    b1 = r1 > r2;
-    b1 = r1 <= r2;
-    b1 = r1 >= r2;
-    
-    b1 = r1 == r1;
-    b1 = r1 != r1;
-    b1 = r1 < r1;
-    b1 = r1 > r1;
-    b1 = r1 <= r1;
-    b1 = r1 >= r1;
-   
-    b1 = r1 == i1;
-    b1 = r1 != i1;
-    b1 = r1 < i1;
-    b1 = r1 > i1;
-    b1 = r1 <= i1;
-    b1 = r1 >= i1;
-    
-    t_rat<t_int32> r4(2, 1);
-    b1 = r4 == i1;
-    b1 = r4 != i1;
-    b1 = r4 < i1;
-    b1 = r4 > i1;
-    b1 = r4 <= i1;
-    b1 = r4 >= i1;
-    
-    r3 = i1 + r1;
-    r3 = i1 * r1;
-    r3 = i1 - r1;
-    r3 = i1 / r1;
-*/
 }
 
 void reg_int(t_reg *x, t_atom_long v)
@@ -290,273 +198,6 @@ void reg_float(t_reg *x, double v)
 void reg_anything(t_reg *x, t_symbol *msg, long ac, t_atom *av)
 {
     t_llll *in_llll;
-
-#ifdef testtest
-
-    if (msg == gensym("testtest")) {
-        const char *txt = "12345 678 1/2 1/4 \"foo bar\" foo bar 10 (c#4 d4-2/10t)";
-        atom a;
-        atom_setobj(&a, (void *) txt);
-        in_llll = llll_parse(1, &a);
-        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, in_llll);
-        llll_free(in_llll);
-        
-        
-        t_pitch p1, p2, p3;
-        std::string s3;
-        
-        p1 = t_pitch(3, t_pitch::natural, 1); // f1
-        p2 = t_pitch(1, t_pitch::natural, 0); // d0
-        p3 = p1 + p2;
-        s3 = p3.toString(); // expected: g1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(1, t_pitch::flat, 0); // db0
-        p3 = p1 + p2;
-        s3 = p3.toString(); // expected: g1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(1, t_pitch::natural, 0); // d0
-        p3 = p1 + p2;
-        s3 = p3.toString(); // expected: g#1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(1, t_pitch::sharp, 0); // d#0
-        p3 = p1 + p2;
-        s3 = p3.toString(); // expected: gx1
-        
-        p1 = t_pitch(3, t_pitch::natural, 1); // f1
-        p2 = t_pitch(1, t_pitch::natural, 0); // d0
-        p3 = p1 - p2;
-        s3 = p3.toString(); // expected: eb1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(1, t_pitch::flat, 0); // db0
-        p3 = p1 - p2; //
-        s3 = p3.toString(); // expected: e#1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(1, t_pitch::natural, 0); // d0
-        p3 = p1 - p2;
-        s3 = p3.toString(); // expected: e1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(1, t_pitch::sharp, 0); // d#0
-        p3 = p1 - p2;
-        s3 = p3.toString(); // expected: eb1
-        
-        
-        
-        
-        p1 = t_pitch(3, t_pitch::natural, 1); // f1
-        p2 = t_pitch(5, t_pitch::natural, 0); // a0
-        p3 = p1 + p2;
-        s3 = p3.toString(); // expected: d2
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(5, t_pitch::flat, 0); // ab0
-        p3 = p1 + p2;
-        s3 = p3.toString(); // expected: d2
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(5, t_pitch::natural, 0); // a0
-        p3 = p1 + p2;
-        s3 = p3.toString(); // expected: d#2
-        
-        p1 = t_pitch(3, t_pitch::sharp, 1); // f#1
-        p2 = t_pitch(5, t_pitch::sharp, 0); // a#0
-        p3 = p1 + p2;
-        s3 = p3.toString(); // expected: dx2
-        
-        p1 = t_pitch(3, t_pitch::natural, 2); // f2
-        p2 = t_pitch(6, t_pitch::natural, 0); // b0
-        p3 = p1 - p2;
-        s3 = p3.toString(); // expected: gb1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 2); // f#2
-        p2 = t_pitch(6, t_pitch::flat, 0); // bb0
-        p3 = p1 - p2; //
-        s3 = p3.toString(); // expected: g#1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 2); // f#2
-        p2 = t_pitch(6, t_pitch::natural, 0); // b0
-        p3 = p1 - p2;
-        s3 = p3.toString(); // expected: g1
-        
-        p1 = t_pitch(3, t_pitch::sharp, 2); // f#1
-        p2 = t_pitch(6, t_pitch::sharp, 0); // b#0
-        p3 = p1 - p2;
-        s3 = p3.toString(); // expected: gb1
-        
-        
-        p1 = t_pitch(3, t_pitch::natural, 0); // f0
-        p3 = p1 * 1;
-        s3 = p3.toString(); // expected: f0
-
-        p1 = t_pitch(3, t_pitch::natural, 0); // f0
-        p3 = p1 * 2;
-        s3 = p3.toString(); // expected: bb0
-        
-        p1 = t_pitch(3, t_pitch::natural, 0); // f0
-        p3 = p1 * 3;
-        s3 = p3.toString(); // expected: eb1
-        
-        
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = p1 * 1;
-        s3 = p3.toString(); // expected: eb1
-        
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = p1 * 2;
-        s3 = p3.toString(); // expected: gb2
-        
-        p1 = t_pitch(2, t_pitch::flat, 0); // eb0
-        p3 = p1 * 3;
-        s3 = p3.toString(); // expected: bbb0
-        
-        p1 = t_pitch(2, t_pitch::flat, 0); // eb0
-        p3 = p1 * 4;
-        s3 = p3.toString(); // expected: dbb1
-        
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = p1 * 3;
-        s3 = p3.toString(); // expected: bbb3
-        
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = p1 * 4;
-        s3 = p3.toString(); // expected: dbb5
-        
-        
-        p1 = t_pitch(1, t_pitch::natural, 0); // d0
-        p3 = -p1;
-        s3 = p3.toString(); // expected: bb-1
-        
-        p1 = t_pitch(2, t_pitch::flat, 0); // eb0
-        p3 = -p1;
-        s3 = p3.toString(); // expected: a-1
- 
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = -p1;
-        s3 = p3.toString(); // expected: a-2
-        
-        p1 = t_pitch(1, t_pitch::natural, -1); // d-1
-        p3 = -p1;
-        s3 = p3.toString(); // expected: bb0
-        
-        p1 = t_pitch(2, t_pitch::flat, -1); // eb-1
-        p3 = -p1;
-        s3 = p3.toString(); // expected: a0
-        
-        p1 = t_pitch(2, t_pitch::flat, -2); // eb-2
-        p3 = -p1;
-        s3 = p3.toString(); // expected: a1
-        
-        p1 = t_pitch(2, t_pitch::flat, 0); // eb0
-        p3 = p1 * -1;
-        s3 = p3.toString(); // expected: a-1
-        
-        p1 = t_pitch(2, t_pitch::flat, 0); // eb0
-        p3 = p1 * -2;
-        s3 = p3.toString(); // expected: f#-1
-        
-        p1 = t_pitch(2, t_pitch::flat, 0); // eb0
-        p3 = p1 * -3;
-        s3 = p3.toString(); // expected: d#-1
-        
-        p1 = t_pitch(2, t_pitch::flat, 0); // eb0
-        p3 = p1 * -4;
-        s3 = p3.toString(); // expected: b#-2
-        
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = p1 * -1;
-        s3 = p3.toString(); // expected: a-2
-        
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = p1 * -2;
-        s3 = p3.toString(); // expected: f#-3
-        
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = p1 * -3;
-        s3 = p3.toString(); // expected: d#-4
-        
-        p1 = t_pitch(2, t_pitch::flat, 1); // eb1
-        p3 = p1 * -4;
-        s3 = p3.toString(); // expected: b#-6
-        
-        p1 = t_pitch(2, t_pitch::natural, 4); // e4
-        p2 = t_pitch(0, t_pitch::natural, 1); // c1
-        p3 = p1 % p2;
-        s3 = p3.toString(); // expected: e0
-        
-        p1 = t_pitch(1, t_pitch::natural, 0); // c1
-        p2 = t_pitch(3, t_pitch::natural, 0); // f0
-        p3 = p1 % p2;
-        s3 = p3.toString(); // expected: d0
-        
-        p1 = t_pitch(2, t_pitch::natural, -4); // e-4
-        p2 = t_pitch(0, t_pitch::natural, 1); // c1
-        p3 = p1 % p2;
-        s3 = p3.toString(); // expected: e-1
-        
-        p1 = t_pitch(2, t_pitch::natural, 4); // e4
-        p2 = t_pitch(0, t_pitch::natural, -1); // c-1
-        p3 = p1 % p2;
-        s3 = p3.toString(); // expected: e0
-        
-        p1 = t_pitch(1, t_pitch::flat * 3, 4); // dbbb1
-        p2 = t_pitch(0, t_pitch::natural, 1); // c1
-        p3 = p1 % p2;
-        s3 = p3.toString(); // expected: dbbb1
-        
-        p1 = t_pitch(2, t_pitch::natural, 0); // e0
-        p3 = p1 / 2;
-        s3 = p3.toString(); // expected: d0
-        
-        p1 = t_pitch(4, t_pitch::flat, 0); // gb0
-        p3 = p1 / 2;
-        s3 = p3.toString(); // expected: eb0
-        
-        p1 = t_pitch(1, t_pitch::natural, 1); // d1
-        p3 = p1 / 2;
-        s3 = p3.toString(); // expected: g0
-        
-        p1 = t_pitch(2, t_pitch::natural, 2); // e2
-        p3 = p1 / 4;
-        s3 = p3.toString(); // expected: g0
-        
-        p1 = t_pitch(2, t_pitch::natural, 2); // e2
-        p3 = p1 / 2;
-        s3 = p3.toString(); // expected: d1
-        
-        p1 = t_pitch(0, t_pitch::natural, 1); // c1
-        p3 = p1 / 2;
-        s3 = p3.toString(); // expected: f#0?
-        
-        p1 = t_pitch(0, t_pitch::natural, 1); // c1
-        p3 = p1 % 2;
-        s3 = p3.toString(); // expected: dbb0
-        
-        p1 = t_pitch(1, t_pitch::natural, 0); // d0
-        p3 = p1 / -1;
-        s3 = p3.toString(); // expected: bb-1
-        
-        p1 = t_pitch(2, t_pitch::natural, 0); // e0
-        p3 = p1 / -2;
-        s3 = p3.toString(); // expected: bb-1
-        
-        p1 = t_pitch(1, t_pitch::natural, -1); // d-1
-        p3 = p1 / -1;
-        s3 = p3.toString(); // expected: bb0
-        
-        p1 = t_pitch(2, t_pitch::natural, -1); // e-1
-        p3 = p1 / -2;
-        s3 = p3.toString(); // expected: e0
-        
-        post("foo");
-
-        return;
-    }
-#endif // testtest
     
     in_llll = llllobj_parse_retain_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, 0);
 	if (!in_llll)
@@ -616,7 +257,7 @@ t_reg *reg_new(t_symbol *s, short ac, t_atom *av)
 		// @description An optional default llll. 
 		// If an llll has been saved with the patcher through the <m>embed</m> attribute,
 		// it will override the argument llll.
-		long true_ac = attr_args_offset(ac, av);
+		t_atom_long true_ac = attr_args_offset(ac, av);
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "4");
 		if (true_ac) {
@@ -624,7 +265,7 @@ t_reg *reg_new(t_symbol *s, short ac, t_atom *av)
 			if (def_llll)
 				llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, def_llll, 0);
 		}
-
+        
 		x->n_proxy = proxy_new_debug((t_object *) x, 1, &x->n_in);
 
 		d = (t_dictionary *)gensym("#D")->s_thing;
@@ -639,6 +280,7 @@ t_reg *reg_new(t_symbol *s, short ac, t_atom *av)
 		}
 	}
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 	
 	if (x && err == MAX_ERR_NONE)
 		return x;

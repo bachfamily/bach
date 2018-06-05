@@ -20,7 +20,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -53,7 +53,9 @@ t_helphelper *helphelper_new(t_symbol *s, short ac, t_atom *av)
 		if (hashtab_store_safe(bach->b_helppatches, (t_symbol *) x->n_patcher, (t_object *) x))
 			object_warn((t_object *) x, "More than one bach.helphelper being created in patch %p!", x->n_patcher);
 	}
-	
+    
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

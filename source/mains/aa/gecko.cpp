@@ -156,7 +156,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -179,7 +179,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)gecko_inletinfo,	"inletinfo",	A_CANT,		0);
 	class_addmethod(c, (method)gecko_appendtodictionary,	"appendtodictionary", A_CANT, 0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	CLASS_ATTR_LONG(c, "embed",	0,	t_gecko, n_embed);
 	CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);

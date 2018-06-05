@@ -191,7 +191,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append @inwrap 1",
+									"text" : "bach.join @inwrap 1",
 									"patching_rect" : [ 36.0, 118.0, 141.0, 20.0 ],
 									"id" : "obj-1",
 									"fontname" : "Arial",
@@ -449,7 +449,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append @inwrap 1",
+									"text" : "bach.join @inwrap 1",
 									"patching_rect" : [ 36.0, 118.0, 141.0, 20.0 ],
 									"id" : "obj-1",
 									"fontname" : "Arial",
@@ -653,7 +653,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append @inwrap 1",
+									"text" : "bach.join @inwrap 1",
 									"patching_rect" : [ 36.0, 118.0, 141.0, 20.0 ],
 									"id" : "obj-1",
 									"fontname" : "Arial",
@@ -871,7 +871,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append @inwrap 1",
+									"text" : "bach.join @inwrap 1",
 									"patching_rect" : [ 36.0, 118.0, 141.0, 20.0 ],
 									"id" : "obj-1",
 									"fontname" : "Arial",

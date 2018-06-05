@@ -117,7 +117,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 6 @inwrap 1",
+					"text" : "bach.join 6 @inwrap 1",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"patching_rect" : [ 575.0, 318.0, 182.0, 20.0 ],

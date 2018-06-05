@@ -37,7 +37,7 @@
 	pitch-class, cent, midicent, convert, pitch
 
 	@seealso
-	bach.mc2pc, bach.mcapprox, bach.pcsetinfo, bach.expr
+	bach.mc2pc, bach.approx, bach.pcsetinfo, bach.expr
 	
 	@owner
 	Daniele Ghisi
@@ -71,7 +71,7 @@
 
 void main_foo() {
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 }
 

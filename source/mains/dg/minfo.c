@@ -84,7 +84,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -102,10 +102,12 @@ int T_EXPORT main()
 	class_addmethod(c, (method)minfo_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)minfo_inletinfo,	"inletinfo",	A_CANT,		0);
 
-//	NO NEED TO ADD out ATTRIBUTE!
+
+    // no @out attribute, only versionnumber (hidden)
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_UI);
 
 
-	CLASS_ATTR_CHAR(c, "matchtype", 0, t_minfo, match_type); 
+	CLASS_ATTR_CHAR(c, "matchtype", 0, t_minfo, match_type);
 	CLASS_ATTR_STYLE_LABEL(c,"matchtype",0,"onoff","Match Type for Symmetricity");
 	CLASS_ATTR_BASIC(c,"matchtype",0);
 	// @discussion If this flag is set, the symmetricity check for a matrix will take 
@@ -215,7 +217,8 @@ t_minfo *minfo_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
-	if (x && err == MAX_ERR_NONE)
+	llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    if (x && err == MAX_ERR_NONE)
 		return x;
 	
 	object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL

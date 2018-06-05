@@ -85,38 +85,27 @@ typedef struct _memmap_item {
  Note that, unlike the Max atom types, they actually are bit flags:
  this allows to represent combinations of types within one variable.
  */
-/*
 typedef enum _hatom_types {
-    H_NOTHING   = 0x00,
-    H_NULL      ,
-    H_LONG      ,
-    H_RAT       ,
-    H_DOUBLE    ,
-    H_DIATONIC  ,
-    H_SYM       ,
-    H_STRING    , // unused for now
-    H_LLLL      ,
-    H_OBJ       ,
-    H_POP       ,
-    H_ALL       = 0xFF // only used by lexpr
-} e_hatom_types;
-*/
-/*
- Legacy enum, with the types as a bitfield. Still used by
- */
-typedef enum _hatom_types {
-    H_NOTHING	= 0x00000000,
-    H_NULL		= 0x00000001,	// special type, used by llll_contains() and llll_is()
-    H_LONG		= 0x00000002,
-    H_RAT		= 0x00000004,
-    H_DOUBLE    = 0x00000008,
-    H_SYM		= 0x00000010,
-    H_LLLL		= 0x00000020,
-    H_OBJ		= 0x00000040,
-    H_POP		= 0x00000080,	// special type, used by llll_from_native_buf() and the deprecated llll_save_as_native_buf()
-    H_PITCH     = 0x00000100,
-    H_STRING    = 0x00000200,
-    H_ALL		= 0xFFFFFFFF,	// special type, only used for bitmasking
+    H_NOTHING       = 0x00000000,
+    H_NULL          = 0x00000001,	// special type, used by llll_contains() and llll_is()
+    H_LONG          = 0x00000002,
+    H_RAT           = 0x00000004,
+    H_DOUBLE        = 0x00000008,
+    H_SYM           = 0x00000010,
+    H_LLLL          = 0x00000020,
+    H_OBJ           = 0x00000040,
+    H_POP           = 0x00000080,	// special type, used by llll_from_native_buf() and the deprecated llll_save_as_native_buf()
+    H_PITCH         = 0x00000100,
+    H_STRING        = 0x00000200,
+    
+    H_PAREN         = 0x00010000,   // modifier, indicating that a symbol contains parens
+    H_SEPARATOR     = 0x00020000,   // modifier, indicating that a symbol contains separators (whitespace, comma, semicolon)
+    H_SPECIAL       = 0x00040000,   // modifier, indicating that a symbol contains backslashes and/or double quotes
+    H_BACKTICK      = 0x00100000,   // modifier, indicating that a symbol starts with a backtick
+    
+    H_PLAINTYPE     = 0x0000FFFF,   // bitmask for only retrieving the plain type
+    H_MODIFIERS     = 0xFFFF0000,   // bitmask for only retrieving the modifiers
+    H_ALL           = 0xFFFFFFFF,	// special type, only used by lexpr
 } e_hatom_types;
 
 //#define H_NUMBER (H_LONG | H_RAT | H_DOUBLE)
@@ -258,7 +247,6 @@ typedef struct _llll
 #endif
 	t_int32_atomic		l_count;			// reference count - you should never touch this directly!
 	t_int32				l_flags;			// OBJ_FLAG_OBJ: free the elements it contains - OBJ_FLAG_DATA: don't
-	t_uint8				l_leveltype;		// one of the #e_llll_leveltypes flags, indicating the type of parenthesis surrounding the llll
 #ifdef BACH_SAVE_STACK_WITH_MEMORY_LOGS
 #ifdef BACH_SAVE_STACK_IN_LLLLS
 	t_mframe			l_alloc_stack[16];	// for badass debugging purposes
@@ -297,7 +285,7 @@ t_uint32 hatom_gettype(const t_hatom *h);
 t_atom_long hatom_getlong(const t_hatom *h);
 double hatom_getdouble(const t_hatom *h);
 t_rational hatom_getrational(const t_hatom *h);
-t_pitch hatom_getpitch(const t_hatom *h);
+t_pitch hatom_getpitch(const t_hatom *h, long tonedivision = 0, e_accidentals_preferences pref = k_ACC_AUTO);
 t_symbol *hatom_getsym(const t_hatom *h);
 t_llll *hatom_getllll(const t_hatom *h); // no check is performed, and the reference count of the llll is left untouched
 void *hatom_getobj(const t_hatom *h);

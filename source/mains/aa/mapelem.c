@@ -84,7 +84,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -128,7 +128,7 @@ int T_EXPORT main()
     //	in the lllls received by the lambda inlet. The default is 0.
 
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	
 	class_register(CLASS_BOX, c);
@@ -187,7 +187,7 @@ void mapelem_anything(t_mapelem *x, t_symbol *msg, long ac, t_atom *av)
 			t_llll *cloned = llll_clone(base_ll);
 			llll_release(base_ll);
 			if (!x->n_unwrap)
-				llll_wrap(&cloned, 1ll);
+				llll_wrap(&cloned, 1);
 
 			llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), 1);
 			llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 1, cloned);
@@ -432,6 +432,8 @@ t_mapelem *mapelem_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

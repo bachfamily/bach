@@ -45,7 +45,7 @@ int T_EXPORT main(void)
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -65,7 +65,7 @@ int T_EXPORT main(void)
 	
 //	class_addmethod(c, (method)edit_mousedownonchar,	"mousedownonchar",	A_LONG, 0);
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
 	
 	CLASS_ATTR_RGBA(c, "textcolor", 0, t_edit, j_textcolor);
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "textcolor", 0, "0. 0. 0. 0.");
@@ -137,7 +137,7 @@ void edit_anything(t_edit *x, t_symbol *msg, long ac, t_atom *av)
 	if (!(in_llll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, msg, ac, av, 0)))
 		return;
 	
-	llll_to_text_buf(in_llll, &buff, 0, 10, LLLL_T_NULL, NULL);
+	llll_to_text_buf(in_llll, &buff, 0, 10, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 
 	object_method(jbox_get_textfield((t_object *)x), gensym("settext"), buff);
 
@@ -203,7 +203,7 @@ void edit_bang(t_edit *x)
 
 	object_method(textfield, gensym("gettextptr"), &text, &size);
 	
-	ll = llll_from_text_buf(text, 0);
+	ll = llll_from_text_buf(text);
 	if (ll) {
 		llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, ll);
 		llll_free(ll);
@@ -372,5 +372,8 @@ t_edit *edit_new(t_symbol *name, short argc, t_atom *argv)
 		jbox_set_fontsize((t_object *) x, 12);
 		jbox_ready((t_jbox *) &x->j_box);
 	}
+    
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	return x;
 }

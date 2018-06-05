@@ -538,7 +538,7 @@ void scoreapi_set_zoom(t_score *x, double z)
 {
 	change_zoom((t_notation_obj *) x, (z > 1.) ? z : 1.);
 	redraw_hscrollbar((t_notation_obj *)x, 0);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void scoreapi_set_vzoom(t_score *x, double z)
@@ -552,7 +552,7 @@ void scoreapi_set_vzoom(t_score *x, double z)
 	x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
 	//		post("supposed: %f. this: %f.--> zoom %f", supposedheight, height, x->r_ob.zoom_y);
 	calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void scoreapi_set_noteheads_font(t_score *x, t_symbol *font)
@@ -996,7 +996,7 @@ void recompute_all_except_for_beamings_and_autocompletion(t_score *x)
 	recalculate_all_utf_measure_timesignatures(x);
 	check_all_measures_ties(x);
 	set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	x->r_ob.need_recompute_chords_double_onset = true;
 }
 
@@ -1013,20 +1013,20 @@ void recompute_all(t_score *x)
 	recalculate_all_utf_measure_timesignatures(x);
 	check_all_measures_ties(x);
 	set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	x->r_ob.need_recompute_chords_double_onset = true;
 }
 
 void recompute_all_except_for_beamings_and_autocompletion_and_redraw(t_score *x)
 {
 	recompute_all_except_for_beamings_and_autocompletion(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void recompute_all_and_redraw(t_score *x) 
 {
 	recompute_all(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 /*
@@ -2891,7 +2891,7 @@ t_max_err score_setattr_keys(t_score *x, t_object *attr, long ac, t_atom *av){
 	compute_all_notes_approximations(x, true); 
 	recalculate_all_chord_parameters(x);
 	recalculate_all_beams_positions(x); // by calling this it will also validate the accidentals for all measures.
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	return err;
 }
 
@@ -3102,8 +3102,7 @@ void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll,
 		
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
 			char *buf = NULL;
-			llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, NULL); //buf+50
-			llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, get_strings_for_rhythmic_tree_elements_verbosity1);
+			llll_to_text_buf(measure->rhythmic_tree, &buf, 0, 0, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL); //buf+50
 			verbose_post_rhythmic_tree((t_notation_obj *) x, measure, gensym("score_set"), 1);
 			bach_freeptr(buf);
 		#endif
@@ -3234,11 +3233,8 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
 						t_symbol *pivotsym = hatom_getsym(&pivot->l_hatom);
 						if (pivotsym == _llllobj_sym_slotinfo) {
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the set_slotinfo function
-							if (firstllll && firstllll->l_head) {
-								t_llll *slots_to_erase = set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
-								notationobj_erase_slots_from_llll((t_notation_obj *)x, slots_to_erase);
-								llll_free(slots_to_erase);
-							}
+							if (firstllll && firstllll->l_head)
+								set_slotinfo_from_llll((t_notation_obj *) x, firstllll);
 						} else if (pivotsym == _llllobj_sym_commands) {
 							llll_destroyelem(pivot); // we kill the pivot, in order to give the correct llll to the function
 							if (firstllll && firstllll->l_head)
@@ -3421,7 +3417,7 @@ void set_score_from_llll(t_score *x, t_llll* inputlist, char also_lock_general_m
  	llll_free(wholescore);
 	
 	update_hscrollbar((t_notation_obj *)x, 0);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 
 #ifdef CONFIGURATION_Development
 	verbose_print(x);
@@ -3487,7 +3483,7 @@ void score_snap_pitch_to_grid(t_score *x, t_symbol *s, long argc, t_atom *argv)
 		}
 	}
 	unlock_general_mutex((t_notation_obj *)x);	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 
@@ -3550,7 +3546,7 @@ void clear_score_body(t_score *x, long voicenum)
 #endif
 	update_hscrollbar((t_notation_obj *)x, 0);
 	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 
@@ -3788,7 +3784,7 @@ void merge_chords_and_sum_durations(t_score *x, t_chord *chord1, t_chord *chord2
                 
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
                 char *buf = NULL;
-                llll_to_text_buf(common_relative, &buf, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+                llll_to_text_buf(common_relative, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
                 llll_check(chord1->parent->rhythmic_tree);
                 bach_freeptr(buf);
 #endif
@@ -3801,7 +3797,7 @@ void merge_chords_and_sum_durations(t_score *x, t_chord *chord1, t_chord *chord2
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
                 char *buf2 = NULL;
                 llll_check(chord1->parent->rhythmic_tree);
-                llll_to_text_buf(common_relative, &buf2, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+                llll_to_text_buf(common_relative, &buf2, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
                 bach_freeptr(buf2);
 #endif
                 
@@ -3813,7 +3809,7 @@ void merge_chords_and_sum_durations(t_score *x, t_chord *chord1, t_chord *chord2
                 
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
                 char *buf = NULL;
-                llll_to_text_buf(common_relative, &buf, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+                llll_to_text_buf(common_relative, &buf, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
                 llll_check(chord1->parent->rhythmic_tree);
                 bach_freeptr(buf);
 #endif
@@ -3826,7 +3822,7 @@ void merge_chords_and_sum_durations(t_score *x, t_chord *chord1, t_chord *chord2
 #ifdef BACH_RHYTHMIC_TREE_DEBUG
                 char *buf2 = NULL;
                 llll_check(chord1->parent->rhythmic_tree);
-                llll_to_text_buf(common_relative, &buf2, 0, 2, 0, get_strings_for_rhythmic_tree_elements_verbosity0);
+                llll_to_text_buf(common_relative, &buf2, 0, 2, 0, LLLL_TE_SMART, LLLL_TB_SMART, get_strings_for_rhythmic_tree_elements_verbosity0);
                 bach_freeptr(buf2);
 #endif
                 
@@ -4011,7 +4007,7 @@ void turn_chord_into_rest_or_into_note(t_score *x, t_chord *chord, double mc) {
 		x->r_ob.notation_cursor.measure->need_recompute_beamings = true;
 		set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
 		perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_TIES + k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	}
 }
 
@@ -4081,7 +4077,6 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
 	this_ch->float_steps = 0;
 //    this_ch->min_float_steps = LONG_MIN;
 //    this_ch->max_float_steps = LONG_MAX;
-	this_ch->beaming_group = 0;
 	this_ch->is_score_chord = true;
 	this_ch->system_index = 0;
 	this_ch->direction = 0;
@@ -4116,7 +4111,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
 		curr_nt = curr_nt->next;
 	}
 	
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	
 	return this_ch;
 }
@@ -4157,7 +4152,6 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 
 			this_ch->just_added_from_separate_parameters = false;
 			this_ch->voiceparent = NULL;
-			this_ch->beaming_group = 0;
 			this_ch->float_steps = 0;
 //            this_ch->min_float_steps = LONG_MIN;
 //            this_ch->max_float_steps = LONG_MAX;
@@ -4271,7 +4265,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 							if (atom_gettype(slots + s + 2) == A_SYM) { // it MUST be a A_SYM
 								if (strcmp(atom_getsym(slots + s + 2)->s_name, "function") == 0) { // slot function
 									long num_pts = atom_getlong(slots + s + 3);
-									temp->slot[j].length = 0; // we'll put it at the end (just to avoid that append_slotitem get crazy)
+									temp->slot[j].length = 0; // we'll put it at the end (just to avoid that slotitem_append get crazy)
 									s += 4;
 									for (i = 0; i < num_pts; i++) { // add each point 
 										double x_val, y_val, slope;
@@ -4284,7 +4278,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 										point = (t_pts *)bach_newptr(sizeof(t_pts));
 										point->x = x_val; point->y = y_val; point->slope = slope;
 										thisitem->item = point;
-										append_slotitem(thisitem); // points are ordered! we just have to append them
+										slotitem_append(thisitem); // points are ordered! we just have to append them
 									}
 									temp->slot[j].length = num_pts; // number of points
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "long") == 0) { // slot long
@@ -4294,7 +4288,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 									*val = atom_getlong(slots + s + 3);
 									s += 4;
 									thisitem->item = val;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "float") == 0) { // slot float
 									double *val = (double *)bach_newptr(sizeof(double));
 									t_slotitem *thisitem = build_slotitem((t_notation_obj *)x, &(temp->slot[j]));
@@ -4302,7 +4296,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 									s += 4;
 									thisitem->item = val;
 									temp->slot[j].length = 0;
-									append_slotitem(thisitem);
+									slotitem_append(thisitem);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "longlist") == 0) { // slot longlist
 									long num_numbers = atom_getlong(slots + s + 3); // number of numbers
 									temp->slot[j].length = 0;
@@ -4313,7 +4307,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 										*val = atom_getlong(slots + s);
 										s += 1;
 										thisitem->item = val;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
 									}
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "floatlist") == 0) { // slot floatlist
 									long num_numbers = atom_getlong(slots + s + 3); // number of numbers
@@ -4325,7 +4319,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 										*val = atom_getfloat(slots + s);
 										s += 1;
 										thisitem->item = val;
-										append_slotitem(thisitem);
+										slotitem_append(thisitem);
 									}
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "text") == 0) { // slot text
 									long num_chars = atom_getlong(slots + s + 3); // number of chars
@@ -4334,8 +4328,8 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 									strncpy_zero(text, atom_getsym(slots + 4)->s_name, num_chars + 1);
 									s += 5;
 									bach_copyptr(thisitem->item, text, num_chars * sizeof(char));
-									temp->slot[j].length = 0; // just to avoid that append_slotitem (which incrase automatically the # of items) get crazy
-									append_slotitem(thisitem);
+									temp->slot[j].length = 0; // just to avoid that slotitem_append (which incrase automatically the # of items) get crazy
+									slotitem_append(thisitem);
 									temp->slot[j].length = num_chars;
 									bach_freeptr(text);
 								} else if (strcmp(atom_getsym(slots + s + 2)->s_name, "filelist") == 0) { // slot filelist
@@ -4359,7 +4353,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 										thisitem->item = file;
 										if (i + 1 == act_file_index)
                                             slot_set_active_item(&temp->slot[j], thisitem);
-										append_slotitem(thisitem); // files are ordered! we just have to append them
+										slotitem_append(thisitem); // files are ordered! we just have to append them
 									}
 								} else { // undefined or wrongly defined slot
 									s += 3;
@@ -4774,7 +4768,7 @@ char merge(t_score *x, t_rational threshold_sym, double threshold_cents, char ga
 	
 	if (changed) {
 		check_correct_scheduling((t_notation_obj *)x, false);
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	}
 	
 	return changed;
@@ -5261,6 +5255,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
 
 
 
+#ifdef BACH_SUPPORT_SLURS
 void reset_all_slurs_position(t_score *x)
 {
 	t_scorevoice *voice; t_measure *measure; t_chord *chord; t_note *note; long i;
@@ -5271,7 +5266,7 @@ void reset_all_slurs_position(t_score *x)
 					for (i = 0; i < note->num_slurs_to; i++)
 						note->slur_to[i]->need_recompute_position = true;
 }
-
+#endif
 
 
 long score_oksize(t_score *x, t_rect *newrect)
@@ -5285,10 +5280,11 @@ long score_oksize(t_score *x, t_rect *newrect)
         x->r_ob.inner_width = newrect->width - (2 * x->r_ob.j_inset_x);
 
 		reset_all_articulations_positions((t_notation_obj *)x);
+#ifdef BACH_SUPPORT_SLURS
 		reset_all_slurs_position(x);
-		
+#endif
 		x->r_ob.firsttime = true;
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 		return 1;
 	}
 	return 0;
@@ -5377,7 +5373,7 @@ void scoreapi_initscore_step02(t_score *x)
 	x->can_need_repaint = false;
 	
 	recompute_all(x); // needed here, to have the right domain (after a draw)
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 }
 
 void delete_measure_tempi(t_score *x, t_measure *measure)
@@ -6510,8 +6506,8 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 					
 					// grace chords info
 					for (temp_grace = chords_to_align[i]->prev; temp_grace && temp_grace->is_grace_chord; temp_grace = temp_grace->prev) {
-						double add = (temp_grace == chords_to_align[i]->prev && temp_grace->direction == 1 && chords_to_align[i]->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0; 
-						chord_left_uext_for_grace_chords += temp_grace->left_uextension + temp_grace->right_uextension + add + has_chord_at_least_one_tie(temp_grace) * CONST_SCORE_TIE_ADDITIONAL_USPACING + CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
+						double add = (temp_grace == chords_to_align[i]->prev && temp_grace->direction == 1 && chords_to_align[i]->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0;
+						chord_left_uext_for_grace_chords += temp_grace->left_uextension + MAX(temp_grace->right_uextension + add + has_chord_at_least_one_tie(temp_grace) * CONST_SCORE_TIE_ADDITIONAL_USPACING, CONST_SCORE_MIN_USPACE_BETWEEN_GRACE_CHORDS) + CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
 					}
 					chord_left_uext += chord_left_uext_for_grace_chords;
 					
@@ -7432,7 +7428,7 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 						// grace chords
 						cursor = chord->stem_offset_ux - chord->left_uextension - CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
 						for (temp_grace = chord->prev; temp_grace && temp_grace->is_grace_chord; temp_grace = temp_grace->prev){
-							double add = (temp_grace == chord->prev && temp_grace->direction == 1 && chord->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0; 
+							double add = (temp_grace == chord->prev && temp_grace->direction == 1 && chord->direction == -1) ? CONST_SCORE_ADD_GRACE_USPACE_FOR_STEMS : 0;
 							temp_grace->stem_offset_ux = temp_grace->alignment_ux = cursor - MAX(temp_grace->right_uextension + add + has_chord_at_least_one_tie(temp_grace) * CONST_SCORE_TIE_ADDITIONAL_USPACING, CONST_SCORE_MIN_USPACE_BETWEEN_GRACE_CHORDS);
 							cursor = temp_grace->stem_offset_ux - temp_grace->left_uextension - CONST_SCORE_USPACE_BEFORE_GRACE_CHORD;
 						}
@@ -7542,15 +7538,17 @@ void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt)
 				else
 					chord->duration_ux = this_meas->start_barline_offset_ux + this_meas->width_ux - chord->stem_offset_ux - CONST_SAFETY_USEPARATION_TAIL_NEXT_OBJ * x->r_ob.zoom_x * x->r_ob.zoom_y;
 				
+#ifdef BACH_SUPPORT_SLURS
 				for (nt = chord->firstnote; nt; nt = nt->next) { // and setting flag to recompute slur position
 					for (j = 0; j < nt->num_slurs_to; j++)
 						nt->slur_to[j]->need_recompute_position = true;
 					for (j = 0; j < nt->num_slurs_from; j++)
 						nt->slur_from[j]->need_recompute_position = true;
 				}
+#endif
 			}
 
-	ct = 0;	
+	ct = 0;
 #ifdef CONFIGURATION_Development	
 	// check the number of alignment points
 	t_alignmentpoint *temp1;
@@ -7789,10 +7787,12 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                         acc_shift_for_note = shift;
                         if (n->show_accidental && note->show_accidental) {
                             double n_uy = scaleposition_to_uyposition((t_notation_obj *)x, n_steps, v);
-                            if (!((n_uy - n->accidental_top_uextension < note_uy + note->accidental_bottom_uextension &&
-                                 n_uy + n->accidental_bottom_uextension < note_uy - note->accidental_top_uextension) ||
-                                (n_uy - n->accidental_top_uextension > note_uy + note->accidental_bottom_uextension &&
-                                 n_uy + n->accidental_bottom_uextension > note_uy - note->accidental_top_uextension))) {
+                            double n_top = note_get_accidental_top_uextension((t_notation_obj *)x, n);
+                            double n_bottom = note_get_accidental_top_uextension((t_notation_obj *)x, n);
+                            double note_top = note_get_accidental_top_uextension((t_notation_obj *)x, note);
+                            double note_bottom = note_get_accidental_top_uextension((t_notation_obj *)x, note);
+                            if (!((n_uy - n_top < note_uy + note_bottom && n_uy + n_bottom < note_uy - note_top) ||
+                                (n_uy - n_top > note_uy + note_bottom && n_uy + n_bottom > note_uy - note_top))) {
                                     acc_shift_for_acc = MAX(acc_shift_for_acc, -n->accidental_stem_delta_ux + CONST_UX_ACC_SEPARATION_FROM_NOTE);
                             }
                         }
@@ -8296,14 +8296,14 @@ t_llll* get_all_measuresinfo_values_as_llll(t_score *x)
 	return out_llll;
 }
 
-t_llll* get_all_cents_values_as_llll(t_score *x, char tree)
+t_llll* get_all_cents_values_as_llll(t_score *x, char tree, e_output_pitches pitch_output_mode)
 {
 	t_llll* out_llll = llll_get();
 	t_scorevoice *voice;
 	lock_general_mutex((t_notation_obj *)x);	
 	voice = x->firstvoice;
 	while (voice && (voice->v_ob.number < x->r_ob.num_voices)) {
-		llll_appendllll(out_llll, get_voice_cents_values_as_llll(x, voice, tree), 0, WHITENULL_llll);
+		llll_appendllll(out_llll, get_voice_cents_values_as_llll(x, voice, tree, pitch_output_mode), 0, WHITENULL_llll);
 		voice = voice->next;
 	}
 	unlock_general_mutex((t_notation_obj *)x);	
@@ -8415,7 +8415,7 @@ t_llll* get_voice_measuresinfo_values_as_llll(t_scorevoice *voice)
 	return out_llll;
 }
 
-t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tree)
+t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tree, e_output_pitches pitch_output_mode)
 {
 	t_chord *temp_chord = measure->firstchord;
 	t_llll* meas_llll = llll_get();
@@ -8423,7 +8423,7 @@ t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tr
 		t_note *temp_note = temp_chord->firstnote;
 		t_llll* in_llll = llll_get();
 		while (temp_note) { // append chord lllls
-            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note);
+            note_appendpitch_to_llll_for_separate_syntax((t_notation_obj *)x, in_llll, temp_note, pitch_output_mode);
 			temp_note = temp_note->next;
 		}
 		llll_appendllll(meas_llll, in_llll, 0, WHITENULL_llll);	
@@ -8435,7 +8435,7 @@ t_llll *measure_get_cents_values_as_llll(t_score *x, t_measure *measure, char tr
 	return meas_llll;
 }
 
-t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree)
+t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tree, e_output_pitches pitch_output_mode)
 {
 	// get all the information concerning the cents and put it in a llll
 	
@@ -8447,7 +8447,7 @@ t_llll* get_voice_cents_values_as_llll(t_score *x, t_scorevoice *voice, char tre
 	t_llll* out_llll = llll_get();
 	t_measure *temp_meas = voice->firstmeasure;
 	while (temp_meas) {
-		t_llll* meas_llll = measure_get_cents_values_as_llll(x, temp_meas, tree);
+		t_llll* meas_llll = measure_get_cents_values_as_llll(x, temp_meas, tree, pitch_output_mode);
 		llll_appendllll(out_llll, meas_llll, 0, WHITENULL_llll);	
 		temp_meas = temp_meas->next;
 	}
@@ -8510,7 +8510,7 @@ t_llll* measure_get_durations_values_as_llll(t_score *x, t_measure *measure, cha
 		llll_appendrat(out_llll, (tree == 0 && temp_chord->is_grace_chord) ? long2rat(0) : temp_chord->r_sym_duration, 0, WHITENULL_llll);	
 
 		// adding ties, if needed to output the whole rhythmic tree
-		if (tree == 2 && is_all_chord_tied_to((t_notation_obj *) x, temp_chord, false, NULL))
+		if (tree == 2 && chord_is_all_tied_to((t_notation_obj *) x, temp_chord, false, NULL))
 			llll_appendsym(out_llll, _llllobj_sym_t, 0, WHITENULL_llll);	
 		
 		temp_chord = temp_chord->next;
@@ -9367,7 +9367,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 												   note_y_real - (1.3 * x->r_ob.slot_background_font_size - 0.5) * slot_zoom_y + x->r_ob.background_slot_text_ushift[1] * slot_zoom_y, -1);
 						
 						// draw ledger lines if needed
-						scaleposition = curr_nt->scaleposition;
+						scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
 						
 						additional_notehead_correction = (rat_rat_cmp(curr_ch->figure, RAT_1OVER2) <= 0) ? 0. : 2.;
 
@@ -9476,7 +9476,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         if (curr_nt->r_it.ID > 0) {
                             char text[140];
                             snprintf_zero(text, 140, "%ld", curr_nt->r_it.ID);
-                            write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + stem_adj_x + notehead_uwidth * x->r_ob.zoom_y,
+                            write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
                                        note_y_real, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
                         }
 #endif
@@ -9711,7 +9711,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
                                 t_jrgba annotationcolor = get_annotation_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
-                                paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, curr_nt->notehead_textbox_left_corner.x, s, jf_ann, staff_top);
+                                double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
+                                paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top);
                             }
                         }
                     }
@@ -10290,6 +10291,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 			
 		unlock_general_mutex((t_notation_obj *)x);
 
+#ifdef BACH_SUPPORT_SLURS
 		// painting slurs
 		for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
 			if (voice->v_ob.hidden)
@@ -10304,12 +10306,13 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 								paint_slur((t_notation_obj *) x, g, x->r_ob.j_note_rgba, curr_nt->slur_to[i], false, build_jrgba(0,0,1,1), build_jrgba(1,0,1,1), 2, 0.5, 1);
 						}
 		}
-
+#endif
 		if (x->r_ob.show_markers && x->r_ob.firstmarker) {
 			t_marker *marker;
 
-            lock_markers_mutex((t_notation_obj *)x);;
+            lock_markers_mutex((t_notation_obj *)x);
             markers_check_update_name_uwidth((t_notation_obj *)x);
+            double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0;
 			for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
 				double marker_onset = 0;
 				t_timepoint tp = build_timepoint(0, long2rat(0));
@@ -10337,16 +10340,31 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
 				is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
 				if (marker_ux >= x->r_ob.screen_ux_start - 200 / x->r_ob.zoom_x && marker_ux < x->r_ob.screen_ux_end) {
-					double marker_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_ux);
+					this_marker_x = unscaled_xposition_to_xposition((t_notation_obj *)x, marker_ux);
 					
 					marker->name_painted_direction = (marker_ux + marker->name_uwidth > x->r_ob.screen_ux_end ? -1 : 1);
-					paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : marker_color, 
-								 jf_text_markers, marker, marker_x, 
-								 playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker);
+                    
+                    if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
+                        marker->name_line = marker->prev->name_line + 1;
+                        if (marker->prev->name_line > 0) {
+                            for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
+                                if (tempmk->name_line == 0) {
+                                    if (onset_to_xposition((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                        marker->name_line = 0;
+                                    break;
+                                }
+                        }
+                    } else
+                        marker->name_line = 0;
+                    
+					paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : marker_color,
+								 jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
 					if (marker->attach_to == k_MARKER_ATTACH_TO_MEASURE){
 						double voice_staff_top_y = get_staff_top_y((t_notation_obj *)x, (t_voice *)nth_scorevoice(x, tp.voice_num), false);
-						paint_circle(g, change_alpha(marker_color, 1), marker_color, marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
+						paint_circle(g, change_alpha(marker_color, 1), marker_color, this_marker_x, voice_staff_top_y, 2 * x->r_ob.zoom_y, 1);
 					}
+                    
+                    prev_marker_x = this_marker_x;
 				} else if (marker_ux >= x->r_ob.screen_ux_end)
                     break;
 			}
@@ -10512,17 +10530,36 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 case k_NOTE:
                 {
                     t_note *activenote = (t_note *)x->r_ob.active_slot_notationitem;
-                    if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth < 0) { //temporal slot
-                        x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
-                        if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_singleslotfortiednotes) {
-                            t_note *lasttied = note_get_last_in_tieseq(activenote);
-                            x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, lasttied->parent->parent->tuttipoint_reference->offset_ux + lasttied->parent->stem_offset_ux + lasttied->parent->duration_ux);
-                        } else {
-                            x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux + activenote->parent->duration_ux);
-                        }
+                    
+                    x->r_ob.slot_window_x1 = round_to_semiinteger(chord_get_alignment_x((t_notation_obj *)x, activenote->parent));
+
+                    if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -3. || x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -1. ||
+                        (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && !slot_can_extend_beyond_note_tail((t_notation_obj *)x, x->r_ob.active_slot_num))) { // duration
+                        double ms_end = notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + notation_item_get_duration_ms_for_slots_account_for_ties((t_notation_obj *)x, x->r_ob.active_slot_num, (t_notation_item *)activenote);
+                        double x_end = ms_to_xposition((t_notation_obj *)x, ms_end, 0);
+                        x->r_ob.slot_window_x2 = x_end;
+                        
+                    } else if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { // auto
+                        double ms_start = notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote);
+                        double ms_end = ms_start + notation_item_get_duration_ms_for_slots_account_for_ties((t_notation_obj *)x, x->r_ob.active_slot_num, (t_notation_item *)activenote);
+                        double x_end;
+                        double max_x = slot_get_max_x((t_notation_obj *)x, notation_item_get_slot((t_notation_obj *)x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num), x->r_ob.active_slot_num);
+                        
+                        if (slot_is_temporal_absolute((t_notation_obj *)x, x->r_ob.active_slot_num)) {
+                            x_end = ms_to_xposition((t_notation_obj *)x, ms_start + MAX(ms_end - ms_start, max_x), 0);
+                         } else {
+                             x_end = ms_to_xposition((t_notation_obj *)x, MAX(ms_end, rescale(MAX(max_x, 1.), x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[0], x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[1], 0, notation_item_get_duration_ms_for_slots_account_for_ties((t_notation_obj *)x, x->r_ob.active_slot_num, x->r_ob.active_slot_notationitem))), 0);
+                         }
+                        
+                        x->r_ob.slot_window_x2 = x_end;
+
+                        
                     } else {
-                        x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activenote->parent->parent->tuttipoint_reference->offset_ux + activenote->parent->stem_offset_ux));
-                        x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
+                        if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
+                            x->r_ob.slot_window_x2 = ms_to_xposition((t_notation_obj *)x, notation_item_get_onset_ms((t_notation_obj *)x, (t_notation_item *)activenote) + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth);
+                        } else {
+                            x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
+                        }
                     }
                 }
                     break;
@@ -10533,7 +10570,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux));
                         x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->parent->width_ux);
                     } else {
-                        if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth < 0) { //temporal slot
+                        if (slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { //temporal slot
                             x->r_ob.slot_window_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->stem_offset_ux));
                             x->r_ob.slot_window_x2 = unscaled_xposition_to_xposition((t_notation_obj *)x, activechord->parent->tuttipoint_reference->offset_ux + activechord->stem_offset_ux + activechord->duration_ux);
                         } else {
@@ -10610,6 +10647,11 @@ void scoreapi_paint(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
 	if (USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS) // building surfaces for most common graphic notation elements
 		notationobj_build_notation_item_surfaces((t_notation_obj *)x, view, rect);
 
+    if (x->r_ob.highlight_domain) {
+        double x1 = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start);
+        double x2 = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_end);
+        paint_rectangle(g, change_alpha(x->r_ob.j_selection_rgba, 0.1), change_alpha(x->r_ob.j_selection_rgba, 0.1), x1, 0, x2-x1, rect.height, 0);
+    }
 	
 	// setting alpha to 1 before painting layers! otherwise we have blending issues
 	jgraphics_set_source_rgba(g, 0, 0, 0, 1);
@@ -10665,7 +10707,7 @@ void scoreapi_paint(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
 	
 	if (x->need_repaint) { // in some very special cases (particular tuplets) we need to draw at least 2 times to have the correct result
 		x->can_need_repaint = false;
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *)x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 	} else if (x->r_ob.need_send_rebuild_done_after_paint) {
 #ifdef BACH_MAX
 		// sending rebuild done (will be deferred_low!!!)
@@ -11278,10 +11320,10 @@ void score_delete_voice(t_score *x, t_scorevoice *voice)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 	recompute_all(x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
 
@@ -11370,7 +11412,7 @@ void score_swap_voices(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
-	invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
 
@@ -11497,7 +11539,7 @@ void score_move_and_reinitialize_last_voice(t_score *x, t_scorevoice *after_this
             perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_FROM_SCRATCH);
         }
         
-		invalidate_notation_static_layer_and_repaint((t_notation_obj *) x);
+		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	}
 }
 

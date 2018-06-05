@@ -11,6 +11,9 @@
 
 #include "ext.h"
 
+#define MAX_SYM_LENGTH 32768	// the supposed maximum length for a symbol name
+
+
 ///////////////////////////////////////////////////////////////////////
 // MEMORY API
 //

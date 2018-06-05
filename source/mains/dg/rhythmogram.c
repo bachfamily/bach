@@ -285,7 +285,7 @@ int T_EXPORT main(void){
 	common_symbols_init();
 	llllobj_common_symbols_init();
 
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -325,7 +325,7 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) rhythmogram_assist,			"assist", A_CANT, 0);
 	class_addmethod(c, (method) rhythmogram_bang,			"bang", 0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
 
 
 	CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 240 120"); // new dimensions
@@ -2840,7 +2840,8 @@ void rhythmogram_anything(t_rhythmogram *x, t_symbol *s, long argc, t_atom *argv
 }
 
 
-t_rhythmogram* rhythmogram_new(t_symbol *s, long argc, t_atom *argv){
+t_rhythmogram* rhythmogram_new(t_symbol *s, long argc, t_atom *argv)
+{
 	t_rhythmogram* x = NULL;
 	t_max_err err = MAX_ERR_GENERIC;
 	t_dictionary *d;
@@ -2915,6 +2916,7 @@ t_rhythmogram* rhythmogram_new(t_symbol *s, long argc, t_atom *argv){
 
 	x->recalled_attributes = 1;
 
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 	if (x)
 		return x;
 
@@ -3284,7 +3286,7 @@ void rhythmogram_paint(t_rhythmogram *x, t_object *view){
 		else if (x->mode == k_MODE_RHYTHMOGRAM || x->mode == k_MODE_AUTOCORRELOGRAM)
 			paint_line(g, build_jrgba(0.5, 0.5, 0.5, 1.), 0, x->curr_mouse_pt.y, rect.width, x->curr_mouse_pt.y, 0.5);
 		else if (x->mode == k_MODE_RHYTHMOSCOPE || x->mode == k_MODE_AUTOCORRELATION) {
-			double yy = rescale_with_slope(x->sampling_vals[this_idx_for_rhythmoscope_circle], 0, x->max_displayed_amplitude_rhythmoscope, rect.height, 0, 0, 0);
+			double yy = rescale_with_slope(x->sampling_vals[this_idx_for_rhythmoscope_circle], 0, x->max_displayed_amplitude_rhythmoscope, rect.height, 0, 0);
 			paint_line(g, build_jrgba(0.5, 0.5, 0.5, 1.), x->curr_mouse_pt.x, 0, x->curr_mouse_pt.x, rect.height, 0.5);
 			paint_circle_filled(g, x->j_color, x->curr_mouse_pt.x, yy, 2.3);
 			if (samples_graphical_delta_x >= 3) {
@@ -3339,9 +3341,9 @@ void rhythmogram_mousemove(t_rhythmogram *x, t_object *patcherview, t_pt pt, lon
 		
 	if (x->show_hint){
 		if (x->mode == k_MODE_RHYTHMOGRAM || x->mode == k_MODE_AUTOCORRELOGRAM || x->mode == k_MODE_PARTIAL_TRACKING || x->mode == k_MODE_TS_DETECTOR) {
-			x->curr_hint_bpm = rescale_with_slope(pt.y, 0, x->height, x->max_displayed_bpm, 0, 0, 0);
+			x->curr_hint_bpm = rescale_with_slope(pt.y, 0, x->height, x->max_displayed_bpm, 0, 0);
 		} else if (x->mode == k_MODE_RHYTHMOSCOPE || x->mode == k_MODE_AUTOCORRELATION){
-			x->curr_hint_bpm = rescale_with_slope(pt.x, 0, x->width, x->min_displayed_bpm, x->max_displayed_bpm, 0, 0);
+			x->curr_hint_bpm = rescale_with_slope(pt.x, 0, x->width, x->min_displayed_bpm, x->max_displayed_bpm, 0);
 		}
 		x->curr_hint_hz = x->curr_hint_bpm / 60;
 		

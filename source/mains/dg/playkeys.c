@@ -71,6 +71,7 @@ enum playkeys_properties
     k_PLAYKEYS_TEMPO,
     k_PLAYKEYS_QUARTERTEMPO,
     k_PLAYKEYS_SLOT,
+    k_PLAYKEYS_ALLSLOTS,
     k_PLAYKEYS_CHORDINDEX,
     k_PLAYKEYS_NOTEINDEX,
     k_PLAYKEYS_PLAY,
@@ -332,6 +333,8 @@ long symbol_to_property(t_symbol *s)
         return k_PLAYKEYS_QUARTERTEMPO;
     if (s == _llllobj_sym_slot)
         return k_PLAYKEYS_SLOT;
+    if (s == _llllobj_sym_slots)
+        return k_PLAYKEYS_ALLSLOTS;
     if (s == _llllobj_sym_play)
         return k_PLAYKEYS_PLAY;
     if (s == _llllobj_sym_stop)
@@ -387,6 +390,7 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_TEMPO: return _llllobj_sym_tempo;
         case k_PLAYKEYS_QUARTERTEMPO: return _llllobj_sym_quartertempo;
         case k_PLAYKEYS_SLOT: return _llllobj_sym_slot;
+        case k_PLAYKEYS_ALLSLOTS: return _llllobj_sym_slots;
         case k_PLAYKEYS_PLAY: return _llllobj_sym_play;
         case k_PLAYKEYS_STOP: return _llllobj_sym_stop;
         case k_PLAYKEYS_PAUSE: return _llllobj_sym_pause;
@@ -413,7 +417,7 @@ int T_EXPORT main()
     common_symbols_init();
     llllobj_common_symbols_init();
     
-    if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+    if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
         error("bach: bad installation");
         return 1;
     }
@@ -473,6 +477,8 @@ int T_EXPORT main()
     CLASS_ATTR_ENUMINDEX(c,"nullmode", 0, "Never For Empty Keys For Unmatched Keys");
     CLASS_ATTR_BASIC(c, "nullmode", 0);
     // @description Handles when <b>null</b> is output from a given key outlet.
+    // 0 = Never; 1 = only for keys without any content (default); 2 = also for unmatched keys (e.g. keys that has no meaning for the specific notation item,
+    // such as velocity for markers, etc.).
 
     
     CLASS_ATTR_LONG(c, "defaultbreakpoints",		0,	t_playkeys, n_use_default_breakpoints);
@@ -510,7 +516,7 @@ int T_EXPORT main()
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
 
-    llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
     class_register(CLASS_BOX, c);
     playkeys_class = c;
@@ -1682,9 +1688,9 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                             if (velocity_el)
                                                 velocity = hatom_getlong(&velocity_el->l_hatom);
                                             snprintf(buf, 512, "(0. 0. 0. %ld) (1. 0. 0. %ld)", velocity, velocity);
-                                            llll_appendllll(found, llll_from_text_buf(buf, false));
+                                            llll_appendllll(found, llll_from_text_buf(buf));
                                         } else {
-                                            llll_appendllll(found, llll_from_text_buf("(0. 0. 0.) (1. 0. 0.)", false));
+                                            llll_appendllll(found, llll_from_text_buf("(0. 0. 0.) (1. 0. 0.)"));
                                         }
                                     } else
                                         llll_appendllll(found, llll_get());
@@ -1755,6 +1761,49 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                         
                         
                         
+                        
+                    case k_PLAYKEYS_ALLSLOTS:
+                    {
+                        switch (incoming) {
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD:
+                            case k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_ROLLCHORD_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND:
+                            case k_PLAYKEYS_INCOMING_SCORECHORD_COMMAND:
+                                found = llll_get();
+                                for (t_llllelem *startnoteel = getindex_2levels(in_ll, 4, incoming_is_from_roll(incoming) ? 2 : 5); startnoteel; startnoteel = startnoteel->l_next) {
+                                    if (hatom_gettype(&startnoteel->l_hatom) != H_LLLL)
+                                        break;
+                                    t_llll *notell = hatom_getllll(&startnoteel->l_hatom);
+                                    if (!can_llll_be_a_note(notell))
+                                        break;
+                                    
+                                    if ((target_el = root_find_el_with_sym_router(notell, _llllobj_sym_slots))) {
+                                        if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
+                                            break;
+                                        
+                                        t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
+                                        llll_appendllll(found, llll_behead(llll_clone(slotsll)));
+                                    } else
+                                        llll_appendllll(found, llll_get());
+                                }
+                                break;
+                                
+                                
+                            case k_PLAYKEYS_INCOMING_SCOREREST:
+                            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
+                                // to do
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                        playkeys_handle_flattening_and_nullmode(x, &found, incoming, this_key->property, outlet);
+                    }
+                        break;
                         
                     case k_PLAYKEYS_LYRICS:
                     case k_PLAYKEYS_DYNAMICS:
@@ -1972,7 +2021,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         // if <m>playoutfullpath</m> is active for the notation object), "measurenumber"
         // (only meaningful for notes and chords if <m>playoutfullpath</m> is active for the notation object), "breakpoints",
         // "measureinfo", "name", "tempo", "quartertempo", "slot", "playoffset" (for partial played notes with
-        // <m>playpartialnotes</m> set to 2), "role" (for markers only).
+        // <m>playpartialnotes</m> set to 2), "role" (for markers only), "slots" (all slots)
         // In addition to these,
         // also "play", "stop", "pause", "end" keys are allowed; the "router" key will output the incoming router message;
         // they will report the corresponding actions with a bang.
@@ -2205,6 +2254,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
     } else
         error(BACH_CANT_INSTANTIATE);
     
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
     if (x && err == MAX_ERR_NONE)
         return x;
     

@@ -82,7 +82,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -106,6 +106,8 @@ int T_EXPORT main()
 	
 	class_register(CLASS_BOX, c);
 	encode_class = c;
+
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
 
 	dev_post("bach.encode compiled %s %s", __DATE__, __TIME__);
 	
@@ -148,7 +150,7 @@ void encode_anything(t_encode *x, t_symbol *msg, long ac, t_atom *av)
 	if (!ll)
 		return;
 	chunk_av = (t_atom *) bach_newptr(65536 * sizeof(t_atom));
-	data_ac = llll_deparse(ll, &data_av, 0, LLLL_D_QUOTE | LLLL_D_FLOAT64);
+	data_ac = llll_deparse(ll, &data_av, 0, LLLL_D_QUOTE | LLLL_D_MAX | LLLL_D_FLOAT64);
 	llll_free(ll);	
 	start = end = 0;
 	tot_chunks = 0;
@@ -236,6 +238,8 @@ t_encode *encode_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

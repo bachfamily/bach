@@ -30,7 +30,10 @@
 	The relationship with the modulo is: modulo/6 = tonedivision. <br /> <br />
 	@copy BACH_DOC_TONEDIVISION
 	@copy BACH_DOC_SETTHEORY_MODULO
-	
+
+	@status
+	deprecated
+
 	@category
 	bach, bach abstractions, bach notation
 
@@ -67,7 +70,7 @@
 
 void main_foo() {
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 }
 

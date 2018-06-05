@@ -243,7 +243,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 374.0, 123.0, 433.0, 181.0 ],
-					"text" : "Then we need to define formally the constraints, name them and tell on which variables they apply. We just have one constraint, which is: all variables should be pairwise differents. If we call this constraint \"diff\", we thus would like to have apply this constraints to the variables (1 2) (1 3) (1 4) (1 5) (2 3) (2 4)... We easily obtain this list via the combinations of an arithmetic series from 1 to the number of variables. All we have to do is then to prepend the \"diff\" symbol and add a level of parenthesys (all of which we do with [bach.append]).\nNotice that you can add more than one couple to the same constraints, and you do this just by juxtaposing all couples on which a constraint act after the constraint name. Even more: constraints must not necessarily act on couples of elements, but on any subset of the variables. Constraints acting on single elements will be named \"unary\" constraints,  constraint acting on couples will be \"binary\", the ones acting on three elements will be \"ternary\", and so on."
+					"text" : "Then we need to define formally the constraints, name them and tell on which variables they apply. We just have one constraint, which is: all variables should be pairwise differents. If we call this constraint \"diff\", we thus would like to have apply this constraints to the variables (1 2) (1 3) (1 4) (1 5) (2 3) (2 4)... We easily obtain this list via the combinations of an arithmetic series from 1 to the number of variables. All we have to do is then to prepend the \"diff\" symbol and add a level of parenthesys (all of which we do with [bach.join]).\nNotice that you can add more than one couple to the same constraints, and you do this just by juxtaposing all couples on which a constraint act after the constraint name. Even more: constraints must not necessarily act on couples of elements, but on any subset of the variables. Constraints acting on single elements will be named \"unary\" constraints,  constraint acting on couples will be \"binary\", the ones acting on three elements will be \"ternary\", and so on."
 				}
 
 			}
@@ -1185,7 +1185,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.append.mxo",
+				"name" : "bach.join.mxo",
 				"type" : "iLaX"
 			}
 , 			{

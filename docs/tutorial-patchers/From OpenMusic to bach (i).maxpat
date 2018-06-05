@@ -188,7 +188,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 485.0, 308.0, 86.0, 21.0 ],
-					"text" : "bach.append"
+					"text" : "bach.join"
 				}
 
 			}
@@ -1077,7 +1077,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.append.mxo",
+				"name" : "bach.join.mxo",
 				"type" : "iLaX"
 			}
 , 			{

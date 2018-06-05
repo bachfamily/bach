@@ -72,7 +72,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -111,6 +111,8 @@ int T_EXPORT main()
 	bach_class_setname("bach.!=", "bach.neq");
 	dev_post("bach.!= compiled %s %s", __DATE__, __TIME__);
 	
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
+
 	return 0;
 }
 
@@ -217,7 +219,8 @@ t_neq *neq_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
-	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

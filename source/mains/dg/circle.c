@@ -232,7 +232,7 @@ int T_EXPORT main(void){
 	common_symbols_init();
 	llllobj_common_symbols_init();
 
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -351,7 +351,7 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) circle_inletinfo, "inletinfo", A_CANT, 0);
 	class_addmethod(c, (method) circle_assist, "assist", A_CANT, 0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
 
 	CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 120 120"); // new dimensions
 	// @exclude bach.circle
@@ -862,6 +862,7 @@ t_circle* circle_new(t_symbol *s, long argc, t_atom *argv){
 
 	jbox_ready(&x->j_box.l_box);
 
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 	if (x)
 		return x;
 	else 

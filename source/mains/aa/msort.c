@@ -76,7 +76,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -93,7 +93,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)msort_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)msort_inletinfo,		"inletinfo",	A_CANT,		0);
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 	CLASS_ATTR_LONG(c, "order",	0, t_msort, n_order);
 	CLASS_ATTR_FILTER_CLIP(c, "order", 0, 1);
@@ -183,20 +183,26 @@ long msort_func(t_msort *x, t_llllelem *a, t_llllelem *b)
 	}
 	
 	x->n_haslambda = 0;
-	
-	if (x->n_ob.l_out[2].b_type == LLLL_O_TEXT) {
-		outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base + 1);
-		outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
-		outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base);
-		outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_t_sym, a_item->n_t_ac, a_item->n_t_av);
-	
-	} else if (x->n_ob.l_out[2].b_type == LLLL_O_NATIVE) {
-		outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base + 1);
-		outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_n_sym, 1, b_item->n_n_av);
-		outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base);
-		outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_n_sym, 1, a_item->n_n_av);
-	}	
-	
+    
+    switch (x->n_ob.l_out[2].b_type) {
+        case LLLL_O_TEXT:
+            outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base + 1);
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_t_sym, b_item->n_t_ac, b_item->n_t_av);
+            outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base);
+            outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_t_sym, a_item->n_t_ac, a_item->n_t_av);
+            break;
+        case LLLL_O_MAX:
+            outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base + 1);
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_m_sym, b_item->n_m_ac, b_item->n_m_av);
+            outlet_int(x->n_ob.l_out[3].b_outlet, x->n_base);
+            outlet_anything(x->n_ob.l_out[2].b_outlet, a_item->n_m_sym, a_item->n_m_ac, a_item->n_m_av);
+            break;
+        case LLLL_O_NATIVE:
+            outlet_anything(x->n_ob.l_out[2].b_outlet, b_item->n_n_sym, 1, b_item->n_n_av);
+            break;
+        default:
+            break;
+    }
 	
 	if (!x->n_haslambda)
 		return llll_leq(a_item->n_this_by, b_item->n_this_by);
@@ -254,6 +260,8 @@ t_msort *msort_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

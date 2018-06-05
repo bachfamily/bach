@@ -631,7 +631,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.mcapprox 2 @out t",
+									"text" : "bach.approx 2 @out t",
 									"id" : "obj-13",
 									"fontname" : "Arial",
 									"numinlets" : 2,
@@ -711,7 +711,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append 3 @outwrap 1",
+									"text" : "bach.join 3 @outwrap 1",
 									"id" : "obj-32",
 									"fontname" : "Arial",
 									"numinlets" : 3,
@@ -874,7 +874,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append 3 @outwrap 1",
+									"text" : "bach.join 3 @outwrap 1",
 									"id" : "obj-11",
 									"fontname" : "Arial",
 									"numinlets" : 3,
@@ -902,7 +902,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append @triggers 2",
+									"text" : "bach.join @triggers 2",
 									"id" : "obj-53",
 									"fontname" : "Arial",
 									"numinlets" : 2,

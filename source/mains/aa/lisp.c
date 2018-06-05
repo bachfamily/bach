@@ -85,7 +85,7 @@ int T_EXPORT main()
     common_symbols_init();
     llllobj_common_symbols_init();
     
-    if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+    if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
         error("bach: bad installation");
         return 1;
     }
@@ -118,7 +118,7 @@ int T_EXPORT main()
     // and also manages the notify method for managing the l_rebuild field.
     // Always put this in the main() function of an object with llll outlets.
     
-    llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
     
 
     
@@ -179,7 +179,7 @@ void lisp_anything(t_lisp *x, t_symbol *msg, long ac, t_atom *av)
         // the 1 at the end means that a clone of the store contents must be returned
         ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 0);
     }
-    llll_to_text_buf(ll, &buf);
+    ////////////llll_to_text_buf(ll, &buf);
     
     cl_object result = lisp_lisp(buf);
     llll_release(ll);

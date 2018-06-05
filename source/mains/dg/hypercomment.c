@@ -170,6 +170,11 @@ int T_EXPORT main(void)
     class_addmethod(c, (method) hypercomment_mousedoubleclick, "mousedoubleclick", A_CANT, 0);
 	class_addmethod(c, (method) hypercomment_mousemove, "mousemove",	A_CANT, 0);
 	
+  
+//  hypercomment is not an LLLLOBJ, so it doesn't have this. I don't think it'll need it.
+//    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_UI);
+
+    
 	CLASS_STICKY_ATTR(c,"category",0,"Color");
 
 #ifdef BACH_MAX7_STYLES_COMPATIBILITY

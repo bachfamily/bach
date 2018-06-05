@@ -90,11 +90,18 @@
 		},
 		"Outlet types" : {
 			"Nativeortext" : {
-				"filename" : [ "bach.help.llll.03_outlet types.03_nativeortext.maxpat" ],
+				"filename" : [ "bach.help.llll.03_outlet types.02_nativeortext.maxpat" ],
 				"objects" : [ "all" ],
 				"seealso" : [  ],
 				"tags" : [ "llll", "outlet", "text", "native", "type", "out" ],
 				"title" : [ "Outlet types: native or text" ]
+			},
+			"Outletmax" : {
+				"filename" : [ "bach.help.llll.03_outlet types.03_outletmax.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [  ],
+				"tags" : [ "llll", "outlet", "text", "native", "type", "out", "max", "m", "backtick", "remove", "quote", "friendly" ],
+				"title" : [ "Output to Max and backticks" ]
 			},
 			"Mixedoutlets" : {
 				"filename" : [ "bach.help.llll.03_outlet types.04_mixedoutlets.maxpat" ],
@@ -565,6 +572,20 @@
 					"title" : [ "Grid and ruler colors" ]
 				}
 			},
+			"Markernames" : {
+				"filename" : [ "bach.help.notation.appearance.37_markernames.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "marker", "ruler", "grid" ],
+				"tags" : [ "appearance", "ruler", "label", "marker", "name", "markername", "line", "smart" ],
+				"title" : [ "Marker names" ]
+			},
+			"Highlightdomain" : {
+				"filename" : [ "bach.help.notation.appearance.38_highlightdomain.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "getdomainpixels", "domain" ],
+				"tags" : [ "appearance", "domain", "screen", "portion", "highlight", "show", "display", "underline", "ui", "align", "alignment", "synchronization", "graphic", "graphical", "waveform" ],
+				"title" : [ "Highlight domain" ]
+			},
 			"Slots" : {
 				"Backgroundslots" : {
 					"filename" : [ "bach.help.notation.appearance.40_slots.01_backgroundslots.maxpat" ],
@@ -635,7 +656,7 @@
 					"filename" : [ "bach.help.notation.appearance.50_spacing.05_spacingproportionalexample.maxpat" ],
 					"objects" : [ "bach.score" ],
 					"seealso" : [ "spacing+proportional" ],
-					"tags" : [ "appearance", "score", "spacing", "proportional", "example", "align", "waveform", "synchronize", "display" ],
+					"tags" : [ "appearance", "score", "spacing", "proportional", "example", "align", "waveform", "synchronize", "display", "alignment", "graphic", "graphical" ],
 					"title" : [ "Proportional spacing example" ]
 				},
 				"Spacingspring" : {
@@ -757,7 +778,7 @@
 				"filename" : [ "bach.help.notation.articulations.02_defining.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "header" ],
-				"tags" : [ "articulation", "define", "assign", "introduce", "slot", "addslot", "changeslotvalue", "delete", "clear", "cleararticulations" ],
+				"tags" : [ "articulation", "define", "assign", "introduce", "slot", "addslot", "changeslotitem", "delete", "clear", "cleararticulations" ],
 				"title" : [ "Introducing standard articulations" ]
 			},
 			"Articulationslist" : {
@@ -1115,7 +1136,7 @@
 				"filename" : [ "bach.help.notation.editing.26_snaptemporal.maxpat" ],
 				"objects" : [ "bach.roll" ],
 				"seealso" : [ "snap+pitch", "snaponsettogrid", "snaptailtogrid" ],
-				"tags" : [ "editing", "edit", "interface", "snap", "onset", "tail", "snaponset", "snaptail" ],
+				"tags" : [ "editing", "edit", "interface", "snap", "onset", "tail", "snaponset", "snaptail", "prevent", "from", "control", "avoid", "snapmarkers", "marker" ],
 				"title" : [ "Snap onsets or tails to time grid" ]
 			},
 			"Markersinterface" : {
@@ -1656,8 +1677,8 @@
 			"Addchord" : {
 				"filename" : [ "bach.help.notation.messages.01_addchord.maxpat" ],
 				"objects" : [ "bach.roll" ],
-				"seealso" : [ "addchords", "gluechord" ],
-				"tags" : [ "message", "addchord", "add", "chord", "adding" ],
+				"seealso" : [ "addchords", "gluechord", "sel" ],
+				"tags" : [ "message", "addchord", "add", "chord", "adding", "select", "sel", "selection" ],
 				"title" : [ "Adding a chord in bach.roll" ]
 			},
 			"B_addchords" : {
@@ -1677,8 +1698,8 @@
 			"Gluechord" : {
 				"filename" : [ "bach.help.notation.messages.03_gluechord.maxpat" ],
 				"objects" : [ "bach.roll" ],
-				"seealso" : [ "addchord", "addchords", "gluechord+example" ],
-				"tags" : [ "message", "gluechord", "glue", "chord", "gluing", "glueing" ],
+				"seealso" : [ "addchord", "addchords", "gluechord+example", "sel" ],
+				"tags" : [ "message", "gluechord", "glue", "chord", "gluing", "glueing", "select", "sel", "selection" ],
 				"title" : [ "Gluing chords in bach.roll" ]
 			},
 			"Gluechordslots" : {
@@ -1713,7 +1734,7 @@
 				"Appendsinglemeasure" : {
 					"filename" : [ "bach.help.notation.messages.06_measures.12_appendsinglemeasure.maxpat" ],
 					"objects" : [ "bach.score" ],
-					"seealso" : [ "appendmeasure", "appendmeasures", "insertmeasure", "insertmeasures", "measure+gathered+syntax" ],
+					"seealso" : [ "appendmeasure", "insertmeasure", "insertmeasures", "measure+gathered+syntax", "ceilmeasures" ],
 					"tags" : [ "message", "appendmeasure", "append", "add", "addmeasure", "measure", "single", "end" ],
 					"title" : [ "Appending a single measure" ]
 				},
@@ -1784,15 +1805,15 @@
 			"Dumpsingleroll" : {
 				"filename" : [ "bach.help.notation.messages.12_dumpsingleroll.maxpat" ],
 				"objects" : [ "bach.roll" ],
-				"seealso" : [ "header", "body" ],
-				"tags" : [ "message", "dump", "single", "outlet", "separate", "gathered", "header", "body", "midichannels", "clefs", "keys", "markers", "groups" ],
+				"seealso" : [ "header", "body", "outputpitchesseparate" ],
+				"tags" : [ "message", "dump", "single", "outlet", "separate", "gathered", "header", "body", "onset", "duration", "extra", "velocity", "velocities", "cents", "pitches", "pitch", "selective", "poc", "pitchorcents" ],
 				"title" : [ "Selective dump for bach.roll" ]
 			},
 			"Dumpsinglescore" : {
 				"filename" : [ "bach.help.notation.messages.13_dumpsinglescore.maxpat" ],
 				"objects" : [ "bach.score" ],
-				"seealso" : [ "header", "body" ],
-				"tags" : [ "message", "dump", "single", "outlet", "header", "body", "separate", "gathered", "midichannels", "clefs", "keys", "markers", "groups" ],
+				"seealso" : [ "header", "body", "outputpitchesseparate" ],
+				"tags" : [ "message", "dump", "single", "outlet", "header", "body", "separate", "gathered", "selective", "measureinfo", "duration", "tie", "cents", "velocity", "velocities", "extras", "pitch", "cents", "pitches", "poc", "pitchorcents" ],
 				"title" : [ "Selective dump for bach.score" ]
 			},
 			"Dumpsingleslot" : {
@@ -1801,6 +1822,13 @@
 				"seealso" : [ "header", "body" ],
 				"tags" : [ "message", "dump", "selective" ],
 				"title" : [ "Selective dump for bach.slot" ]
+			},
+			"B_dumpheader" : {
+				"filename" : [ "bach.help.notation.messages.14b_dumpheader.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "header", "body", "selective+dump" ],
+				"tags" : [ "message", "dump", "single", "outlet", "header", "body", "separate", "gathered", "midichannels", "clefs", "keys", "markers", "groups", "selective" ],
+				"title" : [ "Selective dump for header content" ]
 			},
 			"Mergeroll" : {
 				"filename" : [ "bach.help.notation.messages.15_mergeroll.maxpat" ],
@@ -1820,7 +1848,7 @@
 				"filename" : [ "bach.help.notation.messages.17_explodechords.maxpat" ],
 				"objects" : [ "bach.roll" ],
 				"seealso" : [ "getnumchords", "merge" ],
-				"tags" : [ "message", "explode", "chord", "explodechords" ],
+				"tags" : [ "message", "explode", "chord", "explodechords", "selection" ],
 				"title" : [ "Exploding chords" ]
 			},
 			"Slicechordinroll" : {
@@ -2164,6 +2192,13 @@
 					"tags" : [ "message", "operate", "on", "selection", "change", "cent", "cents", "velocity", "velocities", "modify", "parameter", "pitch" ],
 					"title" : [ "Changing pitches or velocities" ]
 				},
+				"B_transp" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.04b_transp.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "sel", "pitch+interval", "pitch+syntax", "modify+existing+parameters", "modify+equation" ],
+					"tags" : [ "message", "operate", "on", "selection", "change", "cent", "cents", "pitch", "pitches", "transpose", "transposing", "chromatic", "diatonic" ],
+					"title" : [ "Transposing via pitches or cents" ]
+				},
 				"Tie" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.05_tie.maxpat" ],
 					"objects" : [ "bach.score" ],
@@ -2223,7 +2258,7 @@
 				"Slot" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.13_slot.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
-					"seealso" : [ "copyslot", "moveslot", "changeslotvalue" ],
+					"seealso" : [ "copyslot", "moveslot", "changeslotitem" ],
 					"tags" : [ "message", "operate", "on", "selection", "slot", "addslot", "eraseslot", "add", "erase", "active", "clear" ],
 					"title" : [ "Adding or deleting slot content" ]
 				},
@@ -2234,18 +2269,39 @@
 					"tags" : [ "message", "operate", "on", "selection", "slot", "moveslot", "copyslot", "move", "copy" ],
 					"title" : [ "Copying or moving slots" ]
 				},
-				"Slotchange" : {
-					"filename" : [ "bach.help.notation.messages.30_operate on selection.18_slotchange.maxpat" ],
+				"A_slotitemadddelete" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.17a_slotitemadddelete.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "changeslotitem", "slot+content+syntax", "eraseslot" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "append", "prepend", "delete", "add", "erase", "clear", "single", "value", "element", "item", "slotitem", "point", "number", "function", "insert", "appendslotitem", "slotitem", "prependslotitem", "deleteslotitem", "insertslotitem" ],
+					"title" : [ "Inserting or deleting slot elements" ]
+				},
+				"B_slotiteminsertfunctionpoint" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.17b_slotiteminsertfunctionpoint.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "insertslotitem", "changeslotitem", "deleteslotitem" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "insert", "function", "point", "insertslotitem", "modify", "thresh", "spat", "3dfunction", "dynfilter", "temporal" ],
+					"title" : [ "Inserting function points" ]
+				},
+				"C_slotitemdeletefunctionpoint" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.17c_slotitemdeletefunctionpoint.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "insertslotitem", "changeslotitem" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "delete", "point", "function", "coordinate", "x", "find", "element", "item", "slotitem", "deleteslotitem" ],
+					"title" : [ "Deleting function points" ]
+				},
+				"Slotitemchange" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.18_slotitemchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "changeslotvalue", "slot+content+syntax" ],
-					"tags" : [ "message", "operate", "on", "selection", "slot", "change", "single", "value", "changeslotvalue", "all" ],
+					"seealso" : [ "changeslotitem", "slot+content+syntax" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "change", "single", "value", "changeslotitem", "all" ],
 					"title" : [ "Setting single slot elements" ]
 				},
 				"Relativeslotchange" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.19_relativeslotchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "relative+modify" ],
-					"tags" : [ "message", "operate", "on", "selection", "slot", "relative", "modify", "changeslotvalue", "`nil" ],
+					"tags" : [ "message", "operate", "on", "selection", "slot", "relative", "modify", "changeslotitem", "`nil" ],
 					"title" : [ "Modifying existing slot elements" ]
 				},
 				"Openslotwin" : {
@@ -2401,35 +2457,35 @@
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.01_intro.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "key+signature", "enharmonic+table", "respell+options" ],
-					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "reset", "atonal", "chew", "chen", "chewandchen", "algorithm", "selection", "algorithm" ],
+					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "reset", "atonal", "chew", "chen", "chewandchen", "algorithm", "selection", "algorithm", "spell" ],
 					"title" : [ "Respell pitches" ]
 				},
 				"Basicoptions" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.02_basicoptions.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell", "sel+note" ],
-					"tags" : [ "message", "pitch", "select", "selection", "respell", "automatically", "enharmonic", "enharmonicity", "option", "sharp", "flat", "sharper", "sharpest", "flatter", "flattest", "voicewise", "circle", "of", "fifths", "algorithm" ],
+					"tags" : [ "message", "pitch", "select", "selection", "respell", "automatically", "enharmonic", "enharmonicity", "option", "sharp", "flat", "sharper", "sharpest", "flatter", "flattest", "voicewise", "circle", "of", "fifths", "algorithm", "spell" ],
 					"title" : [ "Basic respell options" ]
 				},
 				"Atonaloptions" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.03_atonaloptions.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell+flattest", "respell+sharpest", "respell+atonal" ],
-					"tags" : [ "message", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "discard", "altered", "repetition", "discardalteredrepetition", "stdev", "thresh", "stdevthresh", "standard", "deviation", "equation", "threshold", "algorithm", "atonal" ],
+					"tags" : [ "message", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "discard", "altered", "repetition", "discardalteredrepetition", "stdev", "thresh", "stdevthresh", "standard", "deviation", "equation", "threshold", "algorithm", "atonal", "spell" ],
 					"title" : [ "Atonal algorithm options" ]
 				},
 				"Chewandchen" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.04_chewandchen.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell" ],
-					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "winsize", "locality", "sliding", "selfreferential", "spiral", "spiralr", "spiralh", "radius", "height", "step" ],
+					"tags" : [ "message", "selection", "select", "pitch", "respell", "automatically", "enharmonic", "enharmonicity", "option", "winsize", "locality", "sliding", "selfreferential", "spiral", "spiralr", "spiralh", "radius", "height", "step", "spell" ],
 					"title" : [ "Chew and Chen algorithm" ]
 				},
 				"Globality" : {
 					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.05_globality.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "respell", "pitch+message", "sel+message" ],
-					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect" ],
+					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect", "spell" ],
 					"title" : [ "Respelling scope" ]
 				}
 			},
@@ -3582,6 +3638,13 @@
 				"tags" : [ "sequencer", "sequencing", "play", "offline", "playselection", "dumpselection", "non-real-time", "off", "line", "off-line", "messages", "order", "onset" ],
 				"title" : [ "Offline playing from messages" ]
 			},
+			"Prescheduledplay" : {
+				"filename" : [ "bach.help.notation.sequencing.26_prescheduledplay.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "play", "play+offline" ],
+				"tags" : [ "sequencer", "sequencing", "play", "preschedule", "playback", "schedule", "accurate", "playing", "prescheduled", "scheduler" ],
+				"title" : [ "Prescheduling playback" ]
+			},
 			"Mute" : {
 				"filename" : [ "bach.help.notation.sequencing.30_mute.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -3789,15 +3852,29 @@
 					"title" : [ "Dynamics slots" ]
 				}
 			},
-			"Slotdomain" : {
-				"filename" : [ "bach.help.notation.slots.11_slotdomain.maxpat" ],
+			"A_slottemporalmode" : {
+				"filename" : [ "bach.help.notation.slots.11a_slottemporalmode.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+syntax", "slotinfo+inspector", "temporal" ],
+				"tags" : [ "slot", "temporal", "mode", "absolute", "temporality", "relative", "millisecond", "none", "crop", "information", "temporalmode" ],
+				"title" : [ "Slot temporal modes" ]
+			},
+			"B_slotextend" : {
+				"filename" : [ "bach.help.notation.slots.11b_slotextend.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+syntax", "slotinfo+inspector", "temporal" ],
+				"tags" : [ "slot", "temporal", "mode", "absolute", "temporality", "relative", "millisecond", "example", "beyond", "extend", "tail", "longer", "minlength", "fake", "note", "automation", "record", "write", "latch" ],
+				"title" : [ "Extend temporal slots beyond tails" ]
+			},
+			"A_slotdomain" : {
+				"filename" : [ "bach.help.notation.slots.12a_slotdomain.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "llll+dollar" ],
 				"tags" : [ "slot", "slotinfo", "domain", "slope", "domainslope" ],
 				"title" : [ "Slot domain" ]
 			},
-			"Slotrange" : {
-				"filename" : [ "bach.help.notation.slots.12_slotrange.maxpat" ],
+			"B_slotrange" : {
+				"filename" : [ "bach.help.notation.slots.12b_slotrange.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "llll+dollar" ],
 				"tags" : [ "slot", "slotinfo", "range", "slope" ],
@@ -3909,6 +3986,13 @@
 				"seealso" : [ "slotinfo" ],
 				"tags" : [ "slot", "slotinfo", "resetslotinfo", "reset", "revert", "default" ],
 				"title" : [ "Resetting the slotinfo" ]
+			},
+			"Slottemporalmodeconversion" : {
+				"filename" : [ "bach.help.notation.slots.29_slottemporalmodeconversion.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+syntax", "slotinfo+inspector", "slot+temporalmode" ],
+				"tags" : [ "slot", "temporal", "mode", "temporalmode", "conversion", "convert", "change", "relative", "millisecond", "absolute" ],
+				"title" : [ "Slot temporal mode conversion" ]
 			},
 			"Slot linkage" : {
 				"Intro" : {
@@ -4606,10 +4690,17 @@
 				},
 				"Slotinfo1" : {
 					"filename" : [ "bach.help.notation.syntax.50_header.14_slotinfo1.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "interface+slotinfo", "inspector", "slot+slotinfo" ],
+					"tags" : [ "header", "syntax", "slotinfo", "parameter", "slot", "name", "type", "name", "key", "access", "temporalmode", "temporal", "mode", "range", "slope", "domain", "domainslope", "zrange", "zslope", "extend", "beyond", "tail" ],
+					"title" : [ "Basic slotinfo parameters (1)" ]
+				},
+				"B_slotinfo1b" : {
+					"filename" : [ "bach.help.notation.syntax.50_header.14b_slotinfo1b.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "interface+slotinfo", "inspector", "slot+slotinfo" ],
-					"tags" : [ "header", "syntax", "slotinfo", "parameter", "slot", "name", "type", "range", "key", "slope", "width", "height", "ysnap", "domain", "domainslope", "default", "representation", "zrange", "zslope", "singleslotfortiednotes", "copywhensplit", "follownotehead", "trim", "access", "prevent", "readonly", "read", "only", "write", "readandwrite" ],
-					"title" : [ "Basic slotinfo parameters" ]
+					"tags" : [ "header", "syntax", "slotinfo", "parameter", "slot", "width", "height", "snap", "ysnap", "zsnap" ],
+					"title" : [ "Basic slotinfo parameters (2)" ]
 				},
 				"Slotinfo2" : {
 					"filename" : [ "bach.help.notation.syntax.50_header.15_slotinfo2.maxpat" ],
@@ -4756,12 +4847,35 @@
 					"title" : [ "Slots for rests in separate syntax" ]
 				}
 			},
-			"Notenames" : {
-				"filename" : [ "bach.help.notation.syntax.90_notenames.maxpat" ],
-				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "ascii+accidentals" ],
-				"tags" : [ "syntax", "note", "name", "middlecoctave" ],
-				"title" : [ "Inputting note names" ]
+			"Pitches" : {
+				"Notenames" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.01_notenames.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "separate+syntax", "gathered+syntax", "show+note+name", "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "middlecoctave", "notename" ],
+					"title" : [ "Inputting pitches" ]
+				},
+				"Pitchsyntax" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone" ],
+					"title" : [ "Pitch syntax" ]
+				},
+				"Intervals" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.03_intervals.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "arithmetics", "add", "divide", "multiply", "subtract", "subtract", "remainder", "interval" ],
+					"title" : [ "Pitch arithmetics and intervals" ]
+				},
+				"Pack" : {
+					"filename" : [ "bach.help.notation.syntax.90_pitches.04_pack.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "pitch+syntax" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "pitches", "create", "break", "build", "pack", "unpack", "pitchpack", "pitchunpack" ],
+					"title" : [ "Packing and unpacking pitches" ]
+				}
 			}
 		},
 		"Voice properties" : {

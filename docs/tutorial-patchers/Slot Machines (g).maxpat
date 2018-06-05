@@ -54,7 +54,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "comment",
-					"text" : "it's handy to use the @inwrap attribute of bach.append, which automatically wraps all lllls in the inlets. If this might be overkilling for single elements (as cents or duration), this is essential for list elements (such as amplitude values, or soundfile lists).",
+					"text" : "it's handy to use the @inwrap attribute of bach.join, which automatically wraps all lllls in the inlets. If this might be overkilling for single elements (as cents or duration), this is essential for list elements (such as amplitude values, or soundfile lists).",
 					"linecount" : 8,
 					"numoutlets" : 0,
 					"fontsize" : 12.0,
@@ -136,7 +136,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 6 @inwrap 1",
+					"text" : "bach.join 6 @inwrap 1",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"patching_rect" : [ 321.0, 309.0, 151.0, 20.0 ],

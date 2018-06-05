@@ -69,6 +69,14 @@
 // @method bang @digest Output messages
 // @description Outputs messages for <o>line~</o>, based on the most recently received input data.
 
+// @method milliseconds @digest Convert Slot in Milliseconds Mode
+// @description A <m>milliseconds</m> message in the first inlet will consider
+// the slot information coming from the second inlet as a slot in "Milliseconds"
+// temporal mode (see <m>temporalmode</m> specification of the slotinfo),
+// and will trigger the output of the conversion of the slot content into messages for <o>line~</o>, 
+// output from the first outlet. <br /> 
+
+
 
 // ---------------
 // ATTRIBUTES
@@ -76,7 +84,7 @@
  
 void main_foo() {
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 }
 

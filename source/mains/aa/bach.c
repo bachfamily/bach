@@ -38,10 +38,13 @@ int bach_mmi_comp(const t_memmap_item **a, const t_memmap_item **b);
 void bach_poolstatus(t_bach *x);
 void bach_pooldump(t_bach *x);
 void bach_version(t_bach *x);
+void bach_sendbuildnumber(t_bach *x, t_symbol *s);
 void bach_sendversion(t_bach *x, t_symbol *s);
+void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s);
 void bach_donors(t_bach *x);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
 char bach_load_default_font(void);
+long bach_getbuildnumber(void);
 
 t_bach *bach_new(t_symbol *s, long ac, t_atom *av);
 
@@ -126,6 +129,8 @@ void ext_main(void *moduleRef)
 	class_addmethod(c, (method) bach_pooldump, "pooldump", 0);
     class_addmethod(c, (method) bach_version, "version", 0);
     class_addmethod(c, (method) bach_sendversion, "sendversion", A_SYM, 0);
+    class_addmethod(c, (method) bach_sendversionwithbuildnumber, "sendversionwithbuildnumber", A_SYM, 0);
+    class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_donors, "donors", 0);
 
 #ifdef BACH_SAVE_STACK_WITH_MEMORY_LOGS
@@ -140,18 +145,18 @@ void ext_main(void *moduleRef)
     class_register(CLASS_NOBOX, c);
 	bach_class = c;
 	
-	bach_version(NULL);
-	
-	
 #ifdef BACH_PRELOAD_CURSORS
 	t_bach_resources *resources = (t_bach_resources *)sysmem_newptr(sizeof(t_bach_resources));
 	load_cursors(resources, moduleRef);
 	_llllobj_sym_bachcursors->s_thing = (t_object *)resources;
 #endif
+    
 	bach_load_default_font();
-
-	bach_new(NULL, 0, NULL);
+    
+	bach_new(NULL, 0, NULL); // among other things, also fills the version number fields
 	
+    bach_version(NULL); // posts the version
+    
 	c = class_new("bach.initpargs", (method)initpargs_new, (method)initpargs_free, (short)sizeof(t_initpargs), 0L, A_GIMME, 0);
 	
 	class_addmethod(c, (method)initpargs_add,		"add",	A_GIMME,	0);
@@ -323,11 +328,27 @@ void bach_pooldump(t_bach *x)
 	object_post((t_object *) x, "----------------------------");
 }
 
+
 void bach_version(t_bach *x)
 {
+    
 	post("--- bach: automated composer's helper ---");
 	post("© 2010-2017 - Andrea Agostini and Daniele Ghisi");
-	post(BACH_CURRENT_VERSION_TEXT);
+    
+    
+// Post version
+    char version_buf[4096];
+#ifdef MAC_VERSION
+#ifdef CONFIGURATION_Development
+    snprintf_zero(version_buf, 4096, "%s", bach->b_version_string_verbose_with_build);
+#else 
+    snprintf_zero(version_buf, 4096, "%s", bach->b_version_string_verbose);
+#endif
+#else
+    snprintf_zero(version_buf, 4096, "%s", bach->b_version_string_verbose);
+#endif
+	post(version_buf);
+    
 	
 	dev_post("bach compiled %s %s", __DATE__, __TIME__);
 #ifdef C74_X64
@@ -405,22 +426,44 @@ void bach_version(t_bach *x)
     dev_post("--- size of t_hatom: %ld", (long) sizeof(t_hatom));
 }
 
+void bach_sendbuildnumber(t_bach *x, t_symbol *s)
+{
+    if (s && s->s_thing) {
+        t_atom bnum;
+        atom_setlong(&bnum, bach_getbuildnumber());
+        object_method_typed(s->s_thing, NULL, 1, &bnum, NULL);
+    }
+}
+
 void bach_sendversion(t_bach *x, t_symbol *s)
 {
     if (s && s->s_thing) {
         t_atom vnum;
-        atom_setlong(&vnum, BACH_CURRENT_VERSION);
-        object_method_typed(s->s_thing, gensym(BACH_CURRENT_VERSION_TEXT), 1, &vnum, NULL);
+        atom_setlong(&vnum, bach_get_current_version());
+        object_method_typed(s->s_thing, gensym(bach_get_current_version_string_verbose()), 1, &vnum, NULL);
     }
 }
+
+
+void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s)
+{
+    if (s && s->s_thing) {
+        t_atom vnum;
+        atom_setlong(&vnum, bach_get_current_version());
+        object_method_typed(s->s_thing, gensym(bach_get_current_version_string_verbose_with_build()), 1, &vnum, NULL);
+    }
+}
+
 
 void bach_donors(t_bach *x)
 {
     post(" ");
     post("**************************************************************************");
     post("bach: automated composer's helper would like to thank");
-    post("   Dimitri Fergadis");
-    post("   Cody Brookshire");
+    post(" - Dimitri Fergadis");
+    post("        (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research)");
+    post("        Proprietor of Halocyan Records");
+    post(" - Cody Brookshire");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
@@ -457,6 +500,36 @@ char bach_install_font(char *font_file_name, char force_overwrite)
 	
 }
 
+
+long parse_version_string(char *str, long *major, long *minor, long *revision, long *maintenance)
+{
+    long maj = 0, min = 0, rev = 0, maint = 0;
+    long count = 0;
+    char temp_str[128];
+    snprintf_zero(temp_str, 128, "%s", str);
+    
+    char *pch = strtok(temp_str, ".");
+    while (pch != NULL)
+    {
+        switch (count) {
+            case 0: maj = atoi(pch); break;
+            case 1: min = atoi(pch); break;
+            case 2: rev = atoi(pch); break;
+            case 3: maint = atoi(pch); break;
+            default: break;
+        }
+        pch = strtok (NULL, ".");
+        count++;
+    }
+    
+    if (major) *major = maj;
+    if (minor) *minor = min;
+    if (revision) *revision = rev;
+    if (maintenance) *maintenance = maint;
+    
+    return maint + rev * 100 + min * 10000 + maj * 1000000;
+}
+
 t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 {
 	if (bach)
@@ -472,7 +545,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 	hashtab_flags(x->b_poolmap, OBJ_FLAG_DATA);
 #endif
 	
-	x->b_llll_version = BACH_LLLL_VERSION;
+
 	
 #ifdef BACH_INSTALL_FONT
 	if (bach_install_font("Microton.ttf", false)) {
@@ -514,7 +587,56 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     x->b_portalpatchers = hashtab_new(0);
     hashtab_flags(x->b_helppatches, OBJ_FLAG_REF);
 	systhread_mutex_new(&x->b_memmap_lock, 0);
+    
+    x->b_reservedselectors = hashtab_new(0);
+    object_method(x->b_reservedselectors, gensym("readonly"), 1);
+    
+    hashtab_store(x->b_reservedselectors, _sym_bang, (t_object *) x);
+    
+    hashtab_store(x->b_reservedselectors, _sym_int, (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in1"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in2"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in3"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in4"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in5"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in6"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in7"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in8"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("in9"), (t_object *) x);
+    
+    hashtab_store(x->b_reservedselectors, _sym_float, (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft1"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft2"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft3"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft4"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft5"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft6"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft7"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft8"), (t_object *) x);
+    hashtab_store(x->b_reservedselectors, gensym("ft9"), (t_object *) x);
+    
+    hashtab_store(x->b_reservedselectors, _sym_list, (t_object *) x);
+    hashtab_store(x->b_reservedselectors, _sym_symbol, (t_object *) x);
+    
+    hashtab_store(x->b_reservedselectors, _llllobj_sym_bach_llll, (t_object *) x);
+    hashtab_store(x->b_reservedselectors, _llllobj_sym_null, (t_object *) x);
+
+    
 	bach_setup(x);
+    
+    
+    
+    // Filling version fields
+    snprintf_zero(x->b_llll_version_string, 128, "%s", BACH_LLLL_VERSION);
+    snprintf_zero(x->b_version_string, 128, "%s", BACH_VERSION);
+    snprintf_zero(x->b_version_string_verbose, 128, "v%s beta", BACH_VERSION);
+    x->b_version = parse_version_string(x->b_version_string, NULL, NULL, NULL, NULL);
+    x->b_llll_version = parse_version_string(x->b_llll_version_string, NULL, NULL, NULL, NULL);
+    x->b_buildnumber = bach_getbuildnumber();
+    snprintf_zero(x->b_version_string_verbose_with_build, 128, "v%s beta (build %ld)", BACH_VERSION, x->b_buildnumber);
+    
+    
+    
 
 	/*
 	this_llll_pool_item = x->b_llll_pool;
@@ -987,3 +1109,21 @@ char bach_load_default_font(void)
 	return 0;
 
 }
+
+
+long bach_getbuildnumber(void)
+{
+#ifdef MAC_VERSION
+    CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
+    if (mainBundle) {
+        
+//        UInt32 bundleVersion = CFBundleGetVersionNumber(mainBundle); /// this one won't work
+        SInt32 bundleVersion = CFStringGetIntValue((CFStringRef)CFBundleGetValueForInfoDictionaryKey(mainBundle, kCFBundleVersionKey));
+        return bundleVersion;
+    } else
+        return 0;
+#else
+    return 0;
+#endif
+}
+

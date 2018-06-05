@@ -1,4 +1,6 @@
 %option noyywrap nodefault reentrant
+%option noyyalloc noyyrealloc noyyfree
+%option never-interactive
 %option outfile="chkparser.c"
 %option prefix="chkparser_"
 
@@ -7,7 +9,7 @@ INTEGER ([+-]?[0-9]+)
 FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
 RATIONAL ({INTEGER}[/]{INTEGER})
 NOTENAME ([a-g]|[A-G])
-ACCIDENTAL ([#bxdq]+)
+ACCIDENTAL ([#bxdq\^v]+)
 
 %{
 	#define BACH_MAX
@@ -21,65 +23,135 @@ ACCIDENTAL ([#bxdq]+)
     #include <ctype.h>
     #define parserpost printf
     #endif
+    
+    #define YY_NO_UNISTD_H
 
-
-    typedef struct _typecheck_res {
-        t_bool t_reserved;
-        t_bool t_wishesbt;
-    } t_typecheck_res;
 %}
-
-%option extra-type="t_typecheck_res *"
 
 %%
 
-%{
-    t_typecheck_res *tcr = yyextra;
-%}
-
-^` {
-    parserpost("typecheck: starting backtick");
-    tcr->t_wishesbt = true;
+^{INTEGER} {
+    parserpost("typecheck: long");
+    return H_LONG;
 }
 
-\(|\) {
-    parserpost("typecheck: paren");
-    tcr->t_wishesbt = true;
+^{FLOAT} {
+    parserpost("typecheck: double");
+    return H_DOUBLE;
 }
 
-{INTEGER}|{RATIONAL}|{FLOAT} {
-    parserpost("typecheck: number");
-    tcr->t_wishesbt = true;
+^{RATIONAL} {
+    parserpost("typecheck: rational");
+    return H_RAT;
 }
 
-{NOTENAME}{ACCIDENTAL}?{INTEGER} {
+^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER} {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 
-{NOTENAME}{INTEGER}{ACCIDENTAL} {
+^[-+]?{NOTENAME}{INTEGER}{ACCIDENTAL} {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 
-{NOTENAME}{INTEGER}[+|-][0-9]+t {
+^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[-+][0-9]+t {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 
-{NOTENAME}{INTEGER}[+|-][0-9]+[/]{INTEGER}t {
+^[-+]?{NOTENAME}{ACCIDENTAL}?{INTEGER}[-+][0-9]+[/]{INTEGER}t {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 
-[ \t\n\,\;] {
-    parserpost("typecheck: reserved char");
-    tcr->t_reserved = true;
-    return 0;
+
+
+^[^`\(\) \t\n\,\;\"\\][^\(\) \t\n\,\;\"\\]* {
+    parserpost("typecheck: no parens, no separators, no double quotes / backslashes");
+    return H_SYM;
 }
 
-[^\(\) \t\n]* {
-    parserpost(" typecheck: symbol");
+^[^` \t\n\,\;\"\\][^ \t\n\,\;\"\\]* {
+    parserpost("typecheck: parens, no separators, no double quotes / backslashes");
+    return H_SYM | H_PAREN;
+}
+
+^[^`\(\)\"\\][^\(\)\"\\]* {
+    parserpost("typecheck: no parens, separators, no double quotes / backslashes");
+    return H_SYM | H_SEPARATOR;
+}
+
+^[^`\"\\][^\"\\]* {
+    parserpost("typecheck: parens, separators, no double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SEPARATOR;
+}
+
+
+
+
+^[^`\(\) \t\n\,\;][^\(\) \t\n\,\;]* {
+    parserpost("typecheck: no parens, no separators, double quotes / backslashes");
+    return H_SYM | H_SPECIAL;
+}
+
+^[^` \t\n\,\;][^ \t\n\,\;]* {
+    parserpost("typecheck: parens, no separators, double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SPECIAL;
+}
+
+^[^`\(\)][^\(\)]* {
+    parserpost("typecheck: no parens, separators, double quotes / backslashes");
+    return H_SYM | H_SEPARATOR | H_SPECIAL;
+}
+
+^[^`].* {
+    parserpost("typecheck: parens, separators, double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SEPARATOR | H_SPECIAL;
+}
+
+
+
+
+^`[^\(\) \t\n\,\;\"\\]* {
+    parserpost("typecheck: backtick, no parens, no separators, no double quotes / backslashes");
+    return H_SYM | H_BACKTICK;
+}
+
+^`[ \t\n\,\;\"\\]* {
+    parserpost("typecheck: backtick, parens, no separators, no double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_PAREN;
+}
+
+^`[^\(\)\"\\]* {
+    parserpost("typecheck: backtick, no parens, separators, no double quotes / backslashes");
+return H_SYM | H_BACKTICK | H_SEPARATOR;
+}
+
+
+^`[^\"\\]* {
+    parserpost("typecheck: backtick, parens, separators, no double quotes / backslashes");
+return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
+}
+
+^`[^\(\) \t\n\,\;]* {
+    parserpost("typecheck: backtick, no parens, no separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SPECIAL;
+}
+
+^`[^ \t\n\,\;]* {
+    parserpost("typecheck: backtick, parens, no separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SPECIAL;
+}
+
+^`[^\(\)]* {
+    parserpost("typecheck: backtick, no parens, separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SEPARATOR | H_SPECIAL;
+}
+
+^`.* {
+    parserpost("typecheck: backtick, parens, separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_PAREN | H_SPECIAL;
 }
 
 
@@ -92,29 +164,78 @@ int main(int argc, char **argv)
 }
 #endif
 
-void chkparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
+
+
+
+t_chkParser::t_chkParser() : t_parser()
 {
-    yy_flush_buffer(bp, myscanner);
-    yy_delete_buffer(bp, myscanner);
+
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    reset();
 }
 
-t_bool typecheck_parse(char *buf)
+void t_chkParser::reset()
 {
-    yyscan_t myscanner;
-    YY_BUFFER_STATE bp;
-    t_typecheck_res res = {false, false};
-    chkparser_lex_init_extra(&res, &myscanner);
-    bp = yy_scan_string(buf, myscanner);
-    yylex(myscanner);
-    chkparser_flush_and_delete_buffer(myscanner, bp);
-    chkparser_lex_destroy(myscanner);
-    return res.t_wishesbt && !res.t_reserved;
+    t_parser::reset();
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    //yy_init_globals ((yyscan_t) this);
 }
 
-YY_BUFFER_STATE chkparser_scan_string(yyscan_t myscanner, char *buf)
+long t_chkParser::parse(const char *buf)
 {
-    YY_BUFFER_STATE bp = yy_scan_string(buf, myscanner);
-    yy_switch_to_buffer(bp, myscanner);
-    return bp;
+    parserpost("chkparser: parsing %s", buf);
+    long type;
+    YY_BUFFER_STATE bp = chkparser__scan_string(buf, (yyscan_t) this);
+    chkparser__switch_to_buffer(bp, (yyscan_t) this);
+    type = chkparser_lex((yyscan_t) this);
+    reset();
+    return type != H_NOTHING ? type : H_SYM;
 }
 
+t_bool t_chkParser::wantsBacktick(t_symbol *s)
+{
+    if (s == _llllobj_sym_nil || s == _llllobj_sym_null) {
+        return true;
+    } else {
+        long type = parse(s->s_name);
+        long mods = type & H_MODIFIERS;
+        if ((type & H_PLAINTYPE) != H_SYM ||
+            (mods & H_BACKTICK) ||
+            ((mods & H_PAREN) && !(mods & H_SEPARATOR))) {
+            return true;
+        } else
+            return false;
+    }
+}
+
+t_symbol *t_chkParser::addQuoteIfNeeded(t_symbol *s)
+{
+    if (wantsBacktick(s))
+        return sym_addquote(s->s_name);
+    else
+        return s;
+}
+
+
+
+
+void *chkparser_alloc(size_t bytes, void *yyscanner)
+{
+    void *b = ((t_chkParser *) yyscanner)->getPtr(bytes);
+    parserpost(" chkparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
+}
+
+void *chkparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" chkparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
+
+void chkparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}

@@ -55,7 +55,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 2 @triggers 2",
+					"text" : "bach.join 2 @triggers 2",
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 724.0, 522.0, 155.0, 20.0 ],
 					"id" : "obj-115",
@@ -125,7 +125,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 2 @triggers 2 @outwrap 1",
+					"text" : "bach.join 2 @triggers 2 @outwrap 1",
 					"linecount" : 2,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 378.0, 495.0, 142.0, 34.0 ],

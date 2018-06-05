@@ -9,16 +9,27 @@
 #ifndef symparser_h
 #define symparser_h
 
+#include "bach_parser.hpp"
 #include "llll_commons.h"
 
+#ifndef parserpost
 #ifdef CONFIGURATION_Development
 //#define parserpost post
 #define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
 #endif
+#endif
 
-void symbol_parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth);
+class t_symParser : public t_parser {
+private:
+    long startCondition;
+public:
+    t_symParser(long ignore = 0);
+    void parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth);
+    void reset();
+    long getStartCondition() { return startCondition; }
+};
 
 
 #endif /* symparser_h */

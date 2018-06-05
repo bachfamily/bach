@@ -866,12 +866,17 @@
     //  - <b>access</b>: sets the slot accessibility, and expects a symbol. Default is "readandwrite" (slot is readable and writable);
     // you can also use "readonly" (slot is only readable, not writable via interface), or "none" (slot window can't even be opened, slot
     // content cannot be accessed).<br />
+    //  - <b>temporalmode</b>: sets whether the slot contains temporal information, and if so in which form.
+    //  It expects one of the following symbols: "none" (the information is not temporal), "relative" (the information is temporal, and the X value
+    //  of each slot item is a relative position inside the note duration, usually between 0 and 1), "milliseconds" (the information is temporal, and the X
+    //  value of each slot item is defined as a position milliseconds with respect to the note onset). <br />
+    //  - <b>extend</b>: toggles the ability for temporal slots to extend their content beyond the end of each corresponding note (might be also useful,
+    //  in combination with the "milliseconds" temporalmode, in order to define continuous parameters, independently from a note duration). <br />
 	//  – <b>range</b>: followed by two numbers, sets the minimum and maximum values the slot range (vertical axis for function and 3dfunction slots, or number
 	//  range for number slots) may assume. <br />
 	//  – <b>key</b>: expects the character or the ASCII value of a key to be mapped as a hotkey for the slot. <br />
 	//  – <b>slope</b>: expects a parameter (-1 to 1, 0 = linear) to exponentially represent the displayed range values of the slot. <br />
-	//  – <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). You can also put "temporal" 
-	//  if you want the window to correspond exactly to the note length, which is handy when dealing e.g. with envelopes or spatializations. <br />
+	//  – <b>width</b>: expects a value determining the width of the slot window (scaled according to the object's vertical zoom). <br />
 	//  – <b>height</b>: a value determining the height of the slot window (scaled according to the object's vertical zoom). You can also put "auto" 
 	//  if you want to leave an automatically calculated height (default). <br />
 	//  – <b>ysnap</b>: sets, for function or 3dfunction slots, some privileged Y points to which the points will be snapped
@@ -1475,8 +1480,17 @@
     // @copy BACH_DOC_RELATIVE_MODIFICATIONS
     // @copy BACH_DOC_EQUATION_MODIFICATIONS
 
+
+#define BACH_DOC_MESSAGE_POC
+    // The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
+    // depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
+    // essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
+    // @copy BACH_DOC_RELATIVE_MODIFICATIONS
+    // @copy BACH_DOC_EQUATION_MODIFICATIONS
+
+
 #define BACH_DOC_MESSAGE_VOICE
-	// The word <m>voice</m>, followed by a number, sets the new voice number for all 
+	// The word <m>voice</m>, followed by a number, sets the new voice number for all
 	// the selected notes or chords. 
 	// Any of the numbers in the voice syntax can be replaced by an llll containing a relative modification of the existing voice. 
 	// If a single number is inserted, this can be replaced by a generic equation.
@@ -1492,7 +1506,8 @@
 	// Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
     // They and should be immediately followed by the possible accidentals and the
 	// octave number, without any space (e.g. <b>D#4</b>). <br />
-    // Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat)
+    // Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+    // <b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
     // One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
     // middle C, 1/16 tone up.
 	// <br /> <br />
@@ -1538,24 +1553,47 @@
     // Instead of the slot numbers, you can use slot names, or you can the word "active" to refer to the currently open slot.
 
 
-#define BACH_DOC_MESSAGE_CHANGESLOTVALUE
-	// A <m>changeslotvalue</m> message will change a specific value inside a slot (possibly containing more than one element, such as
+#define BACH_DOC_MESSAGE_CHANGESLOTITEM
+	// A <m>changeslotitem</m> message will change a specific element inside a slot (possibly containing more than one element, such as
 	// a <m>function</m> slot, or an <m>intlist</m> slot...) of any selected note.
-	// The syntax is <b>changeslotvalue <m>slot_number</m> <m>element_index</m> <m>SLOT_ELEMENT_CONTENT</m></b>. <br />
+	// The syntax is <b>changeslotitem <m>slot_number</m> <m>element_index</m> <m>SLOT_ELEMENT_CONTENT</m></b>. <br />
 	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
 	// The <m>element_index</m> is the number identifying the position of the element to be changed (e.g., for a <m>function</m> slot: 1 for the first point, 2 for the second, and so on).
     // The symbol "all" can replace the element index, in order to change all elements. 
 	// The element content is a single element in the lists of the slot content syntax: a single point for a slot <m>function</m>, a single number for an <m>intlist</m> or <m>floatlist</m> slot,
 	// and so on. Such element must be unwrapped from its outer level of parentheses (if any). For instance, for a function,
-	// a good syntax is <b>changeslotvalue 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
+	// a good syntax is <b>changeslotitem 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
 	// to the point <b>(0.5 20 0)</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
 	
-	
+
+#define BACH_DOC_MESSAGE_APPENDSLOTITEM
+    // A <m>appendslotitem</m> message will append a specific element at the end of a slot.
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+
+#define BACH_DOC_MESSAGE_PREPENDSLOTITEM
+    // A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+#define BACH_DOC_MESSAGE_INSERTSLOTITEM
+    // A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
+    // The position may be specified explicitly (for slots that do not bear X-axis information) or
+    // dropped (for slots bearing X-axis information, or time-axis information, such as functions, spat, etc.).
+    // The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
+
+#define BACH_DOC_MESSAGE_DELETESLOTITEM
+    // A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
+    // Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
+    // wrapped X coordinate of the element to delete (use the <m>thresh</m> message argument to set a tolerance
+    // threshold for the X coordinate matching).
+
+
+
 #define BACH_DOC_MESSAGE_LAMBDA
 	// The <m>lambda</m> message is a general router which can be prepended to all the following operations:
 	// <m>cents</m>, <m>velocity</m>, <m>onset</m>, <m>tail</m>, <m>duration</m>, <m>voice</m>, <m>addbreakpoint</m>, <m>erasebreakpoint</m>,
-    // <m>addslot</m>, <m>changeslotvalue</m>, <m>eraseslot</m>, <m>name</m>.
+    // <m>addslot</m>, <m>changeslotitem</m>, <m>eraseslot</m>, <m>name</m>.
 	// If such router is prepended, the corresponding operation will apply on the currently output selected item.
 	// The idea is that when a selection dump is asked or a command is sent (also see <m>dumpselection</m> or <m>sendcommand</m>), the notation
 	// elements are output one by one from the playout (notewise or chordwise depending on the <m>playmode</m>): if you put a feedback loop from the playout
@@ -1714,9 +1752,9 @@
 	//    ↪ Add the <m>Shift</m> key to change duration more rapidly. <br />
 	// • <m>Alt+←</m>: Decrease duration for selected notes (possible breakpoint positions are rescaled). <br /> 
 	//    ↪ Add the <m>Shift</m> key to change duration more rapidly. <br />
-	// • <m>Alt+Ctrl+→</m> (mac) or <m>Alt+Shift+Ctrl+→</m> (win): Increase note duration, preserving the absolute position of each pitch breakpoint. <br />
+	// • <m>Alt+Ctrl+→</m> (mac) or <m>Alt+Shift+Ctrl+→</m> (win): Increase note duration, preserving the absolute position of each relative breakpoint. <br />
 	//    ↪ Add the <m>Shift</m> key (mac) to change duration more rapidly. <br />
-	// • <m>Alt+Ctrl+←</m> (mac) or <m>Alt+Shift+Ctrl+←</m> (win): Decrease note duration, preserving the absolute position of each pitch breakpoint. <br />
+    // • <m>Alt+Ctrl+←</m> (mac) or <m>Alt+Shift+Ctrl+←</m> (win): Decrease note duration, preserving the absolute position of each relative breakpoint. <br />
 	//    ↪ Add the <m>Shift</m> key (mac) to change duration more rapidly. <br />
 	// • <m>↑</m>: Raise pitch of selection by one step. <br /> 
 	//    ↪ Add the <m>Shift</m> key to raise the pitch by one octave. <br />
@@ -1942,9 +1980,7 @@
 	// • <m>Backspace</m>: Delete all selected items, except for selected note tails, for which the backspace key reverts their pitch to the 
 	// original notehead pitch (no glissando). <br /> 
     //    ↪ Add the <m>Shift</m> key to delete selected measures; otherwise simple <m>Backspace</m> will clear the measure content. <br />
-	// • <m>→</m>: Shift selection onsets to the right; for selected tails: increase corresponding note duration <br />
-	// • <m>←</m>: Shift selection onsets to the left; for selected tails: decrease corresponding note duration <br /> 
-	// • <m>↑</m>: Raise pitch of selection by one step. <br /> 
+	// • <m>↑</m>: Raise pitch of selection by one step. <br />
 	//    ↪ Add the <m>Shift</m> key to raise the pitch by one octave. <br />
 	//    ↪ Add the <m>Ctrl+Shift</m> key to prevent notes from being assigned to different voices. <br />
 	// • <m>↓</m>: Lower pitch of selection by one step. <br /> 
@@ -2110,11 +2146,11 @@
 	// @copy BACH_DOC_SLOT_EDIT_KEYBOARD_COMMANDS
 	
 #define BACH_DOC_OPERATION_ABSTRACTIONS_LLLL_AND_NUMBERS_REMARK
-	// Unless one of the two operand lllls is a number, the operation is intended to be 
-	// element-wise: position of elements of left and right elements must match in operations, 
-	// both left and right lllls must have the same shape.
-	// If one of the two lllls is a single number, such number is used in the operation against 
-	// all elements of the other llll (as when the <m>scalarmode</m> attribute is set to 1 
+	// Unless one of the two operand lllls contains a single number or pitch, the operation is intended to be
+	// element-wise: position of elements of the left and right lllls are matched in operations,
+	// and both left and right lllls must have the same shape.
+	// If one of the two lllls contains a single element, such element is used in the operation against
+	// all the elements of the other llll (as when the <m>scalarmode</m> attribute is set to 1
 	// in <o>bach.expr</o>).
 	// <br /> <br />
 
@@ -2245,3 +2281,71 @@
     // while within the broader spectrum {"pppp", "ppp", "pp", "p", "mp", "mf", "f", "ff", "fff", "ffff"}, having <m>maxchars</m> = 4 and <m>D</m> = 5,
     // one has x = x(7, 5) = -1+2i/(2D+1) = -1 + 14/11 = 3/11
     // vel("f") = vel(7) = 128 * ((1 + (3/11)^a)/2)^b ~ 128 * 0.748 ~ 96. <br />
+
+
+#define BACH_DOC_PRESCHEDULED_PLAYBACK
+    // Prescheduled playback schedules the events at the beginning of the playback, hence taking a bit more time before playback starts, but also ensuring
+    // ensures the best possible timing. Prescheduled playback has some limitations: <br />
+    // - no live modification to the roll or score is accounted for during playback; <br />
+    // - loops won't work;  <br />
+    // - lambda+modifications won't work;  <br />
+    // - redraw is only performed at each new event;  <br />
+    // - the "pause" message won't work.  <br />
+
+
+
+#define BACH_DOC_GOTO
+    // The <m>goto</m> message moves the selection to new items, i.e. clears the selection and select the new item. <br />
+    // The first argument is the go-to command, which can be one of the following symbols: <br />
+    // • "up", "down", "left", "right": move selection up/down/left/right, as you would with the editing
+    // keyboard arrows (+ Command or Control) <br />
+    // • "next", "prev": move selection to the following or previous elements <br />
+    // • "time" or "timepoint": move selection to a given point in time (either in milliseconds or as a timepoint).
+    // An argument is expected, either a number (millisecond position) or a timepoint, in llll form (see below for timepoint syntax). <br />
+    // <br />
+    // In addition, a certain number of behaviors can be changed via the following message attributes:
+    // • "repeat": expects an integer, setting the number of times for the command to be repeated. <br />
+    // • "nullmode": if non-zero, also notifies when there is no (longer) selection, e.g. at the end of a "next" go-to chain. <br />
+    // • "skiprests": if non-zero, avoids the rest while performing the selection. <br />
+    // • "inscreen": if non-zero, also puts the selected items inside the displayed portion of the domain. <br />
+    // • "voices": sets the voicenumbers for the voices to be accounted for; default is the empty llll, meaning: all voices. <br />
+    // • "where": sets a mathematical condition to be applied to sieve the selection each time the command is performed. Variables are the same
+    // as in the <m>sel note if</m> case. <br />
+    // • "until": sets a mathematical condition that, if not matched, will cause the command to be re-executed, until the condition is met.
+    // Variables are the same as in the <m>sel note if</m> case. <br />
+    // • "untilmode": a symbol, either "any" or "all", determining whether the <m>until</m> condition should be applied to all selected elements in order
+    // to be considered met, or to anyone of them (i.e. at least one). <br />
+    // • "type": sets a list of notation item types (as symbols) to be accounted for, among: "note", "rest", "marker", "tempo", "measure", "voice". <br />
+    // • "markershavevoices": if non-zero, considers measure-attached markers as belonging to the corresponding voice (and hence accounts for it
+    // while using the <m>voicemode</m> and <m>voices</m> message attributes). <br />
+    // • "graceshavedur": if non-zero, considers grace notes as having a (minimal) duration, precisely the one attributed to them by the <o>bach.score</o>
+    // playback system, and controllable via the related attributes. <br />
+    // • "tiemode": one of the following symbols, defining how selection behaves with respect to ties: <br />
+    //   - "each": each element in a tie sequence is independent, and can be independently selected; <br />
+    //   - "all" (default): whenever an element in a tie sequence is to be selected, all the other elements are selected too. <br />
+    // <br />
+    // For the "time" command only: <br />
+    // • "include": for the "time" command only: expects one or two symbols among "head" and "tail" in order to determine what extreme should be included
+    // when it falls exactly on the timepoint (default: head). <br />
+    // For the "next"/"prev" commands only: <br />
+    // • "voicemode": a symbol determining how the selection should be performed across different voices. Allowed values are: <br />
+    //   - "each": go-to command is performed in each voice independently (e.g.: all voices go to next selected chord, independently); <br />
+    //   - "any": go-to command is performed on the next/previous element, no matter in which voice it is. The sequence will walk through all
+    // chords in all voices; <br />
+    //   - "all": go-to command is performed accounting for selection in all voices, but selection is allowed to always jump, starting from the
+    // last reached onset or tail; <br />
+    //   - "anyactive" (default): like "any", but only applied on the voices having some selected element; <br />
+    //   - "allactive": like "all", but only applied on the voices having some selected element. <br />
+    // • "polymode": a symbol determining how the polyphony should be handled. Allowed values are: <br />
+    //   - "none": don't account for polyphony, i.e. don't "hold" (keep selected) previously selected chords; <br />
+    //   - "overlap" (default): keep previously selected chords if they overlap with the new selection. This yields a standard walkthrough of the score; <br />
+    //   - "overhang": keep previously selected chords if they are "temporally contained" in the new selection (i.e. if the new selection starts before
+    // their onset and ends after their tail). <br />
+    // • "from", "to": symbols (among "auto", "head" and "tail") determining from and to which point the selection should be computed.
+    // For instance going to the "next" chord from a given selection means, by default, looking at the farthermost selected notehead
+    // and searching for the first chords
+    // whose notehead lies after that, i.e. we search from a head to another head. The opposite is true, by default, when going to "prev" chords:
+    // we search from the leftmost tail the nearest previous one. This is the behavior with "from" and "to" attributes set to "auto".
+    // One could change these behaviors by setting "from" and "to" explicitly to some other element ("head" or "tail"). <br />
+    // <br />
+    // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE

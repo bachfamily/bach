@@ -6,7 +6,7 @@
 	bach.mc2p
 	
 	@realname 
-	bach.mc2o
+	bach.mc2p
 
 	@type
 	object
@@ -25,7 +25,8 @@
 	
 	@discussion
 	The pitches are inferred automatically from the cents, by snapping it to the
-	nearest element of the current microtonal grid (see the <m>tonedivision</m> attribute).
+	nearest element of the current microtonal grid (see the <m>tonedivision</m> attribute),
+    depending on the values of the other attributes.
 	
 	@category
 	bach, bach objects, bach notation
@@ -79,7 +80,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}	
@@ -101,13 +102,14 @@ int T_EXPORT main()
 	class_addmethod(c, (method)mc2p_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)mc2p_inletinfo,	"inletinfo",	A_CANT,		0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 	
 	CLASS_ATTR_LONG(c, "tonedivision", 0, t_mc2p, tone_division); 
 	CLASS_ATTR_STYLE_LABEL(c,"tonedivision",0,"text","Microtonal Division");
 	CLASS_ATTR_BASIC(c,"tonedivision",0);
 	// @description @copy BACH_DOC_TONEDIVISION
+    // Set <m>tonedivision</m> to 0 (default) in order to perform the conversion at maximum precision.
 
 	CLASS_ATTR_CHAR(c, "accidentalspreferences", 0, t_mc2p, accidentals_preferences); 
 	CLASS_ATTR_STYLE_LABEL(c,"accidentalspreferences",0,"enumindex","Accidental Preferences");
@@ -171,7 +173,7 @@ long substitute_mc_with_pitches_fn(void *data, t_hatom *a, const t_llll *address
     
     if (x->print_octave == 0) {
         // output symbol without octave
-        hatom_setsym(a, gensym(p.toCString(false)));
+        hatom_setsym(a, p.toSym(false));
     }
     
 	return 0;
@@ -235,14 +237,15 @@ t_mc2p *mc2p_new(t_symbol *s, short ac, t_atom *av)
 	
 		x->accidentals_preferences = 0;
 		x->print_octave = 1;
-		x->tone_division = 2;
+		x->tone_division = 0;
 
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "4");
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
-	if (x && err == MAX_ERR_NONE)
+	llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    if (x && err == MAX_ERR_NONE)
 		return x;
 	
 	object_free_debug(x);

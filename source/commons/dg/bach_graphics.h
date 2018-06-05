@@ -189,7 +189,7 @@ void polygon_offset_smart_inplace(t_polygon **poly, double amount, long unwanted
 void compute_bezier_point(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3, double t, double *x_res, double *y_res);
 
 
-// (PRIVATE) get a bach-standard choice for the two internal bezier control points for the cubic bezier curve in the convex hull given by x_start y_start x_end y_end, with the slope given by slope (0 = linear)
+// (PRIVATE) get a bach-standard choice for the two internal bezier control points for the cubic bezier curve in the convex hull given by x_start y_start x_end y_end, with the slope given by slope (0 = linear). BEWARE: ONLY WORKS FOR POSITIVE SLOPES
 void get_bezier_control_points(double x_start, double y_start, double x_end, double y_end, double slope, double *ctrl_1_x, double *ctrl_1_y, double *ctrl_2_x, double *ctrl_2_y, double *left_derivative, double *right_derivative);
 // (PRIVATE) get the middle refinement point to split a curve display into 2 bezier curves
 void get_middle_refinement_point_for_curve(double x1, double y1, double x2, double y2, double *middle_x, double *middle_y, double *middle_derivative, double slope);

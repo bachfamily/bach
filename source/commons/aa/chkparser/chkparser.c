@@ -362,8 +362,8 @@ static void yy_fatal_error (yyconst char msg[] ,yyscan_t yyscanner );
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 10
-#define YY_END_OF_BUFFER 11
+#define YY_NUM_RULES 24
+#define YY_END_OF_BUFFER 25
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -371,30 +371,33 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[41] =
+static yyconst flex_int16_t yy_accept[69] =
     {   0,
-        9,    9,   11,    9,    8,    2,    9,    8,    9,    3,
-        9,    1,    9,    9,    3,    3,    3,    9,    9,    9,
-        9,    4,    9,    9,    3,    9,    3,    9,    4,    5,
-        9,    9,    3,    9,    9,    6,    9,    9,    7,    0
+        0,    0,   25,   24,    8,   10,   12,    9,    8,    8,
+        1,    8,   16,    8,   10,   10,   12,    9,   14,   11,
+       14,   13,   11,    8,    1,    8,    2,    2,    8,    8,
+        8,    8,    4,   16,   17,   17,   17,   19,   15,    8,
+        8,    3,    8,    2,    8,    4,    5,    8,   18,   18,
+       20,   17,   19,   17,   19,   21,    8,    2,    8,   22,
+       22,   23,    8,    6,    8,    8,    7,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    2,    2,
+        1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    1,    1,    3,    1,    1,    1,    1,    4,
-        5,    1,    6,    7,    6,    8,    9,   10,   10,   10,
-       10,   10,   10,   10,   10,   10,   10,    1,    7,    1,
+        1,    2,    1,    4,    5,    1,    1,    1,    1,    6,
+        6,    1,    7,    2,    7,    8,    9,   10,   10,   10,
+       10,   10,   10,   10,   10,   10,   10,    1,    2,    1,
         1,    1,    1,    1,   11,   11,   11,   11,   12,   11,
        11,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,   13,   14,   15,   14,   15,
+        1,    4,    1,    5,    1,   13,   14,   15,   14,   15,
 
        16,   14,   14,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    3,    1,    1,   17,    1,    1,    1,    3,
-        1,    1,    1,   18,    1,    1,    1,    1,    1,    1,
+        1,    1,    5,    1,    1,   17,    1,    5,    1,    5,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -411,58 +414,108 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst YY_CHAR yy_meta[19] =
+static yyconst YY_CHAR yy_meta[18] =
     {   0,
-        1,    2,    1,    2,    2,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1
+        1,    1,    2,    3,    1,    4,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_uint16_t yy_base[42] =
+static yyconst flex_uint16_t yy_base[92] =
     {   0,
-        0,   52,   64,    0,   76,   76,   11,    0,   52,   14,
-       28,    0,    0,   51,    0,   34,    0,   19,   22,   27,
-       50,   48,   29,   49,   48,   47,   46,   45,   43,   33,
-       42,   39,   37,   58,   35,    0,   32,   10,    0,   76,
-       39
-    } ;
-
-static yyconst flex_int16_t yy_def[42] =
-    {   0,
-       40,    1,   40,   41,   40,   40,   41,   41,   41,   41,
-       41,   41,   41,   41,   10,   41,   16,   41,   41,   11,
-       41,   11,   41,   41,   41,   41,   41,   41,   41,   41,
-       41,   41,   41,   41,   41,   41,   41,   41,   41,    0,
-       40
-    } ;
-
-static yyconst flex_uint16_t yy_nxt[95] =
-    {   0,
-        4,    5,    4,    6,    6,    7,    8,    9,    4,   10,
-       11,   11,    4,   11,   11,   11,    4,    4,   14,   38,
-       15,   17,   18,   15,   24,   19,   39,   26,   25,   19,
-       20,   27,   28,   21,   32,   30,   29,   22,   33,   13,
-       37,   38,   20,   16,   38,   23,   33,   30,   33,   23,
-       30,   34,   29,   31,   29,   27,   27,   25,   25,   22,
-       16,   16,   30,   40,   12,   31,   35,   34,   40,   40,
-       40,   40,   40,   40,   36,    3,   40,   40,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
-       40,   40,   40,   40
+        0,    0,  144,  263,   16,   20,   25,   30,   34,   50,
+       53,   65,   79,  133,   83,   51,   88,   93,   61,   26,
+        0,  136,    0,    0,    0,    0,    9,   61,   61,   69,
+       91,  121,   97,  111,  116,  121,  126,  131,    0,   93,
+      116,  111,  106,  101,  100,   98,  131,   96,  144,  103,
+      149,  154,   55,  159,    0,   91,   78,   74,  155,  134,
+        0,    0,  132,   68,   64,   82,   56,  263,  172,  176,
+      180,  184,  188,  192,  196,  200,  204,  208,  211,  215,
+      219,  223,  227,  231,  235,  239,  243,  247,  250,  254,
+      258
 
     } ;
 
-static yyconst flex_int16_t yy_chk[95] =
+static yyconst flex_int16_t yy_def[92] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    1,    1,    1,    1,    7,   38,
-        7,   10,   10,   10,   18,   10,   38,   19,   18,   10,
-       11,   19,   20,   11,   23,   30,   20,   11,   23,   41,
-       35,   37,   11,   16,   35,   16,   33,   30,   32,   16,
-       22,   31,   29,   22,   28,   27,   26,   25,   24,   21,
-       14,    9,   22,    3,    2,   22,   34,   34,    0,    0,
-        0,    0,    0,    0,   34,   40,   40,   40,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
-       40,   40,   40,   40
+       69,   68,   68,   68,   70,   71,   72,   73,   68,   70,
+       10,   10,   74,   10,   71,   75,   72,   73,   76,   77,
+       78,   79,   80,   10,   11,   12,   10,   10,   10,   10,
+       12,   10,   12,   74,   81,   82,   83,   84,   85,   10,
+       10,   10,   10,   10,   10,   10,   10,   10,   81,   82,
+       83,   86,   87,   88,   89,   90,   10,   10,   10,   86,
+       88,   91,   10,   10,   10,   10,   10,    0,   68,   68,
+       68,   68,   68,   68,   68,   68,   68,   68,   68,   68,
+       68,   68,   68,   68,   68,   68,   68,   68,   68,   68,
+       68
 
+    } ;
+
+static yyconst flex_uint16_t yy_nxt[281] =
+    {   0,
+        5,    6,    6,    7,    5,    8,    9,   10,    5,   11,
+       12,   12,   13,   12,   12,   12,    5,   15,   16,   17,
+       40,   18,   16,   19,   40,   20,   19,   21,   23,   39,
+       22,   20,   23,   22,   14,   15,   16,   17,   14,   18,
+       14,   24,   14,   25,   26,   26,   14,   26,   26,   26,
+       14,   15,   16,   17,   21,   18,   23,   55,   62,   27,
+       28,   29,   25,   21,   30,   14,   39,   41,   30,   31,
+       42,   32,   40,   66,   33,   43,   40,   14,   44,   31,
+       35,   36,   37,   58,   38,   16,   19,   58,   20,   19,
+       21,   66,   62,   22,   20,   23,   22,   45,   67,   57,
+
+       46,   47,   58,   48,   48,   59,   61,   46,   55,   46,
+       44,   47,   49,   50,   51,   44,   38,   35,   36,   52,
+       42,   53,   36,   36,   54,   42,   55,   52,   54,   37,
+       33,   56,   53,   55,   56,   47,   61,   39,   65,   62,
+       14,   66,   14,   68,   68,   47,   50,   60,   68,   53,
+       60,   61,   68,   68,   56,   52,   54,   52,   68,   62,
+       54,   54,   54,   63,   59,   68,   68,   68,   68,   68,
+       68,   64,    4,    4,    4,    4,   14,   14,   14,   14,
+       15,   15,   15,   15,   17,   17,   17,   17,   18,   18,
+       18,   18,   34,   34,   34,   34,   16,   16,   16,   16,
+
+       19,   19,   19,   19,   20,   20,   20,   20,   21,   21,
+       21,   22,   68,   22,   22,   23,   23,   68,   23,   49,
+       49,   49,   49,   50,   50,   50,   50,   51,   51,   51,
+       51,   38,   38,   38,   38,   39,   68,   39,   39,   60,
+       60,   60,   60,   53,   53,   53,   53,   61,   61,   61,
+       55,   55,   68,   55,   56,   68,   56,   56,   62,   68,
+       62,   62,    3,   68,   68,   68,   68,   68,   68,   68,
+       68,   68,   68,   68,   68,   68,   68,   68,   68,   68
+    } ;
+
+static yyconst flex_int16_t yy_chk[281] =
+    {   0,
+        2,    2,    2,    2,    2,    2,    2,    2,    2,    2,
+        2,    2,    2,    2,    2,    2,    2,    5,    5,    5,
+       27,    5,    6,    6,   27,    6,    7,    7,   20,   20,
+        7,    8,    8,    8,    9,    9,    9,    9,    9,    9,
+        9,    9,    9,    9,    9,    9,    9,    9,    9,    9,
+        9,   10,   10,   10,   16,   10,   16,   53,   53,   10,
+       11,   11,   11,   19,   11,   67,   19,   29,   11,   12,
+       29,   12,   28,   65,   12,   30,   28,   64,   30,   12,
+       13,   13,   13,   58,   13,   15,   15,   57,   15,   17,
+       17,   66,   56,   17,   18,   18,   18,   31,   66,   40,
+
+       31,   33,   40,   33,   46,   48,   50,   46,   50,   45,
+       44,   33,   34,   34,   34,   43,   34,   35,   35,   35,
+       42,   35,   36,   36,   36,   41,   36,   37,   37,   37,
+       32,   37,   38,   38,   38,   47,   60,   22,   63,   60,
+       47,   63,   14,    3,    0,   47,   49,   49,    0,   49,
+       51,   51,    0,    0,   51,   52,   52,   52,    0,   52,
+       54,   54,   54,   59,   59,    0,    0,    0,    0,    0,
+        0,   59,   69,   69,   69,   69,   70,   70,   70,   70,
+       71,   71,   71,   71,   72,   72,   72,   72,   73,   73,
+       73,   73,   74,   74,   74,   74,   75,   75,   75,   75,
+
+       76,   76,   76,   76,   77,   77,   77,   77,   78,   78,
+       78,   79,    0,   79,   79,   80,   80,    0,   80,   81,
+       81,   81,   81,   82,   82,   82,   82,   83,   83,   83,
+       83,   84,   84,   84,   84,   85,    0,   85,   85,   86,
+       86,   86,   86,   87,   87,   87,   87,   88,   88,   88,
+       89,   89,    0,   89,   90,    0,   90,   90,   91,    0,
+       91,   91,   68,   68,   68,   68,   68,   68,   68,   68,
+       68,   68,   68,   68,   68,   68,   68,   68,   68,   68
     } ;
 
 /* The intent behind this definition is that it'll catch
@@ -473,7 +526,7 @@ static yyconst flex_int16_t yy_chk[95] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 #line 1 "chkparser.l"
-#line 13 "chkparser.l"
+#line 15 "chkparser.l"
 	#define BACH_MAX
 	#ifdef BACH_MAX
     #include "llllobj.h"
@@ -485,13 +538,10 @@ static yyconst flex_int16_t yy_chk[95] =
     #include <ctype.h>
     #define parserpost printf
     #endif
+    
+    #define YY_NO_UNISTD_H
 
-
-    typedef struct _typecheck_res {
-        t_bool t_reserved;
-        t_bool t_wishesbt;
-    } t_typecheck_res;
-#line 495 "chkparser.c"
+#line 545 "chkparser.c"
 
 #define INITIAL 0
 
@@ -503,7 +553,9 @@ static yyconst flex_int16_t yy_chk[95] =
 #include <unistd.h>
 #endif
 
-#define YY_EXTRA_TYPE t_typecheck_res *
+#ifndef YY_EXTRA_TYPE
+#define YY_EXTRA_TYPE void *
+#endif
 
 /* Holds the entire state of the reentrant scanner. */
 struct yyguts_t
@@ -753,14 +805,10 @@ YY_DECL
 		}
 
 	{
-#line 34 "chkparser.l"
+#line 31 "chkparser.l"
 
 
-
-    t_typecheck_res *tcr = yyextra;
-
-
-#line 764 "chkparser.c"
+#line 812 "chkparser.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -788,22 +836,18 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 41 )
+				if ( yy_current_state >= 69 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 76 );
+		while ( yy_current_state != 68 );
+		yy_cp = yyg->yy_last_accepting_cpos;
+		yy_current_state = yyg->yy_last_accepting_state;
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
-		if ( yy_act == 0 )
-			{ /* have to back up */
-			yy_cp = yyg->yy_last_accepting_cpos;
-			yy_current_state = yyg->yy_last_accepting_state;
-			yy_act = yy_accept[yy_current_state];
-			}
 
 		YY_DO_BEFORE_ACTION;
 
@@ -820,83 +864,202 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 40 "chkparser.l"
+#line 33 "chkparser.l"
 {
-    parserpost("typecheck: starting backtick");
-    tcr->t_wishesbt = true;
+    parserpost("typecheck: long");
+    return H_LONG;
 }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 45 "chkparser.l"
+#line 38 "chkparser.l"
 {
-    parserpost("typecheck: paren");
-    tcr->t_wishesbt = true;
+    parserpost("typecheck: double");
+    return H_DOUBLE;
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 50 "chkparser.l"
+#line 43 "chkparser.l"
 {
-    parserpost("typecheck: number");
-    tcr->t_wishesbt = true;
+    parserpost("typecheck: rational");
+    return H_RAT;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 55 "chkparser.l"
+#line 48 "chkparser.l"
 {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 60 "chkparser.l"
+#line 53 "chkparser.l"
 {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 65 "chkparser.l"
+#line 58 "chkparser.l"
 {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 70 "chkparser.l"
+#line 63 "chkparser.l"
 {
     parserpost("typecheck: pitch");
-    tcr->t_wishesbt = true;
+    return H_PITCH;
 }
 	YY_BREAK
 case 8:
-/* rule 8 can match eol */
 YY_RULE_SETUP
-#line 75 "chkparser.l"
+#line 70 "chkparser.l"
 {
-    parserpost("typecheck: reserved char");
-    tcr->t_reserved = true;
-    return 0;
+    parserpost("typecheck: no parens, no separators, no double quotes / backslashes");
+    return H_SYM;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 81 "chkparser.l"
+#line 75 "chkparser.l"
 {
-    parserpost(" typecheck: symbol");
+    parserpost("typecheck: parens, no separators, no double quotes / backslashes");
+    return H_SYM | H_PAREN;
 }
 	YY_BREAK
 case 10:
+/* rule 10 can match eol */
 YY_RULE_SETUP
-#line 86 "chkparser.l"
+#line 80 "chkparser.l"
+{
+    parserpost("typecheck: no parens, separators, no double quotes / backslashes");
+    return H_SYM | H_SEPARATOR;
+}
+	YY_BREAK
+case 11:
+/* rule 11 can match eol */
+YY_RULE_SETUP
+#line 85 "chkparser.l"
+{
+    parserpost("typecheck: parens, separators, no double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SEPARATOR;
+}
+	YY_BREAK
+case 12:
+YY_RULE_SETUP
+#line 93 "chkparser.l"
+{
+    parserpost("typecheck: no parens, no separators, double quotes / backslashes");
+    return H_SYM | H_SPECIAL;
+}
+	YY_BREAK
+case 13:
+YY_RULE_SETUP
+#line 98 "chkparser.l"
+{
+    parserpost("typecheck: parens, no separators, double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SPECIAL;
+}
+	YY_BREAK
+case 14:
+/* rule 14 can match eol */
+YY_RULE_SETUP
+#line 103 "chkparser.l"
+{
+    parserpost("typecheck: no parens, separators, double quotes / backslashes");
+    return H_SYM | H_SEPARATOR | H_SPECIAL;
+}
+	YY_BREAK
+case 15:
+/* rule 15 can match eol */
+YY_RULE_SETUP
+#line 108 "chkparser.l"
+{
+    parserpost("typecheck: parens, separators, double quotes / backslashes");
+    return H_SYM | H_PAREN | H_SEPARATOR | H_SPECIAL;
+}
+	YY_BREAK
+case 16:
+YY_RULE_SETUP
+#line 116 "chkparser.l"
+{
+    parserpost("typecheck: backtick, no parens, no separators, no double quotes / backslashes");
+    return H_SYM | H_BACKTICK;
+}
+	YY_BREAK
+case 17:
+/* rule 17 can match eol */
+YY_RULE_SETUP
+#line 121 "chkparser.l"
+{
+    parserpost("typecheck: backtick, parens, no separators, no double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_PAREN;
+}
+	YY_BREAK
+case 18:
+/* rule 18 can match eol */
+YY_RULE_SETUP
+#line 126 "chkparser.l"
+{
+    parserpost("typecheck: backtick, no parens, separators, no double quotes / backslashes");
+return H_SYM | H_BACKTICK | H_SEPARATOR;
+}
+	YY_BREAK
+case 19:
+/* rule 19 can match eol */
+YY_RULE_SETUP
+#line 132 "chkparser.l"
+{
+    parserpost("typecheck: backtick, parens, separators, no double quotes / backslashes");
+return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
+}
+	YY_BREAK
+case 20:
+YY_RULE_SETUP
+#line 137 "chkparser.l"
+{
+    parserpost("typecheck: backtick, no parens, no separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SPECIAL;
+}
+	YY_BREAK
+case 21:
+YY_RULE_SETUP
+#line 142 "chkparser.l"
+{
+    parserpost("typecheck: backtick, parens, no separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SPECIAL;
+}
+	YY_BREAK
+case 22:
+/* rule 22 can match eol */
+YY_RULE_SETUP
+#line 147 "chkparser.l"
+{
+    parserpost("typecheck: backtick, no parens, separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_SEPARATOR | H_SPECIAL;
+}
+	YY_BREAK
+case 23:
+YY_RULE_SETUP
+#line 152 "chkparser.l"
+{
+    parserpost("typecheck: backtick, parens, separators, double quotes / backslashes");
+    return H_SYM | H_BACKTICK | H_PAREN | H_SPECIAL;
+}
+	YY_BREAK
+case 24:
+YY_RULE_SETUP
+#line 158 "chkparser.l"
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
-#line 900 "chkparser.c"
+#line 1063 "chkparser.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -963,7 +1126,8 @@ case YY_STATE_EOF(INITIAL):
 
 			else
 				{
-				yy_cp = yyg->yy_c_buf_p;
+				yy_cp = yyg->yy_last_accepting_cpos;
+				yy_current_state = yyg->yy_last_accepting_state;
 				goto yy_find_action;
 				}
 			}
@@ -1192,7 +1356,7 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 41 )
+			if ( yy_current_state >= 69 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1221,11 +1385,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 41 )
+		if ( yy_current_state >= 69 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 40);
+	yy_is_jam = (yy_current_state == 68);
 
 	(void)yyg;
 	return yy_is_jam ? 0 : yy_current_state;
@@ -1488,7 +1652,7 @@ static void chkparser__load_buffer_state  (yyscan_t yyscanner)
         b->yy_bs_column = 0;
     }
 
-        b->yy_is_interactive = file ? (isatty( fileno(file) ) > 0) : 0;
+        b->yy_is_interactive = 0;
     
 	errno = oerrno;
 }
@@ -2037,38 +2201,9 @@ static int yy_flex_strlen (yyconst char * s , yyscan_t yyscanner)
 }
 #endif
 
-void *chkparser_alloc (yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	return (void *) malloc( size );
-}
-
-void *chkparser_realloc  (void * ptr, yy_size_t  size , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-
-	/* The cast to (char *) in the following accommodates both
-	 * implementations that use char* generic pointers, and those
-	 * that use void* generic pointers.  It works with the latter
-	 * because both ANSI C and C++ allow castless assignment from
-	 * any pointer type to void*, and deal with argument conversions
-	 * as though doing an assignment.
-	 */
-	return (void *) realloc( (char *) ptr, size );
-}
-
-void chkparser_free (void * ptr , yyscan_t yyscanner)
-{
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
-	(void)yyg;
-	free( (char *) ptr );	/* see chkparser_realloc() for (char *) cast */
-}
-
 #define YYTABLES_NAME "yytables"
 
-#line 86 "chkparser.l"
+#line 158 "chkparser.l"
 
 
 
@@ -2079,30 +2214,79 @@ int main(int argc, char **argv)
 }
 #endif
 
-void chkparser_flush_and_delete_buffer(yyscan_t myscanner, YY_BUFFER_STATE bp)
+
+
+
+t_chkParser::t_chkParser() : t_parser()
 {
-    chkparser__flush_buffer(bp,myscanner);
-    chkparser__delete_buffer(bp,myscanner);
+
+    setPtr(sizeof(struct yyguts_t));
+    setBasePtr();
+    reset();
 }
 
-t_bool typecheck_parse(char *buf)
+void t_chkParser::reset()
 {
-    yyscan_t myscanner;
-    YY_BUFFER_STATE bp;
-    t_typecheck_res res = {false, false};
-    chkparser_lex_init_extra(&res, &myscanner);
-    bp = chkparser__scan_string(buf,myscanner);
-    chkparser_lex(myscanner);
-    chkparser_flush_and_delete_buffer(myscanner, bp);
-    chkparser_lex_destroy(myscanner);
-    return res.t_wishesbt && !res.t_reserved;
+    t_parser::reset();
+    /* By setting to 0xAA, we expose bugs in
+     yy_init_globals. Leave at 0x00 for releases. */
+    memset(this,0x00,sizeof(struct yyguts_t));
+    //yy_init_globals ((yyscan_t) this);
 }
 
-YY_BUFFER_STATE chkparser_scan_string(yyscan_t myscanner, char *buf)
+long t_chkParser::parse(const char *buf)
 {
-    YY_BUFFER_STATE bp = chkparser__scan_string(buf,myscanner);
-    chkparser__switch_to_buffer(bp,myscanner);
-    return bp;
+    parserpost("chkparser: parsing %s", buf);
+    long type;
+    YY_BUFFER_STATE bp = chkparser__scan_string(buf, (yyscan_t) this);
+    chkparser__switch_to_buffer(bp, (yyscan_t) this);
+    type = chkparser_lex((yyscan_t) this);
+    reset();
+    return type != H_NOTHING ? type : H_SYM;
 }
 
+t_bool t_chkParser::wantsBacktick(t_symbol *s)
+{
+    if (s == _llllobj_sym_nil || s == _llllobj_sym_null) {
+        return true;
+    } else {
+        long type = parse(s->s_name);
+        long mods = type & H_MODIFIERS;
+        if ((type & H_PLAINTYPE) != H_SYM ||
+            (mods & H_BACKTICK) ||
+            ((mods & H_PAREN) && !(mods & H_SEPARATOR))) {
+            return true;
+        } else
+            return false;
+    }
+}
+
+t_symbol *t_chkParser::addQuoteIfNeeded(t_symbol *s)
+{
+    if (wantsBacktick(s))
+        return sym_addquote(s->s_name);
+    else
+        return s;
+}
+
+
+
+
+void *chkparser_alloc(size_t bytes, void *yyscanner)
+{
+    void *b = ((t_chkParser *) yyscanner)->getPtr(bytes);
+    parserpost(" chkparser_alloc: %d bytes requested, returning %p", bytes, b);
+    return b;
+}
+
+void *chkparser_realloc(void *ptr,size_t bytes, void *yyscanner)
+{
+    parserpost(" chkparser_realloc: %d bytes requested for pointer %p, returning %p", bytes, ptr, ptr);
+    return ptr;
+}
+
+void chkparser_free(void *ptr,void *yyscanner)
+{
+    return;
+}
 

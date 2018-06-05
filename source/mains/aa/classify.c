@@ -78,7 +78,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -116,8 +116,8 @@ int T_EXPORT main()
 	// When set to 0, numbers with different types but equal value (i.e. 1.5 and 3/2) are considered as equal. 
 	// When set to 1, they are considered different.
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
-	
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	  
 	
 	
 	class_register(CLASS_BOX, c);
@@ -250,6 +250,8 @@ t_classify *classify_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

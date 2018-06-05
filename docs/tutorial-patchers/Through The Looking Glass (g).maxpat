@@ -555,7 +555,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "newobj",
-									"text" : "bach.append 5",
+									"text" : "bach.join 5",
 									"id" : "obj-12",
 									"fontname" : "Arial",
 									"numinlets" : 5,

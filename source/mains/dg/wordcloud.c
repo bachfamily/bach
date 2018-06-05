@@ -182,7 +182,7 @@ int T_EXPORT main(void){
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -233,7 +233,7 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) wordcloud_assist, "assist", A_CANT, 0);
 	class_addmethod(c, (method) wordcloud_oksize, "oksize", A_CANT, 0);
 	
-//	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_UI);
 	
 	CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 200 300"); // new dimensions
 	// @exclude bach.wordcloud
@@ -642,7 +642,8 @@ void wordcloud_anything(t_wordcloud *x, t_symbol *s, long argc, t_atom *argv){
 
 
 
-t_wordcloud* wordcloud_new(t_symbol *s, short argc, t_atom *argv){
+t_wordcloud* wordcloud_new(t_symbol *s, short argc, t_atom *argv)
+{
 	t_wordcloud* x = NULL;
 	t_max_err err = MAX_ERR_GENERIC;
 	t_dictionary *d;
@@ -716,6 +717,7 @@ t_wordcloud* wordcloud_new(t_symbol *s, short argc, t_atom *argv){
 		}
 		
 		x->creating_new_obj = false; 
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 		return x;
 	}
 	
@@ -838,7 +840,7 @@ char do_rebuild_tags(t_wordcloud *x, t_object *view, t_rect rect, t_symbol *font
 		if (this_weights >= min_drawable_weights) { 
 			t_symbol *tag = hatom_gettype(&tags_elem->l_hatom) == H_SYM ? hatom_getsym(&tags_elem->l_hatom) : _llllobj_sym_empty_symbol;
 			double font_size = x->min_weights == x->max_weights ? (x->min_font_size + x->max_font_size) / 2. : 
-			rescale_with_slope(this_weights, x->autofit ? min_drawable_weights : x->min_weights, x->max_weights, x->min_font_size, x->max_font_size, x->slope, false);
+			rescale_with_slope(this_weights, x->autofit ? min_drawable_weights : x->min_weights, x->max_weights, x->min_font_size, x->max_font_size, x->slope);
 			t_jfont *jf = jfont_create_debug(font_name->s_name, (t_jgraphics_font_slant) font_slant, (t_jgraphics_font_weight) font_weight, font_size);
 			jfont_text_measure(jf, tag->s_name, &w, &h);
 			

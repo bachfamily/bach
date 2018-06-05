@@ -73,7 +73,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -94,7 +94,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)pick_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)pick_inletinfo,	"inletinfo",	A_CANT,		0);
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 	CLASS_ATTR_LONG(c, "unwrap", 0,	t_pick, n_unwrap);
 	CLASS_ATTR_LABEL(c, "unwrap", 0, "Unwrap");
@@ -201,7 +201,7 @@ void pick_assist(t_pick *x, void *b, long m, long a, char *s)
 			}
 		} else {
 			char *txt = NULL;
-			llll_to_text_buf(idx_hatom->h_w.w_llll, &txt, 0, 0, 0, NULL);
+			llll_to_text_buf(idx_hatom->h_w.w_llll, &txt, 0, 0, 0, 0, 0, NULL);
 			sprintf(s, "llll (%s): Element at position %s", type, txt);
 		}
 		// @out 0 @loop 1 @digest Extracted elements
@@ -303,6 +303,8 @@ t_pick *pick_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

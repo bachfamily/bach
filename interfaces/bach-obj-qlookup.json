@@ -1303,6 +1303,46 @@
       "bach.intersection"
     ]
   },
+  "bach.textin": {
+    "digest": "Accept variants of the llll text format",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "text",
+      "native",
+      "backtick",
+      "llll"
+    ],
+    "seealso": [
+      "bach.portal",
+      "bach.textout",
+      "bach.read"
+    ]
+  },
+  "bach.textout": {
+    "digest": "Produces variants of the llll text format",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "text",
+      "backtick",
+      "attributes",
+      "pitch"
+    ],
+    "seealso": [
+      "bach.portal",
+      "bach.textin",
+      "bach.write"
+    ]
+  },
   "bach.thin": {
     "digest": "Remove duplicate elements",
     "module": "bach",
@@ -1944,7 +1984,7 @@
       "bach.expr"
     ]
   },
-  "bach.%": {
+  "bach.mod": {
     "digest": "Quick llll modulo",
     "module": "bach",
     "category": [
@@ -1967,6 +2007,46 @@
       "bach.+",
       "bach.-",
       "%"
+    ]
+  },
+  "bach.pitchpack": {
+    "digest": "Make pitches from their components",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math",
+      "pitch"
+    ],
+    "keywords": [
+      "calculate",
+      "compute",
+      "pitch",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.pitchunpack"
+    ]
+  },
+  "bach.pitchunpack": {
+    "digest": "Separate components of pitches",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math",
+      "pitch"
+    ],
+    "keywords": [
+      "calculate",
+      "compute",
+      "pitch",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.pitchpack"
     ]
   },
   "bach.pow": {
@@ -2062,6 +2142,31 @@
       "bach.-",
       "bach.%",
       "/"
+    ]
+  },
+  "bach.%": {
+    "digest": "Quick llll modulo",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "modulo",
+      "remainder",
+      "division",
+      "number",
+      "calculate",
+      "compute"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach./",
+      "bach.*",
+      "bach.+",
+      "bach.-",
+      "%"
     ]
   },
   "bach.repeat": {
@@ -2809,8 +2914,8 @@
       "bach.tree"
     ]
   },
-  "bach.mc2n": {
-    "digest": "Midicents to note name conversion",
+  "bach.mc2p": {
+    "digest": "MIDIcents to pitch conversion",
     "module": "bach",
     "category": [
       "bach",
@@ -2822,10 +2927,11 @@
       "midicent",
       "cent",
       "note",
-      "name"
+      "name",
+      "pitch"
     ],
     "seealso": [
-      "bach.n2mc",
+      "bach.p2mc",
       "bach.f2mc",
       "bach.mc2f"
     ]
@@ -2876,27 +2982,6 @@
       "Into The Matrix"
     ]
   },
-  "bach.n2mc": {
-    "digest": "Note names to midicents conversion",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach notation"
-    ],
-    "keywords": [
-      "convert",
-      "midicent",
-      "cent",
-      "note",
-      "name"
-    ],
-    "seealso": [
-      "bach.mc2n",
-      "bach.f2mc",
-      "bach.mc2f"
-    ]
-  },
   "bach.omtree2bachtree": {
     "digest": "Convert an OpenMusic rhythmic tree into a bach rhythmic tree",
     "module": "bach",
@@ -2918,6 +3003,27 @@
       "bach.bachtree2omtree",
       "bach.score",
       "The World Outside"
+    ]
+  },
+  "bach.p2mc": {
+    "digest": "Pitches to MIDIcents conversion",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "convert",
+      "midicent",
+      "cent",
+      "note",
+      "name"
+    ],
+    "seealso": [
+      "bach.mc2p",
+      "bach.f2mc",
+      "bach.mc2f"
     ]
   },
   "bach.pad": {
@@ -3040,6 +3146,40 @@
       "bach.mod+",
       "bach.mod-",
       "bach.modtimes"
+    ]
+  },
+  "bach.quantize": {
+    "digest": "Perform quantization tasks",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "quantize",
+      "measureinfo",
+      "convert",
+      "measured",
+      "proportional",
+      "marker",
+      "minimal units",
+      "grace notes",
+      "box",
+      "approximate",
+      "distance",
+      "time signature",
+      "tempo",
+      "barline"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.score",
+      "bach.beatbox",
+      "bach.beatunbox",
+      "bach.score2roll",
+      "bach.mono",
+      "Real Time Stories"
     ]
   },
   "bach.quantize": {
@@ -3403,6 +3543,38 @@
       "Into The Matrix"
     ]
   },
+  "bach.transcribe": {
+    "digest": "Fills a <o>bach.roll</o> according to incoming MIDI data",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "transcribe",
+      "write",
+      "fill",
+      "MIDI",
+      "stream",
+      "pitch",
+      "velocity",
+      "cent",
+      "midicent",
+      "voice",
+      "number",
+      "duration",
+      "insert",
+      "note",
+      "proportional"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.quantize",
+      "bach.ezmidiplay",
+      "Real Time Stories"
+    ]
+  },
   "bach.tree": {
     "digest": "Display and edit lllls in a tree diagram",
     "module": "bach",
@@ -3554,6 +3726,30 @@
       "bach.mod+",
       "bach.mod-",
       "bach.modtimes"
+    ]
+  },
+  "bach.approx": {
+    "digest": "Snap pitches or MIDIcents to microtonal grid",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "cent",
+      "midicent",
+      "approximate",
+      "snap",
+      "grid",
+      "microtone",
+      "nearest",
+      "pitch"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.mc2pc",
+      "bach.pc2mc"
     ]
   },
   "bach.belong": {
@@ -3911,6 +4107,27 @@
       "bach.sort",
       "bach.ssort",
       "bach.msort"
+    ]
+  },
+  "bach.enharm": {
+    "digest": "Handle enharmonicity",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "pitch",
+      "enharmonicity",
+      "retranscribe",
+      "respell",
+      "note"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.mc2pc",
+      "bach.pc2mc"
     ]
   },
   "bach.ezmidiplay": {
@@ -4520,33 +4737,9 @@
     ],
     "seealso": [
       "bach.pc2mc",
-      "bach.mcapprox",
+      "bach.approx",
       "bach.pcsetinfo",
       "bach.expr"
-    ]
-  },
-  "bach.mcapprox": {
-    "digest": "Snap midicents to microtonal grid",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "cent",
-      "midicent",
-      "approximate",
-      "snap",
-      "grid",
-      "microtone",
-      "nearest",
-      "pitch"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.mc2pc",
-      "bach.pc2mc"
     ]
   },
   "bach.mean": {
@@ -4881,7 +5074,7 @@
     ],
     "seealso": [
       "bach.mc2pc",
-      "bach.mcapprox",
+      "bach.approx",
       "bach.pcsetinfo",
       "bach.expr"
     ]
@@ -5451,38 +5644,6 @@
       "bach.chordrev",
       "bach.restrot bach.score",
       "Through The Looking Glass"
-    ]
-  },
-  "bach.transcribe": {
-    "digest": "Fills a <o>bach.roll</o> according to incoming MIDI data",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "transcribe",
-      "write",
-      "fill",
-      "MIDI",
-      "stream",
-      "pitch",
-      "velocity",
-      "cent",
-      "midicent",
-      "voice",
-      "number",
-      "duration",
-      "insert",
-      "note",
-      "proportional"
-    ],
-    "seealso": [
-      "bach.roll",
-      "bach.quantize",
-      "bach.ezmidiplay",
-      "Real Time Stories"
     ]
   },
   "bach.urn": {

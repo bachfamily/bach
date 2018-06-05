@@ -11,6 +11,13 @@ v0.8b
 					C5 is now ALWAYS the middle C
 					Please modify your patches accordingly, if you relied on other values or on latin names
 
+- All objects       The behavior of backticks in the text-format llll output has changed:
+                        now the first item of an llll doesn't get a backtick any longer if it is the name of an attribute of a bach object.
+                    There is a new format for llll output: 'm' (as in Max), which is a textual representation (akin to 't') with no backticks at all,
+                        useful for passing correctly symbols to regular Max objects.
+                    Notice that, unlike the 't' format, the 'm' format is not invertible, i.e., a 'm' 
+			llll output from a bach object might not be parsed correctly by another bach object, even if it doesn't exceed the size limit for a Max message.
+
 - bach.append -> bach.join	This one won't break the compatibility with older patches, we promise :-)
 					But still it's important that you start using the new [bach.join] instead of [bach.append].
 					It is basically the same object and it behaves in the very same way. All bach patchers 
@@ -19,6 +26,10 @@ v0.8b
 - bach.unpacknote -> bach.playkeys	
 				Again: bach.unpacknote will remain, but it is deprecated. You should start using bach.playkeys,
 					which doesn't work in the exact same way, but which is way more flexible.
+
+- bach.mcapprox -> bach.approx
+				Again: bach.mcapprox will remain, but it is deprecated. You should start using bach.approx, which supports both MIDIcents and pitches
+
 
 - bach.roll, bach.score		Default slot linkages have changed!!!
 					Now by default lyrics are stored in slot 20, popping up with 'l'
@@ -35,10 +46,16 @@ v0.8b
 				Input/output syntax for LLLL and MATRIX-typed slots does NOT have outer level of parenthesis any longer.
 					For instance, if slot 3 is of type LLLL now [addslot (3 foo bar)] assigns a flat llll of 2 elements as slot 3.
 					The same thing is retrieven as output. Please update your patches if you use LLLL and MATRIX-typed slots!
+				The "changeslotvalue" no longer accepts negative indices to mean "all". 
+					Negative indices are parsed, as usual in bach, as element being counted backwards. 
 
 
 - bach.tonnetz			Now center and generators are by default pitches; 
 					your patches should be brought to the new system automatically, but please verify their behavior
+
+- bach.mod			Now implements the expr mod() function, positive modulo.
+					Now [bach.%] is an alias for the new abstraction [bach.remainder], which implements the signed modulo (as in expr),
+					so compatibility is kept if you used [bach.%], but not if you used [bach.mod]
 
 - all objects:			Specifications syntax for message arguments has been replaced by @ syntax.
 					This will NOT break backwards compatibility, but you should use the new syntax whenever possible.
@@ -50,6 +67,8 @@ v0.8b
 *****************
 
 *** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
+
+- bach.expr     The power operator (**) now has higher priority than unary minus and plus, and logical and bitwise not.
 
 - bach.urn. bach.wurn	IMPORTANT: Former @autoclear 2 (introduced in 0.7.9) is now @autoclear 3; @autoclear 2 has a similar yet different meaning. See bach.urn help file
 
@@ -70,6 +89,9 @@ v0.8b
 
 - bach.circle, bach.tonnetz
 			Old "velocityhandling" attribute is now called "showvelocity". This might change the display of your patches!
+
+- bach.roll, bach.score, bach.slot
+			The "changeslotvalue" message is now called "changeslotitem". Old name is however kept for backward compatibility.
 
 - bach.roll, bach.score	
 			Old "velocityhandling" attribute is now called "showvelocity", but differently from bach.circle and bach.tonnetz,
@@ -107,6 +129,9 @@ v0.8b
 				you should use the new ones from now on
 			Default loop is now (0ms, 1000ms) for bach.roll and first measure for bach.score
 			If you named markers or items "next", "prev" or "time", you might run into trouble.
+			New important features for slots: "temporalmode" (none, relative or milliseconds) and "extend" (to extend the slot content beyond the note tail)
+				In particular, you may now define millisecond-based behaviors for slots.
+			"sel chord N" now selects the Nth chord in voice 1 (independently of measure barlines)
 
 
 
@@ -193,10 +218,11 @@ v0.8b
 - bach.pad, bach.partition
 			Are now externals
 
-- bach.classify, bach.playkeys, bach.resample	
+- bach.classify, bach.playkeys, bach.resample, bach.textin, bach.textout
 			New externals
 
-- bach.postpend		New abstraction
+- bach.postpend, bach.pitchpack, bach.pitchunpack, bach.remainder	
+			New abstractions
 
 - bach.prepend, bach.unpacknote, bach.mapchord
 			Optimized patchers
@@ -205,6 +231,12 @@ v0.8b
 
 - bach.reg, bach.value, bach.pv
 			Now lllls can be edited via double clicking
+
+- bach.read         New ignore attribute
+
+- bach.write        New escape attribute
+                    New negativeoctaves attribute and message attribute
+                    The message attributes wrap, indent, maxdecimals and maxdepth can now be set as object attributes as well
 
 - bach.pv		Fixed crashes happening when freeing the object
 
@@ -222,8 +254,14 @@ v0.8b
 				also now preventedit supports "drop"
 			Slotinfo now has an "access" specification preventing or restricting access to slot content
 			New "copyslot" and "moveslot" messages
+			New "appendslotitem", "prependslotitem" and "deleteslotitem" messages
+				Also the "changeslotvalue" message now is called "changeslotitem" (old syntax kept for backward compatibility)
 
-- bach.roll, bach.score	Now support "parts", via the "voice ensembles". 
+- bach.roll, bach.score, bach.expr, bach.graph
+            Expressions support pitches
+            New functions for dealing with pitches: "pitch", "degree", "octave", "alter", "cents", "makepitch", "enharm", "approx"
+
+- bach.roll, bach.score	Now support "parts", via the "voice ensembles".
 				Voices can be gathered in voice ensembles to display different parts on the same staff
 				See the new @part attribute (see #part in the help center)
 				Also: new @activepart, @showpartcolors attributes
@@ -271,8 +309,11 @@ v0.8b
 			New @catchplay attribute to follow playhead while playing (default: on)
 			"sel tail if" and "sel tails": new messages (also unsel/select)
 			Now "dumpselection" message also supports a @router attribute (e.g. "dumpselection @router foo")  
-
-
+			Now "play preschedule" feature, ensuring best timing (with some limitations): see #play+preschedule
+			Now the "play" message is output *before* partial notes also in offline mode
+			Smart marker names placement
+			New @highlightdomain attribute
+			
 - bach.score		Fixed bug causing lost slots on syncopations
 			Fixed bug possibly causing crashes while changing number of voices
 			Autobeam: now works actually differently from autorhythm (as expected) 

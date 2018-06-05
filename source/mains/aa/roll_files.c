@@ -115,9 +115,9 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 			handle_rebuild_done((t_notation_obj *) x);
 			handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_IMPORT_MIDI_ROLL);
 			if (chord_thresh >= 0) {
-				systhread_mutex_lock(x->r_ob.c_general_mutex);
+                lock_general_mutex((t_notation_obj *)x);
                 merge(x, chord_thresh, -1, merging_policy, merging_policy, 0, 0);
-				systhread_mutex_unlock(x->r_ob.c_general_mutex);
+                unlock_general_mutex((t_notation_obj *)x);
 			}
 			break;
 		default:
@@ -694,21 +694,21 @@ void roll_writetxt(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *roll_as_llll = get_roll_values_as_llll(x, k_CONSIDER_FOR_SAVING, k_HEADER_ALL, true, false); // we save everything
-	llll_writetxt((t_object *) x, roll_as_llll, arguments);
+	llll_writetxt((t_object *) x, roll_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART);
 }
 
 void roll_exportom(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *roll_as_llll = get_roll_values_as_llll(x, k_CONSIDER_FOR_EXPORT_OM, k_HEADER_ALL, true, false); // we save everything
-	llll_writetxt((t_object *) x, roll_as_llll, arguments);
+	llll_writetxt((t_object *) x, roll_as_llll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 void roll_exportpwgl(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *roll_as_llll_for_pwgl = get_roll_values_as_llll_for_pwgl(x);
-	llll_writetxt((t_object *) x, roll_as_llll_for_pwgl, arguments);
+	llll_writetxt((t_object *) x, roll_as_llll_for_pwgl, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_DOUBLE_QUOTE, LLLL_TB_SPECIAL);
 }
 
 unsigned long midi_getvalue(unsigned char **buf, unsigned long bytes)
@@ -839,7 +839,7 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
             llll_destroyelem(arguments->l_head);
     }
     
-	systhread_mutex_lock(x->r_ob.c_general_mutex);
+    lock_general_mutex((t_notation_obj *)x);
 
 	prepare_voices_to_write((t_notation_obj *) x, &voices_to_write);
 	
@@ -992,7 +992,8 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 			}
 		}
 	}
-	systhread_mutex_unlock(x->r_ob.c_general_mutex);
+    
+    unlock_general_mutex((t_notation_obj *)x);
 	
 	// now that we have parsed all the roll into our intermediate data structure, let's convert it into raw MIDI data and write them 
 	count = create_raw_midi_data_buffer(track_ll, num_tracks, format, time_division, 0, &buffer);

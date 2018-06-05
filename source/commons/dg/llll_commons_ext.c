@@ -134,9 +134,12 @@ t_llll *llll_subllll(t_llllelem *from, t_llllelem *to)
 {
 	t_llll *ll;
 	t_llllelem *elem;
+    
+    if (!from || !to)
+        return llll_get();
 
 	if (from->l_parent != to->l_parent || !from->l_parent)
-		return NULL;
+		return llll_get();
 	
 	ll = llll_get();
 	for (elem = from; elem; elem = elem->l_next) {
@@ -586,7 +589,7 @@ t_symbol *nth_sym_of_a_plain_sym_llll(t_llll *in_llll, long index) {
 void llll_to_char_array(t_llll *in_llll, char* char_array, long max_chars) {
 //	return;
 	t_atom *av = NULL;
-	short ac = llll_deparse(in_llll, &av, 0, 1);
+	short ac = llll_deparse(in_llll, &av, 0, LLLL_D_QUOTE);
 	long i, cur = 0; 
 	char part_string[100];
 	for (i = 0; i < ac && cur < 85; i++){   
@@ -1063,7 +1066,7 @@ void llll_cpost(t_llll *ll)
 {
 #ifdef CONFIGURATION_Development
     char *buf1 = NULL;
-    llll_to_text_buf(ll, &buf1);
+    llll_to_text_buf(ll, &buf1, 0, 6, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
     cpost(buf1);
     bach_freeptr(buf1);
 #endif
@@ -1585,7 +1588,7 @@ double get_integral_distance_with_original(t_pts *points, char *taken, long num_
 
 		if (i < num_points) {
 			for (j = i_fix + 1; j <= i; j++) {
-				double interp = rescale_with_slope(points[j].x, points[i_fix].x, points[i].x, points[i_fix].y, points[i].y, 0., false); // no slope
+				double interp = rescale(points[j].x, points[i_fix].x, points[i].x, points[i_fix].y, points[i].y); // no slope
 				diff_with_interpolation[j] = points[j];
 				diff_with_interpolation[j].y = fabs(diff_with_interpolation[j].y - interp);
 			}
@@ -1739,7 +1742,7 @@ t_llll *rect_to_llll(t_rect rect)
 // the input llll is expected to be in the form (x y slope anything else...) (x y slope anything else...)
 // the "anything else" is also merged with respect to the given input mode.
 // slopehandling = 0: ignore them, slopehandling = 1: approximate
-t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, char markmode)
+t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_keep, double thresh, long p, char algorithm, char slope_handling, char markmode, t_object *culprit)
 {
 	t_llll *ll = llll_get();
 	t_llllelem *elem;
@@ -1747,6 +1750,11 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 	
 	// Convert slopes to linear, and if |slope| > threshold add a mid-point!
 	for (elem = in_ll->l_head; elem; elem = elem->l_next) {
+        if (hatom_gettype(&elem->l_hatom) != H_LLLL) {
+            object_warn(culprit, "Warning: all function points must be lllls. A non-llll element has been dropped.");
+            continue;
+        }
+        
 		double pt_x, pt_y, pt_slope, prev_x, prev_y, prev_slope;
 		double fabs_pt_slope = 0;
         t_llll *orig_ll = hatom_getllll(&elem->l_hatom);
@@ -1967,7 +1975,7 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 	} else if (algorithm == 1) {
 		// clustering algorithm, greedy
 		
-		double pivot_x, pivot_y, pivot_slope, pt_x, pt_y, pt_slope;
+		double pivot_x = 0, pivot_y = 0, pivot_slope = 0, pt_x, pt_y, pt_slope;
 		t_llllelem *elem, *pivotelem;
 		
 		elem = ll->l_head;
@@ -1979,36 +1987,49 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 		}
 		
 		elem = ll->l_head;
-		unpack_llll_to_double_triplet(hatom_getllll(&elem->l_hatom), &pivot_x, &pivot_y, &pivot_slope);	
-		pivotelem = elem;
-		elem = elem->l_next;
+        
+        if (elem && hatom_gettype(&elem->l_hatom) == H_LLLL) {
+            unpack_llll_to_double_triplet(hatom_getllll(&elem->l_hatom), &pivot_x, &pivot_y, &pivot_slope);
+            pivotelem = elem;
+            elem = elem->l_next;
+        } else {
+            object_error(culprit, "Error: wrong function syntax found (three floats expected)!");
+            goto end;
+        }
 		
 		while (elem) {
 			
 			double dist = 0;
 			while (elem) {
-				// clustering following points
-				unpack_llll_to_double_triplet(hatom_getllll(&elem->l_hatom), &pt_x, &pt_y, &pt_slope);	
-				if (elem == pivotelem->l_next)
-					dist = 0;
-				else {
-					t_llllelem *temp;
-					double tot_dist = 0;
-					long count = 0;
-					double temp_x, temp_y, temp_slope;
-					for (temp = pivotelem->l_next; temp; temp = temp->l_next) {
-						if (temp == elem)
-							break;
-						else {
-							unpack_llll_to_double_triplet(hatom_getllll(&temp->l_hatom), &temp_x, &temp_y, &temp_slope);	
-							tot_dist += fabs(pt_line_distance_vertical(temp_x, temp_y, pivot_x, pivot_y, pt_x, pt_y));
-							count++;
-						}
-					}
-					tot_dist /= count;
-					if (tot_dist > thresh)
-						break;
-				}
+                
+                if (!elem || hatom_gettype(&elem->l_hatom) != H_LLLL) {
+                    object_error(culprit, "Error: wrong function syntax found (three floats expected)!");
+                    goto end;
+                } else {
+                    
+                    // clustering following points
+                    unpack_llll_to_double_triplet(hatom_getllll(&elem->l_hatom), &pt_x, &pt_y, &pt_slope);
+                    if (elem == pivotelem->l_next)
+                        dist = 0;
+                    else {
+                        t_llllelem *temp;
+                        double tot_dist = 0;
+                        long count = 0;
+                        double temp_x, temp_y, temp_slope;
+                        for (temp = pivotelem->l_next; temp; temp = temp->l_next) {
+                            if (temp == elem)
+                                break;
+                            else {
+                                unpack_llll_to_double_triplet(hatom_getllll(&temp->l_hatom), &temp_x, &temp_y, &temp_slope);
+                                tot_dist += fabs(pt_line_distance_vertical(temp_x, temp_y, pivot_x, pivot_y, pt_x, pt_y));
+                                count++;
+                            }
+                        }
+                        tot_dist /= count;
+                        if (tot_dist > thresh)
+                            break;
+                    }
+                }
 				elem = elem->l_next;
 			}
 			
@@ -2175,7 +2196,8 @@ t_llll *llll_approximate_breakpoint_function(t_llll *in_ll, long num_points_to_k
 		llll_free(malus_ll);
 		
 	}
-	
+
+end:
 	return ll;
 }
 
@@ -2239,7 +2261,7 @@ t_llll *integrate_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values,
 		while (right + 1 < size && pts[right].x < this_x)
 			right ++;
 		
-		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, false);
+		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
 		
 		if (elem->l_prev) {
 			res += (this_y + prev_y) * (this_x - prev_x)/2.;
@@ -2301,7 +2323,7 @@ t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, 
 		for (i = 0; i < num_samples; i++) {
 			double this_x, this_y;
 			
-			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0, false);
+			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0);
 			
 			// finding left and right element 
 			while (left + 1 < size && pts[left+1].x < this_x)
@@ -2309,7 +2331,7 @@ t_llll *integrate_bpf(t_llll *incoming, double domain_start, double domain_end, 
 			while (right + 1 < size && pts[right].x < this_x)
 				right ++;
 			
-			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, false);
+			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
 			
 			if (i >= 1) {
 				res += (this_y + prev_y) * (this_x - prev_x)/2.;
@@ -2362,7 +2384,7 @@ t_llll *derive_bpf_with_explicit_sampling(t_llll *incoming, t_llll *x_values, ch
 		while (right + 1 < size && pts[right].x < this_x)
 			right ++;
 		
-		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, false);
+		this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
 		
 		if (elem->l_prev) {
 			res = (this_y - prev_y) / (this_x - prev_x);
@@ -2451,7 +2473,7 @@ t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, lon
 		for (i = 0; i < num_samples; i++) {
 			double this_x, this_y;
 			
-			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0, false);
+			this_x = rescale_with_slope(i, 0, num_samples - 1, domain_start, domain_end, 0);
 			
 			// finding left and right element 
 			while (left + 1 < size && pts[left+1].x < this_x)
@@ -2459,7 +2481,7 @@ t_llll *derive_bpf(t_llll *incoming, double domain_start, double domain_end, lon
 			while (right + 1 < size && pts[right].x < this_x)
 				right ++;
 			
-			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope, false);
+			this_y = rescale_with_slope(this_x, pts[left].x, pts[right].x, pts[left].y, pts[right].y, pts[right].slope);
 			
 			if (i >= 1)
 				res = (this_y - prev_y) / (this_x - prev_x);

@@ -65,7 +65,7 @@
 
 void main_foo() {
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 CLASS_ATTR_LONG(c, "nils", 0, t_lookup, n_nils);
 CLASS_ATTR_FILTER_CLIP(c, "nils", 0, 1);

@@ -75,7 +75,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -100,7 +100,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)pack_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)pack_inletinfo,	"inletinfo",	A_CANT,		0);
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 
 	CLASS_ATTR_LONG(c, "nullmode",		0,	t_pack, n_nullmode);
@@ -269,7 +269,9 @@ t_pack *pack_new(t_symbol *s, short ac, t_atom *av)
 		x->n_ob.l_rebuild = 1;
 	} else
 		object_error((t_object *) x, "Missing arguments");
-	
+
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

@@ -79,7 +79,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -127,7 +127,7 @@ int T_EXPORT main()
 	class_register(CLASS_BOX, c);
 	arithmser_class = c;
 	
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 
 	dev_post("bach.arithmser compiled %s %s", __DATE__, __TIME__);
@@ -139,7 +139,7 @@ void arithmser_bang(t_arithmser *x)
 {	
 	if (x->n_ob.l_rebuild != 0) {
 		x->n_ob.l_rebuild = 0;
-		llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, llll_arithmser(x->n_min, x->n_max, x->n_step, x->n_maxcount), 0);
+		llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, llll_arithmser(x->n_min, x->n_max, x->n_step, x->n_maxcount, (t_object *) x), 0);
 	}
 	llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
 }
@@ -220,11 +220,11 @@ void arithmser_assist(t_arithmser *x, void *b, long m, long a, char *s)
 {	
 	if (m == ASSIST_INLET) {
 		switch (a) {
-			case 0: sprintf(s, "number/llll: Starting Value");			break;	// @in 0 @type number/llll @digest Starting value
+			case 0: sprintf(s, "number/pitch/llll: Starting Value");			break;	// @in 0 @type number/pitch/llll @digest Starting value
 																				// @description If an llll is entered, it is expected to contain: start, end, step, maximum number of items (see <m>llll</m> message).
-			case 1: sprintf(s, "number/llll: Ending Value");			break;	// @in 1 @type number/none/llll @digest Ending value
+			case 1: sprintf(s, "number/pitch/none/llll: Ending Value");			break;	// @in 1 @type number/pitch/none/llll @digest Ending value
 																				// @description If an llll is entered, it is expected to contain: end, step, maximum number of items (see <m>llll</m> message).
-			case 2: sprintf(s, "number/llll: Step");					break;	// @in 2 @type number/none/llll @digest Step
+			case 2: sprintf(s, "number/pitch/none/llll: Step");					break;	// @in 2 @type number/number/none/llll @digest Step
 																				// @description If an llll is entered, it is expected to contain: step, maximum number of items (see <m>llll</m> message).
 			case 3: sprintf(s, "int: Maximum Number of Elements");		break;	// @in 3 @type int/none @digest Maximum number of items
 		}
@@ -290,6 +290,8 @@ t_arithmser *arithmser_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

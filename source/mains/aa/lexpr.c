@@ -17,7 +17,7 @@ int T_EXPORT main(void)
 	/*
 	t_class *c;
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION)) {
+	if (llllobj_check_version(bach_get_current_llll_version())) {
 		error("bach: bad installation");
 		return 1;
 	}

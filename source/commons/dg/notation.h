@@ -38,6 +38,7 @@
 #include "bach_math_utilities.h"
 #include "bach_cursors.h"
 #include "llll_commons_ext.h"
+#include "alterparser.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -57,6 +58,8 @@
 
     #define BACH_CHORDS_HAVE_SLOTS
     #define BACH_MARKERS_HAVE_SLOTS
+
+    // #define BACH_SUPPORT_SLURS       ///< Not yet ready for this!
 
     // THESE THREE SHOULD NOT BE DEFINED; they increase the size of the t_note without actually gaining that much in CPU speed.
     //#define BACH_SLOTS_HAVE_LASTITEM              ///< Last item is saved inside slot structure
@@ -309,6 +312,7 @@
 #define CONST_SLOT_ARTICULATIONS_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_ARTICULATIONS
 #define CONST_SLOT_NOTEHEAD_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_NOTEHEAD
 #define CONST_SLOT_DYNAMICS_DEFAULT_UWIDTH 70				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_DYNAMICS
+#define CONST_SLOT_FUNCTION_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FUNCTION (when static)
 #define CONST_SLOT_FILELIST_DEFAULT_UWIDTH 150			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FILELIST
 #define CONST_SLOT_MATRIX_DEFAULT_UWIDTH 150			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_TOGGLEMATRIX, #k_SLOT_TYPE_INTMATRIX, #k_SLOT_TYPE_FLOATMATRIX
 #define CONST_SLOT_FILTER_DEFAULT_UWIDTH 200			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FILTER 
@@ -675,6 +679,17 @@ typedef enum _merge_when {
     k_MERGE_WHEN_DRAWABLE = 1,      ///< Merge all-tied sequences (or all-rests sequence) only when the resulting sum is drawable
     k_MERGE_WHEN_ALWAYS = 2         ///< Always merge all-tied sequences
 } e_merge_when;
+
+
+
+typedef enum _scheduling_type {
+    k_SCHEDULING_STANDARD = 0,       ///< Online play (default)
+    k_SCHEDULING_OFFLINE = 1,      ///< Off-line play (no scheduling)
+    k_SCHEDULING_PRESCHEDULE = 2      ///< Accurate online scheduling (but won't respond to modifications in the score, and loops and lambda won't work)
+} e_scheduling_type;
+
+
+
 
 
 
@@ -1328,6 +1343,20 @@ typedef enum _slot_types {
 } e_slot_types;
 
 
+/** Slot temporal modes.
+	@ingroup	slots
+ */
+
+typedef enum _slot_temporalmodes
+{
+    k_SLOT_TEMPORALMODE_NONE = 0,               ///< The slot is static (not temporal)
+    k_SLOT_TEMPORALMODE_RELATIVE = 1,           ///< The slot is temporal, and the temporal position is a relative value between the domain start (= note beginning) and the domain end (note end)
+    k_SLOT_TEMPORALMODE_MILLISECONDS = 2,       ///< The slot is temporal, and the temporal position is a ms position (0 being the note start)
+    k_SLOT_TEMPORALMODE_TIMEPOINTS = 3,         ///< The slot is temporal, and the temporal position is a timepoint (not yet supported)
+    k_NUM_SLOT_TEMPORALMODES                    ///< Number of slot temporal modes (NONE-type included).
+} e_slot_temporalmodes;
+
+
 /** Things to which a slot can be linked with.
 	@ingroup	slots
  */
@@ -1669,6 +1698,7 @@ typedef enum _undo_operations
 	k_UNDO_OP_CHANGE_TAIL_FOR_SELECTION,
 	k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION,
     k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION,
+    k_UNDO_OP_CHANGE_POC_FOR_SELECTION,
     k_UNDO_OP_CHANGE_MEASUREINFO_FOR_SELECTION,
 	k_UNDO_OP_CHANGE_VOICE_FOR_SELECTION,
 	k_UNDO_OP_CHANGE_VELOCITY_FOR_SELECTION,
@@ -1846,6 +1876,22 @@ typedef enum _slot_access_types
 } e_slot_access_types;
 
 
+/** Used by notation_item_change_slotitem()
+	@ingroup	slots
+ */
+typedef enum _slot_changeslotitem_modes
+{
+    k_CHANGESLOTITEM_MODE_MODIFY_ONE = 0,	///< Modify a single item
+    k_CHANGESLOTITEM_MODE_MODIFY_ALL = 1,	///< Modify all items
+    k_CHANGESLOTITEM_MODE_INSERT = 2,       ///< Insert an item at a given position
+    k_CHANGESLOTITEM_MODE_INSERT_AUTO = 3,       ///< Insert an item and automatically find the right position if needed (e.g. for function points)
+    k_CHANGESLOTITEM_MODE_APPEND = 4,       ///< Append an item
+    k_CHANGESLOTITEM_MODE_PREPEND = 5,      ///< Prepend an item
+    k_CHANGESLOTITEM_MODE_DELETE_ONE = 6,       ///< Delete an item
+    k_CHANGESLOTITEM_MODE_DELETE_ALL = 7,	///< Delete all items
+} e_slot_changeslotitem_modes;
+
+
 /** Play modes.
 	@ingroup	sequencing
  */
@@ -1938,7 +1984,8 @@ typedef enum _ms_to_tp_modes {
 	@ingroup	attributes
  */
 typedef enum _output_pitches {
-    k_OUTPUT_PITCHES_NEVER,       ///< Always output MIDIcents
+    k_OUTPUT_PITCHES_DEFAULT = -1,       ///< Always output MIDIcents
+    k_OUTPUT_PITCHES_NEVER = 0,       ///< Always output MIDIcents
     k_OUTPUT_PITCHES_WHEN_USER_DEFINED,      ///< Output pitches only when they are user-defined
     k_OUTPUT_PITCHES_ALWAYS,    ///< Force output pitches
 } e_output_pitches;
@@ -1973,8 +2020,8 @@ typedef struct _notation_item
 	
 	char					selected;			///< Is the notation element selected?
 	struct _notation_item	*next_selected;		///< Pointer to the next selected notation item
-	struct _notation_item	*prev_selected;		///< Pointer to the previous selected notation item
-
+    struct _notation_item	*prev_selected;		///< Pointer to the previous selected notation item
+    
 	char					preselected;		///< Is the notation element preselected?
 	struct _notation_item	*next_preselected;	///< Pointer to the next preselected notation item
 	struct _notation_item	*prev_preselected;	///< Pointer to the previous preselected notation item
@@ -2162,7 +2209,7 @@ typedef struct _biquad
 typedef struct _bpt{
 	t_notation_item		r_it;		///< Notation item, containing common stuff for all notation items.
 
-	double	delta_mc;				///< The difference of midicents with respect to the parent note midicents 
+	double	delta_mc;				///< The difference of midicents with respect to the parent note midicents
 	double	rel_x_pos;				///< The x relative position within the note duration line, ranging from 0. = beginning to 1. = end
 	double	slope;					///< The slope of the portion of segment before the breakpoint (from -1. to 1.; 0 = linear)
 
@@ -2195,6 +2242,20 @@ typedef struct _clipboard
 	
 	double onset;	///< Onset of the copied content, if any (e.g. for [bach.roll], if copying a bunch of notes, this onset is the onset of the first copied note).
 } t_clipboard;
+
+
+
+// private
+typedef struct _scheduled_event
+{
+    void            *clock;
+    t_llll          *content;
+    double          time;
+    char            is_notewise;
+    char            is_end;
+} t_scheduled_event;
+
+
 
 
 /** The data structure representing an articulation. 
@@ -2282,23 +2343,21 @@ typedef struct _note
     t_pitch         pitch_original;     ///< Original introduced pitch. This can also be a "NotAPitch" (t_pitch::NaP), if the user has only introduced midicents, i.e. if the enharmonicity is automatic and not user-defined
     t_pitch         pitch_displayed;    ///< Displayed pitch, possibly quantized to the microtonal grid.
     
-    char			show_accidental;					///< Flag saying if we show the accidental or not, depending on the key signature, on previous score content, on cautionary accidentals handling, and so on.
-                                                        ///< For instance, a natural accidental is obtained by setting #screen_accidental to 0, and #show_accidental to 1.
-
-    
-    
-    
 	long			velocity;			///< MIDIVelocity of the note, from #CONST_MIN_VELOCITY to #CONST_MAX_VELOCITY
 	double			duration;			///< Duration of the note in milliseconds. Please notice that this is only used in [bach.roll]; 
 										///< if you need to retrieve the duration in ms of a [bach.score] note, it is saved in the duration_ms field of the parent chord.
 	
 	// ties
-	struct _note	*tie_to;			///< Pointer to the next tied note. If the note has no tie starting from it, this is NULL. This can also be WHITENULL if the
+	struct _note	*tie_to;			///< Pointer to the next tied note. If the note has no tie starting from it, this is NULL. This can also beo WHITENULL if the
 										///< tie to next chord is set, but hasn't be validated yet via the check_measure_ties() function. When this function is called, the
 										///< WHITENULL is changed to the proper note pointer.
 	struct _note	*tie_from;			///< Pointer to the previous tied note. If the note has no tie ending on it, this is NULL
 	char			tie_direction;		///< Direction of the *starting* tie, if any. 1 = tie is over, -1 = ties is under, 0 = tie direction is undefined (or not yet defined)
 	
+    char			show_accidental;					///< Flag saying if we show the accidental or not, depending on the key signature, on previous score content, on cautionary accidentals handling, and so on.
+    ///< For instance, a natural accidental is obtained by setting #screen_accidental to 0, and #show_accidental to 1.
+    
+    
 	struct _chord	*parent;			///< Pointer to the parent chord
 	
 	// resize
@@ -2309,7 +2368,7 @@ typedef struct _note
 	double			draggingvelocity;			///< Private, for internal use (keeps track, only during mousedrag, of the velocity as a double precision floating number)
 
 	// pitch breakpoints
-	int						num_breakpoints;	///< Number of pitch breakpoints within the duration line (it is always at least 2, given that the note start and the note tail are breakpoints)
+	long					num_breakpoints;	///< Number of pitch breakpoints within the duration line (it is always at least 2, given that the note start and the note tail are breakpoints)
 	t_bpt					*firstbreakpoint;	///< Pointer to the first pitch breakpoint (since there are always at least 2 breakpoints, it should never be NULL)
 	t_bpt					*lastbreakpoint;	///< Pointer to the last pitch breakpoint (never NULL, again).
 	struct _duration_line	*durationline;		///< Pointer to the duration line structure for the note. This structure comes handy when used for selection and interface changes.
@@ -2327,42 +2386,41 @@ typedef struct _note
 	long				num_articulations;		///< Number of articulations really attached to the note
 	t_articulation		*articulation;			///< The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
 
+#ifdef BACH_SUPPORT_SLURS
 	// slurs, only ***for future compatibility***
 	long			num_slurs_to;							///< Number of slurs starting on the note
 	long			num_slurs_from;							///< Number of slurs ending on the note 
 	t_slur			*slur_to[CONST_MAX_SLURS_PER_NOTE];		///< The array containing the pointer to the slurs starting on the note (only num_slurs_to elements are meaningful)
 	t_slur			*slur_from[CONST_MAX_SLURS_PER_NOTE];	///< The array containing the pointer to the slurs ending on the note (only num_slurs_from elements are meaningful)
-
+#endif
     
 	// Fixed painting parameters (calculated at some point, and not recalculated if not needed)
-	long			scaleposition;								///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
+//	long			scaleposition;								///< Number of steps of vertical graphical distance between the note and the middle C (see #e_clefs for more info about steps)
 																///< E.g. for the F# above the middle C, this is 3 (C->D->E->F). For the B just below the middle C, this is -1.
-	char			num_accidentals;							///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
+    char			num_accidentals;							///< Number of accidentals needed to display the screen_accidental of the note. E.g. for a Ebb, this is 2.
+    char			need_auxiliary_stem;						///< Flag telling if the notehead is attached to the stem (0) or not (1, and thus needs the auxiliary stem)
 	unicodeChar		accidental_text[CONST_MAX_ACCIDENTALS + 1]; ///< Unicode chararcters for the text of the accidental
 	double			notecenter_stem_delta_ux;					///< Unscaled horizontal deplacement of the x of the notehead center pixel, with respect to the stem position
-	char			need_auxiliary_stem;						///< Flag telling if the notehead is attached to the stem (0) or not (1, and thus needs the auxiliary stem)
-	
+
     
     // nonstandard noteheads
     long            notehead_ID;                                ///< Notehead type, one of the #e_noteheads
     double			notehead_uwidth;							///< Unscaled width of the notehead
     
 	double			accidental_stem_delta_ux;					///< Unscaled horizontal deplacement of the RIGHT boundary of the accidental text field, with respect to the stem position. Should be always negative.
-    double			accidental_uwidth;                          ///< Unscaled width of the accidental (or 0 if none).
-	double			accidental_top_uextension;					///< Unscaled vertical extension of the accidental, from its align vertical center to its topmost point.
+//    double			accidental_uwidth;                          ///< Unscaled width of the accidental (or 0 if none).
+//	double			accidental_top_uextension;					///< Unscaled vertical extension of the accidental, from its align vertical center to its topmost point.
 																///< The align vertical center is the vertical y position of the center of the notehead to which it is referred. 
 																///< Notice that the align vertical center of the accidental usually does not coincide with the center of the accidental bounding rectangle. 
 																///< For instance, for a flat, the align vertical center is much lower than the center of the bounding rectangle.
-	double			accidental_bottom_uextension;				///< Unscaled vertical extension of the accidental, from its align center to its bottommost point.
+//	double			accidental_bottom_uextension;				///< Unscaled vertical extension of the accidental, from its align center to its bottommost point.
 																///< See #accidental_top_uextension for more information.
 
 	// Windowed painting parameters (in real pixels, and only calculated when the note is inside the window and painted)
 	t_pt			center;										///< Center of the note (it is in real pixels, and not an unscaled ones)
 	double			center_stafftop_uy;							///< Unscaled distance of the y of the notehead center from the topmost staff point
-	t_pt			notehead_textbox_left_corner;				///< Left corner of the notehead textbox
+//	t_pt			notehead_textbox_left_corner;				///< Left corner of the notehead textbox
 	
-	char			note_name[5];								///< (DUMMY) Dummy field needed in order to declare the note name (and not only the note pitch) as bach-attribute for each note
-
 	// double linked list
 	struct _note	*next;				///< Pointer to the next note
 	struct _note	*prev;				///< Pointer to the previous note
@@ -2488,19 +2546,12 @@ typedef struct _chord
 										///< (the algorithm fills automatically the direction when the chord parameters are recomputed)
 										///< This value can NOT be set, only get: the direction is automatically calculated and cannot be changed (for the moment)
 	
-	struct _rollvoice	*voiceparent;	///< Pointer to the chord parent, if the chord parent is a #t_rollvoice - only used by [bach.roll]
-	struct _measure		*parent;		///< Pointer to the chord parent, if the chord parent is a #t_measure - only used by [bach.score]
-	
 	// flags
 	char		is_score_chord;					///< Flag telling if the chord is a [bach.score] chord (1) or a [bach.roll] chord (0)
 	char		imposed_direction;				///< Internal flag, private use, to impose a direction to the chord stem (then calculate_chord_parameters() will set the direction flag), as before 1 = stem up, -1 = stem down.
 	char		need_recompute_parameters;		///< Flag telling if we need to recompute the chord parameters. If yes, as soon as needed, some functions are run: assign_chord_lyrics(), assign_chord_dynamics() and calculate_chord_parameters(),
 												///< which sets the chord lyrics from the slot content (if any) andall the chord parameters such as direction, left_uextension, right_uextension... 
 	char		need_recalculate_onset;			///< Internal flag, privat use, telling if we need to recalculate the onset of the chord. Only used by score, where the
-	
-	long		beaming_group;					///< (OBSOLETE, UNUSED) ID of the beaming group to which the chord belongs (unique within the measure), 0 if the chord is not beamed to anything
-	long		beaming_bits;					///< (OBSOLETE, UNUSED) A bit field telling which flags are actually beamed. For instance ...0001110 means (right to left): 4th flag is off, 8th flag is on, 16th flag is on, 32th flag is on. 
-												///< (The rightmost bit is left unused)
 	
 	char		locked;							///< Flag telling if the chord is locked
 	char		muted;							///< Flag telling if the chord is muted
@@ -2509,6 +2560,12 @@ typedef struct _chord
 
 	char		just_added_from_separate_parameters;		///< Private flag, used in [bach.roll], telling if the chord has just been added from a separate parameters input
 	
+
+    // parents
+    struct _rollvoice	*voiceparent;	///< Pointer to the chord parent, if the chord parent is a #t_rollvoice - only used by [bach.roll]
+    struct _measure		*parent;		///< Pointer to the chord parent, if the chord parent is a #t_measure - only used by [bach.score]
+
+    
 	// These are only used by [bach.score] and ignored by [bach.roll]
 	t_rational		r_sym_onset;				///< Symbolic onset (rational) of the chord with respect to the measure beginning. A chord starting 7/8 after the beginning of the measure, has r_sym_onset = 7/8. 
 	t_rational		r_sym_duration;				///< Symbolic duration of the chord. By convention, if this is negative, it means that the element is a rest lasting the absolute value of this r_sym_duration.
@@ -2554,12 +2611,11 @@ typedef struct _chord
 	double			bottommost_stafftop_uy;				///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, with respect to the staff top
 	double			topmost_stafftop_uy_noacc;			///< Unscaled vertical shift (in pixels) of the topmost point in the chord, if we ignore the accidentals
 	double			bottommost_stafftop_uy_noacc;		///< Unscaled vertical shift (in pixels) of the bottommost point in the chord, if we ignore the accidentals
-	double			beam_stafftop_uy;					///< Unscaled vertical shift (in pixels) of the point of the flag or beam nearest to the a note
+//	double			beam_stafftop_uy;					///< Unscaled vertical shift (in pixels) of the point of the flag or beam nearest to the a note
 	double			topmostnote_stafftop_uy;			///< Unscaled vertical shift (in pixels) of the topmost note center, with respect to the staff top
 	double			bottommostnote_stafftop_uy;			///< Unscaled vertical shift (in pixels) of the bottommost note center, with respect to the staff top
     
 	// painting parameters only used by [bach.score]:
-	t_pt			beaming_average_point;				///< Average point of a beaming slope, if a beaming starts with this chord
 	double			beam_y;								///< y pixel of the point of the main flag or beam
 	double			alignment_ux;						///< Offset (in pixels) of the chord alignment point with respect to the tuttipoint start point
 	double			stem_offset_ux;						///< Unscaled horizontal offset (in pixels) of the stem with respect to the tuttipoint start point
@@ -2586,9 +2642,6 @@ typedef struct _chord
 	// beamings
 	long			beams_depth;				///< Number of beaming lines over the chord
 	
-	// grace?
-	char			is_grace_chord;				///< Is the chord a grace chord?
-
 	// articulations (for the moment, only implemented in [bach.score])
     // These are deprecated: use the articulation-typed slots instead
 	long			num_articulations;		///< (DEPRECATED) Number of articulations really attached to the note
@@ -2597,9 +2650,12 @@ typedef struct _chord
 	struct _lyrics      *lyrics;				///< The chord piece of lyrics (it is always allocated).
     struct _dynamics	*dynamics;				///< The chord piece of dynamics (it is always allocated).
 
-	// rhythmic tree
-	t_llllelem		*rhythmic_tree_elem;		///< Pointer to the #t_llllelem corresponding to the chord in the measure beaming tree 
-	char			dont_split_for_ts_boxes;	///< Don't split this chord when gathering into ts boxes
+    // grace?
+    char			is_grace_chord;				///< Is the chord a grace chord?
+
+    // rhythmic tree
+    char			dont_split_for_ts_boxes;	///< Don't split this chord when gathering into ts boxes
+	t_llllelem		*rhythmic_tree_elem;		///< Pointer to the #t_llllelem corresponding to the chord in the measure beaming tree
     
 #ifdef BACH_CHORDS_HAVE_SLOTS
     t_slot		slot[CONST_MAX_SLOTS];          ///< The array containing the slot content for the chord (for each slot)
@@ -3181,6 +3237,7 @@ typedef struct _marker
 	
 	// utility
 	char				name_painted_direction;					///< Field filled at painttime telling if a marker's name has been painted at the LEFT of the marker line (value -1) or at the right of the marker line (value 1). Value 0 means "still unset".
+    long                name_line;                  ///< Filled at painttime telling on which "line" a markername is
 	double				ux_difference_with_mousedown_marker;	///< Used by handling mousedragging in [bach.score], difference in unscaled horizontal pixels of the marker position with respect to the marker on which the mouse is down. 
 	
 	// dummy fields
@@ -3568,6 +3625,8 @@ typedef struct _slotinfo
 	long		slot_num;								///< 0-based slot number
 	t_symbol	*slot_name;								///< Name of the slot
 	char		slot_type;								///< Type of the slot, must be one of #e_slot_types
+    char        slot_temporalmode;                      ///< Temporal mode of the slot, must be one of the #e_slot_temporalmodes
+    char        extend_beyond_tails;                    ///< Temporal slots can extend beyond note tails
     
 	double		slot_domain[2];							///< Domain of the slot (minimum and maximum value, only for #k_SLOT_TYPE_FUNCTION slots)
 	double		slot_domain_par;						///< Slope parameter (-1 to 1) which can desplay exponentially the slot domain
@@ -3575,7 +3634,8 @@ typedef struct _slotinfo
 	double		slot_range_par;							///< Slope parameter (-1 to 1) which can display exponentially the slot range (see #t_pts to know more about the slope)
 	double		slot_zrange[2];							///< Range of the 3rd dimension (the one "coming out from the screen) for #k_SLOT_TYPE_3DFUNCTION slots (minimum and maximum value)
 	double		slot_zrange_par;						///< Slope parameter (-1 to 1) which can display exponentially the of the 3rd dimension (the one "coming out from the screen) for #k_SLOT_TYPE_3DFUNCTION slots
-	
+
+    
     t_llll		*slot_repr;								///< Slot representation. This can be:
 														///< - a single symbol, such as "Hz", and will be understood as unit of measurement;
 														///< - a plain llll, such as "(John George Ringo)", which will be understood as enumeration content for
@@ -3770,20 +3830,20 @@ typedef struct _notation_obj
 	t_symbol		**clefs_as_symlist;				///< List of clefs as symbols (one for each voice).
 													///< Functions clef_symbol_to_clef_number() and clef_number_to_clef_symbol() operate conversions 
 													///< between symbols (such as "G", "F"...) and numbers (such as #k_CLEF_G, #k_CLEF_F...)
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 	t_llll			*voicenames_as_llll;			///< Voicenames represented in llll form (one llllelem for each voice)
 	char			*hidevoices_as_charlist;		///< List of 0's and 1's (one for each voice), depending if the voice is hidden (1) or not (0)
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 	double			*voiceuspacing_as_floatlist;	///< List of unscaled distances (in pixel) between voices. First element is the space before 
 													///< first voice, last element is the space after last voice (and thus these values are #num_voices + 1
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
-													///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+													///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in notation_obj_init() and freed by notation_obj_free()
 	t_symbol		**keys_as_symlist;				///< List of key signatures as symbols (one symbol for each voice). 'M' = major, 'm' = minor, so "C#M" is C# major, and so on. 
 													///< Latin and anglosaxon syntax accepted. Functions parse_sym_to_key_and_mode() and notename2midicents()
 													///< operate parsing and conversions
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 	long			*midichannels_as_longlist;		///< List of midichannels (one for each voice). 
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 
 	// staff lines
 	t_llll			*stafflines_as_llll;	///< Stafflines as an llll
@@ -3793,7 +3853,7 @@ typedef struct _notation_obj
 
 	// measure numbers
 	char			*show_measure_numbers;			///< List of flags (one for each voice) telling if we want to show the measure numbers in that voice
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 	double			measure_numbers_font_size;		///< Font size for the measure numbers (for zoom_y = 1, will be scaled according to the zoom)
 	
 	// private, utilities
@@ -3874,7 +3934,7 @@ typedef struct _notation_obj
 	
 	// slots fields 
 	t_slotinfo	*slotinfo;					///< Information about the structure of each slot)
-											///< It is an array with #CONST_MAX_SLOTS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+											///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	double		slot_minimum_window_uwidth;	///< Unscaled minimum width (in pixels) for a slot window (only for non-temporal slots)
 	
 	long		active_slot_num;			///< Number (0-based) of the slot whose slot window is being shown (-1 = normal view: no slot windows are show  n)
@@ -3917,11 +3977,11 @@ typedef struct _notation_obj
 
 	long		num_background_slots;				///< Number of slots to be kept drawn in background (also when slot window is closed)
 	long		*background_slots;					///< List of the slot numbers (1-based!) which have to be kept in background, only the first <num_background_slots> elements are meaningful.
-													///< It is an array with #CONST_MAX_SLOTS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	
 	long		num_popup_menu_slots;				///< Number of slots appearing in the contextual menu (when clicking on a note)
 	long		*popup_menu_slots;					///< List of the slot numbers (1-based!) which have to be in the contextual menu, only the first <num_popup_menu_slots> elements are meaningful.
-													///< It is an array with #CONST_MAX_SLOTS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_SLOTS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	
 	char		mouse_hover;				///< Flag telling if we allow mouse hovering on the points of the #k_SLOT_TYPE_FUNCTION slots
 	t_slotitem	*hovered_slotitem;			///< Pointer to the currently hovered slot item (typically a #t_slotitem of a function slot) 
@@ -4016,9 +4076,11 @@ typedef struct _notation_obj
 
 	// mutex
 	t_systhread_mutex	c_general_mutex;	///< General mutex for all the operations on the score content, except for markers
+    t_systhread_mutex	c_deparse_mutex;	///< Recursive mutex for deparsing lllls in the anything method
 	t_systhread_mutex	c_markers_mutex;	///< Specific mutex for the markers operations
 	t_systhread_mutex	c_undo_mutex;		///< Specific mutex for the undo llll
 	t_bach_atomic_lock	c_atomic_lock;		///< An atomic lock, for some rare circumstances where it is needed. We usually use the mutex, yet this atomic lock has the advantage that we can call llllobj_output_llll from inside a locked region.
+    t_bach_atomic_lock	c_atomic_lock_play;		///< An atomic lock for the play system, for some rare circumstances where it is needed. We need a dedicated one
 
 	// atomic increments
 	t_bach_atomic_lock		c_inuse;			///< Number for atomic locks, which are currently UNUSED (mutexes are used instead)
@@ -4055,7 +4117,7 @@ typedef struct _notation_obj
 									///< the displayed portion of score 
 	double		length_ux;			///< Length of the whole score in unscaled pixels
                                     ///< Beware: operations like inscreenpos etc. might change this length, in order to appropriately show more portion of score.
-	
+    char        highlight_domain;   ///< If toggled, highlights the domain portion of the notation item (useful to align other Max UI objects on top of it).
 	
 	// horizontal scrolling
 	char		show_hscrollbar;		///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
@@ -4086,7 +4148,7 @@ typedef struct _notation_obj
 	e_accidentals_preferences	accidentals_preferences;	///< Preference for the accidental choice; must be one of the #e_accidentals_preferences
     double      accidentals_decay_threshold_ms;     ///< For [bach.roll] only, handles the decay threshold for accidental naturalization display.
 	t_symbol	**full_acc_repr;					///< List of accidental representation symbols (one for each voice).
-													///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 													///< Each symbol specifies the full accidental representation for a voice.
 													///< For a semitonal representation a sequence like "n # n # n n b n b n # n" is expected (12 elems)
 													///< For a quartertonal representation a sequence like "n + # - n + # - n + n + b - n db b - n + # #+ n +" is expected (24 elems).
@@ -4167,7 +4229,7 @@ typedef struct _notation_obj
     char            need_snap_some_nonselected_items;   ///< Field which is set only when nonselected elements (flagged with #k_FLAG_TO_BE_SNAPPED) need to be snapped
 	t_prevent_edit	prevent_edit;						///< Structure telling if a given element type can (0) or cannot (1) be edited via the interface
 	t_atom			*prevent_editing_atom;				///< Array with the symbols corresponding to the elements whose editing is denied (the number of such elements is #num_prevent_editing_elems
-														///< It is an array with #CONST_MAX_BACH_ELEMENT_TYPES + 10 elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+														///< It is an array with #CONST_MAX_BACH_ELEMENT_TYPES + 10 elements allocated in notation_obj_init() and freed by notation_obj_free()
 	long			num_prevent_editing_elems;			///< Number of elements whose editing is to be prevented
 	char			allow_linear_edit;					///< Allow usage of the linear editing system (for [bach.score] only)
 	t_llll			*constraint_pitches_when_editing;	///< llll containing possible information on how pitches must be constrained while editing them.
@@ -4296,7 +4358,7 @@ typedef struct _notation_obj
 	double		head_vertical_additional_uspace;	///< Unscaled additional vertical space at the top of the object. 
 													///< This value is retreived and synchronized with the first element of #voiceuspacing_as_floatlist. 
 	double		key_signature_uwidth;				///< Unscaled width (in pixels) of the space needed to paint the key signature after the clefs
-	
+    char        smart_markername_placement;         ///< Toggles smart multi-line marker names placement
 	
 	// page view fields (THESE ARE STILL UNSUPPORTED)
 	char		view;							///< (UNSUPPORTED) Current type of view, one of the #e_views
@@ -4319,9 +4381,9 @@ typedef struct _notation_obj
 	char		allow_undo;							///< Flag telling if we allow undo. 
 	
 	t_llll		**old_undo_llll;					///< (OBSOLETE!) Array containing the #CONST_MAX_UNDO_STEPS undo steps (NULL if step is not defined)
-													///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	t_llll		**old_redo_llll;					///< (OBSOLETE!) Array containing the #CONST_MAX_UNDO_STEPS redo steps (NULL if step is not defined) 
-													///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+													///< It is an array with #CONST_MAX_UNDO_STEPS elements allocated in notation_obj_init() and freed by notation_obj_free()
 	
 	double		last_undo_time;						///< (UNUSED) Operating system's time (in milliseconds) of the last time when un undo step has been performed 
 
@@ -4471,7 +4533,9 @@ typedef struct _notation_obj
 	// play
 	char		allow_play_from_interface;	///< Flag telling if we allow playing from the interface
 	char		playing;					///< Flag telling if the object is currently playing
-	char		playing_offline;			///< Flag telling if the object is currently playing in "offline" mode
+	char		playing_scheduling_type;    ///< Scheduling type for playing, one of the #e_scheduling_type
+    t_llll      *to_preschedule;            ///< List containing t_scheduled_events to be scheduled, ONLY for the PRESCHEDULED mode.
+    t_llllelem  *preschedule_cursor;        ///< Cursor while reading the prescheduled list
 	
 	double		play_head_start_ms;		///< Position in milliseconds of the OFFLINE play cursor
 	double		play_head_start_ux;		///< Unscaled x pixel of the OFFLINE play cursor (only used in [bach.score]) 
@@ -4502,7 +4566,7 @@ typedef struct _notation_obj
 													///< Synchoronous chords exceeding this number will be played 'as soon as possible' in the next scheduler tick (scheduled immediately)
 
 	t_chord		**chord_play_cursor;		///< Multicursor (one element for each voice) containing the last played chords, or generally (when possible) the chords happening _before_ the already scheduled events. 
-											///< It is an array with #CONST_MAX_VOICES elements allocated in initialize_notation_obj() and freed by free_notation_obj()
+											///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 											///< The idea is that, to play the next chord, we start to look ahead from the ones we have already played, and
 											///< we keep track of this 'looking ahead' with this multicursor.
     t_tempo     **tempo_play_cursor;         ///< Cursor containing the last played tempo for each voice, or generally (when possible) the tempo happening _before_ the already scheduled events (exactly linke #chord_play_cursor)
@@ -4554,8 +4618,8 @@ typedef struct _notation_obj
 												///< very same item. If nothing is being output, this is 0. 
 												///< More precisely, before outputting any thing from the playout, the #lambda_selected_item_ID is set, then its values are output,
 												///< and then the #lambda_selected_item_ID is unset (= set to 0). If the user closes the lambda loop, the #lambda_selected_item_ID is 
-												///< still set, and can be retrieven by any message accepting the lambda prefix (such as "lambda cents" or "lambda changeslotvalue").
-												///< This is thread safe, since if another thread deletes the object, when the "cents" or "changeslotvalue" function tries to retrieve
+												///< still set, and can be retrieven by any message accepting the lambda prefix (such as "lambda cents" or "lambda changeslotitem").
+												///< This is thread safe, since if another thread deletes the object, when the "cents" or "changeslotitem" function tries to retrieve
 												///< the notation item from its ID, it fails (item has been deleted).
 	
 	// expression evaluations
@@ -5099,7 +5163,7 @@ void note_set_displayed_user_enharmonicity_from_screen_representation(t_note *nt
 void note_set_displayed_user_enharmonicity(t_note *nt, t_pitch pitch);
 
 void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_data_considering_types mode);
-void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note);
+void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 
 
 
@@ -5950,6 +6014,11 @@ double get_accidental_top_uextension(t_notation_obj *r_ob, t_rational accidental
 double get_accidental_bottom_uextension(t_notation_obj *r_ob, t_rational accidental);
 
 
+//TBD
+double note_get_accidental_top_uextension(t_notation_obj *r_ob, t_note *note);
+double note_get_accidental_bottom_uextension(t_notation_obj *r_ob, t_note *note);
+
+
 /**	Returns the unscaled width of an accidental, given the current <accidentals_typo_preferences> of the notation object.
 	@ingroup			typographical
 	@param r_ob			The notation object
@@ -6673,7 +6742,7 @@ void initialize_rollvoice(t_notation_obj *r_ob, t_rollvoice *voice, long voice_n
 	@param	whole_undo_tick	Pointer to the function creating an undo tick for the whole notation object. Must be implemented for each notation object.
 	@param	force_notation_item_inscreen		Pointer to a function forcing a notation item to be inside the screen; leave NULL if unneeded.
 */
-void initialize_notation_obj(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen);
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen);
 
 
 /**	Initialize (or re-initialize) slot information with a default slotinfo 
@@ -6705,6 +6774,15 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
 
 
 
+// PRE-SCHEDULING
+void notation_obj_clear_prescheduled_events(t_notation_obj *r_ob);
+void notation_obj_preschedule_end(t_notation_obj *x, t_symbol *s, long argc, t_atom *argv);
+void notation_obj_preschedule_task(t_notation_obj *r_ob);
+void notation_obj_append_prescheduled_event(t_notation_obj *r_ob, double time, t_llll *content, char is_notewise, char is_end);
+
+
+
+
 
 // -----------------------------------
 // FREEING STUFF
@@ -6714,14 +6792,14 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
 	@ingroup		notation_free
 	@param r_ob		The notation object
  */
-void free_notation_obj(t_notation_obj *r_ob);
+void notation_obj_free(t_notation_obj *r_ob);
 
 
 /**	Free the memory of a notation item (created via build_notation_item())
 	@ingroup		notation_free
 	@param it		The notation item
  */
-void free_notation_item(t_notation_item *it);
+void notation_item_free(t_notation_item *it);
 
 
 /**	Free the memory of slots of a notation item
@@ -7391,6 +7469,10 @@ double notation_item_get_play_tail_ms_accurate(t_notation_obj *r_ob, t_notation_
 double notation_item_get_play_duration_ms_accurate(t_notation_obj *r_ob, t_notation_item *it);
 
 
+/// TBD
+double notation_item_get_duration_ms_for_slots_account_for_ties(t_notation_obj *r_ob, long slotnum, t_notation_item *it);
+
+
 /** Obtain the pitch in cents of a given notation item (or zero if none).
 	@ingroup		notation
 	@param	r_ob	The notation object
@@ -7591,7 +7673,7 @@ void quick_notation_obj_recompute_all_chord_parameters(t_notation_obj *r_ob);
 	@param		tempo		The tempo
 	@return		1 if the tempo is necessary, 0 if the score timings remain exactly the same without the tempo.
 */ 
-char is_tempo_necessary(t_tempo *tempo);
+char tempo_is_necessary(t_tempo *tempo);
 
 
 /**	Simply build a time signature from a numerator/denominator couple.
@@ -7681,6 +7763,27 @@ t_marker *get_marker_from_path_as_llllelem_range(t_notation_obj *r_ob, t_llllele
 // -----------------------------------
 
 
+/**	Tell if a given slot is temporal (of any kind).
+	@ingroup			slots
+	@param r_ob			The notation object
+	@param slotnum		The 0-based slot number
+	@return				1 if the slot is temporal, 0 otherwise
+ */
+char slot_is_temporal(t_notation_obj *r_ob, long slotnum);
+
+
+/**	Tell if a given slot is temporal in absolute mode (i.e. non-relative).
+	@ingroup			slots
+	@param r_ob			The notation object
+	@param slotnum		The 0-based slot number
+	@return				1 if the slot is temporal in absolute mode, 0 otherwise
+ */
+char slot_is_temporal_absolute(t_notation_obj *r_ob, long slotnum);
+
+// TBD
+char slot_can_extend_beyond_note_tail(t_notation_obj *r_ob, long slotnum);
+
+
 /**	Allocates the memory for a new #t_slotitem.
 	@ingroup			slots
 	@param r_ob			The notation object
@@ -7706,10 +7809,8 @@ t_slotitem *build_default_slotitem(t_notation_obj *r_ob, t_slot *parent, long sl
 	@param r_ob				The notation object
 	@param slot_num			Number (0-based) of the slot to modify
 	@param new_type			New type of the slot (as symbol)
-	@param slots_to_erase	llll which will be filled to (just declare it as t_llll *slot_to_erase, and then pass it to the function which will fill it)
-							If you don't need this list, just pass NULL
  */
-void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type, t_llll *slots_to_erase);
+void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type);
 
 
 /**	Convert the content of a slot (i.e. convert each note's slot content for a given slot) 
@@ -7722,7 +7823,7 @@ void change_slot_type(t_notation_obj *r_ob, long slot_num, t_symbol *new_type, t
 	@return					1 if the conversion could not be performed (incompatible slots) and thus the slot content should be deleted.,
 							0 otherwise.
  */
-char convert_slot(t_notation_obj *r_ob, long slot_num, long old_slottype, long new_slottype);
+char convert_slot_type(t_notation_obj *r_ob, long slot_num, long old_slottype, long new_slottype);
 
 
 /**	Convert the content of a note's slot so that it matches a newly defined slot type.
@@ -7732,7 +7833,7 @@ char convert_slot(t_notation_obj *r_ob, long slot_num, long old_slottype, long n
 	@param slot_num			Number (0-based) of the slot to modify
 	@param conversion_type	0 for no conversion, 1 for conversion from long to double, 2 for conversion from double to long.
  */
-void convert_note_slot(t_notation_obj *r_ob, t_note *note, long slot_num, long conversion_type);
+void convert_note_slot_type(t_notation_obj *r_ob, t_note *note, long slot_num, long conversion_type);
 
 
 /**	Retrieve slot type as symbol from slot type as #e_slot_types
@@ -7749,6 +7850,14 @@ t_symbol *slot_type_to_symbol(e_slot_types slot_type);
 	@return		One of the #e_slot_types (e.g. #k_SLOT_TYPE_FUNCTION)
  */
 e_slot_types slot_symbol_to_type(t_symbol *type);
+
+
+
+// TBD
+void change_slot_temporalmode(t_notation_obj *r_ob, long slot_num, t_symbol *new_temporalmode);
+t_symbol *slot_temporalmode_to_symbol(e_slot_temporalmodes slot_temporalmode);
+e_slot_temporalmodes slot_symbol_to_temporalmode(t_symbol *temporalmode);
+void notationobj_slot_remove_extensions(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Get last item of a slot.
@@ -7780,7 +7889,7 @@ void slot_set_active_item(t_slot *slot, t_slotitem *item_to_be_set_as_active);
 	@param item			Pointer to the slotitem to insert
 	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void prepend_slotitem(t_slotitem *item);
+void slotitem_prepend(t_slotitem *item);
 
 
 /**	Insert a slotitem at the end of a slot.
@@ -7788,7 +7897,12 @@ void prepend_slotitem(t_slotitem *item);
 	@param item			Pointer to the slotitem to insert
  	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void append_slotitem(t_slotitem *item);
+void slotitem_append(t_slotitem *item);
+
+
+/// TBD
+void slotitem_insert_extended(t_notation_obj *r_ob, long slotnum, t_slotitem *item, e_slot_changeslotitem_modes mode, long insertion_position_0based);
+t_slotitem *slot_xcoord_to_slotitem(t_notation_obj *r_ob, long slotnum, t_slot *s, double x_val, double thresh, long *idx, double *dist);
 
 
 /**	Insert a slotitem between two existing slotitems.
@@ -7798,7 +7912,7 @@ void append_slotitem(t_slotitem *item);
 	@param next_item	Pointer to the right slotitem
 	@remark				IMPORTANT: <item> must already have defined the <parent> field, so the #t_slot containing the slotitems linked list is surely item->parent 
  */
-void insert_slotitem(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_item);
+void slotitem_insert(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_item);
 
 
 /**	Delete a slotitem from slot.
@@ -7807,7 +7921,7 @@ void insert_slotitem(t_slotitem *item, t_slotitem *prev_item, t_slotitem *next_i
 	@param	slot_num	The 0-based number of the slot
 	@param	item		Pointer to the slotitem to delete
  */
-void delete_slotitem(t_notation_obj *r_ob, long slot_num, t_slotitem *item);
+void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item);
 
 
 /**	Retrieve the index (0-based) index of a slotitem (in in the parent slot linked list) 
@@ -7953,18 +8067,32 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_note *note, int slot_num,
 void change_slot_matrix_value(t_notation_obj *r_ob, t_note *note, int slot_num, t_slotitem *slotitem, long row, long col, double new_val, char val_given_as_delta);
 
 
-/**	Change the value of a generic slot; new value is expressed as an llll.
+/**	Change a specific slotitem of a note; new item is expressed as an llll.
 	@ingroup					slots
 	@param	r_ob				The notation object
 	@param	note				The note which owns the slot
 	@param	slot_num			The slot number (0-based!)
 	@param	position			The 1-based index of the item which you want to change (e.g. to change second value in a #k_SLOT_TYPE_INTLIST, set <position> = 2)
-	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotvalue' message syntax)
+	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
+    @param  mode                The operation mode, one of the #e_slot_changeslotitem_modes
+    @param  modify_existing     If non-zero, it'll try to modify existing function points whenever the nex X coordinate coincides with an existing X coordinate
+                                up to the #modification_x_thresh
+    @param  modification_x_thresh   Threshold for X coordinates to be modified (if #modify_existing is non-zero)
  */
-void change_note_slot_value(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll);
+void note_change_slot_item(t_notation_obj *r_ob, t_note *note, long slotnum, long position, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE, char modify_existing = 0, double modification_x_thresh = 0.);
 
-// TBD
-void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position, t_llll *new_values_as_llll);
+
+/**	Change a specific slotitem of a notation item; new item is expressed as an llll.
+	@ingroup					slots
+	@param	r_ob				The notation object
+	@param	note				The note which owns the slot
+	@param	slot_num			The slot number (0-based!)
+	@param	position_1based		The 1-based index of the item which you want to change (e.g. to change second value in a #k_SLOT_TYPE_INTLIST, set <position> = 2)
+	@param	new_values_as_llll	The new slotitem value, expressed as an llll (as the 'changeslotitem' message syntax)
+ @param  mode                The operation mode, one of the #e_slot_changeslotitem_modes
+ */
+void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode = k_CHANGESLOTITEM_MODE_MODIFY_ONE, char modify_existing = 0, double modification_x_thresh = 0.);
+
 
 /**	Completely erase a note's slot.
 	@ingroup					slots
@@ -7973,10 +8101,10 @@ void change_notation_item_slot_value(t_notation_obj *r_ob, t_notation_item *nite
 	@param	slot_number			The slot number (0-based!)
 	@param	also_check_slot_recomputations			Also checks slot recomputation and linkages
  */
-void erase_note_slot(t_notation_obj *r_ob, t_note *note, int slot_number, char also_check_slot_recomputations = 1);
+void note_clear_slot(t_notation_obj *r_ob, t_note *note, int slot_number, char also_check_slot_recomputations = 1);
 
 // TBD
-void erase_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_number, char also_check_slot_recomputations = 1);
+void notation_item_clear_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_number, char also_check_slot_recomputations = 1);
 void erase_all_notationitem_slots(t_notation_obj *r_ob, t_notation_item *nitem, char also_check_slot_recomputations = 1);
 
 
@@ -7989,6 +8117,7 @@ void notationobj_sel_move_slot(t_notation_obj *r_ob, long slotfrom, long slotto,
 // TBD
 void move_notationitem_slot(t_notation_obj *r_ob, t_notation_item *nitem, int slot_from, int slot_to, char keep_original, char also_check_slot_recomputations = 1);
 void move_note_slot(t_notation_obj *r_ob, t_note *note, int slot_from, int slot_to, char keep_original, char also_check_slot_recomputations = 1);
+void notationobj_sel_change_slot_item_from_params(t_notation_obj *r_ob, t_llll *args, char lambda, e_slot_changeslotitem_modes mode);
 
 
 /**	Check if all the slot data in a notation object correctly lie within the slot domain. If not, it forces data to lie within the slot domain.
@@ -7997,7 +8126,7 @@ void move_note_slot(t_notation_obj *r_ob, t_note *note, int slot_from, int slot_
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_domain(t_notation_obj *r_ob, long slot_num);
+void slot_check_domain(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Check if all the slot data in a notation object correclty lie within the slot range. If not, it forces data to lie within the slot range.
@@ -8006,7 +8135,7 @@ void check_slot_domain(t_notation_obj *r_ob, long slot_num);
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_range(t_notation_obj *r_ob, long slot_num);
+void slot_check_range(t_notation_obj *r_ob, long slot_num);
 
 
 /**	Check if all the slot data in a notation object correclty lie within the slot zrange (the range of the 3rd dimension). If not, it forces data to lie within the slot range.
@@ -8015,10 +8144,10 @@ void check_slot_range(t_notation_obj *r_ob, long slot_num);
 	@param	r_ob				The notation object
 	@param	slot_num			The slot number (0-based!) to check
  */
-void check_slot_zrange(t_notation_obj *r_ob, long slot_num);
+void slot_check_zrange(t_notation_obj *r_ob, long slot_num);
 
 // TBD
-void check_slot_access(t_notation_obj *r_ob, long slot_num);
+void slot_check_access(t_notation_obj *r_ob, long slot_num);
 
 
 // -----------------------------------
@@ -8084,17 +8213,17 @@ void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1
 t_llll *get_default_slots_to_transfer_1based(t_notation_obj * r_ob);
 
 
-/**	Get the complete information about the content of all the slots of a portion of note in a llll form.
+/**	Get the complete information about the content of all the slots of a portion of a notation item in a llll form.
 	@ingroup					slots
 	@param	r_ob				The notation object
-	@param	note				The note
+	@param	nitem				The notation item
 	@param	mode				One of the #e_data_considering_types, informing on the aim for which you want to collect the information
 	@param	force_all_slots		If this is 1 the algorithm will return all the note slots, if this is 0 (advised) only the one containing real slot information, and not the empty ones.
 	@param	start_rel_x_pos		The starting point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@param	end_rel_x_pos		The ending point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@return						An llll containing all the note slots information.
  */
-t_llll* get_partialnote_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, char force_all_slots, double start_rel_x_pos, double end_rel_x_pos);
+t_llll* notation_item_get_partial_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char force_all_slots, double start_rel_x_pos, double end_rel_x_pos);
 
 
 /**	Get the information about the content of a given slot of a given note in a llll form.
@@ -8115,17 +8244,17 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 t_notation_item *notation_item_get_bearing_dynamics(t_notation_obj *r_ob, t_notation_item *nitem, long dynamics_slot_num);
 t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notation_obj *r_ob, t_notation_item *nitem);
 
-/**	Get the information about the content of a part given slot of a given note in a llll form.
+/**	Get the information about the content of a part given slot of a given notation item in a llll form.
 	@ingroup					slots
 	@param	r_ob				The notation object
-	@param	note				The note
+	@param	nitem				The notation item
 	@param	mode				One of the #e_data_considering_types, informing on the aim for which you want to collect the information
 	@param	slotnum				The 0-based slot number in which we are interested
 	@param	start_rel_x_pos		The starting point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@param	end_rel_x_pos		The ending point of the part of slot which will be output, in relative form (0 = beginning of slot, 1 = end of slot)
 	@return						An llll containing the specified slot information.
  */
-t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, char mode, long slotnum, double start_rel_x_pos, double end_rel_x_pos);
+t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, double start_rel_x_pos, double end_rel_x_pos);
 
 
 /**	Retrieve all the information about the slotinfo of a given notation object.
@@ -8141,7 +8270,7 @@ t_llll* get_partialnote_single_slot_values_as_llll(t_notation_obj *r_ob, t_note 
     @param bw_compatible      Guarantees backward compatibility with bach 0.7.9 or previous (i.e. only outputs 30 slots)
 	@return				An llll containing the slotinfo information for the notation object.
  */
-t_llll* get_slotinfo_values_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible);
+t_llll* get_slotinfo_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible);
 
 
 /**	Just like note_get_slots_values_as_llll() but it removes the gensym("slots") symbol.
@@ -8209,10 +8338,10 @@ t_llll *get_biquad_as_full_llll(t_notation_obj *r_ob, t_biquad *bqd);
 t_llll *find_sublist_with_router(t_notation_obj *r_ob, t_llll *note_llll, t_symbol *sym);
 void glue_portion_of_single_temporal_slot(t_notation_obj *r_ob, t_note *receiver, t_llll *slot_llll, long slotnum,
 										  double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
-										  double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
+										  double portion_duration_ratio_to_receiver, char direction, double smooth_ms, double giver_duration, double final_duration);
 void glue_portion_of_temporal_slots(t_notation_obj *r_ob, t_note *receiver, t_llll *note_llll, 
 									double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
-									double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
+									double portion_duration_ratio_to_receiver, char direction, double smooth_ms, double giver_duration, double final_duration);
 void glue_portion_of_breakpoints(t_notation_obj *r_ob, t_note *receiver, t_llll *note_llll, t_note *dummy_giver,
 								 double start_glued_note_portion_rel_x, double end_glued_note_portion_rel_x, 
 								 double portion_duration_ratio_to_receiver, char direction, double smooth_ms);
@@ -8230,6 +8359,8 @@ t_slot *get_activeitem_slot(t_notation_obj *r_ob, long slotnumber);
 t_slot *notation_item_get_slot(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber);
 t_slot *notation_item_get_slot_extended(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, char force_get_for_chords);
 t_slotitem *notation_item_get_slot_firstitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber);
+t_slotitem *notation_item_get_slot_nth_item(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, long n);
+t_slotitem *slot_get_nth_item(t_slot *s, long n);
 t_chord *notation_item_chord_get_parent(t_notation_obj *r_ob, t_notation_item *nitem);
 long notation_item_get_slot_numitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber); // private
 
@@ -8351,6 +8482,9 @@ t_slotitem *pt_to_function_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_n
  */
 t_slotitem *pt_to_3dfunction_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_number);
 
+// TBD
+t_slotitem *pt_to_spat_slot_point(t_notation_obj *r_ob, t_pt pt, long slot_number);
+
 
 /**	Retrieve the clicked biquad filter in a dynfilter type of slot window, starting from a screen point (pixels).
 	@ingroup			slot_graphic
@@ -8366,6 +8500,7 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
 /**	Convert a screen point (pixels) into its coordinates in a function slot, by retrieving the x and y coordinates.
 	@ingroup			slot_graphic
 	@param r_ob			The notation object
+    @param nitem        The notation item owning the slot
 	@param pt			The point on the screen (in pixels) as a #t_pt structure
 	@param slot_number	Number (0-based) of the (function) slot
 	@param active_slot_window	The rectangle containing the pixels for the active part of the slotwindow
@@ -8375,12 +8510,13 @@ t_slotitem *pt_to_dynfilter_biquad(t_notation_obj *r_ob, t_pt pt, long slot_numb
 	@remark				It works like pt_to_function_slot_point() but it doesn't allocate memory for a slotitem, it just fills the <xval> and <yval> pointers.
 	@see				pt_to_function_slot_point()
  */
-void pt_to_function_xy_values(t_notation_obj *r_ob, t_pt pt, long slot_number, t_rect active_slot_window, double *xval, double *yval);
+void pt_to_function_xy_values(t_notation_obj *r_ob, t_notation_item *nitem, t_pt pt, long slot_number, t_rect active_slot_window, double *xval, double *yval);
 
 
 /**	Convert the coordinates of a point in a function slot into its screen coordinates (in pixels).
 	@ingroup					slot_graphic
 	@param r_ob					The notation object
+    @param nitem                The notation item owning the slot
 	@param xval					x coordinate of the function point
 	@param yval					y coordinate of the function point
 	@param slot_number			Number (0-based) of the (function) slot
@@ -8390,12 +8526,13 @@ void pt_to_function_xy_values(t_notation_obj *r_ob, t_pt pt, long slot_number, t
 	@see						pt_to_function_xy_values()
 	@see						function_xyz_values_to_pt()
  */
-void function_xy_values_to_pt(t_notation_obj *r_ob, double xval, double yval, long slot_number, t_rect active_slot_window, t_pt *pt);
+void function_xy_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, double xval, double yval, long slot_number, t_rect active_slot_window, t_pt *pt);
 
 
 /**	Convert the coordinates of a point in a 3d-function slot into its screen coordinates (in pixels).
 	@ingroup					slot_graphic
 	@param r_ob					The notation object
+    @param nitem                The notation item owning the slot
 	@param xval					x coordinate of the function point
 	@param yval					y coordinate of the function point
 	@param zval					z coordinate of the function point
@@ -8408,7 +8545,7 @@ void function_xy_values_to_pt(t_notation_obj *r_ob, double xval, double yval, lo
 	
 	@see						function_xy_values_to_pt()
  */
-void function_xyz_values_to_pt(t_notation_obj *r_ob, double xval, double yval, double zval, long slot_number, t_rect active_slot_window, t_pt *pt, double slot_zoom);
+void function_xyz_values_to_pt(t_notation_obj *r_ob, t_notation_item *nitem, double xval, double yval, double zval, long slot_number, t_rect active_slot_window, t_pt *pt, double slot_zoom);
 
 
 // TBD
@@ -8432,7 +8569,7 @@ t_slotitem *notehead_id_to_slotitem(t_notation_obj *r_ob, t_note *note, long slo
  
 	@remark				The function does NOT redraw automatically the jbox, you have to do it after.
  */
-char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed, char *redraw);
+char slot_handle_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed, char *redraw);
 
 
 /**	Handle the action of clicking (mouse-down) on a slot.
@@ -8452,11 +8589,11 @@ char handle_slot_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						so ALWAYS do something like this:
 	@code
 	lock_general_mutex(r_ob);
-	handle_slot_mousedown(...);
+	slot_handle_mousedown(...);
 	unlock_general_mutex(r_ob);
 	@endcode
 */
-char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, e_element_types *clicked_obj, void **clicked_ptr, char *changed, char need_popup);
+char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, e_element_types *clicked_obj, void **clicked_ptr, char *changed, char need_popup);
 
 
 /**	Handle the action of releasing the click (mouse-up) on a slot.
@@ -8469,11 +8606,11 @@ char handle_slot_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 						so ALWAYS do something like this:
 						@code
 						lock_general_mutex(r_ob);
-						handle_slot_mouseup(...);
+						slot_handle_mouseup(...);
 						unlock_general_mutex(r_ob);
 						@endcode
  */
-void handle_slot_mouseup(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers);
+void slot_handle_mouseup(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers);
 
 
 /**	Handle the action of scrolling the mousewheel on a slot window.
@@ -8489,11 +8626,11 @@ void handle_slot_mouseup(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, l
 						so ALWAYS do something like this:
 						@code
 						lock_general_mutex(r_ob);
-						handle_slot_mousewheel(...);
+						slot_handle_mousewheel(...);
 						unlock_general_mutex(r_ob);
 						@endcode
  */
-char handle_slot_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc);
+char slot_handle_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long modifiers, double x_inc, double y_inc);
 
 
 /**	Handle the action of doubleclicking on a slot.
@@ -8507,7 +8644,7 @@ char handle_slot_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long 
 
 	@remark				The function does NOT redraw automatically the jbox, you have to do it after.
  */
-char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed);
+char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *changed);
 
 
 /**	Handle the action of mouse-hovering on a slot. Currently it only handles the #k_SLOT_TYPE_FUNCTION types of slot (hovering will update legend and show bigger circles on function points)
@@ -8522,7 +8659,7 @@ char handle_slot_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 
 	@remark				The function does NOT redraw automatically the jbox, you have to do it after.
  */
-char handle_slot_mousemove(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *redraw, char *mousepointer_changed);
+char slot_handle_mousemove(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers, char *redraw, char *mousepointer_changed);
 
 
 /**	Delete all the selected function points from a given slot
@@ -8973,6 +9110,9 @@ void note_set_pitch(t_notation_obj *r_ob, t_note *note, t_pitch pitch);
 t_pitch note_get_pitch(t_notation_obj *r_ob, t_note *note);
 
 
+// TBD: pitch-or-cents
+void note_get_poc(t_notation_obj *r_ob, t_note *note, t_hatom *h);
+
 /**	Revert the enharmony of a note to its default value (e.g. turns Eb to D#, and leaves D# to D#, differently from enharmonically_retranscribe_note())
 	@ingroup		notation_actions
 	@param	r_ob	The notation object
@@ -9379,6 +9519,9 @@ int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, lon
 int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, long point_y);
 
 
+// TBD
+double notationobj_get_marker_voffset(t_notation_obj *r_ob, t_marker *mk);
+
 /**	Tell if a point is on the loop region (or on the loop region extremes).
 	@ingroup			notation_graphic
 	@param 	r_ob		The notation object
@@ -9461,7 +9604,7 @@ void handle_dilation_rectangle_mouse_cursor(t_notation_obj *r_ob, t_object *patc
 	@ingroup		notation_paint
 	@param	r_ob	The notation object
 */
-void invalidate_notation_static_layer_and_repaint(t_notation_obj *r_ob);
+void notationobj_invalidate_notation_static_layer_and_redraw(t_notation_obj *r_ob);
 
 
 /** Call jbox_redraw() to repaint the notation object.
@@ -9580,9 +9723,10 @@ void paint_beam_line(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double
 	@param	marker_y2			The ending y (pixel) of the marker line
 	@param	width				The width of the marker line
 	@param	also_paint_name		This has to be 1 if we also need to paint the name of the marker, 0 otherwise 
+    @param  namewidth           Pointer that will be filled with the width of the marker name (can be NULL)
  */ 
 void paint_marker(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, t_jfont* jf, t_marker *marker, 
-					double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name);
+					double marker_x, double marker_y1, double marker_y2, double linewidth, char also_paint_name, double *namewidth);
 
 /**	Paint the loop region.
 	@ingroup					notation_paint
@@ -10475,7 +10619,7 @@ void append_note_breakpoints_formatted_for_pwgl(t_notation_obj *r_ob, t_llll *th
 	@param		bpt		The breakpoint
 	@return				The absolute onset of the breakpoint in milliseconds.
 */
-double get_breakpoint_absolute_onset(t_bpt *bpt);
+double breakpoint_get_absolute_onset(t_bpt *bpt);
 
 
 /** Obtain a part of duration line, as breakpoints llll.
@@ -10487,7 +10631,7 @@ double get_breakpoint_absolute_onset(t_bpt *bpt);
 	@param	new_start_midicents	Pointer which will be filled with the midicents value at the beginning of the extrapolated part, or NULL if not needed.
 	@return				The partial breakpoints as llll
  */
-t_llll* get_partialnote_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, double start_rel_x_pos, double end_rel_x_pos, double *new_start_midicents);
+t_llll* note_get_partial_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, double start_rel_x_pos, double end_rel_x_pos, double *new_start_midicents);
 
 
 
@@ -12021,6 +12165,11 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
 t_llll* get_single_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode);
 
 
+// TBD
+char should_play_tied_notes_separately(t_notation_obj *r_ob, t_chord *chord);
+char should_play_tied_chords_separately(t_notation_obj *r_ob, t_chord *chord);
+
+
 /**	Obtain all the information about a bach.score chord, in gathered syntax.
 	@ingroup			notation_data
 	@param	r_ob		The notation object
@@ -12098,23 +12247,6 @@ t_llll* get_rollpartialchord_values_as_llll(t_notation_obj *r_ob, t_chord *chord
 */
 t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, double ms_start, double ms_end);
 
-
-
-/**	Obtain the maximum index of the beam of a chord. This always coincides (at least for now) with the number of beams a chord has over/under itself
-	(e.g. if a chord has 2 beams over/under itself, it'll return 2). 
-	@remark				This does NOT include the chords flags: if the chord is unbeamed, this function will return 0.
-	@ingroup			notation_data
-	@param	r_ob		The notation object
-	@param	chord		The chord
-	@return				The maximum index of the beam of the chord, i.e. the number of beams of the chord.
-*/
-long chord_get_max_beaming_index(t_chord *chord);
-
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-// OBSOLETE!
-void set_beaming_chords_directions(t_notation_obj *r_ob, t_measure *measure);
-#endif
 
 
 
@@ -12692,7 +12824,6 @@ t_rational ts_to_division(t_notation_obj *r_ob, t_timesignature *ts);
 // THESE ALL REFER TO THE OLD BEAMING PARSING (with no beaming tree below)
 void calculate_measure_beamings(t_notation_obj *r_ob, t_measure *measure, long flags, t_llll *garbage);
 void properly_retranscribe_tuplets(t_notation_obj *r_ob, t_measure *measure, t_llll *garbage);
-void correct_beaming_orphans(t_notation_obj *r_ob, t_measure *meas);
 char get_num_dots_with_tuplet_info(t_notation_obj *r_ob, t_rational duration, t_rational tuplet_group_unit, t_rational tuplet_group_figure);
 char is_duration_drawable_with_tuplet_info(t_notation_obj *r_ob, t_rational duration, t_rational *screen_duration, char *num_dots, t_rational tuplet_group_unit, t_rational tuplet_group_unit_figure);
 void get_rhythm_drawable(t_notation_obj *r_ob, t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll **new_rhythm, t_llll **new_infos, t_llll **new_ties, 
@@ -12885,7 +13016,7 @@ void check_tuplets(t_notation_obj *r_ob, t_llll *rhythm, t_llll *infos, t_llll *
 							If #next_chord is NULL, each WHITENULL in the t_note::tie_to field of the given chord will be accounted as a tie.
 	@return			1 if the chord is completely tied to the next one, 0 otherwise
  */
-char is_all_chord_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_measure, t_chord *next_chord);
+char chord_is_all_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_measure, t_chord *next_chord);
 
 
 /**	Tell if a chord is completely tied to the previous one.
@@ -12898,7 +13029,7 @@ char is_all_chord_tied_to(t_notation_obj *r_ob, t_chord *chord, char within_meas
 							If #next_chord is NULL, each WHITENULL in the t_note::tie_to field of the given chord will be accounted as a tie.
 	@return			1 if the chord is completely tied to the previous one, 0 otherwise
  */
-char is_all_chord_tied_from(t_chord *chord, char within_measure);
+char chord_is_all_tied_from(t_chord *chord, char within_measure);
 
 
 /**	Tell if a chord is followed by a rest
@@ -12942,14 +13073,6 @@ char chord_has_a_tie_from(t_chord *ch);
 void check_ties_around_measure(t_measure *measure);
 
 
-/**	Get the last note of the sequence of tied notes containing a given note. If the given note has no starting ties, the note itself is returned.
-	@ingroup		notation
-	@param	note	The note
-	@return	The last note tied to the given note.
- */
-t_note *note_get_last_in_tieseq(t_note *note);
-
-
 /**	Get the first note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
 	@ingroup		notation
 	@param	note	The note
@@ -12958,10 +13081,44 @@ t_note *note_get_last_in_tieseq(t_note *note);
 t_note *note_get_first_in_tieseq(t_note *note);
 
 
+/**	Get the last note of the sequence of tied notes containing a given note. If the given note has no starting ties, the note itself is returned.
+	@ingroup		notation
+	@param	note	The note
+	@return	The last note tied to the given note.
+ */
+t_note *note_get_last_in_tieseq(t_note *note);
+
+
+/**	Get the symbolic duration of a sequence of completely tied notes (given any note in the sequence)
+	@ingroup		notation
+	@param	note	Any note in the sequence
+	@return			The symbolic duration of the sequence of completely tied notes
+ */
+t_rational note_get_tieseq_symduration(t_note *note);
+
+
+/**	Get the first selected note of the sequence of tied notes containing a given note. If the given note has no ending ties, the note itself is returned.
+	@ingroup		notation
+    @param  r_ob    The notation object
+	@param	note	The note
+	@return	The first selected note tied to the given note.
+ */
+t_note *note_get_first_selected_in_tieseq(t_notation_obj *r_ob, t_note *note);
+
+
+/**	Get the last selected note of the sequence of tied notes containing a given note. If the given note has no starting ties, the note itself is returned.
+	@ingroup		notation
+ @param  r_ob    The notation object
+	@param	note	The note
+	@return	The last selected note tied to the given note.
+ */
+t_note *note_get_last_selected_in_tieseq(t_notation_obj *r_ob, t_note *note);
+
+
 /**	Get the last chord of the sequence of completely-tied chords containing a given chord. If the given chord is not completely tied to the
 	next one or to the previous one, the chord itself is returned.
  	@ingroup		notation
-	@param	note	The chord
+	@param	chord	The chord
 	@return			The last chord of the sequence of completely-tied chords (if any, the chord itself otherwise).
  */
 t_chord *chord_get_last_in_tieseq(t_chord *chord);
@@ -12974,6 +13131,14 @@ t_chord *chord_get_last_in_tieseq(t_chord *chord);
 	@return			The first chord of the sequence of completely-tied chords (if any, the chord itself otherwise).
  */
 t_chord *chord_get_first_in_tieseq(t_chord *chord);
+
+
+/**	Get the symbolic duration of a sequence of completely tied chords (given any chord in the sequence)
+	@ingroup		notation
+	@param	note	Any chord in the sequence
+	@return			The symbolic duration of the sequence of completely tied chords
+ */
+t_rational chord_get_tieseq_symduration(t_chord *chord);
 
 
 /**	Get the last chord of the sequence of completely tied chords (i.e. whose notes are all completely tied to each other) 
@@ -13307,7 +13472,7 @@ void recompute_all_for_tuttipoint_region(t_notation_obj *r_ob, t_tuttipoint *tpt
 	For bach.roll: this sets the t_chord::need_recompute_parameters flags for all the chords in a given measure, 
 	forcing the chord parameters to be recomputed at the next paint cycle.
 	For bach.score: this calls recompute_all_for_measure() for all measures.
-	In any case, the t_notation_obj::need_perform_analysis_and_change flag is set, then the invalidate_notation_static_layer_and_repaint() function is called
+	In any case, the t_notation_obj::need_perform_analysis_and_change flag is set, then the notationobj_invalidate_notation_static_layer_and_redraw() function is called
 	in order to repaint (all parameters will be actually calculated inside the paint cycle).
 	@ingroup								notation
 	@param	r_ob							The notation object
@@ -13655,6 +13820,10 @@ char change_chord_cents_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord,
 char change_chord_pitch_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_pitch);
 char change_note_pitch_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note, t_lexpr *lexpr, t_llll *new_pitch);
 
+// TBD, Same, with pitches/or/cents
+char change_chord_poc_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_poc);
+char change_note_poc_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note, t_lexpr *lexpr, t_llll *new_poc);
+
 
 /**	Change the cents of a pitch breakpoint, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
 	@ingroup interface
@@ -13890,6 +14059,9 @@ char change_selection_breakpoint_pitch(t_notation_obj *r_ob, double delta_mc);
  */
 void trim_note_end(t_notation_obj *r_ob, t_note *nt, double delta_ms);
 
+// TBD
+void trim_note_slots(t_notation_obj *r_ob, t_note *nt, double delta_ms, char trim_absolute_slots_only);
+
 /**	Change the position of the note heads preserving the absolute position of all breakpoints and temporal slot elements.
     Only usable in bach.roll.
 	@ingroup interface
@@ -13999,6 +14171,7 @@ t_llll* get_function_slot_sampling(t_notation_obj *r_ob, t_note *note, long slot
 t_llll* get_function_slot_sampling_delta(t_notation_obj *r_ob, t_note *note, long slot_num, double delta);
 
 
+
 /**	Paste slot items from an llll (currently this only works for function slots).
 	The function inserts the slot items at the appropriate places inside the llll.
 	@ingroup slot_interface
@@ -14014,6 +14187,11 @@ void paste_slotitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum,
 
 // TBD
 t_llll *slots_develop_ranges(t_notation_obj *r_ob, t_llll *ll);
+double slot_get_max_x(t_notation_obj *r_ob, t_slot *slot, long slot_num);
+double notationobj_get_slot_max_x(t_notation_obj *r_ob, long slot_num);
+double slot_get_domain_min(t_notation_obj *r_ob, long slot_num);
+double slot_get_domain_max(t_notation_obj *r_ob, long slot_num, t_notation_item *nitem);
+double slot_get_domain_max_force_default_duration(t_notation_obj *r_ob, long slot_num, double default_duration);
 
 
 
@@ -15417,7 +15595,7 @@ long handle_articulations_popup(t_notation_obj *r_ob, t_articulation *art, long 
 				@code
 				assign_local_spacing_width_multiplier(r_ob, tpt, 2.);
 				recompute_all_for_tuttipoint_region(r_ob, tpt);
-				invalidate_notation_static_layer_and_repaint(r_ob);	// or perform_analysis_and_change(...)
+				notationobj_invalidate_notation_static_layer_and_redraw(r_ob);	// or perform_analysis_and_change(...)
 				@endcode
 	
  */
@@ -17519,7 +17697,7 @@ void bach_get_attr(t_bach_inspector_manager *man, void *obj, t_bach_attribute *a
 	@param	obj		Pointer to the object being inspected
 	@param	attr	The bach attribute
  */
-long bach_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
+long bach_attr_inactive(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr);
 
 
 /** Preprocessor for a bach attribute. This function is called BEFORE the attribute is set. 
@@ -18007,6 +18185,10 @@ void lock_general_mutex(t_notation_obj *r_ob);
  */
 void unlock_general_mutex(t_notation_obj *r_ob);
 
+
+// Internal
+void lock_deparse_mutex(t_notation_obj *r_ob);
+void unlock_deparse_mutex(t_notation_obj *r_ob);
 
 /** Lock the notation object's marker mutex, corresponding to the field t_notation_obj::c_markers_mutex.
 	@ingroup	miscellanea
@@ -18510,6 +18692,9 @@ void change_double(t_notation_obj *r_ob, double *number, t_lexpr *lexpr, t_lllle
 	@ingroup				math
  */
 void change_pitch(t_notation_obj *r_ob, t_pitch *pitch, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
+
+
+void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
 
 

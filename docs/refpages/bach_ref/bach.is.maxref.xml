@@ -40,7 +40,7 @@
 			</digest>
 			<description>
 				The numeric representation is one of the following values:
-				<b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll.
+				<b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll, <b>256</b> = pitch.
 			</description>
 		</outlet>
 		<outlet id="1" type="INLET_TYPE">
@@ -49,7 +49,7 @@
 			</digest>
 			<description>
 				The symbolic representation is one of the following symbols:
-				<b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>null</b>.
+				<b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>p</b> = pitch, <b>n</b> = null.
 			</description>
 		</outlet>
 	</outletlist>
@@ -109,14 +109,14 @@
 			<description>
 				The numeric representation of the contained data types.
 				The numeric representation is one of the following values:
-				<b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll.
+				<b>1</b> = null, <b>2</b> = integer, <b>4</b> = rational, <b>8</b> = float, <b>16</b> = symbol, <b>32</b> = llll, <b>256</b> = pitch.
 			</description>
 		</entry>
 		<entry name ="Outlet 2 (llll)">
 			<description>
 				The symbolic representation of the contained data types.
 				The symbolic representation is one of the following symbols:
-				<b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>null</b>.
+				<b>i</b> = integer, <b>r</b> = rational, <b>f</b> = float, <b>s</b> = symbol, <b>l</b> = llll, <b>p</b> = pitch, <b>n</b> = null.
 			</description>
 		</entry>
 	</misc>

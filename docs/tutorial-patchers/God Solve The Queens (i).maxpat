@@ -270,7 +270,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 203.0, 113.0, 20.0 ],
-					"text" : "bach.append"
+					"text" : "bach.join"
 				}
 
 			}
@@ -768,7 +768,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 335.0, 252.0, 169.0, 20.0 ],
-					"text" : "bach.append @inwrap 1"
+					"text" : "bach.join @inwrap 1"
 				}
 
 			}
@@ -1627,7 +1627,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.mcapprox.maxpat",
+				"name" : "bach.approx.maxpat",
 				"bootpath" : "/Applications/Max 6.1/packages/bach/patchers",
 				"patcherrelativepath" : "../../patchers",
 				"type" : "JSON",
@@ -1657,7 +1657,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.append.mxo",
+				"name" : "bach.join.mxo",
 				"type" : "iLaX"
 			}
 , 			{

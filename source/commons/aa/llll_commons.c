@@ -81,6 +81,8 @@ t_uint32 *llllelem_pool_size;
 t_bach_atomic_lock *llllelem_pool_lock;
 t_llllelem_numbered *llllelem_model;
 
+t_hashtab *reservedselectors;
+
 
 
 int llll_compare_elems_by_thing(t_llllelem **a, t_llllelem **b);
@@ -109,7 +111,41 @@ void bach_setup(t_bach *x)
 	llllelem_pool_size = &bach->b_llllelem_pool_size;
 	llllelem_pool_lock = &x->b_llllelem_pool_lock;
 	llllelem_model = &x->b_llllelem_model;
+    
+    reservedselectors = bach->b_reservedselectors;
 }
+
+
+
+
+
+unsigned long bach_get_current_version(void)
+{
+    return ((t_bach *)gensym("bach")->s_thing)->b_version;
+}
+
+
+unsigned long bach_get_current_llll_version(void)
+{
+    return ((t_bach *)gensym("bach")->s_thing)->b_llll_version;
+}
+
+char *bach_get_current_version_string_verbose(void)
+{
+    return ((t_bach *)gensym("bach")->s_thing)->b_version_string_verbose;
+}
+
+char *bach_get_current_version_string_verbose_with_build(void)
+{
+    return ((t_bach *)gensym("bach")->s_thing)->b_version_string_verbose_with_build;
+}
+
+
+
+
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // create a new legal llll from text (but s is ignored, so all the list must be inside av[])
@@ -185,7 +221,7 @@ long llll_contains_separators(char *txt)
 	return 0;
 }
 
-t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags)
+t_atomarray *llll_deparse_to_aa(t_llll *ll, long flags)
 {
 	t_atom *out = NULL;
 	t_atom_long ac = llll_deparse(ll, &out, 0, flags);
@@ -196,22 +232,22 @@ t_atomarray *llll_deparse_to_aa(t_llll *ll, char flags)
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// returns 0 if it can't allocate the memory it needs
+// returns 0 if it can't allocate the memory it needs,
+// otherwise the number of atoms constituting the result (including the offset)
 //
 // offset is referred to *out (leaves some atoms at the beginning, useful for preset)
-// flags are LLLL_D_QUOTE and LLLL_D_FLOAT64
+// flags are LLLL_D_QUOTE, LLLL_D_MAX and LLLL_D_FLOAT64
 
-t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flags)
+t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flags)
 {
 	long ac = offset;
 	t_llll *subll;
 	t_llllelem *elem;
 	char txt[256];
 	t_llll_stack *stack;
-	t_symbol *checked, **this_arg;
 	t_atom_long outsize;
-	long leveltype = L_STANDARD;
 	t_atom *new_out, *this_out;
+    t_chkParser chkParser;
 	
 	if (*out == NULL) {
 		*out = (t_atom *) bach_newptr(ATOM_LIST_LENGTH_STEP * sizeof (t_atom));
@@ -293,34 +329,33 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 					break;
                 
                 case H_PITCH:
-                    atom_setsym(this_out++, gensym(elem->l_hatom.h_w.w_pitch.toString().c_str()));
+                    atom_setsym(this_out++, elem->l_hatom.h_w.w_pitch.toSym(true, flags & LLLL_D_NEGOCTAVES));
                     ac ++;
                     elem = elem->l_next;
                     break;
                     
-				case H_SYM:
-					if (flags & LLLL_D_QUOTE) {
-						if (ac == 0) {
-							for (this_arg = _llllobj_attributes; *this_arg; this_arg++)
-								if (elem->l_hatom.h_w.w_sym == *this_arg)
-									break;
-							if (*this_arg)
-								checked = llll_addquote(elem->l_hatom.h_w.w_sym->s_name);
-							else
-								checked = llll_quoteme(elem->l_hatom.h_w.w_sym);
-						} else
-							checked = llll_quoteme(elem->l_hatom.h_w.w_sym);
-					} else 
-						checked = elem->l_hatom.h_w.w_sym;
+                case H_SYM: {
+                    t_symbol *sym = elem->l_hatom.h_w.w_sym;
+
+                    if (ac == 0 && (flags & (LLLL_D_MAX | LLLL_D_QUOTE))) {
+                        t_object *dummy = NULL;
+                        hashtab_lookup(reservedselectors, sym, &dummy);
+                        if (dummy)
+                            sym = sym_addquote(sym->s_name);
+                        else if (flags & LLLL_D_QUOTE)
+                            sym = chkParser.addQuoteIfNeeded(sym);
+                    } else if (flags & LLLL_D_QUOTE) {
+                        sym = chkParser.addQuoteIfNeeded(sym);
+					}
 					
-					atom_setsym(this_out++, checked);
+					atom_setsym(this_out++, sym);
 					ac ++;
 					elem = elem->l_next;
 					break;
+                }
 				case H_LLLL:
 					subll = elem->l_hatom.h_w.w_llll;
-					leveltype = subll->l_leveltype;
-					atom_setsym(this_out++, _open_parentheses_sym[leveltype]);
+					atom_setsym(this_out++, _llllobj_sym_open_round_bracket);
 					ac ++;
 					llll_stack_push(stack, elem);
 					elem = subll->l_head;
@@ -349,34 +384,20 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, char flag
 		}
 		if (!stack->s_items)
 			break;
-		atom_setsym(this_out++, _closed_parentheses_sym[leveltype]);
+		atom_setsym(this_out++, _llllobj_sym_closed_round_bracket);
 		ac ++;
 		elem = (t_llllelem *) llll_stack_pop(stack);
-		leveltype = elem->l_parent->l_leveltype;
 		elem = elem->l_next;
 	}
 	llll_stack_destroy(stack);
 	return ac;
 }
 
-// TODO:
-// replace with a call to the parser
-// if it returns anything different from one symbol, it should be quoted
-t_symbol *llll_quoteme(t_symbol *s)
+t_symbol *sym_addquote(const char *txt)
 {
-	if (s == _llllobj_sym_nil ||
-        s == _llllobj_sym_null ||
-        typecheck_parse(s->s_name))
-		return llll_addquote(s->s_name);
-    else
-        return s;
-}
-
-t_symbol *llll_addquote(const char *txt)
-{
-	char quoted[2048];
+	char quoted[MAX_SYM_LENGTH];
 	*quoted = QUOTE_CHAR;
-	strncpy_zero(quoted + 1, txt, 2048);
+	strncpy_zero(quoted + 1, txt, MAX_SYM_LENGTH);
 	return gensym(quoted);
 }
 
@@ -549,7 +570,6 @@ t_max_err llll_clone_upon(const t_llll *inll, t_llll *outll)
 		outll->l_depth = inll->l_depth;
 		outll->l_size = inll->l_size;
 		outll->l_thing.w_whole = inll->l_thing.w_whole;
-		outll->l_leveltype = inll->l_leveltype;
 		if (!instack->s_items)
 			break;
 		inelem = (t_llllelem *) llll_stack_pop(instack);
@@ -6395,7 +6415,7 @@ t_llll *llll_primeser(long min, long max, long maxcount)
 	return ser;
 }
 
-t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount)
+t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hatom, t_atom_long maxcount, t_object *culprit)
 {
 	long start_type = hatom_gettype(&start_hatom);
 	long end_type = hatom_gettype(&end_hatom);
@@ -6438,10 +6458,13 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = start <= end ? 1 : -1;
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
 			} else {
 				maxcount_decides = true;
-                if (maxcount > 1)
-                    step = (end - start) / (maxcount - 1);
+                step = (end - start) / (maxcount - 1);
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6467,7 +6490,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else if (start_type == H_RAT || end_type == H_RAT || step_type == H_RAT || !  hatom_type_is_number(step_type)) {
+	} else if (start_type == H_RAT || end_type == H_RAT || step_type == H_RAT) {
 		t_rational start, end, step, v;
 		t_atom_long count;
 		step = hatom_getrational(&step_hatom);
@@ -6498,12 +6521,14 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = rat_rat_cmp(start, end) <= 0 ? genrat(1, 1) : genrat(-1, 1);
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld/%ld", step.num(), step.den());
 			} else {
-                if (maxcount > 1) {
-                    step = rat_long_div(rat_rat_diff(end, start), maxcount - 1);
-                }
+                step = rat_long_div(rat_rat_diff(end, start), maxcount - 1);
 				if (step.r_num == 0)
 					step = rat_rat_cmp(start, end) <= 0 ? RAT_MIN_POSITIVE : RAT_MAX_NEGATIVE;
+                else if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld/%ld", step.num(), step.den());
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6518,7 +6543,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else {
+	} else if (start_type == H_LONG || end_type == H_LONG || step_type == H_LONG) {
 		t_atom_long start, end, step, v;
 		t_atom_long count;
 		step = hatom_getlong(&step_hatom);
@@ -6548,11 +6573,14 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 			if (maxcount <= 0) {
 				step = start <= end ? 1 : -1;
 				maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld", step);
 			} else {
-                if (maxcount > 1)
-                    step = (end - start) / (maxcount - 1);
+                step = (end - start) / (maxcount - 1);
 				if (step == 0)
 					step = start <= end ? 1 : -1;
+                else if (hatom_type_is_number(step_type))
+                    object_warn((t_object *) culprit, "Step is 0, setting to %ld", step);
 			}
 		} else if (maxcount <= 0)
 			maxcount = ATOM_LONG_MAX;
@@ -6566,7 +6594,78 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 		}
 		pedantic_llll_check(outll);
 		return outll;
-	}
+        
+    } else { // pitches
+        t_pitch start, end, step, v;
+        t_atom_long count;
+        step = hatom_getpitch(&step_hatom);
+        
+        if (hatom_type_is_number(start_type)) {
+            start = hatom_getpitch(&start_hatom);
+        } else {
+            if (!(hatom_type_is_number(end_type))) {
+                return outll;
+            } else if (maxcount == 1) {
+                start = end = hatom_getpitch(&end_hatom);
+            } else if (step == t_pitch::C0 || maxcount <= 0) {
+                return outll;
+            } else {
+                end = hatom_getpitch(&end_hatom);
+                start = end - step * (maxcount - 1);
+            }
+        }
+        
+        if (hatom_type_is_number(end_type)) {
+            end = hatom_getpitch(&end_hatom);
+        } else {
+            if (step == t_pitch::C0 || maxcount <= 0)
+                return outll;
+            end = step > t_pitch::C0 ? PITCH_MAX : PITCH_MIN;
+        }
+        if (step == t_pitch::C0) {
+            if (maxcount <= 0) {
+                step = start < end ? t_pitch(1, t_pitch::flat, 0) : t_pitch(1, t_pitch::flat, 0);
+                maxcount = ATOM_LONG_MAX;
+                if (hatom_type_is_number(step_type)) {
+                    char txt[256];
+                    step.toTextBuf(txt, 256);
+                    object_warn((t_object *) culprit, "Step is 0, setting to %s", txt);
+                }
+            } else {
+                step = (end - start) / (maxcount - 1);;
+                if (step == t_pitch::C0)
+                    step = start < end ? t_pitch(1, t_pitch::flat, 0) : t_pitch(1, t_pitch::flat, 0);
+                if (start != end && hatom_type_is_number(step_type)) {
+                    char txt[256];
+                    step.toTextBuf(txt, 256);
+                    object_warn((t_object *) culprit, "Step is 0, setting to %s", txt);
+                }
+            }
+        } else if (maxcount <= 0)
+            maxcount = ATOM_LONG_MAX;
+        
+        if ((step.degree() != 0 || step.octave() != 0) &&
+            (start.degree() != end.degree() || start.octave() != end.octave())) {
+            if (step > t_pitch::C0) {
+                for (v = start, count = 0; v <= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            } else {
+                for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            }
+        } else {
+            object_warn((t_object *) culprit, "Also considering midicents");
+            if (step > t_pitch::C0) {
+                for (v = start, count = 0; v <= end && v.toMC() < end.toMC() && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            } else {
+                for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
+                    llll_appendpitch(outll, v, 0, WHITENULL_llll);
+            }
+        }
+        pedantic_llll_check(outll);
+        return outll;
+    }
 }
 
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err)
@@ -6635,7 +6734,8 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
 		pedantic_llll_check(outll);
 		return outll;
 		
-	} else if (start_type == H_RAT || end_type == H_RAT || factor_type == H_RAT) {
+	} else if (start_type == H_RAT || end_type == H_RAT || factor_type == H_RAT ||
+               start_type == H_PITCH || end_type == H_PITCH || factor_type == H_PITCH) {
 		t_rational start, end, factor, v;
 		t_atom_long count;
 		
@@ -7138,28 +7238,165 @@ t_llll *llll_scan(t_llll *in_llll, long sublists)
 	return outllll;
 }
 
-t_atom_long hatom_to_text_buf(t_hatom *a, char **buf, t_atom_long offset, t_atom_long max_decimals, long flags, text_buf_fn fn)
+t_atom_long hatom_to_text_buf(t_hatom *a, char **buf, t_atom_long offset, t_atom_long max_decimals, text_buf_fn fn)
 {
     t_atom_long res;
     t_llll *ll = llll_get();
     llll_appendhatom(ll, a);
     ll->l_head->l_flags = OBJ_FLAG_DATA;
-    res = llll_to_text_buf(ll, buf, offset, max_decimals, flags, fn);
+    res = llll_to_text_buf(ll, buf, offset, max_decimals, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, fn);
     llll_free(ll);
     return res;
 }
 
 
-t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_long max_decimals, long flags, text_buf_fn fn, t_bool leave_final_space)
+long escape_string(const char *orig, char *dest, const char *needescape, const char meta)
+{
+    char *this_escaped = dest;
+    long count = 0;
+    while (*orig && count < 4096) {
+        t_bool found;
+        const char *this_needescape;
+        for (this_needescape = needescape, found = false; !found && *this_needescape; this_needescape++)
+            found = *this_needescape == *orig;
+        
+        if (found) {
+            *(this_escaped++) = meta;
+            *(this_escaped++) = *(orig++);
+            count += 2;
+        } else {
+            *(this_escaped++) = *(orig++);
+            count++;
+        }
+    }
+    *this_escaped = 0;
+    return count;
+}
+
+long prepare_string_for_text_buf(const t_symbol *sym, char *dst, long escape_flags, long backslash_flags, t_chkParser *parser)
+{
+    char *symname = sym->s_name;
+    char *printme = NULL;
+    long inferred_type = H_NOTHING;
+    long ac = 0;
+    long len;
+    
+    const char *closing = "";
+    
+    switch (escape_flags) {
+        case LLLL_TE_NONE:
+            break;
+        case LLLL_TE_BACKTICK:
+            inferred_type = parser->parse(sym->s_name);
+            if ((inferred_type & H_PLAINTYPE) != H_SYM ||
+                (inferred_type & (H_PAREN | H_BACKTICK))) {
+                *(dst++) = '`';
+                ac++;
+                if (backslash_flags == LLLL_TB_SMART)
+                    backslash_flags = LLLL_TB_SPECIAL_AND_SEPARATORS;
+            }
+            break;
+        case LLLL_TE_DOUBLE_QUOTE:
+            inferred_type = parser->parse(sym->s_name);
+            if ((inferred_type & H_PLAINTYPE) != H_SYM ||
+                (inferred_type & (H_PAREN | H_SEPARATOR | H_BACKTICK))) {
+                *(dst++) = '\"';
+                ac++;
+                closing = "\"";
+                if (backslash_flags == LLLL_TB_SMART)
+                    backslash_flags = LLLL_TB_SPECIAL;
+            }
+            break;
+        case LLLL_TE_SMART:
+            inferred_type = parser->parse(sym->s_name);
+            if ((inferred_type & H_PLAINTYPE) != H_SYM ||
+                ((inferred_type & (H_PAREN | H_BACKTICK)) && (inferred_type | ~H_SEPARATOR))) {
+                *(dst++) = '`';
+                ac++;
+                if (backslash_flags == LLLL_TB_SMART)
+                    backslash_flags = LLLL_TB_SPECIAL_AND_SEPARATORS;
+            } else if (inferred_type & H_SEPARATOR) {
+                *(dst++) = '\"';
+                ac++;
+                closing = "\"";
+                if (backslash_flags == LLLL_TB_SMART)
+                    backslash_flags = LLLL_TB_SPECIAL;
+            }
+            break;
+        case LLLL_TE_PWGL_STYLE:
+            *(dst++) = '\"';
+            ac++;
+            closing = "\"";
+            break;
+        case LLLL_TE_SQL_STYLE:
+            *(dst++) = '\'';
+            ac++;
+            closing = "\'";
+            break;
+    }
+    
+    switch (backslash_flags) {
+        case LLLL_TB_SMART: // if we're here then either we have LLLL_TE_NONE,
+            // or LLLL_TE_SMART and the symbol has nothing to escape.
+            // In either case we can fall back on...
+        case LLLL_TB_NONE:
+            printme = symname;
+            inferred_type = H_SYM;
+            break;
+        case LLLL_TB_PWGL_STYLE:
+            len = escape_string(symname, dst, "\"\\ \t\n", '\\');
+            inferred_type = H_SYM;
+            break;
+        case LLLL_TB_SQL_STYLE:
+            len = escape_string(symname, dst, "'", '\'');
+            inferred_type = H_SYM;
+            break;
+        case LLLL_TB_SPECIAL:
+            if (inferred_type == H_NOTHING)
+                inferred_type = parser->parse(sym->s_name);
+            if (inferred_type & H_SPECIAL)
+                len = escape_string(symname, dst, "\"'", '\\');
+            else
+                printme = symname;
+            break;
+        case LLLL_TB_SPECIAL_AND_SEPARATORS:
+            if (inferred_type == H_NOTHING)
+                inferred_type = parser->parse(sym->s_name);
+            if (inferred_type & (H_SPECIAL | H_SEPARATOR))
+                len = escape_string(symname, dst, ",; \n\t\"'", '\\');
+            else
+                printme = symname;
+            break;
+    }
+    
+    if (printme) {
+        len = snprintf_zero(dst, TEXT_BUF_SIZE_STEP - 2, "%s%s ", printme, closing);
+    } else {
+        dst += len;
+        ac += len;
+        len = snprintf_zero(dst, TEXT_BUF_SIZE_STEP - 2, "%s ", closing);
+    }
+    ac += len;
+    return ac;
+}
+
+
+t_atom_long llll_to_text_buf(t_llll *ll,
+                             char **buf,
+                             t_atom_long offset,
+                             t_atom_long max_decimals,
+                             long general_flags,
+                             long escape_flags,
+                             long backslash_flags,
+                             text_buf_fn fn)
 {
 	t_atom_long ac = offset;
 	t_llll *subll;
 	t_llllelem *elem;
 	t_llll_stack *stack;
 	t_atom_long outsize;
-	long leveltype = L_STANDARD;
-	t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
 	t_atom_long len;
+    t_chkParser chkParser;
 	char *new_buf, *pos = NULL, *txt = NULL;
 	
 	if (*buf == NULL) {
@@ -7178,7 +7415,7 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 	}
 	
 	if (ll->l_size == 0) {
-		if (flags & LLLL_T_NULL) {
+		if (general_flags & LLLL_T_NULL) {
 			strncpy_zero(pos, "null", TEXT_BUF_SIZE_STEP);
 			return ac + 4;
 		}
@@ -7255,85 +7492,15 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 						pos += len;
 						break;
                     case H_PITCH:
-                        len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString().c_str());
+                        len = elem->l_hatom.h_w.w_pitch.toTextBuf(pos, 256, TEXT_BUF_SIZE_STEP - 2, general_flags & LLLL_T_NEGATIVE_OCTAVES, true);
                         ac += len;
                         pos += len;
                         break;
-					case H_SYM: 
-						if (flags & LLLL_T_COPYSYMBOLS) {
-							len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_sym->s_name);
-							ac += len;
-							pos += len;
-						} else {
-							t_atom_long symlen = 0;
-							char *symname = elem->l_hatom.h_w.w_sym->s_name;
-							char *symnamepos = symname;
-							char *thispos = pos;
-							char *contains_spaces = NULL;
-                            if (flags & LLLL_T_FORCE_SINGLE_QUOTES) {
-                                *thispos++ = '\'';
-                                symlen++;
-                            }
-							if (!(flags & (LLLL_T_NO_DOUBLE_QUOTES))) {
-								contains_spaces = strchr(symname, ' ');
-								if (contains_spaces || (flags & (LLLL_T_FORCE_DOUBLE_QUOTES))) { // if it contains spaces or forced double quotes
-									if (flags & (LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES)) {
-										*thispos++ ='\\';
-										symlen++;
-									}
-									*thispos++ = '"';
-									symlen++;
-								}
-							}
-							while (*symnamepos && symlen < TEXT_BUF_SIZE_STEP - 6) {
-								switch (*symnamepos) {
-									case ',':
-									case ';':
-										if (contains_spaces || (flags & LLLL_T_NO_BACKSLASH)) {
-											*thispos++ = *symnamepos++;
-											symlen ++;
-										} else {
-											*thispos++ = '\\';
-											*thispos++ = *symnamepos++;
-											symlen += 2;
-										}
-										break;
-									case '"':
-									case '\\':
-										if (contains_spaces || (flags & LLLL_T_NO_BACKSLASH)) {
-											*thispos++ = *symnamepos++;
-											symlen ++;
-										} else {
-											*thispos++ = '\\';
-											*thispos++ = *symnamepos++;
-											symlen += 2;
-										}
-										break;
-									default:
-										*thispos++ = *symnamepos++;
-										symlen ++;
-										break;
-								}
-							}
-							if (contains_spaces || (flags & (LLLL_T_FORCE_DOUBLE_QUOTES))) { // if it contains spaces or forced double quotes
-								if (flags & (LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES)) {
-									*thispos++ ='\\';
-									symlen++;
-								}
-								*thispos++ = '"';
-								symlen++;
-							}
-                            if (flags & LLLL_T_FORCE_SINGLE_QUOTES) {
-                                *thispos++ = '\'';
-                                symlen++;
-                            }
-							*thispos++ = ' ';
-							*thispos = 0;
-							symlen++;
-							pos = thispos;
-							ac += symlen;
-						}
-						break;
+                    case H_SYM:
+                        len = prepare_string_for_text_buf(elem->l_hatom.h_w.w_sym, pos, escape_flags, backslash_flags, &chkParser);
+                        pos += len;
+                        ac += len;
+                        break;
 					case H_OBJ:
 						len = snprintf_zero(pos, 256, "[object:%p] ", elem->l_hatom.h_w.w_obj);
 						ac += len;
@@ -7356,8 +7523,7 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 			
 			if (elem->l_hatom.h_type == H_LLLL) {
 				subll = elem->l_hatom.h_w.w_llll;
-				leveltype = subll->l_leveltype;
-				*pos++ = special_parentheses ? _open_parentheses[leveltype] : '(';
+				*pos++ = '(';
 				*pos++ = ' ';
 				*pos = 0;
 				ac += 2;
@@ -7370,31 +7536,31 @@ t_atom_long llll_to_text_buf(t_llll *ll, char **buf, t_atom_long offset, t_atom_
 		
 		if (!stack->s_items)
 			break;
-		*pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+		*pos++ = ')';
 		*pos++ = ' ';
 		*pos = 0;
 		
 		ac += 2;
-		
-		if (outsize - ac < TEXT_BUF_SIZE_STEP) {
-			outsize += TEXT_BUF_SIZE_STEP;
-			new_buf = (char *) bach_resizeptr(*buf, outsize);
-			if (!new_buf) {
-				llll_stack_destroy(stack);
-				return ac;
-			} else {
-				*buf = new_buf;
-				pos = *buf + ac;
-			}
-		}
+        
+        if (outsize - ac < TEXT_BUF_SIZE_STEP) {
+            outsize += TEXT_BUF_SIZE_STEP;
+            new_buf = (char *) bach_resizeptr(*buf, outsize);
+            if (!new_buf) {
+                llll_stack_destroy(stack);
+                return ac;
+            } else {
+                *buf = new_buf;
+                pos = *buf + ac;
+            }
+        }
+
 		elem = (t_llllelem *) llll_stack_pop(stack);
-		leveltype = elem->l_parent->l_leveltype;
 		elem = elem->l_next;
 	}
-    if (!leave_final_space) {
-        ac--;
-        *(pos - 1) = 0;
-    }
+    
+    ac--;
+    *(pos - 1) = 0;
+    
 	llll_stack_destroy(stack);
 	return ac;
 }
@@ -7439,21 +7605,29 @@ void manage_wrap_and_indent(int len, char **pos, t_atom_long *linesize, t_atom_l
 
 
 
-t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, t_atom_long max_decimals,
-                                      t_atom_long wrap, const char *indent, t_atom_long maxdepth, long flags, text_buf_fn fn)
+t_atom_long llll_to_text_buf_pretty(t_llll *ll,
+                                    char **buf,
+                                    t_atom_long offset,
+                                    t_atom_long max_decimals,
+                                    t_atom_long wrap,
+                                    const char *indent,
+                                    t_atom_long maxdepth,
+                                    long general_flags,
+                                    long escape_flags,
+                                    long backslash_flags,
+                                    text_buf_fn fn)
 {
     t_atom_long count = offset;
     t_llll *subll;
     t_llllelem *elem;
     t_llll_stack *stack;
     t_atom_long outsize;
-    long leveltype = L_STANDARD;
-    t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
     t_atom_long len;
     t_atom_long linesize = 0;
     t_atom_long indent_depth = 1;
     t_bool just_closed_indented_sublist = false;
     char *new_buf, *pos = NULL;
+    t_chkParser chkParser;
     
     if (*buf == NULL) {
         outsize = 2 * TEXT_BUF_SIZE_STEP + offset;
@@ -7471,7 +7645,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
     }
     
     if (ll->l_size == 0) {
-        if (flags & LLLL_T_NULL) {
+        if (general_flags & LLLL_T_NULL) {
             strncpy_zero(pos, "null", TEXT_BUF_SIZE_STEP);
             return count + 4;
         }
@@ -7604,12 +7778,12 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
                     case H_PITCH:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
                             char txt[256];
-                            len = snprintf_zero(txt, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString().c_str());
+                            len = elem->l_hatom.h_w.w_pitch.toTextBuf(txt, 256, true, general_flags & LLLL_T_NEGATIVE_OCTAVES);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
                             len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", txt);
                         } else {
-                            len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_pitch.toString().c_str());
+                            len = elem->l_hatom.h_w.w_pitch.toTextBuf(pos, TEXT_BUF_SIZE_STEP - 2, true, general_flags & LLLL_T_NEGATIVE_OCTAVES, true);
                         }
                         count += len;
                         pos += len;
@@ -7617,123 +7791,21 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
                         elem = elem->l_next;
                         break;
                     case H_SYM:
-                        if (flags & LLLL_T_COPYSYMBOLS) {
-                            if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                                char *txt = elem->l_hatom.h_w.w_sym->s_name;
-                                len = strlen(txt);
-                                manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
-                                just_closed_indented_sublist = false;
-                                len = snprintf_zero(pos, 256, "%s ", txt);
-                            } else {
-                                len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", elem->l_hatom.h_w.w_sym->s_name);
-                            }
-                            count += len;
-                            pos += len;
-                            linesize += len;
+                        if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
+                            char txt[4100];
+                            len = prepare_string_for_text_buf(elem->l_hatom.h_w.w_sym, txt, escape_flags, backslash_flags, &chkParser);
+                            manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
+                            just_closed_indented_sublist = false;
+ 
+                            // note that there is no trailing space here,
+                            // as it is added by prepare_string_for_text_buf()
+                            len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s", txt);
                         } else {
-                            t_atom_long len = 0;
-                            char *symname = elem->l_hatom.h_w.w_sym->s_name;
-                            char *symnamepos = symname;
-                            long txtlen = strlen(symname) * 2;
-                            char *this_txt, *txt;
-                            txt = (char *) bach_newptr(txtlen);
-                            
-                            if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                                this_txt = txt;
-                            } else {
-                                this_txt = pos;
-                            }
-                            
-                            //char *thispos = pos;
-                            char *contains_spaces = NULL;
-                            if (flags & LLLL_T_FORCE_SINGLE_QUOTES) {
-                                *this_txt++ = '\'';
-                                len++;
-                            }
-                            if (!(flags & (LLLL_T_NO_DOUBLE_QUOTES))) {
-                                contains_spaces = strchr(symname, ' ');
-                                if (contains_spaces || (flags & (LLLL_T_FORCE_DOUBLE_QUOTES))) { // if it contains spaces or forced double quotes
-                                    if (flags & (LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES)) {
-                                        *this_txt++ ='\\';
-                                        len++;
-                                    }
-                                    *this_txt++ = '"';
-                                    len++;
-                                }
-                            }
-                            while (*symnamepos && len < TEXT_BUF_SIZE_STEP - 6) {
-                                switch (*symnamepos) {
-                                    case ',':
-                                    case ';':
-                                        if (contains_spaces || (flags & LLLL_T_NO_BACKSLASH)) {
-                                            *this_txt++ = *symnamepos++;
-                                            len ++;
-                                        } else {
-                                            *this_txt++ = '\\';
-                                            *this_txt++ = *symnamepos++;
-                                            len += 2;
-                                        }
-                                        break;
-                                    case '"':
-                                    case '\\':
-                                        if (contains_spaces || (flags & LLLL_T_NO_BACKSLASH)) {
-                                            *this_txt++ = *symnamepos++;
-                                            len ++;
-                                        } else {
-                                            *this_txt++ = '\\';
-                                            *this_txt++ = *symnamepos++;
-                                            len += 2;
-                                        }
-                                        break;
-                                    default:
-                                        *this_txt++ = *symnamepos++;
-                                        len ++;
-                                        break;
-                                }
-                            }
-                            if (contains_spaces || (flags & (LLLL_T_FORCE_DOUBLE_QUOTES))) { // if it contains spaces or forced double quotes
-                                if (flags & (LLLL_T_BACKSLASH_BEFORE_DOUBLE_QUOTES)) {
-                                    *this_txt++ ='\\';
-                                    len++;
-                                }
-                                *this_txt++ = '"';
-                                len++;
-                            }
-                            if (flags & LLLL_T_FORCE_SINGLE_QUOTES) {
-                                *this_txt++ = '\'';
-                                len++;
-                            }
-                            
-                            if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                                manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
-                                just_closed_indented_sublist = false;
-                                *this_txt = 0;
-                                if (outsize - count - (this_txt - txt) < TEXT_BUF_SIZE_STEP) {
-                                    outsize += (this_txt - txt) + TEXT_BUF_SIZE_STEP;
-                                    new_buf = (char *) bach_resizeptr(*buf, outsize);
-                                    if (!new_buf) {
-                                        bach_freeptr(txt);
-                                        llll_stack_destroy(stack);
-                                        return count;
-                                    } else {
-                                        *buf = new_buf;
-                                        pos = *buf + count;
-                                    }
-                                }
-                                len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP, "%s ", txt);
-                                count += len;
-                                pos += len;
-                                linesize += len;
-                                bach_freeptr(txt);
-                            } else {
-                                *this_txt++ = ' ';
-                                //*this_txt = 0; // we don't really need this
-                                len++;
-                                pos = this_txt;
-                                count += len;
-                                linesize += len;
-                            }
+                            len = prepare_string_for_text_buf(elem->l_hatom.h_w.w_sym, pos, escape_flags, backslash_flags, &chkParser);
                         }
+                        count += len;
+                        pos += len;
+                        linesize += len;
                         elem = elem->l_next;
                         break;
                     case H_OBJ:
@@ -7762,8 +7834,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
                             }
                             just_closed_indented_sublist = false;
                         }
-                        leveltype = subll->l_leveltype;
-                        *pos++ = special_parentheses ? _open_parentheses[leveltype] : '(';
+                        *pos++ = '(';
                         *pos++ = ' ';
                         //*pos = 0; // we don't really need this
                         count += 2;
@@ -7805,16 +7876,16 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
             if (indent_depth <= maxdepth || (maxdepth < 0 && subll->l_depth >= -maxdepth)) { // if we are within maxdepth
                 manage_wrap_and_indent(1, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                 --indent_depth;
-                *pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+                *pos++ = ')';
                 *pos++ = '\n';
                 just_closed_indented_sublist = true;
             } else {
-                *pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+                *pos++ = ')';
                 *pos++ = ' ';
                 //just_closed_indented_sublist = false;
             }
         } else {
-            *pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+            *pos++ = ')';
             *pos++ = ' ';
         }
         //*pos = 0; // we don't really need this
@@ -7834,7 +7905,6 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
         }
         elem = (t_llllelem *) llll_stack_pop(stack);
         subll = elem->l_parent;
-        leveltype = subll->l_leveltype;
         elem = elem->l_next;
         //if (!elem && (depth <= maxdepth || (maxdepth < 0 && subll->l_depth >= -maxdepth)))
           //  manage_indent(&pos, &linesize, &count, depth, indent);
@@ -7847,15 +7917,13 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll, char **buf, t_atom_long offset, 
 
 #endif // __use_llll_to_text_buf_pretty
 
-
+#ifdef __use_llll_to_text_buf_limited
 t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_atom_long offset, t_atom_long max_decimals, long flags, text_buf_fn fn)
 {
 	t_atom_long ac = offset;
 	t_llll *subll;
 	t_llllelem *elem;
 	t_llll_stack *stack;
-	long leveltype = L_STANDARD;
-	t_bool special_parentheses = (flags & LLLL_T_ONLY_STANDARD_PARENTHESES) == 0;
 	t_atom_long len;
 	char *pos = NULL, *txt = NULL;
 	
@@ -7946,7 +8014,7 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 						max_size -= len;
 						break;
 					case H_SYM:
-						if (flags & LLLL_T_COPYSYMBOLS) {
+						if (flags & LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE) {
 							len = snprintf_zero(pos, max_size, "%s ", elem->l_hatom.h_w.w_sym->s_name);
 							ac += len;
 							pos += len;
@@ -8049,9 +8117,8 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 			
 			if (elem->l_hatom.h_type == H_LLLL) {
 				subll = elem->l_hatom.h_w.w_llll;
-				leveltype = subll->l_leveltype;
 				if (max_size > 2) {
-					*pos++ = special_parentheses ? _open_parentheses[leveltype] : '(';
+					*pos++ = '(';
 					*pos++ = ' ';
 					*pos = 0;
 					ac += 2;
@@ -8067,7 +8134,7 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 		if (!stack->s_items)
 			break;
 		if (max_size > 2) {
-			*pos++ = special_parentheses ? _closed_parentheses[leveltype] : ')';
+			*pos++ = ')';
 			*pos++ = ' ';
 			*pos = 0;
 			ac += 2;
@@ -8075,7 +8142,6 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 		}
 
 		elem = (t_llllelem *) llll_stack_pop(stack);
-		leveltype = elem->l_parent->l_leveltype;
 		elem = elem->l_next;
 	}
 	if (*pos == ' ') {
@@ -8085,7 +8151,7 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 	llll_stack_destroy(stack);
 	return ac;
 }
-
+#endif //__use_llll_to_text_buf_limited
 
 
 // write a llll into a native buffer
@@ -8462,7 +8528,7 @@ llll_parseargs_error:
 
 
 /// Same as llll_parseargs, but using the attribute-like syntax: @attrname attrvalue
-// IMPORTANT: if destructive is non-zero the function is destructive: the incoming ll will have all @stuff removed.
+// IMPORTANT: if destructive is non-zero the incoming ll will have all @stuff removed.
 long llll_parseattrs(t_object *x, t_llll *ll, char destructive, const char *types, ...)
 {
     va_list ap;

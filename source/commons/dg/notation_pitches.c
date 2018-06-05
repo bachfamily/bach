@@ -99,9 +99,9 @@ void note_appendpitch_to_llll(t_notation_obj *r_ob, t_llll *ll, t_note *note, lo
 }
 
 
-void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note)
+void note_appendpitch_to_llll_for_separate_syntax(t_notation_obj *r_ob, t_llll *ll, t_note *note, e_output_pitches pitch_output_mode)
 {
-    note_appendpitch_to_llll(r_ob, ll, note, r_ob->output_pitches_separate);
+    note_appendpitch_to_llll(r_ob, ll, note, pitch_output_mode == k_OUTPUT_PITCHES_DEFAULT ? r_ob->output_pitches_separate : pitch_output_mode);
 }
 
 
@@ -249,6 +249,19 @@ void notationobj_autospell_trivial(t_notation_obj *r_ob, t_autospell_params *par
 
 //// CHEW AND CHEN ALGORITHM from Chew and Chen (2003, 2005)
 
+t_pitch pitch_snap_alteration_to_semitones(t_pitch p)
+{
+    // floor(alter /(1/2))
+    long d = rat_rat_divdiv(p.alter(), RAT_1OVER2, false);
+    return t_pitch(p.degree(), rat_long_prod(RAT_1OVER2, d), p.octave());
+}
+
+t_pitch pitch_rematch_alteration_from_semitones(t_pitch p, t_pitch orig_pitch)
+{
+    t_rational module = rat_rat_mod(orig_pitch.alter(), RAT_1OVER2, false);
+    return t_pitch(p.degree(), rat_rat_sum(p.alter(), module), p.octave());
+}
+
 t_pitch position_on_line_of_fifths_to_pitch(long pos)
 {
     return t_pitch::middleC + pos * t_pitch(4);
@@ -257,7 +270,8 @@ t_pitch position_on_line_of_fifths_to_pitch(long pos)
 
 long pitch_to_position_on_line_of_fifths(t_pitch p)
 {
-    t_pitch temp = t_pitch(p.degree(), p.alter(), 0);
+    t_pitch snapped_p = pitch_snap_alteration_to_semitones(p);
+    t_pitch temp = t_pitch(p.degree(), snapped_p.alter(), 0);
     t_pitch lowG = t_pitch(4);
     t_pitch octave = t_pitch(0, long2rat(0), 1);
     const long MAX_TRY = 128;
@@ -555,6 +569,7 @@ t_pitch notationobj_autospell_match_pitch_with_position_on_line_of_fifths(t_nota
 {
     t_pitch new_pitch = position_on_line_of_fifths_to_pitch(pos);
     new_pitch.set(new_pitch.degree(), new_pitch.alter(), orig_pitch.octave());
+    new_pitch = pitch_rematch_alteration_from_semitones(new_pitch, orig_pitch);
     long new_pitch_octave = orig_pitch.octave() + floor((orig_pitch.toMC() - new_pitch.toMC())/1200);
     
     return t_pitch(new_pitch.degree(), new_pitch.alter(), new_pitch_octave);
@@ -592,7 +607,7 @@ void autospell_respell_note_wr_to_SCE(t_notation_obj *r_ob, t_autospell_params *
             for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
                 t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
                 char notename[128];
-                snprintf_zero(notename, 128, "%s", thispitch.toCString());
+                thispitch.toTextBuf(notename, 128);
                 object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, sqrt(pt3d_distance_squared(SCE, pitch_to_position_on_spiral_array(r_ob, par, thispitch))), el->l_prev ? "" : " <-- chosen");
             }
         }
@@ -619,7 +634,7 @@ long autospell_respell_note_wr_to_LCE(t_notation_obj *r_ob, t_autospell_params *
             for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
                 t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
                 char notename[128];
-                snprintf_zero(notename, 128, "%s", thispitch.toCString());
+                thispitch.toTextBuf(notename, 128);
                 object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, fabs(LCE - pitch_to_position_on_line_of_fifths(thispitch)), el->l_prev ? "" : " <-- chosen");
             }
         }
@@ -684,8 +699,11 @@ void notationobj_autospell_chew_and_chen_do(t_notation_obj *r_ob, t_autospell_pa
             long starts = hatom_getlong(&ll->l_head->l_next->l_next->l_hatom);
             
             if (starts) { // we must spell it
-                if (par->verbose)
-                    object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", note->pitch_displayed.toCString(), notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
+                if (par->verbose) {
+                    char txt[256];
+                    note->pitch_displayed.toTextBuf(txt, 256);
+                    object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", txt, notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
+                }
                 
                 autospell_respell_note_wr_to_SCE(r_ob, par, note, sliding_win_CE);
             }
@@ -721,8 +739,11 @@ void notationobj_autospell_chew_and_chen_do(t_notation_obj *r_ob, t_autospell_pa
                 long starts = hatom_getlong(&ll->l_head->l_next->l_next->l_hatom);
                 
                 if (starts) { // we must spell it
-                    if (par->verbose)
-                        object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", note->pitch_displayed.toCString(), notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
+                    if (par->verbose) {
+                        char txt[256];
+                        note->pitch_displayed.toTextBuf(txt, 256);
+                        object_post((t_object *)r_ob, "      • Spelling note %s, starting at %.0fms", txt, notation_item_get_onset_ms(r_ob, (t_notation_item *)note));
+                    }
                     
                     autospell_respell_note_wr_to_SCE(r_ob, par, note, weighted_CE);
                 }
@@ -1260,8 +1281,10 @@ void notes_llll_to_text_buf(t_notation_obj *r_ob, t_llll *ll, char *buf, long bu
 {
     long cur = 0;
     for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
+        char txt[256];
         t_note *nt = (t_note *)hatom_getobj(&el->l_hatom);
-        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", nt->pitch_displayed.toCString(), el->l_next ? " " : "");
+        nt->pitch_displayed.toTextBuf(txt, 256);
+        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", txt, el->l_next ? " " : "");
     }
 }
 
@@ -1269,8 +1292,10 @@ void positions_llll_to_text_buf(t_notation_obj *r_ob, t_llll *ll, char *buf, lon
 {
     long cur = 0;
     for (t_llllelem *el = ll->l_head; el; el = el->l_next) {
+        char txt[256];
         t_pitch p = position_on_line_of_fifths_to_pitch(hatom_getlong(&el->l_hatom));
-        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", p.toCString(false), el->l_next ? " " : "");
+        p.toTextBuf(txt, 256, false);
+        cur += snprintf_zero(buf + cur, buf_size - cur, "%s%s", txt, el->l_next ? " " : "");
     }
 }
 
@@ -1315,6 +1340,7 @@ char autospell_dg_respell_is_acceptable(t_notation_obj *r_ob, t_autospell_params
 long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_params *params, t_llll *notes)
 {
     char pitches_str[2048];
+    pitches_str[0] = 0;
     
     if (!notes->l_head)
         return 0;
@@ -1401,10 +1427,10 @@ long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_para
 long is_range_included(t_notation_obj *r_ob, t_llll *contained, t_llll *container)
 {
     double contained_start = get_range_firstonset(r_ob, contained);
-    double contained_end = get_range_firstonset(r_ob, contained);
+    double contained_end = get_range_lastonset(r_ob, contained);
     double container_start = get_range_firstonset(r_ob, container);
-    double container_end = get_range_firstonset(r_ob, container);
-    if (container_start < contained_start && container_end > contained_end)
+    double container_end = get_range_lastonset(r_ob, container);
+    if (container_start <= contained_start && container_end >= contained_end)
         return 1;
     return 0;
 }
@@ -1414,9 +1440,10 @@ void autospell_dg_delete_container_ranges(t_notation_obj *r_ob, t_llll *range, t
 {
     t_llllelem *temp = range_el->l_next, *tempnext;
     while (temp) {
+        t_llllelem *range_el_ok = (t_llllelem *)hatom_getobj(&temp->l_hatom);
         tempnext = temp->l_next;
-        if (hatom_gettype(&temp->l_hatom) == H_LLLL) {
-            t_llll *temp_range = llll_clone(hatom_getllll(&temp->l_hatom));
+        if (hatom_gettype(&range_el_ok->l_hatom) == H_LLLL) {
+            t_llll *temp_range = llll_clone(hatom_getllll(&range_el_ok->l_hatom));
             llll_flatten(temp_range, -1, 0);
             if (is_range_included(r_ob, range, temp_range))
                 llll_destroyelem(temp);
@@ -1440,10 +1467,8 @@ void notationobj_autospell_dg_do(t_notation_obj *r_ob, t_autospell_params *par, 
     llll_flatten(scanned, 1, 0);
     llll_rev(scanned, 1, 1);
     
-    t_llllelem *nextel;
-    for (t_llllelem *el = scanned->l_head; el; el = nextel) {
+    for (t_llllelem *el = scanned->l_head; el; el = el->l_next) {
         t_llllelem *this_el = (t_llllelem *)hatom_getobj(&el->l_hatom);
-        nextel = el->l_next;
         if (hatom_gettype(&this_el->l_hatom) == H_LLLL) {
             t_llll *range = llll_clone(hatom_getllll(&this_el->l_hatom));
             llll_flatten(range, -1, 0);
@@ -1511,7 +1536,7 @@ t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob
     par.lineoffifth_bias = 2.;
     par.discard_altered_repetitions = true;
     
-    t_llll *stdev_thresh_ll = llll_from_text_buf("21/(numnotes+1)", false);
+    t_llll *stdev_thresh_ll = llll_from_text_buf("21/(numnotes+1)");
     t_atom *stdev_thresh_av = NULL;
     long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, 0);
     par.stdev_thresh = lexpr_new(stdev_thresh_ac, stdev_thresh_av, subs_count, subs, (t_object *)r_ob);
@@ -1536,7 +1561,7 @@ long llll_to_pos_helper(t_llll *ll)
                 t_symbol *s = hatom_getsym(&ll->l_head->l_hatom);
                 char temp[2048];
                 snprintf_zero(temp, 2048, "%s0", s ? s->s_name : "C");
-                t_llll *temp_ll = llll_from_text_buf(temp, false);
+                t_llll *temp_ll = llll_from_text_buf(temp);
                 if (temp_ll && temp_ll->l_head) {
                     if (hatom_gettype(&temp_ll->l_head->l_hatom) == H_PITCH)
                         res = pitch_to_position_on_line_of_fifths(hatom_getpitch(&temp_ll->l_head->l_hatom));

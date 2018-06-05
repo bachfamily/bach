@@ -76,7 +76,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}	
@@ -99,7 +99,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)bachtree2omtree_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)bachtree2omtree_inletinfo,	"inletinfo",	A_CANT,		0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 	
 	class_register(CLASS_BOX, c);
@@ -209,7 +209,8 @@ t_bachtree2omtree *bachtree2omtree_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
-	if (x && err == MAX_ERR_NONE)
+	llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    if (x && err == MAX_ERR_NONE)
 		return x;
 	
 	object_free_debug(x);

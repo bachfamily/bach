@@ -56,11 +56,10 @@
 
 typedef struct _portal
 {
-	struct llllobj_object 	n_ob;
+	t_llllobj_object 	n_ob;
 	long				n_proxies;	
 	void				**n_proxy;
-	long				n_clone;
-	long				n_in;	
+    long				n_in;
 	long				n_loadbanged;
 	long				n_processed;
 	long				n_ready;
@@ -93,7 +92,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -115,17 +114,13 @@ int T_EXPORT main()
 	class_addmethod(c, (method)portal_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)portal_dopargs,		"dopargs",		A_GIMME,	0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	class_register(CLASS_BOX, c);
 	portal_class = c;
 	
 	if (!bach->b_initpargs)
 		bach->b_initpargs = (t_object *) object_new_typed(CLASS_NOBOX, gensym("bach.initpargs"), 0, NULL);
-		
-	CLASS_ATTR_LONG(c, "clone", 0, t_portal, n_clone);
-	CLASS_ATTR_FILTER_CLIP(c, "clone", 0, 1);
-	CLASS_ATTR_STYLE_LABEL(c, "clone", 0, "onoff", "Clone");
 
 	dev_post("bach.portal compiled %s %s", __DATE__, __TIME__);
 	
@@ -173,31 +168,37 @@ void portal_anything(t_portal *x, t_symbol *msg, long ac, t_atom *av)
 	if (msg == LLLL_NATIVE_MSG)
 		inlist = llllobj_get_retained_native_llll_from_args(ac, av); // non-NULL if it's a valid native list
 
-	if (inlist && (x->n_ob.l_out[inlet].b_type == LLLL_O_NATIVE)) { // native -> native
-		if (!x->n_clone) {
-			outlet_anything(x->n_ob.l_out[inlet].b_outlet, msg, ac, av);
-			llll_release(inlist);
-		} else {
-			t_llll *cloned = llll_clone(inlist);
-			llll_release(inlist);
-			llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, inlet, cloned);
-			llll_free(cloned);
-		}
-	} else if (!inlist && (x->n_ob.l_out[inlet].b_type == LLLL_O_TEXT)) { // text -> text
-		if (msg != _sym_list)
-			outlet_anything(x->n_ob.l_out[inlet].b_outlet, msg, ac, av);
-		else
-			outlet_list(x->n_ob.l_out[inlet].b_outlet, NULL, ac, av);
-	} else if (inlist) { // native -> text
-		llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, inlet, inlist);
-		llll_release(inlist);
-	} else { // text -> native
-		inlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_DONT); // LLLL_PARSE_DONT is ignored
-		if (inlist) {
-			llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, inlet, inlist);
-			llll_free(inlist);
-		}
-	}
+    if (inlist) { // native ->
+        switch (x->n_ob.l_out[inlet].b_type) {
+            case LLLL_O_NATIVE:
+                outlet_anything(x->n_ob.l_out[inlet].b_outlet, msg, ac, av);
+                llll_release(inlist);
+                break;
+            case LLLL_O_TEXT:
+            case LLLL_O_MAX:
+                llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, inlet, inlist);
+                llll_release(inlist);
+                break;
+            default:
+                break;
+        }
+    } else { // text ->
+        switch (x->n_ob.l_out[inlet].b_type) {
+            case LLLL_O_NATIVE:
+            case LLLL_O_MAX:
+                inlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_DONT); // LLLL_PARSE_DONT is ignored
+                if (inlist) {
+                    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, inlet, inlist);
+                    llll_free(inlist);
+                }
+                break;
+            case LLLL_O_TEXT:
+                outlet_anything(x->n_ob.l_out[inlet].b_outlet, msg, ac, av);
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void portal_assist(t_portal *x, void *b, long m, long a, char *s)
@@ -279,6 +280,8 @@ t_portal *portal_new(t_symbol *s, short ac, t_atom *av)
 		}
 	} else 
 		error(BACH_CANT_INSTANTIATE);
+
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

@@ -75,7 +75,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -141,7 +141,7 @@ int T_EXPORT main()
 	// The <m>set</m> attribute allows setting the insertion elements.
 	// This is especially useful when used in the object box.
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	
 	
@@ -234,7 +234,7 @@ void subs_anything(t_subs *x, t_symbol *msg, long ac, t_atom *av)
             if (x->n_multi == 0) {
                 address = llll_get();
                 llll_appendllll(address, llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 1), 0, WHITENULL_llll);
-                model = llll_get();
+                model = llll_get ();
                 llll_appendllll(model, llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 2, 1), 0, WHITENULL_llll);
             } else {
                 address = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 1);
@@ -319,6 +319,8 @@ t_subs *subs_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

@@ -1,13 +1,13 @@
 %define api.pure full
 %name-prefix "symparser_"
 
-%token <l> LONG
-%token <d> DOUBLE
-%token <r> RAT
-%token <p> PITCH
-%token <sym> SYMBOL
-%token PUSH POP
-%token BACHNULL BACHNIL
+%token <l> BACH_LONG
+%token <d> BACH_DOUBLE
+%token <r> BACH_RAT
+%token <p> BACH_PITCH
+%token <sym> BACH_SYMBOL
+%token BACH_PUSH BACH_POP
+%token BACH_NULL BACH_NIL
 
 %debug
 
@@ -19,6 +19,9 @@
     #include <stdio.h>
     #define parserpost printf
     #endif
+    
+    #define YYSTACK_USE_ALLOCA 1
+    #define YY_NO_UNISTD_H
 
 %}
 
@@ -32,8 +35,8 @@
 
 
 %{
-    #include "symparser.tab.h"
-    #include "symparser.lex.h"
+    #include "bach_symparser_tab.h"
+    #include "bach_symparser_lex.h"
 
     int yylex(YYSTYPE *yylval_param, yyscan_t myscanner);
     int yyerror(yyscan_t myscanner, t_llll **ll, t_llll_stack *stack, long *depth, char *s);
@@ -55,35 +58,35 @@ sequence:
 | sequence term
 ;
 
-term: LONG {
+term: BACH_LONG {
 	llll_appendlong(*ll, $1);
-	parserpost("parse: LONG %ld", $1);
-} | DOUBLE {
+	parserpost("parse: BACH_LONG %ld", $1);
+} | BACH_DOUBLE {
 	llll_appenddouble(*ll, $1);
-	parserpost("parse: DOUBLE %lf", $1);
-} | RAT {
+	parserpost("parse: BACH_DOUBLE %lf", $1);
+} | BACH_RAT {
 	llll_appendrat(*ll, $1);
-	parserpost("parse: RAT %ld/%ld", $1.num(), $1.den());
-} | PITCH {
+	parserpost("parse: BACH_RAT %ld/%ld", $1.num(), $1.den());
+} | BACH_PITCH {
 	llll_appendpitch(*ll, $1);
 	parserpost("parse: degree: %c%d+%d/%d", 
-		t_pitch::degree2name[$1.degree()], $1.octave(), $1.alter().num(), $1.alter().den());
-} | SYMBOL {
+		t_BACH_PITCH::degree2name[$1.degree()], $1.octave(), $1.alter().num(), $1.alter().den());
+} | BACH_SYMBOL {
 	llll_appendsym(*ll, $1);
-	parserpost("parse: symbol %s", $1->s_name);
-} | BACHNULL {
+	parserpost("parse: BACH_SYMBOL %s", $1->s_name);
+} | BACH_NULL {
     parserpost("parse: NULL");
-} | BACHNIL {
+} | BACH_NIL {
 	llll_appendllll(*ll, llll_get());
     parserpost("parse: NIL");
-} | PUSH {
+} | BACH_PUSH {
 	(*depth)++;
 	t_llll *newll = llll_get();
 	llll_appendllll(*ll, newll, 0, WHITENULL_llll);
 	llll_stack_push(stack, *ll);
 	*ll = newll;
-	parserpost("parse: PUSH");
-} | POP {
+	parserpost("parse: BACH_PUSH");
+} | BACH_POP {
 	(*depth)--;
 	if (*depth > 0) {
 		t_llll *parent = (t_llll *) llll_stack_pop(stack);
@@ -92,20 +95,18 @@ term: LONG {
 		*ll = parent;
 	} else
 		YYERROR;
-	parserpost("parse: POPPE");
+	parserpost("parse: BACH_POPPE");
 }
  
 %%
 
-void symbol_parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
+void t_symParser::parse(char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
 {
-    yyscan_t myscanner;
     YY_BUFFER_STATE bp;
-    symparser_lex_init(&myscanner);
- 	bp = symparser_scan_string(myscanner, buf);
-    symparser_parse(myscanner, ll, stack, depth);
-    symparser_flush_and_delete_buffer(myscanner, bp);
-    symparser_lex_destroy(myscanner);
+ 	bp = symparser_scan_string((yyscan_t) this, buf);
+    symparser_parse((yyscan_t) this, ll, stack, depth);
+    symparser_flush_and_delete_buffer((yyscan_t) this, bp);
+    reset();
 }
 
 #ifndef BACH_MAX

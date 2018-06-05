@@ -11,11 +11,16 @@
 const t_shortRational t_pitch::dblsharp = t_shortRational(1);
 const t_shortRational t_pitch::sharp = t_shortRational(1, 2);
 const t_shortRational t_pitch::qrtrsharp = t_shortRational(1, 4);
-const t_shortRational t_pitch::natural = t_shortRational(0, 1);
-const t_shortRational t_pitch::qrtrflat = t_shortRational(-1, 4);
-const t_shortRational t_pitch::flat = t_shortRational(-1, 2);
+const t_shortRational t_pitch::eighthsharp = t_shortRational(1, 8);
 
-const t_pitch t_pitch::NaP = t_pitch(0, t_shortRational(0, 0), 0); // not a pitch
+const t_shortRational t_pitch::natural = t_shortRational(0, 1);
+const t_shortRational t_pitch::flat = t_shortRational(-1, 2);
+const t_shortRational t_pitch::qrtrflat = t_shortRational(-1, 4);
+const t_shortRational t_pitch::eighthflat = t_shortRational(-1, 8);
+
+const t_shortRational t_pitch::illegal = t_shortRational(0, 0);
+
+const t_pitch t_pitch::NaP = t_pitch(0, illegal, 0); // not a pitch
 const t_pitch t_pitch::middleC = t_pitch(0, natural, 5); // middle C
 const t_pitch t_pitch::C0 = t_pitch(0, natural, 0); // C0
 
@@ -148,16 +153,32 @@ t_pitch t_pitch::operator*(t_atom_long b) const
     return t_pitch(sat);
 }
 
-t_pitch t_pitch::divdiv(const t_atom_long b) const
+t_pitch t_pitch::operator*(const t_rational &b) const
 {
+    t_rat<long> inv = b.inv();
+
+    if (inv.r_num == 0 || inv.r_den == 0)
+        return t_pitch::NaP;
+
+    return *this / b.inv();
+}
+
+t_pitch t_pitch::operator/(const t_atom_long b) const
+{
+    if (b == 0)
+        return t_pitch::NaP;
+    
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps /= b;
     sat.mc /= b;
     return t_pitch(sat);
 }
 
-t_pitch t_pitch::divdiv(const t_rational &b) const
+t_pitch t_pitch::operator/(const t_rational &b) const
 {
+    if (b.r_num == 0 || b.r_den == 0)
+        return t_pitch::NaP;
+
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps = sat.steps * b.den() / b.num();
     sat.mc /= t_shortRational(b);
@@ -166,6 +187,9 @@ t_pitch t_pitch::divdiv(const t_rational &b) const
 
 t_pitch t_pitch::operator%(const t_pitch &b) const
 {
+    if (b.toMC() == 0)
+        return t_pitch::NaP;
+
     t_atom_long quotient = t_atom_long(double(*this / b));
     t_pitch t = b * quotient;
     return *this - t;
@@ -173,72 +197,180 @@ t_pitch t_pitch::operator%(const t_pitch &b) const
 
 t_pitch t_pitch::operator%(const t_atom_long b) const
 {
+    if (b == 0)
+        return t_pitch::NaP;
+    
     t_stepsAndMC sat = toStepsAndMC();
     sat.steps -= (sat.steps / b) * b;
     sat.mc = t_shortRational(0);
     return t_pitch(sat);
 }
 
-std::string t_pitch::toString(char include_octave)
+long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace)
 {
-    std::string s;
-    s = degree2name[p_degree];
-    if (p_alter == natural) {
-        if (include_octave)
-            s += std::to_string(p_octave);
-    } else if (p_alter.den() == 1 || p_alter.den() == 2 || p_alter.den() == 4) {
-        if (p_alter > natural) { // sharps
-            t_shortRational remainder = p_alter;
-            while (remainder != natural) {
+    long count = 0;
+    if (!buf || bufSize == 0)
+        return -1;
+    if (p_alter == illegal) {
+        return snprintf_zero(buf, bufSize, "NaP");
+    } else if (p_octave >= 0 || always_positive) {
+        if (++count == bufSize) { *buf = 0; return count - 1; }
+        *(buf++) = degree2name[p_degree];
+        t_shortRational remainder = p_alter;
+        if (remainder > natural) { // sharps
+            /* // this is probably not convenient, as it complicates simple cases
+             s += std::string("x", t_atom_long(remainder / dblsharp));
+             remainder %= dblsharp;
+             
+             s += std::string("#", t_atom_long(remainder / sharp));
+             remainder %= sharp;
+             
+             s += std::string("q", t_atom_long(remainder / qrtrsharp));
+             remainder %= qrtrsharp;
+             
+             s += std::string("^", t_atom_long(remainder / eighthsharp));
+             remainder %= eighthsharp;
+             */
+            
+            while (remainder >= eighthsharp) {
+                if (++count == bufSize) { *buf = 0; return count - 1; }
                 if (remainder >= dblsharp) {
-                    s += 'x';
+                    *(buf++) = 'x';
                     remainder -= dblsharp;
                 } else if (remainder >= sharp) {
-                    s += '#';
+                    *(buf++) = '#';
                     remainder -= sharp;
                 } else if (remainder >= qrtrsharp) {
-                    s += 'q';
+                    *(buf++) = 'q';
                     remainder -= qrtrsharp;
+                } else if (remainder >= eighthsharp) {
+                    *(buf++) = '^';
+                    remainder -= eighthsharp;
                 }
             }
-        } else { // flats
-            t_shortRational remainder = p_alter;
-            while (remainder != natural) {
+        } else if (remainder < natural) { // flats
+            while (remainder <= eighthflat) {
+                if (++count == bufSize) { *buf = 0; return count - 1; }
                 if (remainder <= flat) {
-                    s += 'b';
+                    *(buf++) = 'b';
                     remainder -= flat;
                 } else if (remainder <= qrtrflat) {
-                    s += 'd';
+                    *(buf++) = 'd';
                     remainder -= qrtrflat;
+                } else if (remainder <= eighthflat) {
+                    *(buf++) = 'v';
+                    remainder -= eighthflat;
                 }
             }
         }
-        if (include_octave)
-            s += std::to_string(p_octave);
-    } else {
+        
+        long len = 0;
+        
         if (include_octave) {
-            if (p_alter > natural)
-                s += std::to_string(p_octave) + '+' + p_alter.to_string() + "t";
+            if (remainder > natural)
+                len = snprintf_zero(buf, bufSize - count, "%d+%d/%dt", p_octave, remainder.num(), remainder.den());
+            else if (remainder < natural)
+                len = snprintf_zero(buf, bufSize - count, "%d%d/%dt", p_octave, remainder.num(), remainder.den());
             else
-                s += std::to_string(p_octave) + p_alter.to_string() + "t";
+                len= snprintf_zero(buf, bufSize - count, "%d", p_octave);
         } else {
-            if (p_alter > natural)
-                s += '+' + p_alter.to_string() + "t";
-            else
-                s += p_alter.to_string() + "t";
+            if (remainder > natural)
+                len = snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
+            else if (remainder < natural)
+                len = snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
         }
-    }
-    
-    return s;
-}
+        buf += len;
+        count += len;
+    } else { // if (octave < 0 && !always_positive)
+        t_pitch mirrored = -*this;
+        if (++count == bufSize) { *buf = 0; return count - 1; }
+        *(buf++) = '-';
+        if (++count == bufSize) { *buf = 0; return count - 1; }
+        *(buf++) = degree2name[mirrored.p_degree];
+        t_shortRational remainder = mirrored.p_alter;
+        if (remainder > natural) { // sharps
+            /* // this is probably not convenient, as it complicates simple cases
+             s += std::string("x", t_atom_long(remainder / dblsharp));
+             remainder %= dblsharp;
+             
+             s += std::string("#", t_atom_long(remainder / sharp));
+             remainder %= sharp;
+             
+             s += std::string("q", t_atom_long(remainder / qrtrsharp));
+             remainder %= qrtrsharp;
+             
+             s += std::string("^", t_atom_long(remainder / eighthsharp));
+             remainder %= eighthsharp;
+             */
+            
+            while (remainder >= eighthsharp) {
+                if (++count == bufSize) { *buf = 0; return count - 1; }
+                if (remainder >= dblsharp) {
+                    *(buf++) = 'x';
+                    remainder -= dblsharp;
+                } else if (remainder >= sharp) {
+                    *(buf++) = '#';
+                    remainder -= sharp;
+                } else if (remainder >= qrtrsharp) {
+                    *(buf++) = 'q';
+                    remainder -= qrtrsharp;
+                } else if (remainder >= eighthsharp) {
+                    *(buf++) = '^';
+                    remainder -= eighthsharp;
+                }
+            }
+            remainder *= -1;
+        } else if (remainder < natural) { // flats
+            while (remainder <= eighthflat) {
+                if (++count == bufSize) { *buf = 0; return count - 1; }
+                if (remainder <= flat) {
+                    *(buf++) = 'b';
+                    remainder -= flat;
+                } else if (remainder <= qrtrflat) {
+                    *(buf++) = 'd';
+                    remainder -= qrtrflat;
+                } else if (remainder <= eighthflat) {
+                    *(buf++) = 'v';
+                    remainder -= eighthflat;
+                }
+            }
+            remainder *= -1;
+        }
+        
+        long len = 0;
 
-std::string t_pitch::toString()
-{
-    return t_pitch::toString(true);
+        if (include_octave) {
+            if (remainder > natural)
+                len = snprintf_zero(buf, bufSize - count, "%d+%d/%dt", mirrored.octave(), remainder.num(), remainder.den());
+            else if (remainder < natural)
+                len = snprintf_zero(buf, bufSize - count, "%d%d/%dt", mirrored.octave(), remainder.num(), remainder.den());
+            else
+                len = snprintf_zero(buf, bufSize - count, "%d", mirrored.octave());
+        } else {
+            if (remainder > natural)
+                len = snprintf_zero(buf, bufSize - count, "+%d/%dt", remainder.num(), remainder.den());
+            else if (remainder < natural)
+                len = snprintf_zero(buf, bufSize - count, "%d/%dt", remainder.num(), remainder.den());
+        }
+        buf += len;
+        count += len;
+    }
+    if (!addTrailingSpace || count == bufSize - 1) {
+        *(buf) = 0;
+        return count;
+    }
+    *(buf) = ' ';
+    *(buf + 1) = 0;
+    return count + 1;
 }
 
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
 {
+    long original_tone_division = tone_division;
+    
+    if (tone_division == 0)
+        tone_division = 8;
+    
     // converts a midicents number in the accidentals, with respect to the given full_accidental_representation (representing for each note)
     double fl = floor(mc/1200);
     double step_mc = 200. / tone_division;
@@ -391,6 +523,14 @@ t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences
     grid_ratio.r_den = numsteps;
     
     t_rational accidental = rat_rat_diff(grid_ratio, natural_ratio) * 6;
+    
+    if (original_tone_division == 0) {
+        // obtaining the most precise alteration possible
+        t_pitch p1 = t_pitch(steps % 7, long2rat(0), steps / 7);
+        t_rational mc1 = p1.toMC();
+        t_rational mc_orig = approx_double_with_rat_fixed_den(mc, 100, 0, NULL);
+        accidental = (mc_orig - mc1)/200;
+    }
     
     return t_pitch(steps % 7, accidental, steps / 7);
 }

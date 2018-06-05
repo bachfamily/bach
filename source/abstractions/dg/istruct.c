@@ -69,7 +69,7 @@
 
 void main_foo() {
 
-llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
 CLASS_ATTR_CHAR(c, "autosort", 0, t_istruct, autosort); 
 CLASS_ATTR_STYLE_LABEL(c,"autosort",0,"onoff","Autosort");

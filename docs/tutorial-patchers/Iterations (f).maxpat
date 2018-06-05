@@ -65,7 +65,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 79.0, 433.0, 80.0, 20.0 ],
-					"text" : "bach.append"
+					"text" : "bach.join"
 				}
 
 			}
@@ -79,7 +79,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 220.0, 246.0, 80.0, 20.0 ],
-					"text" : "bach.append"
+					"text" : "bach.join"
 				}
 
 			}
@@ -982,7 +982,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.append.mxo",
+				"name" : "bach.join.mxo",
 				"type" : "iLaX"
 			}
  ]

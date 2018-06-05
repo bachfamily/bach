@@ -93,7 +93,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -122,7 +122,7 @@ int T_EXPORT main()
     class_addmethod(c, (method)value_okclose,         "okclose",       A_CANT, 0);
 
     
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	class_register(CLASS_BOX, c);
 	value_class = c;
@@ -149,7 +149,7 @@ void value_dblclick(t_value *x)
     char *buf = NULL;
     
     bach_atomic_lock(&vault->v_lock);
-    llll_to_text_buf_pretty(vault->v_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, 0, NULL);
+    llll_to_text_buf_pretty(vault->v_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
     bach_atomic_unlock(&vault->v_lock);
     
     object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
@@ -165,9 +165,7 @@ void value_edclose(t_value *x, char **ht, long size)
 {
     // do something with the text
     if (ht) {
-        t_atom av;
-        atom_setobj(&av, *ht);
-        t_llll *ll = llll_parse(1, &av);
+        t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         
         if (ll) {
             t_llll *freeme;
@@ -292,6 +290,8 @@ t_value *value_new(t_symbol *s, short ac, t_atom *av)
 	} else
 		object_bug((t_object *) x, "Memory allocation error: couldn't create bach.value");
 	
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	if (x && err == MAX_ERR_NONE)
 		return x;
 	

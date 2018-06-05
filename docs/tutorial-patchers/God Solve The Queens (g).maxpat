@@ -750,7 +750,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 52.0, 213.0, 155.0, 22.0 ],
 									"style" : "",
-									"text" : "bach.append @inwrap 1"
+									"text" : "bach.join @inwrap 1"
 								}
 
 							}
@@ -1897,7 +1897,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.append.mxo",
+				"name" : "bach.join.mxo",
 				"type" : "iLaX"
 			}
 , 			{

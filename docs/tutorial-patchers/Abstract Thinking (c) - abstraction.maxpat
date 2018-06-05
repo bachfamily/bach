@@ -194,7 +194,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 2 @outwrap 1",
+					"text" : "bach.join 2 @outwrap 1",
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 221.0, 511.0, 158.0, 20.0 ],
 					"id" : "obj-17",
@@ -830,7 +830,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.append 2 @triggers 2",
+					"text" : "bach.join 2 @triggers 2",
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 65.0, 587.0, 155.0, 20.0 ],
 					"id" : "obj-38",

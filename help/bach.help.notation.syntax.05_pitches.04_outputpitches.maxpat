@@ -47,7 +47,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 403.5, 230.0, 153.5, 83.0 ],
-					"presentation_rect" : [ 293.0, 256.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Retrieve gathered, separate and playout syntax. Test with different attribute values"
 				}
@@ -126,7 +125,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 225.0, 290.0, 190.0, 23.0 ],
-					"presentation_rect" : [ 397.0, 153.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "sel all, dumpselection, unsel all"
 				}
@@ -142,7 +140,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 211.0, 260.0, 78.0, 23.0 ],
-					"presentation_rect" : [ 303.0, 153.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "dump cents"
 				}
@@ -158,7 +155,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 191.0, 230.0, 75.0, 23.0 ],
-					"presentation_rect" : [ 159.0, 161.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "dump body"
 				}
@@ -202,22 +198,6 @@
 					"patching_rect" : [ 319.785706, 429.0, 117.0, 23.0 ],
 					"style" : "",
 					"text" : "bach.print Playout"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"hidden" : 1,
-					"id" : "obj-22",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 260.0, 91.0, 22.0 ],
-					"style" : "",
-					"text" : "loadmess clear"
 				}
 
 			}
@@ -370,7 +350,6 @@
 					"outlettype" : [ "", "", "int" ],
 					"parameter_enable" : 0,
 					"patching_rect" : [ 561.5, 254.0, 20.0, 20.0 ],
-					"presentation_rect" : [ 456.5, 169.0, 0.0, 0.0 ],
 					"rounded" : 60.0,
 					"style" : "",
 					"text" : "2",
@@ -462,15 +441,6 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-19", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-1", 0 ],
-					"disabled" : 0,
-					"hidden" : 1,
-					"source" : [ "obj-22", 0 ]
 				}
 
 			}

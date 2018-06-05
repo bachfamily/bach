@@ -63,6 +63,8 @@ double hatom_getdouble(const t_hatom *h)
 	}
 }
 
+#define DOUBLE_TO_RATIONAL_DENOMINATOR (1000*27*7)
+
 t_rational hatom_getrational(const t_hatom *h)
 {
 	t_rational r = {0,0};
@@ -73,8 +75,9 @@ t_rational hatom_getrational(const t_hatom *h)
 			return r;
 			break;
 		case H_DOUBLE: // TODO: can be greatly improved!!!!
-			r.r_num = h->h_w.w_double;
-			r.r_den = 1;
+            r.r_num = h->h_w.w_double * DOUBLE_TO_RATIONAL_DENOMINATOR;
+			r.r_den = DOUBLE_TO_RATIONAL_DENOMINATOR;
+            r.reduce();
 			return r;
 			break;
 		case H_RAT:
@@ -90,25 +93,26 @@ t_rational hatom_getrational(const t_hatom *h)
 	return r;
 }
 
-t_pitch hatom_getpitch(const t_hatom *h)
+
+t_pitch hatom_getpitch(const t_hatom *h, long tonedivision, e_accidentals_preferences pref)
 {
     switch (hatom_gettype(h)) {
         case H_LONG:
-            return t_pitch::fromMC(h->h_w.w_long);
+            return t_pitch::fromMC(h->h_w.w_long, tonedivision, pref);
             break;
         case H_DOUBLE:
-            return t_pitch::fromMC(h->h_w.w_double);
+            return t_pitch::fromMC(h->h_w.w_double, tonedivision, pref);
             break;
         case H_RAT: // TODO: can be improved!
         {
             double d = h->h_w.w_rat;
-            return t_pitch::fromMC(d);
+            return t_pitch::fromMC(d, tonedivision, pref);
         }
         case H_PITCH:
             return h->h_w.w_pitch;
             break;
         default:
-            return t_pitch(0);
+            return t_pitch::C0;
             break;
     }
 }

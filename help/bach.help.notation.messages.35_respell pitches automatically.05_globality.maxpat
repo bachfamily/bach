@@ -299,7 +299,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 589.0, 19.0 ],
 					"style" : "",
-					"text" : "Tags: message, pitche, respell, automatically, enharmonic, enharmonicity, scope, local, global, affect",
+					"text" : "Tags: message, pitche, respell, automatically, enharmonic, enharmonicity, scope, local, global, affect, spell",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

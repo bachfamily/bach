@@ -83,7 +83,7 @@ typedef struct _goto_params
     long        untilmode;      ///< Is 'until' clause applied to all new selection or at least one element? One of the e_goto_untilmode
     
     long        nullmode;       ///< If non-zero, notifies the null
-    long        polymode;      ///< one of the e_goto_polymode, handling the keeping of selection across polyphony
+    long        polymode;      ///< one of the e_goto_polymode, handling the keeping of selection across polyphony (doesn't work with up/down/left/right)
     long        force_inscreen;      ///< Also force new selected items to be in screen
     long        tiemode;        ///< one of the e_goto_tiemode handling tie sequences
     long        skiprests;      ///< Skip or ignore rests (don't select them)

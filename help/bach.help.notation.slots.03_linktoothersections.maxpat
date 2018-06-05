@@ -174,7 +174,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 388.0, 280.0, 65.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Refer to #slot+messages to know the messages which can be sent to bach.roll or bach.score, concerning slots (such as the #addslot or #changeslotvalue messages).",
+					"text" : "Refer to #slot+messages to know the messages which can be sent to bach.roll or bach.score, concerning slots (such as the #addslot or #changeslotitem messages).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

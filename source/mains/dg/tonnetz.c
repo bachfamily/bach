@@ -358,7 +358,7 @@ t_max_err tonnetz_setattr_diatonic_center(t_tonnetz *x, t_object *attr, long ac,
             if (hatom_gettype(&args->l_head->l_hatom) == H_PITCH) {
                 x->pitch_center = hatom_getpitch(&args->l_head->l_hatom);
             } else if (is_hatom_number(&args->l_head->l_hatom)) {
-                x->pitch_center = t_pitch::fromMC(hatom_getdouble(&args->l_head->l_hatom));
+                x->pitch_center = t_pitch::fromMC(hatom_getdouble(&args->l_head->l_hatom), x->modulo/6, k_ACC_AUTO);
                 
 /*				long screen_mc;
 				t_rational screen_acc;
@@ -550,7 +550,7 @@ t_max_err tonnetz_setattr_scaleintervals(t_tonnetz *x, t_object *attr, long ac, 
 				if (ll->l_size == 1 && ll->l_depth == 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
 					t_symbol *sym = hatom_getsym(&ll->l_head->l_hatom);
 					llll_free(ll);
-					ll = llll_from_text_buf(sym->s_name, false);
+					ll = llll_from_text_buf(sym->s_name);
 				}
 				
 				llll_free(x->purely_diatonic_scale_intervals);
@@ -580,7 +580,7 @@ t_max_err tonnetz_setattr_scalefreqratios(t_tonnetz *x, t_object *attr, long ac,
 			if (ll->l_size == 1 && ll->l_depth == 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
 				t_symbol *sym = hatom_getsym(&ll->l_head->l_hatom);
 				llll_free(ll);
-				ll = llll_from_text_buf(sym->s_name, false);
+				ll = llll_from_text_buf(sym->s_name);
 			}
 
 			llll_free(x->purely_diatonic_scale_freq_ratios);
@@ -678,7 +678,7 @@ t_max_err tonnetz_setattr_generators(t_tonnetz *x, t_object *attr, long ac, t_at
 			if (ll->l_size == 1 && ll->l_depth == 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM) {
 				t_symbol *sym = hatom_getsym(&ll->l_head->l_hatom);
 				llll_free(ll);
-				ll = llll_from_text_buf(sym->s_name, false);
+				ll = llll_from_text_buf(sym->s_name);
 			}
 			
 			
@@ -981,7 +981,7 @@ int T_EXPORT main(void){
 	common_symbols_init();
 	llllobj_common_symbols_init();
 
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -1214,7 +1214,7 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) tonnetz_assist, "assist", A_CANT, 0);
 	class_addmethod(c, (method) tonnetz_oksize, "oksize", A_CANT, 0);
 
-	llllobj_class_add_out_attr(c, LLLL_OBJ_UI);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_UI);
 
 
 	CLASS_ATTR_DEFAULT(c, "patching_rect", 0, "0 0 542. 316."); // new dimensions
@@ -2255,7 +2255,8 @@ void tonnetz_anything(t_tonnetz *x, t_symbol *s, long argc, t_atom *argv){ //arg
 	jbox_redraw((t_jbox *) x);
 }
 
-t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv){
+t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv)
+{
 	t_tonnetz* x = NULL;
 	t_max_err err = MAX_ERR_GENERIC;
 	t_dictionary *d;
@@ -2286,8 +2287,8 @@ t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv){
 	err = jbox_new(&x->j_box.l_box, flags, argc, argv); 
 	x->j_box.l_box.b_firstin = (t_object*) x;
 	x->creating_new_obj = true;
-	x->purely_diatonic_scale_intervals = llll_from_text_buf((char *) "200 200 100 200 200 200 100", false);
-	x->purely_diatonic_scale_freq_ratios = llll_from_text_buf((char *) "9/8 5/4 4/3 3/2 5/3 15/8 2/1", false);
+	x->purely_diatonic_scale_intervals = llll_from_text_buf((char *) "200 200 100 200 200 200 100");
+	x->purely_diatonic_scale_freq_ratios = llll_from_text_buf((char *) "9/8 5/4 4/3 3/2 5/3 15/8 2/1");
 
     x->diatonic_center_as_llll = llll_get();
     
@@ -2307,7 +2308,7 @@ t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv){
 	x->show_focus = 1;
 	x->velocity_handling = 1;
 	x->is_velocity_dragging = -1;
-	x->generators_as_llll = llll_from_text_buf((char *)"(4 7) (2 4)", false);
+	x->generators_as_llll = llll_from_text_buf((char *)"(4 7) (2 4)");
 	x->generators[0].diatonic_steps = 4;
 	x->generators[0].chromatic_steps = 7;
 	x->generators[0].frequency_ratio = genrat(3, 2);
@@ -2355,6 +2356,7 @@ t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv){
 		calculate_static_tonnetz(x);
 
 		x->creating_new_obj = false;
+        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 		return x;
 	}
 

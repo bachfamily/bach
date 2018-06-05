@@ -58,6 +58,7 @@
 #include "ext_systhread.h"
 #include "ext_dictionary.h"
 #include "jpatcher_api.h"
+#include "chkparser.h"
 
 #define MAX_ATTRS 256
 
@@ -82,7 +83,6 @@ typedef struct _args
 	t_systhread_mutex	n_mutex;
 	long				n_itsme;
 	long				n_retrying;
-	long				n_clone;
     t_object            *n_patcher;
 } t_args;
 
@@ -109,7 +109,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -192,7 +192,7 @@ int T_EXPORT main()
 	// @description An optional set of keywords to be considered as attributes, and therefore output as attribute-style arguments. <br />
 	// @copy BACH_DOC_STATIC_ATTR
  
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
 */
 	class_register(CLASS_BOX, c);
@@ -276,36 +276,43 @@ void args_anything(t_args *x, t_symbol *msg, long ac, t_atom *av)
 				}
 			}
 		}
-		if (inlist && (x->n_ob.l_out[outlet].b_type == LLLL_O_NATIVE)) { // native -> native
-			if (!x->n_clone) {
-				outlet_anything(x->n_ob.l_out[outlet].b_outlet, msg, ac, av);
-				llll_release(inlist);
-			} else {
-				t_llll *cloned = llll_clone(inlist);
-				llll_release(inlist);
-				llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, cloned);
-				llll_free(cloned);
-			}
-		} else if (!inlist && (x->n_ob.l_out[outlet].b_type == LLLL_O_TEXT)) { // text -> text
-			if (msg != _sym_list)
-				outlet_anything(x->n_ob.l_out[outlet].b_outlet, msg, ac, av);
-			else
-				outlet_list(x->n_ob.l_out[outlet].b_outlet, NULL, ac, av);
-		} else if (inlist) { // native -> text
-			llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, inlist);
-			llll_release(inlist);
-		}
-		else { // text -> native
-			if (msg == _sym_bang && ac == 0)
-				llllobj_outlet_bang((t_object *) x, LLLL_OBJ_VANILLA, outlet);
-			else {
-				inlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_RETAIN); // LLLL_PARSE_RETAIN is ignored as the llll is surely text
-				if (inlist) {
-					llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, inlist);
-					llll_free(inlist);
-				}
-			}
-		}
+        
+        
+        if (inlist) { // native ->
+            switch (x->n_ob.l_out[outlet].b_type) {
+                case LLLL_O_NATIVE:
+                    outlet_anything(x->n_ob.l_out[outlet].b_outlet, msg, ac, av);
+                    llll_release(inlist);
+                    break;
+                case LLLL_O_TEXT:
+                case LLLL_O_MAX:
+                    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, inlist);
+                    llll_release(inlist);
+                    break;
+                default:
+                    break;
+            }
+        } else { // text ->
+            if (msg == _sym_bang && ac == 0) {
+                outlet_bang(x->n_ob.l_out[outlet].b_outlet);
+            } else {
+                switch (x->n_ob.l_out[outlet].b_type) {
+                case LLLL_O_NATIVE:
+                case LLLL_O_MAX:
+                    inlist = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_DONT); // LLLL_PARSE_DONT is ignored
+                    if (inlist) {
+                        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlet, inlist);
+                        llll_free(inlist);
+                    }
+                    break;
+                case LLLL_O_TEXT:
+                    outlet_anything(x->n_ob.l_out[outlet].b_outlet, msg, ac, av);
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
 	}
 }
 
@@ -410,14 +417,6 @@ t_args *args_new(t_symbol *s, short ac, t_atom *av)
 					i++;
 				} else
 					object_error((t_object *) x, "Bad value for done attribute", i);
-			} else if (!strcmp(attrname, "clone")) {
-				long type = atom_gettype(av + i);
-				if (type == A_LONG || type == A_FLOAT) {
-					t_atom_long val = atom_getlong(av + i);
-					x->n_clone = CLAMP(val, 0, 1);
-					i++;
-				} else
-					object_error((t_object *) x, "Bad value for clone attribute", i);
 			} else if (!strcmp(attrname, "outout")) {
 				long type = atom_gettype(av + i);
 				if (type == A_LONG || type == A_FLOAT) {
@@ -467,6 +466,7 @@ t_args *args_new(t_symbol *s, short ac, t_atom *av)
 		error(BACH_CANT_INSTANTIATE);
 	
 	//object_post((t_object *) x, "instantiated bach.args: %p", x);
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;
@@ -481,6 +481,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 	t_jbox *pfftbox; 
 	t_object *box; // the box containing the patcher
 	t_atombuf *patcherargs;
+    t_chkParser chkParser;
 
 	long i;
 	long ac = 0;
@@ -555,13 +556,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 		
 		if (x->n_outout || attrsym != _llllobj_sym_out) {
 			if (x->n_backtick) {
-				for (this_arg = _llllobj_attributes; *this_arg; this_arg++)
-					if (attrsym == *this_arg)
-						break;
-				if (*this_arg)
-					attrsym = llll_addquote(attrsym->s_name);
-				else
-					attrsym = llll_quoteme(attrsym);
+                attrsym = chkParser.addQuoteIfNeeded(attrsym);
 			}
 			llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, x->n_proxies + 2, attrsym, outargsac, outargsav + 1);	
 		}
@@ -600,15 +595,9 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 				}
 			if (shootit) {
 				attrsym = gensym(attrsym->s_name + 1);
-				if (x->n_backtick) {
-					for (this_arg = _llllobj_attributes; *this_arg; this_arg++)
-						if (attrsym == *this_arg)
-							break;
-					if (*this_arg)
-						attrsym = llll_addquote(attrsym->s_name);
-					else
-						attrsym = llll_quoteme(attrsym);
-				}
+                if (x->n_backtick) {
+                    attrsym = chkParser.addQuoteIfNeeded(attrsym);
+                }
 				llllobj_outlet_anything((t_object *) x, LLLL_OBJ_VANILLA, x->n_proxies + 2, attrsym, outargsac, outargsav + 1);	
 			}
 		}

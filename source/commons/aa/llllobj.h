@@ -49,22 +49,24 @@ typedef struct llllobj_out // the structure for an outlet and its cached data - 
 // TO BE CLEANED UP!
 typedef struct llllobj_object
 {
-	t_object				l_ob;			// the t_object from which we inherit
+	t_object				l_ob;               // the t_object from which we inherit
 	
-	t_int32					l_numstores;	// how many stores we have
-	struct llllobj_store	*l_incache;		// the stores
+	t_int32					l_numstores;        // how many stores we have
+	struct llllobj_store	*l_incache;         // the stores
 	
-	t_int32					l_numouts;		// how many outlets
-	t_int32					l_numllllouts;	// how many llll outlets
-	t_symbol				*l_outtypes;	// the value of the out attribute, when relevant
-	struct llllobj_out		*l_out;			// the outs
-	t_object				*l_send;		// unused
+	t_int32					l_numouts;          // how many outlets
+	t_int32					l_numllllouts;      // how many llll outlets
+	t_symbol				*l_outtypes;        // the value of the out attribute, when relevant
+	struct llllobj_out		*l_out;             // the outs
+	t_object				*l_send;            // unused
 	
-	t_bool					l_running;		// always 1 except during the instance creation - used for some exoteric initialization stuff - don't touch this!
-	t_bool					l_rebuild;		// can be managed by the standard notify method
-	t_llll					*l_dictll;		// unused
-	t_hashtab				*l_release;		// the release pool
-	t_bach_atomic_lock		l_release_lock; // threadlock for the release pool
+	t_bool					l_running;          // always 1 except during the instance creation - used for some exoteric initialization stuff - don't touch this!
+	t_bool					l_rebuild;          // can be managed by the standard notify method
+	t_llll					*l_dictll;          // unused
+	t_hashtab				*l_release;         // the release pool
+	t_bach_atomic_lock		l_release_lock;     // threadlock for the release pool
+    
+    t_atom_long             l_versionnumber;    // the number of the bach version under which the object was created or last saved
 } t_llllobj_object;
 
 
@@ -90,6 +92,8 @@ typedef struct llllobj_pxobject
 	t_llll					*l_dictll;		// unused
 	t_hashtab				*l_release;		// the release pool
 	t_bach_atomic_lock		l_release_lock; // threadlock for the release pool
+
+    t_atom_long             l_versionnumber;    // the number of the bach version under which the object was created or last saved
 } t_llllobj_pxobject;
 
 
@@ -115,6 +119,8 @@ typedef struct llllobj_jbox
 	t_llll					*l_dictll;		// Optionally set by llllobj_is_help
 	t_hashtab				*l_release;		// stuff to be released when the object is freed
 	t_bach_atomic_lock		l_release_lock;
+
+    t_atom_long             l_versionnumber;    // the number of the bach version under which the object was created or last saved
 } t_llllobj_jbox;
 
 
@@ -141,6 +147,8 @@ typedef struct llllobj_pxjbox
 	t_llll					*l_dictll;		// Optionally set by llllobj_is_help
 	t_hashtab				*l_release;		// stuff to be released when the object is freed
 	t_bach_atomic_lock		l_release_lock;
+
+    t_atom_long             l_versionnumber;    // the number of the bach version under which the object was created or last saved
 } t_llllobj_pxjbox;
 
 
@@ -289,7 +297,8 @@ void llllobj_outlet_symbol_couple_as_llll(t_object *x, e_llllobj_obj_types llllo
 // it manages native / text format
 // each object receiving the llll retains it if needed, so you should free the list after outputting it
 // outlets are counted from 0
-void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll);
+// flags are e_llll_deparse_flags
+void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_llll *in_ll, long flags = 0);
 
 
 // (unused)
@@ -322,7 +331,7 @@ void llllobj_outlet_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type,
  If you set LLLL_PARSE_CLONE you also have the right to perform destructive operations on the llll.
  But if you are about to store the incoming llll in one of your object's stores, then you have to use llllobj_parse_and_store() or llllobj_parse_retain_and_store()
  */
-t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, e_llllobj_parse_flags flags);
+t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, e_llllobj_parse_flags flags, long ignore = LLLL_I_NONE);
 
 /*
  A workaround for dealing with how text-format lllls are passed to objects
@@ -393,7 +402,10 @@ void llllobj_gunload_array_range(t_object *x, e_llllobj_obj_types type, t_llll *
 
 
 // (private) load an llll in a text outlet
-void llllobj_gunload_text(t_llllobj_out *cache, t_llll *inll);
+void llllobj_gunload_bttext(t_llllobj_out *cache, t_llll *inll);
+
+// (private) load an llll in a max-formatted outlet
+void llllobj_gunload_max(t_llllobj_out *cache, t_llll *inll);
 
 // (private) load an llll in a native outlet
 void llllobj_gunload_native(t_llllobj_out *cache, t_llll *ll);
@@ -417,7 +429,7 @@ void llllobj_cache_list(t_llllobj_out *cache, t_symbol *msg, long ac, t_atom *av
 // (private) load any message in an output cache
 void llllobj_cache_anything(t_llllobj_out *cache, t_symbol *msg, long ac, t_atom *av, void *thing);
 
-// (private) load a text-based llll in an output cache from the atomarray coming from the deparse method
+// (private) load a text-based llll (with or without backticks) in an output cache from the atomarray coming from the deparse method
 void llllobj_cache_text(t_llllobj_out *cache, t_atomarray *deparsed_aa);
 
 
@@ -612,7 +624,27 @@ void llllobj_change_out_type(t_llllobj_out *cache, e_llllobj_outlet_types newtyp
 // that will be called by the standard notify method.
 void llllobj_class_add_out_attr(t_class *c, e_llllobj_obj_types type);
 
+// add the invisible versionnumber attr
+void llllobj_class_add_versionnumber_attr(t_class *c, e_llllobj_obj_types type);
 
+// add the out and versionnumber attrs
+void llllobj_class_add_default_bach_attrs(t_class *c, e_llllobj_obj_types type);
+
+// to be called from the object constructor
+// returns the object version number, as stored in the object dictionary,
+// or 0 if the version number is not stored
+// (meaning that the object was saved with bach pre-0.8,
+// or that is being typed now)
+// if process is true, the arguments stored in the object dictionary will be processed
+t_atom_long llllobj_get_version_number(t_object *x, e_llllobj_obj_types types);
+
+// sets the object version number as the current one
+// should be called by each object at the end of its constructor
+void llllobj_set_current_version_number(t_object *x, e_llllobj_obj_types type);
+
+
+// sets the object version number as a specified one (useful before handling backward compatibility routines)
+void llllobj_set_version_number(t_object *x, e_llllobj_obj_types type, long version_number);
 
 
 // clean all the stores and outlets of an object

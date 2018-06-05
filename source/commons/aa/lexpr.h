@@ -81,13 +81,16 @@ typedef struct _lexpr_op {
 typedef struct _lexpr_func {
 	unsigned long f_type;		// currently, can be H_DOUBLE or H_ALL
 	long f_dontfold;	// should be 1 only for "random"
+    const char *f_name;
 	union {		// of course, the fields of the union are all the same. this is only useful to avoid some casting
 		double		(*p_dptr_d)(double a);	// the function, if it will return a double (e.g. cos) - use it with f_type H_DOUBLE
 		double		(*p_dptr_dd)(double a, double b);	// the function, if it will return a double (e.g. cos) - use it with f_type H_DOUBLE
+        double		(*p_dptr_ddd)(double a, double b, double c);	// the function, if it will return a double (e.g. cos) - use it with f_type H_DOUBLE
 		long		(*p_lptr)();	// the function, if it will return a long (unused)
 		t_rational	(*p_rptr)();	// the function, if it will return a rational (unused)
 		void		(*p_vptr_hh)(t_hatom *a, t_hatom *r);	// use this with H_ALL. the function returns void, but accepts a last *hatom parameter for storing the result (see lexpr_float or lexpr_pow)
 		void		(*p_vptr_hhh)(t_hatom *a, t_hatom *b, t_hatom *r);	// use this with H_ALL. the function returns void, but accepts a last *hatom parameter for storing the result (see lexpr_float or lexpr_pow)
+        void		(*p_vptr_hhhh)(t_hatom *a, t_hatom *b, t_hatom *c, t_hatom *r);	// use this with H_ALL. the function returns void, but accepts a last *hatom parameter for storing the result (see lexpr_float or lexpr_pow)
 	} f_ptrs;
 } t_lexpr_func;
 
@@ -136,7 +139,7 @@ BEGIN_CHECK_LINKAGE
  if the operation is unary, h2 must be NULL
  returns 0 if successful, errno otherwise
  */
-long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom *res);
+long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *res);
 
 /*
  evaluate an expression with a set of variables.
@@ -161,7 +164,8 @@ long lexpr_append_lexeme_CLOSED(t_lexpr_lexeme *lex);
 long lexpr_append_lexeme_COMMA(t_lexpr_lexeme *lex);
 
 long lexpr_append_lexeme_VAR(t_lexpr_lexeme *lex, char type, long index, short *numvars, char *txt, char **offending);
-long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, char *txt, long subs_count, const char *substitutions[], short *numvars, char **offending);
+long lexpr_append_lexeme_VAR_substitution(t_lexpr_lexeme *lex, const char *txt, long subs_count, const char *substitutions[], short *numvars, char **offending);
+long lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(t_lexpr_lexeme *lex, long subs_count, const char *substitutions[], short *numvars, char **offending);
 
 long lexpr_append_lexeme_BITOR(t_lexpr_lexeme *lex);
 long lexpr_append_lexeme_LOGOR(t_lexpr_lexeme *lex);
@@ -194,11 +198,12 @@ long lexpr_append_lexeme_RATIONAL(t_lexpr_lexeme *lex, t_rational r);
 long lexpr_append_lexeme_FLOAT(t_lexpr_lexeme *lex, double d);
 long lexpr_append_lexeme_PITCH(t_lexpr_lexeme *lex, t_pitch p);
 
-long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a));
-long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a, double b));
-long lexpr_append_lexeme_FUNC_unary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *r));
-long lexpr_append_lexeme_FUNC_binary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r));
-long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r));
+long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a), const char *name);
+long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(double a, double b), const char *name);
+long lexpr_append_lexeme_FUNC_unary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *r), const char *name);
+long lexpr_append_lexeme_FUNC_binary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r), const char *name);
+long lexpr_append_lexeme_FUNC_binary_ALL_dontfold(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *r), const char *name);
+long lexpr_append_lexeme_FUNC_ternary_ALL(t_lexpr_lexeme *lex, void(*f)(t_hatom *a, t_hatom *b, t_hatom *c, t_hatom *r), const char *name);
 
 
 

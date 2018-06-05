@@ -25,7 +25,6 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 	t_llll_stack *stack;
 	t_atom_long depth = 1;
 	long deepenough;
-	long leveltype = L_STANDARD;
 	char *txt = NULL, *pos;
 	
 	if (!ll)
@@ -98,9 +97,12 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 					case H_RAT:
 						snprintf_zero(postline, 256, "%s " ATOM_LONG_PRINTF_FMT "/" ATOM_LONG_PRINTF_FMT, header, this_elem->l_hatom.h_w.w_rat.r_num, this_elem->l_hatom.h_w.w_rat.r_den);
 						break;
-                    case H_PITCH:
-                        snprintf_zero(postline, 256, "%s %s", header, this_elem->l_hatom.h_w.w_pitch.toString().c_str());
+                    case H_PITCH: {
+                        char txt[256];
+                        this_elem->l_hatom.h_w.w_pitch.toTextBuf(txt, 256);
+                        snprintf_zero(postline, 256, "%s %s", header, txt);
                         break;
+                    }
 					case H_LLLL:
 						break;
 					case H_OBJ:
@@ -117,9 +119,8 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 						snprintf_zero(postline, 256, "%s ###NULL###", header);
 					this_elem = this_elem->l_next;
 				} else {
-					leveltype = sub_ll->l_leveltype;
 					if (depth > 0 && (depth < maxdepth || (maxdepth < 0 && sub_ll->l_depth >= -maxdepth))) { // if we are within maxdepth
-						snprintf_zero(postline, 256, "%s %c ", header, _open_parentheses[leveltype]);
+						snprintf_zero(postline, 256, "%s ( ", header);
 						if (txt)
 							strncat_zero(postline, txt, 256);
 						llll_stack_push(stack, this_elem);
@@ -131,9 +132,9 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 							strncat_zero(header, "•", 256);
 					} else {
 						if (deepenough) {
-							snprintf_zero(postline, 256, "%s %c ", header, _open_parentheses[leveltype]);				
-							llll_to_text_buf(sub_ll, &postline, strlen(postline), max_decimals, LLLL_T_NO_BACKSLASH, fn);
-							snprintf_zero(postline, sysmem_ptrsize(postline), "%s %c", postline, _closed_parentheses[leveltype]);
+							snprintf_zero(postline, 256, "%s ( ", header);
+							llll_to_text_buf(sub_ll, &postline, strlen(postline), max_decimals, 0, 0, 0, fn);
+							snprintf_zero(postline, sysmem_ptrsize(postline), "%s )", postline);
 						}
 						this_elem = this_elem->l_next;
 					}
@@ -152,14 +153,13 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 		
 		if (deepenough) {
 			if (client)
-				object_post((t_object *) client, "%s %c", header, _closed_parentheses[leveltype]);
+				object_post((t_object *) client, "%s )", header);
 			else 
-				post("%s %c", header, _closed_parentheses[leveltype]);
+				post("%s )", header);
 		}
 		
 		depth--;
 		this_elem = (t_llllelem *) llll_stack_pop(stack);
-		leveltype = this_elem->l_parent->l_leveltype;
 		deepenough = (mindepth > 0 && depth >= mindepth) || (this_elem->l_parent->l_depth <= -mindepth);
 		this_elem = this_elem->l_next;
 		snprintf_zero(header, 256, "%3" ATOM_LONG_FMT_MODIFIER "d: ", depth);
@@ -220,7 +220,7 @@ void llll_print(t_llll *ll, t_object *client, long error_message_type, t_atom_lo
 	if (!ll)
 		return;
 	
-	llll_to_text_buf(ll, &buf, 0, max_decimals, LLLL_T_NULL | LLLL_T_NO_BACKSLASH, fn);
+	llll_to_text_buf(ll, &buf, 0, max_decimals, LLLL_T_NULL, 0, 0, fn);
 	if (client) {
 		switch (error_message_type) {
 			case 1:
@@ -268,19 +268,6 @@ void llll_print_named_do(void *dummy, t_symbol *name, long ac, t_atom *av)
 	defer_low(printobj, (method) llll_printobject_free, NULL, 0, NULL);
 }
 
-
-// creates a llll from a text buffer
-t_llll *llll_from_text_buf(const char *txtbuf, t_bool leveltypes)
-{
-	t_llll *ll;
-	t_atom av;
-	atom_setobj(&av, (t_object *) txtbuf);
-	// llll_text2atoms(txtbuf, &ac, &av);
-	ll = leveltypes ? llll_parse_with_leveltypes(1, &av) : llll_parse(1, &av);
-	// bach_freeptr(av);
-	return ll;
-}
-
 void llll_text2atoms(char *text, long *ac, t_atom **av)
 {
 	char outstr[256];
@@ -298,7 +285,7 @@ void llll_text2atoms(char *text, long *ac, t_atom **av)
 
 // used by bach.sort and bach.msort
 // formats a llll before the sorting algorithm for outputting its elements one by one
-void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, e_llllobj_outlet_types outtypes)
+void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, long outtypes)
 {
 	t_llllelem *elem;
 	t_llll_sort_item *sort_item;
@@ -327,11 +314,10 @@ void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, e_llllobj_outle
 		} else
 			sort_item->n_this_by = wrapped;
 		
-		
 		if (outtypes & LLLL_O_TEXT) {
 			atoms = NULL;
-			sort_item->n_t_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, 1);
-			sort_item->n_freeme = atoms = (t_atom *) bach_resizeptr(atoms, sort_item->n_t_ac * sizeof(t_atom));
+			sort_item->n_t_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, LLLL_D_QUOTE | LLLL_D_MAX);
+			sort_item->n_t_freeme = atoms = (t_atom *) bach_resizeptr(atoms, sort_item->n_t_ac * sizeof(t_atom));
 			switch (atoms->a_type) {
 				case A_FLOAT:
 					if (sort_item->n_t_ac > 1)
@@ -356,6 +342,36 @@ void llll_prepare_sort_data(t_object *x, t_llll *ll, t_llll *by, e_llllobj_outle
 					break;
 			}
 		}
+        
+        if (outtypes & LLLL_O_MAX) {
+            atoms = NULL;
+            sort_item->n_m_ac = llll_deparse(sort_item->n_this_by, &atoms, 0, LLLL_D_MAX);
+            sort_item->n_m_freeme = atoms = (t_atom *) bach_resizeptr(atoms, sort_item->n_m_ac * sizeof(t_atom));
+            switch (atoms->a_type) {
+                case A_FLOAT:
+                    if (sort_item->n_m_ac > 1)
+                        sort_item->n_m_sym = _sym_list;
+                    else
+                        sort_item->n_m_sym = _sym_float;
+                    sort_item->n_m_av = atoms;
+                    break;
+                case A_LONG:
+                    if (sort_item->n_m_ac > 1)
+                        sort_item->n_m_sym = _sym_list;
+                    else
+                        sort_item->n_m_sym = _sym_int;
+                    sort_item->n_m_av = atoms;
+                    break;
+                case A_SYM:
+                    sort_item->n_m_sym = atoms->a_w.w_sym;
+                    sort_item->n_m_ac--;
+                    sort_item->n_m_av = atoms + 1;
+                    break;
+                default:
+                    break;
+            }
+        }
+        
 		if (outtypes & LLLL_O_NATIVE) {
 			sort_item->n_n_sym = LLLL_NATIVE_MSG;
 			sort_item->n_n_av = (t_atom *) bach_newptr(sizeof(t_atom));
@@ -384,8 +400,10 @@ void llll_retrieve_sort_data(t_object *x, t_llll *ll, t_llll *idx_ll, t_atom_lon
 		if (item->n_n_av)
 			bach_freeptr(item->n_n_av);
 		if (item->n_t_av)
-			bach_freeptr(item->n_freeme); // the t_atom* we originally allocated in llll_prepare_sort_data
-		
+			bach_freeptr(item->n_t_freeme); // the t_atom* we originally allocated in llll_prepare_sort_data
+        if (item->n_m_av)
+            bach_freeptr(item->n_m_freeme); // the t_atom* we originally allocated in llll_prepare_sort_data
+
 		orig_hatom = item->n_term;
 		bach_freeptr(item);
 		if (orig_hatom.h_type == H_LLLL)
@@ -572,7 +590,7 @@ void llll_posthatom(t_hatom *hatom)
 			atom_setsym(newatom_ptr, gensym(rat_txt));
 			break;
         case H_PITCH:
-            atom_setsym(newatom_ptr, gensym(hatom->h_w.w_pitch.toString().c_str()));
+            atom_setsym(newatom_ptr, hatom->h_w.w_pitch.toSym());
 		default:
 			break;
 	}

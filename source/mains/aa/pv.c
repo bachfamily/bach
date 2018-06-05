@@ -113,7 +113,7 @@ int T_EXPORT main()
 	common_symbols_init();
 	llllobj_common_symbols_init();
 	
-	if (llllobj_check_version(BACH_LLLL_VERSION) || llllobj_test()) {
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
 		error("bach: bad installation");
 		return 1;
 	}
@@ -143,7 +143,7 @@ int T_EXPORT main()
 
     
     
-	llllobj_class_add_out_attr(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	class_register(CLASS_BOX, c);
 	pv_class = c;
@@ -173,7 +173,7 @@ void pv_dblclick(t_pv *x)
     
     char *buf = NULL;
     bach_atomic_lock(&pvitem->p_lock);
-    llll_to_text_buf_pretty(pvitem->p_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, 0, NULL);
+    llll_to_text_buf_pretty(pvitem->p_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
     bach_atomic_unlock(&pvitem->p_lock);
     object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
     object_attr_setsym(x->m_editor, gensym("title"), gensym("llll"));
@@ -188,9 +188,7 @@ void pv_edclose(t_pv *x, char **ht, long size)
 {
     // do something with the text
     if (ht) {
-        t_atom av;
-        atom_setobj(&av, *ht);
-        t_llll *ll = llll_parse(1, &av);
+        t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         if (ll) {
             t_llll *freeme;
             t_pvitem *pvitem;
@@ -551,6 +549,8 @@ t_pvault *pvault_new(t_symbol *s, short ac, t_atom *av)
 		object_method(x->p_top2pvitem, gensym("readonly"), 1);
 		hashtab_flags(x->p_top2pvitem, OBJ_FLAG_REF);
 	}
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
 	return x;
 }
 

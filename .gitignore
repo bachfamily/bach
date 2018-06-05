@@ -1,8 +1,6 @@
 # Compiled source #
 ###################
 *.mxo
-*.mxe
-*.mxe64
 *.a
 
 
@@ -24,6 +22,12 @@ source/xcproj/bach.xcodeproj/*.pbxuser
 source/xcproj/bach.xcodeproj/*.mode*
 
 
+# Plist Data: we need to unsync this otherwise we have constant conflicts #
+# given that the build number is updated automatically at each build      #
+###########################################################################
+source/xcproj/Info.plist
+
+
 # Makefiles #
 #########
 makefile
@@ -31,6 +35,8 @@ source/commons/aa/strparser/makefile
 source/commons/aa/symparser/makefile
 source/commons/aa/chkparser/makefile
 source/commons/aa/exprparser/makefile
+source/commons/aa/pitchparser/makefile
+source/commons/aa/alterparser/makefile
 
 
 # Emacs temp files for .gitignore and .gitattributes #

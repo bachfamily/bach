@@ -9,16 +9,31 @@
 #ifndef chkparser_h
 #define chkparser_h
 
+#include "bach_parser.hpp"
 #include "llll_commons.h"
 
+#ifndef parserpost
 #ifdef CONFIGURATION_Development
 //#define parserpost post
 #define parserpost(...) ((void) 0)
 #else
 #define parserpost(...) ((void) 0)
 #endif
+#endif
 
-// returns true if the symbol has to be quoted
-t_bool typecheck_parse(char *buf);
+
+class t_chkParser : public t_parser {
+private:
+    
+public:
+    t_chkParser();
+    
+    // returns a #e_hatom_types indicating the inferred type for the text
+    long parse(const char *buf);
+    void reset();
+    t_bool wantsBacktick(t_symbol *s);
+    
+    t_symbol *addQuoteIfNeeded(t_symbol *sym);
+};
 
 #endif /* chkparser_h */
