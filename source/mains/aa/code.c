@@ -378,5 +378,4 @@ void bifSetup()
     (*bifTable)["right"] = new t_fnRight;
     (*bifTable)["subs"] = new t_fnSubs;
     (*bifTable)["insert"] = new t_fnInsert;
-
 }
