@@ -115,7 +115,7 @@ typedef struct _playkeys_key
 {
     long        property;                   // one of the playkeys_items
     long        allowed_notationitems;     // a combination of playkeys_incoming
-    t_symbol    *allowed_command_router;     // a combination of playkeys_incoming
+    t_symbol    *allowed_command_router;     // a command router allowed to enter
     t_hatom     specification;              // content: e.g. slot number/name
     long        exists;                     // data actually exist for key
 } t_playkeys_key;
@@ -647,6 +647,8 @@ void playkeys_handle_flattening_and_nullmode(t_playkeys *x, t_llll **ll, long in
             case k_PLAYKEYS_INCOMING_TEMPO:
             case k_PLAYKEYS_INCOMING_MARKER:
             case k_PLAYKEYS_INCOMING_SCOREMEASURE:
+            case k_PLAYKEYS_INCOMING_SCOREREST:
+            case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
                 if (x->n_flattenfornotes && (*ll)->l_size == 1)
                     llll_flatten(*ll, 1, 0);
                 if (x->n_nullmode == 0 && (*ll)->l_size == 0) {
@@ -655,6 +657,7 @@ void playkeys_handle_flattening_and_nullmode(t_playkeys *x, t_llll **ll, long in
                     x->n_keys[outlet].exists = 0;
                 }
                 break;
+                
                 
             case k_PLAYKEYS_INCOMING_ROLLCHORD:
             case k_PLAYKEYS_INCOMING_SCORECHORD:
@@ -885,6 +888,10 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
             x->n_keys[outlet].exists = 0;
             
             if (incoming & x->n_keys[outlet].allowed_notationitems) { // must process key
+                
+                if ((incoming == k_PLAYKEYS_INCOMING_ROLLNOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCORENOTE_COMMAND || incoming == k_PLAYKEYS_INCOMING_SCOREREST_COMMAND) && this_key->allowed_command_router != router)
+                    continue; // not the right command
+                
                 found = NULL;
                 switch (this_key->property) {
                     case k_PLAYKEYS_TYPE:
@@ -1863,9 +1870,44 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 
                             case k_PLAYKEYS_INCOMING_SCOREREST:
                             case k_PLAYKEYS_INCOMING_SCOREREST_COMMAND:
-                                // to do
-                                break;
+                                found = llll_get();
+                            {
+                                t_llllelem *restel = llll_getindex(in_ll, 4, I_STANDARD);
+                                if (!restel || hatom_gettype(&restel->l_hatom) != H_LLLL)
+                                    break;
                                 
+                                t_llll *restll = hatom_getllll(&restel->l_hatom);
+                                if ((target_el = root_find_el_with_sym_router(restll, _llllobj_sym_slots))) {
+                                    if (hatom_gettype(&target_el->l_hatom) != H_LLLL)
+                                        break;
+                                    
+                                    t_llll *slotsll = hatom_getllll(&target_el->l_hatom);
+                                    
+                                    t_hatom spec = this_key->specification;
+                                    if (this_key->property == k_PLAYKEYS_DYNAMICS)
+                                        hatom_setatom(&spec, &x->n_dynamicsslot);
+                                    if (this_key->property == k_PLAYKEYS_LYRICS)
+                                        hatom_setatom(&spec, &x->n_lyricsslot);
+                                    if (this_key->property == k_PLAYKEYS_ARTICULATIONS)
+                                        hatom_setatom(&spec, &x->n_articulationsslot);
+                                    if (this_key->property == k_PLAYKEYS_NOTEHEAD)
+                                        hatom_setatom(&spec, &x->n_noteheadslot);
+                                    if (spec.h_type == H_LONG) {
+                                        if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec))))
+                                            llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        else
+                                            llll_appendllll(found, llll_get());
+                                    } else if (spec.h_type == H_SYM) {
+                                        if ((target_el = root_find_el_with_sym_router(slotsll, hatom_getsym(&spec))))
+                                            llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
+                                        else
+                                            llll_appendllll(found, llll_get());
+                                    }
+                                    
+                                } else
+                                    llll_appendllll(found, llll_get());
+                            }
+                                break;
                             default:
                                 break;
                         }
@@ -2095,6 +2137,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                     {
                         long slotnum = hatom_getlong(&el->l_hatom);
                         this_keys->property = k_PLAYKEYS_SLOT;
+                        this_keys->allowed_command_router = allowed_command_router;
                         hatom_setlong(&this_keys->specification, slotnum);
                         this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
                         *this_outlets++ = '4';
@@ -2111,6 +2154,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                         if (router_is_sym && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
                             for (t_llllelem *tempel = ll->l_head->l_next; tempel; tempel = tempel->l_next) {
                                 this_keys->property = k_PLAYKEYS_SLOT;
+                                this_keys->allowed_command_router = allowed_command_router;
                                 this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
                                 if (hatom_gettype(&tempel->l_hatom) == H_SYM)
                                     hatom_setsym(&this_keys->specification, hatom_getsym(&tempel->l_hatom));

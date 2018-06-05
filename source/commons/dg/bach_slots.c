@@ -5009,13 +5009,55 @@ void notation_item_check(t_notation_obj *r_ob, t_notation_item *nitem)
 #ifdef BACH_CHECK_NOTATION_ITEMS
     notation_item_check_against_tuttipoints(r_ob, nitem);
     notation_item_check_slots(r_ob, nitem);
-    if ((long)nitem->group > 0 && (long)nitem->group < 1000) {
-        long foo = 7;
-        foo++;
+    if ((long)nitem->group > 0 && (long)nitem->group < 1000)
         bach_breakpoint(0);
+    
+    switch (nitem->type) {
+        case k_NOTE:
+            if (!((t_note *)nitem)->firstbreakpoint || !((t_note *)nitem)->lastbreakpoint)
+                bach_breakpoint(0);
+            if (!((t_note *)nitem)->parent)
+                bach_breakpoint(0);
+            break;
+
+        case k_CHORD:
+            if (!((t_note *)nitem)->parent)
+                bach_breakpoint(0);
+            break;
+
+        default:
+            break;
     }
+    
 #endif
 }
+
+
+void notation_item_check_force(t_notation_obj *r_ob, t_notation_item *nitem)
+{
+/*    notation_item_check_against_tuttipoints(r_ob, nitem);
+    notation_item_check_slots(r_ob, nitem);
+    if ((long)nitem->group > 0 && (long)nitem->group < 1000)
+        bach_breakpoint(0);
+  */
+    switch (nitem->type) {
+        case k_NOTE:
+            if (!((t_note *)nitem)->firstbreakpoint || !((t_note *)nitem)->lastbreakpoint)
+                bach_breakpoint(0);
+            if (!((t_note *)nitem)->parent)
+                bach_breakpoint(0);
+            break;
+            
+        case k_CHORD:
+            if (!((t_note *)nitem)->parent)
+                bach_breakpoint(0);
+            break;
+            
+        default:
+            break;
+    }
+}
+
 
 void notation_obj_check(t_notation_obj *r_ob)
 {
@@ -5039,6 +5081,40 @@ void notation_obj_check(t_notation_obj *r_ob)
     }
 #endif
 }
+
+void notation_obj_check_force(t_notation_obj *r_ob, char also_lock_mutex)
+{
+//    return;
+#ifdef CONFIGURATION_Development
+    if (also_lock_mutex)
+        lock_general_mutex(r_ob);
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        t_scorevoice *voice;
+        t_measure *measure;
+        t_chord *chord;
+        t_note *note;
+        for (voice = (t_scorevoice *)r_ob->firstvoice; voice && voice->v_ob.number < r_ob->num_voices; voice = (t_scorevoice *)voice_get_next(r_ob, (t_voice *)voice)) {
+            notation_item_check_force(r_ob, (t_notation_item *)voice);
+            for (measure = voice->firstmeasure; measure; measure = measure->next) {
+                notation_item_check_force(r_ob, (t_notation_item *)measure);
+                for (chord = measure->firstchord; chord; chord = chord->next) {
+                    notation_item_check_force(r_ob, (t_notation_item *)chord);
+                    for (note = chord->firstnote; note; note = note->next) {
+                        if (!note->parent) {
+                            char foo = 7;
+                            foo++;
+                        }
+                        notation_item_check_force(r_ob, (t_notation_item *)note);
+                    }
+                }
+            }
+        }
+    }
+    if (also_lock_mutex)
+        unlock_general_mutex(r_ob);
+#endif
+}
+
 
 
 void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob)
@@ -5758,6 +5834,28 @@ void change_slot_spatpts_value(t_notation_obj *r_ob, t_notation_item *nitem, int
 }
 
 
+char is_llll_relative_modification(t_llll *values_as_llll)
+{
+    char there_is_a_relative_modification = false;
+    if (values_as_llll->l_size >= 1) {
+        for (t_llllelem *el = values_as_llll->l_head; el; el = el->l_next) {
+            if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                t_llll *ll = hatom_getllll(&el->l_hatom);
+                if (ll && ll->l_tail && hatom_gettype(&ll->l_tail->l_hatom) == H_SYM) {
+                    t_symbol *s = hatom_getsym(&ll->l_tail->l_hatom);
+                    if (s == gensym("plus") || s == gensym("minus") || s == gensym("times") || s == gensym("div"))
+                        there_is_a_relative_modification = true;
+                    else
+                        return 0;
+                } else if (ll && ll->l_tail)
+                    return 0;
+            }
+        }
+    } else
+        return 0;
+
+    return there_is_a_relative_modification;
+}
 
 // position == -1 means ALL
 void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnum, long position_1based, t_llll *new_values_as_llll, e_slot_changeslotitem_modes mode, char modify_existing, double modification_x_thresh)
@@ -5843,8 +5941,9 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
             if (slot_type != k_SLOT_TYPE_TEXT && position > slot->length)
                 mode = k_CHANGESLOTITEM_MODE_APPEND;
             
-            if (slot_type != k_SLOT_TYPE_LLLL)
-                llll_flatten(values_as_llll, 1, 0); // possibly removing the outer level of parentheses
+            if (slot_type != k_SLOT_TYPE_LLLL && values_as_llll->l_depth > 1 && !is_llll_relative_modification(values_as_llll)) {
+                llll_flatten(values_as_llll, 1, 0); // possibly removing the outer level of parentheses [::: BUT WHY DID WE NEED THIS????]
+            }
             
             
             if ((mode == k_CHANGESLOTITEM_MODE_APPEND || mode == k_CHANGESLOTITEM_MODE_PREPEND || mode == k_CHANGESLOTITEM_MODE_INSERT || mode == k_CHANGESLOTITEM_MODE_INSERT_AUTO) && modify_existing && values_as_llll->l_head) {
@@ -9802,6 +9901,47 @@ void change_popupmenu_slot_flag(t_notation_obj *r_ob, long slot_num_0_based, cha
 		}
 		r_ob->slotinfo[slot_num_0_based].appear_in_popup_menu = false;
 	}
+}
+
+
+
+
+t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->lyrics_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        long size = NULL;
+        char *text = NULL;
+        
+        atom_gettext_debug(ac, av, &size, &text, OBEX_UTIL_ATOM_GETTEXT_SYM_NO_QUOTE);
+        
+        if (size && text) {
+            t_symbol *font = gensym(text);
+            r_ob->annotations_font = font;
+            implicitely_recalculate_all(r_ob, false);
+            notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+            bach_freeptr(text);
+        }
+    }
+    return MAX_ERR_NONE;
 }
 
 

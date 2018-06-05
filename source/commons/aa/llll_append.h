@@ -25,6 +25,10 @@ void llll_upgrade_depth(t_llll *son);
 void llll_downgrade_depth(t_llll *dad);
 
 
+// only used for debugging purposes -- returns the root llll
+t_llll *llll_root(const t_llll *ll);
+
+
 ///////////////////////////////////////////////////////////////////////
 // ADDING ELEMENTS TO lllls
 
@@ -67,6 +71,7 @@ t_llllelem *llll_appendpitch_from_elems(t_llll *where, t_atom_short degree, t_sh
 t_llllelem *llll_appenddouble(t_llll *where, double what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendsym(t_llll *where, t_symbol *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_appendobj(t_llll *where, void *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_appendfunc(t_llll *where, void *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 
 // a new llllelem is created. the llll is not cloned
 t_llllelem *llll_appendllll(t_llll *where, t_llll *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
@@ -86,6 +91,7 @@ t_llllelem *llll_prependpitch_from_elems(t_llll *where, t_atom_short degree, t_s
 t_llllelem *llll_prependdouble(t_llll *where, double what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependsym(t_llll *where, t_symbol *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependobj(t_llll *where, void *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_prependfunc(t_llll *where, void *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependllll(t_llll *where, t_llll *what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_prependllll_clone(t_llll *where, t_llll *what, long flags = 0, t_llll *adopter = WHITENULL_llll, llll_clone_fn fn = NULL);
 
@@ -101,6 +107,7 @@ t_llllelem *llll_insertpitch_before(t_pitch what, t_llllelem *before_what, long 
 t_llllelem *llll_insertpitch_from_elems_before(t_atom_short degree, t_shortRational alter, t_atom_short octave, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertsym_before(t_symbol *what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertobj_before(void *what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_insertfunc_before(void *what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertllll_before(t_llll *what, t_llllelem *before_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 
 void llll_insert_after(t_llllelem *what, t_llllelem *after_what, t_llll *adopter = WHITENULL_llll);
@@ -112,6 +119,7 @@ t_llllelem *llll_insertrat_from_elems_after(long what_num, long what_den, t_llll
 t_llllelem *llll_insertdouble_after(double what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertsym_after(t_symbol *what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertobj_after(void *what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
+t_llllelem *llll_insertfunc_after(void *what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 t_llllelem *llll_insertllll_after(t_llll *what, t_llllelem *after_what, long flags = 0, t_llll *adopter = WHITENULL_llll);
 
 #endif /* llll_append_h */

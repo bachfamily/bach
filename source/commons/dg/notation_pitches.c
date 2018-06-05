@@ -295,7 +295,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
             count++;
         }
         if (temp % lowG == 0)
-            return round(temp.toMC() / lowG.toMC());
+            return round((double)(temp.toMC() / lowG.toMC()));
         return LONG_MAX;
     }
 
@@ -306,7 +306,7 @@ long pitch_to_position_on_line_of_fifths(t_pitch p)
             count++;
         }
         if (temp % lowG == 0)
-            return round(temp.toMC() / lowG.toMC());
+            return round((double)(temp.toMC() / lowG.toMC()));
         return LONG_MAX;
     }
     
@@ -570,7 +570,7 @@ t_pitch notationobj_autospell_match_pitch_with_position_on_line_of_fifths(t_nota
     t_pitch new_pitch = position_on_line_of_fifths_to_pitch(pos);
     new_pitch.set(new_pitch.degree(), new_pitch.alter(), orig_pitch.octave());
     new_pitch = pitch_rematch_alteration_from_semitones(new_pitch, orig_pitch);
-    long new_pitch_octave = orig_pitch.octave() + floor((orig_pitch.toMC() - new_pitch.toMC())/1200);
+    long new_pitch_octave = orig_pitch.octave() + floor((double)((orig_pitch.toMC() - new_pitch.toMC())/1200));
     
     return t_pitch(new_pitch.degree(), new_pitch.alter(), new_pitch_octave);
 }

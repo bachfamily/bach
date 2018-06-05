@@ -193,6 +193,8 @@ void contains_anything(t_contains *x, t_symbol *msg, long ac, t_atom *av)
 		if (types & H_SYM)		llll_appendsym(types_llll, _llllobj_sym_s, 0, WHITENULL_llll);
 		if (types & H_LLLL)		llll_appendsym(types_llll, _llllobj_sym_l, 0, WHITENULL_llll);
 		if (types & H_OBJ)		llll_appendsym(types_llll, _llllobj_sym_o, 0, WHITENULL_llll);
+        if (types & H_FUNCTION)	llll_appendsym(types_llll, _llllobj_sym_F, 0, WHITENULL_llll);
+
 
 	}
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, types_llll, 1);

@@ -52,10 +52,14 @@ public:
     constexpr t_urrat(const double d) : r_num(d * 1000), r_den(1000) {}
     
     operator double() const {
+        if (r_den == 0)
+            return r_num;
         return static_cast<double>(r_num) / static_cast<double>(r_den);
     }
     
     operator t_atom_long() const {
+        if (r_den == 0)
+            return r_num;
         return r_num / r_den;
     }
 

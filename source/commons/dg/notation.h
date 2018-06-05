@@ -11,7 +11,6 @@
 #include "bach.h"
 
 #ifdef BACH_MAX
-
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
@@ -57,7 +56,7 @@
 //    #define BACH_OUTPUT_SYMBOLIC_LEVELTYPES         ///< Are leveltypes to be output as symbols, instead of integers?
 
     #define BACH_CHORDS_HAVE_SLOTS
-    #define BACH_MARKERS_HAVE_SLOTS
+//    #define BACH_MARKERS_HAVE_SLOTS   ///< Not yet ready for this!
 
     // #define BACH_SUPPORT_SLURS       ///< Not yet ready for this!
 
@@ -76,14 +75,14 @@
 	#ifdef CONFIGURATION_Development
 
 		// Handy flags for debugging:
-		//#define BACH_RHYTHMIC_TREE_DEBUG				///< Print verbosely rhythmic trees at each step, and do additional checking for debug. Only works on Mac
+		//#define BACH_RHYTHMIC_TREE_DEBUG				///< Print verbosely rhythmic trees at each step, and do additional checking. Only works on Mac
 		//#define BACH_POST_IDS_IN_RHYTHMIC_TREE_DEBUG	///< Also post IDs in rhythmic tree debug
 		//#define BACH_PLAY_DEBUG						///< Debug the playing task with messages about next scheduled chords
         //#define BACH_QUANTIZE_DEBUG					///< Debug the quantize task
 		//#define BACH_SPACING_DEBUG					///< Debug the spacing task (and display alignment points)
 		//#define BACH_PAINT_IDS						///< Paint the IDs for all elements having one
         //#define BACH_UNDO_DEBUG						///< Debug the undo task
-		//#define BACH_ARTICULATION_POSITION_DEBUG
+		//#define BACH_ARTICULATION_POSITION_DEBUG      ///< Debug for articulation position
         //#define BACH_CHECK_NOTATION_ITEMS               ///< Debug for notation items
 
 		#ifdef BACH_RHYTHMIC_TREE_DEBUG
@@ -500,6 +499,7 @@
 													///< notes will be glued. This threshold can be changed, as a parameter in the message. (Only used by [bach.roll])
 
 #define BACH_MAX_TEMPO_DIGITS   6                   ///< Maximum tempo digits
+#define BACH_MAX_LAST_ANNOTATION_TEXT_CHARS 2048    ///< Maximum annotation text characters (only used for comparing with last annotation!)
 
 #ifdef C74_X64
 #define CONST_RAT_APPROX_TEMPI_DEN 100				///< Denominator used for tempi approximation. 
@@ -1993,6 +1993,19 @@ typedef enum _output_pitches {
 
 
 
+/** Annotation filtering duplicates modes
+ @ingroup    attributes
+ */
+typedef enum _annotations_filterdup_mode {
+    k_ANNOTATIONS_FILTERDUP_DONT = 0,           ///< Don't filter duplicates (default)
+    k_ANNOTATIONS_FILTERDUP_DO = 1,             ///< Don't show duplicates of annotations
+    k_ANNOTATIONS_FILTERDUP_DO_WITHCLEARINGSYM = 2,    ///< Don't show annotation duplicates and use a clearing sym to clear the annotation
+    k_ANNOTATIONS_FILTERDUP_DO_WITHLINE = 3,           ///< Show annotation duplicates with lines
+} e_annotations_filterdup_modes;
+
+
+
+
 #define k_INSPECTOR_MINIATURE_SHOW_BOTH_LINES (k_INSPECTOR_MINIATURE_SHOW_VERTICAL_LINE + k_INSPECTOR_MINIATURE_SHOW_HORIZONTAL_LINE)  ///< Show both lines in the inspector miniature @ingroup attributes 
 
 
@@ -3004,7 +3017,8 @@ typedef struct _voice
 	long			number;             ///< The number of the voice, 0-based
     
     /// Multivoicing stuff:
-    long            part_index;     ///< The index of the part inside the multivoice, 0-based
+    long            part_index;              ///< The index of the part inside the voiceensemble, 0-based
+    long            voiceensemble_index;     ///< The index of the voiceensemble that the voice belongs to, 0-based
     
 	double			middleC_y;		///< Y position (in pixels) of the middle C inside the voice. This is computed in compute_middleC_position_for_voice(),
 									///< and updated as the zoom or voice configuration change. This y position is the base to build stafflines and to place
@@ -3129,10 +3143,10 @@ typedef struct _tuttipoint
 
 /** The data structure representing an alignment point (only used in [bach.score]).
 	An alignment point is a sort of marker relying some musical entities which happen at the same time.
-	Alignment points are only used inside calculate_tuttipoint_spacing() to calculate the spacing of a tuttipoint region.
+	Alignment points are only used inside tuttipoint_calculate_spacing() to calculate the spacing of a tuttipoint region.
  
 	@remark		Alignment points are stored in each tuttipoint structure. They are just calculated innerly inside the function
-				calculate_tuttipoint_spacing(), which builds them, spaces them, sets the spacing values inside the chords and measure proper fields.
+				tuttipoint_calculate_spacing(), which builds them, spaces them, sets the spacing values inside the chords and measure proper fields.
 				But at any new spacing, their address change, so NEVER rely on a specific address of an alignment point!
  
 	@ingroup	notation
@@ -3958,7 +3972,8 @@ typedef struct _notation_obj
     double      slot_window_active_unscrolled_width;    ///< Horizontal width of the slot window content, not clipped to the actual window, for slot zoom = 1.
 	char		output_slot_names;			///< If this is 1, the notation object always outputs slot names and NOT slot numbers from the playout (which means: for mode = #k_CONSIDER_FOR_EVALUATION or #k_CONSIDER_FOR_PLAYING or #k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE or #k_CONSIDER_FOR_PLAYING_ONLY_IF_SELECTED)
 	double		slot_window_zoom;			///< Additional zoom (with respect to the #zoom_y field) for the slot windows, 100 being the default one. 
-	double		bgslot_zoom;				///< Additional zoom (with respect to the #zoom_y field) for the background displayed slots, 100 being the default one. 
+	double		bgslot_zoom;				///< Additional zoom (with respect to the #zoom_y field) for the background displayed slots, 100 being the default one.
+    char        combine_range_slope_during_playback;    ///< Combines the range slope with the existing slopes during playback
 	
 	// only used by color slots
 	double		slot_window_palette_width;		///< Width (in pixels) of the main palette in the slot window for slots of type #k_SLOT_TYPE_COLOR
@@ -4038,6 +4053,8 @@ typedef struct _notation_obj
     // annotations
     char		show_annotations;               ///< Flag telling if we want to show the textual annotations
     double		annotation_font_size;			///< Font size for the textual annotations over the staff (for zoom_y = 1)
+    char        thinannotations;                ///< Thinning annotation mode, on of the #e_annotations_filterdup_modes
+    t_symbol    *annotations_clearingsym;       ///< Symbol to be put automatically, depending on the #thinannotations mode, to clear an annotation
     
     // dynamics
     char		show_dynamics;                  ///< Flag telling if we want to show the dynamics
@@ -4098,6 +4115,7 @@ typedef struct _notation_obj
 	char			selection_type;			///< Type of the selection, will be one of the #e_element_types. 
 											///< E.g. if it is #k_CHORD it means that all selected items are chords,
 											///< and so on. If the selection is mixed, this will be #k_MIXED.
+    t_notation_item *selectioncursor;       ///< Internal cursor used for selection
 	
 	// current window attributes in ms (mostly, but not solely, used by [bach.roll])
 	double		screen_ms_start;			///< Position in ms of the beginning of the displayed portion of score
@@ -4269,6 +4287,8 @@ typedef struct _notation_obj
 	t_symbol	*noteheads_font;	///< Name of the font (as symbol) used for the notation elements (all but accidentals and articulations)
 	t_symbol	*accidentals_font;	///< Name of the font (as symbol) used for the accidentals
     t_symbol	*articulations_font;///< Name of the font (as symbol) used for the articuations
+    t_symbol	*lyrics_font;///< Name of the font (as symbol) used for the articuations
+    t_symbol	*annotations_font;///< Name of the font (as symbol) used for the articuations
 	double		legend_font_size;	///< Size in pt of the legend (fixed!)
 
 	
@@ -6157,7 +6177,7 @@ long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicode
 long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
 
 
-/**	Get the default width for a portion of score. This function is used inside calculate_tuttipoint_spacing() in order to determine the
+/**	Get the default width for a portion of score. This function is used inside tuttipoint_calculate_spacing() in order to determine the
 	width that each tuttipoint section might have. (If tuttipoints coincide with measures, we'll ask for the default unscaled width of the entire measure). 
 	@ingroup					typographical
 	@param	r_ob				The notation object
@@ -6907,7 +6927,7 @@ void free_slotinfos(t_notation_obj *r_ob);
 	@param r_ob		The notation object
 	@param tpt		The tuttipoint
  */
-void free_alignmentpoints_for_tuttipoint(t_notation_obj *r_ob, t_tuttipoint *tpt);
+void tuttipoint_free_alignmentpoints(t_notation_obj *r_ob, t_tuttipoint *tpt);
 
 	
 /**	Free the memory of a measure's rhythmic tree
@@ -7057,7 +7077,7 @@ t_dynamics *build_dynamics(t_chord *owner);
 	@param note			The note to insert
 	@param forced_ID	An ID which the note will be forced to have
  */
-void insert_note(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned long forced_ID);
+void note_insert(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned long forced_ID);
 
 
 /**	Append a note to a chord (forcing the insertion as last element, and not depending on the pitch).
@@ -7069,7 +7089,7 @@ void insert_note(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned lo
 	@param note			The note to append
 	@param forced_ID	An ID which the note will be forced to have
  */
-void force_append_note(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned long force_ID);
+void note_append_force(t_notation_obj *r_ob, t_chord *chord, t_note *note, unsigned long force_ID);
 
 
 /**	Slices a note into a left and right part. It modifies the origianl note, making it become the left part of the split, and returns 
@@ -7091,6 +7111,9 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
 	@return						The cloned note
  */
 t_note *clone_note(t_notation_obj *r_ob, t_note *note, e_clone_for_types clone_for);
+
+//Internal
+void check_note_breakpoints(t_note *note);
 
 
 /**	Clone a chord. 
@@ -7509,15 +7532,6 @@ t_rational notation_item_get_symonset(t_notation_obj *r_ob, t_notation_item *it)
 t_rational notation_item_get_symduration(t_notation_obj *r_ob, t_notation_item *it);
 
 
-/** Obtain the 0-based voice number of a given notation item, or -1 if the notation item is not assigned to any voice.
-	@ingroup		notation
-	@param	r_ob	The notation object
-	@param	it		The notation item
-	@return			The 0-based voice number of the notation item.
- */ 
-long notation_item_get_voicenumber(t_notation_obj *r_ob, t_notation_item *it);
-
-
 /** Obtain the t_voice of a given notation item, or NULL if the notation item is not assigned to any voice.
 	@ingroup		notation
 	@param	r_ob	The notation object
@@ -7525,6 +7539,33 @@ long notation_item_get_voicenumber(t_notation_obj *r_ob, t_notation_item *it);
 	@return			The voice
  */
 t_voice *notation_item_get_voice(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the 0-based voice number of a given notation item, or -1 if the notation item is not assigned to any voice.
+	@ingroup		notation
+	@param	r_ob	The notation object
+	@param	it		The notation item
+	@return			The 0-based voice number of the notation item.
+ */
+long notation_item_get_voicenumber(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the 0-based part number of a given notation item, or -1 if the notation item is not assigned to any voice.
+	@ingroup		notation
+	@param	r_ob	The notation object
+	@param	it		The notation item
+	@return			The 0-based part number of the notation item.
+ */
+long notation_item_get_partnumber(t_notation_obj *r_ob, t_notation_item *it);
+
+
+/** Obtain the 0-based voice ensemble index of a given notation item, or -1 if the notation item is not assigned to any voice.
+	@ingroup		notation
+	@param	r_ob	The notation object
+	@param	it		The notation item
+	@return			The 0-based voice ensemble index of the notation item.
+ */
+long notation_item_get_voiceensemble(t_notation_obj *r_ob, t_notation_item *it);
 
 
 /** Obtain the 0-based measure namber of a given notation item, or -1 if the notation item is not assigned to any measure.
@@ -8208,8 +8249,9 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
 // TBD
 t_llll* notation_item_get_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty);
 t_llll* notation_item_get_multiple_slots_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, char get_even_if_empty, t_llll *which_slots_1based);
+t_llll *notation_item_get_slots_to_be_copied(t_notation_obj *r_ob, t_notation_item *from, t_llll *which_slots_1based, char even_if_empty);// this one is private
 void notation_item_copy_slots(t_notation_obj *r_ob, t_notation_item *from, t_notation_item *to, t_llll *which_slots_1based, char even_if_empty);
-void transfer_note_slots(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty);
+void note_transfer_slots_to_siebling(t_notation_obj *r_ob, t_note *nt, t_llll *which_slots_1based, char even_if_empty, char even_to_rests);
 t_llll *get_default_slots_to_transfer_1based(t_notation_obj * r_ob);
 
 
@@ -8304,6 +8346,7 @@ void notation_item_check_against_tuttipoints(t_notation_obj *r_ob, t_notation_it
 void notation_obj_check_against_tuttipoints(t_notation_obj *r_ob);
 void notation_obj_check_all_measure_tuttipoints(t_notation_obj *r_ob);
 void clear_all_measure_tuttipoint_references(t_notation_obj *r_ob);
+void notation_obj_check_force(t_notation_obj *r_ob, char also_lock_mutext);
 
 
 /**	Set a slot content (one of more slots) to all the selected notes in a notation object.
@@ -10032,7 +10075,10 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
 
 
 // TBD
-void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item, double stem_x, long slot, t_jfont *jf_ann, double staff_top_y);
+void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
+                                double x_pos, long slot, t_jfont *jf_ann, double staff_top_y,
+                                char *last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
+                                double *annotation_line_y_pos);
 
 void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                               double center_x, double duration_x, long slot, t_jfont *jf_dynamics, double font_size, double staff_bottom_y,
@@ -10045,8 +10091,8 @@ void paint_dynamics_from_symbol(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
                                 double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint,
                                 char boxed);
 
-long parse_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char dyn_text[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, t_slotitem **slotitem_containing_dynamics = NULL);
-long parse_chord_dynamics_easy(t_notation_obj *r_ob, t_chord *ch, long slot_num, char *dyn_text, long *hairpin);
+long chord_parse_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char dyn_text[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, t_slotitem **slotitem_containing_dynamics = NULL);
+long chord_parse_dynamics_easy(t_notation_obj *r_ob, t_chord *ch, long slot_num, char *dyn_text, long *hairpin);
 
 
 
@@ -12635,7 +12681,7 @@ t_voice *voiceensemble_get_next(t_notation_obj *r_ob, t_voice *voice);
  */
 t_voice *voiceensemble_get_prev(t_notation_obj *r_ob, t_voice *voice);
 
-long get_num_voiceensembles(t_notation_obj *r_ob);
+long notationobj_get_num_voiceensembles(t_notation_obj *r_ob);
 char do_voices_belong_to_same_voiceensemble(t_notation_obj *r_ob, t_voice *v1, t_voice *v2);
 long voiceensemble_get_numparts(t_notation_obj *r_ob, t_voice *any_voice_in_voicenensemble);
 t_llll *voiceensemble_get_voicenumbers(t_notation_obj *r_ob, t_voice *any_voice_in_voicenensemble, char one_based);
@@ -17108,6 +17154,8 @@ t_max_err notation_obj_set_voicespacing(t_notation_obj *r_ob, long ac, double *v
 t_max_err notation_obj_setattr_preventedit(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_maxundosteps(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_showaccidentalspreferences(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_lyrics_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_annotations_font(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_numparts(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_voice_part_getattr(t_notation_obj *r_ob, t_object *attr, long *ac, t_atom **av);
 t_max_err notation_obj_set_numparts_from_llll(t_notation_obj *r_ob, t_llll *ll);
@@ -18343,7 +18391,7 @@ char change_notation_item_names(t_notation_obj *r_ob, t_notation_item *it, t_lll
 	@param	r_ob	The notation object
 	@param	newnames		The new names 
 	@param	only_change_this_elems	If this is not NULL, it can contain a list of symbols identifying the elements whose name has to be changed.
-									This list can contain symbols like "chord", "voice", "note", "measure", "marker.
+									This list can contain symbols like "chord", "voice", "note", "measure", "marker".
 	@param	incremental				If this flag is non-zero, markers are assigned incremental names (if such names were already used).
 	@param	append_names			If this flag is non-zero, the new names are appended to the existing ones
 	@param	also_assign_to_progeny_for_chords	If non-zero, if a chord is selected, the name is assigned BOTH to the chord and to each one of its notes
@@ -18737,6 +18785,10 @@ void select_markers_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode);
 void select_breakpoints_with_lexpr(t_notation_obj *r_ob, e_selection_modes mode, char tails_only);
 t_chord *chord_get_first_before_ms(t_notation_obj *r_ob, t_voice *voice, double ms);
 t_chord *chord_get_first_after_ms(t_notation_obj *r_ob, t_voice *voice, double ms);
+t_chord *chord_get_first_before_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset);
+t_chord *chord_get_first_after_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset);
+t_chord *chord_get_first_strictly_before_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset);
+t_chord *chord_get_first_strictly_after_symonset(t_notation_obj *r_ob, t_measure *meas, t_rational r_sym_onset);
 void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char num_steps, long modifiers);
 char is_in_linear_edit_mode(t_notation_obj *r_ob);
 void markers_check_update_name_uwidth(t_notation_obj *r_ob);
@@ -18748,7 +18800,7 @@ t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_obje
 long parse_string_to_dynamics(t_notation_obj *r_ob, t_symbol *sym, char *dynamics); // returns hairpin
 void parse_string_to_dynamics_ext(t_notation_obj *r_ob, char *buf, char dynamics[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, char *complete_deparsed_string, long complete_deparsed_string_alloc);
 long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_inconsistent, char check_unnecessary, char fix_inconsistent, char fix_unnecessary, char selection_only, char verbose);
-long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_to_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp);
+long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_to_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode);
 long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh);
 long dynamic_marking_cmp(char *mark1, char *mark2);
 void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char *buf);

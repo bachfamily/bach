@@ -160,13 +160,13 @@
 			</description>
 		</method>
 		<method name="seed">
-			<arg name="selective_dump_option" optional="1" type="symbol" />
+			<arg name="allowed_configurations" optional="1" type="llll" />
 			<arg name="seed" optional="0" type="int" />
 			<digest>
 				Set the random number generator seed
 			</digest>
 			<description>
-				Syntax: <b>seed <m>[&lt;symbol: selective_dump_option&gt;]</m> <m>&lt;int: seed&gt;</m> </b><br />				<br />
+				Syntax: <b>seed <m>[&lt;llll: allowed_configurations&gt;]</m> <m>&lt;int: seed&gt;</m> </b><br />				<br />
 				Use the <m>seed</m> message to set the random number generator seed
 				(see the reference of <o>urn</o> for more information).
 			</description>

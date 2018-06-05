@@ -7,7 +7,6 @@
 
 %s NO_L NO_b NO_Lb NO_e NO_Le NO_be NO_Lbe NO_l NO_Ll NO_bl NO_Lbl NO_el NO_Lel NO_bel NO_Lbel NO_p NO_Lp NO_bp NO_Lbp NO_ep NO_Lep NO_bep NO_Lbep NO_lp NO_Llp NO_blp NO_Lblp NO_elp NO_Lelp NO_belp NO_Lbelp NO_r NO_Lr NO_br NO_Lbr NO_er NO_Ler NO_ber NO_Lber NO_lr NO_Llr NO_blr NO_Lblr NO_elr NO_Lelr NO_belr NO_Lbelr NO_pr NO_Lpr NO_bpr NO_Lbpr NO_epr NO_Lepr NO_bepr NO_Lbepr NO_lpr NO_Llpr NO_blpr NO_Lblpr NO_elpr NO_Lelpr NO_belpr NO_Lbelpr NO_s NO_Ls NO_bs NO_Lbs NO_es NO_Les NO_bes NO_Lbes NO_ls NO_Lls NO_bls NO_Lbls NO_els NO_Lels NO_bels NO_Lbels NO_ps NO_Lps NO_bps NO_Lbps NO_eps NO_Leps NO_beps NO_Lbeps NO_lps NO_Llps NO_blps NO_Lblps NO_elps NO_Lelps NO_belps NO_Lbelps NO_rs NO_Lrs NO_brs NO_Lbrs NO_ers NO_Lers NO_bers NO_Lbers NO_lrs NO_Llrs NO_blrs NO_Lblrs NO_elrs NO_Lelrs NO_belrs NO_Lbelrs NO_prs NO_Lprs NO_bprs NO_Lbprs NO_eprs NO_Leprs NO_beprs NO_Lbeprs NO_lprs NO_Llprs NO_blprs NO_Lblprs NO_elprs NO_Lelprs NO_belprs NO_Lbelprs
 
-SEPABACH_RATOR ([ \t\n\(\)\[\]\{\}])
 INTEGER ([+-]?[0-9]+)
 FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
 SIMPLEFLOAT ([+-]?(([0-9]*\.[0-9]+)|([0-9]+\.)))

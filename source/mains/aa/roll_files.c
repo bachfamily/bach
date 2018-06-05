@@ -132,7 +132,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 				sysfile_read(fh, &count, testbuf);
 				sysfile_setpos(fh, SYSFILE_FROMSTART, 0);
 				if (!memcmp(testbuf, "<?xml", 5)) { // xml
-					object_error((t_object *) x, "Can't open an XML file");
+					object_error((t_object *) x, "Can't open an XML file. Maybe you meant to open it with bach.score?");
 					goto roll_doread_error_close;
 				}
 				roll_ll = llll_readfile((t_object *) x, fh);
@@ -646,7 +646,7 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 		}
 	}
 	
-	dev_llll_print(roll_ll, (t_object *) x, 0, 6, NULL);
+//	dev_llll_print(roll_ll, (t_object *) x, 0, 6, NULL);
 	
 readmidi_error:
 	if (!ok) {

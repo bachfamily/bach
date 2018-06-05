@@ -607,7 +607,7 @@ void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res)
         hatom_setrational(res, hatom_getrational(h1) / h2->h_w.w_long);
         
     } else if (h1_type == H_PITCH && h2_type == H_PITCH) { // pp -> l
-        hatom_setlong(res, hatom_getlong(h1) / hatom_getlong(h2));
+        hatom_setlong(res, hatom_getpitch(h1).divdiv(hatom_getpitch(h2)));
         
     } else { // rr rp -> r
         hatom_setrational(res, hatom_getrational(h1) / hatom_getrational(h2));

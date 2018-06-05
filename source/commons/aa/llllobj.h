@@ -266,7 +266,9 @@ void llllobj_outlet_bang(t_object *x, e_llllobj_obj_types type, long outnum);
 void llllobj_outlet_int(t_object *x, e_llllobj_obj_types type, long outnum, t_atom_long n);
 void llllobj_outlet_float(t_object *x, e_llllobj_obj_types type, long outnum, double n);
 void llllobj_outlet_anything(t_object *x, e_llllobj_obj_types type, long outnum, t_symbol *msg, long ac, t_atom *av);
+void llllobj_outlet_anything_prudent(t_object *x, e_llllobj_obj_types type, long outnum, t_symbol *msg, long ac, t_atom *av);
 
+void outlet_anything_prudent(void *o, t_symbol *s, short ac, t_atom *av);
 
 
 /**     Send a given symbol as a unique element of an llll, through a
@@ -538,7 +540,7 @@ t_llll *llllobj_get_store_contents(t_object *x, e_llllobj_obj_types type, long n
 
 
 // called from every object's main() function
-// returns non-0 if the object version number doesn't match the framework version number
+// returns non-0 if the llll version number of the object doesn't match the llll version number of the global bach object
 // in which case the class should not be created
 t_max_err llllobj_check_version(t_atom_ulong version);
 

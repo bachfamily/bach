@@ -88,12 +88,9 @@
 				• <b>writetxt myfile.txt @maxdepth 1</b>   <i>→ no indentation is performed</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@indent</m> (atom, default: tab): Number of spaces for indentation or "tab" symbol<br />
-				
-<m>@maxdepth</m> (int, default: -1): Maximum depth for new lines<br />
-				
-<m>@wrap</m> (int, default: 0): Maximum number of characters per line (0 means: no wrapping)<br />
+				<m>@indent</m> (atom, default: tab): Number of spaces for indentation or "tab" symbol<br />
+				<m>@maxdepth</m> (int, default: -1): Maximum depth for new lines<br />
+				<m>@wrap</m> (int, default: 0): Maximum number of characters per line (0 means: no wrapping)<br />
 				<br />
 				In first inlet:
 				the stored llll is written to the specified file in text format.

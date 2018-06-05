@@ -868,8 +868,7 @@
 				• <b>addchord 2 (1000 (6000 500 50 (slots (3 10 20 30))) (7200 0.5 50 (breakpoints (0 0 0) (1 -500 0))))</b>   <i>→ and with extra information</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@sel</m> (int, default: 0): Also select the added chord<br />
+				<m>@sel</m> (int, default: 0): Also select the added chord<br />
 				<br />
 				An <m>addchord</m> message will add a new chord to the existing ones.
 				The first optional integer argument is the number of the voice in which the chord should be placed.
@@ -1304,10 +1303,8 @@
 			<description>
 				Syntax: <b>appendslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
 				Message attributes:<br />
-				
-<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
-				
-<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
 				<br />
 				A <m>appendslotitem</m> message will append a specific element at the end of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
@@ -1375,10 +1372,12 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -1491,10 +1490,8 @@
 				• <b>checkdynamics selection</b>   <i>→ check dynamics, for selected items only</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@inconsistent</m> (int, default: 1): If non-zero, checks inconsistent dynamics<br />
-				
-<m>@unnecessary</m> (int, default: 1): If non-zero, checks unnecessary dynamics<br />
+				<m>@inconsistent</m> (int, default: 1): If non-zero, checks inconsistent dynamics<br />
+				<m>@unnecessary</m> (int, default: 1): If non-zero, checks unnecessary dynamics<br />
 				<br />
 				A <m>checkdynamics</m> message will check the correctness of the dynamics sequence, for the whole score or - if
 				"selection" is set as first argument, for the selected items only. The dynamics sequence considered is the one contained in the slot
@@ -1690,10 +1687,8 @@
 				• <b>delete @transferslots all @empty 1</b>   <i>→ delete current selection, and transfer all slots, even the empty ones</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@transferslots</m> (llll, default: null): If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible<br />
-				
-<m>@empty</m> (int, default: 0): Also transfer empty slots<br />
+				<m>@transferslots</m> (llll, default: null): If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible<br />
+				<m>@empty</m> (int, default: 0): Also transfer empty slots<br />
 				<br />
 				The word <m>delete</m> simply deletes all the currently selected items.
 				<br />
@@ -1735,8 +1730,7 @@
 				• <b>deleteslotitem 3 (0.7) @thresh 0.1</b>   <i>→ the same, with a tolerance of 0.1</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@thresh</m> (float, default: 0.): Tolerance threshold for X matching<br />
+				<m>@thresh</m> (float, default: 0.): Tolerance threshold for X matching<br />
 				<br />
 				A <m>deleteslotitem</m> message will delete a specific element at a given position in a slot.
 				Two arguments are expected: the slot number (or name) and either the index of the slot item, or the
@@ -2391,8 +2385,7 @@
 			</digest>
 			<description>
 				Message attributes:<br />
-				
-<m>@router</m> (llll, default: null): Sets a forced router to be used instead of the default one<br />
+				<m>@router</m> (llll, default: null): Sets a forced router to be used instead of the default one<br />
 				<br />
 				The <m>dumpselection</m> message sends the content of each one of selected notation items from the
 				playout, in playout syntax (off-line play).
@@ -2604,10 +2597,12 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -2638,12 +2633,10 @@
 				• <b>dynamics2velocities @exp 1.</b>   <i>→ use a linear mapping curve</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@maxchars</m> (int, default: 4): Width of the dynamics spectrum<br />
-				
-<m>@exp</m> (float, default: 0.8): Exponent for the conversion<br />
-				
-<m>@mapping</m> (llll): Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs<br />
+				<m>@maxchars</m> (int, default: 4): Width of the dynamics spectrum<br />
+				<m>@exp</m> (float, default: 0.8): Exponent for the conversion<br />
+				<m>@mapping</m> (llll): Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs<br />
+				<m>@breakpointmode</m> (int, default: 0): Breakpoint handling (0 = handle existing ones, 1 = add new ones to match dynamics, 2 = also clear)<br />
 				<br />
 				A <m>dynamics2velocities</m> message will assign all the note velocities (and pitch breakpoint velocity,
 				if <m>breakpointshavevelocity</m> is non-zero), depending on the current dynamics and hairpins, for the whole score or - if
@@ -2750,16 +2743,11 @@
 				• <b>exportmidi mymidi.mid (resolution 1920)</b>   <i>→ exports with a resolution of 1920 ticks per beat</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
-				
-<m>@exportbarlines</m> (int, default: 1): Barline markers are exported as MIDI marker events, with the name "bach barline"<br />
-				
-<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
-				
-<m>@format</m> (int, default: 0): MIDI file format (0 = single track, 1 = multiple tracks)<br />
-				
-<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
+				<m>@exportmarkers</m> (int, default: 1): If non-zero, exports all the markers<br />
+				<m>@exportbarlines</m> (int, default: 1): Barline markers are exported as MIDI marker events, with the name "bach barline"<br />
+				<m>@voices</m> (llll, default: null): Numbers of voices to be exported (<b>null</b> means: all voices)<br />
+				<m>@format</m> (int, default: 0): MIDI file format (0 = single track, 1 = multiple tracks)<br />
+				<m>@resolution</m> (int, default: 960): Number of MIDI ticks per beat<br />
 				<br />
 				The <m>exportmidi</m> message saves the content of the <o>bach.roll</o> as a MIDI file.
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
@@ -2826,12 +2814,9 @@
 				• <b>fixdynamics @unnecessary 0</b>   <i>→ filter out dynamics repetitions</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@inconsistent</m> (int, default: 1): If non-zero, fixes inconsistent dynamics<br />
-				
-<m>@unnecessary</m> (int, default: 1): If non-zero, fixes unnecessary dynamics<br />
-				
-<m>@verbose</m> (int, default: 0): If non-zero, logs warnings in the max window for each found dynamics<br />
+				<m>@inconsistent</m> (int, default: 1): If non-zero, fixes inconsistent dynamics<br />
+				<m>@unnecessary</m> (int, default: 1): If non-zero, fixes unnecessary dynamics<br />
+				<m>@verbose</m> (int, default: 0): If non-zero, logs warnings in the max window for each found dynamics<br />
 				<br />
 				A <m>fixdynamics</m> message will check the correctness of the dynamics sequence, for the whole score or - if
 				"selection" is set as first argument, for the selected items only. The dynamics sequence considered is the one contained in the slot
@@ -2977,8 +2962,7 @@
 				• <b>getmarker Ringo Starr</b>   <i>→ get the first marker named both 'Ringo' and 'Starr'</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@namefirst</m> (int, default: 0): If non-zero outputs the marker name(s) as first element<br />
+				<m>@namefirst</m> (int, default: 0): If non-zero outputs the marker name(s) as first element<br />
 				<br />
 				The <m>getmarker</m>, without any further argument, will output all the markers from the playout in the form
 				<b>markers <m>MARKER1</m> <m>MARKER2</m>...</b>, where each <m>MARKER</m> is an llll of the form
@@ -3172,8 +3156,7 @@
 				• <b>gluechord (3000 (6210 1000 100)) 10 30 @sel 1</b>   <i>→ ...and select the added or glued chord</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@sel</m> (int, default: 0): Also select the added or glued chord<br />
+				<m>@sel</m> (int, default: 0): Also select the added or glued chord<br />
 				<br />
 				A <m>gluechord</m> message acts exactly like an <m>addchord</m> message, which an important difference:
 				it glues the introduced chord, whenever possible, to existing notes. More precisely: if an already existing note is
@@ -3332,38 +3315,22 @@
 				• <b>goto next @voicemode any @polymode overlap</b>   <i>→ navigate through score polyphonically</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@inscreen</m> (int, default: 0): If non-zero, shows selected elements inside the domain<br />
-				
-<m>@skiprests</m> (int, default: 0): If non-zero, avoids rest<br />
-				
-<m>@repeat</m> (int, default: 1): Repeat command a certain number of times<br />
-				
-<m>@nullmode</m> (int, default: 1): If non-zero, notifies when no more elements are selected<br />
-				
-<m>@voices</m> (llll, default: null): Sets the voices to be affected by selection (if <b>null</b>: all voices)<br />
-				
-<m>@type</m> (llll, default: smart): Sets the notation item types to be accounted for<br />
-				
-<m>@include</m> (symbol/llll, default: head): Sets which element (head or tail) to include as boundary for "time" command<br />
-				
-<m>@tiemode</m> (symbol, default: all): If "all", select all tied sequences if any of their element is selected; if "each", select tied elements separately<br />
-				
-<m>@voicemode</m> (symbol, default: anyactive): Sets how selection should be handled across voices for "next" and "prev" commands<br />
-				
-<m>@polymode</m> (symbol, default: overlap): Sets how polyphony should be handled across voices for "next" and "prev" commands<br />
-				
-<m>@from</m> (symbol, default: auto): Sets start computation point (either "head" or "tail") for "next" and "prev" commands<br />
-				
-<m>@to</m> (symbol, default: auto): Sets end computation point (either "head" or "tail") for "next" and "prev" commands<br />
-				
-<m>@graceshavedur</m> (int, default: 0): If non-zero, grace elements have playback duration<br />
-				
-<m>@markershavevoices</m> (int, default: 0): If non-zero, measure-attached markers undergo the voice attributes conditions<br />
-				
-<m>@where</m> (llll, default: null): Sets a condition to be matched by selected items (the other ones are discarded)<br />
-				
-<m>@until</m> (llll, default: null): Sets a condition to be matched, otherwise perform the command again, until condition is met<br />
+				<m>@inscreen</m> (int, default: 0): If non-zero, shows selected elements inside the domain<br />
+				<m>@skiprests</m> (int, default: 0): If non-zero, avoids rest<br />
+				<m>@repeat</m> (int, default: 1): Repeat command a certain number of times<br />
+				<m>@nullmode</m> (int, default: 1): If non-zero, notifies when no more elements are selected<br />
+				<m>@voices</m> (llll, default: null): Sets the voices to be affected by selection (if <b>null</b>: all voices)<br />
+				<m>@type</m> (llll, default: smart): Sets the notation item types to be accounted for<br />
+				<m>@include</m> (symbol/llll, default: head): Sets which element (head or tail) to include as boundary for "time" command<br />
+				<m>@tiemode</m> (symbol, default: all): If "all", select all tied sequences if any of their element is selected; if "each", select tied elements separately<br />
+				<m>@voicemode</m> (symbol, default: anyactive): Sets how selection should be handled across voices for "next" and "prev" commands<br />
+				<m>@polymode</m> (symbol, default: overlap): Sets how polyphony should be handled across voices for "next" and "prev" commands<br />
+				<m>@from</m> (symbol, default: auto): Sets start computation point (either "head" or "tail") for "next" and "prev" commands<br />
+				<m>@to</m> (symbol, default: auto): Sets end computation point (either "head" or "tail") for "next" and "prev" commands<br />
+				<m>@graceshavedur</m> (int, default: 0): If non-zero, grace elements have playback duration<br />
+				<m>@markershavevoices</m> (int, default: 0): If non-zero, measure-attached markers undergo the voice attributes conditions<br />
+				<m>@where</m> (llll, default: null): Sets a condition to be matched by selected items (the other ones are discarded)<br />
+				<m>@until</m> (llll, default: null): Sets a condition to be matched, otherwise perform the command again, until condition is met<br />
 				<br />
 				The <m>goto</m> message moves the selection to new items, i.e. clears the selection and select the new item. <br />
 				The first argument is the go-to command, which can be one of the following symbols: <br />
@@ -3527,10 +3494,8 @@
 			<description>
 				Syntax: <b>insertslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;int: element_position&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
 				Message attributes:<br />
-				
-<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
-				
-<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
 				<br />
 				A <m>insertslotitem</m> message will insert a specific element at a given position in a slot.
 				The position may be specified explicitly (for slots that do not bear X-axis information) or
@@ -4474,10 +4439,8 @@
 				• <b>name George @progeny 1</b>   <i>→ if chords are selected also assign name to their notes</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@incremental</m> (int, default: 0): If non-zero, assigns incremental numbering to selected markers in addition to names<br />
-				
-<m>@progeny</m> (int, default: 0): If non-zero, assigns names to both selected chords and all their notes<br />
+				<m>@incremental</m> (int, default: 0): If non-zero, assigns incremental numbering to selected markers in addition to names<br />
+				<m>@progeny</m> (int, default: 0): If non-zero, assigns names to both selected chords and all their notes<br />
 				<br />
 				The word <m>name</m>, followed by a symbol, a number or an llll, assigns such content as names for the
 				selected notation items. <br />
@@ -4557,10 +4520,12 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -4616,8 +4581,7 @@
 				• <b>paste durationline</b>   <i>→ paste copied duration line to selection</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@repeat</m> (int, default: 1): Number of times pasting must be performed<br />
+				<m>@repeat</m> (int, default: 1): Number of times pasting must be performed<br />
 				<br />
 				Pastes the content contained in the global clipboard. <br />
 				If the clipboard contains a portion of score, this score is pasted at its exact original position. Two optional arguments
@@ -4678,10 +4642,12 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -4957,10 +4923,12 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -4981,10 +4949,8 @@
 			<description>
 				Syntax: <b>prependslotitem <m>&lt;int/symbol: slot_number_or_name&gt;</m> <m>&lt;llll: slot_element&gt;</m> <i>[message attributes]</i> </b><br />				<br />
 				Message attributes:<br />
-				
-<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
-				
-<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
+				<m>@modify</m> (int, default: 0): If there is a point at the introduced X coordinate, modify it instead of adding a new one<br />
+				<m>@thresh</m> (float, default: 0.): X coordinate threshold for the <m>modify</m> attribute<br />
 				<br />
 				A <m>prependslotitem</m> message will prepend a specific element at the beginning of a slot.
 				The message works similarly to <m>changeslotitem</m> (see this latter to have more information).
@@ -5029,16 +4995,11 @@
 				• <b>read goldberg3.mid @markmeasures 1 @markdivisions 1</b>   <i>→ also convert beats to markers</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@tracks2voices</m> (int, default: 1): For MIDI files, if non-zero, each MIDI track will be converted into a separate voice (default: )<br />
-				
-<m>@chans2voices</m> (int, default: 0): For MIDI files, if non-zero, each MIDI channel will be converted into a separate voice<br />
-				
-<m>@markmeasures</m> (int, default: 1): For MIDI files, if non-zero, adds barline markers<br />
-				
-<m>@markdivisions</m> (int, default: 0): For MIDI files, if non-zero, adds divisions markers<br />
-				
-<m>@importbarlines</m> (int, default: 1): For MIDI files, if non-zero MIDI markers named "bach barline" are imported as barline markers<br />
+				<m>@tracks2voices</m> (int, default: 1): For MIDI files, if non-zero, each MIDI track will be converted into a separate voice (default: )<br />
+				<m>@chans2voices</m> (int, default: 0): For MIDI files, if non-zero, each MIDI channel will be converted into a separate voice<br />
+				<m>@markmeasures</m> (int, default: 1): For MIDI files, if non-zero, adds barline markers<br />
+				<m>@markdivisions</m> (int, default: 0): For MIDI files, if non-zero, adds divisions markers<br />
+				<m>@importbarlines</m> (int, default: 1): For MIDI files, if non-zero MIDI markers named "bach barline" are imported as barline markers<br />
 				<br />
 				The <m>read</m> message will open any file that <o>bach.roll</o> is able to read.
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
@@ -5141,32 +5102,19 @@
 				• <b>respell @algorithm chewandchen</b>   <i>→ respell via the Chew and Chen algorithm</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@selection</m> (int, default: 0): If non-zero, only operates on selection<br />
-				
-<m>@algorithm</m> (symbol, default: default): Select the algorithm: "default", "chewandchen" or "atonal"<br />
-				
-<m>@voicewise</m> (int, default: 1): If non-zero, operate on one voice at a time<br />
-				
-<m>@sharpest</m> (symbol/pitch, default: B#): Sets the "sharpest" note available (the farthest right on the line of fifths)<br />
-				
-<m>@flattest</m> (symbol/pitch, default: Fb): Sets the "flattest" note available (the farthest left on the line of fifths)<br />
-				
-<m>@verbose</m> (int, default: 0): Toggle verbose mode for debug<br />
-				
-<m>@winsize</m> (double, default: 500): For Chew and Chen algorithm, sets the window size in milliseconds<br />
-				
-<m>@spiralr</m> (double, default: 1.4142): For Chew and Chen algorithm, sets the pitch spiral radius<br />
-				
-<m>@spiralh</m> (double, default: 3.8729): For Chew and Chen algorithm, sets the pitch spiral vertical step<br />
-				
-<m>@numsliding</m> (int, default: 8): For Chew and Chen algorithm, sets the number of sliding windows<br />
-				
-<m>@numselfreferential</m> (int, default: 2): For Chew and Chen algorithm, sets the number of selfreferential windows<br />
-				
-<m>@discardalteredrepetitions</m> (int, default: 1): For Atonal algorithm, avoids repetitions of the same diatonic step with different alterations<br />
-				
-<m>@stdevthresh</m> (llll/symbol, default: 21/(numnotes+1)): For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth<br />
+				<m>@selection</m> (int, default: 0): If non-zero, only operates on selection<br />
+				<m>@algorithm</m> (symbol, default: default): Select the algorithm: "default", "chewandchen" or "atonal"<br />
+				<m>@voicewise</m> (int, default: 1): If non-zero, operate on one voice at a time<br />
+				<m>@sharpest</m> (symbol/pitch, default: B#): Sets the "sharpest" note available (the farthest right on the line of fifths)<br />
+				<m>@flattest</m> (symbol/pitch, default: Fb): Sets the "flattest" note available (the farthest left on the line of fifths)<br />
+				<m>@verbose</m> (int, default: 0): Toggle verbose mode for debug<br />
+				<m>@winsize</m> (double, default: 500): For Chew and Chen algorithm, sets the window size in milliseconds<br />
+				<m>@spiralr</m> (double, default: 1.4142): For Chew and Chen algorithm, sets the pitch spiral radius<br />
+				<m>@spiralh</m> (double, default: 3.8729): For Chew and Chen algorithm, sets the pitch spiral vertical step<br />
+				<m>@numsliding</m> (int, default: 8): For Chew and Chen algorithm, sets the number of sliding windows<br />
+				<m>@numselfreferential</m> (int, default: 2): For Chew and Chen algorithm, sets the number of selfreferential windows<br />
+				<m>@discardalteredrepetitions</m> (int, default: 1): For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations<br />
+				<m>@stdevthresh</m> (llll/symbol, default: 21/(numnotes+1)): For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth<br />
 				<br />
 				The <m>respell</m> message reset the enharmonicity ("graphics") specification of each selected note to a default one.
 				Three algorithms are available, which can be set using the "algorithm" message attribute: a default algorithm,
@@ -5211,10 +5159,8 @@
 				• <b>rippledelete @transferslots all @empty 1</b>   <i>→ ripple-delete current selection, and transfer all slots, even the empty ones</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@transferslots</m> (llll, default: null): If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible<br />
-				
-<m>@empty</m> (int, default: 0): Also transfer empty slots<br />
+				<m>@transferslots</m> (llll, default: null): If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible<br />
+				<m>@empty</m> (int, default: 0): Also transfer empty slots<br />
 				<br />
 				The message <m>rippledelete</m> deletes all the currently selected items, and shifts all the following one
 				backwards in order to fill the gap. <br />
@@ -5334,10 +5280,12 @@
 				The condition must be an expr-like expression returning 1 if notes have to be selected, 0 otherwise.
 				You can use symbolic variables inside such expressions. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -5751,10 +5699,12 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -5876,16 +5826,11 @@
 				• <b>velocities2dynamics @thresh 0. @unnecessary 0</b>   <i>→ assign a dynamic marking to each chord, no hairpins</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@maxchars</m> (int, default: 4): Width of the dynamics spectrum<br />
-				
-<m>@exp</m> (float, default: 0.8): Exponent for the conversion<br />
-				
-<m>@mapping</m> (llll): Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs<br />
-				
-<m>@unnecessary</m> (int, default: 1): If non-zero, drops unnecessary dynamic markings<br />
-				
-<m>@thresh</m> (float, default: 1.): Hairpin detection threshold<br />
+				<m>@maxchars</m> (int, default: 4): Width of the dynamics spectrum<br />
+				<m>@exp</m> (float, default: 0.8): Exponent for the conversion<br />
+				<m>@mapping</m> (llll): Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs<br />
+				<m>@unnecessary</m> (int, default: 1): If non-zero, drops unnecessary dynamic markings<br />
+				<m>@thresh</m> (float, default: 1.): Hairpin detection threshold<br />
 				<br />
 				A <m>velocities2dynamics</m> message will infer and assign chord dynamics and hairpins, depending on the current velocities,
 				for the whole score or - if "selection" is set as first argument, for the selected items only.
@@ -5962,10 +5907,12 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -6005,10 +5952,12 @@
 				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
 				The standard symbolic variables are available. <br />
 				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the
-				note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-				and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
 				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
 				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -6052,12 +6001,9 @@
 				• <b>writetxt myfile.txt @maxdepth 1</b>   <i>→ no indentation is performed</i><br />
 				<br />
 				Message attributes:<br />
-				
-<m>@indent</m> (atom, default: tab): Number of spaces for indentation or "tab" symbol<br />
-				
-<m>@maxdepth</m> (int, default: -1): Maximum depth for new lines<br />
-				
-<m>@wrap</m> (int, default: 0): Maximum number of characters per line (0 means: no wrapping)<br />
+				<m>@indent</m> (atom, default: tab): Number of spaces for indentation or "tab" symbol<br />
+				<m>@maxdepth</m> (int, default: -1): Maximum depth for new lines<br />
+				<m>@wrap</m> (int, default: 0): Maximum number of characters per line (0 means: no wrapping)<br />
 				<br />
 				The <m>writetxt</m> message saves all the <o>bach.roll</o> content, as llll, in text format (with extension .txt).
 				This will result in a readable text file, but it might also lead to some very slight loss of precision. This is usually negligible, but
@@ -6095,7 +6041,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Accidental Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6361,7 +6306,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6381,6 +6325,37 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="annotationsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Annotations Font
+			</digest>
+			<description>
+				@description Sets the font used to display annotations (default is Arial).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotations Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
+			</attributelist>
+		</attribute>
+		<attribute name="applyslope" get="1" set="1" type="int" size="1">
+			<digest>
+				Apply Range Slopes During Playback
+			</digest>
+			<description>
+				Toggle the ability to change the slopes in function slots in order to possibly apply range slopes.
+				The new slopes will hence account for the visual range slope too. By default it is active.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Apply Range Slopes During Playback" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="articulationcolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Articulation Color
@@ -6392,7 +6367,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Articulation Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6496,7 +6470,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.4 0.4 0.4 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Auxiliary Staff Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6655,7 +6628,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Clef Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6828,7 +6800,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Dynamics Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -6968,7 +6939,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 0.3" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Grid Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7120,7 +7090,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Key Signature Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7230,7 +7199,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.78 0.63 0.04 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Edit Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7459,7 +7427,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.83 0.04 0.04 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lock Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7491,7 +7458,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.68 0.48 0.69 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Loop Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7524,8 +7490,21 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="lyricsfont" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Lyrics Font
+			</digest>
+			<description>
+				@description Sets the font used to display lyrics (default is Arial).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Font" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="Arial" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Lyrics Font" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="font" />
 			</attributelist>
 		</attribute>
 		<attribute name="lyricsfontsize" get="1" set="1" type="float" size="1">
@@ -7656,7 +7635,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.29 0.29 0.72 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mute Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7711,7 +7689,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Note Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -7783,7 +7760,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number Of Voices" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
@@ -7814,7 +7790,6 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -7928,7 +7903,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.34 0.87 0.20 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Play Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8500,7 +8474,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Ruler Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -8583,7 +8556,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.3 0.3 0.3 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Scrollbar Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9352,7 +9324,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.61 0.61 0.21 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Solo Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9422,7 +9393,6 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Stem Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
@@ -9437,8 +9407,45 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
 				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 0.1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Subdivision Grid Color" />
-				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
+		<attribute name="thinannotations" get="1" set="1" type="int" size="1">
+			<digest>
+				Handle Annotation Duplicates
+			</digest>
+			<description>
+				Decides what to do with identical annotations put on nearby chords. <br />
+				0 = Keeps all the annotations; <br />
+				1 = Removes all the duplicates; <br />
+				2 = Removes all the duplicates and puts a symbol to clear the annotation at the end
+				if no other annotation is present; <br />
+				3 = Removes all the duplicates and puts a bracket.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Handle Annotation Duplicates" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
+		<attribute name="thinannotationsclearsym" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Annotation Clearing Symbol
+			</digest>
+			<description>
+				If <m>thinannotations</m> is set to 2 (Remove With Clearing Symbol), this attribute
+				sets the clearing symbol to remove the annotation label.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="ord." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Clearing Symbol" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
 		<attribute name="tonedivision" get="1" set="1" type="int" size="1">

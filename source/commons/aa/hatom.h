@@ -97,6 +97,7 @@ typedef enum _hatom_types {
     H_POP           = 0x00000080,	// special type, used by llll_from_native_buf() and the deprecated llll_save_as_native_buf()
     H_PITCH         = 0x00000100,
     H_STRING        = 0x00000200,
+    H_FUNCTION      = 0x00000400,   // a function
     
     H_PAREN         = 0x00010000,   // modifier, indicating that a symbol contains parens
     H_SEPARATOR     = 0x00020000,   // modifier, indicating that a symbol contains separators (whitespace, comma, semicolon)
@@ -122,6 +123,7 @@ typedef union _hword
 	t_symbol *w_sym;				// pointer to a symbol in the Max symbol table
 	struct _llll *w_llll;			// an llll
 	void *w_obj;					// pointer to a #t_object or other generic pointer
+    void *w_func;                   // pointer to a function (private and only partially supported)
 	t_atom_ulong w_ulong;			// long unsigned integer (32-bit or 64-bit according to the platform)
 	struct _llllelem *w_llllelem;	// an llllelem
 #ifdef C74_X64
@@ -161,6 +163,7 @@ typedef union thingword
 	struct _llll		*w_llll;
 	struct _llllelem	*w_llllelem;
 	void				*w_obj;
+    void                *w_func;
 	t_int64				w_whole;
 } t_thingword;
 
@@ -289,6 +292,7 @@ t_pitch hatom_getpitch(const t_hatom *h, long tonedivision = 0, e_accidentals_pr
 t_symbol *hatom_getsym(const t_hatom *h);
 t_llll *hatom_getllll(const t_hatom *h); // no check is performed, and the reference count of the llll is left untouched
 void *hatom_getobj(const t_hatom *h);
+void *hatom_getfunc(const t_hatom *h);
 void hatom_setlong(t_hatom *h, const t_atom_long l);
 void hatom_setrational(t_hatom *h, const t_rational &r); // first, the given rational is reduced. Then, if the denominator appears to be 1 or -1 a long is stored instead
 void hatom_setpitch(t_hatom *h, const t_pitch &p);
@@ -298,6 +302,7 @@ void hatom_setdouble(t_hatom *h, const double d);
 void hatom_setsym(t_hatom *h, const t_symbol *s);
 void hatom_setllll(t_hatom *h, const t_llll *llll); // no check is performed, and the reference count of the llll is left untouched
 void hatom_setobj(t_hatom *h, const void *o);
+void hatom_setfunc(t_hatom *h, const void *o);
 void hatom_setatom(t_hatom *h, const t_atom *a); // atom to hatom conversion. If the atom is A_OBJ and points to a llll, the hatom is correctly set to A_LLLL
 long hatom_eq(const t_hatom *a, const t_hatom *b); // comparison between two atoms
 

@@ -105,6 +105,9 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
                     }
 					case H_LLLL:
 						break;
+                    case H_FUNCTION:
+                        snprintf_zero(postline, 256, "%s <function %p>", header, this_elem->l_hatom.h_w.w_obj);
+                        break;
 					case H_OBJ:
 						snprintf_zero(postline, 256, "%s <object %p>", header, this_elem->l_hatom.h_w.w_obj);
 						break;

@@ -1,266 +1,4 @@
 {
-  "bach.args": {
-    "digest": "Manage subpatcher arguments",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "subpatcher",
-      "abstraction",
-      "argument",
-      "attribute",
-      "synchronize",
-      "manage"
-    ],
-    "seealso": [
-      "bach.portal",
-      "patcherargs",
-      "Abstract Thinking"
-    ]
-  },
-  "bach.arithmser": {
-    "digest": "Arithmetic series",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "series",
-      "arithmetic",
-      "step",
-      "compute",
-      "calculate"
-    ],
-    "seealso": [
-      "bach.primeser",
-      "bach.geomser"
-    ]
-  },
-  "bach.cartesianprod": {
-    "digest": "Cartesian product",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "set",
-      "cartesian product",
-      "product",
-      "combination",
-      "couple",
-      "combine"
-    ],
-    "seealso": [
-      "bach.comb",
-      "bach.perm",
-      "bach.trans",
-      "bach.constraints"
-    ]
-  },
-  "bach.classify": {
-    "digest": "Arrange element into classes",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "arrange",
-      "collect",
-      "duplicates",
-      "classify",
-      "lambda loop"
-    ],
-    "seealso": [
-      "bach.thin",
-      "bach.collect"
-    ]
-  },
-  "bach.collect": {
-    "digest": "Collect elements into lllls",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "collect",
-      "gather",
-      "iteration",
-      "rebuild",
-      "element",
-      "address",
-      "command"
-    ],
-    "seealso": [
-      "bach.iter",
-      "bach.step",
-      "bach.join",
-      "bach.drip",
-      "bach.mapelem",
-      "Iterations"
-    ]
-  },
-  "bach.comb": {
-    "digest": "Combinations of elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "combination",
-      "combinatory",
-      "element"
-    ],
-    "seealso": [
-      "bach.perm",
-      "bach.scramble",
-      "bach.cartesianprod"
-    ]
-  },
-  "bach.constraints": {
-    "digest": "Solve constraints satisfaction problems",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "constraint satisfaction problem",
-      "rule",
-      "domain",
-      "lambda loop",
-      "solve",
-      "constraint"
-    ],
-    "seealso": [
-      "bach.comb",
-      "bach.perm",
-      "bach.cartesianprod",
-      "God Solve the Queens"
-    ]
-  },
-  "bach.contains": {
-    "digest": "Contents of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "contain",
-      "data",
-      "element",
-      "content"
-    ],
-    "seealso": [
-      "bach.is",
-      "bach.bitdecode",
-      "bach.filter"
-    ]
-  },
-  "bach.defer": {
-    "digest": "Put an llll at the front of the low-priority queue",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "defer",
-      "queue",
-      "low-priority"
-    ],
-    "seealso": [
-      "bach.deferlow",
-      "bach.pipe"
-    ]
-  },
-  "bach.deferlow": {
-    "digest": "Put an llll at the tail of the low-priority queue",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "defer",
-      "queue",
-      "low-priority"
-    ],
-    "seealso": [
-      "bach.defer",
-      "bach.pipe"
-    ]
-  },
-  "bach.delace": {
-    "digest": "De-interleave an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "delace",
-      "deinterleave",
-      "split"
-    ],
-    "seealso": [
-      "bach.lace",
-      "bach.trans"
-    ]
-  },
-  "bach.depth": {
-    "digest": "Depth of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "depth"
-    ],
-    "seealso": [
-      "bach.is",
-      "bach.contains",
-      "bach.length"
-    ]
-  },
-  "bach.diff": {
-    "digest": "Difference of two sets",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "set",
-      "difference"
-    ],
-    "seealso": [
-      "bach.union",
-      "bach.intersection",
-      "bach.symdiff"
-    ]
-  },
   "bach.==": {
     "digest": "Compare two lllls for equality",
     "module": "bach",
@@ -279,152 +17,6 @@
       "bach.&gt;",
       "bach.&lt;",
       "bach.&gt;=",
-      "bach.&lt;=",
-      "bach.filter",
-      "bach.sieve"
-    ]
-  },
-  "bach.expr": {
-    "digest": "Evaluate mathematical expressions",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "expression",
-      "evaluate",
-      "variable",
-      "number",
-      "calculate",
-      "compute"
-    ],
-    "seealso": [
-      "bach.+",
-      "bach.-",
-      "bach.*",
-      "bach./",
-      "bach.%",
-      "expr",
-      "vexpr"
-    ]
-  },
-  "bach.factorize": {
-    "digest": "Factorize a number",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "integer",
-      "number",
-      "factorization",
-      "factorize",
-      "factor",
-      "prime"
-    ],
-    "seealso": [
-      "bach.prime",
-      "bach.primeser"
-    ]
-  },
-  "bach.find": {
-    "digest": "Find elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "find",
-      "detect",
-      "search",
-      "element",
-      "sequence",
-      "condition",
-      "address",
-      "lambda loop"
-    ],
-    "seealso": [
-      "bach.filter",
-      "bach.keys",
-      "bach.sieve",
-      "bach.constraints",
-      "bach.swap",
-      "bach.locate"
-    ]
-  },
-  "bach.flat": {
-    "digest": "Decrease the depth of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "flat",
-      "flatten",
-      "level",
-      "parenthesis",
-      "remove",
-      "eliminate",
-      "couple",
-      "depth",
-      "decrease"
-    ],
-    "seealso": [
-      "bach.wrap",
-      "bach.trans",
-      "bach.depth"
-    ]
-  },
-  "bach.geomser": {
-    "digest": "Geometric series",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "series",
-      "geometric",
-      "factor",
-      "compute",
-      "calculate"
-    ],
-    "seealso": [
-      "bach.primeser",
-      "bach.arithmser"
-    ]
-  },
-  "bach.>=": {
-    "digest": "Compare two lllls for greater than or equal condition",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "compare",
-      "greater",
-      "equal",
-      "condition",
-      "lexicographical",
-      "order",
-      "numerical"
-    ],
-    "seealso": [
-      "bach.==",
-      "bach.!=",
-      "bach.&gt;",
-      "bach.&lt;",
       "bach.&lt;=",
       "bach.filter",
       "bach.sieve"
@@ -449,6 +41,83 @@
       "bach.lace",
       "bach.delace",
       "bach.mdelace"
+    ]
+  },
+  "bach.reshape": {
+    "digest": "Impose to an llll the structure of another",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "reshape",
+      "change",
+      "impose",
+      "structure"
+    ],
+    "seealso": [
+      "bach.write",
+      "bach.shelf",
+      "bach.value",
+      "bach.pv",
+      "bach.portal"
+    ]
+  },
+  "bach.is": {
+    "digest": "Type of the incoming data",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "type",
+      "is",
+      "data"
+    ],
+    "seealso": [
+      "bach.contains",
+      "bach.filter"
+    ]
+  },
+  "bach.lisp": {
+    "digest": "lisperse an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "lisperse",
+      "invert"
+    ],
+    "seealso": [
+      "bach.rot",
+      "bach.slice",
+      "bach.join",
+      "bach.trans"
+    ]
+  },
+  "bach.diff": {
+    "digest": "Difference of two sets",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "set",
+      "difference"
+    ],
+    "seealso": [
+      "bach.union",
+      "bach.intersection",
+      "bach.symdiff"
     ]
   },
   "bach.>": {
@@ -477,8 +146,8 @@
       "bach.sieve"
     ]
   },
-  "bach.insert": {
-    "digest": "Insert elements in an llll",
+  "bach.collect": {
+    "digest": "Collect elements into lllls",
     "module": "bach",
     "category": [
       "bach",
@@ -486,76 +155,43 @@
       "bach llll"
     ],
     "keywords": [
-      "insert",
-      "element",
-      "address",
-      "introduce",
-      "add"
-    ],
-    "seealso": [
-      "bach.subs",
-      "bach.replace",
-      "bach.find",
-      "bach.nth"
-    ]
-  },
-  "bach.intersection": {
-    "digest": "Intersection of two sets",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "set",
-      "intersection"
-    ],
-    "seealso": [
-      "bach.union",
-      "bach.diff",
-      "bach.symdiff"
-    ]
-  },
-  "bach.is": {
-    "digest": "Type of the incoming data",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "type",
-      "is",
-      "data"
-    ],
-    "seealso": [
-      "bach.contains",
-      "bach.filter"
-    ]
-  },
-  "bach.iter": {
-    "digest": "Iterate through lllls",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "iterate",
+      "collect",
+      "gather",
       "iteration",
+      "rebuild",
       "element",
       "address",
       "command"
     ],
     "seealso": [
+      "bach.iter",
       "bach.step",
-      "bach.collect",
+      "bach.join",
       "bach.drip",
       "bach.mapelem",
       "Iterations"
+    ]
+  },
+  "bach.args": {
+    "digest": "Manage subpatcher arguments",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "subpatcher",
+      "abstraction",
+      "argument",
+      "attribute",
+      "synchronize",
+      "manage"
+    ],
+    "seealso": [
+      "bach.portal",
+      "patcherargs",
+      "Abstract Thinking"
     ]
   },
   "bach.join": {
@@ -579,30 +215,6 @@
       "bach.lace",
       "bach.insert",
       "bach.subs"
-    ]
-  },
-  "bach.keys": {
-    "digest": "Route an llll according to specific keys",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "key",
-      "router",
-      "route",
-      "sublist",
-      "element",
-      "retrieve"
-    ],
-    "seealso": [
-      "bach.find",
-      "bach.keychain",
-      "bach.score",
-      "bach.roll",
-      "bach.constraints"
     ]
   },
   "bach.lace": {
@@ -640,6 +252,436 @@
       "bach.depth"
     ]
   },
+  "bach.rot": {
+    "digest": "Rotate an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "rotate",
+      "shift",
+      "circular"
+    ],
+    "seealso": [
+      "bach.rev",
+      "bach.slice",
+      "bach.join",
+      "bach.trans",
+      "bach.chordrot",
+      "bach.restrot",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.pipe": {
+    "digest": "Delay lllls.",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "delay",
+      "pipe"
+    ],
+    "seealso": [
+      "bach.defer",
+      "bach.deferlow",
+      "pipe",
+      "delay"
+    ]
+  },
+  "bach.nth": {
+    "digest": "Return specific elements of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "element",
+      "position",
+      "address",
+      "retrieve",
+      "range",
+      "permutation"
+    ],
+    "seealso": [
+      "bach.pick",
+      "bach.subs",
+      "bach.insert",
+      "bach.replace",
+      "bach.lookup",
+      "bach.swap"
+    ]
+  },
+  "bach.contains": {
+    "digest": "Contents of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "contain",
+      "data",
+      "element",
+      "content"
+    ],
+    "seealso": [
+      "bach.is",
+      "bach.bitdecode",
+      "bach.filter"
+    ]
+  },
+  "bach.print": {
+    "digest": "Print lllls in the Max window",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "print",
+      "Max window",
+      "show",
+      "display"
+    ],
+    "seealso": [
+      "bach.post",
+      "print"
+    ]
+  },
+  "bach.comb": {
+    "digest": "Combinations of elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "combination",
+      "combinatory",
+      "element"
+    ],
+    "seealso": [
+      "bach.perm",
+      "bach.scramble",
+      "bach.cartesianprod"
+    ]
+  },
+  "bach.flat": {
+    "digest": "Decrease the depth of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "flat",
+      "flatten",
+      "level",
+      "parenthesis",
+      "remove",
+      "eliminate",
+      "couple",
+      "depth",
+      "decrease"
+    ],
+    "seealso": [
+      "bach.wrap",
+      "bach.trans",
+      "bach.depth"
+    ]
+  },
+  "bach.textout": {
+    "digest": "Produces variants of the llll text format",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "text",
+      "backtick",
+      "attributes",
+      "pitch"
+    ],
+    "seealso": [
+      "bach.portal",
+      "bach.textin",
+      "bach.write"
+    ]
+  },
+  "bach.insert": {
+    "digest": "Insert elements in an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "insert",
+      "element",
+      "address",
+      "introduce",
+      "add"
+    ],
+    "seealso": [
+      "bach.subs",
+      "bach.replace",
+      "bach.find",
+      "bach.nth"
+    ]
+  },
+  "bach.factorize": {
+    "digest": "Factorize a number",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "integer",
+      "number",
+      "factorization",
+      "factorize",
+      "factor",
+      "prime"
+    ],
+    "seealso": [
+      "bach.prime",
+      "bach.primeser"
+    ]
+  },
+  "bach.thin": {
+    "digest": "Remove duplicate elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "delete",
+      "remove",
+      "duplicates",
+      "thin",
+      "lambda loop"
+    ],
+    "seealso": [
+      "bach.intersection",
+      "bach.diff",
+      "bach.symdiff",
+      "bach.union",
+      "bach.classify"
+    ]
+  },
+  "bach.sort": {
+    "digest": "Sort an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "sort",
+      "order",
+      "lambda loop"
+    ],
+    "seealso": [
+      "bach.perm",
+      "bach.scramble"
+    ]
+  },
+  "bach.pick": {
+    "digest": "Return elements from an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "pick",
+      "retrieve",
+      "address"
+    ],
+    "seealso": [
+      "bach.nth",
+      "bach.keys"
+    ]
+  },
+  "bach.primeser": {
+    "digest": "Series of prime numbers",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll",
+      "bach math"
+    ],
+    "keywords": [
+      "series",
+      "prime",
+      "number"
+    ],
+    "seealso": [
+      "bach.factorize",
+      "bach.prime",
+      "bach.arithmser",
+      "bach.geomser",
+      "bach.recurser"
+    ]
+  },
+  "bach.textin": {
+    "digest": "Accept variants of the llll text format",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "text",
+      "native",
+      "backtick",
+      "llll"
+    ],
+    "seealso": [
+      "bach.portal",
+      "bach.textout",
+      "bach.read"
+    ]
+  },
+  "bach.classify": {
+    "digest": "Arrange element into classes",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "arrange",
+      "collect",
+      "duplicates",
+      "classify",
+      "lambda loop"
+    ],
+    "seealso": [
+      "bach.thin",
+      "bach.collect"
+    ]
+  },
+  "bach.depth": {
+    "digest": "Depth of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "depth"
+    ],
+    "seealso": [
+      "bach.is",
+      "bach.contains",
+      "bach.length"
+    ]
+  },
+  "bach.defer": {
+    "digest": "Put an llll at the front of the low-priority queue",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "defer",
+      "queue",
+      "low-priority"
+    ],
+    "seealso": [
+      "bach.deferlow",
+      "bach.pipe"
+    ]
+  },
+  "bach.wrap": {
+    "digest": "Wrap an llll in parentheses",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "wrap",
+      "add",
+      "level",
+      "parenthesis"
+    ],
+    "seealso": [
+      "bach.flat",
+      "bach.nth",
+      "bach.depth"
+    ]
+  },
+  "bach.!=": {
+    "digest": "Compare two lllls for inequality",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "compare",
+      "different",
+      "condition"
+    ],
+    "seealso": [
+      "bach.==",
+      "bach.&gt;",
+      "bach.&lt;",
+      "bach.&gt;=",
+      "bach.&lt;=",
+      "bach.filter",
+      "bach.sieve"
+    ]
+  },
+  "bach.union": {
+    "digest": "Union of two sets",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "set",
+      "union"
+    ],
+    "seealso": [
+      "bach.intersection",
+      "bach.diff",
+      "bach.symdiff"
+    ]
+  },
   "bach.<=": {
     "digest": "Compare two lllls for less than or equal condition",
     "module": "bach",
@@ -667,8 +709,8 @@
       "bach.sieve"
     ]
   },
-  "bach.lisp": {
-    "digest": "lisperse an llll",
+  "bach.subs": {
+    "digest": "Replace or remove elements in an llll",
     "module": "bach",
     "category": [
       "bach",
@@ -676,14 +718,41 @@
       "bach llll"
     ],
     "keywords": [
-      "lisperse",
-      "invert"
+      "substitute",
+      "modify",
+      "replace",
+      "remove",
+      "delete",
+      "element"
     ],
     "seealso": [
-      "bach.rot",
-      "bach.slice",
-      "bach.join",
-      "bach.trans"
+      "bach.insert",
+      "bach.replace",
+      "bach.find",
+      "bach.nth",
+      "bach.swap"
+    ]
+  },
+  "bach.read": {
+    "digest": "Read an llll from disk",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "read",
+      "load",
+      "disk",
+      "file",
+      "native",
+      "text"
+    ],
+    "seealso": [
+      "bach.write",
+      "bach.shelf",
+      "bach.reg"
     ]
   },
   "bach.<": {
@@ -710,6 +779,89 @@
       "bach.&lt;=",
       "bach.filter",
       "bach.sieve"
+    ]
+  },
+  "bach.perm": {
+    "digest": "Return permutations of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "permutation",
+      "permute"
+    ],
+    "seealso": [
+      "bach.comb",
+      "bach.scramble",
+      "bach.nth",
+      "bach.cartesianprod",
+      "bach.constraints",
+      "bach.swap"
+    ]
+  },
+  "bach.reg": {
+    "digest": "Store an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "store",
+      "output"
+    ],
+    "seealso": [
+      "bach.write",
+      "bach.shelf",
+      "bach.value",
+      "bach.pv",
+      "bach.portal"
+    ]
+  },
+  "bach.shelf": {
+    "digest": "Storage system for lllls",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "store",
+      "refer",
+      "name",
+      "save",
+      "reference"
+    ],
+    "seealso": [
+      "bach.reg",
+      "bach.value",
+      "bach.pv",
+      "coll",
+      "dict"
+    ]
+  },
+  "bach.pack": {
+    "digest": "Assemble an llll with keyed sublists",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "key",
+      "router",
+      "assemble",
+      "sublist"
+    ],
+    "seealso": [
+      "bach.keys",
+      "bach.join"
     ]
   },
   "bach.mapelem": {
@@ -756,151 +908,6 @@
       "bach.expr"
     ]
   },
-  "bach.!=": {
-    "digest": "Compare two lllls for inequality",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "compare",
-      "different",
-      "condition"
-    ],
-    "seealso": [
-      "bach.==",
-      "bach.&gt;",
-      "bach.&lt;",
-      "bach.&gt;=",
-      "bach.&lt;=",
-      "bach.filter",
-      "bach.sieve"
-    ]
-  },
-  "bach.nth": {
-    "digest": "Return specific elements of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "element",
-      "position",
-      "address",
-      "retrieve",
-      "range",
-      "permutation"
-    ],
-    "seealso": [
-      "bach.pick",
-      "bach.subs",
-      "bach.insert",
-      "bach.replace",
-      "bach.lookup",
-      "bach.swap"
-    ]
-  },
-  "bach.pack": {
-    "digest": "Assemble an llll with keyed sublists",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "key",
-      "router",
-      "assemble",
-      "sublist"
-    ],
-    "seealso": [
-      "bach.keys",
-      "bach.join"
-    ]
-  },
-  "bach.perm": {
-    "digest": "Return permutations of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "permutation",
-      "permute"
-    ],
-    "seealso": [
-      "bach.comb",
-      "bach.scramble",
-      "bach.nth",
-      "bach.cartesianprod",
-      "bach.constraints",
-      "bach.swap"
-    ]
-  },
-  "bach.pick": {
-    "digest": "Return elements from an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "pick",
-      "retrieve",
-      "address"
-    ],
-    "seealso": [
-      "bach.nth",
-      "bach.keys"
-    ]
-  },
-  "bach.pipe": {
-    "digest": "Delay lllls.",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "delay",
-      "pipe"
-    ],
-    "seealso": [
-      "bach.defer",
-      "bach.deferlow",
-      "pipe",
-      "delay"
-    ]
-  },
-  "bach.portal": {
-    "digest": "Let lllls through",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "portal",
-      "text",
-      "native",
-      "disabled",
-      "outlet",
-      "convert"
-    ],
-    "seealso": [
-      "bach.reg"
-    ]
-  },
   "bach.post": {
     "digest": "Print lllls in the Max window, element by element",
     "module": "bach",
@@ -921,213 +928,46 @@
       "print"
     ]
   },
-  "bach.prime": {
-    "digest": "Primality test",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "prime",
-      "test",
-      "number"
-    ],
-    "seealso": [
-      "bach.factorize",
-      "bach.primeser"
-    ]
-  },
-  "bach.primeser": {
-    "digest": "Series of prime numbers",
+  "bach.trans": {
+    "digest": "Matrix transposition of an llll",
     "module": "bach",
     "category": [
       "bach",
       "bach objects",
       "bach llll",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "transpose",
+      "matrix",
+      "mirror"
+    ],
+    "seealso": [
+      "bach.lace",
+      "bach.delace",
+      "bach.mdelace",
+      "bach.reshape"
+    ]
+  },
+  "bach.arithmser": {
+    "digest": "Arithmetic series",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
       "bach math"
     ],
     "keywords": [
       "series",
-      "prime",
-      "number"
+      "arithmetic",
+      "step",
+      "compute",
+      "calculate"
     ],
     "seealso": [
-      "bach.factorize",
-      "bach.prime",
-      "bach.arithmser",
-      "bach.geomser"
-    ]
-  },
-  "bach.print": {
-    "digest": "Print lllls in the Max window",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "print",
-      "Max window",
-      "show",
-      "display"
-    ],
-    "seealso": [
-      "bach.post",
-      "print"
-    ]
-  },
-  "bach.pv": {
-    "digest": "Share lllls within a patch hierarchy",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "share",
-      "value",
-      "data",
-      "patch",
-      "hierarchy",
-      "name"
-    ],
-    "seealso": [
-      "bach.value",
-      "bach.shelf",
-      "bach.reg",
-      "value",
-      "pv"
-    ]
-  },
-  "bach.read": {
-    "digest": "Read an llll from disk",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "read",
-      "load",
-      "disk",
-      "file",
-      "native",
-      "text"
-    ],
-    "seealso": [
-      "bach.write",
-      "bach.shelf",
-      "bach.reg"
-    ]
-  },
-  "bach.readsdif": {
-    "digest": "Read an SDIF file",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "SDIF",
-      "file",
-      "read",
-      "load",
-      "convert"
-    ],
-    "seealso": [
-      "bach.writesdif",
-      "bach.read",
-      "bach.roll"
-    ]
-  },
-  "bach.reg": {
-    "digest": "Store an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "store",
-      "output"
-    ],
-    "seealso": [
-      "bach.write",
-      "bach.shelf",
-      "bach.value",
-      "bach.pv",
-      "bach.portal"
-    ]
-  },
-  "bach.reshape": {
-    "digest": "Impose to an llll the structure of another",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "reshape",
-      "change",
-      "impose",
-      "structure"
-    ],
-    "seealso": [
-      "bach.write",
-      "bach.shelf",
-      "bach.value",
-      "bach.pv",
-      "bach.portal"
-    ]
-  },
-  "bach.rev": {
-    "digest": "Reverse an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "reverse",
-      "invert"
-    ],
-    "seealso": [
-      "bach.rot",
-      "bach.slice",
-      "bach.join",
-      "bach.trans"
-    ]
-  },
-  "bach.rot": {
-    "digest": "Rotate an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "rotate",
-      "shift",
-      "circular"
-    ],
-    "seealso": [
-      "bach.rev",
-      "bach.slice",
-      "bach.join",
-      "bach.trans",
-      "bach.chordrot",
-      "bach.restrot",
-      "Through The Looking Glass"
+      "bach.primeser",
+      "bach.geomser",
+      "bach.recurser"
     ]
   },
   "bach.scramble": {
@@ -1151,8 +991,8 @@
       "bach.cartesianprod"
     ]
   },
-  "bach.shelf": {
-    "digest": "Storage system for lllls",
+  "bach.keys": {
+    "digest": "Route an llll according to specific keys",
     "module": "bach",
     "category": [
       "bach",
@@ -1160,18 +1000,227 @@
       "bach llll"
     ],
     "keywords": [
-      "store",
-      "refer",
-      "name",
-      "save",
-      "reference"
+      "key",
+      "router",
+      "route",
+      "sublist",
+      "element",
+      "retrieve"
     ],
     "seealso": [
-      "bach.reg",
-      "bach.value",
-      "bach.pv",
-      "coll",
-      "dict"
+      "bach.find",
+      "bach.keychain",
+      "bach.score",
+      "bach.roll",
+      "bach.constraints"
+    ]
+  },
+  "bach.delace": {
+    "digest": "De-interleave an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "delace",
+      "deinterleave",
+      "split"
+    ],
+    "seealso": [
+      "bach.lace",
+      "bach.trans"
+    ]
+  },
+  "bach.readsdif": {
+    "digest": "Read an SDIF file",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "SDIF",
+      "file",
+      "read",
+      "load",
+      "convert"
+    ],
+    "seealso": [
+      "bach.writesdif",
+      "bach.read",
+      "bach.roll"
+    ]
+  },
+  "bach.>=": {
+    "digest": "Compare two lllls for greater than or equal condition",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "compare",
+      "greater",
+      "equal",
+      "condition",
+      "lexicographical",
+      "order",
+      "numerical"
+    ],
+    "seealso": [
+      "bach.==",
+      "bach.!=",
+      "bach.&gt;",
+      "bach.&lt;",
+      "bach.&lt;=",
+      "bach.filter",
+      "bach.sieve"
+    ]
+  },
+  "bach.geomser": {
+    "digest": "Geometric series",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "series",
+      "geometric",
+      "factor",
+      "compute",
+      "calculate"
+    ],
+    "seealso": [
+      "bach.primeser",
+      "bach.arithmser",
+      "bach.recurser"
+    ]
+  },
+  "bach.prime": {
+    "digest": "Primality test",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "prime",
+      "test",
+      "number"
+    ],
+    "seealso": [
+      "bach.factorize",
+      "bach.primeser"
+    ]
+  },
+  "bach.weights": {
+    "digest": "Interpolate lllls according to weights",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "interpolate",
+      "weight",
+      "linear combination"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.interp",
+      "bach.normalize",
+      "nodes"
+    ]
+  },
+  "bach.iter": {
+    "digest": "Iterate through lllls",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "iterate",
+      "iteration",
+      "element",
+      "address",
+      "command"
+    ],
+    "seealso": [
+      "bach.step",
+      "bach.collect",
+      "bach.drip",
+      "bach.mapelem",
+      "Iterations"
+    ]
+  },
+  "bach.writesdif": {
+    "digest": "Write an SDIF file",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "SDIF",
+      "write",
+      "save",
+      "disk",
+      "file",
+      "convert"
+    ],
+    "seealso": [
+      "bach.readsdif",
+      "bach.write",
+      "bach.roll"
+    ]
+  },
+  "bach.portal": {
+    "digest": "Let lllls through",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "portal",
+      "text",
+      "native",
+      "disabled",
+      "outlet",
+      "convert"
+    ],
+    "seealso": [
+      "bach.reg"
+    ]
+  },
+  "bach.intersection": {
+    "digest": "Intersection of two sets",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "set",
+      "intersection"
+    ],
+    "seealso": [
+      "bach.union",
+      "bach.diff",
+      "bach.symdiff"
     ]
   },
   "bach.slice": {
@@ -1193,24 +1242,6 @@
       "bach.split",
       "bach.lace",
       "bach.delace"
-    ]
-  },
-  "bach.sort": {
-    "digest": "Sort an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "sort",
-      "order",
-      "lambda loop"
-    ],
-    "seealso": [
-      "bach.perm",
-      "bach.scramble"
     ]
   },
   "bach.step": {
@@ -1238,30 +1269,6 @@
       "Iterations"
     ]
   },
-  "bach.subs": {
-    "digest": "Replace or remove elements in an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "substitute",
-      "modify",
-      "replace",
-      "remove",
-      "delete",
-      "element"
-    ],
-    "seealso": [
-      "bach.insert",
-      "bach.replace",
-      "bach.find",
-      "bach.nth",
-      "bach.swap"
-    ]
-  },
   "bach.swap": {
     "digest": "Swap elements in an llll",
     "module": "bach",
@@ -1284,6 +1291,197 @@
       "bach.perm"
     ]
   },
+  "bach.constraints": {
+    "digest": "Solve constraints satisfaction problems",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "constraint satisfaction problem",
+      "rule",
+      "domain",
+      "lambda loop",
+      "solve",
+      "constraint"
+    ],
+    "seealso": [
+      "bach.comb",
+      "bach.perm",
+      "bach.cartesianprod",
+      "God Solve the Queens"
+    ]
+  },
+  "bach.code": {
+    "digest": "Compare two lllls for greater than or equal condition",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "compare",
+      "greater",
+      "equal",
+      "condition",
+      "lexicographical",
+      "order",
+      "numerical"
+    ],
+    "seealso": [
+      "bach.==",
+      "bach.!=",
+      "bach.&gt;",
+      "bach.&lt;",
+      "bach.&lt;=",
+      "bach.filter",
+      "bach.sieve"
+    ]
+  },
+  "bach.find": {
+    "digest": "Find elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "find",
+      "detect",
+      "search",
+      "element",
+      "sequence",
+      "condition",
+      "address",
+      "lambda loop"
+    ],
+    "seealso": [
+      "bach.filter",
+      "bach.keys",
+      "bach.sieve",
+      "bach.constraints",
+      "bach.swap",
+      "bach.locate"
+    ]
+  },
+  "bach.write": {
+    "digest": "Write an llll to disk",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "write",
+      "save",
+      "disk",
+      "file",
+      "native",
+      "text"
+    ],
+    "seealso": [
+      "bach.read",
+      "bach.shelf",
+      "bach.reg"
+    ]
+  },
+  "bach.rev": {
+    "digest": "Reverse an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "reverse",
+      "invert"
+    ],
+    "seealso": [
+      "bach.rot",
+      "bach.slice",
+      "bach.join",
+      "bach.trans"
+    ]
+  },
+  "bach.value": {
+    "digest": "Share lllls",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "value",
+      "share",
+      "name",
+      "patcher",
+      "hierarchy"
+    ],
+    "seealso": [
+      "bach.pv",
+      "bach.shelf",
+      "bach.reg",
+      "value",
+      "pv"
+    ]
+  },
+  "bach.pv": {
+    "digest": "Share lllls within a patch hierarchy",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "share",
+      "value",
+      "data",
+      "patch",
+      "hierarchy",
+      "name"
+    ],
+    "seealso": [
+      "bach.value",
+      "bach.shelf",
+      "bach.reg",
+      "value",
+      "pv"
+    ]
+  },
+  "bach.expr": {
+    "digest": "Evaluate mathematical expressions",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "expression",
+      "evaluate",
+      "variable",
+      "number",
+      "calculate",
+      "compute"
+    ],
+    "seealso": [
+      "bach.+",
+      "bach.-",
+      "bach.*",
+      "bach./",
+      "bach.%",
+      "expr",
+      "vexpr"
+    ]
+  },
   "bach.symdiff": {
     "digest": "Symmetric difference of two sets",
     "module": "bach",
@@ -1303,8 +1501,8 @@
       "bach.intersection"
     ]
   },
-  "bach.textin": {
-    "digest": "Accept variants of the llll text format",
+  "bach.cartesianprod": {
+    "digest": "Cartesian product",
     "module": "bach",
     "category": [
       "bach",
@@ -1312,79 +1510,18 @@
       "bach llll"
     ],
     "keywords": [
-      "text",
-      "native",
-      "backtick",
-      "llll"
+      "set",
+      "cartesian product",
+      "product",
+      "combination",
+      "couple",
+      "combine"
     ],
     "seealso": [
-      "bach.portal",
-      "bach.textout",
-      "bach.read"
-    ]
-  },
-  "bach.textout": {
-    "digest": "Produces variants of the llll text format",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "text",
-      "backtick",
-      "attributes",
-      "pitch"
-    ],
-    "seealso": [
-      "bach.portal",
-      "bach.textin",
-      "bach.write"
-    ]
-  },
-  "bach.thin": {
-    "digest": "Remove duplicate elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "delete",
-      "remove",
-      "duplicates",
-      "thin",
-      "lambda loop"
-    ],
-    "seealso": [
-      "bach.intersection",
-      "bach.diff",
-      "bach.symdiff",
-      "bach.union",
-      "bach.classify"
-    ]
-  },
-  "bach.trans": {
-    "digest": "Matrix transposition of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "transpose",
-      "matrix",
-      "mirror"
-    ],
-    "seealso": [
-      "bach.lace",
-      "bach.delace",
-      "bach.mdelace",
-      "bach.reshape"
+      "bach.comb",
+      "bach.perm",
+      "bach.trans",
+      "bach.constraints"
     ]
   },
   "bach.tree": {
@@ -1429,8 +1566,8 @@
       "pic": "bach.tree.svg"
     }
   },
-  "bach.union": {
-    "digest": "Union of two sets",
+  "bach.deferlow": {
+    "digest": "Put an llll at the tail of the low-priority queue",
     "module": "bach",
     "category": [
       "bach",
@@ -1438,124 +1575,17 @@
       "bach llll"
     ],
     "keywords": [
-      "set",
-      "union"
+      "defer",
+      "queue",
+      "low-priority"
     ],
     "seealso": [
-      "bach.intersection",
-      "bach.diff",
-      "bach.symdiff"
+      "bach.defer",
+      "bach.pipe"
     ]
   },
-  "bach.value": {
-    "digest": "Share lllls",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "value",
-      "share",
-      "name",
-      "patcher",
-      "hierarchy"
-    ],
-    "seealso": [
-      "bach.pv",
-      "bach.shelf",
-      "bach.reg",
-      "value",
-      "pv"
-    ]
-  },
-  "bach.weights": {
-    "digest": "Interpolate lllls according to weights",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "interpolate",
-      "weight",
-      "linear combination"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.interp",
-      "bach.normalize",
-      "nodes"
-    ]
-  },
-  "bach.wrap": {
-    "digest": "Wrap an llll in parentheses",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "wrap",
-      "add",
-      "level",
-      "parenthesis"
-    ],
-    "seealso": [
-      "bach.flat",
-      "bach.nth",
-      "bach.depth"
-    ]
-  },
-  "bach.write": {
-    "digest": "Write an llll to disk",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "write",
-      "save",
-      "disk",
-      "file",
-      "native",
-      "text"
-    ],
-    "seealso": [
-      "bach.read",
-      "bach.shelf",
-      "bach.reg"
-    ]
-  },
-  "bach.writesdif": {
-    "digest": "Write an SDIF file",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "SDIF",
-      "write",
-      "save",
-      "disk",
-      "file",
-      "convert"
-    ],
-    "seealso": [
-      "bach.readsdif",
-      "bach.write",
-      "bach.roll"
-    ]
-  },
-  "bach.+": {
-    "digest": "Quick llll addition",
+  "bach.minimum": {
+    "digest": "Output minimum element-wise",
     "module": "bach",
     "category": [
       "bach",
@@ -1563,112 +1593,18 @@
       "bach math"
     ],
     "keywords": [
-      "addition",
-      "calculate",
-      "compute",
-      "sum",
-      "number"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.-",
-      "bach.*",
-      "bach./",
-      "+",
-      "bach.mod+"
-    ]
-  },
-  "bach.-": {
-    "digest": "Quick llll subtraction",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "difference",
-      "calculate",
-      "compute",
-      "subtraction",
-      "number"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.!-",
-      "bach.+",
-      "bach.*",
-      "bach./",
-      "-",
-      "bach.mod-"
-    ]
-  },
-  "bach.abs": {
-    "digest": "Quick absolute value of lllls",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "absolute value",
-      "modulo",
-      "magnitude",
-      "radius",
-      "calculate",
-      "compute",
-      "sign"
-    ],
-    "seealso": [
-      "bach.expr",
-      "abs"
-    ]
-  },
-  "bach.autoscale": {
-    "digest": "Linearly rescale an llll automatically",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "rescale",
-      "expand",
-      "stretch",
-      "automatic",
-      "linear",
-      "number",
       "minimum",
-      "maximum",
-      "detect",
-      "map"
-    ],
-    "seealso": [
-      "bach.scale",
-      "bach.minmax",
-      "bach.expr",
-      "bach.interp"
-    ]
-  },
-  "bach.bitdecode": {
-    "digest": "Decode a bit field",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "bit field",
-      "decode",
-      "integer",
+      "calculate",
+      "element",
+      "compute",
       "number"
     ],
     "seealso": [
-      "bach.is",
-      "bach.contains"
+      "bach.maximum",
+      "bach.minmax",
+      "minimum",
+      "bach.clip",
+      "bach.expr"
     ]
   },
   "bach.clip": {
@@ -1697,8 +1633,8 @@
       "bach.expr"
     ]
   },
-  "bach./": {
-    "digest": "Quick llll division",
+  "bach.+": {
+    "digest": "Quick llll addition",
     "module": "bach",
     "category": [
       "bach",
@@ -1706,122 +1642,19 @@
       "bach math"
     ],
     "keywords": [
-      "division",
+      "addition",
       "calculate",
       "compute",
-      "number",
-      "quotient",
-      "ratio",
-      "fraction"
+      "sum",
+      "number"
     ],
     "seealso": [
       "bach.expr",
-      "bach.!/",
-      "bach.*",
-      "bach.+",
       "bach.-",
-      "bach.%",
-      "/"
-    ]
-  },
-  "bach.dl2curve": {
-    "digest": "Convert a duration line into pitch and velocity curve~ messages",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "duration line",
-      "curve~",
-      "convert",
-      "glissando",
-      "pitch",
-      "velocity",
-      "duration"
-    ],
-    "seealso": [
-      "bach.dl2line",
-      "bach.roll",
-      "bach.score",
-      "bach.slot2line",
-      "bach.slot2curve",
-      "bach.playkeys"
-    ]
-  },
-  "bach.dl2line": {
-    "digest": "Convert a duration line into pitch and velocity line~ messages",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "duration line",
-      "line",
-      "convert",
-      "glissando",
-      "pitch",
-      "velocity",
-      "duration"
-    ],
-    "seealso": [
-      "bach.dl2curve",
-      "bach.roll",
-      "bach.score",
-      "bach.slot2line",
-      "bach.slot2curve",
-      "bach.playkeys"
-    ]
-  },
-  "bach.dx2x": {
-    "digest": "Build llll from element differences",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "integrate",
-      "discrete",
-      "difference",
-      "build",
-      "construct",
-      "sum",
-      "number",
-      "start",
-      "step"
-    ],
-    "seealso": [
-      "bach.x2dx"
-    ]
-  },
-  "bach.filter": {
-    "digest": "Only let specified data types through",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "pass",
-      "filter",
-      "reject",
-      "accept",
-      "route",
-      "type",
-      "let through"
-    ],
-    "seealso": [
-      "bach.is",
-      "bach.contains",
-      "bach.sieve",
-      "bach.filternull",
-      "Iterations"
+      "bach.*",
+      "bach./",
+      "+",
+      "bach.mod+"
     ]
   },
   "bach.filternull": {
@@ -1848,8 +1681,8 @@
       "Slot Machines"
     ]
   },
-  "bach.interp": {
-    "digest": "Interpolate between lllls",
+  "bach.sum": {
+    "digest": "Sum all numbers in an llll",
     "module": "bach",
     "category": [
       "bach",
@@ -1857,200 +1690,22 @@
       "bach math"
     ],
     "keywords": [
-      "interpolate",
-      "parameter",
-      "sampling",
-      "sample",
-      "linear",
-      "exponent"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.scale",
-      "bach.autoscale"
-    ]
-  },
-  "bach.lookup": {
-    "digest": "Return specific elements of an llll (inlets reversed)",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "retrieve",
-      "look up",
-      "element",
-      "address"
-    ],
-    "seealso": [
-      "bach.nth",
-      "bach.pick"
-    ]
-  },
-  "bach.mapelem": {
-    "digest": "Modify llll elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "map",
-      "element",
-      "modify",
-      "change",
-      "each",
-      "transform",
-      "lambda loop",
-      "iterate",
-      "iteration"
-    ],
-    "seealso": [
-      "bach.iter",
-      "bach.collect",
-      "Iterations"
-    ]
-  },
-  "bach.maximum": {
-    "digest": "Output maximum element-wise",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "maximum",
-      "calculate",
-      "element",
-      "compute",
-      "number"
-    ],
-    "seealso": [
-      "bach.minimum",
-      "bach.minmax",
-      "maximum",
-      "bach.clip",
-      "bach.expr"
-    ]
-  },
-  "bach.mc2r": {
-    "digest": "Interval to frequency ratio conversion",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "interval",
-      "cent",
-      "midicent",
-      "frequency",
-      "ratio",
-      "rational",
-      "convert"
-    ],
-    "seealso": [
-      "bach.r2mc",
-      "bach.f2mc",
-      "bach.mc2f",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.minimum": {
-    "digest": "Output minimum element-wise",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "minimum",
-      "calculate",
-      "element",
-      "compute",
-      "number"
-    ],
-    "seealso": [
-      "bach.maximum",
-      "bach.minmax",
-      "minimum",
-      "bach.clip",
-      "bach.expr"
-    ]
-  },
-  "bach.mod": {
-    "digest": "Quick llll modulo",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "modulo",
-      "remainder",
-      "division",
+      "sum",
       "number",
       "calculate",
-      "compute"
+      "compute",
+      "add",
+      "summation"
     ],
     "seealso": [
-      "bach.expr",
-      "bach./",
-      "bach.*",
+      "bach.prod",
+      "bach.mean",
       "bach.+",
-      "bach.-",
-      "%"
+      "zl"
     ]
   },
-  "bach.pitchpack": {
-    "digest": "Make pitches from their components",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math",
-      "pitch"
-    ],
-    "keywords": [
-      "calculate",
-      "compute",
-      "pitch",
-      "number"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.pitchunpack"
-    ]
-  },
-  "bach.pitchunpack": {
-    "digest": "Separate components of pitches",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math",
-      "pitch"
-    ],
-    "keywords": [
-      "calculate",
-      "compute",
-      "pitch",
-      "number"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.pitchpack"
-    ]
-  },
-  "bach.pow": {
-    "digest": "Quick llll exponentiation",
+  "bach.x2dx": {
+    "digest": "Take differences between element",
     "module": "bach",
     "category": [
       "bach",
@@ -2058,229 +1713,15 @@
       "bach math"
     ],
     "keywords": [
-      "power",
-      "raise",
-      "exponent",
-      "base",
-      "number",
-      "calculate",
-      "compute"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.*",
-      "pow",
-      "bach.mpow"
-    ]
-  },
-  "bach.prod": {
-    "digest": "Multiply all numbers in an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "product",
-      "number",
-      "calculate",
-      "compute",
-      "multiply"
-    ],
-    "seealso": [
-      "bach.sum",
-      "bach.*"
-    ]
-  },
-  "bach.r2mc": {
-    "digest": "Frequency ratio to interval conversion",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "interval",
-      "cent",
-      "midicent",
-      "frequency",
-      "ratio",
-      "rational",
-      "convert"
-    ],
-    "seealso": [
-      "bach.mc2r",
-      "bach.f2mc",
-      "bach.mc2f",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.!/": {
-    "digest": "Quick llll division (inlets reversed)",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "division",
-      "calculate",
-      "compute",
-      "number",
-      "quotient",
-      "ratio",
-      "fraction"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.!/",
-      "bach.*",
-      "bach.+",
-      "bach.-",
-      "bach.%",
-      "/"
-    ]
-  },
-  "bach.%": {
-    "digest": "Quick llll modulo",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "modulo",
-      "remainder",
-      "division",
-      "number",
-      "calculate",
-      "compute"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach./",
-      "bach.*",
-      "bach.+",
-      "bach.-",
-      "%"
-    ]
-  },
-  "bach.repeat": {
-    "digest": "Repeat lllls",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "repeat",
-      "loop",
-      "wrap"
-    ],
-    "seealso": [
-      "bach.collect",
-      "bach.group",
-      "uzi",
-      "bach.period",
-      "bach.pad"
-    ]
-  },
-  "bach.replace": {
-    "digest": "Quickly find and replace elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "replace",
-      "find",
-      "search",
-      "occurrence",
-      "condition",
-      "lambda loop",
-      "element"
-    ],
-    "seealso": [
-      "bach.find",
-      "bach.subs",
-      "bach.nsubs",
-      "Iterations"
-    ]
-  },
-  "bach.!-": {
-    "digest": "Quick llll subtraction (inlets reversed)",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
+      "derive",
+      "discrete",
       "difference",
-      "calculate",
-      "compute",
-      "subtraction",
+      "take",
+      "subtract",
       "number"
     ],
     "seealso": [
-      "bach.expr",
-      "bach.-",
-      "!-",
-      "bach.mod-"
-    ]
-  },
-  "bach.round": {
-    "digest": "Round llll elements to a value",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "round",
-      "approximate",
-      "snap",
-      "grid",
-      "number"
-    ],
-    "seealso": [
-      "bach.expr",
-      "round"
-    ]
-  },
-  "bach.scale": {
-    "digest": "Linearly rescale an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "rescale",
-      "expand",
-      "stretch",
-      "linear",
-      "number",
-      "minimum",
-      "maximum",
-      "value",
-      "range",
-      "map"
-    ],
-    "seealso": [
-      "bach.autoscale",
-      "bach.minmax",
-      "bach.expr",
-      "bach.interp"
+      "bach.dx2x"
     ]
   },
   "bach.sieve": {
@@ -2310,8 +1751,53 @@
       "Iterations"
     ]
   },
-  "bach.sum": {
-    "digest": "Sum all numbers in an llll",
+  "bach.lookup": {
+    "digest": "Return specific elements of an llll (inlets reversed)",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "retrieve",
+      "look up",
+      "element",
+      "address"
+    ],
+    "seealso": [
+      "bach.nth",
+      "bach.pick"
+    ]
+  },
+  "bach.dl2curve": {
+    "digest": "Convert a duration line into pitch and velocity curve~ messages",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "duration line",
+      "curve~",
+      "convert",
+      "glissando",
+      "pitch",
+      "velocity",
+      "duration"
+    ],
+    "seealso": [
+      "bach.dl2line",
+      "bach.roll",
+      "bach.score",
+      "bach.slot2line",
+      "bach.slot2curve",
+      "bach.playkeys"
+    ]
+  },
+  "bach.mc2r": {
+    "digest": "Interval to frequency ratio conversion",
     "module": "bach",
     "category": [
       "bach",
@@ -2319,18 +1805,540 @@
       "bach math"
     ],
     "keywords": [
-      "sum",
-      "number",
-      "calculate",
-      "compute",
-      "add",
-      "summation"
+      "interval",
+      "cent",
+      "midicent",
+      "frequency",
+      "ratio",
+      "rational",
+      "convert"
     ],
     "seealso": [
-      "bach.prod",
-      "bach.mean",
+      "bach.r2mc",
+      "bach.f2mc",
+      "bach.mc2f",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.mod": {
+    "digest": "Quick llll modulo",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "modulo",
+      "remainder",
+      "division",
+      "number",
+      "calculate",
+      "compute"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach./",
+      "bach.*",
       "bach.+",
-      "zl"
+      "bach.-",
+      "%"
+    ]
+  },
+  "bach.interp": {
+    "digest": "Interpolate between lllls",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "interpolate",
+      "parameter",
+      "sampling",
+      "sample",
+      "linear",
+      "exponent"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.scale",
+      "bach.autoscale"
+    ]
+  },
+  "bach.!-": {
+    "digest": "Quick llll subtraction (inlets reversed)",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "difference",
+      "calculate",
+      "compute",
+      "subtraction",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.-",
+      "!-",
+      "bach.mod-"
+    ]
+  },
+  "bach.dl2line": {
+    "digest": "Convert a duration line into pitch and velocity line~ messages",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "duration line",
+      "line",
+      "convert",
+      "glissando",
+      "pitch",
+      "velocity",
+      "duration"
+    ],
+    "seealso": [
+      "bach.dl2curve",
+      "bach.roll",
+      "bach.score",
+      "bach.slot2line",
+      "bach.slot2curve",
+      "bach.playkeys"
+    ]
+  },
+  "bach./": {
+    "digest": "Quick llll division",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "division",
+      "calculate",
+      "compute",
+      "number",
+      "quotient",
+      "ratio",
+      "fraction"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.!/",
+      "bach.*",
+      "bach.+",
+      "bach.-",
+      "bach.%",
+      "/"
+    ]
+  },
+  "bach.filter": {
+    "digest": "Only let specified data types through",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "pass",
+      "filter",
+      "reject",
+      "accept",
+      "route",
+      "type",
+      "let through"
+    ],
+    "seealso": [
+      "bach.is",
+      "bach.contains",
+      "bach.sieve",
+      "bach.filternull",
+      "Iterations"
+    ]
+  },
+  "bach.dx2x": {
+    "digest": "Build llll from element differences",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "integrate",
+      "discrete",
+      "difference",
+      "build",
+      "construct",
+      "sum",
+      "number",
+      "start",
+      "step"
+    ],
+    "seealso": [
+      "bach.x2dx"
+    ]
+  },
+  "bach.pow": {
+    "digest": "Quick llll exponentiation",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "power",
+      "raise",
+      "exponent",
+      "base",
+      "number",
+      "calculate",
+      "compute"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.*",
+      "pow",
+      "bach.mpow"
+    ]
+  },
+  "bach.mapelem": {
+    "digest": "Modify llll elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "map",
+      "element",
+      "modify",
+      "change",
+      "each",
+      "transform",
+      "lambda loop",
+      "iterate",
+      "iteration"
+    ],
+    "seealso": [
+      "bach.iter",
+      "bach.collect",
+      "Iterations"
+    ]
+  },
+  "bach.scale": {
+    "digest": "Linearly rescale an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "rescale",
+      "expand",
+      "stretch",
+      "linear",
+      "number",
+      "minimum",
+      "maximum",
+      "value",
+      "range",
+      "map"
+    ],
+    "seealso": [
+      "bach.autoscale",
+      "bach.minmax",
+      "bach.expr",
+      "bach.interp"
+    ]
+  },
+  "bach.repeat": {
+    "digest": "Repeat lllls",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "repeat",
+      "loop",
+      "wrap"
+    ],
+    "seealso": [
+      "bach.collect",
+      "bach.group",
+      "uzi",
+      "bach.period",
+      "bach.pad"
+    ]
+  },
+  "bach.pitchunpack": {
+    "digest": "Separate components of pitches",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math",
+      "pitch"
+    ],
+    "keywords": [
+      "calculate",
+      "compute",
+      "pitch",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.pitchpack"
+    ]
+  },
+  "bach.bitdecode": {
+    "digest": "Decode a bit field",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "bit field",
+      "decode",
+      "integer",
+      "number"
+    ],
+    "seealso": [
+      "bach.is",
+      "bach.contains"
+    ]
+  },
+  "bach.-": {
+    "digest": "Quick llll subtraction",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "difference",
+      "calculate",
+      "compute",
+      "subtraction",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.!-",
+      "bach.+",
+      "bach.*",
+      "bach./",
+      "-",
+      "bach.mod-"
+    ]
+  },
+  "bach.r2mc": {
+    "digest": "Frequency ratio to interval conversion",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "interval",
+      "cent",
+      "midicent",
+      "frequency",
+      "ratio",
+      "rational",
+      "convert"
+    ],
+    "seealso": [
+      "bach.mc2r",
+      "bach.f2mc",
+      "bach.mc2f",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.replace": {
+    "digest": "Quickly find and replace elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "replace",
+      "find",
+      "search",
+      "occurrence",
+      "condition",
+      "lambda loop",
+      "element"
+    ],
+    "seealso": [
+      "bach.find",
+      "bach.subs",
+      "bach.nsubs",
+      "Iterations"
+    ]
+  },
+  "bach.maximum": {
+    "digest": "Output maximum element-wise",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "maximum",
+      "calculate",
+      "element",
+      "compute",
+      "number"
+    ],
+    "seealso": [
+      "bach.minimum",
+      "bach.minmax",
+      "maximum",
+      "bach.clip",
+      "bach.expr"
+    ]
+  },
+  "bach.!/": {
+    "digest": "Quick llll division (inlets reversed)",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "division",
+      "calculate",
+      "compute",
+      "number",
+      "quotient",
+      "ratio",
+      "fraction"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.!/",
+      "bach.*",
+      "bach.+",
+      "bach.-",
+      "bach.%",
+      "/"
+    ]
+  },
+  "bach.round": {
+    "digest": "Round llll elements to a value",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "round",
+      "approximate",
+      "snap",
+      "grid",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "round"
+    ]
+  },
+  "bach.autoscale": {
+    "digest": "Linearly rescale an llll automatically",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "rescale",
+      "expand",
+      "stretch",
+      "automatic",
+      "linear",
+      "number",
+      "minimum",
+      "maximum",
+      "detect",
+      "map"
+    ],
+    "seealso": [
+      "bach.scale",
+      "bach.minmax",
+      "bach.expr",
+      "bach.interp"
+    ]
+  },
+  "bach.pitchpack": {
+    "digest": "Make pitches from their components",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math",
+      "pitch"
+    ],
+    "keywords": [
+      "calculate",
+      "compute",
+      "pitch",
+      "number"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.pitchunpack"
+    ]
+  },
+  "bach.%": {
+    "digest": "Quick llll modulo",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "modulo",
+      "remainder",
+      "division",
+      "number",
+      "calculate",
+      "compute"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach./",
+      "bach.*",
+      "bach.+",
+      "bach.-",
+      "%"
     ]
   },
   "bach.*": {
@@ -2357,8 +2365,8 @@
       "bach.mod*"
     ]
   },
-  "bach.x2dx": {
-    "digest": "Take differences between element",
+  "bach.prod": {
+    "digest": "Multiply all numbers in an llll",
     "module": "bach",
     "category": [
       "bach",
@@ -2366,214 +2374,41 @@
       "bach math"
     ],
     "keywords": [
-      "derive",
-      "discrete",
-      "difference",
-      "take",
-      "subtract",
-      "number"
-    ],
-    "seealso": [
-      "bach.dx2x"
-    ]
-  },
-  "bach.adj": {
-    "digest": "Compute the adjugate of a matrix",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "adjoint",
-      "matrix",
-      "adjugate",
-      "transpose",
-      "cofactor",
-      "determinant",
-      "inverse",
-      "invert"
-    ],
-    "seealso": [
-      "bach.trans",
-      "bach.inv",
-      "bach.m2jitcellblock"
-    ]
-  },
-  "bach.bachtree2omtree": {
-    "digest": "Convert a bach rhythmic tree into an OpenMusic rhythmic tree",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach notation"
-    ],
-    "keywords": [
-      "rhythmic tree",
-      "tree",
-      "rhythm",
-      "convert",
-      "OpenMusic",
-      "measureinfo",
-      "duration"
-    ],
-    "seealso": [
-      "bach.omtree2bachtree",
-      "bach.score",
-      "The World Outside"
-    ]
-  },
-  "bach.beatbox": {
-    "digest": "Box voice-wise parameters into measure-wise information",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach notation"
-    ],
-    "keywords": [
-      "box",
-      "measure",
-      "parenthesis",
-      "wrap",
-      "measurewise",
-      "voicewise",
-      "format",
-      "flow",
-      "plain",
-      "measureinfo",
-      "beat"
-    ],
-    "seealso": [
-      "bach.beatunbox",
-      "bach.score",
-      "bach.quantize",
-      "bach.score2roll",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.beatunbox": {
-    "digest": "Flatten measure-wise parameters into plain voice-wise information",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach notation"
-    ],
-    "keywords": [
-      "unbox",
-      "measure",
-      "parenthesis",
-      "unwrap",
-      "flat",
-      "measurewise",
-      "voicewise",
-      "format",
-      "flow",
-      "plain",
-      "measureinfo"
-    ],
-    "seealso": [
-      "bach.beatbox",
-      "bach.score",
-      "bach.quantize",
-      "bach.score2roll",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.circle": {
-    "digest": "Clock diagram",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach set theory",
-      "bach interface",
-      "U/I"
-    ],
-    "keywords": [
-      "circle",
-      "diagram",
-      "clock",
-      "pitch-class",
-      "set",
-      "rhythm",
-      "loop",
-      "velocity",
-      "select",
-      "rotate",
-      "transpose",
-      "invert",
-      "microtone"
-    ],
-    "seealso": [
-      "bach.primeform",
-      "bach.pcsetinfo",
-      "bach.mod+",
-      "bach.mod-",
-      "bach.modtimes",
-      "bach.compl"
-    ],
-    "palette": {
-      "category": [
-        "bach",
-        "bach objects",
-        "bach set theory",
-        "bach interface",
-        "U/I"
-      ],
-      "action": "bach.circle",
-      "pic": "bach.circle.svg"
-    }
-  },
-  "bach.convertbase": {
-    "digest": "Perform base conversion for numbers",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "convert",
-      "base",
-      "conversion",
+      "product",
       "number",
-      "digit"
+      "calculate",
+      "compute",
+      "multiply"
     ],
     "seealso": [
-      "bach.factorize",
-      "bach./",
-      "bach.%",
-      "bach.gcd",
-      "bach.lcm"
+      "bach.sum",
+      "bach.*"
     ]
   },
-  "bach.derive": {
-    "digest": "Derive functions",
+  "bach.abs": {
+    "digest": "Quick absolute value of lllls",
     "module": "bach",
     "category": [
       "bach",
-      "bach objects",
+      "bach abstractions",
       "bach math"
     ],
     "keywords": [
-      "derive",
-      "derivative",
-      "function",
-      "breakpoint function",
-      "lambda loop"
+      "absolute value",
+      "modulo",
+      "magnitude",
+      "radius",
+      "calculate",
+      "compute",
+      "sign"
     ],
     "seealso": [
-      "bach.integrate",
       "bach.expr",
-      "bach.slot",
-      "bach.reducefunction"
+      "abs"
     ]
   },
-  "bach.diag": {
-    "digest": "Build a diagonal matrix",
+  "bach.minfo": {
+    "digest": "Report information about a matrix",
     "module": "bach",
     "category": [
       "bach",
@@ -2581,42 +2416,15 @@
       "bach matrix calculus"
     ],
     "keywords": [
-      "matrix",
-      "diagonal",
-      "shift",
-      "secondary",
-      "main",
-      "build"
     ],
     "seealso": [
-      "bach.minfo",
+      "bach.diag",
       "bach.submatrix",
       "bach.idmatrix",
       "bach.mrandom",
       "bach.wellshape",
       "bach.m2jitcellblock",
       "Into The Matrix"
-    ]
-  },
-  "bach.dict2llll": {
-    "digest": "Convert a dictionary into an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "convert",
-      "`dictionary",
-      "name",
-      "element",
-      "tree"
-    ],
-    "seealso": [
-      "bach.llll2dict",
-      "dict",
-      "bach.tree"
     ]
   },
   "bach.eig": {
@@ -2642,8 +2450,8 @@
       "Into The Matrix"
     ]
   },
-  "bach.extractbasis": {
-    "digest": "Find linearly independent vectors",
+  "bach.trace": {
+    "digest": "Compute the trace of a matrix",
     "module": "bach",
     "category": [
       "bach",
@@ -2651,199 +2459,22 @@
       "bach matrix calculus"
     ],
     "keywords": [
-      "extract",
-      "find",
-      "basis",
-      "vector",
-      "orthogonal",
-      "unitary",
-      "linear independence"
-    ],
-    "seealso": [
-      "bach.gausselim",
-      "bach.linearsolve",
-      "bach.ker",
-      "bach.im",
-      "Into The Matrix"
-    ]
-  },
-  "bach.fft": {
-    "digest": "Fast Fourier transform for lllls",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "Fourier",
-      "transform",
-      "discrete"
-    ],
-    "seealso": [
-      "fft~",
-      "bach.expr",
-      "bach.pol2car",
-      "bach.car2pol",
-      "bach.resample"
-    ]
-  },
-  "bach.float2rat": {
-    "digest": "Approximate a floating point number with a rational number",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "convert",
-      "floating point",
-      "rational",
-      "number",
-      "approximate",
-      "threshold",
-      "denominator",
-      "error"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.ratnum",
-      "bach.quantize"
-    ]
-  },
-  "bach.gausselim": {
-    "digest": "Perform matrix gaussian elimination",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "reduce",
       "matrix",
-      "Gauss elimination",
-      "echelon form",
-      "determinant",
-      "rank",
-      "swap",
-      "row",
-      "column"
+      "trace",
+      "sum",
+      "diagonal",
+      "calculate",
+      "compute",
+      "element"
     ],
     "seealso": [
-      "bach.linearsolve",
-      "bach.extractbasis",
       "bach.det",
-      "bach.rank",
-      "bach.im",
-      "bach.ker",
-      "bach.inv",
+      "bach.m2jitcellblock",
       "Into The Matrix"
     ]
   },
-  "bach.graph": {
-    "digest": "Plot a graph",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math",
-      "bach interface",
-      "U/I"
-    ],
-    "keywords": [
-      "plot",
-      "graph",
-      "draw",
-      "function",
-      "display",
-      "vector",
-      "curve",
-      "parametric",
-      "polar",
-      "cartesian",
-      "coordinate",
-      "expression"
-    ],
-    "seealso": [
-      "bach.expr",
-      "plot~",
-      "Into The Matrix"
-    ],
-    "palette": {
-      "category": [
-        "bach",
-        "bach objects",
-        "bach math",
-        "bach interface",
-        "U/I"
-      ],
-      "action": "bach.graph",
-      "pic": "bach.graph.svg"
-    }
-  },
-  "bach.hypercomment": {
-    "digest": "A <o>comment</o> with hyperlink references",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach interface",
-      "U/I",
-      "bach miscellanea"
-    ],
-    "keywords": [
-      "comment",
-      "link",
-      "hyperlink",
-      "reference",
-      "hand",
-      "write",
-      "send",
-      "click"
-    ],
-    "seealso": [
-      "comment",
-      "bach.wordcloud"
-    ],
-    "palette": {
-      "category": [
-        "bach",
-        "bach objects",
-        "bach interface",
-        "U/I",
-        "bach miscellanea"
-      ],
-      "action": "bach.hypercomment",
-      "pic": "bach.hypercomment.svg"
-    }
-  },
-  "bach.integrate": {
-    "digest": "Integrate functions",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "integrate",
-      "integral function",
-      "function",
-      "breakpoint function",
-      "lambda loop",
-      "calculate"
-    ],
-    "seealso": [
-      "bach.derive",
-      "bach.expr",
-      "bach.slot",
-      "bach.reducefunction"
-    ]
-  },
-  "bach.ivec": {
-    "digest": "Compute the interval vector of a pitch-class set",
+  "bach.zsearch": {
+    "digest": "Search for Z-related pitch-class sets",
     "module": "bach",
     "category": [
       "bach",
@@ -2851,109 +2482,31 @@
       "bach set theory"
     ],
     "keywords": [
-      "interval",
-      "vector",
-      "compute",
-      "calculate",
+      "Z-relation",
       "pitch-class",
       "set",
-      "interval vector",
-      "k-deck"
+      "search",
+      "find",
+      "k-deck",
+      "copy",
+      "group",
+      "action",
+      "transposition",
+      "inversion",
+      "prime form",
+      "normal form",
+      "family",
+      "interval vector"
     ],
     "seealso": [
       "bach.ifunc",
-      "bach.zsearch",
-      "bach.circle",
       "bach.primeform",
-      "bach.pcsetinfo"
-    ]
-  },
-  "bach.linearsolve": {
-    "digest": "Solve a linear system of equations",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "solve",
-      "linear system",
-      "equation",
-      "matrix",
-      "column",
-      "vector"
-    ],
-    "seealso": [
-      "bach.gausselim",
-      "bach.mtimes",
-      "bach.eig",
-      "bach.det",
-      "bach.rank",
-      "Into The Matrix"
-    ]
-  },
-  "bach.llll2dict": {
-    "digest": "Convert an llll into a dictionary",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "convert",
-      "`dictionary",
-      "name",
-      "element",
-      "tree"
-    ],
-    "seealso": [
-      "bach.dict2llll",
-      "dict",
-      "bach.tree"
-    ]
-  },
-  "bach.mc2p": {
-    "digest": "MIDIcents to pitch conversion",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach notation"
-    ],
-    "keywords": [
-      "convert",
-      "midicent",
-      "cent",
-      "note",
-      "name",
-      "pitch"
-    ],
-    "seealso": [
-      "bach.p2mc",
-      "bach.f2mc",
-      "bach.mc2f"
-    ]
-  },
-  "bach.minfo": {
-    "digest": "Report information about a matrix",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-    ],
-    "seealso": [
-      "bach.diag",
-      "bach.submatrix",
-      "bach.idmatrix",
-      "bach.mrandom",
-      "bach.wellshape",
-      "bach.m2jitcellblock",
-      "Into The Matrix"
+      "bach.circle",
+      "bach.ivec",
+      "bach.pcsetinfo",
+      "bach.mod+",
+      "bach.mod-",
+      "bach.modtimes"
     ]
   },
   "bach.mtimes": {
@@ -3005,29 +2558,8 @@
       "The World Outside"
     ]
   },
-  "bach.p2mc": {
-    "digest": "Pitches to MIDIcents conversion",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach notation"
-    ],
-    "keywords": [
-      "convert",
-      "midicent",
-      "cent",
-      "note",
-      "name"
-    ],
-    "seealso": [
-      "bach.mc2p",
-      "bach.f2mc",
-      "bach.mc2f"
-    ]
-  },
-  "bach.pad": {
-    "digest": "Pad, loop or trim an llll",
+  "bach.poset": {
+    "digest": "Partially ordered sets",
     "module": "bach",
     "category": [
       "bach",
@@ -3035,16 +2567,70 @@
       "bach llll"
     ],
     "keywords": [
-      "repeat",
-      "size",
-      "length",
-      "trim",
-      "extend",
-      "loop"
+      "set",
+      "order",
+      "partial",
+      "lattice",
+      "diagram"
     ],
     "seealso": [
-      "bach.length",
-      "bach.repeat"
+      "bach.&gt;",
+      "bach.&lt;",
+      "bach.&gt;=",
+      "bach.&lt;="
+    ]
+  },
+  "bach.transcribe": {
+    "digest": "Fills a <o>bach.roll</o> according to incoming MIDI data",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "transcribe",
+      "write",
+      "fill",
+      "MIDI",
+      "stream",
+      "pitch",
+      "velocity",
+      "cent",
+      "midicent",
+      "voice",
+      "number",
+      "duration",
+      "insert",
+      "note",
+      "proportional"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.quantize",
+      "bach.ezmidiplay",
+      "Real Time Stories"
+    ]
+  },
+  "bach.llll2dict": {
+    "digest": "Convert an llll into a dictionary",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "convert",
+      "`dictionary",
+      "name",
+      "element",
+      "tree"
+    ],
+    "seealso": [
+      "bach.dict2llll",
+      "dict",
+      "bach.tree"
     ]
   },
   "bach.partition": {
@@ -3070,8 +2656,54 @@
       "bach.prod"
     ]
   },
-  "bach.playkeys": {
-    "digest": "Extract play information",
+  "bach.diag": {
+    "digest": "Build a diagonal matrix",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "matrix",
+      "diagonal",
+      "shift",
+      "secondary",
+      "main",
+      "build"
+    ],
+    "seealso": [
+      "bach.minfo",
+      "bach.submatrix",
+      "bach.idmatrix",
+      "bach.mrandom",
+      "bach.wellshape",
+      "bach.m2jitcellblock",
+      "Into The Matrix"
+    ]
+  },
+  "bach.recurser": {
+    "digest": "Series from recurrence relations",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "series",
+      "recurrence",
+      "calculate",
+      "fibonacci"
+    ],
+    "seealso": [
+      "bach.primeser",
+      "bach.geomser",
+      "bach.arithmser"
+    ]
+  },
+  "bach.beatunbox": {
+    "digest": "Flatten measure-wise parameters into plain voice-wise information",
     "module": "bach",
     "category": [
       "bach",
@@ -3079,77 +2711,71 @@
       "bach notation"
     ],
     "keywords": [
-      "keys",
-      "play",
-      "unpack",
-      "unpacknote",
-      "parameter",
-      "playout",
-      "syntax"
+      "unbox",
+      "measure",
+      "parenthesis",
+      "unwrap",
+      "flat",
+      "measurewise",
+      "voicewise",
+      "format",
+      "flow",
+      "plain",
+      "measureinfo"
     ],
     "seealso": [
-      "bach.keys",
-      "bach.roll",
-      "bach.score"
+      "bach.beatbox",
+      "bach.score",
+      "bach.quantize",
+      "bach.score2roll",
+      "Through The Looking Glass"
     ]
   },
-  "bach.poset": {
-    "digest": "Partially ordered sets",
+  "bach.dict2llll": {
+    "digest": "Convert a dictionary into an llll",
     "module": "bach",
     "category": [
       "bach",
-      "bach objects",
+      "bach abstractions",
       "bach llll"
     ],
     "keywords": [
-      "set",
-      "order",
-      "partial",
-      "lattice",
-      "diagram"
+      "convert",
+      "`dictionary",
+      "name",
+      "element",
+      "tree"
     ],
     "seealso": [
-      "bach.&gt;",
-      "bach.&lt;",
-      "bach.&gt;=",
-      "bach.&lt;="
+      "bach.llll2dict",
+      "dict",
+      "bach.tree"
     ]
   },
-  "bach.primeform": {
-    "digest": "Compute the prime form of a pitch-class set",
+  "bach.reducefunction": {
+    "digest": "Simplify breakpoint functions",
     "module": "bach",
     "category": [
       "bach",
       "bach objects",
-      "bach set theory"
+      "bach math"
     ],
     "keywords": [
-      "prime form",
-      "pitch-class",
-      "normal form",
-      "order",
-      "group",
-      "modulo",
-      "action",
-      "copy",
-      "compute",
-      "calculate",
-      "transpose",
-      "invert"
+      "simplify",
+      "reduce",
+      "breakpoint function",
+      "prune",
+      "smooth"
     ],
     "seealso": [
-      "bach.ifunc",
-      "bach.zsearch",
-      "bach.circle",
-      "bach.ivec",
-      "bach.pcsetinfo",
-      "bach.mod+",
-      "bach.mod-",
-      "bach.modtimes"
+      "bach.slot",
+      "bach.roll",
+      "bach.score",
+      "bach.resample"
     ]
   },
-  "bach.quantize": {
-    "digest": "Perform quantization tasks",
+  "bach.p2mc": {
+    "digest": "Pitches to MIDIcents conversion",
     "module": "bach",
     "category": [
       "bach",
@@ -3157,63 +2783,62 @@
       "bach notation"
     ],
     "keywords": [
-      "quantize",
-      "measureinfo",
       "convert",
-      "measured",
-      "proportional",
-      "marker",
-      "minimal units",
-      "grace notes",
-      "box",
-      "approximate",
-      "distance",
-      "time signature",
-      "tempo",
-      "barline"
+      "midicent",
+      "cent",
+      "note",
+      "name"
     ],
     "seealso": [
-      "bach.roll",
-      "bach.score",
-      "bach.beatbox",
-      "bach.beatunbox",
-      "bach.score2roll",
-      "bach.mono",
-      "Real Time Stories"
+      "bach.mc2p",
+      "bach.f2mc",
+      "bach.mc2f"
     ]
   },
-  "bach.quantize": {
-    "digest": "Perform quantization tasks",
+  "bach.submatrix": {
+    "digest": "Get a submatrix of a matrix",
     "module": "bach",
     "category": [
       "bach",
       "bach objects",
-      "bach notation"
+      "bach matrix calculus"
     ],
     "keywords": [
-      "quantize",
-      "measureinfo",
-      "convert",
-      "measured",
-      "proportional",
-      "marker",
-      "minimal units",
-      "grace notes",
-      "box",
-      "approximate",
-      "distance",
-      "time signature",
-      "tempo",
-      "barline"
+      "matrix",
+      "crop",
+      "cut",
+      "slice"
     ],
     "seealso": [
-      "bach.roll",
-      "bach.score",
-      "bach.beatbox",
-      "bach.beatunbox",
-      "bach.score2roll",
-      "bach.mono",
-      "Real Time Stories"
+      "bach.minfo",
+      "bach.diag",
+      "bach.idmatrix",
+      "bach.wellshape",
+      "bach.m2jitcellblock",
+      "Into The Matrix"
+    ]
+  },
+  "bach.convertbase": {
+    "digest": "Perform base conversion for numbers",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "convert",
+      "base",
+      "conversion",
+      "number",
+      "digit"
+    ],
+    "seealso": [
+      "bach.factorize",
+      "bach./",
+      "bach.%",
+      "bach.gcd",
+      "bach.lcm"
     ]
   },
   "bach.ratnum": {
@@ -3249,28 +2874,6 @@
       "pic": "bach.ratnum.svg"
     }
   },
-  "bach.reducefunction": {
-    "digest": "Simplify breakpoint functions",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach math"
-    ],
-    "keywords": [
-      "simplify",
-      "reduce",
-      "breakpoint function",
-      "prune",
-      "smooth"
-    ],
-    "seealso": [
-      "bach.slot",
-      "bach.roll",
-      "bach.score",
-      "bach.resample"
-    ]
-  },
   "bach.resample": {
     "digest": "Resample lllls",
     "module": "bach",
@@ -3294,6 +2897,63 @@
     "seealso": [
       "bach.reducefunction",
       "bach.fft"
+    ]
+  },
+  "bach.bachtree2omtree": {
+    "digest": "Convert a bach rhythmic tree into an OpenMusic rhythmic tree",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "rhythmic tree",
+      "tree",
+      "rhythm",
+      "convert",
+      "OpenMusic",
+      "measureinfo",
+      "duration"
+    ],
+    "seealso": [
+      "bach.omtree2bachtree",
+      "bach.score",
+      "The World Outside"
+    ]
+  },
+  "bach.quantize": {
+    "digest": "Perform quantization tasks",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "quantize",
+      "measureinfo",
+      "convert",
+      "measured",
+      "proportional",
+      "marker",
+      "minimal units",
+      "grace notes",
+      "box",
+      "approximate",
+      "distance",
+      "time signature",
+      "tempo",
+      "barline"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.score",
+      "bach.beatbox",
+      "bach.beatunbox",
+      "bach.score2roll",
+      "bach.mono",
+      "Real Time Stories"
     ]
   },
   "bach.roll": {
@@ -3369,6 +3029,232 @@
       "action": "bach.roll",
       "pic": "bach.roll.svg"
     }
+  },
+  "bach.hypercomment": {
+    "digest": "A <o>comment</o> with hyperlink references",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach interface",
+      "U/I",
+      "bach miscellanea"
+    ],
+    "keywords": [
+      "comment",
+      "link",
+      "hyperlink",
+      "reference",
+      "hand",
+      "write",
+      "send",
+      "click"
+    ],
+    "seealso": [
+      "comment",
+      "bach.wordcloud"
+    ],
+    "palette": {
+      "category": [
+        "bach",
+        "bach objects",
+        "bach interface",
+        "U/I",
+        "bach miscellanea"
+      ],
+      "action": "bach.hypercomment",
+      "pic": "bach.hypercomment.svg"
+    }
+  },
+  "bach.gausselim": {
+    "digest": "Perform matrix gaussian elimination",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "reduce",
+      "matrix",
+      "Gauss elimination",
+      "echelon form",
+      "determinant",
+      "rank",
+      "swap",
+      "row",
+      "column"
+    ],
+    "seealso": [
+      "bach.linearsolve",
+      "bach.extractbasis",
+      "bach.det",
+      "bach.rank",
+      "bach.im",
+      "bach.ker",
+      "bach.inv",
+      "Into The Matrix"
+    ]
+  },
+  "bach.derive": {
+    "digest": "Derive functions",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "derive",
+      "derivative",
+      "function",
+      "breakpoint function",
+      "lambda loop"
+    ],
+    "seealso": [
+      "bach.integrate",
+      "bach.expr",
+      "bach.slot",
+      "bach.reducefunction"
+    ]
+  },
+  "bach.float2rat": {
+    "digest": "Approximate a floating point number with a rational number",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "convert",
+      "floating point",
+      "rational",
+      "number",
+      "approximate",
+      "threshold",
+      "denominator",
+      "error"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.ratnum",
+      "bach.quantize"
+    ]
+  },
+  "bach.fft": {
+    "digest": "Fast Fourier transform for lllls",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "Fourier",
+      "transform",
+      "discrete"
+    ],
+    "seealso": [
+      "fft~",
+      "bach.expr",
+      "bach.pol2car",
+      "bach.car2pol",
+      "bach.resample"
+    ]
+  },
+  "bach.integrate": {
+    "digest": "Integrate functions",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math"
+    ],
+    "keywords": [
+      "integrate",
+      "integral function",
+      "function",
+      "breakpoint function",
+      "lambda loop",
+      "calculate"
+    ],
+    "seealso": [
+      "bach.derive",
+      "bach.expr",
+      "bach.slot",
+      "bach.reducefunction"
+    ]
+  },
+  "bach.circle": {
+    "digest": "Clock diagram",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach set theory",
+      "bach interface",
+      "U/I"
+    ],
+    "keywords": [
+      "circle",
+      "diagram",
+      "clock",
+      "pitch-class",
+      "set",
+      "rhythm",
+      "loop",
+      "velocity",
+      "select",
+      "rotate",
+      "transpose",
+      "invert",
+      "microtone"
+    ],
+    "seealso": [
+      "bach.primeform",
+      "bach.pcsetinfo",
+      "bach.mod+",
+      "bach.mod-",
+      "bach.modtimes",
+      "bach.compl"
+    ],
+    "palette": {
+      "category": [
+        "bach",
+        "bach objects",
+        "bach set theory",
+        "bach interface",
+        "U/I"
+      ],
+      "action": "bach.circle",
+      "pic": "bach.circle.svg"
+    }
+  },
+  "bach.extractbasis": {
+    "digest": "Find linearly independent vectors",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "extract",
+      "find",
+      "basis",
+      "vector",
+      "orthogonal",
+      "unitary",
+      "linear independence"
+    ],
+    "seealso": [
+      "bach.gausselim",
+      "bach.linearsolve",
+      "bach.ker",
+      "bach.im",
+      "Into The Matrix"
+    ]
   },
   "bach.score": {
     "digest": "Display and edit a score in classical notation",
@@ -3455,27 +3341,178 @@
       "pic": "bach.score.svg"
     }
   },
-  "bach.submatrix": {
-    "digest": "Get a submatrix of a matrix",
+  "bach.primeform": {
+    "digest": "Compute the prime form of a pitch-class set",
     "module": "bach",
     "category": [
       "bach",
       "bach objects",
-      "bach matrix calculus"
+      "bach set theory"
     ],
     "keywords": [
-      "matrix",
-      "crop",
-      "cut",
-      "slice"
+      "prime form",
+      "pitch-class",
+      "normal form",
+      "order",
+      "group",
+      "modulo",
+      "action",
+      "copy",
+      "compute",
+      "calculate",
+      "transpose",
+      "invert"
     ],
     "seealso": [
-      "bach.minfo",
-      "bach.diag",
-      "bach.idmatrix",
-      "bach.wellshape",
-      "bach.m2jitcellblock",
-      "Into The Matrix"
+      "bach.ifunc",
+      "bach.zsearch",
+      "bach.circle",
+      "bach.ivec",
+      "bach.pcsetinfo",
+      "bach.mod+",
+      "bach.mod-",
+      "bach.modtimes"
+    ]
+  },
+  "bach.mc2p": {
+    "digest": "MIDIcents to pitch conversion",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "convert",
+      "midicent",
+      "cent",
+      "note",
+      "name",
+      "pitch"
+    ],
+    "seealso": [
+      "bach.p2mc",
+      "bach.f2mc",
+      "bach.mc2f"
+    ]
+  },
+  "bach.pad": {
+    "digest": "Pad, loop or trim an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "repeat",
+      "size",
+      "length",
+      "trim",
+      "extend",
+      "loop"
+    ],
+    "seealso": [
+      "bach.length",
+      "bach.repeat"
+    ]
+  },
+  "bach.slot": {
+    "digest": "Display and edit a single slot window",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation",
+      "bach interface",
+      "U/I"
+    ],
+    "keywords": [
+      "slot",
+      "display",
+      "edit",
+      "breakpoint function",
+      "filter",
+      "spat",
+      "number",
+      "list",
+      "matrix",
+      "color",
+      "select"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.score",
+      "bach.slot2line",
+      "bach.slot2curve",
+      "bach.slot2filtercoeff",
+      "Slot Machines"
+    ],
+    "palette": {
+      "category": [
+        "bach",
+        "bach objects",
+        "bach notation",
+        "bach interface",
+        "U/I"
+      ],
+      "action": "bach.slot",
+      "pic": "bach.slot.svg"
+    }
+  },
+  "bach.beatbox": {
+    "digest": "Box voice-wise parameters into measure-wise information",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "box",
+      "measure",
+      "parenthesis",
+      "wrap",
+      "measurewise",
+      "voicewise",
+      "format",
+      "flow",
+      "plain",
+      "measureinfo",
+      "beat"
+    ],
+    "seealso": [
+      "bach.beatunbox",
+      "bach.score",
+      "bach.quantize",
+      "bach.score2roll",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.ivec": {
+    "digest": "Compute the interval vector of a pitch-class set",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach set theory"
+    ],
+    "keywords": [
+      "interval",
+      "vector",
+      "compute",
+      "calculate",
+      "pitch-class",
+      "set",
+      "interval vector",
+      "k-deck"
+    ],
+    "seealso": [
+      "bach.ifunc",
+      "bach.zsearch",
+      "bach.circle",
+      "bach.primeform",
+      "bach.pcsetinfo"
     ]
   },
   "bach.tonnetz": {
@@ -3520,8 +3557,8 @@
       "pic": "bach.tonnetz.svg"
     }
   },
-  "bach.trace": {
-    "digest": "Compute the trace of a matrix",
+  "bach.adj": {
+    "digest": "Compute the adjugate of a matrix",
     "module": "bach",
     "category": [
       "bach",
@@ -3529,22 +3566,64 @@
       "bach matrix calculus"
     ],
     "keywords": [
+      "adjoint",
       "matrix",
-      "trace",
-      "sum",
-      "diagonal",
-      "calculate",
-      "compute",
-      "element"
+      "adjugate",
+      "transpose",
+      "cofactor",
+      "determinant",
+      "inverse",
+      "invert"
     ],
     "seealso": [
-      "bach.det",
-      "bach.m2jitcellblock",
-      "Into The Matrix"
+      "bach.trans",
+      "bach.inv",
+      "bach.m2jitcellblock"
     ]
   },
-  "bach.transcribe": {
-    "digest": "Fills a <o>bach.roll</o> according to incoming MIDI data",
+  "bach.graph": {
+    "digest": "Plot a graph",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach math",
+      "bach interface",
+      "U/I"
+    ],
+    "keywords": [
+      "plot",
+      "graph",
+      "draw",
+      "function",
+      "display",
+      "vector",
+      "curve",
+      "parametric",
+      "polar",
+      "cartesian",
+      "coordinate",
+      "expression"
+    ],
+    "seealso": [
+      "bach.expr",
+      "plot~",
+      "Into The Matrix"
+    ],
+    "palette": {
+      "category": [
+        "bach",
+        "bach objects",
+        "bach math",
+        "bach interface",
+        "U/I"
+      ],
+      "action": "bach.graph",
+      "pic": "bach.graph.svg"
+    }
+  },
+  "bach.playkeys": {
+    "digest": "Extract play information",
     "module": "bach",
     "category": [
       "bach",
@@ -3552,26 +3631,108 @@
       "bach notation"
     ],
     "keywords": [
-      "transcribe",
-      "write",
-      "fill",
-      "MIDI",
-      "stream",
-      "pitch",
-      "velocity",
-      "cent",
-      "midicent",
-      "voice",
-      "number",
-      "duration",
-      "insert",
-      "note",
-      "proportional"
+      "keys",
+      "play",
+      "unpack",
+      "unpacknote",
+      "parameter",
+      "playout",
+      "syntax"
+    ],
+    "seealso": [
+      "bach.keys",
+      "bach.roll",
+      "bach.score"
+    ]
+  },
+  "bach.linearsolve": {
+    "digest": "Solve a linear system of equations",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "solve",
+      "linear system",
+      "equation",
+      "matrix",
+      "column",
+      "vector"
+    ],
+    "seealso": [
+      "bach.gausselim",
+      "bach.mtimes",
+      "bach.eig",
+      "bach.det",
+      "bach.rank",
+      "Into The Matrix"
+    ]
+  },
+  "bach.wordcloud": {
+    "digest": "Display a word cloud",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach interface",
+      "U/I",
+      "bach miscellanea"
+    ],
+    "keywords": [
+      "word",
+      "cloud",
+      "tag",
+      "display",
+      "click"
+    ],
+    "seealso": [
+      "bach.hypercomment"
+    ],
+    "palette": {
+      "category": [
+        "bach",
+        "bach objects",
+        "bach interface",
+        "U/I",
+        "bach miscellanea"
+      ],
+      "action": "bach.wordcloud",
+      "pic": "bach.wordcloud.svg"
+    }
+  },
+  "bach.quantize": {
+    "digest": "Perform quantization tasks",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach notation"
+    ],
+    "keywords": [
+      "quantize",
+      "measureinfo",
+      "convert",
+      "measured",
+      "proportional",
+      "marker",
+      "minimal units",
+      "grace notes",
+      "box",
+      "approximate",
+      "distance",
+      "time signature",
+      "tempo",
+      "barline"
     ],
     "seealso": [
       "bach.roll",
-      "bach.quantize",
-      "bach.ezmidiplay",
+      "bach.score",
+      "bach.beatbox",
+      "bach.beatunbox",
+      "bach.score2roll",
+      "bach.mono",
       "Real Time Stories"
     ]
   },
@@ -3617,119 +3778,8 @@
       "pic": "bach.tree.svg"
     }
   },
-  "bach.slot": {
-    "digest": "Display and edit a single slot window",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach notation",
-      "bach interface",
-      "U/I"
-    ],
-    "keywords": [
-      "slot",
-      "display",
-      "edit",
-      "breakpoint function",
-      "filter",
-      "spat",
-      "number",
-      "list",
-      "matrix",
-      "color",
-      "select"
-    ],
-    "seealso": [
-      "bach.roll",
-      "bach.score",
-      "bach.slot2line",
-      "bach.slot2curve",
-      "bach.slot2filtercoeff",
-      "Slot Machines"
-    ],
-    "palette": {
-      "category": [
-        "bach",
-        "bach objects",
-        "bach notation",
-        "bach interface",
-        "U/I"
-      ],
-      "action": "bach.slot",
-      "pic": "bach.slot.svg"
-    }
-  },
-  "bach.wordcloud": {
-    "digest": "Display a word cloud",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach interface",
-      "U/I",
-      "bach miscellanea"
-    ],
-    "keywords": [
-      "word",
-      "cloud",
-      "tag",
-      "display",
-      "click"
-    ],
-    "seealso": [
-      "bach.hypercomment"
-    ],
-    "palette": {
-      "category": [
-        "bach",
-        "bach objects",
-        "bach interface",
-        "U/I",
-        "bach miscellanea"
-      ],
-      "action": "bach.wordcloud",
-      "pic": "bach.wordcloud.svg"
-    }
-  },
-  "bach.zsearch": {
-    "digest": "Search for Z-related pitch-class sets",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach set theory"
-    ],
-    "keywords": [
-      "Z-relation",
-      "pitch-class",
-      "set",
-      "search",
-      "find",
-      "k-deck",
-      "copy",
-      "group",
-      "action",
-      "transposition",
-      "inversion",
-      "prime form",
-      "normal form",
-      "family",
-      "interval vector"
-    ],
-    "seealso": [
-      "bach.ifunc",
-      "bach.primeform",
-      "bach.circle",
-      "bach.ivec",
-      "bach.pcsetinfo",
-      "bach.mod+",
-      "bach.mod-",
-      "bach.modtimes"
-    ]
-  },
-  "bach.approx": {
-    "digest": "Snap pitches or MIDIcents to microtonal grid",
+  "bach.sliceheader": {
+    "digest": "Separate header and body of a gathered syntax",
     "module": "bach",
     "category": [
       "bach",
@@ -3737,19 +3787,90 @@
       "bach notation"
     ],
     "keywords": [
-      "cent",
-      "midicent",
-      "approximate",
-      "snap",
-      "grid",
-      "microtone",
-      "nearest",
-      "pitch"
+      "header",
+      "information",
+      "slice",
+      "separate",
+      "body",
+      "gathered syntax",
+      "content",
+      "split",
+      "retrieve"
     ],
     "seealso": [
-      "bach.expr",
-      "bach.mc2pc",
-      "bach.pc2mc"
+      "bach.roll",
+      "bach.score",
+      "bach.slice"
+    ]
+  },
+  "bach.fact": {
+    "digest": "Compute factorial",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "factorial",
+      "product",
+      "number",
+      "compute",
+      "calculate"
+    ],
+    "seealso": [
+      "bach.bin",
+      "bach.prod"
+    ]
+  },
+  "bach.mode": {
+    "digest": "Find the mode of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "mode",
+      "number",
+      "statistics",
+      "compute",
+      "calculate"
+    ],
+    "seealso": [
+      "bach.quantiles",
+      "bach.mean",
+      "bach.median",
+      "bach.variance",
+      "bach.stdev",
+      "bach.skewness",
+      "bach.kurtosis"
+    ]
+  },
+  "bach.postpend": {
+    "digest": "Append an llll at the end of input",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "postpend",
+      "combine",
+      "concatenate",
+      "add",
+      "back",
+      "end",
+      "join",
+      "append"
+    ],
+    "seealso": [
+      "bach.prepend",
+      "bach.join",
+      "bach.insert",
+      "bach.pack"
     ]
   },
   "bach.belong": {
@@ -3774,259 +3895,8 @@
       "bach.filter"
     ]
   },
-  "bach.bin": {
-    "digest": "Compute binomial coefficient",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "compute",
-      "calculate",
-      "binomial coefficient",
-      "combinations"
-    ],
-    "seealso": [
-      "bach.fact",
-      "bach.prod"
-    ]
-  },
-  "bach.cartopol": {
-    "digest": "Cartesian to polar coordinate conversion for lllls",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "polar",
-      "cartesian",
-      "coordinate",
-      "convert",
-      "amplitude",
-      "phase",
-      "angle",
-      "radius",
-      "real",
-      "imaginary",
-      "part"
-    ],
-    "seealso": [
-      "bach.poltocar",
-      "bach.expr",
-      "bach.fft"
-    ]
-  },
-  "bach.change": {
-    "digest": "Filter out repetitions of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "filter",
-      "repetition",
-      "change"
-    ],
-    "seealso": [
-      "change",
-      "bach.reg",
-      "bach.eq",
-      "bach.neq"
-    ]
-  },
-  "bach.chordrev": {
-    "digest": "Reverse the non-rest elements of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "chord",
-      "reverse",
-      "sequence",
-      "ties",
-      "duration",
-      "retrograde"
-    ],
-    "seealso": [
-      "bach.tierev",
-      "bach.chordrot",
-      "bach.restrot",
-      "bach.fromc&amp;r",
-      "bach.toc&amp;r",
-      "bach.score",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.chordrot": {
-    "digest": "Rotate the non-rest elements of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "chord",
-      "rotate",
-      "talea",
-      "sequence"
-    ],
-    "seealso": [
-      "bach.restrot",
-      "bach.chordrev",
-      "bach.tierev",
-      "bach.fromc&amp;r",
-      "bach.toc&amp;r",
-      "bach.score",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.combinevoices": {
-    "digest": "Combine voices into a new bach.roll or bach.score",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "join",
-      "combine",
-      "voice",
-      "measured",
-      "proportional"
-    ],
-    "seealso": [
-      "bach.roll",
-      "bach.score",
-      "bach.join"
-    ]
-  },
-  "bach.compl": {
-    "digest": "Find complement of a pitch-class set",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach set theory"
-    ],
-    "keywords": [
-      "complement",
-      "pitch-class",
-      "modulo",
-      "negative"
-    ],
-    "seealso": [
-      "bach.circle",
-      "bach.mod+",
-      "bach.mod-",
-      "bach.modtimes",
-      "bach.pcsetinfo"
-    ]
-  },
-  "bach.coprime": {
-    "digest": "Test if numbers are coprime",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "coprime",
-      "prime",
-      "number",
-      "greatest common divisor"
-    ],
-    "seealso": [
-      "bach.prime",
-      "bach.primeser",
-      "bach.factorize",
-      "bach.coprimeser",
-      "bach.gcd",
-      "bach.lcm"
-    ]
-  },
-  "bach.coprimeser": {
-    "digest": "Coprime number series",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "coprime",
-      "prime",
-      "number",
-      "greatest common divisor",
-      "series",
-      "sequence"
-    ],
-    "seealso": [
-      "bach.arithmser",
-      "bach.geomser",
-      "bach.primeser",
-      "bach.coprime",
-      "bach.factorize",
-      "bach.gcd",
-      "bach.lcm"
-    ]
-  },
-  "bach.counter": {
-    "digest": "Multi-index counter",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "count",
-      "index",
-      "minimum",
-      "maximum",
-      "memory",
-      "list"
-    ],
-    "seealso": [
-      "counter",
-      "bach.expr",
-      "bach.+",
-      "bach.reg"
-    ]
-  },
-  "bach.cross": {
-    "digest": "Compute the cross product of two lllls",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "vector product",
-      "cross product",
-      "coordinate",
-      "vector",
-      "cartesian",
-      "orthogonal"
-    ],
-    "seealso": [
-      "bach.mtimes"
-    ]
-  },
-  "bach.det": {
-    "digest": "Compute the determinant of a matrix",
+  "bach.ker": {
+    "digest": "Find the kernel of a matrix",
     "module": "bach",
     "category": [
       "bach",
@@ -4034,219 +3904,42 @@
       "bach matrix calculus"
     ],
     "keywords": [
-      "determinant",
+      "kernel",
       "matrix",
-      "calculate",
-      "compute",
-      "Gauss elimination"
+      "nullity",
+      "vector",
+      "multiplication",
+      "extract",
+      "basis"
     ],
     "seealso": [
-      "bach.trace",
+      "bach.im",
+      "bach.extractbasis",
+      "bach.lienarsolve",
       "bach.gausselim",
-      "bach.rank",
-      "bach.inv",
       "Into The Matrix"
     ]
   },
-  "bach.divisors": {
-    "digest": "Find divisors of a number",
+  "bach.mod-": {
+    "digest": "Modular arithmetic subtraction",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach math"
+      "bach set theory"
     ],
     "keywords": [
-      "compute",
-      "calculate",
-      "binomial coefficient",
-      "combinations"
-    ],
-    "seealso": [
-      "bach.factorize",
-      "bach./",
-      "bach.%",
-      "bach.expr"
-    ]
-  },
-  "bach.drip": {
-    "digest": "Automatically step through lllls with delays",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "drip",
-      "iterate",
-      "delay",
-      "metro",
-      "sequence",
-      "step"
-    ],
-    "seealso": [
-      "bach.step"
-    ]
-  },
-  "bach.dsort": {
-    "digest": "Sort llll by distances",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "sort",
-      "distance",
-      "element",
-      "number"
-    ],
-    "seealso": [
-      "bach.sort",
-      "bach.ssort",
-      "bach.msort"
-    ]
-  },
-  "bach.enharm": {
-    "digest": "Handle enharmonicity",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "pitch",
-      "enharmonicity",
-      "retranscribe",
-      "respell",
-      "note"
-    ],
-    "seealso": [
-      "bach.expr",
-      "bach.mc2pc",
-      "bach.pc2mc"
-    ]
-  },
-  "bach.ezmidiplay": {
-    "digest": "Quick way to play MIDI",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "MIDI",
-      "play",
-      "playout",
-      "stream",
-      "noteon",
-      "noteoff"
-    ],
-    "seealso": [
-      "bach.roll",
-      "bach.score",
-      "bach.playkeys",
-      "makenote",
-      "noteout",
-      "Brother John",
-      "The Gift Of Synthesis"
-    ]
-  },
-  "bach.f2mc": {
-    "digest": "Frequency to midicents conversion",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "frequency",
-      "cent",
-      "midicent",
-      "convert",
-      "pitch"
-    ],
-    "seealso": [
-      "bach.mc2f",
-      "mtof",
-      "ftom",
-      "bach.n2mc",
-      "bach.mc2n",
-      "bach.mc2r",
-      "bach.r2mc",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.fact": {
-    "digest": "Compute factorial",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "factorial",
-      "product",
+      "modulo",
+      "subtraction",
       "number",
-      "compute",
-      "calculate"
+      "pitch-class",
+      "minus"
     ],
     "seealso": [
-      "bach.bin",
-      "bach.prod"
-    ]
-  },
-  "bach.fromc&r": {
-    "digest": "Reassemble non-rest and rest elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "chord",
-      "rest",
-      "convert",
-      "assemble",
-      "position",
-      "index"
-    ],
-    "seealso": [
-      "bach.toc&amp;r",
-      "bach.insert",
-      "bach.chordrot",
-      "bach.chordrev",
-      "bach.restrot",
-      "bach.score",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.funnel": {
-    "digest": "Index llll elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "index",
-      "funnel",
-      "enumerate",
-      "element",
-      "number"
-    ],
-    "seealso": [
-      "listfunnel",
-      "bach.trans",
-      "bach.join"
+      "bach.-",
+      "bach.%",
+      "bach.mod+",
+      "bach.mod*"
     ]
   },
   "bach.gcd": {
@@ -4271,51 +3964,155 @@
       "bach.coprimeser"
     ]
   },
-  "bach.getcol": {
-    "digest": "Get a column of a matrix",
+  "bach.slot2filtercoeff": {
+    "digest": "Convert a dynfilter-slot content into messages to drive <o>filtercoeff~</o>",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach matrix calculus"
+      "bach notation"
     ],
     "keywords": [
-      "column",
-      "matrix",
-      "extract",
-      "pick"
+      "slot",
+      "filter",
+      "sequence",
+      "convert",
+      "filtercoeff~"
     ],
     "seealso": [
-      "bach.getrow",
-      "bach.submatrix",
-      "bach.nth",
-      "bach.trans",
-      "bach.minfo"
+      "bach.slot2curve",
+      "bach.slot2line",
+      "filtercoeff~",
+      "biquad~",
+      "bach.roll",
+      "bach.score",
+      "bach.slot"
     ]
   },
-  "bach.getrow": {
-    "digest": "Get a row of a matrix",
+  "bach.restrot": {
+    "digest": "Rotate the negative signs of an llll",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach matrix calculus"
+      "bach notation"
     ],
     "keywords": [
-      "row",
-      "matrix",
-      "extract",
-      "pick"
+      "rest",
+      "rotate",
+      "sign",
+      "negative",
+      "duration",
+      "talea"
     ],
     "seealso": [
-      "bach.getcol",
-      "bach.submatrix",
-      "bach.nth",
-      "bach.minfo"
+      "bach.restrot",
+      "bach.chordrot",
+      "bach.fromc&amp;r",
+      "bach.toc&amp;r",
+      "bach.score"
     ]
   },
-  "bach.histo": {
-    "digest": "Build histograms",
+  "bach.toc&r": {
+    "digest": "Route non-rest and rest elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "chord",
+      "rest",
+      "convert",
+      "route",
+      "divide",
+      "split",
+      "position",
+      "index"
+    ],
+    "seealso": [
+      "bach.fromc&amp;r",
+      "bach.insert",
+      "bach.chordrot",
+      "bach.chordrev",
+      "bach.restrot bach.score",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.istruct": {
+    "digest": "Get the interval structure pitch-class set",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach set theory"
+    ],
+    "keywords": [
+      "interval structure",
+      "interval",
+      "modulo",
+      "pitch-class",
+      "distance",
+      "element",
+      "loop"
+    ],
+    "seealso": [
+      "bach.primeform",
+      "bach.circle",
+      "bach.mod+",
+      "bach.mod-",
+      "bach.modtimes",
+      "bach.period",
+      "bach.ifunc"
+    ]
+  },
+  "bach.norm": {
+    "digest": "Find the norm of a vector",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "norm",
+      "calculate",
+      "compute",
+      "distance",
+      "square",
+      "element",
+      "sum",
+      "square root"
+    ],
+    "seealso": [
+      "bach.normalize",
+      "Into The Matrix"
+    ]
+  },
+  "bach.combinevoices": {
+    "digest": "Combine voices into a new bach.roll or bach.score",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "join",
+      "combine",
+      "voice",
+      "measured",
+      "proportional"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.score",
+      "bach.join"
+    ]
+  },
+  "bach.change": {
+    "digest": "Filter out repetitions of an llll",
     "module": "bach",
     "category": [
       "bach",
@@ -4323,69 +4120,15 @@
       "bach llll"
     ],
     "keywords": [
-      "histogram",
-      "integer",
-      "number",
-      "build",
-      "count",
-      "appearance",
-      "statistics",
-      "word",
-      "dictionary",
-      "unique",
-      "occurrence",
-      "show up"
+      "filter",
+      "repetition",
+      "change"
     ],
     "seealso": [
-      "histo",
-      "bach.iter",
-      "bach.collect"
-    ]
-  },
-  "bach.idmatrix": {
-    "digest": "Build identity matrix",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "matrix",
-      "identity",
-      "build",
-      "square",
-      "size"
-    ],
-    "seealso": [
-      "bach.idvector",
-      "bach.minfo",
-      "bach.diag",
-      "bach.mrandom",
-      "bach.wellshape",
-      "bach.m2jitcellblock",
-      "Into The Matrix"
-    ]
-  },
-  "bach.idvector": {
-    "digest": "Build cartesian versors and combinations",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "vector",
-      "identity",
-      "versor",
-      "unitary",
-      "build",
-      "combination",
-      "entry"
-    ],
-    "seealso": [
-      "bach.idmatrix"
+      "change",
+      "bach.reg",
+      "bach.eq",
+      "bach.neq"
     ]
   },
   "bach.ifunc": {
@@ -4414,8 +4157,250 @@
       "bach.histo"
     ]
   },
-  "bach.im": {
-    "digest": "Find the image of a matrix",
+  "bach.ezmidiplay": {
+    "digest": "Quick way to play MIDI",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "MIDI",
+      "play",
+      "playout",
+      "stream",
+      "noteon",
+      "noteoff"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.score",
+      "bach.playkeys",
+      "makenote",
+      "noteout",
+      "Brother John",
+      "The Gift Of Synthesis"
+    ]
+  },
+  "bach.stdev": {
+    "digest": "Find the standard deviation of the numbers in an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "standard deviation",
+      "statistics",
+      "moment",
+      "compute",
+      "calculate",
+      "number"
+    ],
+    "seealso": [
+      "bach.mean",
+      "bach.variance",
+      "bach.median",
+      "bach.skewness",
+      "bach.kurtosis"
+    ]
+  },
+  "bach.mean": {
+    "digest": "Find the mean of the numbers in an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "mean",
+      "statistics",
+      "average",
+      "moment",
+      "compute",
+      "calculate",
+      "number"
+    ],
+    "seealso": [
+      "bach.variance",
+      "bach.stdev",
+      "bach.median",
+      "bach.skewness",
+      "bach.kurtosis"
+    ]
+  },
+  "bach.enharm": {
+    "digest": "Handle enharmonicity",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "pitch",
+      "enharmonicity",
+      "retranscribe",
+      "respell",
+      "note"
+    ],
+    "seealso": [
+      "bach.expr",
+      "bach.mc2pc",
+      "bach.pc2mc"
+    ]
+  },
+  "bach.chordrot": {
+    "digest": "Rotate the non-rest elements of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "chord",
+      "rotate",
+      "talea",
+      "sequence"
+    ],
+    "seealso": [
+      "bach.restrot",
+      "bach.chordrev",
+      "bach.tierev",
+      "bach.fromc&amp;r",
+      "bach.toc&amp;r",
+      "bach.score",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.median": {
+    "digest": "Find the median of the numbers in an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "median",
+      "number",
+      "statistics",
+      "compute",
+      "calculate",
+      "quantile"
+    ],
+    "seealso": [
+      "bach.quantiles",
+      "bach.mean",
+      "bach.mode",
+      "bach.variance",
+      "bach.stdev",
+      "bach.skewness",
+      "bach.kurtosis"
+    ]
+  },
+  "bach.reduce": {
+    "digest": "Recursively apply binary function on elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "apply",
+      "reduce",
+      "recursive",
+      "element",
+      "function",
+      "binary",
+      "lambda loop",
+      "iterate",
+      "iteration"
+    ],
+    "seealso": [
+      "bach.mapelem",
+      "bach.iter",
+      "bach.collect",
+      "bach.sum",
+      "bach.prod"
+    ]
+  },
+  "bach.mono": {
+    "digest": "Make <o>bach.roll</o> monophonic",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "monophonic",
+      "trim",
+      "note",
+      "proportional",
+      "legato"
+    ],
+    "seealso": [
+      "bach.roll",
+      "bach.quantize"
+    ]
+  },
+  "bach.coprimeser": {
+    "digest": "Coprime number series",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "coprime",
+      "prime",
+      "number",
+      "greatest common divisor",
+      "series",
+      "sequence"
+    ],
+    "seealso": [
+      "bach.arithmser",
+      "bach.geomser",
+      "bach.primeser",
+      "bach.coprime",
+      "bach.factorize",
+      "bach.gcd",
+      "bach.lcm"
+    ]
+  },
+  "bach.slot2line": {
+    "digest": "Convert a function-slot content into messages for <o>line~</o>",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "slot",
+      "breakpoint function",
+      "line",
+      "line~",
+      "convert"
+    ],
+    "seealso": [
+      "line~",
+      "bach.slot2curve",
+      "bach.roll",
+      "bach.score",
+      "bach.slot"
+    ]
+  },
+  "bach.m2jitcellblock": {
+    "digest": "Display the content of an llll matrix in a jit.cellblock",
     "module": "bach",
     "category": [
       "bach",
@@ -4424,19 +4409,150 @@
     ],
     "keywords": [
       "matrix",
-      "image",
-      "column",
-      "span",
-      "basis",
-      "extract",
-      "rank"
+      "display",
+      "convert",
+      "cell",
+      "jit.cellblock"
     ],
     "seealso": [
-      "bach.ker",
-      "bach.extractbasis",
-      "bach.trans",
-      "bach.gausselim",
+      "jit.cellblock",
+      "bach.m2matrixctrl",
       "Into The Matrix"
+    ]
+  },
+  "bach.pc2mc": {
+    "digest": "Pitch-classes to midicents conversion",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach set theory"
+    ],
+    "keywords": [
+      "pitch-class",
+      "cent",
+      "midicent",
+      "convert",
+      "pitch"
+    ],
+    "seealso": [
+      "bach.mc2pc",
+      "bach.approx",
+      "bach.pcsetinfo",
+      "bach.expr"
+    ]
+  },
+  "bach.mc2pc": {
+    "digest": "Midicents to pitch-classes conversion",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach set theory"
+    ],
+    "keywords": [
+      "pitch-class",
+      "cent",
+      "midicent",
+      "convert",
+      "pitch"
+    ],
+    "seealso": [
+      "bach.pc2mc",
+      "bach.approx",
+      "bach.pcsetinfo",
+      "bach.expr"
+    ]
+  },
+  "bach.mrandom": {
+    "digest": "Obtain a random matrix",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "matrix",
+      "random",
+      "build",
+      "size",
+      "element",
+      "pick"
+    ],
+    "seealso": [
+      "bach.minfo",
+      "bach.diag",
+      "bach.idmatrix",
+      "bach.wellshape",
+      "bach.m2jitcellblock",
+      "Into The Matrix"
+    ]
+  },
+  "bach.variance": {
+    "digest": "Find the variance of the numbers in an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "variance",
+      "statistics",
+      "moment",
+      "compute",
+      "calculate",
+      "number"
+    ],
+    "seealso": [
+      "bach.mean",
+      "bach.stdev",
+      "bach.median",
+      "bach.skewness",
+      "bach.kurtosis"
+    ]
+  },
+  "bach.det": {
+    "digest": "Compute the determinant of a matrix",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "determinant",
+      "matrix",
+      "calculate",
+      "compute",
+      "Gauss elimination"
+    ],
+    "seealso": [
+      "bach.trace",
+      "bach.gausselim",
+      "bach.rank",
+      "bach.inv",
+      "Into The Matrix"
+    ]
+  },
+  "bach.bin": {
+    "digest": "Compute binomial coefficient",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "compute",
+      "calculate",
+      "binomial coefficient",
+      "combinations"
+    ],
+    "seealso": [
+      "bach.fact",
+      "bach.prod"
     ]
   },
   "bach.inv": {
@@ -4467,8 +4583,77 @@
       "Into The Matrix"
     ]
   },
-  "bach.istruct": {
-    "digest": "Get the interval structure pitch-class set",
+  "bach.random": {
+    "digest": "Pick random elements from an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "random",
+      "element",
+      "pick",
+      "extract",
+      "pool"
+    ],
+    "seealso": [
+      "random",
+      "bach.nth",
+      "bach.pick",
+      "bach.urn",
+      "bach.lookup",
+      "bach.mrandom",
+      "bach.wrandom"
+    ]
+  },
+  "bach.split": {
+    "digest": "Add parentheses depending on a separator",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "split",
+      "separate",
+      "chunk",
+      "separator",
+      "wrap",
+      "lambda loop",
+      "keep",
+      "change",
+      "repetition"
+    ],
+    "seealso": [
+      "bach.slice"
+    ]
+  },
+  "bach.period": {
+    "digest": "Find the period of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "period",
+      "periodicity",
+      "loop",
+      "repeat"
+    ],
+    "seealso": [
+      "bach.group",
+      "bach.repeat",
+      "bach.pcsetinfo",
+      "bach.istruct"
+    ]
+  },
+  "bach.mod*": {
+    "digest": "Modular arithmetic multiplication",
     "module": "bach",
     "category": [
       "bach",
@@ -4476,136 +4661,21 @@
       "bach set theory"
     ],
     "keywords": [
-      "interval structure",
-      "interval",
       "modulo",
-      "pitch-class",
-      "distance",
-      "element",
-      "loop"
-    ],
-    "seealso": [
-      "bach.primeform",
-      "bach.circle",
-      "bach.mod+",
-      "bach.mod-",
-      "bach.modtimes",
-      "bach.period",
-      "bach.ifunc"
-    ]
-  },
-  "bach.ker": {
-    "digest": "Find the kernel of a matrix",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "kernel",
-      "matrix",
-      "nullity",
-      "vector",
       "multiplication",
-      "extract",
-      "basis"
+      "times",
+      "number",
+      "pitch-class"
     ],
     "seealso": [
-      "bach.im",
-      "bach.extractbasis",
-      "bach.lienarsolve",
-      "bach.gausselim",
-      "Into The Matrix"
+      "bach.*",
+      "bach.%",
+      "bach.mod+",
+      "bach.mod-"
     ]
   },
-  "bach.keychain": {
-    "digest": "Organize lllls by keys",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "keychain",
-      "tag",
-      "organize",
-      "arrange",
-      "key",
-      "lambda loop"
-    ],
-    "seealso": [
-      "bach.keys"
-    ]
-  },
-  "bach.kurtosis": {
-    "digest": "Find the kurtosis of the numbers in an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "kurtosis",
-      "statistics",
-      "moment",
-      "compute",
-      "calculate",
-      "number"
-    ],
-    "seealso": [
-      "bach.mean",
-      "bach.stdev",
-      "bach.variance",
-      "bach.median",
-      "bach.skewness"
-    ]
-  },
-  "bach.lcm": {
-    "digest": "Compute least common multiple",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "least common multiple",
-      "compute",
-      "calculate",
-      "number"
-    ],
-    "seealso": [
-      "bach.gcd",
-      "bach.prime",
-      "bach.primeser",
-      "bach.coprime",
-      "bach.coprimeser"
-    ]
-  },
-  "bach.locate": {
-    "digest": "Locate elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "find",
-      "locate",
-      "element",
-      "address"
-    ],
-    "seealso": [
-      "bach.find",
-      "bach.lookup"
-    ]
-  },
-  "bach.m2jitcellblock": {
-    "digest": "Display the content of an llll matrix in a jit.cellblock",
+  "bach.idvector": {
+    "digest": "Build cartesian versors and combinations",
     "module": "bach",
     "category": [
       "bach",
@@ -4613,42 +4683,44 @@
       "bach matrix calculus"
     ],
     "keywords": [
-      "matrix",
-      "display",
-      "convert",
-      "cell",
-      "jit.cellblock"
+      "vector",
+      "identity",
+      "versor",
+      "unitary",
+      "build",
+      "combination",
+      "entry"
     ],
     "seealso": [
-      "jit.cellblock",
-      "bach.m2matrixctrl",
-      "Into The Matrix"
+      "bach.idmatrix"
     ]
   },
-  "bach.m2matrixctrl": {
-    "digest": "Format an llll matrix to be used with matrixctrl or matrix~",
+  "bach.prepend": {
+    "digest": "Add an llll in front of input",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach matrix calculus"
+      "bach llll"
     ],
     "keywords": [
-      "matrix",
-      "matrixctrl",
-      "convert"
+      "prepend",
+      "combine",
+      "concatenate",
+      "add",
+      "front",
+      "append",
+      "join"
     ],
     "seealso": [
-      "matrixctrl",
-      "matrix~",
-      "router",
-      "bach.matrixctrl2m",
-      "bach.m2jitcellblock",
-      "Into The Matrix"
+      "bach.postpend",
+      "bach.join",
+      "bach.insert",
+      "bach.pack"
     ]
   },
-  "bach.mapchord": {
-    "digest": "Individually modify chords",
+  "bach.approx": {
+    "digest": "Snap pitches or MIDIcents to microtonal grid",
     "module": "bach",
     "category": [
       "bach",
@@ -4656,42 +4728,19 @@
       "bach notation"
     ],
     "keywords": [
-      "map",
-      "chord",
-      "modify",
-      "change",
-      "each",
-      "transform",
-      "lambda loop",
-      "iterate",
-      "iteration",
-      "rhythmic tree",
-      "level",
-      "parenthesis"
+      "cent",
+      "midicent",
+      "approximate",
+      "snap",
+      "grid",
+      "microtone",
+      "nearest",
+      "pitch"
     ],
     "seealso": [
-      "bach.mapelem",
-      "bach.iter",
-      "bach.collect"
-    ]
-  },
-  "bach.matrixctrl2m": {
-    "digest": "Convert a matrixctrl object into an llll matrix",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "matrix",
-      "matrixctrl",
-      "convert"
-    ],
-    "seealso": [
-      "matrixctrl",
-      "bach.m2matrixctrl",
-      "Into The Matrix"
+      "bach.expr",
+      "bach.mc2pc",
+      "bach.pc2mc"
     ]
   },
   "bach.mc2f": {
@@ -4720,30 +4769,29 @@
       "Through The Looking Glass"
     ]
   },
-  "bach.mc2pc": {
-    "digest": "Midicents to pitch-classes conversion",
+  "bach.getrow": {
+    "digest": "Get a row of a matrix",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach set theory"
+      "bach matrix calculus"
     ],
     "keywords": [
-      "pitch-class",
-      "cent",
-      "midicent",
-      "convert",
-      "pitch"
+      "row",
+      "matrix",
+      "extract",
+      "pick"
     ],
     "seealso": [
-      "bach.pc2mc",
-      "bach.approx",
-      "bach.pcsetinfo",
-      "bach.expr"
+      "bach.getcol",
+      "bach.submatrix",
+      "bach.nth",
+      "bach.minfo"
     ]
   },
-  "bach.mean": {
-    "digest": "Find the mean of the numbers in an llll",
+  "bach.lcm": {
+    "digest": "Compute least common multiple",
     "module": "bach",
     "category": [
       "bach",
@@ -4751,46 +4799,38 @@
       "bach math"
     ],
     "keywords": [
-      "mean",
-      "statistics",
-      "average",
-      "moment",
+      "least common multiple",
       "compute",
       "calculate",
       "number"
     ],
     "seealso": [
-      "bach.variance",
-      "bach.stdev",
-      "bach.median",
-      "bach.skewness",
-      "bach.kurtosis"
+      "bach.gcd",
+      "bach.prime",
+      "bach.primeser",
+      "bach.coprime",
+      "bach.coprimeser"
     ]
   },
-  "bach.median": {
-    "digest": "Find the median of the numbers in an llll",
+  "bach.funnel": {
+    "digest": "Index llll elements",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach math"
+      "bach llll"
     ],
     "keywords": [
-      "median",
-      "number",
-      "statistics",
-      "compute",
-      "calculate",
-      "quantile"
+      "index",
+      "funnel",
+      "enumerate",
+      "element",
+      "number"
     ],
     "seealso": [
-      "bach.quantiles",
-      "bach.mean",
-      "bach.mode",
-      "bach.variance",
-      "bach.stdev",
-      "bach.skewness",
-      "bach.kurtosis"
+      "listfunnel",
+      "bach.trans",
+      "bach.join"
     ]
   },
   "bach.mod+": {
@@ -4816,30 +4856,8 @@
       "bach.mod*"
     ]
   },
-  "bach.mod-": {
-    "digest": "Modular arithmetic subtraction",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach set theory"
-    ],
-    "keywords": [
-      "modulo",
-      "subtraction",
-      "number",
-      "pitch-class",
-      "minus"
-    ],
-    "seealso": [
-      "bach.-",
-      "bach.%",
-      "bach.mod+",
-      "bach.mod*"
-    ]
-  },
-  "bach.mode": {
-    "digest": "Find the mode of an llll",
+  "bach.kurtosis": {
+    "digest": "Find the kurtosis of the numbers in an llll",
     "module": "bach",
     "category": [
       "bach",
@@ -4847,62 +4865,76 @@
       "bach math"
     ],
     "keywords": [
-      "mode",
-      "number",
+      "kurtosis",
       "statistics",
+      "moment",
       "compute",
-      "calculate"
+      "calculate",
+      "number"
     ],
     "seealso": [
-      "bach.quantiles",
       "bach.mean",
-      "bach.median",
-      "bach.variance",
       "bach.stdev",
-      "bach.skewness",
-      "bach.kurtosis"
+      "bach.variance",
+      "bach.median",
+      "bach.skewness"
     ]
   },
-  "bach.mod*": {
-    "digest": "Modular arithmetic multiplication",
+  "bach.wurn": {
+    "digest": "Pick weighted random elements from an llll without duplicates",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach set theory"
+      "bach llll"
     ],
     "keywords": [
-      "modulo",
-      "multiplication",
-      "times",
-      "number",
-      "pitch-class"
+      "random",
+      "repetition",
+      "urn",
+      "pick",
+      "extract",
+      "element",
+      "duplicate",
+      "weight",
+      "probability"
     ],
     "seealso": [
-      "bach.*",
-      "bach.%",
-      "bach.mod+",
-      "bach.mod-"
+      "urn",
+      "bach.nth",
+      "bach.pick",
+      "bach.random",
+      "bach.urn",
+      "bach.wrandom",
+      "bach.lookup"
     ]
   },
-  "bach.mono": {
-    "digest": "Make <o>bach.roll</o> monophonic",
+  "bach.urn": {
+    "digest": "Pick random elements from an llll without duplicates",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach notation"
+      "bach llll"
     ],
     "keywords": [
-      "monophonic",
-      "trim",
-      "note",
-      "proportional",
-      "legato"
+      "random",
+      "repetition",
+      "urn",
+      "pick",
+      "extract",
+      "element",
+      "duplicate"
     ],
     "seealso": [
-      "bach.roll",
-      "bach.quantize"
+      "urn",
+      "bach.nth",
+      "bach.pick",
+      "bach.random",
+      "bach.lookup",
+      "bach.mrandom",
+      "bach.wrandom",
+      "bach.wurn"
     ]
   },
   "bach.mpow": {
@@ -4934,149 +4966,186 @@
       "Into The Matrix"
     ]
   },
-  "bach.mrandom": {
-    "digest": "Obtain a random matrix",
+  "bach.fromc&r": {
+    "digest": "Reassemble non-rest and rest elements",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach matrix calculus"
+      "bach notation"
     ],
     "keywords": [
-      "matrix",
-      "random",
-      "build",
-      "size",
-      "element",
-      "pick"
-    ],
-    "seealso": [
-      "bach.minfo",
-      "bach.diag",
-      "bach.idmatrix",
-      "bach.wellshape",
-      "bach.m2jitcellblock",
-      "Into The Matrix"
-    ]
-  },
-  "bach.nearest": {
-    "digest": "Snap numbers to nearest elements of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "snap",
-      "nearest",
-      "distance",
-      "grid",
-      "list"
-    ],
-    "seealso": [
-      "bach.sort",
-      "bach.msort",
-      "bach.ssort",
-      "bach.dsort"
-    ]
-  },
-  "bach.norm": {
-    "digest": "Find the norm of a vector",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "norm",
-      "calculate",
-      "compute",
-      "distance",
-      "square",
-      "element",
-      "sum",
-      "square root"
-    ],
-    "seealso": [
-      "bach.normalize",
-      "Into The Matrix"
-    ]
-  },
-  "bach.normalize": {
-    "digest": "Normalize a vector",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "normalize",
-      "unitary",
-      "norm",
-      "calculate",
-      "compute",
-      "distance",
-      "square",
-      "element",
-      "sum",
-      "square root"
-    ],
-    "seealso": [
-      "bach.norm",
-      "Into The Matrix"
-    ]
-  },
-  "bach.path2llll": {
-    "digest": "Obtain full directory tree in llll form",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
+      "chord",
+      "rest",
       "convert",
-      "file",
-      "folder",
-      "path",
-      "name",
-      "tree",
-      "import",
-      "full",
-      "directory",
-      "subfolder",
-      "hierarchy"
+      "assemble",
+      "position",
+      "index"
     ],
     "seealso": [
-      "folder",
-      "bach.tree",
-      "bach.dict2llll",
-      "dropfile"
+      "bach.toc&amp;r",
+      "bach.insert",
+      "bach.chordrot",
+      "bach.chordrev",
+      "bach.restrot",
+      "bach.score",
+      "Through The Looking Glass"
     ]
   },
-  "bach.pc2mc": {
-    "digest": "Pitch-classes to midicents conversion",
+  "bach.f2mc": {
+    "digest": "Frequency to midicents conversion",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach set theory"
+      "bach math"
     ],
     "keywords": [
-      "pitch-class",
+      "frequency",
       "cent",
       "midicent",
       "convert",
       "pitch"
     ],
     "seealso": [
-      "bach.mc2pc",
-      "bach.approx",
-      "bach.pcsetinfo",
+      "bach.mc2f",
+      "mtof",
+      "ftom",
+      "bach.n2mc",
+      "bach.mc2n",
+      "bach.mc2r",
+      "bach.r2mc",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.divisors": {
+    "digest": "Find divisors of a number",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "compute",
+      "calculate",
+      "binomial coefficient",
+      "combinations"
+    ],
+    "seealso": [
+      "bach.factorize",
+      "bach./",
+      "bach.%",
       "bach.expr"
+    ]
+  },
+  "bach.dsort": {
+    "digest": "Sort llll by distances",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "sort",
+      "distance",
+      "element",
+      "number"
+    ],
+    "seealso": [
+      "bach.sort",
+      "bach.ssort",
+      "bach.msort"
+    ]
+  },
+  "bach.tierev": {
+    "digest": "Reverse a sequence of ties",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "reverse",
+      "tie",
+      "sequence",
+      "chord",
+      "pitch",
+      "voice"
+    ],
+    "seealso": [
+      "bach.chordrev",
+      "bach.chordrot",
+      "bach.restrot",
+      "bach.fromc&amp;r",
+      "bach.toc&amp;r",
+      "bach.score",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.locate": {
+    "digest": "Locate elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "find",
+      "locate",
+      "element",
+      "address"
+    ],
+    "seealso": [
+      "bach.find",
+      "bach.lookup"
+    ]
+  },
+  "bach.skewness": {
+    "digest": "Find the skewness of the numbers in an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "skewness",
+      "statistics",
+      "moment",
+      "compute",
+      "calculate",
+      "number"
+    ],
+    "seealso": [
+      "bach.mean",
+      "bach.stdev",
+      "bach.variance",
+      "bach.median",
+      "bach.kurtosis"
+    ]
+  },
+  "bach.drip": {
+    "digest": "Automatically step through lllls with delays",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "drip",
+      "iterate",
+      "delay",
+      "metro",
+      "sequence",
+      "step"
+    ],
+    "seealso": [
+      "bach.step"
     ]
   },
   "bach.pcsetinfo": {
@@ -5114,8 +5183,126 @@
       "bach.istruct"
     ]
   },
-  "bach.period": {
-    "digest": "Find the period of an llll",
+  "bach.cross": {
+    "digest": "Compute the cross product of two lllls",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "vector product",
+      "cross product",
+      "coordinate",
+      "vector",
+      "cartesian",
+      "orthogonal"
+    ],
+    "seealso": [
+      "bach.mtimes"
+    ]
+  },
+  "bach.mapchord": {
+    "digest": "Individually modify chords",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "map",
+      "chord",
+      "modify",
+      "change",
+      "each",
+      "transform",
+      "lambda loop",
+      "iterate",
+      "iteration",
+      "rhythmic tree",
+      "level",
+      "parenthesis"
+    ],
+    "seealso": [
+      "bach.mapelem",
+      "bach.iter",
+      "bach.collect"
+    ]
+  },
+  "bach.counter": {
+    "digest": "Multi-index counter",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "count",
+      "index",
+      "minimum",
+      "maximum",
+      "memory",
+      "list"
+    ],
+    "seealso": [
+      "counter",
+      "bach.expr",
+      "bach.+",
+      "bach.reg"
+    ]
+  },
+  "bach.compl": {
+    "digest": "Find complement of a pitch-class set",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach set theory"
+    ],
+    "keywords": [
+      "complement",
+      "pitch-class",
+      "modulo",
+      "negative"
+    ],
+    "seealso": [
+      "bach.circle",
+      "bach.mod+",
+      "bach.mod-",
+      "bach.modtimes",
+      "bach.pcsetinfo"
+    ]
+  },
+  "bach.im": {
+    "digest": "Find the image of a matrix",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "matrix",
+      "image",
+      "column",
+      "span",
+      "basis",
+      "extract",
+      "rank"
+    ],
+    "seealso": [
+      "bach.ker",
+      "bach.extractbasis",
+      "bach.trans",
+      "bach.gausselim",
+      "Into The Matrix"
+    ]
+  },
+  "bach.path2llll": {
+    "digest": "Obtain full directory tree in llll form",
     "module": "bach",
     "category": [
       "bach",
@@ -5123,20 +5310,27 @@
       "bach llll"
     ],
     "keywords": [
-      "period",
-      "periodicity",
-      "loop",
-      "repeat"
+      "convert",
+      "file",
+      "folder",
+      "path",
+      "name",
+      "tree",
+      "import",
+      "full",
+      "directory",
+      "subfolder",
+      "hierarchy"
     ],
     "seealso": [
-      "bach.group",
-      "bach.repeat",
-      "bach.pcsetinfo",
-      "bach.istruct"
+      "folder",
+      "bach.tree",
+      "bach.dict2llll",
+      "dropfile"
     ]
   },
-  "bach.poltocar": {
-    "digest": "Polar to cartesian coordinate conversion for lllls",
+  "bach.cartopol": {
+    "digest": "Cartesian to polar coordinate conversion for lllls",
     "module": "bach",
     "category": [
       "bach",
@@ -5157,62 +5351,80 @@
       "part"
     ],
     "seealso": [
-      "bach.cartopol",
+      "bach.poltocar",
       "bach.expr",
       "bach.fft"
     ]
   },
-  "bach.postpend": {
-    "digest": "Append an llll at the end of input",
+  "bach.slot2curve": {
+    "digest": "Convert a function-slot content into messages for <o>curve~</o>",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach llll"
+      "bach notation"
     ],
     "keywords": [
-      "postpend",
-      "combine",
-      "concatenate",
-      "add",
-      "back",
-      "end",
-      "join",
-      "append"
+      "slot",
+      "curve~",
+      "breakpoint function",
+      "convert",
+      "message"
     ],
     "seealso": [
-      "bach.prepend",
-      "bach.join",
-      "bach.insert",
-      "bach.pack"
+      "curve~",
+      "bach.slot2line",
+      "bach.roll",
+      "bach.score",
+      "bach.slot"
     ]
   },
-  "bach.prepend": {
-    "digest": "Add an llll in front of input",
+  "bach.m2matrixctrl": {
+    "digest": "Format an llll matrix to be used with matrixctrl or matrix~",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach llll"
+      "bach matrix calculus"
     ],
     "keywords": [
-      "prepend",
-      "combine",
-      "concatenate",
-      "add",
-      "front",
-      "append",
-      "join"
+      "matrix",
+      "matrixctrl",
+      "convert"
     ],
     "seealso": [
-      "bach.postpend",
-      "bach.join",
-      "bach.insert",
-      "bach.pack"
+      "matrixctrl",
+      "matrix~",
+      "router",
+      "bach.matrixctrl2m",
+      "bach.m2jitcellblock",
+      "Into The Matrix"
     ]
   },
-  "bach.quantiles": {
-    "digest": "Find quantiles or filter according to them",
+  "bach.getcol": {
+    "digest": "Get a column of a matrix",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "column",
+      "matrix",
+      "extract",
+      "pick"
+    ],
+    "seealso": [
+      "bach.getrow",
+      "bach.submatrix",
+      "bach.nth",
+      "bach.trans",
+      "bach.minfo"
+    ]
+  },
+  "bach.normalize": {
+    "digest": "Normalize a vector",
     "module": "bach",
     "category": [
       "bach",
@@ -5220,45 +5432,45 @@
       "bach math"
     ],
     "keywords": [
-      "mean",
-      "statistics",
-      "quantile",
-      "upper",
-      "lower",
-      "range",
-      "region",
-      "filter",
-      "sieve",
-      "keep"
+      "normalize",
+      "unitary",
+      "norm",
+      "calculate",
+      "compute",
+      "distance",
+      "square",
+      "element",
+      "sum",
+      "square root"
     ],
     "seealso": [
-      "bach.median",
-      "bach.filter"
+      "bach.norm",
+      "Into The Matrix"
     ]
   },
-  "bach.random": {
-    "digest": "Pick random elements from an llll",
+  "bach.idmatrix": {
+    "digest": "Build identity matrix",
     "module": "bach",
     "category": [
       "bach",
       "bach abstractions",
-      "bach llll"
+      "bach matrix calculus"
     ],
     "keywords": [
-      "random",
-      "element",
-      "pick",
-      "extract",
-      "pool"
+      "matrix",
+      "identity",
+      "build",
+      "square",
+      "size"
     ],
     "seealso": [
-      "random",
-      "bach.nth",
-      "bach.pick",
-      "bach.urn",
-      "bach.lookup",
+      "bach.idvector",
+      "bach.minfo",
+      "bach.diag",
       "bach.mrandom",
-      "bach.wrandom"
+      "bach.wellshape",
+      "bach.m2jitcellblock",
+      "Into The Matrix"
     ]
   },
   "bach.randomdrip": {
@@ -5289,80 +5501,6 @@
       "bach.wrandom"
     ]
   },
-  "bach.rank": {
-    "digest": "Compute the rank of a matrix",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "rank",
-      "calculate",
-      "compute",
-      "Gauss elimination",
-      "linear independence",
-      "matrix"
-    ],
-    "seealso": [
-      "bach.gausselim",
-      "bach.det",
-      "bach.inv",
-      "Into The Matrix"
-    ]
-  },
-  "bach.reduce": {
-    "digest": "Recursively apply binary function on elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "apply",
-      "reduce",
-      "recursive",
-      "element",
-      "function",
-      "binary",
-      "lambda loop",
-      "iterate",
-      "iteration"
-    ],
-    "seealso": [
-      "bach.mapelem",
-      "bach.iter",
-      "bach.collect",
-      "bach.sum",
-      "bach.prod"
-    ]
-  },
-  "bach.restrot": {
-    "digest": "Rotate the negative signs of an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "rest",
-      "rotate",
-      "sign",
-      "negative",
-      "duration",
-      "talea"
-    ],
-    "seealso": [
-      "bach.restrot",
-      "bach.chordrot",
-      "bach.fromc&amp;r",
-      "bach.toc&amp;r",
-      "bach.score"
-    ]
-  },
   "bach.score2roll": {
     "digest": "Convert a <o>bach.score</o> into a <o>bach.roll</o>",
     "module": "bach",
@@ -5384,8 +5522,8 @@
       "bach.quantize"
     ]
   },
-  "bach.skewness": {
-    "digest": "Find the skewness of the numbers in an llll",
+  "bach.coprime": {
+    "digest": "Test if numbers are coprime",
     "module": "bach",
     "category": [
       "bach",
@@ -5393,92 +5531,18 @@
       "bach math"
     ],
     "keywords": [
-      "skewness",
-      "statistics",
-      "moment",
-      "compute",
-      "calculate",
-      "number"
+      "coprime",
+      "prime",
+      "number",
+      "greatest common divisor"
     ],
     "seealso": [
-      "bach.mean",
-      "bach.stdev",
-      "bach.variance",
-      "bach.median",
-      "bach.kurtosis"
-    ]
-  },
-  "bach.sliceheader": {
-    "digest": "Separate header and body of a gathered syntax",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "header",
-      "information",
-      "slice",
-      "separate",
-      "body",
-      "gathered syntax",
-      "content",
-      "split",
-      "retrieve"
-    ],
-    "seealso": [
-      "bach.roll",
-      "bach.score",
-      "bach.slice"
-    ]
-  },
-  "bach.slot2curve": {
-    "digest": "Convert a function-slot content into messages for <o>curve~</o>",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "slot",
-      "curve~",
-      "breakpoint function",
-      "convert",
-      "message"
-    ],
-    "seealso": [
-      "curve~",
-      "bach.slot2line",
-      "bach.roll",
-      "bach.score",
-      "bach.slot"
-    ]
-  },
-  "bach.slot2filtercoeff": {
-    "digest": "Convert a dynfilter-slot content into messages to drive <o>filtercoeff~</o>",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "slot",
-      "filter",
-      "sequence",
-      "convert",
-      "filtercoeff~"
-    ],
-    "seealso": [
-      "bach.slot2curve",
-      "bach.slot2line",
-      "filtercoeff~",
-      "biquad~",
-      "bach.roll",
-      "bach.score",
-      "bach.slot"
+      "bach.prime",
+      "bach.primeser",
+      "bach.factorize",
+      "bach.coprimeser",
+      "bach.gcd",
+      "bach.lcm"
     ]
   },
   "bach.slot2function": {
@@ -5504,31 +5568,8 @@
       "bach.slot"
     ]
   },
-  "bach.slot2line": {
-    "digest": "Convert a function-slot content into messages for <o>line~</o>",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "slot",
-      "breakpoint function",
-      "line",
-      "line~",
-      "convert"
-    ],
-    "seealso": [
-      "line~",
-      "bach.slot2curve",
-      "bach.roll",
-      "bach.score",
-      "bach.slot"
-    ]
-  },
-  "bach.split": {
-    "digest": "Add parentheses depending on a separator",
+  "bach.nearest": {
+    "digest": "Snap numbers to nearest elements of an llll",
     "module": "bach",
     "category": [
       "bach",
@@ -5536,191 +5577,17 @@
       "bach llll"
     ],
     "keywords": [
-      "split",
-      "separate",
-      "chunk",
-      "separator",
-      "wrap",
-      "lambda loop",
-      "keep",
-      "change",
-      "repetition"
+      "snap",
+      "nearest",
+      "distance",
+      "grid",
+      "list"
     ],
     "seealso": [
-      "bach.slice"
-    ]
-  },
-  "bach.stdev": {
-    "digest": "Find the standard deviation of the numbers in an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "standard deviation",
-      "statistics",
-      "moment",
-      "compute",
-      "calculate",
-      "number"
-    ],
-    "seealso": [
-      "bach.mean",
-      "bach.variance",
-      "bach.median",
-      "bach.skewness",
-      "bach.kurtosis"
-    ]
-  },
-  "bach.stream": {
-    "digest": "Stream last elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "stream",
-      "element",
-      "last"
-    ],
-    "seealso": [
-      "bach.collect",
-      "bach.iter",
-      "zl.stream"
-    ]
-  },
-  "bach.tierev": {
-    "digest": "Reverse a sequence of ties",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "reverse",
-      "tie",
-      "sequence",
-      "chord",
-      "pitch",
-      "voice"
-    ],
-    "seealso": [
-      "bach.chordrev",
-      "bach.chordrot",
-      "bach.restrot",
-      "bach.fromc&amp;r",
-      "bach.toc&amp;r",
-      "bach.score",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.toc&r": {
-    "digest": "Route non-rest and rest elements",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach notation"
-    ],
-    "keywords": [
-      "chord",
-      "rest",
-      "convert",
-      "route",
-      "divide",
-      "split",
-      "position",
-      "index"
-    ],
-    "seealso": [
-      "bach.fromc&amp;r",
-      "bach.insert",
-      "bach.chordrot",
-      "bach.chordrev",
-      "bach.restrot bach.score",
-      "Through The Looking Glass"
-    ]
-  },
-  "bach.urn": {
-    "digest": "Pick random elements from an llll without duplicates",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach llll"
-    ],
-    "keywords": [
-      "random",
-      "repetition",
-      "urn",
-      "pick",
-      "extract",
-      "element",
-      "duplicate"
-    ],
-    "seealso": [
-      "urn",
-      "bach.nth",
-      "bach.pick",
-      "bach.random",
-      "bach.lookup",
-      "bach.mrandom",
-      "bach.wrandom",
-      "bach.wurn"
-    ]
-  },
-  "bach.variance": {
-    "digest": "Find the variance of the numbers in an llll",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach math"
-    ],
-    "keywords": [
-      "variance",
-      "statistics",
-      "moment",
-      "compute",
-      "calculate",
-      "number"
-    ],
-    "seealso": [
-      "bach.mean",
-      "bach.stdev",
-      "bach.median",
-      "bach.skewness",
-      "bach.kurtosis"
-    ]
-  },
-  "bach.wellshape": {
-    "digest": "Force matrix to be properly rectangular",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach abstractions",
-      "bach matrix calculus"
-    ],
-    "keywords": [
-      "well-shaped",
-      "row",
-      "column",
-      "number",
-      "matrix",
-      "rectangle",
-      "wrap",
-      "force",
-      "constraint"
-    ],
-    "seealso": [
-      "bach.minfo",
-      "bach.m2jitcellblock",
-      "Into The Matrix"
+      "bach.sort",
+      "bach.msort",
+      "bach.ssort",
+      "bach.dsort"
     ]
   },
   "bach.wrandom": {
@@ -5752,8 +5619,58 @@
       "bach.wurn"
     ]
   },
-  "bach.wurn": {
-    "digest": "Pick weighted random elements from an llll without duplicates",
+  "bach.quantiles": {
+    "digest": "Find quantiles or filter according to them",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "mean",
+      "statistics",
+      "quantile",
+      "upper",
+      "lower",
+      "range",
+      "region",
+      "filter",
+      "sieve",
+      "keep"
+    ],
+    "seealso": [
+      "bach.median",
+      "bach.filter"
+    ]
+  },
+  "bach.wellshape": {
+    "digest": "Force matrix to be properly rectangular",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "well-shaped",
+      "row",
+      "column",
+      "number",
+      "matrix",
+      "rectangle",
+      "wrap",
+      "force",
+      "constraint"
+    ],
+    "seealso": [
+      "bach.minfo",
+      "bach.m2jitcellblock",
+      "Into The Matrix"
+    ]
+  },
+  "bach.keychain": {
+    "digest": "Organize lllls by keys",
     "module": "bach",
     "category": [
       "bach",
@@ -5761,24 +5678,157 @@
       "bach llll"
     ],
     "keywords": [
-      "random",
-      "repetition",
-      "urn",
-      "pick",
-      "extract",
-      "element",
-      "duplicate",
-      "weight",
-      "probability"
+      "keychain",
+      "tag",
+      "organize",
+      "arrange",
+      "key",
+      "lambda loop"
     ],
     "seealso": [
-      "urn",
-      "bach.nth",
-      "bach.pick",
-      "bach.random",
-      "bach.urn",
-      "bach.wrandom",
-      "bach.lookup"
+      "bach.keys"
+    ]
+  },
+  "bach.histo": {
+    "digest": "Build histograms",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "histogram",
+      "integer",
+      "number",
+      "build",
+      "count",
+      "appearance",
+      "statistics",
+      "word",
+      "dictionary",
+      "unique",
+      "occurrence",
+      "show up"
+    ],
+    "seealso": [
+      "histo",
+      "bach.iter",
+      "bach.collect"
+    ]
+  },
+  "bach.chordrev": {
+    "digest": "Reverse the non-rest elements of an llll",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach notation"
+    ],
+    "keywords": [
+      "chord",
+      "reverse",
+      "sequence",
+      "ties",
+      "duration",
+      "retrograde"
+    ],
+    "seealso": [
+      "bach.tierev",
+      "bach.chordrot",
+      "bach.restrot",
+      "bach.fromc&amp;r",
+      "bach.toc&amp;r",
+      "bach.score",
+      "Through The Looking Glass"
+    ]
+  },
+  "bach.matrixctrl2m": {
+    "digest": "Convert a matrixctrl object into an llll matrix",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "matrix",
+      "matrixctrl",
+      "convert"
+    ],
+    "seealso": [
+      "matrixctrl",
+      "bach.m2matrixctrl",
+      "Into The Matrix"
+    ]
+  },
+  "bach.stream": {
+    "digest": "Stream last elements",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach llll"
+    ],
+    "keywords": [
+      "stream",
+      "element",
+      "last"
+    ],
+    "seealso": [
+      "bach.collect",
+      "bach.iter",
+      "zl.stream"
+    ]
+  },
+  "bach.poltocar": {
+    "digest": "Polar to cartesian coordinate conversion for lllls",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach math"
+    ],
+    "keywords": [
+      "polar",
+      "cartesian",
+      "coordinate",
+      "convert",
+      "amplitude",
+      "phase",
+      "angle",
+      "radius",
+      "real",
+      "imaginary",
+      "part"
+    ],
+    "seealso": [
+      "bach.cartopol",
+      "bach.expr",
+      "bach.fft"
+    ]
+  },
+  "bach.rank": {
+    "digest": "Compute the rank of a matrix",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach abstractions",
+      "bach matrix calculus"
+    ],
+    "keywords": [
+      "rank",
+      "calculate",
+      "compute",
+      "Gauss elimination",
+      "linear independence",
+      "matrix"
+    ],
+    "seealso": [
+      "bach.gausselim",
+      "bach.det",
+      "bach.inv",
+      "Into The Matrix"
     ]
   }
 }

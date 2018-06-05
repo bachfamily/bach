@@ -113,12 +113,29 @@ t_llll *hatom_change_to_obj(t_hatom *hatom, const void *o)
 {
     if (hatom->h_type != H_LLLL) {
         hatom->h_type = H_OBJ;
-        hatom->h_w.w_obj = (t_object *) o;
+        hatom->h_w.w_obj = (void *) o;
         return NULL;
     } else {
         t_llll *old_ll = hatom->h_w.w_llll;
         hatom->h_type = H_OBJ;
         hatom->h_w.w_obj = (t_object *) o;
+        llll_downgrade_depth(old_ll->l_owner->l_parent);
+        old_ll->l_owner = NULL;
+        pedantic_llll_check(old_ll);
+        return old_ll;
+    }
+}
+
+t_llll *hatom_change_to_func(t_hatom *hatom, const void *o)
+{
+    if (hatom->h_type != H_LLLL) {
+        hatom->h_type = H_FUNCTION;
+        hatom->h_w.w_func = (void *) o;
+        return NULL;
+    } else {
+        t_llll *old_ll = hatom->h_w.w_llll;
+        hatom->h_type = H_FUNCTION;
+        hatom->h_w.w_func = (t_object *) o;
         llll_downgrade_depth(old_ll->l_owner->l_parent);
         old_ll->l_owner = NULL;
         pedantic_llll_check(old_ll);

@@ -151,7 +151,14 @@ long substitute_names_with_mc_fn(void *data, t_hatom *a, const t_llll *address){
 			hatom_setlong(a, screen_mc + acc_part.r_num);
 		else
 			hatom_setdouble(a, screen_mc + rat2double(acc_part));
-	}
+    } else if (hatom_gettype(a) == H_PITCH) {
+        t_pitch p = hatom_getpitch(a);
+        t_rational mc = p.toMC();
+        if (mc.r_den == 1)
+            hatom_setlong(a, mc.r_num);
+        else
+            hatom_setdouble(a, rat2double(mc));
+    }
 	return 0;
 }
 

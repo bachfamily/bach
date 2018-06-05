@@ -10,7 +10,6 @@
 #define bach_pitch_hpp
 
 #include <string>
-#include "bach_mem.h"
 #include "rational.h"
 
 
@@ -167,13 +166,19 @@ public:
     t_pitch operator*(const t_rational &b) const;
     t_pitch operator/(const t_atom_long b) const;
     t_pitch operator/(const t_rational &b) const;
-    t_rational operator/(const t_pitch &b) const { return toMC() / b.toMC(); };
+    t_rational operator/(const t_pitch &b) const {
+        t_rational b_toMC = b.toMC();
+        if (b_toMC.r_num == 0)
+            error("Illegal division by C0 (or one of its enharmonic pitches) detected.");
+        return toMC() / b_toMC;
+    };
+    
     t_pitch operator%(const t_atom_long b) const;
     t_pitch operator%(const t_pitch &b) const;
     
-    long divdiv(const t_pitch &b) const {
-        t_rational res = *this / b;
-        return res.num() / res.den();
+
+    t_atom_long divdiv(const t_pitch &b) const {
+        return static_cast<t_atom_long>((*this) / b);
     };
     
     friend t_pitch operator*(const t_atom_long a, const t_pitch b) { return b * a; }
@@ -359,7 +364,10 @@ public:
                 case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
                     
                 case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
-                    
+                
+                case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
+                case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                
                 case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
                 case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
                     

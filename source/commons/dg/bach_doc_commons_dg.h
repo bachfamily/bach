@@ -1101,10 +1101,12 @@
 
 #define BACH_DOC_SYMBOLIC_VARIABLES
 	// Symbolic variables are variables that can be used in the conditional selection or parameter modification processes. 
-	// These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the 
-	// note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration), 
-	// <m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-	// and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+	// These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+    // <m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+    // For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+	// <m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+	// <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+    // grace chords, 0 otherwise). <br />
 	// In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 	// the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
     // (all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -2251,6 +2253,12 @@
     // You can purchase November from this web address: www.klemm-music.de/notation/november/.
     // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set. Not all articulations are supported by all fonts.
     // You can however always define custom articulations with any font of your choice.
+
+#define BACH_DOC_LYRICS_FONT
+    // @description Sets the font used to display lyrics (default is Arial).
+
+#define BACH_DOC_ANNOTATIONS_FONT
+    // @description Sets the font used to display annotations (default is Arial).
 
 #define BACH_DOC_DYNAMICS_SPECTRUM
     // The dynamics spectrum is the sequence of standard dynamics in the piano-to-forte range.

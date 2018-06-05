@@ -115,7 +115,7 @@
 				Output the arithmetic series
 			</digest>
 			<description>
-				A bang outputs the arithmetic series of primes according to the most recently received parameters.
+				A bang outputs the arithmetic series according to the most recently received parameters.
 			</description>
 		</method>
 		<method name="llll">
@@ -188,6 +188,7 @@
 	<seealsolist>
 		<seealso name="bach.primeser" />
 		<seealso name="bach.geomser" />
+		<seealso name="bach.recurser" />
 	</seealsolist>
 
 	<misc name = "Input">

@@ -319,7 +319,7 @@ t_llll* get_collapsed_score_as_llll(t_score *x, t_llll *whichvoices, long refere
 
 // modifying selection
 void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv);
-char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_check_scheduling, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false);
+char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_check_scheduling, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false, char transfer_slots_even_to_rests = false);
 void score_sel_deletemeasures(t_score *x);
 void score_clear_selection(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_sel_rebeam(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -433,7 +433,7 @@ void change_slur_ending_note(t_score *x, t_slur *slur, t_note *newnote);
 #endif
 
 // selections
-void preselect_elements_in_region_for_mouse_selection(t_score *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2);
+void preselect_elements_in_region_for_mouse_selection(t_score *x, double ms1, double ms2, double mc1, double mc2, long v1, long v2, char correct_for_voiceensembles);
 
 // quantization
 void score_quantize(t_score *x, t_symbol *s, long argc, t_atom *argv);
@@ -987,7 +987,7 @@ void score_getloop(t_score *x){
 // *******************************************************************************************
 
 
-char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_check_scheduling, t_llll *slots_to_transfer_to_next_note_in_chord_1based, char transfer_slots_even_if_empty)
+char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_check_scheduling, t_llll *slots_to_transfer_to_next_note_in_chord_1based, char transfer_slots_even_if_empty, char transfer_slots_even_to_rests)
 {
 	char changed = 0;
 	if (curr_it->type == k_NOTE) {
@@ -995,7 +995,7 @@ char score_sel_delete_item(t_score *x, t_notation_item *curr_it, char *need_chec
 		notation_item_delete_from_selection((t_notation_obj *) x, curr_it);
 		if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt)){
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)nt, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-            transfer_note_slots((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty);
+            note_transfer_slots_to_siebling((t_notation_obj *)x, nt, slots_to_transfer_to_next_note_in_chord_1based, transfer_slots_even_if_empty, transfer_slots_even_to_rests);
             note_delete((t_notation_obj *)x, nt, false);
 			changed = 1;
 		}
@@ -1050,15 +1050,15 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
 	char need_check_scheduling = false;
     
     t_llll *transfer_slots = NULL;
-    long even_if_empty = false;
+    long even_if_empty = false, even_to_rests = false;
     t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
-    llll_parseargs_and_attrs((t_object *) x, ll, "li", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty);
+    llll_parseargs_and_attrs((t_object *) x, ll, "lii", gensym("transferslots"), &transfer_slots, gensym("empty"), &even_if_empty, gensym("torests"), &even_to_rests);
     llll_free(ll);
     
 	t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : NULL;
 	
 	// this must be here at the beginning, because it changes the selected items!
-	turn_selection_into_rests(x, true, true, true, transfer_slots, even_if_empty);
+	turn_selection_into_rests(x, true, true, true, transfer_slots, even_if_empty, even_to_rests);
 
 	lock_general_mutex((t_notation_obj *)x);
 
@@ -1074,7 +1074,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
 			continue;
 		}
 		
-		score_sel_delete_item(x, curr_it, &need_check_scheduling, transfer_slots, even_if_empty);
+		score_sel_delete_item(x, curr_it, &need_check_scheduling, transfer_slots, even_if_empty, even_to_rests);
 	}
 	
     if (transfer_slots)
@@ -1630,13 +1630,13 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 				clear_preselection((t_notation_obj *)x);
 				if (!voice_numbers || voice_numbers->l_size == 0) {
 					for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
-						preselect_elements_in_region_for_mouse_selection(x, ux1, ux2, mc1, mc2, voice->v_ob.number, voice->v_ob.number);
+						preselect_elements_in_region_for_mouse_selection(x, ux1, ux2, mc1, mc2, voice->v_ob.number, voice->v_ob.number, false);
 				} else {
 					t_llllelem *elem;
 					for (elem = voice_numbers->l_head; elem; elem = elem->l_next)
 						if (hatom_gettype(&elem->l_hatom) == H_LONG) {
 							long this_voice_num = hatom_getlong(&elem->l_hatom);
-							preselect_elements_in_region_for_mouse_selection(x, ux1, ux2, mc1, mc2, this_voice_num, this_voice_num);
+							preselect_elements_in_region_for_mouse_selection(x, ux1, ux2, mc1, mc2, this_voice_num, this_voice_num, false);
 						}
 				}
 				ms1 = unscaled_xposition_to_ms((t_notation_obj *)x, ux1, 1);
@@ -5158,8 +5158,10 @@ int T_EXPORT main(void){
 	// @description @copy BACH_DOC_MESSAGE_DELETE
     // If measures are selected, only their notes and chords are deleted, and measure are preserved.
     // Use <m>deletemeasures</m> if you need to delete whole measures. <br />
-    // When deleting notes from a chord, use the "@transferslots" specification to define a set of slots to be transfered to a neighbour note in the same chord,
-    // whenever possible. Use also "all" to transfer all slots, and "auto" to transfer a standard set of slots (dynamics, lyrics, articulations, annotations);
+    // When deleting notes from a chord, use the "@transferslots" specification to define a set of slots
+    // to be transfered to a neighbour note in the same chord,
+    // whenever possible (if the "@torests" specification is added, slots will be transfered to the rest if the note was the only one in the chord).
+    // Use also "all" to transfer all slots, and "auto" to transfer a standard set of slots (dynamics, lyrics, articulations, annotations);
     // use "dynamics", "lyrics", "noteheads", "articulations", "annotation" instead of slot numbers.
     // Use the additional "@empty" message argument in order to tell with a 0/1 integer whether empty slots should also be transfered (by default: 0 = false).
     // @mattr transferslots @type llll @default null @digest If non-null, when deleting notes from a chord, these slots will be transfered to another chord note whenever possible
@@ -5167,6 +5169,7 @@ int T_EXPORT main(void){
     // @example delete @caption delete current selection
     // @example delete @transferslots 20 21 @caption delete current selection, and transfer content of slot 20 and 21 to another chord note, if possible
     // @example delete @transferslots all @caption delete current selection, and transfer all slots
+    // @example delete @transferslots all @transfertorest 1 @caption delete current selection, and transfer all slots, even to rests
     // @example delete @transferslots all @empty 1 @caption delete current selection, and transfer all slots, even the empty ones
     // @seealso eraseslot, deletemeasures
 	class_addmethod(c, (method) score_sel_delete, "delete", A_GIMME, 0);
@@ -5207,7 +5210,7 @@ int T_EXPORT main(void){
     // @mattr spiralh @type double @default 3.8729 @digest For Chew and Chen algorithm, sets the pitch spiral vertical step
     // @mattr numsliding @type int @default 8 @digest For Chew and Chen algorithm, sets the number of sliding windows
     // @mattr numselfreferential @type int @default 2 @digest For Chew and Chen algorithm, sets the number of selfreferential windows
-    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, avoids repetitions of the same diatonic step with different alterations
+    // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations
     // @mattr stdevthresh @type llll/symbol @default 21/(numnotes+1) @digest For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth
     // @example respell @caption respell according to key and/or enharmonic tables
     // @example respell @algorithm atonal @caption respell via the atonal algorithm
@@ -6317,6 +6320,7 @@ int T_EXPORT main(void){
     // @mattr maxchars @type int @default 4 @digest Width of the dynamics spectrum
     // @mattr exp @type float @default 0.8 @digest Exponent for the conversion
     // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs
+    // @mattr breakpointmode @type int @default 0 @digest Breakpoint handling (0 = handle existing ones, 1 = add new ones to match dynamics, 2 = also clear)
     // @seealso velocities2dynamics, checkdynamics, fixdynamics
     // @example dynamics2velocities @caption convert dynamics to velocities throughout the whole score
     // @example dynamics2velocities selection @caption same thing, for selected items only
@@ -6824,6 +6828,18 @@ int T_EXPORT main(void){
     CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"articulationsfont", 0, "\"November for bach\"");
     CLASS_ATTR_ACCESSORS(c, "articulationsfont", (method)NULL, (method)score_set_articulations_font);
     // @description @copy BACH_DOC_ARTICULATIONS_FONT
+
+    CLASS_ATTR_SYM(c,"lyricsfont", 0, t_notation_obj, lyrics_font);
+    CLASS_ATTR_STYLE_LABEL(c, "lyricsfont", 0, "font", "Lyrics Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"lyricsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "lyricsfont", (method)NULL, (method)notation_obj_setattr_lyrics_font);
+    // @description @copy BACH_DOC_LYRICS_FONT
+    
+    CLASS_ATTR_SYM(c,"annotationsfont", 0, t_notation_obj, annotations_font);
+    CLASS_ATTR_STYLE_LABEL(c, "annotationsfont", 0, "font", "Annotations Font");
+    CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"annotationsfont", 0, "Arial");
+    CLASS_ATTR_ACCESSORS(c, "annotationsfont", (method)NULL, (method)notation_obj_setattr_annotations_font);
+    // @description @copy BACH_DOC_ANNOTATIONS_FONT
 
 	CLASS_ATTR_DOUBLE(c,"measurenumberfontsize",0, t_notation_obj, measure_numbers_font_size);
 	CLASS_ATTR_STYLE_LABEL(c,"measurenumberfontsize",0,"text","Measure Numbers Font Size");
@@ -8628,7 +8644,7 @@ void score_copy_slots_to_tied_noted_sequences(t_score *x)
 
 void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	long inlet = proxy_getinlet((t_object *) x); 
-
+    
 	if (x->r_ob.is_sending_automessage) // automessage loop; we don't want it
 		return;
 	
@@ -8826,7 +8842,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         char selection_only = false;
                         t_llll *mapping_ll = NULL;
                         llll_destroyelem(firstelem);
-                        long slot_num = x->r_ob.link_dynamics_to_slot - 1;
+                        long slot_num = x->r_ob.link_dynamics_to_slot - 1, bptmode = 1;
                         double a_exp = CONST_DEFAULT_DYNAMICS_TO_VELOCITY_EXPONENT;
                         long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
@@ -8837,9 +8853,9 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             slot_num = hatom_getlong(&inputlist->l_head->l_hatom) - 1;
                             llll_behead(inputlist);
                         }
-                        llll_parseargs_and_attrs((t_object *)x, inputlist, "lid", gensym("mapping"), &mapping_ll, gensym("maxchars"), &maxchars, gensym("exp"), &a_exp);
+                        llll_parseargs_and_attrs((t_object *)x, inputlist, "lidi", gensym("mapping"), &mapping_ll, gensym("maxchars"), &maxchars, gensym("exp"), &a_exp, gensym("breakpointmode"), &bptmode);
                         if (slot_num >= 0 && slot_num < CONST_MAX_SLOTS)
-                            notationobj_dynamics2velocities((t_notation_obj *)x, slot_num, mapping_ll, selection_only, MAX(0, maxchars + 1), CLAMP(a_exp, 0.001, 1.));
+                            notationobj_dynamics2velocities((t_notation_obj *)x, slot_num, mapping_ll, selection_only, MAX(0, maxchars + 1), CLAMP(a_exp, 0.001, 1.), bptmode);
                         llll_free(mapping_ll);
 
                     } else if (router == gensym("velocities2dynamics")) {
@@ -8895,6 +8911,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             if (params->l_head) {
                                 parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head, NULL, NULL, &from_here, false);
                                 if (params->l_head->l_next) {
+                                    to_here = from_here;
                                     to_here_def = true;
                                     parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, params->l_head->l_next, NULL, NULL, &to_here, false);
                                 }
@@ -9133,6 +9150,9 @@ t_chord *clear_region(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t
             cur = next_cur;
         }
         
+        if (!res) // we haven't deleted/changed/split anything
+            res = chord_get_first_strictly_before_symonset((t_notation_obj *)x, start_meas, from_here->pt_in_measure);
+        
     } else {
         
         // start measure
@@ -9286,10 +9306,11 @@ void overtype_voice(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t_t
             den = region_dur.r_den;
         }
         
-        t_llll *ts = long_couple_to_llll(num, den);
+        t_llll *ts = long_couple_to_llll(num > 0 ? num : 1, den);
         set_measure_ts_and_tempo_from_llll((t_notation_obj *) x, fakemeas, ts, NULL, 0, NULL, false);
         
-        check_measure_autocompletion(x, fakemeas); // we now count on autocompletion to trim stuff properly
+        if (num > 0)
+            check_measure_autocompletion(x, fakemeas); // we now count on autocompletion to trim stuff properly
         compute_note_approximations_for_measure((t_notation_obj *)x, fakemeas, false);
         validate_accidentals_for_measure((t_notation_obj *)x, fakemeas);
 
@@ -10119,7 +10140,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
 		lock_general_mutex((t_notation_obj *)x);
 		clear_preselection((t_notation_obj *)x);
-		preselect_elements_in_region_for_mouse_selection(x, x->r_ob.j_selected_region_ux1, x->r_ob.j_selected_region_ux2, x->r_ob.j_selected_region_mc1, x->r_ob.j_selected_region_mc2, x->r_ob.j_selected_region_voice1, x->r_ob.j_selected_region_voice2);
+		preselect_elements_in_region_for_mouse_selection(x, x->r_ob.j_selected_region_ux1, x->r_ob.j_selected_region_ux2, x->r_ob.j_selected_region_mc1, x->r_ob.j_selected_region_mc2, x->r_ob.j_selected_region_voice1, x->r_ob.j_selected_region_voice2, true);
 		if ((x->r_ob.j_mousedown_point.y > 3 * x->r_ob.zoom_y && 3 * x->r_ob.zoom_y > pt.y) || (pt.y > 3 * x->r_ob.zoom_y && 3 * x->r_ob.zoom_y > x->r_ob.j_mousedown_point.y)) {
 			double ms1 = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.j_selected_region_ux1, 1);
 			double ms2 = unscaled_xposition_to_ms((t_notation_obj *)x, x->r_ob.j_selected_region_ux2, 1);
@@ -10339,7 +10360,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 
 							if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)((t_note *)temp)->parent)) {
 								t_note *new_note = clone_note((t_notation_obj *) x, (t_note *)temp, k_CLONE_FOR_SAME_CHORD); // we clone the note
-								insert_note((t_notation_obj *) x, ((t_note *)temp)->parent, new_note, 0);
+								note_insert((t_notation_obj *) x, ((t_note *)temp)->parent, new_note, 0);
 								((t_note *)temp)->parent->parent->need_recompute_beams_positions = true;
 								recalculate_all_measure_chord_parameters((t_notation_obj *)x, ((t_note *)temp)->parent->parent);
 								set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
@@ -10528,7 +10549,7 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)note->parent->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
 			create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)chord_for_note_insertion->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
 
-			insert_note((t_notation_obj *) x, chord_for_note_insertion, note_in_new_voice, 0);
+			note_insert((t_notation_obj *) x, chord_for_note_insertion, note_in_new_voice, 0);
 			note_compute_approximation((t_notation_obj *) x, note_in_new_voice);
 			if (chord_for_note_insertion->r_sym_duration.r_num < 0) chord_for_note_insertion->r_sym_duration = rat_abs(chord_for_note_insertion->r_sym_duration); 
 			newch = chord_for_note_insertion;
@@ -12066,7 +12087,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 #endif
                                     }
                                     
-                                    insert_note((t_notation_obj *)x, curr_ch, newnote, 0);
+                                    note_insert((t_notation_obj *)x, curr_ch, newnote, 0);
 									x->r_ob.item_changed_at_mousedown = 1;
 									curr_ch->r_sym_duration = rat_abs(curr_ch->r_sym_duration);
 									notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)curr_ch);
@@ -14026,7 +14047,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
 	for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
 		if (is_in_clef_shape((t_notation_obj *)x, pt.x, pt.y, (t_voice *)voice)) {
 			clear_preselection((t_notation_obj *)x);
-			preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -1000, 16000, voice->v_ob.number, voice->v_ob.number);
+			preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
 			move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
 		}
 	}
@@ -14420,7 +14441,7 @@ void add_note_to_chord_from_linear_edit(t_score *x, long force_diatonic_step){
 		x->r_ob.notation_cursor.chord->r_sym_duration = rat_abs(x->r_ob.notation_cursor.chord->r_sym_duration);
 
         note_set_user_enharmonicity_from_screen_representation(this_nt, argv[1], long2rat(0), true);
-		insert_note((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
+		note_insert((t_notation_obj *) x, x->r_ob.notation_cursor.chord, this_nt, 0);
 		note_compute_approximation((t_notation_obj *) x, this_nt);
 		calculate_chord_parameters((t_notation_obj *) x, x->r_ob.notation_cursor.chord, get_voice_clef((t_notation_obj *)x, (t_voice *)x->r_ob.notation_cursor.chord->parent->voiceparent), false);
 		validate_accidentals_for_measure((t_notation_obj *) x, x->r_ob.notation_cursor.measure);
@@ -15798,7 +15819,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 				if (is_editable((t_notation_obj *)x, k_MARKER, k_DELETION))
 					delete_selected_markers(x); // x->r_ob.selection_type
                 t_llll *slots_to_transfer = get_default_slots_to_transfer_1based((t_notation_obj *)x);
-                turn_selection_into_rests(x, is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_DELETION), is_editable((t_notation_obj *)x, k_LYRICS, k_ELEMENT_ACTIONS_NONE), is_editable((t_notation_obj *)x, k_DYNAMICS, k_ELEMENT_ACTIONS_NONE), slots_to_transfer, false);
+                turn_selection_into_rests(x, is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_DELETION), is_editable((t_notation_obj *)x, k_LYRICS, k_ELEMENT_ACTIONS_NONE), is_editable((t_notation_obj *)x, k_DYNAMICS, k_ELEMENT_ACTIONS_NONE), slots_to_transfer, false, false);
                 llll_free(slots_to_transfer);
 				notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *)x);
 				handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_TURN_SELECTION_INTO_RESTS); 
@@ -16231,7 +16252,7 @@ void select_all(t_score *x){
 //	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 }	
 
-void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, double ux2, double mc1, double mc2, long v1, long v2){
+void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, double ux2, double mc1, double mc2, long v1, long v2, char correct_for_voiceensembles){
 	// preselect (and then, at the mouseup: select) all the elements in the region. ux1 and ux2 are the unscaled x positions
 
 	t_scorevoice *voice;
@@ -16249,16 +16270,19 @@ void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, do
 
 		voicenum = voice->v_ob.number;
         
-        // correcting voicenum for voiceensembles
         char same_v1_v2 = (v1 == v2);
-        t_voice *v1v = nth_voice((t_notation_obj *)x, v1);
-        t_voice *v2v = nth_voice((t_notation_obj *)x, v2);
-        if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v1v))
-            voicenum = v1;
-        else if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v2v))
-            voicenum = v2;
-        if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, v1v, v2v))
-            same_v1_v2 = true;
+
+        // correcting voicenum for voiceensembles
+        if (correct_for_voiceensembles) {
+            t_voice *v1v = nth_voice((t_notation_obj *)x, v1);
+            t_voice *v2v = nth_voice((t_notation_obj *)x, v2);
+            if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v1v))
+                voicenum = v1;
+            else if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, (t_voice *)voice, v2v))
+                voicenum = v2;
+            if (do_voices_belong_to_same_voiceensemble((t_notation_obj *)x, v1v, v2v))
+                same_v1_v2 = true;
+        }
         
 		curr_measure = voice->firstmeasure;
 		while (curr_measure) {

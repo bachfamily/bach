@@ -876,6 +876,13 @@
 				"tags" : [ "message", "convert", "assign", "dynamic", "velocity", "velocities", "parameter", "char", "maxchar", "p", "f", "exponent", "map", "linear", "dynamics2velocities" ],
 				"title" : [ "Dynamics to velocities parameters" ]
 			},
+			"Dynamics2velocitiesmorebpts" : {
+				"filename" : [ "bach.help.notation.dynamics.22_dynamics2velocitiesmorebpts.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "dynamics", "breakpointhavevelocity", "dynamics2velocities", "velocities2dynamics" ],
+				"tags" : [ "message", "convert", "assign", "dynamic", "velocity", "velocities", "parameter", "dynamics2velocities", "breakpointmode", "breakpoint", "mode", "clear", "add" ],
+				"title" : [ "Dynamics to velocities and breakpoints" ]
+			},
 			"Velocities2dynamics" : {
 				"filename" : [ "bach.help.notation.dynamics.24_velocities2dynamics.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -2175,7 +2182,7 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.02b_deletetransfer.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection" ],
-					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "keep", "slot", "transfer", "copy", "content", "dynamic", "articulation", "lyric", "notehead", "annotation", "empty", "transferslots" ],
+					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "keep", "slot", "transfer", "copy", "content", "dynamic", "articulation", "lyric", "notehead", "annotation", "empty", "transferslots", "torests", "to", "rest" ],
 					"title" : [ "Delete selection and transfer slots" ]
 				},
 				"Onsettailduration" : {
@@ -2449,7 +2456,7 @@
 				"filename" : [ "bach.help.notation.messages.31_symbolvariables.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "conditional+selection" ],
-				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace" ],
+				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace", "part", "voiceensemble", "pitch", "ensemble" ],
 				"title" : [ "Symbolic variables for expressions" ]
 			},
 			"Respell pitches automatically" : {
@@ -2677,6 +2684,13 @@
 				"seealso" : [ "linear+edit", "timepoint+syntax", "basic+overtyping" ],
 				"tags" : [ "message", "overtype", "over", "type", "replace", "content", "music", "linear", "overwrite", "write", "advanced", "overtyping", "more", "trim", "fill", "overflow", "rhythmic", "tree" ],
 				"title" : [ "Advanced overtyping" ]
+			},
+			"Overtypeandgracenotes" : {
+				"filename" : [ "bach.help.notation.messages.97_overtypeandgracenotes.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "linear+edit", "timepoint+syntax", "overtyping", "grace+syntax" ],
+				"tags" : [ "message", "overtype", "over", "type", "replace", "content", "music", "linear", "overwrite", "write", "advanced", "overtyping", "more", "grace", "note", "insert", "inserting", "add", "chord" ],
+				"title" : [ "Inserting grace notes" ]
 			}
 		},
 		"Naming" : {
@@ -2837,6 +2851,13 @@
 				"seealso" : [ "voice+ensemble", "showpartcolors", "linear+edit", "chord+add", "measure+add", "numparts" ],
 				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "edit", "part", "interface", "active", "set", "editing", "duplicate", "copy", "paste", "new", "swap" ],
 				"title" : [ "Set active part for editing" ]
+			},
+			"Selectpart" : {
+				"filename" : [ "bach.help.notation.parts.05_selectpart.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "voice+ensemble", "part", "variables", "sel", "unsel", "select", "subsel" ],
+				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "part", "select", "sel", "unsel", "select", "subsel" ],
+				"title" : [ "Part selection" ]
 			}
 		},
 		"Quantization" : {
@@ -3880,6 +3901,13 @@
 				"tags" : [ "slot", "slotinfo", "range", "slope" ],
 				"title" : [ "Slot range" ]
 			},
+			"C_slotrangeslope" : {
+				"filename" : [ "bach.help.notation.slots.12c_slotrangeslope.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "range+slope" ],
+				"tags" : [ "slot", "slotinfo", "range", "slope", "apply", "warp", "combine", "modulate" ],
+				"title" : [ "Using slot range slope during playback" ]
+			},
 			"Slotzrange" : {
 				"filename" : [ "bach.help.notation.slots.13_slotzrange.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
@@ -4106,6 +4134,13 @@
 					"seealso" : [ "slot+linkage", "slotinfo+inspector" ],
 					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "accidental", "linkannotationtoslot", "commentary", "text", "expression", "annotationfontsize", "font" ],
 					"title" : [ "Setting up annotations" ]
+				},
+				"Annotationmore" : {
+					"filename" : [ "bach.help.notation.slots.30_slot linkage.31_annotationmore.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "slot+linkage", "annotation" ],
+					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "linkannotationtoslot", "commentary", "text", "expression", "duplicate", "pizz", "arco", "pizzicato", "ord", "pont", "tasto", "technique", "remove", "filter", "bracket", "ordinario", "ponticello" ],
+					"title" : [ "Handling annotation duplicates" ]
 				}
 			}
 		},

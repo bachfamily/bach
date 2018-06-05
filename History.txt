@@ -1,5 +1,48 @@
 VERSION NOTES:
 
+v0.8.1b
+
+Scroll down for very important things you should now about v0.8b (v0.8.1 being a minor update, fixing a few bugs)
+
+*****************
+*** IMPORTANT ***
+*****************
+
+*** THESE CHANGES MIGHT BREAK COMPATIBILITY WITH OLDER PATCHES ***
+
+- bach.roll, bach.score
+		There's a new @applyslope attribute, by default set to 1, 
+			that applies range slopes in function slots automatically
+			to function segments or curves, to account for slot range slope
+		Your patches might then sound different than previously!
+			if you did NOT want this, simply set @applyslope to 0.
+
+- bach.partition
+		Now when partitions of 0 are requested a "null" list is output.
+
+***********************
+*** VERSION CHANGES ***
+***********************
+
+- all objects	Fixed issues with negative midicents
+
+- bach.recurser	New object
+
+- bach.roll, bach.score
+		Now "dynamics2velocities" handles breakpoints
+		Fixed bug causing wrong breakpoint handling for "dynamics2velocities" in some situations
+		Added "part" as a possible variable for selection expressions
+		Added support for removing duplicate annotation (see #annotation+duplicates)
+
+- bach.score	Fixed possible crashes with "inscreenmeas"
+		Fixed possible crashes in rare scenarios when the score was hidden.
+
+- bach.n2mc	Now handles pitches as well 
+			(this entailed compatibility breaks with older patches, but such issues is now fixed)
+
+
+
+
 v0.8b
 
 ******************************************************************

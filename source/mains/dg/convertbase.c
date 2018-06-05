@@ -593,13 +593,9 @@ void convertbase_anything(t_convertbase *x, t_symbol *msg, long ac, t_atom *av)
     if (output_sym)
         llllobj_outlet_anything((t_object *)x, LLLL_OBJ_VANILLA, 0, output_sym, 0, NULL);
     else if (float_mode) {
-        t_atom float_atom;
-        atom_setfloat(&float_atom, output_long + output_float_part);
-        llllobj_outlet_anything((t_object *)x, LLLL_OBJ_VANILLA, 0, _sym_float, 1, &float_atom);
+        llllobj_outlet_float((t_object *) x, LLLL_OBJ_VANILLA, 0, output_long + output_float_part);
     } else {
-        t_atom int_atom;
-        atom_setlong(&int_atom, output_long);
-        llllobj_outlet_anything((t_object *)x, LLLL_OBJ_VANILLA, 0, _sym_int, 1, &int_atom);
+        llllobj_outlet_float((t_object *) x, LLLL_OBJ_VANILLA, 0, output_long);
     }
     
     llll_free(output_digits);

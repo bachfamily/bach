@@ -28,13 +28,13 @@
 	@copy BACH_DOC_ASCII_ACCIDENTALS_SYNTAX
 	
 	@category
-	bach, bach objects, bach notation
+	bach, bach objects, bach notation, bach pitches
 
 	@keywords
 	convert, midicent, cent, note, name
 
 	@seealso
-	bach.mc2p, bach.f2mc, bach.mc2f
+	bach.mc2p, bach.f2mc, bach.mc2f, bach.approx
 	
 	@owner
 	Daniele Ghisi

@@ -1241,6 +1241,11 @@ t_llll *llll_develop_ranges(t_llll *ll);
 void llll_put_elems_in_lllls_in_lthing(t_llll *ll);
 void llll_remove_lllls_from_lthing(t_llll *ll);
 
+t_bool llll_istrue(const t_llll *ll);
+t_llll *get_num_ll(const t_atom_long n);
+t_atom_long llll_getlong(t_llll *ll, t_atom_long def = 0);
+
+
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

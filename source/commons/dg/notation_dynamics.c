@@ -14,7 +14,7 @@ t_chord *dynamics_get_next(t_notation_obj *r_ob, t_voice *voice, long slot_num, 
     char dyn_text[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
     t_slotitem *slotitem = NULL;
     for (t_chord *ch = curr_ch ? chord_get_next(curr_ch) : chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
-        if (parse_chord_dynamics(r_ob, ch, slot_num, dyn_text, hairpins, num_dynamics, open_hairpin, &slotitem)) {
+        if (chord_parse_dynamics(r_ob, ch, slot_num, dyn_text, hairpins, num_dynamics, open_hairpin, &slotitem)) {
             for (long i = 0; i < *num_dynamics; i++) {
                 char this_dyn_text_dep[CONST_MAX_NUM_DYNAMICS_CHARS];
                 deparse_dynamics_to_string_once(r_ob, dyn_text[i], this_dyn_text_dep);
@@ -35,7 +35,7 @@ t_chord *dynamics_get_prev(t_notation_obj *r_ob, t_voice *voice, long slot_num, 
     char dyn_text[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
     t_slotitem *slotitem = NULL;
     for (t_chord *ch = curr_ch ? chord_get_prev(curr_ch) : chord_get_last(r_ob, voice); ch; ch = chord_get_prev(ch)) {
-        if (parse_chord_dynamics(r_ob, ch, slot_num, dyn_text, hairpins, &num_dyns, open_hairpin, &slotitem)) {
+        if (chord_parse_dynamics(r_ob, ch, slot_num, dyn_text, hairpins, &num_dyns, open_hairpin, &slotitem)) {
             if (num_dynamics)
                 *num_dynamics = num_dyns;
             
@@ -62,7 +62,7 @@ t_chord *dynamics_get_first(t_notation_obj *r_ob, t_voice *voice, long slot_num,
     return dynamics_get_next(r_ob, voice, slot_num, NULL, num_dynamics, dynamics, hairpins, open_hairpin, onset);
 }
 
-long parse_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char dyn_text[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, t_slotitem **slotitem_containing_dynamics)
+long chord_parse_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char dyn_text[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, t_slotitem **slotitem_containing_dynamics)
 {
     t_slotitem *slotitem = NULL;
     
@@ -91,7 +91,7 @@ long parse_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char
 }
 
 
-long parse_chord_dynamics_easy(t_notation_obj *r_ob, t_chord *ch, long slot_num, char *dyn_text, long *hairpin)
+long chord_parse_dynamics_easy(t_notation_obj *r_ob, t_chord *ch, long slot_num, char *dyn_text, long *hairpin)
 {
     t_slotitem *slotitem = NULL;
     
@@ -120,7 +120,7 @@ long parse_chord_dynamics_easy(t_notation_obj *r_ob, t_chord *ch, long slot_num,
         if (num_dynamics) {
             if (dyn_text)
                 snprintf_zero(dyn_text, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", all_dynamics_text[0]);
-            if (open_hairpin)
+            if (hairpin && open_hairpin)
                 *hairpin = hairpins[0];
         }
         return 1;
@@ -750,7 +750,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 continue;
             }
             
-            parse_chord_dynamics(r_ob, ch, slot_num, dyn_text, hairpins, &num_dynamics, &open_hairpin, &slotitem);
+            chord_parse_dynamics(r_ob, ch, slot_num, dyn_text, hairpins, &num_dynamics, &open_hairpin, &slotitem);
             
             for (i = 0; i < num_dynamics; i++)
                 deparse_dynamics_to_string_once(r_ob, dyn_text[i], dyn_text_dep[i]);
@@ -1341,7 +1341,29 @@ char is_dynamics_local(t_notation_obj *r_ob, t_llll *dyn_vel_associations, t_sym
 }
 
 
-void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_llll *dyn_vel_associations, t_dynamics_params *params, t_chord *left_dyns_chord, long num_left_dyns, t_symbol **left_dyns, long *hairpins, t_symbol *right_dyn, double left_onset, double right_onset, char add_undo_tick)
+
+t_symbol *chord_get_first_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num)
+{
+    char dyn_text[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
+    long num_dynamics = 0;
+    chord_parse_dynamics(r_ob, ch, slot_num, dyn_text, NULL, &num_dynamics, NULL);
+    
+    if (num_dynamics > 0) {
+        char temp[CONST_MAX_NUM_DYNAMICS_CHARS * 3];
+        deparse_dynamics_to_string_once(r_ob, dyn_text[0], temp);
+        return gensym(temp);
+    } else
+        return NULL;
+}
+
+
+// bptmode = 0: don't add/delete breakpoints
+// bptmode = 1: add breakpoints to match dynamics
+// bptmode = 2: also delete existing breakpoints before adding new ones
+void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_llll *dyn_vel_associations, t_dynamics_params *params,
+                                           t_chord *left_dyns_chord, long num_left_dyns, t_symbol **left_dyns,
+                                           long *hairpins, t_symbol *right_dyn, double left_onset, double right_onset,
+                                           char add_undo_tick, char bptmode, long slot_num)
 {
     double velocity = 0;
     double left_velocity = 0, right_velocity = 0;
@@ -1364,10 +1386,55 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                 for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
                     nt->velocity = velocity;
                     if (r_ob->breakpoints_have_velocity) {
+                        
+                        if (bptmode >= 2)
+                            note_delete_breakpoints(r_ob, nt);
+                        
+                        if (bptmode >= 1 && num_left_dyns > 2) {
+                            // possibly creating internal breakpoints when dynamics are more than 2 for a single note
+                            // First dynamics will correspond to notehead, last dynamics will correspond to note tail
+                            for (long i = 1; i < num_left_dyns - 1; i++) {
+                                double relative_bpt_position = (((double)i)/(num_left_dyns - 1));
+                                // check whether there's a breakpoint around here (with threshold 1 ms)
+                                char found = false;
+                                for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next)
+                                    if (fabs(bpt->rel_x_pos * nt->duration - relative_bpt_position * nt->duration) < 1.) {
+                                        found = true;
+                                        break;
+                                    }
+                                if (!found)
+                                    add_breakpoint(r_ob, nt, relative_bpt_position, 0, 0, true, 0, true);
+                            }
+                        }
+                        
+
                         for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
-                            if (!bpt->prev || num_left_dyns == 1)
+                            if (!bpt->prev || (num_left_dyns == 1 && last_hairpin == 0))
                                 bpt->velocity = velocity;
-                            else {
+                            
+                            else if (num_left_dyns == 1 && last_hairpin != 0) {
+                                // we have a starting dynamics, then a hairpin ending to some other future chord (e.g. "ff>")
+                                // gotta find that "future chord"
+                                t_chord *nextchwithdyn = chord_get_next_with_dynamics(r_ob, ch, NULL, false, false);
+                                if (nextchwithdyn) {
+                                    // get first dynamics
+                                    t_symbol *right_dyn = chord_get_first_dynamics(r_ob, nextchwithdyn, slot_num);
+                                    if (right_dyn) {
+                                        if (!dynamics_to_velocity(r_ob, left_dyns[0], &left_velocity, dyn_vel_associations, params, 1)) {
+                                            if (!dynamics_to_velocity(r_ob, right_dyn, &right_velocity, dyn_vel_associations, params, -1)) {
+                                                bpt->velocity = rescale_with_slope_inv(notation_item_get_onset_ms(r_ob, (t_notation_item *)bpt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nt), notation_item_get_onset_ms(r_ob, (t_notation_item *)nextchwithdyn), left_velocity, right_velocity, last_hairpin > 1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : (last_hairpin < -1 ? DYNAMICS_TO_VELOCITY_EXP_SLOPE : 0.));
+                                            } else
+                                                object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamics '%s'. Skipping dynamic marking.", right_dyn->s_name);
+                                        } else
+                                            object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamics '%s'. Skipping dynamic marking.", left_dyns[0]->s_name);
+                                    } else {
+                                        bpt->velocity = velocity;
+                                    }
+                                } else {
+                                    bpt->velocity = velocity;
+                                }
+                                
+                            } else {
                                 // choosing
                                 double idx_dyn = CLAMP(bpt->rel_x_pos*(num_left_dyns - 1), 0, num_left_dyns - 1);
                                 long idx1 = CLAMP(floor(idx_dyn), 0, num_left_dyns - 1);
@@ -1439,7 +1506,7 @@ void assign_chord_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
     }
 }
 
-long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp)
+long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode)
 {
     t_symbol *curr_dyn_sym[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
     t_symbol *next_dyn_sym[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
@@ -1476,7 +1543,7 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
                 continue;
             
-            assign_chord_velocities_from_dynamics(r_ob, ch, dyn_vel_associations, &params, curr_dyn_chord, curr_num_dynamics, curr_dyn_sym, curr_hairpins, next_dyn_chord && (next_num_dynamics > 0) ? next_dyn_sym[0] : NULL, curr_dyn_onset, next_dyn_onset, true);
+            chord_assign_velocities_from_dynamics(r_ob, ch, dyn_vel_associations, &params, curr_dyn_chord, curr_num_dynamics, curr_dyn_sym, curr_hairpins, next_dyn_chord && (next_num_dynamics > 0) ? next_dyn_sym[0] : NULL, curr_dyn_onset, next_dyn_onset, true, bptmode, slot_num);
         }
         
     }

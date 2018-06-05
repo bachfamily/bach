@@ -127,7 +127,9 @@ unsigned long bach_get_current_version(void)
 
 unsigned long bach_get_current_llll_version(void)
 {
-    return ((t_bach *)gensym("bach")->s_thing)->b_llll_version;
+    t_bach *b = ((t_bach *)gensym("bach")->s_thing);
+    unsigned long v = b->b_llll_version;
+    return v;
 }
 
 char *bach_get_current_version_string_verbose(void)
@@ -370,6 +372,12 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
 					ac++;
 					elem = elem->l_next;
 					break;
+                case H_FUNCTION:
+                    snprintf_zero(txt, 256, "[function:%p]", elem->l_hatom.h_w.w_obj);
+                    atom_setsym(this_out++, gensym(txt));
+                    ac++;
+                    elem = elem->l_next;
+                    break;
 				case H_NULL:
 					atom_setsym(this_out++, _llllobj_sym_null);
 					ac++;
@@ -6430,11 +6438,16 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         
         if (hatom_type_is_number(start_type)) {
             start = hatom_getdouble(&start_hatom);
+            if (maxcount == 1) {
+                end = start;
+                step = 1;
+            }
         } else {
             if (!(hatom_type_is_number(end_type))) {
                 return outll;
             } else if (maxcount == 1) {
                 start = end = hatom_getdouble(&end_hatom);
+                step = 1;
             } else if (step == 0 || maxcount <= 0) {
                 return outll;
             } else {
@@ -6497,11 +6510,16 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         
         if (hatom_type_is_number(start_type)) {
             start = hatom_getrational(&start_hatom);
+            if (maxcount == 1) {
+                end = start;
+                step = t_rational(1, 1);
+            }
         } else {
             if (!(hatom_type_is_number(end_type))) {
                 return outll;
             } else if (maxcount == 1) {
                 start = end = hatom_getrational(&end_hatom);
+                step = t_rational(1, 1);
             } else if (step.r_num == 0 || maxcount <= 0) {
                 return outll;
             } else {
@@ -6550,11 +6568,16 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
 
         if (hatom_type_is_number(start_type)) {
             start = hatom_getlong(&start_hatom);
+            if (maxcount == 1) {
+                end = start;
+                step = 1;
+            }
         } else {
             if (!(hatom_type_is_number(end_type))) {
                 return outll;
             } else if (maxcount == 1) {
-                start = end = hatom_getdouble(&end_hatom);
+                start = end = hatom_getlong(&end_hatom);
+                step = 1;
             } else if (step == 0 || maxcount <= 0) {
                 return outll;
             } else {
@@ -6602,11 +6625,16 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         
         if (hatom_type_is_number(start_type)) {
             start = hatom_getpitch(&start_hatom);
+            if (maxcount == 1) {
+                end = start;
+                step = t_pitch(1, t_pitch::natural, 0);
+            }
         } else {
             if (!(hatom_type_is_number(end_type))) {
                 return outll;
             } else if (maxcount == 1) {
                 start = end = hatom_getpitch(&end_hatom);
+                step = t_pitch(1, t_pitch::natural, 0);
             } else if (step == t_pitch::C0 || maxcount <= 0) {
                 return outll;
             } else {
@@ -6667,6 +6695,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         return outll;
     }
 }
+
 
 t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hatom factor_hatom, t_atom_long maxcount, long *err)
 {
@@ -6844,6 +6873,13 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
 		
 	}
 }
+
+
+
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -7506,6 +7542,11 @@ t_atom_long llll_to_text_buf(t_llll *ll,
 						ac += len;
 						pos += len;
 						break;
+                    case H_FUNCTION:
+                        len = snprintf_zero(pos, 256, "[function:%p] ", elem->l_hatom.h_w.w_func);
+                        ac += len;
+                        pos += len;
+                        break;
 					case H_NULL:
 						strncpy_zero(pos, "null ", 5);
 						pos += 5;
@@ -7823,6 +7864,21 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                         linesize += len;
                         elem = elem->l_next;
                         break;
+                    case H_FUNCTION:
+                        if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
+                            char txt[256];
+                            len = snprintf_zero(txt, 256, "[function:%p]", elem->l_hatom.h_w.w_func);
+                            manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
+                            just_closed_indented_sublist = false;
+                            len = snprintf_zero(pos, 256, "%s ", txt);
+                        } else {
+                            len = snprintf_zero(pos, 256, "[function:%p] ", elem->l_hatom.h_w.w_func);
+                        }
+                        count += len;
+                        pos += len;
+                        linesize += len;
+                        elem = elem->l_next;
+                        break;
                     case H_LLLL:
                         subll = elem->l_hatom.h_w.w_llll;
                         if (indent) {
@@ -8098,6 +8154,12 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 						pos += len;
 						max_size -= len;
 						break;
+                    case H_FUNCTION:
+                        len = snprintf_zero(pos, max_size, "[function:%p] ", elem->l_hatom.h_w.w_func);
+                        ac += len;
+                        pos += len;
+                        max_size -= len;
+                        break;
 					case H_NULL:
 						len = snprintf_zero(pos, max_size, "null ");
 						pos += len;
@@ -8738,3 +8800,36 @@ void llll_remove_lllls_from_lthing(t_llll *ll)
 		elem->l_thing.w_llll = NULL;
 	}
 }  
+
+
+t_bool llll_istrue(const t_llll *ll)
+{
+    switch (ll->l_size) {
+        case 0:
+            return false;
+        case 1: {
+            t_llllelem *head = ll->l_head;
+            t_hatom *head_hatom = &head->l_hatom;
+            long type = hatom_gettype(head_hatom);
+            if (type != H_LONG && type != H_DOUBLE)
+                return true;
+            if (hatom_getdouble(head_hatom) != 0.)
+                return true;
+            return false;
+        }
+        default:
+            return true;
+    }
+}
+
+t_llll *get_num_ll(const t_atom_long n)
+{
+    t_llll *ll = llll_get();
+    llll_appendlong(ll, n);
+    return ll;
+}
+
+t_atom_long llll_getlong(t_llll *ll, t_atom_long def)
+{
+    return ll->l_head ? hatom_getlong(&ll->l_head->l_hatom) : def;
+}

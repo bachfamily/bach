@@ -141,6 +141,14 @@ void *hatom_getobj(const t_hatom *h)
 		return NULL;
 }
 
+void *hatom_getfunc(const t_hatom *h)
+{
+    if (hatom_gettype(h) == H_FUNCTION)
+        return h->h_w.w_func;
+    else
+        return NULL;
+}
+
 void hatom_setlong(t_hatom *h, const t_atom_long l)
 {
 	h->h_type = H_LONG;
@@ -231,6 +239,12 @@ void hatom_setobj(t_hatom *h, const void *o)
 	h->h_w.w_obj = (t_object *) o;
 }
 
+void hatom_setfunc(t_hatom *h, const void *o)
+{
+    h->h_type = H_FUNCTION;
+    h->h_w.w_func = (t_object *) o;
+}
+
 void hatom_setatom(t_hatom *h, const t_atom *a)
 {
 	switch (a->a_type) {
@@ -264,6 +278,7 @@ long hatom_eq(const t_hatom *a, const t_hatom *b)
 		case H_LONG:
 		case H_LLLL:
 		case H_OBJ:
+        case H_FUNCTION:
 		case H_SYM:
 			if (a->h_w.w_long != b->h_w.w_long)
 				return 0;

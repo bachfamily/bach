@@ -1659,6 +1659,14 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Sets an horizontal and vertical shift coefficients for the slot text displayed
 		// for slots kept in background.
+        
+        
+        CLASS_ATTR_CHAR(c,"applyslope",0, t_notation_obj, combine_range_slope_during_playback);
+        CLASS_ATTR_STYLE_LABEL(c,"applyslope",0,"onoff","Apply Range Slopes During Playback");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"applyslope", 0, "1");
+        // @exclude bach.slot
+        // @description Toggle the ability to change the slopes in function slots in order to possibly apply range slopes.
+        // The new slopes will hence account for the visual range slope too. By default it is active.
 	}
 	
 	CLASS_ATTR_CHAR(c, "showslotnumbers", 0, t_notation_obj, show_slot_numbers);
@@ -2012,6 +2020,27 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Toggles the ability to display pitch breakpoints as real notes (possibly with accidentals).
 		// If this is not set, pitch breakpoints are displayed as small diamonds.
+        
+        
+        CLASS_ATTR_CHAR(c, "thinannotations", 0, t_notation_obj, thinannotations);
+        CLASS_ATTR_STYLE_LABEL(c,"thinannotations",0,"enumindex","Handle Annotation Duplicates");
+        CLASS_ATTR_ENUMINDEX(c,"thinannotations", 0, "Keep Remove Remove With Clearing Symbol Remove With Bracket");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"thinannotations",0,"0");
+        // @exclude bach.slot
+        // @description Decides what to do with identical annotations put on nearby chords. <br />
+        // 0 = Keeps all the annotations; <br />
+        // 1 = Removes all the duplicates; <br />
+        // 2 = Removes all the duplicates and puts a symbol to clear the annotation at the end
+        // if no other annotation is present; <br />
+        // 3 = Removes all the duplicates and puts a bracket.
+
+        CLASS_ATTR_SYM(c, "thinannotationsclearsym", 0, t_notation_obj, annotations_clearingsym);
+        CLASS_ATTR_STYLE_LABEL(c,"thinannotationsclearsym",0,"text","Annotation Clearing Symbol");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"thinannotationsclearsym",0,"ord.");
+        // @exclude bach.slot
+        // @description If <m>thinannotations</m> is set to 2 (Remove With Clearing Symbol), this attribute
+        // sets the clearing symbol to remove the annotation label.
+
 	}
 	
 	CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -5163,13 +5192,15 @@ t_llll *get_markers_as_llll(t_notation_obj *r_ob, char mode, double start_ms, do
 // use command_number = -1 for standard dump
 char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_number, delete_item_fn delete_item_method, t_llll *forced_routers)
 {
-	t_notation_item *item, *nextitem;
+    t_notation_item *item; // *nextitem;
     
     // Important: selection might change due to lambda stuff, etc. New selection will be appended at the end.
     // Hence we break after the last selected item
     t_notation_item *lastselected = r_ob->lastselecteditem;
-    for (item = r_ob->firstselecteditem; item; item = nextitem) {
-        nextitem = item->next_selected;
+    for (item = r_ob->firstselecteditem; item; ) {
+        r_ob->selectioncursor = item->next_selected;
+//        nextitem = item->next_selected; // item might be deleted, so that might be nice to keep the pointer to nextitem.
+                                        // but what if nextitem is ALSO deleted???
 		if (item->type == k_NOTE)
 			send_note_as_llll((t_notation_obj *) r_ob, (t_note *)item, outlet, k_CONSIDER_FOR_EVALUATION, command_number, forced_routers);
 		else if (item->type == k_CHORD)
@@ -5184,6 +5215,9 @@ char standard_dump_selection(t_notation_obj *r_ob, long outlet, long command_num
         
         if (item == lastselected)
             break;
+        
+//        item = nextitem;
+        item = r_ob->selectioncursor;
 	}
 	
 	char changed = 0, need_check_scheduling = 0;

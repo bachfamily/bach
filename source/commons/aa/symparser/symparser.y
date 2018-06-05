@@ -70,7 +70,7 @@ term: BACH_LONG {
 } | BACH_PITCH {
 	llll_appendpitch(*ll, $1);
 	parserpost("parse: degree: %c%d+%d/%d", 
-		t_BACH_PITCH::degree2name[$1.degree()], $1.octave(), $1.alter().num(), $1.alter().den());
+		t_pitch::degree2name[$1.degree()], $1.octave(), $1.alter().num(), $1.alter().den());
 } | BACH_SYMBOL {
 	llll_appendsym(*ll, $1);
 	parserpost("parse: BACH_SYMBOL %s", $1->s_name);
