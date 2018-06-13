@@ -465,13 +465,23 @@ lexpr_new_error:
 
 t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
 {
-    long i = expr->l_size;
     t_hatom *stack = (t_hatom *) bach_newptr(L_MAX_TOKENS * sizeof(t_hatom));
+    if (lexpr_eval_upon(expr, vars, stack)) {
+        bach_freeptr(stack);
+        return NULL;
+    } else
+        return stack;
+}
+
+// stack must be an allocated array of hatoms, of size L_MAX_TOKENS
+t_bool lexpr_eval_upon(t_lexpr *expr, t_hatom *vars, t_hatom *stack)
+{
+    int i;
     t_lexpr_token *thistok;
     t_hatom *thisstack = stack;
     t_hatom *this_vars;
-    long stop_it = 0;
-    for (i = 0, thistok = expr->l_tokens; !stop_it && i < expr->l_size; i++, thistok++) {
+    t_bool err = false;
+    for (i = 0, thistok = expr->l_tokens; !err && i < expr->l_size; i++, thistok++) {
         switch (thistok->t_type) {
             case TT_HATOM:
                 *thisstack++ = thistok->t_contents.c_hatom;
@@ -497,7 +507,7 @@ t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
                             break;
                     }
                 } else
-                    stop_it = 1;
+                    err = true;
                 break;
             case TT_OP:
             case TT_FUNC:
@@ -519,11 +529,7 @@ t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
                 break;
         }
     }
-    if (stop_it) {
-        bach_freeptr(stack);
-        return NULL;
-    } else
-        return stack;
+    return err;
 }
 
 long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *res)
