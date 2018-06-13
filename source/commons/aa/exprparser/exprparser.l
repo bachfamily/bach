@@ -355,6 +355,8 @@ t {
 "abs" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_abs, "abs"); }
 "sgn" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_sgn, "sgn"); }
 "mod" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_mod, "mod"); }
+"min" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_min, "min"); }
+"max" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_max, "max"); }
 
 "acos" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acos, "acos"); }
 "asin" { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asin, "asin"); }

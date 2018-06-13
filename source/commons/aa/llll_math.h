@@ -75,6 +75,8 @@ void hatom_fn_sgn(t_hatom *arg, t_hatom *res);
 void hatom_fn_mod(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_remainder(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res);
+void hatom_fn_min(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_fn_max(t_hatom *h1, t_hatom *h2, t_hatom *res);
 
 
 

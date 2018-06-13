@@ -427,6 +427,22 @@ void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res)
     hatom_setdouble(res, bach_jn(order, x));
 }
 
+void hatom_fn_min(t_hatom *a1, t_hatom *a2, t_hatom *res)
+{
+    if (llll_leq_hatom(a1, a2))
+        *res = *a1;
+    else
+        *res = *a2;
+}
+
+void hatom_fn_max(t_hatom *a1, t_hatom *a2, t_hatom *res)
+{
+    if (llll_leq_hatom(a2, a1))
+        *res = *a1;
+    else
+        *res = *a2;
+}
+
 void hatom_fn_approx(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
     switch (hatom_gettype(a1)) {
