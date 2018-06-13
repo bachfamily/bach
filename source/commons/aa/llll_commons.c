@@ -2305,7 +2305,7 @@ llll_multisubs_exit:
 	return;
 }
 
-// --- DESTRUCTIVE on ll (elements are inserted), addresses (is sorted) and insertions (is sorted)
+// --- DESTRUCTIVE on ll (elements are inserted), addresses (is freed) and insertions (is freed)
 void llll_multiinsert_a(t_llll *ll, t_llll *addresses, t_llll *insertions)
 {
 	if (!ll)
@@ -2361,7 +2361,7 @@ llll_multiinsert_a_exit:
 	return;
 }
 
-// --- DESTRUCTIVE on ll (elements are inserted), addresses (is sorted) and insertions (is sorted)
+// --- DESTRUCTIVE on ll (elements are inserted), addresses (is freed) and insertions (is freed)
 void llll_multiinsert_b(t_llll *ll, t_llll *addresses, t_llll *insertions)
 {
 	if (!ll)
@@ -4675,13 +4675,13 @@ void llll_insert_llll_at_address(t_llll *ll, t_llll *address, t_llll *subs_model
  this allows the list to be flattened in sub-linear time
 */
 
-void llll_flatten(t_llll *ll, t_int32 maxdepth, long spikemode)
+void llll_flatten(t_llll *ll, t_atom_long maxdepth, long spikemode)
 {
 	llll_flat(ll, 0, maxdepth, spikemode, LLLL_FREETHING_DONT);
 	pedantic_llll_check(ll);
 }
 
-void llll_flat(t_llll *ll, t_int32 minlevel, t_int32 maxlevel, long spikemode, e_freething_modes freething)
+void llll_flat(t_llll *ll, t_atom_long minlevel, t_atom_long maxlevel, long spikemode, e_freething_modes freething)
 {
 	t_llllelem *this_elem = NULL, *next_elem = NULL;
 	t_llllelem *nextelem_to_reach = NULL;
