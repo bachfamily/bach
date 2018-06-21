@@ -365,21 +365,39 @@ void bifSetup()
     bifTable = new std::unordered_map<std::string, t_function *>;
     (*bifTable)["length"] = new t_fnLength;
     (*bifTable)["depth"] = new t_fnDepth;
-    (*bifTable)["args"] = new t_fnArgs;
     (*bifTable)["nth"] = new t_fnNth;
     (*bifTable)["sort"] = new t_fnSort;
-    (*bifTable)["outlet"] = new t_fnOutlet;
+    (*bifTable)["contains"] = new t_fnContains;
     (*bifTable)["rev"] = new t_fnRev;
     (*bifTable)["rot"] = new t_fnRot;
-    (*bifTable)["contains"] = new t_fnContains;
     (*bifTable)["trans"] = new t_fnTrans;
     (*bifTable)["flat"] = new t_fnFlat;
+    (*bifTable)["slice"] = new t_fnSlice;
     (*bifTable)["left"] = new t_fnLeft;
     (*bifTable)["right"] = new t_fnRight;
+    (*bifTable)["args"] = new t_fnArgs;
     (*bifTable)["subs"] = new t_fnSubs;
     (*bifTable)["insert"] = new t_fnInsert;
     (*bifTable)["find"] = new t_fnFind;
     (*bifTable)["finditems"] = new t_fnFinditems;
     (*bifTable)["findaddrs"] = new t_fnFindaddrs;
+    (*bifTable)["scramble"] = new t_fnScramble;
+    (*bifTable)["minmax"] = new t_fnMinmax;
+    (*bifTable)["perm"] = new t_fnPerm;
+    (*bifTable)["comb"] = new t_fnComb;
+    (*bifTable)["cartesianprod"] = new t_fnCartesianprod;
+    (*bifTable)["wrap"] = new t_fnWrap;
+    (*bifTable)["group"] = new t_fnGroup;
+    (*bifTable)["thin"] = new t_fnThin;
+    (*bifTable)["classify"] = new t_fnClassify;
+    (*bifTable)["union"] = new t_fnUnion;
+    (*bifTable)["intersection"] = new t_fnIntersection;
+    (*bifTable)["symdiff"] = new t_fnSymdiff;
+    (*bifTable)["diff"] = new t_fnDiff;
+
+    (*bifTable)["outlet"] = new t_fnOutlet;
+
+
+
 
 }

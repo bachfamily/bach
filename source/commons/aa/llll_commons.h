@@ -804,7 +804,7 @@ t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk);
 
 
 // return the cartesian product of the lllls contained in inll. count is the size of the array
-t_llll *llll_cartesianprod(t_llll **inll, long count);
+t_llll *llll_cartesianprod( t_llll **inll, long count);
 
 
 // return an llll with all the elements for which cmpfn returns non-0
@@ -925,14 +925,14 @@ t_llll *llll_lace(t_llll **lists, t_atom_long count, long iterationmode);
 void llll_reshape(t_llll *ll, t_llll *modelll, llll_clone_fn fn = NULL);
 
 /*
- ---DESTRUCTIVE
+ ---DESTRUCTIVE on ll (inplace)
  divide an llll in modulo-sized lllls (or smaller, at the end of the original llll)
  e.g. 1 2 3 4 5 6 7 8 with modulo 3 => (1 2 3) (4 5 6) (7 8)
  return MAX_ERR_GENERIC if the modulos and overlaps are not compatible 
  (in which case, anyway, the overlap is adjusted so as to be smaller than the modulo)
  */
 t_max_err llll_groupllll(t_llll *ll, t_atom_long modulo, t_atom_long overlap);
-t_max_err llll_multigroupllll(t_llll *ll, t_llll *modulos, t_atom_long overlap, long circular_pad);
+t_max_err llll_multigroupllll(t_llll *ll, const t_llll *modulos, t_atom_long overlap, long circular_pad);
 
 
 ///////////////////////////

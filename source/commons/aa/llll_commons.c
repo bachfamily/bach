@@ -7172,10 +7172,10 @@ t_max_err llll_groupllll(t_llll *ll, t_atom_long modulo, t_atom_long overlap)
 }
 
 /*
- ---DESTRUCTIVE
+ ---DESTRUCTIVE on ll (inplace)
  as llll_groupllll, but accepts a llll of integers for grouping
  */
-t_max_err llll_multigroupllll(t_llll *ll, t_llll *modulos, t_atom_long overlap, long circular_pad)
+t_max_err llll_multigroupllll(t_llll *ll, const t_llll *modulos, t_atom_long overlap, long circular_pad)
 {
 	t_atom_long count;
 	t_llllelem *modulo_elem, *elem, *nextelem = NULL, *pivot, *temp;
