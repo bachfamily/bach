@@ -378,4 +378,8 @@ void bifSetup()
     (*bifTable)["right"] = new t_fnRight;
     (*bifTable)["subs"] = new t_fnSubs;
     (*bifTable)["insert"] = new t_fnInsert;
+    (*bifTable)["find"] = new t_fnFind;
+    (*bifTable)["finditems"] = new t_fnFinditems;
+    (*bifTable)["findaddrs"] = new t_fnFindaddrs;
+
 }

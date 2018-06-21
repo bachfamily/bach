@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ extern int strparser_debug;
 
 union YYSTYPE
 {
-#line 25 "strparser.y" /* yacc.c:1909  */
+#line 25 "strparser.y" /* yacc.c:1916  */
 
 	long l;
 	double d;
@@ -70,7 +70,7 @@ union YYSTYPE
 	t_pitch p;
 	t_symbol *sym;
 
-#line 74 "strparser.tab.h" /* yacc.c:1909  */
+#line 74 "strparser.tab.h" /* yacc.c:1916  */
 };
 
 typedef union YYSTYPE YYSTYPE;

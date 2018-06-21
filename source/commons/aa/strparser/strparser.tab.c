@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.4"
+#define YYBISON_VERSION "3.0.5"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -928,6 +928,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
       case N:                               \
         yyformat = S;                       \
       break
+    default: /* Avoid compiler warnings. */
       YYCASE_(0, YY_("syntax error"));
       YYCASE_(1, YY_("syntax error, unexpected %s"));
       YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
@@ -1252,70 +1253,70 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 59 "strparser.y" /* yacc.c:1646  */
+#line 59 "strparser.y" /* yacc.c:1663  */
     {
 	llll_appendlong(*ll, (yyvsp[0].l));
 	parserpost("parse: BACH_LONG %ld", (yyvsp[0].l));
 }
-#line 1261 "strparser.tab.c" /* yacc.c:1646  */
+#line 1262 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
   case 5:
-#line 62 "strparser.y" /* yacc.c:1646  */
+#line 62 "strparser.y" /* yacc.c:1663  */
     {
 	llll_appenddouble(*ll, (yyvsp[0].d));
 	parserpost("parse: BACH_DOUBLE %lf", (yyvsp[0].d));
 }
-#line 1270 "strparser.tab.c" /* yacc.c:1646  */
+#line 1271 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
   case 6:
-#line 65 "strparser.y" /* yacc.c:1646  */
+#line 65 "strparser.y" /* yacc.c:1663  */
     {
 	llll_appendrat(*ll, (yyvsp[0].r));
 	parserpost("parse: BACH_RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
 }
-#line 1279 "strparser.tab.c" /* yacc.c:1646  */
+#line 1280 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
   case 7:
-#line 68 "strparser.y" /* yacc.c:1646  */
+#line 68 "strparser.y" /* yacc.c:1663  */
     {
 	llll_appendpitch(*ll, (yyvsp[0].p));
 	parserpost("parse: degree: %c%d+%d/%d", 
 		t_pitch::degree2name[(yyvsp[0].p).degree()], (yyvsp[0].p).octave(), (yyvsp[0].p).alter().num(), (yyvsp[0].p).alter().den());
 }
-#line 1289 "strparser.tab.c" /* yacc.c:1646  */
+#line 1290 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
   case 8:
-#line 72 "strparser.y" /* yacc.c:1646  */
+#line 72 "strparser.y" /* yacc.c:1663  */
     {
 	llll_appendsym(*ll, (yyvsp[0].sym));
 	parserpost("parse: BACH_SYMBOL %s", (yyvsp[0].sym)->s_name);
 }
-#line 1298 "strparser.tab.c" /* yacc.c:1646  */
+#line 1299 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
   case 9:
-#line 75 "strparser.y" /* yacc.c:1646  */
+#line 75 "strparser.y" /* yacc.c:1663  */
     {
     parserpost("parse: NULL");
 }
-#line 1306 "strparser.tab.c" /* yacc.c:1646  */
+#line 1307 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
   case 10:
-#line 77 "strparser.y" /* yacc.c:1646  */
+#line 77 "strparser.y" /* yacc.c:1663  */
     {
 	llll_appendllll(*ll, llll_get());
     parserpost("parse: NIL");
 }
-#line 1315 "strparser.tab.c" /* yacc.c:1646  */
+#line 1316 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
   case 11:
-#line 80 "strparser.y" /* yacc.c:1646  */
+#line 80 "strparser.y" /* yacc.c:1663  */
     {
 	(*depth)++;
 	t_llll *newll = llll_get();
@@ -1324,11 +1325,11 @@ yyreduce:
 	*ll = newll;
 	parserpost("parse: BACH_PUSH");
 }
-#line 1328 "strparser.tab.c" /* yacc.c:1646  */
+#line 1329 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
   case 12:
-#line 87 "strparser.y" /* yacc.c:1646  */
+#line 87 "strparser.y" /* yacc.c:1663  */
     {
 	(*depth)--;
 	if (*depth > 0) {
@@ -1340,11 +1341,11 @@ yyreduce:
 		YYERROR;
 	parserpost("parse: BACH_POP");
 }
-#line 1344 "strparser.tab.c" /* yacc.c:1646  */
+#line 1345 "strparser.tab.c" /* yacc.c:1663  */
     break;
 
 
-#line 1348 "strparser.tab.c" /* yacc.c:1646  */
+#line 1349 "strparser.tab.c" /* yacc.c:1663  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1572,7 +1573,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 99 "strparser.y" /* yacc.c:1906  */
+#line 99 "strparser.y" /* yacc.c:1907  */
 
 
 void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
