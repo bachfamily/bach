@@ -4094,7 +4094,7 @@ t_llll *llll_oneperm(t_llll *inlist, long order, long circular)
 // the combinations are grouped in sublists according to their size, e.g.
 // ((1) (2) (3)) ((1 2) (2 3) (1 3)) ((1 2 3))
 
-t_llll *llll_comb(t_llll *ll, t_atom_long startk, t_atom_long endk)
+t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk)
 {
 	t_llll *klist, *comblist;
 	t_llll *outlist;

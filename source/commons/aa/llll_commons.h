@@ -800,7 +800,7 @@ t_llll *llll_oneperm(t_llll *inlist, long order, long circular);
 // endk < 0 is converted in ll->size (this means that startk = 0, endk = -1 will return all the combinations)
 // the combinations are grouped in sublists according to their size, e.g.
 // ((1) (2) (3)) ((1 2) (2 3) (1 3)) ((1 2 3))
-t_llll *llll_comb(t_llll *ll, t_atom_long startk, t_atom_long endk);
+t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk);
 
 
 // return the cartesian product of the lllls contained in inll. count is the size of the array
