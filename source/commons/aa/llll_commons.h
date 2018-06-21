@@ -482,6 +482,8 @@ void llll_transfer(t_llll *from_ll, t_llll *to_ll);
 // (engine of bach.contains)
 t_atom_long llll_contains(t_llll *ll, t_int32 mindepth, t_int32 maxdepth);
 
+// converts the long representation of bach contains into an llll of symbols
+t_llll *contains_long_to_syms(const long types);
 
 
 // ---DESTRUCTIVE!

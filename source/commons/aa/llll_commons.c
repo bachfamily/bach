@@ -658,6 +658,21 @@ t_atom_long llll_contains(t_llll *ll, t_int32 mindepth, t_int32 maxdepth)
 	return contains;
 }
 
+t_llll *contains_long_to_syms(const long types)
+{
+    t_llll *types_llll = llll_get();
+    if (types & H_NULL)        llll_appendsym(types_llll, _llllobj_sym_n, 0, WHITENULL_llll);
+    if (types & H_LONG)        llll_appendsym(types_llll, _llllobj_sym_i, 0, WHITENULL_llll);
+    if (types & H_RAT)        llll_appendsym(types_llll, _llllobj_sym_r, 0, WHITENULL_llll);
+    if (types & H_DOUBLE)    llll_appendsym(types_llll, _llllobj_sym_f, 0, WHITENULL_llll);
+    if (types & H_PITCH)    llll_appendsym(types_llll, _llllobj_sym_p, 0, WHITENULL_llll);
+    if (types & H_SYM)        llll_appendsym(types_llll, _llllobj_sym_s, 0, WHITENULL_llll);
+    if (types & H_LLLL)        llll_appendsym(types_llll, _llllobj_sym_l, 0, WHITENULL_llll);
+    if (types & H_OBJ)        llll_appendsym(types_llll, _llllobj_sym_o, 0, WHITENULL_llll);
+    if (types & H_FUNCTION)    llll_appendsym(types_llll, _llllobj_sym_F, 0, WHITENULL_llll);
+    return types_llll;
+}
+
 // DESTRUCTIVE!
 void llll_rev(t_llll *ll, t_int32 mindepth, t_int32 maxdepth) // ll must have at least 1 elem!
 {
