@@ -394,6 +394,9 @@ void bifSetup()
     (*bifTable)["intersection"] = new t_fnIntersection;
     (*bifTable)["symdiff"] = new t_fnSymdiff;
     (*bifTable)["diff"] = new t_fnDiff;
+    (*bifTable)["primeser"] = new t_fnPrimeser;
+    (*bifTable)["arithmser"] = new t_fnArithmser;
+    (*bifTable)["geomser"] = new t_fnGeomser;
 
     (*bifTable)["outlet"] = new t_fnOutlet;
 
