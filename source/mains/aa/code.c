@@ -400,6 +400,7 @@ void bifSetup()
 
     (*bifTable)["outlet"] = new t_fnOutlet;
 
+    (*bifTable)["sin"] = new t_fnSin;
 
 
 
