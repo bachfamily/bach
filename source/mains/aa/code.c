@@ -423,6 +423,59 @@ void bifSetup()
     (*bifTable)["round"] = new t_mathUnaryFunctionDD<round>;
     (*bifTable)["trunc"] = new t_mathUnaryFunctionDD<trunc>;
 
+    (*bifTable)["fmod"] = new t_mathBinaryFunctionDDD<fmod>;
+    (*bifTable)["atan2"] = new t_mathBinaryFunctionDDD<atan2>;
+    (*bifTable)["hypot"] = new t_mathBinaryFunctionDDD<hypot>;
 
+    (*bifTable)["int"] = new t_mathUnaryFunctionAA<hatom_fn_int>;
+    (*bifTable)["rat"] = new t_mathUnaryFunctionAA<hatom_fn_rat>;
+    (*bifTable)["num"] = new t_mathUnaryFunctionAA<hatom_fn_num>;
+    (*bifTable)["den"] = new t_mathUnaryFunctionAA<hatom_fn_den>;
+    (*bifTable)["abs"] = new t_mathUnaryFunctionAA<hatom_fn_abs>;
+    (*bifTable)["sgn"] = new t_mathUnaryFunctionAA<hatom_fn_sgn>;
+    (*bifTable)["float"] = new t_mathUnaryFunctionAA<hatom_fn_float>;
+    (*bifTable)["pitch"] = new t_mathUnaryFunctionAA<hatom_fn_pitch>;
+    (*bifTable)["degree"] = new t_mathUnaryFunctionAA<hatom_fn_degree>;
+    (*bifTable)["octave"] = new t_mathUnaryFunctionAA<hatom_fn_octave>;
+    (*bifTable)["alter"] = new t_mathUnaryFunctionAA<hatom_fn_alter>;
+    (*bifTable)["cents"] = new t_mathUnaryFunctionAA<hatom_fn_cents>;
 
+    (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_fn_pow>("base", "exponent");
+    (*bifTable)["mod"] = new t_mathBinaryFunctionAAA<hatom_fn_mod>;
+    (*bifTable)["min"] = new t_mathBinaryFunctionAAA<hatom_fn_min>;
+    (*bifTable)["max"] = new t_mathBinaryFunctionAAA<hatom_fn_max>;
+    (*bifTable)["random"] = new t_mathBinaryFunctionAAA<hatom_fn_random>;
+    (*bifTable)["bessel"] = new t_mathBinaryFunctionAAA<hatom_fn_jn>("x", "order");
+    (*bifTable)["approx"] = new t_mathBinaryFunctionAAA<hatom_fn_approx>;
+    (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>;
+    (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("steps", "cents");
+
+    (*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("pitch", "alter", "degree");
+
+    (*bifTable)["#u-"] = new t_mathUnaryFunctionAA<hatom_op_uminus>;
+    (*bifTable)["#!"] = new t_mathUnaryFunctionAA<hatom_op_lognot>;
+    (*bifTable)["#~"] = new t_mathUnaryFunctionAA<hatom_op_bitnot>;
+
+    (*bifTable)["#+"] = new t_mathBinaryFunctionAAA<hatom_op_plus>;
+    (*bifTable)["#-"] = new t_mathBinaryFunctionAAA<hatom_op_minus>;
+    (*bifTable)["#*"] = new t_mathBinaryFunctionAAA<hatom_op_times>;
+    (*bifTable)["#/"] = new t_mathBinaryFunctionAAA<hatom_op_div>;
+    (*bifTable)["#//"] = new t_mathBinaryFunctionAAA<hatom_op_divdiv>;
+    (*bifTable)["#%"] = new t_mathBinaryFunctionAAA<hatom_fn_remainder>;
+    (*bifTable)["#=="] = new t_mathBinaryFunctionAAA<hatom_op_eq>;
+    (*bifTable)["#!="] = new t_mathBinaryFunctionAAA<hatom_op_neq>;
+    (*bifTable)["#<"] = new t_mathBinaryFunctionAAA<hatom_op_lt>;
+    (*bifTable)["#>"] = new t_mathBinaryFunctionAAA<hatom_op_gt>;
+    (*bifTable)["#<="] = new t_mathBinaryFunctionAAA<hatom_op_le>;
+    (*bifTable)["#>="] = new t_mathBinaryFunctionAAA<hatom_op_ge>;
+    (*bifTable)["#&"] = new t_mathBinaryFunctionAAA<hatom_op_bitand>;
+    (*bifTable)["#^"] = new t_mathBinaryFunctionAAA<hatom_op_bitxor>;
+    (*bifTable)["#|"] = new t_mathBinaryFunctionAAA<hatom_op_bitor>;
+    (*bifTable)["#&&"] = new t_mathBinaryFunctionAAA<hatom_op_logand>;
+    (*bifTable)["#^^"] = new t_mathBinaryFunctionAAA<hatom_op_logxor>;
+    (*bifTable)["#||"] = new t_mathBinaryFunctionAAA<hatom_op_logor>;
+    (*bifTable)["#&&&"] = new t_mathBinaryFunctionAAA<hatom_op_logand>; // TODO
+    (*bifTable)["#|||"] = new t_mathBinaryFunctionAAA<hatom_op_logor>; // TODO
+    (*bifTable)["#<<"] = new t_mathBinaryFunctionAAA<hatom_op_lshift>; // TODO
+    (*bifTable)["#>>"] = new t_mathBinaryFunctionAAA<hatom_op_rshift>; // TODO
 }
