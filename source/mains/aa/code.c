@@ -399,8 +399,29 @@ void bifSetup()
     (*bifTable)["geomser"] = new t_fnGeomser;
 
     (*bifTable)["outlet"] = new t_fnOutlet;
-
-    (*bifTable)["sin"] = new t_fnSin;
+    
+    (*bifTable)["cos"] = new t_mathUnaryFunctionDD<cos>;
+    (*bifTable)["sin"] = new t_mathUnaryFunctionDD<sin>;
+    (*bifTable)["tan"] = new t_mathUnaryFunctionDD<tan>;
+    (*bifTable)["exp"] = new t_mathUnaryFunctionDD<exp>;
+    (*bifTable)["log"] = new t_mathUnaryFunctionDD<log>;
+    (*bifTable)["acos"] = new t_mathUnaryFunctionDD<acos>;
+    (*bifTable)["asin"] = new t_mathUnaryFunctionDD<asin>;
+    (*bifTable)["atan"] = new t_mathUnaryFunctionDD<atan>;
+    (*bifTable)["cosh"] = new t_mathUnaryFunctionDD<cosh>;
+    (*bifTable)["sinh"] = new t_mathUnaryFunctionDD<sinh>;
+    (*bifTable)["tanh"] = new t_mathUnaryFunctionDD<tanh>;
+    (*bifTable)["exp2"] = new t_mathUnaryFunctionDD<exp2>;
+    (*bifTable)["log2"] = new t_mathUnaryFunctionDD<log2>;
+    (*bifTable)["sqrt"] = new t_mathUnaryFunctionDD<sqrt>;
+    (*bifTable)["ceil"] = new t_mathUnaryFunctionDD<ceil>;
+    (*bifTable)["acosh"] = new t_mathUnaryFunctionDD<acosh>;
+    (*bifTable)["asinh"] = new t_mathUnaryFunctionDD<asinh>;
+    (*bifTable)["atanh"] = new t_mathUnaryFunctionDD<atanh>;
+    (*bifTable)["log10"] = new t_mathUnaryFunctionDD<log10>;
+    (*bifTable)["floor"] = new t_mathUnaryFunctionDD<floor>;
+    (*bifTable)["round"] = new t_mathUnaryFunctionDD<round>;
+    (*bifTable)["trunc"] = new t_mathUnaryFunctionDD<trunc>;
 
 
 
