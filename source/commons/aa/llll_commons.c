@@ -1602,6 +1602,27 @@ void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_
     pedantic_llll_check(ll);
 }
 
+t_llll* llll_reduce(t_llll *ll, reduce_fn fn, void *data)
+{
+    t_llll *res;
+    long address;
+    t_llllelem *this_elem;
+    if (ll->l_size < 1)
+        return nullptr;
+    res = llll_get();
+    this_elem = ll->l_head;
+    llll_appendhatom_clone(res, &this_elem->l_hatom);
+    for (this_elem = this_elem->l_next, address = 2;
+         this_elem;
+         this_elem = this_elem->l_next, address++) {
+        t_llll *new_res = (fn)(data, res, &this_elem->l_hatom, address);
+        llll_free(res);
+        res = new_res;
+    }
+    return res;
+}
+
+
 // frees all the elements in a llll (regardless of its flag)
 void llll_clear(t_llll *x)
 {

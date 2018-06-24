@@ -667,7 +667,15 @@ void llll_funall(t_llll *x, fun_fn fn, void *data, t_int32 mindepth, t_int32 max
 void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_fn, void *data, t_atom_long mindepth, t_atom_long maxdepth);
 
 
+typedef t_llll* (*reduce_fn)(void *data, const t_llll *accum, const t_hatom *h, t_atom_long address);
 
+
+/*
+ reduces an llll by accumulation.
+ the llll is traversed at its root, and its elements are passed one after another to fn, along with its address and the result of the previous iteration. The return value is the return value of the last iteration. The initial value of the accumulation is the head of ll, and the iteration starts at the second element
+ 
+ */
+t_llll* llll_reduce(t_llll *ll, reduce_fn fn, void *data);
 
 
 
