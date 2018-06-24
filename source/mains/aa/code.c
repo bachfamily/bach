@@ -397,6 +397,7 @@ void bifSetup()
     (*bifTable)["primeser"] = new t_fnPrimeser;
     (*bifTable)["arithmser"] = new t_fnArithmser;
     (*bifTable)["geomser"] = new t_fnGeomser;
+    (*bifTable)["map"] = new t_fnMap;
 
     (*bifTable)["outlet"] = new t_fnOutlet;
     
@@ -449,7 +450,6 @@ void bifSetup()
     (*bifTable)["approx"] = new t_mathBinaryFunctionAAA<hatom_fn_approx>;
     (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>;
     (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("steps", "cents");
-
     (*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("pitch", "alter", "degree");
 
     (*bifTable)["#u-"] = new t_mathUnaryFunctionAA<hatom_op_uminus>;

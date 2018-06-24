@@ -654,7 +654,17 @@ long llll_iter(long lists, t_llll **inlist, t_int32 maxdepth,
 void llll_funall(t_llll *x, fun_fn fn, void *data, t_int32 mindepth, t_int32 maxdepth, long flags = 0);
 
 
+/*
 
+ Process all the elements in ll.
+ For each element of ll:
+ - if it's a sublist in which we can choose whether to enter or not (that is, whose contents are in the mindepth-maxdepth range), call ask_fn if provided. ask_fn is passed a one-element llll containing the sublist, its address in the original ll and its address in the modified ll. The return value is 0 if it must be entered, 1 if not.
+ - if we're between mindepth and maxdepth, and it was either a non-list element or a sublist we haven't entered (including the case in which we didn't enter it because it was at maxdepth), then the element (or, more precisely, a new list containing it) is passed to mod_fn (if provided), along with the addresses as before. If mod_fn returns non-NULL, then the contents returned llll are substituted to the element that has been passed. This allows replacing elements with longer stuff, or deleting altogether
+ 
+ The called functions can take ownership of the data ll, but not of the address lls, which can't be destroyed or modified, and whose content change at each iteration.
+
+ */
+void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_fn, void *data, t_atom_long mindepth, t_atom_long maxdepth);
 
 
 

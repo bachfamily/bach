@@ -1469,7 +1469,7 @@ void llll_funall(t_llll *ll, fun_fn fn, void *data, t_int32 mindepth, t_int32 ma
 
 }
 
-void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_fn, void *data, t_int32 mindepth, t_int32 maxdepth)
+void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_fn, void *data, t_atom_long mindepth, t_atom_long maxdepth)
 {
     t_llll *old_address, *new_address, *subll;
     t_llll_stack *stack;
@@ -1513,7 +1513,10 @@ void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_
                     if (!not_maxdepth)
                         dontenter = 1;
                     else if (ask_fn) {
-                        dontenter = (ask_fn)(data, subll, old_address, new_address);
+                        t_llll *outll = llll_get();
+                        llll_appendhatom_clone(outll, hatom);
+                        dontenter = (ask_fn)(data, outll, old_address, new_address);
+                        llll_free(outll);
                     } else
                         dontenter = 0;
                 }
