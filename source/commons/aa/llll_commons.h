@@ -325,6 +325,10 @@ typedef long (*llll_cmp_fn)(t_llll *a, t_llll *b);
 // called by llll_funall; must return non-0 if a sublist is met and we don't want to enter it
 typedef long (*fun_fn)(void *data, t_hatom *a, const t_llll *address);
 
+// called by llll_funall; must return non-0 if a sublist is met and we don't want to enter it
+typedef t_llll* (*fun_ext_mod_fn)(void *data, const t_llll *ll, const t_llll *old_address, const t_llll *new_address);
+typedef long (*fun_ext_ask_fn)(void *data, const t_llll *ll, const t_llll *old_address, const t_llll *new_address);
+
 // called by llll_iter
 typedef long (*iter_datafn)(void *x, long list, t_llll *data, char isaddress); // isaddress is 0 if called as datafunc, 1 if called as addressfunc
 typedef long (*iter_cmdfn)(void *x, long cmd);

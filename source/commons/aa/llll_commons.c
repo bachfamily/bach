@@ -1469,6 +1469,136 @@ void llll_funall(t_llll *ll, fun_fn fn, void *data, t_int32 mindepth, t_int32 ma
 
 }
 
+void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_fn, void *data, t_int32 mindepth, t_int32 maxdepth)
+{
+    t_llll *old_address, *new_address, *subll;
+    t_llll_stack *stack;
+    t_llllelem *elem, *nextelem;
+    t_hatom *hatom;
+    long deepenough;
+    t_int32 depth = 1;
+    long dontenter = 0;
+    
+    if (!ll)
+        return;
+    
+    if (mindepth == 0) {
+        mindepth = 1;
+    }
+    
+    if (mindepth > ll->l_depth || maxdepth < -ll->l_depth)
+        return;
+    
+    deepenough = (mindepth == 1 || ll->l_depth < -mindepth);
+    
+    old_address = llll_get();
+    new_address = llll_get();
+
+    stack = llll_stack_new();
+    elem = ll->l_head;
+    
+    llll_appendlong(old_address, LLLL_IDX_BASE);
+    llll_appendlong(new_address, LLLL_IDX_BASE);
+
+    while (1) {
+        while (elem) {
+            hatom = &elem->l_hatom;
+            nextelem = elem->l_next;
+            
+            if ((subll = hatom_getllll(hatom))) {
+                if (!deepenough)
+                    dontenter = 0;
+                else {
+                    t_bool not_maxdepth = depth < maxdepth || (maxdepth < 0 && subll->l_depth >= -maxdepth);
+                    if (!not_maxdepth)
+                        dontenter = 1;
+                    else if (ask_fn) {
+                        dontenter = (ask_fn)(data, subll, old_address, new_address);
+                    } else
+                        dontenter = 0;
+                }
+            } else
+                dontenter = 1;
+            
+            if (dontenter) {
+                t_llll *outll = llll_get();
+                llll_appendhatom_clone(outll, hatom);
+                t_llll *rv = (mod_fn)(data, outll, old_address, new_address);
+                llll_free(outll);
+                if (rv) {
+                    if (rv->l_size == 0) {
+                        llll_destroyelem(elem);
+                        new_address->l_tail->l_hatom.h_w.w_long--;
+                    } else {
+                        t_llll *parent = elem->l_parent;
+                        t_llllelem *prev = elem->l_prev;
+                        t_llllelem *next = elem->l_next;
+                        llll_destroyelem(elem);
+                        llll_adopt(rv, parent);
+                        if (prev) {
+                            rv->l_head->l_prev = prev;
+                            prev->l_next = rv->l_head->l_prev;
+                        } else {
+                            parent->l_head = rv->l_head;
+                            rv->l_head->l_prev = NULL;
+                        }
+                        if (next) {
+                            rv->l_tail->l_next = next;
+                            next->l_prev = rv->l_tail->l_next;
+                        } else {
+                            parent->l_tail = rv->l_tail;
+                            rv->l_tail->l_next = NULL;
+                        }
+                        parent->l_size += rv->l_size;
+                        new_address->l_tail->l_hatom.h_w.w_long += rv->l_size - 1;
+                        
+                        long subll_depth = subll->l_depth;
+                        llll_chuck(subll);
+                        if (rv->l_depth > subll_depth) {
+                            for (t_llllelem *this_elem = rv->l_head; this_elem != rv->l_tail; this_elem = this_elem->l_next) {
+                                t_llll *this_subll;
+                                if ((this_subll = hatom_getllll(&this_elem->l_hatom)))
+                                    llll_upgrade_depth(this_subll);
+                            }
+                        }
+                        else if (rv->l_depth < subll_depth) {
+                            llll_downgrade_depth(parent);
+                        }
+                        
+                        deepenough = ((mindepth >= 0 && depth >= mindepth) || (parent->l_depth <= -mindepth));
+                    }
+                }
+                
+                old_address->l_tail->l_hatom.h_w.w_long++;
+                new_address->l_tail->l_hatom.h_w.w_long++;
+                elem = nextelem;
+                
+            } else if (subll) { // if there's a subll and we enter
+                llll_stack_push(stack, elem->l_next);
+                elem = subll->l_head;
+                depth++;
+                llll_appendlong(old_address, LLLL_IDX_BASE, 0, WHITENULL_llll);
+                llll_appendlong(new_address, LLLL_IDX_BASE, 0, WHITENULL_llll);
+                deepenough = ((mindepth >= 0 && depth >= mindepth) || (subll->l_depth <= -mindepth));
+            }
+        }
+        if (depth <= 1)
+            break;
+        elem = (t_llllelem *) llll_stack_pop(stack);
+        llll_destroyelem(old_address->l_tail);
+        llll_destroyelem(new_address->l_tail);
+        old_address->l_tail->l_hatom.h_w.w_long++;
+        new_address->l_tail->l_hatom.h_w.w_long++;
+        depth--;
+        deepenough = elem && ((mindepth > 0 && depth >= mindepth) || (elem->l_parent->l_depth <= -mindepth));
+    }
+    
+    llll_stack_destroy(stack);
+    llll_free(old_address);
+    llll_free(new_address);
+    pedantic_llll_check(ll);
+}
+
 // frees all the elements in a llll (regardless of its flag)
 void llll_clear(t_llll *x)
 {
