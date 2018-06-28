@@ -1637,6 +1637,13 @@
 				"tags" : [ "editing", "edit", "interface", "marker", "interface", "shift", "offset", "snap", "drag", "snapping", "chord", "note", "tail", "magnetic", "magnetically" ],
 				"title" : [ "Snapping markers magnetically" ]
 			},
+			"Markersshiftandscale" : {
+				"filename" : [ "bach.help.notation.markers.08_markersshiftandscale.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ "marker+edit" ],
+				"tags" : [ "editing", "edit", "interface", "marker", "interface", "shift", "offset", "move", "stretch", "compress", "shrink", "scale", "shifting", "stretching", "region", "blank", "add", "silence" ],
+				"title" : [ "Shifting and stretching regions" ]
+			},
 			"Selection" : {
 				"filename" : [ "bach.help.notation.markers.10_selection.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],

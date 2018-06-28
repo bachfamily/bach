@@ -711,6 +711,7 @@
 				   ↪ Add the <m>Shift</m> key to have markers snap to chord onset, note tails or pitch breakpoints <br />
 				   ↪ Add the <m>Shift+Cmd</m> keys (mac) or <m>Shift+Ctrl</m> keys (win) for fine editing <br />
 				   ↪ Add the <m>Ctrl</m> key (mac) in order to move anything beyond the marker while moving the marker <br />
+				   ↪ Add the <m>Ctrl+Cmd</m> key (mac) in order to stretch the region between the marker and the previous one<br />
 				• <m>Alt+click+drag</m>: Duplicate the marker into a new one with an unique name <br />
 				• <m>doubleclick</m> on a marker name: Edit marker name <br />
 				<br />
