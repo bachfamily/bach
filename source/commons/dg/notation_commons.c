@@ -28477,7 +28477,7 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 	double original_onset = note->parent->onset;
 	double new_onset;
 	double new_duration = 0;
-	double velocity = 0;
+	double velocity = note->velocity;
 	double midicents;
 	t_llll* out_llll = llll_get();
 	
