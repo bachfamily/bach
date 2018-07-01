@@ -801,6 +801,11 @@ t_llll *llll_oneperm(t_llll *inlist, long order, long circular);
 t_llll *llll_comb(t_llll *ll, t_atom_long startk, t_atom_long endk);
 
 
+// return all the combinations of the elements in ll of size between startk and endk, allowing the repetition of each element more than once
+// the combinations are grouped in sublists according to their size
+t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long endk);
+
+
 // return the cartesian product of the lllls contained in inll. count is the size of the array
 t_llll *llll_cartesianprod(t_llll **inll, long count);
 

@@ -4146,6 +4146,33 @@ void set_all_longs_to_number(t_llll *in_llll, long number) {
     }
 }
 
+void regroup_delete_first_element(t_quantize *x, t_llll *rhythm, t_llll *infos, t_llll *ties,
+                                    t_llllelem *prevbox_last_rhythm_elem, t_llllelem *prevbox_last_infos_elem, t_llllelem *prevbox_last_ties_elem,
+                                    t_llllelem *nextbox_first_rhythm_elem, t_llllelem *nextbox_first_infos_elem, t_llllelem *nextbox_first_ties_elem,
+                                    t_rational smallest_minimal_unit) {
+    if (rhythm && rhythm->l_size > 1) {
+        t_llllelem *rhythm_elem, *infos_elem, *ties_elem;
+        t_llllelem *prev_infos_elem, *prev_ties_elem, *prev_rhythm_elem;
+        t_llllelem *next_infos_elem, *next_ties_elem, *next_rhythm_elem;
+        t_llllelem *smallest_rhythm_elem = rhythm->l_head;
+        t_llllelem *smallest_infos_elem = infos->l_head;
+        t_llllelem *smallest_ties_elem = ties->l_head;
+        
+        if (!smallest_rhythm_elem)
+            return; // not found. Something has gone wrong.
+        
+        prev_infos_elem = smallest_infos_elem ? (smallest_infos_elem->l_prev ? smallest_infos_elem->l_prev : prevbox_last_infos_elem) : NULL;
+        prev_ties_elem = smallest_ties_elem->l_prev ? smallest_ties_elem->l_prev : prevbox_last_ties_elem;
+        prev_rhythm_elem = smallest_rhythm_elem->l_prev ? smallest_rhythm_elem->l_prev : prevbox_last_rhythm_elem;
+        next_infos_elem = smallest_infos_elem ? (smallest_infos_elem->l_next ? smallest_infos_elem->l_next : nextbox_first_infos_elem) : NULL;
+        next_ties_elem = smallest_ties_elem->l_next ? smallest_ties_elem->l_next : nextbox_first_ties_elem;
+        next_rhythm_elem = smallest_rhythm_elem->l_next ? smallest_rhythm_elem->l_next : nextbox_first_rhythm_elem;
+        
+        destroy_rhythm_element_or_turn_it_into_grace(x, smallest_rhythm_elem, smallest_infos_elem, smallest_ties_elem,
+                                                     prev_rhythm_elem, prev_infos_elem, prev_ties_elem, next_rhythm_elem, next_infos_elem, next_ties_elem, true, false, smallest_minimal_unit);
+    }
+}
+
 void regroup_delete_fastest_element(t_quantize *x, t_llll *rhythm, t_llll *infos, t_llll *ties,
                                     t_llllelem *prevbox_last_rhythm_elem, t_llllelem *prevbox_last_infos_elem, t_llllelem *prevbox_last_ties_elem,
                                     t_llllelem *nextbox_first_rhythm_elem, t_llllelem *nextbox_first_infos_elem, t_llllelem *nextbox_first_ties_elem,

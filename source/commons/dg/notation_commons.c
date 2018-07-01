@@ -21815,9 +21815,8 @@ char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *
 					
 					while (rat_rat_cmp_integer_and_remainders(r_onset_integerpart, r_sym_onset, box_summed_elem_rat_integerpart, box_summed_elem_rat_remainder) == 1) { 
 						// while it goes COMPLETELY over the box
-						llll_appendrat(box_rhythm_llll[i],
-									   rat_long_prod(rat_rat_diff_integer_and_remainders(box_summed_elem_rat_integerpart, box_summed_elem_rat_remainder, box_summed_elem_rat_prev_integerpart, box_summed_elem_rat_prev_remainder), 
-													 rhythm_elem_sign), 0, WHITENULL_llll);
+                        t_rational dur_to_append = rat_long_prod(rat_rat_diff_integer_and_remainders(box_summed_elem_rat_integerpart, box_summed_elem_rat_remainder, box_summed_elem_rat_prev_integerpart, box_summed_elem_rat_prev_remainder), rhythm_elem_sign);
+						llll_appendrat(box_rhythm_llll[i], dur_to_append);
                         t_llllelem *new_infos_elem;
 						if (infos_elem) 
 							new_infos_elem = llll_appendelem_clone_preserve_lthing(box_infos_llll[i], infos_elem, 0, WHITENULL_llll);
@@ -21857,6 +21856,7 @@ char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *
 							llll_appendhatom_clone(box_ties_llll[i], &ties_elem->l_hatom, 0, WHITENULL_llll); 
 						else 
 							llll_appendllll(box_ties_llll[i], repeat_long_for_llllelem_len(0, ties_elem), 0, WHITENULL_llll);
+                        
 					} else if (rat_rat_cmp_integer_and_remainders(r_onset_integerpart, r_sym_onset, box_summed_elem_rat_integerpart, box_summed_elem_rat_remainder) == 0) { 
 						// precisely at the end of the box 
 						llll_appendrat(box_rhythm_llll[i], rat_long_prod(rat_rat_diff_integer_and_remainders(r_onset_integerpart, r_sym_onset, box_summed_elem_rat_prev_integerpart, box_summed_elem_rat_prev_remainder), rhythm_elem_sign), 0, WHITENULL_llll);

@@ -49,6 +49,8 @@ typedef struct _comb
 	struct llllobj_object 	n_ob;
 	long					n_kstart;
 	t_atom					n_kend;
+    
+    long                    n_allow_repetitions;
 } t_comb;
 
 
@@ -107,16 +109,24 @@ int T_EXPORT main()
 	
 	CLASS_ATTR_LONG(c, "kstart", 0, t_comb, n_kstart);
 	CLASS_ATTR_ACCESSORS(c, "kstart", (method)NULL, (method)comb_setattr_kstart);
-	CLASS_ATTR_LABEL(c, "kstart", 0, "Start cardinality");
+	CLASS_ATTR_LABEL(c, "kstart", 0, "Start Cardinality");
 	CLASS_ATTR_BASIC(c, "kstart", 0);
 	// @description Start cardinality.
 	
 	CLASS_ATTR_ATOM(c, "kend", 0, t_comb, n_kend);
 	CLASS_ATTR_ACCESSORS(c, "kend", (method)NULL, (method)comb_setattr_kend);
-	CLASS_ATTR_LABEL(c, "kend", 0, "End cardinality");
+	CLASS_ATTR_LABEL(c, "kend", 0, "End Cardinality");
 	CLASS_ATTR_BASIC(c, "kend", 0);
 	// @description End cardinality.
 	
+    CLASS_ATTR_LONG(c, "repeat", 0, t_comb, n_allow_repetitions);
+    CLASS_ATTR_LABEL(c, "repeat", 0, "Allow Repetitions");
+    CLASS_ATTR_STYLE_LABEL(c, "repeat", 0, "onoff", "Allow Repetitions");
+    CLASS_ATTR_BASIC(c, "repeat", 0);
+    // @description Allow repetition of elements in the output (i.e. compute arrangements with repetitions).
+    // By default this is 0, and standard combinations are computed.
+
+    
 	class_register(CLASS_BOX, c);
 	comb_class = c;
 	
@@ -193,8 +203,12 @@ void comb_anything(t_comb *x, t_symbol *msg, long ac, t_atom *av)
 	else
 		kend = atom_getlong(&x->n_kend);
 	
-	combed = llll_comb(ll, x->n_kstart, kend);
-	llll_release(ll);
+    if (x->n_allow_repetitions)
+        combed = llll_comb_with_repetitions(ll,x->n_kstart, kend);
+    else
+        combed = llll_comb(ll, x->n_kstart, kend);
+	
+    llll_release(ll);
 	x->n_ob.l_rebuild = 0;
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, combed, 0);
 	llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
@@ -232,6 +246,8 @@ t_comb *comb_new(t_symbol *s, short ac, t_atom *av)
 		// @description If only one argument is present, it is considered both start and end cardinality.
 		// If two arguments are present, the first is considered start cardinality, the second end cardinality
 		
+        x->n_allow_repetitions = false;
+        
 		long true_ac = attr_args_offset(ac, av);
 		atom_setsym(&x->n_kend, gensym("<none>"));
 		if (true_ac >= 1) {
