@@ -28,8 +28,10 @@ typedef struct _code
     char *n_text;
     t_bach_atomic_lock n_lock;
     
-    t_atom_long n_inlets;
-    t_atom_long n_outlets;
+    t_atom_long n_dataInlets;
+    t_atom_long n_dataOutlets;
+    t_atom_long n_directInlets;
+    t_atom_long n_directOutlets;
     std::unordered_map<std::string, t_ownedFunction *> n_ofTable;
 
     char *text;
