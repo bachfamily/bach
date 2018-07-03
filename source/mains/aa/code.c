@@ -54,6 +54,9 @@ void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av);
 long code_atoms2text(t_code *x, long ac, t_atom *av);
 void code_buildAst(t_code *x, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *lambdaInlets, t_atom_long *lambdaOutlets);
 
+void code_deferbang(t_code *x, t_symbol *msg, long ac, t_atom *av);
+void code_defer_buildAst(t_code *x, t_symbol *msg, long ac, t_atom *av);
+
 // editor
 void code_okclose(t_code *x, char *s, short *result);
 void code_edclose(t_code *x, char **ht, long size);
@@ -158,10 +161,13 @@ void code_edclose(t_code *x, char **ht, long size)
         if (!isspace(*(x->n_text + size - 1))) {
             *(x->n_text + size) = ' ';
             *(x->n_text + size + 1) = 0;
-        }
+        } else
+            *(x->n_text + size) = 0;
         t_atom_long dummy_dataInlets = 0, dummy_dataOutlets = 0, dummy_dirInlets = 0, dummy_dirOutlets = 0;
         code_buildAst(x, &dummy_dataInlets, &dummy_dataOutlets, &dummy_dirInlets, &dummy_dirOutlets);
         bach_atomic_unlock(&x->n_lock);
+        if (x->n_auto)
+            defer_low(x, (method) code_deferbang, _sym_bang, 0, nullptr);
     }
     x->n_editor = NULL;
 }
@@ -218,11 +224,17 @@ void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av)
         llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet);
         if (inlet == 0)
             code_bang(x);
-    } else {
-        code_atoms2text(x, ac, av);
-        t_atom_long dummy_dataInlets = 0, dummy_dataOutlets = 0, dummy_dirInlets = 0, dummy_dirOutlets = 0;
-        code_buildAst(x, &dummy_dataInlets, &dummy_dataOutlets, &dummy_dirInlets, &dummy_dirOutlets);
-    }
+    } else
+        defer_low(x, (method) code_defer_buildAst, gensym("code"), ac, av);
+}
+
+void code_defer_buildAst(t_code *x, t_symbol *msg, long ac, t_atom *av)
+{
+    code_atoms2text(x, ac, av);
+    t_atom_long dummy_dataInlets = 0, dummy_dataOutlets = 0, dummy_dirInlets = 0, dummy_dirOutlets = 0;
+    code_buildAst(x, &dummy_dataInlets, &dummy_dataOutlets, &dummy_dirInlets, &dummy_dirOutlets);
+    if (x->n_auto)
+        code_bang(x);
 }
 
 void code_assist(t_code *x, void *b, long m, long a, char *s)
@@ -268,7 +280,6 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
     t_max_err err = 0;
     
     true_ac = attr_args_offset(ac, av);
-    
     
     if ((x = (t_code *) object_alloc_debug(code_class))) {
         // @arg 0 @name default @optional 1 @digest Default comparison llll
@@ -322,6 +333,14 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
                     i++;
                 } else
                     object_error((t_object *) x, "Bad value for lambdaouts attribute");
+            } else if (!strcmp(attrname, "auto")) {
+                long type = atom_gettype(av + i);
+                if (type == A_LONG || type == A_FLOAT) {
+                    t_atom_long val = atom_getlong(av + i);
+                    x->n_auto = CLAMP(val, 0, LLLL_MAX_INLETS);
+                    i++;
+                } else
+                    object_error((t_object *) x, "Bad value for auto attribute");
             } else if (!strcmp(attrname, "out")) {
                 llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, av + i);
                 i++;
@@ -351,11 +370,19 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
     } else 
         error(BACH_CANT_INSTANTIATE);
     
-    if (x && err == MAX_ERR_NONE)
+    if (x && err == MAX_ERR_NONE) {
+        if (x->n_auto)
+            defer_low(x, (method) code_deferbang, _sym_bang, 0, nullptr);
         return x;
+    }
     
     object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL
     return NULL;
+}
+
+void code_deferbang(t_code *x, t_symbol *msg, long ac, t_atom *av)
+{
+    code_bang(x);
 }
 
 long code_atoms2text(t_code *x, long ac, t_atom *av)
@@ -366,6 +393,15 @@ long code_atoms2text(t_code *x, long ac, t_atom *av)
     buf = sysmem_resizeptr(buf, textsize + 1);
     *(buf + textsize - 1) = ' ';
     *(buf + textsize) = 0;
+    
+    for (char *c = buf; *c; c++) {
+        if (*c == '\\' &&
+            (*(c+1) == ',' || *(c+1) == ';' || *(c+1) == '$')) {
+            for (char *d = c; *d; d++)
+                *d = *(d + 1);
+        }
+    }
+    
     bach_atomic_lock(&x->n_lock);
     sysmem_freeptr(x->n_text);
     x->n_text = buf;

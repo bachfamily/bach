@@ -27,6 +27,7 @@ typedef struct _code
 
     char *n_text;
     t_bach_atomic_lock n_lock;
+    t_atom_long n_auto;
     
     t_atom_long n_dataInlets;
     t_atom_long n_dataOutlets;
@@ -34,7 +35,6 @@ typedef struct _code
     t_atom_long n_directOutlets;
     std::unordered_map<std::string, t_ownedFunction *> n_ofTable;
 
-    char *text;
     t_object *n_editor;
     
 } t_code;

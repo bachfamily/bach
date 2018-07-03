@@ -140,7 +140,6 @@ int T_EXPORT main()
 	return 0;
 }
 
-
 void reg_dblclick(t_reg *x)
 {
     if (!x->m_editor)
