@@ -4460,7 +4460,7 @@ typedef struct _notation_obj
 	long		cautionary_accidentals_remind;			///< Number specifying after how many chords the cautionary (non-annulation) accidental is necessary again to remind it  
 	double		max_beam_slope;							///< (No more supported, used only up to bach 0.6.7) Maximum slope for the beamings (has been replaced by <max_beam_delta_y>) 
 	long		max_beam_delta_y;						///< Maximum possible vertical distance between the end and the start point of a beaming. This value is in steps.
-	double		constraint_beam_start_end_in_spaces;	///< If 1, beams cannot start and end in any position, but only on a vertical grid of half-steps
+	char		constraint_beam_start_end_in_spaces;	///< If 1, beams cannot start and end in any position, but only on a vertical grid of half-steps
 	char		tie_assign_pitch;						///< Flag telling if when we tie two notes having same screen midicents and accidentals, their actual midicents are set equal (to the first one). 
 														///< For instance we may tie a C3 of 6004 cents with a C3 of 6009 cents, and the latter will become
 														///< a C3 of 6004 cents.
