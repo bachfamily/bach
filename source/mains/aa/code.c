@@ -432,6 +432,9 @@ void code_ownedFunctionsSetup(t_code *x)
 void bifSetup()
 {
     bifTable = new std::unordered_map<std::string, t_function *>;
+    (*bifTable)["$args"] = new t_fnArgs;
+    (*bifTable)["$argcount"] = new t_fnArgcount;
+
     (*bifTable)["length"] = new t_fnLength;
     (*bifTable)["depth"] = new t_fnDepth;
     (*bifTable)["nth"] = new t_fnNth;
@@ -444,7 +447,6 @@ void bifSetup()
     (*bifTable)["slice"] = new t_fnSlice;
     (*bifTable)["left"] = new t_fnLeft;
     (*bifTable)["right"] = new t_fnRight;
-    (*bifTable)["args"] = new t_fnArgs;
     (*bifTable)["subs"] = new t_fnSubs;
     (*bifTable)["insert"] = new t_fnInsert;
     (*bifTable)["find"] = new t_fnFind;
