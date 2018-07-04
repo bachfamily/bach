@@ -75,7 +75,7 @@ typedef struct _pv
 	t_llll			*n_empty;
     long            n_placed;
     
-    t_object                *m_editor;
+    t_object        *m_editor;
 } t_pv;
 
 
@@ -375,6 +375,8 @@ void pv_free(t_pv *x)
 		}
 	}
     //dev_post("we don't have a pvault! bug?");
+    
+    object_free_debug(x->m_editor);
 	llll_free(x->n_empty);
 	llllobj_obj_free((t_llllobj_object *) x);
 }

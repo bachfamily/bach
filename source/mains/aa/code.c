@@ -270,6 +270,7 @@ void code_free(t_code *x)
 {
     if (x->n_main)
         x->n_main->decrease();
+    object_free_debug(x->n_editor);
     llllobj_obj_free((t_llllobj_object *) x);
 }
 

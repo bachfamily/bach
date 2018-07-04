@@ -238,6 +238,7 @@ void reg_appendtodictionary(t_reg *x, t_dictionary *d)
 void reg_free(t_reg *x)
 {
 	object_free_debug(x->n_proxy);
+    object_free_debug(x->m_editor);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
 
