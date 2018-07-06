@@ -52,7 +52,7 @@ void code_float(t_code *x, double v);
 void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av);
 
 long code_atoms2text(t_code *x, long ac, t_atom *av);
-void code_buildAst(t_code *x, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *lambdaInlets, t_atom_long *lambdaOutlets);
+t_max_err code_buildAst(t_code *x, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *lambdaInlets, t_atom_long *lambdaOutlets);
 
 void code_deferbang(t_code *x, t_symbol *msg, long ac, t_atom *av);
 void code_defer_buildAst(t_code *x, t_symbol *msg, long ac, t_atom *av);
@@ -147,12 +147,72 @@ void code_dblclick(t_code *x)
 
 void code_okclose(t_code *x, char *s, short *result)
 {
-    *result = 0;
+    char *newCode = NULL;
+    char *oldCode = NULL;
+    t_mainFunction *oldMain = x->n_main;
+    if (oldMain)
+        oldMain->increase();
+    t_max_err err;
+    object_method(x->n_editor, gensym("gettext"), &newCode);
+    if (*newCode == 0)
+        return;
+    size_t codeLen = strlen(newCode);
+    if (!isspace(*(newCode + codeLen - 1))) {
+        newCode = sysmem_resizeptr(newCode, codeLen + 2);
+        *(newCode + codeLen) = ' ';
+        *(newCode + codeLen + 1) = 0;
+    }
+    oldCode = x->n_text;
+    x->n_text = newCode;
+    t_atom_long dummy_dataInlets = 0, dummy_dataOutlets = 0, dummy_dirInlets = 0, dummy_dirOutlets = 0;
+    err = code_buildAst(x, &dummy_dataInlets, &dummy_dataOutlets, &dummy_dirInlets, &dummy_dirOutlets);
+    
+    if (!err) {
+        sysmem_freeptr(oldCode);
+        if (oldMain)
+            oldMain->decrease();
+        *result = 3;
+    } else {
+        {
+            t_object *wind = object_attr_getobj(x->n_editor, _sym_wind);
+            short r;
+#ifdef MAC_VERSION
+            r = wind_advise_explain(wind, "Cannot parse code", nullptr, "Keep Errors", "Revert to Previous Version", "Stop and Fix Code");
+#else
+            // on Windows, the buttons are too narrow...
+            r = wind_advise_explain(wind, "Cannot parse code", nullptr, "Keep", "Revert", "Fix");
+#endif
+            switch (r) {
+                case 1: // keep
+                    sysmem_freeptr(oldCode);
+                    if (oldMain)
+                        oldMain->decrease();
+                    *result = 3;
+                    break;
+                case 3: // revert
+                    x->n_text = oldCode;
+                    sysmem_freeptr(newCode);
+                    if (x->n_main)
+                        x->n_main->decrease();
+                    x->n_main = oldMain;
+                    *result = 3;
+                    break;
+                case 2: // stop
+                    x->n_text = oldCode;
+                    sysmem_freeptr(newCode);
+                    if (x->n_main)
+                        x->n_main->decrease();
+                    x->n_main = oldMain;
+                    *result = 4;
+                    break;
+            }
+        }
+    }
 }
 
 void code_edclose(t_code *x, char **ht, long size)
 {
-    // do something with the text
+ /*   // do something with the text
     if (ht) {
         bach_atomic_lock(&x->n_lock);
         sysmem_freeptr(x->n_text);
@@ -168,7 +228,7 @@ void code_edclose(t_code *x, char **ht, long size)
         bach_atomic_unlock(&x->n_lock);
         if (x->n_auto)
             defer_low(x, (method) code_deferbang, _sym_bang, 0, nullptr);
-    }
+    }*/
     x->n_editor = NULL;
 }
 
@@ -289,7 +349,7 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
 
         if (true_ac) {
             code_atoms2text(x, true_ac, av);
-            code_buildAst(x, &x->n_dataInlets, &x->n_dataOutlets, &x->n_directInlets, &x->n_directOutlets);
+            err = code_buildAst(x, &x->n_dataInlets, &x->n_dataOutlets, &x->n_directInlets, &x->n_directOutlets);
         }
         
         long i = true_ac;
@@ -348,7 +408,7 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
             } else
                 object_error((t_object *) x, "Unknown attribute %s", attrname);
         }
-        if (x->n_dataInlets < 1)
+        if (x->n_dataInlets < 1 || err)
             x->n_dataInlets = 1;
         
         CLIP_ASSIGN(x->n_dataOutlets, 0, 127);
@@ -407,19 +467,22 @@ long code_atoms2text(t_code *x, long ac, t_atom *av)
     sysmem_freeptr(x->n_text);
     x->n_text = buf;
     bach_atomic_unlock(&x->n_lock);
-    post("%s---", buf);
     return textsize + 1;
 }
 
-void code_buildAst(t_code *x, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *lambdaInlets, t_atom_long *lambdaOutlets)
+t_max_err code_buildAst(t_code *x, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *lambdaInlets, t_atom_long *lambdaOutlets)
 {
+    if (!x->n_text)
+        return 0;
+    t_max_err err = MAX_ERR_NONE;
     if (x->n_main)
         x->n_main->decrease();
     t_mainFunction *newMain = stringparser_parse_buffer(x->n_text, gvt, dataInlets, dataOutlets, lambdaInlets, lambdaOutlets, bifTable, x);
     if (newMain)
         x->n_main = newMain;
     else
-        *dataInlets = -1;
+        err = MAX_ERR_GENERIC;
+    return err;
 }
 
 void code_ownedFunctionsSetup(t_code *x)
