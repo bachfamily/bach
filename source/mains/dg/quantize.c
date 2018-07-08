@@ -61,6 +61,8 @@
 #include <time.h>
 
 
+//#define QUANTIZE_USE_STDEVS
+
 #define QUANTIZE_MARK_TIED_INFOS true
 
 #define QUANTIZE_MERGE_WHEN (k_MERGE_WHEN_DRAWABLE)
@@ -3856,7 +3858,7 @@ char quantize_box_single_step(t_quantize *x, t_llll *box_durations, t_llll **qua
                 if (x->verbose >= 2) object_post((t_object *) x, "     -- approximation for second-last duration cannot lead to a zero-error solution! Rejected.");
                 is_ok = false;
             } else if ((x->allow_box_durs || x->deny_box_durs) && !is_approx_ok_for_allow_and_deny_box_durs(x, elem_multiindex, depth)) {
-                if (x->verbose >= 2) object_post((t_object *) x, "     -- approximation for %ld-th duration does not fit with allowed/denied configurations! Rejected.");
+                if (x->verbose >= 2) object_post((t_object *) x, "     -- approximation for does not fit with allowed/denied configurations! Rejected.");
                 is_ok = false;
             } else {
                 t_rational duration_to_complete = rat_rat_diff(total_duration, llll_sum_abs_of_rat_llll(curr_durations));
@@ -3948,15 +3950,27 @@ char quantize_box_single_step(t_quantize *x, t_llll *box_durations, t_llll **qua
         if (is_ok) { // solution retained!
             
             double this_euclidean_distance = llll_euclidean_distance_of_plain_rat_lllls(curr_durations, box_durations);
+
+#ifdef QUANTIZE_USE_STDEVS
+            t_llll *this_stdevs = llll_abs_diff_of_plain_lllls_as_double(curr_durations, box_durations);
+            double this_error_average = 0;
+            double this_error_stdev = llll_stdev_of_plain_double_llll(this_stdevs, &this_error_average);
+#endif
             
             if (x->verbose) {
                 char *quantization_string = NULL;
                 llll_to_text_buf(curr_durations, &quantization_string, 0, BACH_DEFAULT_MAXDECIMALS, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
                 object_post((t_object *) x, "      > Possible quantization found: %s", quantization_string);
                 object_post((t_object *) x, "      > Euclidean distance: %.8f", this_euclidean_distance);
+#ifdef QUANTIZE_USE_STDEVS
+                object_post((t_object *) x, "      > Error: average %.8f, stdev: %.8f", this_error_average, this_error_stdev);
+#endif
                 bach_freeptr(quantization_string);
             }
             
+#ifdef QUANTIZE_USE_STDEVS
+            llll_free(this_stdevs);
+#endif
             res = true; // found something!
             
             if (x->algorithm == k_QUANTIZE_ALGORITHM_GREEDY) {

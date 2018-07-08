@@ -1380,9 +1380,9 @@ long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_para
             llll_appendlong(respell_note_pos, autospell_respell_note_wr_to_LCE(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)), this_pos, true, false));
             llll_appenddouble(respell_note_keys, note_voice ? note_voice->key : 0);
         }
-        double key_avg = get_average_of_plain_double_llll(respell_note_keys);
+        double key_avg = llll_average_of_plain_double_llll(respell_note_keys);
         double avg;
-        double stdev = get_stdev_of_plain_double_llll(respell_note_pos, &avg);
+        double stdev = llll_stdev_of_plain_double_llll(respell_note_pos, &avg);
         
         avg -= params->lineoffifth_bias;
         avg -= key_avg;

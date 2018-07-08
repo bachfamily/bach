@@ -164,6 +164,16 @@ void llll_trim(t_llll *in_llll, long num_elems) {
 }
 
 
+t_llll *llll_abs_diff_of_plain_lllls_as_double(t_llll *llll1, t_llll *llll2)
+{
+    t_llll *out = llll_get();
+    t_llllelem *elem1, *elem2;
+    for (elem1 = llll1->l_head, elem2 = llll2->l_head; elem1 && elem2; elem1 = elem1->l_next, elem2 = elem2->l_next) {
+        llll_appenddouble(out, fabs(hatom_getdouble(&elem1->l_hatom) - hatom_getdouble(&elem2->l_hatom)));
+    }
+    return out;
+}
+
 
 double llll_euclidean_distance_of_plain_rat_lllls(t_llll *llll1, t_llll *llll2) {
 	t_llllelem *elem1, *elem2;
@@ -297,7 +307,7 @@ t_llll *llll_medianfilter(t_llll *ll, long window_in_samples)
 	return out;
 }
 
-double get_average_of_plain_double_llll(t_llll *ll)
+double llll_average_of_plain_double_llll(t_llll *ll)
 {
     double av = 0;
     long count = 0;
@@ -311,7 +321,8 @@ double get_average_of_plain_double_llll(t_llll *ll)
     return av;
 }
 
-double get_stdev_of_plain_double_llll(t_llll *ll, double *average)
+
+double llll_stdev_of_plain_double_llll(t_llll *ll, double *average)
 {
 	// find average
 	double av = 0, stdev = 0;
