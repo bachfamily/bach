@@ -410,7 +410,7 @@ t_llll* llll_x2dx_of_plain_double_llll(t_llll *in_llll);
 	@param	in_llll			The llll
 	@return					The average of the elements in the llll
  */
-double get_average_of_plain_double_llll(t_llll *ll);
+double llll_average_of_plain_double_llll(t_llll *ll);
 
 
 /**	Find standard deviation in a plain llll containing doubles (or longs).
@@ -419,7 +419,7 @@ double get_average_of_plain_double_llll(t_llll *ll);
 	@param	average			Pointer which will be filled with the average of the llll values (if needed, leave NULL if unwanted)
 	@return					The standard deviation of the elements in the llll
  */
-double get_stdev_of_plain_double_llll(t_llll *ll, double *average);
+double llll_stdev_of_plain_double_llll(t_llll *ll, double *average);
 
 
 /**	Apply a mean filter on a plain llll
@@ -645,6 +645,10 @@ void llll_mergesort_inplace(t_llll **llll_in, long (*cmpfn)(void *data, t_llllel
 	@return			The euclidean distance between <llll1> and <llll2> 
  */
 double llll_euclidean_distance_of_plain_rat_lllls(t_llll *llll1, t_llll *llll2);
+
+
+// TBD
+t_llll *llll_abs_diff_of_plain_lllls_as_double(t_llll *llll1, t_llll *llll2);
 
 
 /**	Chains two lllls by cloning the elements of the second one and appending them to the first one. The user is free to use the second list afterwards, if needed. 

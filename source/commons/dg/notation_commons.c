@@ -21815,9 +21815,8 @@ char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *
 					
 					while (rat_rat_cmp_integer_and_remainders(r_onset_integerpart, r_sym_onset, box_summed_elem_rat_integerpart, box_summed_elem_rat_remainder) == 1) { 
 						// while it goes COMPLETELY over the box
-						llll_appendrat(box_rhythm_llll[i],
-									   rat_long_prod(rat_rat_diff_integer_and_remainders(box_summed_elem_rat_integerpart, box_summed_elem_rat_remainder, box_summed_elem_rat_prev_integerpart, box_summed_elem_rat_prev_remainder), 
-													 rhythm_elem_sign), 0, WHITENULL_llll);
+                        t_rational dur_to_append = rat_long_prod(rat_rat_diff_integer_and_remainders(box_summed_elem_rat_integerpart, box_summed_elem_rat_remainder, box_summed_elem_rat_prev_integerpart, box_summed_elem_rat_prev_remainder), rhythm_elem_sign);
+						llll_appendrat(box_rhythm_llll[i], dur_to_append);
                         t_llllelem *new_infos_elem;
 						if (infos_elem) 
 							new_infos_elem = llll_appendelem_clone_preserve_lthing(box_infos_llll[i], infos_elem, 0, WHITENULL_llll);
@@ -21857,6 +21856,7 @@ char split_rhythm_to_boxes(t_llll *rhythm, t_llll *infos, t_llll *ties, t_llll *
 							llll_appendhatom_clone(box_ties_llll[i], &ties_elem->l_hatom, 0, WHITENULL_llll); 
 						else 
 							llll_appendllll(box_ties_llll[i], repeat_long_for_llllelem_len(0, ties_elem), 0, WHITENULL_llll);
+                        
 					} else if (rat_rat_cmp_integer_and_remainders(r_onset_integerpart, r_sym_onset, box_summed_elem_rat_integerpart, box_summed_elem_rat_remainder) == 0) { 
 						// precisely at the end of the box 
 						llll_appendrat(box_rhythm_llll[i], rat_long_prod(rat_rat_diff_integer_and_remainders(r_onset_integerpart, r_sym_onset, box_summed_elem_rat_prev_integerpart, box_summed_elem_rat_prev_remainder), rhythm_elem_sign), 0, WHITENULL_llll);
@@ -28477,7 +28477,7 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 	double original_onset = note->parent->onset;
 	double new_onset;
 	double new_duration = 0;
-	double velocity = 0;
+	double velocity = note->velocity;
 	double midicents;
 	t_llll* out_llll = llll_get();
 	
@@ -32245,19 +32245,26 @@ char reset_note_enharmonicity(t_notation_obj *r_ob, t_note *note){
 	return changed;
 }
 
-char reset_all_enharmonicity(t_notation_obj *r_ob)
+char reset_all_enharmonicity(t_notation_obj *r_ob, char ignore_locked_notes)
 {
-    char changed = 0;
+    char changed = 0, undo_done = 0;
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
         for (t_chord *ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-            for (t_note *nt = ch->firstnote; nt; nt = nt->next)
-                changed |= reset_note_enharmonicity(r_ob, nt);
+            for (t_note *nt = ch->firstnote; nt; nt = nt->next) {
+                if (!ignore_locked_notes || !notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+                    if (!undo_done) {
+                        undo_done = 1;
+                        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                    }
+                    changed |= reset_note_enharmonicity(r_ob, nt);
+                }
+            }
         }
     return changed;
 }
 
-char reset_selection_enharmonicity(t_notation_obj *r_ob)
+char reset_selection_enharmonicity(t_notation_obj *r_ob, char ignore_locked_notes)
 {
 	// retranscribe and delete all the "graphic" extras for the selection (revert the accidentals to k_ACCIDENTALS_AUTO)
 	t_notation_item *curr_it = r_ob->firstselecteditem;
@@ -32267,14 +32274,14 @@ char reset_selection_enharmonicity(t_notation_obj *r_ob)
 
 		if (curr_it->type == k_NOTE) { // it is a note
 			t_note *nt = (t_note *) curr_it;
-			if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
+			if (!ignore_locked_notes || !notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) {
 				create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 				changed |= reset_note_enharmonicity(r_ob, nt);
 			}
 		} else if (curr_it->type == k_CHORD) {
 			t_note *temp_nt = ((t_chord *)curr_it)->firstnote;
 			while (temp_nt) {
-				if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
+				if (!ignore_locked_notes || !notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
 					create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 					changed |= reset_note_enharmonicity(r_ob, temp_nt);
 				}
@@ -32285,7 +32292,7 @@ char reset_selection_enharmonicity(t_notation_obj *r_ob)
 			while (temp_ch) {
 				t_note *temp_nt = ((t_chord *)curr_it)->firstnote;
 				while (temp_nt) {
-					if (!notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
+					if (!ignore_locked_notes || !notation_item_is_globally_locked(r_ob, (t_notation_item *)temp_nt)) {
 						create_simple_selected_notation_item_undo_tick(r_ob, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 						changed |= reset_note_enharmonicity(r_ob, temp_nt);
 					}

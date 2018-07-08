@@ -195,6 +195,8 @@ typedef struct _autospell_params
     
     t_symbol    *algorithm; // either "default" or "chewandchen"
     
+    char    ignore_locked_notes;
+    
     // PARAMETERS FOR DEFAULT ALGORITHM
     double  lineoffifth_bias;       // Bias for the line of fifths
     t_lexpr *stdev_thresh;          // Equation for the acceptance threshold for the standard deviation of the positions on the line of fifth (may depend on numnotes and note extension)
@@ -225,9 +227,9 @@ typedef struct _autospell_params
 void notationobj_autospell_trivial(t_notation_obj *r_ob, t_autospell_params *par)
 {
     if (par->selection_only)
-        reset_selection_enharmonicity(r_ob);
+        reset_selection_enharmonicity(r_ob, par->ignore_locked_notes);
     else
-        reset_all_enharmonicity(r_ob);
+        reset_all_enharmonicity(r_ob, par->ignore_locked_notes);
     
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         lock_general_mutex(r_ob);
@@ -358,24 +360,30 @@ t_voice *get_note_voice(t_notation_obj *r_ob, t_note *note)
 t_llll *notationobj_autospell_list_possibilities(t_notation_obj *r_ob, t_autospell_params *par, t_note *note)
 {
     t_llll *out = llll_get();
-    
+
     t_voice *voice = get_note_voice(r_ob, note);
     long key = 0;
-    if (voice) {
+    if (voice)
         key = voice->key;
-    }
     
     long pos = pitch_to_position_on_line_of_fifths(note->pitch_displayed);
-    pos -= key; // indeed, maxnumflats and maxnumsharps are WITH RESPECT to the KEY!
     
-    // now, all possibilities must lie be between (-1 - 7 * par->max_num_flats) et (5 + 7 * par->max_num_sharps)
-    pos = positive_mod(pos, 12);
-    
-    for (long i = pos; i <= par->max_LOF_position; i += 12)
-        llll_appendlong(out, i + key);
+    if (!par->ignore_locked_notes || !notation_item_is_globally_locked(r_ob, (t_notation_item *)note)) {
+        pos -= key; // indeed, maxnumflats and maxnumsharps are WITH RESPECT to the KEY!
 
-    for (long i = pos - 12; i >= par->min_LOF_position; i -= 12)
-        llll_appendlong(out, i + key);
+        // now, all possibilities must lie be between (-1 - 7 * par->max_num_flats) et (5 + 7 * par->max_num_sharps)
+        pos = positive_mod(pos, 12);
+        
+        for (long i = pos; i <= par->max_LOF_position; i += 12)
+            llll_appendlong(out, i + key);
+        
+        for (long i = pos - 12; i >= par->min_LOF_position; i -= 12)
+            llll_appendlong(out, i + key);
+        
+    } else {
+        // note has to be kept as it is!
+        llll_appendlong(out, pos);
+    }
 
     return out;
 }
@@ -595,56 +603,62 @@ void notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(t_notati
 // respell a note with respect to a spiral center of effect
 void autospell_respell_note_wr_to_SCE(t_notation_obj *r_ob, t_autospell_params *par, t_note *note, t_pt3d SCE)
 {
-    t_llll *possibilities = notationobj_autospell_list_possibilities(r_ob, par, note);
-
-    if (possibilities && possibilities->l_head) {
-        par->thing = &SCE;
-        llll_mergesort_inplace(&possibilities, llll_sort_by_distance_to_SCE, par);
-        par->thing = NULL;
+    if (!par->ignore_locked_notes || !notation_item_is_globally_locked(r_ob, (t_notation_item *)note)) {
         
-        if (par->verbose) {
-            object_post((t_object *)r_ob, "  Possibilities, in order of distance:");
-            for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
-                t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
-                char notename[128];
-                thispitch.toTextBuf(notename, 128);
-                object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, sqrt(pt3d_distance_squared(SCE, pitch_to_position_on_spiral_array(r_ob, par, thispitch))), el->l_prev ? "" : " <-- chosen");
+        t_llll *possibilities = notationobj_autospell_list_possibilities(r_ob, par, note);
+        
+        if (possibilities && possibilities->l_head) {
+            par->thing = &SCE;
+            llll_mergesort_inplace(&possibilities, llll_sort_by_distance_to_SCE, par);
+            par->thing = NULL;
+            
+            if (par->verbose) {
+                object_post((t_object *)r_ob, "  Possibilities, in order of distance:");
+                for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
+                    t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
+                    char notename[128];
+                    thispitch.toTextBuf(notename, 128);
+                    object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, sqrt(pt3d_distance_squared(SCE, pitch_to_position_on_spiral_array(r_ob, par, thispitch))), el->l_prev ? "" : " <-- chosen");
+                }
             }
+            
+            notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(r_ob, par, note, hatom_getlong(&possibilities->l_head->l_hatom));
         }
-
-        notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(r_ob, par, note, hatom_getlong(&possibilities->l_head->l_hatom));
+        llll_free(possibilities);
+        
     }
-    llll_free(possibilities);
 }
 
 
 // respell a note with respect to a center of effect
 long autospell_respell_note_wr_to_LCE(t_notation_obj *r_ob, t_autospell_params *par, t_note *note, double LCE, char only_output_res, char verbose)
 {
-    t_llll *possibilities = notationobj_autospell_list_possibilities(r_ob, par, note);
     long res = 0;
     
-    if (possibilities && possibilities->l_head) {
-        par->thing = &LCE;
-        llll_mergesort_inplace(&possibilities, llll_sort_by_distance_to_LCE, par);
-        par->thing = NULL;
+//    if (!par->ignore_locked_notes || !notation_item_is_globally_locked(r_ob, (t_notation_item *)note)) {
+        t_llll *possibilities = notationobj_autospell_list_possibilities(r_ob, par, note);
         
-        if (verbose) {
-            object_post((t_object *)r_ob, "  Possibilities, in order of distance:");
-            for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
-                t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
-                char notename[128];
-                thispitch.toTextBuf(notename, 128);
-                object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, fabs(LCE - pitch_to_position_on_line_of_fifths(thispitch)), el->l_prev ? "" : " <-- chosen");
+        if (possibilities && possibilities->l_head) {
+            par->thing = &LCE;
+            llll_mergesort_inplace(&possibilities, llll_sort_by_distance_to_LCE, par);
+            par->thing = NULL;
+            
+            if (verbose) {
+                object_post((t_object *)r_ob, "  Possibilities, in order of distance:");
+                for (t_llllelem *el = possibilities->l_head; el; el = el->l_next) {
+                    t_pitch thispitch = notationobj_autospell_match_pitch_with_position_on_line_of_fifths(r_ob, par, note->pitch_displayed, hatom_getlong(&el->l_hatom));
+                    char notename[128];
+                    thispitch.toTextBuf(notename, 128);
+                    object_post((t_object *)r_ob, "    %s (dist: %.3f)%s", notename, fabs(LCE - pitch_to_position_on_line_of_fifths(thispitch)), el->l_prev ? "" : " <-- chosen");
+                }
             }
+            
+            res = hatom_getlong(&possibilities->l_head->l_hatom);
+            if (!only_output_res)
+                notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(r_ob, par, note, hatom_getlong(&possibilities->l_head->l_hatom));
         }
-        
-        res = hatom_getlong(&possibilities->l_head->l_hatom);
-        if (!only_output_res)
-            notationobj_autospell_set_note_pitch_to_position_on_line_of_fifths(r_ob, par, note, hatom_getlong(&possibilities->l_head->l_hatom));
-    }
-    llll_free(possibilities);
-    
+        llll_free(possibilities);
+//    }
     return res;
 }
 
@@ -1366,9 +1380,9 @@ long autospell_dg_respell_notes_multitest(t_notation_obj *r_ob, t_autospell_para
             llll_appendlong(respell_note_pos, autospell_respell_note_wr_to_LCE(r_ob, params, ((t_note *)hatom_getobj(&nel->l_hatom)), this_pos, true, false));
             llll_appenddouble(respell_note_keys, note_voice ? note_voice->key : 0);
         }
-        double key_avg = get_average_of_plain_double_llll(respell_note_keys);
+        double key_avg = llll_average_of_plain_double_llll(respell_note_keys);
         double avg;
-        double stdev = get_stdev_of_plain_double_llll(respell_note_pos, &avg);
+        double stdev = llll_stdev_of_plain_double_llll(respell_note_pos, &avg);
         
         avg -= params->lineoffifth_bias;
         avg -= key_avg;
@@ -1531,6 +1545,8 @@ t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob
     par.r_ob = r_ob;
     par.algorithm = _llllobj_sym_default; //gensym("chewandchen");
     
+    par.ignore_locked_notes = 1;
+    
     par.voicewise = 1;
     
     par.lineoffifth_bias = 2.;
@@ -1585,7 +1601,7 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
     t_llll *stdev_thresh_ll = NULL;
     t_autospell_params par = notationobj_autospell_get_default_params(r_ob);
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdillli", gensym("selection"), &par.selection_only, gensym("numsliding"), &par.w_sliding, gensym("numselfreferential"), &par.w_selfreferential, gensym("locality"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &minflats, gensym("maxsharps"), &maxsharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("bias"), &par.lineoffifth_bias, gensym("voicewise"), &par.voicewise, gensym("sharpest"), &maxpitch, gensym("flattest"), &minpitch, gensym("stdevthresh"), &stdev_thresh_ll, gensym("discardalteredrepetitions"), &par.discard_altered_repetitions);
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, args, "iiiddddiiisdilllii", gensym("selection"), &par.selection_only, gensym("numsliding"), &par.w_sliding, gensym("numselfreferential"), &par.w_selfreferential, gensym("locality"), &par.f, gensym("winsize"), &par.chunk_size_ms, gensym("spiralr"), &par.spiral_r, gensym("spiralh"), &par.spiral_h, gensym("maxflats"), &minflats, gensym("maxsharps"), &maxsharps, gensym("verbose"), &par.verbose, gensym("algorithm"), &par.algorithm, gensym("bias"), &par.lineoffifth_bias, gensym("voicewise"), &par.voicewise, gensym("sharpest"), &maxpitch, gensym("flattest"), &minpitch, gensym("stdevthresh"), &stdev_thresh_ll, gensym("discardalteredrepetitions"), &par.discard_altered_repetitions, gensym("ignorelocked"), &par.ignore_locked_notes);
     
     
     if (stdev_thresh_ll) {
