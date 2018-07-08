@@ -563,7 +563,7 @@ t_llll *measure_get_as_llll_for_sending(t_notation_obj *r_ob, t_measure *measure
 void notation_obj_edclose(t_notation_obj *r_ob, char **ht, long size)
 {
 	// the editor is closed. Let's replug the slot content!
-	if (ht && r_ob->active_slot_notationitem && r_ob->active_slot_num >= 0) {
+	if (!r_ob->freeing && ht && r_ob->active_slot_notationitem && r_ob->active_slot_num >= 0) {
 		create_simple_notation_item_undo_tick(r_ob, get_activeitem_undo_item(r_ob), k_UNDO_MODIFICATION_CHANGE);
 		t_llll *ll;
 		if (r_ob->slotinfo[r_ob->active_slot_num].slot_type == k_SLOT_TYPE_TEXT) {
@@ -4779,6 +4779,8 @@ void notation_obj_free(t_notation_obj *r_ob)
 {
 	long i;
 	
+    r_ob->freeing = 1; // we're starting to free everything
+    
 	jbox_free(&r_ob->j_box.l_box);
 	
 	
@@ -4908,6 +4910,9 @@ void notation_obj_free(t_notation_obj *r_ob)
 	// MISCELLANEA
 	// **************************	
 	
+    // freeing external editor
+    object_free_debug(r_ob->m_editor);
+
     // freeing typo pref
     bach_freeptr(r_ob->articulations_typo_preferences.artpref);
     bach_freeptr(r_ob->noteheads_typo_preferences.nhpref);

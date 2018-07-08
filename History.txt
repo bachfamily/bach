@@ -40,6 +40,7 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 - bach.n2mc	Now handles pitches as well 
 			(this entailed compatibility breaks with older patches, but such issues is now fixed)
 
+- bach.comb	New @repeat attribute to allow repetitions (arrangements)
 
 
 
