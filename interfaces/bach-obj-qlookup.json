@@ -2094,7 +2094,7 @@
       "bach",
       "bach abstractions",
       "bach math",
-      "pitch"
+      "bach pitches"
     ],
     "keywords": [
       "calculate",
@@ -2303,7 +2303,7 @@
       "bach",
       "bach abstractions",
       "bach math",
-      "pitch"
+      "bach pitches"
     ],
     "keywords": [
       "calculate",
@@ -2780,7 +2780,8 @@
     "category": [
       "bach",
       "bach objects",
-      "bach notation"
+      "bach notation",
+      "bach pitches"
     ],
     "keywords": [
       "convert",
@@ -2792,7 +2793,8 @@
     "seealso": [
       "bach.mc2p",
       "bach.f2mc",
-      "bach.mc2f"
+      "bach.mc2f",
+      "bach.approx"
     ]
   },
   "bach.submatrix": {
@@ -3388,12 +3390,13 @@
       "cent",
       "note",
       "name",
-      "pitch"
+      "bach pitches"
     ],
     "seealso": [
       "bach.p2mc",
       "bach.f2mc",
-      "bach.mc2f"
+      "bach.mc2f",
+      "bach.approx"
     ]
   },
   "bach.pad": {
@@ -4725,7 +4728,8 @@
     "category": [
       "bach",
       "bach abstractions",
-      "bach notation"
+      "bach notation",
+      "bach pitches"
     ],
     "keywords": [
       "cent",

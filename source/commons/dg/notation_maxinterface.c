@@ -5525,8 +5525,13 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_DELETE);
                 else if (modifiers == eAltKey && is_editable(r_ob, k_MARKER, k_CREATION))
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_COPY);
-                else if (modifiers == eControlKey)
-                    bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_DRAGGINGHAND);
+                else if (modifiers == eControlKey) {
+                    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+                        bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_DRAGGINGHAND);
+                    else
+                        bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_SWITCH);
+                } else if (modifiers == eControlKey + eCommandKey && r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+                    bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_TRIM_END);
                 else
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_RESIZE_LEFTRIGHT);
                 break;

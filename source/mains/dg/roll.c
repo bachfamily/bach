@@ -4426,6 +4426,7 @@ int T_EXPORT main(void){
     // @mattr numselfreferential @type int @default 2 @digest For Chew and Chen algorithm, sets the number of selfreferential windows
     // @mattr discardalteredrepetitions @type int @default 1 @digest For Atonal algorithm, try to avoid repetitions of the same diatonic step with different alterations
     // @mattr stdevthresh @type llll/symbol @default 21/(numnotes+1) @digest For Atonal algorithm, sets the equation for the threshold of the standard deviation of positions on the line of fifth
+    // @mattr ignorelocked @type int @default 1 @digest If non-zero, locked notes are left unchanged (default)
     // @example respell @caption respell according to key and/or enharmonic tables
     // @example respell @algorithm atonal @caption respell via the atonal algorithm
     // @example respell @algorithm atonal @flattest Gb @sharpest A# @caption the same, but avoid E#, B#, Cb, Fb
@@ -11578,30 +11579,75 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 //            dev_post("--- mousedown_ux, ms: %.2f, %.2fms", mousedown_ux, unscaled_xposition_to_ms((t_notation_obj *)x, mousedown_ux, 0));
 			changed = move_selected_ms_attached_markers((t_notation_obj *) x, mousedown_ux, (modifiers & eShiftKey && !(modifiers & eCommandKey)), &delta_ms);
             
-            if (modifiers == eControlKey) {
+            if (modifiers == eControlKey + eCommandKey || modifiers == eControlKey) {
                 t_rollvoice *voice;
                 t_chord *chord;
                 t_marker *mk;
+                char stretch = ((modifiers & eCommandKey) > 0);
+                t_marker *prev_marker = NULL;
+                double prev_marker_ms = 0;
+                
                 double mousedown_ms = unscaled_xposition_to_ms((t_notation_obj *)x, mousedown_ux, 0);
-//                dev_post("--- mousedown_ms: %.2f, delta_ms: %.2f", mousedown_ms, delta_ms);
-                for (voice = (t_rollvoice *)x->r_ob.firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
-                    for (chord = voice->firstchord; chord; chord = chord->next) {
-//                        dev_post("--- chord_onset: %.2f, diff: %.2f", chord->onset, chord->onset - mousedown_ms);
-                        if (!notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) chord) && chord->onset >= mousedown_marker_ms &&
-                            !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *) chord)) {
-                            create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)chord, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
-                            chord->onset += delta_ms;
-                            chord->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
-                        }
-                    }
-                    check_chords_order_for_voice(x, voice);
-                }
-                for (mk = x->r_ob.firstmarker; mk; mk = mk->next)
-                    if (!notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) mk) && mk->position_ms >= mousedown_marker_ms &&
+                
+                for (mk = x->r_ob.firstmarker; mk; mk = mk->next) {
+                    if (stretch && mk->position_ms < mousedown_marker_ms && mk != (t_marker *)x->r_ob.j_mousedown_ptr)
+                        prev_marker = mk;
+                    if (!notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) mk) &&
+                        mk->position_ms >= mousedown_marker_ms &&
                         !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *) mk)) {
                         mk->position_ms += delta_ms;
                         mk->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
                     }
+                }
+                if (prev_marker)
+                    prev_marker_ms = notation_item_get_onset_ms_accurate((t_notation_obj *)x, (t_notation_item *)prev_marker);
+                double stretch_factor = (stretch && mousedown_marker_ms > prev_marker_ms) ? (mousedown_marker_ms - prev_marker_ms + delta_ms)/(mousedown_marker_ms - prev_marker_ms) : 1;
+
+                // shifting all following items
+                for (voice = (t_rollvoice *)x->r_ob.firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
+                    for (chord = voice->firstchord; chord; chord = chord->next) {
+                        //                        dev_post("--- chord_onset: %.2f, diff: %.2f", chord->onset, chord->onset - mousedown_ms);
+                        if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *) chord) &&
+                            !notation_item_is_selected((t_notation_obj *)x, (t_notation_item *) chord)) {
+                            
+                            if (chord->onset >= mousedown_marker_ms) {
+                                // shift it
+                                create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)chord, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
+                                chord->onset += delta_ms;
+                                chord->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
+                            } else if (stretch) {
+                                double chord_tail = notation_item_get_tail_ms((t_notation_obj *)x, (t_notation_item *)chord);
+                                if (chord_tail > prev_marker_ms) {
+                                    create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)chord, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
+                                    if (chord->onset > prev_marker_ms) {
+                                        chord->onset = prev_marker_ms + (chord->onset - prev_marker_ms) * stretch_factor;
+                                        if (chord_tail <= mousedown_marker_ms) { // easy case, chord completely within boundaries
+                                            for (t_note *nt = chord->firstnote; nt; nt = nt->next)
+                                                nt->duration *= stretch_factor;
+                                        } else {
+                                            for (t_note *nt = chord->firstnote; nt; nt = nt->next) {
+                                                double note_tail = notation_item_get_tail_ms((t_notation_obj *)x, (t_notation_item *)nt);
+                                                if (note_tail <= mousedown_marker_ms)
+                                                    nt->duration *= stretch_factor;
+                                                else
+                                                    nt->duration = (mousedown_marker_ms - chord->onset) * stretch_factor + (note_tail - mousedown_marker_ms);
+                                            }
+                                        }
+                                        chord->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
+                                    } else { // chord onset won't change, note duration will
+                                        for (t_note *nt = chord->firstnote; nt; nt = nt->next) {
+                                            double note_tail = notation_item_get_tail_ms((t_notation_obj *)x, (t_notation_item *)nt);
+                                            if (note_tail > prev_marker_ms)
+                                                nt->duration = (prev_marker_ms - chord->onset) + (note_tail - prev_marker_ms) * stretch_factor;
+                                        }
+                                        chord->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    check_chords_order_for_voice(x, voice);
+                }
                 
                 x->r_ob.need_snap_some_nonselected_items = true;
             }

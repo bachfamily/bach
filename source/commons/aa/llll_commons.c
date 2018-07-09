@@ -4395,6 +4395,93 @@ llll_cartesianprod_exit:
 	return outll;
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// return all the combinations of the elements in ll of size between startk and endk, WITH REPETITIONS
+// endk < 0 is converted in ll->size (this means that startk = 0, endk = -1 will return all the combinations)
+// the combinations are grouped in sublists according to their size, e.g.
+// ((1) (2) (3)) ((1 2) (2 3) (1 3)) ((1 2 3))
+
+t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long endk)
+{
+    t_llll *klist, *comblist;
+    t_llll *outlist;
+    t_atom_long inc, k, i;
+    t_atom_long ll_size;
+    t_atom_long *indices;
+    t_atom_long dontreachthisk;
+    t_hatom **hatoms, **this_hatoms;
+    t_llllelem *el;
+    
+    if (!ll)
+        return NULL;
+    outlist = llll_get();
+    
+    ll_size = ll->l_size;
+    if (ll_size == 0)
+        return outlist;
+    
+    indices = (t_atom_long *) bach_newptr(ll_size * sizeof(t_atom_long));
+    hatoms = (t_hatom **) bach_newptr(ll_size * sizeof(t_hatom *));
+    
+    startk = MAX(startk, 0);
+    endk = MAX(endk, 0);
+    
+    inc = startk > endk ? -1 : 1;
+    
+    for (el = ll->l_head, this_hatoms = hatoms; el; el = el->l_next, this_hatoms++)
+        *this_hatoms = &el->l_hatom;
+    
+    dontreachthisk = endk + inc;
+    
+    for (k = startk; k != dontreachthisk; k += inc) {
+        klist = llll_get();
+        llll_appendllll(outlist, klist, 0, WHITENULL_llll);
+        
+        if (k == 0) {
+            llll_appendllll(klist, llll_get(), 0, WHITENULL_llll);
+            continue;
+        }
+        
+        for (i = 0; i < k; i++)
+            indices[i] = 0;
+        
+        while (1) {
+            t_atom_long maxofthemin;
+            
+            comblist = llll_get();
+            llll_appendllll(klist, comblist, 0, WHITENULL_llll);
+            
+            for (i = 0; i < k; i++)
+                llll_appendhatom_clone(comblist, hatoms[indices[i]], 0, WHITENULL_llll);
+            i = k - 1;
+            maxofthemin = ll_size - k;
+            
+            indices[i] ++;
+            while (i > 0 && indices[i] >= ll_size) {
+                i--;
+                indices[i]++;
+            }
+            
+            if (indices[0] >= ll_size)
+                break;
+            
+            /* comb now looks like (..., x, n, n, n, ..., n).
+             Turn it into (..., x, 0, 0, ...) */
+            for (i++; i < k; i++)
+                indices[i] = 0;
+            
+        }
+    }
+    
+    bach_freeptr(hatoms);
+    bach_freeptr(indices);
+    pedantic_llll_check(outlist);
+    
+    return outlist;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 

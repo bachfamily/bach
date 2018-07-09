@@ -1808,7 +1808,7 @@ void retrieve_measure_and_division_onsets(t_rhythmogram *x, char also_affect_wei
 		flattened = llll_clone(config->detected_onsets_ms);
 		llll_flatten(flattened, 0, 0);
 		diff = llll_x2dx_of_plain_double_llll(flattened);
-		config->detected_onsets_std_dev_ms = get_stdev_of_plain_double_llll(diff, &avg);
+		config->detected_onsets_std_dev_ms = llll_stdev_of_plain_double_llll(diff, &avg);
 		config->detected_onsets_std_dev_rel = config->detected_onsets_std_dev_ms / avg;
 		
 		if (also_affect_weights)

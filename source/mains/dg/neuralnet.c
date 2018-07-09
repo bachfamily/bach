@@ -492,7 +492,7 @@ void neuralnet_write(t_neuralnet *x, t_symbol *s, long argc, t_atom *argv){
 void neuralnet_writetxt(t_neuralnet *x, t_symbol *s, long argc, t_atom *argv){
     t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, argc, argv, LLLL_PARSE_CLONE);
 	t_llll *state_ll = x->nn->getState();
-	llll_writetxt((t_object *) x, state_ll, arguments);
+    llll_writetxt((t_object *) x, state_ll, arguments, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART);
 }
 
 

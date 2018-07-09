@@ -170,6 +170,7 @@
 		<seealso name="bach.p2mc" />
 		<seealso name="bach.f2mc" />
 		<seealso name="bach.mc2f" />
+		<seealso name="bach.approx" />
 	</seealsolist>
 
 	<misc name = "Input">
@@ -198,7 +199,7 @@
 		</entry>
 		<entry name ="Keywords">
 			<description>
-convert, midicent, cent, note, name, pitch.
+convert, midicent, cent, note, name, bach pitches.
 			</description>
 		</entry>
 	</misc>

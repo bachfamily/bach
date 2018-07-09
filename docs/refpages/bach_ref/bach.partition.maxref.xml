@@ -10,7 +10,7 @@
 	</digest>
 
 	<description>
-		Computes the integer partition of the incoming number or the partition of the incoming set
+		Computes the integer partition of the incoming non-negative number or the partition of the incoming set
 	</description>
 
 	<!--METADATA-->
