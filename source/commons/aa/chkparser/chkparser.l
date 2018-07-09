@@ -65,8 +65,6 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_PITCH;
 }
 
-
-
 ^[^`\(\) \t\n\,\;\"\\][^\(\) \t\n\,\;\"\\]* {
     parserpost("typecheck: no parens, no separators, no double quotes / backslashes");
     return H_SYM;
@@ -86,9 +84,6 @@ ACCIDENTAL ([#bxdq\^v]+)
     parserpost("typecheck: parens, separators, no double quotes / backslashes");
     return H_SYM | H_PAREN | H_SEPARATOR;
 }
-
-
-
 
 ^[^`\(\) \t\n\,\;][^\(\) \t\n\,\;]* {
     parserpost("typecheck: no parens, no separators, double quotes / backslashes");
@@ -110,9 +105,6 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_PAREN | H_SEPARATOR | H_SPECIAL;
 }
 
-
-
-
 ^`[^\(\) \t\n\,\;\"\\]* {
     parserpost("typecheck: backtick, no parens, no separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK;
@@ -125,13 +117,12 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 ^`[^\(\)\"\\]* {
     parserpost("typecheck: backtick, no parens, separators, no double quotes / backslashes");
-return H_SYM | H_BACKTICK | H_SEPARATOR;
+    return H_SYM | H_BACKTICK | H_SEPARATOR;
 }
-
 
 ^`[^\"\\]* {
     parserpost("typecheck: backtick, parens, separators, no double quotes / backslashes");
-return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
+    return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
 }
 
 ^`[^\(\) \t\n\,\;]* {
@@ -154,6 +145,9 @@ return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
     return H_SYM | H_BACKTICK | H_PAREN | H_SPECIAL;
 }
 
+.|\n {
+    parserpost("typecheck: dummy default rule, but matched anyway with %s\n", yytext);
+}
 
 %%
 

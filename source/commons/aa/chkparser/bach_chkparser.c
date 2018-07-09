@@ -547,8 +547,8 @@ static void yynoreturn yy_fatal_error ( const char* msg , yyscan_t yyscanner );
 	yyg->yy_hold_char = *yy_cp; \
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
-#define YY_NUM_RULES 24
-#define YY_END_OF_BUFFER 25
+#define YY_NUM_RULES 25
+#define YY_END_OF_BUFFER 26
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -558,7 +558,7 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[69] =
     {   0,
-        0,    0,   25,   24,    8,   10,   12,    9,    8,    8,
+        0,    0,   26,   24,    8,   10,   12,    9,    8,    8,
         1,    8,   16,    8,   10,   10,   12,    9,   14,   11,
        14,   13,   11,    8,    1,    8,    2,    2,    8,    8,
         8,    8,    4,   16,   17,   17,   17,   19,   15,    8,
@@ -1170,7 +1170,7 @@ case 18:
 YY_RULE_SETUP
 {
     parserpost("typecheck: backtick, no parens, separators, no double quotes / backslashes");
-return H_SYM | H_BACKTICK | H_SEPARATOR;
+    return H_SYM | H_BACKTICK | H_SEPARATOR;
 }
 	YY_BREAK
 case 19:
@@ -1178,7 +1178,7 @@ case 19:
 YY_RULE_SETUP
 {
     parserpost("typecheck: backtick, parens, separators, no double quotes / backslashes");
-return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
+    return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
 }
 	YY_BREAK
 case 20:
@@ -1211,6 +1211,13 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case 24:
+/* rule 24 can match eol */
+YY_RULE_SETUP
+{
+    parserpost("typecheck: dummy default rule, but matched anyway with %s\n", yytext);
+}
+	YY_BREAK
+case 25:
 YY_RULE_SETUP
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK
