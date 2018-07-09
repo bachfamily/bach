@@ -558,8 +558,8 @@ static void yynoreturn yy_fatal_error ( const char* msg , yyscan_t yyscanner );
 	yyg->yy_hold_char = *yy_cp; \
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
-#define YY_NUM_RULES 18
-#define YY_END_OF_BUFFER 19
+#define YY_NUM_RULES 19
+#define YY_END_OF_BUFFER 20
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -596,7 +596,7 @@ static const flex_int16_t yy_accept[396] =
        17,   17,   17,   17,   15,   15,   17,   17,   15,   15,
        17,   17,   15,   15,   17,   17,   15,   15,   17,   17,
        17,   17,   17,   17,   17,   17,   17,   17,   17,   17,
-       17,   17,   17,   17,   17,   17,   19,   15,   15,   15,
+       17,   17,   17,   17,   17,   17,   20,   15,   15,   15,
         1,    2,   15,   15,    3,   15,   11,   15,   17,   18,
        17,   17,   17,    3,   17,   11,   17,   15,   15,    3,
        17,   17,    3,    1,    2,   15,   17,   15,   17,   15,
@@ -1626,6 +1626,13 @@ YY_RULE_SETUP
 	YY_BREAK
 
 case 18:
+/* rule 18 can match eol */
+YY_RULE_SETUP
+{
+    parserpost(" lex: UNRECOGNIZED CHARACTER %s\n", yytext);
+}
+	YY_BREAK
+case 19:
 YY_RULE_SETUP
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK

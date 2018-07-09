@@ -337,79 +337,119 @@ void code_free(t_code *x)
 t_code *code_new(t_symbol *s, short ac, t_atom *av)
 {
     t_code *x = NULL;
-    long true_ac;
+    long true_ac, i;
     t_max_err err = 0;
     
-    true_ac = attr_args_offset(ac, av);
-    
+    //true_ac = attr_args_offset(ac, av);
+
     if ((x = (t_code *) object_alloc_debug(code_class))) {
         // @arg 0 @name default @optional 1 @digest Default comparison llll
 
         code_ownedFunctionsSetup(x);
 
+#define withattrs
+#ifdef withattrs
+        true_ac = ac;
+        
+        t_symbol *symattr;
+        char *attrname;
+        
+        t_atom_long dataInlets = -1, dataOutlets = -1, directInlets = -1, directOutlets = -1;
+        
+        t_bool attrParseErr = false;
+        
+        while (true_ac >= 2 &&
+               (symattr = atom_getsym(av + true_ac - 2)) &&
+               *(attrname = symattr->s_name) == '@') {
+            attrname++;
+            t_atom *this_av = av + true_ac - 1;
+            if (!strcmp(attrname, "inlets")) {
+                long type = atom_gettype(this_av);
+                if (type == A_LONG || type == A_FLOAT) {
+                    t_atom_long val = atom_getlong(this_av);
+                    dataInlets = CLAMP(val, 0, LLLL_MAX_INLETS);
+                } else {
+                    object_error((t_object *) x, "Bad value for inlets attribute");
+                    attrParseErr = true;
+                }
+            } else if (!strcmp(attrname, "outlets")) {
+                long type = atom_gettype(this_av);
+                if (type == A_LONG || type == A_FLOAT) {
+                    t_atom_long val = atom_getlong(this_av);
+                    dataOutlets = CLAMP(val, 0, LLLL_MAX_INLETS);
+                } else {
+                    object_error((t_object *) x, "Bad value for outlets attribute");
+                    attrParseErr = true;
+                }
+            } else if (!strcmp(attrname, "lambdains")) {
+                long type = atom_gettype(this_av);
+                if (type == A_LONG || type == A_FLOAT) {
+                    t_atom_long val = atom_getlong(this_av);
+                    directInlets = CLAMP(val, 0, LLLL_MAX_INLETS);
+                } else {
+                    object_error((t_object *) x, "Bad value for lambdains attribute");
+                    attrParseErr = true;
+                }
+            } else if (!strcmp(attrname, "lambdaouts")) {
+                long type = atom_gettype(this_av);
+                if (type == A_LONG || type == A_FLOAT) {
+                    t_atom_long val = atom_getlong(this_av);
+                    directOutlets = CLAMP(val, 0, LLLL_MAX_INLETS);
+                } else {
+                    object_error((t_object *) x, "Bad value for lambdaouts attribute");
+                    attrParseErr = true;
+                }
+            } else if (!strcmp(attrname, "auto")) {
+                long type = atom_gettype(this_av);
+                if (type == A_LONG || type == A_FLOAT) {
+                    t_atom_long val = atom_getlong(this_av);
+                    x->n_auto = CLAMP(val, 0, LLLL_MAX_INLETS);
+                } else {
+                    object_error((t_object *) x, "Bad value for auto attribute");
+                    attrParseErr = true;
+                }
+            } else if (!strcmp(attrname, "out")) {
+                t_max_err err = MAX_ERR_NONE;
+                char *outtypes = atom_getsym(this_av)->s_name;
+                llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_VANILLA, &outtypes, 1, &err);
+                bach_freeptr(outtypes);
+                if (!err)
+                    llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, this_av);
+                else {
+                    object_error((t_object *) x, "Bad value for out attribute");
+                    attrParseErr = true;
+                }
+            } else {
+                object_error((t_object *) x, "Unknown attribute %s", attrname);
+                attrParseErr = true;
+            }
+            if (!attrParseErr)
+                true_ac -= 2;
+            else
+                break;
+        }
+   
+#endif // withattrs
+        
+        
+        
         if (true_ac) {
             code_atoms2text(x, true_ac, av);
             err = code_buildAst(x, &x->n_dataInlets, &x->n_dataOutlets, &x->n_directInlets, &x->n_directOutlets);
         }
-        
-        long i = true_ac;
-        while (i < ac - 1) {
-            t_symbol *symattr = atom_getsym(av + i);
-            if (!symattr || *symattr->s_name != '@') {
-                object_error((t_object *) x, "Bad argument at position %ld", i);
-                i++;
-                break;
-            }
-            const char *attrname = symattr->s_name + 1;
-            i++;
-            if (!strcmp(attrname, "inlets")) {
-                long type = atom_gettype(av + i);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(av + i);
-                    x->n_dataInlets = CLAMP(val, 0, LLLL_MAX_INLETS);
-                    i++;
-                } else
-                    object_error((t_object *) x, "Bad value for inlets attribute");
-            } else if (!strcmp(attrname, "outlets")) {
-                long type = atom_gettype(av + i);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(av + i);
-                    x->n_dataOutlets = CLAMP(val, 0, LLLL_MAX_INLETS);
-                    i++;
-                } else
-                    object_error((t_object *) x, "Bad value for outlets attribute");
-            } else if (!strcmp(attrname, "lambdains")) {
-                long type = atom_gettype(av + i);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(av + i);
-                    x->n_directInlets = CLAMP(val, 0, LLLL_MAX_INLETS);
-                    i++;
-                } else
-                    object_error((t_object *) x, "Bad value for lambdains attribute");
-            } else if (!strcmp(attrname, "lambdaouts")) {
-                long type = atom_gettype(av + i);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(av + i);
-                    x->n_directOutlets = CLAMP(val, 0, LLLL_MAX_INLETS);
-                    i++;
-                } else
-                    object_error((t_object *) x, "Bad value for lambdaouts attribute");
-            } else if (!strcmp(attrname, "auto")) {
-                long type = atom_gettype(av + i);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(av + i);
-                    x->n_auto = CLAMP(val, 0, LLLL_MAX_INLETS);
-                    i++;
-                } else
-                    object_error((t_object *) x, "Bad value for auto attribute");
-            } else if (!strcmp(attrname, "out")) {
-                llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, av + i);
-                i++;
-            } else
-                object_error((t_object *) x, "Unknown attribute %s", attrname);
-        }
+
         if (x->n_dataInlets < 1 || err)
             x->n_dataInlets = 1;
+        
+        if (dataInlets >= 0)
+            x->n_dataInlets = dataInlets;
+        if (dataOutlets >= 0)
+            x->n_dataOutlets = dataOutlets;
+        if (directInlets >= 0)
+            x->n_directInlets = directInlets;
+        if (directOutlets >= 0)
+            x->n_directOutlets = directOutlets;
+
         
         CLIP_ASSIGN(x->n_dataOutlets, 0, 127);
         CLIP_ASSIGN(x->n_directOutlets, 0, 126);

@@ -1878,12 +1878,14 @@ void llllobj_clear_all_stores_and_outs(t_object *x, e_llllobj_obj_types type)
 	llllobj_clear_all_outs(x, type);
 }
 
-long llllobj_conform_outtypes(t_object *x, e_llllobj_obj_types type, char **outtypes, long accept_minus)
+long llllobj_conform_outtypes(t_object *x, e_llllobj_obj_types type, char **outtypes, long accept_minus, t_max_err *err)
 {
 	long numlllloutlets = llllobj_get_numllllouts(x, type);
 	long len_outtypes = strlen(*outtypes);
 	long i;
 	long changed = 0;
+	if (err)
+		*err = MAX_ERR_NONE;
 	if (accept_minus) {
 		char *old_outtypes = *outtypes;
 		*outtypes = (char *) bach_newptr(numlllloutlets + 1);
@@ -1924,6 +1926,8 @@ long llllobj_conform_outtypes(t_object *x, e_llllobj_obj_types type, char **outt
 				}
 				break;
 			default:
+				if (err && (*outtypes)[i] != 'N')
+					*err = MAX_ERR_GENERIC;
 				if (!changed) {
 					char *old_outtypes = *outtypes;
 					*outtypes = (char *) bach_newptr(numlllloutlets + 1);

@@ -599,7 +599,7 @@ void llllobj_pxjbox_free(t_llllobj_pxjbox *x);
 // (private) adjusts the value of *outtypes according to the number of llll outlets
 // accepts_minus is non-0 if we're not in the initialization phase
 // returns 0 if *outtypes has not changed, 1 if it has
-long llllobj_conform_outtypes(t_object *x, e_llllobj_obj_types type, char **outtypes, long accept_minus);
+long llllobj_conform_outtypes(t_object *x, e_llllobj_obj_types type, char **outtypes, long accept_minus, t_max_err *err = nullptr);
 
 
 

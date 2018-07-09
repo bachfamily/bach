@@ -144,7 +144,9 @@ ACCIDENTAL ([#bxdq\^v]+)
     }
 }
 
-
+.|\n {
+    parserpost(" lex: UNRECOGNIZED CHARACTER %s\n", yytext);
+}
 
 %%
 
