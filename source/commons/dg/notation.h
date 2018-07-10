@@ -3878,6 +3878,7 @@ typedef struct _notation_obj
     char		numvoices_handled_at_startup;	///< (PRIVATE) Flag to tell if the numvoices attribute has already been handled at startup or not
 	char		creatingnewobj;				///< (PRIVATE) Flag which is 1 before the attr_dictionary_process() and 0 afterwards
 	char		firsttime;					///< (PRIVATE) Flag which is 1 before the first paint method has been called
+    char        freeing;                    ///< (PRIVAGE) Flag which is 1 when the freeing of the notation object is started
 	char		only_play_selection;		///< (PRIVATE) Flag which is 1 when the play() function is called via the playselection function
 	char		defining_numerator;			///< (PRIVATE) Flag which is 1 if the user is defining the tuplet numerator in the bach.score linear editing system
 	char		item_changed_at_mousedown;	///< (PRIVATE) Flag which is 1 after mousedown when something has been changed directly on mousedown and NOT on mousedrag; it becomes 0 at mouseup
