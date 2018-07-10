@@ -324,10 +324,10 @@ public:
         return (p_alter.r_den == 0);
     }
     
-    long toTextBuf(char *buf, long bufSize, t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false);
+    long toTextBuf(char *buf, long bufSize, t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false) const;
     
     
-    t_symbol* toSym(t_bool include_octave = true, t_bool always_positive = false)
+    t_symbol* toSym(t_bool include_octave = true, t_bool always_positive = false) const
     {
         char buf[MAX_SYM_LENGTH];
         toTextBuf(buf, MAX_SYM_LENGTH, include_octave, always_positive);

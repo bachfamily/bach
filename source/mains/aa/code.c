@@ -51,6 +51,10 @@ void code_int(t_code *x, t_atom_long v);
 void code_float(t_code *x, double v);
 void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av);
 
+void code_read(t_code *x, t_symbol *s);
+void code_doread(t_code *x, t_symbol *s);
+void code_readfile(t_code *x, char *filename, short path);
+
 long code_atoms2text(t_code *x, long ac, t_atom *av);
 t_max_err code_buildAst(t_code *x, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *lambdaInlets, t_atom_long *lambdaOutlets);
 
@@ -102,6 +106,9 @@ int T_EXPORT main()
     class_addmethod(c, (method)code_int,		"int",			A_LONG,		0);
     class_addmethod(c, (method)code_float,		"float",		A_FLOAT,	0);
     class_addmethod(c, (method)code_anything,	"list",			A_GIMME,	0);
+    
+    
+    class_addmethod(c, (method)code_read,        "read",            A_DEFSYM,    0);
     
     // @method bang @digest Perform the last operation
     // @description Return the comparison result for the most recently received lllls.
@@ -237,6 +244,80 @@ long code_edsave(t_code *x, char **ht, long size)
     return 1;
 }
 
+void code_read(t_code *x, t_symbol *s)
+{
+    defer(x, (method) code_doread, s, 0, NULL);
+}
+
+void code_doread(t_code *x, t_symbol *s)
+{
+    t_fourcc filetype = 'TEXT', outtype;
+    short numtypes = 1;
+    char filename[MAX_PATH_CHARS];
+    short path;
+    if (s == gensym("")) {      // if no argument supplied, ask for file
+        if (open_dialog(filename, &path, &outtype, &filetype, 1))       // non-zero: user cancelled
+        return;
+    } else {
+        strcpy(filename, s->s_name);    // must copy symbol before calling locatefile_extended
+        if (locatefile_extended(filename, &path, &outtype, &filetype, 1)) { // non-zero: not found
+            object_error((t_object *) x, "%s: not found", s->s_name);
+            return;
+        }
+    }
+    // we have a file
+    code_readfile(x, filename, path);
+}
+
+void code_readfile(t_code *x, char *filename, short path)
+{
+    t_filehandle fh;
+    char *newCode = NULL;
+    char *oldCode = NULL;
+    t_max_err err;
+    t_mainFunction *oldMain = x->n_main;
+    if (oldMain)
+        oldMain->increase();
+    t_ptr_size codeLen;
+    if (path_opensysfile(filename, path, &fh, READ_PERM)) {
+        object_error((t_object *) x, "error opening %s", filename);
+        return;
+    }
+    // allocate memory block that is the size of the file
+    sysfile_geteof(fh, &codeLen);
+    newCode = sysmem_newptr(codeLen + 2);
+    newCode[0] = 0;
+    // read in the file
+    sysfile_read(fh, &codeLen, newCode);
+    sysfile_close(fh);
+
+    if (isspace(newCode[codeLen - 1])) {
+        newCode[codeLen] = 0;
+    } else {
+        newCode[codeLen] = ' ';
+        newCode[codeLen + 1] = 0;
+    }
+    
+    oldCode = x->n_text;
+    x->n_text = newCode;
+    t_atom_long dummy_dataInlets = 0, dummy_dataOutlets = 0, dummy_dirInlets = 0, dummy_dirOutlets = 0;
+    err = code_buildAst(x, &dummy_dataInlets, &dummy_dataOutlets, &dummy_dirInlets, &dummy_dirOutlets);
+    
+    if (!err) {
+        sysmem_freeptr(oldCode);
+        if (oldMain)
+            oldMain->decrease();
+        if (x->n_auto)
+            code_bang(x);
+    } else {
+        x->n_text = oldCode;
+        sysmem_freeptr(newCode);
+        if (x->n_main)
+        x->n_main->decrease();
+        x->n_main = oldMain;
+    }
+}
+
 void code_bang(t_code *x)
 {
     t_execContext context((t_llllobj_object *) x);
@@ -291,6 +372,11 @@ void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av)
 void code_defer_buildAst(t_code *x, t_symbol *msg, long ac, t_atom *av)
 {
     code_atoms2text(x, ac, av);
+
+}
+
+void code_buildAstFromText(t_code *x)
+{
     t_atom_long dummy_dataInlets = 0, dummy_dataOutlets = 0, dummy_dirInlets = 0, dummy_dirOutlets = 0;
     code_buildAst(x, &dummy_dataInlets, &dummy_dataOutlets, &dummy_dirInlets, &dummy_dirOutlets);
     if (x->n_auto)
@@ -330,6 +416,8 @@ void code_free(t_code *x)
 {
     if (x->n_main)
         x->n_main->decrease();
+    if (x->n_text)
+    sysmem_freeptr(x->n_text);
     object_free_debug(x->n_editor);
     llllobj_obj_free((t_llllobj_object *) x);
 }

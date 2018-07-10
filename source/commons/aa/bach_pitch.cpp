@@ -214,7 +214,7 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     return *this - b * temp;
 }
 
-long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace)
+long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
 {
     long count = 0;
     if (!buf || bufSize == 0)
