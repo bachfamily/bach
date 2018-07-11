@@ -6423,12 +6423,12 @@ int T_EXPORT main(void){
 
     CLASS_ATTR_CHAR(c,"dlspansties",0, t_notation_obj, dl_spans_ties);
     CLASS_ATTR_STYLE_LABEL(c,"dlspansties",0,"enumindex","Duration Line Spans Ties");
-    CLASS_ATTR_ENUMINDEX(c,"dlspansties", 0, "No Yes Yes With Hidden Notes");
+    CLASS_ATTR_ENUMINDEX(c,"dlspansties", 0, "No Yes Yes With Hidden Notes Yes With Hidden Notes And Ties");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dlspansties",0,"0");
     // @description Toggles the ability for the duration line (if shown) to span sequences of
     // tied notes. Values are: 0 = Don't span ties (default); 1 = Span ties; 2 = Span ties,
-    // and also hide notes and ties (i.e. only the duration line is kept to symbolize the duration of the
-    // tied sequence).
+    // and also hide notes; 3 = 2 = Span ties, and also hide notes and ties
+    // (i.e. only the duration line is kept to symbolize the duration of the tied sequence).
 
     
 	CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -16317,36 +16317,52 @@ void preselect_elements_in_region_for_mouse_selection(t_score *x, double ux1, do
 					} else if ((x->r_ob.show_durations) && (ch_align_pt_ux < ux1)) { // maybe the duration tail is selected...
 						t_note *curr_nt = curr_chord->firstnote;
 						while (curr_nt) { // cycle on the notes
-							if ( ((curr_chord->parent->tuttipoint_reference->offset_ux + curr_chord->stem_offset_ux + curr_chord->duration_ux >= ux1)&&(curr_chord->parent->tuttipoint_reference->offset_ux + curr_chord->stem_offset_ux + curr_chord->duration_ux <= ux2)) &&
-								(  ((voicenum > v2) && (voicenum < v1)) ||
-								 (same_v1_v2 && (v1 == voicenum) && ((curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc >= mc1)&&(curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc <= mc2))) ||
-								 (!same_v1_v2 && (voicenum == v1) && (curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc >= mc1)) ||
-								 (!same_v1_v2 && (voicenum == v2) && (curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc <= mc2)) )) {
-								notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint);
-							}
+                            if (x->r_ob.dl_spans_ties == 0 || !curr_nt->tie_from) {
+                                double chord_tail_ux = curr_chord->parent->tuttipoint_reference->offset_ux + curr_chord->stem_offset_ux + curr_chord->duration_ux;
+                                if (x->r_ob.dl_spans_ties > 0) {
+                                    t_note *last_tied_nt = note_get_last_in_tieseq(curr_nt);
+                                    if (last_tied_nt && last_tied_nt->parent)
+                                    chord_tail_ux = last_tied_nt->parent->parent->tuttipoint_reference->offset_ux + last_tied_nt->parent->stem_offset_ux + last_tied_nt->parent->duration_ux;
+                                }
+                                if ( ((chord_tail_ux >= ux1)&&(chord_tail_ux <= ux2)) &&
+                                    (  ((voicenum > v2) && (voicenum < v1)) ||
+                                     (same_v1_v2 && (v1 == voicenum) && ((curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc >= mc1)&&(curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc <= mc2))) ||
+                                     (!same_v1_v2 && (voicenum == v1) && (curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc >= mc1)) ||
+                                     (!same_v1_v2 && (voicenum == v2) && (curr_nt->midicents + curr_nt->lastbreakpoint->delta_mc <= mc2)) )) {
+                                        notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint);
+                                    }
+                            }
 							curr_nt = curr_nt->next;
 						} 
 					}
 					if ((x->r_ob.show_durations) && (!(ch_align_pt_ux >= ux2)) && (!notation_item_is_preselected((t_notation_obj *)x, (t_notation_item *)curr_chord))) { // looking for breakpoint-selection
 						t_note *curr_nt = curr_chord->firstnote;
 						while (curr_nt) { // cycle on the notes
-							// we only select breakpoints IF the whole note has NOT been selected in the region, otherwise the whole note is selected, that's all
-							if (!notation_item_is_preselected((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
-								t_bpt *curr_bpt = curr_nt->firstbreakpoint->next;
-								while (curr_bpt) { // cycle on the breakpoints
-									if (curr_bpt != curr_nt->lastbreakpoint){
-										if ( ((curr_chord->parent->tuttipoint_reference->offset_ux + curr_chord->stem_offset_ux + curr_bpt->rel_x_pos * curr_chord->duration_ux >= ux1)
-											  && (curr_chord->parent->tuttipoint_reference->offset_ux + curr_chord->stem_offset_ux + curr_bpt->rel_x_pos * curr_chord->duration_ux <= ux2)) &&
-											(  ((voicenum > v2) && (voicenum < v1)) ||
-											 (same_v1_v2 && (v1 == voicenum) && ((curr_nt->midicents + curr_bpt->delta_mc >= mc1)&&(curr_nt->midicents + curr_bpt->delta_mc <= mc2))) ||
-											 (!same_v1_v2 && (voicenum == v1) && (curr_nt->midicents + curr_bpt->delta_mc >= mc1)) ||
-											 (!same_v1_v2 && (voicenum == v2) && (curr_nt->midicents + curr_bpt->delta_mc <= mc2)) )) {
-												notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)curr_bpt);						
-											}
-									}
-									curr_bpt = curr_bpt->next;
-								}
-							}
+                            if (x->r_ob.dl_spans_ties == 0 || !curr_nt->tie_from) {
+                                double chord_duration_ux = curr_chord->duration_ux;
+                                if (x->r_ob.dl_spans_ties > 0) {
+                                    t_note *last_tied_nt = note_get_last_in_tieseq(curr_nt);
+                                    if (last_tied_nt && last_tied_nt->parent)
+                                        chord_duration_ux = (last_tied_nt->parent->parent->tuttipoint_reference->offset_ux + last_tied_nt->parent->stem_offset_ux + last_tied_nt->parent->duration_ux) - (curr_chord->parent->tuttipoint_reference->offset_ux + curr_chord->stem_offset_ux);
+                                }
+                                // we only select breakpoints IF the whole note has NOT been selected in the region, otherwise the whole note is selected, that's all
+                                if (!notation_item_is_preselected((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
+                                    t_bpt *curr_bpt = curr_nt->firstbreakpoint->next;
+                                    while (curr_bpt) { // cycle on the breakpoints
+                                        if (curr_bpt != curr_nt->lastbreakpoint){
+                                            if ( ((curr_chord->parent->tuttipoint_reference->offset_ux + curr_chord->stem_offset_ux + curr_bpt->rel_x_pos * chord_duration_ux >= ux1)
+                                                  && (curr_chord->parent->tuttipoint_reference->offset_ux + curr_chord->stem_offset_ux + curr_bpt->rel_x_pos * chord_duration_ux <= ux2)) &&
+                                                (  ((voicenum > v2) && (voicenum < v1)) ||
+                                                 (same_v1_v2 && (v1 == voicenum) && ((curr_nt->midicents + curr_bpt->delta_mc >= mc1)&&(curr_nt->midicents + curr_bpt->delta_mc <= mc2))) ||
+                                                 (!same_v1_v2 && (voicenum == v1) && (curr_nt->midicents + curr_bpt->delta_mc >= mc1)) ||
+                                                 (!same_v1_v2 && (voicenum == v2) && (curr_nt->midicents + curr_bpt->delta_mc <= mc2)) )) {
+                                                    notation_item_add_to_preselection((t_notation_obj *) x, (t_notation_item *)curr_bpt);
+                                                }
+                                        }
+                                        curr_bpt = curr_bpt->next;
+                                    }
+                                }
+                            }
 							curr_nt = curr_nt->next;
 						}
 					}

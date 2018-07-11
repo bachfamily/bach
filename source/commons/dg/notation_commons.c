@@ -33102,14 +33102,22 @@ char change_chord_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *cho
 void note_change_tail_for_glissando_till_next(t_notation_obj *r_ob, t_note *note, double slope)
 {
     if (note && note->parent) {
-        t_chord *ch = note->parent;
-        t_chord *nextch = chord_get_next(ch);
-        if (nextch && nextch->firstnote) {
-            // pick the appropriate note in the chord
-            long pos = CLAMP(note_get_position(r_ob, note), 1, nextch->num_notes);
-            t_note *nextnt = nth_note(nextch, pos - 1);
-            note->lastbreakpoint->delta_mc = nextnt->midicents - note->midicents;
-            note->lastbreakpoint->slope = slope;
+        if (r_ob->dl_spans_ties == 0 || !note->tie_from) {
+            t_chord *ch = note->parent;
+            t_chord *nextch = NULL;
+            if (r_ob->dl_spans_ties > 0) {
+                t_note *last_tied_note = note_get_last_in_tieseq(note);
+                if (last_tied_note && last_tied_note->parent)
+                    nextch = chord_get_next(last_tied_note->parent);
+            } else
+                nextch = chord_get_next(ch);
+            if (nextch && nextch->firstnote) {
+                // pick the appropriate note in the chord
+                long pos = CLAMP(note_get_position(r_ob, note), 1, nextch->num_notes);
+                t_note *nextnt = nth_note(nextch, pos - 1);
+                note->lastbreakpoint->delta_mc = nextnt->midicents - note->midicents;
+                note->lastbreakpoint->slope = slope;
+            }
         }
     }
 }

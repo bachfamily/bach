@@ -9366,8 +9366,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 						char is_note_played = false;
                         double note_end_pos = end_pos;
 						
-                        if (x->r_ob.show_durations && x->r_ob.dl_spans_ties > 1 && curr_nt->tie_from)
-                            continue;
+//                        if (x->r_ob.show_durations && x->r_ob.dl_spans_ties > 2 && curr_nt->tie_from)
+//                            continue;
                         
 						if (is_chord_selected && is_note_preselected)
 							note_unselected = true;
@@ -9447,7 +9447,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
 						
                         
 						// duration line and breakpoints
-                        if (x->r_ob.show_durations && (!x->r_ob.dl_spans_ties || !curr_nt->tie_from)) {
+                        if (x->r_ob.show_durations && (x->r_ob.dl_spans_ties == 0 || !curr_nt->tie_from)) {
                             if (x->r_ob.allow_glissandi) {
                                 double (*mc_to_ypos)(t_notation_obj *, double, t_voice *) = x->r_ob.breakpoints_have_noteheads ? mc_to_yposition_quantized : mc_to_yposition;
                                 double mc_or_screen_mc = x->r_ob.breakpoints_have_noteheads ? curr_nt->midicents : note_get_screen_midicents(curr_nt);
@@ -9537,7 +9537,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         
                         
                         // draw the notehead
-                        paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, 0, grace_ratio);
+                        if (x->r_ob.dl_spans_ties < 2 || !curr_nt->tie_from)
+                            paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, 0, grace_ratio);
                         
                         //                        paint_line(g, build_jrgba(1, 0, 0, 0.5), chord_alignment_point_x, 0, chord_alignment_point_x, rect.height, 1.);
                         //                        dev_post("note voice %ld; alignment_pt: %.2f, stem_x: %.2f, notehead_width: %.2f", voice->v_ob.number + 1, chord_alignment_point_x, stem_x, curr_nt->notehead_uwidth * x->r_ob.zoom_y);
@@ -9569,7 +9570,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         }
                         
                         // draw tie, if there's a tie
-                        if (x->r_ob.show_ties && curr_nt->tie_to && (!x->r_ob.show_durations || x->r_ob.dl_spans_ties <= 1)) {
+                        if (x->r_ob.show_ties && curr_nt->tie_to && (!x->r_ob.show_durations || x->r_ob.dl_spans_ties <= 2)) {
                             const double CONST_SCORE_TIE_POSITION = 0.6;
                             char tie_direction = (curr_nt->tie_direction) ? curr_nt->tie_direction : ((curr_ch->direction == -1) ? 1 : -1);
                             double start_x = (curr_ch->num_dots) ? stem_x + dot_x_offset : note_x_real + notehead_uwidth * x->r_ob.zoom_y * CONST_SCORE_TIE_POSITION;
