@@ -38,6 +38,8 @@ typedef struct _code
 
     t_object *n_editor;
     
+    char *n_filename;
+    short n_path;
 } t_code;
 
 #endif /* code_h */
