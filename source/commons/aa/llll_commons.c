@@ -1540,14 +1540,14 @@ void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_
                         llll_adopt(rv, parent);
                         if (prev) {
                             rv->l_head->l_prev = prev;
-                            prev->l_next = rv->l_head->l_prev;
+                            prev->l_next = rv->l_head;
                         } else {
                             parent->l_head = rv->l_head;
                             rv->l_head->l_prev = NULL;
                         }
                         if (next) {
                             rv->l_tail->l_next = next;
-                            next->l_prev = rv->l_tail->l_next;
+                            next->l_prev = rv->l_tail;
                         } else {
                             parent->l_tail = rv->l_tail;
                             rv->l_tail->l_next = NULL;
@@ -1555,20 +1555,22 @@ void llll_funall_extended(t_llll *ll, fun_ext_ask_fn ask_fn, fun_ext_mod_fn mod_
                         parent->l_size += rv->l_size;
                         new_address->l_tail->l_hatom.h_w.w_long += rv->l_size - 1;
                         
-                        long subll_depth = subll->l_depth;
-                        llll_chuck(subll);
-                        if (rv->l_depth > subll_depth) {
-                            for (t_llllelem *this_elem = rv->l_head; this_elem != rv->l_tail; this_elem = this_elem->l_next) {
-                                t_llll *this_subll;
-                                if ((this_subll = hatom_getllll(&this_elem->l_hatom)))
+                        if (subll) {
+                            long subll_depth = subll->l_depth;
+                            llll_chuck(subll);
+                            if (rv->l_depth > subll_depth + 1) {
+                                for (t_llllelem *this_elem = rv->l_head; this_elem != rv->l_tail; this_elem = this_elem->l_next) {
+                                    t_llll *this_subll;
+                                    if ((this_subll = hatom_getllll(&this_elem->l_hatom)))
                                     llll_upgrade_depth(this_subll);
+                                }
                             }
+                            else if (rv->l_depth <= subll_depth) {
+                                llll_downgrade_depth(parent);
+                            }
+                            
+                            deepenough = ((mindepth >= 0 && depth >= mindepth) || (parent->l_depth <= -mindepth));
                         }
-                        else if (rv->l_depth < subll_depth) {
-                            llll_downgrade_depth(parent);
-                        }
-                        
-                        deepenough = ((mindepth >= 0 && depth >= mindepth) || (parent->l_depth <= -mindepth));
                     }
                 }
                 

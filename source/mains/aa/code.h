@@ -28,6 +28,7 @@ typedef struct _code
     char *n_text;
     t_bach_atomic_lock n_lock;
     t_atom_long n_auto;
+    t_atom_long n_embed;
     
     t_atom_long n_dataInlets;
     t_atom_long n_dataOutlets;

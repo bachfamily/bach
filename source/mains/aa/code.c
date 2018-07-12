@@ -52,8 +52,9 @@ void code_float(t_code *x, double v);
 void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av);
 
 void code_read(t_code *x, t_symbol *s);
+void code_forceread(t_code *x, t_symbol *s);
 void code_doread(t_code *x, t_symbol *s);
-void code_readfile(t_code *x, char *filename, short path);
+void code_readfile(t_code *x, t_symbol *s, char *filename, short path);
 
 long code_atoms2text(t_code *x, long ac, t_atom *av);
 t_max_err code_buildAst(t_code *x, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *lambdaInlets, t_atom_long *lambdaOutlets);
@@ -66,6 +67,8 @@ void code_okclose(t_code *x, char *s, short *result);
 void code_edclose(t_code *x, char **ht, long size);
 void code_dblclick(t_code *x);
 long code_edsave(t_code *x, char **ht, long size);
+
+void code_appendtodictionary(t_code *x, t_dictionary *d);
 
 
 t_mainFunction *stringparser_parse_buffer(char *buf, t_safeTable<t_sharedVariable> *gvt, t_atom_long *dataInlets, t_atom_long *dataOutlets, t_atom_long *lambdaInlets, t_atom_long *lambdaOutlets, std::unordered_map<std::string, t_function *> *bifs, struct _code *owner);
@@ -108,14 +111,16 @@ int T_EXPORT main()
     class_addmethod(c, (method)code_anything,	"list",			A_GIMME,	0);
     
     
-    class_addmethod(c, (method)code_read,        "read",            A_DEFSYM,    0);
-    
+    class_addmethod(c, (method)code_read,   "read",            A_DEFSYM,    0);
+    class_addmethod(c, (method)code_read,   "read",            A_DEFSYM,    0);
+
     // @method bang @digest Perform the last operation
     // @description Return the comparison result for the most recently received lllls.
     
     class_addmethod(c, (method)code_assist,		"assist",		A_CANT,		0);
     class_addmethod(c, (method)code_inletinfo,	"inletinfo",	A_CANT,		0);
-    
+    class_addmethod(c, (method)code_appendtodictionary,    "appendtodictionary", A_CANT, 0);
+
     // @method (doubleclick) @digest Edit llll as text
     // @description Doubleclicking on the object forces a text editor to open up, where the llll can be edited directly in text form.
     class_addmethod(c, (method)code_dblclick,		"dblclick",		A_CANT, 0);
@@ -179,6 +184,8 @@ void code_okclose(t_code *x, char *s, short *result)
         if (oldMain)
             oldMain->decrease();
         *result = 3;
+        if (x->n_auto)
+            code_bang(x);
     } else {
         {
             t_object *wind = object_attr_getobj(x->n_editor, _sym_wind);
@@ -244,6 +251,13 @@ long code_edsave(t_code *x, char **ht, long size)
     return 1;
 }
 
+void code_appendtodictionary(t_code *x, t_dictionary *d)
+{
+    if (x->n_embed) {
+        dictionary_appendstring(d, gensym("code"), x->n_text);
+    }
+}
+
 void code_read(t_code *x, t_symbol *s)
 {
     defer(x, (method) code_doread, s, 0, NULL);
@@ -266,10 +280,10 @@ void code_doread(t_code *x, t_symbol *s)
         }
     }
     // we have a file
-    code_readfile(x, filename, path);
+    code_readfile(x, s, filename, path);
 }
 
-void code_readfile(t_code *x, char *filename, short path)
+void code_readfile(t_code *x, t_symbol *s, char *filename, short path)
 {
     t_filehandle fh;
     char *newCode = NULL;
@@ -310,11 +324,19 @@ void code_readfile(t_code *x, char *filename, short path)
         if (x->n_auto)
             code_bang(x);
     } else {
-        x->n_text = oldCode;
-        sysmem_freeptr(newCode);
-        if (x->n_main)
-        x->n_main->decrease();
-        x->n_main = oldMain;
+        if (s == gensym("forceread")) {
+            x->n_text = newCode;
+            sysmem_freeptr(oldCode);
+            if (oldMain)
+                oldMain->decrease();
+            x->n_main = nullptr;
+        } else {
+            sysmem_freeptr(newCode);
+            x->n_text = oldCode;
+            if (oldMain)
+                oldMain->increase();
+            x->n_main = oldMain;
+        }
     }
 }
 
@@ -371,17 +393,27 @@ void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av)
 
 void code_defer_buildAst(t_code *x, t_symbol *msg, long ac, t_atom *av)
 {
+    t_max_err err;
+    char *oldText = x->n_text;
+    t_mainFunction *oldMain = x->n_main;
+    if (oldMain)
+        oldMain->increase();
     code_atoms2text(x, ac, av);
-
-}
-
-void code_buildAstFromText(t_code *x)
-{
     t_atom_long dummy_dataInlets = 0, dummy_dataOutlets = 0, dummy_dirInlets = 0, dummy_dirOutlets = 0;
-    code_buildAst(x, &dummy_dataInlets, &dummy_dataOutlets, &dummy_dirInlets, &dummy_dirOutlets);
-    if (x->n_auto)
-        code_bang(x);
+    err = code_buildAst(x, &dummy_dataInlets, &dummy_dataOutlets, &dummy_dirInlets, &dummy_dirOutlets);
+    if (!err) {
+        sysmem_freeptr(oldText);
+        if (oldMain)
+            oldMain->decrease();
+        if (x->n_auto)
+            code_bang(x);
+    } else {
+        
+    }
+    
+    
 }
+
 
 void code_assist(t_code *x, void *b, long m, long a, char *s)
 {
@@ -427,6 +459,7 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
     t_code *x = NULL;
     long true_ac, i;
     t_max_err err = 0;
+    t_dictionary *d = nullptr;
     
     //true_ac = attr_args_offset(ac, av);
 
@@ -434,9 +467,8 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
         // @arg 0 @name default @optional 1 @digest Default comparison llll
 
         code_ownedFunctionsSetup(x);
+        x->n_embed = 1;
 
-#define withattrs
-#ifdef withattrs
         true_ac = ac;
         
         t_symbol *symattr;
@@ -491,7 +523,16 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
                 long type = atom_gettype(this_av);
                 if (type == A_LONG || type == A_FLOAT) {
                     t_atom_long val = atom_getlong(this_av);
-                    x->n_auto = CLAMP(val, 0, LLLL_MAX_INLETS);
+                    x->n_auto = val != 0;
+                } else {
+                    object_error((t_object *) x, "Bad value for auto attribute");
+                    attrParseErr = true;
+                }
+            } else if (!strcmp(attrname, "embed")) {
+                long type = atom_gettype(this_av);
+                if (type == A_LONG || type == A_FLOAT) {
+                    t_atom_long val = atom_getlong(this_av);
+                    x->n_auto = val != 0;
                 } else {
                     object_error((t_object *) x, "Bad value for auto attribute");
                     attrParseErr = true;
@@ -516,11 +557,7 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
             else
                 break;
         }
-   
-#endif // withattrs
-        
-        
-        
+
         if (true_ac) {
             code_atoms2text(x, true_ac, av);
             err = code_buildAst(x, &x->n_dataInlets, &x->n_dataOutlets, &x->n_directInlets, &x->n_directOutlets);
@@ -556,9 +593,36 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
         x->n_proxy = (void **) bach_newptr((x->n_proxies + 1) * sizeof (void *));
         for (i = x->n_proxies; i > 0; i--)
             x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
-    } else 
+        
+        d = (t_dictionary *)gensym("#D")->s_thing;
+        if (d) {
+            char *newCode = nullptr;
+            dictionary_getstring(d, gensym("code"), (const char **) &newCode);
+            if (newCode) {
+                if (x->n_main)
+                    x->n_main->decrease();
+                sysmem_freeptr(x->n_text);
+                size_t codeLen = strlen(newCode);
+                if (!isspace(*(newCode + codeLen - 1))) {
+                    x->n_text = sysmem_newptr(codeLen + 2);
+                    strncpy(x->n_text, newCode, codeLen);
+                    *(x->n_text + codeLen) = ' ';
+                    *(x->n_text + codeLen + 1) = 0;
+                } else {
+                    x->n_text = sysmem_newptr(codeLen + 1);
+                    strncpy(x->n_text, newCode, codeLen);
+                    *(x->n_text + codeLen) = 0;
+                }
+                
+                code_buildAst(x, &x->n_dataInlets, &x->n_dataOutlets, &x->n_directInlets, &x->n_directOutlets);
+            }
+        }
+    
+    } else
         error(BACH_CANT_INSTANTIATE);
     
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+
     if (x && err == MAX_ERR_NONE) {
         if (x->n_auto)
             defer_low(x, (method) code_deferbang, _sym_bang, 0, nullptr);
