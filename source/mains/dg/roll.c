@@ -64,6 +64,8 @@
 #include <locale.h>
 #include <time.h> 
 
+#include "jit.common.h"
+
 #ifdef MAC_VERSION
 //#define AA_PLAY
 #endif
@@ -10986,6 +10988,76 @@ void roll_paint(t_roll *x, t_object *view)
     else
         paint_border((t_object *)x, g, &rect, &x->r_ob.j_border_rgba, (!x->r_ob.show_border) ? 0 : ((x->r_ob.j_has_focus && x->r_ob.show_focus) ? 2.5 : 1), x->r_ob.corner_roundness);
 
+    if (TRUE) { // paint to matrix
+        t_symbol *matrix_name = gensym("jittestmatrix"); // x->matrix_name
+        long plane = 0; // x->plane
+        long offsetcount = 0; // x->offsetcount
+        long offset[JIT_MATRIX_MAX_DIMCOUNT]; // x->offset
+        for (long i = 0; i < JIT_MATRIX_MAX_DIMCOUNT; i++)
+            offset[i] = 0;
+
+        //find matrix
+        void *matrix = jit_object_findregistered(matrix_name);
+        if (matrix && jit_object_method(matrix, _jit_sym_class_jit_matrix)) {
+            long savelock,offset0,offset1;
+            t_jit_matrix_info minfo;
+            char *bp,*p;
+            
+            savelock = (long) jit_object_method(matrix,_jit_sym_lock,1);
+            jit_object_method(matrix,_jit_sym_getinfo,&minfo);
+            jit_object_method(matrix,_jit_sym_getdata,&bp);
+            
+            if ((!bp)||(plane>=minfo.planecount)||(plane<0)) {
+                jit_error_sym(x,_jit_sym_err_calculate);
+                jit_object_method(matrix,_jit_sym_lock,savelock);
+                goto out;
+            } else {
+                
+                //max_jit_fill_offset_bp(x,&bp,&minfo);
+                
+                //limited to filling at most into 2 dimensions per list
+                offset0 = (offsetcount>0) ? offset[0] : 0;
+                offset1 = (offsetcount>1) ? offset[1] : 0;
+                CLIP_ASSIGN(offset0, 0, minfo.dim[0]-1);
+                CLIP_ASSIGN(offset1, 0, minfo.dim[1]-1);
+                CLIP_ASSIGN(argc,0,(minfo.dim[0]*(minfo.dim[1]-offset1))-offset0);
+                
+                long j = offset0 + offset1*minfo.dim[0];
+                
+                if (minfo.type==_jit_sym_char) {
+                    bp += plane;
+                    for (long i=0; i<argc; i++,j++) {
+                        p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
+                        
+                        *((uchar *)p) = jit_atom_getcharfix(argv+i);
+                    }
+                } else if (minfo.type==_jit_sym_long) {
+                    bp += plane*4;
+                    for (i=0; i<argc; i++,j++) {
+                        p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
+                        *((t_int32 *)p) = jit_atom_getlong(argv+i);
+                    }
+                } else if (minfo.type==_jit_sym_float32) {
+                    bp += x->plane*4;
+                    for (i=0; i<argc; i++,j++) {
+                        p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
+                        *((float *)p) = jit_atom_getfloat(argv+i);
+                    }
+                } if (minfo.type==_jit_sym_float64) {
+                    bp += x->plane*8;
+                    for (i=0; i<argc; i++,j++) {
+                        p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
+                        *((double *)p) = jit_atom_getfloat(argv+i);
+                    }
+                }
+                
+                jit_object_method(matrix,_jit_sym_lock,savelock);
+            }
+        } else {
+            jit_error_sym(x,_jit_sym_err_calculate);
+        }
+    }
+    
 	send_changed_bang_and_automessage_if_needed((t_notation_obj *)x);
 	
 	if (must_repaint)
