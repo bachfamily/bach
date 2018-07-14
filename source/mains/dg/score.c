@@ -71,6 +71,7 @@ void score_inletinfo(t_score *x, void *b, long a, char *t);
 void score_free(t_score *x);
 t_score* score_new(t_symbol *s, long argc, t_atom *argv);
 void score_paint(t_score *x, t_object *view);
+void score_paint_to_jitter_matrix(t_score *x, t_symbol *matrix_name);
 t_max_err score_notify(t_score *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
 
 void score_getmaxID(t_score *x);
@@ -4877,7 +4878,11 @@ int T_EXPORT main(void){
 	CLASS_METHOD_ATTR_PARSE(c, "end_preset", "undocumented", gensym("long"), 0L, "1");
 
 
+    // @method paintjit @digest Draw the score onto a jitter matrix
+    // @description @copy BACH_DOC_PAINTJIT
+    class_addmethod(c, (method) score_paint_to_jitter_matrix, "paintjit", A_SYM, 0);
 
+    
 	// @method llll @digest Function depends on inlet
 	// @description In the first inlet, an llll is expected to be a gathered syntax content of the entire <o>bach.score</o> (building
 	// the new <o>bach.score</o> content from scratch), or an llll containing just some header specification 
@@ -16724,22 +16729,34 @@ void score_paint(t_score *x, t_object *view)
 	g = (t_jgraphics*) patcherview_get_jgraphics(view); 
 	jbox_get_rect_for_view(&x->r_ob.j_box.l_box.b_ob, view, &rect);
 
-	paint_background((t_object *)x, g, &rect, &x->r_ob.j_background_rgba, x->r_ob.corner_roundness);
-
 	if (x->r_ob.j_box.l_rebuild){
 		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		x->r_ob.j_box.l_rebuild = 0;
 	}
 	
-	scoreapi_paint(x, view, g, rect);
+	score_paint_ext(x, view, g, rect);
 	
     if (x->r_ob.are_there_solos)
         paint_border((t_object *)x, g, &rect, &x->r_ob.j_solo_rgba, 2.5, x->r_ob.corner_roundness);
     else
         paint_border((t_object *)x, g, &rect, &x->r_ob.j_border_rgba, (!x->r_ob.show_border) ? 0 : ((x->r_ob.j_has_focus && x->r_ob.show_focus) ? 2.5 : 1), x->r_ob.corner_roundness);
 
+    if (x->r_ob.jit_destination_matrix && strlen(x->r_ob.jit_destination_matrix->s_name) > 0)
+        score_paint_to_jitter_matrix(x, x->r_ob.jit_destination_matrix);
+
 	send_changed_bang_and_automessage_if_needed((t_notation_obj *)x);
+
+    if (x->r_ob.notify_when_painted)
+        llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 7, _llllobj_sym_painted);
 }
+
+void score_paint_to_jitter_matrix(t_score *x, t_symbol *matrix_name)
+{
+    bach_paint_to_jitter_matrix((t_object *)x, matrix_name, x->r_ob.width, x->r_ob.height, (bach_paint_ext_fn)score_paint_ext);
+}
+
+
+
 
 char score_sel_dilate_mc(t_score *x, double mc_factor, double fixed_mc_y_pixel){
 	char changed = 0;

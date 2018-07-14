@@ -355,7 +355,8 @@ t_llllobj_common_symbols_table *llllobj_common_symbols_gettable()
 	x->s_loop = gensym("loop");
     x->s_flags = gensym("flags");
     x->s_path = gensym("path");
-	
+    x->s_painted = gensym("painted");
+
 	x->s_prev = gensym("prev");
 	x->s_next = gensym("next");
 	

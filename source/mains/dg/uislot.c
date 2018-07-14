@@ -80,6 +80,7 @@ void uislot_assist(t_uislot *x, void *b, long m, long a, char *s);
 void uislot_free(t_uislot *x);
 t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv);
 void uislot_paint(t_uislot *x, t_object *view);
+void uislot_paint_to_jitter_matrix(t_uislot *x, t_symbol *matrix_name);
 
 void uislot_anything(t_uislot *x, t_symbol *s, long argc, t_atom *argv);
 void uislot_int(t_uislot *x, t_atom_long num);
@@ -405,6 +406,11 @@ int T_EXPORT main(void){
 	CLASS_METHOD_ATTR_PARSE(c, "end_preset", "undocumented", gensym("long"), 0L, "1");
 
 
+    // @method paintjit @digest Draw the slot onto a jitter matrix
+    // @description @copy BACH_DOC_PAINTJIT
+    class_addmethod(c, (method) uislot_paint_to_jitter_matrix, "paintjit", A_SYM, 0);
+
+    
 	// @method llll @digest Set slot content and/or slotinfo
 	// @description An incoming llll sets the content of the slots.
 	// The expected syntax is: <b>slot <m>SLOTINFO</m> <m>SLOTS_CONTENT</m></b>
@@ -1503,14 +1509,8 @@ void uislot_free(t_uislot *x){
 }
 
 
-void uislot_paint(t_uislot *x, t_object *view){
-
-	t_jgraphics *g;
-	t_rect rect;
-		
-	g = (t_jgraphics*) patcherview_get_jgraphics(view); 
-	jbox_get_rect_for_view(&x->r_ob.j_box.l_box.b_ob, view, &rect);
-	
+void uislot_paint_ext(t_uislot *x, t_object *view, t_jgraphics *g, t_rect rect)
+{
 	paint_background((t_object *)x, g, &rect, &x->r_ob.j_background_rgba, x->r_ob.corner_roundness);
 
 	x->r_ob.height = rect.height;
@@ -1581,8 +1581,31 @@ void uislot_paint(t_uislot *x, t_object *view){
 
 	t_jrgba border_color = (x->r_ob.active_slot_num >= 0 && x->r_ob.active_slot_num < CONST_MAX_SLOTS) ? x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_color : get_grey(0.5);
 	paint_border((t_object *)x, g, &rect, &border_color, (!x->r_ob.show_border) ? 0 : (x->r_ob.j_has_focus && x->r_ob.show_focus ? 2.5 : 1), x->r_ob.corner_roundness);
+}
 
-	send_changed_bang_and_automessage_if_needed((t_notation_obj *)x);
+void uislot_paint(t_uislot *x, t_object *view)
+{
+    
+    t_jgraphics *g;
+    t_rect rect;
+    
+    g = (t_jgraphics*) patcherview_get_jgraphics(view);
+    jbox_get_rect_for_view(&x->r_ob.j_box.l_box.b_ob, view, &rect);
+    
+    uislot_paint_ext(x, view, g, rect);
+    
+    if (x->r_ob.jit_destination_matrix && strlen(x->r_ob.jit_destination_matrix->s_name) > 0)
+        uislot_paint_to_jitter_matrix(x, x->r_ob.jit_destination_matrix);
+
+    send_changed_bang_and_automessage_if_needed((t_notation_obj *)x);
+
+    if (x->r_ob.notify_when_painted)
+        llllobj_outlet_symbol_as_llll((t_object *)x, LLLL_OBJ_UI, 1, _llllobj_sym_painted);
+}
+
+void uislot_paint_to_jitter_matrix(t_uislot *x, t_symbol *matrix_name)
+{
+    bach_paint_to_jitter_matrix((t_object *)x, matrix_name, x->r_ob.width, x->r_ob.height, (bach_paint_ext_fn)uislot_paint_ext);
 }
 
 

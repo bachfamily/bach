@@ -311,7 +311,7 @@ t_llll* get_voice_velocities_values_as_llll(t_scorevoice *voice, char tree);
 t_llll* measure_get_pixel_values_as_llll(t_score *x, t_scorevoice *voice, t_measure *measure);
 t_llll* get_voice_pixel_values_as_llll(t_score *x, t_scorevoice *voice);
 
-void scoreapi_paint(t_score *x, t_object *view, t_jgraphics *g_ok, t_rect rect);
+void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect);
 void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_rect);
 
 double get_linear_edit_cursor_ux_position(t_score *x);

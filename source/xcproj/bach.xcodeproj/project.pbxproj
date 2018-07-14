@@ -19367,12 +19367,6 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
-				OTHER_LDFLAGS = (
-					"-framework",
-					JitterAPI,
-					"$(C74_SYM_LINKER_FLAGS)",
-					"$(C74_SYM_LINKER_FLAGS)",
-				);
 			};
 			name = Development;
 		};
@@ -19388,12 +19382,6 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
-				OTHER_LDFLAGS = (
-					"-framework",
-					JitterAPI,
-					"$(C74_SYM_LINKER_FLAGS)",
-					"$(C74_SYM_LINKER_FLAGS)",
-				);
 			};
 			name = Deployment;
 		};

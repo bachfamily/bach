@@ -1290,9 +1290,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
 	long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
 	t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
 	t_atom_long *av_long = NULL;
-	long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0;
+	long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0;
 	double slotbgalpha = 0, backgroundslotfontsize = 0;
-    t_atom_long velocityhandling = -1;
+    t_atom_long velocityhandling = -1, notificationsformessages = -1;
     char brand_new_creation = 0;
 
     
@@ -1352,6 +1352,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if ((has_velocityhandling = dictionary_hasentry(d, gensym("velocityhandling"))))
         dictionary_getlong(d, gensym("velocityhandling"), &velocityhandling);
 
+    if ((has_notificationsformessages = dictionary_hasentry(d, gensym("notificationsformessages"))))
+        dictionary_getlong(d, gensym("notificationsformessages"), &notificationsformessages);
+
     if (num_voices_from_argument > 0) {
         t_atom av;
         atom_setlong(&av, num_voices_from_argument);
@@ -1401,6 +1404,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if (has_velocityhandling)
         object_attr_setchar(x, gensym("showvelocity"), velocityhandling);
     
+    if (has_notificationsformessages)
+        object_attr_setchar(x, gensym("notifymessages"), notificationsformessages);
+
     // Setting object size depending on numvoices
     if (brand_new_creation && r_ob->link_vzoom_to_height && r_ob->num_voices > 1) {
         if (r_ob->num_voices <= 4) r_ob->zoom_y = 1.;
@@ -1948,6 +1954,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
     CLASS_ATTR_SYM(c,"jitmatrix",0, t_notation_obj, jit_destination_matrix);
     CLASS_ATTR_STYLE_LABEL(c,"jitmatrix",0,"text","Mirror To Jitter Matrix");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jitmatrix",0,"");
+    CLASS_ATTR_ACCESSORS(c, "jitmatrix", (method)NULL, (method)notation_obj_setattr_jitmatrix);
     // @description Sets the name of a jitter matrix to which the canvas should be mirrored
     
 	
@@ -2380,13 +2387,20 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     // 7200, while 0.7.8.1 is 7810.
     
 
-	CLASS_ATTR_CHAR(c,"notificationsformessages",0, t_notation_obj, notify_also_upon_messages);
-	CLASS_ATTR_STYLE_LABEL(c,"notificationsformessages",0,"onoff","Notifications When Changed Via Messages");
-	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notificationsformessages", 0, "0");
+	CLASS_ATTR_CHAR(c,"notifymessages",0, t_notation_obj, notify_also_upon_messages);
+	CLASS_ATTR_STYLE_LABEL(c,"notifymessages",0,"onoff","Notifications When Changed Via Messages");
+	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifymessages", 0, "0");
 	// @description Toggles the ability to send notifications caused by actions coming from messages, and not only from the interface.
 	// For instance, a <m>inscreenpos</m> message will toggle a <m>domain</m> notification, and so on.
 	// By default this is inactive.
 	
+    CLASS_ATTR_CHAR(c,"notifypaint",0, t_notation_obj, notify_when_painted);
+    CLASS_ATTR_STYLE_LABEL(c,"notifypaint",0,"onoff","Notifications When Display Is Refreshed");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifypaint", 0, "0");
+    // @description Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
+    // whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
+    
+    
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		CLASS_ATTR_CHAR(c,"keepselectioniflostfocus",0, t_notation_obj, keep_selection_if_lost_focus);
 		CLASS_ATTR_STYLE_LABEL(c,"keepselectioniflostfocus",0,"onoff","Keep Selection If Lost Focus");
@@ -3414,6 +3428,18 @@ t_max_err notation_obj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long 
 	}
 	return MAX_ERR_NONE;
 }
+
+t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av && atom_gettype(av) == A_SYM) {
+        t_symbol *s = atom_getsym(av);
+        r_ob->jit_destination_matrix = s;
+    } else {
+        r_ob->jit_destination_matrix = _llllobj_sym_empty_symbol;
+    }
+    return MAX_ERR_NONE;
+}
+
 
 
 t_max_err notation_obj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){

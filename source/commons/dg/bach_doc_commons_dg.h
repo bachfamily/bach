@@ -5,6 +5,13 @@
 	by Daniele Ghisi
 */
 
+
+#define BACH_DOC_PAINTJIT
+    // The <m>paintjit</m> message, followed by the name of a jitter matrix,
+    // mirrors the canvas of the object onto the jitter matrix.
+    // The matrix should have either 1 or 4 planes, and should have at least 2 dimensions.
+    // The first two dimensions are used; the matrix is automatically resized to the needed dimensions.
+    // Retina resolution is not supported (retina objects are mirrored in standard resolution).
 	
 #define BACH_DOC_REGULARITYBOXES
 	//	Regularity boxes are a concept that helps bach.quantize quantizing properly by preserving untouched important beat positions. 

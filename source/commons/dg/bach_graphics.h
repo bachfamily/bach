@@ -1414,7 +1414,7 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
 
 /// JITTER PAINTING STUFF
 
-void obj_paint_to_jitter_matrix(t_object *x, t_symbol *matrix_name, long width, long height, bach_paint_ext_fn obj_paint_ext);
+void bach_paint_to_jitter_matrix(t_object *x, t_symbol *matrix_name, long width, long height, bach_paint_ext_fn obj_paint_ext);
 
 
 #endif

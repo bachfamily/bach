@@ -4005,7 +4005,7 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
 
 
 
-void obj_paint_to_jitter_matrix(t_object *x, t_symbol *matrix_name, long width, long height, bach_paint_ext_fn obj_paint_ext)
+void bach_paint_to_jitter_matrix(t_object *x, t_symbol *matrix_name, long width, long height, bach_paint_ext_fn obj_paint_ext)
 {
     long w = width, h = height;
     t_rect draw_rect = build_rect(0, 0, w, h);

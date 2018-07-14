@@ -4227,6 +4227,7 @@ typedef struct _notation_obj
 	char		breakpoints_have_velocity;			///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
 	char		breakpoints_have_noteheads;			///< Flag telling if the breakpoints are shown as standard classical noteheads
 	
+    char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
 	char		notify_also_upon_messages;			///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes 
 	char		dblclick_sends_values;				///< Flag telling if, when we double click, the selection is sent through the playout (as when we press V)
 	
@@ -17114,6 +17115,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type);
 t_max_err notation_obj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
