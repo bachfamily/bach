@@ -1945,6 +1945,11 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showborder",0,"1");
 	// @description Toggles the ability to display the object border.
 
+    CLASS_ATTR_SYM(c,"jitmatrix",0, t_notation_obj, jit_destination_matrix);
+    CLASS_ATTR_STYLE_LABEL(c,"jitmatrix",0,"text","Mirror To Jitter Matrix");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jitmatrix",0,"");
+    // @description Sets the name of a jitter matrix to which the canvas should be mirrored
+    
 	
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
         CLASS_ATTR_CHAR(c,"smartmarkernames",0, t_notation_obj, smart_markername_placement);

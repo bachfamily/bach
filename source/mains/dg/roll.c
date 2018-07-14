@@ -64,8 +64,6 @@
 #include <locale.h>
 #include <time.h> 
 
-#include "jit.common.h"
-
 #ifdef MAC_VERSION
 //#define AA_PLAY
 #endif
@@ -84,6 +82,7 @@ void roll_assist(t_roll *x, void *b, long m, long a, char *s);
 void roll_free(t_roll *x);
 t_roll* roll_new(t_symbol *s, long argc, t_atom *argv);
 void roll_paint(t_roll *x, t_object *view);
+void roll_paint_to_jitter_matrix(t_roll *x, t_symbol *matrix_name);
 t_max_err roll_notify(t_roll *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
 
 void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv);
@@ -3771,6 +3770,8 @@ int T_EXPORT main(void){
     class_addmethod(c, (method) roll_setvalueof, "setvalueof", A_CANT, 0);
 #endif
     
+    class_addmethod(c, (method) roll_paint_to_jitter_matrix, "paintjit", A_SYM, 0);
+
     // @method subroll @digest Output a portion of <o>bach.roll</o>
 	// @description The <m>subroll</m> message outputs the gathered syntax information of a portion of the <o>bach.roll</o>,
 	// namely it outputs only certain voices and within a certain time interval.
@@ -10110,10 +10111,10 @@ char is_notehead_inscreen_for_painting(t_roll *x, t_note *curr_nt){
 	return false;
 }
 
-void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus)
+void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jgraphics *graphic_context)
 {
 	
-	t_jgraphics *g = jbox_start_layer((t_object *)x, view, gensym("static_layer1"), rect.width, rect.height);
+    t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer1"), rect.width, rect.height) : graphic_context;
 
 	if (g){
 		t_jfont *jf_text_small, *jf_text_smallbold, *jf_text_markers, *jf_lyrics, *jf_lyrics_nozoom, *jf_ann, *jf_dynamics, *jf_small_dynamics, *jf_dynamics_nozoom;
@@ -10665,17 +10666,20 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
         jfont_destroy_debug(jf_dynamics);
         jfont_destroy_debug(jf_dynamics_nozoom);
         jfont_destroy_debug(jf_small_dynamics);
-		jbox_end_layer((t_object *)x, view, gensym("static_layer1"));
+        
+        if (view)
+            jbox_end_layer((t_object *)x, view, gensym("static_layer1"));
 	}
-	
-	jbox_paint_layer((t_object *)x, view, gensym("static_layer1"), 0., 0.);	// position of the layer
+
+    if (view)
+        jbox_paint_layer((t_object *)x, view, gensym("static_layer1"), 0., 0.);	// position of the layer
 }
 
 
-void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_acc_bogus, t_jfont *jf_text_legend)
+void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_acc_bogus, t_jfont *jf_text_legend, t_jgraphics *graphic_context)
 {
 	
-	t_jgraphics *g = jbox_start_layer((t_object *)x, view, gensym("static_layer2"), rect.width, rect.height);
+    t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer2"), rect.width, rect.height) : graphic_context;
 	
 	if (g) {
 		t_jfont *jf_voice_names = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.voice_names_font_size * x->r_ob.zoom_y); 
@@ -10819,19 +10823,18 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 		
 		
 		jfont_destroy_debug(jf_voice_names);
-		jbox_end_layer((t_object *)x, view, gensym("static_layer2"));
+        if (view)
+            jbox_end_layer((t_object *)x, view, gensym("static_layer2"));
 	}
 	
-	jbox_paint_layer((t_object *)x, view, gensym("static_layer2"), 0., 0.);	// position of the layer
+    if (view)
+        jbox_paint_layer((t_object *)x, view, gensym("static_layer2"), 0., 0.);	// position of the layer
 }
 
 
-
-void roll_paint(t_roll *x, t_object *view)
+/// view can be NULL, in this case the graphic context g is used.
+void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
 {
-	t_jgraphics *g;
-	t_rect rect;
-//	char firsttime = x->r_ob.firsttime;
 	char must_repaint = false;
 	
 	t_jfont *jf_text, *jf_text_fixed, *jf, *jf_acc, *jf_acc_bogus, *jf_text_fractions;
@@ -10840,11 +10843,8 @@ void roll_paint(t_roll *x, t_object *view)
 		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 		x->r_ob.j_box.l_rebuild = 0;
 	}
-	
-	// getting rectangle dimensions
-	g = (t_jgraphics*) patcherview_get_jgraphics(view); 
-	jbox_get_rect_for_view(&x->r_ob.j_box.l_box.b_ob, view, &rect);
-	
+
+
 	paint_background((t_object *)x, g, &rect, &x->r_ob.j_background_rgba, x->r_ob.corner_roundness);
 
 	x->r_ob.inner_width = rect.width - (2 * x->r_ob.j_inset_x);
@@ -10906,7 +10906,7 @@ void roll_paint(t_roll *x, t_object *view)
 	// setting alpha to 1 before painting layers! otherwise we have blending issues
 	jgraphics_set_source_rgba(g, 0, 0, 0, 1);
 
-    paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus);
+    paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus, g);
 
 
 	// do we have to print the play_head line?
@@ -10926,7 +10926,7 @@ void roll_paint(t_roll *x, t_object *view)
 	
 	// setting alpha to 1 before painting layers! otherwise we have blending issues
 	jgraphics_set_source_rgba(g, 0, 0, 0, 1);
-	paint_static_stuff2(x, view, rect, jf, jf_acc, jf_acc_bogus, jf_text_fixed);
+	paint_static_stuff2(x, view, rect, jf, jf_acc, jf_acc_bogus, jf_text_fixed, g);
 	
 	// paint the selection rectangle, if needed
 	if (x->r_ob.j_mousedown_obj_type == k_REGION)
@@ -10988,81 +10988,166 @@ void roll_paint(t_roll *x, t_object *view)
     else
         paint_border((t_object *)x, g, &rect, &x->r_ob.j_border_rgba, (!x->r_ob.show_border) ? 0 : ((x->r_ob.j_has_focus && x->r_ob.show_focus) ? 2.5 : 1), x->r_ob.corner_roundness);
 
-    if (TRUE) { // paint to matrix
-        t_symbol *matrix_name = gensym("jittestmatrix"); // x->matrix_name
-        long plane = 0; // x->plane
-        long offsetcount = 0; // x->offsetcount
-        long offset[JIT_MATRIX_MAX_DIMCOUNT]; // x->offset
-        for (long i = 0; i < JIT_MATRIX_MAX_DIMCOUNT; i++)
-            offset[i] = 0;
+    if (must_repaint)
+        notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+}
 
-        //find matrix
-        void *matrix = jit_object_findregistered(matrix_name);
-        if (matrix && jit_object_method(matrix, _jit_sym_class_jit_matrix)) {
-            long savelock,offset0,offset1;
-            t_jit_matrix_info minfo;
-            char *bp,*p;
+
+
+void roll_paint(t_roll *x, t_object *view)
+{
+    t_jgraphics *g;
+    t_rect rect;
+    
+    // getting rectangle dimensions
+    g = (t_jgraphics*) patcherview_get_jgraphics(view);
+    jbox_get_rect_for_view(&x->r_ob.j_box.l_box.b_ob, view, &rect);
+    
+    roll_paint_ext(x, view, g, rect);
+    
+    if (x->r_ob.jit_destination_matrix && strlen(x->r_ob.jit_destination_matrix->s_name) > 0)
+        roll_paint_to_jitter_matrix(x, x->r_ob.jit_destination_matrix);
+    
+    send_changed_bang_and_automessage_if_needed((t_notation_obj *)x);
+}
+
+
+void roll_paint_to_jitter_matrix(t_roll *x, t_symbol *matrix_name)
+{
+    long w = x->r_ob.width, h = x->r_ob.height;
+    t_rect draw_rect = build_rect(0, 0, w, h);
+    t_jsurface *draw_surface = jgraphics_image_surface_create(JGRAPHICS_FORMAT_ARGB32, w, h);
+    t_jgraphics *draw_g = jgraphics_create(draw_surface);
+    
+    jgraphics_set_source_rgba(draw_g, 0, 0, 0, 1.);
+//    jgraphics_image_surface_draw(g, bg_slots_surface, rect_oo, rect_oo);
+    
+    roll_paint_ext(x, NULL, draw_g, draw_rect);
+
+    
+    long offset[JIT_MATRIX_MAX_DIMCOUNT]; // x->offset
+    for (long i = 0; i < JIT_MATRIX_MAX_DIMCOUNT; i++)
+        offset[i] = 0;
+    
+    //find matrix
+    t_jrgba color;
+    void *matrix = jit_object_findregistered(matrix_name);
+    if (matrix && jit_object_method(matrix, _jit_sym_class_jit_matrix)) {
+        long savelock;
+        t_jit_matrix_info minfo;
+        char *bp,*p;
+        
+        savelock = (long) jit_object_method(matrix,_jit_sym_lock,1);
+        jit_object_method(matrix,_jit_sym_getinfo,&minfo);
+        jit_object_method(matrix,_jit_sym_getdata,&bp);
+        
+        if (!bp || minfo.dimcount < 2 || (minfo.planecount != 1 && minfo.planecount != 4)) {
+            object_error((t_object *)x, "Error with jitter matrix");
+            object_error((t_object *)x, "   Please check that it exists, that it has at least 2 dimensions and either 1 or 4 planes.");
+            jit_object_method(matrix,_jit_sym_lock,savelock);
+        } else {
+
+            if (minfo.dim[0] != w || minfo.dim[1] != h) {
+                minfo.dim[0] = w;
+                minfo.dim[1] = h;
+                if (jit_object_method(matrix, _jit_sym_setinfo, &minfo))
+                    object_warn((t_object *)x, "Cannot resize jitter matrix automatically");
+                jit_object_method(matrix,_jit_sym_getinfo,&minfo);
+                jit_object_method(matrix,_jit_sym_getdata,&bp);
+            }
             
-            savelock = (long) jit_object_method(matrix,_jit_sym_lock,1);
-            jit_object_method(matrix,_jit_sym_getinfo,&minfo);
-            jit_object_method(matrix,_jit_sym_getdata,&bp);
-            
-            if ((!bp)||(plane>=minfo.planecount)||(plane<0)) {
-                jit_error_sym(x,_jit_sym_err_calculate);
+            if (!bp || minfo.dimcount < 2 || (minfo.planecount != 1 && minfo.planecount != 4)) {
+                object_error((t_object *)x, "Error with jitter matrix");
+                object_error((t_object *)x, "   Please check that it exists, that it has at least 2 dimensions and either 1 or 4 planes.");
                 jit_object_method(matrix,_jit_sym_lock,savelock);
-                goto out;
             } else {
                 
-                //max_jit_fill_offset_bp(x,&bp,&minfo);
-                
-                //limited to filling at most into 2 dimensions per list
-                offset0 = (offsetcount>0) ? offset[0] : 0;
-                offset1 = (offsetcount>1) ? offset[1] : 0;
-                CLIP_ASSIGN(offset0, 0, minfo.dim[0]-1);
-                CLIP_ASSIGN(offset1, 0, minfo.dim[1]-1);
-                CLIP_ASSIGN(argc,0,(minfo.dim[0]*(minfo.dim[1]-offset1))-offset0);
-                
-                long j = offset0 + offset1*minfo.dim[0];
+                long actual_w = minfo.dim[0], actual_h = minfo.dim[1];
                 
                 if (minfo.type==_jit_sym_char) {
-                    bp += plane;
-                    for (long i=0; i<argc; i++,j++) {
-                        p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
-                        
-                        *((uchar *)p) = jit_atom_getcharfix(argv+i);
+                    for (long i = 0; i < actual_w; i++) {
+                        for (long j = 0; j < actual_h; j++) {
+                            jgraphics_image_surface_get_pixel(draw_surface, i, j, &color);
+                            p = bp + (j)*minfo.dimstride[1] + (i)*minfo.dimstride[0];
+                            if (minfo.planecount == 1) {
+                                t_jhsla color_hsla = rgba_to_hsla(color);
+                                *((uchar *)p) = round(color_hsla.lightness * color_hsla.alpha * 255);
+                            } else {
+                                *((uchar *)p) = round(color.alpha * 255);
+                                *(((uchar *)p) + 1) = round(color.red * 255);
+                                *(((uchar *)p) + 2) = round(color.green * 255);
+                                *(((uchar *)p) + 3) = round(color.blue * 255);
+                            }
+                        }
                     }
+                    
                 } else if (minfo.type==_jit_sym_long) {
-                    bp += plane*4;
-                    for (i=0; i<argc; i++,j++) {
-                        p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
-                        *((t_int32 *)p) = jit_atom_getlong(argv+i);
-                    }
+                    /*                bp += plane*4;
+                     for (i=0; i<argc; i++,j++) {
+                     p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
+                     *((t_int32 *)p) = jit_atom_getlong(argv+i);
+                     } */
                 } else if (minfo.type==_jit_sym_float32) {
-                    bp += x->plane*4;
-                    for (i=0; i<argc; i++,j++) {
-                        p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
-                        *((float *)p) = jit_atom_getfloat(argv+i);
+                    for (long i = 0; i < actual_w; i++) {
+                        for (long j = 0; j < actual_h; j++) {
+                            jgraphics_image_surface_get_pixel(draw_surface, i, j, &color);
+                            p = bp + (j)*minfo.dimstride[1] + (i)*minfo.dimstride[0];
+                            if (minfo.planecount == 1) {
+                                t_jhsla color_hsla = rgba_to_hsla(color);
+                                *((float *)p) = color_hsla.lightness * color_hsla.alpha;
+                            } else {
+                                *(((float *)p)) = color.alpha;
+                                *(((float *)p) + 1) = color.red;
+                                *(((float *)p) + 2) = color.green;
+                                *(((float *)p) + 3) = color.blue;
+                            }
+                        }
                     }
-                } if (minfo.type==_jit_sym_float64) {
-                    bp += x->plane*8;
-                    for (i=0; i<argc; i++,j++) {
-                        p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
-                        *((double *)p) = jit_atom_getfloat(argv+i);
+                    
+                    /*                bp += x->plane*4;
+                     for (i=0; i<argc; i++,j++) {
+                     p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
+                     *((float *)p) = jit_atom_getfloat(argv+i);
+                     } */
+                } else if (minfo.type==_jit_sym_float64) {
+                    
+                    for (long i = 0; i < actual_w; i++) {
+                        for (long j = 0; j < actual_h; j++) {
+                            jgraphics_image_surface_get_pixel(draw_surface, i, j, &color);
+                            p = bp + (j)*minfo.dimstride[1] + (i)*minfo.dimstride[0];
+                            if (minfo.planecount == 1) {
+                                t_jhsla color_hsla = rgba_to_hsla(color);
+                                *((double *)p) = color_hsla.lightness * color_hsla.alpha;
+                            } else {
+                                *((double *)p) = color.alpha;
+                                *(((double *)p) + 1) = color.red;
+                                *(((double *)p) + 2) = color.green;
+                                *(((double *)p) + 3) = color.blue;
+                            }
+                        }
                     }
+                    
+                    /*                bp += x->plane*8;
+                     for (i=0; i<argc; i++,j++) {
+                     p = bp + (j/minfo.dim[0])*minfo.dimstride[1] + (j%minfo.dim[0])*minfo.dimstride[0];
+                     *((double *)p) = jit_atom_getfloat(argv+i);
+                     } */
                 }
-                
-                jit_object_method(matrix,_jit_sym_lock,savelock);
             }
-        } else {
-            jit_error_sym(x,_jit_sym_err_calculate);
+
+            jit_object_method(matrix,_jit_sym_lock,savelock);
         }
+    } else {
+        object_error((t_object *)x, "Can't find jitter matrix!");
+//        jit_error_sym(x,_jit_sym_err_calculate);
     }
-    
-	send_changed_bang_and_automessage_if_needed((t_notation_obj *)x);
-	
-	if (must_repaint)
-		notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+        
+
+    jgraphics_destroy(draw_g);
+    jgraphics_surface_destroy(draw_surface);
 }
+
+
 
 
 // INLET INTERACTION:

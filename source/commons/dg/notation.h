@@ -4743,6 +4743,9 @@ typedef struct _notation_obj
     char                curr_realtime_mode;     ///< Flag telling if realtime mode is currently active
     t_realtime_attrs    curr_realtime_attrs;    ///< Current value of the realtime attributes (updated right before the realtime mode is turned on)
     
+    // jitter painting stuff
+    t_symbol            *jit_destination_matrix; ///< If non-NULL, also mirrors the painting of the canvas on the selected jitter Matrix.
+    
     // backward compatibility stuff
     long                bwcompatible;           ///< Number of the version of bach towards which the object needs to be compatible. E.g. if 7900, this
                                                 ///< will ensure compatibility (whenever possible...) with bach 0.7.9, and so on.

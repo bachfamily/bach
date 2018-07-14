@@ -9,6 +9,7 @@
 #define _BACH_GRAPHICS_H_
 
 #include "bach.h"
+#include "jit.common.h"
 
 #ifdef USE_GPC_LIBRARY
 #include "gpc.h"
@@ -125,6 +126,13 @@ typedef struct _bach_casting_ray
 	// distance between intersection
 	double dist;
 } t_bach_casting_ray;
+
+
+
+typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t_rect rect);
+
+
+
 
 
 //// POLYGON STUFF
@@ -1401,6 +1409,14 @@ void paint_rect(t_jgraphics* g, t_rect *rect, t_jrgba *border_color, t_jrgba *fi
 void paint_background(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *fill_color, double corner_roundness);
 void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_color, double border_size, double corner_roundness);
 
+
+
+
+/// JITTER PAINTING STUFF
+
+void obj_paint_to_jitter_matrix(t_object *x, t_symbol *matrix_name, long width, long height, bach_paint_ext_fn obj_paint_ext);
+
+
 #endif
 
 #ifdef BACH_JUCE
@@ -1408,7 +1424,8 @@ void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const cha
 void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft, char single_line, char use_ellipsis);
 char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen);
 #endif
-	
+
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE
