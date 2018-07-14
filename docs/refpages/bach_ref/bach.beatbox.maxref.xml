@@ -167,6 +167,24 @@
 				Perform the boxing operation on the most recently received input data.
 			</description>
 		</method>
+		<method name="clear">
+			<arglist />
+			<digest>
+				Clear specific inlet
+			</digest>
+			<description>
+				Resets the llll of a specific parameter (depending ont the inlet).
+			</description>
+		</method>
+		<method name="clearall">
+			<arglist />
+			<digest>
+				Clear all inlets
+			</digest>
+			<description>
+				Resets the llll of all parameters.
+			</description>
+		</method>
 		<method name="llll">
 			<arglist />
 			<digest>

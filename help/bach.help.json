@@ -764,6 +764,20 @@
 				"seealso" : [ "articulation" ],
 				"tags" : [ "appearance", "articulation", "show", "hide", "showarticulations", "showarticulationsextensions" ],
 				"title" : [ "Articulations" ]
+			},
+			"Mirrortojitter" : {
+				"filename" : [ "bach.help.notation.appearance.90_mirrortojitter.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "notifypaint", "automatic+mirroring+jitter" ],
+				"tags" : [ "appearance", "mirror", "display", "jitter", "matrix", "paint", "jit", "paintjit", "draw", "manual", "mirroring" ],
+				"title" : [ "Manual mirroring to Jitter matrix" ]
+			},
+			"Automirrortojitter" : {
+				"filename" : [ "bach.help.notation.appearance.91_automirrortojitter.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "notifypaint", "manual+mirroring+jitter" ],
+				"tags" : [ "appearance", "mirror", "display", "jitter", "matrix", "paint", "jit", "draw", "automatic", "mirroring", "sync", "keep", "jitmatrix" ],
+				"title" : [ "Automatic mirroring to Jitter matrix" ]
 			}
 		},
 		"Articulations" : {
@@ -3192,6 +3206,13 @@
 				"seealso" : [ "cursor", "domain", "loop" ],
 				"tags" : [ "query", "queries", "notify", "notification", "message", "incoming" ],
 				"title" : [ "Notify incoming messages" ]
+			},
+			"Notifywhenpainted" : {
+				"filename" : [ "bach.help.notation.queries and notifications.40_notifywhenpainted.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "jitmatrix" ],
+				"tags" : [ "query", "queries", "notify", "notification", "paint", "display", "refresh", "redraw", "draw", "jitter", "jit", "matrix", "mirror", "display", "notifypaint" ],
+				"title" : [ "Notify when display refreshes" ]
 			}
 		},
 		"Rhythm and beams" : {

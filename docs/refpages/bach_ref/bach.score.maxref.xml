@@ -6214,6 +6214,19 @@
 				<br />				See also:<m>llll</m>,<m>autobeam</m><br />
 			</description>
 		</method>
+		<method name="paintjit">
+			<arglist />
+			<digest>
+				Draw the score onto a jitter matrix
+			</digest>
+			<description>
+				The <m>paintjit</m> message, followed by the name of a jitter matrix,
+				mirrors the canvas of the object onto the jitter matrix.
+				The matrix should have either 1 or 4 planes, and should have at least 2 dimensions.
+				The first two dimensions are used; the matrix is automatically resized to the needed dimensions.
+				Retina resolution is not supported (retina objects are mirrored in standard resolution).
+			</description>
+		</method>
 		<method name="paste">
 			<arg name="replace" optional="1" type="symbol" />
 			<arg name="slot" optional="1" type="symbol" />
@@ -6851,16 +6864,6 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
-			</digest>
-			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -6870,6 +6873,16 @@
 				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
 				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
 				<br />				See also:<m>eraseslot</m><br />
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the custom articulations definition to the default one
+			</digest>
+			<description>
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="resetwidthfactors">
@@ -9149,8 +9162,8 @@
 			<description>
 				Toggles the ability for the duration line (if shown) to span sequences of
 				tied notes. Values are: 0 = Don't span ties (default); 1 = Span ties; 2 = Span ties,
-				and also hide notes and ties (i.e. only the duration line is kept to symbolize the duration of the
-				tied sequence).
+				and also hide notes; 3 = 2 = Span ties, and also hide notes and ties
+				(i.e. only the duration line is kept to symbolize the duration of the tied sequence).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
@@ -9557,6 +9570,21 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="7" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Inset" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jitmatrix" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Mirror To Jitter Matrix
+			</digest>
+			<description>
+				Sets the name of a jitter matrix to which the canvas should be mirrored
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mirror To Jitter Matrix" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -10428,7 +10456,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
-		<attribute name="notificationsformessages" get="1" set="1" type="int" size="1">
+		<attribute name="notifymessages" get="1" set="1" type="int" size="1">
 			<digest>
 				Notifications When Changed Via Messages
 			</digest>
@@ -10441,6 +10469,23 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Changed Via Messages" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="notifypaint" get="1" set="1" type="int" size="1">
+			<digest>
+				Notifications When Display Is Refreshed
+			</digest>
+			<description>
+				Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
+				whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Display Is Refreshed" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
