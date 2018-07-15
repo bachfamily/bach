@@ -21,6 +21,8 @@
 #include "llll_hatom_change.h"
 #include "llll_comparisons.h"
 #include "bach_threads.h"
+#include <unordered_map>
+
 #ifdef BACH_JITCLANG
 #include "bach_jitclang.h"
 #else
@@ -268,6 +270,11 @@ typedef struct _simpllelem {
 	struct _simpllelem	*s_next;
 } t_simpllelem;
 
+class t_function;
+
+template <typename T> class t_safeTable;
+
+class t_sharedVariable;
 
 // the bach NOBOX object
 typedef struct _bach {
@@ -308,6 +315,10 @@ typedef struct _bach {
 	t_bool				b_loadtime;
     
     t_hashtab           *b_reservedselectors;
+    
+    t_safeTable<t_sharedVariable> *b_gvt;
+    std::unordered_map<std::string, t_function *> *b_bifTable;
+    
 } t_bach;
 
 
