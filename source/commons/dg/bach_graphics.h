@@ -9,7 +9,6 @@
 #define _BACH_GRAPHICS_H_
 
 #include "bach.h"
-#include "jit.common.h"
 
 #ifdef USE_GPC_LIBRARY
 #include "gpc.h"
@@ -128,8 +127,6 @@ typedef struct _bach_casting_ray
 } t_bach_casting_ray;
 
 
-
-typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t_rect rect);
 
 
 
@@ -1411,10 +1408,6 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
 
 
 
-
-/// JITTER PAINTING STUFF
-
-void bach_paint_to_jitter_matrix(t_object *x, t_symbol *matrix_name, long width, long height, bach_paint_ext_fn obj_paint_ext);
 
 
 #endif

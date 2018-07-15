@@ -49,6 +49,7 @@
 	Daniele Ghisi
 */
 
+
 #include "llll_modifiers.h"
 #include "roll_files.h" //< roll.h is included in here
 #include "notation_attrs.h"
@@ -62,7 +63,10 @@
 #include "ext_critical.h"
 #include <stdio.h>
 #include <locale.h>
-#include <time.h> 
+#include <time.h>
+
+#include "bach_jit.h"
+
 
 #ifdef MAC_VERSION
 //#define AA_PLAY

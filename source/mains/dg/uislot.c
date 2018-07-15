@@ -60,6 +60,8 @@
 #include <locale.h>
 #include <time.h> 
 
+#include "bach_jit.h"
+
 
 typedef struct _uislot 
 {

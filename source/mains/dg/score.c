@@ -56,6 +56,8 @@
 #include "notation_goto.h"
 #include "ext_drag.h"
 
+#include "bach_jit.h"
+
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, loop_region_as_llll, score_getattr_loop)
 
 
