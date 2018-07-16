@@ -86,6 +86,7 @@ void roll_assist(t_roll *x, void *b, long m, long a, char *s);
 void roll_free(t_roll *x);
 t_roll* roll_new(t_symbol *s, long argc, t_atom *argv);
 void roll_paint(t_roll *x, t_object *view);
+void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect);
 void roll_paint_to_jitter_matrix(t_roll *x, t_symbol *matrix_name);
 t_max_err roll_notify(t_roll *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
 
@@ -5350,6 +5351,9 @@ int T_EXPORT main(void){
     class_addmethod(c, (method) roll_exportmidi, "exportmidi", A_GIMME, 0);
 
     
+    class_addmethod(c, (method) roll_exportimage, "exportimage", A_GIMME, 0);
+
+    
 	// @method exportom @digest Export to OpenMusic
 	// @description The <m>exportom</m> message saves the content of the <o>bach.roll</o> object in a way that OpenMusic will be able to open
 	// (by selecting "Import" and then "From bach" from the File menu). The content of a <o>bach.roll</o> can be imported into an OpenMusic's "chord-seq"
@@ -6032,7 +6036,7 @@ t_max_err roll_setattr_vzoom(t_roll *x, t_object *attr, long ac, t_atom *av){
 			recompute_total_length((t_notation_obj *) x);
             recalculate_all_chord_parameters(x);
 			calculate_ms_on_a_line((t_notation_obj *) x);
-			x->r_ob.needed_uheight = notationobj_get_supposed_standard_height((t_notation_obj *) x);
+			x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *) x);
 			redraw_vscrollbar((t_notation_obj *) x, 1); // redraw is inside here
 		}
 	}
@@ -9728,7 +9732,7 @@ long roll_oksize(t_roll *x, t_rect *newrect)
 			notationobj_set_vzoom_depending_on_height((t_notation_obj *) x, newrect->height);
 		else {
 			notationobj_reset_size_related_stuff((t_notation_obj *) x);
-			x->r_ob.needed_uheight = notationobj_get_supposed_standard_height((t_notation_obj *)x);
+			x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *)x);
 			x->r_ob.needed_uheight_for_one_system = x->r_ob.needed_uheight / ((x->r_ob.num_systems > 0) ? x->r_ob.num_systems : 1);
 		}
         
@@ -9788,7 +9792,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
 	x->r_ob.obj_type = k_NOTATION_OBJECT_ROLL;
 	
 	notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_ROLL, (rebuild_fn) set_roll_from_llll, (notation_obj_fn) create_whole_roll_undo_tick, 
-							(notation_obj_notation_item_fn) force_notation_item_inscreen);
+							(notation_obj_notation_item_fn) force_notation_item_inscreen, (bach_paint_ext_fn)roll_paint_ext);
 
 	roll_declare_bach_attributes(x);
 	
@@ -10701,22 +10705,28 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 /*        double old_fadestart_no_inset = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_FADE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
         double old_end_x_to_repaint_no_inset = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_DELETE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
 
-        paint_line(g, build_jrgba(1, 0, 0, 1), end_x_to_repaint_no_inset, 0, end_x_to_repaint_no_inset, 1000, 1);
-        paint_line(g, build_jrgba(0, 1, 0, 1), fadestart_no_inset, 0, fadestart_no_inset, 1000, 1);
         paint_dashed_line(g, build_jrgba(1, 0, 0, 1), old_end_x_to_repaint_no_inset, 0, old_end_x_to_repaint_no_inset, 1000, 1, 5);
         paint_dashed_line(g, build_jrgba(0, 1, 0, 1), old_fadestart_no_inset, 0, old_fadestart_no_inset, 1000, 1, 5);
- */
+ 
+        paint_line(g, build_jrgba(1, 0, 0, 1), end_x_to_repaint_no_inset, 0, end_x_to_repaint_no_inset, 1000, 1);
+        paint_line(g, build_jrgba(0, 1, 0, 1), fadestart_no_inset, 0, fadestart_no_inset, 1000, 1);
+*/
+        if (!x->r_ob.fade_predomain)
+            end_x_to_repaint_no_inset = fadestart_no_inset = get_predomain_width((t_notation_obj *)x);
+        
         lock_general_mutex((t_notation_obj *)x);
 		
         // painting label families
         if (x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_VENN)
             paint_venn_label_families((t_notation_obj *)x, view, g);
 
-		// painting ruler&grids
-		paint_ruler_and_grid_for_roll((t_notation_obj *)x, g, rect);
-		
-		// repainting left part
-		repaint_left_background_part((t_notation_obj *)x, g, rect, fadestart_no_inset, end_x_to_repaint_no_inset);
+        if (x->r_ob.fade_predomain) {
+            paint_ruler_and_grid_for_roll((t_notation_obj *)x, g, rect);
+            repaint_left_background_part((t_notation_obj *)x, g, rect, fadestart_no_inset, end_x_to_repaint_no_inset);
+        } else {
+            repaint_left_background_part((t_notation_obj *)x, g, rect, fadestart_no_inset, end_x_to_repaint_no_inset);
+            paint_ruler_and_grid_for_roll((t_notation_obj *)x, g, rect);
+        }
 		
 		for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
 			double k; 
@@ -10874,7 +10884,7 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
 		else
 			notationobj_reset_size_related_stuff((t_notation_obj *) x);
 
-		x->r_ob.needed_uheight = notationobj_get_supposed_standard_height((t_notation_obj *) x);
+		x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *) x);
 		x->r_ob.needed_uheight_for_one_system = x->r_ob.needed_uheight / ((x->r_ob.num_systems > 0) ? x->r_ob.num_systems : 1);
 		calculate_ms_on_a_line((t_notation_obj *) x);
 		update_vscrollbar((t_notation_obj *) x, 0);

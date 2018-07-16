@@ -1015,3 +1015,211 @@ roll_dowritemidi_error:
 		llll_free(arguments);
 	return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
 }
+
+
+void get_filename_extension(char *filename, char *ext, char also_truncate_filename)
+{
+    char *dot = strrchr(filename, '.');
+    if (!dot || dot == filename)
+        ext[0] = 0;
+    else {
+        strcpy(ext, dot + 1);
+        if (also_truncate_filename)
+            *dot = 0;
+    }
+}
+
+
+
+t_max_err roll_dowriteimage(t_roll *x, t_symbol *s, long ac, t_atom *av)
+{
+    t_llll *arguments = (t_llll *) atom_getobj(av);
+    char ok = true;
+    t_symbol *view = gensym("line");
+    long dpi = 72, must_cleanup = 1, fadepredomain = -1;
+    t_symbol *filename_sym = NULL, *type_sym = gensym("png");
+    double msperline = x->r_ob.domain;
+
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "sssidi",
+                                         _sym_filename, &filename_sym,
+                                         _sym_type, &type_sym,
+                                         gensym("view"), &view,         // can be one of the following: "raw", "line", "multiline", "scroll"
+                                         gensym("dpi"), &dpi,
+                                         gensym("msperline"), &msperline,
+                                         gensym("fadedomain"), &fadepredomain
+                                         );
+    
+    if (view != gensym("raw") && view != gensym("line") && view != gensym("multiline") && view != gensym("scroll")) {
+        object_warn((t_object *)x, "Unknown view mode!");
+        view = gensym("line");
+    }
+    
+    must_cleanup = (view != gensym("raw"));
+    
+    if (fadepredomain < 0)
+        fadepredomain = 1; //!must_cleanup;
+    
+    if (arguments->l_size) {
+        filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
+        if (filename_sym)
+            llll_destroyelem(arguments->l_head);
+    }
+
+
+    if (filename_sym) {
+        // getting output path
+        short path = 0;
+        char filename[MAX_FILENAME_CHARS];
+        char filename_no_ext[MAX_FILENAME_CHARS];
+        char extension[MAX_FILENAME_CHARS];
+        path_frompotentialpathname(filename_sym->s_name, &path, filename);
+        strncpy_zero(filename_no_ext, filename, MAX_FILENAME_CHARS);
+        get_filename_extension(filename_no_ext, extension, true);
+
+        
+        //    lock_general_mutex((t_notation_obj *)x);
+        long w, h;
+        long num_shots = 1;
+        
+        long show_hscrollbar_prev = x->r_ob.show_hscrollbar, show_vscrollbar_prev = x->r_ob.show_vscrollbar;
+        long legend_prev = x->r_ob.legend;
+        double inner_width_prev = x->r_ob.inner_width, inner_height_prev = x->r_ob.inner_height;
+        long show_border_prev = x->r_ob.show_border;
+        double length_ms_prev = x->r_ob.length_ms;
+        double screen_ms_start_prev = x->r_ob.screen_ms_start;
+        long fade_predomain_prev = x->r_ob.fade_predomain;
+        
+        x->r_ob.fade_predomain = fadepredomain;
+        
+        if (must_cleanup) {
+            close_slot_window((t_notation_obj *)x);
+            x->r_ob.show_hscrollbar = x->r_ob.show_vscrollbar = 0;
+            x->r_ob.legend = 0;
+            x->r_ob.show_border = false;
+
+            if (view == gensym("line")) {
+                x->r_ob.inner_width = MAX(inner_width_prev, deltaonset_to_deltaxpixels((t_notation_obj *)x, x->r_ob.length_ms) + get_predomain_width((t_notation_obj *)x));
+                x->r_ob.inner_height = notationobj_get_supposed_standard_uheight((t_notation_obj *)x) * x->r_ob.zoom_y;
+            } else if (view == gensym("scroll") || view == gensym("page") || view == gensym("multiline")) {
+                if (msperline != x->r_ob.domain) {
+                    x->r_ob.inner_width = deltaonset_to_deltaxpixels((t_notation_obj *)x, msperline) + get_predomain_width((t_notation_obj *)x);
+                    x->r_ob.inner_height = notationobj_get_supposed_standard_uheight((t_notation_obj *)x) * x->r_ob.zoom_y;
+                }
+            }
+            
+            if (view == gensym("multiline") || view == gensym("scroll") || view == gensym("page")) {
+                num_shots = ceil(length_ms_prev / msperline);
+                x->r_ob.length_ms = num_shots * msperline;
+            }
+
+            redraw_hscrollbar((t_notation_obj *) x, 1);
+            redraw_vscrollbar((t_notation_obj *) x, 1);
+            calculate_ms_on_a_line((t_notation_obj *) x);
+            recalculate_num_systems((t_notation_obj *)x);
+            x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
+            x->r_ob.firsttime = true;
+
+            w = x->r_ob.inner_width + 2 * x->r_ob.j_inset_x, h = x->r_ob.inner_height + 2 * x->r_ob.j_inset_y;
+        } else {
+            w = x->r_ob.width, h = x->r_ob.height;
+        }
+        
+        t_jsurface *page_surface = NULL;
+        t_jgraphics *page_g = NULL;
+        
+        if (view == gensym("scroll") || view == gensym("page")) {
+            page_surface = jgraphics_image_surface_create(JGRAPHICS_FORMAT_ARGB32, w, h * num_shots);
+            page_g = jgraphics_create(page_surface);
+        }
+
+        
+        for (long i = 1; i <= num_shots; i++) {
+            // adjusting filename if needed
+            char filename_temp[MAX_FILENAME_CHARS];
+            if (view == gensym("multiline"))
+                snprintf_zero(filename_temp, MAX_FILENAME_CHARS, "%s_%05d.%s", filename_no_ext, i, extension);
+            else
+                snprintf_zero(filename_temp, MAX_FILENAME_CHARS, "%s", filename);
+            
+            // setting domain properly
+            if (view == gensym("multiline") || view == gensym("scroll") || view == gensym("page")) {
+                x->r_ob.screen_ms_start = (i - 1) * msperline;
+                redraw_hscrollbar((t_notation_obj *) x, 2);
+            }
+            
+            t_rect shot_rect = build_rect(0, 0, w, h);
+            t_jsurface *shot_surface = jgraphics_image_surface_create(JGRAPHICS_FORMAT_ARGB32, w, h);
+            t_jgraphics *shot_g = jgraphics_create(shot_surface);
+            
+            jgraphics_set_source_rgba(shot_g, 0, 0, 0, 1.);
+            
+            (x->r_ob.paint_ext_function)((t_object *)x, NULL, shot_g, shot_rect);
+            
+            if (view == gensym("scroll") || view == gensym("page")) {
+                jgraphics_image_surface_draw(page_g, shot_surface, shot_rect, build_rect(0, (i-1) * h, w, h));
+            } else {
+                if (type_sym && strcasecmp(extension, "png") == 0) {
+                    jgraphics_image_surface_writepng(shot_surface, filename_temp, path, dpi);
+                } else if (type_sym && (strcasecmp(extension, "jpeg") == 0 || strcasecmp(extension, "jpg") == 0)) {
+                    jgraphics_image_surface_writejpeg(shot_surface, filename_temp, path);
+                }
+            }
+            
+            jgraphics_destroy(shot_g);
+            jgraphics_surface_destroy(shot_surface);
+        }
+        
+        if ((view == gensym("scroll") || view == gensym("page")) && page_g && page_surface) {
+            if (type_sym && strcasecmp(extension, "png") == 0) {
+                jgraphics_image_surface_writepng(page_surface, filename, path, dpi);
+            } else if (type_sym && (strcasecmp(extension, "jpeg") == 0 || strcasecmp(extension, "jpg") == 0)) {
+                jgraphics_image_surface_writejpeg(page_surface, filename, path);
+            }
+        }
+        
+        if (page_g)
+            jgraphics_destroy(page_g);
+        if (page_surface)
+            jgraphics_surface_destroy(page_surface);
+        
+        //    unlock_general_mutex((t_notation_obj *)x);
+        
+        if (must_cleanup) {
+            x->r_ob.show_hscrollbar = show_hscrollbar_prev;
+            x->r_ob.show_vscrollbar = show_vscrollbar_prev;
+            x->r_ob.legend = legend_prev;
+            x->r_ob.show_border = show_border_prev;
+
+            x->r_ob.inner_width = inner_width_prev;
+            x->r_ob.inner_height = inner_height_prev;
+            
+            x->r_ob.screen_ms_start = screen_ms_start_prev;
+            x->r_ob.length_ms = length_ms_prev;
+
+            redraw_hscrollbar((t_notation_obj *) x, 1);
+            redraw_vscrollbar((t_notation_obj *) x, 1);
+            calculate_ms_on_a_line((t_notation_obj *) x);
+            recalculate_num_systems((t_notation_obj *)x);
+            x->r_ob.system_jump = get_system_jump((t_notation_obj *)x);
+            x->r_ob.firsttime = true;
+            notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
+        }
+        
+        x->r_ob.fade_predomain = fade_predomain_prev;
+        
+    } else {
+        ok = false;
+    }
+    
+    return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
+}
+
+
+
+void roll_exportimage(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_atom av;
+    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    atom_setobj(&av, arguments);
+    defer(x, (method)roll_dowriteimage, s, 1, &av);
+}

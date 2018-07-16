@@ -807,6 +807,10 @@ typedef t_jrgba (*bach_inspector_color_fn)(void *notation_obj, void *elem, long 
 typedef char (*delete_item_fn)(void *notation_obj, void *notation_item, char *need_check_scheduling);
 
 
+/** Function to be wrapped by the object's paint function
+    @ingroup display
+ */
+typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t_rect rect);
 
 
 
@@ -4137,7 +4141,8 @@ typedef struct _notation_obj
 	double		length_ux;			///< Length of the whole score in unscaled pixels
                                     ///< Beware: operations like inscreenpos etc. might change this length, in order to appropriately show more portion of score.
     char        highlight_domain;   ///< If toggled, highlights the domain portion of the notation item (useful to align other Max UI objects on top of it).
-	
+    char        fade_predomain;     ///< Fade a small left portion of score, before the domain start, with an alpha gradient
+    
 	// horizontal scrolling
 	char		show_hscrollbar;		///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
 	char		need_hscrollbar;		///< Flag telling if we need (1) or not (0) the horizontal scrollbar
@@ -4711,6 +4716,7 @@ typedef struct _notation_obj
 	notation_obj_fn					whole_obj_undo_tick_function;	///< Pointer to the function creating the undo tick for the whole object
 	notation_obj_notation_item_fn	force_notation_item_inscreen;	///< Pointer to a function forcing a given notation item to be inside the screen
     notation_obj_timepoint_to_ux_fn timepoint_to_unscaled_xposition;///< Pointer to a function (if any), converting a timepoint into an unscaled x position (makes sense for bach.score only)
+    bach_paint_ext_fn               paint_ext_function;             ///< Pointer to the function painting the object (in extended bach mode)
     
 	// attributes
 	t_bach_inspector_manager	m_inspector;						///< Inspector manager
@@ -4870,6 +4876,14 @@ double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system);
 	@return				The onset in milliseconds
  */
 double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system);
+
+
+/**    Get the horizontal width of the portion of score at the left of the domain starting point (including clefs, key signatures, etc.)
+    @ingroup            conversions
+    @param r_ob            The notation object
+    @return                The horizontal width of the portion of score at the left of the domain, in pixels
+ */
+double get_predomain_width(t_notation_obj *r_ob);
 
 
 /**	Convert a horizontal pixel distance into a time distance in milliseconds (only usable by [bach.roll]) 
@@ -6766,8 +6780,9 @@ void initialize_rollvoice(t_notation_obj *r_ob, t_rollvoice *voice, long voice_n
 	@param	rebuild			Pointer to the function rebuilding the whole object from a given llll. Must be implemented for each notation object.
 	@param	whole_undo_tick	Pointer to the function creating an undo tick for the whole notation object. Must be implemented for each notation object.
 	@param	force_notation_item_inscreen		Pointer to a function forcing a notation item to be inside the screen; leave NULL if unneeded.
+    @param  bach_paint_ext_fn paint_extended    Pointer to the paint function (in extended bach mode, i.e. with a bach_paint_ext_fn signature)
 */
-void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen);
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, bach_paint_ext_fn paint_extended);
 
 
 /**	Initialize (or re-initialize) slot information with a default slotinfo 
@@ -18764,7 +18779,7 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
 void notationobj_handle_change_cursors_on_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers);
 
 long notationobj_get_notification_outlet(t_notation_obj *r_ob);
-double notationobj_get_supposed_standard_height(t_notation_obj *r_ob);
+double notationobj_get_supposed_standard_uheight(t_notation_obj *r_ob);
 void notationobj_reset_size_related_stuff(t_notation_obj *r_ob);
 void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double height);
 

@@ -10479,17 +10479,24 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 		t_scorevoice *voice;
 		double system_jump = x->r_ob.system_jump;
 
+        if (!x->r_ob.fade_predomain)
+            end_x_to_repaint_no_inset = fadestart_no_inset = get_predomain_width((t_notation_obj *)x);
+
         // painting label families
         if (x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_VENN)
             paint_venn_label_families((t_notation_obj *)x, view, g);
 
 //		dev_post("painting stuff2");
-		paint_ruler_and_grid_for_score(x, g, rect);
-		
-		// repaint left background part
-		repaint_left_background_part((t_notation_obj *)x, g, rect, fadestart_no_inset, end_x_to_repaint_no_inset);
-		
-		// repaint first ts if needed
+
+        if (x->r_ob.fade_predomain) {
+            paint_ruler_and_grid_for_score(x, g, rect);
+            repaint_left_background_part((t_notation_obj *)x, g, rect, fadestart_no_inset, end_x_to_repaint_no_inset);
+        } else {
+            repaint_left_background_part((t_notation_obj *)x, g, rect, fadestart_no_inset, end_x_to_repaint_no_inset);
+            paint_ruler_and_grid_for_score(x, g, rect);
+        }
+
+        // repaint first ts if needed
 		if (x->r_ob.spacing_type == k_SPACING_PROPORTIONAL) {
 			for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
 				if (voice->firstmeasure && voice->firstmeasure && unscaled_xposition_to_xposition((t_notation_obj *) x, x->firsttuttipoint->offset_ux) > 0)
@@ -10835,6 +10842,9 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
 		x->r_ob.current_num_grid_subdivisions = num_subdivisions;
 		
 		for (i = 0, ms = start_ms; ms < screen_ms_end; ms += step_ms, i++){
+            if (!x->r_ob.fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < x->r_ob.screen_ms_start)
+                continue;
+
 			double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
 			if (i % num_subdivisions == 0) { // main division
 				if (x->r_ob.show_grid)
@@ -10861,7 +10871,11 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
 		// labels
 		if (x->r_ob.show_ruler_labels && x->r_ob.ruler > 0) {
 			for (ms = start_ms, i = 0, div = 0; ms < screen_ms_end; ms += x->r_ob.grid_step_ms, i+= num_subdivisions){
-				double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
+
+                if (!x->r_ob.fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < x->r_ob.screen_ms_start)
+                    continue;
+                
+                double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
 				if (pix > right_cur + x->r_ob.ruler_labels_font_size * 3 * x->r_ob.zoom_y) {
 					if (x->r_ob.ruler == 1 || x->r_ob.ruler == 3) { // ruler above
 						if ((div + 1) % label_step == 0)

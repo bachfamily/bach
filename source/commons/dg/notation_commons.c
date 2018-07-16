@@ -42,7 +42,7 @@ long notationobj_get_notification_outlet(t_notation_obj *r_ob)
 }
 
 // returns the height for base pt, vzoom = 1.
-double notationobj_get_supposed_standard_height(t_notation_obj *r_ob)
+double notationobj_get_supposed_standard_uheight(t_notation_obj *r_ob)
 {
     long num_staves = get_num_staves(r_ob, true);
     // calculating vertical spacing
@@ -70,7 +70,7 @@ void notationobj_reset_size_related_stuff(t_notation_obj *r_ob)
 
 void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double height)
 {
-    double supposedheight = notationobj_get_supposed_standard_height(r_ob);
+    double supposedheight = notationobj_get_supposed_standard_uheight(r_ob);
     r_ob->needed_uheight = supposedheight;
     r_ob->needed_uheight_for_one_system = supposedheight / ((r_ob->num_systems > 0) ? r_ob->num_systems : 1);
     r_ob->zoom_y = MAX(0.01, height / supposedheight);
@@ -3444,14 +3444,17 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         long count = 0;
         long ms_limit = MAX(1000000, r_ob->length_ms);
 		for (pix = start_x, i = tick_offset, ms = start_ms; pix < graphic_rect.width && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
-			
+            
             if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
                 pix = onset_to_xposition(r_ob, ms, NULL);
                 if (prev_pix == pix) count++; else count = 0;
                 if (count > 100) break;
                 if (pix != pix) { pix = prev_pix; continue; } // NaN
             }
-            
+
+            if (!r_ob->fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < r_ob->screen_ms_start)
+                continue;
+
             if (pix < 0)
                 continue;
             
@@ -3489,6 +3492,10 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
             double prev_pix = -10000000;
             long count = 0;
 			for (ms = start_ms, pix = start_x, i = tick_offset, div = 0; pix < graphic_rect.width && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
+
+                if (!r_ob->fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < r_ob->screen_ms_start)
+                    continue;
+                
                 if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
 					pix = onset_to_xposition(r_ob, ms, NULL);
                     if (prev_pix == pix) count++; else count = 0;
@@ -3937,7 +3944,8 @@ long yposition_to_systemnumber(t_notation_obj *r_ob, double yposition){
 	}
 }
 
-double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system){
+double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system)
+{
 	long this_system;
 	double res = 0;
 	if (system) {
@@ -3968,7 +3976,17 @@ double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system){
 	return res;
 }
 
-double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system){
+
+double get_predomain_width(t_notation_obj *r_ob)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+        return onset_to_xposition(r_ob, r_ob->screen_ms_start, NULL);
+    else
+        return unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start);
+}
+
+double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system)
+{
 	double res = system * r_ob->ms_on_a_line + r_ob->screen_ms_start +
 				(((xposition - r_ob->j_inset_x) / r_ob->zoom_y) - CONST_ROLL_UX_LEFT_START - r_ob->key_signature_uwidth - r_ob->voice_names_uwidth - r_ob->additional_ux_start_pad) / (CONST_X_SCALING * r_ob->zoom_x);
 	if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
@@ -30665,6 +30683,11 @@ void update_total_length_from_length_ms_till_last_note(t_notation_obj *r_ob, dou
 
 }
 
+// from_what:
+// 0 = we have the information on the x of the scrollbar;
+// 1 = we have the information from 0. to 1. (relative: 0=start/1=end);
+// 2 = we have the information about the starting ms of the window
+// 3 = like 2, but don't mess around with auto-stuff, we
 void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 {
 	char obj_type = r_ob->obj_type;
@@ -34994,7 +35017,7 @@ t_jrgba partidx_to_color(long part_idx)
     return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false);
 }
 
-void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen)
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, bach_paint_ext_fn paint_extended)
 {
 	long i;
     
@@ -35114,6 +35137,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
 	r_ob->rebuild_function = rebuild;
 	r_ob->whole_obj_undo_tick_function = whole_undo_tick;
 	r_ob->force_notation_item_inscreen = force_notation_item_inscreen;
+    r_ob->paint_ext_function = paint_extended;
 	
 	r_ob->selected_slot_items = llll_make();
 	r_ob->item_changed_at_mousedown = 0;
@@ -36943,7 +36967,7 @@ void calculate_voice_offsets(t_notation_obj *r_ob)
 	// re-setting each voice offset
 	t_voice *voice = r_ob->firstvoice;
 	double offset = r_ob->head_vertical_additional_uspace * r_ob->zoom_y;
-	r_ob->needed_uheight = notationobj_get_supposed_standard_height(r_ob);
+	r_ob->needed_uheight = notationobj_get_supposed_standard_uheight(r_ob);
 	while (voice && voice->number < r_ob->num_voices) {
 		voice->offset_y = round(offset); // round is needed, in order to have non antialiased things!
         if (!voice->hidden && (voice->number == r_ob->num_voices - 1 || voice_get_next(r_ob, voice)->part_index == 0)) {
@@ -37538,7 +37562,7 @@ t_max_err notation_obj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long
 void auto_set_rectangle_size_do(t_notation_obj *r_ob)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-        r_ob->needed_uheight = notationobj_get_supposed_standard_height(r_ob);
+        r_ob->needed_uheight = notationobj_get_supposed_standard_uheight(r_ob);
         r_ob->needed_uheight_for_one_system = r_ob->needed_uheight / ((r_ob->num_systems > 0) ? r_ob->num_systems : 1);
         r_ob->system_jump = get_system_jump(r_ob);
         if (r_ob->link_vzoom_to_height) {
@@ -37550,7 +37574,7 @@ void auto_set_rectangle_size_do(t_notation_obj *r_ob)
             pres_rect.height = patch_rect.height = MAX(1, r_ob->needed_uheight * r_ob->zoom_y);
             jbox_set_presentation_size((t_object *)r_ob, &pres_rect);
             jbox_set_patching_size((t_object *)r_ob, &patch_rect);
-            //			post("zoom (known): %f  supposed: %f. this: %f.", r_ob->zoom_y, notationobj_get_supposed_standard_height((t_notationobj *)x), pres_rect.height);
+            //			post("zoom (known): %f  supposed: %f. this: %f.", r_ob->zoom_y, notationobj_get_supposed_standard_uheight((t_notationobj *)x), pres_rect.height);
             adjust_zoom_for_non_antialiased_lines(r_ob);
             calculate_voice_offsets(r_ob);
             r_ob->itsme = false;
@@ -37562,10 +37586,10 @@ void auto_set_rectangle_size_do(t_notation_obj *r_ob)
         jbox_get_patching_size((t_object *)r_ob, &patch_rect);
         
         r_ob->itsme = true;
-        pres_rect.height = patch_rect.height = MAX(1, notationobj_get_supposed_standard_height(r_ob) * r_ob->zoom_y);
+        pres_rect.height = patch_rect.height = MAX(1, notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y);
         jbox_set_presentation_size((t_object *)r_ob, &pres_rect);
         jbox_set_patching_size((t_object *)r_ob, &patch_rect);
-        //			post("zoom (known): %f  supposed: %f. this: %f.", r_ob->zoom_y, notationobj_get_supposed_standard_height((t_notation_obj *)x), pres_rect.height);
+        //			post("zoom (known): %f  supposed: %f. this: %f.", r_ob->zoom_y, notationobj_get_supposed_standard_uheight((t_notation_obj *)x), pres_rect.height);
         adjust_zoom_for_non_antialiased_lines(r_ob);
         calculate_voice_offsets(r_ob);
         r_ob->itsme = false;

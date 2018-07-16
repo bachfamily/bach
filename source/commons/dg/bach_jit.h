@@ -15,8 +15,6 @@
 BEGIN_CHECK_LINKAGE
 #endif
 
-typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t_rect rect);
-
 
 void bach_paint_to_jitter_matrix(t_object *x, t_symbol *matrix_name, long width, long height, bach_paint_ext_fn obj_paint_ext);
 

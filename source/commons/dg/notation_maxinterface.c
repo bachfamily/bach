@@ -1972,6 +1972,13 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // @description Toggles the ability to highlight the domain with the <m>selectioncolor</m>. This is useful, for instance, in order to
         // align other Max UI objects on the top of bach notation objects.
         
+        CLASS_ATTR_CHAR(c,"fadedomain",0, t_notation_obj, fade_predomain);
+        CLASS_ATTR_STYLE_LABEL(c,"fadedomain",0,"onoff","Fade Domain Over Clefs");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"fadedomain",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the ability to fade the portion of the score at left of the domain, near the clefs, with a transparency gradient
+        // (also see <m>highlightdomain</m>).
+        
         
         CLASS_ATTR_DOUBLE(c, "additionalstartpad", 0, t_notation_obj, additional_ux_start_pad);
 		CLASS_ATTR_STYLE_LABEL(c,"additionalstartpad",0,"text","Additional Start Pad");

@@ -35,6 +35,7 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 		New attribute @notifypaint to notify when display is refreshed
 
 - bach.roll, bach.score
+		New @fadedomain attribute
 		Now "dynamics2velocities" handles breakpoints
 		Fixed bug causing wrong breakpoint handling for "dynamics2velocities" in some situations
 		Added "part" as a possible variable for selection expressions

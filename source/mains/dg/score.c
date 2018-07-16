@@ -7382,7 +7382,7 @@ t_max_err score_setattr_vzoom(t_score *x, t_object *attr, long ac, t_atom *av){
 			double z = atom_getfloat(av); 
 			scoreapi_set_vzoom(x, z);
 			reset_all_articulations_positions((t_notation_obj *)x);
-			x->r_ob.needed_uheight = notationobj_get_supposed_standard_height((t_notation_obj *)x);
+			x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *)x);
 			redraw_vscrollbar((t_notation_obj *) x, 1);
 		}
 	}
@@ -9502,7 +9502,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
 	object_obex_lookup(x, gensym("#P"), &(x->r_ob.patcher_parent));
 
 	notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SCORE, (rebuild_fn) set_score_from_llll, 
-							(notation_obj_fn) create_whole_score_undo_tick, (notation_obj_notation_item_fn) force_notation_item_inscreen);
+							(notation_obj_fn) create_whole_score_undo_tick, (notation_obj_notation_item_fn) force_notation_item_inscreen, (bach_paint_ext_fn)score_paint_ext);
 
     x->r_ob.timepoint_to_unscaled_xposition = (notation_obj_timepoint_to_ux_fn)timepoint_to_unscaled_xposition;
     
