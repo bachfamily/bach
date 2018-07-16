@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 34.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 286.0, 97.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -45,9 +45,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 80.0, 109.0, 23.0 ],
+					"patching_rect" : [ 6.0, 119.0, 82.0, 23.0 ],
 					"style" : "",
-					"text" : "exportlilypondpdf"
+					"text" : "exportimage"
 				}
 
 			}
@@ -76,7 +76,7 @@
 					"numvoices" : 3,
 					"out" : "nnnnnnnn",
 					"outlettype" : [ "", "", "", "", "", "", "", "", "bang" ],
-					"patching_rect" : [ 6.0, 176.0, 585.0, 246.0 ],
+					"patching_rect" : [ 6.0, 202.0, 585.0, 246.0 ],
 					"pitcheditrange" : [ "null" ],
 					"showmeasurenumbers" : [ 1, 1, 1 ],
 					"stafflines" : [ 5, 5, 5 ],
@@ -99,7 +99,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 193.0, 116.5, 309.0, 40.0 ],
+					"patching_rect" : [ 166.0, 145.5, 309.0, 40.0 ],
 					"style" : "",
 					"text" : "Add a symbol if you need to specify the output file (otherwise a \"Choose File\" dialog appears)"
 				}
@@ -114,9 +114,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 25.0, 127.0, 152.0, 23.0 ],
+					"patching_rect" : [ 25.0, 154.0, 129.0, 23.0 ],
 					"style" : "",
-					"text" : "exportlilypondpdf foo.pdf"
+					"text" : "exportimage foo.png"
 				}
 
 			}
@@ -129,9 +129,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 126.0, 77.0, 162.0, 25.0 ],
+					"patching_rect" : [ 90.0, 119.0, 104.0, 25.0 ],
 					"style" : "",
-					"text" : "Export as pdf and open"
+					"text" : "Export image"
 				}
 
 			}
@@ -145,7 +145,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "See Also: exportlilypond",
+					"text" : "See Also: export+image+view, exportlilypondpdf",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -161,7 +161,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "Objects: bach.score",
+					"text" : "Objects: bach.roll, bach.score",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -178,7 +178,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 282.0, 23.0 ],
 					"style" : "",
-					"text" : "PDF export via LilyPond",
+					"text" : "Exporting scores as images",
 					"varname" : "title"
 				}
 
@@ -193,7 +193,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "Tags: data, lilypond, export, exportlilypondpdf, pdf, create",
+					"text" : "Tags: data, export, image, png, picture, save, exportimage",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -206,13 +206,13 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 2,
+					"linecount" : 4,
 					"maxclass" : "bach.hypercomment",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 32.0, 600.0, 36.0 ],
-					"text" : "If you have LilyPond installed on your machine (you can download it for free at www.lilypond.org), you can directly export the score into a pdf.",
+					"patching_rect" : [ 6.0, 32.0, 604.0, 65.0 ],
+					"text" : "Even if you cannot export in PDF without using #exportlilypondpdf, you can still natively export scores as PNG images. This is true both for bach.roll and for bach.score. By default, scores are exported as a long horizontal image with a single staff system. However, more options are available: see #export+image+view",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

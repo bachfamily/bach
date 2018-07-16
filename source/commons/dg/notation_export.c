@@ -163,7 +163,16 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         }
     }
     
-    
+    if (filename_sym) {
+        char new_temp_filename[MAX_FILENAME_CHARS];
+        char extension[MAX_FILENAME_CHARS];
+        get_filename_extension(filename_sym->s_name, extension, false);
+        if (strcasecmp(extension, "png") != 0) {
+            snprintf_zero(new_temp_filename, MAX_FILENAME_CHARS, "%s.png", filename_sym->s_name);
+            type_sym = gensym(new_temp_filename);
+        }
+    }
+
     if (!type_sym) {
         if (filename_sym) {
             char extension[MAX_FILENAME_CHARS];
