@@ -100,6 +100,7 @@ void roll_int(t_roll *x, t_atom_long num);
 void roll_float(t_roll *x, double num);
 void roll_bang(t_roll *x);
 void roll_clock(t_roll *x, t_symbol *s);
+void roll_new_undo_redo(t_roll *x, char what);
 
 
 // mute/lock/solo
@@ -5301,7 +5302,7 @@ int T_EXPORT main(void){
 	// @marg 0 @name filename @optional 1 @type symbol
     // @example write @caption save file in native format via dialog box
     // @example write myfile.llll @caption save bach file in native format
-    // @seealso writetxt, exportmidi, read
+    // @seealso writetxt, exportmidi, read, exportimage
 	class_addmethod(c, (method) roll_write, "write", A_GIMME, 0);
 
 
@@ -5321,7 +5322,7 @@ int T_EXPORT main(void){
     // @mattr indent @type atom @default tab @digest Number of spaces for indentation or "tab" symbol
     // @mattr maxdepth @type int @default -1 @digest Maximum depth for new lines
     // @mattr wrap @type int @default 0 @digest Maximum number of characters per line (0 means: no wrapping)
-    // @seealso write, exportmidi, read
+    // @seealso write, exportmidi, read, exportimage
 	class_addmethod(c, (method) roll_writetxt, "writetxt", A_GIMME, 0);
 	
 	
@@ -5352,10 +5353,33 @@ int T_EXPORT main(void){
     // @example exportmidi mymidi.mid (voices ((1 3))) (format 1) @caption exports voices 1 through 3
     // @example exportmidi mymidi.mid (voices ((1 3) 4 7)) (format 1) @caption exports voices 1 through 3, 4 and 7
     // @example exportmidi mymidi.mid (resolution 1920) @caption exports with a resolution of 1920 ticks per beat
-    // @seealso write, writetxt, read
+    // @seealso write, writetxt, read, exportimage
     class_addmethod(c, (method) roll_exportmidi, "exportmidi", A_GIMME, 0);
 
     
+    // @method exportimage @digest Export as PNG image
+    // @description The <m>exportimage</m> message exports the content of the <o>bach.roll</o> as a single image or an image series.
+    // The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
+    // allowing the choice of the location and file name for saving. Images are exported in PNG format. <br />
+    // Three view modes are allowed, selected via the "view" message attribute: <br />
+    // raw: the current view of the object is exported; <br />
+    // line: all the score is exported in a single horizontal system; <br />
+    // multiline: the score is split into multiple different files (systems); the system length is by default the object current domain, but
+    // can be also set via the "mspersystem" message attribute; <br />
+    // scroll: as the "multiline" mode, but all the systems are collected into a single file, scrollable vertically; the system length
+    // is by default the object current domain, but can be also set via the "mspersystem" message attribute. <br />
+    // @marg 0 @name filename @optional 1 @type symbol
+    // @mattr view @type symbol @default line @digest View mode
+    // @mattr mspersystem @type float @default none @digest Length of a system in milliseconds
+    // @mattr dpi @type int @default 72 @digest Dots per inch
+    // @mattr fadedomain @type int @default -1 @digest Fade the left part of the domain near the clefs
+    // @example exportimage /tmp/img.png @caption export score as image
+    // @example exportimage @caption export score as image via dialog box
+    // @example exportimage @view raw @caption export the portion of score displayed
+    // @example exportimage @view line @caption export whole score
+    // @example exportimage @view multiline @mspersystem 5000 @caption export score as multiple images, each displaying 5 secs
+    // @example exportimage @view page @mspersystem 5000 @caption export score as single image, each system displaying 5 secs
+    // @seealso write, writetxt, exportom, exportmidi, read
     class_addmethod(c, (method) roll_exportimage, "exportimage", A_GIMME, 0);
 
     
@@ -5367,7 +5391,7 @@ int T_EXPORT main(void){
 	// allowing the choice of the location and file name for saving.
 	// @marg 0 @name filename @optional 1 @type symbol
     // @example exportom forOM.txt @caption export file in OpenMusic format
-    // @seealso write, writetxt, exportpwgl, exportmidi, read
+    // @seealso write, writetxt, exportpwgl, exportmidi, exportimage, read
 	class_addmethod(c, (method) roll_exportom, "exportom", A_GIMME, 0);
 
 
@@ -5379,7 +5403,7 @@ int T_EXPORT main(void){
 	// @marg 0 @name filename @optional 1 @type symbol
     // @example exportpwgl @caption export file in PWGL format via dialog box
     // @example exportpwgl forPWGL.txt @caption export file in PWGL format
-    // @seealso write, writetxt, exportom, exportmidi, read
+    // @seealso write, writetxt, exportom, exportmidi, exportimage, read
 	class_addmethod(c, (method) roll_exportpwgl, "exportpwgl", A_GIMME, 0);
 
 
@@ -9797,7 +9821,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
 	x->r_ob.obj_type = k_NOTATION_OBJECT_ROLL;
 	
 	notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_ROLL, (rebuild_fn) set_roll_from_llll, (notation_obj_fn) create_whole_roll_undo_tick, 
-							(notation_obj_notation_item_fn) force_notation_item_inscreen, (bach_paint_ext_fn)roll_paint_ext);
+							(notation_obj_notation_item_fn) force_notation_item_inscreen, (notation_obj_undo_redo_fn)roll_new_undo_redo,  (bach_paint_ext_fn)roll_paint_ext);
 
 	roll_declare_bach_attributes(x);
 	

@@ -813,6 +813,10 @@ typedef char (*delete_item_fn)(void *notation_obj, void *notation_item, char *ne
 typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t_rect rect);
 
 
+//TBD
+typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to);
+
+
 
 /** Structure for a bach attribute. A bach attribute is some field of some specific element which we want to bring in the foreground,
 	in order for the user to be able to set/get it via the bach integrated inspector.
@@ -2724,6 +2728,8 @@ typedef struct _timepoint
 
 // Private
 typedef double (*notation_obj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, char sample_all_voices, char zero_pim_is_measure_first_chord);
+typedef double (*notation_obj_undo_redo_fn)(void *notation_obj, char direction);
+
 
 
 
@@ -3139,6 +3145,9 @@ typedef struct _tuttipoint
 	char		need_recompute_spacing;			///< A flag telling if we need to recompute the spacing within this tuttipoint region, one of the #e_spacing_calculation_types
 	long		flag;							///< Internal, for private use: generic flag.
 	
+    ////
+    double      data;                           ///< Internal
+    
 	// double linked list
 	struct _tuttipoint*	next;		///< Pointer to the next tuttipoint in the score
 	struct _tuttipoint*	prev;		///< Pointer to the previous tuttipoint in the score
@@ -3863,6 +3872,12 @@ typedef struct _notation_obj
 	long			*midichannels_as_longlist;		///< List of midichannels (one for each voice). 
 													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 
+    // tuttipoints, for bach.score
+    t_tuttipoint    *firsttuttipoint;               ///< First tuttipoint
+    t_tuttipoint    *lasttuttipoint;                ///< Last tuttipoint
+    long            num_tuttipoints;                ///< Number of tuttipoints
+
+    
 	// staff lines
 	t_llll			*stafflines_as_llll;	///< Stafflines as an llll
 	
@@ -4716,7 +4731,9 @@ typedef struct _notation_obj
 	notation_obj_fn					whole_obj_undo_tick_function;	///< Pointer to the function creating the undo tick for the whole object
 	notation_obj_notation_item_fn	force_notation_item_inscreen;	///< Pointer to a function forcing a given notation item to be inside the screen
     notation_obj_timepoint_to_ux_fn timepoint_to_unscaled_xposition;///< Pointer to a function (if any), converting a timepoint into an unscaled x position (makes sense for bach.score only)
+    notation_obj_undo_redo_fn       undo_redo_function;             ///< Function for undo/redo
     bach_paint_ext_fn               paint_ext_function;             ///< Pointer to the function painting the object (in extended bach mode)
+    notation_obj_inscreenmeas_fn    inscreenmeas_function;          ///< Pointer to the inscreenmeas function
     
 	// attributes
 	t_bach_inspector_manager	m_inspector;						///< Inspector manager
@@ -4752,6 +4769,7 @@ typedef struct _notation_obj
     
     // jitter painting stuff
     t_symbol            *jit_destination_matrix; ///< If non-NULL, also mirrors the painting of the canvas on the selected jitter Matrix.
+    char                pagelike_barlines;        ///< If non-null, the barlines and measure numbers (in bach.score) are drawn as if they were on a page
     
     // backward compatibility stuff
     long                bwcompatible;           ///< Number of the version of bach towards which the object needs to be compatible. E.g. if 7900, this
@@ -6780,9 +6798,10 @@ void initialize_rollvoice(t_notation_obj *r_ob, t_rollvoice *voice, long voice_n
 	@param	rebuild			Pointer to the function rebuilding the whole object from a given llll. Must be implemented for each notation object.
 	@param	whole_undo_tick	Pointer to the function creating an undo tick for the whole notation object. Must be implemented for each notation object.
 	@param	force_notation_item_inscreen		Pointer to a function forcing a notation item to be inside the screen; leave NULL if unneeded.
+    @param    undo_redo_fn                       Pointer to the undo/redo function; leave NULL if unneeded.
     @param  bach_paint_ext_fn paint_extended    Pointer to the paint function (in extended bach mode, i.e. with a bach_paint_ext_fn signature)
 */
-void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, bach_paint_ext_fn paint_extended);
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, notation_obj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended);
 
 
 /**	Initialize (or re-initialize) slot information with a default slotinfo 
@@ -18815,6 +18834,7 @@ t_chord *chord_get_first_strictly_after_symonset(t_notation_obj *r_ob, t_measure
 void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char num_steps, long modifiers);
 char is_in_linear_edit_mode(t_notation_obj *r_ob);
 void markers_check_update_name_uwidth(t_notation_obj *r_ob);
+t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt);
 
 t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol *s, t_symbol *msg, void *sender, void *data);
 t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_object *view);
@@ -18832,6 +18852,9 @@ void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char 
 // autospell
 void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args);
 
+
+// export image
+t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t_atom *av);
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

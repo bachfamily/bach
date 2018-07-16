@@ -37,10 +37,6 @@
 typedef struct _score // [bach.score] structure
 {
 	t_notation_obj r_ob;  // root: notation object (all the common attributes) 
-	
-    t_tuttipoint	*firsttuttipoint;
-    t_tuttipoint	*lasttuttipoint;
-    long			num_tuttipoints;
 
     // elements in the score
 	t_scorevoice	*firstvoice;
@@ -160,6 +156,7 @@ void recompute_all_and_redraw(t_score *x);
 void recompute_all_except_for_beamings_and_autocompletion(t_score *x);
 
 void remove_all_tuttipoints_flag_modified(t_score *x);
+char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas);
 
 
 t_scorevoice* nth_scorevoice(t_score *x, long n);

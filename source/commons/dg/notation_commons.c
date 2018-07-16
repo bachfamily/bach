@@ -30742,7 +30742,7 @@ void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 	} else { // we do need a scroll bar
 		r_ob->need_hscrollbar = 1;
 
-		if (from_what == 2){ // we have the information about the starting ms of the window
+		if (from_what == 2 || from_what == 3){ // we have the information about the starting ms of the window
 			// r_ob->scrollbarpos must be 0 at screen_start_ms = 0,  1 at screen_start_ms = length_ms - domain
             if (obj_type == k_NOTATION_OBJECT_ROLL) {
                 if (r_ob->lambda_spacing)
@@ -30797,7 +30797,8 @@ void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 //            dev_post("scrollbar pos: %.2f, domain: %.2f, screen_ms_start = %.2f", r_ob->hscrollbar_pos, r_ob->domain, r_ob->screen_ms_start);
 			r_ob->screen_ms_end = r_ob->screen_ms_start + r_ob->domain;
 		} else if (obj_type == k_NOTATION_OBJECT_SCORE) {
-			r_ob->screen_ux_start = (r_ob->length_ux - r_ob->domain_ux)*r_ob->hscrollbar_pos;
+            if (from_what < 3)
+                r_ob->screen_ux_start = (r_ob->length_ux - r_ob->domain_ux)*r_ob->hscrollbar_pos;
 			r_ob->screen_ux_end = r_ob->screen_ux_start + r_ob->domain_ux;
 		}
 	}
@@ -35019,7 +35020,7 @@ t_jrgba partidx_to_color(long part_idx)
     return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false);
 }
 
-void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, bach_paint_ext_fn paint_extended)
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, notation_obj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended)
 {
 	long i;
     
@@ -35139,6 +35140,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
 	r_ob->rebuild_function = rebuild;
 	r_ob->whole_obj_undo_tick_function = whole_undo_tick;
 	r_ob->force_notation_item_inscreen = force_notation_item_inscreen;
+    r_ob->undo_redo_function = undo_redo_fn;
     r_ob->paint_ext_function = paint_extended;
 	
 	r_ob->selected_slot_items = llll_make();
@@ -43627,6 +43629,14 @@ void markers_check_update_name_uwidth(t_notation_obj *r_ob)
 
 
 
-
+t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt)
+{
+    long i;
+    for (i = 0; i < r_ob->num_voices; i++) // cycle on the voices
+        if (tpt->measure[i])
+            return tpt->measure[i];
+    
+    return NULL;
+}
 
 

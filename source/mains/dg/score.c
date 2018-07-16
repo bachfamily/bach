@@ -75,6 +75,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv);
 void score_paint(t_score *x, t_object *view);
 void score_paint_to_jitter_matrix(t_score *x, t_symbol *matrix_name);
 t_max_err score_notify(t_score *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
+void score_new_undo_redo(t_score *x, char what);
 
 void score_getmaxID(t_score *x);
 
@@ -1596,7 +1597,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 				}
 				
 				ux1 = -1; 
-				ux2 = (x->lasttuttipoint) ? x->lasttuttipoint->offset_ux + x->lasttuttipoint->width_ux : -1;
+				ux2 = (x->r_ob.lasttuttipoint) ? x->r_ob.lasttuttipoint->offset_ux + x->r_ob.lasttuttipoint->width_ux : -1;
 
 				if (selectllll->l_size >= 1)
 					parse_open_timepoint_syntax_from_llllelem((t_notation_obj *)x, selectllll->l_head, &ux1, NULL, NULL, false);
@@ -3217,7 +3218,7 @@ void score_inscreenmeas(t_score *x, t_symbol *s, long argc, t_atom *argv){
 void score_resetlocalwidthmultiplformeas(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	t_llll *arguments;
 	char changed = false;
-	t_tuttipoint *start = x->firsttuttipoint, *end = x->lasttuttipoint, *temp;
+	t_tuttipoint *start = x->r_ob.firsttuttipoint, *end = x->r_ob.lasttuttipoint, *temp;
 	t_llll *garbage;
 	
 	if (!x->firstvoice)
@@ -6194,6 +6195,32 @@ int T_EXPORT main(void){
     // @seealso write, writetxt, read, exportxml, exportpwgl, exportxml, exportlilypond, exportlilypondpdf
     class_addmethod(c, (method) score_exportom, "exportom", A_GIMME, 0);
     
+    
+    
+    // @method exportimage @digest Export as PNG image
+    // @description The <m>exportimage</m> message exports the content of the <o>bach.roll</o> as a single image or an image series.
+    // The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
+    // allowing the choice of the location and file name for saving. Images are exported in PNG format. <br />
+    // Three view modes are allowed, selected via the "view" message attribute: <br />
+    // raw: the current view of the object is exported; <br />
+    // line: all the score is exported in a single horizontal system; <br />
+    // multiline: the score is split into multiple different files (systems); the system length is by default the object current domain, but
+    // can be also set via the "mspersystem" message attribute; <br />
+    // scroll: as the "multiline" mode, but all the systems are collected into a single file, scrollable vertically; the system length
+    // is by default the object current domain, but can be also set via the "mspersystem" message attribute. <br />
+    // @marg 0 @name filename @optional 1 @type symbol
+    // @mattr view @type symbol @default line @digest View mode
+    // @mattr mspersystem @type float @default none @digest Length of a system in milliseconds
+    // @mattr dpi @type int @default 72 @digest Dots per inch
+    // @mattr fadedomain @type int @default -1 @digest Fade the left part of the domain near the clefs
+    // @example exportimage /tmp/img.png @caption export score as image
+    // @example exportimage @caption export score as image via dialog box
+    // @example exportimage @view raw @caption export the portion of score displayed
+    // @example exportimage @view line @caption export whole score
+    // @example exportimage @view multiline @mspersystem 5000 @caption export score as multiple images, each displaying 5 secs
+    // @example exportimage @view page @mspersystem 5000 @caption export score as single image, each system displaying 5 secs
+    // @seealso write, writetxt, exportom, exportmidi, read
+    class_addmethod(c, (method) score_exportimage, "exportimage", A_GIMME, 0);
     
 
     
@@ -9502,8 +9529,9 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
 	object_obex_lookup(x, gensym("#P"), &(x->r_ob.patcher_parent));
 
 	notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SCORE, (rebuild_fn) set_score_from_llll, 
-							(notation_obj_fn) create_whole_score_undo_tick, (notation_obj_notation_item_fn) force_notation_item_inscreen, (bach_paint_ext_fn)score_paint_ext);
-
+							(notation_obj_fn) create_whole_score_undo_tick, (notation_obj_notation_item_fn) force_notation_item_inscreen, (notation_obj_undo_redo_fn)score_new_undo_redo,  (bach_paint_ext_fn)score_paint_ext);
+    x->r_ob.inscreenmeas_function = (notation_obj_inscreenmeas_fn)scoreapi_inscreenmeas_do;
+    
     x->r_ob.timepoint_to_unscaled_xposition = (notation_obj_timepoint_to_ux_fn)timepoint_to_unscaled_xposition;
     
 	scoreapi_initscore_step01(x);
@@ -10091,7 +10119,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 		t_tuttipoint *tpt;
 		t_notation_item *item;
 		if (!is_editable((t_notation_obj *)x, k_MEASURE, k_MODIFICATION_GENERIC)) return;
-		for (tpt = x->firsttuttipoint; tpt; tpt = tpt->next)
+		for (tpt = x->r_ob.firsttuttipoint; tpt; tpt = tpt->next)
 			tpt->flag &= ~k_FLAG_MODIFIED;
 		
 		for (item = x->r_ob.firstselecteditem; item; item = item->next_selected){
@@ -10120,7 +10148,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 			}
 		}
 	
-		for (tpt = x->firsttuttipoint; tpt; tpt = tpt->next)
+		for (tpt = x->r_ob.firsttuttipoint; tpt; tpt = tpt->next)
 			tpt->flag &= ~k_FLAG_MODIFIED;
 
 	} else if (x->r_ob.j_mousedown_obj_type == k_REGION) { // a region has been selected
@@ -13009,12 +13037,12 @@ void select_all_measure_in_selected_measures_range(t_score *x) {
 	}
 	
 	if (!tpt_left) {
-		tpt_left = x->firsttuttipoint;
+		tpt_left = x->r_ob.firsttuttipoint;
 		tpt_left_measure_offset = 0;
 	}
 
 	if (!tpt_right) {
-		tpt_right = x->lasttuttipoint;
+		tpt_right = x->r_ob.lasttuttipoint;
 		tpt_right_measure_offset = 100000000; // whatever, big
 	}
 	
@@ -13290,7 +13318,7 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
         tuttipoint_aligned = false;
     
     if (tuttipoint_aligned) {
-        t_tuttipoint *ref_tpt_next = ref_tpt ? ref_tpt->next : x->firsttuttipoint;
+        t_tuttipoint *ref_tpt_next = ref_tpt ? ref_tpt->next : x->r_ob.firsttuttipoint;
         // calculate measure durations
         for (i = 0; i < x->r_ob.num_voices; i++)
             if (meas[i])

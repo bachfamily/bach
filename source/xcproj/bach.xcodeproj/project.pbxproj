@@ -243,6 +243,7 @@
 		1E784F9720274BC400F11D75 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		1E784F9820274BC400F11D75 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		1E784FA220274C1200F11D75 /* recurser.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E784FA120274C1200F11D75 /* recurser.c */; };
+		1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A1D4420FCEB020051B9E8 /* notation_export.c */; };
 		1EA9401B1BDFEBDB00EFCABC /* gpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA940191BDFEBDB00EFCABC /* gpc.h */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
@@ -2846,6 +2847,7 @@
 		1E7573061BE03A4E002A0986 /* cursor_note_sharp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_note_sharp.png; sourceTree = "<group>"; };
 		1E784F9D20274BC400F11D75 /* bach.recurser.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.recurser.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E784FA120274C1200F11D75 /* recurser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recurser.c; sourceTree = "<group>"; };
+		1E7A1D4420FCEB020051B9E8 /* notation_export.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_export.c; sourceTree = "<group>"; };
 		1E9026EE150FC5380005B502 /* bach_doc_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_doc_groups.h; sourceTree = "<group>"; };
 		1EA940181BDFEBDB00EFCABC /* gpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpc.c; sourceTree = "<group>"; };
 		1EA940191BDFEBDB00EFCABC /* gpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gpc.h; sourceTree = "<group>"; };
@@ -5668,6 +5670,7 @@
 				91EED59E1237C06B003C05FC /* notation.h */,
 				91EED59D1237C06B003C05FC /* notation_commons.c */,
 				91CA0C5D1DF9374D0068B29D /* notation_dynamics.c */,
+				1E7A1D4420FCEB020051B9E8 /* notation_export.c */,
 				911385B91F4C3AC300637524 /* notation_goto.h */,
 				911385B71F4C3AB100637524 /* notation_goto.c */,
 				91EE6FC513A28C1C00BBE47C /* notation_maxinterface.c */,
@@ -12454,6 +12457,7 @@
 				91FDDC3B1FBE2D4C0040D803 /* bach_chkparser.c in Sources */,
 				91FE0ED1190AAB57007B6BED /* llll_comparisons.c in Sources */,
 				910400B21C147F5C0072277C /* gpc.c in Sources */,
+				1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

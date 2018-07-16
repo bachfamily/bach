@@ -4046,22 +4046,12 @@ score_dowritelilypond_error:
 
 
 
-void foo(int a)
+
+void score_exportimage(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
-    int b;
-    if (a == 0)
-        b = 1;
-    else if (a == 1)
-        b = 3;
-    else
-        b = 100;
-    
-    switch (a) {
-        case 0: b = 1; break;
-        case 1: b = 3; break;
-        default: b = 100; break;
-    }
-    
-    return;
-    
+    t_atom av;
+    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    atom_setobj(&av, arguments);
+    defer(x, (method)notationobj_dowriteimage, s, 1, &av);
 }
+

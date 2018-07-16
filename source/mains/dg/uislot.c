@@ -1408,7 +1408,7 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
 	x->r_ob.obj_type = k_NOTATION_OBJECT_SLOT;
 	x->r_ob.slot_window_zoom = x->r_ob.bgslot_zoom = 100;
 
-	notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notation_obj_fn) create_whole_uislot_undo_tick, NULL, (bach_paint_ext_fn)uislot_paint_ext);
+	notation_obj_init((t_notation_obj *) x, k_NOTATION_OBJECT_SLOT, (rebuild_fn) set_uislot_from_llll, (notation_obj_fn) create_whole_uislot_undo_tick, NULL, (notation_obj_undo_redo_fn)uislot_new_undo_redo, (bach_paint_ext_fn)uislot_paint_ext);
 
     x->r_ob.active_slot_num = 0;
     x->r_ob.active_slot_num_1based = 1;
