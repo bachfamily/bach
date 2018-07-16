@@ -1057,7 +1057,7 @@ t_max_err roll_dowriteimage(t_roll *x, t_symbol *s, long ac, t_atom *av)
     must_cleanup = (view != gensym("raw"));
     
     if (fadepredomain < 0)
-        fadepredomain = 1; //!must_cleanup;
+        fadepredomain = x->r_ob.fade_predomain; //!must_cleanup;
     
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -1144,7 +1144,7 @@ t_max_err roll_dowriteimage(t_roll *x, t_symbol *s, long ac, t_atom *av)
             // setting domain properly
             if (view == gensym("multiline") || view == gensym("scroll") || view == gensym("page")) {
                 x->r_ob.screen_ms_start = (i - 1) * msperline;
-                redraw_hscrollbar((t_notation_obj *) x, 2);
+                redraw_hscrollbar((t_notation_obj *) x, 3);
             }
             
             t_rect shot_rect = build_rect(0, 0, w, h);

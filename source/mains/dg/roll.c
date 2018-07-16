@@ -88,6 +88,11 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv);
 void roll_paint(t_roll *x, t_object *view);
 void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect);
 void roll_paint_to_jitter_matrix(t_roll *x, t_symbol *matrix_name);
+
+void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *voice, t_chord *curr_ch, t_rect rect, long system_index, char *first_painted_chord, long *curr_hairpin_type, double *curr_hairpin_start_x, t_jfont *jf, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_small_dynamics, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_dynamics, t_jfont *jf_ann, t_jfont *jf_lyrics, long clef, double octave_stem_length, char part_direction, double staff_top_y, double staff_bottom_y, char *last_annotation_text, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos, double *annotation_line_y_pos, char *lyrics_dashed_going_on, double *left_dashed_x);
+
+void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect);
+
 t_max_err roll_notify(t_roll *x, t_symbol *s, t_symbol *msg, void *sender, void *data);
 
 void roll_anything(t_roll *x, t_symbol *s, long argc, t_atom *argv);
@@ -10121,15 +10126,448 @@ char is_notehead_inscreen_for_painting(t_roll *x, t_note *curr_nt){
 	return false;
 }
 
+void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
+{
+    // markers, if any
+    if (x->r_ob.show_markers && x->r_ob.firstmarker) {
+        t_marker *marker;
+        t_jfont *jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);
+
+        double playhead_y1, playhead_y2;
+        get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
+
+        lock_markers_mutex((t_notation_obj *)x);
+        markers_check_update_name_uwidth((t_notation_obj *)x);
+        double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0;
+        for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
+            if (marker->need_update_name_uwidth)
+                recalculate_marker_name_uwidth((t_notation_obj *)x, marker);
+            double marker_onset = marker->position_ms;
+            char buf[1000];
+            char is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
+            char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
+            get_names_as_text(marker->r_it.names, buf, 1000);
+            if (marker_onset >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_onset < x->r_ob.screen_ms_end) {
+                this_marker_x = onset_to_xposition((t_notation_obj *)x, marker_onset, NULL);
+                marker->name_painted_direction = (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end ? -1 : 1);
+                
+                if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
+                    marker->name_line = marker->prev->name_line + 1;
+                    if (marker->prev->name_line > 0) {
+                        for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
+                            if (tempmk->name_line == 0) {
+                                if (onset_to_xposition((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                    marker->name_line = 0;
+                                break;
+                            }
+                    }
+                } else
+                    marker->name_line = 0;
+                
+                paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : x->r_ob.j_marker_rgba,
+                             jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
+                prev_marker_x = this_marker_x;
+            } else if (marker_onset >= x->r_ob.screen_ms_end)
+                break;
+        }
+        unlock_markers_mutex((t_notation_obj *)x);;
+
+        jfont_destroy_debug(jf_text_markers);
+    }
+}
+
+
+void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *voice, t_chord *curr_ch, t_rect rect, long system_index, char *first_painted_chord, long *curr_hairpin_type, double *curr_hairpin_start_x, t_jfont *jf, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_small_dynamics, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_dynamics, t_jfont *jf_ann, t_jfont *jf_lyrics, long clef, double octave_stem_length, char part_direction, double staff_top_y, double staff_bottom_y, char *last_annotation_text, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos, double *annotation_line_y_pos, char *lyrics_dashed_going_on, double *left_dashed_x)
+{
+    double chord_alignment_x, stem_x;
+    char is_chord_selected, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited;
+    char is_chord_played;
+    long num_notes = curr_ch->num_notes;
+    double first_note_y_real, last_note_y_real;
+    t_note *curr_nt;
+    double system_jump = x->r_ob.system_jump;
+    double system_shift = 0; // vertical shift due to the system index
+    t_jrgba stemcolor, notecolor, tailcolor, accidentalcolor, durationlinecolor;
+
+    if (!curr_ch->firstnote) {
+        object_warn((t_object *) x, "Error: chord with 0 notes detected!");
+        return;
+    }
+
+    if (first_painted_chord && *first_painted_chord) {
+        long s = x->r_ob.link_dynamics_to_slot - 1;
+        if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
+            // check if there's an hairpin ending on this chord
+            for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
+                if (chord_parse_dynamics_easy((t_notation_obj *)x, temp, s, NULL, curr_hairpin_type)) {
+                    *curr_hairpin_start_x = onset_to_xposition((t_notation_obj *) x, temp->onset, NULL);
+                    break;
+                }
+            }
+        }
+        *first_painted_chord = false;
+    }
+    
+    // finding stem position
+    if (x->r_ob.view == k_VIEW_SCROLL) {
+        chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, NULL);
+    } else if (x->r_ob.view == k_VIEW_PAPYRUS) {
+        chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, &system_index);
+        system_shift = system_jump * system_index;
+    } else {
+        chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, NULL);
+    }
+    
+#ifdef BACH_PAINT_IDS
+    char text[140];
+    snprintf_zero(text, 140, "%ld", curr_ch->r_it.ID);
+    write_text(g, jf_text_markers, build_jrgba(0.3, 0, 0, 1), text, curr_ch->stem_x,
+               staff_top_y - 40, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM, true, false);
+#endif
+    
+    // do we have to recalculate chord parameters?
+    if (curr_ch->need_recompute_parameters) { // we have to recalculate chord parameters
+        assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
+        assign_chord_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom);
+        calculate_chord_parameters((t_notation_obj *) x, curr_ch, clef, true);
+        curr_ch->need_recompute_parameters = false;
+    }
+    
+    stem_x = get_stem_x_from_alignment_point_x((t_notation_obj *)x, curr_ch, chord_alignment_x);
+    curr_ch->stem_x = stem_x;
+    
+    // handling selection
+    is_chord_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_ch));
+    is_chord_linear_edited = (x->r_ob.notation_cursor.voice && x->r_ob.notation_cursor.chord == curr_ch);
+    
+    is_chord_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_ch);
+    is_chord_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_ch);
+    is_chord_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_ch);
+    is_chord_played = x->r_ob.highlight_played_notes ? curr_ch->played : false;
+    
+    t_note *note_1 = nth_note(curr_ch, 0);
+    t_note *note_2 = nth_note(curr_ch, num_notes - 1);
+    first_note_y_real = note_1 ? system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(note_1), (t_voice *) voice) : 0;
+    last_note_y_real = note_2 ? system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(note_2), (t_voice *) voice) : 0;
+    
+    // draw stem
+    stemcolor = get_stem_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+    if (x->r_ob.show_stems > 0) {
+        if (curr_ch->direction == 1) { // stem upwards
+            paint_line(g, stemcolor, stem_x, first_note_y_real, stem_x, last_note_y_real - octave_stem_length, CONST_STEM_WIDTH);
+        } else if (curr_ch->direction == -1) { // stem downwards
+            paint_line(g, stemcolor, stem_x, last_note_y_real, stem_x, first_note_y_real + octave_stem_length, CONST_STEM_WIDTH);
+        }
+    }
+    curr_ch->stem_x = stem_x;
+    
+    double label_family_chord_shape_radius = CONST_LABEL_FAMILY_NOTE_STARTING_URADIUS * x->r_ob.zoom_y;
+    
+    // we draw the notes and the accidentals
+    for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) { // cycle on the notes
+        // is the note IN the screen?
+        if (is_notehead_inscreen_for_painting(x, curr_nt)) {
+            
+            // selection (or preselection):
+            char is_note_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_nt);
+            char is_note_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_nt) ^ is_note_preselected);
+            char is_durationline_selected = is_note_selected;
+            char is_tail_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint));
+            char note_unselected = false;
+            char is_note_played, is_note_locked, is_note_muted, is_note_solo;
+            double note_y_real, note_x_real;
+            double ledger_lines_y[CONST_MAX_LEDGER_LINES];
+            int num_ledger_lines; int i;
+            long scaleposition;
+            double notehead_uwidth;
+            double end_pos = onset_to_xposition((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
+            t_bpt *selected_breakpoint = NULL;
+            
+            if (is_chord_selected && is_note_preselected)
+                note_unselected = true;
+            
+            is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
+            is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
+            is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
+            is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
+            
+            // get colors
+            notecolor = note_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
+            durationlinecolor = get_durationline_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
+            accidentalcolor = get_accidental_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
+            tailcolor = get_tail_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected || is_tail_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? curr_nt->lastbreakpoint->velocity : curr_nt->velocity);
+            
+            // finding y positions
+            note_y_real = system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
+            curr_nt->center.y = note_y_real;
+            
+            // finding x positions
+            notehead_uwidth = curr_nt->notehead_uwidth;
+            note_x_real = stem_x + get_notehead_ux_shift((t_notation_obj *) x, curr_nt) * x->r_ob.zoom_y + curr_nt->notecenter_stem_delta_ux * x->r_ob.zoom_y;
+            curr_nt->center.x = note_x_real; // center of the notehead
+            
+            // paint note label circles
+            if (x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_SINGLETONS)
+                paint_note_label_families((t_notation_obj *)x, view, g, curr_nt, &label_family_chord_shape_radius);
+            
+            // background noteslots
+            double slot_zoom_y = x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.);
+            double note_x = note_x_real - ((curr_nt->notehead_uwidth / 2.) * x->r_ob.zoom_y);
+            paint_background_slots((t_notation_obj *) x, g, note_x_real, note_y_real, end_pos - note_x_real, jf_text_small,
+                                   jf_text_smallbold, jf_small_dynamics, (t_notation_item *)curr_nt,
+                                   note_x_real + (note_x_real - note_x) * 2 + x->r_ob.background_slot_text_ushift[0] * slot_zoom_y,
+                                   note_y_real + x->r_ob.background_slot_text_ushift[1] * slot_zoom_y,
+                                   note_x_real + (note_x_real - note_x) * 2 + x->r_ob.background_slot_text_ushift[0] * slot_zoom_y,
+                                   note_y_real - (1.3 * x->r_ob.slot_background_font_size - 0.5) * slot_zoom_y + x->r_ob.background_slot_text_ushift[1] * slot_zoom_y, -1);
+            
+            // draw ledger lines if needed
+            scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
+            get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
+            for (i = 0; i < num_ledger_lines; i++)
+                paint_line(g, x->r_ob.j_mainstaves_rgba, note_x_real - CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i],
+                           note_x_real + CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i], 1.);
+            
+            
+            //                            paint_line(g, build_jrgba(1, 0, 0, 0.5), chord_alignment_x, 0, chord_alignment_x, rect.height, 1.);
+            //                            dev_post("note voice %ld; alignment_pt: %.2f, stem_x: %.2f, notehead_width: %.2f", voice->v_ob.number + 1,chord_alignment_x, stem_x, curr_nt->notehead_uwidth * x->r_ob.zoom_y);
+            
+            // duration line and breakpoints
+            paint_duration_line((t_notation_obj *) x, view, g, durationlinecolor, tailcolor, curr_nt, end_pos, system_shift, system_jump, note_unselected, is_chord_selected, is_note_selected, is_durationline_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, &selected_breakpoint);
+            
+            // draw the notehead
+            paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, system_shift, 1.);
+            
+#ifdef BACH_PAINT_IDS
+            if (curr_nt->r_it.ID > 0) {
+                char text[140];
+                snprintf_zero(text, 140, "%ld", curr_nt->r_it.ID);
+                write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
+                           note_y_real, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+            }
+#endif
+            
+            // draw the auxiliary stems, if needed
+            if (x->r_ob.show_stems > 1 && curr_nt->need_auxiliary_stem) {
+                if (curr_ch->direction == 1) { // stem down
+                    paint_line(g, stemcolor, stem_x, last_note_y_real - 0.4*octave_stem_length, note_x_real, last_note_y_real - 0.2*octave_stem_length, CONST_AUX_STEM_WIDTH);
+                    paint_line(g, stemcolor, note_x_real, last_note_y_real - 0.2*octave_stem_length, note_x_real, note_y_real - 0.5 * x->r_ob.step_y, CONST_AUX_STEM_WIDTH);
+                } else if (curr_ch->direction == -1) { // stem up
+                    paint_line(g, stemcolor, stem_x, first_note_y_real + 0.4*octave_stem_length, note_x_real, first_note_y_real + 0.2*octave_stem_length, CONST_AUX_STEM_WIDTH);
+                    paint_line(g, stemcolor, note_x_real, first_note_y_real + 0.2*octave_stem_length, note_x_real, note_y_real + 0.5 * x->r_ob.step_y, CONST_AUX_STEM_WIDTH);
+                } else {
+                    object_warn((t_object *)x, "Warning: chord direction undefined!");
+                }
+            }
+            
+            // need to put accidentals?
+            paint_noteaccidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, NULL, NULL);
+            
+            
+        }
+    }
+    
+    // setting bottommost and topmost y values
+    curr_ch->bottommost_y_noacc = curr_ch->firstnote->center.y + (curr_ch->direction < 0 ? octave_stem_length : x->r_ob.step_y);
+    curr_ch->topmost_y_noacc = curr_ch->lastnote->center.y - (curr_ch->direction > 0 ? octave_stem_length : x->r_ob.step_y);
+    
+    // painting articulations
+    // need to put articulations?
+    if (x->r_ob.show_articulations){
+        if (x->r_ob.link_articulations_to_slot > 0 && x->r_ob.link_articulations_to_slot < CONST_MAX_SLOTS) {
+            long s = x->r_ob.link_articulations_to_slot - 1;
+            if (x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_ARTICULATIONS) {
+                // "NEW WAY" (which, for bach.roll, is the ONLY way): slot-attached articulations
+                for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) {
+                    t_slotitem *item;
+                    for (item = curr_nt->slot[s].firstitem; item; item = item->next) {
+                        t_articulation *art = (t_articulation *)item->item;
+                        char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
+                        char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
+                        char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
+                        char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
+                        char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)art);
+                        double end_pos = onset_to_xposition((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
+                        t_jrgba articulationcolor = get_articulation_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
+                        paint_articulation((t_notation_obj *) x, g, &articulationcolor, art, (t_notation_item *)curr_nt, curr_ch->direction, stem_x, curr_nt->center.x, curr_nt->center.y, curr_nt->notehead_uwidth, end_pos, part_direction);
+                    }
+                }
+            }
+        }
+    }
+    
+    if (x->r_ob.show_annotations){
+        if (x->r_ob.link_annotation_to_slot > 0 && x->r_ob.link_annotation_to_slot < CONST_MAX_SLOTS) {
+            long s = x->r_ob.link_annotation_to_slot - 1;
+            for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) {
+                if (notation_item_get_slot_firstitem((t_notation_obj *)x, (t_notation_item *)curr_nt, s) ||
+                    (last_annotation_text[0] && (e_annotations_filterdup_modes)x->r_ob.thinannotations != k_ANNOTATIONS_FILTERDUP_DONT)) {
+                    char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
+                    char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
+                    char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
+                    char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
+                    t_jrgba annotationcolor = get_annotation_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
+                    double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
+                    paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top_y, last_annotation_text, annotation_sequence_start_x_pos, annotation_sequence_end_x_pos, annotation_line_y_pos);
+                }
+            }
+        }
+    }
+    
+    if (x->r_ob.show_dynamics || x->r_ob.show_hairpins){
+        if (curr_ch->dynamics && curr_ch->dynamics->text) {
+            t_notation_item *nitem = (t_notation_item *)curr_ch;
+            char is_item_locked = notation_item_is_globally_locked((t_notation_obj *)x, nitem);
+            char is_item_muted = notation_item_is_globally_muted((t_notation_obj *)x, nitem);
+            char is_item_solo = notation_item_is_globally_solo((t_notation_obj *)x, nitem);
+            char is_item_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, nitem) && curr_ch->played) : false;
+            char is_dynamics_selected = notation_item_is_selected((t_notation_obj *) x, nitem) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->dynamics);
+            
+            t_jrgba dynamicscolor = get_dynamics_color((t_notation_obj *) x, curr_ch, is_dynamics_selected, is_item_played, is_item_locked, is_item_muted, is_item_solo, is_chord_linear_edited);
+            double chord_alignment_x = chord_get_alignment_x((t_notation_obj *)x, curr_ch);
+            
+            double end_pos = onset_to_xposition((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
+            
+            paint_dynamics_from_symbol((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, curr_ch->dynamics->text, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
+        }
+    }
+    
+    
+    // paint chord label rectangles
+    if (x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_SINGLETONS)
+        paint_chord_label_families((t_notation_obj *)x, view, g, curr_ch, label_family_chord_shape_radius);
+    
+    // group lines?
+    if ((x->r_ob.show_groups % 2) && curr_ch->r_it.group){
+        t_notation_item *tmp;
+        if (x->r_ob.show_stems == 0 && curr_ch->firstnote != curr_ch->lastnote) {
+            t_note *nt;
+            for (nt = curr_ch->firstnote; nt && nt->next; nt = nt->next)
+                paint_dashed_line(g, stemcolor, stem_x + nt->notecenter_stem_delta_ux * x->r_ob.zoom_y, staff_top_y + nt->center_stafftop_uy * x->r_ob.zoom_y,
+                                  stem_x + nt->next->notecenter_stem_delta_ux * x->r_ob.zoom_y, staff_top_y + nt->next->center_stafftop_uy * x->r_ob.zoom_y, 0.5, 2);
+        }
+        for (tmp = curr_ch->r_it.group->firstelem; tmp; tmp = tmp->next_group_item){
+            if (tmp->type == k_CHORD && (t_chord *)tmp != curr_ch){
+                t_chord *tmpch = (t_chord *) tmp;
+                if (tmpch->onset <= curr_ch->onset) {
+                    double tmp_staff_top_y = (tmpch->voiceparent == curr_ch->voiceparent ? staff_top_y : get_staff_top_y((t_notation_obj *) x, (t_voice *)tmpch->voiceparent, false));
+                    paint_dashed_line(g, stemcolor, onset_to_xposition((t_notation_obj *) x, tmpch->onset, NULL), tmp_staff_top_y + (x->r_ob.show_stems > 0 ? tmpch->stemtip_stafftop_uy : (tmpch->direction == -1 ? tmpch->bottommostnote_stafftop_uy : tmpch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y,
+                                      stem_x, staff_top_y + (x->r_ob.show_stems > 0 ? curr_ch->stemtip_stafftop_uy : (curr_ch->direction == -1 ? curr_ch->bottommostnote_stafftop_uy : curr_ch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y, 0.5, 2);
+                }
+            }
+        }
+    }
+    
+    // lyrics?
+    if (curr_ch->lyrics && curr_ch->lyrics->label && x->r_ob.show_lyrics) {
+        double pos_y = staff_bottom_y - x->r_ob.lyrics_uy_pos * x->r_ob.zoom_y;
+        double pos_x = curr_ch->stem_x + ((curr_ch->direction == 1 ? -0.5 : 0.5) * get_principal_notehead_uwidth((t_notation_obj *)x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift) * x->r_ob.zoom_y;
+        if (!(x->r_ob.is_editing_type == k_LYRICS && x->r_ob.is_editing_chord == curr_ch)){
+            char is_lyrics_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->lyrics);
+            t_jrgba lyrics_color = change_color_depending_on_playlockmute((t_notation_obj *) x, x->r_ob.j_lyrics_rgba, is_lyrics_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, false);
+            write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, lyrics_color, curr_ch->lyrics->label, pos_x, pos_y);
+        }
+        
+        double ldx = *left_dashed_x;
+        if (lyrics_dashed_going_on && *lyrics_dashed_going_on) {
+            double this_left_x = pos_x;
+            long num_dash_needed = MAX(0, round((this_left_x - ldx) * CONST_NUM_DASH_PER_UX));
+            
+            if (num_dash_needed == 0 && (this_left_x - ldx) > CONST_UX_MINIMUM_SPACE_FOR_DASH * 1.25)
+                num_dash_needed = 1;
+            
+            if (num_dash_needed == 1) {
+                double x_module = (this_left_x - ldx - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
+                write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", ldx + x_module, pos_y);
+            } else if (num_dash_needed > 1) {
+                long i;
+                double x_module = (this_left_x - ldx)/num_dash_needed;
+                for (i = 0; i < num_dash_needed; i++){
+                    double this_x = ldx + x_module/2. + i * x_module;
+                    write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
+                }
+            }
+        }
+        
+        if (lyrics_dashed_going_on) {
+            *lyrics_dashed_going_on = curr_ch->lyrics->lyrics_dashed_extension;
+            if (*lyrics_dashed_going_on)
+                *left_dashed_x = pos_x + curr_ch->lyrics->lyrics_uwidth * x->r_ob.zoom_y;
+        }
+        
+    }
+}
+
+
+void roll_paint_linear_editing_stuff(t_roll *x, t_jgraphics *g, t_rollvoice *voice, double staff_top_y, double staff_bottom_y)
+{
+    if (x->r_ob.notation_cursor.voice == (t_voice *)voice) {
+        double yy, ypos = voice->v_ob.middleC_y - x->r_ob.notation_cursor.step * x->r_ob.step_y;
+        double xpos = onset_to_xposition((t_notation_obj *) x, x->r_ob.notation_cursor.onset, NULL);
+        paint_line(g, x->r_ob.j_linear_edit_rgba, xpos, staff_top_y, xpos, staff_bottom_y, 2);
+        
+        // ledger lines?
+        if (ypos < staff_top_y) {
+            for (yy = staff_top_y - x->r_ob.step_y * 2; yy > ypos; yy -= x->r_ob.step_y * 2)
+                paint_line(g, x->r_ob.j_auxiliarystaves_rgba, xpos - 1.3 * x->r_ob.zoom_y, yy, xpos + 1.3 * x->r_ob.zoom_y, yy, 1);
+            paint_line(g, x->r_ob.j_linear_edit_rgba, xpos, staff_top_y, xpos, ypos, 1);
+        }
+        if (ypos > staff_bottom_y) {
+            for (yy = staff_bottom_y + x->r_ob.step_y * 2; yy < ypos; yy += x->r_ob.step_y * 2)
+                paint_line(g, x->r_ob.j_mainstaves_rgba, xpos - 1.3 * x->r_ob.zoom_y, yy, xpos + 1.3 * x->r_ob.zoom_y, yy, 1);
+            paint_line(g, x->r_ob.j_linear_edit_rgba, xpos, staff_bottom_y, xpos, ypos, 1);
+        }
+        
+        // paint tick
+        paint_line(g, x->r_ob.j_linear_edit_rgba, xpos - 2 * x->r_ob.zoom_y, ypos, xpos + 2 * x->r_ob.zoom_y, ypos, 2);
+    }
+}
+
+
+void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf_dynamics, double staff_bottom_y, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *curr_hairpin_start_x, t_chord *last_drawn_chord)
+{
+    if (curr_hairpin_type && *curr_hairpin_type && x->r_ob.show_hairpins){
+        long s = x->r_ob.link_dynamics_to_slot - 1;
+        if (s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
+            long old_hairpin_type = *curr_hairpin_type;
+            t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, last_drawn_chord, curr_hairpin_type, false, true);
+            double curr_hairpin_end_x = rect.width * 2;
+            if (lastch)
+                curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
+            paint_dynamics_from_symbol((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
+        }
+    }
+}
+
+void roll_paint_last_dashed_lines(t_roll *x, t_jgraphics *g, t_jfont *jf_lyrics, double staff_bottom_y, char lyrics_dashed_going_on, double left_dashed_x)
+{
+    // dashed lines for lyrics left to draw?
+    if (x->r_ob.show_lyrics && lyrics_dashed_going_on) {
+        double pos_y = staff_bottom_y - x->r_ob.lyrics_uy_pos * x->r_ob.zoom_y;
+        double this_left_x = x->r_ob.j_inset_x + x->r_ob.inner_width;
+        long num_dash_needed = MAX(0, round((this_left_x - left_dashed_x) * CONST_NUM_DASH_PER_UX));
+        
+        if (num_dash_needed == 1) {
+            double x_module = (this_left_x - left_dashed_x)/2;
+            write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", left_dashed_x + x_module, pos_y);
+        } else if (num_dash_needed > 1) {
+            long i;
+            double x_module = (this_left_x - left_dashed_x)/num_dash_needed;
+            for (i = 0; i < num_dash_needed; i++){
+                double this_x = left_dashed_x + x_module/2. + i * x_module;
+                write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
+            }
+        }
+    }
+}
+
 void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jgraphics *force_graphic_context)
 {
 	
     t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer1"), rect.width, rect.height) : force_graphic_context;
 
-	if (g){
-		t_jfont *jf_text_small, *jf_text_smallbold, *jf_text_markers, *jf_lyrics, *jf_lyrics_nozoom, *jf_ann, *jf_dynamics, *jf_small_dynamics, *jf_dynamics_nozoom;
+	if (g) {
+		t_jfont *jf_text_small, *jf_text_smallbold, *jf_lyrics, *jf_lyrics_nozoom, *jf_ann, *jf_dynamics, *jf_small_dynamics, *jf_dynamics_nozoom;
 		t_rollvoice *voice;
-		double playhead_y1, playhead_y2;
 		double system_jump = x->r_ob.system_jump;
 		double octave_stem_length = 7 * x->r_ob.step_y;
 /*		double end_x_to_repaint_no_inset = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.screen_ux_start - CONST_X_LEFT_START_DELETE_UX_ROLL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
@@ -10145,21 +10583,18 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 		// defining fonts
 		jf_text_small = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small)
 		jf_text_smallbold = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.)));  // text font (small and bold)
-		jf_text_markers = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.markers_font_size * x->r_ob.zoom_y);  // text font for markers
 		jf_lyrics = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size * x->r_ob.zoom_y);
 		jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
         jf_ann = jfont_create_debug(x->r_ob.annotations_font ? x->r_ob.annotations_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.annotation_font_size * x->r_ob.zoom_y);
         jf_small_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
         jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
         jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.dynamics_font_size);
-		
-		get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
-		
+			
+        
 		lock_general_mutex((t_notation_obj *)x);
 		for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // cycle on the voices
 			t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
 			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-			t_jrgba notecolor, tailcolor, stemcolor, accidentalcolor, durationlinecolor;
 			t_chord *curr_ch;
 			double staff_bottom_y, staff_top_y;
 			long k; 
@@ -10204,7 +10639,6 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 								  voice->v_ob.middleC_y + k * system_jump, clef, mainstaffcolor, auxstaffcolor, voice->v_ob.num_staff_lines, voice->v_ob.staff_lines);
 			
 			// clefs later! at the end!
-
 #ifdef BACH_PAINT_IDS
 			char text[20];
 			snprintf_zero(text, 40, "%ld", voice->v_ob.r_it.ID);
@@ -10214,462 +10648,37 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 			// chords and notes!
 			for (curr_ch = voice->firstchord; curr_ch; curr_ch = curr_ch->next) { // cycle on the chords
 				long system_index = 0; // index of system
-				double system_shift = 0; // vertical shift due to the system index 
-				
-				if (!curr_ch->firstnote) {
-					object_warn((t_object *) x, "Error: chord with 0 notes detected!");
-					continue;
-				}
-				
 				curr_ch->system_index = system_index = onset_to_system_index((t_notation_obj *) x, curr_ch->onset);
 				
 				// we check if the chord is IN the screen: if so, we draw it!
                 char position = chord_get_screen_position_for_painting(x, curr_ch);
                 
-				if (position == 0) { // inside the screen
-					double chord_alignment_x, stem_x;
-					char is_chord_selected, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited;
-					char is_chord_played;
-					long num_notes = curr_ch->num_notes;
-					double first_note_y_real, last_note_y_real;
-					t_note *curr_nt;
-					
-                    if (first_painted_chord) {
-                        long s = x->r_ob.link_dynamics_to_slot - 1;
-                        if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
-                            // check if there's an hairpin ending on this chord
-                            for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
-                                if (chord_parse_dynamics_easy((t_notation_obj *)x, temp, s, NULL, &curr_hairpin_type)) {
-                                    curr_hairpin_start_x = onset_to_xposition((t_notation_obj *) x, temp->onset, NULL);
-                                    break;
-                                }
-                            }
-                        }
-                        first_painted_chord = false;
-                    }
-                    
-					// finding stem position
-					if (x->r_ob.view == k_VIEW_SCROLL) {
-						chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, NULL);
-					} else if (x->r_ob.view == k_VIEW_PAPYRUS) {
-						chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, &system_index);
-						system_shift = system_jump * system_index;
-					} else {
-						chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, NULL);
-					}
-					
-#ifdef BACH_PAINT_IDS
-					char text[140];
-					snprintf_zero(text, 140, "%ld", curr_ch->r_it.ID);
-					write_text(g, jf_text_markers, build_jrgba(0.3, 0, 0, 1), text, curr_ch->stem_x, 
-							   staff_top_y - 40, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM, true, false);
-#endif
-					
-					// do we have to recalculate chord parameters?
-					if (curr_ch->need_recompute_parameters) { // we have to recalculate chord parameters 
-						assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
-                        assign_chord_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom);
-						calculate_chord_parameters((t_notation_obj *) x, curr_ch, clef, true);
-						curr_ch->need_recompute_parameters = false;
-					}
-
-					stem_x = get_stem_x_from_alignment_point_x((t_notation_obj *)x, curr_ch, chord_alignment_x);
-					curr_ch->stem_x = stem_x;
-					
-					// handling selection
-					is_chord_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_ch));
-                    is_chord_linear_edited = (x->r_ob.notation_cursor.voice && x->r_ob.notation_cursor.chord == curr_ch);
-					
-					is_chord_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_ch);
-					is_chord_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_ch); 
-					is_chord_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_ch); 
-					is_chord_played = x->r_ob.highlight_played_notes ? curr_ch->played : false; 
-					
-					t_note *note_1 = nth_note(curr_ch, 0);
-					t_note *note_2 = nth_note(curr_ch, num_notes - 1);
-					first_note_y_real = note_1 ? system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(note_1), (t_voice *) voice) : 0;
-					last_note_y_real = note_2 ? system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(note_2), (t_voice *) voice) : 0;
-					
-					// draw stem
-					stemcolor = get_stem_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
-					if (x->r_ob.show_stems > 0) {
-						if (curr_ch->direction == 1) { // stem upwards
-							paint_line(g, stemcolor, stem_x, first_note_y_real, stem_x, last_note_y_real - octave_stem_length, CONST_STEM_WIDTH);
-						} else if (curr_ch->direction == -1) { // stem downwards
-							paint_line(g, stemcolor, stem_x, last_note_y_real, stem_x, first_note_y_real + octave_stem_length, CONST_STEM_WIDTH);
-						}
-					}
-					curr_ch->stem_x = stem_x;
-					
-					double label_family_chord_shape_radius = CONST_LABEL_FAMILY_NOTE_STARTING_URADIUS * x->r_ob.zoom_y;
-					
-					// we draw the notes and the accidentals
-					for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) { // cycle on the notes
-						// is the note IN the screen?
-						if (is_notehead_inscreen_for_painting(x, curr_nt)) {
-							
-							// selection (or preselection): 
-							char is_note_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_nt);
-							char is_note_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_nt) ^ is_note_preselected);
-							char is_durationline_selected = is_note_selected; 
-							char is_tail_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)curr_nt->lastbreakpoint)); 
-							char note_unselected = false;
-							char is_note_played, is_note_locked, is_note_muted, is_note_solo;
-							double note_y_real, note_x_real;
-							double ledger_lines_y[CONST_MAX_LEDGER_LINES]; 
-							int num_ledger_lines; int i;
-							long scaleposition;
-							double notehead_uwidth;
-							double end_pos = onset_to_xposition((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
-							t_bpt *selected_breakpoint = NULL;
-							
-							if (is_chord_selected && is_note_preselected)
-								note_unselected = true;
-							
-							is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
-							is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt); 
-							is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt); 
-							is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false; 
-							
-							// get colors
-							notecolor = note_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
-                            durationlinecolor = get_durationline_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
-                            accidentalcolor = get_accidental_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
-							tailcolor = get_tail_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected || is_tail_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? curr_nt->lastbreakpoint->velocity : curr_nt->velocity);
-							
-							// finding y positions
-							note_y_real = system_shift + mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
-							curr_nt->center.y = note_y_real;
-							
-							// finding x positions
-							notehead_uwidth = curr_nt->notehead_uwidth;
-							note_x_real = stem_x + get_notehead_ux_shift((t_notation_obj *) x, curr_nt) * x->r_ob.zoom_y + curr_nt->notecenter_stem_delta_ux * x->r_ob.zoom_y;
-							curr_nt->center.x = note_x_real; // center of the notehead
-                            
-							// paint note label circles
-							if (x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_SINGLETONS) 
-								paint_note_label_families((t_notation_obj *)x, view, g, curr_nt, &label_family_chord_shape_radius);
-							
-							// background noteslots
-							double slot_zoom_y = x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.);
-                            double note_x = note_x_real - ((curr_nt->notehead_uwidth / 2.) * x->r_ob.zoom_y);
-							paint_background_slots((t_notation_obj *) x, g, note_x_real, note_y_real, end_pos - note_x_real, jf_text_small,
-                                                    jf_text_smallbold, jf_small_dynamics, (t_notation_item *)curr_nt,
-													note_x_real + (note_x_real - note_x) * 2 + x->r_ob.background_slot_text_ushift[0] * slot_zoom_y, 
-													note_y_real + x->r_ob.background_slot_text_ushift[1] * slot_zoom_y, 
-													note_x_real + (note_x_real - note_x) * 2 + x->r_ob.background_slot_text_ushift[0] * slot_zoom_y, 
-													note_y_real - (1.3 * x->r_ob.slot_background_font_size - 0.5) * slot_zoom_y + x->r_ob.background_slot_text_ushift[1] * slot_zoom_y, -1);
-							
-							// draw ledger lines if needed
-							scaleposition = curr_nt->pitch_displayed.toStepsFromMiddleC();
-							get_ledger_lines((t_notation_obj *) x, (t_voice *) voice, scaleposition, &num_ledger_lines, ledger_lines_y); // let's obtain the list of ledger lines y
-							for (i = 0; i < num_ledger_lines; i++)
-								paint_line(g, x->r_ob.j_mainstaves_rgba, note_x_real - CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i], 
-										   note_x_real + CONST_LEDGER_LINES_HALF_UWIDTH * curr_nt->notehead_resize * x->r_ob.zoom_y, system_shift + ledger_lines_y[i], 1.);
-							
-                            
-//                            paint_line(g, build_jrgba(1, 0, 0, 0.5), chord_alignment_x, 0, chord_alignment_x, rect.height, 1.);
-//                            dev_post("note voice %ld; alignment_pt: %.2f, stem_x: %.2f, notehead_width: %.2f", voice->v_ob.number + 1,chord_alignment_x, stem_x, curr_nt->notehead_uwidth * x->r_ob.zoom_y);
-
-							// duration line and breakpoints
-							paint_duration_line((t_notation_obj *) x, view, g, durationlinecolor, tailcolor, curr_nt, end_pos, system_shift, system_jump, note_unselected, is_chord_selected, is_note_selected, is_durationline_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, &selected_breakpoint);
-
-                            // draw the notehead
-                            paint_notehead((t_notation_obj *) x, view, g, jf, &notecolor, curr_nt, note_x_real, note_y_real, system_shift, 1.);
-                            
-#ifdef BACH_PAINT_IDS
-                            if (curr_nt->r_it.ID > 0) {
-                                char text[140];
-                                snprintf_zero(text, 140, "%ld", curr_nt->r_it.ID);
-                                write_text(g, jf_text_markers, build_jrgba(0.3, 0.2, 0.5, 1), text, note_x + notehead_uwidth * x->r_ob.zoom_y,
-                                           note_y_real, rect.width, 40, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
-                            }
-#endif
-                            
-                            // draw the auxiliary stems, if needed
-                            if (x->r_ob.show_stems > 1 && curr_nt->need_auxiliary_stem) {
-                                if (curr_ch->direction == 1) { // stem down
-                                    paint_line(g, stemcolor, stem_x, last_note_y_real - 0.4*octave_stem_length, note_x_real, last_note_y_real - 0.2*octave_stem_length, CONST_AUX_STEM_WIDTH);
-                                    paint_line(g, stemcolor, note_x_real, last_note_y_real - 0.2*octave_stem_length, note_x_real, note_y_real - 0.5 * x->r_ob.step_y, CONST_AUX_STEM_WIDTH);
-                                } else if (curr_ch->direction == -1) { // stem up
-                                    paint_line(g, stemcolor, stem_x, first_note_y_real + 0.4*octave_stem_length, note_x_real, first_note_y_real + 0.2*octave_stem_length, CONST_AUX_STEM_WIDTH);
-                                    paint_line(g, stemcolor, note_x_real, first_note_y_real + 0.2*octave_stem_length, note_x_real, note_y_real + 0.5 * x->r_ob.step_y, CONST_AUX_STEM_WIDTH);
-                                } else {
-                                    object_warn((t_object *)x, "Warning: chord direction undefined!");
-                                }
-                            }
-                            
-                            // need to put accidentals?
-                            paint_noteaccidentals((t_notation_obj *) x, g, jf_acc, jf_text_fractions, jf_acc_bogus, &accidentalcolor, curr_nt, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), note_y_real, stem_x, NULL, NULL);
-                            
-                            
-						}
-					}
-                    
-                    // setting bottommost and topmost y values
-                    curr_ch->bottommost_y_noacc = curr_ch->firstnote->center.y + (curr_ch->direction < 0 ? octave_stem_length : x->r_ob.step_y);
-                    curr_ch->topmost_y_noacc = curr_ch->lastnote->center.y - (curr_ch->direction > 0 ? octave_stem_length : x->r_ob.step_y);
-                    
-                    // painting articulations
-                    // need to put articulations?
-                    if (x->r_ob.show_articulations){
-                        if (x->r_ob.link_articulations_to_slot > 0 && x->r_ob.link_articulations_to_slot < CONST_MAX_SLOTS) {
-                            long s = x->r_ob.link_articulations_to_slot - 1;
-                            if (x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_ARTICULATIONS) {
-                                // "NEW WAY" (which, for bach.roll, is the ONLY way): slot-attached articulations
-                                for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) {
-                                    t_slotitem *item;
-                                    for (item = curr_nt->slot[s].firstitem; item; item = item->next) {
-                                        t_articulation *art = (t_articulation *)item->item;
-                                        char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                        char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                        char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                        char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
-                                        char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)art);
-                                        double end_pos = onset_to_xposition((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
-                                        t_jrgba articulationcolor = get_articulation_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
-                                        paint_articulation((t_notation_obj *) x, g, &articulationcolor, art, (t_notation_item *)curr_nt, curr_ch->direction, stem_x, curr_nt->center.x, curr_nt->center.y, curr_nt->notehead_uwidth, end_pos, part_direction);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (x->r_ob.show_annotations){
-                        if (x->r_ob.link_annotation_to_slot > 0 && x->r_ob.link_annotation_to_slot < CONST_MAX_SLOTS) {
-                            long s = x->r_ob.link_annotation_to_slot - 1;
-                            for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) {
-                                if (notation_item_get_slot_firstitem((t_notation_obj *)x, (t_notation_item *)curr_nt, s) ||
-                                    (last_annotation_text[0] && (e_annotations_filterdup_modes)x->r_ob.thinannotations != k_ANNOTATIONS_FILTERDUP_DONT)) {
-                                    char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                    char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                    char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                    char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
-                                    t_jrgba annotationcolor = get_annotation_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
-                                    double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
-                                    paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top_y, last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
-                                }
-                            }
-                        }
-                    }
-
-                    
-                    /*
-                    if (x->r_ob.show_dynamics || x->r_ob.show_hairpins){
-                        if (x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.link_dynamics_to_slot < CONST_MAX_SLOTS) {
-                            if (!(x->r_ob.is_editing_type == k_DYNAMICS && x->r_ob.is_editing_chord == curr_ch)){
-                                long s = x->r_ob.link_dynamics_to_slot - 1;
-                                for (curr_nt = curr_ch->firstnote; curr_nt; curr_nt = curr_nt->next) {
-                                    if (notation_item_get_slot_firstitem((t_notation_obj *)x, (t_notation_item *)curr_nt, s)) {
-                                        char is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                        char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                        char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                                        char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
-                                        t_jrgba dynamicscolor = get_dynamics_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
-                                        double end_pos = onset_to_xposition((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
-                                        paint_dynamics_from_slot((t_notation_obj *)x, g, &dynamicscolor, (t_notation_item *)curr_nt, chord_alignment_x, end_pos - chord_alignment_x, s, jf_dynamics, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &curr_hairpin_type, false);
-                                        break; // WE ONLY ACCOUNT FOR THE FIRST NOTE BEARING A DYNAMICS!!!
-                                    }
-                                }
-                            }
-                        }
-                    } */
-                    
-                    if (x->r_ob.show_dynamics || x->r_ob.show_hairpins){
-                        if (curr_ch->dynamics && curr_ch->dynamics->text) {
-                            t_notation_item *nitem = (t_notation_item *)curr_ch;
-                            char is_item_locked = notation_item_is_globally_locked((t_notation_obj *)x, nitem);
-                            char is_item_muted = notation_item_is_globally_muted((t_notation_obj *)x, nitem);
-                            char is_item_solo = notation_item_is_globally_solo((t_notation_obj *)x, nitem);
-                            char is_item_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, nitem) && curr_ch->played) : false;
-                            char is_dynamics_selected = notation_item_is_selected((t_notation_obj *) x, nitem) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->dynamics);
-                            
-                            t_jrgba dynamicscolor = get_dynamics_color((t_notation_obj *) x, curr_ch, is_dynamics_selected, is_item_played, is_item_locked, is_item_muted, is_item_solo, is_chord_linear_edited);
-                            double chord_alignment_x = chord_get_alignment_x((t_notation_obj *)x, curr_ch);
-                            
-                            double end_pos = onset_to_xposition((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
-                            
-                            paint_dynamics_from_symbol((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, curr_ch->dynamics->text, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);
-                        }
-                    }
-
-                    
-					// paint chord label rectangles
-					if (x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_SINGLETONS)
-						paint_chord_label_families((t_notation_obj *)x, view, g, curr_ch, label_family_chord_shape_radius);
-					
-					// group lines?
-					if ((x->r_ob.show_groups % 2) && curr_ch->r_it.group){
-						t_notation_item *tmp;
-						if (x->r_ob.show_stems == 0 && curr_ch->firstnote != curr_ch->lastnote) {
-							t_note *nt;
-							for (nt = curr_ch->firstnote; nt && nt->next; nt = nt->next)
-								paint_dashed_line(g, stemcolor, stem_x + nt->notecenter_stem_delta_ux * x->r_ob.zoom_y, staff_top_y + nt->center_stafftop_uy * x->r_ob.zoom_y, 
-												  stem_x + nt->next->notecenter_stem_delta_ux * x->r_ob.zoom_y, staff_top_y + nt->next->center_stafftop_uy * x->r_ob.zoom_y, 0.5, 2);
-						}
-						for (tmp = curr_ch->r_it.group->firstelem; tmp; tmp = tmp->next_group_item){
-							if (tmp->type == k_CHORD && (t_chord *)tmp != curr_ch){
-								t_chord *tmpch = (t_chord *) tmp;
-								if (tmpch->onset <= curr_ch->onset) {
-									double tmp_staff_top_y = (tmpch->voiceparent == curr_ch->voiceparent ? staff_top_y : get_staff_top_y((t_notation_obj *) x, (t_voice *)tmpch->voiceparent, false));
-									paint_dashed_line(g, stemcolor, onset_to_xposition((t_notation_obj *) x, tmpch->onset, NULL), tmp_staff_top_y + (x->r_ob.show_stems > 0 ? tmpch->stemtip_stafftop_uy : (tmpch->direction == -1 ? tmpch->bottommostnote_stafftop_uy : tmpch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y,
-													  stem_x, staff_top_y + (x->r_ob.show_stems > 0 ? curr_ch->stemtip_stafftop_uy : (curr_ch->direction == -1 ? curr_ch->bottommostnote_stafftop_uy : curr_ch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y, 0.5, 2);
-								}
-							}
-						}
-					}
-					
-					// lyrics?
-					if (curr_ch->lyrics && curr_ch->lyrics->label && x->r_ob.show_lyrics) {
-						double pos_y = staff_bottom_y - x->r_ob.lyrics_uy_pos * x->r_ob.zoom_y;
-						double pos_x = curr_ch->stem_x + ((curr_ch->direction == 1 ? -0.5 : 0.5) * get_principal_notehead_uwidth((t_notation_obj *)x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift) * x->r_ob.zoom_y;
-						if (!(x->r_ob.is_editing_type == k_LYRICS && x->r_ob.is_editing_chord == curr_ch)){
-							char is_lyrics_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->lyrics);
-							t_jrgba lyrics_color = change_color_depending_on_playlockmute((t_notation_obj *) x, x->r_ob.j_lyrics_rgba, is_lyrics_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, false);
-							write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, lyrics_color, curr_ch->lyrics->label, pos_x, pos_y);
-						}
-						
-						if (lyrics_dashed_going_on) {
-							double this_left_x = pos_x;
-							long num_dash_needed = MAX(0, round((this_left_x - left_dashed_x) * CONST_NUM_DASH_PER_UX)); 
-							
-							if (num_dash_needed == 0 && (this_left_x - left_dashed_x) > CONST_UX_MINIMUM_SPACE_FOR_DASH * 1.25)
-								num_dash_needed = 1;
-							
-							if (num_dash_needed == 1) {
-								double x_module = (this_left_x - left_dashed_x - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
-								write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", left_dashed_x + x_module, pos_y);
-							} else if (num_dash_needed > 1) {
-								long i;
-								double x_module = (this_left_x - left_dashed_x)/num_dash_needed;
-								for (i = 0; i < num_dash_needed; i++){
-									double this_x = left_dashed_x + x_module/2. + i * x_module;
-									write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
-								}
-							}
-						}
-						
-						lyrics_dashed_going_on = curr_ch->lyrics->lyrics_dashed_extension;
-						if (lyrics_dashed_going_on)
-							left_dashed_x = pos_x + curr_ch->lyrics->lyrics_uwidth * x->r_ob.zoom_y;
-						
-					}
-					
-					
-				} else if (position > 0)
+				if (position == 0)
+                    roll_paint_chord(x, view, g, voice, curr_ch, rect, system_index, &first_painted_chord, &curr_hairpin_type, &curr_hairpin_start_x, jf, jf_lyrics_nozoom, jf_dynamics_nozoom, jf_text_small, jf_text_smallbold, jf_small_dynamics, jf_acc, jf_text_fractions, jf_acc_bogus, jf_dynamics, jf_ann, jf_lyrics, clef, octave_stem_length, part_direction, staff_top_y, staff_bottom_y, last_annotation_text, &prev_hairpin_color, &prev_hairpin_dontpaint, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos, &lyrics_dashed_going_on, &left_dashed_x);
+                else if (position > 0)
                     break;
 			}
             
             
-            // last hairpin?
-            if (curr_hairpin_type && x->r_ob.show_hairpins){
-                long s = x->r_ob.link_dynamics_to_slot - 1;
-                if (s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
-                    long old_hairpin_type = curr_hairpin_type;
-                    t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, curr_ch, &curr_hairpin_type, false, true);
-                    double curr_hairpin_end_x = rect.width * 2;
-                    if (lastch)
-                        curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
-                    paint_dynamics_from_symbol((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &old_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);
-                }
-            }
-
-			
-			// dashed lines for lyrics left to draw?
-			if (x->r_ob.show_lyrics && lyrics_dashed_going_on) {
-				double pos_y = staff_bottom_y - x->r_ob.lyrics_uy_pos * x->r_ob.zoom_y;
-				double this_left_x = x->r_ob.j_inset_x + x->r_ob.inner_width;
-				long num_dash_needed = MAX(0, round((this_left_x - left_dashed_x) * CONST_NUM_DASH_PER_UX)); 
-				
-				if (num_dash_needed == 1) {
-					double x_module = (this_left_x - left_dashed_x)/2;
-					write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", left_dashed_x + x_module, pos_y);
-				} else if (num_dash_needed > 1) {
-					long i;
-					double x_module = (this_left_x - left_dashed_x)/num_dash_needed;
-					for (i = 0; i < num_dash_needed; i++){
-						double this_x = left_dashed_x + x_module/2. + i * x_module;
-						write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
-					}
-				}
-			}
+            roll_paint_last_hairpin(x, g, rect, jf_dynamics, staff_bottom_y, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, &curr_hairpin_start_x, curr_ch);
             
+            roll_paint_last_dashed_lines(x, g, jf_lyrics, staff_bottom_y, lyrics_dashed_going_on, left_dashed_x);
+
+            roll_paint_linear_editing_stuff(x, g, voice, staff_top_y, staff_bottom_y);
+
             
-            // Linear editing the voice?
-            // linear_edit cursor?
-            if (voice_linear_edited){
-                double yy, ypos = voice->v_ob.middleC_y - x->r_ob.notation_cursor.step * x->r_ob.step_y;
-                double xpos = onset_to_xposition((t_notation_obj *) x, x->r_ob.notation_cursor.onset, NULL);
-                paint_line(g, x->r_ob.j_linear_edit_rgba, xpos, staff_top_y, xpos, staff_bottom_y, 2);
-
-                // ledger lines?
-                if (ypos < staff_top_y) {
-                    for (yy = staff_top_y - x->r_ob.step_y * 2; yy > ypos; yy -= x->r_ob.step_y * 2)
-                        paint_line(g, x->r_ob.j_auxiliarystaves_rgba, xpos - 1.3 * x->r_ob.zoom_y, yy, xpos + 1.3 * x->r_ob.zoom_y, yy, 1);
-                    paint_line(g, x->r_ob.j_linear_edit_rgba, xpos, staff_top_y, xpos, ypos, 1);
-                }
-                if (ypos > staff_bottom_y) {
-                    for (yy = staff_bottom_y + x->r_ob.step_y * 2; yy < ypos; yy += x->r_ob.step_y * 2)
-                        paint_line(g, x->r_ob.j_mainstaves_rgba, xpos - 1.3 * x->r_ob.zoom_y, yy, xpos + 1.3 * x->r_ob.zoom_y, yy, 1);
-                    paint_line(g, x->r_ob.j_linear_edit_rgba, xpos, staff_bottom_y, xpos, ypos, 1);
-                }
-                
-                // paint tick
-                paint_line(g, x->r_ob.j_linear_edit_rgba, xpos - 2 * x->r_ob.zoom_y, ypos, xpos + 2 * x->r_ob.zoom_y, ypos, 2);
-            }
-
 			// TODO: repaint selection!
 			// the selction must be in the foreground
-            
 		}
         
 		unlock_general_mutex((t_notation_obj *)x);
 		
-		// markers, if any
-		if (x->r_ob.show_markers && x->r_ob.firstmarker) {
-			t_marker *marker;
-            
-            lock_markers_mutex((t_notation_obj *)x);
-            markers_check_update_name_uwidth((t_notation_obj *)x);
-            double this_marker_x = 0, prev_marker_x = -30000, prev_marker_width = 0;
-			for (marker = x->r_ob.firstmarker; marker; marker = marker->next) {
-                if (marker->need_update_name_uwidth)
-                    recalculate_marker_name_uwidth((t_notation_obj *)x, marker);
-				double marker_onset = marker->position_ms;
-				char buf[1000];
-				char is_marker_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)marker);
-				char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
-				get_names_as_text(marker->r_it.names, buf, 1000);
-				if (marker_onset >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_onset < x->r_ob.screen_ms_end) {
-                    this_marker_x = onset_to_xposition((t_notation_obj *)x, marker_onset, NULL);
-                    marker->name_painted_direction = (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end ? -1 : 1);
-                    
-                    if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
-                        marker->name_line = marker->prev->name_line + 1;
-                        if (marker->prev->name_line > 0) {
-                            for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
-                                if (tempmk->name_line == 0) {
-                                    if (onset_to_xposition((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
-                                        marker->name_line = 0;
-                                    break;
-                                }
-                        }
-                    } else
-                        marker->name_line = 0;
-                    
-                    paint_marker((t_notation_obj *) x, g, (is_marker_selected ^ is_marker_preselected) ? x->r_ob.j_selection_rgba : x->r_ob.j_marker_rgba,
-                                 jf_text_markers, marker, this_marker_x, playhead_y1, playhead_y2, 2., x->r_ob.is_editing_type != k_MARKERNAME || x->r_ob.is_editing_marker != marker, &prev_marker_width);
-                    prev_marker_x = this_marker_x;
-				} else if (marker_onset >= x->r_ob.screen_ms_end)
-                    break;
-			}
-			unlock_markers_mutex((t_notation_obj *)x);;
-		}
+        roll_paint_markers(x, g, rect);
+
 		
 		// destroying all fonts
 		jfont_destroy_debug(jf_text_small);
 		jfont_destroy_debug(jf_text_smallbold);
-		jfont_destroy_debug(jf_text_markers);
 		jfont_destroy_debug(jf_lyrics_nozoom);
 		jfont_destroy_debug(jf_lyrics);
         jfont_destroy_debug(jf_ann);
@@ -10929,8 +10938,6 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
 	if (x->r_ob.playing) { 
 		double playhead_y1, playhead_y2;
 		double play_head_pos = onset_to_xposition((t_notation_obj *) x, x->r_ob.play_head_ms, NULL);
-//        dev_post("Domain start: %.2f", x->r_ob.screen_ms_start);
-//        dev_post("Playhead: %.2f", play_head_pos);
         get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
 		paint_playhead(g, x->r_ob.j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * x->r_ob.zoom_y);
 	} else if (x->r_ob.show_playhead) {

@@ -30687,7 +30687,7 @@ void update_total_length_from_length_ms_till_last_note(t_notation_obj *r_ob, dou
 // 0 = we have the information on the x of the scrollbar;
 // 1 = we have the information from 0. to 1. (relative: 0=start/1=end);
 // 2 = we have the information about the starting ms of the window
-// 3 = like 2, but don't mess around with auto-stuff, we
+// 3 = like 2, but don't autocorrect the screen_starting_ms ever
 void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 {
 	char obj_type = r_ob->obj_type;
@@ -30788,10 +30788,12 @@ void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 		if (obj_type == k_NOTATION_OBJECT_ROLL) {
             r_ob->screen_ux_start = (r_ob->length_ux - r_ob->domain_ux)*r_ob->hscrollbar_pos;
             r_ob->screen_ux_end = r_ob->screen_ux_start + r_ob->domain_ux;
-            if (r_ob->lambda_spacing)
-                r_ob->screen_ms_start = xposition_to_onset(r_ob, unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start), 0);
-            else
-                r_ob->screen_ms_start = (r_ob->length_ms - r_ob->domain) * r_ob->hscrollbar_pos;
+            if (from_what < 3) {
+                if (r_ob->lambda_spacing)
+                    r_ob->screen_ms_start = xposition_to_onset(r_ob, unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start), 0);
+                else
+                    r_ob->screen_ms_start = (r_ob->length_ms - r_ob->domain) * r_ob->hscrollbar_pos;
+            }
 //            dev_post("scrollbar pos: %.2f, domain: %.2f, screen_ms_start = %.2f", r_ob->hscrollbar_pos, r_ob->domain, r_ob->screen_ms_start);
 			r_ob->screen_ms_end = r_ob->screen_ms_start + r_ob->domain;
 		} else if (obj_type == k_NOTATION_OBJECT_SCORE) {
