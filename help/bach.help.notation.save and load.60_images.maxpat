@@ -38,6 +38,38 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-3",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 240.0, 171.5, 259.0, 25.0 ],
+					"presentation_rect" : [ 245.0, 163.5, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "Set image DPI metadata (defaults to 72)"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 50.0, 171.5, 188.0, 23.0 ],
+					"presentation_rect" : [ 50.0, 169.0, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "exportimage foo.png @dpi 300"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
@@ -45,7 +77,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 119.0, 82.0, 23.0 ],
+					"patching_rect" : [ 6.0, 103.0, 82.0, 23.0 ],
 					"style" : "",
 					"text" : "exportimage"
 				}
@@ -99,7 +131,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 166.0, 145.5, 309.0, 40.0 ],
+					"patching_rect" : [ 166.0, 129.5, 309.0, 40.0 ],
 					"style" : "",
 					"text" : "Add a symbol if you need to specify the output file (otherwise a \"Choose File\" dialog appears)"
 				}
@@ -114,7 +146,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 25.0, 154.0, 129.0, 23.0 ],
+					"patching_rect" : [ 25.0, 138.0, 129.0, 23.0 ],
 					"style" : "",
 					"text" : "exportimage foo.png"
 				}
@@ -129,7 +161,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 90.0, 119.0, 104.0, 25.0 ],
+					"patching_rect" : [ 90.0, 103.0, 104.0, 25.0 ],
 					"style" : "",
 					"text" : "Export image"
 				}
@@ -193,7 +225,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "Tags: data, export, image, png, picture, save, exportimage",
+					"text" : "Tags: data, export, image, png, picture, save, exportimage, dpi",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -219,6 +251,13 @@
 			}
  ],
 		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-6", 0 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
 				"patchline" : 				{
 					"destination" : [ "obj-6", 0 ],
 					"source" : [ "obj-27", 0 ]

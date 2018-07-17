@@ -6210,15 +6210,19 @@ int T_EXPORT main(void){
     // is by default the object current domain, but can be also set via the "mspersystem" message attribute. <br />
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr view @type symbol @default line @digest View mode
-    // @mattr mspersystem @type float @default none @digest Length of a system in milliseconds
+    // @mattr pixelpersystem @type float @default none @digest Length of a system in pixels (to be scaled with respect to <m>vzoom</m> attribute)
     // @mattr dpi @type int @default 72 @digest Dots per inch
-    // @mattr fadedomain @type int @default -1 @digest Fade the left part of the domain near the clefs
+    // @mattr systemvshift @type int @default 0 @digest Separation between systems in pixels
+    // @mattr fitmeasures @type int @default 1 @digest Use layout algorithms to arrange measures in systems
+    // @mattr fadedomain @type int @default none @digest Fade the left part of the domain near the clefs
     // @example exportimage /tmp/img.png @caption export score as image
     // @example exportimage @caption export score as image via dialog box
     // @example exportimage @view raw @caption export the portion of score displayed
     // @example exportimage @view line @caption export whole score
-    // @example exportimage @view multiline @mspersystem 5000 @caption export score as multiple images, each displaying 5 secs
-    // @example exportimage @view page @mspersystem 5000 @caption export score as single image, each system displaying 5 secs
+    // @example exportimage @view multiline @caption export score as multiple images
+    // @example exportimage @view scroll @caption export score as single image
+    // @example exportimage @view scroll @systemvshift 10 @caption export score as single image with 10 pixels of system separation
+    // @example exportimage @view scroll @pixelpersystem 500 @caption export score as multiple images, each with 500 horizontal pixels (if <m>vzoom</m> is 100).
     // @seealso write, writetxt, exportom, exportmidi, read
     class_addmethod(c, (method) score_exportimage, "exportimage", A_GIMME, 0);
     

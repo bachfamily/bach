@@ -2195,7 +2195,7 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
     jgraphics_set_source_rgba(g, 0, 0, 0, 1);
 }
 
-void paint_playhead(t_jgraphics* g, t_jrgba color, double playhead_x, double playhead_y1, double playhead_y2, double width, double tip_size)
+void paint_playhead_line(t_jgraphics* g, t_jrgba color, double playhead_x, double playhead_y1, double playhead_y2, double width, double tip_size)
 {
 	paint_line(g, color, playhead_x, playhead_y1, playhead_x, playhead_y2, width);
 	jgraphics_move_to(g, playhead_x, playhead_y1);

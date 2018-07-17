@@ -1180,6 +1180,28 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
     jgraphics_stroke(g);
 }
 
+void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
+{
+    double playhead_y1, playhead_y2, play_head_pos;
+    if (r_ob->playing) {
+        get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+            play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_ux);
+        else
+            play_head_pos = onset_to_xposition(r_ob, r_ob->play_head_ms, NULL);
+
+        paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * r_ob->zoom_y);
+    } else if (r_ob->show_playhead) {
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+            play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_start_ux);
+        else
+            play_head_pos = onset_to_xposition(r_ob, r_ob->play_head_start_ms, NULL);
+
+        get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+        paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * r_ob->zoom_y);
+    }
+    
+}
 
 
 void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect, t_jfont *jf_text_legend)

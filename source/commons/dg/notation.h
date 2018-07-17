@@ -713,6 +713,18 @@ typedef enum _voiceensemble_interface_policy {
 } e_voiceensemble_interface_policy;
 
 
+typedef enum _chord_position_in_screen {
+    k_CHORDPOSITIONINSCREEN_ENDS_BEFORE_DOMAIN = -3,
+    k_CHORDPOSITIONINSCREEN_ENDS_INSIDE_PREDOMAIN = -2,
+    k_CHORDPOSITIONINSCREEN_ENDS_INSIDE_DOMAIN = -1,
+    k_CHORDPOSITIONINSCREEN_STARTS_INSIDE_DOMAIN = 0,
+    k_CHORDPOSITIONINSCREEN_STARTS_AFTER_DOMAIN = 1,
+    k_CHORDPOSITIONINSCREEN_OVERSPANS_DOMAIN = 2,
+} e_chord_position_in_screen;
+
+
+
+
 /** Function setting the whole information for the notation object, starting from a ll. 
 	Each notation object implement one of these.
 	@ingroup interface
@@ -9736,6 +9748,7 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
 
 
 // TBD
+void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect);
 char is_clef_multistaff(t_notation_obj *r_ob, long clef);
 
 

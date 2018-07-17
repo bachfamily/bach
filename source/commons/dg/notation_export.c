@@ -72,7 +72,7 @@ t_llll *get_tuttipoint_system_layout(t_notation_obj *r_ob, double expected_windo
         
         double ratio = tuttipoint_adapt(r_ob, from, &to, expected_window_uwidth);
 
-        if (ratio > 2.) { // ratio too high
+        if (ratio > 1.618) { // ratio too high
             // split this tuttipoint into many  parts
             
             long num_parts = round(ratio);
@@ -87,7 +87,7 @@ t_llll *get_tuttipoint_system_layout(t_notation_obj *r_ob, double expected_windo
                 llll_appenddouble(this_ll, from->offset_ux + i * diff/num_parts);
                 llll_appendllll(out, this_ll);
             }
-//        } else if (ratio < 0.5) {
+//        } else if (ratio < 0.618) {
             // ratio too low
         } else {
             t_llll *this_ll = llll_get();
@@ -122,14 +122,16 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     double mspersystem = r_ob->domain, uxperline = r_ob->domain_ux;
     t_llll *tuttipoint_system_layout = NULL;
     double new_inner_width = 0;
+    long systemvshift_pixels = 0;
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssiddii",
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssiddiii",
                                          _sym_filename, &filename_sym,
                                          _sym_type, &type_sym,
                                          gensym("view"), &view,         // can be one of the following: "raw", "line", "multiline", "scroll"
                                          gensym("dpi"), &dpi,
                                          gensym("mspersystem"), &mspersystem,
                                          gensym("pixelpersystem"), &uxperline,
+                                         gensym("systemvshift"), &systemvshift_pixels,
                                          gensym("fitmeasures"), &fitmeasures,
                                          gensym("fadedomain"), &fadepredomain
                                          );
@@ -142,7 +144,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     must_cleanup = (view != gensym("raw"));
     
     if (fadepredomain < 0)
-        fadepredomain = (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? !must_cleanup : r_ob->fade_predomain); //!must_cleanup;
+        fadepredomain = (view == gensym("raw") ? r_ob->fade_predomain : 0);
     
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -275,9 +277,9 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         t_jgraphics *page_g = NULL;
         
         if (view == gensym("scroll") || view == gensym("page")) {
-            page_surface = jgraphics_image_surface_create(JGRAPHICS_FORMAT_ARGB32, w, h * num_shots);
+            page_surface = jgraphics_image_surface_create(JGRAPHICS_FORMAT_ARGB32, w, h * num_shots + (num_shots - 1) * systemvshift_pixels);
             page_g = jgraphics_create(page_surface);
-            t_rect bg = build_rect(0, 0, w, h * num_shots);
+            t_rect bg = build_rect(0, 0, w, h * num_shots + (num_shots - 1) * systemvshift_pixels);
             paint_rect(page_g, &bg, NULL, &r_ob->j_background_rgba, 0, 0);
         }
         
@@ -351,7 +353,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             (r_ob->paint_ext_function)((t_object *)r_ob, NULL, shot_g, shot_rect);
             
             if (view == gensym("scroll") || view == gensym("page")) {
-                jgraphics_image_surface_draw(page_g, shot_surface, shot_rect, build_rect(0, (i-1) * h, w, h));
+                jgraphics_image_surface_draw(page_g, shot_surface, shot_rect, build_rect(0, (i-1) * (h + systemvshift_pixels), w, h));
             } else {
                 if (type_sym && strcasecmp(extension, "png") == 0) {
                     if (jgraphics_image_surface_writepng(shot_surface, filename_temp, path, dpi) != MAX_ERR_NONE) {

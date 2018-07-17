@@ -39,17 +39,15 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubblepoint" : 0.23,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-16",
-					"linecount" : 2,
+					"id" : "obj-5",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 336.0, 176.5, 248.0, 40.0 ],
+					"patching_rect" : [ 320.0, 163.0, 207.0, 25.0 ],
 					"style" : "",
-					"text" : "As \"multiline\"; but gathers all systems in a single image, a scrollable page"
+					"text" : "Apply layout algorithm (default)"
 				}
 
 			}
@@ -57,61 +55,49 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-15",
+					"id" : "obj-3",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 46.0, 173.0, 288.0, 23.0 ],
+					"patching_rect" : [ 57.0, 163.0, 254.0, 23.0 ],
+					"presentation_rect" : [ 39.0, 162.0, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "exportimage @view scroll @pixelpersystem 300"
+					"text" : "exportimage @view scroll @fitmeasures 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"bubble" : 1,
+					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 353.0, 133.0, 225.0, 40.0 ],
-					"style" : "",
-					"text" : "...but can be modified! In bach.roll the attribute is @mspersystem"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-9",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 46.0, 141.5, 305.0, 23.0 ],
-					"style" : "",
-					"text" : "exportimage @view multiline @pixelpersystem 300"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-7",
+					"id" : "obj-76",
 					"linecount" : 3,
-					"maxclass" : "comment",
+					"maxclass" : "bach.hypercomment",
 					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 205.0, 90.5, 387.0, 54.0 ],
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 32.0, 585.0, 50.0 ],
+					"sendto" : "bach.help.filtertags",
+					"text" : "By default, when you export a bach.score as image in multiline or scroll view, a layout algorithm tries to fid the appropriate number of measures into each system. You can disable these algorithm by setting the \"fitmeasure\" message attribute to 0: in this case the score is treated as a long roll. ",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-1",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 26.0, 115.0, 382.0, 23.0 ],
+					"presentation_rect" : [ 26.0, 84.0, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "Organize the score in multiple systems, and save each one as a separate image. By default the length of the system is the one currently displayed..."
+					"text" : "exportimage @view scroll @fitmeasures 0 @pixelpersystem 200"
 				}
 
 			}
@@ -124,70 +110,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 28.0, 106.0, 176.0, 23.0 ],
+					"patching_rect" : [ 6.0, 85.0, 254.0, 23.0 ],
 					"style" : "",
-					"text" : "exportimage @view multiline"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-3",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 177.0, 66.5, 295.0, 25.0 ],
-					"style" : "",
-					"text" : "Export the image as a single long line (default)"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-4",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 66.5, 149.0, 23.0 ],
-					"style" : "",
-					"text" : "exportimage @view line"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 160.0, 26.5, 316.0, 40.0 ],
-					"style" : "",
-					"text" : "Export the image exactly as one sees it on screen (possibly with scrollbars, legend, etc...)"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-5",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 35.0, 149.0, 23.0 ],
-					"style" : "",
-					"text" : "exportimage @view raw"
+					"text" : "exportimage @view scroll @fitmeasures 0"
 				}
 
 			}
@@ -242,7 +167,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "See Also: export+image",
+					"text" : "See Also: export+image, export+image+view",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -275,7 +200,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 282.0, 23.0 ],
 					"style" : "",
-					"text" : "Image export views for bach.score",
+					"text" : "Image export layout",
 					"varname" : "title"
 				}
 
@@ -285,13 +210,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
-					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
+					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
 					"style" : "",
-					"text" : "Tags: data, export, image, png, picture, save, exportimage, view, pixelpersystem, mspersystem,  line, raw, multiline, scroll, page",
+					"text" : "Tags: data, export, image, png, picture, save, exportimage, fit, measure, layout, algorithm, fitmeasure",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -301,21 +225,14 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-15", 0 ]
+					"source" : [ "obj-1", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-4", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-5", 0 ]
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}
@@ -326,16 +243,13 @@
 				}
 
 			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-9", 0 ]
-				}
-
-			}
  ],
 		"dependency_cache" : [ 			{
 				"name" : "bach.score.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.hypercomment.mxo",
 				"type" : "iLaX"
 			}
  ],

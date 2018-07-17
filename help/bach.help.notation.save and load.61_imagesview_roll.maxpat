@@ -280,12 +280,13 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
 					"style" : "",
-					"text" : "Tags: data, export, image, png, picture, save, exportimage, view, pixelpersystem, mspersystem",
+					"text" : "Tags: data, export, image, png, picture, save, exportimage, view, pixelpersystem, mspersystem, line, raw, multiline, scroll, page",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

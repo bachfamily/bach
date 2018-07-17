@@ -586,6 +586,13 @@
 				"tags" : [ "appearance", "domain", "screen", "portion", "highlight", "show", "display", "underline", "ui", "align", "alignment", "synchronization", "graphic", "graphical", "waveform" ],
 				"title" : [ "Highlight domain" ]
 			},
+			"Fadedomain" : {
+				"filename" : [ "bach.help.notation.appearance.39_fadedomain.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "highlightdomain" ],
+				"tags" : [ "appearance", "domain", "screen", "portion", "fade", "transparency", "faded", "fadedomain", "graphic" ],
+				"title" : [ "Fade domain" ]
+			},
 			"Slots" : {
 				"Backgroundslots" : {
 					"filename" : [ "bach.help.notation.appearance.40_slots.01_backgroundslots.maxpat" ],
@@ -778,6 +785,13 @@
 				"seealso" : [ "notifypaint", "manual+mirroring+jitter" ],
 				"tags" : [ "appearance", "mirror", "display", "jitter", "matrix", "paint", "jit", "draw", "automatic", "mirroring", "sync", "keep", "jitmatrix" ],
 				"title" : [ "Automatic mirroring to Jitter matrix" ]
+			},
+			"Mira" : {
+				"filename" : [ "bach.help.notation.appearance.95_mira.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "exportimage", "notifypaint", "manual+mirroring+jitter" ],
+				"tags" : [ "appearance", "mirror", "display", "mira", "sync", "miraweb", "web", "cast" ],
+				"title" : [ "Using bach with Mira and Miraweb" ]
 			}
 		},
 		"Articulations" : {
@@ -3530,6 +3544,41 @@
 				"seealso" : [ "exportlilypond" ],
 				"tags" : [ "data", "lilypond", "export", "exportlilypondpdf", "pdf", "create" ],
 				"title" : [ "PDF export via LilyPond" ]
+			},
+			"Images" : {
+				"filename" : [ "bach.help.notation.save and load.60_images.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "export+image+view", "exportlilypondpdf" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "dpi" ],
+				"title" : [ "Exporting scores as images" ]
+			},
+			"Imagesview_roll" : {
+				"filename" : [ "bach.help.notation.save and load.61_imagesview_roll.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ "export+image" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "view", "pixelpersystem", "mspersystem", "line", "raw", "multiline", "scroll", "page" ],
+				"title" : [ "Image export views for bach.roll" ]
+			},
+			"Imagesview_score" : {
+				"filename" : [ "bach.help.notation.save and load.62_imagesview_score.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "export+image" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "view", "pixelpersystem", "mspersystem", "line", "raw", "multiline", "scroll", "page" ],
+				"title" : [ "Image export views for bach.score" ]
+			},
+			"Imagesview_score2" : {
+				"filename" : [ "bach.help.notation.save and load.63_imagesview_score2.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "export+image", "export+image+view" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "fit", "measure", "layout", "algorithm", "fitmeasure" ],
+				"title" : [ "Image export layout" ]
+			},
+			"Images_fadedomain" : {
+				"filename" : [ "bach.help.notation.save and load.64_images_fadedomain.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "export+image", "export+image+view", "fadedomain" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "fade", "domain", "fadedomain", "appearance", "exporteed", "image", "systemvshift", "shift", "system", "separation", "vertical" ],
+				"title" : [ "Exported image appearance" ]
 			}
 		},
 		"Sequencing" : {

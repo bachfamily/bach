@@ -2727,6 +2727,42 @@
 				<br />				See also:<m>merge</m><br />
 			</description>
 		</method>
+		<method name="exportimage">
+			<arg name="filename" optional="1" type="symbol" />
+			<digest>
+				Export as PNG image
+			</digest>
+			<description>
+				Syntax: <b>exportimage <m>[&lt;symbol: filename&gt;]</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>exportimage /tmp/img.png</b>   <i>→ export score as image</i><br />
+				• <b>exportimage</b>   <i>→ export score as image via dialog box</i><br />
+				• <b>exportimage @view raw</b>   <i>→ export the portion of score displayed</i><br />
+				• <b>exportimage @view line</b>   <i>→ export whole score</i><br />
+				• <b>exportimage @view multiline @mspersystem 5000</b>   <i>→ export score as multiple images, each displaying 5 secs</i><br />
+				• <b>exportimage @view scroll @mspersystem 5000</b>   <i>→ export score as single image, each system displaying 5 secs</i><br />
+				• <b>exportimage @view scroll @systemvshift 10</b>   <i>→ export score as single image with 10 pixels of system separation</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@view</m> (symbol, default: line): View mode<br />
+				<m>@mspersystem</m> (float, default: none): Length of a system in milliseconds<br />
+				<m>@dpi</m> (int, default: 72): Dots per inch<br />
+				<m>@systemvshift</m> (int, default: 0): Separation between systems in pixels<br />
+				<m>@fadedomain</m> (int, default: none): Fade the left part of the domain near the clefs<br />
+				<br />
+				The <m>exportimage</m> message exports the content of the <o>bach.roll</o> as a single image or an image series.
+				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
+				allowing the choice of the location and file name for saving. Images are exported in PNG format. <br />
+				Three view modes are allowed, selected via the "view" message attribute: <br />
+				raw: the current view of the object is exported; <br />
+				line: all the score is exported in a single horizontal system; <br />
+				multiline: the score is split into multiple different files (systems); the system length is by default the object current domain, but
+				can be also set via the "mspersystem" message attribute; <br />
+				scroll: as the "multiline" mode, but all the systems are collected into a single file, scrollable vertically; the system length
+				is by default the object current domain, but can be also set via the "mspersystem" message attribute. <br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportom</m>,<m>exportmidi</m>,<m>read</m><br />
+			</description>
+		</method>
 		<method name="exportmidi">
 			<arg name="filename" optional="1" type="symbol" />
 			<digest>
@@ -2763,7 +2799,7 @@
 				- <b>format</b> (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks). <br />
 				– <b>resolution</b> (default: 960): the number of MIDI ticks per beat. <br />
 				- <b>exportbarlines</b> (default: 1): the barline markers are exported as MIDI marker events, with the name "bach barline". <br />
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportimage</m><br />
 			</description>
 		</method>
 		<method name="exportom">
@@ -2780,7 +2816,7 @@
 				or "multi-seq".
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportpwgl</m>,<m>exportmidi</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportpwgl</m>,<m>exportmidi</m>,<m>exportimage</m>,<m>read</m><br />
 			</description>
 		</method>
 		<method name="exportpwgl">
@@ -2798,7 +2834,7 @@
 				(by connecting the "import-bach" box, in the "pwgl2bach" library).
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportom</m>,<m>exportmidi</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportom</m>,<m>exportmidi</m>,<m>exportimage</m>,<m>read</m><br />
 			</description>
 		</method>
 		<method name="fixdynamics">
@@ -5071,15 +5107,11 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the slotinfo to the default one
+				Reset the custom articulations definition to the default one
 			</digest>
 			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
+				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
+				all the user-defined articulations.
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -5095,11 +5127,15 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom articulations definition to the default one
+				Reset the slotinfo to the default one
 			</digest>
 			<description>
-				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
-				all the user-defined articulations.
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="respell">
@@ -5998,7 +6034,7 @@
 				The <m>write</m> message saves all the <o>bach.roll</o> content in native format (with extension .llll).
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>writetxt</m>,<m>exportmidi</m>,<m>read</m><br />
+				<br />				See also:<m>writetxt</m>,<m>exportmidi</m>,<m>read</m>,<m>exportimage</m><br />
 			</description>
 		</method>
 		<method name="writetxt">
@@ -6038,7 +6074,7 @@
 				- <b>wrap</b> (default: 0, i.e. no wrapping): the maximum number of characters to be placed on each line.<br />
 				- <b>filename</b> (default: not set): the name of the file to be written.
 				If set, this specification overrides the file name set as the first message argument.
-				<br />				See also:<m>write</m>,<m>exportmidi</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>exportmidi</m>,<m>read</m>,<m>exportimage</m><br />
 			</description>
 		</method>
 	</methodlist>
@@ -6925,6 +6961,23 @@
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
+			</attributelist>
+		</attribute>
+		<attribute name="fadedomain" get="1" set="1" type="int" size="1">
+			<digest>
+				Fade Domain Over Clefs
+			</digest>
+			<description>
+				Toggles the ability to fade the portion of the score at left of the domain, near the clefs, with a transparency gradient
+				(also see <m>highlightdomain</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Fade Domain Over Clefs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
 		<attribute name="grid" get="1" set="1" type="int" size="1">

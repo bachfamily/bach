@@ -10770,17 +10770,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
 	jgraphics_set_source_rgba(g, 0, 0, 0, 1);
 	paint_static_stuff1(x, view, rect, jf, jf_acc, jf_text_fractions, jf_acc_bogus, jf_ts, jf_tempi, jf_text, jf_measure_num, g, repaint_measure_num);
 	
-	// do we have to print the play_head line?
-	if (x->r_ob.playing) {
-		double playhead_y1, playhead_y2;
-		get_playhead_ypos((t_notation_obj *) x, rect, &playhead_y1, &playhead_y2);
-		double play_head_pos = unscaled_xposition_to_xposition((t_notation_obj *) x, x->r_ob.play_head_ux);
-		paint_playhead(g, x->r_ob.j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * x->r_ob.zoom_y);
-	} else if (x->r_ob.show_playhead) {
-		double playhead_y1, playhead_y2;
-		get_playhead_ypos((t_notation_obj *) x, rect, &playhead_y1, &playhead_y2);
-		paint_playhead(g, x->r_ob.j_play_rgba, unscaled_xposition_to_xposition((t_notation_obj *)x, x->r_ob.play_head_start_ux), playhead_y1, playhead_y2, 1., 3 * x->r_ob.zoom_y);
-	}
+    paint_playhead((t_notation_obj *)x, g, rect);
 	
 	// draw the legend
 	if (x->r_ob.j_mouse_is_over && x->r_ob.legend == 2 && x->r_ob.j_mouse_x >= x->r_ob.j_inset_x && 
