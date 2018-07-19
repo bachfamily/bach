@@ -4290,7 +4290,12 @@ t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk, t_atom
 		
 		if (k == 0) {
 			llll_appendllll(klist, llll_get(), 0, WHITENULL_llll);
-			continue;
+            
+            count++;
+            if (max_count > 0 && count >= max_count)
+                goto end;
+
+            continue;
 		}
 		
 		for (i = 0; i < k; i++)
@@ -4309,7 +4314,7 @@ t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk, t_atom
             
             count++;
             if (max_count > 0 && count >= max_count)
-                break;
+                goto end;
 			
 			indices[i] ++;
 			while (i > 0 && indices[i] > maxofthemin + i) {
@@ -4327,7 +4332,8 @@ t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk, t_atom
 			
 		}
 	}
-	
+
+end:
 	bach_freeptr(hatoms);
 	bach_freeptr(indices);
 	pedantic_llll_check(outlist);
@@ -4447,6 +4453,11 @@ t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long e
         
         if (k == 0) {
             llll_appendllll(klist, llll_get(), 0, WHITENULL_llll);
+            
+            count++;
+            if (max_count > 0 && count >= max_count)
+                goto end;
+
             continue;
         }
         
@@ -4466,7 +4477,7 @@ t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long e
             
             count++;
             if (max_count > 0 && count >= max_count)
-                break;
+                goto end;
 
             indices[i] ++;
             while (i > 0 && indices[i] >= ll_size) {
@@ -4485,6 +4496,7 @@ t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long e
         }
     }
     
+end:
     bach_freeptr(hatoms);
     bach_freeptr(indices);
     pedantic_llll_check(outlist);

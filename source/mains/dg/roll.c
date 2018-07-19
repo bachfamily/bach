@@ -5062,6 +5062,8 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) roll_int, "int", A_LONG, 0);
 	class_addmethod(c, (method) roll_float, "float", A_FLOAT, 0);
 
+    // multitouch handling from Mira/MiraWeb
+    class_addmethod(c, (method) notationobj_mt, "mt", A_GIMME, 0);
 
 	// @method bang @digest Build content from separate parameters
 	// @description A <m>bang</m> in any of the inlets will first rebuild new <o>bach.roll</o> content starting from
@@ -5072,7 +5074,7 @@ int T_EXPORT main(void){
 	// Not all the separate parameters need to be given to build the new content: if some are not given, default values
 	// will be used instead. Default onsets are 0ms, 1000ms, 2000ms..., but if you input less onsets than needed (e.g. just two)
 	// the difference between the last two onsets will be padded in case new chords are to be inserted. Default pitch in cents is 6000 (middle C).
-	// Default duration is 500ms, default velocity is 100, but in both cases but the last one is padded if more chords than the input velocities are
+	// Default duration is 500ms, default velocity is 100, but in both cases the last one is padded if more chords than input parameters are
 	// to be created. Default extras are no extras. 
 	class_addmethod(c, (method) roll_bang, "bang", 0);
 
@@ -6026,7 +6028,7 @@ t_max_err roll_setattr_showstems(t_roll *x, t_object *attr, long ac, t_atom *av)
 
 
 
-t_max_err roll_setattr_zoom(t_roll *x, t_object *attr, long ac, t_atom *av){
+t_max_err roll_setattr_zoom(t_roll *x, t_object *attr, long ac, t_atom *av) {
 	if (ac && av) {
 		double z = atom_getfloat(av);
         double minzoom = CONST_MIN_ZOOM;
@@ -10673,7 +10675,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 		double system_jump = x->r_ob.system_jump;
 		double octave_stem_length = 7 * x->r_ob.step_y;
         double end_x_to_repaint_no_inset = (22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
-        double predomain_width = get_predomain_width((t_notation_obj *)x);
+        double predomain_width = get_predomain_width_pixels((t_notation_obj *)x);
 
 		// some constant that will be useful later for the "retouches" left to do, in order to have things working properly
 		// e.g.: if some notes have been drawn over these parts, we cover the notes with the keys/background/staves...
@@ -10816,7 +10818,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
     t_jfont *jf_text_small = NULL, *jf_text_smallbold = NULL, *jf_lyrics = NULL, *jf_lyrics_nozoom = NULL, *jf_ann = NULL, *jf_dynamics = NULL, *jf_small_dynamics = NULL, *jf_dynamics_nozoom = NULL;
     t_marker *restart_from_this_marker = NULL;
     double octave_stem_length = 7 * x->r_ob.step_y;
-    double predomain_width = get_predomain_width((t_notation_obj *)x);
+    double predomain_width = get_predomain_width_pixels((t_notation_obj *)x);
 
     lock_general_mutex((t_notation_obj *)x);
     for (t_rollvoice *voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
@@ -10950,7 +10952,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             double fadestart_no_inset = (15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
             
             if (!x->r_ob.fade_predomain)
-                end_x_to_repaint_no_inset = fadestart_no_inset = get_predomain_width((t_notation_obj *)x);
+                end_x_to_repaint_no_inset = fadestart_no_inset = get_predomain_width_pixels((t_notation_obj *)x);
             
             lock_general_mutex((t_notation_obj *)x);
             
@@ -11155,7 +11157,7 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
         paint_line(g, build_jrgba(0, 1, 0, 1), fadestart_no_inset, 0, fadestart_no_inset, 1000, 1);
 */
         if (!x->r_ob.fade_predomain)
-            end_x_to_repaint_no_inset = fadestart_no_inset = get_predomain_width((t_notation_obj *)x);
+            end_x_to_repaint_no_inset = fadestart_no_inset = get_predomain_width_pixels((t_notation_obj *)x);
         
         lock_general_mutex((t_notation_obj *)x);
 		

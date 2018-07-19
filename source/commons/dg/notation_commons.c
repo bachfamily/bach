@@ -3999,7 +3999,15 @@ double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system)
 }
 
 
-double get_predomain_width(t_notation_obj *r_ob)
+double get_domain_width_pixels(t_notation_obj *r_ob)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+        return deltaonset_to_deltaxpixels(r_ob, r_ob->domain);
+    else
+        return deltauxpixels_to_deltaxpixels(r_ob, r_ob->domain_ux);
+}
+
+double get_predomain_width_pixels(t_notation_obj *r_ob)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
         return onset_to_xposition(r_ob, r_ob->screen_ms_start, NULL);

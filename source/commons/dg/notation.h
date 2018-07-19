@@ -4783,6 +4783,12 @@ typedef struct _notation_obj
     t_symbol            *jit_destination_matrix; ///< If non-NULL, also mirrors the painting of the canvas on the selected jitter Matrix.
     char                pagelike_barlines;        ///< If non-null, the barlines and measure numbers (in bach.score) are drawn as if they were on a page
     
+    // mira/miraweb: stuff designed to work with mira.multitouch
+    char mt_finger_state[10];                   ///< State of each finger
+    t_pt mt_finger_pos[10];                     ///< Positions of each finger (in pixels)
+    char mt_pinching;                           ///< Flag telling whether there's pinching going on
+    double mt_zoom_at_pinch_start;              ///< Zoom at the moment the pinch started
+
     // backward compatibility stuff
     long                bwcompatible;           ///< Number of the version of bach towards which the object needs to be compatible. E.g. if 7900, this
                                                 ///< will ensure compatibility (whenever possible...) with bach 0.7.9, and so on.
@@ -4913,7 +4919,15 @@ double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system);
     @param r_ob            The notation object
     @return                The horizontal width of the portion of score at the left of the domain, in pixels
  */
-double get_predomain_width(t_notation_obj *r_ob);
+double get_predomain_width_pixels(t_notation_obj *r_ob);
+
+
+/**    Get the horizontal width of the domain in pixels
+ @ingroup            conversions
+ @param r_ob            The notation object
+ @return                The horizontal width of the domain in pixels
+ */
+double get_domain_width_pixels(t_notation_obj *r_ob);
 
 
 /**	Convert a horizontal pixel distance into a time distance in milliseconds (only usable by [bach.roll]) 
@@ -18868,6 +18882,9 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args);
 
 // export image
 t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t_atom *av);
+
+// mira multitouch
+void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

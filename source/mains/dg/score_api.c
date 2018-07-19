@@ -8970,7 +8970,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     char part_direction = is_in_voiceensemble ? (voice->v_ob.part_index % 2 == 1 ? -1 : 1) : 0;
     char dynamics_span_ties = do_dynamics_span_ties(x);
     
-    double domain_start_pixel = get_predomain_width((t_notation_obj *)x);
+    double domain_start_pixel = get_predomain_width_pixels((t_notation_obj *)x);
     double domain_end_pixel = unscaled_xposition_to_xposition((t_notation_obj *)x, x->r_ob.screen_ux_end);
 
     char last_annotation_text[BACH_MAX_LAST_ANNOTATION_TEXT_CHARS];
@@ -10503,7 +10503,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
 		double system_jump = x->r_ob.system_jump;
 
         if (!x->r_ob.fade_predomain)
-            end_x_to_repaint_no_inset = fadestart_no_inset = get_predomain_width((t_notation_obj *)x);
+            end_x_to_repaint_no_inset = fadestart_no_inset = get_predomain_width_pixels((t_notation_obj *)x);
 
         // painting label families
         if (x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || x->r_ob.show_label_families == k_SHOW_LABEL_FAMILIES_VENN)
@@ -10789,7 +10789,7 @@ void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect)
 	paint_static_stuff2(x, view, rect, jf, jf_acc, jf_acc_bogus, jf_text_fixed, jf_ts, jf_tempi, g);
 
     // painting the first measure number, if needed
-    double domain_start_pixel = get_predomain_width((t_notation_obj *)x);
+    double domain_start_pixel = get_predomain_width_pixels((t_notation_obj *)x);
     for (t_llllelem *el = repaint_measure_num->l_head; el; el = el->l_next) {
         t_measure *meas = (t_measure *)hatom_getobj(&el->l_hatom);
         char measurenum_txt[8];

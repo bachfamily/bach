@@ -5890,3 +5890,91 @@ t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_obje
 
 
 
+
+/////// MIRA / MIRAWEB INTERACTION
+
+
+long notationobj_mt_get_num_fingers_down(t_notation_obj *r_ob)
+{
+    long res = 0;
+    for (long i = 0; i < 10; i++)
+        res += (r_ob->mt_finger_state[i] > 0);
+    return res;
+}
+
+void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    if (argc) {
+        t_object *firstview = jpatcher_get_firstview((t_object *)r_ob);
+        
+        if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("region") && argc >= 4) { // region <regionID> <finger> <state> <device>
+//            long finger_id = CLAMP(atom_getlong(argv + 2), 1, 10) - 1;
+//            long state = CLAMP(atom_getlong(argv + 3), 0, 1);
+//            finger_state[finger_id] = state;
+        } else if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("touch") && argc >= 5) { // touch <x> <y> <finger> <state> <region> <device>
+            long finger_id = CLAMP(atom_getlong(argv + 3), 1, 10) - 1;
+            long state = CLAMP(atom_getlong(argv + 4), 0, 1);
+            t_pt pos = build_pt(atom_getfloat(argv + 1) * r_ob->width, atom_getfloat(argv + 2) * r_ob->height);
+            
+//            dev_object_post((t_object *)r_ob, "• Mira finger %ld %s", finger_id + 1, state ? "ON" : "OFF");
+            
+            if (r_ob->mt_finger_state[finger_id]) {
+                if (!state) {
+                    // finger released
+                    method mouseup = object_method_direct_getmethod((t_object *) r_ob, gensym("mouseup"));
+                    if (mouseup) (mouseup)(r_ob, firstview, pos, 0);
+                } else {
+                    // finger dragged
+                    method mousedrag = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedrag"));
+                    if (mousedrag) (mousedrag)(r_ob, firstview, pos, 0);
+                }
+            } else {
+                if (!state) {
+                    // should not happen, in principle
+                } else {
+                    // finger pressed
+                    method mousedown = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedown"));
+                    if (mousedown) (mousedown)(r_ob, firstview, pos, 0);
+                }
+            }
+            
+            r_ob->mt_finger_state[finger_id] = state;
+            r_ob->mt_finger_pos[finger_id] = pos;
+            
+            if (notationobj_mt_get_num_fingers_down(r_ob) == 0)
+                r_ob->mt_pinching = false;
+            
+            // swipe = scroll
+        } else if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("swipe") && argc >= 2) { // swipe <direction> <device>
+            t_symbol *direction = atom_getsym(argv + 1);
+            method mousewheel = object_method_direct_getmethod((t_object *) r_ob, gensym("mousewheel"));
+            if (mousewheel) {
+                if (direction == gensym("left"))
+                    (mousewheel)(r_ob, firstview, r_ob->mt_finger_pos[0], 0, -get_domain_width_pixels(r_ob) / (25. * CONST_X_MOUSEWHEEL_FACTOR), 0.);
+                else if (direction == gensym("right"))
+                    (mousewheel)(r_ob, firstview, r_ob->mt_finger_pos[0], 0, get_domain_width_pixels(r_ob) / (25. * CONST_X_MOUSEWHEEL_FACTOR), 0.);
+            }
+            
+            // pinch = change zoom
+        } else if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("pinch") && argc >= 2) { // pinch <change> <velocity> <state> <device>
+            double change = atom_getfloat(argv + 1);
+            if (!r_ob->mt_pinching) {
+                // just started pinching!
+                r_ob->mt_zoom_at_pinch_start = r_ob->zoom_x;
+                r_ob->mt_pinching = true;
+            }
+            object_attr_setfloat((t_object *)r_ob, gensym("zoom"), r_ob->mt_zoom_at_pinch_start * change * 100.);
+//            method mousewheel = object_method_direct_getmethod((t_object *) r_ob, gensym("mousewheel"));
+//            (mousewheel)(r_ob, firstview, r_ob->mt_finger_pos[0], eCommandKey, 0., 4 * (r_ob->zoom_x - change * r_ob->zoom_x)/CONST_Y_MOUSEWHEEL_FACTOR);
+            
+            // tap = Cmd + click
+        } else if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("tap") && argc >= 3) { // tap <x> <y> <region> <device>
+            t_pt pos = build_pt(atom_getfloat(argv + 1) * r_ob->width, atom_getfloat(argv + 2) * r_ob->height);
+            method mousedown = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedown"));
+            method mouseup = object_method_direct_getmethod((t_object *) r_ob, gensym("mouseup"));
+            if (mousedown) (mousedown)(r_ob, firstview, pos, eCommandKey);
+            if (mouseup) (mouseup)(r_ob, firstview, pos, eCommandKey);
+        }
+    }
+}
+

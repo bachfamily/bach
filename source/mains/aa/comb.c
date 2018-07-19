@@ -30,7 +30,7 @@
  bach, bach objects, bach llll
  
  @keywords
- combination, combinatory, element
+ combination, combinatory, element, arrange, arrangement
 
  @seealso
  bach.perm, bach.scramble, bach.cartesianprod

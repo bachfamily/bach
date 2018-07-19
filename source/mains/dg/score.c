@@ -4907,6 +4907,8 @@ int T_EXPORT main(void){
 	class_addmethod(c, (method) score_int, "int", A_LONG, 0);
 	class_addmethod(c, (method) score_float, "float", A_FLOAT, 0);
 
+    // multitouch handling from Mira/MiraWeb
+    class_addmethod(c, (method) notationobj_mt, "mt", A_GIMME, 0);
 
 	// @method bang @digest Build content from separate parameters
 	// @description A <m>bang</m> in any of the inlets will first rebuild new <o>bach.score</o> content starting from
@@ -8680,6 +8682,8 @@ void score_copy_slots_to_tied_noted_sequences(t_score *x)
 	unlock_general_mutex((t_notation_obj *)x);
 }
 
+
+
 void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	long inlet = proxy_getinlet((t_object *) x); 
     
@@ -8695,8 +8699,9 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
             t_symbol *router = is_firstelem_symbol ? hatom_getsym(&firstelem->l_hatom) : NULL;
 
             char append_via_gathered_syntax = false;
-            if (router == _llllobj_sym_addmeasures || router == _llllobj_sym_appendmeasures)
+            if (router == _llllobj_sym_addmeasures || (router == _llllobj_sym_appendmeasures && (inputlist->l_size == 1 || inputlist->l_depth > 2))) {
                 append_via_gathered_syntax = true;
+            }
             
             if (append_via_gathered_syntax) {
                 x->must_append_measures = true;

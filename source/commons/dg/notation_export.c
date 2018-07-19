@@ -226,22 +226,22 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             
             if (view == gensym("line")) {
                 if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-                    r_ob->inner_width = MAX(inner_width_prev, deltaonset_to_deltaxpixels(r_ob, r_ob->length_ms) + get_predomain_width(r_ob));
+                    r_ob->inner_width = MAX(inner_width_prev, deltaonset_to_deltaxpixels(r_ob, r_ob->length_ms) + get_predomain_width_pixels(r_ob));
                     r_ob->inner_height = notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y;
                 } else { // k_NOTATION_OBJECT_SCORE
-                    r_ob->inner_width = deltauxpixels_to_deltaxpixels(r_ob, r_ob->length_ux - CONST_SCORE_ADDITIONALS_UX_AT_THE_END) + get_predomain_width(r_ob);
+                    r_ob->inner_width = deltauxpixels_to_deltaxpixels(r_ob, r_ob->length_ux - CONST_SCORE_ADDITIONALS_UX_AT_THE_END) + get_predomain_width_pixels(r_ob);
                     r_ob->inner_height = notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y;
                 }
             } else if (view == gensym("scroll") || view == gensym("page") || view == gensym("multiline")) {
                 if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
                     if (mspersystem != r_ob->domain)
-                        r_ob->inner_width = deltaonset_to_deltaxpixels(r_ob, mspersystem) + get_predomain_width(r_ob);
+                        r_ob->inner_width = deltaonset_to_deltaxpixels(r_ob, mspersystem) + get_predomain_width_pixels(r_ob);
                     r_ob->inner_height = notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y;
                     num_shots = ceil(length_ms_prev / mspersystem);
                     r_ob->length_ms = num_shots * mspersystem;
                 } else { // k_NOTATION_OBJECT_SCORE
                     if (uxperline != r_ob->domain_ux)
-                        r_ob->inner_width = deltauxpixels_to_deltaxpixels(r_ob, uxperline) + get_predomain_width(r_ob);
+                        r_ob->inner_width = deltauxpixels_to_deltaxpixels(r_ob, uxperline) + get_predomain_width_pixels(r_ob);
                     r_ob->inner_height = notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y;
                     
                     if (!fitmeasures) {
@@ -320,7 +320,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                                         calculate_ms_on_a_line(r_ob);
                                     }
                                 } else if (num_tuttipoint_slices > 1) {
-                                    r_ob->inner_width = (new_inner_width - get_predomain_width(r_ob)) * num_tuttipoint_slices + get_predomain_width(r_ob);
+                                    r_ob->inner_width = (new_inner_width - get_predomain_width_pixels(r_ob)) * num_tuttipoint_slices + get_predomain_width_pixels(r_ob);
                                     redraw_hscrollbar(r_ob, 1);
                                     calculate_ms_on_a_line(r_ob);
                                 }
@@ -415,7 +415,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                 unlock_general_mutex(r_ob);
             }
             
-            redraw_hscrollbar(r_ob, 1);
+            redraw_hscrollbar(r_ob, 2);
             redraw_vscrollbar(r_ob, 1);
             calculate_ms_on_a_line(r_ob);
             recalculate_num_systems(r_ob);
