@@ -1326,7 +1326,7 @@
 				Not all the separate parameters need to be given to build the new content: if some are not given, default values
 				will be used instead. Default onsets are 0ms, 1000ms, 2000ms..., but if you input less onsets than needed (e.g. just two)
 				the difference between the last two onsets will be padded in case new chords are to be inserted. Default pitch in cents is 6000 (middle C).
-				Default duration is 500ms, default velocity is 100, but in both cases but the last one is padded if more chords than the input velocities are
+				Default duration is 500ms, default velocity is 100, but in both cases the last one is padded if more chords than input parameters are
 				to be created. Default extras are no extras.
 			</description>
 		</method>

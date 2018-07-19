@@ -789,9 +789,23 @@
 			"Mira" : {
 				"filename" : [ "bach.help.notation.appearance.95_mira.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
-				"seealso" : [ "exportimage", "notifypaint", "manual+mirroring+jitter" ],
+				"seealso" : [ "mira+multitouch", "exportimage", "notifypaint", "manual+mirroring+jitter" ],
 				"tags" : [ "appearance", "mirror", "display", "mira", "sync", "miraweb", "web", "cast" ],
 				"title" : [ "Using bach with Mira and Miraweb" ]
+			},
+			"Miratouch" : {
+				"filename" : [ "bach.help.notation.appearance.96_miratouch.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "bach+mira" ],
+				"tags" : [ "appearance", "mirror", "display", "mira", "sync", "miraweb", "web", "cast", "interaction", "touch", "multitouch", "mt", "message", "network", "networking" ],
+				"title" : [ "Adding interaction with Mira and Miraweb" ]
+			},
+			"Miracustom" : {
+				"filename" : [ "bach.help.notation.appearance.97_miracustom.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "bach+mira" ],
+				"tags" : [ "appearance", "mirror", "display", "mira", "sync", "miraweb", "web", "cast", "interaction", "touch", "multitouch", "network", "networking", "custom", "customize" ],
+				"title" : [ "Customizing interaction with Mira and Miraweb" ]
 			}
 		},
 		"Articulations" : {

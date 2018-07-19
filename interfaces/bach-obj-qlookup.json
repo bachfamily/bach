@@ -369,7 +369,9 @@
     "keywords": [
       "combination",
       "combinatory",
-      "element"
+      "element",
+      "arrange",
+      "arrangement"
     ],
     "seealso": [
       "bach.perm",
