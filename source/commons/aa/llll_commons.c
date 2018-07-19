@@ -4248,7 +4248,7 @@ t_llll *llll_oneperm(t_llll *inlist, long order, long circular)
 // the combinations are grouped in sublists according to their size, e.g.
 // ((1) (2) (3)) ((1 2) (2 3) (1 3)) ((1 2 3))
 
-t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk)
+t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk, t_atom_long max_count)
 {
 	t_llll *klist, *comblist;
 	t_llll *outlist;
@@ -4258,6 +4258,7 @@ t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk)
 	t_atom_long dontreachthisk;
 	t_hatom **hatoms, **this_hatoms;
 	t_llllelem *el;
+    t_atom_long count = 0;
 	
 	if (!ll)
 		return NULL;
@@ -4305,6 +4306,10 @@ t_llll *llll_comb(const t_llll *ll, t_atom_long startk, t_atom_long endk)
 				llll_appendhatom_clone(comblist, hatoms[indices[i]], 0, WHITENULL_llll);
 			i = k - 1;
 			maxofthemin = ll_size - k;
+            
+            count++;
+            if (max_count > 0 && count >= max_count)
+                break;
 			
 			indices[i] ++;
 			while (i > 0 && indices[i] > maxofthemin + i) {
@@ -4403,7 +4408,7 @@ llll_cartesianprod_exit:
 // the combinations are grouped in sublists according to their size, e.g.
 // ((1) (2) (3)) ((1 2) (2 3) (1 3)) ((1 2 3))
 
-t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long endk)
+t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long endk, t_atom_long max_count)
 {
     t_llll *klist, *comblist;
     t_llll *outlist;
@@ -4413,6 +4418,7 @@ t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long e
     t_atom_long dontreachthisk;
     t_hatom **hatoms, **this_hatoms;
     t_llllelem *el;
+    t_atom_long count = 0;
     
     if (!ll)
         return NULL;
@@ -4458,6 +4464,10 @@ t_llll *llll_comb_with_repetitions(t_llll *ll, t_atom_long startk, t_atom_long e
             i = k - 1;
             maxofthemin = ll_size - k;
             
+            count++;
+            if (max_count > 0 && count >= max_count)
+                break;
+
             indices[i] ++;
             while (i > 0 && indices[i] >= ll_size) {
                 i--;
