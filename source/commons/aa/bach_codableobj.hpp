@@ -76,5 +76,6 @@ void codableobj_free(t_codableobj *x);
 
 void codableobj_code_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
 
+long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av);
 
 #endif /* bach_codableobj_hpp */

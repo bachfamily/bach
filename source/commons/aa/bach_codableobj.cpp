@@ -402,3 +402,19 @@ void codableclass_add_standard_methods(t_class *c)
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
 }
+
+long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av)
+{
+    long i;
+    long code_av = 0;
+    for (i = 0; i < ac - 1; i++) {
+        if (atom_getsym(av + i) == gensym("@lambda")) {
+            code_av = i + 1;
+            codableobj_getCodeFromAtoms(x, code_av, av + code_av);
+            if (codableobj_buildAst(x) != MAX_ERR_NONE)
+                object_error((t_object *) x, "Invalid code");
+            return i;
+        }
+    }
+    return ac;
+}
