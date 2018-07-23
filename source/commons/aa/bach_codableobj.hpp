@@ -16,7 +16,9 @@ long bach_atoms2text(long ac, t_atom *av, char **buf);
 class t_ownedFunction;
 class t_mainFunction;
 
-typedef std::unordered_map<std::string, t_ownedFunction *> t_ofTable;
+using t_ofTable = std::unordered_map<std::string, t_ownedFunction>;
+//typedef std::unordered_map<std::string, t_ownedFunction *> t_ofTable;
+
 
 typedef struct _codableobj
 {
@@ -31,6 +33,7 @@ typedef struct _codableobj
     t_bool c_auto;
     t_bach_atomic_lock c_lock;
 } t_codableobj;
+
 
 void codableclass_add_standard_methods(t_class *c);
 
@@ -77,5 +80,7 @@ void codableobj_free(t_codableobj *x);
 void codableobj_code_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
 
 long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av);
+
+void codableobj_ownedFunctionsSetup(t_codableobj *x);
 
 #endif /* bach_codableobj_hpp */

@@ -418,3 +418,11 @@ long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av)
     }
     return ac;
 }
+
+
+void codableobj_ownedFunctionsSetup(t_codableobj *x)
+{
+    x->c_ofTable["directout"] = new t_fnDirectout_dummy(x);
+    x->c_ofTable["directin"] = new t_fnDirectin_dummy(x);
+    x->c_ofTable["print"] = new t_fnPrint((t_object *) x);
+}
