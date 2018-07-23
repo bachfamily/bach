@@ -378,3 +378,10 @@ void code_deferbang(t_code *x, t_symbol *msg, long ac, t_atom *av)
 }
 
 
+
+void code_ownedFunctionsSetup(t_code *x)
+{
+    x->n_ob.c_ofTable["directout"] = new t_fnDirectout(x);
+    x->n_ob.c_ofTable["directin"] = new t_fnDirectin(x);
+    x->n_ob.c_ofTable["print"] = new t_fnPrint((t_object *) x);
+}

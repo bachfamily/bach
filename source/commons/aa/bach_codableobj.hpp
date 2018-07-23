@@ -16,8 +16,7 @@ long bach_atoms2text(long ac, t_atom *av, char **buf);
 class t_ownedFunction;
 class t_mainFunction;
 
-using t_ofTable = std::unordered_map<std::string, t_ownedFunction>;
-//typedef std::unordered_map<std::string, t_ownedFunction *> t_ofTable;
+typedef std::unordered_map<std::string, t_ownedFunction *> t_ofTable;
 
 
 typedef struct _codableobj
