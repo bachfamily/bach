@@ -14,7 +14,7 @@ void get_filename_extension(char *filename, char *ext, char also_truncate_filena
     if (!dot || dot == filename)
         ext[0] = 0;
     else {
-        strcpy(ext, dot + 1);
+        strncpy_zero(ext, dot + 1, MAX_FILENAME_CHARS);
         if (also_truncate_filename)
             *dot = 0;
     }
@@ -171,7 +171,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         get_filename_extension(filename_sym->s_name, extension, false);
         if (strcasecmp(extension, "png") != 0) {
             snprintf_zero(new_temp_filename, MAX_FILENAME_CHARS, "%s.png", filename_sym->s_name);
-            type_sym = gensym(new_temp_filename);
+            filename_sym = gensym(new_temp_filename);
         }
     }
 
@@ -197,7 +197,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         filename[0] = 0;
         path_frompotentialpathname(filename_sym->s_name, &path, filename);
         if (!filename[0])
-            strncpy_zero(filename, filename_sym->s_name, MAX_PATH_CHARS);
+            snprintf(filename, MAX_FILENAME_CHARS, "%s", filename_sym->s_name);
         strncpy_zero(filename_no_ext, filename, MAX_FILENAME_CHARS);
         get_filename_extension(filename_no_ext, extension, true);
         
@@ -434,6 +434,9 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     
     if (tuttipoint_system_layout)
         llll_free(tuttipoint_system_layout);
+    
+    if (arguments)
+        llll_free(arguments);
     
     return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
 }

@@ -185,6 +185,12 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
 	if (msg == _llllobj_sym_clearall) {
 		for (i = 0; i < 6; i++)
 			llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), i);
+        if (x->output_separate) {
+            for (i = 1; i < 6; i++)
+                llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), i);
+        } else {
+            llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), 0);
+        }
 		return;
 	}
 

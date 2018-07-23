@@ -5907,34 +5907,37 @@ void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
     if (argc) {
         t_object *firstview = jpatcher_get_firstview((t_object *)r_ob);
         
-        if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("region") && argc >= 4) { // region <regionID> <finger> <state> <device>
+//        if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("region") && argc >= 4) { // region <regionID> <finger> <state> <device>
 //            long finger_id = CLAMP(atom_getlong(argv + 2), 1, 10) - 1;
 //            long state = CLAMP(atom_getlong(argv + 3), 0, 1);
 //            finger_state[finger_id] = state;
-        } else if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("touch") && argc >= 5) { // touch <x> <y> <finger> <state> <region> <device>
+//        } else
+            if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("touch") && argc >= 5) { // touch <x> <y> <finger> <state> <region> <device>
             long finger_id = CLAMP(atom_getlong(argv + 3), 1, 10) - 1;
             long state = CLAMP(atom_getlong(argv + 4), 0, 1);
             t_pt pos = build_pt(atom_getfloat(argv + 1) * r_ob->width, atom_getfloat(argv + 2) * r_ob->height);
             
 //            dev_object_post((t_object *)r_ob, "• Mira finger %ld %s", finger_id + 1, state ? "ON" : "OFF");
             
-            if (r_ob->mt_finger_state[finger_id]) {
-                if (!state) {
-                    // finger released
-                    method mouseup = object_method_direct_getmethod((t_object *) r_ob, gensym("mouseup"));
-                    if (mouseup) (mouseup)(r_ob, firstview, pos, 0);
+            if (!r_ob->mt_pinching) {
+                if (r_ob->mt_finger_state[finger_id]) {
+                    if (!state) {
+                        // finger released
+                        method mouseup = object_method_direct_getmethod((t_object *) r_ob, gensym("mouseup"));
+                        if (mouseup) (mouseup)(r_ob, firstview, pos, 0);
+                    } else {
+                        // finger dragged
+                        method mousedrag = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedrag"));
+                        if (mousedrag) (mousedrag)(r_ob, firstview, pos, 0);
+                    }
                 } else {
-                    // finger dragged
-                    method mousedrag = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedrag"));
-                    if (mousedrag) (mousedrag)(r_ob, firstview, pos, 0);
-                }
-            } else {
-                if (!state) {
-                    // should not happen, in principle
-                } else {
-                    // finger pressed
-                    method mousedown = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedown"));
-                    if (mousedown) (mousedown)(r_ob, firstview, pos, 0);
+                    if (!state) {
+                        // should not happen, in principle
+                    } else {
+                        // finger pressed
+                        method mousedown = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedown"));
+                        if (mousedown) (mousedown)(r_ob, firstview, pos, 0);
+                    }
                 }
             }
             
