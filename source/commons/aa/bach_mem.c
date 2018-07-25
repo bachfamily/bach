@@ -151,6 +151,8 @@ t_llll *llll_retrieve_from_phonenumber_and_retain(t_uint32 phonenumber)
 	llll_page = phonenumber / BACH_LLLL_PAGE_SIZE;
 	llll_row = phonenumber % BACH_LLLL_PAGE_SIZE;
 	x = llll_book[llll_page] + llll_row;
+    if (x->l_owner)
+        return NULL;
 	if (ATOMIC_INCREMENT_32(&x->l_count) == 1) { // which means that this list is not game
 		ATOMIC_DECREMENT_32(&x->l_count);
 		return NULL;

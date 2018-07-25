@@ -88,14 +88,14 @@ void llll_append(t_llll *where, t_llllelem *what, t_llll *adopter)
             where->l_depth = 1;
             llll_upgrade_depth(where);
         }
-        return;
+    } else {
+        what->l_prev = where->l_tail;
+        where->l_tail->l_next = what;
+        where->l_tail = what;
+        where->l_size ++;
+        if (what->l_hatom.h_type == H_LLLL)
+            llll_upgrade_depth(what->l_hatom.h_w.w_llll);
     }
-    what->l_prev = where->l_tail;
-    where->l_tail->l_next = what;
-    where->l_tail = what;
-    where->l_size ++;
-    if (what->l_hatom.h_type == H_LLLL)
-        llll_upgrade_depth(what->l_hatom.h_w.w_llll);
     return;
 }
 

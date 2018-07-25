@@ -265,6 +265,8 @@
 		91000B531D33EB940081ECC0 /* gecko.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91000B521D33EB940081ECC0 /* gecko.cpp */; };
 		910400B21C147F5C0072277C /* gpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA940181BDFEBDB00EFCABC /* gpc.c */; };
 		91040DA51FB1ABCD009E91CD /* bach_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91040DA31FB1ABCD009E91CD /* bach_parser.hpp */; };
+		91071DB12100DB5900452762 /* bach_codableobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91071DAF2100DB5900452762 /* bach_codableobj.cpp */; };
+		91071DB22100DB5900452762 /* bach_codableobj.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91071DB02100DB5900452762 /* bach_codableobj.hpp */; };
 		9108DB6A145D65BA00C6289F /* mc2n.c in Sources */ = {isa = PBXBuildFile; fileRef = 9108DB69145D65BA00C6289F /* mc2n.c */; };
 		9108DB6C145D65CB00C6289F /* n2mc.c in Sources */ = {isa = PBXBuildFile; fileRef = 9108DB6B145D65CB00C6289F /* n2mc.c */; };
 		910B178519920899003F580D /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
@@ -2884,6 +2886,8 @@
 		91000B501D33DA0C0081ECC0 /* libgecodesearch.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgecodesearch.a; path = /usr/local/lib/libgecodesearch.a; sourceTree = "<absolute>"; };
 		91000B521D33EB940081ECC0 /* gecko.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gecko.cpp; sourceTree = "<group>"; };
 		91040DA31FB1ABCD009E91CD /* bach_parser.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bach_parser.hpp; sourceTree = "<group>"; };
+		91071DAF2100DB5900452762 /* bach_codableobj.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bach_codableobj.cpp; sourceTree = "<group>"; };
+		91071DB02100DB5900452762 /* bach_codableobj.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bach_codableobj.hpp; sourceTree = "<group>"; };
 		9108DB44145D602200C6289F /* bach.n2mc.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.n2mc.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		9108DB5B145D605000C6289F /* bach.mc2n.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.mc2n.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		9108DB69145D65BA00C6289F /* mc2n.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc2n.c; sourceTree = "<group>"; };
@@ -5643,6 +5647,8 @@
 				91B62BBB1F501A3800B9FC63 /* llll_lifecycle.h */,
 				91B62BC01F5218A200B9FC63 /* bach_mem.h */,
 				91040DA31FB1ABCD009E91CD /* bach_parser.hpp */,
+				91071DAF2100DB5900452762 /* bach_codableobj.cpp */,
+				91071DB02100DB5900452762 /* bach_codableobj.hpp */,
 			);
 			path = aa;
 			sourceTree = "<group>";
@@ -6372,6 +6378,7 @@
 			files = (
 				91FDDC2B1FBE2B2F0040D803 /* bach_exprparser_lex.h in Headers */,
 				91040DA51FB1ABCD009E91CD /* bach_parser.hpp in Headers */,
+				91071DB22100DB5900452762 /* bach_codableobj.hpp in Headers */,
 				91812A691611B29E00473F86 /* _kiss_fft_guts.h in Headers */,
 				91812A6B1611B29E00473F86 /* kiss_fft.h in Headers */,
 				91812A6C1611B29E00473F86 /* kissfft.hh in Headers */,
@@ -12384,6 +12391,7 @@
 				91812A801611B29E00473F86 /* mxml-search.c in Sources */,
 				91812A811611B29E00473F86 /* mxml-set.c in Sources */,
 				91812A821611B29E00473F86 /* mxml-string.c in Sources */,
+				91071DB12100DB5900452762 /* bach_codableobj.cpp in Sources */,
 				91812A871611B29E00473F86 /* notation_files.c in Sources */,
 				91812A891611B29E00473F86 /* collector_commons.c in Sources */,
 				911385B81F4C3AB100637524 /* notation_goto.c in Sources */,

@@ -492,7 +492,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 	long p_true_ac, b_true_ac, shootit;
 	long outargsac;
 	t_atom *outargsav;
-	t_symbol *attrsym, **this_arg;
+	t_symbol *attrsym;
 
 	long cm; 
 	long cmdaltsh = (eShiftKey | eCommandKey | eAltKey);
