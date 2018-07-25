@@ -5971,13 +5971,24 @@ void calculate_tuttipoints(t_score *x)
 	// checking tuttipoints having a measure starting and ending with all the voices
 	for (this_tpt = x->r_ob.firsttuttipoint; this_tpt; this_tpt = this_tpt->next) {
 		char all_voices_start = true;
+        char simple_single_measure_tuttipoint = true;
+        char some_measures_have_next = false;
 		for (i = 0; i < x->r_ob.num_voices; i++) {
 			if (!this_tpt->measure[i]) {
 				all_voices_start = false;
+                simple_single_measure_tuttipoint = false;
 				break;
-			}
+            } else if (!this_tpt->measure[i]->next && some_measures_have_next) {
+                simple_single_measure_tuttipoint = false;
+            } else if (this_tpt->measure[i]->next) {
+                some_measures_have_next = true;
+                if (this_tpt->measure[i]->next->tuttipoint_reference == this_tpt) {
+                    simple_single_measure_tuttipoint = false;
+                }
+            }
 		}
 		this_tpt->all_voices_are_together = all_voices_start;
+        this_tpt->simple_single_measure_tuttipoint = simple_single_measure_tuttipoint;
 	}
 
 	// checking if all measures have a tuttipoint reference
@@ -6140,8 +6151,8 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt, do
                 temp = this_meas->start_barline_offset_ux + this_meas->width_ux;
             
             // deciding the needed spaces for ts and barline
-            if (!this_meas->prev || !(are_ts_equal(&this_meas->prev->timesignature, &this_meas->timesignature)))
-                this_meas->timesignature_uwidth = get_ts_uwidth((t_notation_obj *) x, this_meas->timesignature);
+            if (!this_meas->prev || !(ts_are_equal(&this_meas->prev->timesignature, &this_meas->timesignature)))
+                this_meas->timesignature_uwidth = ts_get_uwidth((t_notation_obj *) x, this_meas->timesignature);
             
             for (tempo = this_meas->firsttempo; tempo; tempo = tempo->next)
                 tempo->tuttipoint_offset_ux = tempo->tuttipoint_onset_ms *  x->r_ob.spacing_width * CONST_X_SCALING * wf;
@@ -6412,7 +6423,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
 							break;
 						} else { 
 							// first measure
-							double this_ts_width = get_ts_uwidth((t_notation_obj *) x, chords_to_align[i]->parent->timesignature); 
+							double this_ts_width = ts_get_uwidth((t_notation_obj *) x, chords_to_align[i]->parent->timesignature); 
                             chords_to_align[i]->parent->timesignature_uwidth = this_ts_width;
                             if (this_ts_width > 0.) // there's a time signature
                                 this_ts_width += CONST_SCORE_USPACE_AFTER_TS;
@@ -6450,9 +6461,9 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
 								}
 								
 								// deciding the needed spaces for ts and barline
-								if (!(are_ts_equal(&started_measure->prev->timesignature, &started_measure->timesignature))) { // time signature width
+								if (!(ts_are_equal(&started_measure->prev->timesignature, &started_measure->timesignature))) { // time signature width
 									double this_ts_width, real_width_with_spaces;
-									this_ts_width = get_ts_uwidth((t_notation_obj *) x, started_measure->timesignature);
+									this_ts_width = ts_get_uwidth((t_notation_obj *) x, started_measure->timesignature);
 									started_measure->timesignature_uwidth = this_ts_width;
 									if (this_ts_width > 0.)
 										real_width_with_spaces = this_ts_width + CONST_SCORE_USPACE_AFTER_START_BARLINE_WITH_TS + CONST_SCORE_USPACE_AFTER_TS;
@@ -7703,7 +7714,7 @@ char are_all_time_signatures_synchronous_ext(t_score *x, t_scorevoice *from, t_s
     
     for (voice = from->next; voice && voice->v_ob.number < x->r_ob.num_voices && voice->v_ob.number <= to->v_ob.number; voice = voice->next){
         for (meas1 = fstvoice->firstmeasure, meas2 = voice->firstmeasure; meas1 && meas2; meas1 = meas1->next, meas2 = meas2->next){
-            if (!are_ts_equal(&meas1->timesignature, &meas2->timesignature))
+            if (!ts_are_equal(&meas1->timesignature, &meas2->timesignature))
                 return false;
             if ((meas1->next && !meas2->next) || (meas2->next && !meas1->next))
                 return false;
@@ -8894,7 +8905,7 @@ long show_rhythmic_tree_fn(void *data, t_hatom *a, const t_llll *address){
 
 char need_to_show_ts(t_measure *measure)
 {
-	return (measure->voiceparent->v_ob.part_index == 0 && (!measure->prev || !are_ts_equal(&measure->prev->timesignature, &measure->timesignature)));
+	return (measure->voiceparent->v_ob.part_index == 0 && (!measure->prev || !ts_are_equal(&measure->prev->timesignature, &measure->timesignature)));
 }
 
 double get_linear_edit_cursor_ux_position(t_score *x){

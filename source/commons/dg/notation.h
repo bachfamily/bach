@@ -3137,6 +3137,7 @@ typedef struct _tuttipoint
 	
 	// utilities
 	char		all_voices_are_together;	///< Flag telling if all voices at the tuttipoint are together (it could be indeed that some voice is missing, because it has already ended before the others)
+    char        simple_single_measure_tuttipoint;       ///< Flag telling if the tuttipoint is of the simplest kind: a single measure throughout all voices
 	
 	// alignment points
 	struct _alignmentpoint	*firstalignmentpoint;		///< Pointer to the first alignment point in the tuttipoint region
@@ -12891,7 +12892,7 @@ t_measure_end_barline *build_measure_end_barline(t_notation_obj *r_ob, t_measure
 	@param	ts2		Second time signature
 	@return	1 if time signatures are the same, 0 otherwise.
  */
-char are_ts_equal(t_timesignature *ts1, t_timesignature *ts2);
+char ts_are_equal(t_timesignature *ts1, t_timesignature *ts2);
 
 
 /**	Obtain the graphic unscaled horizontal width needed to draw a given time signature
@@ -12900,7 +12901,11 @@ char are_ts_equal(t_timesignature *ts1, t_timesignature *ts2);
 	@param	ts		The time signature
 	@return	The unscaled width needed to draw the time signature.
  */
-double get_ts_uwidth(t_notation_obj *r_ob, t_timesignature ts);
+double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature ts);
+
+
+// TBD
+void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duration);
 
 
 /**	Obtain default beaming boxes to be associated with a given time signature.
@@ -13526,6 +13531,9 @@ char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline)
  */
 char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *ref_barline, t_measure_end_barline **barline);
 
+// TBD
+t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *meas);
+
 
 /**	Set the t_chord::need_recompute_parameters flags for all the chords in a given measure, and also sets the t_notation_obj::need_perform_analysis_and_change flag.
 	Those flags will force the chord graphic parameters to be recomputed at the next paint cycle.
@@ -13972,6 +13980,17 @@ char change_note_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *chord
 	@return					1 if something has been changed, 0 otherwise.
  */
 char change_chord_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_duration);
+
+/**    Change the symbolic duration of a chord, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
+    @ingroup interface
+    @param    r_ob            The notation object
+    @param    chord            The chord
+    @param    lexpr            The lexpr object, or NULL if none
+    @param    new_duration    The llll containing the new symbolic duration, or NULL if none
+    @param    adapt_measureinfo If non-zero, the measureinfo of the measure will be adapted according to the duration change
+    @return                    1 if something has been changed, 0 otherwise.
+ */
+char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_duration, char autoadapt_measureinfo);
 
 
 /**	Change the position of a note tail, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
@@ -18795,6 +18814,20 @@ void change_long(t_notation_obj *r_ob, long *number, t_lexpr *lexpr, t_llllelem 
 	@ingroup				math
  */
 void change_double(t_notation_obj *r_ob, double *number, t_lexpr *lexpr, t_llllelem *modify, char convert_deg2rad, void *lexpr_argument);
+
+
+/**    Change the value of a rational according to a given lexpr or to a given llllelem indication. Possibilities are the same as the change_long() function.
+ If the lexpr is non-NULL, such lexpr is used and the modify element is ignored. If lexpr is NULL, the #modify element is used.
+ 
+ @param    r_ob            The notation object
+ @param number            Pointer to the number to be modified
+ @param lexpr            The lexpr to modify the number (lexpr will accept also standard substitutions of a notation item parameters, set by #lexpr_argument)
+ @param modify            A #t_llllelem containing eithing the new number (as #H_DOUBLE, #H_LONG or #H_RAT) or the instruction to modify the number (as #H_LLLL, see change_long() for all possibilities)
+ @param lexpr_argument    The notation item whose elements parameter have to be used in lexpr
+ @see                    change_long()
+ @ingroup                math
+ */
+void change_rational(t_notation_obj *r_ob, t_rational *number, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
 
 /**	Change the value of a pitch according to a given lexpr or to a given llllelem indication. Possibilities are the same as the change_long() function.

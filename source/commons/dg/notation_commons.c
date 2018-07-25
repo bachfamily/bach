@@ -21511,7 +21511,7 @@ t_llll *measure_get_ties_as_llll(t_notation_obj *r_ob, t_measure *measure) {
 }
 
 
-char are_ts_equal(t_timesignature *ts1, t_timesignature *ts2){
+char ts_are_equal(t_timesignature *ts1, t_timesignature *ts2){
 // are ts1 and ts2 equal? (1 if yes, 0 if no)
 	if (ts1->denominator != ts2->denominator)
 		return 0;
@@ -21587,7 +21587,7 @@ char are_tempi_the_same_and_in_the_same_tp(t_tempo *tempo1, t_tempo *tempo2)
 }
 
 
-double get_ts_uwidth(t_notation_obj *r_ob, t_timesignature ts)
+double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature ts)
 {
 // returns the width of the ts printing, in standard size (e.g. Maestro 24)
 	
@@ -29572,6 +29572,28 @@ t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it,
 	return lexpr_eval(lexpr, vars);
 }
 
+void change_rational_from_llllelem(t_rational *number, t_llllelem *modify)
+{
+    if (hatom_gettype(&modify->l_hatom) == H_LLLL) {
+        t_llll *thisllll = hatom_getllll(&modify->l_hatom);
+        if (thisllll->l_size > 0) {
+            if (thisllll->l_size == 1)
+                *number = hatom_getrational(&thisllll->l_head->l_hatom);
+            else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("plus")))
+                *number += hatom_getrational(&thisllll->l_head->l_hatom);
+            else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("minus")))
+                *number -= hatom_getrational(&thisllll->l_head->l_hatom);
+            else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("times")))
+                *number *= hatom_getrational(&thisllll->l_head->l_hatom);
+            else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("div")))
+                *number /= hatom_getrational(&thisllll->l_head->l_hatom);
+            else
+                *number = hatom_getrational(&thisllll->l_head->l_hatom);
+        }
+    } else {
+        *number = hatom_getrational(&modify->l_hatom);
+    }
+}
 
 void change_double_from_llllelem(double *number, t_llllelem *modify, char convert_deg2rad) { 
 	if (hatom_gettype(&modify->l_hatom) == H_LLLL) {
@@ -29653,6 +29675,18 @@ void change_poc_from_llllelem(t_notation_obj *r_ob, t_hatom *poc, t_llllelem *mo
 
 
 
+void change_rational(t_notation_obj *r_ob, t_rational *number, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument) {
+    // we modify a number via a llllelem (which could be a float itself or a list)
+    // if modify is a list it can be of the type (new_value +) or (new_value *)
+    // convert_deg2rad == 1 for angle treatment (needs deg2rad function), flag == 0 otherwise
+    if (lexpr) {
+        t_hatom *res = lexpr_eval_for_notation_item(r_ob, (t_notation_item *)lexpr_argument, lexpr);
+        *number = hatom_getrational(res);
+        bach_freeptr(res);
+    } else if (modify) {
+        change_rational_from_llllelem(number, modify);
+    }
+}
 
 void change_double(t_notation_obj *r_ob, double *number, t_lexpr *lexpr, t_llllelem *modify, char convert_deg2rad, void *lexpr_argument) { 
 // we modify a number via a llllelem (which could be a float itself or a list)
@@ -33153,6 +33187,64 @@ char change_chord_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *cho
 		}
 	}
 	return changed;
+}
+
+void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duration)
+{
+    long old_den = ts->denominator;
+    
+    if (old_den % new_measure_duration.r_den == 0) {
+        // easy case: the new denominator is a divisor of the old one. E.g. adapting (7 4) to a duration of 5/2
+        ts->numerator = new_measure_duration.r_num * (old_den / new_measure_duration.r_den);
+    } else if (perfect_log2(new_measure_duration.r_den) > 0) {
+        // binary case: the denominator is a power of two. E.g. adapting anything to a duration of n/2^k
+        ts->denominator = MAX(4, new_measure_duration.r_den);
+        ts->numerator = new_measure_duration.r_num * (ts->denominator / new_measure_duration.r_den);
+    } else if (new_measure_duration.r_den % old_den == 0) {
+        // the denominator is a MULTIPLE of the old one. E.g. adapting (7 4) to a duration of 11/8
+        ts->denominator = new_measure_duration.r_den;
+        ts->numerator = new_measure_duration.r_num;
+    } else {
+        // don't really know what to do here. E.g. adapting (5 8) to a duration of 11/12
+        ts->denominator = new_measure_duration.r_den < 6 ? new_measure_duration.r_den * 2 : new_measure_duration.r_den;
+        ts->numerator = new_measure_duration.r_num * (ts->denominator / new_measure_duration.r_den);
+    }
+}
+
+// autoadapt_measureinfo = 0: don't; 1: adapt this measure only; 2: adapt measures in all voices
+char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_symduration, char autoadapt_measureinfo)
+{
+    char changed = 0;
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        t_llllelem *thiselem = (new_symduration) ? new_symduration->l_head : NULL;
+        if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)chord)) && (lexpr || thiselem)) {
+            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)chord->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+            change_rational(r_ob, &chord->r_sym_duration, lexpr, thiselem, (t_notation_item *)chord);
+            if (chord->r_sym_duration <= 0)
+                toggle_grace_for_chord(r_ob, chord, 1);
+            changed = 1;
+            
+            if (autoadapt_measureinfo) {
+                t_measure *meas = chord->parent;
+                t_rational measure_dur = measure_get_sym_duration(meas);
+                t_rational measure_content_dur = measure_get_content_sym_duration(meas);
+                if (measure_content_dur > measure_dur) {
+                    if (meas->tuttipoint_reference->simple_single_measure_tuttipoint && autoadapt_measureinfo > 1) {
+                        r_ob->need_recompute_tuttipoints = true;
+                        r_ob->need_reassign_local_spacing = true;
+                    }
+                    
+                    t_llll *meas_ll = measure_get_aligned_measures_as_llll(r_ob, meas);
+                    for (t_llllelem *el = meas_ll->l_head; el; el = el->l_next) {
+                        t_measure *thismeas = (t_measure *)hatom_getobj(&el->l_hatom);
+                        ts_adapt_to_symduration(&thismeas->timesignature, measure_content_dur);
+                    }
+                    llll_free(meas_ll);
+                }
+            }
+        }
+    }
+    return changed;
 }
 
 void note_change_tail_for_glissando_till_next(t_notation_obj *r_ob, t_note *note, double slope)

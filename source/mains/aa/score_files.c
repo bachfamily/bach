@@ -1726,7 +1726,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 }
                 
                 // time signature
-                if (measureidx == 1 || !are_ts_equal(ts, &measure->timesignature)) {
+                if (measureidx == 1 || !ts_are_equal(ts, &measure->timesignature)) {
                     ts = &measure->timesignature;
                     mxml_node_t *timexml = mxmlNewElement(attributesxml, "time");
                     
@@ -3922,7 +3922,7 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
 			count = 5;
 			sysfile_write(f, &count, "\t\t\t\r\n");
 
-			if (!measure->prev || !are_ts_equal(&measure->timesignature, &measure->prev->timesignature)) {
+			if (!measure->prev || !ts_are_equal(&measure->timesignature, &measure->prev->timesignature)) {
 				// time signature
 				char ts_buf[100];
 				char ts_buf_num[100];

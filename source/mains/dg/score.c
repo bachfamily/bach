@@ -1730,7 +1730,8 @@ void score_sel_change_cents(t_score *x, t_symbol *s, long argc, t_atom *argv){
 	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION);
 }
 
-void score_sel_change_pitch(t_score *x, t_symbol *s, long argc, t_atom *argv){
+void score_sel_change_pitch(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
     t_lexpr *lexpr = NULL;
     t_llll *new_pitch = NULL;
     char changed = 0;
@@ -1883,6 +1884,100 @@ void score_sel_change_poc(t_score *x, t_symbol *s, long argc, t_atom *argv){
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
 }
 
+
+void score_sel_change_symduration(t_score *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_lexpr *lexpr = NULL;
+    t_llll *new_durations = NULL;
+    char changed = 0;
+    long autocomplete = 1, autoadapt = 0, autobeam = 1, autorhythm = 1;
+    long flags = k_BEAMING_CALCULATION_FROM_SCRATCH;
+    char lambda = (s == _llllobj_sym_lambda);
+    t_notation_item *curr_it;
+    
+    if (argc <= 0)
+        return;
+    
+    new_durations = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    
+    llll_parseattrs((t_object *) x, new_durations, true, "iiii",
+                    gensym("autocomplete"), &autocomplete,
+                    gensym("autoadapt"), &autoadapt,
+                    gensym("autobeam"), &autobeam,
+                    gensym("autorhythm"), &autorhythm
+                    );
+    
+    if (!autocomplete)
+        flags |= k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE;
+    
+    if (!autobeam)
+        flags |= k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS;
+
+    if (!autorhythm)
+        flags |= k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS;
+
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("=")) {
+        t_atom *lexpr_av = NULL;
+        long lexpr_ac = llll_deparse(new_durations, &lexpr_av, 0, LLLL_D_NONE);
+        if (lexpr_av) {
+            lexpr = notation_obj_lexpr_new(lexpr_ac - 1, lexpr_av + 1);
+            bach_freeptr(lexpr_av);
+        }
+    }
+    
+    lock_general_mutex((t_notation_obj *)x);
+    curr_it = lambda ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : x->r_ob.firstselecteditem;
+    changed = 0;
+    while (curr_it) {
+        switch (curr_it->type) {
+            case k_NOTE:
+                changed |= change_chord_symduration_from_lexpr_or_llll((t_notation_obj *)x, ((t_note *) curr_it)->parent, lexpr, new_durations, autoadapt);
+                break;
+                //            case k_PITCH_BREAKPOINT:
+                //                changed |= change_breakpoint_cents_from_lexpr_or_llll((t_notation_obj *)x, (t_bpt *) curr_it, lexpr, new_pitch);
+                //                break;
+            case k_CHORD:
+                changed |= change_chord_symduration_from_lexpr_or_llll((t_notation_obj *)x, (t_chord *) curr_it, lexpr, new_durations, autoadapt);
+                break;
+            case k_MEASURE:
+            {
+                t_measure *meas = (t_measure *) curr_it;
+                t_chord *ch = meas->firstchord;
+                if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)meas)) {
+                    create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, curr_it, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                    while (ch) {
+                        t_llllelem *thiselem = (new_durations) ? new_durations->l_head : NULL;
+                        if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch) && thiselem) {
+                            changed |= change_chord_symduration_from_lexpr_or_llll((t_notation_obj *)x, (t_chord *) curr_it, lexpr, new_durations, autoadapt);
+                        }
+                        if (thiselem && thiselem->l_next)
+                            thiselem = thiselem->l_next;
+                        ch->need_recompute_parameters = true;
+                        ch = ch->next;
+                    }
+                }
+                recompute_all_for_measure((t_notation_obj *)x, meas, false);
+            }
+                break;
+            default:
+                break;
+        }
+        curr_it = lambda ? NULL : curr_it->next_selected;
+    }
+    
+    set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
+    perform_analysis_and_change(x, NULL, NULL, flags);
+    
+    close_slot_window((t_notation_obj *)x); // if we were in slot view...
+    unlock_general_mutex((t_notation_obj *)x);
+    
+    if (new_durations)
+        llll_free(new_durations);
+    if (lexpr)
+        lexpr_free(lexpr);
+    
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_DURATION_FOR_SELECTION);
+}
 
 
 void set_measure_measureinfo(t_score *x, t_measure *measure, t_llll *measureinfo)
@@ -5570,7 +5665,7 @@ int T_EXPORT main(void){
     class_addmethod(c, (method) score_sel_change_pitch, "pitch", A_GIMME, 0);
 
     
-    // @method pitch @digest Modify the pitch or cents of selected items
+    // @method poc @digest Modify the pitch or cents of selected items
     // @description @copy BACH_DOC_MESSAGE_POC
     // @marg 0 @name pitch_or_cents @optional 0 @type number/pitch/llll/anything
     class_addmethod(c, (method) score_sel_change_poc, "poc", A_GIMME, 0);
@@ -5589,6 +5684,8 @@ int T_EXPORT main(void){
     // @example measureinfo (11 8) (boxes 3/8 2/8 3/8 4/8) @caption change time signature to 11/8 and assign custom 3+2+3+4 boxes
     class_addmethod(c, (method) score_sel_change_measureinfo, "measureinfo", A_GIMME, 0);
 
+    
+    class_addmethod(c, (method) score_sel_change_symduration, "symduration", A_GIMME, 0);
 
 	// @method addbreakpoint @digest Add a pitch breakpoint to each selected note
 	// @description @copy BACH_DOC_MESSAGE_ADDBREAKPOINT
@@ -13385,7 +13482,7 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                 }
             }
             tpt->all_voices_are_together = all_voices_start;
-
+            tpt->simple_single_measure_tuttipoint = true;
 
             insert_tuttipoint(x, tpt, ref_tpt);
             
@@ -14047,6 +14144,9 @@ void score_mousewheel(t_score *x, t_object *view, t_pt pt, long modifiers, doubl
 	}
 }
 
+
+
+// this function is quirky
 void preselect_measure_in_all_voices(t_score *x, t_measure *ref_measure, char except_ref_measure)
 {
 	t_measure_end_barline *barline[CONST_MAX_VOICES];
@@ -14070,6 +14170,33 @@ void preselect_measure_in_all_voices(t_score *x, t_measure *ref_measure, char ex
 		}
 	}
 }
+
+t_llll *tuttipoint_get_measures_as_llll(t_notation_obj *r_ob, t_tuttipoint *tpt)
+{
+    t_llll *out = llll_get();
+    if (tpt) {
+        for (long v = 0; v < r_ob->num_voices; v++){
+            t_measure *temp = tpt->measure[v];
+            while (temp && temp->tuttipoint_reference == tpt) {
+                llll_appendobj(out, temp);
+                temp = temp->next;
+            }
+        }
+    }
+    return out;
+}
+
+void preselect_tuttipoint_in_all_voices(t_score *x, t_measure *ref_measure, char except_ref_measure)
+{
+    t_llll *ll = tuttipoint_get_measures_as_llll((t_notation_obj *)x, ref_measure->tuttipoint_reference);
+    for (t_llllelem *el = ll ? ll->l_head : NULL; el; el = el->l_next) {
+        t_measure *thismeas = (t_measure *)hatom_getobj(&el->l_hatom);
+        if (!except_ref_measure || thismeas != ref_measure)
+            notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)thismeas);
+    }
+    llll_free(ll);
+}
+
 
 void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long modifiers) {
 	// first of all: are we in a slot mode???? Cause if we are in a slot mode, we gotta handle that separately
@@ -14101,7 +14228,8 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
 		evaluate_selection(x, 0, true);
 		return;
 	} else if (x->r_ob.j_last_mousedown_obj_type == k_MEASURE) {
-		preselect_measure_in_all_voices(x, (t_measure *) x->r_ob.j_last_mousedown_ptr, true);
+        // preselect_measure_in_all_voices(x, (t_measure *) x->r_ob.j_last_mousedown_ptr, true);
+        preselect_tuttipoint_in_all_voices(x, (t_measure *) x->r_ob.j_last_mousedown_ptr, true);
 		move_preselecteditems_to_selection((t_notation_obj *) x, k_SELECTION_MODE_INVOLUTIVE, false, false);
 	} else {
 		// voice names?
@@ -14848,7 +14976,7 @@ void score_paste_replace_single_measures(t_score *x, char also_paste_tempi)
 
             set_measure_from_llll(x, meas, measuretopaste_as_llll, also_paste_tempi, false, NULL);
             
-            if (are_ts_equal(&old_ts, &meas->timesignature)) // only need to recompute measure-related stuff
+            if (ts_are_equal(&old_ts, &meas->timesignature)) // only need to recompute measure-related stuff
                 recompute_all_for_measure((t_notation_obj *)x, meas, true);
             else // pasted different time signatures: potentially all tuttipoints might have changed! need to recompute everything.
                 recompute_all(x);
@@ -14915,7 +15043,7 @@ void score_paste_replace_measures(t_score *x, char also_paste_tempi)
                 
                 set_measure_from_llll(x, meas, measuretopaste_as_llll, also_paste_tempi, false, NULL);
                 
-                if (are_ts_equal(&old_ts, &meas->timesignature)) // only need to recompute measure-related stuff
+                if (ts_are_equal(&old_ts, &meas->timesignature)) // only need to recompute measure-related stuff
                     recompute_all_for_measure((t_notation_obj *)x, meas, true);
                 else // pasted different time signatures: potentially all tuttipoints might have changed! need to recompute everything.
                     recompute_all(x);

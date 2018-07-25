@@ -771,24 +771,24 @@ void build_popup_measure_menu(t_notation_obj *r_ob, t_measure *measure)
 
 	// time signatures (500)
     t_timesignature temp_ts;
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 501, "2/2", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 2, 2))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 502, "2/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 2, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 503, "3/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 3, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 504, "4/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 4, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 505, "5/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 5, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 506, "6/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 6, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 507, "3/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 3, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 508, "4/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 4, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 509, "5/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 5, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 510, "5/8 (3+2)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_2compound_timesignature(r_ob, 3, 2, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 511, "5/8 (2+3)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_2compound_timesignature(r_ob, 2, 3, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 512, "6/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 6, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 513, "7/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 7, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 514, "7/8 (3+2+2)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 3, 2, 2, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 515, "7/8 (2+3+2)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 2, 3, 2, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 516, "7/8 (2+2+3)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 2, 2, 3, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 517, "9/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 9, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 518, "12/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 12, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 501, "2/2", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 2, 2))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 502, "2/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 2, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 503, "3/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 3, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 504, "4/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 4, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 505, "5/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 5, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 506, "6/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 6, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 507, "3/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 3, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 508, "4/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 4, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 509, "5/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 5, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 510, "5/8 (3+2)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_2compound_timesignature(r_ob, 3, 2, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 511, "5/8 (2+3)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_2compound_timesignature(r_ob, 2, 3, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 512, "6/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 6, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 513, "7/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 7, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 514, "7/8 (3+2+2)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 3, 2, 2, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 515, "7/8 (2+3+2)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 2, 3, 2, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 516, "7/8 (2+2+3)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 2, 2, 3, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 517, "9/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 9, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 518, "12/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 12, 8))), 0, NULL);
 	jpopupmenu_addsubmenu(r_ob->popup_measure, "Time Signature", r_ob->popup_measure_timesignature, 0);
 
 	// lock/mute (550)
@@ -3965,6 +3965,28 @@ long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clic
 }
 
 
+
+t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *meas)
+{
+    t_llll *out = llll_get();
+    if (!meas->prev) {
+        // get all first measures
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+            llll_appendobj(out, nth_measure_of_scorevoice((t_scorevoice *)voice, 0));
+        }
+    } else {
+        t_measure_end_barline *barline[CONST_MAX_VOICES];
+        if (get_all_tuttipoint_barlines(r_ob, meas->prev->end_barline, barline)) {
+            for (long i = 0; i < r_ob->num_voices; i++) {
+                if (barline[i]->owner && barline[i]->owner->next)
+                    llll_appendobj(out, barline[i]->owner->next);
+            }
+        }
+        
+    }
+    
+    return out;
+}
 
 // barline must be instantiated with CONST_MAX_VOICES length
 char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *ref_barline, t_measure_end_barline **barline)

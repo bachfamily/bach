@@ -1493,7 +1493,7 @@
 #define BACH_DOC_MESSAGE_POC
     // The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
     // depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
-    // essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
+    // essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more). <br /> <br />
     // @copy BACH_DOC_RELATIVE_MODIFICATIONS
     // @copy BACH_DOC_EQUATION_MODIFICATIONS
 
@@ -1502,7 +1502,7 @@
 	// The word <m>voice</m>, followed by a number, sets the new voice number for all
 	// the selected notes or chords. 
 	// Any of the numbers in the voice syntax can be replaced by an llll containing a relative modification of the existing voice. 
-	// If a single number is inserted, this can be replaced by a generic equation.
+	// If a single number is inserted, this can be replaced by a generic equation. <br /> <br />
 	// @copy BACH_DOC_RELATIVE_MODIFICATIONS
 	// @copy BACH_DOC_EQUATION_MODIFICATIONS 
 
