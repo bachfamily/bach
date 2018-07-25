@@ -63,11 +63,11 @@ public:
         return r_num / r_den;
     }
 
-    template <typename Type2> t_urrat(const t_urrat<Type2> &u)
-    { this->r_num = u.num(); this->r_den = u.den(); }
+    template <typename Type2>
+    t_urrat(const t_urrat<Type2> &u) { this->r_num = u.num(); this->r_den = u.den(); }
     
-    template <typename Type2> t_urrat(const t_rat<Type2> &u)
-    { this->r_num = u.num(); this->r_den = u.den(); }
+    template <typename Type2>
+    t_urrat(const t_rat<Type2> &u) { this->r_num = u.num(); this->r_den = u.den(); }
     
     inline T num(void) const { return r_num; };
     inline T den(void) const { return r_den; };
