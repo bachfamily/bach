@@ -258,7 +258,7 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
             const char *attrname = symattr->s_name + 1;
             i++;
             if (!strcmp(attrname, "ignore")) {
-                char *ignore_txt;
+                char const *ignore_txt;
                 switch (atom_gettype(av + i)) {
                     case A_SYM:
                         ignore_txt = atom_getsym(av + i)->s_name;

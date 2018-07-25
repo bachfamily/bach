@@ -3857,7 +3857,6 @@ void llll_minmax(t_llll *ll, t_hatom **min, t_hatom **max, t_llll *minaddress, t
 	t_int32 maxtype = H_NULL;
 	t_int32 elem_type;
 	t_bool min_changed, max_changed;
-	t_rational relem, rm;
 	t_llll *address;
 	t_llll_stack *stack;
 	long deepenough;

@@ -122,7 +122,7 @@ void code_dblclick(t_code *x)
 
 void code_bang(t_code *x)
 {
-    t_execContext context((t_llllobj_object *) x);
+    t_execContext const context((t_llllobj_object *) x);
     
     t_llll *argv[x->n_dataInlets];
     for (int i = 0; i < x->n_dataInlets; i++) {
@@ -179,7 +179,7 @@ void code_assist(t_code *x, void *b, long m, long a, char *s)
         if (a < x->n_dataInlets)
             sprintf(s, "llll: Data Inlet %ld", a + 1);
         else
-            sprintf(s, "llll: Direct Inlet %ld", a - x->n_dataInlets + 1);
+            sprintf(s, "llll: Direct Inlet " ATOM_LONG_PRINTF_FMT, a - x->n_dataInlets + 1);
 
         // @in 0 @type llll @digest llll to be compared
         // @in 1 @type llll @digest llll to be compared
@@ -191,7 +191,7 @@ void code_assist(t_code *x, void *b, long m, long a, char *s)
         else if (a == x->n_dataOutlets)
             sprintf(s, "llll (%s): Evaluation Result", type); // @out 0 @type int @digest Comparison result (0/1)
         else
-            sprintf(s, "llll (%s): Direct Outlet %ld", type, a - x->n_dataOutlets);
+            sprintf(s, "llll (%s): Direct Outlet " ATOM_LONG_PRINTF_FMT, type, a - x->n_dataOutlets);
     }
 
 }
