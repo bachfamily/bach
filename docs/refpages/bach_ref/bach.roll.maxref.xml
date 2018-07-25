@@ -4962,7 +4962,7 @@
 				Syntax: <b>poc <m>&lt;number/pitch/llll/anything: pitch_or_cents&gt;</m> </b><br />				<br />
 				The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
 				depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
-				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
+				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more). <br /> <br />
 				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
 				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
 				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
@@ -5992,7 +5992,7 @@
 				The word <m>voice</m>, followed by a number, sets the new voice number for all
 				the selected notes or chords.
 				Any of the numbers in the voice syntax can be replaced by an llll containing a relative modification of the existing voice.
-				If a single number is inserted, this can be replaced by a generic equation.
+				If a single number is inserted, this can be replaced by a generic equation. <br /> <br />
 				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
 				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
 				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding

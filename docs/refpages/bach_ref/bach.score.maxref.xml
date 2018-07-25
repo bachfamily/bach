@@ -1970,6 +1970,7 @@
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
 				<br /> <br />
+				<br />				See also:<m>symduration</m><br />
 			</description>
 		</method>
 		<method name="cents">
@@ -6317,43 +6318,6 @@
 			</description>
 		</method>
 		<method name="pitch">
-			<arg name="pitch_or_cents" optional="0" type="number/pitch/llll/anything" />
-			<digest>
-				Modify the pitch or cents of selected items
-			</digest>
-			<description>
-				Syntax: <b>pitch <m>&lt;number/pitch/llll/anything: pitch_or_cents&gt;</m> </b><br />				<br />
-				The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
-				depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
-				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
-				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
-				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
-				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
-				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
-				value of the parameter, while <b>(2. times)</b> multiplies it by two.
-				<br /> <br />
-				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
-				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
-				The standard symbolic variables are available. <br />
-				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
-				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
-				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
-				grace chords, 0 otherwise). <br />
-				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
-				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
-				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
-				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
-				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
-				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
-				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
-				one cannot apply different equations to different notes inside the chord.
-				<br /> <br />
-			</description>
-		</method>
-		<method name="pitch">
 			<arg name="pitch" optional="0" type="number/llll/anything" />
 			<digest>
 				Modify the pitch of selected items
@@ -6776,6 +6740,43 @@
 				<br />				See also:<m>stop</m>,<m>pause</m>,<m>play</m><br />
 			</description>
 		</method>
+		<method name="poc">
+			<arg name="pitch_or_cents" optional="0" type="number/pitch/llll/anything" />
+			<digest>
+				Modify the pitch or cents of selected items
+			</digest>
+			<description>
+				Syntax: <b>poc <m>&lt;number/pitch/llll/anything: pitch_or_cents&gt;</m> </b><br />				<br />
+				The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
+				depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
+				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more). <br /> <br />
+				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
+				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
+				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
+				value of the parameter, while <b>(2. times)</b> multiplies it by two.
+				<br /> <br />
+				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
+				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
+				The standard symbolic variables are available. <br />
+				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
+				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
+				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
+				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
+				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
+				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
+				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
+				one cannot apply different equations to different notes inside the chord.
+				<br /> <br />
+			</description>
+		</method>
 		<method name="prependslotitem">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<arg name="slot_element" optional="0" type="llll" />
@@ -6892,16 +6893,6 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom notehead definition to the default one
-			</digest>
-			<description>
-				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
-				all the user-defined noteheads.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
 				Reset the slotinfo to the default one
 			</digest>
 			<description>
@@ -6911,6 +6902,16 @@
 				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
 				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
 				<br />				See also:<m>eraseslot</m><br />
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the custom notehead definition to the default one
+			</digest>
+			<description>
+				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
+				all the user-defined noteheads.
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -7802,6 +7803,59 @@
 				In other words, the <m>subsel</m> message create an intersection between the specified selection and the existing one.
 				Refer to the message <m>sel</m> to know more about the syntax, since it is exactly the same.
 				<br />				See also:<m>sel</m>,<m>unsel</m>,<m>select</m>,<m>clearselection</m><br />
+			</description>
+		</method>
+		<method name="symduration">
+			<arg name="symduration" optional="0" type="number/llll/anything" />
+			<digest>
+				Modify the duration of selected items
+			</digest>
+			<description>
+				Syntax: <b>symduration <m>&lt;number/llll/anything: symduration&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>symduration 1/4</b>   <i>→ change duration of selected items to 1/4</i><br />
+				• <b>symduration = 1/4</b>   <i>→ exactly the same</i><br />
+				• <b>symduration = symduration * 2</b>   <i>→ double the duration</i><br />
+				• <b>symduration = symduration * 2 @adaptts 1</b>   <i>→ ...and adapt measureinfo in this voice only</i><br />
+				• <b>symduration = symduration * 2 @adaptts 2</b>   <i>→ ...and adapt measureinfo in all voices</i><br />
+				• <b>symduration = (velocity/16) * 8</b>   <i>→ assign durations depending on velocity</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@adaptts</m> (int, default: 0): Also adapt time signature (1 = if it needs to increase, 2 = if it needs to decrease, 3 = both)<br />
+				<m>@adapttsscope</m> (int, default: 1): Scope for <m>adaptts</m> (0 = this measure only, 1 = all synchronous measures)<br />
+				<m>@autorhythm</m> (int, default: 1): Also retranscribe rhythm<br />
+				<m>@autobeam</m> (int, default: 1): Also rebeam measure<br />
+				<m>@autocomplete</m> (int, default: 1): Also autocomplete measure if needed<br />
+				<br />
+				The word <m>symduration</m>, followed by a rational number, sets the new duration, in symbolic units, for all
+				the selected notation items. <br /> <br />
+				The number can be replaced by an llll containing a relative modification of the existing duration, or by a generic equation.
+				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
+				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
+				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
+				value of the parameter, while <b>(2. times)</b> multiplies it by two.
+				<br /> <br />
+				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
+				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
+				The standard symbolic variables are available. <br />
+				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
+				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
+				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
+				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
+				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
+				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
+				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
+				one cannot apply different equations to different notes inside the chord.
+				<br /> <br />
+				<br />				See also:<m>measureinfo</m>,<m>autorhythm</m>,<m>autobeam</m><br />
 			</description>
 		</method>
 		<method name="testdomain">

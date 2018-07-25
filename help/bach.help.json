@@ -2276,6 +2276,20 @@
 					"tags" : [ "message", "operate", "on", "selection", "change", "measureinfo", "tempo", "measure", "info", "tempi", "time", "signature", "modify", "parameter", "barline", "box" ],
 					"title" : [ "Changing measureinfo" ]
 				},
+				"B_symduration" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.07b_symduration.maxpat" ],
+					"objects" : [ "bach.score" ],
+					"seealso" : [ "sel", "autobeam", "autorhythm", "symduration+adapt", "modify+existing+parameters", "modify+equation" ],
+					"tags" : [ "message", "operate", "on", "selection", "change", "duration", "symduration", "symbolic" ],
+					"title" : [ "Changing duration in bach.score" ]
+				},
+				"C_symdurationadapt" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.07c_symdurationadapt.maxpat" ],
+					"objects" : [ "bach.score" ],
+					"seealso" : [ "message+symduration" ],
+					"tags" : [ "message", "operate", "on", "selection", "change", "duration", "symduration", "symbolic", "adapt", "adaptts", "time", "signature", "timesig", "ts", "adapttsscope", "scope", "simplify", "adapttssimplify", "adaptsimplify", "adaptscope" ],
+					"title" : [ "Adapting time signatures as durations change" ]
+				},
 				"Markeronset" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.08_markeronset.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
@@ -2287,14 +2301,14 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.09_relativeparameterchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection", "dump", "play", "playmode", "command" ],
-					"tags" : [ "message", "operate", "on", "selection", "relative", "change", "onset", "duration", "tail", "cents", "velocity", "modify", "exist", "existing", "times", "div", "plus", "minus", "parameter", "pitch", "transpose" ],
+					"tags" : [ "message", "operate", "on", "selection", "relative", "change", "onset", "duration", "tail", "cents", "velocity", "modify", "exist", "existing", "times", "div", "plus", "minus", "parameter", "pitch", "transpose", "symduration" ],
 					"title" : [ "Modify existing parameter values" ]
 				},
 				"Equationchange" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.10_equationchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "sel", "select+if", "relative+parameter+change", "symbolic+variable" ],
-					"tags" : [ "message", "operate", "on", "selection", "equation", "change", "onset", "duration", "tail", "cents", "velocity", "voice", "measure", "modify", "parameter" ],
+					"seealso" : [ "sel", "select+if", "relative+parameter+change", "symbolic+variable", "adaptts" ],
+					"tags" : [ "message", "operate", "on", "selection", "equation", "change", "onset", "duration", "tail", "cents", "velocity", "voice", "measure", "modify", "parameter", "symduration" ],
 					"title" : [ "Assigning values via equations" ]
 				},
 				"Inplace" : {
