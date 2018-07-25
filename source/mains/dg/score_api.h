@@ -377,7 +377,6 @@ char measure_barlines_coincide_for_all_voices(t_score *x, long up_to_this_measur
 t_llll *score_get_interp_at_timepoint(t_score *x, t_timepoint tp);
 t_llll *score_get_sampling_timepoint(t_score *x, t_timepoint delta_tp);
 
-long fix_level_type_flag_for_level_as_ignore_fn(void *data, t_hatom *a, const t_llll *address);
 
 
 void set_loop_region_from_llll(t_score *x, t_llll* loop, char lock_mutex);

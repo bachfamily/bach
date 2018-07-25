@@ -8399,8 +8399,9 @@ void synchronize_boxes_for_measure(t_notation_obj *r_ob, t_measure *measure)
 	}
 }
 
-void set_measure_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature ts){
-	measure->timesignature = ts;
+void measure_set_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature *ts)
+{
+	measure->timesignature = *ts;
 	compute_utf_timesignature(r_ob, &measure->timesignature);
 	synchronize_boxes_for_measure(r_ob, measure);
 	measure->need_check_autocompletion = true;
@@ -8508,7 +8509,7 @@ t_timesignature get_timesignature_from_llll(t_object *n_ob, t_llll *time_signatu
 }
 
 
-void set_measure_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure, t_llll *time_signature, 
+void measure_set_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure, t_llll *time_signature, 
 										t_llll *tempo, char measure_barline, t_llll *parameters, char when_no_ts_given_use_previous_or_nearest_measure_ts)
 { 
 	//	char debug[1000];
@@ -9817,7 +9818,7 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
 	outmeas->locked = false;
 	outmeas->muted = false;
 	outmeas->solo = false;
-	outmeas->beaming_calculation_flags = k_BEAMING_CALCULATION_FROM_SCRATCH;
+	outmeas->beaming_calculation_flags = k_BEAMING_CALCULATION_DO;
 
 	outmeas->custom_boxing = false;
 	outmeas->boxes = llll_get();
@@ -9844,7 +9845,7 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
 	
 	// if time_signature lll is correct, we put that time signature
 	if (time_signature) 
-		set_measure_ts_and_tempo_from_llll(r_ob, outmeas, time_signature, NULL, 0, NULL, false);
+		measure_set_ts_and_tempo_from_llll(r_ob, outmeas, time_signature, NULL, 0, NULL, false);
 	
 	if (time_signature) 
 		compute_utf_timesignature(r_ob, &outmeas->timesignature);
@@ -10752,7 +10753,7 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
 	newmeasure->locked = measure->locked;
 	newmeasure->muted = measure->muted;
 	newmeasure->solo = measure->solo;
-	newmeasure->beaming_calculation_flags = k_BEAMING_CALCULATION_FROM_SCRATCH;
+	newmeasure->beaming_calculation_flags = k_BEAMING_CALCULATION_DO;
 	
 	newmeasure->local_spacing_width_multiplier = measure->local_spacing_width_multiplier;
 	newmeasure->fixed_spacing_uwidth = measure->fixed_spacing_uwidth;
@@ -14827,6 +14828,72 @@ char is_level_an_all_rests_level(t_notation_obj *r_ob, t_llll *box, t_rational *
 		llll_funall(box, get_min_rational_fn, minimum_figure, 1, -1, 0);
 	return res;
 }
+
+
+
+long fix_level_type_flag_for_level_as_ignore_fn(void *data, t_hatom *a, const t_llll *address){
+    if (hatom_gettype(a) == H_LLLL) {
+        if (!hatom_getllll(a)->l_thing.w_obj) {
+            hatom_getllll(a)->l_thing.w_obj = build_rhythm_level_properties();
+            ((t_rhythm_level_properties *)hatom_getllll(a)->l_thing.w_obj)->level_type = k_RHYTHM_LEVEL_IGNORE;
+            *((char *) data) = true;
+        } else if (!(((t_rhythm_level_properties *)hatom_getllll(a)->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_IGNORE)){
+            ((t_rhythm_level_properties *)hatom_getllll(a)->l_thing.w_obj)->level_type &= ~k_RHYTHM_LEVEL_FORCE_TUPLET; // we remove the force tuplet flag!
+            ((t_rhythm_level_properties *)hatom_getllll(a)->l_thing.w_obj)->level_type |= k_RHYTHM_LEVEL_IGNORE;
+            *((char *) data) = true;
+        }
+    }
+    return 0;
+}
+
+
+
+char rebeam_level(t_notation_obj *r_ob, t_measure *meas, t_llllelem *level, char also_destroy_tuplets, char force_autoparse, long flags)
+{
+    if (!level || !meas)
+        return 0;
+    
+    t_llll *llll = NULL;
+    
+    if (level == WHITENULL_llllelem && meas)
+        llll = meas->rhythmic_tree;
+    else if (level != WHITENULL_llllelem && hatom_gettype(&level->l_hatom) == H_LLLL)
+        llll = hatom_getllll(&level->l_hatom);
+    else
+        llll = NULL;
+    
+    if (llll && meas) {
+        char this_changed = 0;
+        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+        
+        verbose_post_rhythmic_tree(r_ob, meas, gensym("Tab Pressed1"), 1);
+        if (llll) {
+            llll_funall(llll, fix_level_type_flag_for_level_as_ignore_fn, &this_changed, 1, -1, FUNALL_SKIP_ATOMS);
+            if (this_changed && !also_destroy_tuplets)
+                set_tuplet_levels_as_keep_levels(llll);
+        }
+        verbose_post_rhythmic_tree(r_ob, meas, gensym("Tab Pressed2"), 1);
+        
+        if (are_all_chords_in_measure_selected(r_ob, meas)){
+            this_changed |= (!meas->rhythmic_tree->l_thing.w_obj || ((t_rhythm_level_properties *)meas->rhythmic_tree->l_thing.w_obj)->level_type != k_RHYTHM_LEVEL_IGNORE);
+            if (this_changed) {
+                llll_funall(meas->rhythmic_tree, fix_level_type_flag_for_level_as_ignore_fn, &this_changed, 1, -1, FUNALL_SKIP_ATOMS);
+                if (!also_destroy_tuplets)
+                    set_tuplet_levels_as_keep_levels(meas->rhythmic_tree);
+            }
+        }
+        
+        if (this_changed)
+            recompute_all_for_measure(r_ob, meas, true);
+        
+        verbose_post_rhythmic_tree((t_notation_obj *) x, meas, gensym("Tab Pressed"), 1);
+        
+        return this_changed;
+    }
+    
+    return 0;
+}
+
 
 
 // returns 1 if changed, 0 if unchanged
@@ -21587,7 +21654,7 @@ char are_tempi_the_same_and_in_the_same_tp(t_tempo *tempo1, t_tempo *tempo2)
 }
 
 
-double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature ts)
+double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature *ts)
 {
 // returns the width of the ts printing, in standard size (e.g. Maestro 24)
 	
@@ -21600,8 +21667,8 @@ double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature ts)
 	double den_width = 0.; double den_height = 0.;
 	if (r_ob->show_time_signatures == 0) return 0.;
 	jf_ts = jfont_create_debug(r_ob->noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->notation_typo_preferences.base_pt_ts);
-	num_utf = charset_unicodetoutf8_debug(ts.num_unicode, ts.len_num, &len_utf_num);
-	den_utf = charset_unicodetoutf8_debug(ts.den_unicode, ts.len_den, &len_utf_den);
+	num_utf = charset_unicodetoutf8_debug(ts->num_unicode, ts->len_num, &len_utf_num);
+	den_utf = charset_unicodetoutf8_debug(ts->den_unicode, ts->len_den, &len_utf_den);
 	strncpy(num_txt, num_utf, 150);
 	strncpy(den_txt, den_utf, 49);
 	bach_freeptr(num_utf);
@@ -32233,7 +32300,7 @@ void notation_obj_check_all_measure_tuttipoints(t_notation_obj *r_ob)
 
 
 
-void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings) 
+void recompute_all_for_measure_ext(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings, char also_check_autocompletion)
 {
     if (!meas)
         return;
@@ -32242,10 +32309,12 @@ void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_
     notation_obj_check(r_ob);
 #endif
 
-	if (also_recompute_beamings) {
+    if (also_check_autocompletion)
+        meas->need_check_autocompletion = true;
+
+    if (also_recompute_beamings) {
 		meas->need_recompute_beamings = true;
-		meas->need_check_autocompletion = true;
-	} else 
+	} else
 		meas->need_recompute_beams_positions = true;
 
 #ifdef BACH_CHECK_NOTATION_ITEMS
@@ -32276,8 +32345,14 @@ void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_
 #endif
 
 	set_need_perform_analysis_and_change_flag(r_ob);
-	// recomputing domain_ux
+    
+	// recomputing domain_ux // WHY ON EARTH DID WE DO THAT HERE???
 	r_ob->domain_ux = (r_ob->inner_width + r_ob->j_inset_x - (r_ob->j_inset_x + CONST_SCORE_UX_LEFT_START * r_ob->zoom_y)) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
+}
+
+void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings)
+{
+    recompute_all_for_measure_ext(r_ob, meas, also_recompute_beamings, also_recompute_beamings);
 }
 
 void recompute_all_for_measures_in_voiceensemble(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings)
@@ -33189,12 +33264,13 @@ char change_chord_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *cho
 	return changed;
 }
 
-void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duration)
+void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duration, char also_simplify)
 {
     long old_den = ts->denominator;
+    long g = 1;
     
     if (old_den % new_measure_duration.r_den == 0) {
-        // easy case: the new denominator is a divisor of the old one. E.g. adapting (7 4) to a duration of 5/2
+        // the new denominator is a divisor of the old one. E.g. adapting (7 4) to a duration of 5/2
         ts->numerator = new_measure_duration.r_num * (old_den / new_measure_duration.r_den);
     } else if (perfect_log2(new_measure_duration.r_den) > 0) {
         // binary case: the denominator is a power of two. E.g. adapting anything to a duration of n/2^k
@@ -33209,37 +33285,68 @@ void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duratio
         ts->denominator = new_measure_duration.r_den < 6 ? new_measure_duration.r_den * 2 : new_measure_duration.r_den;
         ts->numerator = new_measure_duration.r_num * (ts->denominator / new_measure_duration.r_den);
     }
+    
+    
+    if (also_simplify && (g = gcd(ts->numerator, ts->denominator)) > 1) {
+        ts->numerator /= g;
+        ts->denominator /= g;
+        switch (ts->denominator) {
+            case 1:
+                ts->numerator *= 4;
+                ts->denominator *= 4;
+                break;
+            case 2:
+            case 3:
+            case 5:
+                ts->numerator *= 2;
+                ts->denominator *= 2;
+                break;
+            default:
+                break;
+        }
+    }
 }
 
-// autoadapt_measureinfo = 0: don't; 1: adapt this measure only; 2: adapt measures in all voices
-char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_symduration, char autoadapt_measureinfo)
+char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_symduration, char autoadapt_ts, char autoadapt_scope, char autoadapt_simplify)
 {
     char changed = 0;
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         t_llllelem *thiselem = (new_symduration) ? new_symduration->l_head : NULL;
-        if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)chord)) && (lexpr || thiselem)) {
+        if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)chord)) && chord->parent && (lexpr || thiselem)) {
             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)chord->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
             change_rational(r_ob, &chord->r_sym_duration, lexpr, thiselem, (t_notation_item *)chord);
             if (chord->r_sym_duration <= 0)
                 toggle_grace_for_chord(r_ob, chord, 1);
             changed = 1;
             
-            if (autoadapt_measureinfo) {
+            if (autoadapt_ts) {
                 t_measure *meas = chord->parent;
                 t_rational measure_dur = measure_get_sym_duration(meas);
                 t_rational measure_content_dur = measure_get_content_sym_duration(meas);
-                if (measure_content_dur > measure_dur) {
-                    if (meas->tuttipoint_reference->simple_single_measure_tuttipoint && autoadapt_measureinfo > 1) {
+                if (((autoadapt_ts % 2) && (measure_content_dur > measure_dur)) ||
+                    ((autoadapt_ts / 2) && (measure_content_dur < measure_dur))) {
+                    if (!(meas->tuttipoint_reference->simple_single_measure_tuttipoint && autoadapt_scope > 0)) {
                         r_ob->need_recompute_tuttipoints = true;
                         r_ob->need_reassign_local_spacing = true;
                     }
                     
-                    t_llll *meas_ll = measure_get_aligned_measures_as_llll(r_ob, meas);
-                    for (t_llllelem *el = meas_ll->l_head; el; el = el->l_next) {
-                        t_measure *thismeas = (t_measure *)hatom_getobj(&el->l_hatom);
-                        ts_adapt_to_symduration(&thismeas->timesignature, measure_content_dur);
+                    if (autoadapt_scope > 0) {
+                        t_llll *meas_ll = measure_get_aligned_measures_as_llll(r_ob, meas);
+                        for (t_llllelem *el = meas_ll->l_head; el; el = el->l_next) {
+                            t_measure *thismeas = (t_measure *)hatom_getobj(&el->l_hatom);
+                            t_timesignature ts = thismeas->timesignature;
+                            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)thismeas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                            ts_adapt_to_symduration(&ts, measure_content_dur, autoadapt_simplify);
+                            measure_set_ts(r_ob, thismeas, &ts);
+                            recompute_all_for_measure(r_ob, thismeas, true);
+                        }
+                        llll_free(meas_ll);
+                    } else {
+                        t_timesignature ts = meas->timesignature;
+                        ts_adapt_to_symduration(&ts, measure_content_dur, autoadapt_simplify);
+                        measure_set_ts(r_ob, meas, &ts);
+                        recompute_all_for_measure(r_ob, meas, true);
                     }
-                    llll_free(meas_ll);
                 }
             }
         }

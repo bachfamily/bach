@@ -1536,13 +1536,13 @@ typedef enum _tree_to_beams_correspondences
  */
 typedef enum _beaming_calculation_flags
 {
-	k_BEAMING_CALCULATION_FROM_SCRATCH = 0,			///< Performs the function completely, taking everything into account @ingroup rhythmic_trees
+	k_BEAMING_CALCULATION_DO = 0,			///< Performs the function completely, taking everything into account @ingroup rhythmic_trees
 	k_BEAMING_CALCULATION_DONT_DELETE_LEVELS = 1,	///< Forces the function to leave all levels untouched
 	k_BEAMING_CALCULATION_DONT_ADD_LEVELS = 2,		///< Forces the function to leave all levels untouched
 	k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS = 4,	///< Forces the function to leave all chords untouched (but can add levels)
 	k_BEAMING_CALCULATION_DONT_CHANGE_TIES = 8,		///< Forces the function not to retranscribe all-tied sequences or sequences of consecutive rests
 	k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE = 16,	///< Forces the function never to autocomplete measures
-    k_BEAMING_CALCULATION_FROM_SCRATCH_AND_OVERFLOW_TO_NEXT = 32,	///< Forces the autocompletion check to flow notes to next measures if needed
+    k_BEAMING_CALCULATION_DO_AND_OVERFLOW_TO_NEXT = 32,	///< Forces the autocompletion check to flow notes to next measures if needed
 	k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS = k_BEAMING_CALCULATION_DONT_ADD_LEVELS + k_BEAMING_CALCULATION_DONT_DELETE_LEVELS,	///< Forces the function not to create any other level and not to delete any existing level. Also forces to assume that level is tuplet if and only if it's marked as tuplet level.
 	k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING	= k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS + k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS + k_BEAMING_CALCULATION_DONT_CHANGE_TIES + k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE,	///< Forces the function to leave everything untouched @ingroup rhythmic_trees
 } e_beaming_calculation_flags;
@@ -11589,7 +11589,7 @@ void set_graphic_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_
 	@see					set_measure_parameters()
 	@see					get_timesignature_from_llll()
  */
-void set_measure_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure, t_llll *time_signature, 
+void measure_set_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure, t_llll *time_signature, 
 										t_llll *tempo, char measure_barline, t_llll *parameters, char when_no_ts_given_use_previous_or_nearest_measure_ts);
 
 
@@ -12901,7 +12901,7 @@ char ts_are_equal(t_timesignature *ts1, t_timesignature *ts2);
 	@param	ts		The time signature
 	@return	The unscaled width needed to draw the time signature.
  */
-double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature ts);
+double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature *ts);
 
 
 // TBD
@@ -13392,7 +13392,7 @@ void update_measure_chordnumbers(t_measure *measure);
 	@param	measure	The measure
 	@param	ts		The time signature
  */
-void set_measure_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature ts);
+void measure_set_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature *ts);
 
 
 /**	Properly fills the t_measure::boxes field (which is an llll containing all the standard base-level subdivision boxes) according to the
@@ -13557,6 +13557,9 @@ void recalculate_all_measure_chord_parameters(t_notation_obj *r_ob, t_measure *m
 										as they are, and only the notes positions are reparsed.
  */
 void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings);
+
+// TBD
+void recompute_all_for_measure_ext(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings, char also_check_autocompletion);
 
 
 /**	As recompute_all_for_measure(), but also applies to all corresponding measures in the voice ensemble.
@@ -13987,10 +13990,13 @@ char change_chord_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *cho
     @param    chord            The chord
     @param    lexpr            The lexpr object, or NULL if none
     @param    new_duration    The llll containing the new symbolic duration, or NULL if none
-    @param    adapt_measureinfo If non-zero, the measureinfo of the measure will be adapted according to the duration change
+    @param    autoadapt_ts      If non-zero, the time signature of the measure will be adapted according to the duration change
+                                If it is 1, the time signature is adapted when it needs to be increased, if it is 2 when it needs to be decreased, if it is 3, in both cases
+    @param    autoadapt_scope   Sets the scope for adapting the time signatures: 0 = this measure only, 1 = all synchronous measures
+    @param    autoadapt_simplify If non-zero, will allow simplifying numerator and denominator of new time signature (only meaningful if #adapt_measureinfo is non-zero)
     @return                    1 if something has been changed, 0 otherwise.
  */
-char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_duration, char autoadapt_measureinfo);
+char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_duration, char autoadapt_ts, char autoadapt_scope, char autoadapt_simplify);
 
 
 /**	Change the position of a note tail, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
@@ -15814,7 +15820,7 @@ char reset_selected_measures_local_spacing_width_multiplier(t_notation_obj *r_ob
 	@ingroup	rhythmic_trees
 	@param		r_ob							The notation object
 	@param		measure							The measure
-	@param		char beaming_calculation_flags	One of the #e_beaming_calculation_flags, specifying if some steps must be avoided. Leave #k_BEAMING_CALCULATION_FROM_SCRATCH = 0 to perform all steps. 
+	@param		char beaming_calculation_flags	One of the #e_beaming_calculation_flags, specifying if some steps must be avoided. Leave #k_BEAMING_CALCULATION_DO = 0 to perform all steps.
 	@see		build_beams_structures()
  */
 void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beaming_calculation_flags);
@@ -16006,6 +16012,11 @@ void get_rhythm_drawable_one_step(t_notation_obj *r_ob, t_llll *box, char only_c
 	@ingroup	rhythmic_trees
  */
 long get_rhythm_drawable_for_level_fn(void *data, t_hatom *beam_tree, const t_llll *address);
+
+
+// TBD
+long fix_level_type_flag_for_level_as_ignore_fn(void *data, t_hatom *a, const t_llll *address);
+char rebeam_level(t_notation_obj *r_ob, t_measure *meas, t_llllelem *level, char also_destroy_tuplets, char force_autoparse, long flags);
 
 
 /** A #fun_fn function to reset all the three beam number parameters to -1 for a level (the incoming hatom).

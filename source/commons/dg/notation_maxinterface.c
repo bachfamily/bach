@@ -4109,7 +4109,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                 
                 if (first == last) {
                     create_simple_selected_notation_item_undo_tick(r_ob, item, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-                    set_measure_ts(r_ob, (t_measure *)item, chosen_ts);
+                    measure_set_ts(r_ob, (t_measure *)item, &chosen_ts);
                     recompute_all_for_measure(r_ob, (t_measure *)item, false);
                 } else {
                     t_voice *temp;
@@ -4118,7 +4118,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                         t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure_num);
                         if (m) {
                             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-                            set_measure_ts(r_ob, m, chosen_ts);
+                            measure_set_ts(r_ob, m, &chosen_ts);
                             recompute_all_for_measure(r_ob, m, false);
                         }
                         if (temp == last)
