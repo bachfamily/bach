@@ -357,7 +357,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
                 }
 				case H_LLLL:
 					subll = elem->l_hatom.h_w.w_llll;
-					atom_setsym(this_out++, _llllobj_sym_open_round_bracket);
+					atom_setsym(this_out++, LLLL_PUSH_SYMBOL);
 					ac ++;
 					llll_stack_push(stack, elem);
 					elem = subll->l_head;
@@ -392,7 +392,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
 		}
 		if (!stack->s_items)
 			break;
-		atom_setsym(this_out++, _llllobj_sym_closed_round_bracket);
+		atom_setsym(this_out++, LLLL_POP_SYMBOL);
 		ac ++;
 		elem = (t_llllelem *) llll_stack_pop(stack);
 		elem = elem->l_next;
@@ -7822,7 +7822,7 @@ t_atom_long llll_to_text_buf(t_llll *ll,
 			
 			if (elem->l_hatom.h_type == H_LLLL) {
 				subll = elem->l_hatom.h_w.w_llll;
-				*pos++ = '(';
+				*pos++ = LLLL_PUSH_CHAR;
 				*pos++ = ' ';
 				*pos = 0;
 				ac += 2;
@@ -7835,7 +7835,7 @@ t_atom_long llll_to_text_buf(t_llll *ll,
 		
 		if (!stack->s_items)
 			break;
-		*pos++ = ')';
+		*pos++ = LLLL_POP_CHAR;
 		*pos++ = ' ';
 		*pos = 0;
 		
@@ -8148,7 +8148,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                             }
                             just_closed_indented_sublist = false;
                         }
-                        *pos++ = '(';
+                        *pos++ = LLLL_PUSH_CHAR;
                         *pos++ = ' ';
                         //*pos = 0; // we don't really need this
                         count += 2;
@@ -8190,16 +8190,16 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
             if (indent_depth <= maxdepth || (maxdepth < 0 && subll->l_depth >= -maxdepth)) { // if we are within maxdepth
                 manage_wrap_and_indent(1, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                 --indent_depth;
-                *pos++ = ')';
+                *pos++ = LLLL_POP_CHAR;
                 *pos++ = '\n';
                 just_closed_indented_sublist = true;
             } else {
-                *pos++ = ')';
+                *pos++ = LLLL_POP_CHAR;
                 *pos++ = ' ';
                 //just_closed_indented_sublist = false;
             }
         } else {
-            *pos++ = ')';
+            *pos++ = LLLL_POP_CHAR;
             *pos++ = ' ';
         }
         //*pos = 0; // we don't really need this
@@ -8438,7 +8438,7 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 			if (elem->l_hatom.h_type == H_LLLL) {
 				subll = elem->l_hatom.h_w.w_llll;
 				if (max_size > 2) {
-					*pos++ = '(';
+					*pos++ = LLLL_PUSH_CHAR;
 					*pos++ = ' ';
 					*pos = 0;
 					ac += 2;
@@ -8454,7 +8454,7 @@ t_atom_long llll_to_text_buf_limited(t_llll *ll, char **buf, long max_size, t_at
 		if (!stack->s_items)
 			break;
 		if (max_size > 2) {
-			*pos++ = ')';
+			*pos++ = LLLL_POP_CHAR;
 			*pos++ = ' ';
 			*pos = 0;
 			ac += 2;

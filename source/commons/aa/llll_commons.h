@@ -11,7 +11,12 @@
 #define	QUOTE_CHAR ('`')				// the special character for quoting
 #define LLLL_NATIVE_MSG	(_llllobj_sym_bach_llll)
 
-
+#define LLLL_PUSH_SYMBOL (_llllobj_sym_open_square_bracket)
+#define LLLL_POP_SYMBOL (_llllobj_sym_closed_square_bracket)
+#define LLLL_PUSH_CHAR ('[')
+#define LLLL_POP_CHAR (']')
+#define LLLL_PUSH_CSTR "["
+#define LLLL_POP_CSTR "]"
 
 #define TEXT_LIST_MAX_LENGTH		65536
 #define ATOM_LIST_LENGTH_STEP		(4096*64)

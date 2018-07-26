@@ -41,12 +41,12 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
 
 <INITIAL,NO_b,NO_e,NO_be,NO_l,NO_bl,NO_el,NO_bel,NO_p,NO_bp,NO_ep,NO_bep,NO_lp,NO_blp,NO_elp,NO_belp,NO_r,NO_br,NO_er,NO_ber,NO_lr,NO_blr,NO_elr,NO_belr,NO_pr,NO_bpr,NO_epr,NO_bepr,NO_lpr,NO_blpr,NO_elpr,NO_belpr,NO_s,NO_bs,NO_es,NO_bes,NO_ls,NO_bls,NO_els,NO_bels,NO_ps,NO_bps,NO_eps,NO_beps,NO_lps,NO_blps,NO_elps,NO_belps,NO_rs,NO_brs,NO_ers,NO_bers,NO_lrs,NO_blrs,NO_elrs,NO_belrs,NO_prs,NO_bprs,NO_eprs,NO_beprs,NO_lprs,NO_blprs,NO_elprs,NO_belprs>{
     
-    \( {
+    ("("|"[") {
         parserpost(" lex: BACH_PUSH\n");
         return BACH_PUSH;
     }
     
-    \) {
+    (")"|"]") {
         parserpost(" lex: BACH_POP\n");
         return BACH_POP;
     }

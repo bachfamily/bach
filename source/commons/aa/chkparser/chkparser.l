@@ -65,7 +65,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_PITCH;
 }
 
-^[^`\(\) \t\n\,\;\"\\][^\(\) \t\n\,\;\"\\]* {
+^[^`\(\)\[\] \t\n\,\;\"\\][^\(\)\[\] \t\n\,\;\"\\]* {
     parserpost("typecheck: no parens, no separators, no double quotes / backslashes");
     return H_SYM;
 }
@@ -75,7 +75,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_PAREN;
 }
 
-^[^`\(\)\"\\][^\(\)\"\\]* {
+^[^`\(\)\[\]\"\\][^\(\)\[\]\"\\]* {
     parserpost("typecheck: no parens, separators, no double quotes / backslashes");
     return H_SYM | H_SEPARATOR;
 }
@@ -85,7 +85,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_PAREN | H_SEPARATOR;
 }
 
-^[^`\(\) \t\n\,\;][^\(\) \t\n\,\;]* {
+^[^`\(\)\[\] \t\n\,\;][^\(\)\[\] \t\n\,\;]* {
     parserpost("typecheck: no parens, no separators, double quotes / backslashes");
     return H_SYM | H_SPECIAL;
 }
@@ -95,7 +95,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_PAREN | H_SPECIAL;
 }
 
-^[^`\(\)][^\(\)]* {
+^[^`\(\)\[\]][^\(\)\[\]]* {
     parserpost("typecheck: no parens, separators, double quotes / backslashes");
     return H_SYM | H_SEPARATOR | H_SPECIAL;
 }
@@ -105,7 +105,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_PAREN | H_SEPARATOR | H_SPECIAL;
 }
 
-^`[^\(\) \t\n\,\;\"\\]* {
+^`[^\(\)\[\] \t\n\,\;\"\\]* {
     parserpost("typecheck: backtick, no parens, no separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK;
 }
@@ -115,7 +115,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_BACKTICK | H_PAREN;
 }
 
-^`[^\(\)\"\\]* {
+^`[^\(\)\[\]\"\\]* {
     parserpost("typecheck: backtick, no parens, separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SEPARATOR;
 }
@@ -125,7 +125,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
 }
 
-^`[^\(\) \t\n\,\;]* {
+^`[^\(\)\[\] \t\n\,\;]* {
     parserpost("typecheck: backtick, no parens, no separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SPECIAL;
 }
@@ -135,7 +135,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_BACKTICK | H_SPECIAL;
 }
 
-^`[^\(\)]* {
+^`[^\(\)\[\]]* {
     parserpost("typecheck: backtick, no parens, separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SEPARATOR | H_SPECIAL;
 }

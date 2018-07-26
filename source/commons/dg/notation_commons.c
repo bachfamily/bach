@@ -42766,7 +42766,7 @@ void eliminate_spaces_before_open_bracket_symbol(char *buf)
 {
 	long i, len = strlen(buf);
 	for (i = 0; i < len - 1; i++) {
-		if (buf[i] == ' ' && buf[i+1] == '(') {
+		if (buf[i] == ' ' && buf[i+1] == LLLL_PUSH_CHAR) {
 			strcpy(&buf[i], &buf[i+1]);
 			len--;
 		}
