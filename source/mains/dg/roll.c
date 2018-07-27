@@ -2372,7 +2372,7 @@ void roll_poly_do_terminate_note(t_notation_obj *r_ob, t_llllelem *to_terminate,
 {
     t_llll *notell = hatom_getllll(&to_terminate->l_hatom);
     t_note *terminate = (t_note *)hatom_getobj(&notell->l_head->l_hatom);
-    dev_post("    . the note with midicents %ld starting at %.2f ms will be truncated", (long)terminate->midicents, terminate->parent->onset);
+//    dev_post("    . the note with midicents %ld starting at %.2f ms will be truncated", (long)terminate->midicents, terminate->parent->onset);
     t_llllelem *ins = llll_insertdouble_before(termination_ms, notell->l_tail);
     ins->l_thing = ins->l_next->l_thing;
 }
@@ -2395,7 +2395,7 @@ void roll_poly_do_update_resumable_head(t_notation_obj *r_ob, double curr_onset,
     for (t_llllelem *el = *resumable_head; el; el = el->l_next){
         double tail = roll_poly_do_get_llllelem_orig_tail(el);
         if (tail <= curr_onset) {
-            dev_post("Moving resumable head from note %p to note %p", (*resumable_head) ? roll_poly_do_get_llllelem_note(*resumable_head) : NULL, el->l_next ? roll_poly_do_get_llllelem_note(el->l_next) : NULL);
+//            dev_post("Moving resumable head from note %p to note %p", (*resumable_head) ? roll_poly_do_get_llllelem_note(*resumable_head) : NULL, el->l_next ? roll_poly_do_get_llllelem_note(el->l_next) : NULL);
             *resumable_head = el->l_next;
         }
     }
@@ -2699,10 +2699,10 @@ void roll_poly_do(t_roll *x, long maxnumvoices, char drop_priority, char resume,
                             // then we add the note
                             long best_voice = roll_poly_do_find_assignment_voice(r_ob, nt, maxnumvoices, active_voices, lastmc_in_voice, true);
                             if (best_voice >= 0) {
-                                dev_post("    . now the note will be assigned to voice %ld", best_voice + 1);
+//                                dev_post("    . now the note will be assigned to voice %ld", best_voice + 1);
                                 nt_elem = roll_poly_do_append_new_note(r_ob, notes_slicingpoints, nt, best_voice, &resumable_head, lastnote_in_voice, lastmc_in_voice, &num_used_voices);
                             } else {
-                                dev_post("    . still cannot be assigned: weird. We'll delete it but it's weird");
+//                                dev_post("    . still cannot be assigned: weird. We'll delete it but it's weird");
                                 llll_appendobj(notes_to_delete, nt);
                             }
                         }
