@@ -2507,8 +2507,36 @@
 					"tags" : [ "message", "operate", "on", "selection", "create", "modify", "delete", "break", "group", "ungroup" ],
 					"title" : [ "Creating or breaking groups" ]
 				},
+				"Poly" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.70_poly.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "poly+message" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "assign", "reassign", "change", "automatically", "automatic", "force", "forcing" ],
+					"title" : [ "Forcing polyphony or assigning voicing" ]
+				},
+				"Polydroppriority" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.71_polydroppriority.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "poly", "voicingslot", "sel" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "drop", "priority", "terminate", "droppriority", "oldest", "newest", "closest" ],
+					"title" : [ "Priorities in assigning voicing" ]
+				},
+				"Polyresume" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.72_polyresume.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "poly", "poly+drop+priority" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "resume", "resuming", "priority", "resumepriority", "resumevoicing" ],
+					"title" : [ "Resuming notes in voice assignments" ]
+				},
+				"Maxpoly" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.75_maxpoly.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "poly", "voicingslot", "sel" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "number", "max", "maxnum", "used" ],
+					"title" : [ "Obtaining the number of used voices" ]
+				},
 				"Othermessages" : {
-					"filename" : [ "bach.help.notation.messages.30_operate on selection.70_othermessages.maxpat" ],
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.80_othermessages.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "merge", "explodechords", "checkdynamics", "fixdynamics", "dynamics2velocities", "name", "namefromslot", "nametoslot" ],
 					"tags" : [ "message", "operate", "on", "selection", "merge", "explode", "chords", "explodechords", "check", "fix", "dynamics", "checkdynamics", "fixdynamics", "velocity", "velocities", "dynamics2velocities", "respell" ],

@@ -422,8 +422,8 @@ char move_selection_breakpoint(t_roll *x, double delta_x_pos, double delta_y_pos
 //char delete_selection(t_roll *x, char only_editable_items);
 void set_everything_unplayed(t_roll *x);
 void process_chord_parameters_calculation_NOW(t_roll *x);
-char change_note_voice_from_lexpr_or_llll(t_roll *x, t_note *note, t_lexpr *lexpr, t_llll *new_voice, char also_select);
-char change_chord_voice_from_lexpr_or_llll(t_roll *x, t_chord *chord, t_lexpr *lexpr, t_llll *new_voice, char also_select);
+char change_note_voice_from_lexpr_or_llll(t_roll *x, t_note *note, t_lexpr *lexpr, t_llll *new_voice, char also_select, t_note **changed_note);
+char change_chord_voice_from_lexpr_or_llll(t_roll *x, t_chord *chord, t_lexpr *lexpr, t_llll *new_voice, char also_select, t_chord **changed_chord);
 
 void create_whole_roll_undo_tick(t_roll *x);
 void roll_clear_all(t_roll *x);
@@ -1360,7 +1360,7 @@ char roll_sel_delete_item(t_roll *x, t_notation_item *curr_it, char *need_check_
                 changed = 1;
             } else {
                 create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_ADD);
-                if (delete_chord_from_voice((t_notation_obj *)x, ch, ch->prev, false)) {
+                if (chord_delete((t_notation_obj *)x, ch, ch->prev, false)) {
                     if (need_check_scheduling) *need_check_scheduling = true;
                     update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
                 }
@@ -1599,7 +1599,7 @@ void roll_explodechords(t_roll *x, char selection_only)
 					addchord_from_notes(x, voice->v_ob.number, onset, -1, 1, clonednote, clonednote, false, 0);
 					note = nextnote;
 				}
-				delete_chord_from_voice((t_notation_obj *)x, chord, NULL, false);
+				chord_delete((t_notation_obj *)x, chord, NULL, false);
 			}
 			
 			chord = nextchord;
@@ -2216,6 +2216,613 @@ void roll_glissando(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_GLISSANDO_FOR_SELECTION);
 }
 
+
+///// *********************************************
+///// STUFF FOR THE POLY MESSAGE: POLYPHONY
+///// *********************************************
+
+t_llll *obj_and_long_to_llll(void *obj, long num)
+{
+    t_llll *ll = llll_get();
+    llll_appendobj(ll, obj);
+    llll_appendlong(ll, num);
+    return ll;
+}
+
+t_llll *obj_and_double_to_llll(void *obj, double num)
+{
+    t_llll *ll = llll_get();
+    llll_appendobj(ll, obj);
+    llll_appenddouble(ll, num);
+    return ll;
+}
+
+t_llll *obj_and_double_w_lthing_to_llll(void *obj, double num, long lthing)
+{
+    t_llll *ll = llll_get();
+    llll_appendobj(ll, obj);
+    t_llllelem *el = llll_appenddouble(ll, num);
+    el->l_thing.w_long = lthing;
+    return ll;
+}
+
+
+t_note *roll_poly_do_get_llllelem_note(t_llllelem *el)
+{
+    if (!el)
+        return NULL;
+    t_llll *ll = hatom_getllll(&el->l_hatom);
+    return ll && ll->l_head ? (t_note *)hatom_getobj(&ll->l_head->l_hatom) : NULL;
+}
+
+double roll_poly_do_get_llllelem_curr_tail(t_llllelem *el)
+{
+    if (!el)
+        return DBL_MIN;
+    t_llll *ll = hatom_getllll(&el->l_hatom);
+    t_llllelem *temp = ll->l_size % 2 ? ll->l_tail->l_prev : ll->l_tail;
+    return temp ? hatom_getdouble(&temp->l_hatom) : DBL_MIN;
+}
+
+double roll_poly_do_get_llllelem_orig_tail(t_llllelem *el)
+{
+    if (!el)
+        return DBL_MIN;
+    t_llll *ll = hatom_getllll(&el->l_hatom);
+    t_llllelem *temp = ll->l_tail;
+    return temp ? hatom_getdouble(&temp->l_hatom) : DBL_MIN;
+}
+
+double roll_poly_do_get_llllelem_onset(t_llllelem *el)
+{
+    t_note *nt = roll_poly_do_get_llllelem_note(el);
+    if (nt)
+        return nt->parent->onset;
+    return 0;
+}
+
+
+
+void roll_poly_do_set_voicing_to_slot(t_notation_obj *r_ob, t_note *nt, long nt_voicenum, long voicing_slot)
+{
+    // could be faster
+    t_llll *slots_ll = llll_get();
+    llll_appendlong(slots_ll, voicing_slot);
+    llll_appendlong(slots_ll, nt_voicenum);
+    llll_wrap_once(&slots_ll);
+    set_slots_values_to_note_from_llll(r_ob, nt, slots_ll);
+    llll_free(slots_ll);
+}
+
+t_llllelem *roll_poly_do_append_new_note(t_notation_obj *r_ob, t_llll *notes_slicingpoints, t_note *nt, long nt_voicenum, t_llllelem **resumable_head, t_llllelem **lastnote_in_voice, double *lastmc_in_voice, long *num_used_voices)
+{
+    t_llll *new_ll = obj_and_double_w_lthing_to_llll(nt, notation_item_get_tail_ms_accurate(r_ob, (t_notation_item *)nt), nt_voicenum);
+    t_llllelem *new_el = NULL;
+    char must_set_resumable_head = (!(*resumable_head));
+    
+    // finding right position for insertion
+    double note_tail = notation_item_get_tail_ms_accurate(r_ob, (t_notation_item *)nt);
+    for (t_llllelem *el = notes_slicingpoints->l_tail; el; el = el->l_prev) {
+        t_llll *this_ll = hatom_getllll(&el->l_hatom);
+        double this_tail = hatom_getdouble(&this_ll->l_tail->l_hatom);
+        if (note_tail >= this_tail) {
+            new_el = llll_insertllll_after(new_ll, el);
+            break;
+        }
+        if (el == *resumable_head)
+            must_set_resumable_head = true;
+    }
+    
+    if (!new_el)
+        new_el = llll_prependllll(notes_slicingpoints, new_ll);
+
+    if (must_set_resumable_head)
+        *resumable_head = new_el;
+
+    lastnote_in_voice[nt_voicenum] = new_el;
+    lastmc_in_voice[nt_voicenum] = nt->midicents;
+    
+    (*num_used_voices)++;
+    
+    return new_el;
+}
+
+long roll_poly_do_find_assignment_voice(t_notation_obj *r_ob, t_note *nt, long maxnumvoices, char *active_voices, double *lastmc_in_voice, char only_among_inactive_voices)
+{
+    long best_voice = -1;
+    for (long i = 0; i < maxnumvoices; i++) {
+        if (only_among_inactive_voices && active_voices[i])
+            continue;
+        if (best_voice < 0) {
+            best_voice = i;
+        } else if (best_voice >= 0) {
+            if (lastmc_in_voice[i] == DBL_MIN && lastmc_in_voice[best_voice] > DBL_MIN && fabs(nt->midicents - lastmc_in_voice[best_voice]) > 1200) {
+                //   would be first note in the voice
+                best_voice = i;
+            } else if (lastmc_in_voice[i] > DBL_MIN &&
+                       ((lastmc_in_voice[best_voice] == DBL_MIN && fabs(nt->midicents - lastmc_in_voice[i]) <= 1200) ||
+                        (lastmc_in_voice[best_voice] > DBL_MIN && fabs(nt->midicents - lastmc_in_voice[i]) < fabs(nt->midicents - lastmc_in_voice[best_voice])))) {
+                           best_voice = i;
+            }
+        }
+    }
+    return best_voice;
+}
+
+
+void roll_poly_do_update_voice_activity(t_notation_obj *r_ob, double curr_onset, long maxnumvoices, t_llllelem **lastnote_in_voice, char *active_voices, long *num_used_voices)
+{
+    // checking voice activity
+    *num_used_voices = 0;
+    for (long i = 0; i < maxnumvoices; i++) {
+        if (lastnote_in_voice[i]) {
+            double tail = roll_poly_do_get_llllelem_curr_tail(lastnote_in_voice[i]);
+            active_voices[i] = (tail > curr_onset);
+        } else {
+            active_voices[i] = 0;
+        }
+        
+        if (active_voices[i])
+            (*num_used_voices)++;
+    }
+    
+}
+
+void roll_poly_do_terminate_note(t_notation_obj *r_ob, t_llllelem *to_terminate, double termination_ms)
+{
+    t_llll *notell = hatom_getllll(&to_terminate->l_hatom);
+    t_note *terminate = (t_note *)hatom_getobj(&notell->l_head->l_hatom);
+    dev_post("    . the note with midicents %ld starting at %.2f ms will be truncated", (long)terminate->midicents, terminate->parent->onset);
+    t_llllelem *ins = llll_insertdouble_before(termination_ms, notell->l_tail);
+    ins->l_thing = ins->l_next->l_thing;
+}
+
+t_llllelem *roll_poly_do_get_first_active_note(t_notation_obj *r_ob, double curr_onset, t_llllelem *resumable_head)
+{
+    // verify if some of the active notes have ended
+    for (t_llllelem *el = resumable_head; el; el = el->l_next){
+        t_llll *this_ll = hatom_getllll(&el->l_hatom);
+        t_llllelem *temp = this_ll->l_size % 2 ? this_ll->l_tail->l_prev : this_ll->l_tail;
+        double thistail = hatom_getdouble(&temp->l_hatom);
+        if (thistail >= curr_onset)
+            return el;
+    }
+    return NULL;
+}
+
+void roll_poly_do_update_resumable_head(t_notation_obj *r_ob, double curr_onset, t_llllelem **resumable_head)
+{
+    for (t_llllelem *el = *resumable_head; el; el = el->l_next){
+        double tail = roll_poly_do_get_llllelem_orig_tail(el);
+        if (tail <= curr_onset) {
+            dev_post("Moving resumable head from note %p to note %p", (*resumable_head) ? roll_poly_do_get_llllelem_note(*resumable_head) : NULL, el->l_next ? roll_poly_do_get_llllelem_note(el->l_next) : NULL);
+            *resumable_head = el->l_next;
+        }
+    }
+}
+
+long roll_poly_do_sort_by_mc_distance(void *mc, t_llllelem *a, t_llllelem *b) {
+    if (hatom_gettype(&a->l_hatom) == H_LLLL && hatom_gettype(&b->l_hatom) == H_LLLL) {
+        t_note *a_nt = (t_note *)hatom_getobj(&hatom_getllll(&a->l_hatom)->l_head->l_hatom);
+        t_note *b_nt = (t_note *)hatom_getobj(&hatom_getllll(&b->l_hatom)->l_head->l_hatom);
+        double ref_mc = *((double *)mc);
+        
+        return (fabs(a_nt->midicents - ref_mc) <= fabs(b_nt->midicents - ref_mc));
+    }
+    return 0;
+}
+
+long roll_poly_do_sort_by_onset(void *mc, t_llllelem *a, t_llllelem *b) {
+    if (hatom_gettype(&a->l_hatom) == H_LLLL && hatom_gettype(&b->l_hatom) == H_LLLL) {
+        t_note *a_nt = (t_note *)hatom_getobj(&hatom_getllll(&a->l_hatom)->l_head->l_hatom);
+        t_note *b_nt = (t_note *)hatom_getobj(&hatom_getllll(&b->l_hatom)->l_head->l_hatom);
+        
+        return (a_nt->parent->onset <= b_nt->parent->onset);
+    }
+    return 0;
+}
+
+// only_resume_same_voicing == 0: resume note in any voice
+// only_resume_same_voicing == 1: resume note in same voice
+t_llllelem *roll_poly_do_find_resumable_note(t_notation_obj *r_ob, double curr_onset, double prev_tail, double prev_mc, t_llllelem *resumable_head, long maxnumvoices, char *active_voices, double *lastmc_in_voices, char resume_priority, char only_resume_same_voicing, long *resumable_note_voice)
+{
+    t_llll *resumable = llll_get();
+    for (t_llllelem *el = resumable_head; el; el = el->l_next) {
+        t_llll *this_ll = hatom_getllll(&el->l_hatom);
+        // is the note OFF at prev_tail?
+        if (this_ll->l_size % 2 == 1) { // note is off
+            double tail = hatom_getdouble(&this_ll->l_tail->l_hatom);
+            if (tail > prev_tail) { // we can resume this!
+                long resumable_natural_voice = this_ll->l_tail->l_thing.w_long; // natural note voice
+                if (only_resume_same_voicing == 0 || (resumable_natural_voice < maxnumvoices && !active_voices[resumable_natural_voice])) {
+                    llll_appendobj(resumable, el);
+                }
+            }
+        }
+    }
+    
+    t_llllelem *res = NULL;
+    if (resumable->l_head) {
+        if (resume_priority == 0) { // resume oldest
+            llll_inplacesort(resumable, (sort_fn)roll_poly_do_sort_by_onset);
+            res = (t_llllelem *)hatom_getobj(&resumable->l_head->l_hatom);
+        } else if (resume_priority == 1) { // resume newest
+            llll_inplacesort(resumable, (sort_fn)roll_poly_do_sort_by_onset);
+            res = (t_llllelem *)hatom_getobj(&resumable->l_tail->l_hatom);
+        } else { // resume closest
+            llll_inplacesort(resumable, (sort_fn)roll_poly_do_sort_by_mc_distance, &prev_mc);
+            res = (t_llllelem *)hatom_getobj(&resumable->l_head->l_hatom);
+        }
+    }
+    
+    if (res) {
+        t_llll *res_ll = hatom_getllll(&res->l_hatom);
+        if (only_resume_same_voicing) {
+            t_llllelem *temp = res_ll->l_size % 2 ? res_ll->l_tail->l_prev : res_ll->l_tail;
+            *resumable_note_voice = temp->l_thing.w_long; // natural note voice
+        } else {
+            t_note *nt = (t_note *)hatom_getobj(&res_ll->l_head->l_hatom);
+            *resumable_note_voice = roll_poly_do_find_assignment_voice(r_ob, nt, maxnumvoices, active_voices, lastmc_in_voices, true);
+        }
+    }
+    
+    llll_free(resumable);
+    return res;
+}
+
+
+void roll_poly_do_resume_note(t_notation_obj *r_ob, t_llllelem *note_el, double at_this_onset, long note_voicenum, char *active_voices, long *num_used_voices, t_llllelem **lastnote_in_voice, double *lastmc_in_voice)
+{
+    t_llll *note_llll = hatom_getllll(&note_el->l_hatom);
+    t_note *nt = (t_note *)hatom_getobj(&note_llll->l_head->l_hatom);
+    
+    t_llllelem *ins = llll_insertdouble_before(at_this_onset, note_llll->l_tail);
+    ins->l_thing.w_long = note_voicenum;
+    
+    (*num_used_voices)++;
+    active_voices[note_voicenum] = 1;
+    
+    lastnote_in_voice[note_voicenum] = note_el;
+    lastmc_in_voice[note_voicenum] = nt->midicents;
+}
+
+long roll_poly_do_get_num_used_voices(t_notation_obj *r_ob, t_llll *notes_slicingpoints)
+{
+    long maxvoice = -1;
+    for (t_llllelem *el = notes_slicingpoints->l_head; el; el = el->l_next){
+        t_llll *this_ll = hatom_getllll(&el->l_hatom);
+        for (t_llllelem *subel = this_ll->l_head ? this_ll->l_head->l_next : NULL; subel; subel = subel->l_next)
+            maxvoice = MAX(maxvoice, subel->l_thing.w_long);
+    }
+    
+    return maxvoice + 1;
+}
+
+
+
+
+double get_first_onset_before_llllelem(t_llllelem *this_el)
+{
+    double best_onset = DBL_MIN;
+    for (t_llllelem *el = this_el; el; el = el->l_prev) {
+        double this_orig_tail = roll_poly_do_get_llllelem_orig_tail(el);
+        double this_onset = roll_poly_do_get_llllelem_onset(el);
+        best_onset = MAX(best_onset, this_onset);
+        if (this_orig_tail < best_onset)
+            break;
+    }
+    return best_onset;
+}
+
+double get_last_onset(t_llll *notes_slicingpoints)
+{
+    return get_first_onset_before_llllelem(notes_slicingpoints->l_tail);
+}
+
+t_llll *roll_poly_do_get_trailing_tails(t_llll *notes_slicingpoints, double curr_onset, double after_this_onset, t_llll **corresponding_midicents)
+{
+    t_llll *out = llll_get();
+    
+    if (corresponding_midicents && !(*corresponding_midicents))
+        *corresponding_midicents = llll_get();
+
+    for (t_llllelem *el = notes_slicingpoints->l_tail; el; el = el->l_prev) {
+        double this_curr_tail = roll_poly_do_get_llllelem_curr_tail(el);
+        double this_orig_tail = roll_poly_do_get_llllelem_orig_tail(el);
+        if (this_orig_tail <= after_this_onset)
+            break;
+        else if (this_curr_tail > after_this_onset && this_curr_tail < curr_onset) {
+            llll_appenddouble(out, this_curr_tail);
+            if (corresponding_midicents) {
+                t_note *nt = (t_note *)roll_poly_do_get_llllelem_note(el);
+                llll_appenddouble(*corresponding_midicents, nt ? nt->midicents : 0);
+            }
+        }
+    }
+    llll_inplacesort(out);
+    return out;
+}
+
+
+void roll_poly_do_dev_post_slicing_points_and_resumable_head(t_llll *notes_slicingpoints, t_llllelem *resumable_head)
+{
+    dev_post("Slicing points are:");
+    dev_llll_print(notes_slicingpoints, NULL, 0, 4, NULL);
+    if (resumable_head)
+        dev_post("Resumable head is note %p", hatom_getobj(&hatom_getllll(&resumable_head->l_hatom)->l_head->l_hatom));
+    else
+        dev_post("Resumable head is NULL.");
+}
+
+void roll_poly_do_resume(t_notation_obj *r_ob, t_llll *notes_slicingpoints, long num_used_voices, long maxnumvoices, double this_onset, t_llllelem *resumable_head, char *active_voices, double *lastmc_in_voice, t_llllelem **lastnote_in_voice, long resume_priority, char only_resume_same_voicing)
+{
+    long MAX_SUPPORTED_VOICES = CONST_MAX_VOICES;
+    char mustbreak = false;
+    long count = 1;
+    double after_this_onset = get_last_onset(notes_slicingpoints);
+    while (!mustbreak) {
+        t_llll *corresponding_midicents = NULL;
+        t_llll *tail_positions = roll_poly_do_get_trailing_tails(notes_slicingpoints, this_onset, after_this_onset, &corresponding_midicents);
+
+        //        dev_post("~~~ Resumable positions are:");
+//        dev_llll_print(tail_positions, NULL, 0, 4, NULL);
+        
+        if (tail_positions->l_head) {
+            double this_tail_pos = hatom_getdouble(&tail_positions->l_head->l_hatom);
+            double this_mc = corresponding_midicents && corresponding_midicents->l_head ? hatom_getdouble(&corresponding_midicents->l_head->l_hatom) : 0;
+
+//            dev_post("-> Analyzing resumable position %.2f (midicents: %ld)", this_tail_pos, (long)this_mc);
+            
+            roll_poly_do_update_voice_activity(r_ob, this_tail_pos, maxnumvoices, lastnote_in_voice, active_voices, &num_used_voices);
+            
+            if (num_used_voices < maxnumvoices && resumable_head) { // resume?
+//                dev_post("Trying to resume something.");
+                while (num_used_voices < maxnumvoices) {
+                    long resumable_note_voice = -1;
+                    t_llllelem *resumable_note = roll_poly_do_find_resumable_note(r_ob, this_onset, this_tail_pos, this_mc, resumable_head, maxnumvoices, active_voices, lastmc_in_voice, resume_priority, only_resume_same_voicing, &resumable_note_voice);
+                    
+                    if (!resumable_note || resumable_note_voice < 0) {
+//                        dev_post("It doesn't seem we can resume anything more.");
+                        break;
+                    }
+                    
+                    t_note *nt = (t_note *)hatom_getobj(&hatom_getllll(&resumable_note->l_hatom)->l_head->l_hatom);
+//                    dev_post("Resuming the note with midicents %ld and onset %.2f in voicing number %ld", (long)nt->midicents, nt->parent->onset, resumable_note_voice + 1);
+                    roll_poly_do_resume_note(r_ob, resumable_note, this_tail_pos, resumable_note_voice, active_voices, &num_used_voices, lastnote_in_voice, lastmc_in_voice);
+                }
+            } else {
+//                dev_post("Cannot resume anything.");
+            }
+            
+//            roll_poly_do_dev_post_slicing_points_and_resumable_head(notes_slicingpoints, resumable_head);
+            after_this_onset = this_tail_pos;
+        } else {
+            mustbreak = true;
+        }
+        llll_free(tail_positions);
+        
+        if (count++ > MAX_SUPPORTED_VOICES)
+            break; // only out of precaution, "count" should not be needed
+    }
+}
+
+
+// drop_policy = 0: terminate oldest
+// drop_policy = 1: terminate newest
+// drop_policy = 2: terminate closest
+void roll_poly_do(t_roll *x, long maxnumvoices, char drop_priority, char resume, char resume_priority, char only_resume_same_voicing, char voicing_slot, char actually_reassign_voices, char notify_maxusedvoices)
+{
+    t_notation_obj *r_ob = (t_notation_obj *)x;
+    long MAX_SUPPORTED_VOICES = CONST_MAX_VOICES;
+
+    if (maxnumvoices <= 0)
+        maxnumvoices = MAX_SUPPORTED_VOICES;
+    if (maxnumvoices > MAX_SUPPORTED_VOICES) {
+        object_warn((t_object *)x, "Only up to %ld voices can be handled.", CONST_MAX_VOICES);
+        maxnumvoices = MAX_SUPPORTED_VOICES;
+    }
+    
+    char *active_voices = (char *)bach_newptr(maxnumvoices * sizeof(char));
+    double *lastmc_in_voice = (double *)bach_newptr(maxnumvoices * sizeof(double));
+    t_llllelem **lastnote_in_voice = (t_llllelem **)bach_newptr(maxnumvoices * sizeof(t_llllelem *));
+    long num_used_voices = 0;
+    
+    for (long i = 0; i < maxnumvoices; i++) {
+        active_voices[i] = 0;
+        lastnote_in_voice[i] = NULL;
+        lastmc_in_voice[i] = DBL_MIN;
+    }
+
+    t_llll *notes_to_delete = llll_get();
+    
+    t_llll *notes_slicingpoints = llll_get(); // will contain: (notepointer sliceposition1 sliceposition2 sliceposition3... tailposition) (...) (...)
+    t_llllelem *resumable_head = NULL; // pointing to the leftmost element in notes_slicingpoints that can be resumed
+
+    create_whole_roll_undo_tick(x);
+
+    lock_general_mutex(r_ob);
+    
+    for (t_rollvoice *voice = x->firstvoice; voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
+        for (t_chord *chord = voice->firstchord; chord; chord = chord->next) {
+            if (notation_item_is_globally_selected(r_ob, (t_notation_item *)chord)) {
+                double this_onset = notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)chord);
+                
+                for (t_note *nt = chord->firstnote; nt; nt = nt->next) {
+                    t_llllelem *nt_elem = NULL;
+                    
+//                    dev_post("----");
+//                    dev_post("Dealing with note with midicents %ld starting at %.2f ms", (long)nt->midicents, nt->parent->onset);
+//                    roll_poly_do_dev_post_slicing_points_and_resumable_head(notes_slicingpoints, resumable_head);
+
+                    if (resume)
+                        roll_poly_do_resume(r_ob, notes_slicingpoints, num_used_voices, maxnumvoices, this_onset, resumable_head, active_voices, lastmc_in_voice, lastnote_in_voice, resume_priority, only_resume_same_voicing);
+                    
+                    // verify if some of the active notes have ended
+                    roll_poly_do_update_resumable_head(r_ob, this_onset, &resumable_head);
+
+                    roll_poly_do_update_voice_activity(r_ob, this_onset, maxnumvoices, lastnote_in_voice, active_voices, &num_used_voices);
+                    
+                    // find appropriate voice for the new note
+                    long best_voice = roll_poly_do_find_assignment_voice(r_ob, nt, maxnumvoices, active_voices, lastmc_in_voice, true);
+                    
+
+                    if (best_voice >= 0) {
+//                        dev_post("  - will be assigned to voice %ld", best_voice + 1);
+                        nt_elem = roll_poly_do_append_new_note(r_ob, notes_slicingpoints, nt, best_voice, &resumable_head, lastnote_in_voice, lastmc_in_voice,  &num_used_voices);
+                    } else {
+//                        dev_post("  - no free voice found");
+                        if (drop_priority == 1) {
+                            // terminate newest: keep existing notes, delete new one
+//                            dev_post("    . the note will be deleted");
+                            llll_appendobj(notes_to_delete, nt);
+                        } else {
+                            t_llllelem *to_terminate = NULL;
+                            
+                            if (drop_priority == 2) {
+                                // terminate closest
+                                long voice_to_terminate = roll_poly_do_find_assignment_voice(r_ob, nt, maxnumvoices, active_voices, lastmc_in_voice, false);
+                                if (voice_to_terminate >= 0)
+                                    to_terminate = lastnote_in_voice[voice_to_terminate];
+                                else
+                                    to_terminate = roll_poly_do_get_first_active_note(r_ob, this_onset, resumable_head);
+                            } else {
+                                // terminate oldest
+                                to_terminate = roll_poly_do_get_first_active_note(r_ob, this_onset, resumable_head);
+                            }
+
+                            if (to_terminate)
+                                roll_poly_do_terminate_note(r_ob, to_terminate, this_onset);
+                            
+                            // re-checking voice activity
+                            roll_poly_do_update_voice_activity(r_ob, this_onset, maxnumvoices, lastnote_in_voice, active_voices, &num_used_voices);
+                            
+                            // then we add the note
+                            long best_voice = roll_poly_do_find_assignment_voice(r_ob, nt, maxnumvoices, active_voices, lastmc_in_voice, true);
+                            if (best_voice >= 0) {
+                                dev_post("    . now the note will be assigned to voice %ld", best_voice + 1);
+                                nt_elem = roll_poly_do_append_new_note(r_ob, notes_slicingpoints, nt, best_voice, &resumable_head, lastnote_in_voice, lastmc_in_voice, &num_used_voices);
+                            } else {
+                                dev_post("    . still cannot be assigned: weird. We'll delete it but it's weird");
+                                llll_appendobj(notes_to_delete, nt);
+                            }
+                        }
+                    }
+                }
+                
+//                roll_poly_do_dev_post_slicing_points_and_resumable_head(notes_slicingpoints, resumable_head);
+            }
+        }
+        
+        if (resume) {
+//            dev_post("----");
+//            dev_post("Final resuming.");
+            roll_poly_do_resume(r_ob, notes_slicingpoints, num_used_voices, maxnumvoices, DBL_MAX, resumable_head, active_voices, lastmc_in_voice, lastnote_in_voice, resume_priority, only_resume_same_voicing);
+        }
+    }
+    
+    long maxusedpolys = roll_poly_do_get_num_used_voices(r_ob, notes_slicingpoints);
+    
+    if (actually_reassign_voices) {
+        if (r_ob->num_voices < maxusedpolys)
+            set_numvoices(r_ob, maxusedpolys);
+    }
+    
+    for (t_llllelem *el = notes_slicingpoints->l_head; el; el = el->l_next){
+        t_llll *this_ll = hatom_getllll(&el->l_hatom);
+        if (this_ll->l_size >= 2) { // should always be the case
+            t_note *nt = (t_note *)hatom_getobj(&this_ll->l_head->l_hatom);
+            if (this_ll->l_size > 2) {
+                long voicenum = nt->parent->voiceparent->v_ob.number;
+                long i = 0;
+                for (t_llllelem *sl = this_ll->l_head->l_next; sl && nt; sl = sl->l_next, i++) {
+                    double onset, slice_point;
+                    t_note *new_nt = NULL;
+                    if (sl->l_next) {
+                        onset = notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)nt);
+                        slice_point = hatom_getdouble(&sl->l_hatom);
+                        new_nt = slice_note(r_ob, nt, slice_point - onset);
+                        
+                        t_chord *new_ch = addchord_from_notes(x, voicenum, slice_point, 0, 0, NULL, NULL, false, 0);
+                        note_insert(r_ob, new_ch, new_nt, 0);
+                        notation_item_add_to_selection(r_ob, (t_notation_item *)new_ch);
+                    }
+                    
+                    if (voicing_slot)
+                        roll_poly_do_set_voicing_to_slot(r_ob, nt, sl->l_thing.w_long + 1, voicing_slot);
+                    if (actually_reassign_voices) {
+                        t_llll *new_voice = llll_get();
+                        t_note *changed_voice_note = NULL;
+                        llll_appendlong(new_voice, sl->l_thing.w_long + 1);
+                        change_note_voice_from_lexpr_or_llll(x, nt, NULL, new_voice, true, &changed_voice_note);
+                        nt = changed_voice_note;
+                    }
+                    
+                    if (i % 2 || nt->duration == 0)
+                        note_delete(r_ob, nt, false);
+                    nt = new_nt;
+                }
+            } else {
+                if (voicing_slot)
+                    roll_poly_do_set_voicing_to_slot(r_ob, nt, this_ll->l_tail->l_thing.w_long + 1, voicing_slot);
+                if (actually_reassign_voices) {
+                    t_llll *new_voice = llll_get();
+                    t_note *changed_voice_note = NULL;
+                    llll_appendlong(new_voice, this_ll->l_tail->l_thing.w_long + 1);
+                    change_note_voice_from_lexpr_or_llll(x, nt, NULL, new_voice, true, &changed_voice_note);
+                    nt = changed_voice_note;
+                }
+            }
+        }
+    }
+    
+    for (t_llllelem *el = notes_to_delete->l_head; el; el = el->l_next)
+        note_delete(r_ob, (t_note *)hatom_getobj(&el->l_hatom), false);
+    
+    recompute_total_length(r_ob);
+        
+    unlock_general_mutex(r_ob);
+    
+    if (notify_maxusedvoices) {
+        t_llll *outlist = llll_get();
+        llll_appendsym(outlist, gensym("maxpoly"));
+        llll_appendlong(outlist, maxusedpolys);
+        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, outlist);
+        llll_free(outlist);
+    }
+    
+    llll_free(notes_to_delete);
+    llll_free(notes_slicingpoints);
+    bach_freeptr(active_voices);
+    bach_freeptr(lastmc_in_voice);
+    bach_freeptr(lastnote_in_voice);
+}
+
+
+void roll_poly(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_symbol *droppriority = gensym("closest"), *resumepriority = gensym("closest");
+    t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    long max_num_voices = args && args->l_head && is_hatom_number(&args->l_head->l_hatom) ? hatom_getlong(&args->l_head->l_hatom) : 0;
+    long voicingslot = 0, resume = 0, resumevoicing = 1, reassign = 0, notify_maxusedvoices = 1;
+    llll_parseargs_and_attrs_destructive((t_object *) x, args, "siisiii",
+                                         gensym("droppriority"), &droppriority,
+                                         gensym("voicingslot"), &voicingslot,
+                                         gensym("resume"), &resume,
+                                         gensym("resumepriority"), &resumepriority,
+                                         gensym("resumevoicing"), &resumevoicing,
+                                         gensym("reassign"), &reassign,
+                                         gensym("notify"), &notify_maxusedvoices
+                                         );
+    
+    roll_poly_do(x, max_num_voices, droppriority == gensym("oldest") ? 0 : (droppriority == gensym("newest") ? 1 : 2), resume, resumepriority == gensym("oldest") ? 0 : (resumepriority == gensym("newest") ? 1 : 2), resumevoicing, voicingslot, reassign, notify_maxusedvoices);
+    handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LEGATO_FOR_SELECTION);
+
+    llll_free(args);
+}
+
+
+
+
 void roll_sel_change_tail(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 	if (roll_do_sel_change_tail(x, s, argc, argv))
 		handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_TAIL_FOR_SELECTION);
@@ -2387,9 +2994,9 @@ void roll_sel_change_voice(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 	while (curr_it) {
         t_notation_item *next_selected = curr_it->next_selected;
 		if (curr_it->type == k_NOTE) {
-			changed |= change_note_voice_from_lexpr_or_llll(x, (t_note *) curr_it, lexpr, new_voice, true);
+			changed |= change_note_voice_from_lexpr_or_llll(x, (t_note *) curr_it, lexpr, new_voice, true, NULL);
 		} else if (curr_it->type == k_CHORD) {
-			changed |= change_chord_voice_from_lexpr_or_llll(x, (t_chord *) curr_it, lexpr, new_voice, true);
+			changed |= change_chord_voice_from_lexpr_or_llll(x, (t_chord *) curr_it, lexpr, new_voice, true, NULL);
 		}
 		curr_it = lambda ? NULL : next_selected;
 	}
@@ -4462,8 +5069,46 @@ int T_EXPORT main(void){
     // @example legato @caption make selection monophonic, with no rests
     // @example legato trim @caption the same, preserving rests
     // @example legato extend @caption the same, preserving notes superpositions
-    // @seealso tail, duration, glissando
+    // @seealso tail, duration, glissando, poly
 	class_addmethod(c, (method) roll_legato, "legato", A_GIMME, 0);
+
+    
+    // @method poly @digest Force maximum polyphony and/or assign voicing numbers for selection
+    // @description The <m>poly</m> message followed by a number <m>N</m> forces the selected material to be playable with at most <m>N</m> independent
+    // monophonic voices. For instance <m>poly 1</m> will force the selection to be monophonic, <m>poly 2</m> will force it to be playable with
+    // two voices, and so on. Use <m>N</m> = 0 in order to avoid forcing a maximum number of voices - and, possibly, instead using the other following features
+    // of the <m>poly</m> message. <br />
+    // During the process, each note is assigned its own voice index.
+    // If the <m>voicingslot</m> message attribute is set to 1, such index is also put inside such slot;
+    // if the <m>reassign</m> message attribute is set to 1, each voice is
+    // repositioned in the voice corresponding to its index. Hence, for instance, use <m>poly 0 @reassign 1</m> to reassign the selection to
+    // a certain number of (automatically created) independent monophonic voices.  <br />
+    // Unless the <m>notify</m> message attribute is unset, the maximum number of used voices (always less or equal to <m>N</m>, unless <m>N</m> is 0)
+    // is output through the playout preceded by the "maxpoly" symbol. <br />
+    // The <m>droppriority</m> message attribute decides which notes should be terminated whenever the maximum number of voices is reached;
+    // it can be one of the following symbols: "oldest" (drop oldest first), "newest" (drop newest first),
+    // "closest" (drop closest notes in pitch first, default). <br />
+    // If the <m>resume</m> message attribute is set to 1, notes can be resumed if they have been terminated. In this case, the <m>resumepriority</m>
+    // message sets the priority for resuming, as one of the same symbols: "oldest" (resume oldest), "newest" (resume newest first),
+    // "closest" (resume closest notes in pitch first, default). Unless the <m>resumevoicing</m> message attribute is explicitly set to 0,
+    // resuming can only happen for notes on the voicing they initially had (i.e. with the same voice index).
+    // @marg 0 @name maxnumvoices @optional 0 @type int
+    // @mattr droppriority @type symbol @default closest @digest Handle which notes should be terminated ("oldest", "newest", "closest").
+    // @mattr voicingslot @type int @default 0 @digest Slot number where voice index will be stored
+    // @mattr reassign @type int @default 0 @digest Reassign notes in detected voices
+    // @mattr voicingslot @type int @default 0 @digest Slot number where voice index will be stored
+    // @mattr notify @type int @default 1 @digest Notify maximum number of used voices through the playout
+    // @mattr resume @type int @default 0 @digest Resume terminated notes if possible
+    // @mattr resumepriority @type symbol @default closest @digest Handle which notes should be resumed ("oldest", "newest", "closest").
+    // @mattr resumevoicing @type int @default 1 @digest Only resume notes with their original voicing.
+    // @example poly 1 @caption make selection monophonic...
+    // @example poly 1 @resume 1 @caption ...and resume notes if needed
+    // @example poly 0 @voicingslot 5 @caption detect and write voice index in slot 5
+    // @example poly 0 @reassign 1 @caption reassign selection to independent monophonic voices
+    // @example poly 1 @droppriority oldest @caption make selection monophonic, dropping oldest notes first
+    // @example poly 4 @caption make selection playable with at most 4 monophonic instruments
+    // @seealso legato
+    class_addmethod(c, (method) roll_poly, "poly", A_GIMME, 0);
 
 
     // @method glissando @digest Make selection glissando
@@ -6738,7 +7383,7 @@ void clear_voice(t_roll *x, t_rollvoice *voice) {
 		while (temp) {
 			temp2 = temp;
 			temp = temp->prev;
-			if (delete_chord_from_voice((t_notation_obj *)x, temp2, NULL, false))
+			if (chord_delete((t_notation_obj *)x, temp2, NULL, false))
 				need_check_scheduling = true;
 		}
 	}
@@ -8744,7 +9389,7 @@ void clear_roll_body(t_roll *x, long voicenum){
 		t_chord *temp = chord; 
 		while (chord) {
 			temp = chord->next;
-			delete_chord_from_voice((t_notation_obj *)x, chord, NULL, false);
+			chord_delete((t_notation_obj *)x, chord, NULL, false);
 			chord = temp;
 		}
 	} else {
@@ -8755,7 +9400,7 @@ void clear_roll_body(t_roll *x, long voicenum){
 			t_chord *temp = chord; 
 			while (chord) {
 				temp = chord->next;
-				delete_chord_from_voice((t_notation_obj *)x, chord, NULL, false);
+				chord_delete((t_notation_obj *)x, chord, NULL, false);
 				chord = temp;
 			}
 			voice = voice->next;
@@ -9362,7 +10007,7 @@ char merge(t_roll *x, double threshold_ms, double threshold_cents, char gatherin
 						// we merge the chord to the first one
 						chord_to_merge = clone_chord((t_notation_obj *) x, chord2, k_CLONE_FOR_ORIGINAL);
 						merge_chords(x, chord, chord_to_merge, false, true, true);
-						delete_chord_from_voice((t_notation_obj *)x, chord2, NULL, false);
+						chord_delete((t_notation_obj *)x, chord2, NULL, false);
 						merged = true;
 					}
 					chord2 = chord2->next;
@@ -9664,67 +10309,92 @@ char ripple_delete_selection(t_roll *x, char only_editable_items)
 }
  */
 
-char change_note_voice_from_lexpr_or_llll(t_roll *x, t_note *note, t_lexpr *lexpr, t_llll *new_voice, char also_select){
+char change_note_voice_from_lexpr_or_llll(t_roll *x, t_note *note, t_lexpr *lexpr, t_llll *new_voice, char also_select, t_note **new_note)
+{
 	char changed = 0;
 	t_llllelem *thiselem = new_voice ? new_voice->l_head : NULL;
 	
-	if (note->parent->num_notes == 1)
-		return change_chord_voice_from_lexpr_or_llll(x, note->parent, lexpr, new_voice, also_select);
+    if (new_note)
+        *new_note = note;
+    
+    if (note->parent->num_notes == 1) {
+        t_chord *new_chord = NULL;
+		char res = change_chord_voice_from_lexpr_or_llll(x, note->parent, lexpr, new_voice, also_select, &new_chord);
+        if (new_chord)
+            *new_note = new_chord->firstnote;
+        return res;
+    }
 		
 	if ((lexpr || thiselem) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)note)) {
-		long new_voice_num = note->parent->voiceparent->v_ob.number + 1;
-		change_long((t_notation_obj *)x, &new_voice_num, lexpr, thiselem, false, (t_notation_item *)note);
-		t_rollvoice *voice = nth_rollvoice(x, new_voice_num - 1);
-		if (voice) {
-			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-			
-			t_note *cloned = clone_note((t_notation_obj *)x, note, k_CLONE_FOR_ORIGINAL);
-			t_chord *new_chord = build_chord_from_notes((t_notation_obj *)x, cloned, cloned);
-			new_chord->onset = note->parent->onset;
-			insert_chord(x, voice, new_chord, 0);
-			note_delete((t_notation_obj *)x, note, false);
-            update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
-			
-			if (also_select)
-				notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)new_chord);
-			
-			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)new_chord, k_CHORD, k_UNDO_MODIFICATION_DELETE);
-			
-			new_chord->need_recompute_parameters = true;
-			set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-			
-			changed = 1;
-		}
+		long old_voice_num = note->parent->voiceparent->v_ob.number + 1;
+        long new_voice_num = old_voice_num;
+        change_long((t_notation_obj *)x, &new_voice_num, lexpr, thiselem, false, (t_notation_item *)note);
+        if (old_voice_num != new_voice_num) {
+            t_rollvoice *voice = nth_rollvoice(x, new_voice_num - 1);
+            if (voice) {
+                create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)note->parent, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                
+                t_note *cloned = clone_note((t_notation_obj *)x, note, k_CLONE_FOR_ORIGINAL);
+                t_chord *new_chord = build_chord_from_notes((t_notation_obj *)x, cloned, cloned);
+                new_chord->onset = note->parent->onset;
+                insert_chord(x, voice, new_chord, 0);
+                note_delete((t_notation_obj *)x, note, false);
+                update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
+                
+                if (new_note)
+                    *new_note = cloned;
+                
+                if (also_select)
+                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)new_chord);
+                
+                create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)new_chord, k_CHORD, k_UNDO_MODIFICATION_DELETE);
+                
+                new_chord->need_recompute_parameters = true;
+                set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
+                
+                changed = 1;
+            }
+        }
 	}
 	
 	return changed;
 }
 
-char change_chord_voice_from_lexpr_or_llll(t_roll *x, t_chord *chord, t_lexpr *lexpr, t_llll *new_voice, char also_select){
+char change_chord_voice_from_lexpr_or_llll(t_roll *x, t_chord *chord, t_lexpr *lexpr, t_llll *new_voice, char also_select, t_chord **new_chord)
+{
 	char changed = 0;
 	t_llllelem *thiselem = new_voice ? new_voice->l_head : NULL;
 	
-	if ((lexpr || thiselem) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)chord)) {
-		long new_voice_num = chord->voiceparent->v_ob.number + 1;
-		change_long((t_notation_obj *)x, &new_voice_num, lexpr, thiselem, false, (t_notation_item *)chord);
-		t_rollvoice *new_voice = nth_rollvoice(x, new_voice_num - 1);
-		if (new_voice) {
-			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_ADD);
-			
-			t_chord *cloned = clone_chord((t_notation_obj *)x, chord, k_CLONE_FOR_ORIGINAL);
-			delete_chord_from_voice((t_notation_obj *)x, chord, NULL, false);
-			insert_chord(x, new_voice, cloned, 0);
-			
-			if (also_select)
-				notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)cloned);
+    if (new_chord)
+        *new_chord = chord;
 
-			create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)cloned, k_CHORD, k_UNDO_MODIFICATION_DELETE);
-			
-			cloned->need_recompute_parameters = true;
-			set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-			
-			changed = 1;
-		}
+	if ((lexpr || thiselem) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)chord)) {
+        long old_voice_num = chord->voiceparent->v_ob.number + 1;
+        long new_voice_num = old_voice_num;
+		change_long((t_notation_obj *)x, &new_voice_num, lexpr, thiselem, false, (t_notation_item *)chord);
+        if (new_voice_num != old_voice_num) {
+            t_rollvoice *new_voice = nth_rollvoice(x, new_voice_num - 1);
+            if (new_voice) {
+                create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_ADD);
+                
+                t_chord *cloned = clone_chord((t_notation_obj *)x, chord, k_CLONE_FOR_ORIGINAL);
+                chord_delete((t_notation_obj *)x, chord, NULL, false);
+                insert_chord(x, new_voice, cloned, 0);
+                
+                if (new_chord)
+                    *new_chord = cloned;
+                
+                if (also_select)
+                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)cloned);
+                
+                create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)cloned, k_CHORD, k_UNDO_MODIFICATION_DELETE);
+                
+                cloned->need_recompute_parameters = true;
+                set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
+                
+                changed = 1;
+            }
+        }
 	}
 		
 	return changed;
@@ -15227,7 +15897,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                                 char num_notes = ch->num_notes;
                                 if (num_notes == 1) { // delete chord
                                     create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_ADD);
-                                    delete_chord_from_voice((t_notation_obj *) x, ch, ch->prev, false);
+                                    chord_delete((t_notation_obj *) x, ch, ch->prev, false);
                                     x->r_ob.notation_cursor.chord = NULL;
                                     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_CHORD);
                                 } else  {
@@ -15245,7 +15915,7 @@ char roll_key_linearedit(t_roll *x, t_object *patcherview, long keycode, long mo
                         }
                     } else {
                         create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)ch, k_UNDO_MODIFICATION_ADD);
-                        delete_chord_from_voice((t_notation_obj *) x, ch, ch->prev, false);
+                        chord_delete((t_notation_obj *) x, ch, ch->prev, false);
                         x->r_ob.notation_cursor.chord = NULL;
                         handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_LINEAR_EDIT_DELETE_CHORD);
                     }
@@ -16884,7 +17554,7 @@ void roll_new_undo_redo(t_roll *x, char what){
 				newcontent = get_rollchord_values_as_llll((t_notation_obj *)x, (t_chord *) item, k_CONSIDER_FOR_UNDO);
 				new_information = build_undo_redo_information(ID, k_CHORD, k_UNDO_MODIFICATION_ADD, voice_num, 0, k_HEADER_NONE, newcontent);
 				need_recompute_total_length = true;
-				if (delete_chord_from_voice((t_notation_obj *)x, (t_chord *)item, ((t_chord *)item)->prev, false))
+				if (chord_delete((t_notation_obj *)x, (t_chord *)item, ((t_chord *)item)->prev, false))
 					check_correct_scheduling((t_notation_obj *)x, false);
 				
 			} else if (modif_type == k_UNDO_MODIFICATION_ADD) { 

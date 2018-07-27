@@ -1742,6 +1742,7 @@ typedef enum _undo_operations
 	k_UNDO_OP_EQUALLY_RESPACE_SELECTION,
 	k_UNDO_OP_LEGATO_FOR_SELECTION,
     k_UNDO_OP_GLISSANDO_FOR_SELECTION,
+    k_UNDO_OP_FORCE_POLYPHONY_FOR_SELECTION,
 	k_UNDO_OP_DELETE_NOTE,
 	k_UNDO_OP_ADD_NOTE,
 	k_UNDO_OP_CHANGE_NOTE,
@@ -13644,7 +13645,7 @@ t_notation_item *notation_item_get_ancestor_of_at_least_a_certain_type(t_notatio
 	@param	also_recompute_total_length							Flag to tell if we need to also recalculate the total length of the bach.roll
 	@return				1 if the function check_correct_scheduling() should be called, because the scheduling is now invalid; 0 otherwise
  */
-char delete_chord_from_voice(t_notation_obj *r_ob, t_chord *chord, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char also_recompute_total_length);
+char chord_delete(t_notation_obj *r_ob, t_chord *chord, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char also_recompute_total_length);
 
 
 /**	Fill the t_measure::r_total_duration_sec and t_measure::total_duration_ms fields for a measure (for bach.score only).

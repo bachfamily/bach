@@ -3860,7 +3860,7 @@
 				If the <b>trim</b> symbol is given as first argument, the legato will only shorten the notes duration, hence preserving
 				all rests between chords. If the <b>extend</b> symbol is given as first argument, the legato will only make note durations longer,
 				hence preserving all superposition of notes across chords.
-				<br />				See also:<m>tail</m>,<m>duration</m>,<m>glissando</m><br />
+				<br />				See also:<m>tail</m>,<m>duration</m>,<m>glissando</m>,<m>poly</m><br />
 			</description>
 		</method>
 		<method name="llll">
@@ -4988,6 +4988,52 @@
 				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
 				one cannot apply different equations to different notes inside the chord.
 				<br /> <br />
+			</description>
+		</method>
+		<method name="poly">
+			<arg name="maxnumvoices" optional="0" type="int" />
+			<digest>
+				Force maximum polyphony and/or assign voicing numbers for selection
+			</digest>
+			<description>
+				Syntax: <b>poly <m>&lt;int: maxnumvoices&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>poly 1</b>   <i>→ make selection monophonic...</i><br />
+				• <b>poly 1 @resume 1</b>   <i>→ ...and resume notes if needed</i><br />
+				• <b>poly 0 @voicingslot 5</b>   <i>→ detect and write voice index in slot 5</i><br />
+				• <b>poly 0 @reassign 1</b>   <i>→ reassign selection to independent monophonic voices</i><br />
+				• <b>poly 1 @droppriority oldest</b>   <i>→ make selection monophonic, dropping oldest notes first</i><br />
+				• <b>poly 4</b>   <i>→ make selection playable with at most 4 monophonic instruments</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@droppriority</m> (symbol, default: closest): Handle which notes should be terminated ("oldest", "newest", "closest").<br />
+				<m>@voicingslot</m> (int, default: 0): Slot number where voice index will be stored<br />
+				<m>@reassign</m> (int, default: 0): Reassign notes in detected voices<br />
+				<m>@voicingslot</m> (int, default: 0): Slot number where voice index will be stored<br />
+				<m>@notify</m> (int, default: 1): Notify maximum number of used voices through the playout<br />
+				<m>@resume</m> (int, default: 0): Resume terminated notes if possible<br />
+				<m>@resumepriority</m> (symbol, default: closest): Handle which notes should be resumed ("oldest", "newest", "closest").<br />
+				<m>@resumevoicing</m> (int, default: 1): Only resume notes with their original voicing.<br />
+				<br />
+				The <m>poly</m> message followed by a number <m>N</m> forces the selected material to be playable with at most <m>N</m> independent
+				monophonic voices. For instance <m>poly 1</m> will force the selection to be monophonic, <m>poly 2</m> will force it to be playable with
+				two voices, and so on. Use <m>N</m> = 0 in order to avoid forcing a maximum number of voices - and, possibly, instead using the other following features
+				of the <m>poly</m> message. <br />
+				During the process, each note is assigned its own voice index.
+				If the <m>voicingslot</m> message attribute is set to 1, such index is also put inside such slot;
+				if the <m>reassign</m> message attribute is set to 1, each voice is
+				repositioned in the voice corresponding to its index. Hence, for instance, use <m>poly 0 @reassign 1</m> to reassign the selection to
+				a certain number of (automatically created) independent monophonic voices.  <br />
+				Unless the <m>notify</m> message attribute is unset, the maximum number of used voices (always less or equal to <m>N</m>, unless <m>N</m> is 0)
+				is output through the playout preceded by the "maxpoly" symbol. <br />
+				The <m>droppriority</m> message attribute decides which notes should be terminated whenever the maximum number of voices is reached;
+				it can be one of the following symbols: "oldest" (drop oldest first), "newest" (drop newest first),
+				"closest" (drop closest notes in pitch first, default). <br />
+				If the <m>resume</m> message attribute is set to 1, notes can be resumed if they have been terminated. In this case, the <m>resumepriority</m>
+				message sets the priority for resuming, as one of the same symbols: "oldest" (resume oldest), "newest" (resume newest first),
+				"closest" (resume closest notes in pitch first, default). Unless the <m>resumevoicing</m> message attribute is explicitly set to 0,
+				resuming can only happen for notes on the voicing they initially had (i.e. with the same voice index).
+				<br />				See also:<m>legato</m><br />
 			</description>
 		</method>
 		<method name="prependslotitem">

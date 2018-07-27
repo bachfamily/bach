@@ -35,7 +35,9 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 		New attribute @notifypaint to notify when display is refreshed
 
 - bach.roll, bach.score
+		New export as image, also in page view (see #exportimage)
 		New communication with Mira/miraweb via png export (see #bach+mira)
+		New "poly" message to force or handle polyphonic behaviors (see #poly+message)
 		New @fadedomain attribute
 		Now "dynamics2velocities" handles breakpoints
 		Fixed bug causing wrong breakpoint handling for "dynamics2velocities" in some situations

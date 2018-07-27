@@ -21434,7 +21434,7 @@ char chord_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_chord *
 
 // used by roll
 // returns 1 if need to check correct scheduling, 0 otherwise
-char delete_chord_from_voice(t_notation_obj *r_ob, t_chord *chord, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char also_recompute_total_length){
+char chord_delete(t_notation_obj *r_ob, t_chord *chord, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char also_recompute_total_length){
 	t_rollvoice *parent = chord->voiceparent;
 	char need_check_scheduling = false;
     char need_check_solos = is_solo_with_progeny(r_ob, (t_notation_item *)chord);
@@ -31822,7 +31822,7 @@ void note_delete(t_notation_obj *r_ob, t_note *note, char need_recompute_total_l
 			} else {
 				if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
 					// there was just 1 note: gotta delete the whole chord
-					if (delete_chord_from_voice(r_ob, chord, chord_get_prev(chord), need_recompute_total_length))
+					if (chord_delete(r_ob, chord, chord_get_prev(chord), need_recompute_total_length))
 						check_correct_scheduling(r_ob, false);
 					close_slot_window(r_ob); // if we were in slot view...
 					return;
@@ -40021,6 +40021,9 @@ char *undo_op_to_string(long undo_op)
 			break;
         case k_UNDO_OP_GLISSANDO_FOR_SELECTION:
             sprintf(buf, "Glissando");
+            break;
+        case k_UNDO_OP_FORCE_POLYPHONY_FOR_SELECTION:
+            sprintf(buf, "Force Polyphony");
             break;
 		case k_UNDO_OP_DELETE_NOTE:
 			sprintf(buf, "Delete Note");
