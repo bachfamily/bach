@@ -41,7 +41,7 @@ t_max_err codableobj_buildAst(t_codableobj *x,
                            t_atom_long *directInlets,
                            t_atom_long *directOutlets)
 {
-    if (!x->c_text)
+    if (!x->c_text || !(*x->c_text))
         return 0;
     t_max_err err = MAX_ERR_NONE;
     if (x->c_main)
