@@ -131,12 +131,12 @@ double get_onset_from_llllelem(t_llllelem *el);
 char incoming_is_from_roll(long incoming);
 
 
-t_max_err playkeysobj_setattr_process(t_object *x, t_playkeys_settings *sett, t_object *attr, long ac, t_atom *av);
+t_max_err playkeysobj_setattr_process(t_object *x, t_playkeys_settings *sett, t_object *attr, long ac, t_atom *av, char msp_obj);
 t_max_err playkeysobj_getattr_process(t_object *x, t_playkeys_settings *sett, t_object *attr, long *ac, t_atom **av);
 
 void playkeyssettings_init(t_playkeys_settings *sett, t_llll *args_ll);
 void playkeyssettings_free(t_playkeys_settings *sett);
-long playkeysobj_parse_keys(t_object *x, t_playkeys_settings *sett, t_llll *args_ll, char *outlets); // returns 1 if error, 0 otherwise
+long playkeysobj_parse_keys(t_object *x, t_playkeys_settings *sett, t_llll *args_ll, char *outlets, char msp_outlets); // returns 1 if error, 0 otherwise
 
 char playkeysobj_handle_incoming(t_object *x, t_playkeys_settings *sett, t_llll *in_ll, long *incoming_el, t_symbol **router_el);
 t_llll *playkeysobj_get_values(t_object *x, t_playkeys_settings *sett, t_playkeys_key *this_key, long incoming, t_symbol *router, t_llll *in_ll);

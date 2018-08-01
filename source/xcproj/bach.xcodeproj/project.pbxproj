@@ -138,6 +138,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				1EA6CCD52111F2E7006BFBEA /* PBXTargetDependency */,
 				1ED42DC01F8A9D6D008EC1D9 /* PBXTargetDependency */,
 				916120541DD3D616003CEE3A /* PBXTargetDependency */,
 				1EEB7E751526405F00C8FEEC /* PBXTargetDependency */,
@@ -246,6 +247,11 @@
 		1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A1D4420FCEB020051B9E8 /* notation_export.c */; };
 		1EA6CCBF2111DAA8006BFBEA /* playkeys_commons.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA6CCBD2111DAA8006BFBEA /* playkeys_commons.c */; };
 		1EA6CCC12111DAF3006BFBEA /* playkeys_commons.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA6CCC02111DAF3006BFBEA /* playkeys_commons.h */; };
+		1EA6CCC72111F2B8006BFBEA /* playkeys_commons.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA6CCC02111DAF3006BFBEA /* playkeys_commons.h */; };
+		1EA6CCC92111F2B8006BFBEA /* playkeys_commons.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA6CCBD2111DAA8006BFBEA /* playkeys_commons.c */; };
+		1EA6CCCC2111F2B8006BFBEA /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
+		1EA6CCCD2111F2B8006BFBEA /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
+		1EA6CCD72111F308006BFBEA /* playkeystilde.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA6CCD62111F308006BFBEA /* playkeystilde.c */; };
 		1EA9401B1BDFEBDB00EFCABC /* gpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA940191BDFEBDB00EFCABC /* gpc.h */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
@@ -886,6 +892,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1E784F8F20274BC400F11D75;
 			remoteInfo = bach.recurser;
+		};
+		1EA6CCC42111F2B8006BFBEA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 918129441611AEA700473F86;
+			remoteInfo = lib_bach;
+		};
+		1EA6CCD42111F2E7006BFBEA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1EA6CCC22111F2B8006BFBEA;
+			remoteInfo = "bach.playkeys~";
 		};
 		1ED42DAF1F8A9D17008EC1D9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2855,6 +2875,9 @@
 		1E9026EE150FC5380005B502 /* bach_doc_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_doc_groups.h; sourceTree = "<group>"; };
 		1EA6CCBD2111DAA8006BFBEA /* playkeys_commons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playkeys_commons.c; sourceTree = "<group>"; };
 		1EA6CCC02111DAF3006BFBEA /* playkeys_commons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playkeys_commons.h; sourceTree = "<group>"; };
+		1EA6CCD22111F2B8006BFBEA /* bach.playkeys~.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "bach.playkeys~.mxo"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1EA6CCD32111F2B9006BFBEA /* bach.playkeys copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.playkeys copy-Info.plist"; path = "/Users/danieleghisi/Documents/Max 7/Packages/bach/source/xcproj/bach.playkeys copy-Info.plist"; sourceTree = "<absolute>"; };
+		1EA6CCD62111F308006BFBEA /* playkeystilde.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playkeystilde.c; sourceTree = "<group>"; };
 		1EA940181BDFEBDB00EFCABC /* gpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpc.c; sourceTree = "<group>"; };
 		1EA940191BDFEBDB00EFCABC /* gpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gpc.h; sourceTree = "<group>"; };
 		1EB4D4681610C9740041ABFB /* roll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll.h; sourceTree = "<group>"; };
@@ -3672,6 +3695,15 @@
 			files = (
 				1E784F9720274BC400F11D75 /* lib_bach.a in Frameworks */,
 				1E784F9820274BC400F11D75 /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1EA6CCCB2111F2B8006BFBEA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EA6CCCC2111F2B8006BFBEA /* lib_bach.a in Frameworks */,
+				1EA6CCCD2111F2B8006BFBEA /* CoreServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4882,6 +4914,7 @@
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				91BA46AC1F71585E0002D515 /* package */,
+				1EA6CCD32111F2B9006BFBEA /* bach.playkeys copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -5044,6 +5077,7 @@
 				1ED42DBB1F8A9D17008EC1D9 /* bach.transcribe.mxo */,
 				91F58B2F1FC6E698008156B7 /* bach.textin.mxo */,
 				1E784F9D20274BC400F11D75 /* bach.recurser.mxo */,
+				1EA6CCD22111F2B8006BFBEA /* bach.playkeys~.mxo */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6018,6 +6052,7 @@
 				91C479841D312CCB00FBC195 /* pad.c */,
 				919BF81D1E01AB3800CDEA02 /* partition.c */,
 				916120411DD3D576003CEE3A /* playkeys.c */,
+				1EA6CCD62111F308006BFBEA /* playkeystilde.c */,
 				91E5623C19989D760091EAFF /* poset.c */,
 				91DA808A131B341400FCB316 /* primeform.c */,
 				91C0A67512C5237000C31264 /* quantize.c */,
@@ -6064,6 +6099,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1EA6CCC62111F2B8006BFBEA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EA6CCC72111F2B8006BFBEA /* playkeys_commons.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7221,6 +7264,26 @@
 			name = bach.recurser;
 			productName = iterator;
 			productReference = 1E784F9D20274BC400F11D75 /* bach.recurser.mxo */;
+			productType = "com.apple.product-type.bundle";
+		};
+		1EA6CCC22111F2B8006BFBEA /* bach.playkeys~ */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1EA6CCCF2111F2B8006BFBEA /* Build configuration list for PBXNativeTarget "bach.playkeys~" */;
+			buildPhases = (
+				1EA6CCC52111F2B8006BFBEA /* Resources */,
+				1EA6CCC62111F2B8006BFBEA /* Headers */,
+				1EA6CCC82111F2B8006BFBEA /* Sources */,
+				1EA6CCCB2111F2B8006BFBEA /* Frameworks */,
+				1EA6CCCE2111F2B8006BFBEA /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1EA6CCC32111F2B8006BFBEA /* PBXTargetDependency */,
+			);
+			name = "bach.playkeys~";
+			productName = iterator;
+			productReference = 1EA6CCD22111F2B8006BFBEA /* bach.playkeys~.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
 		1ED42DAD1F8A9D17008EC1D9 /* bach.transcribe */ = {
@@ -9998,6 +10061,7 @@
 				91E37306123651A200EC4752 /* bach.pick */,
 				9182E8B5145F086A00CDFBA9 /* bach.pipe */,
 				916120421DD3D581003CEE3A /* bach.playkeys */,
+				1EA6CCC22111F2B8006BFBEA /* bach.playkeys~ */,
 				91CF656C127896A300C44173 /* bach.portal */,
 				91E5622C19989CF90091EAFF /* bach.poset */,
 				91D7C71A1232385500D767D4 /* bach.post */,
@@ -10084,6 +10148,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		1E784F9320274BC400F11D75 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1EA6CCC52111F2B8006BFBEA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -11060,6 +11131,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1EA6CCCE2111F2B8006BFBEA /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1ED42DB71F8A9D17008EC1D9 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
@@ -12010,6 +12088,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				1E784FA220274C1200F11D75 /* recurser.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1EA6CCC82111F2B8006BFBEA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EA6CCD72111F308006BFBEA /* playkeystilde.c in Sources */,
+				1EA6CCC92111F2B8006BFBEA /* playkeys_commons.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13185,6 +13272,16 @@
 			isa = PBXTargetDependency;
 			target = 1E784F8F20274BC400F11D75 /* bach.recurser */;
 			targetProxy = 1E784F9F20274BF400F11D75 /* PBXContainerItemProxy */;
+		};
+		1EA6CCC32111F2B8006BFBEA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 918129441611AEA700473F86 /* lib_bach */;
+			targetProxy = 1EA6CCC42111F2B8006BFBEA /* PBXContainerItemProxy */;
+		};
+		1EA6CCD52111F2E7006BFBEA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1EA6CCC22111F2B8006BFBEA /* bach.playkeys~ */;
+			targetProxy = 1EA6CCD42111F2E7006BFBEA /* PBXContainerItemProxy */;
 		};
 		1ED42DAE1F8A9D17008EC1D9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14650,6 +14747,57 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(AA_INSTALL_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Deployment;
+		};
+		1EA6CCD02111F2B8006BFBEA /* Development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/Library/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
+				INFOPLIST_FILE = "bach.playkeys copy-Info.plist";
+				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					MaxAudioAPI,
+					"$(C74_SYM_LINKER_FLAGS)",
+					"$(C74_SYM_LINKER_FLAGS)",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Development;
+		};
+		1EA6CCD12111F2B8006BFBEA /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"/Library/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
+				INFOPLIST_FILE = "bach.playkeys copy-Info.plist";
+				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					MaxAudioAPI,
+					"$(C74_SYM_LINKER_FLAGS)",
+					"$(C74_SYM_LINKER_FLAGS)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Deployment;
@@ -19679,6 +19827,15 @@
 			buildConfigurations = (
 				1E784F9B20274BC400F11D75 /* Development */,
 				1E784F9C20274BC400F11D75 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Development;
+		};
+		1EA6CCCF2111F2B8006BFBEA /* Build configuration list for PBXNativeTarget "bach.playkeys~" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1EA6CCD02111F2B8006BFBEA /* Development */,
+				1EA6CCD12111F2B8006BFBEA /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;

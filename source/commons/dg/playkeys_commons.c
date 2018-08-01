@@ -367,11 +367,11 @@ t_max_err playkeysobj_getattr_process(t_object *x, t_playkeys_settings *sett, t_
 }
 
 
-t_max_err playkeysobj_setattr_process(t_object *x, t_playkeys_settings *sett, t_object *attr, long ac, t_atom *av)
+t_max_err playkeysobj_setattr_process(t_object *x, t_playkeys_settings *sett, t_object *attr, long ac, t_atom *av, char msp_obj)
 {
     t_llll *ll;
     if (ac == 0 || av) {
-        if ((ll = llllobj_parse_llllattr_llll((t_object *) x, LLLL_OBJ_VANILLA, ac, av))) {
+        if ((ll = llllobj_parse_llllattr_llll((t_object *) x, msp_obj ? LLLL_OBJ_MSP : LLLL_OBJ_VANILLA, ac, av))) {
             t_llll *free_me;
             
             bach_atomic_lock(&sett->n_process_lock);
@@ -1668,8 +1668,14 @@ void playkeyssettings_free(t_playkeys_settings *sett)
 
 
 // returns 1 if error, 0 otherwise
-long playkeysobj_parse_keys(t_object *x, t_playkeys_settings *sett, t_llll *args_ll, char *outlets)
+long playkeysobj_parse_keys(t_object *x, t_playkeys_settings *sett, t_llll *args_ll, char *outlets, char msp)
 {
+    if (!args_ll->l_head) {
+        object_error((t_object *)x, "No keys defined.");
+        llll_free(args_ll);
+        return 1;
+    }
+
     char *this_outlets = outlets;
     long i = 0;
     t_playkeys_key *this_keys = sett->n_keys;
@@ -1692,7 +1698,18 @@ long playkeysobj_parse_keys(t_object *x, t_playkeys_settings *sett, t_llll *args
                     }
                     this_keys->specification.h_type = H_NULL;
                     this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
-                    *this_outlets++ = '4';
+                    switch (this_keys->property) {
+                        case k_PLAYKEYS_PLAY:
+                        case k_PLAYKEYS_STOP:
+                        case k_PLAYKEYS_PAUSE:
+                        case k_PLAYKEYS_END:
+                            *this_outlets++ = 'b';
+                            break;
+                            
+                        default:
+                            *this_outlets++ = msp ? 's' : '4';
+                            break;
+                    }
                     i++;
                     this_keys++;
                 }
@@ -1705,7 +1722,7 @@ long playkeysobj_parse_keys(t_object *x, t_playkeys_settings *sett, t_llll *args
                     this_keys->allowed_command_router = allowed_command_router;
                     hatom_setlong(&this_keys->specification, slotnum);
                     this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
-                    *this_outlets++ = '4';
+                    *this_outlets++ = msp ? 's' : '4';
                     i++;
                     this_keys++;
                 }
@@ -1725,7 +1742,7 @@ long playkeysobj_parse_keys(t_object *x, t_playkeys_settings *sett, t_llll *args
                                 hatom_setsym(&this_keys->specification, hatom_getsym(&tempel->l_hatom));
                             else
                                 hatom_setlong(&this_keys->specification, hatom_getlong(&tempel->l_hatom));
-                            *this_outlets++ = '4';
+                            *this_outlets++ = msp ? 's' : '4';
                             i++;
                             this_keys++;
                         }
