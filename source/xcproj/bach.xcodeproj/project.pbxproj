@@ -2876,7 +2876,6 @@
 		1EA6CCBD2111DAA8006BFBEA /* playkeys_commons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playkeys_commons.c; sourceTree = "<group>"; };
 		1EA6CCC02111DAF3006BFBEA /* playkeys_commons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playkeys_commons.h; sourceTree = "<group>"; };
 		1EA6CCD22111F2B8006BFBEA /* bach.playkeys~.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "bach.playkeys~.mxo"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1EA6CCD32111F2B9006BFBEA /* bach.playkeys copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "bach.playkeys copy-Info.plist"; path = "/Users/danieleghisi/Documents/Max 7/Packages/bach/source/xcproj/bach.playkeys copy-Info.plist"; sourceTree = "<absolute>"; };
 		1EA6CCD62111F308006BFBEA /* playkeystilde.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playkeystilde.c; sourceTree = "<group>"; };
 		1EA940181BDFEBDB00EFCABC /* gpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpc.c; sourceTree = "<group>"; };
 		1EA940191BDFEBDB00EFCABC /* gpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gpc.h; sourceTree = "<group>"; };
@@ -4914,7 +4913,6 @@
 				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
 				19C28FB4FE9D528D11CA2CBB /* Products */,
 				91BA46AC1F71585E0002D515 /* package */,
-				1EA6CCD32111F2B9006BFBEA /* bach.playkeys copy-Info.plist */,
 			);
 			name = iterator;
 			sourceTree = "<group>";
@@ -14765,7 +14763,6 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
-				INFOPLIST_FILE = "bach.playkeys copy-Info.plist";
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -14790,7 +14787,6 @@
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
-				INFOPLIST_FILE = "bach.playkeys copy-Info.plist";
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
 				OTHER_LDFLAGS = (
 					"-framework",

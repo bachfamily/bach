@@ -17,6 +17,9 @@
  @author
  bachproject
  
+ @status
+ experimental
+ 
  @digest
  Get play information at sample rate
  
@@ -48,13 +51,30 @@
 #include "z_dsp.h"
 
 
+typedef struct _playkeystilde_ramp
+{
+    long    num_segments;
+    long    *sample_start;
+    long    *sample_end;
+    double  *value_start;
+    double  *value_end;
+    double  *slope;
+    long    curr_segment;
+    long    curr_sample;
+} t_playkeystilde_ramp;
+
 typedef struct _playkeystilde
 {
-    struct llllobj_object	n_ob;
+    struct llllobj_pxobject	n_ob;
     
-    t_playkeys_settings   sett;
+    long                  num_outlets;
+    char                  audiooutlet2objoutlet[LLLL_MAX_OUTLETS];
+    double                outlet_val[LLLL_MAX_OUTLETS]; // current dsp value for specific outlet
+    t_playkeystilde_ramp  outlet_ramp[LLLL_MAX_OUTLETS];
 
-    t_llll					*n_empty;
+    t_playkeys_settings   sett;
+    
+    long                  samplerate;
 } t_playkeystilde;
 
 
@@ -133,29 +153,6 @@ int T_EXPORT main()
 
     
     
-    CLASS_ATTR_LONG_SUBSTRUCTURE(c, "wrapmode",		0,	t_playkeystilde, sett, t_playkeys_settings, n_flattenfornotes);
-    CLASS_ATTR_LABEL(c, "wrapmode",		0, "Only Wrap Chords llll Data");
-    CLASS_ATTR_STYLE(c, "wrapmode",		0, "onoff");
-    CLASS_ATTR_BASIC(c, "wrapmode", 0);
-    // @description When set to 1, it only wraps llll parameters if the playout input is a chord.
-
-    
-    CLASS_ATTR_LONG_SUBSTRUCTURE(c, "nullmode",		0,	t_playkeystilde, sett, t_playkeys_settings, n_nullmode);
-    CLASS_ATTR_LABEL(c, "nullmode",		0, "Output null");
-    CLASS_ATTR_STYLE(c, "nullmode",		0, "enumindex");
-    CLASS_ATTR_ENUMINDEX(c,"nullmode", 0, "Never For Empty Keys For Unmatched Keys");
-    CLASS_ATTR_BASIC(c, "nullmode", 0);
-    // @description Handles when <b>null</b> is output from a given key outlet.
-    // 0 = Never; 1 = only for keys without any content (default); 2 = also for unmatched keys (e.g. keys that has no meaning for the specific notation item,
-    // such as velocity for markers, etc.).
-
-    
-    CLASS_ATTR_LONG_SUBSTRUCTURE(c, "defaultbreakpoints",		0,	t_playkeystilde, sett, t_playkeys_settings, n_use_default_breakpoints);
-    CLASS_ATTR_LABEL(c, "defaultbreakpoints",		0, "Use Default Breakpoints");
-    CLASS_ATTR_STYLE(c, "defaultbreakpoints",		0, "onoff");
-    // @description When set to 1, uses default breakpoints for notes without glissandi.
-
-    
     CLASS_ATTR_LONG_SUBSTRUCTURE(c, "breakpointshavevelocity",		0,	t_playkeystilde, sett, t_playkeys_settings, n_breakpoints_have_velocity);
     CLASS_ATTR_LABEL(c, "breakpointshavevelocity",		0, "Breakpoints Have Velocity");
     CLASS_ATTR_STYLE(c, "breakpointshavevelocity",		0, "onoff");
@@ -191,7 +188,7 @@ int T_EXPORT main()
     class_register(CLASS_BOX, c);
     playkeystilde_class = c;
     
-    dev_post("bach.playkeystilde compiled %s %s", __DATE__, __TIME__);
+    dev_post("bach.playkeys~ compiled %s %s", __DATE__, __TIME__);
     
     return 0;
 }
@@ -239,6 +236,130 @@ t_max_err playkeystilde_setattr_process(t_playkeystilde *x, t_object *attr, long
 }
 
 
+
+
+void playkeystilde_ramp_free(t_playkeystilde *x)
+{
+    for (long outlet = 0; outlet < x->num_outlets; outlet ++) {
+        if (x->outlet_ramp[outlet].sample_start)
+            bach_freeptr(x->outlet_ramp[outlet].sample_start);
+        if (x->outlet_ramp[outlet].sample_end)
+            bach_freeptr(x->outlet_ramp[outlet].sample_end);
+        if (x->outlet_ramp[outlet].value_start)
+            bach_freeptr(x->outlet_ramp[outlet].value_start);
+        if (x->outlet_ramp[outlet].value_end)
+            bach_freeptr(x->outlet_ramp[outlet].value_end);
+        if (x->outlet_ramp[outlet].slope)
+            bach_freeptr(x->outlet_ramp[outlet].slope);
+    }
+}
+
+void playkeystilde_ramp_init(t_playkeystilde *x)
+{
+    for (long outlet = 0; outlet < x->num_outlets; outlet ++) {
+        x->outlet_ramp[outlet].sample_start = (long *)bach_newptrclear(sizeof(long));
+        x->outlet_ramp[outlet].sample_end = (long *)bach_newptrclear(sizeof(long));
+        x->outlet_ramp[outlet].value_start = (double *)bach_newptrclear(sizeof(double));
+        x->outlet_ramp[outlet].value_end = (double *)bach_newptrclear(sizeof(double));
+        x->outlet_ramp[outlet].slope = (double *)bach_newptrclear(sizeof(double));
+        x->outlet_ramp[outlet].curr_segment = -1; // = no segment
+    }
+}
+
+void llllelem_to_double_triplet(t_llllelem *el, double *t, double *y, double *s)
+{
+    if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+        t_llll *ll = hatom_getllll(&el->l_hatom);
+        t_llllelem *temp = ll->l_head;
+        if (temp) {
+            *t = hatom_getdouble(&temp->l_hatom);
+            temp = temp->l_next;
+            if (temp) {
+                *y = hatom_getdouble(&temp->l_hatom);
+                temp = temp->l_next;
+                if (temp)
+                    *s = hatom_getdouble(&temp->l_hatom);
+            }
+        }
+    } else {
+        *t = 0;
+        *y = hatom_getdouble(&el->l_hatom);
+        *s = 0;
+    }
+}
+
+
+void playkeystilde_fill_ramp(t_playkeystilde *x, long outlet, t_llll *ramp)
+{
+    long num_segments = ramp->l_size - 1;
+    
+    // checking if memory is enough
+    if (num_segments > x->outlet_ramp[outlet].num_segments) {
+        x->outlet_ramp[outlet].sample_start = (long *)bach_resizeptr(x->outlet_ramp[outlet].sample_start, num_segments * sizeof(long));
+        x->outlet_ramp[outlet].sample_end = (long *)bach_resizeptr(x->outlet_ramp[outlet].sample_end, num_segments * sizeof(long));
+        x->outlet_ramp[outlet].value_start = (double *)bach_resizeptr(x->outlet_ramp[outlet].value_start, num_segments * sizeof(double));
+        x->outlet_ramp[outlet].value_end = (double *)bach_resizeptr(x->outlet_ramp[outlet].value_end, num_segments * sizeof(double));
+        x->outlet_ramp[outlet].slope = (double *)bach_resizeptr(x->outlet_ramp[outlet].slope, num_segments * sizeof(double));
+    }
+    
+    long i = 0;
+    x->outlet_ramp[outlet].num_segments = MAX(0, num_segments);
+    double this_t = 0, this_y = x->outlet_val[outlet], this_slope = 0;
+    double prev_t = 0, prev_y = this_y, prev_slope = 0;
+    
+    t_llllelem *el = ramp->l_head;
+    if (el) {
+        llllelem_to_double_triplet(el, &prev_t, &prev_y, &prev_slope);
+        el = el->l_next;
+        for (; el; el = el->l_next, i++) {
+            llllelem_to_double_triplet(el, &this_t, &this_y, &this_slope);
+            x->outlet_ramp[outlet].sample_start[i] = (long)round(prev_t * x->samplerate);
+            x->outlet_ramp[outlet].sample_start[i] = (long)round(this_t * x->samplerate);
+            x->outlet_ramp[outlet].value_start[i] = prev_y;
+            x->outlet_ramp[outlet].value_end[i] = this_y;
+            x->outlet_ramp[outlet].slope[i] = this_slope;
+            prev_t = this_t;
+            prev_y = this_y;
+            prev_slope = this_slope;
+        }
+    }
+    
+}
+
+void playkeystilde_start_ramp(t_playkeystilde *x, long outlet, t_llll *ramp)
+{
+    playkeystilde_fill_ramp(x, outlet, ramp);
+    x->outlet_ramp[outlet].curr_segment = 0;
+    x->outlet_ramp[outlet].curr_sample = 0;
+}
+
+void playkeystilde_goto_value(t_playkeystilde *x, long outlet, double value)
+{
+    x->outlet_val[outlet] = value;
+}
+
+void playkeystilde_process_key_value(t_playkeystilde *x, long outlet, t_llll *key_value)
+{
+    while (key_value->l_depth > 2) {
+        key_value = hatom_gettype(&key_value->l_head->l_hatom) == H_LLLL ? hatom_getllll(&key_value->l_head->l_hatom) : NULL;
+    }
+    
+    if (key_value) {
+        switch (key_value->l_depth) {
+            case 1:
+                if (key_value->l_head)
+                    playkeystilde_goto_value(x, outlet, is_hatom_number(&key_value->l_head->l_hatom) ? hatom_getdouble(&key_value->l_head->l_hatom) : 0);
+                break;
+                
+            case 2:
+                playkeystilde_start_ramp(x, outlet, key_value);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 void playkeystilde_anything(t_playkeystilde *x, t_symbol *msg, long ac, t_atom *av)
 {
     t_llll *in_ll, *found;
@@ -272,27 +393,28 @@ void playkeystilde_anything(t_playkeystilde *x, t_symbol *msg, long ac, t_atom *
                     if (found == WHITENULL_llll) {
                         llllobj_outlet_bang((t_object *) x, LLLL_OBJ_MSP, outlet);
                     } else {
-                        x->sett.n_keys[outlet].exists = 1;
-                        llllobj_gunload_llll((t_object *) x, LLLL_OBJ_MSP, found, outlet);
+                        playkeystilde_process_key_value(x, outlet, found);
+//                        x->sett.n_keys[outlet].exists = 1;
+//                        llllobj_gunload_llll((t_object *) x, LLLL_OBJ_MSP, found, outlet);
                     }
                 } else {
-                    llll_retain(x->n_empty);
-                    llllobj_gunload_llll((t_object *) x, LLLL_OBJ_MSP, x->n_empty, outlet);
+//                    llll_retain(x->n_empty);
+//                    llllobj_gunload_llll((t_object *) x, LLLL_OBJ_MSP, x->n_empty, outlet);
                 }
             } else {
                 if (x->sett.n_nullmode == 2) {
-                    llll_retain(x->n_empty);
-                    llllobj_gunload_llll((t_object *) x, LLLL_OBJ_MSP, x->n_empty, outlet);
+//                    llll_retain(x->n_empty);
+//                    llllobj_gunload_llll((t_object *) x, LLLL_OBJ_MSP, x->n_empty, outlet);
                 }
             }
         }
 
         llll_release(in_ll);
-        x->n_ob.l_rebuild = 0;
-        playkeystilde_output(x);
+//        x->n_ob.l_rebuild = 0;
+//        playkeystilde_output(x);
     } else {
         llll_release(in_ll);
-        x->n_ob.l_rebuild = 0;
+//        x->n_ob.l_rebuild = 0;
     }
 }
 
@@ -339,14 +461,6 @@ void playkeystilde_inletinfo(t_playkeystilde *x, void *b, long a, char *t)
         *t = 1;
 }
 
-void playkeystilde_free(t_playkeystilde *x)
-{
-    playkeyssettings_free(&x->sett);
-    llll_free(x->n_empty);
-    dsp_free((t_pxobject *)x);
-    llllobj_obj_free((t_llllobj_object *) x);
-}
-
 t_playkeystilde *playkeystilde_new(t_symbol *s, short ac, t_atom *av)
 {
     t_playkeystilde *x = NULL;
@@ -383,13 +497,22 @@ t_playkeystilde *playkeystilde_new(t_symbol *s, short ac, t_atom *av)
         
         attr_args_process(x, ac, av);
         
-        if (playkeysobj_parse_keys((t_object *)x, &x->sett, args_ll, outlets, true)) // llll_free(args_ll) is in here
+        if (playkeysobj_parse_keys((t_object *)x, &x->sett, args_ll, outlets, true)) { // llll_free(args_ll) is in here
+            playkeyssettings_free(&x->sett);
+            object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL
             return NULL;
+        }
         
-        dsp_setup((t_pxobject *)x, 0); // no MSP inlets
-        llllobj_obj_setup((t_llllobj_object *) x, 1, outlets);
+        long num_outlets = MIN(LLLL_MAX_OUTLETS, strlen(outlets));
+        x->num_outlets = num_outlets;
+
+        long j = 0;
+        for (long i = 0; i < num_outlets; i++)
+            x->audiooutlet2objoutlet[i] = (outlets[i] == 's') ? j++ : -1;
+//        playkeystilde_ramp_init(x);
         
-        x->n_empty = llll_get();
+        dsp_setup((t_pxobject *)x, 1); // no MSP inlets
+        llllobj_pxobj_setup((t_llllobj_pxobject *) x, 1, outlets);
     } else
         error(BACH_CANT_INSTANTIATE);
     
@@ -401,12 +524,21 @@ t_playkeystilde *playkeystilde_new(t_symbol *s, short ac, t_atom *av)
     return NULL;
 }
 
+void playkeystilde_free(t_playkeystilde *x)
+{
+//    dsp_free((t_pxobject *)x);
+//    playkeystilde_ramp_free(x);
+//    playkeyssettings_free(&x->sett);
+//    llllobj_pxobj_free((t_llllobj_pxobject *) x);
+}
+
 
 
 
 // registers a function for the signal chain in Max
 void playkeystilde_dsp64(t_playkeystilde *x, t_object *dsp64, short *count, double samplerate, long maxvectorsize, long flags)
 {
+    x->samplerate = samplerate;
     post("my sample rate is: %f", samplerate);
     
     // instead of calling dsp_add(), we send the "dsp_add64" message to the object representing the dsp chain
@@ -425,10 +557,54 @@ void playkeystilde_dsp64(t_playkeystilde *x, t_object *dsp64, short *count, doub
 // this is the 64-bit perform method audio vectors
 void playkeystilde_perform64(t_playkeystilde *x, t_object *dsp64, double **ins, long numins, double **outs, long numouts, long sampleframes, long flags, void *userparam)
 {
-    t_double *outL = outs[0];    // we get audio for each outlet of the object from the **outs argument
-    int n = sampleframes;
+/*    if (numouts > 0) {
+        t_double *outL = outs[0];    // we get audio for each outlet of the object from the **outs argument
+        int n = sampleframes;
+        t_playkeystilde_ramp *ramp;
+        long curr_segment;
+        long i;
+        
+        for (long o = 0; o < x->num_outlets; o++) {
+            long oo = x->audiooutlet2objoutlet[o];
+            if (oo >= 0) {
+                // are we inside a ramp?
+                ramp = &x->outlet_ramp[oo];
+                curr_segment = ramp->curr_segment;
+                if (curr_segment >= 0) {
+                    for (i = 0; i < n; i++) {
+                        if (ramp->curr_sample > ramp->sample_end[curr_segment]) {
+                            if (curr_segment == ramp->num_segments) {
+                                // end of the ramp
+                                curr_segment = -1;
+                                break;
+                            } else {
+                                curr_segment = ramp->curr_segment = curr_segment + 1;
+                            }
+                        }
+                        outL[i] = rescale_with_slope(ramp->curr_sample++, ramp->sample_start[curr_segment], ramp->sample_end[curr_segment], ramp->value_start[curr_segment], ramp->value_end[curr_segment], ramp->slope[curr_segment]);
+                    }
+                    
+                    // some left over after the end of the ramp?
+                    if (i < n) {
+                        double end_val = ramp->sample_end[ramp->num_segments - 1];
+                        for (; i < n; i++) {
+                            outL[i] = end_val;
+                        }
+                    }
+                } else {
+                    double val = x->outlet_val[oo];
+                    while (n--)
+                        *outL++ = val;
+                }
+            }
+        }
+    } */
     
-    // this perform method simply copies the input to the output, offsetting the value
-    while (n--)
-        *outL++ = 0.;
+    if (numouts > 0) {
+        t_double *outL = outs[0];
+        long n = sampleframes;
+        while (n--)
+            *outL++ = 0.;
+    }
+
 }

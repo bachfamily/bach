@@ -1631,8 +1631,6 @@ t_llll *playkeysobj_get_values(t_object *x, t_playkeys_settings *sett, t_playkey
 
 void playkeyssettings_init(t_playkeys_settings *sett, t_llll *args_ll)
 {
-    t_playkeys_key *this_keys;
-
     sett->n_process = llll_make();
     sett->n_note_commands = llll_make();
     sett->n_chord_commands = llll_make();
@@ -1643,7 +1641,6 @@ void playkeyssettings_init(t_playkeys_settings *sett, t_llll *args_ll)
     llll_flatten(args_ll_flat, 0, 0);
     sett->n_keys = (t_playkeys_key *) bach_newptr((args_ll_flat->l_size + 1) * sizeof(t_playkeys_key));
     llll_free(args_ll_flat);
-    
     
     sett->n_flattenfornotes = 1;
     sett->n_nullmode = 1;
