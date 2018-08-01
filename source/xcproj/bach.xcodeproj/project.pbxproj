@@ -244,6 +244,8 @@
 		1E784F9820274BC400F11D75 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		1E784FA220274C1200F11D75 /* recurser.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E784FA120274C1200F11D75 /* recurser.c */; };
 		1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A1D4420FCEB020051B9E8 /* notation_export.c */; };
+		1EA6CCBF2111DAA8006BFBEA /* playkeys_commons.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA6CCBD2111DAA8006BFBEA /* playkeys_commons.c */; };
+		1EA6CCC12111DAF3006BFBEA /* playkeys_commons.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA6CCC02111DAF3006BFBEA /* playkeys_commons.h */; };
 		1EA9401B1BDFEBDB00EFCABC /* gpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA940191BDFEBDB00EFCABC /* gpc.h */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
@@ -2851,6 +2853,8 @@
 		1E784FA120274C1200F11D75 /* recurser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recurser.c; sourceTree = "<group>"; };
 		1E7A1D4420FCEB020051B9E8 /* notation_export.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_export.c; sourceTree = "<group>"; };
 		1E9026EE150FC5380005B502 /* bach_doc_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_doc_groups.h; sourceTree = "<group>"; };
+		1EA6CCBD2111DAA8006BFBEA /* playkeys_commons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = playkeys_commons.c; sourceTree = "<group>"; };
+		1EA6CCC02111DAF3006BFBEA /* playkeys_commons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playkeys_commons.h; sourceTree = "<group>"; };
 		1EA940181BDFEBDB00EFCABC /* gpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpc.c; sourceTree = "<group>"; };
 		1EA940191BDFEBDB00EFCABC /* gpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gpc.h; sourceTree = "<group>"; };
 		1EB4D4681610C9740041ABFB /* roll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll.h; sourceTree = "<group>"; };
@@ -5674,6 +5678,8 @@
 				91D18933130EC15100A2E668 /* llll_linearalgebra.c */,
 				91D18934130EC15100A2E668 /* llll_linearalgebra.h */,
 				91EED59E1237C06B003C05FC /* notation.h */,
+				1EA6CCBD2111DAA8006BFBEA /* playkeys_commons.c */,
+				1EA6CCC02111DAF3006BFBEA /* playkeys_commons.h */,
 				91EED59D1237C06B003C05FC /* notation_commons.c */,
 				91CA0C5D1DF9374D0068B29D /* notation_dynamics.c */,
 				1E7A1D4420FCEB020051B9E8 /* notation_export.c */,
@@ -6289,6 +6295,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EA6CCC12111DAF3006BFBEA /* playkeys_commons.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12273,6 +12280,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EA6CCBF2111DAA8006BFBEA /* playkeys_commons.c in Sources */,
 				916120521DD3D5E1003CEE3A /* playkeys.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -2058,7 +2058,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 						// alter
 						screen_accidental = note_get_screen_accidental(note);
 						if (parenthesized_quartertones && screen_accidental.r_den > 2) {
-                            if (parenthesized_quartertones == 30061984) { // yeah, that's bad and private :-) It's however a very bad convention, but I needed it now.
+                            if (parenthesized_quartertones == 30061984) { // yeah, that's bad and private :-)
+                                // These are lines of code only matching Daniele Ghisi's (bad) Finale microtonal convention
                                 screen_accidental = screen_accidental > 0 ? screen_accidental + genrat(1, 4) : screen_accidental - genrat(1, 4);
                                 add_par_qrtrtone = 1;
                             } else {

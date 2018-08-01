@@ -808,6 +808,14 @@ t_max_err GETTER(STRUCT *x, t_object *attr, long *ac, t_atom **av) \
 	class_addattr((c), attr_offset_array_new(attrname, USESYM(atom), 1, (flags), (method)getter, (method)setter, 0, calcoffset(structname, structmember)))
 
 
+#define CLASS_ATTR_LONG_SUBSTRUCTURE(c,attrname,flags,structname,structmember,substructname,substructmember) \
+class_addattr((c),attr_offset_new(attrname,USESYM(long),(flags),(method)0L,(method)0L,calcoffset(structname,structmember)+calcoffset(substructname,substructmember)))
+
+#define CLASS_ATTR_ATOM_SUBSTRUCTURE(c,attrname,flags,structname,structmember,substructname,substructmember) \
+class_addattr((c),attr_offset_new(attrname,USESYM(atom),(flags),(method)0L,(method)0L,calcoffset(structname,structmember)+calcoffset(substructname,substructmember)));
+
+#define CLASS_ATTR_LLLL_SUBSTRUCTURE(c,attrname,flags,structname,structmember,substructname,substructmember,getter,setter) \
+class_addattr((c), attr_offset_array_new(attrname, USESYM(atom), 1, (flags), (method)getter, (method)setter, 0, calcoffset(structname,structmember)+calcoffset(substructname,substructmember)))
 
 
 
