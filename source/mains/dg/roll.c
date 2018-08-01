@@ -74,6 +74,18 @@
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, loop_region_as_llll, roll_getattr_loop)
 
+typedef enum {
+    POLY_PRIORITY_UNDEFINED    = 0,
+    POLY_PRIORITY_OLDEST,
+    POLY_PRIORITY_NEWEST,
+    POLY_PRIORITY_CLOSEST,
+    POLY_PRIORITY_QUIETEST,
+    POLY_PRIORITY_LOUDEST,
+    POLY_PRIORITY_SHORTEST,
+    POLY_PRIORITY_LONGEST,
+} e_poly_priority;
+
+
 // global class pointer variable
 t_class	*s_roll_class = 0;
 
@@ -2371,7 +2383,7 @@ void roll_poly_do_update_voice_activity(t_notation_obj *r_ob, double curr_onset,
 void roll_poly_do_terminate_note(t_notation_obj *r_ob, t_llllelem *to_terminate, double termination_ms)
 {
     t_llll *notell = hatom_getllll(&to_terminate->l_hatom);
-    t_note *terminate = (t_note *)hatom_getobj(&notell->l_head->l_hatom);
+//    t_note *terminate = (t_note *)hatom_getobj(&notell->l_head->l_hatom);
 //    dev_post("    . the note with midicents %ld starting at %.2f ms will be truncated", (long)terminate->midicents, terminate->parent->onset);
     t_llllelem *ins = llll_insertdouble_before(termination_ms, notell->l_tail);
     ins->l_thing = ins->l_next->l_thing;
@@ -2381,14 +2393,101 @@ t_llllelem *roll_poly_do_get_first_active_note(t_notation_obj *r_ob, double curr
 {
     // verify if some of the active notes have ended
     for (t_llllelem *el = resumable_head; el; el = el->l_next){
-        t_llll *this_ll = hatom_getllll(&el->l_hatom);
-        t_llllelem *temp = this_ll->l_size % 2 ? this_ll->l_tail->l_prev : this_ll->l_tail;
-        double thistail = hatom_getdouble(&temp->l_hatom);
+        double thistail = roll_poly_do_get_llllelem_curr_tail(el);
         if (thistail >= curr_onset)
             return el;
     }
     return NULL;
 }
+
+t_llllelem *roll_poly_do_get_quietest_active_note(t_notation_obj *r_ob, double curr_onset, t_llllelem *resumable_head, t_note *including_this_note)
+{
+    // verify if some of the active notes have ended
+    long min_vel = CONST_MAX_VELOCITY + 1;
+    t_llllelem *candidate = NULL;
+    for (t_llllelem *el = resumable_head; el; el = el->l_next){
+        double thistail = roll_poly_do_get_llllelem_curr_tail(el);
+        if (thistail >= curr_onset) {
+            t_note *nt = roll_poly_do_get_llllelem_note(el);
+            if (nt->velocity < min_vel) {
+                min_vel = nt->velocity;
+                candidate = el;
+            }
+        }
+    }
+    
+    if (including_this_note && including_this_note->velocity < min_vel)
+        candidate = WHITENULL_llllelem;
+
+    return candidate;
+}
+
+t_llllelem *roll_poly_do_get_loudest_active_note(t_notation_obj *r_ob, double curr_onset, t_llllelem *resumable_head, t_note *including_this_note)
+{
+    // verify if some of the active notes have ended
+    long max_vel = -1;
+    t_llllelem *candidate = NULL;
+    for (t_llllelem *el = resumable_head; el; el = el->l_next){
+        double thistail = roll_poly_do_get_llllelem_curr_tail(el);
+        if (thistail >= curr_onset) {
+            t_note *nt = roll_poly_do_get_llllelem_note(el);
+            if (nt->velocity > max_vel) {
+                max_vel = nt->velocity;
+                candidate = el;
+            }
+        }
+    }
+    
+    if (including_this_note && including_this_note->velocity > max_vel)
+        candidate = WHITENULL_llllelem;
+
+    return candidate;
+}
+
+t_llllelem *roll_poly_do_get_shortest_active_note(t_notation_obj *r_ob, double curr_onset, t_llllelem *resumable_head, t_note *including_this_note)
+{
+    // verify if some of the active notes have ended
+    double min_duration = DBL_MAX;
+    t_llllelem *candidate = NULL;
+    for (t_llllelem *el = resumable_head; el; el = el->l_next){
+        double thistail = roll_poly_do_get_llllelem_curr_tail(el);
+        if (thistail >= curr_onset) {
+            t_note *nt = roll_poly_do_get_llllelem_note(el);
+            if (nt->duration < min_duration) {
+                min_duration = nt->duration;
+                candidate = el;
+            }
+        }
+    }
+    
+    if (including_this_note && including_this_note->duration < min_duration)
+        candidate = WHITENULL_llllelem;
+    
+    return candidate;
+}
+
+t_llllelem *roll_poly_do_get_longest_active_note(t_notation_obj *r_ob, double curr_onset, t_llllelem *resumable_head, t_note *including_this_note)
+{
+    // verify if some of the active notes have ended
+    double max_dur = -1;
+    t_llllelem *candidate = NULL;
+    for (t_llllelem *el = resumable_head; el; el = el->l_next){
+        double thistail = roll_poly_do_get_llllelem_curr_tail(el);
+        if (thistail >= curr_onset) {
+            t_note *nt = roll_poly_do_get_llllelem_note(el);
+            if (nt->duration > max_dur) {
+                max_dur = nt->duration;
+                candidate = el;
+            }
+        }
+    }
+    
+    if (including_this_note && including_this_note->duration > max_dur)
+        candidate = WHITENULL_llllelem;
+    
+    return candidate;
+}
+
 
 void roll_poly_do_update_resumable_head(t_notation_obj *r_ob, double curr_onset, t_llllelem **resumable_head)
 {
@@ -2586,7 +2685,7 @@ void roll_poly_do_resume(t_notation_obj *r_ob, t_llll *notes_slicingpoints, long
                         break;
                     }
                     
-                    t_note *nt = (t_note *)hatom_getobj(&hatom_getllll(&resumable_note->l_hatom)->l_head->l_hatom);
+//                    t_note *nt = (t_note *)hatom_getobj(&hatom_getllll(&resumable_note->l_hatom)->l_head->l_hatom);
 //                    dev_post("Resuming the note with midicents %ld and onset %.2f in voicing number %ld", (long)nt->midicents, nt->parent->onset, resumable_note_voice + 1);
                     roll_poly_do_resume_note(r_ob, resumable_note, this_tail_pos, resumable_note_voice, active_voices, &num_used_voices, lastnote_in_voice, lastmc_in_voice);
                 }
@@ -2610,7 +2709,7 @@ void roll_poly_do_resume(t_notation_obj *r_ob, t_llll *notes_slicingpoints, long
 // drop_policy = 0: terminate oldest
 // drop_policy = 1: terminate newest
 // drop_policy = 2: terminate closest
-void roll_poly_do(t_roll *x, long maxnumvoices, char drop_priority, char resume, char resume_priority, char only_resume_same_voicing, char voicing_slot, char actually_reassign_voices, char notify_maxusedvoices)
+void roll_poly_do(t_roll *x, long maxnumvoices, e_poly_priority drop_priority, char inclusive, char resume, e_poly_priority resume_priority, char only_resume_same_voicing, char voicing_slot, char actually_reassign_voices, char notify_maxusedvoices)
 {
     t_notation_obj *r_ob = (t_notation_obj *)x;
     long MAX_SUPPORTED_VOICES = CONST_MAX_VOICES;
@@ -2625,24 +2724,24 @@ void roll_poly_do(t_roll *x, long maxnumvoices, char drop_priority, char resume,
     char *active_voices = (char *)bach_newptr(maxnumvoices * sizeof(char));
     double *lastmc_in_voice = (double *)bach_newptr(maxnumvoices * sizeof(double));
     t_llllelem **lastnote_in_voice = (t_llllelem **)bach_newptr(maxnumvoices * sizeof(t_llllelem *));
-    long num_used_voices = 0;
-    
-    for (long i = 0; i < maxnumvoices; i++) {
-        active_voices[i] = 0;
-        lastnote_in_voice[i] = NULL;
-        lastmc_in_voice[i] = DBL_MIN;
-    }
-
     t_llll *notes_to_delete = llll_get();
+    t_llll *notes_slicingpoints_all_voices = llll_get();
     
-    t_llll *notes_slicingpoints = llll_get(); // will contain: (notepointer sliceposition1 sliceposition2 sliceposition3... tailposition) (...) (...)
-    t_llllelem *resumable_head = NULL; // pointing to the leftmost element in notes_slicingpoints that can be resumed
-
     create_whole_roll_undo_tick(x);
 
     lock_general_mutex(r_ob);
     
     for (t_rollvoice *voice = x->firstvoice; voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) {
+        long num_used_voices = 0;
+        for (long i = 0; i < maxnumvoices; i++) {
+            active_voices[i] = 0;
+            lastnote_in_voice[i] = NULL;
+            lastmc_in_voice[i] = DBL_MIN;
+        }
+        
+        t_llll *notes_slicingpoints = llll_get(); // will contain: (notepointer sliceposition1 sliceposition2 sliceposition3... tailposition) (...) (...)
+        t_llllelem *resumable_head = NULL; // pointing to the leftmost element in notes_slicingpoints that can be resumed
+        
         for (t_chord *chord = voice->firstchord; chord; chord = chord->next) {
             if (notation_item_is_globally_selected(r_ob, (t_notation_item *)chord)) {
                 double this_onset = notation_item_get_onset_ms_accurate(r_ob, (t_notation_item *)chord);
@@ -2671,25 +2770,48 @@ void roll_poly_do(t_roll *x, long maxnumvoices, char drop_priority, char resume,
                         nt_elem = roll_poly_do_append_new_note(r_ob, notes_slicingpoints, nt, best_voice, &resumable_head, lastnote_in_voice, lastmc_in_voice,  &num_used_voices);
                     } else {
 //                        dev_post("  - no free voice found");
-                        if (drop_priority == 1) {
-                            // terminate newest: keep existing notes, delete new one
-//                            dev_post("    . the note will be deleted");
-                            llll_appendobj(notes_to_delete, nt);
-                        } else {
-                            t_llllelem *to_terminate = NULL;
-                            
-                            if (drop_priority == 2) {
-                                // terminate closest
+                        t_llllelem *to_terminate = NULL;
+                        
+                        switch (drop_priority) {
+                            case POLY_PRIORITY_LONGEST: // terminate longest
+                                to_terminate = roll_poly_do_get_longest_active_note(r_ob, this_onset, resumable_head, inclusive ? nt : NULL);
+                                break;
+                                
+                            case POLY_PRIORITY_SHORTEST: // terminate shortest
+                                to_terminate = roll_poly_do_get_shortest_active_note(r_ob, this_onset, resumable_head, inclusive ? nt : NULL);
+                                break;
+                                
+                            case POLY_PRIORITY_LOUDEST: // terminate loudest
+                                to_terminate = roll_poly_do_get_loudest_active_note(r_ob, this_onset, resumable_head, inclusive ? nt : NULL);
+                                break;
+                                
+                            case POLY_PRIORITY_QUIETEST: // terminate quietest
+                                to_terminate = roll_poly_do_get_quietest_active_note(r_ob, this_onset, resumable_head, inclusive ? nt : NULL);
+                                break;
+                                
+                            case POLY_PRIORITY_CLOSEST: // terminate closest
+                            {
                                 long voice_to_terminate = roll_poly_do_find_assignment_voice(r_ob, nt, maxnumvoices, active_voices, lastmc_in_voice, false);
                                 if (voice_to_terminate >= 0)
                                     to_terminate = lastnote_in_voice[voice_to_terminate];
                                 else
                                     to_terminate = roll_poly_do_get_first_active_note(r_ob, this_onset, resumable_head);
-                            } else {
-                                // terminate oldest
-                                to_terminate = roll_poly_do_get_first_active_note(r_ob, this_onset, resumable_head);
                             }
+                                break;
+                                
+                            case POLY_PRIORITY_NEWEST:
+                                to_terminate = WHITENULL_llllelem;
+                                break;
+                                
+                            case POLY_PRIORITY_OLDEST:
+                            default: // terminate oldest
+                                to_terminate = roll_poly_do_get_first_active_note(r_ob, this_onset, resumable_head);
+                                break;
+                        }
 
+                        if (to_terminate == WHITENULL_llllelem) {
+                            llll_appendobj(notes_to_delete, nt);
+                        } else {
                             if (to_terminate)
                                 roll_poly_do_terminate_note(r_ob, to_terminate, this_onset);
                             
@@ -2718,16 +2840,21 @@ void roll_poly_do(t_roll *x, long maxnumvoices, char drop_priority, char resume,
 //            dev_post("Final resuming.");
             roll_poly_do_resume(r_ob, notes_slicingpoints, num_used_voices, maxnumvoices, DBL_MAX, resumable_head, active_voices, lastmc_in_voice, lastnote_in_voice, resume_priority, only_resume_same_voicing);
         }
+        
+        llll_chain_clone(notes_slicingpoints_all_voices, notes_slicingpoints);
+        
+        llll_free(notes_slicingpoints);
     }
     
-    long maxusedpolys = roll_poly_do_get_num_used_voices(r_ob, notes_slicingpoints);
+    
+    long maxusedpolys = roll_poly_do_get_num_used_voices(r_ob, notes_slicingpoints_all_voices);
     
     if (actually_reassign_voices) {
         if (r_ob->num_voices < maxusedpolys)
             set_numvoices(r_ob, maxusedpolys);
     }
     
-    for (t_llllelem *el = notes_slicingpoints->l_head; el; el = el->l_next){
+    for (t_llllelem *el = notes_slicingpoints_all_voices->l_head; el; el = el->l_next){
         t_llll *this_ll = hatom_getllll(&el->l_hatom);
         if (this_ll->l_size >= 2) { // should always be the case
             t_note *nt = (t_note *)hatom_getobj(&this_ll->l_head->l_hatom);
@@ -2791,21 +2918,40 @@ void roll_poly_do(t_roll *x, long maxnumvoices, char drop_priority, char resume,
     }
     
     llll_free(notes_to_delete);
-    llll_free(notes_slicingpoints);
     bach_freeptr(active_voices);
     bach_freeptr(lastmc_in_voice);
     bach_freeptr(lastnote_in_voice);
 }
 
 
+e_poly_priority symbol_to_priority(t_symbol *s)
+{
+    if (s == gensym("oldest"))
+        return POLY_PRIORITY_OLDEST;
+    if (s == gensym("newest"))
+        return POLY_PRIORITY_NEWEST;
+    if (s == gensym("closest"))
+        return POLY_PRIORITY_CLOSEST;
+    if (s == gensym("quietest"))
+        return POLY_PRIORITY_QUIETEST;
+    if (s == gensym("loudest"))
+        return POLY_PRIORITY_LOUDEST;
+    if (s == gensym("shortest"))
+        return POLY_PRIORITY_SHORTEST;
+    if (s == gensym("longest"))
+        return POLY_PRIORITY_LONGEST;
+    return POLY_PRIORITY_UNDEFINED;
+}
+
 void roll_poly(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 {
     t_symbol *droppriority = gensym("closest"), *resumepriority = gensym("closest");
     t_llll *args = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     long max_num_voices = args && args->l_head && is_hatom_number(&args->l_head->l_hatom) ? hatom_getlong(&args->l_head->l_hatom) : 0;
-    long voicingslot = 0, resume = 0, resumevoicing = 1, reassign = 0, notify_maxusedvoices = 1;
-    llll_parseargs_and_attrs_destructive((t_object *) x, args, "siisiii",
+    long inclusive = 1, voicingslot = 0, resume = 0, resumevoicing = 1, reassign = 0, notify_maxusedvoices = 1;
+    llll_parseargs_and_attrs_destructive((t_object *) x, args, "siiisiii",
                                          gensym("droppriority"), &droppriority,
+                                         gensym("droppriorityinclusive"), &inclusive,
                                          gensym("voicingslot"), &voicingslot,
                                          gensym("resume"), &resume,
                                          gensym("resumepriority"), &resumepriority,
@@ -2814,7 +2960,7 @@ void roll_poly(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                                          gensym("notify"), &notify_maxusedvoices
                                          );
     
-    roll_poly_do(x, max_num_voices, droppriority == gensym("oldest") ? 0 : (droppriority == gensym("newest") ? 1 : 2), resume, resumepriority == gensym("oldest") ? 0 : (resumepriority == gensym("newest") ? 1 : 2), resumevoicing, voicingslot, reassign, notify_maxusedvoices);
+    roll_poly_do(x, max_num_voices, symbol_to_priority(droppriority), inclusive, resume, symbol_to_priority(resumepriority), resumevoicing, voicingslot, reassign, notify_maxusedvoices);
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_LEGATO_FOR_SELECTION);
 
     llll_free(args);
@@ -5087,20 +5233,21 @@ int T_EXPORT main(void){
     // is output through the playout preceded by the "maxpoly" symbol. <br />
     // The <m>droppriority</m> message attribute decides which notes should be terminated whenever the maximum number of voices is reached;
     // it can be one of the following symbols: "oldest" (drop oldest first), "newest" (drop newest first),
-    // "closest" (drop closest notes in pitch first, default). <br />
+    // "closest" (drop closest notes in pitch first, default), "loudest" (drop loudest first), "quietest" (drop quietest first), "longest" (drop longest first)
+    // "shortest" (drop shortest first). <br />
     // If the <m>resume</m> message attribute is set to 1, notes can be resumed if they have been terminated. In this case, the <m>resumepriority</m>
     // message sets the priority for resuming, as one of the same symbols: "oldest" (resume oldest), "newest" (resume newest first),
     // "closest" (resume closest notes in pitch first, default). Unless the <m>resumevoicing</m> message attribute is explicitly set to 0,
     // resuming can only happen for notes on the voicing they initially had (i.e. with the same voice index).
     // @marg 0 @name maxnumvoices @optional 0 @type int
-    // @mattr droppriority @type symbol @default closest @digest Handle which notes should be terminated ("oldest", "newest", "closest").
+    // @mattr droppriority @type symbol @default closest @digest Handle which notes should be terminated
     // @mattr voicingslot @type int @default 0 @digest Slot number where voice index will be stored
     // @mattr reassign @type int @default 0 @digest Reassign notes in detected voices
     // @mattr voicingslot @type int @default 0 @digest Slot number where voice index will be stored
     // @mattr notify @type int @default 1 @digest Notify maximum number of used voices through the playout
     // @mattr resume @type int @default 0 @digest Resume terminated notes if possible
-    // @mattr resumepriority @type symbol @default closest @digest Handle which notes should be resumed ("oldest", "newest", "closest").
-    // @mattr resumevoicing @type int @default 1 @digest Only resume notes with their original voicing.
+    // @mattr resumepriority @type symbol @default closest @digest Handle which notes should be resumed
+    // @mattr resumevoicing @type int @default 1 @digest Only resume notes with their original voicing
     // @example poly 1 @caption make selection monophonic...
     // @example poly 1 @resume 1 @caption ...and resume notes if needed
     // @example poly 0 @voicingslot 5 @caption detect and write voice index in slot 5

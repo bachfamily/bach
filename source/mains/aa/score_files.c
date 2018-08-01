@@ -2058,8 +2058,13 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 						// alter
 						screen_accidental = note_get_screen_accidental(note);
 						if (parenthesized_quartertones && screen_accidental.r_den > 2) {
-							screen_accidental = rat_rat_diff(screen_accidental, genrat(1, 4));
-							add_par_qrtrtone = 1;
+                            if (parenthesized_quartertones == 30061984) { // yeah, that's bad and private :-) It's however a very bad convention, but I needed it now.
+                                screen_accidental = screen_accidental > 0 ? screen_accidental + genrat(1, 4) : screen_accidental - genrat(1, 4);
+                                add_par_qrtrtone = 1;
+                            } else {
+                                screen_accidental = rat_rat_diff(screen_accidental, genrat(1, 4));
+                                add_par_qrtrtone = 1;
+                            }
 						}
 						double alter = rat2double(rat_long_prod(screen_accidental, 2));
 						if (alter == (int) alter)
