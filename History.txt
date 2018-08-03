@@ -19,6 +19,8 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 		The attribute @notificationsformessages is now called @notifymessages. 
 			Backwards compatibility SHOULD be preserved, but verify your patches.
 
+- bach.score	@dlspansties is now 1 by default
+
 - bach.partition
 		Now when partitions of 0 are requested a "null" list is output.
 

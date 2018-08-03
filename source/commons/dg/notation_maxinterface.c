@@ -1174,8 +1174,8 @@ void build_popup_background_menu(t_notation_obj *r_ob, e_element_types clipboard
 
     jpopupmenu_addseperator(r_ob->popup_background);
 
-    jpopupmenu_additem(r_ob->popup_background, 1020, "Select All Items From Here", NULL, 0, 0, NULL);
     jpopupmenu_additem(r_ob->popup_background, 1021, "Select All Items Till Here", NULL, 0, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_background, 1020, "Select All Items From Here", NULL, 0, 0, NULL);
 
 	if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 		jpopupmenu_additem(r_ob->popup_background, 1010, "Ceil Measures", NULL, 0, 0, NULL);

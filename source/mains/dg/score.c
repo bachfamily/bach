@@ -6624,9 +6624,9 @@ int T_EXPORT main(void){
     CLASS_ATTR_CHAR(c,"dlspansties",0, t_notation_obj, dl_spans_ties);
     CLASS_ATTR_STYLE_LABEL(c,"dlspansties",0,"enumindex","Duration Line Spans Ties");
     CLASS_ATTR_ENUMINDEX(c,"dlspansties", 0, "No Yes Yes With Hidden Notes Yes With Hidden Notes And Ties");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dlspansties",0,"0");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dlspansties",0,"1");
     // @description Toggles the ability for the duration line (if shown) to span sequences of
-    // tied notes. Values are: 0 = Don't span ties (default); 1 = Span ties; 2 = Span ties,
+    // tied notes. Values are: 0 = Don't span ties; 1 = Span ties (default); 2 = Span ties,
     // and also hide notes; 3 = 2 = Span ties, and also hide notes and ties
     // (i.e. only the duration line is kept to symbolize the duration of the tied sequence).
 
