@@ -791,7 +791,7 @@ char can_slot_be_hmoved(t_notation_obj *r_ob, long slot_num)
 }
 
 
-t_chord *notation_item_chord_get_parent(t_notation_obj *r_ob, t_notation_item *nitem)
+t_chord *notation_item_get_parent_chord(t_notation_obj *r_ob, t_notation_item *nitem)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
         return NULL;
@@ -5510,7 +5510,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 						notation_item_clear_slot(r_ob, nitem, j);
 					}
 					
-                    t_chord *ch = notation_item_chord_get_parent(r_ob, nitem);
+                    t_chord *ch = notation_item_get_parent_chord(r_ob, nitem);
 					if (r_ob->link_lyrics_to_slot > 0 && r_ob->link_lyrics_to_slot - 1 == j && ch) { //i.e.: note is not dummy, since it has a parent!
 						if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 							recompute_all_for_measure(r_ob, ch->parent, false);
@@ -6425,7 +6425,7 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
             if (meas)
                 recompute_all_for_measure(r_ob, meas, false);
         } else {
-            t_chord *ch = notation_item_chord_get_parent(r_ob, nitem);
+            t_chord *ch = notation_item_get_parent_chord(r_ob, nitem);
             if (ch)
                 ch->need_recompute_parameters = true;
         }
@@ -7691,7 +7691,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                             
                             if ((r_ob->link_lyrics_to_slot > 0 && r_ob->link_lyrics_to_slot - 1 == s) ||
                                 (r_ob->link_dynamics_to_slot > 0 && r_ob->link_dynamics_to_slot - 1 == s)) {
-                                t_chord *ch = notation_item_chord_get_parent(r_ob, r_ob->active_slot_notationitem);
+                                t_chord *ch = notation_item_get_parent_chord(r_ob, r_ob->active_slot_notationitem);
                                 if (ch) {
                                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                                         recompute_all_for_measure(r_ob, ch->parent, false);
@@ -7893,7 +7893,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                     {
                         long id = 0;
                         t_slotitem *item = pt_to_articulation_slotitem(r_ob, pt, s, r_ob->slot_window_active, &id);
-                        t_chord *ch = notation_item_chord_get_parent(r_ob, r_ob->active_slot_notationitem);
+                        t_chord *ch = notation_item_get_parent_chord(r_ob, r_ob->active_slot_notationitem);
                         if (item && modifiers & eCommandKey) {
                             create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
                             slotitem_delete(r_ob, s, item);
@@ -7918,7 +7918,7 @@ char slot_handle_mousedown(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
                     case k_SLOT_TYPE_NOTEHEAD:
                     {
                         long id = 0;
-                        t_chord *ch = notation_item_chord_get_parent(r_ob, r_ob->active_slot_notationitem);
+                        t_chord *ch = notation_item_get_parent_chord(r_ob, r_ob->active_slot_notationitem);
                         if (modifiers & eCommandKey) {
                             if (get_activeitem_slot_firstitem(r_ob, s)) {
                                 create_simple_notation_item_undo_tick(r_ob, undo_item, k_UNDO_MODIFICATION_CHANGE);
@@ -8016,7 +8016,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						
 						if ((r_ob->link_lyrics_to_slot > 0 && r_ob->link_lyrics_to_slot - 1 == s) ||
                             (r_ob->link_dynamics_to_slot > 0 && r_ob->link_dynamics_to_slot - 1 == s)) {
-                            t_chord *ch = notation_item_chord_get_parent(r_ob, r_ob->active_slot_notationitem);
+                            t_chord *ch = notation_item_get_parent_chord(r_ob, r_ob->active_slot_notationitem);
                             if (ch) {
                                 if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                                     recompute_all_for_measure(r_ob, ch->parent, false);

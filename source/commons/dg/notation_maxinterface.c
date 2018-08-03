@@ -5643,8 +5643,12 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_TRIM_END);
                 else if (!bpt->next && modifiers == eShiftKey)
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_RESIZE_LEFTRIGHT);
-                else
-                    bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, r_ob->breakpoints_have_noteheads ? BACH_CURSOR_NOTE_FOURWAY : BACH_CURSOR_RESIZE_FOURWAY);
+                else {
+                    if (!bpt->next && r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                        bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, r_ob->breakpoints_have_noteheads ? BACH_CURSOR_NOTE_UPDOWN : BACH_CURSOR_RESIZE_UPDOWN);
+                    else
+                        bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, r_ob->breakpoints_have_noteheads ? BACH_CURSOR_NOTE_FOURWAY : BACH_CURSOR_RESIZE_FOURWAY);
+                }
             }
                 break;
 
@@ -5741,7 +5745,7 @@ void notation_obj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboa
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			r_ob->whole_obj_undo_tick_function(r_ob);
 		else
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)notation_item_chord_get_parent(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 		delete_all_selected_function_points(r_ob, slot_num);
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}

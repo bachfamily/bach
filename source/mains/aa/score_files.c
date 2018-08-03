@@ -1436,7 +1436,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	t_chord *chord;
 	t_note *note;
 	t_llll *export_slots = NULL;
-	long export_velocities = 0, export_noteheads = 1, export_lyrics = 1, export_dynamics = 1, export_articulations = 1;
+	long export_velocities = 0, export_noteheads = 1, export_lyrics = 1, export_dynamics = 1, export_articulations = 1, export_glissandi = 0;
 	long dynamics_slot = x->r_ob.link_dynamics_to_slot;
     long articulations_slot = x->r_ob.link_articulations_to_slot;
     const t_articulations_typo_preferences *atp = &x->r_ob.articulations_typo_preferences;
@@ -1444,7 +1444,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	t_llll *arguments = (t_llll *) atom_getobj(av);
     t_slotitem *slotitem;
     
-	llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siilliiiii",
+	llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siilliiiiii",
 				   _sym_filename, &filename_sym,
 				   gensym("dynamicsslot"), &dynamics_slot,
 				   gensym("velocity"), &export_velocities,
@@ -1454,7 +1454,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                    gensym("articulations"), &export_articulations,
                    gensym("lyrics"), &export_lyrics,
                    gensym("noteheads"), &export_noteheads,
-                   gensym("dynamics"), &export_dynamics
+                   gensym("dynamics"), &export_dynamics,
+                   gensym("glissandi"), &export_glissandi
                    );
 
     if (arguments->l_size) {
@@ -1580,6 +1581,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     long voices_left_in_voiceensemble ;
     t_llllelem *this_voice_ensemble_measure;
     t_bool new_voice_ensemble = true;
+    long curr_gliss_id = 1;
     
     long voiceidx;
     partidx = 1;
@@ -1660,7 +1662,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 		t_timesignature *ts = NULL;
         long clef;
         mxml_node_t *partxml;
-        
+        t_llll *open_gliss = export_glissandi ? llll_get() : NULL;
+
         if (new_voice_ensemble) {
             char part_id[16];
             clef = voice->v_ob.clef;
@@ -1890,7 +1893,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 				char chordtype[16], normal_type[16];
 				t_rational screen_accidental;
                 char we_have_already_exported_dynamics_for_this_chord = false;
-				
+                t_llll *open_gliss_chord = export_glissandi ? llll_get() : NULL;
+                char at_least_a_gliss_has_ended = false;
 				xml_value_to_name(chord->figure.r_den, chordtype);
 				
 				if (dur.r_num < 0) {
@@ -2249,6 +2253,29 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 							mxmlElementSetAttr(tied, "type", "start");						
 						}
 					}
+                    
+                    if (export_glissandi) {
+                        if (open_gliss && open_gliss->l_head && note && (!note->tie_from || x->r_ob.dl_spans_ties == 0)) {
+                            mxml_node_t *slide = mxmlNewElement(notations, "slide");
+                            mxmlElementSetAttr(slide, "line-type", "solid");
+                            char numtxt[64];
+                            snprintf_zero(numtxt, 64, "%ld", hatom_getlong(&open_gliss->l_head->l_hatom));
+                            mxmlElementSetAttr(slide, "number", numtxt);
+                            mxmlElementSetAttr(slide, "type", "stop");
+                            llll_behead(open_gliss);
+                            at_least_a_gliss_has_ended = true;
+                        }
+                        if (note && note->lastbreakpoint->delta_mc != 0 && (!note->tie_from || x->r_ob.dl_spans_ties == 0)) {
+                            mxml_node_t *slide = mxmlNewElement(notations, "slide");
+                            mxmlElementSetAttr(slide, "line-type", "solid");
+                            char numtxt[64];
+                            snprintf_zero(numtxt, 64, "%ld", curr_gliss_id);
+                            mxmlElementSetAttr(slide, "number", numtxt);
+                            mxmlElementSetAttr(slide, "type", "start");
+                            llll_appendlong(open_gliss_chord, curr_gliss_id);
+                            curr_gliss_id++;
+                        }
+                    }
 					
 					if (num_tuplets) {
 						long are_there_tuplets = 0;
@@ -2454,6 +2481,13 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     
 					
 				}
+                
+                if (open_gliss) {
+                    if (at_least_a_gliss_has_ended)
+                        llll_clear(open_gliss);
+                    if (open_gliss_chord)
+                        llll_chain(open_gliss, open_gliss_chord);
+                }
 			}
             
             if (voices_left_in_voiceensemble == 1) {
@@ -2488,6 +2522,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             --voices_left_in_voiceensemble;
             new_voice_ensemble = false;
         }
+        
+        if (open_gliss)
+            llll_free(open_gliss);
 	}
     
     

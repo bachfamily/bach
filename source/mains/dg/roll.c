@@ -504,7 +504,7 @@ t_llll* get_roll_values_as_llll_for_pwgl(t_roll *x){
 					llll_appendlong(this_note_llll, round(mc_as_double), 0, WHITENULL_llll);
 				else
 					llll_appenddouble(this_note_llll, mc_as_double, 0, WHITENULL_llll);
-				if (are_note_breakpoints_nontrivial((t_notation_obj *) x,temp_note)) 
+				if (note_breakpoints_are_nontrivial((t_notation_obj *) x,temp_note)) 
 					append_note_breakpoints_formatted_for_pwgl((t_notation_obj *) x, this_note_llll, temp_note);
 				if (notation_item_has_slot_content((t_notation_obj *) x, (t_notation_item *)temp_note))
 					append_note_slot_formatted_for_pwgl((t_notation_obj *) x, this_note_llll, temp_note);
@@ -15399,7 +15399,7 @@ void roll_enter(t_roll *x)	// enter is triggerd at "endeditbox time"
 		notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, new_text_as_llll);
 		llll_free(new_text_as_llll);
         if (x->r_ob.link_lyrics_to_slot > 0 && x->r_ob.link_lyrics_to_slot - 1 == x->r_ob.active_slot_num) {
-            t_chord *ch = notation_item_chord_get_parent((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
+            t_chord *ch = notation_item_get_parent_chord((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
 			if (ch)
                 ch->need_recompute_parameters = true;
         }
@@ -15412,7 +15412,7 @@ void roll_enter(t_roll *x)	// enter is triggerd at "endeditbox time"
         create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
         notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, new_text_as_llll);
         if (x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.link_dynamics_to_slot - 1 == x->r_ob.active_slot_num) {
-            t_chord *ch = notation_item_chord_get_parent((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
+            t_chord *ch = notation_item_get_parent_chord((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
             if (ch)
                 ch->need_recompute_parameters = true;
         }

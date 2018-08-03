@@ -1516,7 +1516,7 @@ void set_measure_cents_values_from_llll(t_score *x, t_llll* measure_midicents, t
 	long chord_num = 0;
 	
 	if (is_measure_empty(measure)) 
-		delete_all_chords_from_measure(x, measure);
+		measure_delete_all_chords(x, measure);
 	
 	onset = long2rat(0); 
 	measure_dur = measure_get_sym_duration(measure);
@@ -2013,7 +2013,7 @@ void set_measure_velocities_values_from_llll(t_score *x, t_llll* measure_velocit
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
 	t_chord *chord;
-	if (is_measure_empty(measure) && (!x->durations_given)) delete_all_chords_from_measure(x, measure);
+	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = measure_velocities->l_size;
 	chord = measure->firstchord;
@@ -2136,7 +2136,7 @@ void set_measure_ties_values_from_llll(t_score *x, t_llll* measure_ties, t_measu
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
 	t_chord *chord;
-	if (is_measure_empty(measure) && (!x->durations_given)) delete_all_chords_from_measure(x, measure);
+	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = measure_ties->l_size; chord_num = 0;
 	chord = measure->firstchord;
@@ -2362,7 +2362,7 @@ void set_measure_graphic_values_from_llll(t_score *x, t_llll* graphic, t_measure
 	long num_chords, chord_num = 0;
 	t_rational onset, measure_dur;
 	t_chord *chord;
-	if (is_measure_empty(measure) && (!x->durations_given)) delete_all_chords_from_measure(x, measure);
+	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	num_chords = graphic->l_size; chord_num = 0;
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	chord = measure->firstchord; // For instance: graphic = (((6000 1/4) (7000 1/8)) (7000 -1/4))
@@ -2509,7 +2509,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
 	t_llllelem *elem; t_chord *chord = measure->firstchord; // For instance: breakpoints = (  ((0 0 0) (1 1 1))   (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1))) )
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
-	if (is_measure_empty(measure) && (!x->durations_given)) delete_all_chords_from_measure(x, measure);
+	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = breakpoints->l_size; chord_num = 0;
 	
@@ -2633,7 +2633,7 @@ void set_measure_articulations_values_from_llll(t_score *x, t_llll* articulation
 	t_llllelem *elem; t_chord *chord = measure->firstchord; // For instance: breakpoints = (  ((0 0 0) (1 1 1))   (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1))) )
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
-	if (is_measure_empty(measure) && (!x->durations_given)) delete_all_chords_from_measure(x, measure);
+	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = articulations->l_size; chord_num = 0;
 	
@@ -2721,7 +2721,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
 	t_llllelem *elem; t_chord *chord = measure->firstchord; // For instance: slots = (  ((0 0 0) (1 1 1))   (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1))) )
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
-	if (is_measure_empty(measure) && !x->durations_given) delete_all_chords_from_measure(x, measure);
+	if (is_measure_empty(measure) && !x->durations_given) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = slots->l_size;
 	
@@ -4156,7 +4156,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
 	this_ch->num_articulations = 0;
 	this_ch->articulation = NULL;
 	
-	insert_chord_in_measure((t_notation_obj *) x, measure, this_ch, after_this_chord, force_ID);
+	chord_insert_in_measure((t_notation_obj *) x, measure, this_ch, after_this_chord, force_ID);
 	
 	// compute the approximation
 	curr_nt = this_ch->firstnote;  
@@ -4232,7 +4232,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 			this_ch->num_articulations = 0;
 			this_ch->articulation = NULL;
 			
-			insert_chord_in_measure((t_notation_obj *) x, measure, this_ch, after_this_chord, force_ID);
+			chord_insert_in_measure((t_notation_obj *) x, measure, this_ch, after_this_chord, force_ID);
 			
 			// create the chain of notes
 			this_ch->lastnote = NULL;
@@ -4687,7 +4687,7 @@ t_chord *split_chord(t_score *x, t_chord *chord, long how_many, long also_split_
         }
         
         for (i = how_many - 1; i >= 0; i--) {
-            insert_chord_in_measure((t_notation_obj *) x, meas, split[i], chord, 0);
+            chord_insert_in_measure((t_notation_obj *) x, meas, split[i], chord, 0);
             if (is_chord_selected)
                 notation_item_add_to_selection((t_notation_obj *) x, (t_notation_item *)split[i]);
         }
@@ -5058,7 +5058,7 @@ void turn_measure_into_single_rest(t_score *x, t_measure *measure)
     t_chord *newch = NULL;
     
     if (measure->firstchord) {
-        delete_all_chords_from_measure(x, measure);
+        measure_delete_all_chords(x, measure);
         
         free_rhythmic_tree((t_notation_obj *)x, measure);
         measure->rhythmic_tree = llll_get();
@@ -5160,7 +5160,7 @@ void voiceensemble_turn_measure_into_single_rest(t_score *x, t_measure *measure)
     }
 }
 
-void delete_all_chords_from_measure(t_score *x, t_measure *measure)
+void measure_delete_all_chords(t_score *x, t_measure *measure)
 {
 	t_chord *chord = measure->firstchord; t_chord *chord2;
 	while (chord) { // delete all chords

@@ -10373,7 +10373,7 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
 	t_note *right_note = clone_note(r_ob, note, k_CLONE_FOR_SPLIT); // new (sliced) note
 	long i;
 	
-	if (are_note_breakpoints_nontrivial(r_ob, note)) {
+	if (note_breakpoints_are_nontrivial(r_ob, note)) {
 		// split breakpoints
 		double new_midicents = note->midicents;
 		t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll(r_ob, note, 0., cut_rel_pos, NULL);
@@ -10723,7 +10723,7 @@ long clone_chord_in_rhythmic_tree_fn(void *data, t_hatom *a, const t_llll *addre
 	if (hatom_gettype(a) == H_OBJ){
 		t_chord *ch = (t_chord *)hatom_getobj(a);
 		t_chord *newch = clone_chord_without_lyrics(r_ob, ch, (e_clone_for_types)clone_for);
-		insert_chord_in_measure(r_ob, meas, newch, *prev_chord, 0);
+		chord_insert_in_measure(r_ob, meas, newch, *prev_chord, 0);
 		newch->rhythmic_tree_elem = llll_hatom2elem(a);
 		hatom_setobj(a, (t_object *)newch);
 		*prev_chord = newch;
@@ -10788,7 +10788,7 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
 		t_chord *temp_ch = measure->firstchord, *last_ch = NULL;
 		while (temp_ch) {
 			t_chord *cloned = clone_chord(r_ob, temp_ch, k_CLONE_FOR_NEW);
-			insert_chord_in_measure(r_ob, measure, cloned, last_ch, 0);
+			chord_insert_in_measure(r_ob, measure, cloned, last_ch, 0);
 			last_ch = cloned; 
 		}
 		newmeasure->rhythmic_tree = NULL;
@@ -11495,7 +11495,7 @@ char is_chord_a_whole_measure_rest(t_notation_obj *r_ob, t_chord *chord){
 		return 0;
 }
 
-void insert_chord_in_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *chord_to_insert, t_chord *after_this_chord, unsigned long force_ID){
+void chord_insert_in_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *chord_to_insert, t_chord *after_this_chord, unsigned long force_ID){
 // insert an (already built) chord in a measure, at a given position. Automatically computes the r_sym_onset field.
 	
 	chord_to_insert->parent = measure;
@@ -15960,7 +15960,7 @@ void get_rhythm_drawable_one_step(t_notation_obj *r_ob, t_llll *box, char only_c
 						new_ch->overall_tuplet_ratio = overall_tuplet_ratio;
 						compute_chord_figure(r_ob, new_ch, true);
 						boxelem = new_ch->rhythmic_tree_elem = llll_insertobj_after(new_ch, boxelem, 0, WHITENULL_llll);
-						insert_chord_in_measure(r_ob, this_chord->parent, new_ch, lastchord_for_insertion, 0);
+						chord_insert_in_measure(r_ob, this_chord->parent, new_ch, lastchord_for_insertion, 0);
 						lastchord_for_insertion = new_ch;
 						llll_appendobj(chords_to_tie, new_ch->prev, 0, WHITENULL_llll);
 						
@@ -16417,7 +16417,7 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
 				char sign = thisch->r_sym_duration.r_num >= 0 ? 1 : -1;
 				t_llll *newllll;
 				
-				insert_chord_in_measure(r_ob, measure, new_ch, thisch, 0);
+				chord_insert_in_measure(r_ob, measure, new_ch, thisch, 0);
 				tie_chord(thisch);
 				whitenull_tie_from(chord_get_next(new_ch));
 				thisch->r_sym_duration = rat_long_prod(rat_rat_diff(rat_abs(thisch->r_sym_duration), diff), sign);
@@ -16492,7 +16492,7 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
 							
 							t_chord *new_ch = clone_chord_without_lyrics(r_ob, splitchord, k_CLONE_FOR_SPLIT);
 							
-							insert_chord_in_measure(r_ob, measure, new_ch, splitchord, 0);
+							chord_insert_in_measure(r_ob, measure, new_ch, splitchord, 0);
 							tie_chord(splitchord);
 							whitenull_tie_from(chord_get_next(new_ch));
 							new_ch->r_sym_duration = right_dur;
@@ -17953,7 +17953,7 @@ long find_tuplets_for_level_fn(void *data, t_hatom *a, const t_llll *address)
 								compute_chord_figure(r_ob, new_ch, false);
 								chord_elem = new_ch->rhythmic_tree_elem = llll_insertobj_after(new_ch, tuplet_level_chords->l_owner, 0, WHITENULL_llll);
 								next_chord_elem = chord_elem->l_next;
-								insert_chord_in_measure(r_ob, old_ch->parent, new_ch, old_ch, 0);
+								chord_insert_in_measure(r_ob, old_ch->parent, new_ch, old_ch, 0);
 								tie_chord(new_ch->prev);
 								whitenull_tie_from(chord_get_next(new_ch));
 
@@ -19104,7 +19104,7 @@ void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beamin
 		curr_ch->topmost_stafftop_uy = curr_ch->bottommost_stafftop_uy = curr_ch->topmost_stafftop_uy_noacc = curr_ch->bottommost_stafftop_uy_noacc = -32000;
     }
 	
-	// We update the num_chords field of the measure. This might NOT be needed, if we used the insert_chord_in_measure() function, but we'll keep it for now.
+	// We update the num_chords field of the measure. This might NOT be needed, if we used the chord_insert_in_measure() function, but we'll keep it for now.
 	update_measure_chordnumbers(measure);
 	
 	// We recompute all the chord figures. This should NOT be needed as well (we should have already done it), but we'll keep it for now.
@@ -26797,7 +26797,7 @@ void add_articulation_to_notation_item(t_notation_obj *r_ob, t_notation_item *it
             t_articulation *art = build_articulation(r_ob, articulation_ID, item, thisitem, notationobj_articulation_id2symbol(r_ob, articulation_ID));
             thisitem->item = art;
             slotitem_append(thisitem);
-            reset_articulation_position_for_chord(r_ob, notation_item_chord_get_parent(r_ob, item));
+            reset_articulation_position_for_chord(r_ob, notation_item_get_parent_chord(r_ob, item));
         }
     }
 }
@@ -28447,7 +28447,7 @@ t_llll* note_get_extras_values_as_llll(t_notation_obj *r_ob, t_note *note)
 		llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
 
 	// see if we need breakpoint extras
-	if (are_note_breakpoints_nontrivial(r_ob, note))
+	if (note_breakpoints_are_nontrivial(r_ob, note))
 		llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL), 0, WHITENULL_llll);
 
 	// see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
@@ -28498,7 +28498,7 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
 		llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
 	
 	// see if we need breakpoint extras
-	if (are_note_breakpoints_nontrivial(r_ob, note)) {
+	if (note_breakpoints_are_nontrivial(r_ob, note)) {
 		llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
 		if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
 			hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
@@ -28632,7 +28632,7 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 		llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
 	
 	// see if we need breakpoint extras
-	if (are_note_breakpoints_nontrivial(r_ob, note)) {
+	if (note_breakpoints_are_nontrivial(r_ob, note)) {
 		double new_mc = 0.;
 		llll_appendllll(out_llll, note_get_partial_breakpoint_values_as_llll(r_ob, note, start_x_rel, end_x_rel, &new_mc), 0, WHITENULL_llll);
 	}
@@ -28651,7 +28651,7 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 	return out_llll;
 }
 
-char are_note_breakpoints_nontrivial(t_notation_obj *r_ob, t_note *note) {
+char note_breakpoints_are_nontrivial(t_notation_obj *r_ob, t_note *note) {
 	if ((note->num_breakpoints > 2) || 
 		((note->num_breakpoints == 2) && 
 			((note->lastbreakpoint->slope != 0.) || (note->lastbreakpoint->delta_mc != 0.) || (r_ob->breakpoints_have_velocity && note->lastbreakpoint->velocity != note->velocity))))
@@ -28802,7 +28802,7 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
 	
 	// see if we need breakpoint extras
 	if (mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE) {
-		if (are_note_breakpoints_nontrivial(r_ob, note)) {
+		if (note_breakpoints_are_nontrivial(r_ob, note)) {
 			llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
 			if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
 				hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
@@ -40361,6 +40361,9 @@ char *undo_op_to_string(long undo_op)
         case k_UNDO_OP_AUTOSPELL:
             sprintf(buf, "Autospell");
             break;
+        case k_UNDO_OP_TAILS_TO_GRACES:
+            sprintf(buf, "Convert tails to grace chords");
+            break;
 		default:
 			sprintf(buf, "Generic Operation");
 			break;
@@ -40497,7 +40500,7 @@ void bach2pwgl_measure_level(t_notation_obj *r_ob, t_llll *box, char *need_set_d
 							llll_appendlong(this_note_llll, round(mc_as_double), 0, WHITENULL_llll);
 						else
 							llll_appenddouble(this_note_llll, mc_as_double, 0, WHITENULL_llll);
-						if (are_note_breakpoints_nontrivial(r_ob, nt)) 
+						if (note_breakpoints_are_nontrivial(r_ob, nt)) 
 							append_note_breakpoints_formatted_for_pwgl(r_ob, this_note_llll, nt);
 						if (notation_item_has_slot_content(r_ob, (t_notation_item *)nt))
 							append_note_slot_formatted_for_pwgl(r_ob, this_note_llll, nt);

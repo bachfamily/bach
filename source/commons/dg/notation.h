@@ -1858,6 +1858,7 @@ typedef enum _undo_operations
 	k_UNDO_OP_CHANGE_BACH_ATTRIBUTE,
 	k_UNDO_OP_SLICE,
     k_UNDO_OP_AUTOSPELL,
+    k_UNDO_OP_TAILS_TO_GRACES
 } e_undo_operations;
 
 
@@ -8471,7 +8472,7 @@ t_slot *notation_item_get_slot_extended(t_notation_obj *r_ob, t_notation_item *n
 t_slotitem *notation_item_get_slot_firstitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber);
 t_slotitem *notation_item_get_slot_nth_item(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, long n);
 t_slotitem *slot_get_nth_item(t_slot *s, long n);
-t_chord *notation_item_chord_get_parent(t_notation_obj *r_ob, t_notation_item *nitem);
+t_chord *notation_item_get_parent_chord(t_notation_obj *r_ob, t_notation_item *nitem);
 long notation_item_get_slot_numitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber); // private
 
 
@@ -12128,7 +12129,7 @@ void set_numvoices(t_notation_obj *r_ob, long num_voices);
 	@param	note		The note
 	@return				1 if note's pitch breakpoints are nontrivial, 0 otherwise
  */
-char are_note_breakpoints_nontrivial(t_notation_obj *r_ob, t_note *note);
+char note_breakpoints_are_nontrivial(t_notation_obj *r_ob, t_note *note);
 
 
 /**	Retrive the unscaled horizontal shift of a notehead. This shift is an ADDITIONAL shift, which sums up to the ordinary graphic positioning.
@@ -12786,7 +12787,7 @@ void set_need_perform_analysis_and_change_flag(t_notation_obj *r_ob);
 	@param	after_this_chord	The chord after which the previous chord must be inserted (leave NULL if chord must be inserted at the beginning of the measure)
 	@param	force_ID	An ID which will be assigned to the inserted chord (as notation item). Leave zero in order to have automatic ID assignment. 
  */
-void insert_chord_in_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *chord_to_insert, t_chord *after_this_chord, unsigned long force_ID);
+void chord_insert_in_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *chord_to_insert, t_chord *after_this_chord, unsigned long force_ID);
 
 
 /**	Build a timepoint.
