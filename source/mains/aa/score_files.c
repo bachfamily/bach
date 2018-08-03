@@ -1581,7 +1581,6 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     long voices_left_in_voiceensemble ;
     t_llllelem *this_voice_ensemble_measure;
     t_bool new_voice_ensemble = true;
-    long curr_gliss_id = 1;
     
     long voiceidx;
     partidx = 1;
@@ -2266,14 +2265,24 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                             at_least_a_gliss_has_ended = true;
                         }
                         if (note && note->lastbreakpoint->delta_mc != 0 && (!note->tie_from || x->r_ob.dl_spans_ties == 0)) {
-                            mxml_node_t *slide = mxmlNewElement(notations, "slide");
-                            mxmlElementSetAttr(slide, "line-type", "solid");
-                            char numtxt[64];
-                            snprintf_zero(numtxt, 64, "%ld", curr_gliss_id);
-                            mxmlElementSetAttr(slide, "number", numtxt);
-                            mxmlElementSetAttr(slide, "type", "start");
-                            llll_appendlong(open_gliss_chord, curr_gliss_id);
-                            curr_gliss_id++;
+                            // finding first free gliss id
+                            long curr_gliss_id = 0;
+                            for (long i = 1; i <= 6; i++) {
+                                if (!is_long_in_llll_first_level(open_gliss, i) && !is_long_in_llll_first_level(open_gliss_chord, i)) {
+                                    curr_gliss_id = i;
+                                    break;
+                                }
+                            }
+                            if (curr_gliss_id > 0) {
+                                mxml_node_t *slide = mxmlNewElement(notations, "slide");
+                                mxmlElementSetAttr(slide, "line-type", "solid");
+                                char numtxt[64];
+                                snprintf_zero(numtxt, 64, "%ld", curr_gliss_id);
+                                mxmlElementSetAttr(slide, "number", numtxt);
+                                mxmlElementSetAttr(slide, "type", "start");
+                                llll_appendlong(open_gliss_chord, curr_gliss_id);
+                                curr_gliss_id++;
+                            }
                         }
                     }
 					
