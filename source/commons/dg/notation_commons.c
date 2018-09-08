@@ -37605,48 +37605,49 @@ t_max_err notation_obj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long 
     notation_obj_check_all_measure_tuttipoints(r_ob);
 #endif
 
-	if (ac && av) {
+    t_llll *args = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
+	if (args && args->l_head) {
 		long auto_clefs = false;
-		for (i = 0; i < ac && i < CONST_MAX_VOICES && av->a_type == A_SYM; i++, av++) {
-			long j, len = av->a_w.w_sym ? strlen(av->a_w.w_sym->s_name) : 0;
-			char *string = (char *)bach_newptr((len + 1) * sizeof(char));
-			t_symbol *s; 
-
-			if (len > 5 || (len <= 5 && len > 0 && av->a_w.w_sym->s_name[0] != 'g' && av->a_w.w_sym->s_name[0] != 'f' && av->a_w.w_sym->s_name[0] != 'G' && av->a_w.w_sym->s_name[0] != 'F')) {
-				// symbolic clefs (Alto, Tenor...)
-				string[0] = (av->a_w.w_sym->s_name[0] >= 97 && av->a_w.w_sym->s_name[0] <= 122) ? av->a_w.w_sym->s_name[0] - 32 : av->a_w.w_sym->s_name[0];
-				for (j = 1; j < len; j++)
-					string[j] = (av->a_w.w_sym->s_name[j] >= 65 && av->a_w.w_sym->s_name[j] <= 90) ? av->a_w.w_sym->s_name[j] + 32 : av->a_w.w_sym->s_name[j];
-			} else {
-				// GF clefs and clef combinations
-				for (j = 0; j < len; j++)
-					string[j] = (av->a_w.w_sym->s_name[j] == 'f' || av->a_w.w_sym->s_name[j] == 'g') ? av->a_w.w_sym->s_name[j] - 32 : av->a_w.w_sym->s_name[j];
-			}
-			string[len] = 0;
+        t_llllelem *el;
+        t_llll *sticky_allowed_clefs = NULL;
+		for (i = 0, el = args->l_head; el && i < CONST_MAX_VOICES; i++, el = el->l_next) {
+            t_symbol *clef_sym = clef_llllelem_to_symbol(el);
+            t_symbol *s = NULL;
+            if (clef_sym) {
+                s = clef_sym;
+                if (s == _llllobj_sym_Auto) {
+                    if (i == 0 && args->l_size == 1)
+                        auto_clefs = true;
+                    s = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD));
+                }
+            } else if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                t_llll *ll = hatom_getllll(&el->l_hatom);
+                t_llll *allowed_clefs = llll_get();
+                for (t_llllelem *subel = ll->l_head; subel; subel = subel->l_next) {
+                    t_symbol *sub_s = clef_llllelem_to_symbol(subel);
+                    if (sub_s) {
+                        long sub_cl = clef_symbol_to_clef_number(r_ob, sub_s);
+                        if (sub_cl != k_CLEF_NONE)
+                            llll_appendlong(allowed_clefs, sub_cl);
+                    }
+                }
+                if (i == 0 && args->l_size == 1) {
+                    auto_clefs = true;
+                    sticky_allowed_clefs = llll_clone(allowed_clefs);
+                }
+                s = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD, allowed_clefs));
+                llll_free(allowed_clefs);
+            } else {
+                s = _llllobj_sym_none;
+            }
+            
+            clefs[i] = s;
 			
-			s = gensym(string);
-			
-			if (s == _llllobj_sym_GF)
-				s = _llllobj_sym_FG;
-			else if (s == _llllobj_sym_GGF)
-				s = _llllobj_sym_FGG;
-			else if (s == _llllobj_sym_GFF)
-				s = _llllobj_sym_FFG;
-			else if (s == _llllobj_sym_GGFF)
-				s = _llllobj_sym_FFGG;
-			else if (s == _llllobj_sym_Auto) {
-				if (i == 0 && ac == 1)
-					auto_clefs = true;
-				s = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD));
-			}
-			clefs[i] = s;
-			
-			bach_freeptr(string);
 		}
 		
 		while (i < CONST_MAX_VOICES + 1) {
 			if (auto_clefs && i < r_ob->num_voices)
-				clefs[i] = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD));
+				clefs[i] = clef_number_to_clef_symbol(r_ob, infer_most_appropriate_clef_for_voice(r_ob, nth_voice(r_ob, i), BACH_CLEF_AUTODETECT_CUTOFF_THRESHOLD, sticky_allowed_clefs));
 			else
 				clefs[i] = NULL;
 			i++;
@@ -37656,6 +37657,9 @@ t_max_err notation_obj_setattr_clefs(t_notation_obj *r_ob, t_object *attr, long 
         notation_obj_check_all_measure_tuttipoints(r_ob);
 #endif
 
+        if (sticky_allowed_clefs)
+            llll_free(sticky_allowed_clefs);
+        llll_free(args);
 		return notation_obj_set_clefs(r_ob, clefs, &r_ob->private_flag);
 	} else
 		return MAX_ERR_GENERIC;
@@ -41807,10 +41811,57 @@ long actiontypesym2actiontypeid(t_symbol *sym)
 }
 
 
+t_symbol *clef_llllelem_to_symbol(t_llllelem *el)
+{
+    t_symbol *clef_sym = NULL;
+    if (hatom_gettype(&el->l_hatom) == H_SYM) {
+        clef_sym = hatom_getsym(&el->l_hatom);
+        
+        // fixing syntax, if needed
+        long j, len = strlen(clef_sym->s_name);
+        char string[2048];
+        
+        if (len > 5 || (len <= 5 && len > 0 && clef_sym->s_name[0] != 'g' && clef_sym->s_name[0] != 'f' && clef_sym->s_name[0] != 'G' && clef_sym->s_name[0] != 'F')) {
+            // symbolic clefs (Alto, Tenor...)
+            string[0] = (clef_sym->s_name[0] >= 97 && clef_sym->s_name[0] <= 122) ? clef_sym->s_name[0] - 32 : clef_sym->s_name[0];
+            for (j = 1; j < 2048 && j < len; j++)
+                string[j] = (clef_sym->s_name[j] >= 65 && clef_sym->s_name[j] <= 90) ? clef_sym->s_name[j] + 32 : clef_sym->s_name[j];
+        } else {
+            // GF clefs and clef combinations
+            for (j = 0; j < 2048 && j < len; j++)
+                string[j] = (clef_sym->s_name[j] == 'f' || clef_sym->s_name[j] == 'g') ? clef_sym->s_name[j] - 32 : clef_sym->s_name[j];
+        }
+        string[len] = 0;
+        
+        clef_sym = gensym(string);
+        
+        if (clef_sym == _llllobj_sym_GF)
+            clef_sym = _llllobj_sym_FG;
+        else if (clef_sym == _llllobj_sym_GGF)
+            clef_sym = _llllobj_sym_FGG;
+        else if (clef_sym == _llllobj_sym_GFF)
+            clef_sym = _llllobj_sym_FFG;
+        else if (clef_sym == _llllobj_sym_GGFF)
+            clef_sym = _llllobj_sym_FFGG;
+        
+    } else if (hatom_gettype(&el->l_hatom) == H_PITCH) { // we need to separately address the clefs F8vb and G8vb (and for bw compatibility F8 and G8)
+        t_pitch p = hatom_getpitch(&el->l_hatom);
+        if (p == t_pitch(3, genrat(-5, 8), 8)) // F8vb
+            clef_sym = _llllobj_sym_F8vb;
+        else if (p == t_pitch(4, genrat(-5, 8), 8)) // G8vb
+            clef_sym = _llllobj_sym_G8vb;
+        else if (p == t_pitch(3, long2rat(0), 8)) // F8
+            clef_sym = _llllobj_sym_F8vb;
+        else if (p == t_pitch(4, long2rat(0), 8)) // G8
+            clef_sym = _llllobj_sym_G8va;
+    }
+    return clef_sym;
+}
+
 // pitches is an llll (not necessarily plain) with the midicents of all pitches (left untouched, function is NOT destructive)
 // data falling farther than <cutoff_threshold> * stdev(pitches) are deleted, then
 // the data range is compared with the staff ranges
-long infer_most_appropriate_clef(t_notation_obj *r_ob, t_llll *pitches, double cutoff_threshold)
+long infer_most_appropriate_clef(t_notation_obj *r_ob, t_llll *pitches, double cutoff_threshold, t_llll *allowed_clefs)
 {
     t_llllelem *elem;
     t_hatom h_sum, *h_min = NULL, *h_max = NULL;
@@ -41855,22 +41906,38 @@ long infer_most_appropriate_clef(t_notation_obj *r_ob, t_llll *pitches, double c
     max = hatom_getdouble(h_max);
     
     // searching for fitting key
-    long found = -1, i, clefs_to_test[12];
+    long num_allowed_clefs = 12;
+    long clefs_to_test[1024];
+    long backup_clef = k_CLEF_FFGG;
+    long found = -1, i;
     double best_diff = max - min;
-    clefs_to_test[0] = k_CLEF_G;
-    clefs_to_test[1] = k_CLEF_F;
-    clefs_to_test[2] = k_CLEF_G8va;
-    clefs_to_test[3] = k_CLEF_G15ma;
-    clefs_to_test[4] = k_CLEF_F8vb;
-    clefs_to_test[5] = k_CLEF_F15mb;
-    clefs_to_test[6] = k_CLEF_FG;
-    clefs_to_test[7] = k_CLEF_GG;
-    clefs_to_test[8] = k_CLEF_FF;
-    clefs_to_test[9] = k_CLEF_FGG;
-    clefs_to_test[10] = k_CLEF_FFG;
-    clefs_to_test[11] = k_CLEF_FFGG;
     
-    for (i = 0; i < 11; i++) {
+    if (allowed_clefs) {
+        i = 0;
+        for (t_llllelem *el = allowed_clefs->l_head; el && i < 1024; el = el->l_next) {
+            long c = hatom_getlong(&el->l_hatom);
+            if (i == 0)
+                backup_clef = c;
+            clefs_to_test[i++] = c;
+        }
+        num_allowed_clefs = i;
+    } else {
+        num_allowed_clefs = 12;
+        clefs_to_test[0] = k_CLEF_G;
+        clefs_to_test[1] = k_CLEF_F;
+        clefs_to_test[2] = k_CLEF_G8va;
+        clefs_to_test[3] = k_CLEF_G15ma;
+        clefs_to_test[4] = k_CLEF_F8vb;
+        clefs_to_test[5] = k_CLEF_F15mb;
+        clefs_to_test[6] = k_CLEF_FG;
+        clefs_to_test[7] = k_CLEF_GG;
+        clefs_to_test[8] = k_CLEF_FF;
+        clefs_to_test[9] = k_CLEF_FGG;
+        clefs_to_test[10] = k_CLEF_FFG;
+        clefs_to_test[11] = k_CLEF_FFGG;
+    }
+
+    for (i = 0; i < num_allowed_clefs; i++) {
         long clefmin, clefmax;
         double this_diff;
         get_staff_range_mc(clefs_to_test[i], &clefmin, &clefmax);
@@ -41904,11 +41971,11 @@ long infer_most_appropriate_clef(t_notation_obj *r_ob, t_llll *pitches, double c
     llll_free(maxaddress);
     llll_free(pitches_wk);
     
-    return i >= 0 ? clefs_to_test[i] : k_CLEF_FFGG; // if no key was found, we use the most comprehensive one
+    return found >= 0 ? clefs_to_test[found] : backup_clef; // if no key was found, we use backup_clef
 }
 
 
-long infer_most_appropriate_clef_for_voice(t_notation_obj *r_ob, t_voice *voice, double cutoff_threshold)
+long infer_most_appropriate_clef_for_voice(t_notation_obj *r_ob, t_voice *voice, double cutoff_threshold, t_llll *allowed_clefs)
 {
 	t_chord *chord = NULL;
 	t_note *note = NULL;
@@ -41925,7 +41992,7 @@ long infer_most_appropriate_clef_for_voice(t_notation_obj *r_ob, t_voice *voice,
 			llll_appenddouble(ll, note->midicents, 0, WHITENULL_llll);
 	
 	if (ll->l_size > 0)
-		res = infer_most_appropriate_clef(r_ob, ll, cutoff_threshold);
+		res = infer_most_appropriate_clef(r_ob, ll, cutoff_threshold, allowed_clefs);
 	
 	llll_free(ll);
 	

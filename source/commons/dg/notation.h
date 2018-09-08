@@ -5299,6 +5299,10 @@ double deltaxpixels_to_deltauxpixels(t_notation_obj *r_ob, double deltaxpixels);
 double deltauxpixels_to_deltaxpixels(t_notation_obj *r_ob, double deltauxpixels);
 
 
+// TBD
+t_symbol *clef_llllelem_to_symbol(t_llllelem *el);
+
+
 /**	Convert a clef (represented as long) into its name (represented as a symbol)
 	@ingroup		conversions
 	@param	r_ob	The notation object
@@ -5756,9 +5760,10 @@ void swapelem_voicewise_arrays(t_notation_obj *r_ob, long idx1, long idx2);
 	@param	r_ob	The notation object
 	@param	pitches	A not-necessarily-plain llll containing all the pitches as H_DOUBLE elements.
 	@param	cutoff_threshold	Cutoff threshold for pitch ignoring. Pitches falling farther than <cutoff_threshold> * stdev(pitches) are ignored.
+    @param  allowed_clefs       If non-null, sets the list of clefs that are allowed. If NULL, a default set is used.
 	@return			One of the #e_clefs, the most appropriate key to display the pitch content.
 */ 
-long infer_most_appropriate_clef(t_notation_obj *r_ob, t_llll *pitches, double cutoff_threshold);
+long infer_most_appropriate_clef(t_notation_obj *r_ob, t_llll *pitches, double cutoff_threshold, t_llll *allowed_clefs = NULL);
 
 
 /** Infer the most appropriate clefs with which to display the pitches of a given voice. 
@@ -5768,9 +5773,11 @@ long infer_most_appropriate_clef(t_notation_obj *r_ob, t_llll *pitches, double c
 	@param	r_ob	The notation object
 	@param	voice	The voice containing the pitches.
 	@param	cutoff_threshold	Cutoff threshold for pitch ignoring. Pitches falling farther than <cutoff_threshold> * stdev(pitches) are ignored.
+    @param  allowed_clefs       If non-null, sets the list of clefs that are allowed. If NULL, a default set is used.
 	@return			One of the #e_clefs, the most appropriate key to display the pitch content.
  */ 
-long infer_most_appropriate_clef_for_voice(t_notation_obj *r_ob, t_voice *voice, double cutoff_threshold);
+long infer_most_appropriate_clef_for_voice(t_notation_obj *r_ob, t_voice *voice, double cutoff_threshold, t_llll *allowed_clefs = NULL);
+
 
 
 /** Resynchronize the t_notation_obj::full_acc_repr array according to each voice t_voice::full_repr (unless it is the default one), and then parse it 

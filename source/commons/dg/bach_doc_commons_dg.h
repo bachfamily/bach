@@ -999,7 +999,9 @@
 	// the musical content, and will set them: such message will apply to all the existing voices, and will not change the number of voices.
 	// You can use the "auto" symbol instead of any symbol in order to have bach detect automatically the most appropriate clefs
 	// for the given voice, depending on its notes (e.g. <b>clefs auto G FG</b>). However, in this case the message will also change the
-	// <m>numvoices</m> attribute, as for the standard case.
+	// <m>numvoices</m> attribute, as for the standard case. You can restrict the clef to be automatically chosen among a set of clefs by wrapping
+    // them between parentheses, preceded by the "auto" symbol. For instance, <b>clefs G F (auto F G) auto</b> will choose the 3rd clef only between
+    // F and G, while the fourth clef is chosen among a standard set of predefined clefs.
 	// <br /> <br />
 
 #define BACH_DOC_VOICENAMES
