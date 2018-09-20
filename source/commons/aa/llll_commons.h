@@ -635,8 +635,8 @@ t_llllelem **llll_find_multiple_elems(t_llll *ll, t_llll *addresses, t_bool crea
  Actually, llll_iter internally is based on the same approach
  
  */
-long llll_iter(long lists, t_llll **inlist, t_int32 maxdepth,
-			   long scalarmode, long recursionmode, long iterationmode, long spikemode, long unwrap, 
+long llll_iter(long lists, t_llll **inlist, t_atom_long maxdepth,
+			   t_atom_long scalarmode, t_atom_long recursionmode, t_atom_long iterationmode, t_atom_long spikemode, t_atom_long unwrap, 
 			   t_llll_itercache *cache,
 			   iter_datafn datafunc, void *datax,
 			   iter_datafn addressfunc, void *addressx,

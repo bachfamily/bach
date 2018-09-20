@@ -837,8 +837,8 @@ void llll_rotatelevel(t_llll *ll, t_atom_long shift)
  For an example of stack-based depth-first iteration, see e.g. llll_clone() (there's plenty of examples around)
  Actually, llll_iter internally is based on the same approach
  */
-long llll_iter(long lists, t_llll **inlist, t_int32 maxdepth,
-			   long scalarmode, long recursionmode, long iterationmode, long spikemode, long unwrap, 
+long llll_iter(long lists, t_llll **inlist, t_atom_long maxdepth,
+			   t_atom_long scalarmode, t_atom_long recursionmode, t_atom_long iterationmode, t_atom_long spikemode, t_atom_long unwrap,
 			   t_llll_itercache *cache,
 			   iter_datafn datafunc, void *datax,
 			   iter_datafn addressfunc, void *addressx,
