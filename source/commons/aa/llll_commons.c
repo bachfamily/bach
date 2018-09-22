@@ -1145,6 +1145,9 @@ long llll_iter(long lists, t_llll **inlist, t_atom_long maxdepth,
 
 				stop = cmdfunc ? (cmdfunc)(cmdx, movements) : 0;
 
+                if (stop)
+                    goto stopped;
+                
 				this_address = address + lastlist; this_elem = elem + lastlist; i = lastlist;
 				for ( ; this_address >= address; this_address--, this_elem--, i--) {
 					this_hatom = &(*this_elem)->l_hatom;
