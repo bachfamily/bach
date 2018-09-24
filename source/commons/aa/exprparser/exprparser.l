@@ -7,7 +7,7 @@
 
 %s BINARY
 
-SEPARATOR ([ \t\n\(\)\[\]\{\}])
+SEPARATOR ([ \t\n\r\(\)\[\]\{\}])
 UINT ([0-9]+)
 UFLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
 URAT ({UINT}[/][+-]?{UINT})
@@ -259,7 +259,7 @@ ACCIDENTAL ([#bxdq\^v]+)
     return err;
 }
 
-<INITIAL>"+"/[^ \n\t] {
+<INITIAL>"+"/[^ \n\r\t] {
     parserpost(" lex: unary + (ignored)");
 }
 
@@ -400,7 +400,7 @@ t {
     return lexpr_append_lexeme_VAR_substitution(epd->lexeme, yytext, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
 }
 
-[ \t\n] {
+[ \t\n\r] {
 	parserpost(" lex: whitespace\n");
 }
 

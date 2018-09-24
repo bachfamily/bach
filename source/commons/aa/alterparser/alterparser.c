@@ -2259,3 +2259,4 @@ void alterparser_free(void *ptr,void *yyscanner)
 {
     return;
 }
+

@@ -129,7 +129,7 @@ ACCIDENTAL ([#bxdq\^v]+)
         return BACH_SYMBOL;
     }
 
-    [^ \t\n\,\;]*[ \t\n\,\;].* {
+    [^ \t\n\r\,\;]*[ \t\n\r\,\;].* {
         parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym(yytext);
         return BACH_SYMBOL;
