@@ -2,14 +2,14 @@
 #define _LLLL_COMMONS_H_
 
 // very private! don't ever change these!!!
-#define LLLL_PRIMES_TABLE_MAX 46337		// the greatest prime <= sqrt(MAXLONG) (it's the last of our prime table)
-#define LLLL_PRIMES_TABLE_SIZE 4792		// how many primes do we have in our table?
-#define LLLL_STACK_SIZESTEP 64			// the dynamic allocation step used by llll_stack
-#define LLLL_BUF_SIZE_STEP 16384		// the dynamic allocation step for text buffers
-#define LLLL_IDX2PTR_SLOTS	1048576		// the number of slots for the llll_phonebook p_idx2ptr hash table (the hashing is just a modulo, so a power of 2 is fine)
+#define LLLL_PRIMES_TABLE_MAX 46337        // the greatest prime <= sqrt(MAXLONG) (it's the last of our prime table)
+#define LLLL_PRIMES_TABLE_SIZE 4792        // how many primes do we have in our table?
+#define LLLL_STACK_SIZESTEP 64            // the dynamic allocation step used by llll_stack
+#define LLLL_BUF_SIZE_STEP 16384        // the dynamic allocation step for text buffers
+#define LLLL_IDX2PTR_SLOTS    1048576        // the number of slots for the llll_phonebook p_idx2ptr hash table (the hashing is just a modulo, so a power of 2 is fine)
 #define BACH_SHASHTABLE_SLOTS 1024
-#define	QUOTE_CHAR ('`')				// the special character for quoting
-#define LLLL_NATIVE_MSG	(_llllobj_sym_bach_llll)
+#define    QUOTE_CHAR ('`')                // the special character for quoting
+#define LLLL_NATIVE_MSG    (_llllobj_sym_bach_llll)
 
 #define LLLL_PUSH_SYMBOL (_llllobj_sym_open_square_bracket)
 #define LLLL_POP_SYMBOL (_llllobj_sym_closed_square_bracket)
@@ -18,9 +18,9 @@
 #define LLLL_PUSH_CSTR "["
 #define LLLL_POP_CSTR "]"
 
-#define TEXT_LIST_MAX_LENGTH		65536
-#define ATOM_LIST_LENGTH_STEP		(4096*64)
-#define TEXT_BUF_SIZE_STEP			(4096*64)
+#define TEXT_LIST_MAX_LENGTH        65536
+#define ATOM_LIST_LENGTH_STEP        (4096*64)
+#define TEXT_BUF_SIZE_STEP            (4096*64)
 
 #include "llll_append.h"
 #include "llll_hatom_change.h"
@@ -45,10 +45,10 @@
 // flags for llll_deparse()
 // NB: for cross-architecture compatibility, 64-bit floats are stored as two longs even under 64-bit architecture
 typedef enum _llll_deparse_flags {
-	LLLL_D_NONE         = 0x00,
-	LLLL_D_QUOTE        = 0x01, // backtick symbols if they can be interpreted as other data types
+    LLLL_D_NONE         = 0x00,
+    LLLL_D_QUOTE        = 0x01, // backtick symbols if they can be interpreted as other data types
     LLLL_D_MAX          = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
-	LLLL_D_FLOAT64      = 0x04,	// encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
+    LLLL_D_FLOAT64      = 0x04,    // encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
     LLLL_D_NEGOCTAVES   = 0x08,  // pitches with negative octaves can be output
     LLLL_D_ALL          = 0x0F
 } e_llll_deparse_flags;
@@ -57,8 +57,8 @@ typedef enum _llll_deparse_flags {
 
 // flags for llll_to_text_buf
 typedef enum _llll_text_flags {
-	LLLL_T_NONE								= 0x0000,
-	LLLL_T_NULL								= 0x0001,	// null is returned if list is empty
+    LLLL_T_NONE                                = 0x0000,
+    LLLL_T_NULL                                = 0x0001,    // null is returned if list is empty
     LLLL_T_NEGATIVE_OCTAVES                 = 0x0002,   // negative octaves are used (i.e., pitches are always positive)
     LLLL_T_ALL                              = 0x0003,
 } e_llll_text_flags;
@@ -132,16 +132,16 @@ typedef enum _llll_parse_ignore_flags {
 
 // outlet types (used in the llllobj_out structure)
 typedef enum _llllobj_outlet_types {
-	LLLL_O_DISABLED		= 0x0000,
-	LLLL_O_BANG         = 0x0001,
-	LLLL_O_LONG         = 0x0002,
-	LLLL_O_FLOAT        = 0x0004,
-	LLLL_O_LIST         = 0x0008,
-	LLLL_O_ANYTHING     = 0x0010,
-	LLLL_O_NATIVE       = 0x0020,
-	LLLL_O_TEXT         = 0x0080,
+    LLLL_O_DISABLED        = 0x0000,
+    LLLL_O_BANG         = 0x0001,
+    LLLL_O_LONG         = 0x0002,
+    LLLL_O_FLOAT        = 0x0004,
+    LLLL_O_LIST         = 0x0008,
+    LLLL_O_ANYTHING     = 0x0010,
+    LLLL_O_NATIVE       = 0x0020,
+    LLLL_O_TEXT         = 0x0080,
     LLLL_O_MAX          = 0x0100,
-	LLLL_O_SIGNAL       = 0x0200 // unused for now
+    LLLL_O_SIGNAL       = 0x0200 // unused for now
 } e_llllobj_outlet_types;
 
 
@@ -151,7 +151,7 @@ typedef enum _llllobj_outlet_types {
 
 // what's in this elem?
 typedef enum _llll_elem_types {
-    LLLL_E_NULL	= 0x01,
+    LLLL_E_NULL    = 0x01,
     LLLL_E_LLLL = 0x02,
     LLLL_E_ATOM = 0x04
 } e_llll_elem_types;
@@ -179,11 +179,11 @@ typedef enum _llll_modes_spike {
 
 // flags for llll_funall
 typedef enum _llll_funall_flags {
-	FUNALL_ONLY_PROCESS_ATOMS = 0,
-	FUNALL_PROCESS_WHOLE_SUBLISTS,
-	FUNALL_SKIP_ATOMS,
-	FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH,
-	FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH_AND_SKIP_ATOMS
+    FUNALL_ONLY_PROCESS_ATOMS = 0,
+    FUNALL_PROCESS_WHOLE_SUBLISTS,
+    FUNALL_SKIP_ATOMS,
+    FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH,
+    FUNALL_PROCESS_SUBLISTS_ONLY_AT_MAXDEPTH_AND_SKIP_ATOMS
 } e_llll_funall_flags;
 
 
@@ -192,10 +192,10 @@ typedef enum _llll_funall_flags {
 // a stack for pointers
 // there is a small set of functions for dealing with it
 typedef struct _llll_stack {
-	void **s_stack;		// the stack itself
-	void **s_current;	// pointer to the last pushed item in the stack
-	long s_size;		// the current size of the stack (it's dynamic!)
-	long s_items;		// the number of items in the stack
+    void **s_stack;        // the stack itself
+    void **s_current;    // pointer to the last pushed item in the stack
+    long s_size;        // the current size of the stack (it's dynamic!)
+    long s_items;        // the number of items in the stack
 } t_llll_stack;
 
 
@@ -203,17 +203,17 @@ typedef struct _llll_stack {
 
 // used by bach.step
 typedef struct _llll_itercache {
-	long				i_active;			// are we inside an iteration? (if 0, all the other fields are not significant)
-	t_llll_stack		*i_elem_stack;		// the stack containing the higher-level elems, and this one
-	t_llll_stack		*i_inlist_stack;	// the stack containing the higher-level lllls, and this one
-	t_llll_stack		*i_steps_stack;		// the stack containing the higher-level steps (they are actually longs!), and this one
-	t_llll				**i_address;		// an array of lllls, containing the current address for every iterated llll
-	t_atom_long			*i_len;				// the lengths of all the iterated lllls
-	long				*i_temporaries;		// the stack depth of the temporary sublist currently open
-	long				i_movements;		// which way we're moving
-	long				i_direction;		// the current direction
-//	t_systhread_mutex	i_mutex;
-//	t_bach_atomic_lock	i_inuse;
+    long                i_active;            // are we inside an iteration? (if 0, all the other fields are not significant)
+    t_llll_stack        *i_elem_stack;        // the stack containing the higher-level elems, and this one
+    t_llll_stack        *i_inlist_stack;    // the stack containing the higher-level lllls, and this one
+    t_llll_stack        *i_steps_stack;        // the stack containing the higher-level steps (they are actually longs!), and this one
+    t_llll                **i_address;        // an array of lllls, containing the current address for every iterated llll
+    t_atom_long            *i_len;                // the lengths of all the iterated lllls
+    long                *i_temporaries;        // the stack depth of the temporary sublist currently open
+    long                i_movements;        // which way we're moving
+    long                i_direction;        // the current direction
+//    t_systhread_mutex    i_mutex;
+//    t_bach_atomic_lock    i_inuse;
 } t_llll_itercache;
 
 
@@ -224,26 +224,26 @@ typedef struct _llll_itercache {
 // this structure contains a term of comparison (that is, a hatom of the llll to sort)
 // and a set of data with all the other stuff needed for outputting the hatom for the comparison outlet
 typedef struct _llll_sort_item {
-	t_hatom		n_term;		// the elem in the original
-	long		n_idx;		// the index of the item in the original llll
-	t_llll		*n_this_by;
-	
-	// fields if the outlet is native
-	t_symbol	*n_n_sym;	// always bach.llll
-	t_atom		*n_n_av;	// atom containing the llll phonenumber. native_ac is always 1 - so we don't need it!
-	
-	// fields if the outlet is text
-	t_symbol	*n_t_sym;	// the message selector
-	long		n_t_ac;		// ac
-	t_atom		*n_t_av;	// av
-	t_atom		*n_t_freeme;	// the atom* to free might not be n_t_av, so we use this instead
+    t_hatom        n_term;        // the elem in the original
+    long        n_idx;        // the index of the item in the original llll
+    t_llll        *n_this_by;
+    
+    // fields if the outlet is native
+    t_symbol    *n_n_sym;    // always bach.llll
+    t_atom        *n_n_av;    // atom containing the llll phonenumber. native_ac is always 1 - so we don't need it!
+    
+    // fields if the outlet is text
+    t_symbol    *n_t_sym;    // the message selector
+    long        n_t_ac;        // ac
+    t_atom        *n_t_av;    // av
+    t_atom        *n_t_freeme;    // the atom* to free might not be n_t_av, so we use this instead
     
     
     // fields if the outlet is max
-    t_symbol	*n_m_sym;	// the message selector
-    long		n_m_ac;		// ac
-    t_atom		*n_m_av;	// av
-    t_atom		*n_m_freeme;	// the atom* to free might not be n_t_av, so we use this instead
+    t_symbol    *n_m_sym;    // the message selector
+    long        n_m_ac;        // ac
+    t_atom        *n_m_av;    // av
+    t_atom        *n_m_freeme;    // the atom* to free might not be n_t_av, so we use this instead
     
 } t_llll_sort_item;
 // NB: in principle, bach.sort might have one of the two comparison outlet being native and the other being text
@@ -257,22 +257,22 @@ typedef struct _llll_sort_item {
 // you give it something, and get a key to retrieve it
 // it can be thread-safe or not (see shashtable_new) and should be extremely fast (especially in the latter 
 typedef struct _shashtable {
-	struct _simpll		*s_idx2ptr[BACH_SHASHTABLE_SLOTS];	// the index is the key, the llll* is the data
-	t_atom_long_atomic	s_lastused;						// last phone number used (they are given in increasing order)
-	t_systhread_mutex	s_mutex;
+    struct _simpll        *s_idx2ptr[BACH_SHASHTABLE_SLOTS];    // the index is the key, the llll* is the data
+    t_atom_long_atomic    s_lastused;                        // last phone number used (they are given in increasing order)
+    t_systhread_mutex    s_mutex;
 } t_shashtable;
 
 
 // one of the linked lists of a phonebook
 typedef struct _simpll {
-	struct _simpllelem	*s_head;
-	t_bach_atomic_lock	s_lock;
+    struct _simpllelem    *s_head;
+    t_bach_atomic_lock    s_lock;
 } t_simpll;
 
 typedef struct _simpllelem {
-	void				*s_thing;
-	unsigned long		s_key;
-	struct _simpllelem	*s_next;
+    void                *s_thing;
+    unsigned long        s_key;
+    struct _simpllelem    *s_next;
 } t_simpllelem;
 
 class t_function;
@@ -283,41 +283,41 @@ class t_sharedVariable;
 
 // the bach NOBOX object
 typedef struct _bach {
-	t_object			b_ob;
+    t_object            b_ob;
     
 // version data, saved inside the bach object in the main() routine
     unsigned long       b_version;
     char                b_version_string[128];
     char                b_version_string_verbose[128];
     char                b_version_string_verbose_with_build[128];
-	unsigned long		b_llll_version;
+    unsigned long        b_llll_version;
     char                b_llll_version_string[128];
     unsigned long       b_buildnumber;
-	
-	t_llll				**b_llll_book; // an array of arrays of lllls
-	t_uint32			**b_llll_phonebook;
-	t_uint32			b_llll_current_phonebook_idx;
-	t_uint32			b_llll_pool_size;
-	t_bach_atomic_lock	b_llll_pool_lock;
-	t_llll				b_llll_model;
-	
-	t_llllelem_numbered	**b_llllelem_book; // an actual array of llllelems
-	t_uint32			**b_llllelem_phonebook;
-	t_uint32			b_llllelem_current_phonebook_idx;
-	t_uint32			b_llllelem_pool_size;
-	t_bach_atomic_lock	b_llllelem_pool_lock;
-	t_llllelem_numbered	b_llllelem_model;
+    
+    t_llll                **b_llll_book; // an array of arrays of lllls
+    t_uint32            **b_llll_phonebook;
+    t_uint32            b_llll_current_phonebook_idx;
+    t_uint32            b_llll_pool_size;
+    t_bach_atomic_lock    b_llll_pool_lock;
+    t_llll                b_llll_model;
+    
+    t_llllelem_numbered    **b_llllelem_book; // an actual array of llllelems
+    t_uint32            **b_llllelem_phonebook;
+    t_uint32            b_llllelem_current_phonebook_idx;
+    t_uint32            b_llllelem_pool_size;
+    t_bach_atomic_lock    b_llllelem_pool_lock;
+    t_llllelem_numbered    b_llllelem_model;
 
-	t_object			*b_initpargs; // the initpargs singleton object, which can call the "dopargs" method of all the registered bach.portal objects
+    t_object            *b_initpargs; // the initpargs singleton object, which can call the "dopargs" method of all the registered bach.portal objects
     t_hashtab           *b_portalpatchers; // a table of all the patchers containing bach.portal objects, associated to lllls of the objects themselves
-	
-	long				*b_primes;
-	t_hashtab			*b_memmap;
-	t_hashtab			*b_poolmap;
-	t_systhread_mutex	b_memmap_lock;
-	
-	t_hashtab			*b_helppatches;
-	t_bool				b_loadtime;
+    
+    long                *b_primes;
+    t_hashtab            *b_memmap;
+    t_hashtab            *b_poolmap;
+    t_systhread_mutex    b_memmap_lock;
+    
+    t_hashtab            *b_helppatches;
+    t_bool                b_loadtime;
     
     t_hashtab           *b_reservedselectors;
     
@@ -614,12 +614,12 @@ t_llllelem **llll_find_multiple_elems(t_llll *ll, t_llll *addresses, t_bool crea
  ABOUT lambdafn:
  the callback function is passed void* (typically the calling object), array of lllls, and an array of elements, and an array of addresses, all of size <lists>.
 
- -	the elements are the elements we're about to enter.
-	they can hold an H_LLLL atom, of which the contained llll is going to be entered. at least one H_LLLL atom is always present.
-	or a non-H_LLLL atom, in which case a virtual sublist is about to be created, and the atom is going to be iterated against the other sublists.
-	or an element can be NULL, which means that all the elements of its containing llll have already been iterated.
-	You can check out each element's parent llll.
- -	the addresses are actually lllls, each containing the address of the element about to be entered.
+ -    the elements are the elements we're about to enter.
+    they can hold an H_LLLL atom, of which the contained llll is going to be entered. at least one H_LLLL atom is always present.
+    or a non-H_LLLL atom, in which case a virtual sublist is about to be created, and the atom is going to be iterated against the other sublists.
+    or an element can be NULL, which means that all the elements of its containing llll have already been iterated.
+    You can check out each element's parent llll.
+ -    the addresses are actually lllls, each containing the address of the element about to be entered.
  the callback function should return 0 to prevent the sublists from being entered, 1 to allow them
  IMPORTANT: you can't perform destructive operations, nor output from the outlets, the data you receive from the callback function.
  If you need to, clone them first!
@@ -636,13 +636,13 @@ t_llllelem **llll_find_multiple_elems(t_llll *ll, t_llll *addresses, t_bool crea
  
  */
 long llll_iter(long lists, t_llll **inlist, t_atom_long maxdepth,
-			   t_atom_long scalarmode, t_atom_long recursionmode, t_atom_long iterationmode, t_atom_long spikemode, t_atom_long unwrap, 
-			   t_llll_itercache *cache,
-			   iter_datafn datafunc, void *datax,
-			   iter_datafn addressfunc, void *addressx,
-			   iter_cmdfn cmdfunc, void *cmdx,
-			   iter_rootfn rootfunc, void *rootx,
-			   iter_lambdafn lambdafn, void *lambdax);
+               t_atom_long scalarmode, t_atom_long recursionmode, t_atom_long iterationmode, t_atom_long spikemode, t_atom_long unwrap, 
+               t_llll_itercache *cache,
+               iter_datafn datafunc, void *datax,
+               iter_datafn addressfunc, void *addressx,
+               iter_cmdfn cmdfunc, void *cmdx,
+               iter_rootfn rootfunc, void *rootx,
+               iter_lambdafn lambdafn, void *lambdax);
 
 
 
@@ -860,7 +860,7 @@ t_llll *llll_cartesianprod( t_llll **inll, long count);
 // recursive: if a match is found and it's a LLLL, do I look into it as well?
 // data: passed unchanged to cmpfn (tipically, the calling object)
 t_llll *llll_find(t_llll *ll, t_llll *addresses, t_atom_long what_size, t_atom_long min_lvl, t_atom_long max_lvl, t_atom_long min_idx, t_atom_long max_idx, 
-				  long idx_reject, long depth_reject, t_atom_long max_count, long recursive, long unwrap, long depthpolicy, long matchdepth, find_fn cmpfn, void *data);
+                  long idx_reject, long depth_reject, t_atom_long max_count, long recursive, long unwrap, long depthpolicy, long matchdepth, find_fn cmpfn, void *data);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1228,7 +1228,7 @@ void simpll_insert_sorted(t_simpll *tll, void *thing, t_atom_ulong key);
 // remove an element from sll
 void simpll_chuck_key(t_simpll *sll, t_atom_ulong key);
 
-// VERY USEFUL!	convert a text in a series of atoms of any length!
+// VERY USEFUL!    convert a text in a series of atoms of any length!
 void llll_text2atoms(char *text, long *ac, t_atom **av);
 
 
@@ -1297,4 +1297,4 @@ t_atom_long llll_getlong(t_llll *ll, t_atom_long def = 0);
 END_CHECK_LINKAGE
 #endif
 
-#endif // _LLLL_COMMONS_H_	
+#endif // _LLLL_COMMONS_H_    
