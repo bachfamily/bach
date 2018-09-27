@@ -50,7 +50,8 @@ typedef enum _llll_deparse_flags {
     LLLL_D_MAX          = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
     LLLL_D_FLOAT64      = 0x04,    // encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
     LLLL_D_NEGOCTAVES   = 0x08,  // pitches with negative octaves can be output
-    LLLL_D_ALL          = 0x0F
+    LLLL_D_PARENS       = 0x10,  // pitches with negative octaves can be output
+    LLLL_D_ALL          = 0x1F
 } e_llll_deparse_flags;
 
 

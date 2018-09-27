@@ -281,6 +281,15 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
     stack = llll_stack_new();
     elem = ll->l_head;
     
+    t_symbol *pushsym, *popsym;
+    if (flags & LLLL_D_PARENS) {
+        pushsym = _llllobj_sym_open_round_bracket;
+        popsym = _llllobj_sym_closed_round_bracket;
+    } else {
+        pushsym = LLLL_PUSH_SYMBOL;
+        popsym = LLLL_POP_SYMBOL;
+    }
+    
     while (1) {
         while (elem) {
             if (ac >= outsize - 5) { // we always leave some more place for the possible closed parenthesis and a float64
@@ -357,7 +366,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
                 }
                 case H_LLLL:
                     subll = elem->l_hatom.h_w.w_llll;
-                    atom_setsym(this_out++, LLLL_PUSH_SYMBOL);
+                    atom_setsym(this_out++, pushsym);
                     ac ++;
                     llll_stack_push(stack, elem);
                     elem = subll->l_head;
@@ -392,7 +401,7 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
         }
         if (!stack->s_items)
             break;
-        atom_setsym(this_out++, LLLL_POP_SYMBOL);
+        atom_setsym(this_out++, popsym);
         ac ++;
         elem = (t_llllelem *) llll_stack_pop(stack);
         elem = elem->l_next;

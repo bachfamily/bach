@@ -155,6 +155,17 @@ int T_EXPORT main()
      // This list adds up to the names of the attributes of the objects connected to <o>bach.textout</o>'s rightmost outlet,
      // and to the usual set of reserved symbols that are backticked anyway.
      */
+    
+    /*
+     CLASS_ATTR_LONG(c, "parens",    0,    t_textout, n_flags);
+     CLASS_ATTR_FILTER_CLIP(c, "parens", 0, 1);
+     CLASS_ATTR_LABEL(c, "parens", 0, "Use Parens");
+     CLASS_ATTR_STYLE(c, "parens", 0, "onoff");
+     // @description When set to 0 (default),
+     // list levels are marked by square brackets.
+     // When set to 1, they are marked by parens.
+     // This is especially useful when exporting data to Lisp programs.
+     */
 
     class_register(CLASS_BOX, c);
     textout_class = c;
@@ -326,6 +337,12 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
                 if (i < ac) {
                     if (atom_getlong(av + i))
                         x->n_flags |= LLLL_D_NEGOCTAVES;
+                } else
+                    object_error((t_object *) x, "Missing attribute value for @negativeoctaves");
+            } else if (!strcmp(attrname, "parens")) {
+                if (i < ac) {
+                    if (atom_getlong(av + i))
+                        x->n_flags |= LLLL_D_PARENS;
                 } else
                     object_error((t_object *) x, "Missing attribute value for @negativeoctaves");
             } else
