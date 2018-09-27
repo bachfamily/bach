@@ -42,7 +42,7 @@ long notationobj_get_notification_outlet(t_notation_obj *r_ob)
 }
 
 // returns the height for base pt, vzoom = 1.
-double notationobj_get_supposed_standard_height(t_notation_obj *r_ob)
+double notationobj_get_supposed_standard_uheight(t_notation_obj *r_ob)
 {
     long num_staves = get_num_staves(r_ob, true);
     // calculating vertical spacing
@@ -70,7 +70,7 @@ void notationobj_reset_size_related_stuff(t_notation_obj *r_ob)
 
 void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double height)
 {
-    double supposedheight = notationobj_get_supposed_standard_height(r_ob);
+    double supposedheight = notationobj_get_supposed_standard_uheight(r_ob);
     r_ob->needed_uheight = supposedheight;
     r_ob->needed_uheight_for_one_system = supposedheight / ((r_ob->num_systems > 0) ? r_ob->num_systems : 1);
     r_ob->zoom_y = MAX(0.01, height / supposedheight);
@@ -1180,6 +1180,28 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
     jgraphics_stroke(g);
 }
 
+void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
+{
+    double playhead_y1, playhead_y2, play_head_pos;
+    if (r_ob->playing) {
+        get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+            play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_ux);
+        else
+            play_head_pos = onset_to_xposition(r_ob, r_ob->play_head_ms, NULL);
+
+        paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * r_ob->zoom_y);
+    } else if (r_ob->show_playhead) {
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+            play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_start_ux);
+        else
+            play_head_pos = onset_to_xposition(r_ob, r_ob->play_head_start_ms, NULL);
+
+        get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
+        paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * r_ob->zoom_y);
+    }
+    
+}
 
 
 void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect, t_jfont *jf_text_legend)
@@ -3444,14 +3466,17 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         long count = 0;
         long ms_limit = MAX(1000000, r_ob->length_ms);
 		for (pix = start_x, i = tick_offset, ms = start_ms; pix < graphic_rect.width && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
-			
+            
             if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
                 pix = onset_to_xposition(r_ob, ms, NULL);
                 if (prev_pix == pix) count++; else count = 0;
                 if (count > 100) break;
                 if (pix != pix) { pix = prev_pix; continue; } // NaN
             }
-            
+
+            if (!r_ob->fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < r_ob->screen_ms_start)
+                continue;
+
             if (pix < 0)
                 continue;
             
@@ -3489,6 +3514,10 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
             double prev_pix = -10000000;
             long count = 0;
 			for (ms = start_ms, pix = start_x, i = tick_offset, div = 0; pix < graphic_rect.width && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
+
+                if (!r_ob->fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < r_ob->screen_ms_start)
+                    continue;
+                
                 if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
 					pix = onset_to_xposition(r_ob, ms, NULL);
                     if (prev_pix == pix) count++; else count = 0;
@@ -3937,7 +3966,8 @@ long yposition_to_systemnumber(t_notation_obj *r_ob, double yposition){
 	}
 }
 
-double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system){
+double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system)
+{
 	long this_system;
 	double res = 0;
 	if (system) {
@@ -3968,7 +3998,25 @@ double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system){
 	return res;
 }
 
-double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system){
+
+double get_domain_width_pixels(t_notation_obj *r_ob)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+        return deltaonset_to_deltaxpixels(r_ob, r_ob->domain);
+    else
+        return deltauxpixels_to_deltaxpixels(r_ob, r_ob->domain_ux);
+}
+
+double get_predomain_width_pixels(t_notation_obj *r_ob)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+        return onset_to_xposition(r_ob, r_ob->screen_ms_start, NULL);
+    else
+        return unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start);
+}
+
+double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system)
+{
 	double res = system * r_ob->ms_on_a_line + r_ob->screen_ms_start +
 				(((xposition - r_ob->j_inset_x) / r_ob->zoom_y) - CONST_ROLL_UX_LEFT_START - r_ob->key_signature_uwidth - r_ob->voice_names_uwidth - r_ob->additional_ux_start_pad) / (CONST_X_SCALING * r_ob->zoom_x);
 	if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
@@ -8351,8 +8399,9 @@ void synchronize_boxes_for_measure(t_notation_obj *r_ob, t_measure *measure)
 	}
 }
 
-void set_measure_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature ts){
-	measure->timesignature = ts;
+void measure_set_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature *ts)
+{
+	measure->timesignature = *ts;
 	compute_utf_timesignature(r_ob, &measure->timesignature);
 	synchronize_boxes_for_measure(r_ob, measure);
 	measure->need_check_autocompletion = true;
@@ -8460,7 +8509,7 @@ t_timesignature get_timesignature_from_llll(t_object *n_ob, t_llll *time_signatu
 }
 
 
-void set_measure_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure, t_llll *time_signature, 
+void measure_set_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure, t_llll *time_signature, 
 										t_llll *tempo, char measure_barline, t_llll *parameters, char when_no_ts_given_use_previous_or_nearest_measure_ts)
 { 
 	//	char debug[1000];
@@ -9769,7 +9818,7 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
 	outmeas->locked = false;
 	outmeas->muted = false;
 	outmeas->solo = false;
-	outmeas->beaming_calculation_flags = k_BEAMING_CALCULATION_FROM_SCRATCH;
+	outmeas->beaming_calculation_flags = k_BEAMING_CALCULATION_DO;
 
 	outmeas->custom_boxing = false;
 	outmeas->boxes = llll_get();
@@ -9796,7 +9845,7 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
 	
 	// if time_signature lll is correct, we put that time signature
 	if (time_signature) 
-		set_measure_ts_and_tempo_from_llll(r_ob, outmeas, time_signature, NULL, 0, NULL, false);
+		measure_set_ts_and_tempo_from_llll(r_ob, outmeas, time_signature, NULL, 0, NULL, false);
 	
 	if (time_signature) 
 		compute_utf_timesignature(r_ob, &outmeas->timesignature);
@@ -10324,7 +10373,7 @@ t_note *slice_note(t_notation_obj *r_ob, t_note *note, double left_slice_duratio
 	t_note *right_note = clone_note(r_ob, note, k_CLONE_FOR_SPLIT); // new (sliced) note
 	long i;
 	
-	if (are_note_breakpoints_nontrivial(r_ob, note)) {
+	if (note_breakpoints_are_nontrivial(r_ob, note)) {
 		// split breakpoints
 		double new_midicents = note->midicents;
 		t_llll *left_bpt = note_get_partial_breakpoint_values_as_llll(r_ob, note, 0., cut_rel_pos, NULL);
@@ -10674,7 +10723,7 @@ long clone_chord_in_rhythmic_tree_fn(void *data, t_hatom *a, const t_llll *addre
 	if (hatom_gettype(a) == H_OBJ){
 		t_chord *ch = (t_chord *)hatom_getobj(a);
 		t_chord *newch = clone_chord_without_lyrics(r_ob, ch, (e_clone_for_types)clone_for);
-		insert_chord_in_measure(r_ob, meas, newch, *prev_chord, 0);
+		chord_insert_in_measure(r_ob, meas, newch, *prev_chord, 0);
 		newch->rhythmic_tree_elem = llll_hatom2elem(a);
 		hatom_setobj(a, (t_object *)newch);
 		*prev_chord = newch;
@@ -10704,7 +10753,7 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
 	newmeasure->locked = measure->locked;
 	newmeasure->muted = measure->muted;
 	newmeasure->solo = measure->solo;
-	newmeasure->beaming_calculation_flags = k_BEAMING_CALCULATION_FROM_SCRATCH;
+	newmeasure->beaming_calculation_flags = k_BEAMING_CALCULATION_DO;
 	
 	newmeasure->local_spacing_width_multiplier = measure->local_spacing_width_multiplier;
 	newmeasure->fixed_spacing_uwidth = measure->fixed_spacing_uwidth;
@@ -10739,7 +10788,7 @@ t_measure* clone_measure(t_notation_obj *r_ob, t_measure *measure, e_clone_for_t
 		t_chord *temp_ch = measure->firstchord, *last_ch = NULL;
 		while (temp_ch) {
 			t_chord *cloned = clone_chord(r_ob, temp_ch, k_CLONE_FOR_NEW);
-			insert_chord_in_measure(r_ob, measure, cloned, last_ch, 0);
+			chord_insert_in_measure(r_ob, measure, cloned, last_ch, 0);
 			last_ch = cloned; 
 		}
 		newmeasure->rhythmic_tree = NULL;
@@ -11446,7 +11495,7 @@ char is_chord_a_whole_measure_rest(t_notation_obj *r_ob, t_chord *chord){
 		return 0;
 }
 
-void insert_chord_in_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *chord_to_insert, t_chord *after_this_chord, unsigned long force_ID){
+void chord_insert_in_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *chord_to_insert, t_chord *after_this_chord, unsigned long force_ID){
 // insert an (already built) chord in a measure, at a given position. Automatically computes the r_sym_onset field.
 	
 	chord_to_insert->parent = measure;
@@ -14781,6 +14830,72 @@ char is_level_an_all_rests_level(t_notation_obj *r_ob, t_llll *box, t_rational *
 }
 
 
+
+long fix_level_type_flag_for_level_as_ignore_fn(void *data, t_hatom *a, const t_llll *address){
+    if (hatom_gettype(a) == H_LLLL) {
+        if (!hatom_getllll(a)->l_thing.w_obj) {
+            hatom_getllll(a)->l_thing.w_obj = build_rhythm_level_properties();
+            ((t_rhythm_level_properties *)hatom_getllll(a)->l_thing.w_obj)->level_type = k_RHYTHM_LEVEL_IGNORE;
+            *((char *) data) = true;
+        } else if (!(((t_rhythm_level_properties *)hatom_getllll(a)->l_thing.w_obj)->level_type & k_RHYTHM_LEVEL_IGNORE)){
+            ((t_rhythm_level_properties *)hatom_getllll(a)->l_thing.w_obj)->level_type &= ~k_RHYTHM_LEVEL_FORCE_TUPLET; // we remove the force tuplet flag!
+            ((t_rhythm_level_properties *)hatom_getllll(a)->l_thing.w_obj)->level_type |= k_RHYTHM_LEVEL_IGNORE;
+            *((char *) data) = true;
+        }
+    }
+    return 0;
+}
+
+
+
+char rebeam_level(t_notation_obj *r_ob, t_measure *meas, t_llllelem *level, char also_destroy_tuplets, char force_autoparse, long flags)
+{
+    if (!level || !meas)
+        return 0;
+    
+    t_llll *llll = NULL;
+    
+    if (level == WHITENULL_llllelem && meas)
+        llll = meas->rhythmic_tree;
+    else if (level != WHITENULL_llllelem && hatom_gettype(&level->l_hatom) == H_LLLL)
+        llll = hatom_getllll(&level->l_hatom);
+    else
+        llll = NULL;
+    
+    if (llll && meas) {
+        char this_changed = 0;
+        create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)meas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+        
+        verbose_post_rhythmic_tree(r_ob, meas, gensym("Tab Pressed1"), 1);
+        if (llll) {
+            llll_funall(llll, fix_level_type_flag_for_level_as_ignore_fn, &this_changed, 1, -1, FUNALL_SKIP_ATOMS);
+            if (this_changed && !also_destroy_tuplets)
+                set_tuplet_levels_as_keep_levels(llll);
+        }
+        verbose_post_rhythmic_tree(r_ob, meas, gensym("Tab Pressed2"), 1);
+        
+        if (are_all_chords_in_measure_selected(r_ob, meas)){
+            this_changed |= (!meas->rhythmic_tree->l_thing.w_obj || ((t_rhythm_level_properties *)meas->rhythmic_tree->l_thing.w_obj)->level_type != k_RHYTHM_LEVEL_IGNORE);
+            if (this_changed) {
+                llll_funall(meas->rhythmic_tree, fix_level_type_flag_for_level_as_ignore_fn, &this_changed, 1, -1, FUNALL_SKIP_ATOMS);
+                if (!also_destroy_tuplets)
+                    set_tuplet_levels_as_keep_levels(meas->rhythmic_tree);
+            }
+        }
+        
+        if (this_changed)
+            recompute_all_for_measure(r_ob, meas, true);
+        
+        verbose_post_rhythmic_tree((t_notation_obj *) x, meas, gensym("Tab Pressed"), 1);
+        
+        return this_changed;
+    }
+    
+    return 0;
+}
+
+
+
 // returns 1 if changed, 0 if unchanged
 // if only_additional_refining == 1, this function will NOT involve
 char refine_beams_for_level_once(t_notation_obj *r_ob, t_llll *box, char for_sublllls_use_max_beam_number_if_under_beam, 
@@ -15845,7 +15960,7 @@ void get_rhythm_drawable_one_step(t_notation_obj *r_ob, t_llll *box, char only_c
 						new_ch->overall_tuplet_ratio = overall_tuplet_ratio;
 						compute_chord_figure(r_ob, new_ch, true);
 						boxelem = new_ch->rhythmic_tree_elem = llll_insertobj_after(new_ch, boxelem, 0, WHITENULL_llll);
-						insert_chord_in_measure(r_ob, this_chord->parent, new_ch, lastchord_for_insertion, 0);
+						chord_insert_in_measure(r_ob, this_chord->parent, new_ch, lastchord_for_insertion, 0);
 						lastchord_for_insertion = new_ch;
 						llll_appendobj(chords_to_tie, new_ch->prev, 0, WHITENULL_llll);
 						
@@ -16302,7 +16417,7 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
 				char sign = thisch->r_sym_duration.r_num >= 0 ? 1 : -1;
 				t_llll *newllll;
 				
-				insert_chord_in_measure(r_ob, measure, new_ch, thisch, 0);
+				chord_insert_in_measure(r_ob, measure, new_ch, thisch, 0);
 				tie_chord(thisch);
 				whitenull_tie_from(chord_get_next(new_ch));
 				thisch->r_sym_duration = rat_long_prod(rat_rat_diff(rat_abs(thisch->r_sym_duration), diff), sign);
@@ -16377,7 +16492,7 @@ void split_first_level_according_to_boxes(t_notation_obj *r_ob, t_measure *measu
 							
 							t_chord *new_ch = clone_chord_without_lyrics(r_ob, splitchord, k_CLONE_FOR_SPLIT);
 							
-							insert_chord_in_measure(r_ob, measure, new_ch, splitchord, 0);
+							chord_insert_in_measure(r_ob, measure, new_ch, splitchord, 0);
 							tie_chord(splitchord);
 							whitenull_tie_from(chord_get_next(new_ch));
 							new_ch->r_sym_duration = right_dur;
@@ -17838,7 +17953,7 @@ long find_tuplets_for_level_fn(void *data, t_hatom *a, const t_llll *address)
 								compute_chord_figure(r_ob, new_ch, false);
 								chord_elem = new_ch->rhythmic_tree_elem = llll_insertobj_after(new_ch, tuplet_level_chords->l_owner, 0, WHITENULL_llll);
 								next_chord_elem = chord_elem->l_next;
-								insert_chord_in_measure(r_ob, old_ch->parent, new_ch, old_ch, 0);
+								chord_insert_in_measure(r_ob, old_ch->parent, new_ch, old_ch, 0);
 								tie_chord(new_ch->prev);
 								whitenull_tie_from(chord_get_next(new_ch));
 
@@ -18989,7 +19104,7 @@ void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beamin
 		curr_ch->topmost_stafftop_uy = curr_ch->bottommost_stafftop_uy = curr_ch->topmost_stafftop_uy_noacc = curr_ch->bottommost_stafftop_uy_noacc = -32000;
     }
 	
-	// We update the num_chords field of the measure. This might NOT be needed, if we used the insert_chord_in_measure() function, but we'll keep it for now.
+	// We update the num_chords field of the measure. This might NOT be needed, if we used the chord_insert_in_measure() function, but we'll keep it for now.
 	update_measure_chordnumbers(measure);
 	
 	// We recompute all the chord figures. This should NOT be needed as well (we should have already done it), but we'll keep it for now.
@@ -21319,7 +21434,7 @@ char chord_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_chord *
 
 // used by roll
 // returns 1 if need to check correct scheduling, 0 otherwise
-char delete_chord_from_voice(t_notation_obj *r_ob, t_chord *chord, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char also_recompute_total_length){
+char chord_delete(t_notation_obj *r_ob, t_chord *chord, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char also_recompute_total_length){
 	t_rollvoice *parent = chord->voiceparent;
 	char need_check_scheduling = false;
     char need_check_solos = is_solo_with_progeny(r_ob, (t_notation_item *)chord);
@@ -21463,7 +21578,7 @@ t_llll *measure_get_ties_as_llll(t_notation_obj *r_ob, t_measure *measure) {
 }
 
 
-char are_ts_equal(t_timesignature *ts1, t_timesignature *ts2){
+char ts_are_equal(t_timesignature *ts1, t_timesignature *ts2){
 // are ts1 and ts2 equal? (1 if yes, 0 if no)
 	if (ts1->denominator != ts2->denominator)
 		return 0;
@@ -21539,7 +21654,7 @@ char are_tempi_the_same_and_in_the_same_tp(t_tempo *tempo1, t_tempo *tempo2)
 }
 
 
-double get_ts_uwidth(t_notation_obj *r_ob, t_timesignature ts)
+double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature *ts)
 {
 // returns the width of the ts printing, in standard size (e.g. Maestro 24)
 	
@@ -21552,8 +21667,8 @@ double get_ts_uwidth(t_notation_obj *r_ob, t_timesignature ts)
 	double den_width = 0.; double den_height = 0.;
 	if (r_ob->show_time_signatures == 0) return 0.;
 	jf_ts = jfont_create_debug(r_ob->noteheads_font->s_name, JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, r_ob->notation_typo_preferences.base_pt_ts);
-	num_utf = charset_unicodetoutf8_debug(ts.num_unicode, ts.len_num, &len_utf_num);
-	den_utf = charset_unicodetoutf8_debug(ts.den_unicode, ts.len_den, &len_utf_den);
+	num_utf = charset_unicodetoutf8_debug(ts->num_unicode, ts->len_num, &len_utf_num);
+	den_utf = charset_unicodetoutf8_debug(ts->den_unicode, ts->len_den, &len_utf_den);
 	strncpy(num_txt, num_utf, 150);
 	strncpy(den_txt, den_utf, 49);
 	bach_freeptr(num_utf);
@@ -26682,7 +26797,7 @@ void add_articulation_to_notation_item(t_notation_obj *r_ob, t_notation_item *it
             t_articulation *art = build_articulation(r_ob, articulation_ID, item, thisitem, notationobj_articulation_id2symbol(r_ob, articulation_ID));
             thisitem->item = art;
             slotitem_append(thisitem);
-            reset_articulation_position_for_chord(r_ob, notation_item_chord_get_parent(r_ob, item));
+            reset_articulation_position_for_chord(r_ob, notation_item_get_parent_chord(r_ob, item));
         }
     }
 }
@@ -28332,7 +28447,7 @@ t_llll* note_get_extras_values_as_llll(t_notation_obj *r_ob, t_note *note)
 		llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
 
 	// see if we need breakpoint extras
-	if (are_note_breakpoints_nontrivial(r_ob, note))
+	if (note_breakpoints_are_nontrivial(r_ob, note))
 		llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, NULL, NULL), 0, WHITENULL_llll);
 
 	// see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
@@ -28383,7 +28498,7 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
 		llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
 	
 	// see if we need breakpoint extras
-	if (are_note_breakpoints_nontrivial(r_ob, note)) {
+	if (note_breakpoints_are_nontrivial(r_ob, note)) {
 		llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
 		if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
 			hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
@@ -28517,7 +28632,7 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 		llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
 	
 	// see if we need breakpoint extras
-	if (are_note_breakpoints_nontrivial(r_ob, note)) {
+	if (note_breakpoints_are_nontrivial(r_ob, note)) {
 		double new_mc = 0.;
 		llll_appendllll(out_llll, note_get_partial_breakpoint_values_as_llll(r_ob, note, start_x_rel, end_x_rel, &new_mc), 0, WHITENULL_llll);
 	}
@@ -28536,7 +28651,7 @@ t_llll* get_rollpartialnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 	return out_llll;
 }
 
-char are_note_breakpoints_nontrivial(t_notation_obj *r_ob, t_note *note) {
+char note_breakpoints_are_nontrivial(t_notation_obj *r_ob, t_note *note) {
 	if ((note->num_breakpoints > 2) || 
 		((note->num_breakpoints == 2) && 
 			((note->lastbreakpoint->slope != 0.) || (note->lastbreakpoint->delta_mc != 0.) || (r_ob->breakpoints_have_velocity && note->lastbreakpoint->velocity != note->velocity))))
@@ -28687,7 +28802,7 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
 	
 	// see if we need breakpoint extras
 	if (mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE) {
-		if (are_note_breakpoints_nontrivial(r_ob, note)) {
+		if (note_breakpoints_are_nontrivial(r_ob, note)) {
 			llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
 			if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
 				hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
@@ -29524,6 +29639,28 @@ t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it,
 	return lexpr_eval(lexpr, vars);
 }
 
+void change_rational_from_llllelem(t_rational *number, t_llllelem *modify)
+{
+    if (hatom_gettype(&modify->l_hatom) == H_LLLL) {
+        t_llll *thisllll = hatom_getllll(&modify->l_hatom);
+        if (thisllll->l_size > 0) {
+            if (thisllll->l_size == 1)
+                *number = hatom_getrational(&thisllll->l_head->l_hatom);
+            else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("plus")))
+                *number += hatom_getrational(&thisllll->l_head->l_hatom);
+            else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("minus")))
+                *number -= hatom_getrational(&thisllll->l_head->l_hatom);
+            else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("times")))
+                *number *= hatom_getrational(&thisllll->l_head->l_hatom);
+            else if ((hatom_gettype(&thisllll->l_tail->l_hatom) == H_SYM) && (hatom_getsym(&thisllll->l_tail->l_hatom) == gensym("div")))
+                *number /= hatom_getrational(&thisllll->l_head->l_hatom);
+            else
+                *number = hatom_getrational(&thisllll->l_head->l_hatom);
+        }
+    } else {
+        *number = hatom_getrational(&modify->l_hatom);
+    }
+}
 
 void change_double_from_llllelem(double *number, t_llllelem *modify, char convert_deg2rad) { 
 	if (hatom_gettype(&modify->l_hatom) == H_LLLL) {
@@ -29605,6 +29742,18 @@ void change_poc_from_llllelem(t_notation_obj *r_ob, t_hatom *poc, t_llllelem *mo
 
 
 
+void change_rational(t_notation_obj *r_ob, t_rational *number, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument) {
+    // we modify a number via a llllelem (which could be a float itself or a list)
+    // if modify is a list it can be of the type (new_value +) or (new_value *)
+    // convert_deg2rad == 1 for angle treatment (needs deg2rad function), flag == 0 otherwise
+    if (lexpr) {
+        t_hatom *res = lexpr_eval_for_notation_item(r_ob, (t_notation_item *)lexpr_argument, lexpr);
+        *number = hatom_getrational(res);
+        bach_freeptr(res);
+    } else if (modify) {
+        change_rational_from_llllelem(number, modify);
+    }
+}
 
 void change_double(t_notation_obj *r_ob, double *number, t_lexpr *lexpr, t_llllelem *modify, char convert_deg2rad, void *lexpr_argument) { 
 // we modify a number via a llllelem (which could be a float itself or a list)
@@ -30665,6 +30814,11 @@ void update_total_length_from_length_ms_till_last_note(t_notation_obj *r_ob, dou
 
 }
 
+// from_what:
+// 0 = we have the information on the x of the scrollbar;
+// 1 = we have the information from 0. to 1. (relative: 0=start/1=end);
+// 2 = we have the information about the starting ms of the window
+// 3 = like 2, but don't autocorrect the screen_starting_ms ever
 void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 {
 	char obj_type = r_ob->obj_type;
@@ -30719,7 +30873,7 @@ void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 	} else { // we do need a scroll bar
 		r_ob->need_hscrollbar = 1;
 
-		if (from_what == 2){ // we have the information about the starting ms of the window
+		if (from_what == 2 || from_what == 3){ // we have the information about the starting ms of the window
 			// r_ob->scrollbarpos must be 0 at screen_start_ms = 0,  1 at screen_start_ms = length_ms - domain
             if (obj_type == k_NOTATION_OBJECT_ROLL) {
                 if (r_ob->lambda_spacing)
@@ -30765,14 +30919,17 @@ void update_hscrollbar(t_notation_obj *r_ob, char from_what)
 		if (obj_type == k_NOTATION_OBJECT_ROLL) {
             r_ob->screen_ux_start = (r_ob->length_ux - r_ob->domain_ux)*r_ob->hscrollbar_pos;
             r_ob->screen_ux_end = r_ob->screen_ux_start + r_ob->domain_ux;
-            if (r_ob->lambda_spacing)
-                r_ob->screen_ms_start = xposition_to_onset(r_ob, unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start), 0);
-            else
-                r_ob->screen_ms_start = (r_ob->length_ms - r_ob->domain) * r_ob->hscrollbar_pos;
+            if (from_what < 3) {
+                if (r_ob->lambda_spacing)
+                    r_ob->screen_ms_start = xposition_to_onset(r_ob, unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start), 0);
+                else
+                    r_ob->screen_ms_start = (r_ob->length_ms - r_ob->domain) * r_ob->hscrollbar_pos;
+            }
 //            dev_post("scrollbar pos: %.2f, domain: %.2f, screen_ms_start = %.2f", r_ob->hscrollbar_pos, r_ob->domain, r_ob->screen_ms_start);
 			r_ob->screen_ms_end = r_ob->screen_ms_start + r_ob->domain;
 		} else if (obj_type == k_NOTATION_OBJECT_SCORE) {
-			r_ob->screen_ux_start = (r_ob->length_ux - r_ob->domain_ux)*r_ob->hscrollbar_pos;
+            if (from_what < 3)
+                r_ob->screen_ux_start = (r_ob->length_ux - r_ob->domain_ux)*r_ob->hscrollbar_pos;
 			r_ob->screen_ux_end = r_ob->screen_ux_start + r_ob->domain_ux;
 		}
 	}
@@ -31665,7 +31822,7 @@ void note_delete(t_notation_obj *r_ob, t_note *note, char need_recompute_total_l
 			} else {
 				if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
 					// there was just 1 note: gotta delete the whole chord
-					if (delete_chord_from_voice(r_ob, chord, chord_get_prev(chord), need_recompute_total_length))
+					if (chord_delete(r_ob, chord, chord_get_prev(chord), need_recompute_total_length))
 						check_correct_scheduling(r_ob, false);
 					close_slot_window(r_ob); // if we were in slot view...
 					return;
@@ -32143,7 +32300,7 @@ void notation_obj_check_all_measure_tuttipoints(t_notation_obj *r_ob)
 
 
 
-void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings) 
+void recompute_all_for_measure_ext(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings, char also_check_autocompletion)
 {
     if (!meas)
         return;
@@ -32152,10 +32309,12 @@ void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_
     notation_obj_check(r_ob);
 #endif
 
-	if (also_recompute_beamings) {
+    if (also_check_autocompletion)
+        meas->need_check_autocompletion = true;
+
+    if (also_recompute_beamings) {
 		meas->need_recompute_beamings = true;
-		meas->need_check_autocompletion = true;
-	} else 
+	} else
 		meas->need_recompute_beams_positions = true;
 
 #ifdef BACH_CHECK_NOTATION_ITEMS
@@ -32186,8 +32345,14 @@ void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_
 #endif
 
 	set_need_perform_analysis_and_change_flag(r_ob);
-	// recomputing domain_ux
+    
+	// recomputing domain_ux // WHY ON EARTH DID WE DO THAT HERE???
 	r_ob->domain_ux = (r_ob->inner_width + r_ob->j_inset_x - (r_ob->j_inset_x + CONST_SCORE_UX_LEFT_START * r_ob->zoom_y)) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
+}
+
+void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings)
+{
+    recompute_all_for_measure_ext(r_ob, meas, also_recompute_beamings, also_recompute_beamings);
 }
 
 void recompute_all_for_measures_in_voiceensemble(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings)
@@ -33097,6 +33262,96 @@ char change_chord_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *cho
 		}
 	}
 	return changed;
+}
+
+void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duration, char also_simplify)
+{
+    long old_den = ts->denominator;
+    long g = 1;
+    
+    if (old_den % new_measure_duration.r_den == 0) {
+        // the new denominator is a divisor of the old one. E.g. adapting (7 4) to a duration of 5/2
+        ts->numerator = new_measure_duration.r_num * (old_den / new_measure_duration.r_den);
+    } else if (perfect_log2(new_measure_duration.r_den) > 0) {
+        // binary case: the denominator is a power of two. E.g. adapting anything to a duration of n/2^k
+        ts->denominator = MAX(4, new_measure_duration.r_den);
+        ts->numerator = new_measure_duration.r_num * (ts->denominator / new_measure_duration.r_den);
+    } else if (new_measure_duration.r_den % old_den == 0) {
+        // the denominator is a MULTIPLE of the old one. E.g. adapting (7 4) to a duration of 11/8
+        ts->denominator = new_measure_duration.r_den;
+        ts->numerator = new_measure_duration.r_num;
+    } else {
+        // don't really know what to do here. E.g. adapting (5 8) to a duration of 11/12
+        ts->denominator = new_measure_duration.r_den < 6 ? new_measure_duration.r_den * 2 : new_measure_duration.r_den;
+        ts->numerator = new_measure_duration.r_num * (ts->denominator / new_measure_duration.r_den);
+    }
+    
+    
+    if (also_simplify && (g = gcd(ts->numerator, ts->denominator)) > 1) {
+        ts->numerator /= g;
+        ts->denominator /= g;
+        switch (ts->denominator) {
+            case 1:
+                ts->numerator *= 4;
+                ts->denominator *= 4;
+                break;
+            case 2:
+            case 3:
+            case 5:
+                ts->numerator *= 2;
+                ts->denominator *= 2;
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_symduration, char autoadapt_ts, char autoadapt_scope, char autoadapt_simplify)
+{
+    char changed = 0;
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        t_llllelem *thiselem = (new_symduration) ? new_symduration->l_head : NULL;
+        if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)chord)) && chord->parent && (lexpr || thiselem)) {
+            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)chord->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+            change_rational(r_ob, &chord->r_sym_duration, lexpr, thiselem, (t_notation_item *)chord);
+            if (chord->r_sym_duration <= 0)
+                toggle_grace_for_chord(r_ob, chord, 1);
+            changed = 1;
+            
+            if (autoadapt_ts) {
+                t_measure *meas = chord->parent;
+                t_rational measure_dur = measure_get_sym_duration(meas);
+                t_rational measure_content_dur = measure_get_content_sym_duration(meas);
+                if (((autoadapt_ts % 2) && (measure_content_dur > measure_dur)) ||
+                    ((autoadapt_ts / 2) && (measure_content_dur < measure_dur))) {
+                    if (!(meas->tuttipoint_reference->simple_single_measure_tuttipoint && autoadapt_scope > 0)) {
+                        r_ob->need_recompute_tuttipoints = true;
+                        r_ob->need_reassign_local_spacing = true;
+                    }
+                    
+                    if (autoadapt_scope > 0) {
+                        t_llll *meas_ll = measure_get_aligned_measures_as_llll(r_ob, meas);
+                        for (t_llllelem *el = meas_ll->l_head; el; el = el->l_next) {
+                            t_measure *thismeas = (t_measure *)hatom_getobj(&el->l_hatom);
+                            t_timesignature ts = thismeas->timesignature;
+                            create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)thismeas, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+                            ts_adapt_to_symduration(&ts, measure_content_dur, autoadapt_simplify);
+                            measure_set_ts(r_ob, thismeas, &ts);
+                            recompute_all_for_measure(r_ob, thismeas, true);
+                        }
+                        llll_free(meas_ll);
+                    } else {
+                        t_timesignature ts = meas->timesignature;
+                        ts_adapt_to_symduration(&ts, measure_content_dur, autoadapt_simplify);
+                        measure_set_ts(r_ob, meas, &ts);
+                        recompute_all_for_measure(r_ob, meas, true);
+                    }
+                }
+            }
+        }
+    }
+    return changed;
 }
 
 void note_change_tail_for_glissando_till_next(t_notation_obj *r_ob, t_note *note, double slope)
@@ -34994,7 +35249,7 @@ t_jrgba partidx_to_color(long part_idx)
     return double_to_color(((double)part_idx - 1)/CONST_NUM_PART_COLORS, 0., 1., false);
 }
 
-void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen)
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, notation_obj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended)
 {
 	long i;
     
@@ -35114,6 +35369,8 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
 	r_ob->rebuild_function = rebuild;
 	r_ob->whole_obj_undo_tick_function = whole_undo_tick;
 	r_ob->force_notation_item_inscreen = force_notation_item_inscreen;
+    r_ob->undo_redo_function = undo_redo_fn;
+    r_ob->paint_ext_function = paint_extended;
 	
 	r_ob->selected_slot_items = llll_make();
 	r_ob->item_changed_at_mousedown = 0;
@@ -36943,7 +37200,7 @@ void calculate_voice_offsets(t_notation_obj *r_ob)
 	// re-setting each voice offset
 	t_voice *voice = r_ob->firstvoice;
 	double offset = r_ob->head_vertical_additional_uspace * r_ob->zoom_y;
-	r_ob->needed_uheight = notationobj_get_supposed_standard_height(r_ob);
+	r_ob->needed_uheight = notationobj_get_supposed_standard_uheight(r_ob);
 	while (voice && voice->number < r_ob->num_voices) {
 		voice->offset_y = round(offset); // round is needed, in order to have non antialiased things!
         if (!voice->hidden && (voice->number == r_ob->num_voices - 1 || voice_get_next(r_ob, voice)->part_index == 0)) {
@@ -37538,7 +37795,7 @@ t_max_err notation_obj_set_clefs(t_notation_obj *r_ob, t_symbol **newstaff, long
 void auto_set_rectangle_size_do(t_notation_obj *r_ob)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-        r_ob->needed_uheight = notationobj_get_supposed_standard_height(r_ob);
+        r_ob->needed_uheight = notationobj_get_supposed_standard_uheight(r_ob);
         r_ob->needed_uheight_for_one_system = r_ob->needed_uheight / ((r_ob->num_systems > 0) ? r_ob->num_systems : 1);
         r_ob->system_jump = get_system_jump(r_ob);
         if (r_ob->link_vzoom_to_height) {
@@ -37550,7 +37807,7 @@ void auto_set_rectangle_size_do(t_notation_obj *r_ob)
             pres_rect.height = patch_rect.height = MAX(1, r_ob->needed_uheight * r_ob->zoom_y);
             jbox_set_presentation_size((t_object *)r_ob, &pres_rect);
             jbox_set_patching_size((t_object *)r_ob, &patch_rect);
-            //			post("zoom (known): %f  supposed: %f. this: %f.", r_ob->zoom_y, notationobj_get_supposed_standard_height((t_notationobj *)x), pres_rect.height);
+            //			post("zoom (known): %f  supposed: %f. this: %f.", r_ob->zoom_y, notationobj_get_supposed_standard_uheight((t_notationobj *)x), pres_rect.height);
             adjust_zoom_for_non_antialiased_lines(r_ob);
             calculate_voice_offsets(r_ob);
             r_ob->itsme = false;
@@ -37562,10 +37819,10 @@ void auto_set_rectangle_size_do(t_notation_obj *r_ob)
         jbox_get_patching_size((t_object *)r_ob, &patch_rect);
         
         r_ob->itsme = true;
-        pres_rect.height = patch_rect.height = MAX(1, notationobj_get_supposed_standard_height(r_ob) * r_ob->zoom_y);
+        pres_rect.height = patch_rect.height = MAX(1, notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y);
         jbox_set_presentation_size((t_object *)r_ob, &pres_rect);
         jbox_set_patching_size((t_object *)r_ob, &patch_rect);
-        //			post("zoom (known): %f  supposed: %f. this: %f.", r_ob->zoom_y, notationobj_get_supposed_standard_height((t_notation_obj *)x), pres_rect.height);
+        //			post("zoom (known): %f  supposed: %f. this: %f.", r_ob->zoom_y, notationobj_get_supposed_standard_uheight((t_notation_obj *)x), pres_rect.height);
         adjust_zoom_for_non_antialiased_lines(r_ob);
         calculate_voice_offsets(r_ob);
         r_ob->itsme = false;
@@ -39765,6 +40022,9 @@ char *undo_op_to_string(long undo_op)
         case k_UNDO_OP_GLISSANDO_FOR_SELECTION:
             sprintf(buf, "Glissando");
             break;
+        case k_UNDO_OP_FORCE_POLYPHONY_FOR_SELECTION:
+            sprintf(buf, "Force Polyphony");
+            break;
 		case k_UNDO_OP_DELETE_NOTE:
 			sprintf(buf, "Delete Note");
 			break;
@@ -40101,6 +40361,9 @@ char *undo_op_to_string(long undo_op)
         case k_UNDO_OP_AUTOSPELL:
             sprintf(buf, "Autospell");
             break;
+        case k_UNDO_OP_TAILS_TO_GRACES:
+            sprintf(buf, "Convert tails to grace chords");
+            break;
 		default:
 			sprintf(buf, "Generic Operation");
 			break;
@@ -40237,7 +40500,7 @@ void bach2pwgl_measure_level(t_notation_obj *r_ob, t_llll *box, char *need_set_d
 							llll_appendlong(this_note_llll, round(mc_as_double), 0, WHITENULL_llll);
 						else
 							llll_appenddouble(this_note_llll, mc_as_double, 0, WHITENULL_llll);
-						if (are_note_breakpoints_nontrivial(r_ob, nt)) 
+						if (note_breakpoints_are_nontrivial(r_ob, nt)) 
 							append_note_breakpoints_formatted_for_pwgl(r_ob, this_note_llll, nt);
 						if (notation_item_has_slot_content(r_ob, (t_notation_item *)nt))
 							append_note_slot_formatted_for_pwgl(r_ob, this_note_llll, nt);
@@ -43601,6 +43864,14 @@ void markers_check_update_name_uwidth(t_notation_obj *r_ob)
 
 
 
-
+t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt)
+{
+    long i;
+    for (i = 0; i < r_ob->num_voices; i++) // cycle on the voices
+        if (tpt->measure[i])
+            return tpt->measure[i];
+    
+    return NULL;
+}
 
 

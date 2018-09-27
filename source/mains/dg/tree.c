@@ -282,7 +282,7 @@ void tree_clear(t_tree *x);
 
 void tree_undo(t_tree *x);
 void tree_redo(t_tree *x);
-void create_default_interface_undo_step(t_tree *x);
+void create_default_interface_undo_step(t_tree *x, char lock_mutex);
 void send_changed_bang(t_tree *x);
 
 
@@ -1810,7 +1810,7 @@ void tree_click(t_tree *x, t_symbol *s, long argc, t_atom *argv){ //argv+1
 void tree_anything(t_tree *x, t_symbol *s, long argc, t_atom *argv){ //argv+1
     t_llll *incomingllll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, s, argc, argv, LLLL_PARSE_CLONE);
     
-    create_default_interface_undo_step(x);
+    create_default_interface_undo_step(x, true);
     
     if (incomingllll) {
         if (s == gensym("setinterleaved") && incomingllll->l_head && incomingllll->l_head->l_next) {
@@ -3141,8 +3141,8 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
         case JKEY_DELETE:
         case JKEY_BACKSPACE:
             if (x->clicked_node && !x->prevent_edit) {
-                create_default_interface_undo_step(x);
                 systhread_mutex_lock(x->c_mutex);
+                create_default_interface_undo_step(x, false);
                 delete_tree_node(x, x->clicked_node); // redraw is here inside
                 x->need_send_changed_bang = true;
                 systhread_mutex_unlock(x->c_mutex);
@@ -3234,7 +3234,7 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
             if (x->clicked_node && !x->prevent_edit) {
                 if (modifiers & eCommandKey) {
                     systhread_mutex_lock(x->c_mutex);
-                    create_default_interface_undo_step(x);
+                    create_default_interface_undo_step(x, false);
                     rotate_tree_node(x, x->clicked_node, keycode == 'r' ? 1 : -1); // redraw is here inside
                     x->need_send_changed_bang = true;
                     systhread_mutex_unlock(x->c_mutex);
@@ -3246,7 +3246,7 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
             if (x->clicked_node && !x->prevent_edit) {
                 if (modifiers & eCommandKey) {
                     systhread_mutex_lock(x->c_mutex);
-                    create_default_interface_undo_step(x);
+                    create_default_interface_undo_step(x, false);
                     reverse_tree_node(x, x->clicked_node); // redraw is here inside
                     x->need_send_changed_bang = true;
                     systhread_mutex_unlock(x->c_mutex);
@@ -3258,7 +3258,7 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
             if (x->clicked_node && !x->prevent_edit) {
                 if (modifiers & eCommandKey) {
                     systhread_mutex_lock(x->c_mutex);
-                    create_default_interface_undo_step(x);
+                    create_default_interface_undo_step(x, false);
                     scramble_tree_node(x, x->clicked_node); // redraw is here inside
                     x->need_send_changed_bang = true;
                     systhread_mutex_unlock(x->c_mutex);
@@ -3270,7 +3270,7 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
             if (x->clicked_node && !x->prevent_edit) {
                 if (modifiers & eCommandKey) {
                     systhread_mutex_lock(x->c_mutex);
-                    create_default_interface_undo_step(x);
+                    create_default_interface_undo_step(x, false);
                     if (modifiers & eShiftKey)
                         splatter_tree_node(x, x->clicked_node);
                     else
@@ -3293,7 +3293,7 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
                         clipboard_llll = llll_get();
                         llll_appendhatom_clone(clipboard_llll, &x->clicked_node->elem->l_hatom, 0, WHITENULL_llll);
                         if (keycode == 'x') {
-                            create_default_interface_undo_step(x);
+                            create_default_interface_undo_step(x, false);
                             delete_tree_node(x, x->clicked_node);
                         }
                     }
@@ -3308,7 +3308,7 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
                     systhread_mutex_lock(x->c_mutex);
                     if (clipboard_llll && x->clicked_node->elem) {
                         // paste node
-                        create_default_interface_undo_step(x);
+                        create_default_interface_undo_step(x, false);
                         hatom_change_to_llll_and_free(&x->clicked_node->elem->l_hatom, llll_clone(clipboard_llll));
                         t_llllelem *new_clicked_node_elem = hatom_getllll(&x->clicked_node->elem->l_hatom)->l_head;
                         llll_splatter(x->clicked_node->elem, LLLL_FREETHING_DONT);
@@ -3330,7 +3330,7 @@ long tree_key(t_tree *x, t_object *patcherview, long keycode, long modifiers, lo
                     if (x->clicked_node && !x->prevent_edit) {
                         if (modifiers & eCommandKey) {
                             systhread_mutex_lock(x->c_mutex);
-                            create_default_interface_undo_step(x);
+                            create_default_interface_undo_step(x, false);
                             duplicate_tree_node(x, x->clicked_node); // redraw is here inside
                             x->need_send_changed_bang = true;
                             systhread_mutex_unlock(x->c_mutex);
@@ -3374,10 +3374,9 @@ void tree_enter(t_tree *x)	// enter is triggerd at "endeditbox time"
             t_llllelem *new_clicked_node_elem = NULL;
             if (x->clicked_node) {
                 
-                create_default_interface_undo_step(x);
-                
                 systhread_mutex_lock(x->c_mutex);
-                
+                create_default_interface_undo_step(x, false);
+
                 if (!x->clicked_node->elem) { // whole tree, but with firstelemisllllname
                     if (x->first_elem_in_llll_is_llll_name) {
                         if (!x->tree_as_llll->l_head) 
@@ -3412,7 +3411,7 @@ void tree_enter(t_tree *x)	// enter is triggerd at "endeditbox time"
             } else {
                 // whole tree
                 systhread_mutex_lock(x->c_mutex);
-                create_default_interface_undo_step(x);
+                create_default_interface_undo_step(x, false);
                 
                 if (x->first_elem_in_llll_is_llll_name) {
                     if (!x->tree_as_llll->l_head) 
@@ -3658,10 +3657,10 @@ void create_undo_redo_step(t_tree *x, char what, char from_what, t_llll *content
 }
 
 
-void create_default_interface_undo_step(t_tree *x)
+void create_default_interface_undo_step(t_tree *x, char lock_mutex)
 {
     if (x->tree_as_llll)
-        create_undo_redo_step(x, k_UNDO, 0, llll_clone(x->tree_as_llll), true);
+        create_undo_redo_step(x, k_UNDO, 0, llll_clone(x->tree_as_llll), lock_mutex);
 }
 
 

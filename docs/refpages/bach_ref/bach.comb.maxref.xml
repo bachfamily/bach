@@ -106,6 +106,19 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
+		<attribute name="maxcount" get="1" set="1" type="int" size="1">
+			<digest>
+				Maximum Number of Combinations
+			</digest>
+			<description>
+				Maximum number of combinations to return.
+				If set to 0 (default), all the combinations of the input llll are returned.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Maximum Number of Combinations" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="out" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Outlet Types
@@ -186,7 +199,7 @@
 		</entry>
 		<entry name ="Keywords">
 			<description>
-combination, combinatory, element.
+combination, combinatory, element, arrange, arrangement.
 			</description>
 		</entry>
 	</misc>

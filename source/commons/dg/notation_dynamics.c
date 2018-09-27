@@ -147,7 +147,7 @@ void paint_dynamics_from_symbol(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
     long num_dynamics = 0;
     char open_hairpin = false;
     long i;
-    t_chord *curr_ch = item ? notation_item_chord_get_parent(r_ob, item) : NULL;
+    t_chord *curr_ch = item ? notation_item_get_parent_chord(r_ob, item) : NULL;
     char dont_paint = (curr_ch && r_ob->is_editing_type == k_DYNAMICS && r_ob->is_editing_chord == curr_ch);
     for (i = 0; i < CONST_MAX_NUM_DYNAMICS_PER_CHORD; i++)
         dyntext[i][0] = 0;

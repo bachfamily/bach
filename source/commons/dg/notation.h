@@ -713,6 +713,18 @@ typedef enum _voiceensemble_interface_policy {
 } e_voiceensemble_interface_policy;
 
 
+typedef enum _chord_position_in_screen {
+    k_CHORDPOSITIONINSCREEN_ENDS_BEFORE_DOMAIN = -3,
+    k_CHORDPOSITIONINSCREEN_ENDS_INSIDE_PREDOMAIN = -2,
+    k_CHORDPOSITIONINSCREEN_ENDS_INSIDE_DOMAIN = -1,
+    k_CHORDPOSITIONINSCREEN_STARTS_INSIDE_DOMAIN = 0,
+    k_CHORDPOSITIONINSCREEN_STARTS_AFTER_DOMAIN = 1,
+    k_CHORDPOSITIONINSCREEN_OVERSPANS_DOMAIN = 2,
+} e_chord_position_in_screen;
+
+
+
+
 /** Function setting the whole information for the notation object, starting from a ll. 
 	Each notation object implement one of these.
 	@ingroup interface
@@ -807,6 +819,14 @@ typedef t_jrgba (*bach_inspector_color_fn)(void *notation_obj, void *elem, long 
 typedef char (*delete_item_fn)(void *notation_obj, void *notation_item, char *need_check_scheduling);
 
 
+/** Function to be wrapped by the object's paint function
+    @ingroup display
+ */
+typedef void (*bach_paint_ext_fn)(t_object *x, t_object *view, t_jgraphics *g, t_rect rect);
+
+
+//TBD
+typedef char (*notation_obj_inscreenmeas_fn)(t_object *x, void *measure_from, void *measure_to);
 
 
 
@@ -1516,13 +1536,13 @@ typedef enum _tree_to_beams_correspondences
  */
 typedef enum _beaming_calculation_flags
 {
-	k_BEAMING_CALCULATION_FROM_SCRATCH = 0,			///< Performs the function completely, taking everything into account @ingroup rhythmic_trees
+	k_BEAMING_CALCULATION_DO = 0,			///< Performs the function completely, taking everything into account @ingroup rhythmic_trees
 	k_BEAMING_CALCULATION_DONT_DELETE_LEVELS = 1,	///< Forces the function to leave all levels untouched
 	k_BEAMING_CALCULATION_DONT_ADD_LEVELS = 2,		///< Forces the function to leave all levels untouched
 	k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS = 4,	///< Forces the function to leave all chords untouched (but can add levels)
 	k_BEAMING_CALCULATION_DONT_CHANGE_TIES = 8,		///< Forces the function not to retranscribe all-tied sequences or sequences of consecutive rests
 	k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE = 16,	///< Forces the function never to autocomplete measures
-    k_BEAMING_CALCULATION_FROM_SCRATCH_AND_OVERFLOW_TO_NEXT = 32,	///< Forces the autocompletion check to flow notes to next measures if needed
+    k_BEAMING_CALCULATION_DO_AND_OVERFLOW_TO_NEXT = 32,	///< Forces the autocompletion check to flow notes to next measures if needed
 	k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS = k_BEAMING_CALCULATION_DONT_ADD_LEVELS + k_BEAMING_CALCULATION_DONT_DELETE_LEVELS,	///< Forces the function not to create any other level and not to delete any existing level. Also forces to assume that level is tuplet if and only if it's marked as tuplet level.
 	k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING	= k_BEAMING_CALCULATION_DONT_CHANGE_LEVELS + k_BEAMING_CALCULATION_DONT_CHANGE_CHORDS + k_BEAMING_CALCULATION_DONT_CHANGE_TIES + k_BEAMING_CALCULATION_DONT_AUTOCOMPLETE,	///< Forces the function to leave everything untouched @ingroup rhythmic_trees
 } e_beaming_calculation_flags;
@@ -1722,6 +1742,7 @@ typedef enum _undo_operations
 	k_UNDO_OP_EQUALLY_RESPACE_SELECTION,
 	k_UNDO_OP_LEGATO_FOR_SELECTION,
     k_UNDO_OP_GLISSANDO_FOR_SELECTION,
+    k_UNDO_OP_FORCE_POLYPHONY_FOR_SELECTION,
 	k_UNDO_OP_DELETE_NOTE,
 	k_UNDO_OP_ADD_NOTE,
 	k_UNDO_OP_CHANGE_NOTE,
@@ -1837,6 +1858,7 @@ typedef enum _undo_operations
 	k_UNDO_OP_CHANGE_BACH_ATTRIBUTE,
 	k_UNDO_OP_SLICE,
     k_UNDO_OP_AUTOSPELL,
+    k_UNDO_OP_TAILS_TO_GRACES
 } e_undo_operations;
 
 
@@ -2720,6 +2742,8 @@ typedef struct _timepoint
 
 // Private
 typedef double (*notation_obj_timepoint_to_ux_fn)(void *notation_obj, t_timepoint tp, char sample_all_voices, char zero_pim_is_measure_first_chord);
+typedef double (*notation_obj_undo_redo_fn)(void *notation_obj, char direction);
+
 
 
 
@@ -3115,6 +3139,7 @@ typedef struct _tuttipoint
 	
 	// utilities
 	char		all_voices_are_together;	///< Flag telling if all voices at the tuttipoint are together (it could be indeed that some voice is missing, because it has already ended before the others)
+    char        simple_single_measure_tuttipoint;       ///< Flag telling if the tuttipoint is of the simplest kind: a single measure throughout all voices
 	
 	// alignment points
 	struct _alignmentpoint	*firstalignmentpoint;		///< Pointer to the first alignment point in the tuttipoint region
@@ -3135,6 +3160,9 @@ typedef struct _tuttipoint
 	char		need_recompute_spacing;			///< A flag telling if we need to recompute the spacing within this tuttipoint region, one of the #e_spacing_calculation_types
 	long		flag;							///< Internal, for private use: generic flag.
 	
+    ////
+    double      data;                           ///< Internal
+    
 	// double linked list
 	struct _tuttipoint*	next;		///< Pointer to the next tuttipoint in the score
 	struct _tuttipoint*	prev;		///< Pointer to the previous tuttipoint in the score
@@ -3859,6 +3887,12 @@ typedef struct _notation_obj
 	long			*midichannels_as_longlist;		///< List of midichannels (one for each voice). 
 													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 
+    // tuttipoints, for bach.score
+    t_tuttipoint    *firsttuttipoint;               ///< First tuttipoint
+    t_tuttipoint    *lasttuttipoint;                ///< Last tuttipoint
+    long            num_tuttipoints;                ///< Number of tuttipoints
+
+    
 	// staff lines
 	t_llll			*stafflines_as_llll;	///< Stafflines as an llll
 	
@@ -4137,7 +4171,8 @@ typedef struct _notation_obj
 	double		length_ux;			///< Length of the whole score in unscaled pixels
                                     ///< Beware: operations like inscreenpos etc. might change this length, in order to appropriately show more portion of score.
     char        highlight_domain;   ///< If toggled, highlights the domain portion of the notation item (useful to align other Max UI objects on top of it).
-	
+    char        fade_predomain;     ///< Fade a small left portion of score, before the domain start, with an alpha gradient
+    
 	// horizontal scrolling
 	char		show_hscrollbar;		///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
 	char		need_hscrollbar;		///< Flag telling if we need (1) or not (0) the horizontal scrollbar
@@ -4227,6 +4262,7 @@ typedef struct _notation_obj
 	char		breakpoints_have_velocity;			///< Flag telling if the breakpoints can have a velocity (and thus one can have diminuendi and crescendi inside a note), see #t_bpt
 	char		breakpoints_have_noteheads;			///< Flag telling if the breakpoints are shown as standard classical noteheads
 	
+    char        notify_when_painted;                ///< Flag telling if we want notifications to be sent whenever the object is repainted
 	char		notify_also_upon_messages;			///< Flag telling if the notifications (such as domain changes...) must be sent also when they are due to some incoming messages, and not to interface changes 
 	char		dblclick_sends_values;				///< Flag telling if, when we double click, the selection is sent through the playout (as when we press V)
 	
@@ -4710,6 +4746,9 @@ typedef struct _notation_obj
 	notation_obj_fn					whole_obj_undo_tick_function;	///< Pointer to the function creating the undo tick for the whole object
 	notation_obj_notation_item_fn	force_notation_item_inscreen;	///< Pointer to a function forcing a given notation item to be inside the screen
     notation_obj_timepoint_to_ux_fn timepoint_to_unscaled_xposition;///< Pointer to a function (if any), converting a timepoint into an unscaled x position (makes sense for bach.score only)
+    notation_obj_undo_redo_fn       undo_redo_function;             ///< Function for undo/redo
+    bach_paint_ext_fn               paint_ext_function;             ///< Pointer to the function painting the object (in extended bach mode)
+    notation_obj_inscreenmeas_fn    inscreenmeas_function;          ///< Pointer to the inscreenmeas function
     
 	// attributes
 	t_bach_inspector_manager	m_inspector;						///< Inspector manager
@@ -4743,6 +4782,16 @@ typedef struct _notation_obj
     char                curr_realtime_mode;     ///< Flag telling if realtime mode is currently active
     t_realtime_attrs    curr_realtime_attrs;    ///< Current value of the realtime attributes (updated right before the realtime mode is turned on)
     
+    // jitter painting stuff
+    t_symbol            *jit_destination_matrix; ///< If non-NULL, also mirrors the painting of the canvas on the selected jitter Matrix.
+    char                pagelike_barlines;        ///< If non-null, the barlines and measure numbers (in bach.score) are drawn as if they were on a page
+    
+    // mira/miraweb: stuff designed to work with mira.multitouch
+    char mt_finger_state[10];                   ///< State of each finger
+    t_pt mt_finger_pos[10];                     ///< Positions of each finger (in pixels)
+    char mt_pinching;                           ///< Flag telling whether there's pinching going on
+    double mt_zoom_at_pinch_start;              ///< Zoom at the moment the pinch started
+
     // backward compatibility stuff
     long                bwcompatible;           ///< Number of the version of bach towards which the object needs to be compatible. E.g. if 7900, this
                                                 ///< will ensure compatibility (whenever possible...) with bach 0.7.9, and so on.
@@ -4866,6 +4915,22 @@ double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system);
 	@return				The onset in milliseconds
  */
 double xposition_to_onset(t_notation_obj *r_ob, double xposition, long system);
+
+
+/**    Get the horizontal width of the portion of score at the left of the domain starting point (including clefs, key signatures, etc.)
+    @ingroup            conversions
+    @param r_ob            The notation object
+    @return                The horizontal width of the portion of score at the left of the domain, in pixels
+ */
+double get_predomain_width_pixels(t_notation_obj *r_ob);
+
+
+/**    Get the horizontal width of the domain in pixels
+ @ingroup            conversions
+ @param r_ob            The notation object
+ @return                The horizontal width of the domain in pixels
+ */
+double get_domain_width_pixels(t_notation_obj *r_ob);
 
 
 /**	Convert a horizontal pixel distance into a time distance in milliseconds (only usable by [bach.roll]) 
@@ -6762,8 +6827,10 @@ void initialize_rollvoice(t_notation_obj *r_ob, t_rollvoice *voice, long voice_n
 	@param	rebuild			Pointer to the function rebuilding the whole object from a given llll. Must be implemented for each notation object.
 	@param	whole_undo_tick	Pointer to the function creating an undo tick for the whole notation object. Must be implemented for each notation object.
 	@param	force_notation_item_inscreen		Pointer to a function forcing a notation item to be inside the screen; leave NULL if unneeded.
+    @param    undo_redo_fn                       Pointer to the undo/redo function; leave NULL if unneeded.
+    @param  bach_paint_ext_fn paint_extended    Pointer to the paint function (in extended bach mode, i.e. with a bach_paint_ext_fn signature)
 */
-void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen);
+void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, notation_obj_fn whole_undo_tick, notation_obj_notation_item_fn force_notation_item_inscreen, notation_obj_undo_redo_fn undo_redo_fn, bach_paint_ext_fn paint_extended);
 
 
 /**	Initialize (or re-initialize) slot information with a default slotinfo 
@@ -8405,7 +8472,7 @@ t_slot *notation_item_get_slot_extended(t_notation_obj *r_ob, t_notation_item *n
 t_slotitem *notation_item_get_slot_firstitem(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber);
 t_slotitem *notation_item_get_slot_nth_item(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber, long n);
 t_slotitem *slot_get_nth_item(t_slot *s, long n);
-t_chord *notation_item_chord_get_parent(t_notation_obj *r_ob, t_notation_item *nitem);
+t_chord *notation_item_get_parent_chord(t_notation_obj *r_ob, t_notation_item *nitem);
 long notation_item_get_slot_numitems(t_notation_obj *r_ob, t_notation_item *nitem, long slotnumber); // private
 
 
@@ -9698,6 +9765,7 @@ void paint_accollatura(t_notation_obj *r_ob, t_jgraphics* g, double stafftop_y, 
 
 
 // TBD
+void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect);
 char is_clef_multistaff(t_notation_obj *r_ob, long clef);
 
 
@@ -11523,7 +11591,7 @@ void set_graphic_values_to_note_from_llll(t_notation_obj *r_ob, t_note *note, t_
 	@see					set_measure_parameters()
 	@see					get_timesignature_from_llll()
  */
-void set_measure_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure, t_llll *time_signature, 
+void measure_set_ts_and_tempo_from_llll(t_notation_obj *r_ob, t_measure *measure, t_llll *time_signature, 
 										t_llll *tempo, char measure_barline, t_llll *parameters, char when_no_ts_given_use_previous_or_nearest_measure_ts);
 
 
@@ -12061,7 +12129,7 @@ void set_numvoices(t_notation_obj *r_ob, long num_voices);
 	@param	note		The note
 	@return				1 if note's pitch breakpoints are nontrivial, 0 otherwise
  */
-char are_note_breakpoints_nontrivial(t_notation_obj *r_ob, t_note *note);
+char note_breakpoints_are_nontrivial(t_notation_obj *r_ob, t_note *note);
 
 
 /**	Retrive the unscaled horizontal shift of a notehead. This shift is an ADDITIONAL shift, which sums up to the ordinary graphic positioning.
@@ -12719,7 +12787,7 @@ void set_need_perform_analysis_and_change_flag(t_notation_obj *r_ob);
 	@param	after_this_chord	The chord after which the previous chord must be inserted (leave NULL if chord must be inserted at the beginning of the measure)
 	@param	force_ID	An ID which will be assigned to the inserted chord (as notation item). Leave zero in order to have automatic ID assignment. 
  */
-void insert_chord_in_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *chord_to_insert, t_chord *after_this_chord, unsigned long force_ID);
+void chord_insert_in_measure(t_notation_obj *r_ob, t_measure *measure, t_chord *chord_to_insert, t_chord *after_this_chord, unsigned long force_ID);
 
 
 /**	Build a timepoint.
@@ -12826,7 +12894,7 @@ t_measure_end_barline *build_measure_end_barline(t_notation_obj *r_ob, t_measure
 	@param	ts2		Second time signature
 	@return	1 if time signatures are the same, 0 otherwise.
  */
-char are_ts_equal(t_timesignature *ts1, t_timesignature *ts2);
+char ts_are_equal(t_timesignature *ts1, t_timesignature *ts2);
 
 
 /**	Obtain the graphic unscaled horizontal width needed to draw a given time signature
@@ -12835,7 +12903,11 @@ char are_ts_equal(t_timesignature *ts1, t_timesignature *ts2);
 	@param	ts		The time signature
 	@return	The unscaled width needed to draw the time signature.
  */
-double get_ts_uwidth(t_notation_obj *r_ob, t_timesignature ts);
+double ts_get_uwidth(t_notation_obj *r_ob, t_timesignature *ts);
+
+
+// TBD
+void ts_adapt_to_symduration(t_timesignature *ts, t_rational new_measure_duration);
 
 
 /**	Obtain default beaming boxes to be associated with a given time signature.
@@ -13322,7 +13394,7 @@ void update_measure_chordnumbers(t_measure *measure);
 	@param	measure	The measure
 	@param	ts		The time signature
  */
-void set_measure_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature ts);
+void measure_set_ts(t_notation_obj *r_ob, t_measure *measure, t_timesignature *ts);
 
 
 /**	Properly fills the t_measure::boxes field (which is an llll containing all the standard base-level subdivision boxes) according to the
@@ -13461,6 +13533,9 @@ char is_barline_tuttipoint(t_notation_obj *r_ob, t_measure_end_barline *barline)
  */
 char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *ref_barline, t_measure_end_barline **barline);
 
+// TBD
+t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *meas);
+
 
 /**	Set the t_chord::need_recompute_parameters flags for all the chords in a given measure, and also sets the t_notation_obj::need_perform_analysis_and_change flag.
 	Those flags will force the chord graphic parameters to be recomputed at the next paint cycle.
@@ -13484,6 +13559,9 @@ void recalculate_all_measure_chord_parameters(t_notation_obj *r_ob, t_measure *m
 										as they are, and only the notes positions are reparsed.
  */
 void recompute_all_for_measure(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings);
+
+// TBD
+void recompute_all_for_measure_ext(t_notation_obj *r_ob, t_measure *meas, char also_recompute_beamings, char also_check_autocompletion);
 
 
 /**	As recompute_all_for_measure(), but also applies to all corresponding measures in the voice ensemble.
@@ -13568,7 +13646,7 @@ t_notation_item *notation_item_get_ancestor_of_at_least_a_certain_type(t_notatio
 	@param	also_recompute_total_length							Flag to tell if we need to also recalculate the total length of the bach.roll
 	@return				1 if the function check_correct_scheduling() should be called, because the scheduling is now invalid; 0 otherwise
  */
-char delete_chord_from_voice(t_notation_obj *r_ob, t_chord *chord, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char also_recompute_total_length);
+char chord_delete(t_notation_obj *r_ob, t_chord *chord, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char also_recompute_total_length);
 
 
 /**	Fill the t_measure::r_total_duration_sec and t_measure::total_duration_ms fields for a measure (for bach.score only).
@@ -13907,6 +13985,20 @@ char change_note_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *chord
 	@return					1 if something has been changed, 0 otherwise.
  */
 char change_chord_duration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_duration);
+
+/**    Change the symbolic duration of a chord, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
+    @ingroup interface
+    @param    r_ob            The notation object
+    @param    chord            The chord
+    @param    lexpr            The lexpr object, or NULL if none
+    @param    new_duration    The llll containing the new symbolic duration, or NULL if none
+    @param    autoadapt_ts      If non-zero, the time signature of the measure will be adapted according to the duration change
+                                If it is 1, the time signature is adapted when it needs to be increased, if it is 2 when it needs to be decreased, if it is 3, in both cases
+    @param    autoadapt_scope   Sets the scope for adapting the time signatures: 0 = this measure only, 1 = all synchronous measures
+    @param    autoadapt_simplify If non-zero, will allow simplifying numerator and denominator of new time signature (only meaningful if #adapt_measureinfo is non-zero)
+    @return                    1 if something has been changed, 0 otherwise.
+ */
+char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord, t_lexpr *lexpr, t_llll *new_duration, char autoadapt_ts, char autoadapt_scope, char autoadapt_simplify);
 
 
 /**	Change the position of a note tail, based on a valid lexpr or (if such lexpr is NULL) on the content of an llll.
@@ -15730,7 +15822,7 @@ char reset_selected_measures_local_spacing_width_multiplier(t_notation_obj *r_ob
 	@ingroup	rhythmic_trees
 	@param		r_ob							The notation object
 	@param		measure							The measure
-	@param		char beaming_calculation_flags	One of the #e_beaming_calculation_flags, specifying if some steps must be avoided. Leave #k_BEAMING_CALCULATION_FROM_SCRATCH = 0 to perform all steps. 
+	@param		char beaming_calculation_flags	One of the #e_beaming_calculation_flags, specifying if some steps must be avoided. Leave #k_BEAMING_CALCULATION_DO = 0 to perform all steps.
 	@see		build_beams_structures()
  */
 void process_rhythmic_tree(t_notation_obj *r_ob, t_measure *measure, long beaming_calculation_flags);
@@ -15922,6 +16014,11 @@ void get_rhythm_drawable_one_step(t_notation_obj *r_ob, t_llll *box, char only_c
 	@ingroup	rhythmic_trees
  */
 long get_rhythm_drawable_for_level_fn(void *data, t_hatom *beam_tree, const t_llll *address);
+
+
+// TBD
+long fix_level_type_flag_for_level_as_ignore_fn(void *data, t_hatom *a, const t_llll *address);
+char rebeam_level(t_notation_obj *r_ob, t_measure *meas, t_llllelem *level, char also_destroy_tuplets, char force_autoparse, long flags);
 
 
 /** A #fun_fn function to reset all the three beam number parameters to -1 for a level (the incoming hatom).
@@ -17111,6 +17208,7 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type);
 t_max_err notation_obj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_bgcolor(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_show_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicenames(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_voicenames_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -18731,6 +18829,20 @@ void change_long(t_notation_obj *r_ob, long *number, t_lexpr *lexpr, t_llllelem 
 void change_double(t_notation_obj *r_ob, double *number, t_lexpr *lexpr, t_llllelem *modify, char convert_deg2rad, void *lexpr_argument);
 
 
+/**    Change the value of a rational according to a given lexpr or to a given llllelem indication. Possibilities are the same as the change_long() function.
+ If the lexpr is non-NULL, such lexpr is used and the modify element is ignored. If lexpr is NULL, the #modify element is used.
+ 
+ @param    r_ob            The notation object
+ @param number            Pointer to the number to be modified
+ @param lexpr            The lexpr to modify the number (lexpr will accept also standard substitutions of a notation item parameters, set by #lexpr_argument)
+ @param modify            A #t_llllelem containing eithing the new number (as #H_DOUBLE, #H_LONG or #H_RAT) or the instruction to modify the number (as #H_LLLL, see change_long() for all possibilities)
+ @param lexpr_argument    The notation item whose elements parameter have to be used in lexpr
+ @see                    change_long()
+ @ingroup                math
+ */
+void change_rational(t_notation_obj *r_ob, t_rational *number, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
+
+
 /**	Change the value of a pitch according to a given lexpr or to a given llllelem indication. Possibilities are the same as the change_long() function.
 	If the lexpr is non-NULL, such lexpr is used and the modify element is ignored. If lexpr is NULL, the #modify element is used.
  
@@ -18759,7 +18871,7 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
 void notationobj_handle_change_cursors_on_mousedrag(t_notation_obj *r_ob, t_object *patcherview, t_pt pt, long modifiers);
 
 long notationobj_get_notification_outlet(t_notation_obj *r_ob);
-double notationobj_get_supposed_standard_height(t_notation_obj *r_ob);
+double notationobj_get_supposed_standard_uheight(t_notation_obj *r_ob);
 void notationobj_reset_size_related_stuff(t_notation_obj *r_ob);
 void notationobj_set_vzoom_depending_on_height(t_notation_obj *r_ob, double height);
 
@@ -18795,6 +18907,7 @@ t_chord *chord_get_first_strictly_after_symonset(t_notation_obj *r_ob, t_measure
 void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char num_steps, long modifiers);
 char is_in_linear_edit_mode(t_notation_obj *r_ob);
 void markers_check_update_name_uwidth(t_notation_obj *r_ob);
+t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt);
 
 t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol *s, t_symbol *msg, void *sender, void *data);
 t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_object *view);
@@ -18812,6 +18925,12 @@ void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char 
 // autospell
 void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args);
 
+
+// export image
+t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t_atom *av);
+
+// mira multitouch
+void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv);
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

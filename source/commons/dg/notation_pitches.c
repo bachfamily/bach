@@ -234,7 +234,7 @@ void notationobj_autospell_trivial(t_notation_obj *r_ob, t_autospell_params *par
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         lock_general_mutex(r_ob);
         set_need_perform_analysis_and_change_flag(r_ob);
-        //        perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_FROM_SCRATCH);
+        //        perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_DO);
         close_slot_window(r_ob); // if we were in slot view...
         unlock_general_mutex(r_ob);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {

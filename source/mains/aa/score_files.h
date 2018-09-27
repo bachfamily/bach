@@ -22,6 +22,7 @@ void score_write(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_writetxt(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_exportxml(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_read_singlesymbol(t_score *x, t_symbol *s, long argc, t_atom *argv);
+void score_exportimage(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 void score_exportom(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_exportpwgl(t_score *x, t_symbol *s, long argc, t_atom *argv);

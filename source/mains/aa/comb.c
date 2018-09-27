@@ -30,7 +30,7 @@
  bach, bach objects, bach llll
  
  @keywords
- combination, combinatory, element
+ combination, combinatory, element, arrange, arrangement
 
  @seealso
  bach.perm, bach.scramble, bach.cartesianprod
@@ -50,6 +50,7 @@ typedef struct _comb
 	long					n_kstart;
 	t_atom					n_kend;
     
+    long                    n_maxcount;
     long                    n_allow_repetitions;
 } t_comb;
 
@@ -120,12 +121,19 @@ int T_EXPORT main()
 	// @description End cardinality.
 	
     CLASS_ATTR_LONG(c, "repeat", 0, t_comb, n_allow_repetitions);
-    CLASS_ATTR_LABEL(c, "repeat", 0, "Allow Repetitions");
     CLASS_ATTR_STYLE_LABEL(c, "repeat", 0, "onoff", "Allow Repetitions");
     CLASS_ATTR_BASIC(c, "repeat", 0);
     // @description Allow repetition of elements in the output (i.e. compute arrangements with repetitions).
     // By default this is 0, and standard combinations are computed.
 
+    CLASS_ATTR_LONG(c, "maxcount", 0, t_comb, n_maxcount);
+    CLASS_ATTR_STYLE_LABEL(c, "maxcount", 0, "text", "Maximum Number of Combinations");
+    CLASS_ATTR_BASIC(c, "maxcount", 0);
+    // @description
+    // Maximum number of combinations to return.
+    // If set to 0 (default), all the combinations of the input llll are returned.
+
+    
     
 	class_register(CLASS_BOX, c);
 	comb_class = c;
@@ -204,9 +212,9 @@ void comb_anything(t_comb *x, t_symbol *msg, long ac, t_atom *av)
 		kend = atom_getlong(&x->n_kend);
 	
     if (x->n_allow_repetitions)
-        combed = llll_comb_with_repetitions(ll,x->n_kstart, kend);
+        combed = llll_comb_with_repetitions(ll,x->n_kstart, kend, x->n_maxcount);
     else
-        combed = llll_comb(ll, x->n_kstart, kend);
+        combed = llll_comb(ll, x->n_kstart, kend, x->n_maxcount);
 	
     llll_release(ll);
 	x->n_ob.l_rebuild = 0;
@@ -247,6 +255,7 @@ t_comb *comb_new(t_symbol *s, short ac, t_atom *av)
 		// If two arguments are present, the first is considered start cardinality, the second end cardinality
 		
         x->n_allow_repetitions = false;
+        x->n_maxcount = 0;
         
 		long true_ac = attr_args_offset(ac, av);
 		atom_setsym(&x->n_kend, gensym("<none>"));

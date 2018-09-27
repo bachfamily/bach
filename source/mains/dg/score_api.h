@@ -37,10 +37,6 @@
 typedef struct _score // [bach.score] structure
 {
 	t_notation_obj r_ob;  // root: notation object (all the common attributes) 
-	
-    t_tuttipoint	*firsttuttipoint;
-    t_tuttipoint	*lasttuttipoint;
-    long			num_tuttipoints;
 
     // elements in the score
 	t_scorevoice	*firstvoice;
@@ -160,6 +156,7 @@ void recompute_all_and_redraw(t_score *x);
 void recompute_all_except_for_beamings_and_autocompletion(t_score *x);
 
 void remove_all_tuttipoints_flag_modified(t_score *x);
+char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas);
 
 
 t_scorevoice* nth_scorevoice(t_score *x, long n);
@@ -230,7 +227,7 @@ char delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_c
 char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char *need_check_solos, char add_undo_ticks);
 void turn_measure_into_single_rest(t_score *x, t_measure *measure);
 void voiceensemble_turn_measure_into_single_rest(t_score *x, t_measure *measure);
-void delete_all_chords_from_measure(t_score *x, t_measure *measure);
+void measure_delete_all_chords(t_score *x, t_measure *measure);
 char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics, char delete_dynamics, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false, char transfer_slots_even_to_rests = false);
 long score_oksize(t_score *x, t_rect *newrect);
 long get_global_num_notes(t_score *x);
@@ -311,7 +308,7 @@ t_llll* get_voice_velocities_values_as_llll(t_scorevoice *voice, char tree);
 t_llll* measure_get_pixel_values_as_llll(t_score *x, t_scorevoice *voice, t_measure *measure);
 t_llll* get_voice_pixel_values_as_llll(t_score *x, t_scorevoice *voice);
 
-void scoreapi_paint(t_score *x, t_object *view, t_jgraphics *g_ok, t_rect rect);
+void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect);
 void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_rect);
 
 double get_linear_edit_cursor_ux_position(t_score *x);
@@ -380,7 +377,6 @@ char measure_barlines_coincide_for_all_voices(t_score *x, long up_to_this_measur
 t_llll *score_get_interp_at_timepoint(t_score *x, t_timepoint tp);
 t_llll *score_get_sampling_timepoint(t_score *x, t_timepoint delta_tp);
 
-long fix_level_type_flag_for_level_as_ignore_fn(void *data, t_hatom *a, const t_llll *address);
 
 
 void set_loop_region_from_llll(t_score *x, t_llll* loop, char lock_mutex);

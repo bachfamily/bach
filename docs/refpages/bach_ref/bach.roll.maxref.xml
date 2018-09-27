@@ -1326,7 +1326,7 @@
 				Not all the separate parameters need to be given to build the new content: if some are not given, default values
 				will be used instead. Default onsets are 0ms, 1000ms, 2000ms..., but if you input less onsets than needed (e.g. just two)
 				the difference between the last two onsets will be padded in case new chords are to be inserted. Default pitch in cents is 6000 (middle C).
-				Default duration is 500ms, default velocity is 100, but in both cases but the last one is padded if more chords than the input velocities are
+				Default duration is 500ms, default velocity is 100, but in both cases the last one is padded if more chords than input parameters are
 				to be created. Default extras are no extras.
 			</description>
 		</method>
@@ -2727,6 +2727,42 @@
 				<br />				See also:<m>merge</m><br />
 			</description>
 		</method>
+		<method name="exportimage">
+			<arg name="filename" optional="1" type="symbol" />
+			<digest>
+				Export as PNG image
+			</digest>
+			<description>
+				Syntax: <b>exportimage <m>[&lt;symbol: filename&gt;]</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>exportimage /tmp/img.png</b>   <i>→ export score as image</i><br />
+				• <b>exportimage</b>   <i>→ export score as image via dialog box</i><br />
+				• <b>exportimage @view raw</b>   <i>→ export the portion of score displayed</i><br />
+				• <b>exportimage @view line</b>   <i>→ export whole score</i><br />
+				• <b>exportimage @view multiline @mspersystem 5000</b>   <i>→ export score as multiple images, each displaying 5 secs</i><br />
+				• <b>exportimage @view scroll @mspersystem 5000</b>   <i>→ export score as single image, each system displaying 5 secs</i><br />
+				• <b>exportimage @view scroll @systemvshift 10</b>   <i>→ export score as single image with 10 pixels of system separation</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@view</m> (symbol, default: line): View mode<br />
+				<m>@mspersystem</m> (float, default: none): Length of a system in milliseconds<br />
+				<m>@dpi</m> (int, default: 72): Dots per inch<br />
+				<m>@systemvshift</m> (int, default: 0): Separation between systems in pixels<br />
+				<m>@fadedomain</m> (int, default: none): Fade the left part of the domain near the clefs<br />
+				<br />
+				The <m>exportimage</m> message exports the content of the <o>bach.roll</o> as a single image or an image series.
+				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
+				allowing the choice of the location and file name for saving. Images are exported in PNG format. <br />
+				Three view modes are allowed, selected via the "view" message attribute: <br />
+				raw: the current view of the object is exported; <br />
+				line: all the score is exported in a single horizontal system; <br />
+				multiline: the score is split into multiple different files (systems); the system length is by default the object current domain, but
+				can be also set via the "mspersystem" message attribute; <br />
+				scroll: as the "multiline" mode, but all the systems are collected into a single file, scrollable vertically; the system length
+				is by default the object current domain, but can be also set via the "mspersystem" message attribute. <br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportom</m>,<m>exportmidi</m>,<m>read</m><br />
+			</description>
+		</method>
 		<method name="exportmidi">
 			<arg name="filename" optional="1" type="symbol" />
 			<digest>
@@ -2763,7 +2799,7 @@
 				- <b>format</b> (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks). <br />
 				– <b>resolution</b> (default: 960): the number of MIDI ticks per beat. <br />
 				- <b>exportbarlines</b> (default: 1): the barline markers are exported as MIDI marker events, with the name "bach barline". <br />
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>read</m>,<m>exportimage</m><br />
 			</description>
 		</method>
 		<method name="exportom">
@@ -2780,7 +2816,7 @@
 				or "multi-seq".
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportpwgl</m>,<m>exportmidi</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportpwgl</m>,<m>exportmidi</m>,<m>exportimage</m>,<m>read</m><br />
 			</description>
 		</method>
 		<method name="exportpwgl">
@@ -2798,7 +2834,7 @@
 				(by connecting the "import-bach" box, in the "pwgl2bach" library).
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportom</m>,<m>exportmidi</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportom</m>,<m>exportmidi</m>,<m>exportimage</m>,<m>read</m><br />
 			</description>
 		</method>
 		<method name="fixdynamics">
@@ -3824,7 +3860,7 @@
 				If the <b>trim</b> symbol is given as first argument, the legato will only shorten the notes duration, hence preserving
 				all rests between chords. If the <b>extend</b> symbol is given as first argument, the legato will only make note durations longer,
 				hence preserving all superposition of notes across chords.
-				<br />				See also:<m>tail</m>,<m>duration</m>,<m>glissando</m><br />
+				<br />				See also:<m>tail</m>,<m>duration</m>,<m>glissando</m>,<m>poly</m><br />
 			</description>
 		</method>
 		<method name="llll">
@@ -4557,6 +4593,19 @@
 				<br />				See also:<m>addslot</m><br />
 			</description>
 		</method>
+		<method name="paintjit">
+			<arglist />
+			<digest>
+				Draw the score onto a jitter matrix
+			</digest>
+			<description>
+				The <m>paintjit</m> message, followed by the name of a jitter matrix,
+				mirrors the canvas of the object onto the jitter matrix.
+				The matrix should have either 1 or 4 planes, and should have at least 2 dimensions.
+				The first two dimensions are used; the matrix is automatically resized to the needed dimensions.
+				Retina resolution is not supported (retina objects are mirrored in standard resolution).
+			</description>
+		</method>
 		<method name="paste">
 			<arg name="replace" optional="1" type="symbol" />
 			<arg name="position_or_slot" optional="1" type="number/symbol" />
@@ -4913,7 +4962,7 @@
 				Syntax: <b>poc <m>&lt;number/pitch/llll/anything: pitch_or_cents&gt;</m> </b><br />				<br />
 				The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
 				depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
-				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
+				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more). <br /> <br />
 				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
 				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
 				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
@@ -4939,6 +4988,52 @@
 				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
 				one cannot apply different equations to different notes inside the chord.
 				<br /> <br />
+			</description>
+		</method>
+		<method name="poly">
+			<arg name="maxnumvoices" optional="0" type="int" />
+			<digest>
+				Force maximum polyphony and/or assign voicing numbers for selection
+			</digest>
+			<description>
+				Syntax: <b>poly <m>&lt;int: maxnumvoices&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>poly 1</b>   <i>→ make selection monophonic...</i><br />
+				• <b>poly 1 @resume 1</b>   <i>→ ...and resume notes if needed</i><br />
+				• <b>poly 0 @voicingslot 5</b>   <i>→ detect and write voice index in slot 5</i><br />
+				• <b>poly 0 @reassign 1</b>   <i>→ reassign selection to independent monophonic voices</i><br />
+				• <b>poly 1 @droppriority oldest</b>   <i>→ make selection monophonic, dropping oldest notes first</i><br />
+				• <b>poly 4</b>   <i>→ make selection playable with at most 4 monophonic instruments</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@droppriority</m> (symbol, default: closest): Handle which notes should be terminated ("oldest", "newest", "closest").<br />
+				<m>@voicingslot</m> (int, default: 0): Slot number where voice index will be stored<br />
+				<m>@reassign</m> (int, default: 0): Reassign notes in detected voices<br />
+				<m>@voicingslot</m> (int, default: 0): Slot number where voice index will be stored<br />
+				<m>@notify</m> (int, default: 1): Notify maximum number of used voices through the playout<br />
+				<m>@resume</m> (int, default: 0): Resume terminated notes if possible<br />
+				<m>@resumepriority</m> (symbol, default: closest): Handle which notes should be resumed ("oldest", "newest", "closest").<br />
+				<m>@resumevoicing</m> (int, default: 1): Only resume notes with their original voicing.<br />
+				<br />
+				The <m>poly</m> message followed by a number <m>N</m> forces the selected material to be playable with at most <m>N</m> independent
+				monophonic voices. For instance <m>poly 1</m> will force the selection to be monophonic, <m>poly 2</m> will force it to be playable with
+				two voices, and so on. Use <m>N</m> = 0 in order to avoid forcing a maximum number of voices - and, possibly, instead using the other following features
+				of the <m>poly</m> message. <br />
+				During the process, each note is assigned its own voice index.
+				If the <m>voicingslot</m> message attribute is set to 1, such index is also put inside such slot;
+				if the <m>reassign</m> message attribute is set to 1, each voice is
+				repositioned in the voice corresponding to its index. Hence, for instance, use <m>poly 0 @reassign 1</m> to reassign the selection to
+				a certain number of (automatically created) independent monophonic voices.  <br />
+				Unless the <m>notify</m> message attribute is unset, the maximum number of used voices (always less or equal to <m>N</m>, unless <m>N</m> is 0)
+				is output through the playout preceded by the "maxpoly" symbol. <br />
+				The <m>droppriority</m> message attribute decides which notes should be terminated whenever the maximum number of voices is reached;
+				it can be one of the following symbols: "oldest" (drop oldest first), "newest" (drop newest first),
+				"closest" (drop closest notes in pitch first, default). <br />
+				If the <m>resume</m> message attribute is set to 1, notes can be resumed if they have been terminated. In this case, the <m>resumepriority</m>
+				message sets the priority for resuming, as one of the same symbols: "oldest" (resume oldest), "newest" (resume newest first),
+				"closest" (resume closest notes in pitch first, default). Unless the <m>resumevoicing</m> message attribute is explicitly set to 0,
+				resuming can only happen for notes on the voicing they initially had (i.e. with the same voice index).
+				<br />				See also:<m>legato</m><br />
 			</description>
 		</method>
 		<method name="prependslotitem">
@@ -5058,21 +5153,21 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
-				Reset the custom notehead definition to the default one
-			</digest>
-			<description>
-				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
-				all the user-defined noteheads.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
 				Reset the custom articulations definition to the default one
 			</digest>
 			<description>
 				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
 				all the user-defined articulations.
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
+				Reset the custom notehead definition to the default one
+			</digest>
+			<description>
+				A <m>resetnoteheadinfo</m> message will reset the all the <m>noteheadinfo</m> to the original one, i.e. will delete
+				all the user-defined noteheads.
 			</description>
 		</method>
 		<method name="resetslotinfo">
@@ -5943,7 +6038,7 @@
 				The word <m>voice</m>, followed by a number, sets the new voice number for all
 				the selected notes or chords.
 				Any of the numbers in the voice syntax can be replaced by an llll containing a relative modification of the existing voice.
-				If a single number is inserted, this can be replaced by a generic equation.
+				If a single number is inserted, this can be replaced by a generic equation. <br /> <br />
 				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
 				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
 				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
@@ -5985,7 +6080,7 @@
 				The <m>write</m> message saves all the <o>bach.roll</o> content in native format (with extension .llll).
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
 				allowing the choice of the location and file name for saving.
-				<br />				See also:<m>writetxt</m>,<m>exportmidi</m>,<m>read</m><br />
+				<br />				See also:<m>writetxt</m>,<m>exportmidi</m>,<m>read</m>,<m>exportimage</m><br />
 			</description>
 		</method>
 		<method name="writetxt">
@@ -6025,7 +6120,7 @@
 				- <b>wrap</b> (default: 0, i.e. no wrapping): the maximum number of characters to be placed on each line.<br />
 				- <b>filename</b> (default: not set): the name of the file to be written.
 				If set, this specification overrides the file name set as the first message argument.
-				<br />				See also:<m>write</m>,<m>exportmidi</m>,<m>read</m><br />
+				<br />				See also:<m>write</m>,<m>exportmidi</m>,<m>read</m>,<m>exportimage</m><br />
 			</description>
 		</method>
 	</methodlist>
@@ -6914,6 +7009,23 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text_large" />
 			</attributelist>
 		</attribute>
+		<attribute name="fadedomain" get="1" set="1" type="int" size="1">
+			<digest>
+				Fade Domain Over Clefs
+			</digest>
+			<description>
+				Toggles the ability to fade the portion of the score at left of the domain, near the clefs, with a transparency gradient
+				(also see <m>highlightdomain</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Fade Domain Over Clefs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="grid" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Grid
@@ -7023,6 +7135,21 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="7" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Inset" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jitmatrix" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Mirror To Jitter Matrix
+			</digest>
+			<description>
+				Sets the name of a jitter matrix to which the canvas should be mirrored
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mirror To Jitter Matrix" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -7694,7 +7821,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
-		<attribute name="notificationsformessages" get="1" set="1" type="int" size="1">
+		<attribute name="notifymessages" get="1" set="1" type="int" size="1">
 			<digest>
 				Notifications When Changed Via Messages
 			</digest>
@@ -7707,6 +7834,23 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Changed Via Messages" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="notifypaint" get="1" set="1" type="int" size="1">
+			<digest>
+				Notifications When Display Is Refreshed
+			</digest>
+			<description>
+				Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
+				whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Display Is Refreshed" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />

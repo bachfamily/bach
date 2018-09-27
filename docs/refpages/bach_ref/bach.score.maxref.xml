@@ -1893,66 +1893,6 @@
 			</description>
 		</method>
 		<method name="cents">
-			<arg name="velocity" optional="0" type="number/llll/anything" />
-			<digest>
-				Modify the pitch of selected items
-			</digest>
-			<description>
-				Syntax: <b>cents <m>&lt;number/llll/anything: velocity&gt;</m> </b><br />
-				Examples:<br />
-				• <b>cents 6000</b>   <i>→ change selected notes to middle C's</i><br />
-				• <b>cents = 6000</b>   <i>→ exactly the same</i><br />
-				• <b>cents = cents * 1.2</b>   <i>→ stretch pitches</i><br />
-				• <b>cents = "random(48, 73)*100"</b>   <i>→ assign pitch randomly</i><br />
-				• <b>cents = 6000 + (cents % 1200)</b>   <i>→ collapse to middle octave</i><br />
-				<br />
-				The word <m>cents</m>, followed by a number, sets the new pitch, in midicents, for all
-				the selected notation items.
-				If a list of numbers is given as arguments, this is applied to selected chords notewise: bottommost note will be assigned
-				the first value, the one above will be assigned the next one, and so on. If less values than selected notes in the chord
-				are given, last value is padded. <br /> <br />
-				Instead of MIDIcents (or cents), one can also instert pitches.
-				The syntax for the single note must be an unique symbol (no spaces) with:
-				<b><m>notename</m>-<m>optional:accidental</m>-<m>octave_number</m></b>.
-				Dashes are only set in order to separate parts of the symbol, but must not be included in the symbol. <br /> <br />
-				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
-				They and should be immediately followed by the possible accidentals and the
-				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
-				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
-				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
-				middle C, 1/16 tone up.
-				<br /> <br />
-				Any of the numbers in the cents syntax can be replaced by an llll containing a relative modification of the existing cents.
-				If a single number is inserted, this can be replaced by a generic equation.
-				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
-				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
-				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
-				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
-				value of the parameter, while <b>(2. times)</b> multiplies it by two.
-				<br /> <br />
-				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
-				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
-				The standard symbolic variables are available. <br />
-				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
-				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
-				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
-				grace chords, 0 otherwise). <br />
-				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
-				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
-				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
-				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
-				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
-				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
-				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
-				one cannot apply different equations to different notes inside the chord.
-				<br /> <br />
-			</description>
-		</method>
-		<method name="cents">
 			<arg name="measureinfo" optional="0" type="llll" />
 			<digest>
 				Modify the measureinfo of selected measures
@@ -2029,6 +1969,67 @@
 				Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
+				<br /> <br />
+				<br />				See also:<m>symduration</m><br />
+			</description>
+		</method>
+		<method name="cents">
+			<arg name="velocity" optional="0" type="number/llll/anything" />
+			<digest>
+				Modify the pitch of selected items
+			</digest>
+			<description>
+				Syntax: <b>cents <m>&lt;number/llll/anything: velocity&gt;</m> </b><br />
+				Examples:<br />
+				• <b>cents 6000</b>   <i>→ change selected notes to middle C's</i><br />
+				• <b>cents = 6000</b>   <i>→ exactly the same</i><br />
+				• <b>cents = cents * 1.2</b>   <i>→ stretch pitches</i><br />
+				• <b>cents = "random(48, 73)*100"</b>   <i>→ assign pitch randomly</i><br />
+				• <b>cents = 6000 + (cents % 1200)</b>   <i>→ collapse to middle octave</i><br />
+				<br />
+				The word <m>cents</m>, followed by a number, sets the new pitch, in midicents, for all
+				the selected notation items.
+				If a list of numbers is given as arguments, this is applied to selected chords notewise: bottommost note will be assigned
+				the first value, the one above will be assigned the next one, and so on. If less values than selected notes in the chord
+				are given, last value is padded. <br /> <br />
+				Instead of MIDIcents (or cents), one can also instert pitches.
+				The syntax for the single note must be an unique symbol (no spaces) with:
+				<b><m>notename</m>-<m>optional:accidental</m>-<m>octave_number</m></b>.
+				Dashes are only set in order to separate parts of the symbol, but must not be included in the symbol. <br /> <br />
+				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
+				They and should be immediately followed by the possible accidentals and the
+				octave number, without any space (e.g. <b>D#4</b>). <br />
+				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
+				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
+				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
+				middle C, 1/16 tone up.
+				<br /> <br />
+				Any of the numbers in the cents syntax can be replaced by an llll containing a relative modification of the existing cents.
+				If a single number is inserted, this can be replaced by a generic equation.
+				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
+				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
+				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
+				value of the parameter, while <b>(2. times)</b> multiplies it by two.
+				<br /> <br />
+				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
+				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
+				The standard symbolic variables are available. <br />
+				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
+				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
+				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
+				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
+				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
+				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
+				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
+				one cannot apply different equations to different notes inside the chord.
 				<br /> <br />
 			</description>
 		</method>
@@ -3617,6 +3618,44 @@
 				The slot number of the slot to clear is given as argument.
 				Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot.
 				<br />				See also:<m>addslot</m>,<m>changeslotitem</m><br />
+			</description>
+		</method>
+		<method name="exportimage">
+			<arg name="filename" optional="1" type="symbol" />
+			<digest>
+				Export as PNG image
+			</digest>
+			<description>
+				Syntax: <b>exportimage <m>[&lt;symbol: filename&gt;]</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>exportimage /tmp/img.png</b>   <i>→ export score as image</i><br />
+				• <b>exportimage</b>   <i>→ export score as image via dialog box</i><br />
+				• <b>exportimage @view raw</b>   <i>→ export the portion of score displayed</i><br />
+				• <b>exportimage @view line</b>   <i>→ export whole score</i><br />
+				• <b>exportimage @view multiline</b>   <i>→ export score as multiple images</i><br />
+				• <b>exportimage @view scroll</b>   <i>→ export score as single image</i><br />
+				• <b>exportimage @view scroll @systemvshift 10</b>   <i>→ export score as single image with 10 pixels of system separation</i><br />
+				• <b>exportimage @view scroll @pixelpersystem 500</b>   <i>→ export score as multiple images, each with 500 horizontal pixels (if &lt;m&gt;vzoom&lt;/m&gt; is 100).</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@view</m> (symbol, default: line): View mode<br />
+				<m>@pixelpersystem</m> (float, default: none): Length of a system in pixels (to be scaled with respect to <m>vzoom</m> attribute)<br />
+				<m>@dpi</m> (int, default: 72): Dots per inch<br />
+				<m>@systemvshift</m> (int, default: 0): Separation between systems in pixels<br />
+				<m>@fitmeasures</m> (int, default: 1): Use layout algorithms to arrange measures in systems<br />
+				<m>@fadedomain</m> (int, default: none): Fade the left part of the domain near the clefs<br />
+				<br />
+				The <m>exportimage</m> message exports the content of the <o>bach.roll</o> as a single image or an image series.
+				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
+				allowing the choice of the location and file name for saving. Images are exported in PNG format. <br />
+				Three view modes are allowed, selected via the "view" message attribute: <br />
+				raw: the current view of the object is exported; <br />
+				line: all the score is exported in a single horizontal system; <br />
+				multiline: the score is split into multiple different files (systems); the system length is by default the object current domain, but
+				can be also set via the "mspersystem" message attribute; <br />
+				scroll: as the "multiline" mode, but all the systems are collected into a single file, scrollable vertically; the system length
+				is by default the object current domain, but can be also set via the "mspersystem" message attribute. <br />
+				<br />				See also:<m>write</m>,<m>writetxt</m>,<m>exportom</m>,<m>exportmidi</m>,<m>read</m><br />
 			</description>
 		</method>
 		<method name="exportlilypond">
@@ -6034,6 +6073,22 @@
 		<method name="name">
 			<arg name="names" optional="0" type="llll" />
 			<digest>
+				Append name(s) to selected items
+			</digest>
+			<description>
+				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
+				Examples:<br />
+				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
+				• <b>name (Ringo Starr) ((Low High Snare) (Sizzle Crash))</b>   <i>→ append complex llll name</i><br />
+				<br />
+				Works like the <m>name</m> message, but appends the given names
+				to the already existing ones (see <m>name</m>).
+				<br />				See also:<m>name</m>,<m>clearnames</m><br />
+			</description>
+		</method>
+		<method name="name">
+			<arg name="names" optional="0" type="llll" />
+			<digest>
 				Assign name(s) to selected items
 			</digest>
 			<description>
@@ -6058,22 +6113,6 @@
 				If a <b>@progeny 1</b> attribute is added and chords are selected, not only the chord name is changed, but also the name of all its notes.
 				This is handy for instance, if one needs to send <b>name @progeny 1</b> to delete all names of selected chords and notes.
 				<br />				See also:<m>nameappend</m>,<m>clearnames</m>,<m>sel</m>,<m>unsel</m>,<m>select</m><br />
-			</description>
-		</method>
-		<method name="name">
-			<arg name="names" optional="0" type="llll" />
-			<digest>
-				Append name(s) to selected items
-			</digest>
-			<description>
-				Syntax: <b>name <m>&lt;llll: names&gt;</m> </b><br />
-				Examples:<br />
-				• <b>name Ringo</b>   <i>→ append 'Ringo' to selected element's names</i><br />
-				• <b>name (Ringo Starr) ((Low High Snare) (Sizzle Crash))</b>   <i>→ append complex llll name</i><br />
-				<br />
-				Works like the <m>name</m> message, but appends the given names
-				to the already existing ones (see <m>name</m>).
-				<br />				See also:<m>name</m>,<m>clearnames</m><br />
 			</description>
 		</method>
 		<method name="nametoslot">
@@ -6214,6 +6253,19 @@
 				<br />				See also:<m>llll</m>,<m>autobeam</m><br />
 			</description>
 		</method>
+		<method name="paintjit">
+			<arglist />
+			<digest>
+				Draw the score onto a jitter matrix
+			</digest>
+			<description>
+				The <m>paintjit</m> message, followed by the name of a jitter matrix,
+				mirrors the canvas of the object onto the jitter matrix.
+				The matrix should have either 1 or 4 planes, and should have at least 2 dimensions.
+				The first two dimensions are used; the matrix is automatically resized to the needed dimensions.
+				Retina resolution is not supported (retina objects are mirrored in standard resolution).
+			</description>
+		</method>
 		<method name="paste">
 			<arg name="replace" optional="1" type="symbol" />
 			<arg name="slot" optional="1" type="symbol" />
@@ -6287,43 +6339,6 @@
 				are given, last value is padded. <br /> <br />
 				Any of the numbers in the pitch syntax can be replaced by an llll containing a relative modification of the existing pitch.
 				If a single number is inserted, this can be replaced by a generic equation.
-				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
-				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
-				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
-				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
-				value of the parameter, while <b>(2. times)</b> multiplies it by two.
-				<br /> <br />
-				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
-				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
-				The standard symbolic variables are available. <br />
-				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
-				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
-				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
-				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
-				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
-				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
-				grace chords, 0 otherwise). <br />
-				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
-				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
-				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
-				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
-				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
-				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
-				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
-				one cannot apply different equations to different notes inside the chord.
-				<br /> <br />
-			</description>
-		</method>
-		<method name="pitch">
-			<arg name="pitch_or_cents" optional="0" type="number/pitch/llll/anything" />
-			<digest>
-				Modify the pitch or cents of selected items
-			</digest>
-			<description>
-				Syntax: <b>pitch <m>&lt;number/pitch/llll/anything: pitch_or_cents&gt;</m> </b><br />				<br />
-				The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
-				depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
-				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
 				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
 				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
 				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
@@ -6725,6 +6740,43 @@
 				<br />				See also:<m>stop</m>,<m>pause</m>,<m>play</m><br />
 			</description>
 		</method>
+		<method name="poc">
+			<arg name="pitch_or_cents" optional="0" type="number/pitch/llll/anything" />
+			<digest>
+				Modify the pitch or cents of selected items
+			</digest>
+			<description>
+				Syntax: <b>poc <m>&lt;number/pitch/llll/anything: pitch_or_cents&gt;</m> </b><br />				<br />
+				The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
+				depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
+				essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more). <br /> <br />
+				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
+				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
+				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
+				value of the parameter, while <b>(2. times)</b> multiplies it by two.
+				<br /> <br />
+				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
+				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
+				The standard symbolic variables are available. <br />
+				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
+				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
+				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
+				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
+				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
+				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
+				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
+				one cannot apply different equations to different notes inside the chord.
+				<br /> <br />
+			</description>
+		</method>
 		<method name="prependslotitem">
 			<arg name="slot_number_or_name" optional="0" type="int/symbol" />
 			<arg name="slot_element" optional="0" type="llll" />
@@ -6841,6 +6893,20 @@
 		<method name="resetslotinfo">
 			<arglist />
 			<digest>
+				Reset the slotinfo to the default one
+			</digest>
+			<description>
+				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
+				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
+				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
+				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
+				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
+				<br />				See also:<m>eraseslot</m><br />
+			</description>
+		</method>
+		<method name="resetslotinfo">
+			<arglist />
+			<digest>
 				Reset the custom notehead definition to the default one
 			</digest>
 			<description>
@@ -6856,20 +6922,6 @@
 			<description>
 				A <m>resetarticulationinfo</m> message will reset the all the <m>articulationinfo</m> to the original one, i.e. will delete
 				all the user-defined articulations.
-			</description>
-		</method>
-		<method name="resetslotinfo">
-			<arglist />
-			<digest>
-				Reset the slotinfo to the default one
-			</digest>
-			<description>
-				A <m>resetslotinfo</m> message will reset the all the <m>slotinfo</m> to the original one.
-				Beware that this may entail slot type conversions, which might result in loss of data if slot types are not compatible.
-				The slotinfo is the information about the types, ranges and many further characteristics of each one of the slots.
-				For bach.roll and bach.score, it is a global information: changing the slotinfo for a given slot will
-				affect such slot for all the notes inside the notation object. See the <m>llll</m> method to know more about its syntax.
-				<br />				See also:<m>eraseslot</m><br />
 			</description>
 		</method>
 		<method name="resetwidthfactors">
@@ -7751,6 +7803,59 @@
 				In other words, the <m>subsel</m> message create an intersection between the specified selection and the existing one.
 				Refer to the message <m>sel</m> to know more about the syntax, since it is exactly the same.
 				<br />				See also:<m>sel</m>,<m>unsel</m>,<m>select</m>,<m>clearselection</m><br />
+			</description>
+		</method>
+		<method name="symduration">
+			<arg name="symduration" optional="0" type="number/llll/anything" />
+			<digest>
+				Modify the duration of selected items
+			</digest>
+			<description>
+				Syntax: <b>symduration <m>&lt;number/llll/anything: symduration&gt;</m> <i>[message attributes]</i> </b><br />
+				Examples:<br />
+				• <b>symduration 1/4</b>   <i>→ change duration of selected items to 1/4</i><br />
+				• <b>symduration = 1/4</b>   <i>→ exactly the same</i><br />
+				• <b>symduration = symduration * 2</b>   <i>→ double the duration</i><br />
+				• <b>symduration = symduration * 2 @adaptts 1</b>   <i>→ ...and adapt measureinfo in this voice only</i><br />
+				• <b>symduration = symduration * 2 @adaptts 2</b>   <i>→ ...and adapt measureinfo in all voices</i><br />
+				• <b>symduration = (velocity/16) * 8</b>   <i>→ assign durations depending on velocity</i><br />
+				<br />
+				Message attributes:<br />
+				<m>@adaptts</m> (int, default: 0): Also adapt time signature (1 = if it needs to increase, 2 = if it needs to decrease, 3 = both)<br />
+				<m>@adapttsscope</m> (int, default: 1): Scope for <m>adaptts</m> (0 = this measure only, 1 = all synchronous measures)<br />
+				<m>@autorhythm</m> (int, default: 1): Also retranscribe rhythm<br />
+				<m>@autobeam</m> (int, default: 1): Also rebeam measure<br />
+				<m>@autocomplete</m> (int, default: 1): Also autocomplete measure if needed<br />
+				<br />
+				The word <m>symduration</m>, followed by a rational number, sets the new duration, in symbolic units, for all
+				the selected notation items. <br /> <br />
+				The number can be replaced by an llll containing a relative modification of the existing duration, or by a generic equation.
+				All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
+				Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+				the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
+				function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
+				value of the parameter, while <b>(2. times)</b> multiplies it by two.
+				<br /> <br />
+				All separate parameters, except for measureinfo, ties and slots, can also be modified via a generic equation. In order to do so,
+				the message symbol must be followed by an <m>=</m> sign (with spaces before and after it), and then by the desired equation.
+				The standard symbolic variables are available. <br />
+				Symbolic variables are variables that can be used in the conditional selection or parameter modification processes.
+				These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+				<m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+				For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+				<m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+				<m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+				grace chords, 0 otherwise). <br />
+				In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
+				the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
+				(all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
+				<m>chordindex</m> or <m>noteindex</m> symbols. <br />
+				For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
+				<b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+				The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and
+				one cannot apply different equations to different notes inside the chord.
+				<br /> <br />
+				<br />				See also:<m>measureinfo</m>,<m>autorhythm</m>,<m>autobeam</m><br />
 			</description>
 		</method>
 		<method name="testdomain">
@@ -9149,8 +9254,8 @@
 			<description>
 				Toggles the ability for the duration line (if shown) to span sequences of
 				tied notes. Values are: 0 = Don't span ties (default); 1 = Span ties; 2 = Span ties,
-				and also hide notes and ties (i.e. only the duration line is kept to symbolize the duration of the
-				tied sequence).
+				and also hide notes; 3 = 2 = Span ties, and also hide notes and ties
+				(i.e. only the duration line is kept to symbolize the duration of the tied sequence).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
@@ -9378,6 +9483,23 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
 			</attributelist>
 		</attribute>
+		<attribute name="fadedomain" get="1" set="1" type="int" size="1">
+			<digest>
+				Fade Domain Over Clefs
+			</digest>
+			<description>
+				Toggles the ability to fade the portion of the score at left of the domain, near the clefs, with a transparency gradient
+				(also see <m>highlightdomain</m>).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Fade Domain Over Clefs" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="flagcolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Flag Color
@@ -9557,6 +9679,21 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="7" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Border Inset" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="jitmatrix" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Mirror To Jitter Matrix
+			</digest>
+			<description>
+				Sets the name of a jitter matrix to which the canvas should be mirrored
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mirror To Jitter Matrix" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
@@ -10428,7 +10565,7 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
 			</attributelist>
 		</attribute>
-		<attribute name="notificationsformessages" get="1" set="1" type="int" size="1">
+		<attribute name="notifymessages" get="1" set="1" type="int" size="1">
 			<digest>
 				Notifications When Changed Via Messages
 			</digest>
@@ -10441,6 +10578,23 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Changed Via Messages" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="notifypaint" get="1" set="1" type="int" size="1">
+			<digest>
+				Notifications When Display Is Refreshed
+			</digest>
+			<description>
+				Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
+				whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notifications When Display Is Refreshed" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />

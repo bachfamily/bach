@@ -230,6 +230,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		1E53253D20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
+		1E53253E20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
+		1E53253F20FB7296001C4EAF /* bach_jit.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E53253A20FB7295001C4EAF /* bach_jit.c */; };
+		1E53254020FB7296001C4EAF /* bach_jit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E53253C20FB7296001C4EAF /* bach_jit.h */; };
+		1E53254120FB7296001C4EAF /* bach_jit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E53253C20FB7296001C4EAF /* bach_jit.h */; };
+		1E53254220FB7296001C4EAF /* bach_jit.h in Headers */ = {isa = PBXBuildFile; fileRef = 1E53253C20FB7296001C4EAF /* bach_jit.h */; };
 		1E5F437F152610C70085FA87 /* omtree2bachtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F437E152610C70085FA87 /* omtree2bachtree.c */; };
 		1E5F440F1526153C0085FA87 /* bachtree2omtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E5F440E1526153C0085FA87 /* bachtree2omtree.c */; };
 		1E7573071BE03A64002A0986 /* cursor_note_flat.png in Resources */ = {isa = PBXBuildFile; fileRef = 1E7573051BE03A4E002A0986 /* cursor_note_flat.png */; };
@@ -237,6 +243,7 @@
 		1E784F9720274BC400F11D75 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		1E784F9820274BC400F11D75 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		1E784FA220274C1200F11D75 /* recurser.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E784FA120274C1200F11D75 /* recurser.c */; };
+		1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A1D4420FCEB020051B9E8 /* notation_export.c */; };
 		1EA9401B1BDFEBDB00EFCABC /* gpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA940191BDFEBDB00EFCABC /* gpc.h */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
@@ -2832,6 +2839,8 @@
 		1E3B57D715ACECA900B32D1F /* kiss_fftndr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftndr.h; sourceTree = "<group>"; };
 		1E3B57D815ACECA900B32D1F /* kiss_fftr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kiss_fftr.c; sourceTree = "<group>"; };
 		1E3B57D915ACECA900B32D1F /* kiss_fftr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kiss_fftr.h; sourceTree = "<group>"; };
+		1E53253A20FB7295001C4EAF /* bach_jit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_jit.c; sourceTree = "<group>"; };
+		1E53253C20FB7296001C4EAF /* bach_jit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_jit.h; sourceTree = "<group>"; };
 		1E5F43651526109A0085FA87 /* bach.omtree2bachtree.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.omtree2bachtree.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E5F437E152610C70085FA87 /* omtree2bachtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = omtree2bachtree.c; sourceTree = "<group>"; };
 		1E5F43FE1526150E0085FA87 /* bach.bachtree2omtree.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.bachtree2omtree.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2840,6 +2849,7 @@
 		1E7573061BE03A4E002A0986 /* cursor_note_sharp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cursor_note_sharp.png; sourceTree = "<group>"; };
 		1E784F9D20274BC400F11D75 /* bach.recurser.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.recurser.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E784FA120274C1200F11D75 /* recurser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recurser.c; sourceTree = "<group>"; };
+		1E7A1D4420FCEB020051B9E8 /* notation_export.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_export.c; sourceTree = "<group>"; };
 		1E9026EE150FC5380005B502 /* bach_doc_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_doc_groups.h; sourceTree = "<group>"; };
 		1EA940181BDFEBDB00EFCABC /* gpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpc.c; sourceTree = "<group>"; };
 		1EA940191BDFEBDB00EFCABC /* gpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gpc.h; sourceTree = "<group>"; };
@@ -5646,6 +5656,8 @@
 		918A53BD131AD06600D3993D /* dg */ = {
 			isa = PBXGroup;
 			children = (
+				1E53253A20FB7295001C4EAF /* bach_jit.c */,
+				1E53253C20FB7296001C4EAF /* bach_jit.h */,
 				1EC5F4711BDFC21600669257 /* bach_graphics.h */,
 				1EC5F4721BDFC21600669257 /* bach_graphics.c */,
 				91D5489D19B58F5F00BBFE1A /* bach_cursors.h */,
@@ -5664,6 +5676,7 @@
 				91EED59E1237C06B003C05FC /* notation.h */,
 				91EED59D1237C06B003C05FC /* notation_commons.c */,
 				91CA0C5D1DF9374D0068B29D /* notation_dynamics.c */,
+				1E7A1D4420FCEB020051B9E8 /* notation_export.c */,
 				911385B91F4C3AC300637524 /* notation_goto.h */,
 				911385B71F4C3AB100637524 /* notation_goto.c */,
 				91EE6FC513A28C1C00BBE47C /* notation_maxinterface.c */,
@@ -6326,6 +6339,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9134EB9513A1FC9300427397 /* score_api.h in Headers */,
+				1E53254120FB7296001C4EAF /* bach_jit.h in Headers */,
 				1EB4D4A11610CCB20041ABFB /* score_files.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6492,6 +6506,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E53254220FB7296001C4EAF /* bach_jit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7004,6 +7019,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1EB4D4691610C9740041ABFB /* roll.h in Headers */,
+				1E53254020FB7296001C4EAF /* bach_jit.h in Headers */,
 				1EB4D4821610CB740041ABFB /* roll_files.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -12316,6 +12332,7 @@
 				917BD551126F63C800A6DAFC /* score.c in Sources */,
 				9134EB9613A1FC9300427397 /* score_api.c in Sources */,
 				1EB4D4A21610CCB20041ABFB /* score_files.c in Sources */,
+				1E53253E20FB7296001C4EAF /* bach_jit.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12448,6 +12465,7 @@
 				91FDDC3B1FBE2D4C0040D803 /* bach_chkparser.c in Sources */,
 				91FE0ED1190AAB57007B6BED /* llll_comparisons.c in Sources */,
 				910400B21C147F5C0072277C /* gpc.c in Sources */,
+				1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12504,6 +12522,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				91B0EB78150BD3A70069A206 /* uislot.c in Sources */,
+				1E53253F20FB7296001C4EAF /* bach_jit.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13087,6 +13106,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E53253D20FB7296001C4EAF /* bach_jit.c in Sources */,
 				91EED5A21237C07E003C05FC /* roll.c in Sources */,
 				1EB4D4811610CB740041ABFB /* roll_files.c in Sources */,
 			);
@@ -16056,6 +16076,12 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					JitterAPI,
+					"$(C74_SYM_LINKER_FLAGS)",
+					"$(C74_SYM_LINKER_FLAGS)",
+				);
 			};
 			name = Development;
 		};
@@ -16072,6 +16098,12 @@
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					JitterAPI,
+					"$(C74_SYM_LINKER_FLAGS)",
+					"$(C74_SYM_LINKER_FLAGS)",
+				);
 			};
 			name = Deployment;
 		};
@@ -16624,6 +16656,12 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					JitterAPI,
+					"$(C74_SYM_LINKER_FLAGS)",
+					"$(C74_SYM_LINKER_FLAGS)",
+				);
 			};
 			name = Development;
 		};
@@ -16639,6 +16677,12 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					JitterAPI,
+					"$(C74_SYM_LINKER_FLAGS)",
+					"$(C74_SYM_LINKER_FLAGS)",
+				);
 			};
 			name = Deployment;
 		};
@@ -19375,6 +19419,12 @@
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					JitterAPI,
+					"$(C74_SYM_LINKER_FLAGS)",
+					"$(C74_SYM_LINKER_FLAGS)",
+				);
 			};
 			name = Development;
 		};
@@ -19390,6 +19440,12 @@
 				);
 				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				INSTALL_PATH = "$(DG_INSTALL_PATH)";
+				OTHER_LDFLAGS = (
+					"-framework",
+					JitterAPI,
+					"$(C74_SYM_LINKER_FLAGS)",
+					"$(C74_SYM_LINKER_FLAGS)",
+				);
 			};
 			name = Deployment;
 		};

@@ -127,6 +127,11 @@ typedef struct _bach_casting_ray
 } t_bach_casting_ray;
 
 
+
+
+
+
+
 //// POLYGON STUFF
 
 void polygon_free(t_polygon *p);
@@ -977,8 +982,7 @@ void paint_beziercs(t_jgraphics* g, t_jrgba *border_color, t_jrgba *inner_color,
 	@param	tip_size			The size of the upper and lower part of the playhead 
 	@param	r_ob				The notation object
  */ 
-void paint_playhead(t_jgraphics* g, t_jrgba color, double playhead_x, double playhead_y1, double playhead_y2, double width, double tip_size);
-
+void paint_playhead_line(t_jgraphics* g, t_jrgba color, double playhead_x, double playhead_y1, double playhead_y2, double width, double tip_size);
 
 
 
@@ -1401,6 +1405,10 @@ void paint_rect(t_jgraphics* g, t_rect *rect, t_jrgba *border_color, t_jrgba *fi
 void paint_background(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *fill_color, double corner_roundness);
 void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_color, double border_size, double corner_roundness);
 
+
+
+
+
 #endif
 
 #ifdef BACH_JUCE
@@ -1408,7 +1416,8 @@ void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const cha
 void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft, char single_line, char use_ellipsis);
 char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen);
 #endif
-	
+
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE

@@ -109,6 +109,16 @@ int T_EXPORT main()
 	class_addmethod(c, (method)beatbox_anything,		"anything",		A_GIMME,	0);
 	class_addmethod(c, (method)beatbox_anything,		"list",			A_GIMME,	0);
 
+    
+    
+    // @method clear @digest Clear specific inlet
+    // @description Resets the llll of a specific parameter (depending ont the inlet).
+    class_addmethod(c, (method)beatbox_anything,        "clear",            A_GIMME,    0);
+
+    // @method clearall @digest Clear all inlets
+    // @description Resets the llll of all parameters.
+    class_addmethod(c, (method)beatbox_anything,        "clearall",            A_GIMME,    0);
+
 	// @method bang @digest Perform the boxing operation.
 	// @description Perform the boxing operation on the most recently received input data.
 	class_addmethod(c, (method)beatbox_bang,			"bang",			0);
@@ -175,6 +185,12 @@ void beatbox_anything(t_beatbox *x, t_symbol *msg, long ac, t_atom *av)
 	if (msg == _llllobj_sym_clearall) {
 		for (i = 0; i < 6; i++)
 			llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), i);
+        if (x->output_separate) {
+            for (i = 1; i < 6; i++)
+                llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), i);
+        } else {
+            llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, llll_get(), 0);
+        }
 		return;
 	}
 

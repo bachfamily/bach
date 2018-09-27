@@ -1015,3 +1015,12 @@ roll_dowritemidi_error:
 		llll_free(arguments);
 	return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
 }
+
+
+void roll_exportimage(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_atom av;
+    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    atom_setobj(&av, arguments);
+    defer(x, (method)notationobj_dowriteimage, s, 1, &av);
+}

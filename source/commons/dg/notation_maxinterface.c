@@ -771,24 +771,24 @@ void build_popup_measure_menu(t_notation_obj *r_ob, t_measure *measure)
 
 	// time signatures (500)
     t_timesignature temp_ts;
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 501, "2/2", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 2, 2))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 502, "2/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 2, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 503, "3/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 3, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 504, "4/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 4, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 505, "5/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 5, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 506, "6/4", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 6, 4))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 507, "3/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 3, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 508, "4/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 4, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 509, "5/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 5, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 510, "5/8 (3+2)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_2compound_timesignature(r_ob, 3, 2, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 511, "5/8 (2+3)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_2compound_timesignature(r_ob, 2, 3, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 512, "6/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 6, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 513, "7/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 7, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 514, "7/8 (3+2+2)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 3, 2, 2, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 515, "7/8 (2+3+2)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 2, 3, 2, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 516, "7/8 (2+2+3)", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 2, 2, 3, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 517, "9/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 9, 8))), 0, NULL);
-	jpopupmenu_additem(r_ob->popup_measure_timesignature, 518, "12/8", NULL, are_ts_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 12, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 501, "2/2", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 2, 2))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 502, "2/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 2, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 503, "3/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 3, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 504, "4/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 4, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 505, "5/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 5, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 506, "6/4", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 6, 4))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 507, "3/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 3, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 508, "4/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 4, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 509, "5/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 5, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 510, "5/8 (3+2)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_2compound_timesignature(r_ob, 3, 2, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 511, "5/8 (2+3)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_2compound_timesignature(r_ob, 2, 3, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 512, "6/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 6, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 513, "7/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 7, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 514, "7/8 (3+2+2)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 3, 2, 2, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 515, "7/8 (2+3+2)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 2, 3, 2, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 516, "7/8 (2+2+3)", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_3compound_timesignature(r_ob, 2, 2, 3, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 517, "9/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 9, 8))), 0, NULL);
+	jpopupmenu_additem(r_ob->popup_measure_timesignature, 518, "12/8", NULL, ts_are_equal(&measure->timesignature, &(temp_ts = build_simple_timesignature(r_ob, 12, 8))), 0, NULL);
 	jpopupmenu_addsubmenu(r_ob->popup_measure, "Time Signature", r_ob->popup_measure_timesignature, 0);
 
 	// lock/mute (550)
@@ -1174,8 +1174,8 @@ void build_popup_background_menu(t_notation_obj *r_ob, e_element_types clipboard
 
     jpopupmenu_addseperator(r_ob->popup_background);
 
-    jpopupmenu_additem(r_ob->popup_background, 1020, "Select All Items From Here", NULL, 0, 0, NULL);
     jpopupmenu_additem(r_ob->popup_background, 1021, "Select All Items Till Here", NULL, 0, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_background, 1020, "Select All Items From Here", NULL, 0, 0, NULL);
 
 	if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 		jpopupmenu_additem(r_ob->popup_background, 1010, "Ceil Measures", NULL, 0, 0, NULL);
@@ -1290,9 +1290,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
 	long ac_backgroundslots, ac_mainstavescolor, ac_auxiliarystavescolor;
 	t_atom *av_backgroundslots = NULL, *av_mainstavescolor = NULL, *av_auxiliarystavescolor = NULL;
 	t_atom_long *av_long = NULL;
-	long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0;
+	long has_backgroundslots = 0, has_slotsbgalpha = 0, has_backgroundslotfontsize = 0, has_velocityhandling = 0, has_notificationsformessages = 0;
 	double slotbgalpha = 0, backgroundslotfontsize = 0;
-    t_atom_long velocityhandling = -1;
+    t_atom_long velocityhandling = -1, notificationsformessages = -1;
     char brand_new_creation = 0;
 
     
@@ -1352,6 +1352,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if ((has_velocityhandling = dictionary_hasentry(d, gensym("velocityhandling"))))
         dictionary_getlong(d, gensym("velocityhandling"), &velocityhandling);
 
+    if ((has_notificationsformessages = dictionary_hasentry(d, gensym("notificationsformessages"))))
+        dictionary_getlong(d, gensym("notificationsformessages"), &notificationsformessages);
+
     if (num_voices_from_argument > 0) {
         t_atom av;
         atom_setlong(&av, num_voices_from_argument);
@@ -1401,6 +1404,9 @@ void notation_obj_arg_attr_dictionary_process_with_bw_compatibility(void *x, t_d
     if (has_velocityhandling)
         object_attr_setchar(x, gensym("showvelocity"), velocityhandling);
     
+    if (has_notificationsformessages)
+        object_attr_setchar(x, gensym("notifymessages"), notificationsformessages);
+
     // Setting object size depending on numvoices
     if (brand_new_creation && r_ob->link_vzoom_to_height && r_ob->num_voices > 1) {
         if (r_ob->num_voices <= 4) r_ob->zoom_y = 1.;
@@ -1945,6 +1951,12 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showborder",0,"1");
 	// @description Toggles the ability to display the object border.
 
+    CLASS_ATTR_SYM(c,"jitmatrix",0, t_notation_obj, jit_destination_matrix);
+    CLASS_ATTR_STYLE_LABEL(c,"jitmatrix",0,"text","Mirror To Jitter Matrix");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"jitmatrix",0,"");
+    CLASS_ATTR_ACCESSORS(c, "jitmatrix", (method)NULL, (method)notation_obj_setattr_jitmatrix);
+    // @description Sets the name of a jitter matrix to which the canvas should be mirrored
+    
 	
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
         CLASS_ATTR_CHAR(c,"smartmarkernames",0, t_notation_obj, smart_markername_placement);
@@ -1959,6 +1971,13 @@ void notation_class_add_appearance_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Toggles the ability to highlight the domain with the <m>selectioncolor</m>. This is useful, for instance, in order to
         // align other Max UI objects on the top of bach notation objects.
+        
+        CLASS_ATTR_CHAR(c,"fadedomain",0, t_notation_obj, fade_predomain);
+        CLASS_ATTR_STYLE_LABEL(c,"fadedomain",0,"onoff","Fade Domain Over Clefs");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"fadedomain",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the ability to fade the portion of the score at left of the domain, near the clefs, with a transparency gradient
+        // (also see <m>highlightdomain</m>).
         
         
         CLASS_ATTR_DOUBLE(c, "additionalstartpad", 0, t_notation_obj, additional_ux_start_pad);
@@ -2375,13 +2394,20 @@ void notation_class_add_behavior_attributes(t_class *c, char obj_type){
     // 7200, while 0.7.8.1 is 7810.
     
 
-	CLASS_ATTR_CHAR(c,"notificationsformessages",0, t_notation_obj, notify_also_upon_messages);
-	CLASS_ATTR_STYLE_LABEL(c,"notificationsformessages",0,"onoff","Notifications When Changed Via Messages");
-	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notificationsformessages", 0, "0");
+	CLASS_ATTR_CHAR(c,"notifymessages",0, t_notation_obj, notify_also_upon_messages);
+	CLASS_ATTR_STYLE_LABEL(c,"notifymessages",0,"onoff","Notifications When Changed Via Messages");
+	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifymessages", 0, "0");
 	// @description Toggles the ability to send notifications caused by actions coming from messages, and not only from the interface.
 	// For instance, a <m>inscreenpos</m> message will toggle a <m>domain</m> notification, and so on.
 	// By default this is inactive.
 	
+    CLASS_ATTR_CHAR(c,"notifypaint",0, t_notation_obj, notify_when_painted);
+    CLASS_ATTR_STYLE_LABEL(c,"notifypaint",0,"onoff","Notifications When Display Is Refreshed");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"notifypaint", 0, "0");
+    // @description Toggles the ability to send a notification (in the form of the "painted" symbol) from the playout
+    // whenever the object display is refreshed (repainted). Beware: this could be CPU consuming.
+    
+    
 	if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		CLASS_ATTR_CHAR(c,"keepselectioniflostfocus",0, t_notation_obj, keep_selection_if_lost_focus);
 		CLASS_ATTR_STYLE_LABEL(c,"keepselectioniflostfocus",0,"onoff","Keep Selection If Lost Focus");
@@ -3410,6 +3436,18 @@ t_max_err notation_obj_setattr_inset(t_notation_obj *r_ob, t_object *attr, long 
 	return MAX_ERR_NONE;
 }
 
+t_max_err notation_obj_setattr_jitmatrix(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av && atom_gettype(av) == A_SYM) {
+        t_symbol *s = atom_getsym(av);
+        r_ob->jit_destination_matrix = s;
+    } else {
+        r_ob->jit_destination_matrix = _llllobj_sym_empty_symbol;
+    }
+    return MAX_ERR_NONE;
+}
+
+
 
 t_max_err notation_obj_setattr_showvscrollbar(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
 	if (ac && av) {
@@ -3928,6 +3966,28 @@ long handle_filters_popup(t_notation_obj *r_ob, long modifiers, t_slotitem *clic
 
 
 
+t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *meas)
+{
+    t_llll *out = llll_get();
+    if (!meas->prev) {
+        // get all first measures
+        for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+            llll_appendobj(out, nth_measure_of_scorevoice((t_scorevoice *)voice, 0));
+        }
+    } else {
+        t_measure_end_barline *barline[CONST_MAX_VOICES];
+        if (get_all_tuttipoint_barlines(r_ob, meas->prev->end_barline, barline)) {
+            for (long i = 0; i < r_ob->num_voices; i++) {
+                if (barline[i]->owner && barline[i]->owner->next)
+                    llll_appendobj(out, barline[i]->owner->next);
+            }
+        }
+        
+    }
+    
+    return out;
+}
+
 // barline must be instantiated with CONST_MAX_VOICES length
 char get_all_tuttipoint_barlines(t_notation_obj *r_ob, t_measure_end_barline *ref_barline, t_measure_end_barline **barline)
 {
@@ -4049,7 +4109,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                 
                 if (first == last) {
                     create_simple_selected_notation_item_undo_tick(r_ob, item, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-                    set_measure_ts(r_ob, (t_measure *)item, chosen_ts);
+                    measure_set_ts(r_ob, (t_measure *)item, &chosen_ts);
                     recompute_all_for_measure(r_ob, (t_measure *)item, false);
                 } else {
                     t_voice *temp;
@@ -4058,7 +4118,7 @@ long handle_measure_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
                         t_measure *m = nth_measure_of_scorevoice((t_scorevoice *)temp, measure_num);
                         if (m) {
                             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)m, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
-                            set_measure_ts(r_ob, m, chosen_ts);
+                            measure_set_ts(r_ob, m, &chosen_ts);
                             recompute_all_for_measure(r_ob, m, false);
                         }
                         if (temp == last)
@@ -5583,8 +5643,12 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_TRIM_END);
                 else if (!bpt->next && modifiers == eShiftKey)
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_RESIZE_LEFTRIGHT);
-                else
-                    bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, r_ob->breakpoints_have_noteheads ? BACH_CURSOR_NOTE_FOURWAY : BACH_CURSOR_RESIZE_FOURWAY);
+                else {
+                    if (!bpt->next && r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                        bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, r_ob->breakpoints_have_noteheads ? BACH_CURSOR_NOTE_UPDOWN : BACH_CURSOR_RESIZE_UPDOWN);
+                    else
+                        bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, r_ob->breakpoints_have_noteheads ? BACH_CURSOR_NOTE_FOURWAY : BACH_CURSOR_RESIZE_FOURWAY);
+                }
             }
                 break;
 
@@ -5681,7 +5745,7 @@ void notation_obj_copy_slot_selection(t_notation_obj *r_ob, t_clipboard *clipboa
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)
 			r_ob->whole_obj_undo_tick_function(r_ob);
 		else
-			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)notation_item_chord_get_parent(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+			create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)notation_item_get_parent_chord(r_ob, nitem), k_CHORD, k_UNDO_MODIFICATION_CHANGE);
 		delete_all_selected_function_points(r_ob, slot_num);
 		handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CUT_SLOT_CONTENT);
 	}
@@ -5851,4 +5915,95 @@ t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_obje
 
 
 
+
+
+/////// MIRA / MIRAWEB INTERACTION
+
+
+long notationobj_mt_get_num_fingers_down(t_notation_obj *r_ob)
+{
+    long res = 0;
+    for (long i = 0; i < 10; i++)
+        res += (r_ob->mt_finger_state[i] > 0);
+    return res;
+}
+
+void notationobj_mt(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *argv)
+{
+    if (argc) {
+        t_object *firstview = jpatcher_get_firstview((t_object *)r_ob);
+        
+//        if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("region") && argc >= 4) { // region <regionID> <finger> <state> <device>
+//            long finger_id = CLAMP(atom_getlong(argv + 2), 1, 10) - 1;
+//            long state = CLAMP(atom_getlong(argv + 3), 0, 1);
+//            finger_state[finger_id] = state;
+//        } else
+            if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("touch") && argc >= 5) { // touch <x> <y> <finger> <state> <region> <device>
+            long finger_id = CLAMP(atom_getlong(argv + 3), 1, 10) - 1;
+            long state = CLAMP(atom_getlong(argv + 4), 0, 1);
+            t_pt pos = build_pt(atom_getfloat(argv + 1) * r_ob->width, atom_getfloat(argv + 2) * r_ob->height);
+            
+//            dev_object_post((t_object *)r_ob, "• Mira finger %ld %s", finger_id + 1, state ? "ON" : "OFF");
+            
+            if (!r_ob->mt_pinching) {
+                if (r_ob->mt_finger_state[finger_id]) {
+                    if (!state) {
+                        // finger released
+                        method mouseup = object_method_direct_getmethod((t_object *) r_ob, gensym("mouseup"));
+                        if (mouseup) (mouseup)(r_ob, firstview, pos, 0);
+                    } else {
+                        // finger dragged
+                        method mousedrag = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedrag"));
+                        if (mousedrag) (mousedrag)(r_ob, firstview, pos, 0);
+                    }
+                } else {
+                    if (!state) {
+                        // should not happen, in principle
+                    } else {
+                        // finger pressed
+                        method mousedown = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedown"));
+                        if (mousedown) (mousedown)(r_ob, firstview, pos, 0);
+                    }
+                }
+            }
+            
+            r_ob->mt_finger_state[finger_id] = state;
+            r_ob->mt_finger_pos[finger_id] = pos;
+            
+            if (notationobj_mt_get_num_fingers_down(r_ob) == 0)
+                r_ob->mt_pinching = false;
+            
+            // swipe = scroll
+        } else if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("swipe") && argc >= 2) { // swipe <direction> <device>
+            t_symbol *direction = atom_getsym(argv + 1);
+            method mousewheel = object_method_direct_getmethod((t_object *) r_ob, gensym("mousewheel"));
+            if (mousewheel) {
+                if (direction == gensym("left"))
+                    (mousewheel)(r_ob, firstview, r_ob->mt_finger_pos[0], 0, -get_domain_width_pixels(r_ob) / (25. * CONST_X_MOUSEWHEEL_FACTOR), 0.);
+                else if (direction == gensym("right"))
+                    (mousewheel)(r_ob, firstview, r_ob->mt_finger_pos[0], 0, get_domain_width_pixels(r_ob) / (25. * CONST_X_MOUSEWHEEL_FACTOR), 0.);
+            }
+            
+            // pinch = change zoom
+        } else if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("pinch") && argc >= 2) { // pinch <change> <velocity> <state> <device>
+            double change = atom_getfloat(argv + 1);
+            if (!r_ob->mt_pinching) {
+                // just started pinching!
+                r_ob->mt_zoom_at_pinch_start = r_ob->zoom_x;
+                r_ob->mt_pinching = true;
+            }
+            object_attr_setfloat((t_object *)r_ob, gensym("zoom"), r_ob->mt_zoom_at_pinch_start * change * 100.);
+//            method mousewheel = object_method_direct_getmethod((t_object *) r_ob, gensym("mousewheel"));
+//            (mousewheel)(r_ob, firstview, r_ob->mt_finger_pos[0], eCommandKey, 0., 4 * (r_ob->zoom_x - change * r_ob->zoom_x)/CONST_Y_MOUSEWHEEL_FACTOR);
+            
+            // tap = Cmd + click
+        } else if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("tap") && argc >= 3) { // tap <x> <y> <region> <device>
+            t_pt pos = build_pt(atom_getfloat(argv + 1) * r_ob->width, atom_getfloat(argv + 2) * r_ob->height);
+            method mousedown = object_method_direct_getmethod((t_object *) r_ob, gensym("mousedown"));
+            method mouseup = object_method_direct_getmethod((t_object *) r_ob, gensym("mouseup"));
+            if (mousedown) (mousedown)(r_ob, firstview, pos, eCommandKey);
+            if (mouseup) (mouseup)(r_ob, firstview, pos, eCommandKey);
+        }
+    }
+}
 

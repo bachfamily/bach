@@ -16,6 +16,10 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 			to function segments or curves, to account for slot range slope
 		Your patches might then sound different than previously!
 			if you did NOT want this, simply set @applyslope to 0.
+		The attribute @notificationsformessages is now called @notifymessages. 
+			Backwards compatibility SHOULD be preserved, but verify your patches.
+
+- bach.score	@dlspansties is now 1 by default
 
 - bach.partition
 		Now when partitions of 0 are requested a "null" list is output.
@@ -28,7 +32,15 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 
 - bach.recurser	New object
 
+- bach.roll, bach.score, bach.slot
+		New feature: scores can be mirrored to jitter matrices (to ease the work with Mira and Miraweb)
+		New attribute @notifypaint to notify when display is refreshed
+
 - bach.roll, bach.score
+		New export as image, also in page view (see #exportimage)
+		New communication with Mira/miraweb via png export (see #bach+mira)
+		New "poly" message to force or handle polyphonic behaviors (see #poly+message)
+		New @fadedomain attribute
 		Now "dynamics2velocities" handles breakpoints
 		Fixed bug causing wrong breakpoint handling for "dynamics2velocities" in some situations
 		Added "part" as a possible variable for selection expressions

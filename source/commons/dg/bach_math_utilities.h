@@ -440,6 +440,7 @@ char is_ratio_invalid(t_rational rat); //1 if the ratio is something/0
 
 void change_long_from_llllelem(long *number, t_llllelem *modify, char convert_deg2rad);
 void change_double_from_llllelem(double *number, t_llllelem *modify, char convert_deg2rad);
+void change_rational_from_llllelem(t_rational *number, t_llllelem *modify, char convert_deg2rad);
 
 
 /**	Change the value of a double, by snapping it into the nearest number of a list (grid) of numbers.
