@@ -242,7 +242,7 @@ t_llllelem *llll_appendobj(t_llll *where, void *what, long flags, t_llll *adopte
 }
 
 // a new llllelem is created
-t_llllelem *llll_appendfunc(t_llll *where, void *what, long flags, t_llll *adopter)
+t_llllelem *llll_appendfunc(t_llll *where, t_function *what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!where)
@@ -440,7 +440,7 @@ t_llllelem *llll_prependobj(t_llll *where, void *what, long flags, t_llll *adopt
     return outelem;
 }
 
-t_llllelem *llll_prependfunc(t_llll *where, void *what, long flags, t_llll *adopter)
+t_llllelem *llll_prependfunc(t_llll *where, t_function *what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!where)
@@ -648,7 +648,7 @@ t_llllelem *llll_insertobj_before(void *what, t_llllelem *before_what, long flag
     return outelem;
 }
 
-t_llllelem *llll_insertfunc_before(void *what, t_llllelem *before_what, long flags, t_llll *adopter)
+t_llllelem *llll_insertfunc_before(t_function *what, t_llllelem *before_what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!before_what)
@@ -839,7 +839,7 @@ t_llllelem *llll_insertobj_after(void *what, t_llllelem *after_what, long flags,
     return outelem;
 }
 
-t_llllelem *llll_insertfunc_after(void *what, t_llllelem *after_what, long flags, t_llll *adopter)
+t_llllelem *llll_insertfunc_after(t_function *what, t_llllelem *after_what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!after_what)

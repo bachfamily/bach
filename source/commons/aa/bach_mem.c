@@ -14,6 +14,7 @@
 #include "ext_atomic.h"
 #include "symparser.h"
 #include "strparser.h"
+#include "function.hpp"
 #ifdef MAC_VERSION
 #include <execinfo.h>
 #endif
@@ -700,6 +701,8 @@ void llllelem_dispose(t_llllelem *x)
 	x->l_parent = NULL;
 	x->l_thing.w_obj = NULL;
 	x->l_flags = NULL;
+    if (x->l_hatom.h_type == H_FUNCTION)
+        x->l_hatom.h_w.w_func->decrease();
 #ifdef BACH_USE_MAGIC_NUMBER
     x->l_magic = BACH_MAGIC_BAD;
 #endif
