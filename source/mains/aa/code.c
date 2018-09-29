@@ -122,27 +122,35 @@ void code_dblclick(t_code *x)
 
 void code_bang(t_code *x)
 {
-    t_execContext context((t_llllobj_object *) x);
     
-    for (int i = 0; i < x->n_dataInlets; i++) {
+    if (!x->n_ob.c_main)
+        return;
+    t_execContext context((t_llllobj_object *) x);
+    long dataInlets = x->n_dataInlets;
+    
+    for (int i = 0; i < dataInlets; i++) {
         context.argv[i] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
     }
-    context.argc = x->n_dataInlets;
+    context.argc = dataInlets;
 
-    if (x->n_ob.c_main) {
-        long outlets = x->n_dataOutlets;
-        if (outlets)
-            x->n_ob.c_main->clearOutletData(outlets);
-        t_llll *result = x->n_ob.c_main->call(context);
-        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);
-        llll_free(result);
-        for (int i = outlets - 1; i >= 0; i--) {
-            t_llll *outll = x->n_ob.c_main->getOutletData(i);
-            if (outll) {
-                llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, i, outll);
-                llll_free(outll);
-            }
+    
+    long outlets = x->n_dataOutlets;
+    if (outlets)
+        x->n_ob.c_main->clearOutletData(outlets);
+    t_llll *result = x->n_ob.c_main->call(context);
+    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);
+    llll_free(result);
+    for (int i = outlets - 1; i >= 0; i--) {
+        t_llll *outll = x->n_ob.c_main->getOutletData(i);
+        if (outll) {
+            llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, i, outll);
+            llll_free(outll);
         }
+    }
+    
+    
+    for (int i = 0; i < dataInlets; i++) {
+        llll_release(context.argv[i]);
     }
 }
 
