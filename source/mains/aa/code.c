@@ -135,8 +135,9 @@ void code_bang(t_code *x)
 
     
     long outlets = x->n_dataOutlets;
-    if (outlets)
-        x->n_ob.c_main->clearOutletData(outlets);
+    x->n_ob.c_main->setOutlets(outlets); // in case the code has just changed
+
+    x->n_ob.c_main->clearOutletData();
     t_llll *result = x->n_ob.c_main->call(context);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);
     llll_free(result);
@@ -144,7 +145,6 @@ void code_bang(t_code *x)
         t_llll *outll = x->n_ob.c_main->getOutletData(i);
         if (outll) {
             llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, i, outll);
-            llll_free(outll);
         }
     }
     
@@ -348,6 +348,7 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
         CLIP_ASSIGN(x->n_dataOutlets, 0, 127);
         CLIP_ASSIGN(x->n_directOutlets, 0, 126);
 
+        
         char outlet_str[256];
         long totOutlets = x->n_dataOutlets + x->n_directOutlets;
         for (i = 0; i <= totOutlets; i++)
@@ -365,7 +366,9 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
         
         d = (t_dictionary *)gensym("#D")->s_thing;
         codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
-    
+        
+        x->n_ob.c_main->setOutlets(x->n_dataOutlets);
+
     } else
         error(BACH_CANT_INSTANTIATE);
     

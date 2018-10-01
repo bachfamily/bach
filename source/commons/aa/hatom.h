@@ -303,7 +303,7 @@ void hatom_setdouble(t_hatom *h, const double d);
 void hatom_setsym(t_hatom *h, const t_symbol *s);
 void hatom_setllll(t_hatom *h, const t_llll *llll); // no check is performed, and the reference count of the llll is left untouched
 void hatom_setobj(t_hatom *h, const void *o);
-void hatom_setfunc(t_hatom *h, const t_function *fn);
+void hatom_setfunc(t_hatom *h, t_function *fn);
 void hatom_setatom(t_hatom *h, const t_atom *a); // atom to hatom conversion. If the atom is A_OBJ and points to a llll, the hatom is correctly set to A_LLLL
 long hatom_eq(const t_hatom *a, const t_hatom *b); // comparison between two atoms
 

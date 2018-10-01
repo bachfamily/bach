@@ -14,7 +14,7 @@ typedef t_object t_binbuf;
 #endif
 //#include "llll_math.h"
 #include "chkparser.h"
-
+#include "function.hpp"
 /*
  possible types:
  i = long
@@ -373,16 +373,16 @@ t_atom_long llll_deparse(t_llll *ll, t_atom **out, t_atom_long offset, long flag
                     break;
                 case H_OBJ:
 #ifdef BACH_MAX
-                    snprintf_zero(txt, 256, "[object:%p]", elem->l_hatom.h_w.w_obj);
+                    snprintf_zero(txt, 256, "<object:%p>", elem->l_hatom.h_w.w_obj);
 #else
-                    snprintf(txt, 256, "[object:%p]", elem->l_hatom.h_w.w_obj);
+                    snprintf(txt, 256, "<object:%p>", elem->l_hatom.h_w.w_obj);
 #endif
                     atom_setsym(this_out++, gensym(txt));
                     ac++;
                     elem = elem->l_next;
                     break;
                 case H_FUNCTION:
-                    snprintf_zero(txt, 256, "[function:%p]", elem->l_hatom.h_w.w_obj);
+                    snprintf_zero(txt, 256, "<function:%p>", elem->l_hatom.h_w.w_obj);
                     atom_setsym(this_out++, gensym(txt));
                     ac++;
                     elem = elem->l_next;
@@ -468,27 +468,33 @@ t_llll *llll_clone_extended(const t_llll *inll, t_llll *adopter, long alloc, lll
                 prev->l_next = outelem;
             else
                 outll->l_head = outelem;
-            if (hatom_gettype(&inelem->l_hatom) == H_LLLL) {
-                llll_stack_push(instack, inelem);
-                outll = llll_get();
-                outelem->l_hatom.h_w.w_llll = outll;
-                outll->l_owner = outelem;
-                inll = inelem->l_hatom.h_w.w_llll;
-                inelem = inll->l_head;
-                prev = NULL;
-                if (this_adopter == adopter && // which means, if this is a sublist of the root llll
-                    (deepest_subll == NULL || deepest_subll->l_depth > inll->l_depth))
-                    deepest_subll = outll;
-                if (inll->l_thing.w_obj) {
-                    if (fn)
-                        outll->l_thing.w_obj = (fn)(inll->l_thing.w_obj);
-                    else
-                        outll->l_thing.w_obj = inll->l_thing.w_obj;
-                }
-                this_adopter = WHITENULL_llll;
-            } else {
-                prev = outelem;
-                inelem = inelem->l_next;
+            switch (hatom_gettype(&inelem->l_hatom)) {
+                case H_LLLL:
+                    llll_stack_push(instack, inelem);
+                    outll = llll_get();
+                    outelem->l_hatom.h_w.w_llll = outll;
+                    outll->l_owner = outelem;
+                    inll = inelem->l_hatom.h_w.w_llll;
+                    inelem = inll->l_head;
+                    prev = NULL;
+                    if (this_adopter == adopter && // which means, if this is a sublist of the root llll
+                        (deepest_subll == NULL || deepest_subll->l_depth > inll->l_depth))
+                        deepest_subll = outll;
+                    if (inll->l_thing.w_obj) {
+                        if (fn)
+                            outll->l_thing.w_obj = (fn)(inll->l_thing.w_obj);
+                        else
+                            outll->l_thing.w_obj = inll->l_thing.w_obj;
+                    }
+                    this_adopter = WHITENULL_llll;
+                    break;
+    
+                case H_FUNCTION:
+                    outelem->l_hatom.h_w.w_func->increase();
+                default:
+                    prev = outelem;
+                    inelem = inelem->l_next;
+                    break;
             }
         }
         outll->l_tail = prev;
@@ -570,17 +576,22 @@ t_max_err llll_clone_upon(const t_llll *inll, t_llll *outll)
                 prev->l_next = outelem;
             else
                 outll->l_head = outelem;
-            if (hatom_gettype(&inelem->l_hatom) == H_LLLL) {
-                llll_stack_push(instack, inelem);
-                outll = llll_get();
-                outelem->l_hatom.h_w.w_llll = outll;
-                outll->l_owner = outelem;
-                inll = inelem->l_hatom.h_w.w_llll;
-                inelem = inll->l_head;
-                prev = NULL;
-            } else {
-                prev = outelem;
-                inelem = inelem->l_next;
+            switch (hatom_gettype(&inelem->l_hatom)) {
+                case H_LLLL:
+                    llll_stack_push(instack, inelem);
+                    outll = llll_get();
+                    outelem->l_hatom.h_w.w_llll = outll;
+                    outll->l_owner = outelem;
+                    inll = inelem->l_hatom.h_w.w_llll;
+                    inelem = inll->l_head;
+                    prev = NULL;
+                    break;
+                case H_FUNCTION:
+                    outelem->l_hatom.h_w.w_func->increase();
+                default:
+                    prev = outelem;
+                    inelem = inelem->l_next;
+                    break;
             }
         }
         outll->l_tail = prev;

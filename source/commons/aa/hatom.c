@@ -1,5 +1,6 @@
 #include "hatom.h"
 #include "llll_math.h"
+#include "function.hpp"
 
 extern t_class *llll_class;
 
@@ -239,10 +240,11 @@ void hatom_setobj(t_hatom *h, const void *o)
 	h->h_w.w_obj = (t_object *) o;
 }
 
-void hatom_setfunc(t_hatom *h, const t_function *fn)
+void hatom_setfunc(t_hatom *h, t_function *fn)
 {
     h->h_type = H_FUNCTION;
-    h->h_w.w_func = (t_function *) fn;
+    fn->increase();
+    h->h_w.w_func = fn;
 }
 
 void hatom_setatom(t_hatom *h, const t_atom *a)

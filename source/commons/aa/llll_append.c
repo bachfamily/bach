@@ -7,7 +7,7 @@
 //
 
 #include "llll_append.h"
-
+#include "function.hpp"
 
 // check the depth of a list taking into account a newly-added sub-llll (son)
 // it updates all the depths of the super-lists of son, if needed
@@ -108,6 +108,8 @@ t_llllelem *llll_appendhatom(t_llll *where, const t_hatom *what, const long flag
     if (what->h_type == H_LLLL)
         outelem = llll_appendllll(where, what->h_w.w_llll, flags, adopter);
     else {
+        if (what->h_type == H_FUNCTION)
+            what->h_w.w_func->increase();
         outelem = llllelem_get();
         outelem->l_hatom = *what;
         outelem->l_flags = flags;
@@ -315,6 +317,8 @@ t_llllelem *llll_prependhatom(t_llll *where, const t_hatom *what, long flags, t_
     if (what->h_type == H_LLLL)
         outelem = llll_prependllll(where, what->h_w.w_llll, flags, adopter);
     else {
+        if (what->h_type == H_FUNCTION)
+            what->h_w.w_func->increase();
         outelem = llllelem_get();
         outelem->l_hatom = *what;
         outelem->l_flags = flags;
@@ -521,6 +525,8 @@ t_llllelem *llll_inserthatom_before(const t_hatom *what, t_llllelem *before_what
     if (what->h_type == H_LLLL)
         outelem = llll_insertllll_before(what->h_w.w_llll, before_what, flags, adopter);
     else {
+        if (what->h_type == H_FUNCTION)
+            what->h_w.w_func->increase();
         outelem = llllelem_get();
         outelem->l_hatom = *what;
         outelem->l_flags = flags;
@@ -712,6 +718,8 @@ t_llllelem *llll_inserthatom_after(t_hatom *what, t_llllelem *after_what, long f
     if (what->h_type == H_LLLL)
         outelem = llll_insertllll_after(what->h_w.w_llll, after_what, flags, adopter);
     else {
+        if (what->h_type == H_FUNCTION)
+            what->h_w.w_func->increase();
         outelem = llllelem_get();
         outelem->l_hatom = *what;
         outelem->l_flags = flags;

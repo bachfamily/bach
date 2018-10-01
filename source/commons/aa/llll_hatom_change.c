@@ -7,6 +7,7 @@
 //
 
 #include "llll_hatom_change.h"
+#include "function.hpp"
 
 
 t_llllelem *llll_hatom2elem(const t_hatom *hatom)
@@ -126,16 +127,20 @@ t_llll *hatom_change_to_obj(t_hatom *hatom, const void *o)
     }
 }
 
-t_llll *hatom_change_to_func(t_hatom *hatom, const t_function *o)
+t_llll *hatom_change_to_func(t_hatom *hatom, t_function *fn)
 {
     if (hatom->h_type != H_LLLL) {
         hatom->h_type = H_FUNCTION;
-        hatom->h_w.w_func = (t_function *) o;
+        hatom->h_w.w_func->decrease();
+        fn->increase();
+        hatom->h_w.w_func = fn;
         return NULL;
     } else {
         t_llll *old_ll = hatom->h_w.w_llll;
         hatom->h_type = H_FUNCTION;
-        hatom->h_w.w_func = (t_function *) o;
+        hatom->h_w.w_func->decrease();
+        fn->increase();
+        hatom->h_w.w_func = (t_function *) fn;
         llll_downgrade_depth(old_ll->l_owner->l_parent);
         old_ll->l_owner = NULL;
         pedantic_llll_check(old_ll);
@@ -148,6 +153,10 @@ t_llll *hatom_change_to_hatom(t_hatom *hatom, const t_hatom *h)
     if (h->h_type == H_LLLL)
         return hatom_change_to_llll(hatom, h->h_w.w_llll);
     if (hatom->h_type != H_LLLL) {
+        if (h->h_type == H_FUNCTION)
+            h->h_w.w_func->increase();
+        if (hatom->h_type == H_FUNCTION)
+            h->h_w.w_func->decrease();
         *hatom = *h;
         return NULL;
     } else {
@@ -165,6 +174,10 @@ t_llll *hatom_change_to_hatom_clone(t_hatom *hatom, const t_hatom *h)
     if (h->h_type == H_LLLL)
         return hatom_change_to_llll(hatom, llll_clone(h->h_w.w_llll));
     if (hatom->h_type != H_LLLL) {
+        if (h->h_type == H_FUNCTION)
+            h->h_w.w_func->increase();
+        if (hatom->h_type == H_FUNCTION)
+            h->h_w.w_func->decrease();
         *hatom = *h;
         return NULL;
     } else {
@@ -207,7 +220,7 @@ void hatom_change_to_obj_and_free(t_hatom *hatom, const void *o)
     llll_free(hatom_change_to_obj(hatom, o));
 }
 
-void hatom_change_to_func_and_free(t_hatom *hatom, const t_function *fn)
+void hatom_change_to_func_and_free(t_hatom *hatom, t_function *fn)
 {
     llll_free(hatom_change_to_func(hatom, fn));
 }
