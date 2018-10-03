@@ -91,7 +91,7 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
             t_object *wind = object_attr_getobj(x->c_editor, _sym_wind);
             short r;
 #ifdef MAC_VERSION
-            r = wind_advise_explain(wind, "Cannot parse code", nullptr, "Keep Errors", "Revert to Previous Version", "Stop and Fix Code");
+            r = wind_advise_explain(wind, (char *) "Cannot parse code", nullptr, "Keep Errors", "Revert to Previous Version", "Stop and Fix Code");
 #else
             // on Windows, the buttons are too narrow...
             r = wind_advise_explain(wind, "Cannot parse code", nullptr, "Keep", "Revert", "Fix");
@@ -191,7 +191,6 @@ void codableobj_read(t_codableobj *x, t_symbol *s)
 void codableobj_doread(t_codableobj *x, t_symbol *s)
 {
     t_fourcc filetype = 'TEXT', outtype;
-    short numtypes = 1;
     char filename[MAX_PATH_CHARS];
     short path;
     if (s == gensym("")) {      // if no argument supplied, ask for file
@@ -324,7 +323,6 @@ long codableobj_getCodeFromAtoms(t_codableobj *x, long ac, t_atom *av)
     textsize = bach_atoms2text(ac, av, &buf);
     
     bach_atomic_lock(&x->c_lock);
-    sysmem_freeptr(x->c_text);
     x->c_text = buf;
     bach_atomic_unlock(&x->c_lock);
     return textsize + 1;
@@ -406,11 +404,9 @@ void codableclass_add_standard_methods(t_class *c)
 long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av)
 {
     long i;
-    long code_av = 0;
     for (i = 0; i < ac - 1; i++) {
         if (atom_getsym(av + i) == gensym("@lambda")) {
-            code_av = i + 1;
-            codableobj_getCodeFromAtoms(x, code_av, av + code_av);
+            codableobj_getCodeFromAtoms(x, ac - i - 1, av + i + 1);
             if (codableobj_buildAst(x) != MAX_ERR_NONE)
                 object_error((t_object *) x, "Invalid code");
             return i;

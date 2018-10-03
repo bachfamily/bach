@@ -148,7 +148,6 @@ void code_bang(t_code *x)
         }
     }
     
-    
     for (int i = 0; i < dataInlets; i++) {
         llll_release(context.argv[i]);
     }

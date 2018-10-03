@@ -39,19 +39,24 @@
  Andrea Agostini
  */
 
-#include "llllobj.h"
-#include "ext_common.h"
-#include "ext_globalsymbol.h"
+#include "bach_codableobj.hpp"
+#include "ast.hpp"
 
 typedef struct _intersection
 {
-	t_llllobj_object 	n_ob;
-	void				*n_proxy[3];
-	long				n_in;
-	long				n_result;
-	long				n_haslambda;
-	t_llll				*n_empty;
+	t_codableobj 	n_ob;
+	void			*n_proxy[3];
+	long			n_in;
+	long			n_result;
+	long			n_haslambda;
+	t_llll			*n_empty;
 } t_intersection;
+
+typedef struct _lambdaData
+{
+    t_intersection *x;
+    t_execContext *context;
+} t_lambdaData;
 
 void intersection_assist(t_intersection *x, void *b, long m, long a, char *s);
 void intersection_inletinfo(t_intersection *x, void *b, long a, char *t);
@@ -65,6 +70,11 @@ void intersection_float(t_intersection *x, double v);
 void intersection_anything(t_intersection *x, t_symbol *msg, long ac, t_atom *av);
 
 long intersection_func(t_intersection *x, t_llllelem *what1, t_llllelem *what2);
+
+long intersection_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2);
+
+// editor
+void intersection_dblclick(t_intersection *x);
 
 t_class *intersection_class;
 
@@ -82,6 +92,8 @@ int T_EXPORT main()
 	
 	c = class_new("bach.intersection", (method)intersection_new, (method)intersection_free, (short)sizeof(t_intersection), 0L, A_GIMME, 0);
 	
+    codableclass_add_standard_methods(c);
+
 	// @method llll @digest Store data and compute intersection
 	// @description
 	// In first inlet: the llll in the right inlet is intersected with the llll and the result is output.<br />
@@ -104,6 +116,8 @@ int T_EXPORT main()
 	class_addmethod(c, (method)intersection_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)intersection_inletinfo,	"inletinfo",	A_CANT,		0);
 
+    class_addmethod(c, (method)intersection_dblclick,        "dblclick",        A_CANT, 0);
+
 
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
@@ -117,9 +131,14 @@ int T_EXPORT main()
 	return 0;
 }
 
+void intersection_dblclick(t_intersection *x)
+{
+    codableobj_dblclick_helper((t_codableobj *) x, gensym("code"));
+}
+
 void intersection_bang(t_intersection *x)
 {	
-	if (x->n_ob.l_rebuild != 0 || proxy_getinlet((t_object *) x) != 0)
+	if (x->n_ob.c_ob.l_rebuild != 0 || proxy_getinlet((t_object *) x) != 0)
 		intersection_anything(x, _sym_bang, 0, NULL);
 	else
 		llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
@@ -149,6 +168,16 @@ void intersection_anything(t_intersection *x, t_symbol *msg, long ac, t_atom *av
 	
 	switch (inlet) {
 		case 0:
+            if (msg == gensym("lambda")) {
+                if (ac) {
+                    defer_low(x, (method) codableobj_code_do, msg, ac, av);
+                } else {
+                    x->n_ob.c_main->decrease();
+                    x->n_ob.c_main = nullptr;
+                }
+                x->n_ob.c_ob.l_rebuild = 1;
+                return;
+            }
             if (msg != _sym_bang) {
                 inll1 = llllobj_parse_clone_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, 0);
                 if (!inll1)
@@ -156,20 +185,30 @@ void intersection_anything(t_intersection *x, t_symbol *msg, long ac, t_atom *av
             } else
                 inll1 = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 1);
             inll2 = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 1);
-            x->n_haslambda = 0;
-            if (inll1->l_size && inll2->l_size)
-                llllobj_test_lambda_loop_two_outs((t_object *) x, LLLL_OBJ_VANILLA, inll1->l_head, inll2->l_head, 1, 2);
-            
-            if (x->n_haslambda) {
-                llll_intersection(inll1, inll2, (sets_fn) intersection_func, x);
-            } else
-                llll_intersection(inll1, inll2);
+            if (x->n_ob.c_main) {
+                t_execContext lambdaContext((t_llllobj_object *) x);
+                lambdaContext.argc = 2;
+                t_lambdaData lambdaData = {
+                    x,
+                    &lambdaContext
+                };
+                llll_intersection(inll1, inll2, (sets_fn) intersection_code, &lambdaData);
+            } else {
+                x->n_haslambda = 0;
+                if (inll1->l_size && inll2->l_size)
+                    llllobj_test_lambda_loop_two_outs((t_object *) x, LLLL_OBJ_VANILLA, inll1->l_head, inll2->l_head, 1, 2);
+                
+                if (x->n_haslambda) {
+                    llll_intersection(inll1, inll2, (sets_fn) intersection_func, x);
+                } else
+                    llll_intersection(inll1, inll2);
+            }
             llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, inll1, 0);
-            x->n_ob.l_rebuild = 0;
+            x->n_ob.c_ob.l_rebuild = 0;
             llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
 			break;
 		case 1:
-			x->n_ob.l_rebuild = llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet) != NULL;
+			x->n_ob.c_ob.l_rebuild = llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet) != NULL;
 			break;
 		case 2:
 			if (msg == LLLL_NATIVE_MSG) {
@@ -249,6 +288,18 @@ long intersection_func(t_intersection *x, t_llllelem *what1, t_llllelem *what2)
 	return x->n_result;
 }
 
+long intersection_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2)
+{
+    t_execContext *context = data->context;
+    context->argv[0] = what1->l_thing.w_llll;
+    context->argv[1] = what2->l_thing.w_llll;
+    context->resetLocalVariables();
+    t_llll *resll = data->x->n_ob.c_main->call(context);
+    long r = llll_istrue(resll);
+    llll_free(resll);
+    return r;
+}
+
 void intersection_assist(t_intersection *x, void *b, long m, long a, char *s)
 {	
 	if (m == ASSIST_INLET) {
@@ -283,7 +334,7 @@ void intersection_free(t_intersection *x)
 	for (i = 2; i > 0; i--)
 		object_free_debug(x->n_proxy[i]);
 	llll_free(x->n_empty);
-	llllobj_obj_free((t_llllobj_object *) x);
+	codableobj_free((t_codableobj *) x);
 }
 
 t_intersection *intersection_new(t_symbol *s, short ac, t_atom *av)
@@ -293,11 +344,17 @@ t_intersection *intersection_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;
 	
 	if ((x = (t_intersection *) object_alloc_debug(intersection_class))) {
+        ac = codableobj_buildCodeAsLambdaAttribute((t_codableobj *) x, ac, av);
+        
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 2, "444");
 		for (i = 2; i > 0; i--)
 			x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
 		x->n_empty = llll_get();
+        
+        t_dictionary* d = (t_dictionary *)gensym("#D")->s_thing;
+        codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
+        
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	
