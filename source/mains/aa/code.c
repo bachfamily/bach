@@ -105,6 +105,51 @@ int T_EXPORT main()
     // @description Doubleclicking on the object forces a text editor to open up, where the llll can be edited directly in text form.
     class_addmethod(c, (method)code_dblclick,		"dblclick",		A_CANT, 0);
 
+    CLASS_ATTR_LONG(c, "inlets",    0,    t_code, n_dataInlets);
+    CLASS_ATTR_LABEL(c, "inlets", 0, "Number of Inlets");
+    CLASS_ATTR_ACCESSORS(c, "inlets", (method)NULL, (method)llllobj_dummy_setter)
+    // @description Number of data inlets. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+
+    CLASS_ATTR_LONG(c, "outlets",    0,    t_code, n_dataOutlets);
+    CLASS_ATTR_LABEL(c, "outlets", 0, "Number of Outlets");
+    CLASS_ATTR_ACCESSORS(c, "outlets", (method)NULL, (method)llllobj_dummy_setter)
+    // @description Number of data outlets. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+
+    CLASS_ATTR_LONG(c, "directins",    0,    t_code, n_directInlets);
+    CLASS_ATTR_LABEL(c, "directins", 0, "Number of Direct Inlets");
+    CLASS_ATTR_ACCESSORS(c, "directins", (method)NULL, (method)llllobj_dummy_setter)
+    // @description Number of direct inlets. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+    
+    CLASS_ATTR_LONG(c, "directouts",    0,    t_code, n_directOutlets);
+    CLASS_ATTR_LABEL(c, "directouts", 0, "Number of Outlets");
+    CLASS_ATTR_ACCESSORS(c, "directouts", (method)NULL, (method)llllobj_dummy_setter)
+    // @description Number of direct outlets. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+
+    CLASS_ATTR_LONG(c, "embed",    0,    t_code, n_dummyEmbed);
+    CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
+    CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
+    CLASS_ATTR_BASIC(c, "embed", 0);
+    CLASS_ATTR_ACCESSORS(c, "embed", (method)NULL, (method)llllobj_dummy_setter)
+    // @description When set to 1, the stored code is saved with the patcher.
+    // @copy BACH_DOC_STATIC_ATTR
+
+    CLASS_ATTR_LONG(c, "auto",    0,    t_code, n_dummyAuto);
+    CLASS_ATTR_LABEL(c, "auto", 0, "Automatically Run Code");
+    CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
+    CLASS_ATTR_BASIC(c, "auto", 0);
+    CLASS_ATTR_ACCESSORS(c, "auto", (method)NULL, (method)llllobj_dummy_setter)
+    // @description When set to 1, the stored code is automatically run at startup.
+    // @copy BACH_DOC_STATIC_ATTR
+
+    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    // @copy BACH_DOC_STATIC_ATTR
+
+    CLASS_ATTR_ACCESSORS(c, "out", (method)NULL, (method)llllobj_dummy_setter)
+
 
     class_register(CLASS_BOX, c);
     code_class = c;
@@ -356,6 +401,17 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
         
         long totInlets = x->n_dataInlets + x->n_directInlets;
         llllobj_obj_setup((t_llllobj_object *) x, totInlets, outlet_str);
+        
+        x->n_dummyEmbed = x->n_ob.c_embed;
+        x->n_dummyAuto = x->n_ob.c_auto;
+        object_attr_setdisabled((t_object *)x, gensym("outlets"), true);
+        object_attr_setdisabled((t_object *)x, gensym("inlets"), true);
+        object_attr_setdisabled((t_object *)x, gensym("directins"), true);
+        object_attr_setdisabled((t_object *)x, gensym("directouts"), true);
+        object_attr_setdisabled((t_object *)x, gensym("auto"), true);
+        object_attr_setdisabled((t_object *)x, gensym("embed"), true);
+        object_attr_setdisabled((t_object *)x, gensym("out"), true);
+
         
         x->n_proxies = CLAMP(totInlets - 1, 0, LLLL_MAX_INLETS);
         

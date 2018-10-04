@@ -2518,7 +2518,7 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.71_polydroppriority.maxpat" ],
 					"objects" : [ "bach.roll" ],
 					"seealso" : [ "poly", "voicingslot", "sel" ],
-					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "drop", "priority", "terminate", "droppriority", "oldest", "newest", "closest" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "drop", "priority", "terminate", "droppriority", "oldest", "newest", "closest", "quietest", "loudest", "shortest", "longest" ],
 					"title" : [ "Priorities in assigning voicing" ]
 				},
 				"Polyresume" : {
@@ -5034,7 +5034,7 @@
 					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone", "accidental" ],
 					"title" : [ "Pitch syntax" ]
 				},
 				"Intervals" : {

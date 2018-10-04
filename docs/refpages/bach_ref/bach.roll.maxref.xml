@@ -5006,14 +5006,14 @@
 				• <b>poly 4</b>   <i>→ make selection playable with at most 4 monophonic instruments</i><br />
 				<br />
 				Message attributes:<br />
-				<m>@droppriority</m> (symbol, default: closest): Handle which notes should be terminated ("oldest", "newest", "closest").<br />
+				<m>@droppriority</m> (symbol, default: closest): Handle which notes should be terminated<br />
 				<m>@voicingslot</m> (int, default: 0): Slot number where voice index will be stored<br />
 				<m>@reassign</m> (int, default: 0): Reassign notes in detected voices<br />
 				<m>@voicingslot</m> (int, default: 0): Slot number where voice index will be stored<br />
 				<m>@notify</m> (int, default: 1): Notify maximum number of used voices through the playout<br />
 				<m>@resume</m> (int, default: 0): Resume terminated notes if possible<br />
-				<m>@resumepriority</m> (symbol, default: closest): Handle which notes should be resumed ("oldest", "newest", "closest").<br />
-				<m>@resumevoicing</m> (int, default: 1): Only resume notes with their original voicing.<br />
+				<m>@resumepriority</m> (symbol, default: closest): Handle which notes should be resumed<br />
+				<m>@resumevoicing</m> (int, default: 1): Only resume notes with their original voicing<br />
 				<br />
 				The <m>poly</m> message followed by a number <m>N</m> forces the selected material to be playable with at most <m>N</m> independent
 				monophonic voices. For instance <m>poly 1</m> will force the selection to be monophonic, <m>poly 2</m> will force it to be playable with
@@ -5028,7 +5028,8 @@
 				is output through the playout preceded by the "maxpoly" symbol. <br />
 				The <m>droppriority</m> message attribute decides which notes should be terminated whenever the maximum number of voices is reached;
 				it can be one of the following symbols: "oldest" (drop oldest first), "newest" (drop newest first),
-				"closest" (drop closest notes in pitch first, default). <br />
+				"closest" (drop closest notes in pitch first, default), "loudest" (drop loudest first), "quietest" (drop quietest first), "longest" (drop longest first)
+				"shortest" (drop shortest first). <br />
 				If the <m>resume</m> message attribute is set to 1, notes can be resumed if they have been terminated. In this case, the <m>resumepriority</m>
 				message sets the priority for resuming, as one of the same symbols: "oldest" (resume oldest), "newest" (resume newest first),
 				"closest" (resume closest notes in pitch first, default). Unless the <m>resumevoicing</m> message attribute is explicitly set to 0,

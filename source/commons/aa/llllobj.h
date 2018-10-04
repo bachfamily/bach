@@ -731,6 +731,11 @@ long bach_is_loadtime(void);
 
 
 
+// dummy setter
+t_max_err llllobj_dummy_setter(t_object *x, void *attr, long ac, t_atom *av);
+
+
+
 
 
 
