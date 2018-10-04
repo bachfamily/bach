@@ -7,7 +7,7 @@
 //
 
 #include "llll_append.h"
-
+#include "function.hpp"
 
 // check the depth of a list taking into account a newly-added sub-llll (son)
 // it updates all the depths of the super-lists of son, if needed
@@ -40,21 +40,21 @@ void llll_downgrade_depth(t_llll *dad)
     t_llll *son;
     t_llllelem *elem;
     t_int32 maxdepth;
-    //	long go_on = 1;
+    //    long go_on = 1;
     if (!dad)
         return;
     do {
         son = dad;
         if (son->l_owner) {
             dad = son->l_owner->l_parent;
-            //			go_on = dad && dad->l_depth <= son->l_depth + 1;
+            //            go_on = dad && dad->l_depth <= son->l_depth + 1;
         } else
             dad = NULL;
         
         maxdepth = 0;
         for (elem = son->l_head; elem; elem = elem->l_next) {
             if (elem->l_hatom.h_type == H_LLLL && elem->l_hatom.h_w.w_llll->l_depth > maxdepth)
-                maxdepth = elem->l_hatom.h_w.w_llll->l_depth;		
+                maxdepth = elem->l_hatom.h_w.w_llll->l_depth;        
         }
         son->l_depth = maxdepth + 1;
     } while (dad);
@@ -63,7 +63,7 @@ void llll_downgrade_depth(t_llll *dad)
 
 // IN ALL THE FOLLOWING FUNCTIONS,
 // 1. if adopter is WHITENULL the new element is owned by the list it is appended (or prepended) to
-//		otherwise, the new element is owned by adopter
+//        otherwise, the new element is owned by adopter
 // 2. the llll depth is always correctly updated
 // 3. flags (when present) are the new llllelem flags
 //
@@ -108,6 +108,8 @@ t_llllelem *llll_appendhatom(t_llll *where, const t_hatom *what, const long flag
     if (what->h_type == H_LLLL)
         outelem = llll_appendllll(where, what->h_w.w_llll, flags, adopter);
     else {
+        if (what->h_type == H_FUNCTION)
+            what->h_w.w_func->increase();
         outelem = llllelem_get();
         outelem->l_hatom = *what;
         outelem->l_flags = flags;
@@ -242,7 +244,7 @@ t_llllelem *llll_appendobj(t_llll *where, void *what, long flags, t_llll *adopte
 }
 
 // a new llllelem is created
-t_llllelem *llll_appendfunc(t_llll *where, void *what, long flags, t_llll *adopter)
+t_llllelem *llll_appendfunc(t_llll *where, t_function *what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!where)
@@ -315,6 +317,8 @@ t_llllelem *llll_prependhatom(t_llll *where, const t_hatom *what, long flags, t_
     if (what->h_type == H_LLLL)
         outelem = llll_prependllll(where, what->h_w.w_llll, flags, adopter);
     else {
+        if (what->h_type == H_FUNCTION)
+            what->h_w.w_func->increase();
         outelem = llllelem_get();
         outelem->l_hatom = *what;
         outelem->l_flags = flags;
@@ -440,7 +444,7 @@ t_llllelem *llll_prependobj(t_llll *where, void *what, long flags, t_llll *adopt
     return outelem;
 }
 
-t_llllelem *llll_prependfunc(t_llll *where, void *what, long flags, t_llll *adopter)
+t_llllelem *llll_prependfunc(t_llll *where, t_function *what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!where)
@@ -475,7 +479,7 @@ t_llllelem *llll_prependllll_clone(t_llll *where, t_llll *what, long flags, t_ll
 
 // IN ALL THE FOLLOWING FUNCTIONS,
 // 1. if adopter is WHITENULL the new element is owned by the list it is appended (or prepended) to
-//		otherwise, the new element is owned by adopter
+//        otherwise, the new element is owned by adopter
 // 2. the llll depth is always correctly updated
 // 3. flags (when present) are the new llllelem flags
 //
@@ -521,6 +525,8 @@ t_llllelem *llll_inserthatom_before(const t_hatom *what, t_llllelem *before_what
     if (what->h_type == H_LLLL)
         outelem = llll_insertllll_before(what->h_w.w_llll, before_what, flags, adopter);
     else {
+        if (what->h_type == H_FUNCTION)
+            what->h_w.w_func->increase();
         outelem = llllelem_get();
         outelem->l_hatom = *what;
         outelem->l_flags = flags;
@@ -648,7 +654,7 @@ t_llllelem *llll_insertobj_before(void *what, t_llllelem *before_what, long flag
     return outelem;
 }
 
-t_llllelem *llll_insertfunc_before(void *what, t_llllelem *before_what, long flags, t_llll *adopter)
+t_llllelem *llll_insertfunc_before(t_function *what, t_llllelem *before_what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!before_what)
@@ -712,6 +718,8 @@ t_llllelem *llll_inserthatom_after(t_hatom *what, t_llllelem *after_what, long f
     if (what->h_type == H_LLLL)
         outelem = llll_insertllll_after(what->h_w.w_llll, after_what, flags, adopter);
     else {
+        if (what->h_type == H_FUNCTION)
+            what->h_w.w_func->increase();
         outelem = llllelem_get();
         outelem->l_hatom = *what;
         outelem->l_flags = flags;
@@ -839,7 +847,7 @@ t_llllelem *llll_insertobj_after(void *what, t_llllelem *after_what, long flags,
     return outelem;
 }
 
-t_llllelem *llll_insertfunc_after(void *what, t_llllelem *after_what, long flags, t_llll *adopter)
+t_llllelem *llll_insertfunc_after(t_function *what, t_llllelem *after_what, long flags, t_llll *adopter)
 {
     t_llllelem *outelem;
     if (!after_what)

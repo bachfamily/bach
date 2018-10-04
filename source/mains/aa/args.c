@@ -102,6 +102,8 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv);
 t_class *args_class;
 t_class *cachedmess_class;
 
+
+
 int T_EXPORT main()
 {
 	t_class *c;
@@ -136,11 +138,12 @@ int T_EXPORT main()
 	class_addmethod(c, (method)args_loadbang,	"loadbang",		0);
 	class_addmethod(c, (method)args_assist,		"assist",		A_CANT,		0);
 
-/*	
+
 	CLASS_ATTR_LONG(c, "ins",	0,	t_args, n_ins);
 	CLASS_ATTR_FILTER_CLIP(c, "ins", 0, LLLL_MAX_INLETS - 1);
 	CLASS_ATTR_LABEL(c, "ins", 0, "Number of llll Inlets");
 	CLASS_ATTR_BASIC(c, "ins", 0);
+    CLASS_ATTR_ACCESSORS(c, "ins", (method)NULL, (method)llllobj_dummy_setter)
 	// @description The number of llll inlets and outlets. In principle, it should match the number of inlets of the patcher. <br />
 	// @copy BACH_DOC_STATIC_ATTR
 	
@@ -148,6 +151,7 @@ int T_EXPORT main()
 	CLASS_ATTR_FILTER_CLIP(c, "nullmode", 0, 1);
 	CLASS_ATTR_STYLE(c, "nullmode", 0, "onoff");
 	CLASS_ATTR_LABEL(c, "nullmode", 0, "Null Mode");
+    CLASS_ATTR_ACCESSORS(c, "nullmode", (method)NULL, (method)llllobj_dummy_setter)
 	// @description When set to 1, <b>null</b> is output if no patcher argument is provided. <br />
 	// @copy BACH_DOC_STATIC_ATTR
 
@@ -155,6 +159,7 @@ int T_EXPORT main()
 	CLASS_ATTR_FILTER_CLIP(c, "backtick", 0, 1);
 	CLASS_ATTR_STYLE(c, "backtick", 0, "onoff");
 	CLASS_ATTR_LABEL(c, "backtick", 0, "Backtick bach Object Arguments");
+    CLASS_ATTR_ACCESSORS(c, "backtick", (method)NULL, (method)llllobj_dummy_setter)
 	// @description When set to 1, if the first element of the "normal arguments" llll is an attribute of any bach object,
 	// then a backtick is prepended to it. In this way, it will not be interpreted as an attribute by any bach object you feed it into. <br />
 	// @copy BACH_DOC_STATIC_ATTR
@@ -163,6 +168,7 @@ int T_EXPORT main()
 	CLASS_ATTR_FILTER_CLIP(c, "mode", 0, 1);
 	CLASS_ATTR_STYLE(c, "mode", 0, "onoff");
 	CLASS_ATTR_LABEL(c, "mode", 0, "Mode");
+    CLASS_ATTR_ACCESSORS(c, "mode", (method)NULL, (method)llllobj_dummy_setter)
 	// @description When set to 1, the "normal arguments" llll is always at least the length of the typed-in arguments.
 	// If not enough arguments are specified in the enclosing patcher, the missing ones will be taken from the <o>bach.args</o>' object box.
 	// This is especially useful for providing an abstraction with a minimal set of default values. <br />
@@ -172,6 +178,7 @@ int T_EXPORT main()
 	CLASS_ATTR_FILTER_CLIP(c, "done", 0, 1);
 	CLASS_ATTR_STYLE(c, "done", 0, "onoff");
 	CLASS_ATTR_LABEL(c, "done", 0, "Output 'done' Message");
+    CLASS_ATTR_ACCESSORS(c, "done", (method)NULL, (method)llllobj_dummy_setter)
 	// @description When set to 1, the message <m>done</m> is output after the last attribute-style argument, just like in <o>patcherargs</o>. <br />
 	// @copy BACH_DOC_STATIC_ATTR
 
@@ -179,7 +186,8 @@ int T_EXPORT main()
 	CLASS_ATTR_FILTER_CLIP(c, "outout", 0, 1);
 	CLASS_ATTR_STYLE(c, "outout", 0, "onoff");
 	CLASS_ATTR_LABEL(c, "outout", 0, "Output \"out\" patcher attribute");
-	// @description When set to 1, the <b>out</b> attribute of the containing patcher, if present, 
+    CLASS_ATTR_ACCESSORS(c, "outout", (method)NULL, (method)llllobj_dummy_setter)
+	// @description When set to 1, the <b>out</b> attribute of the containing patcher, if present,
     // as well as any <m>out</m> message received by <o>bach.args</o>, is output as an attribute-style argument. <br />
     // When set to 0, which is the default, the <b>out</b> attribute of the containing patcher is ignored,
     // as it is assumed that it is meant for a <o>bach.portal</o> object in the same patcher.
@@ -189,12 +197,15 @@ int T_EXPORT main()
 	
 	CLASS_ATTR_SYM_VARSIZE(c, "attrs", 0, t_args, n_attrs, n_numattrs, MAX_ATTRS);
 	CLASS_ATTR_LABEL(c, "attrs", 0, "Known Attributes");
+    CLASS_ATTR_ACCESSORS(c, "attrs", (method)NULL, (method)llllobj_dummy_setter)
 	// @description An optional set of keywords to be considered as attributes, and therefore output as attribute-style arguments. <br />
 	// @copy BACH_DOC_STATIC_ATTR
  
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
-	//llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
-*/
+    // @copy BACH_DOC_STATIC_ATTR
+
+    CLASS_ATTR_ACCESSORS(c, "out", (method)NULL, (method)llllobj_dummy_setter)
+
 	class_register(CLASS_BOX, c);
 	args_class = c;
 	
@@ -443,7 +454,19 @@ t_args *args_new(t_symbol *s, short ac, t_atom *av)
 		if (i < ac)
 			object_error((t_object *) x, "Bad argument list");
 
-		x->n_proxies = x->n_ins;
+
+        
+        object_attr_setdisabled((t_object *)x, gensym("out"), true);
+        object_attr_setdisabled((t_object *)x, gensym("attrs"), true);
+        object_attr_setdisabled((t_object *)x, gensym("outout"), true);
+        object_attr_setdisabled((t_object *)x, gensym("done"), true);
+        object_attr_setdisabled((t_object *)x, gensym("mode"), true);
+        object_attr_setdisabled((t_object *)x, gensym("backtick"), true);
+        object_attr_setdisabled((t_object *)x, gensym("nullmode"), true);
+        object_attr_setdisabled((t_object *)x, gensym("ins"), true);
+
+        
+        x->n_proxies = x->n_ins;
 		this_outlets = outlets;
 		*this_outlets++ = 'a';
 		for (i = 0; i <= x->n_proxies; i++, this_outlets++)

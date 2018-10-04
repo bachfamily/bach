@@ -4,7 +4,7 @@
 %option outfile="chkparser.c"
 %option prefix="chkparser_"
 
-RESERVED ([ \t\n\\,\;)
+RESERVED ([ \t\n\r\\,\;)
 INTEGER ([+-]?[0-9]+)
 FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
 RATIONAL ({INTEGER}[/]{INTEGER})
@@ -65,17 +65,17 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_PITCH;
 }
 
-^[^`\(\) \t\n\,\;\"\\][^\(\) \t\n\,\;\"\\]* {
+^[^`\(\)\[\] \t\n\r\,\;\"\\][^\(\)\[\] \t\n\r\,\;\"\\]* {
     parserpost("typecheck: no parens, no separators, no double quotes / backslashes");
     return H_SYM;
 }
 
-^[^` \t\n\,\;\"\\][^ \t\n\,\;\"\\]* {
+^[^` \t\n\r\,\;\"\\][^ \t\n\r\,\;\"\\]* {
     parserpost("typecheck: parens, no separators, no double quotes / backslashes");
     return H_SYM | H_PAREN;
 }
 
-^[^`\(\)\"\\][^\(\)\"\\]* {
+^[^`\(\)\[\]\"\\][^\(\)\[\]\"\\]* {
     parserpost("typecheck: no parens, separators, no double quotes / backslashes");
     return H_SYM | H_SEPARATOR;
 }
@@ -85,17 +85,17 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_PAREN | H_SEPARATOR;
 }
 
-^[^`\(\) \t\n\,\;][^\(\) \t\n\,\;]* {
+^[^`\(\)\[\] \t\n\r\,\;][^\(\)\[\] \t\n\r\,\;]* {
     parserpost("typecheck: no parens, no separators, double quotes / backslashes");
     return H_SYM | H_SPECIAL;
 }
 
-^[^` \t\n\,\;][^ \t\n\,\;]* {
+^[^` \t\n\r\,\;][^ \t\n\r\,\;]* {
     parserpost("typecheck: parens, no separators, double quotes / backslashes");
     return H_SYM | H_PAREN | H_SPECIAL;
 }
 
-^[^`\(\)][^\(\)]* {
+^[^`\(\)\[\]][^\(\)\[\]]* {
     parserpost("typecheck: no parens, separators, double quotes / backslashes");
     return H_SYM | H_SEPARATOR | H_SPECIAL;
 }
@@ -105,17 +105,17 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_PAREN | H_SEPARATOR | H_SPECIAL;
 }
 
-^`[^\(\) \t\n\,\;\"\\]* {
+^`[^\(\)\[\] \t\n\r\,\;\"\\]* {
     parserpost("typecheck: backtick, no parens, no separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK;
 }
 
-^`[ \t\n\,\;\"\\]* {
+^`[ \t\n\r\,\;\"\\]* {
     parserpost("typecheck: backtick, parens, no separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_PAREN;
 }
 
-^`[^\(\)\"\\]* {
+^`[^\(\)\[\]\"\\]* {
     parserpost("typecheck: backtick, no parens, separators, no double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SEPARATOR;
 }
@@ -125,17 +125,17 @@ ACCIDENTAL ([#bxdq\^v]+)
     return H_SYM | H_BACKTICK | H_PAREN | H_SEPARATOR;
 }
 
-^`[^\(\) \t\n\,\;]* {
+^`[^\(\)\[\] \t\n\r\,\;]* {
     parserpost("typecheck: backtick, no parens, no separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SPECIAL;
 }
 
-^`[^ \t\n\,\;]* {
+^`[^ \t\n\r\,\;]* {
     parserpost("typecheck: backtick, parens, no separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SPECIAL;
 }
 
-^`[^\(\)]* {
+^`[^\(\)\[\]]* {
     parserpost("typecheck: backtick, no parens, separators, double quotes / backslashes");
     return H_SYM | H_BACKTICK | H_SEPARATOR | H_SPECIAL;
 }

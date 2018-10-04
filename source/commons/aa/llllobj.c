@@ -2651,4 +2651,9 @@ void bach_class_setname(const char *obname, const char *filename)
 }
 
 
+t_max_err llllobj_dummy_setter(t_object *x, void *attr, long ac, t_atom *av)
+{
+	return MAX_ERR_NONE;
+}
+
 

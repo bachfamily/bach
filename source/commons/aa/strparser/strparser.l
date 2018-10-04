@@ -6,7 +6,7 @@
 
 %s NO_L NO_b NO_Lb NO_e NO_Le NO_be NO_Lbe NO_l NO_Ll NO_bl NO_Lbl NO_el NO_Lel NO_bel NO_Lbel NO_p NO_Lp NO_bp NO_Lbp NO_ep NO_Lep NO_bep NO_Lbep NO_lp NO_Llp NO_blp NO_Lblp NO_elp NO_Lelp NO_belp NO_Lbelp NO_r NO_Lr NO_br NO_Lbr NO_er NO_Ler NO_ber NO_Lber NO_lr NO_Llr NO_blr NO_Lblr NO_elr NO_Lelr NO_belr NO_Lbelr NO_pr NO_Lpr NO_bpr NO_Lbpr NO_epr NO_Lepr NO_bepr NO_Lbepr NO_lpr NO_Llpr NO_blpr NO_Lblpr NO_elpr NO_Lelpr NO_belpr NO_Lbelpr NO_s NO_Ls NO_bs NO_Lbs NO_es NO_Les NO_bes NO_Lbes NO_ls NO_Lls NO_bls NO_Lbls NO_els NO_Lels NO_bels NO_Lbels NO_ps NO_Lps NO_bps NO_Lbps NO_eps NO_Leps NO_beps NO_Lbeps NO_lps NO_Llps NO_blps NO_Lblps NO_elps NO_Lelps NO_belps NO_Lbelps NO_rs NO_Lrs NO_brs NO_Lbrs NO_ers NO_Lers NO_bers NO_Lbers NO_lrs NO_Llrs NO_blrs NO_Lblrs NO_elrs NO_Lelrs NO_belrs NO_Lbelrs NO_prs NO_Lprs NO_bprs NO_Lbprs NO_eprs NO_Leprs NO_beprs NO_Lbeprs NO_lprs NO_Llprs NO_blprs NO_Lblprs NO_elprs NO_Lelprs NO_belprs NO_Lbelprs
 
-SEPARATOR ([ \t\n\(\)\[\]\{\}])
+SEPARATOR ([ \t\n\r\(\)\[\]\{\}])
 INTEGER ([+-]?[0-9]+)
 FLOAT ([+-]?(((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+)))
 SIMPLEFLOAT ((-?)(([0-9]*\.[0-9]+)|([0-9]+\.)))
@@ -41,12 +41,12 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
 
 <INITIAL,NO_b,NO_e,NO_be,NO_l,NO_bl,NO_el,NO_bel,NO_p,NO_bp,NO_ep,NO_bep,NO_lp,NO_blp,NO_elp,NO_belp,NO_r,NO_br,NO_er,NO_ber,NO_lr,NO_blr,NO_elr,NO_belr,NO_pr,NO_bpr,NO_epr,NO_bepr,NO_lpr,NO_blpr,NO_elpr,NO_belpr,NO_s,NO_bs,NO_es,NO_bes,NO_ls,NO_bls,NO_els,NO_bels,NO_ps,NO_bps,NO_eps,NO_beps,NO_lps,NO_blps,NO_elps,NO_belps,NO_rs,NO_brs,NO_ers,NO_bers,NO_lrs,NO_blrs,NO_elrs,NO_belrs,NO_prs,NO_bprs,NO_eprs,NO_beprs,NO_lprs,NO_blprs,NO_elprs,NO_belprs>{
     
-    \( {
+    ("("|"[") {
         parserpost(" lex: BACH_PUSH\n");
         return BACH_PUSH;
     }
     
-    \) {
+    (")"|"]") {
         parserpost(" lex: BACH_POP\n");
         return BACH_POP;
     }
@@ -115,13 +115,13 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
 
 <INITIAL,NO_L,NO_e,NO_Le,NO_l,NO_Ll,NO_el,NO_Lel,NO_p,NO_Lp,NO_ep,NO_Lep,NO_lp,NO_Llp,NO_elp,NO_Lelp,NO_r,NO_Lr,NO_er,NO_Ler,NO_lr,NO_Llr,NO_elr,NO_Lelr,NO_pr,NO_Lpr,NO_epr,NO_Lepr,NO_lpr,NO_Llpr,NO_elpr,NO_Lelpr,NO_s,NO_Ls,NO_es,NO_Les,NO_ls,NO_Lls,NO_els,NO_Lels,NO_ps,NO_Lps,NO_eps,NO_Leps,NO_lps,NO_Llps,NO_elps,NO_Lelps,NO_rs,NO_Lrs,NO_ers,NO_Lers,NO_lrs,NO_Llrs,NO_elrs,NO_Lelrs,NO_prs,NO_Lprs,NO_eprs,NO_Leprs,NO_lprs,NO_Llprs,NO_elprs,NO_Lelprs>{
     
-    \`[^\\ \t\n]* {
+    \`[^\\ \t\n\r]* {
         parserpost(" lex: BACKTICKED BACH_SYMBOL %s\n", yytext + 1);
         yylval->sym = gensym(yytext + 1);
         return BACH_SYMBOL;
     }
     
-    \`([^ \t\n]|("\\"(.|\n)))*"\\"? {
+    \`([^ \t\n\r]|("\\"(.|\n\r)))*"\\"? {
         parserpost(" lex: BACKTICKED BACH_SYMBOL %s\n", yytext + 1);
         yylval->sym = gensym_unescape(yytext + 1);
         return BACH_SYMBOL;
@@ -136,7 +136,7 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
     return BACH_SYMBOL;
 }
 
-["]("\\"(.|\n)|[^"])*["] {
+["]("\\"(.|\n\r)|[^"])*["] {
     parserpost(" lex: QUOTED BACH_SYMBOL %s\n", yytext);
     *(yytext + yyleng - 1) = 0;
     yylval->sym = gensym_unescape(yytext + 1);
@@ -157,19 +157,19 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
     }
 }
 
-[ \t\n] {
+[ \t\n\r] {
 	parserpost(" lex: Whitespace\n");
 }
 
 <INITIAL,NO_b,NO_e,NO_be,NO_p,NO_bp,NO_ep,NO_bep,NO_r,NO_br,NO_er,NO_ber,NO_pr,NO_bpr,NO_epr,NO_bepr,NO_s,NO_bs,NO_es,NO_bes,NO_ps,NO_bps,NO_eps,NO_beps,NO_rs,NO_brs,NO_ers,NO_bers,NO_prs,NO_bprs,NO_eprs,NO_beprs>{
     
-    [^\(\)\\ \t\n]* {
+    [^\(\)\\ \t\n\r]* {
         parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym(yytext);
         return BACH_SYMBOL;
     }
     
-    ([^\(\) \t\n]|("\\"[^\(\)]))*"\\"? {
+    ([^\(\) \t\n\r]|("\\"[^\(\)]))*"\\"? {
         parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym_unescape(yytext);
         return BACH_SYMBOL;
@@ -178,13 +178,13 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
 
 <NO_L,NO_Lb,NO_Le,NO_Lbe,NO_l,NO_Ll,NO_bl,NO_Lbl,NO_el,NO_Lel,NO_bel,NO_Lbel,NO_Lp,NO_Lbp,NO_Lep,NO_Lbep,NO_lp,NO_Llp,NO_blp,NO_Lblp,NO_elp,NO_Lelp,NO_belp,NO_Lbelp,NO_Lr,NO_Lbr,NO_Ler,NO_Lber,NO_lr,NO_Llr,NO_blr,NO_Lblr,NO_elr,NO_Lelr,NO_belr,NO_Lbelr,NO_Lpr,NO_Lbpr,NO_Lepr,NO_Lbepr,NO_lpr,NO_Llpr,NO_blpr,NO_Lblpr,NO_elpr,NO_Lelpr,NO_belpr,NO_Lbelpr,NO_Ls,NO_Lbs,NO_Les,NO_Lbes,NO_ls,NO_Lls,NO_bls,NO_Lbls,NO_els,NO_Lels,NO_bels,NO_Lbels,NO_Lps,NO_Lbps,NO_Leps,NO_Lbeps,NO_lps,NO_Llps,NO_blps,NO_Lblps,NO_elps,NO_Lelps,NO_belps,NO_Lbelps,NO_Lrs,NO_Lbrs,NO_Lers,NO_Lbers,NO_lrs,NO_Llrs,NO_blrs,NO_Lblrs,NO_elrs,NO_Lelrs,NO_belrs,NO_Lbelrs,NO_Lprs,NO_Lbprs,NO_Leprs,NO_Lbeprs,NO_lprs,NO_Llprs,NO_blprs,NO_Lblprs,NO_elprs,NO_Lelprs,NO_belprs,NO_Lbelprs>{
     
-    [^\\ \t\n]* {
+    [^\\ \t\n\r]* {
         parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym(yytext);
         return BACH_SYMBOL;
     }
     
-    ([^ \t\n]|("\\"(.|\n)))*"\\"? {
+    ([^ \t\n\r]|("\\"(.|\n)))*"\\"? {
         parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym_unescape(yytext);
         return BACH_SYMBOL;

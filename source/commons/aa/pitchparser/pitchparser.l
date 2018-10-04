@@ -72,8 +72,8 @@ ACCIDENTAL ([#bxdq\^v]+)
     return P_ERROR;
 }
 
-\n {
-    parserpost(" lex: unrecognized character \\n", yytext);
+[\n\r] {
+    parserpost(" lex: unrecognized character \\n or \\r", yytext);
     return P_ERROR;
 }
 

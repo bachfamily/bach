@@ -15,7 +15,7 @@
 #include "ext_globalsymbol.h"
 #include "bach_codableobj.hpp"
 
-typedef struct _code
+typedef struct _eval
 {
     t_codableobj n_ob;
     
@@ -29,6 +29,6 @@ typedef struct _code
     t_atom_long n_directOutlets;
 
     short n_path;
-} t_code;
+} t_eval;
 
-#endif /* code_h */
+#endif /* eval_h */

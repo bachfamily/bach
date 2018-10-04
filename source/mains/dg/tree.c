@@ -1007,7 +1007,7 @@ int T_EXPORT main(void){
     
     CLASS_ATTR_SYM(c, "llllsymbol", 0, t_tree, symbol_for_llll);
     CLASS_ATTR_STYLE_LABEL(c,"llllsymbol",0,"text","Placeholder for lllls");
-    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"llllsymbol",0,"(...)");
+    CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"llllsymbol",0,"[...]");
     CLASS_ATTR_ACCESSORS(c, "llllsymbol", (method)NULL, (method)tree_setattr_llllsymbol);
     // @description A symbol serving as placeholder to represent llll nodes (unless the attribute
     // <m>firsteleminllllisllllname</m> is set).

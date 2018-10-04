@@ -18,7 +18,7 @@
  bachproject
  
  @digest 
- Arrange element into classes
+ Arrange elements into classes
  
  @description
  Arranges elements into classes, according to a custom equality test.

@@ -34,7 +34,7 @@ typedef struct _codableobj
 } t_codableobj;
 
 
-void codableclass_add_standard_methods(t_class *c);
+void codableclass_add_standard_methods(t_class *c, t_bool isBachCode = false);
 
 
 t_mainFunction *codableobj_parse_buffer(t_codableobj *x,
@@ -48,6 +48,10 @@ t_max_err codableobj_buildAst(t_codableobj *x,
                               t_atom_long *dataOutlets = nullptr,
                               t_atom_long *directInlets = nullptr,
                               t_atom_long *directOutlets = nullptr);
+
+void codableobj_lambda(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
+
+void codableobj_dblclick(t_codableobj *x);
 
 void codableobj_okclose(t_codableobj *x, char *s, short *result);
 
@@ -76,7 +80,7 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x,
 
 void codableobj_free(t_codableobj *x);
 
-void codableobj_code_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
+void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
 
 long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av);
 

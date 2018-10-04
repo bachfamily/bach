@@ -9253,13 +9253,13 @@
 			</digest>
 			<description>
 				Toggles the ability for the duration line (if shown) to span sequences of
-				tied notes. Values are: 0 = Don't span ties (default); 1 = Span ties; 2 = Span ties,
+				tied notes. Values are: 0 = Don't span ties; 1 = Span ties (default); 2 = Span ties,
 				and also hide notes; 3 = 2 = Span ties, and also hide notes and ties
 				(i.e. only the duration line is kept to symbolize the duration of the tied sequence).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Duration Line Spans Ties" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />

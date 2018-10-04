@@ -289,7 +289,7 @@
 		9118C1FC1941D85800BA58AF /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		9118C2071941D8CD00BA58AF /* life.c in Sources */ = {isa = PBXBuildFile; fileRef = 9118C2061941D8CD00BA58AF /* life.c */; };
 		911A5BB6183219CC00E8A26C /* notation_attrs.h in Headers */ = {isa = PBXBuildFile; fileRef = 911A5BB5183219CB00E8A26C /* notation_attrs.h */; };
-		911B65D320684BAA00464E16 /* code.c in Sources */ = {isa = PBXBuildFile; fileRef = 911B65D220684BAA00464E16 /* code.c */; };
+		911B65D320684BAA00464E16 /* eval.c in Sources */ = {isa = PBXBuildFile; fileRef = 911B65D220684BAA00464E16 /* eval.c */; };
 		911B65D520684C0400464E16 /* libcode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 911B65D420684C0400464E16 /* libcode.a */; };
 		911B65D62068510700464E16 /* libcode.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 911B65D420684C0400464E16 /* libcode.a */; };
 		911F8D8D123F7D7500963195 /* slice.c in Sources */ = {isa = PBXBuildFile; fileRef = 911F8D8C123F7D7500963195 /* slice.c */; };
@@ -2913,7 +2913,7 @@
 		9118C2011941D85800BA58AF /* bach.life.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.life.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		9118C2061941D8CD00BA58AF /* life.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = life.c; sourceTree = "<group>"; };
 		911A5BB5183219CB00E8A26C /* notation_attrs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_attrs.h; sourceTree = "<group>"; };
-		911B65D220684BAA00464E16 /* code.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = code.c; sourceTree = "<group>"; };
+		911B65D220684BAA00464E16 /* eval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eval.c; sourceTree = "<group>"; };
 		911B65D420684C0400464E16 /* libcode.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcode.a; path = "../../../../../../Library/Developer/Xcode/DerivedData/bach-bqoboivcgdedwoagckavjkxwtvql/Build/Products/Development/libcode.a"; sourceTree = "<group>"; };
 		911BB20817CBA88F00B513E8 /* jit.agl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jit.agl.h; sourceTree = "<group>"; };
 		911BB20917CBA88F00B513E8 /* jit.altivec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jit.altivec.h; sourceTree = "<group>"; };
@@ -3237,7 +3237,7 @@
 		9156DC071D2958C500002A01 /* libgecodeint.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgecodeint.a; path = /usr/local/lib/libgecodeint.a; sourceTree = "<absolute>"; };
 		9156DC081D2958C500002A01 /* libgecodekernel.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgecodekernel.a; path = /usr/local/lib/libgecodekernel.a; sourceTree = "<absolute>"; };
 		9156DC091D2958C500002A01 /* libgecodesupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgecodesupport.a; path = /usr/local/lib/libgecodesupport.a; sourceTree = "<absolute>"; };
-		9156E449206E9C4000E461B2 /* code.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = code.h; sourceTree = "<group>"; };
+		9156E449206E9C4000E461B2 /* eval.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = eval.h; sourceTree = "<group>"; };
 		915BC82918E1C3C80057DF18 /* bach.reducefunction.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.reducefunction.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		915BC83518E1C4910057DF18 /* reducefunction.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reducefunction.c; sourceTree = "<group>"; };
 		915D1DDC18D764F5005ED0A4 /* mc2r.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mc2r.c; sourceTree = "<group>"; };
@@ -3324,7 +3324,7 @@
 		91B62BC01F5218A200B9FC63 /* bach_mem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bach_mem.h; sourceTree = "<group>"; };
 		91B6BB6D18F01DD50093DA53 /* wordcloud.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = wordcloud.c; sourceTree = "<group>"; };
 		91B6BB7D18F01DE20093DA53 /* bach.wordcloud.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.wordcloud.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		91B7258B1E5DDA1D00E39EF8 /* bach.code.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.code.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
+		91B7258B1E5DDA1D00E39EF8 /* bach.eval.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.eval.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91BA46AD1F71599E0002D515 /* docs */ = {isa = PBXFileReference; lastKnownFileType = folder; path = docs; sourceTree = "<group>"; };
 		91BA46AE1F71599E0002D515 /* extras */ = {isa = PBXFileReference; lastKnownFileType = folder; path = extras; sourceTree = "<group>"; };
 		91BA46AF1F71599E0002D515 /* help */ = {isa = PBXFileReference; lastKnownFileType = folder; path = help; sourceTree = "<group>"; };
@@ -5032,7 +5032,7 @@
 				91F6A60A1DDDDE2900237E9F /* bach.convertbase.mxo */,
 				91F6A61F1DE6E33100237E9F /* bach.join.mxo */,
 				919BF81B1E01AB0200CDEA02 /* bach.partition.mxo */,
-				91B7258B1E5DDA1D00E39EF8 /* bach.code.mxo */,
+				91B7258B1E5DDA1D00E39EF8 /* bach.eval.mxo */,
 				91DF79F11E919230000EB3B8 /* bach.resample.mxo */,
 				1ED51E191F73F5940021C2D5 /* bach.mc2p.mxo */,
 				1ED51E291F73F5B40021C2D5 /* bach.p2mc.mxo */,
@@ -5510,8 +5510,6 @@
 				912AB4A414FD3F100081E2B5 /* bach.c */,
 				911289FD17E08FDB008381E3 /* cartesianprod.c */,
 				91D261AA1CC64C8B00C75E35 /* classify.c */,
-				9156E449206E9C4000E461B2 /* code.h */,
-				911B65D220684BAA00464E16 /* code.c */,
 				91D7C9551233C2D500D767D4 /* collect.c */,
 				9141D7FD12315932000EE69C /* collector.c */,
 				91D18C07130EE35900A2E668 /* comb.c */,
@@ -5526,6 +5524,8 @@
 				91453FE512CA48A000828342 /* edit.c */,
 				914017DE134EF13E00C1F7D9 /* encode.c */,
 				91D7CA8D1233D98800D767D4 /* eq.c */,
+				9156E449206E9C4000E461B2 /* eval.h */,
+				911B65D220684BAA00464E16 /* eval.c */,
 				91D7CA521233D37500D767D4 /* expr.c */,
 				91BE0060125A0200002763D1 /* factorize.c */,
 				913772131234D8AA00D950E9 /* find.c */,
@@ -8357,9 +8357,9 @@
 			productReference = 91B6BB7D18F01DE20093DA53 /* bach.wordcloud.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
-		91B7257D1E5DDA1D00E39EF8 /* bach.code */ = {
+		91B7257D1E5DDA1D00E39EF8 /* bach.eval */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 91B725881E5DDA1D00E39EF8 /* Build configuration list for PBXNativeTarget "bach.code" */;
+			buildConfigurationList = 91B725881E5DDA1D00E39EF8 /* Build configuration list for PBXNativeTarget "bach.eval" */;
 			buildPhases = (
 				91B725801E5DDA1D00E39EF8 /* Headers */,
 				91B725811E5DDA1D00E39EF8 /* Resources */,
@@ -8372,9 +8372,9 @@
 			dependencies = (
 				91B7257E1E5DDA1D00E39EF8 /* PBXTargetDependency */,
 			);
-			name = bach.code;
+			name = bach.eval;
 			productName = iterator;
-			productReference = 91B7258B1E5DDA1D00E39EF8 /* bach.code.mxo */;
+			productReference = 91B7258B1E5DDA1D00E39EF8 /* bach.eval.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
 		91BE00461259FD65002763D1 /* bach.factorize */ = {
@@ -9918,7 +9918,7 @@
 				911289EC17E08EDC008381E3 /* bach.cartesianprod */,
 				91DA80E0131B34CD00FCB316 /* bach.circle */,
 				91D2619C1CC64C5D00C75E35 /* bach.classify */,
-				91B7257D1E5DDA1D00E39EF8 /* bach.code */,
+				91B7257D1E5DDA1D00E39EF8 /* bach.eval */,
 				91D7C9351233B4FD00D767D4 /* bach.collect */,
 				91D18B4E130EE1C200A2E668 /* bach.comb */,
 				91688FF1134FA75900805BC9 /* bach.constraints */,
@@ -12562,7 +12562,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				911B65D320684BAA00464E16 /* code.c in Sources */,
+				911B65D320684BAA00464E16 /* eval.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13275,7 +13275,7 @@
 		};
 		911B658D206841A800464E16 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 91B7257D1E5DDA1D00E39EF8 /* bach.code */;
+			target = 91B7257D1E5DDA1D00E39EF8 /* bach.eval */;
 			targetProxy = 911B658C206841A800464E16 /* PBXContainerItemProxy */;
 		};
 		911FC5C617AF98B6004E8E49 /* PBXTargetDependency */ = {
@@ -14300,7 +14300,7 @@
 		};
 		91B7258E1E5DDA3B00E39EF8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 91B7257D1E5DDA1D00E39EF8 /* bach.code */;
+			target = 91B7257D1E5DDA1D00E39EF8 /* bach.eval */;
 			targetProxy = 91B7258D1E5DDA3B00E39EF8 /* PBXContainerItemProxy */;
 		};
 		91BCCC101F56A60B002D8BE2 /* PBXTargetDependency */ = {
@@ -20233,7 +20233,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;
 		};
-		91B725881E5DDA1D00E39EF8 /* Build configuration list for PBXNativeTarget "bach.code" */ = {
+		91B725881E5DDA1D00E39EF8 /* Build configuration list for PBXNativeTarget "bach.eval" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				91B725891E5DDA1D00E39EF8 /* Development */,
