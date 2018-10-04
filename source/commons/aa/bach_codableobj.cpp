@@ -131,7 +131,7 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
 void codableobj_lambda(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
 {
     if (ac) {
-        defer_low(x, (method) codableobj_code_do, msg, ac, av);
+        defer_low(x, (method) codableobj_expr_do, msg, ac, av);
     } else {
         x->c_main->decrease();
         x->c_main = nullptr;
@@ -385,7 +385,7 @@ void codableobj_free(t_codableobj *x)
 }
 
 
-void codableobj_code_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
+void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
 {
     t_max_err err;
     char *oldText = x->c_text;
