@@ -27,9 +27,6 @@ typedef struct _code
     t_atom_long n_dataOutlets;
     t_atom_long n_directInlets;
     t_atom_long n_directOutlets;
-    
-    t_atom_long n_dummyEmbed;
-    t_atom_long n_dummyAuto;
 
     short n_path;
 } t_code;

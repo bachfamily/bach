@@ -129,7 +129,7 @@ int T_EXPORT main()
     // @description Number of direct outlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
-    CLASS_ATTR_LONG(c, "embed",    0,    t_code, n_dummyEmbed);
+    CLASS_ATTR_LONG(c, "embed",    0,    t_codableobj, c_embed);
     CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
     CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
     CLASS_ATTR_BASIC(c, "embed", 0);
@@ -137,7 +137,7 @@ int T_EXPORT main()
     // @description When set to 1, the stored code is saved with the patcher.
     // @copy BACH_DOC_STATIC_ATTR
 
-    CLASS_ATTR_LONG(c, "auto",    0,    t_code, n_dummyAuto);
+    CLASS_ATTR_LONG(c, "auto",    0,    t_codableobj, c_auto);
     CLASS_ATTR_LABEL(c, "auto", 0, "Automatically Run Code");
     CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
     CLASS_ATTR_BASIC(c, "auto", 0);
@@ -223,8 +223,6 @@ void code_anything(t_code *x, t_symbol *msg, long ac, t_atom *av)
     } else
         defer_low(x, (method) codableobj_code_do, gensym("code"), ac, av);
 }
-
-
 
 void code_assist(t_code *x, void *b, long m, long a, char *s)
 {
@@ -401,9 +399,7 @@ t_code *code_new(t_symbol *s, short ac, t_atom *av)
         
         long totInlets = x->n_dataInlets + x->n_directInlets;
         llllobj_obj_setup((t_llllobj_object *) x, totInlets, outlet_str);
-        
-        x->n_dummyEmbed = x->n_ob.c_embed;
-        x->n_dummyAuto = x->n_ob.c_auto;
+
         object_attr_setdisabled((t_object *)x, gensym("outlets"), true);
         object_attr_setdisabled((t_object *)x, gensym("inlets"), true);
         object_attr_setdisabled((t_object *)x, gensym("directins"), true);
@@ -443,8 +439,6 @@ void code_deferbang(t_code *x, t_symbol *msg, long ac, t_atom *av)
 {
     code_bang(x);
 }
-
-
 
 void code_ownedFunctionsSetup(t_code *x)
 {
