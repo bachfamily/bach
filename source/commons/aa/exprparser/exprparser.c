@@ -801,8 +801,8 @@ static const flex_int16_t yy_chk[481] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 
-	#define BACH_MAX
-	#ifdef BACH_MAX
+    #define BACH_MAX
+    #ifdef BACH_MAX
     #include "llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
@@ -1442,8 +1442,8 @@ case 33:
 YY_RULE_SETUP
 {
     char *textend;
-	long num = strtol(yytext, &textend, 10);
-	long den = strtol(textend + 1, NULL, 10);
+    long num = strtol(yytext, &textend, 10);
+    long den = strtol(textend + 1, NULL, 10);
     parserpost(" lex: URAT %ld / %ld\n", num, den);
     BEGIN BINARY;
     return lexpr_append_lexeme_RATIONAL(epd->lexeme, t_rational(num, den));
@@ -1714,7 +1714,7 @@ case 91:
 /* rule 91 can match eol */
 YY_RULE_SETUP
 {
-	parserpost(" lex: whitespace\n");
+    parserpost(" lex: whitespace\n");
 }
 	YY_BREAK
 case 92:
@@ -2872,7 +2872,7 @@ static int yy_flex_strlen (const char * s , yyscan_t yyscanner)
 #ifndef BACH_MAX
 int main(int argc, char **argv)
 {
-	yylex();
+    yylex();
 }
 #endif
 

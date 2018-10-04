@@ -15,8 +15,8 @@ NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([#bxdq\^v]+)
 
 %{
-	#define BACH_MAX
-	#ifdef BACH_MAX
+    #define BACH_MAX
+    #ifdef BACH_MAX
     #include "llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
@@ -285,8 +285,8 @@ ACCIDENTAL ([#bxdq\^v]+)
 
 {URAT} {
     char *textend;
-	long num = strtol(yytext, &textend, 10);
-	long den = strtol(textend + 1, NULL, 10);
+    long num = strtol(yytext, &textend, 10);
+    long den = strtol(textend + 1, NULL, 10);
     parserpost(" lex: URAT %ld / %ld\n", num, den);
     BEGIN BINARY;
     return lexpr_append_lexeme_RATIONAL(epd->lexeme, t_rational(num, den));
@@ -401,7 +401,7 @@ t {
 }
 
 [ \t\n\r] {
-	parserpost(" lex: whitespace\n");
+    parserpost(" lex: whitespace\n");
 }
 
 . {
@@ -414,7 +414,7 @@ t {
 #ifndef BACH_MAX
 int main(int argc, char **argv)
 {
-	yylex();
+    yylex();
 }
 #endif
 

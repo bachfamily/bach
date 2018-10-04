@@ -40,21 +40,21 @@ void llll_downgrade_depth(t_llll *dad)
     t_llll *son;
     t_llllelem *elem;
     t_int32 maxdepth;
-    //	long go_on = 1;
+    //    long go_on = 1;
     if (!dad)
         return;
     do {
         son = dad;
         if (son->l_owner) {
             dad = son->l_owner->l_parent;
-            //			go_on = dad && dad->l_depth <= son->l_depth + 1;
+            //            go_on = dad && dad->l_depth <= son->l_depth + 1;
         } else
             dad = NULL;
         
         maxdepth = 0;
         for (elem = son->l_head; elem; elem = elem->l_next) {
             if (elem->l_hatom.h_type == H_LLLL && elem->l_hatom.h_w.w_llll->l_depth > maxdepth)
-                maxdepth = elem->l_hatom.h_w.w_llll->l_depth;		
+                maxdepth = elem->l_hatom.h_w.w_llll->l_depth;        
         }
         son->l_depth = maxdepth + 1;
     } while (dad);
@@ -63,7 +63,7 @@ void llll_downgrade_depth(t_llll *dad)
 
 // IN ALL THE FOLLOWING FUNCTIONS,
 // 1. if adopter is WHITENULL the new element is owned by the list it is appended (or prepended) to
-//		otherwise, the new element is owned by adopter
+//        otherwise, the new element is owned by adopter
 // 2. the llll depth is always correctly updated
 // 3. flags (when present) are the new llllelem flags
 //
@@ -479,7 +479,7 @@ t_llllelem *llll_prependllll_clone(t_llll *where, t_llll *what, long flags, t_ll
 
 // IN ALL THE FOLLOWING FUNCTIONS,
 // 1. if adopter is WHITENULL the new element is owned by the list it is appended (or prepended) to
-//		otherwise, the new element is owned by adopter
+//        otherwise, the new element is owned by adopter
 // 2. the llll depth is always correctly updated
 // 3. flags (when present) are the new llllelem flags
 //
