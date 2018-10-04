@@ -464,10 +464,10 @@ void bach_donors(t_bach *x)
     post(" ");
     post("**************************************************************************");
     post("bach: automated composer's helper would like to thank");
+    post(" - Cody Brookshire");
     post(" - Dimitri Fergadis");
     post("        (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research)");
     post("        Proprietor of Halocyan Records");
-    post(" - Cody Brookshire");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
