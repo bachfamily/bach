@@ -1390,8 +1390,8 @@ int T_EXPORT main(void){
 		CLASS_ATTR_STYLE_LABEL(c,"center",0,"text","Diatonic Center");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"center",0,"C5");
 //		CLASS_ATTR_ACCESSORS(c, "center", (method)NULL, (method)tonnetz_setattr_diatonic_center);
-		// @description Sets the diatonic center pitch
-        // @copy BACH_PITCH_SYNTAX
+		// @description Sets the diatonic center pitch.
+        // @copy BACH_DOC_PITCHES_ALSO_AS_NOTENAMES
     
 		CLASS_ATTR_CHAR(c, "mode", 0, t_tonnetz, mode);
 		CLASS_ATTR_STYLE_LABEL(c,"mode",0,"enumindex","Lattice Type");

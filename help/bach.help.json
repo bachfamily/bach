@@ -586,6 +586,13 @@
 				"tags" : [ "appearance", "domain", "screen", "portion", "highlight", "show", "display", "underline", "ui", "align", "alignment", "synchronization", "graphic", "graphical", "waveform" ],
 				"title" : [ "Highlight domain" ]
 			},
+			"Fadedomain" : {
+				"filename" : [ "bach.help.notation.appearance.39_fadedomain.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "highlightdomain" ],
+				"tags" : [ "appearance", "domain", "screen", "portion", "fade", "transparency", "faded", "fadedomain", "graphic" ],
+				"title" : [ "Fade domain" ]
+			},
 			"Slots" : {
 				"Backgroundslots" : {
 					"filename" : [ "bach.help.notation.appearance.40_slots.01_backgroundslots.maxpat" ],
@@ -764,6 +771,41 @@
 				"seealso" : [ "articulation" ],
 				"tags" : [ "appearance", "articulation", "show", "hide", "showarticulations", "showarticulationsextensions" ],
 				"title" : [ "Articulations" ]
+			},
+			"Mirrortojitter" : {
+				"filename" : [ "bach.help.notation.appearance.90_mirrortojitter.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "notifypaint", "automatic+mirroring+jitter" ],
+				"tags" : [ "appearance", "mirror", "display", "jitter", "matrix", "paint", "jit", "paintjit", "draw", "manual", "mirroring" ],
+				"title" : [ "Manual mirroring to Jitter matrix" ]
+			},
+			"Automirrortojitter" : {
+				"filename" : [ "bach.help.notation.appearance.91_automirrortojitter.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "notifypaint", "manual+mirroring+jitter" ],
+				"tags" : [ "appearance", "mirror", "display", "jitter", "matrix", "paint", "jit", "draw", "automatic", "mirroring", "sync", "keep", "jitmatrix" ],
+				"title" : [ "Automatic mirroring to Jitter matrix" ]
+			},
+			"Mira" : {
+				"filename" : [ "bach.help.notation.appearance.95_mira.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "mira+multitouch", "exportimage", "notifypaint", "manual+mirroring+jitter" ],
+				"tags" : [ "appearance", "mirror", "display", "mira", "sync", "miraweb", "web", "cast" ],
+				"title" : [ "Using bach with Mira and Miraweb" ]
+			},
+			"Miratouch" : {
+				"filename" : [ "bach.help.notation.appearance.96_miratouch.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "bach+mira" ],
+				"tags" : [ "appearance", "mirror", "display", "mira", "sync", "miraweb", "web", "cast", "interaction", "touch", "multitouch", "mt", "message", "network", "networking" ],
+				"title" : [ "Adding interaction with Mira and Miraweb" ]
+			},
+			"Miracustom" : {
+				"filename" : [ "bach.help.notation.appearance.97_miracustom.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "bach+mira" ],
+				"tags" : [ "appearance", "mirror", "display", "mira", "sync", "miraweb", "web", "cast", "interaction", "touch", "multitouch", "network", "networking", "custom", "customize" ],
+				"title" : [ "Customizing interaction with Mira and Miraweb" ]
 			}
 		},
 		"Articulations" : {
@@ -875,6 +917,13 @@
 				"seealso" : [ "dynamics", "linkdynamicstoslot", "dynamics2velocities", "velocities2dynamics" ],
 				"tags" : [ "message", "convert", "assign", "dynamic", "velocity", "velocities", "parameter", "char", "maxchar", "p", "f", "exponent", "map", "linear", "dynamics2velocities" ],
 				"title" : [ "Dynamics to velocities parameters" ]
+			},
+			"Dynamics2velocitiesmorebpts" : {
+				"filename" : [ "bach.help.notation.dynamics.22_dynamics2velocitiesmorebpts.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "dynamics", "breakpointhavevelocity", "dynamics2velocities", "velocities2dynamics" ],
+				"tags" : [ "message", "convert", "assign", "dynamic", "velocity", "velocities", "parameter", "dynamics2velocities", "breakpointmode", "breakpoint", "mode", "clear", "add" ],
+				"title" : [ "Dynamics to velocities and breakpoints" ]
 			},
 			"Velocities2dynamics" : {
 				"filename" : [ "bach.help.notation.dynamics.24_velocities2dynamics.maxpat" ],
@@ -1630,6 +1679,13 @@
 				"tags" : [ "editing", "edit", "interface", "marker", "interface", "shift", "offset", "snap", "drag", "snapping", "chord", "note", "tail", "magnetic", "magnetically" ],
 				"title" : [ "Snapping markers magnetically" ]
 			},
+			"Markersshiftandscale" : {
+				"filename" : [ "bach.help.notation.markers.08_markersshiftandscale.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ "marker+edit" ],
+				"tags" : [ "editing", "edit", "interface", "marker", "interface", "shift", "offset", "move", "stretch", "compress", "shrink", "scale", "shifting", "stretching", "region", "blank", "add", "silence" ],
+				"title" : [ "Shifting and stretching regions" ]
+			},
 			"Selection" : {
 				"filename" : [ "bach.help.notation.markers.10_selection.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
@@ -1734,7 +1790,7 @@
 				"Appendsinglemeasure" : {
 					"filename" : [ "bach.help.notation.messages.06_measures.12_appendsinglemeasure.maxpat" ],
 					"objects" : [ "bach.score" ],
-					"seealso" : [ "appendmeasure", "appendmeasures", "insertmeasure", "insertmeasures", "measure+gathered+syntax" ],
+					"seealso" : [ "appendmeasure", "insertmeasure", "insertmeasures", "measure+gathered+syntax", "ceilmeasures" ],
 					"tags" : [ "message", "appendmeasure", "append", "add", "addmeasure", "measure", "single", "end" ],
 					"title" : [ "Appending a single measure" ]
 				},
@@ -2175,7 +2231,7 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.02b_deletetransfer.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection" ],
-					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "keep", "slot", "transfer", "copy", "content", "dynamic", "articulation", "lyric", "notehead", "annotation", "empty", "transferslots" ],
+					"tags" : [ "message", "operate", "on", "selection", "delete", "erase", "ripple", "rippledelete", "keep", "slot", "transfer", "copy", "content", "dynamic", "articulation", "lyric", "notehead", "annotation", "empty", "transferslots", "torests", "to", "rest" ],
 					"title" : [ "Delete selection and transfer slots" ]
 				},
 				"Onsettailduration" : {
@@ -2220,6 +2276,20 @@
 					"tags" : [ "message", "operate", "on", "selection", "change", "measureinfo", "tempo", "measure", "info", "tempi", "time", "signature", "modify", "parameter", "barline", "box" ],
 					"title" : [ "Changing measureinfo" ]
 				},
+				"B_symduration" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.07b_symduration.maxpat" ],
+					"objects" : [ "bach.score" ],
+					"seealso" : [ "sel", "autobeam", "autorhythm", "symduration+adapt", "modify+existing+parameters", "modify+equation" ],
+					"tags" : [ "message", "operate", "on", "selection", "change", "duration", "symduration", "symbolic" ],
+					"title" : [ "Changing duration in bach.score" ]
+				},
+				"C_symdurationadapt" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.07c_symdurationadapt.maxpat" ],
+					"objects" : [ "bach.score" ],
+					"seealso" : [ "message+symduration" ],
+					"tags" : [ "message", "operate", "on", "selection", "change", "duration", "symduration", "symbolic", "adapt", "adaptts", "time", "signature", "timesig", "ts", "adapttsscope", "scope", "simplify", "adapttssimplify", "adaptsimplify", "adaptscope" ],
+					"title" : [ "Adapting time signatures as durations change" ]
+				},
 				"Markeronset" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.08_markeronset.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
@@ -2231,14 +2301,14 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.09_relativeparameterchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+all", "clearselection", "dump", "play", "playmode", "command" ],
-					"tags" : [ "message", "operate", "on", "selection", "relative", "change", "onset", "duration", "tail", "cents", "velocity", "modify", "exist", "existing", "times", "div", "plus", "minus", "parameter", "pitch", "transpose" ],
+					"tags" : [ "message", "operate", "on", "selection", "relative", "change", "onset", "duration", "tail", "cents", "velocity", "modify", "exist", "existing", "times", "div", "plus", "minus", "parameter", "pitch", "transpose", "symduration" ],
 					"title" : [ "Modify existing parameter values" ]
 				},
 				"Equationchange" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.10_equationchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
-					"seealso" : [ "sel", "select+if", "relative+parameter+change", "symbolic+variable" ],
-					"tags" : [ "message", "operate", "on", "selection", "equation", "change", "onset", "duration", "tail", "cents", "velocity", "voice", "measure", "modify", "parameter" ],
+					"seealso" : [ "sel", "select+if", "relative+parameter+change", "symbolic+variable", "adaptts" ],
+					"tags" : [ "message", "operate", "on", "selection", "equation", "change", "onset", "duration", "tail", "cents", "velocity", "voice", "measure", "modify", "parameter", "symduration" ],
 					"title" : [ "Assigning values via equations" ]
 				},
 				"Inplace" : {
@@ -2437,8 +2507,36 @@
 					"tags" : [ "message", "operate", "on", "selection", "create", "modify", "delete", "break", "group", "ungroup" ],
 					"title" : [ "Creating or breaking groups" ]
 				},
+				"Poly" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.70_poly.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "poly+message" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "assign", "reassign", "change", "automatically", "automatic", "force", "forcing" ],
+					"title" : [ "Forcing polyphony or assigning voicing" ]
+				},
+				"Polydroppriority" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.71_polydroppriority.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "poly", "voicingslot", "sel" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "drop", "priority", "terminate", "droppriority", "oldest", "newest", "closest", "quietest", "loudest", "shortest", "longest" ],
+					"title" : [ "Priorities in assigning voicing" ]
+				},
+				"Polyresume" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.72_polyresume.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "poly", "poly+drop+priority" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "resume", "resuming", "priority", "resumepriority", "resumevoicing" ],
+					"title" : [ "Resuming notes in voice assignments" ]
+				},
+				"Maxpoly" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.75_maxpoly.maxpat" ],
+					"objects" : [ "bach.roll" ],
+					"seealso" : [ "poly", "voicingslot", "sel" ],
+					"tags" : [ "message", "operate", "on", "selection", "poly", "polyphony", "assign", "assignment", "mono", "monophony", "voicing", "voice", "number", "max", "maxnum", "used" ],
+					"title" : [ "Obtaining the number of used voices" ]
+				},
 				"Othermessages" : {
-					"filename" : [ "bach.help.notation.messages.30_operate on selection.70_othermessages.maxpat" ],
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.80_othermessages.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "merge", "explodechords", "checkdynamics", "fixdynamics", "dynamics2velocities", "name", "namefromslot", "nametoslot" ],
 					"tags" : [ "message", "operate", "on", "selection", "merge", "explode", "chords", "explodechords", "check", "fix", "dynamics", "checkdynamics", "fixdynamics", "velocity", "velocities", "dynamics2velocities", "respell" ],
@@ -2449,7 +2547,7 @@
 				"filename" : [ "bach.help.notation.messages.31_symbolvariables.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "conditional+selection" ],
-				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace" ],
+				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace", "part", "voiceensemble", "pitch", "ensemble" ],
 				"title" : [ "Symbolic variables for expressions" ]
 			},
 			"Respell pitches automatically" : {
@@ -2487,6 +2585,13 @@
 					"seealso" : [ "respell", "pitch+message", "sel+message" ],
 					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "scope", "local", "global", "affect", "spell" ],
 					"title" : [ "Respelling scope" ]
+				},
+				"Keeplocked" : {
+					"filename" : [ "bach.help.notation.messages.35_respell pitches automatically.06_keeplocked.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "respell", "lock", "unlock" ],
+					"tags" : [ "message", "pitche", "respell", "automatically", "enharmonic", "enharmonicity", "lock", "keep", "keeping", "ignore", "ignorelocked", "note", "first" ],
+					"title" : [ "Keeping notes during respelling" ]
 				}
 			},
 			"Subroll" : {
@@ -2677,6 +2782,13 @@
 				"seealso" : [ "linear+edit", "timepoint+syntax", "basic+overtyping" ],
 				"tags" : [ "message", "overtype", "over", "type", "replace", "content", "music", "linear", "overwrite", "write", "advanced", "overtyping", "more", "trim", "fill", "overflow", "rhythmic", "tree" ],
 				"title" : [ "Advanced overtyping" ]
+			},
+			"Overtypeandgracenotes" : {
+				"filename" : [ "bach.help.notation.messages.97_overtypeandgracenotes.maxpat" ],
+				"objects" : [ "bach.score" ],
+				"seealso" : [ "linear+edit", "timepoint+syntax", "overtyping", "grace+syntax" ],
+				"tags" : [ "message", "overtype", "over", "type", "replace", "content", "music", "linear", "overwrite", "write", "advanced", "overtyping", "more", "grace", "note", "insert", "inserting", "add", "chord" ],
+				"title" : [ "Inserting grace notes" ]
 			}
 		},
 		"Naming" : {
@@ -2837,6 +2949,13 @@
 				"seealso" : [ "voice+ensemble", "showpartcolors", "linear+edit", "chord+add", "measure+add", "numparts" ],
 				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "edit", "part", "interface", "active", "set", "editing", "duplicate", "copy", "paste", "new", "swap" ],
 				"title" : [ "Set active part for editing" ]
+			},
+			"Selectpart" : {
+				"filename" : [ "bach.help.notation.parts.05_selectpart.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "voice+ensemble", "part", "variables", "sel", "unsel", "select", "subsel" ],
+				"tags" : [ "part", "voice", "ensemble", "voiceensemble", "part", "select", "sel", "unsel", "select", "subsel" ],
+				"title" : [ "Part selection" ]
 			}
 		},
 		"Quantization" : {
@@ -3157,6 +3276,13 @@
 				"seealso" : [ "cursor", "domain", "loop" ],
 				"tags" : [ "query", "queries", "notify", "notification", "message", "incoming" ],
 				"title" : [ "Notify incoming messages" ]
+			},
+			"Notifywhenpainted" : {
+				"filename" : [ "bach.help.notation.queries and notifications.40_notifywhenpainted.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "jitmatrix" ],
+				"tags" : [ "query", "queries", "notify", "notification", "paint", "display", "refresh", "redraw", "draw", "jitter", "jit", "matrix", "mirror", "display", "notifypaint" ],
+				"title" : [ "Notify when display refreshes" ]
 			}
 		},
 		"Rhythm and beams" : {
@@ -3474,6 +3600,41 @@
 				"seealso" : [ "exportlilypond" ],
 				"tags" : [ "data", "lilypond", "export", "exportlilypondpdf", "pdf", "create" ],
 				"title" : [ "PDF export via LilyPond" ]
+			},
+			"Images" : {
+				"filename" : [ "bach.help.notation.save and load.60_images.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "export+image+view", "exportlilypondpdf" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "dpi" ],
+				"title" : [ "Exporting scores as images" ]
+			},
+			"Imagesview_roll" : {
+				"filename" : [ "bach.help.notation.save and load.61_imagesview_roll.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ "export+image" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "view", "pixelpersystem", "mspersystem", "line", "raw", "multiline", "scroll", "page" ],
+				"title" : [ "Image export views for bach.roll" ]
+			},
+			"Imagesview_score" : {
+				"filename" : [ "bach.help.notation.save and load.62_imagesview_score.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "export+image" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "view", "pixelpersystem", "mspersystem", "line", "raw", "multiline", "scroll", "page" ],
+				"title" : [ "Image export views for bach.score" ]
+			},
+			"Imagesview_score2" : {
+				"filename" : [ "bach.help.notation.save and load.63_imagesview_score2.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "export+image", "export+image+view" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "fit", "measure", "layout", "algorithm", "fitmeasure" ],
+				"title" : [ "Image export layout" ]
+			},
+			"Images_fadedomain" : {
+				"filename" : [ "bach.help.notation.save and load.64_images_fadedomain.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "export+image", "export+image+view", "fadedomain" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "fade", "domain", "fadedomain", "appearance", "exporteed", "image", "systemvshift", "shift", "system", "separation", "vertical" ],
+				"title" : [ "Exported image appearance" ]
 			}
 		},
 		"Sequencing" : {
@@ -3880,6 +4041,13 @@
 				"tags" : [ "slot", "slotinfo", "range", "slope" ],
 				"title" : [ "Slot range" ]
 			},
+			"C_slotrangeslope" : {
+				"filename" : [ "bach.help.notation.slots.12c_slotrangeslope.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slotinfo+inspector", "slotinfo+syntax", "range+slope" ],
+				"tags" : [ "slot", "slotinfo", "range", "slope", "apply", "warp", "combine", "modulate", "applyslope" ],
+				"title" : [ "Using slot range slope during playback" ]
+			},
 			"Slotzrange" : {
 				"filename" : [ "bach.help.notation.slots.13_slotzrange.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
@@ -4106,6 +4274,13 @@
 					"seealso" : [ "slot+linkage", "slotinfo+inspector" ],
 					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "accidental", "linkannotationtoslot", "commentary", "text", "expression", "annotationfontsize", "font" ],
 					"title" : [ "Setting up annotations" ]
+				},
+				"Annotationmore" : {
+					"filename" : [ "bach.help.notation.slots.30_slot linkage.31_annotationmore.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "slot+linkage", "annotation" ],
+					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "linkannotationtoslot", "commentary", "text", "expression", "duplicate", "pizz", "arco", "pizzicato", "ord", "pont", "tasto", "technique", "remove", "filter", "bracket", "ordinario", "ponticello" ],
+					"title" : [ "Handling annotation duplicates" ]
 				}
 			}
 		},
@@ -4859,7 +5034,7 @@
 					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone", "accidental" ],
 					"title" : [ "Pitch syntax" ]
 				},
 				"Intervals" : {

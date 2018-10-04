@@ -100,6 +100,17 @@ double rescale_with_slope(double value, double min, double max, double new_min, 
 // Same as rescale_with_slope, but performs inverse mapping
 double rescale_with_slope_inv(double value, double min, double max, double new_min, double new_max, double slope);
 
+
+/** Combines two slope into a single one, as if the slopes were applied sequentially.
+    @ingroup    math
+    @param    slope1               The first slope
+    @param    slope2               The second slope
+    @return                        A single slope representing the combination of the two.
+    @remark                        For instance, combining a 0.5 slope and a 0.5 slope gives a 0.8 slope
+ */
+double combine_slopes(double slope1, double slope2);
+
+
 /**	Rescale a double (which ranged from a minimum and a maximum) to a new range. 
 	Also takes into account a slope factor, corresponding to a sort of "exponent" for the rescaling, and computes the derivative in the point.
 	@ingroup	math
@@ -429,6 +440,7 @@ char is_ratio_invalid(t_rational rat); //1 if the ratio is something/0
 
 void change_long_from_llllelem(long *number, t_llllelem *modify, char convert_deg2rad);
 void change_double_from_llllelem(double *number, t_llllelem *modify, char convert_deg2rad);
+void change_rational_from_llllelem(t_rational *number, t_llllelem *modify, char convert_deg2rad);
 
 
 /**	Change the value of a double, by snapping it into the nearest number of a list (grid) of numbers.

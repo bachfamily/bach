@@ -7,3 +7,5 @@
 *.sdif binary
 *.llll binary
 *.mp3 binary
+*.mxe binary
+*.mxe64 binary

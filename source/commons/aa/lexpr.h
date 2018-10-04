@@ -147,6 +147,13 @@ long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom
  */
 t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars);
 
+// like lexpr_eval(), but
+// stack must be an allocated array of hatoms, of size L_MAX_TOKENS
+// if the return value is false, stack[0] contains the result of the evaluation
+// if the return value is true, the evaluation could not be performed
+t_bool lexpr_eval_upon(t_lexpr *expr, t_hatom *vars, t_hatom *stack);
+
+
 t_lexpr *lexpr_alloc(void);
 t_lexpr *lexpr_new(short ac, t_atom *av, long subs_count, const char **substitutions, t_object *culprit);
 t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count, const char **substitutions, t_object *culprit);

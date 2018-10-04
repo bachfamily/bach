@@ -242,6 +242,7 @@ void value_free(t_value *x)
 		object_free_debug(x->n_vault);
 		x->n_name->s_thing = NULL;
 	}
+    object_free_debug(x->m_editor);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
 

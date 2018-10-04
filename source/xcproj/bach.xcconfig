@@ -16,7 +16,7 @@ ARCHS = i386 x86_64
 
 // Paths
 C74SUPPORT = $(SRCROOT)/../../../max-sdk-7.3.3/source/c74support
-HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
+HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(SRCROOT)/../../../code/source/code" "$(SRCROOT)/../../../code/source/code/stringparser"
 FRAMEWORK_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
 
 // *** UNCOMMENT FOR MAX6 INSTALL
@@ -70,9 +70,9 @@ DEPLOYMENT_LOCATION = YES
 GENERATE_PKGINFO_FILE = YES
 
 // Flags to enforce some build-time checks for the symbols used while not actually performing a hard link
-
 C74_SYM_LINKER_FLAGS = @$(C74SUPPORT)/max-includes/c74_linker_flags.txt
 OTHER_LDFLAGS = $(C74_SYM_LINKER_FLAGS) $(C74_SYM_LINKER_FLAGS)
+// OTHER_LDFLAGS = -framework JitterAPI $(C74_SYM_LINKER_FLAGS) $(C74_SYM_LINKER_FLAGS)
 
 // hide all symbols by default
 // mark a function to be exported with the C74_EXPORT macro -- most likely this will only apply to the main() function

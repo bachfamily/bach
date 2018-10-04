@@ -75,16 +75,18 @@ void hatom_fn_sgn(t_hatom *arg, t_hatom *res);
 void hatom_fn_mod(t_hatom *a1, t_hatom *a2, t_hatom *res);
 void hatom_fn_remainder(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res);
+void hatom_fn_min(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_fn_max(t_hatom *h1, t_hatom *h2, t_hatom *res);
 
 
 
 
-void hatom_op_uminus(t_hatom *h1, t_hatom *res);
 void hatom_op_plus(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_minus(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_times(t_hatom *h1, t_hatom *h2, t_hatom *res);
-void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_div(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_op_uminus(t_hatom *h1, t_hatom *res);
 void hatom_op_pow(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_logand(t_hatom *h1, t_hatom *h2, t_hatom *res);
 void hatom_op_logor(t_hatom *h1, t_hatom *h2, t_hatom *res);

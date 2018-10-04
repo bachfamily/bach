@@ -1,5 +1,6 @@
 %option noyywrap nodefault reentrant
 %option noyyalloc noyyrealloc noyyfree
+%option never-interactive
 %option outfile="pitchparser.c"
 %option prefix="pitchparser_"
 
@@ -29,6 +30,9 @@ ACCIDENTAL ([#bxdq\^v]+)
         P_MORE,
         P_ERROR
     } e_pitchparser_rv;
+    
+    #define YY_NO_UNISTD_H
+
 %}
 
 %option extra-type = "t_pitch *"
@@ -68,8 +72,8 @@ ACCIDENTAL ([#bxdq\^v]+)
     return P_ERROR;
 }
 
-\n {
-    parserpost(" lex: unrecognized character \\n", yytext);
+[\n\r] {
+    parserpost(" lex: unrecognized character \\n or \\r", yytext);
     return P_ERROR;
 }
 

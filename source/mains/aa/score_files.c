@@ -1460,7 +1460,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	t_chord *chord;
 	t_note *note;
 	t_llll *export_slots = NULL;
-	long export_velocities = 0, export_noteheads = 1, export_lyrics = 1, export_dynamics = 1, export_articulations = 1;
+	long export_velocities = 0, export_noteheads = 1, export_lyrics = 1, export_dynamics = 1, export_articulations = 1, export_glissandi = 0;
 	long dynamics_slot = x->r_ob.link_dynamics_to_slot;
     long articulations_slot = x->r_ob.link_articulations_to_slot;
     const t_articulations_typo_preferences *atp = &x->r_ob.articulations_typo_preferences;
@@ -1468,7 +1468,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	t_llll *arguments = (t_llll *) atom_getobj(av);
     t_slotitem *slotitem;
     
-	llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siilliiiii",
+	llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siilliiiiii",
 				   _sym_filename, &filename_sym,
 				   gensym("dynamicsslot"), &dynamics_slot,
 				   gensym("velocity"), &export_velocities,
@@ -1478,7 +1478,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                    gensym("articulations"), &export_articulations,
                    gensym("lyrics"), &export_lyrics,
                    gensym("noteheads"), &export_noteheads,
-                   gensym("dynamics"), &export_dynamics
+                   gensym("dynamics"), &export_dynamics,
+                   gensym("glissandi"), &export_glissandi
                    );
 
     if (arguments->l_size) {
@@ -1521,7 +1522,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     
 	mxml_node_t *partlistxml = mxmlNewElement(scorepartwisexml, "part-list");
 	
-	systhread_mutex_lock(x->r_ob.c_general_mutex);
+    lock_general_mutex((t_notation_obj *)x);
 
 	// prepare the slot export
 	t_llllelem *this_slotnum_elem, *next_elem;
@@ -1684,7 +1685,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 		t_timesignature *ts = NULL;
         long clef;
         mxml_node_t *partxml;
-        
+        t_llll *open_gliss = export_glissandi ? llll_get() : NULL;
+
         if (new_voice_ensemble) {
             char part_id[16];
             clef = voice->v_ob.clef;
@@ -1750,7 +1752,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 }
                 
                 // time signature
-                if (measureidx == 1 || !are_ts_equal(ts, &measure->timesignature)) {
+                if (measureidx == 1 || !ts_are_equal(ts, &measure->timesignature)) {
                     ts = &measure->timesignature;
                     mxml_node_t *timexml = mxmlNewElement(attributesxml, "time");
                     
@@ -1914,7 +1916,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 				char chordtype[16], normal_type[16];
 				t_rational screen_accidental;
                 char we_have_already_exported_dynamics_for_this_chord = false;
-				
+                t_llll *open_gliss_chord = export_glissandi ? llll_get() : NULL;
+                char at_least_a_gliss_has_ended = false;
 				xml_value_to_name(chord->figure.r_den, chordtype);
 				
 				if (dur.r_num < 0) {
@@ -2004,7 +2007,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     // dyn_text: array of C-strings with the codepoints of "p", "ff", "p", "pppp" for November for bach
                                     // hairpins: array of 1, -2, -1, 0
                                     // open_hairpin: false
-                                    parse_chord_dynamics((t_notation_obj *)x, chord, dynamics_slot, dyn_text, hairpins, &num_dynamics, &open_hairpin, NULL);
+                                    chord_parse_dynamics((t_notation_obj *)x, chord, dynamics_slot, dyn_text, hairpins, &num_dynamics, &open_hairpin, NULL);
        
                                     // obtaining the rational duration of the entire sequence of possibly tied chords
                                     t_rational dur_with_ties = note_get_tieseq_symduration(note);
@@ -2082,8 +2085,13 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 						// alter
 						screen_accidental = note_get_screen_accidental(note);
 						if (parenthesized_quartertones && screen_accidental.r_den > 2) {
-							screen_accidental = rat_rat_diff(screen_accidental, genrat(1, 4));
-							add_par_qrtrtone = 1;
+                            if (parenthesized_quartertones == 30061984) { // yeah, that's bad and private :-) It's however a very bad convention, but I needed it now.
+                                screen_accidental = screen_accidental > 0 ? screen_accidental + genrat(1, 4) : screen_accidental - genrat(1, 4);
+                                add_par_qrtrtone = 1;
+                            } else {
+                                screen_accidental = rat_rat_diff(screen_accidental, genrat(1, 4));
+                                add_par_qrtrtone = 1;
+                            }
 						}
 						double alter = rat2double(rat_long_prod(screen_accidental, 2));
 						if (alter == (int) alter)
@@ -2268,6 +2276,39 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 							mxmlElementSetAttr(tied, "type", "start");						
 						}
 					}
+                    
+                    if (export_glissandi) {
+                        if (open_gliss && open_gliss->l_head && note && (!note->tie_from || x->r_ob.dl_spans_ties == 0)) {
+                            mxml_node_t *slide = mxmlNewElement(notations, "slide");
+                            mxmlElementSetAttr(slide, "line-type", "solid");
+                            char numtxt[64];
+                            snprintf_zero(numtxt, 64, "%ld", hatom_getlong(&open_gliss->l_head->l_hatom));
+                            mxmlElementSetAttr(slide, "number", numtxt);
+                            mxmlElementSetAttr(slide, "type", "stop");
+                            llll_behead(open_gliss);
+                            at_least_a_gliss_has_ended = true;
+                        }
+                        if (note && note->lastbreakpoint->delta_mc != 0 && (!note->tie_from || x->r_ob.dl_spans_ties == 0)) {
+                            // finding first free gliss id
+                            long curr_gliss_id = 0;
+                            for (long i = 1; i <= 6; i++) {
+                                if (!is_long_in_llll_first_level(open_gliss, i) && !is_long_in_llll_first_level(open_gliss_chord, i)) {
+                                    curr_gliss_id = i;
+                                    break;
+                                }
+                            }
+                            if (curr_gliss_id > 0) {
+                                mxml_node_t *slide = mxmlNewElement(notations, "slide");
+                                mxmlElementSetAttr(slide, "line-type", "solid");
+                                char numtxt[64];
+                                snprintf_zero(numtxt, 64, "%ld", curr_gliss_id);
+                                mxmlElementSetAttr(slide, "number", numtxt);
+                                mxmlElementSetAttr(slide, "type", "start");
+                                llll_appendlong(open_gliss_chord, curr_gliss_id);
+                                curr_gliss_id++;
+                            }
+                        }
+                    }
 					
 					if (num_tuplets) {
 						long are_there_tuplets = 0;
@@ -2473,6 +2514,13 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     
 					
 				}
+                
+                if (open_gliss) {
+                    if (at_least_a_gliss_has_ended)
+                        llll_clear(open_gliss);
+                    if (open_gliss_chord)
+                        llll_chain(open_gliss, open_gliss_chord);
+                }
 			}
             
             if (voices_left_in_voiceensemble == 1) {
@@ -2507,10 +2555,13 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             --voices_left_in_voiceensemble;
             new_voice_ensemble = false;
         }
+        
+        if (open_gliss)
+            llll_free(open_gliss);
 	}
     
     
-	systhread_mutex_unlock(x->r_ob.c_general_mutex);
+    unlock_general_mutex((t_notation_obj *)x);
 	
 	t_filehandle fh;
 	//bach_fix_filename_extension(&filename_sym, "xml");
@@ -3007,7 +3058,7 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
             llll_behead(arguments);
     }
     
-	systhread_mutex_lock(x->r_ob.c_general_mutex);
+    lock_general_mutex((t_notation_obj *)x);
 	
 	prepare_voices_to_write((t_notation_obj *) x, &voices_to_write);
 	num_voices = voices_to_write->l_size;
@@ -3165,7 +3216,8 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
 			}
 		}
 	}
-	systhread_mutex_unlock(x->r_ob.c_general_mutex);
+    
+    unlock_general_mutex((t_notation_obj *)x);
 	
 	// if there are notes before 0, then we have to fix up some stuff
 	if (first_onset < 0) {
@@ -3806,7 +3858,7 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
     }
     
 
-	systhread_mutex_lock(x->r_ob.c_general_mutex);
+    lock_general_mutex((t_notation_obj *)x);
 	
 	prepare_voices_to_write((t_notation_obj *) x, &voices_to_write);
 	long num_voices = voices_to_write->l_size;
@@ -3945,7 +3997,7 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
 			count = 5;
 			sysfile_write(f, &count, "\t\t\t\r\n");
 
-			if (!measure->prev || !are_ts_equal(&measure->timesignature, &measure->prev->timesignature)) {
+			if (!measure->prev || !ts_are_equal(&measure->timesignature, &measure->prev->timesignature)) {
 				// time signature
 				char ts_buf[100];
 				char ts_buf_num[100];
@@ -4061,7 +4113,7 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
 	sysfile_close(f);
 	
 score_dowritelilypond_error:
-	systhread_mutex_unlock(x->r_ob.c_general_mutex);
+    unlock_general_mutex((t_notation_obj *)x);
 	if (arguments)
 		llll_free(arguments);
 	return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
@@ -4069,22 +4121,12 @@ score_dowritelilypond_error:
 
 
 
-void foo(int a)
+
+void score_exportimage(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
-    int b;
-    if (a == 0)
-        b = 1;
-    else if (a == 1)
-        b = 3;
-    else
-        b = 100;
-    
-    switch (a) {
-        case 0: b = 1; break;
-        case 1: b = 3; break;
-        default: b = 100; break;
-    }
-    
-    return;
-    
+    t_atom av;
+    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    atom_setobj(&av, arguments);
+    defer(x, (method)notationobj_dowriteimage, s, 1, &av);
 }
+

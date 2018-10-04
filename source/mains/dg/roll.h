@@ -2,8 +2,8 @@
  *  roll.h
  *  bach-fw
  *
- *  Created by andrea agostini on 10/6/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
+ *  Created by Daniele ghisi on 10/6/11.
+ *  Copyright 2011 Daniele Ghisi and Andrea Agostini. All rights reserved.
  *
  */
 
@@ -19,20 +19,20 @@ BEGIN_CHECK_LINKAGE
 
 typedef struct _roll // [bach.roll] structure
 {
-	t_notation_obj r_ob; // root: notation object (all the common attributes for roll and score) 
-	
-	t_rollvoice	*firstvoice;
-	t_rollvoice	*lastvoice;
-	
+    t_notation_obj r_ob; // root: notation object (all the common attributes for roll and score) 
+    
+    t_rollvoice    *firstvoice;
+    t_rollvoice    *lastvoice;
+    
 
-	// utilities
-	char		must_append_chords;
-	char		must_preselect_appended_chords;
-	double		must_apply_delta_onset;
-	char		pasting_chords;
-	double		non_inspector_ms_screen_start;
-	
-	long m_in;   // space for the inlet number used by all the proxies
+    // utilities
+    char        must_append_chords;
+    char        must_preselect_appended_chords;
+    double        must_apply_delta_onset;
+    char        pasting_chords;
+    double        non_inspector_ms_screen_start;
+    
+    long m_in;   // space for the inlet number used by all the proxies
     void *m_proxy1;
     void *m_proxy2;
     void *m_proxy3;

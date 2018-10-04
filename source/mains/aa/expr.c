@@ -137,12 +137,12 @@ int T_EXPORT main()
 	CLASS_ATTR_BASIC(c, "scalarmode", 0);
 	// @description @copy BACH_DOC_SCALARMODE
 	
-	/*
+	
 	CLASS_ATTR_LONG(c, "maxvars",	0,	t_bach_expr, n_maxvars);
 	CLASS_ATTR_FILTER_CLIP(c, "maxvars", 0, LEXPR_MAX_VARS);
 	CLASS_ATTR_LABEL(c, "maxvars", 0, "Maximum Variables");
 	CLASS_ATTR_FILTER_CLIP(c, "maxvars", 1, 255);
-	*/
+    CLASS_ATTR_ACCESSORS(c, "maxvars", (method)NULL, (method)llllobj_dummy_setter)
 	// @description Explicitly set the number of inlets. <br />
 	// @copy BACH_DOC_STATIC_ATTR
 	
@@ -404,6 +404,8 @@ t_bach_expr *bach_expr_new(t_symbol *s, short ac, t_atom *av)
 			x->n_maxvars = 1;
 		llllobj_obj_setup((t_llllobj_object *) x, x->n_maxvars, "4");
 		
+        object_attr_setdisabled((t_object *)x, gensym("maxvars"), true);
+        
 		x->n_proxies = CLAMP(x->n_maxvars - 1, 0, LLLL_MAX_INLETS);
 		
 		x->n_proxy = (void **) bach_newptr((x->n_proxies + 1) * sizeof (void *));

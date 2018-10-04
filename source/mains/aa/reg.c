@@ -118,7 +118,7 @@ int T_EXPORT main()
     // @description Doubleclicking on the object forces a text editor to open up, where the llll can be edited directly in text form.
     class_addmethod(c, (method)reg_dblclick,		"dblclick",		A_CANT, 0);
     class_addmethod(c, (method)reg_edclose,         "edclose",		A_CANT, 0);
-    class_addmethod(c, (method)reg_okclose,         "okclose",       A_CANT, 0);
+    class_addmethod(c, (method)reg_okclose,         "okclose",      A_CANT, 0);
     
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
@@ -139,7 +139,6 @@ int T_EXPORT main()
 	
 	return 0;
 }
-
 
 void reg_dblclick(t_reg *x)
 {
@@ -239,6 +238,7 @@ void reg_appendtodictionary(t_reg *x, t_dictionary *d)
 void reg_free(t_reg *x)
 {
 	object_free_debug(x->n_proxy);
+    object_free_debug(x->m_editor);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
 

@@ -204,14 +204,13 @@ t_delace *delace_new(t_symbol *s, short ac, t_atom *av)
 					numouts = 1;
 					if (true_ac >= 2) {
 						x->n_count = atom_getlong(av + 1);
-						if (x->n_count < 1)
-							x->n_count = 2;
 					}
+                    if (x->n_count < 1)
+                        x->n_count = 2;
 				} else {
 					object_error((t_object *) x, "Unknown argument: %s", atom_getsym(av)->s_name);
 				}
-			}
-			else {
+			} else {
 				numouts = atom_getlong(av);
 				if (numouts < 1 || numouts >= LLLL_MAX_OUTLETS) {
 					object_error((t_object *) x, "Bad number of outlets");

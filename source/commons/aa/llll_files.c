@@ -1,5 +1,5 @@
 #include "notation.h"
-#include "score_api.h"
+//#include "score_api.h"
 #include "llll_files.h"
 #include "ext_strings.h"
 
@@ -282,7 +282,7 @@ t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore)
 	
 	// allocate memory block that is the size of the file
 	sysfile_geteof(fh, &size);
-	buffer = (char *) bach_newptr(size + 1);
+	buffer = (char *) bach_newptr(size + 2);
     buffer[0] = 0;
     
 	// read in the file
@@ -290,7 +290,8 @@ t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore)
 	sysfile_close(fh);
 
 	if (strncmp(buffer, "\nbach", 5)) { // it's text format
-		*(buffer + size) = 0;
+		*(buffer + size) = ' ';
+        *(buffer + size + 1) = 0;
 		ll = llll_from_text_buf(buffer, size > MAX_SYM_LENGTH, ignore);
 	} else { // it's in old native format
 		ll = llll_from_native_buf(buffer, size);

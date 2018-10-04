@@ -15,19 +15,19 @@
 	
 //	#define BACH_CURRENT_VERSION 70911
 //	#define BACH_CURRENT_VERSION_TEXT "v0.7.9.11 beta"
-//	#define BACH_LLLL_VERSION 8000
+//	#define bach_get_current_llll_version() 8000
 
 	////////////////////#define BACH_MAX
 	//#define BACH_JUCE
 
-    #ifdef __cplusplus
+    #ifdef __cplusplus_WEDONTNEEDTHIS
         #define BEGIN_CHECK_LINKAGE \
             extern "C" {
     #else
         #define BEGIN_CHECK_LINKAGE
     #endif // __cplusplus
 
-    #ifdef __cplusplus
+    #ifdef __cplusplus_WEDONTNEEDTHIS
         #define END_CHECK_LINKAGE \
             }
     #else
@@ -67,10 +67,16 @@
 
 	#define dev_cprintf(...) ((void) 0)
 
-
-
 		#ifdef WIN_VERSION
-			#define CONFIGURATION_Deployment
+			#ifdef _DEBUG
+				#define CONFIGURATION_Development
+			#else
+				#define CONFIGURATION_Deployment
+			#endif
+			#define BACH_LLLL_VERSION "0.8.0.0"
+			#define BACH_VERSION "0.8.0.1"
+
+			#define MAXAPI_USE_MSCRT
 		#endif
 		
 		#ifdef CONFIGURATION_Development
@@ -138,18 +144,21 @@
 		#define BACH_LLLLELEM_PAGE_SIZE (2 << (BACH_LLLLELEM_PAGE_SIZE_EXPONENT - 1)) // 4
 		#define BACH_LLLLELEM_BOOK_SIZE (2 << (BACH_LLLLELEM_MAX_NUMBER_EXPONENT - BACH_LLLLELEM_PAGE_SIZE_EXPONENT - 1))
 
+
 #include <assert.h>
 
 // a macro to mark exported symbols in the code without requiring an external file to define them
 #ifdef WIN_VERSION
 // note that this is the required syntax on windows regardless of whether the compiler is msvc or gcc
 #define T_EXPORT __declspec(dllexport)
-#define snprintf sprintf_s
+//#define snprintf sprintf_s
 #define strncasecmp _strnicmp
 #else // MAC_VERSION
 // the mac uses the standard gcc syntax, you should also set the -fvisibility=hidden flag to hide the non-marked symbols
 #define T_EXPORT __attribute__((visibility("default")))
 #endif
+
+#define MAX_SYM_LENGTH 32768	// the supposed maximum length for a symbol name
 
 extern struct _bach *bach;
 

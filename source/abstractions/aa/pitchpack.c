@@ -29,7 +29,7 @@
 	attribute set to 1.
  
 	@category
-	bach, bach abstractions, bach math, pitch
+	bach, bach abstractions, bach math, bach pitches
  
 	@keywords
 	calculate, compute, pitch, number

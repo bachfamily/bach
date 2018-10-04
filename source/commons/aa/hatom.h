@@ -13,7 +13,7 @@
 #include "ext_systhread.h"
 #endif
 
-#ifdef BACH_JUCE	
+#ifdef BACH_JUCE    
 #include "bach_jucewrapper.h"
 #endif
 
@@ -35,8 +35,8 @@ typedef t_int32_atomic t_bach_atomic_lock;
 // BEWARE: THIS IS NOT A REAL RWLOCK (TODO!!!) - it's just an ordinary spinlock
 // - and anyway it's probably unused (to be cleaned up...)
 typedef struct _bach_rwlock {
-	t_bach_atomic_lock	r_lock;
-	//t_int32_atomic		r_readers;
+    t_bach_atomic_lock    r_lock;
+    //t_int32_atomic        r_readers;
 } t_bach_rwlock;
 
 
@@ -45,36 +45,36 @@ typedef struct _bach_rwlock {
 // stuff for memory debugging
 //
 typedef union _mword {
-	char								*w_char;
-	short								*w_short;
-	int									*w_int;
-	long								*w_long;
-	t_atom_long							*w_atom_long;
-	double								*w_double;
-	t_rational                          *w_rational;
+    char                                *w_char;
+    short                                *w_short;
+    int                                    *w_int;
+    long                                *w_long;
+    t_atom_long                            *w_atom_long;
+    double                                *w_double;
+    t_rational                          *w_rational;
     t_pitch                             *w_pitch;
-	t_object							*w_object;
-	struct _llllelem					*w_llllelem;
-	struct _llll						*w_llll;
-	t_object							**w_object_arr;
-	struct _llllelem					**w_llllelem_arr;
-	struct _llll						**w_llll_arr;
-	struct _rhythm_level_properties		*w_rhythm_level_properties;
-	void								*w_void;
+    t_object                            *w_object;
+    struct _llllelem                    *w_llllelem;
+    struct _llll                        *w_llll;
+    t_object                            **w_object_arr;
+    struct _llllelem                    **w_llllelem_arr;
+    struct _llll                        **w_llll_arr;
+    struct _rhythm_level_properties        *w_rhythm_level_properties;
+    void                                *w_void;
 } t_mword;
 
 typedef struct _mframe {
-	char	s_string[128];
-	void	*s_address;
+    char    s_string[128];
+    void    *s_address;
 } t_mframe;
 
 typedef struct _memmap_item {
-	t_mword			m_word;		// the memory address
-	long			m_size;		// the size of the allocated memory
-	t_symbol		*m_name;	// the data type
-	long			m_count;	// reference count
-	t_mframe		m_stack[12];
-	t_int32_atomic	m_order;
+    t_mword            m_word;        // the memory address
+    long            m_size;        // the size of the allocated memory
+    t_symbol        *m_name;    // the data type
+    long            m_count;    // reference count
+    t_mframe        m_stack[12];
+    t_int32_atomic    m_order;
 } t_memmap_item;
 #endif
 
@@ -87,16 +87,17 @@ typedef struct _memmap_item {
  */
 typedef enum _hatom_types {
     H_NOTHING       = 0x00000000,
-    H_NULL          = 0x00000001,	// special type, used by llll_contains() and llll_is()
+    H_NULL          = 0x00000001,    // special type, used by llll_contains() and llll_is()
     H_LONG          = 0x00000002,
     H_RAT           = 0x00000004,
     H_DOUBLE        = 0x00000008,
     H_SYM           = 0x00000010,
     H_LLLL          = 0x00000020,
     H_OBJ           = 0x00000040,
-    H_POP           = 0x00000080,	// special type, used by llll_from_native_buf() and the deprecated llll_save_as_native_buf()
+    H_POP           = 0x00000080,    // special type, used by llll_from_native_buf() and the deprecated llll_save_as_native_buf()
     H_PITCH         = 0x00000100,
     H_STRING        = 0x00000200,
+    H_FUNCTION      = 0x00000400,   // a function
     
     H_PAREN         = 0x00010000,   // modifier, indicating that a symbol contains parens
     H_SEPARATOR     = 0x00020000,   // modifier, indicating that a symbol contains separators (whitespace, comma, semicolon)
@@ -105,29 +106,32 @@ typedef enum _hatom_types {
     
     H_PLAINTYPE     = 0x0000FFFF,   // bitmask for only retrieving the plain type
     H_MODIFIERS     = 0xFFFF0000,   // bitmask for only retrieving the modifiers
-    H_ALL           = 0xFFFFFFFF,	// special type, only used by lexpr
+    H_ALL           = 0xFFFFFFFF,    // special type, only used by lexpr
 } e_hatom_types;
 
 //#define H_NUMBER (H_LONG | H_RAT | H_DOUBLE)
+
+class t_function;
 
 // A piece of data that can be contained in an hatom.
 // On a 32-bit architecture, it is 64 bit wide.
 // On a 64-bit architecture, it is 128 bit wide.
 typedef union _hword
 {
-	t_atom_long w_long;				// long integer (32-bit or 64-bit according to the platform)
-	double w_double;				// 64-bit float (on both architectures!)
-	t_rational w_rat;				// a rational, composed by two t_atom_long
+    t_atom_long w_long;                // long integer (32-bit or 64-bit according to the platform)
+    double w_double;                // 64-bit float (on both architectures!)
+    t_rational w_rat;                // a rational, composed by two t_atom_long
     t_pitch w_pitch;                // a pitch, represented in terms of "white key", alteration and octave
-	t_symbol *w_sym;				// pointer to a symbol in the Max symbol table
-	struct _llll *w_llll;			// an llll
-	void *w_obj;					// pointer to a #t_object or other generic pointer
-	t_atom_ulong w_ulong;			// long unsigned integer (32-bit or 64-bit according to the platform)
-	struct _llllelem *w_llllelem;	// an llllelem
+    t_symbol *w_sym;                // pointer to a symbol in the Max symbol table
+    struct _llll *w_llll;            // an llll
+    void *w_obj;                    // pointer to a #t_object or other generic pointer
+    t_function *w_func;             // pointer to a function (private and only partially supported)
+    t_atom_ulong w_ulong;            // long unsigned integer (32-bit or 64-bit according to the platform)
+    struct _llllelem *w_llllelem;    // an llllelem
 #ifdef C74_X64
-	t_uint64 w_whole[2];			// only used to hackily access the whole 128-bit field; probably deprecable
+    t_uint64 w_whole[2];            // only used to hackily access the whole 128-bit field; probably deprecable
 #else
-	t_uint64 w_whole;				// only used to hackily access the whole 64-bit field; probably deprecable
+    t_uint64 w_whole;                // only used to hackily access the whole 64-bit field; probably deprecable
 #endif
 } t_hword;
 
@@ -136,8 +140,8 @@ typedef union _hword
 // llllelems contain hatoms, rather than plain atoms.
 typedef struct _hatom
 {
-	t_hword h_w;
-	t_uint32 h_type;
+    t_hword h_w;
+    t_uint32 h_type;
 } t_hatom;
 
 
@@ -152,16 +156,17 @@ typedef struct _hatom
 // You probably don't want to use l_thing altogether...
 typedef union thingword
 {
-	t_atom_long			w_long;
-	t_atom_ulong		w_ulong;
-	double				w_double;
+    t_atom_long            w_long;
+    t_atom_ulong        w_ulong;
+    double                w_double;
     t_rational          w_rat;
     t_urrational        w_urrat;
     t_pitch             w_pitch;
-	struct _llll		*w_llll;
-	struct _llllelem	*w_llllelem;
-	void				*w_obj;
-	t_int64				w_whole;
+    struct _llll        *w_llll;
+    struct _llllelem    *w_llllelem;
+    void                *w_obj;
+    t_function          *w_func;
+    t_int64                w_whole;
 } t_thingword;
 
 /*
@@ -176,19 +181,19 @@ typedef union thingword
 
 typedef struct _llllelem
 {
-	t_hatom				l_hatom;	// the actual data - note that this is not a pointer
-	struct _llllelem	*l_prev;	// pointer to the previous element in the list
-	struct _llllelem	*l_next;	// pointer to the next element
-	struct _llll		*l_parent;	// pointer to the list containing the element
-	t_thingword			l_thing;	// whatever you want, whatever you like - but always zero it before outputting the llll
+    t_hatom                l_hatom;    // the actual data - note that this is not a pointer
+    struct _llllelem    *l_prev;    // pointer to the previous element in the list
+    struct _llllelem    *l_next;    // pointer to the next element
+    struct _llll        *l_parent;    // pointer to the list containing the element
+    t_thingword            l_thing;    // whatever you want, whatever you like - but always zero it before outputting the llll
 #ifdef BACH_USE_MAGIC_NUMBER
-	t_uint32			l_magic;	// magic number, BACH_MAGIC_GOOD if the object is valid - semi-deprecated
+    t_uint32            l_magic;    // magic number, BACH_MAGIC_GOOD if the object is valid - semi-deprecated
 #endif
-	t_int32				l_flags;	// OBJ_FLAG_OBJ: free the possibly contained llll - OBJ_FLAG_DATA: don't
+    t_int32                l_flags;    // OBJ_FLAG_OBJ: free the possibly contained llll - OBJ_FLAG_DATA: don't
 #ifdef BACH_SAVE_STACK_WITH_MEMORY_LOGS
 #ifdef BACH_SAVE_STACK_IN_LLLLS
-	t_mframe			l_alloc_stack[16];	// for badass debugging purposes
-	t_mframe			l_free_stack[16];	// for badass debugging purposes
+    t_mframe            l_alloc_stack[16];    // for badass debugging purposes
+    t_mframe            l_free_stack[16];    // for badass debugging purposes
 #endif
 #endif
 } t_llllelem;
@@ -197,8 +202,8 @@ typedef struct _llllelem
 // an llllelem with an id. only used for low-level object pool management
 typedef struct _llllelem_numbered
 {
-	t_llllelem	l_elem;			// the llllelem
-	t_uint32	l_phonenumber;	// its id
+    t_llllelem    l_elem;            // the llllelem
+    t_uint32    l_phonenumber;    // its id
 } t_llllelem_numbered;
 
 
@@ -234,32 +239,32 @@ typedef struct _llllelem_numbered
 
 typedef struct _llll
 {
-	struct _llllelem	*l_head;			// pointer to the first element, or NULL if llll is empty
-	struct _llllelem	*l_tail;			// pointer to the last element, or NULL if llll is empty
-	struct _llllelem	*l_owner;			// pointer to the element that contains the llll, or NULL if it has none
-	t_thingword			l_thing;			// whatever you want, whatever you like - but always zero it before outputting the llll
-	t_uint32			l_phonenumber;		// the llll id. it is also the number passed in a patch for its native representation (as in bach.llll 12345)
-											// you should never touch this directly!
-	t_uint32			l_size;				// the number of elements in the list (at this level only - a subllll counts as one element)
-	t_int32				l_depth;			// the maximal depth of the llll, starting from this level down to the deepest sublist
+    struct _llllelem    *l_head;            // pointer to the first element, or NULL if llll is empty
+    struct _llllelem    *l_tail;            // pointer to the last element, or NULL if llll is empty
+    struct _llllelem    *l_owner;            // pointer to the element that contains the llll, or NULL if it has none
+    t_thingword            l_thing;            // whatever you want, whatever you like - but always zero it before outputting the llll
+    t_uint32            l_phonenumber;        // the llll id. it is also the number passed in a patch for its native representation (as in bach.llll 12345)
+                                            // you should never touch this directly!
+    t_uint32            l_size;                // the number of elements in the list (at this level only - a subllll counts as one element)
+    t_int32                l_depth;            // the maximal depth of the llll, starting from this level down to the deepest sublist
 #ifdef BACH_USE_MAGIC_NUMBER
-	t_uint32			l_magic;			// magic number, BACH_MAGIC_GOOD if the object is valid - semi-deprecated
+    t_uint32            l_magic;            // magic number, BACH_MAGIC_GOOD if the object is valid - semi-deprecated
 #endif
-	t_int32_atomic		l_count;			// reference count - you should never touch this directly!
-	t_int32				l_flags;			// OBJ_FLAG_OBJ: free the elements it contains - OBJ_FLAG_DATA: don't
+    t_int32_atomic        l_count;            // reference count - you should never touch this directly!
+    t_int32                l_flags;            // OBJ_FLAG_OBJ: free the elements it contains - OBJ_FLAG_DATA: don't
 #ifdef BACH_SAVE_STACK_WITH_MEMORY_LOGS
 #ifdef BACH_SAVE_STACK_IN_LLLLS
-	t_mframe			l_alloc_stack[16];	// for badass debugging purposes
-	t_mframe			l_free_stack[16];	// for badass debugging purposes
+    t_mframe            l_alloc_stack[16];    // for badass debugging purposes
+    t_mframe            l_free_stack[16];    // for badass debugging purposes
 #endif
 #endif
 } t_llll;
 
 
 typedef enum _llll_leveltypes {
-	L_STANDARD	= 0,
-	L_SQUARE,
-	L_CURLY,
+    L_STANDARD    = 0,
+    L_SQUARE,
+    L_CURLY,
     L_FLATTENED = 0xF0 // private, only used by llll_flat
 } e_llll_leveltypes;
 
@@ -267,9 +272,9 @@ typedef enum _llll_leveltypes {
  Useful with llll_getindex()
  */
 typedef enum _llll_index_modes { 
-	I_STANDARD		= 0x00,
-	I_NON_NEGATIVE	= 0x01,	// negative indices return NULL (normally negative indices are read from the tail) 
-	I_MODULO		= 0x02	// the list is seen as circular (so asking for the 4th element in a 3-element list will return the 1st element)
+    I_STANDARD        = 0x00,
+    I_NON_NEGATIVE    = 0x01,    // negative indices return NULL (normally negative indices are read from the tail) 
+    I_MODULO        = 0x02    // the list is seen as circular (so asking for the 4th element in a 3-element list will return the 1st element)
 } e_llll_index_modes;
 
 
@@ -280,7 +285,6 @@ BEGIN_CHECK_LINKAGE
 t_bool hatom_is_number(const t_hatom *h);
 t_bool hatom_type_is_number(const t_int32 type);
 
-
 t_uint32 hatom_gettype(const t_hatom *h);
 t_atom_long hatom_getlong(const t_hatom *h);
 double hatom_getdouble(const t_hatom *h);
@@ -289,6 +293,7 @@ t_pitch hatom_getpitch(const t_hatom *h, long tonedivision = 0, e_accidentals_pr
 t_symbol *hatom_getsym(const t_hatom *h);
 t_llll *hatom_getllll(const t_hatom *h); // no check is performed, and the reference count of the llll is left untouched
 void *hatom_getobj(const t_hatom *h);
+t_function *hatom_getfunc(const t_hatom *h);
 void hatom_setlong(t_hatom *h, const t_atom_long l);
 void hatom_setrational(t_hatom *h, const t_rational &r); // first, the given rational is reduced. Then, if the denominator appears to be 1 or -1 a long is stored instead
 void hatom_setpitch(t_hatom *h, const t_pitch &p);
@@ -298,6 +303,7 @@ void hatom_setdouble(t_hatom *h, const double d);
 void hatom_setsym(t_hatom *h, const t_symbol *s);
 void hatom_setllll(t_hatom *h, const t_llll *llll); // no check is performed, and the reference count of the llll is left untouched
 void hatom_setobj(t_hatom *h, const void *o);
+void hatom_setfunc(t_hatom *h, t_function *fn);
 void hatom_setatom(t_hatom *h, const t_atom *a); // atom to hatom conversion. If the atom is A_OBJ and points to a llll, the hatom is correctly set to A_LLLL
 long hatom_eq(const t_hatom *a, const t_hatom *b); // comparison between two atoms
 

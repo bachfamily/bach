@@ -55,9 +55,9 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 		hatom_setllll(&h, ll);
 		txt = (fn)(&h, max_decimals);
 		if (client)
-			object_post(client, "  0: ( %s", txt);
+			object_post(client, "  0: " LLLL_PUSH_CSTR " %s", txt);
 		else
-			post("  0: ( %s", txt);
+			post("  0: " LLLL_PUSH_CSTR " %s", txt);
 		bach_freeptr(txt);
 	}
 	
@@ -105,6 +105,9 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
                     }
 					case H_LLLL:
 						break;
+                    case H_FUNCTION:
+                        snprintf_zero(postline, 256, "%s <function %p>", header, this_elem->l_hatom.h_w.w_obj);
+                        break;
 					case H_OBJ:
 						snprintf_zero(postline, 256, "%s <object %p>", header, this_elem->l_hatom.h_w.w_obj);
 						break;
@@ -120,7 +123,7 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 					this_elem = this_elem->l_next;
 				} else {
 					if (depth > 0 && (depth < maxdepth || (maxdepth < 0 && sub_ll->l_depth >= -maxdepth))) { // if we are within maxdepth
-						snprintf_zero(postline, 256, "%s ( ", header);
+						snprintf_zero(postline, 256, "%s " LLLL_PUSH_CSTR " ", header);
 						if (txt)
 							strncat_zero(postline, txt, 256);
 						llll_stack_push(stack, this_elem);
@@ -132,7 +135,7 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 							strncat_zero(header, "•", 256);
 					} else {
 						if (deepenough) {
-							snprintf_zero(postline, 256, "%s ( ", header);
+							snprintf_zero(postline, 256, "%s " LLLL_PUSH_CSTR " ", header);
 							llll_to_text_buf(sub_ll, &postline, strlen(postline), max_decimals, 0, 0, 0, fn);
 							snprintf_zero(postline, sysmem_ptrsize(postline), "%s )", postline);
 						}
@@ -153,9 +156,9 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 		
 		if (deepenough) {
 			if (client)
-				object_post((t_object *) client, "%s )", header);
+				object_post((t_object *) client, "%s " LLLL_POP_CSTR, header);
 			else 
-				post("%s )", header);
+				post("%s " LLLL_POP_CSTR, header);
 		}
 		
 		depth--;

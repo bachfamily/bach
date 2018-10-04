@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.4"
+#define YYBISON_VERSION "3.0.5"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -76,6 +76,8 @@
     #include <stdio.h>
     #define parserpost printf
     #endif
+    #define YY_NO_UNISTD_H
+
 
 
 # ifndef YY_NULLPTR
@@ -111,15 +113,15 @@ extern int strparser_debug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    LONG = 258,
-    DOUBLE = 259,
-    RAT = 260,
-    PITCH = 261,
-    SYMBOL = 262,
-    PUSH = 263,
-    POP = 264,
-    BACHNULL = 265,
-    BACHNIL = 266
+    BACH_LONG = 258,
+    BACH_DOUBLE = 259,
+    BACH_RAT = 260,
+    BACH_PITCH = 261,
+    BACH_SYMBOL = 262,
+    BACH_PUSH = 263,
+    BACH_POP = 264,
+    BACH_NULL = 265,
+    BACH_NIL = 266
   };
 #endif
 
@@ -456,8 +458,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    53,    53,    54,    57,    60,    63,    66,    70,    73,
-      75,    78,    85
+       0,    55,    55,    56,    59,    62,    65,    68,    72,    75,
+      77,    80,    87
 };
 #endif
 
@@ -466,9 +468,9 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "LONG", "DOUBLE", "RAT", "PITCH",
-  "SYMBOL", "PUSH", "POP", "BACHNULL", "BACHNIL", "$accept", "sequence",
-  "term", YY_NULLPTR
+  "$end", "error", "$undefined", "BACH_LONG", "BACH_DOUBLE", "BACH_RAT",
+  "BACH_PITCH", "BACH_SYMBOL", "BACH_PUSH", "BACH_POP", "BACH_NULL",
+  "BACH_NIL", "$accept", "sequence", "term", YY_NULLPTR
 };
 #endif
 
@@ -920,6 +922,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
       case N:                               \
         yyformat = S;                       \
       break
+    default: /* Avoid compiler warnings. */
       YYCASE_(0, YY_("syntax error"));
       YYCASE_(1, YY_("syntax error, unexpected %s"));
       YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
@@ -1246,21 +1249,21 @@ yyreduce:
         case 4:
     {
 	llll_appendlong(*ll, (yyvsp[0].l));
-	parserpost("parse: LONG %ld", (yyvsp[0].l));
+	parserpost("parse: BACH_LONG %ld", (yyvsp[0].l));
 }
     break;
 
   case 5:
     {
 	llll_appenddouble(*ll, (yyvsp[0].d));
-	parserpost("parse: DOUBLE %lf", (yyvsp[0].d));
+	parserpost("parse: BACH_DOUBLE %lf", (yyvsp[0].d));
 }
     break;
 
   case 6:
     {
 	llll_appendrat(*ll, (yyvsp[0].r));
-	parserpost("parse: RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
+	parserpost("parse: BACH_RAT %ld/%ld", (yyvsp[0].r).num(), (yyvsp[0].r).den());
 }
     break;
 
@@ -1275,7 +1278,7 @@ yyreduce:
   case 8:
     {
 	llll_appendsym(*ll, (yyvsp[0].sym));
-	parserpost("parse: symbol %s", (yyvsp[0].sym)->s_name);
+	parserpost("parse: BACH_SYMBOL %s", (yyvsp[0].sym)->s_name);
 }
     break;
 
@@ -1299,7 +1302,7 @@ yyreduce:
 	llll_appendllll(*ll, newll, 0, WHITENULL_llll);
 	llll_stack_push(stack, *ll);
 	*ll = newll;
-	parserpost("parse: PUSH");
+	parserpost("parse: BACH_PUSH");
 }
     break;
 
@@ -1313,7 +1316,7 @@ yyreduce:
 		*ll = parent;
 	} else
 		YYERROR;
-	parserpost("parse: POP");
+	parserpost("parse: BACH_POP");
 }
     break;
 

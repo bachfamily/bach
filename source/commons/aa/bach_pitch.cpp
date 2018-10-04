@@ -7,6 +7,16 @@
 //
 
 #include "bach_pitch.hpp"
+#include "bach_mem.h"
+
+
+inline long divdiv_floor(long a, long b) {
+    if (b < 0) {
+        a *= -1;
+        b *= -1;
+    }
+    return a / b - (a % b < 0);
+}
 
 const t_shortRational t_pitch::dblsharp = t_shortRational(1);
 const t_shortRational t_pitch::sharp = t_shortRational(1, 2);
@@ -169,7 +179,7 @@ t_pitch t_pitch::operator/(const t_atom_long b) const
         return t_pitch::NaP;
     
     t_stepsAndMC sat = toStepsAndMC();
-    sat.steps /= b;
+    sat.steps = sat.steps / b; // or divdiv_floor(sat.steps, b);
     sat.mc /= b;
     return t_pitch(sat);
 }
@@ -180,7 +190,7 @@ t_pitch t_pitch::operator/(const t_rational &b) const
         return t_pitch::NaP;
 
     t_stepsAndMC sat = toStepsAndMC();
-    sat.steps = sat.steps * b.den() / b.num();
+    sat.steps = sat.steps * b.den(), b.num(); // or divdiv_floor(sat.steps * b.den(), b.num());
     sat.mc /= t_shortRational(b);
     return t_pitch(sat);
 }
@@ -190,7 +200,7 @@ t_pitch t_pitch::operator%(const t_pitch &b) const
     if (b.toMC() == 0)
         return t_pitch::NaP;
 
-    t_atom_long quotient = t_atom_long(double(*this / b));
+    t_atom_long quotient = t_atom_long((*this).divdiv(b));
     t_pitch t = b * quotient;
     return *this - t;
 }
@@ -200,19 +210,20 @@ t_pitch t_pitch::operator%(const t_atom_long b) const
     if (b == 0)
         return t_pitch::NaP;
     
-    t_stepsAndMC sat = toStepsAndMC();
-    sat.steps -= (sat.steps / b) * b;
-    sat.mc = t_shortRational(0);
-    return t_pitch(sat);
+    t_pitch temp = (*this / b);
+    return *this - b * temp;
 }
 
-long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace)
+long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool always_positive, t_bool addTrailingSpace) const
 {
     long count = 0;
     if (!buf || bufSize == 0)
         return -1;
     if (p_alter == illegal) {
-        return snprintf_zero(buf, bufSize, "NaP");
+        if (addTrailingSpace)
+            return snprintf_zero(buf, bufSize, "NaP ");
+        else
+            return snprintf_zero(buf, bufSize, "NaP ");
     } else if (p_octave >= 0 || always_positive) {
         if (++count == bufSize) { *buf = 0; return count - 1; }
         *(buf++) = degree2name[p_degree];
@@ -355,11 +366,27 @@ long t_pitch::toTextBuf(char *buf, long bufSize, t_bool include_octave, t_bool a
         buf += len;
         count += len;
     }
-    if (!addTrailingSpace || count == bufSize - 1)
+    if (!addTrailingSpace || count == bufSize - 1) {
+        *(buf) = 0;
         return count;
+    }
     *(buf) = ' ';
     *(buf + 1) = 0;
     return count + 1;
+}
+
+
+long mod_positive(long num, long mod)
+{
+    if (num >= 0)
+        return num % mod;
+    
+    return ((num % mod) + mod) % mod;
+}
+
+long floor_div_by_7(long num)
+{
+    return num / 7 - (num % 7 < 0);
 }
 
 t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences accidentals_preferences, t_rational *key_acc_pattern, t_rational *full_repr)
@@ -524,11 +551,11 @@ t_pitch t_pitch::fromMC(double mc, long tone_division, e_accidentals_preferences
     
     if (original_tone_division == 0) {
         // obtaining the most precise alteration possible
-        t_pitch p1 = t_pitch(steps % 7, long2rat(0), steps / 7);
+        t_pitch p1 = t_pitch(mod_positive(steps, 7), long2rat(0), floor_div_by_7(steps));
         t_rational mc1 = p1.toMC();
         t_rational mc_orig = approx_double_with_rat_fixed_den(mc, 100, 0, NULL);
         accidental = (mc_orig - mc1)/200;
     }
     
-    return t_pitch(steps % 7, accidental, steps / 7);
+    return t_pitch(mod_positive(steps, 7), accidental, floor_div_by_7(steps));
 }

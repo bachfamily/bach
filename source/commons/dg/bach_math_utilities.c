@@ -38,12 +38,33 @@ long iexp2(long exponent){
 
 
 
+// combines two slopes, as applied one after another, and gives a single output slope approximating them
+// In case the two slopes have the SAME SIGN, the result is not approximated.
+// In case the two slopes
+double combine_slopes(double slope1, double slope2)
+{
+    // same sign, easy.
+    // Curve function is
+    // y = t^((1+slope)/(1-slope))
+    // applying repeatedly gives
+    // y = t^(((1+s1)/(1-s1)) * ((1+s2)/(1-s2)))
+    // and solving (1+x)/(1-x) = (((1+s1)/(1-s1)) * ((1+s2)/(1-s2)))
+    // gives x = (s+w)/(sw+1)
+    // This is true for positive slopes, but it generalizes quite nicely to any slope
+    // It'll be only exact with respect to display for positive slopes, though.
+    
+    if (slope2 == -slope1)
+        return 0;
+    else
+        return ((slope1+slope2)/(slope1*slope2 + 1));
+}
+
 double rescale_with_slope_and_get_derivative_do(double value, double min, double max, double new_min, double new_max, double slope, double *derivative, char sign_of_slopes_to_be_mirrored)
 {
     // Curve function is
     // y = t^((1+slope)/(1-slope))
     // for positive slopes and
-    // y = 1-(1-t)^((1+slope)/(1-slope))
+    // y = 1-(1-t)^((1+|slope|)/(1-|slope|))
     // for negative slopes.
     // The parameter t is the normalized x (between 0 and 1), and result is also normalized between 0 and 1
     

@@ -343,6 +343,7 @@ typedef struct _llllobj_common_symbols_table
 	t_symbol	*s_loop;
     t_symbol	*s_flags;
     t_symbol	*s_path;
+    t_symbol    *s_painted;
 
 	t_symbol	*s_prev;
 	t_symbol	*s_next;
@@ -735,6 +736,7 @@ typedef struct _llllobj_common_symbols_table
 #define _llllobj_sym_loop			(_llllobj_common_symbols->s_loop)
 #define _llllobj_sym_flags			(_llllobj_common_symbols->s_flags)
 #define _llllobj_sym_path			(_llllobj_common_symbols->s_path)
+#define _llllobj_sym_painted            (_llllobj_common_symbols->s_painted)
 
 #define _llllobj_sym_prev			(_llllobj_common_symbols->s_prev)
 #define _llllobj_sym_next			(_llllobj_common_symbols->s_next)

@@ -16,6 +16,7 @@
 #include "exprparser.h"
 
 #define YY_HEADER_EXPORT_START_CONDITIONS
+#define YY_NO_UNISTD_H
 #include "bach_exprparser_lex.h"
 
 #ifdef WIN_VERSION
@@ -91,7 +92,7 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     short numvars = 0;
     char again;
     t_hatom result_hatom;
-    t_max_err err = MAX_ERR_NONE;
+    t_atom_long err;
     t_exprparser_data exprparser_data;
     char *offending;
     
@@ -188,6 +189,27 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
             goto lexpr_new_error;
         }
     }
+    
+    err = lexpr_try_substitute_lexeme_FUNC_with_VAR_substitution(this_lex - 1, subs_count, substitutions, &numvars, exprparser_data.offending);
+    
+    switch (err) {
+            case E_OK:
+                break;
+            case E_BAD_VAR_TYPE:
+                object_error(culprit, "Bad variable: %s", exprparser_data.offending);
+                bach_freeptr(*exprparser_data.offending);
+                goto lexpr_new_error;
+                break;
+            case E_BAD_NAME:
+                object_error(culprit, "Bad name: %s", *exprparser_data.offending);
+                bach_freeptr(*exprparser_data.offending);
+                goto lexpr_new_error;
+                break;
+            case E_BAD_EXPR:
+                object_error(culprit, "Bad expression");
+                goto lexpr_new_error;
+                break;
+    }
 
     lexstack_ptr = lexstack - 1; // always points to the last valid argument
     tokqueue_ptr = tokqueue;
@@ -196,7 +218,9 @@ t_max_err lexpr_init(t_lexpr *this_lexpr, short ac, t_atom *av, long subs_count,
     // the shunting-yard algorithm! (plus some error checking)
     // http://en.wikipedia.org/wiki/Shunting-yard_algorithm
     
-    for (i = 0, this_lex = lexs + 1; i < lexc && err == MAX_ERR_NONE; i++, this_lex++) {
+    for (i = 0, this_lex = lexs + 1, err = MAX_ERR_NONE;
+         i < lexc && err == MAX_ERR_NONE;
+         i++, this_lex++) {
         switch (this_lex->l_type) {
             case L_COMMA:
                 while (lexstack_ptr >= lexstack && (*lexstack_ptr)->l_type != L_OPEN) {
@@ -441,13 +465,23 @@ lexpr_new_error:
 
 t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
 {
-    long i = expr->l_size;
     t_hatom *stack = (t_hatom *) bach_newptr(L_MAX_TOKENS * sizeof(t_hatom));
+    if (lexpr_eval_upon(expr, vars, stack)) {
+        bach_freeptr(stack);
+        return NULL;
+    } else
+        return stack;
+}
+
+// stack must be an allocated array of hatoms, of size L_MAX_TOKENS
+t_bool lexpr_eval_upon(t_lexpr *expr, t_hatom *vars, t_hatom *stack)
+{
+    int i;
     t_lexpr_token *thistok;
     t_hatom *thisstack = stack;
     t_hatom *this_vars;
-    long stop_it = 0;
-    for (i = 0, thistok = expr->l_tokens; !stop_it && i < expr->l_size; i++, thistok++) {
+    t_bool err = false;
+    for (i = 0, thistok = expr->l_tokens; !err && i < expr->l_size; i++, thistok++) {
         switch (thistok->t_type) {
             case TT_HATOM:
                 *thisstack++ = thistok->t_contents.c_hatom;
@@ -473,7 +507,7 @@ t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
                             break;
                     }
                 } else
-                    stop_it = 1;
+                    err = true;
                 break;
             case TT_OP:
             case TT_FUNC:
@@ -495,11 +529,7 @@ t_hatom *lexpr_eval(t_lexpr *expr, t_hatom *vars)
                 break;
         }
     }
-    if (stop_it) {
-        bach_freeptr(stack);
-        return NULL;
-    } else
-        return stack;
+    return err;
 }
 
 long lexpr_eval_one(const t_lexpr_token *verb, t_hatom *h1, t_hatom *h2, t_hatom *h3, t_hatom *res)
@@ -1194,6 +1224,7 @@ long lexpr_append_lexeme_FUNC_unary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(doubl
     lex->l_token.t_operands = 1;
     lex->l_token.t_contents.c_func.f_ptrs.p_dptr_d = f;
     lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
+    lex->l_token.t_contents.c_func.f_name = name;
     return E_OK;
 }
 
@@ -1201,7 +1232,7 @@ long lexpr_append_lexeme_FUNC_binary_DOUBLE(t_lexpr_lexeme *lex, double(*f)(doub
 {
     lex->l_type = L_TOKEN;
     lex->l_token.t_type = TT_FUNC;
-    lex->l_token.t_operands = 1;
+    lex->l_token.t_operands = 2;
     lex->l_token.t_contents.c_func.f_ptrs.p_dptr_dd = f;
     lex->l_token.t_contents.c_func.f_type = H_DOUBLE;
     lex->l_token.t_contents.c_func.f_name = name;

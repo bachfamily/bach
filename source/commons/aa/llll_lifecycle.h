@@ -10,6 +10,7 @@
 #define llll_lifecycle_h
 
 #include "hatom.h"
+#include "bach_mem.h"
 
 ///////////////////////////////////////////////////////////////////////
 ///// MEMORY STUFF
@@ -46,8 +47,8 @@ void llll_dispose(t_llll *x);
 
 
 // increment/decrement the reference count of ll
-void llll_retain(t_llll *ll);
-void llll_retain_nocheck(t_llll *ll);
+t_llll *llll_retain(t_llll *ll);
+t_llll *llll_retain_nocheck(t_llll *ll);
 void llll_release(t_llll *ll);
 
 // free a llll without calling llll_check; all the l_thing fields will be freed according to freething - DEPRECATED

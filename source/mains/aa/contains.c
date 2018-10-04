@@ -175,26 +175,14 @@ void contains_anything(t_contains *x, t_symbol *msg, long ac, t_atom *av)
 			return;
 	} 
 	if (x->n_maxdepth == 0) {
-		x->n_longout = H_LLLL;
-		types_llll = llll_get();
-		llll_appendsym(types_llll, _llllobj_sym_l, 0, WHITENULL_llll);
+		x->n_longout = types = H_LLLL;
 	} else {
 		ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 0);
 
-		types_llll = llll_get();
 		x->n_longout = types = llll_contains(ll, x->n_mindepth, x->n_maxdepth);
 		llll_release(ll);
-		
-		if (types & H_NULL)		llll_appendsym(types_llll, _llllobj_sym_n, 0, WHITENULL_llll);
-		if (types & H_LONG)		llll_appendsym(types_llll, _llllobj_sym_i, 0, WHITENULL_llll);
-		if (types & H_RAT)		llll_appendsym(types_llll, _llllobj_sym_r, 0, WHITENULL_llll);
-		if (types & H_DOUBLE)	llll_appendsym(types_llll, _llllobj_sym_f, 0, WHITENULL_llll);
-        if (types & H_PITCH)	llll_appendsym(types_llll, _llllobj_sym_p, 0, WHITENULL_llll);
-		if (types & H_SYM)		llll_appendsym(types_llll, _llllobj_sym_s, 0, WHITENULL_llll);
-		if (types & H_LLLL)		llll_appendsym(types_llll, _llllobj_sym_l, 0, WHITENULL_llll);
-		if (types & H_OBJ)		llll_appendsym(types_llll, _llllobj_sym_o, 0, WHITENULL_llll);
-
 	}
+    types_llll = contains_long_to_syms(types);
 	llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, types_llll, 1);
 	x->n_ob.l_rebuild = 0;
 	llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 1);

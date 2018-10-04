@@ -152,6 +152,7 @@ t_llll* llll_scalar_matrix_product(t_hatom *scalar, t_llll *matrix){
 					inelem = inelem->l_next;
 					break;
 				case H_SYM:
+                case H_FUNCTION:
 				case H_OBJ:
 					llll_appendhatom(outll, &inelem->l_hatom, 0, WHITENULL_llll);
 					inelem = inelem->l_next;

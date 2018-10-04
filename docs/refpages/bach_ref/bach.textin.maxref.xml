@@ -74,7 +74,7 @@
 			</digest>
 			<description>
 				The <m>ignore</m> attribute allows preventing certain categories
-				of elements to be interpreted according to the usual bach syntax.
+				of elements from being interpreted according to the usual bach syntax.
 				Categories are expressed by letters, according to the following table:<br />
 				- <b>L</b> stands for all the open and closed parens marking llll sublists:
 				if this category is set, parens and symbols containing parens
@@ -95,9 +95,11 @@
 				to be interpreted with the backtick included
 				(e.g., the <b>`foo</b> symbol is read as it is, including the backtick,
 				as opposed to what would happen normally, when it would be read as <b>foo</b>). <br />
-				- <b>a</b> stands for ignoring all the above categories.
+				- <b>-</b> reverses the selection, that is, makes the characters detailed above
+				indicate the categories <i>not</i> to be ignored. <br />
+				- <b>1</b> stands for ignoring all the above categories.
 				If it is present alongside other specifiers (e.g., <b>alp</b>), it overrides them. <br />
-				- <b>-</b> stands for no category, and it is the default.
+				- <b>0</b> stands for no category, and is the default.
 				If it is present alongside other specifiers (e.g., <b>-p</b>), it is ignored. <br />
 				For example, the <m>ignore</m> attribute could be set to <b>lp</b>,
 				which would cause a message containing <b>( a001 Mahler(Bernstein).aif )</b>

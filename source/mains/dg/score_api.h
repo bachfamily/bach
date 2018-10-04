@@ -36,29 +36,25 @@
 
 typedef struct _score // [bach.score] structure
 {
-	t_notation_obj r_ob;  // root: notation object (all the common attributes) 
-	
-    t_tuttipoint	*firsttuttipoint;
-    t_tuttipoint	*lasttuttipoint;
-    long			num_tuttipoints;
+    t_notation_obj r_ob;  // root: notation object (all the common attributes) 
 
     // elements in the score
-	t_scorevoice	*firstvoice;
-	t_scorevoice	*lastvoice;
-	
-	
-	double			non_inspector_ux_screen_start;
-	
-	// utilities
-	char		durations_given;
-	char		need_repaint;
-	char		can_need_repaint;
-	char		not_clicked_anything;
-	char		n_rebuild;
-	char		debug;
-	char		must_append_measures;
-	
-	long m_in;   // space for the inlet number used by all the proxies
+    t_scorevoice    *firstvoice;
+    t_scorevoice    *lastvoice;
+    
+    
+    double            non_inspector_ux_screen_start;
+    
+    // utilities
+    char        durations_given;
+    char        need_repaint;
+    char        can_need_repaint;
+    char        not_clicked_anything;
+    char        n_rebuild;
+    char        debug;
+    char        must_append_measures;
+    
+    long m_in;   // space for the inlet number used by all the proxies
     void *m_proxy1;
     void *m_proxy2;
     void *m_proxy3;
@@ -73,12 +69,12 @@ typedef struct _score // [bach.score] structure
 
 
 // verbose?
-#define verbose		false
+#define verbose        false
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE
 #endif
-	
+    
 void score_hidecursor(t_score *x);
 void score_showcursor(t_score *x);
 
@@ -160,6 +156,7 @@ void recompute_all_and_redraw(t_score *x);
 void recompute_all_except_for_beamings_and_autocompletion(t_score *x);
 
 void remove_all_tuttipoints_flag_modified(t_score *x);
+char scoreapi_inscreenmeas_do(t_score *x, t_measure *start_meas, t_measure *end_meas);
 
 
 t_scorevoice* nth_scorevoice(t_score *x, long n);
@@ -230,8 +227,8 @@ char delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_c
 char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *update_chord_play_cursor_to_this_chord_if_needed, char *need_check_solos, char add_undo_ticks);
 void turn_measure_into_single_rest(t_score *x, t_measure *measure);
 void voiceensemble_turn_measure_into_single_rest(t_score *x, t_measure *measure);
-void delete_all_chords_from_measure(t_score *x, t_measure *measure);
-char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics, char delete_dynamics, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false);
+void measure_delete_all_chords(t_score *x, t_measure *measure);
+char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics, char delete_dynamics, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false, char transfer_slots_even_to_rests = false);
 long score_oksize(t_score *x, t_rect *newrect);
 long get_global_num_notes(t_score *x);
 long get_global_num_notes_voice(t_scorevoice *voice);
@@ -268,8 +265,8 @@ void calculate_all_tempi_remaining_onsets(t_score *x);
 void calculate_tuttipoints(t_score *x);
 void insert_tuttipoint(t_score *x, t_tuttipoint *tuttipoint_to_insert, t_tuttipoint *after_this_tuttipoint);
 void refresh_all_tuttipoints_offset_ux(t_score *x);
-void calculate_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt);
-void refine_tuttipoint_spacing(t_score *x, t_tuttipoint *tpt);
+void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt);
+void tuttipoint_refine_spacing(t_score *x, t_tuttipoint *tpt);
 long get_num_chords(t_score *x);
 t_chord* ID_to_chord(t_score *x, long ID_to_find);
 void refresh_measure_numbers(t_score *x, t_scorevoice *voice);
@@ -311,15 +308,15 @@ t_llll* get_voice_velocities_values_as_llll(t_scorevoice *voice, char tree);
 t_llll* measure_get_pixel_values_as_llll(t_score *x, t_scorevoice *voice, t_measure *measure);
 t_llll* get_voice_pixel_values_as_llll(t_score *x, t_scorevoice *voice);
 
-void scoreapi_paint(t_score *x, t_object *view, t_jgraphics *g_ok, t_rect rect);
+void score_paint_ext(t_score *x, t_object *view, t_jgraphics *g, t_rect rect);
 void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_rect);
 
 double get_linear_edit_cursor_ux_position(t_score *x);
 
 void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_ts, t_jfont *jf_tempi,
-						 t_jfont *jf_text, char *there_is_legend, char *legend_text);
+                         t_jfont *jf_text, char *there_is_legend, char *legend_text);
 void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_acc_bogus, t_jfont *jf_text, t_jfont *jf_ts, t_jfont *jf_tempi,
-						 char *there_is_legend, char *legend_text);
+                         char *there_is_legend, char *legend_text);
 
 void create_whole_score_undo_tick(t_score *x);
 void check_if_need_to_splatter_level_when_turning_note_to_rest(t_score *x, t_chord *chord);
@@ -336,11 +333,11 @@ void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, lo
 
 
 /** Add all measures starting together (in all voices) to the preselection.
-	This measure block is identifying by a reference measure belonging to it.
-	@ingroup			selection
-	@param	r_ob		The notation object
-	@param	ref_measure	The reference measure
-	@param	except_ref_measure	If non-zero means: don't preselect the reference measure
+    This measure block is identifying by a reference measure belonging to it.
+    @ingroup            selection
+    @param    r_ob        The notation object
+    @param    ref_measure    The reference measure
+    @param    except_ref_measure    If non-zero means: don't preselect the reference measure
  */
 void preselect_measure_in_all_voices(t_score *x, t_measure *ref_measure, char except_ref_measure);
 
@@ -380,7 +377,6 @@ char measure_barlines_coincide_for_all_voices(t_score *x, long up_to_this_measur
 t_llll *score_get_interp_at_timepoint(t_score *x, t_timepoint tp);
 t_llll *score_get_sampling_timepoint(t_score *x, t_timepoint delta_tp);
 
-long fix_level_type_flag_for_level_as_ignore_fn(void *data, t_hatom *a, const t_llll *address);
 
 
 void set_loop_region_from_llll(t_score *x, t_llll* loop, char lock_mutex);

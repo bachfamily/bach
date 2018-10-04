@@ -32,7 +32,7 @@
 	@copy BACH_DOC_SETTHEORY_MODULO
 	
 	@category
-	bach, bach abstractions, bach notation
+	bach, bach abstractions, bach notation, bach pitches
 
 	@keywords
 	cent, midicent, approximate, snap, grid, microtone, nearest, pitch

@@ -115,9 +115,9 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 			handle_rebuild_done((t_notation_obj *) x);
 			handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_IMPORT_MIDI_ROLL);
 			if (chord_thresh >= 0) {
-				systhread_mutex_lock(x->r_ob.c_general_mutex);
+                lock_general_mutex((t_notation_obj *)x);
                 merge(x, chord_thresh, -1, merging_policy, merging_policy, 0, 0);
-				systhread_mutex_unlock(x->r_ob.c_general_mutex);
+                unlock_general_mutex((t_notation_obj *)x);
 			}
 			break;
 		default:
@@ -132,7 +132,7 @@ void roll_doread(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 				sysfile_read(fh, &count, testbuf);
 				sysfile_setpos(fh, SYSFILE_FROMSTART, 0);
 				if (!memcmp(testbuf, "<?xml", 5)) { // xml
-					object_error((t_object *) x, "Can't open an XML file");
+					object_error((t_object *) x, "Can't open an XML file. Maybe you meant to open it with bach.score?");
 					goto roll_doread_error_close;
 				}
 				roll_ll = llll_readfile((t_object *) x, fh);
@@ -646,7 +646,7 @@ t_llll *roll_readmidi_direct(t_roll *x, t_filehandle fh, long track2voice, long 
 		}
 	}
 	
-	dev_llll_print(roll_ll, (t_object *) x, 0, 6, NULL);
+//	dev_llll_print(roll_ll, (t_object *) x, 0, 6, NULL);
 	
 readmidi_error:
 	if (!ok) {
@@ -839,7 +839,7 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
             llll_destroyelem(arguments->l_head);
     }
     
-	systhread_mutex_lock(x->r_ob.c_general_mutex);
+    lock_general_mutex((t_notation_obj *)x);
 
 	prepare_voices_to_write((t_notation_obj *) x, &voices_to_write);
 	
@@ -992,7 +992,8 @@ t_max_err roll_dowritemidi(t_roll *x, t_symbol *s, long ac, t_atom *av)
 			}
 		}
 	}
-	systhread_mutex_unlock(x->r_ob.c_general_mutex);
+    
+    unlock_general_mutex((t_notation_obj *)x);
 	
 	// now that we have parsed all the roll into our intermediate data structure, let's convert it into raw MIDI data and write them 
 	count = create_raw_midi_data_buffer(track_ll, num_tracks, format, time_division, 0, &buffer);
@@ -1013,4 +1014,13 @@ roll_dowritemidi_error:
 	if (arguments)
 		llll_free(arguments);
 	return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
+}
+
+
+void roll_exportimage(t_roll *x, t_symbol *s, long argc, t_atom *argv)
+{
+    t_atom av;
+    t_llll *arguments = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    atom_setobj(&av, arguments);
+    defer(x, (method)notationobj_dowriteimage, s, 1, &av);
 }

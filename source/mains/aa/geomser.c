@@ -32,7 +32,7 @@
  series, geometric, factor, compute, calculate
 
  @seealso
- bach.primeser, bach.arithmser
+ bach.primeser, bach.arithmser, bach.recurser
  
  @owner
  Andrea Agostini

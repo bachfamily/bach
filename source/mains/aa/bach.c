@@ -8,10 +8,13 @@
 #include <execinfo.h>
 #endif
 #endif
+
 #ifdef WIN_VERSION
-#include <windows.h>
-HINSTANCE hinst;
+    #include <windows.h>
+    HINSTANCE hinst;
 #endif
+
+#include "ast.hpp"
 
 long *bach_gen_primes(void);
 
@@ -45,6 +48,7 @@ void bach_donors(t_bach *x);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
 char bach_load_default_font(void);
 long bach_getbuildnumber(void);
+void bach_init_bifs(t_bach *x);
 
 t_bach *bach_new(t_symbol *s, long ac, t_atom *av);
 
@@ -460,8 +464,10 @@ void bach_donors(t_bach *x)
     post(" ");
     post("**************************************************************************");
     post("bach: automated composer's helper would like to thank");
-    post("   Dimitri Fergadis");
-    post("   Cody Brookshire");
+    post(" - Cody Brookshire");
+    post(" - Dimitri Fergadis");
+    post("        (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research)");
+    post("        Proprietor of Halocyan Records");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
@@ -618,7 +624,6 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     
     hashtab_store(x->b_reservedselectors, _llllobj_sym_bach_llll, (t_object *) x);
     hashtab_store(x->b_reservedselectors, _llllobj_sym_null, (t_object *) x);
-
     
 	bach_setup(x);
     
@@ -665,6 +670,8 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 
 	gensym("bach")->s_thing = (t_object *) x;
 	
+    bach_init_bifs(x);
+
 	defer_low(x, (method) bach_init_print, NULL, 0, NULL);
 	return x;
 }
@@ -1108,7 +1115,6 @@ char bach_load_default_font(void)
 
 }
 
-
 long bach_getbuildnumber(void)
 {
 #ifdef MAC_VERSION
@@ -1125,3 +1131,127 @@ long bach_getbuildnumber(void)
 #endif
 }
 
+void bach_init_bifs(t_bach *x)
+{
+    auto bifTable = x->b_bifTable = new std::unordered_map<std::string, t_function *>;
+    x->b_gvt = new t_safeTable<t_sharedVariable>;
+
+    (*bifTable)["$args"] = new t_fnArgs;
+    (*bifTable)["$argcount"] = new t_fnArgcount;
+    
+    (*bifTable)["length"] = new t_fnLength;
+    (*bifTable)["depth"] = new t_fnDepth;
+    (*bifTable)["nth"] = new t_fnNth;
+    (*bifTable)["sort"] = new t_fnSort;
+    (*bifTable)["contains"] = new t_fnContains;
+    (*bifTable)["rev"] = new t_fnRev;
+    (*bifTable)["rot"] = new t_fnRot;
+    (*bifTable)["trans"] = new t_fnTrans;
+    (*bifTable)["flat"] = new t_fnFlat;
+    (*bifTable)["slice"] = new t_fnSlice;
+    (*bifTable)["left"] = new t_fnLeft;
+    (*bifTable)["right"] = new t_fnRight;
+    (*bifTable)["subs"] = new t_fnSubs;
+    (*bifTable)["insert"] = new t_fnInsert;
+    (*bifTable)["find"] = new t_fnFind;
+    (*bifTable)["finditems"] = new t_fnFinditems;
+    (*bifTable)["findaddrs"] = new t_fnFindaddrs;
+    (*bifTable)["scramble"] = new t_fnScramble;
+    (*bifTable)["minmax"] = new t_fnMinmax;
+    (*bifTable)["perm"] = new t_fnPerm;
+    (*bifTable)["comb"] = new t_fnComb;
+    (*bifTable)["cartesianprod"] = new t_fnCartesianprod;
+    (*bifTable)["wrap"] = new t_fnWrap;
+    (*bifTable)["group"] = new t_fnGroup;
+    (*bifTable)["thin"] = new t_fnThin;
+    (*bifTable)["classify"] = new t_fnClassify;
+    (*bifTable)["union"] = new t_fnUnion;
+    (*bifTable)["intersection"] = new t_fnIntersection;
+    (*bifTable)["symdiff"] = new t_fnSymdiff;
+    (*bifTable)["diff"] = new t_fnDiff;
+    (*bifTable)["primeser"] = new t_fnPrimeser;
+    (*bifTable)["arithmser"] = new t_fnArithmser;
+    (*bifTable)["geomser"] = new t_fnGeomser;
+    (*bifTable)["map"] = new t_fnMap;
+    (*bifTable)["reduce"] = new t_fnReduce;
+    
+    (*bifTable)["outlet"] = new t_fnOutlet;
+    
+    (*bifTable)["cos"] = new t_mathUnaryFunctionDD<cos>("cos");
+    (*bifTable)["sin"] = new t_mathUnaryFunctionDD<sin>("sin");
+    (*bifTable)["tan"] = new t_mathUnaryFunctionDD<tan>("tan");
+    (*bifTable)["exp"] = new t_mathUnaryFunctionDD<exp>("exp");
+    (*bifTable)["log"] = new t_mathUnaryFunctionDD<log>("log");
+    (*bifTable)["acos"] = new t_mathUnaryFunctionDD<acos>("acos");
+    (*bifTable)["asin"] = new t_mathUnaryFunctionDD<asin>("asin");
+    (*bifTable)["atan"] = new t_mathUnaryFunctionDD<atan>("atan");
+    (*bifTable)["cosh"] = new t_mathUnaryFunctionDD<cosh>("cosh");
+    (*bifTable)["sinh"] = new t_mathUnaryFunctionDD<sinh>("sinh");
+    (*bifTable)["tanh"] = new t_mathUnaryFunctionDD<tanh>("tanh");
+    (*bifTable)["exp2"] = new t_mathUnaryFunctionDD<exp2>("exp2");
+    (*bifTable)["log2"] = new t_mathUnaryFunctionDD<log2>("log2");
+    (*bifTable)["sqrt"] = new t_mathUnaryFunctionDD<sqrt>("sqrt");
+    (*bifTable)["ceil"] = new t_mathUnaryFunctionDD<ceil>("ceil");
+    (*bifTable)["acosh"] = new t_mathUnaryFunctionDD<acosh>("acosh");
+    (*bifTable)["asinh"] = new t_mathUnaryFunctionDD<asinh>("asinh");
+    (*bifTable)["atanh"] = new t_mathUnaryFunctionDD<atanh>("atanh");
+    (*bifTable)["log10"] = new t_mathUnaryFunctionDD<log10>("log10");
+    (*bifTable)["floor"] = new t_mathUnaryFunctionDD<floor>("floor");
+    (*bifTable)["round"] = new t_mathUnaryFunctionDD<round>("round");
+    (*bifTable)["trunc"] = new t_mathUnaryFunctionDD<trunc>("trunc");
+    
+    (*bifTable)["fmod"] = new t_mathBinaryFunctionDDD<fmod>("fmod");
+    (*bifTable)["atan2"] = new t_mathBinaryFunctionDDD<atan2>("atan2");
+    (*bifTable)["hypot"] = new t_mathBinaryFunctionDDD<hypot>("hypot");
+    
+    (*bifTable)["int"] = new t_mathUnaryFunctionAA<hatom_fn_int>("int");
+    (*bifTable)["rat"] = new t_mathUnaryFunctionAA<hatom_fn_rat>("rat");
+    (*bifTable)["num"] = new t_mathUnaryFunctionAA<hatom_fn_num>("num");
+    (*bifTable)["den"] = new t_mathUnaryFunctionAA<hatom_fn_den>("den");
+    (*bifTable)["abs"] = new t_mathUnaryFunctionAA<hatom_fn_abs>("abs");
+    (*bifTable)["sgn"] = new t_mathUnaryFunctionAA<hatom_fn_sgn>("sgn");
+    (*bifTable)["float"] = new t_mathUnaryFunctionAA<hatom_fn_float>("float");
+    (*bifTable)["pitch"] = new t_mathUnaryFunctionAA<hatom_fn_pitch>("pitch");
+    (*bifTable)["degree"] = new t_mathUnaryFunctionAA<hatom_fn_degree>("degree");
+    (*bifTable)["octave"] = new t_mathUnaryFunctionAA<hatom_fn_octave>("octave");
+    (*bifTable)["alter"] = new t_mathUnaryFunctionAA<hatom_fn_alter>("alter");
+    (*bifTable)["cents"] = new t_mathUnaryFunctionAA<hatom_fn_cents>("cents");
+    
+    (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_fn_pow>("base", "exponent", "pow");
+    (*bifTable)["mod"] = new t_mathBinaryFunctionAAA<hatom_fn_mod>("x", "y", "mod");
+    (*bifTable)["min"] = new t_mathBinaryFunctionAAA<hatom_fn_min>("x", "y", "min");
+    (*bifTable)["max"] = new t_mathBinaryFunctionAAA<hatom_fn_max>("x", "y", "max");
+    (*bifTable)["random"] = new t_mathBinaryFunctionAAA<hatom_fn_random>("x", "y", "random");
+    (*bifTable)["bessel"] = new t_mathBinaryFunctionAAA<hatom_fn_jn>("x", "order", "bessel");
+    (*bifTable)["approx"] = new t_mathBinaryFunctionAAA<hatom_fn_approx>("pitch", "tonedivision", "approx");
+    (*bifTable)["enharm"] = new t_mathBinaryFunctionAAA<hatom_fn_enharm>("x", "y", "enharm");
+    (*bifTable)["makepitchsc"] = new t_mathBinaryFunctionAAA<hatom_fn_makepitchsc>("steps", "cents", "makepitchsc");
+    (*bifTable)["makepitch"] = new t_mathTernaryFunctionAAAA<hatom_fn_makepitch>("pitch", "alter", "degree", "makepitch");
+    
+    (*bifTable)["#u-"] = new t_mathUnaryFunctionAA<hatom_op_uminus>("#u-");
+    (*bifTable)["#!"] = new t_mathUnaryFunctionAA<hatom_op_lognot>("#!");
+    (*bifTable)["#~"] = new t_mathUnaryFunctionAA<hatom_op_bitnot>("#~");
+    
+    (*bifTable)["#+"] = new t_mathBinaryFunctionAAA<hatom_op_plus>("#+");
+    (*bifTable)["#-"] = new t_mathBinaryFunctionAAA<hatom_op_minus>("#-");
+    (*bifTable)["#*"] = new t_mathBinaryFunctionAAA<hatom_op_times>("#*");
+    (*bifTable)["#/"] = new t_mathBinaryFunctionAAA<hatom_op_div>("#/");
+    (*bifTable)["#//"] = new t_mathBinaryFunctionAAA<hatom_op_divdiv>("#//");
+    (*bifTable)["#%"] = new t_mathBinaryFunctionAAA<hatom_fn_remainder>("#%");
+    (*bifTable)["#=="] = new t_mathBinaryFunctionAAA<hatom_op_eq>("#==");
+    (*bifTable)["#!="] = new t_mathBinaryFunctionAAA<hatom_op_neq>("#!=");
+    (*bifTable)["#<"] = new t_mathBinaryFunctionAAA<hatom_op_lt>("#<");
+    (*bifTable)["#>"] = new t_mathBinaryFunctionAAA<hatom_op_gt>("#>");
+    (*bifTable)["#<="] = new t_mathBinaryFunctionAAA<hatom_op_le>("#<=");
+    (*bifTable)["#>="] = new t_mathBinaryFunctionAAA<hatom_op_ge>("#>=");
+    (*bifTable)["#&"] = new t_mathBinaryFunctionAAA<hatom_op_bitand>("#&");
+    (*bifTable)["#^"] = new t_mathBinaryFunctionAAA<hatom_op_bitxor>("#^");
+    (*bifTable)["#|"] = new t_mathBinaryFunctionAAA<hatom_op_bitor>("#|");
+    (*bifTable)["#&&"] = new t_mathBinaryFunctionAAA<hatom_op_logand>("#&&");
+    (*bifTable)["#^^"] = new t_mathBinaryFunctionAAA<hatom_op_logxor>("#^^");
+    (*bifTable)["#||"] = new t_mathBinaryFunctionAAA<hatom_op_logor>("#||");
+    //(*bifTable)["#&&&"] = new t_mathBinaryFunctionAAA<hatom_op_logand>("#&&&"); // TODO
+    (*bifTable)["#|||"] = new t_mathBinaryFunctionAAA<hatom_op_logor>("#|||"); // TODO
+    (*bifTable)["#<<"] = new t_mathBinaryFunctionAAA<hatom_op_lshift>("#<<");
+    (*bifTable)["#>>"] = new t_mathBinaryFunctionAAA<hatom_op_rshift>("#>>");
+}

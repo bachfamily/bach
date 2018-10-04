@@ -114,6 +114,21 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="parens" get="1" set="1" type="int" size="1">
+			<digest>
+				Use Parens
+			</digest>
+			<description>
+				When set to 0 (default),
+				list levels are marked by square brackets.
+				When set to 1, they are marked by parens.
+				This is especially useful when exporting data to Lisp programs.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Use Parens" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="selectors" get="1" set="1" type="sym_array" size="1234">
 			<digest>
 				Potential Message Selectors

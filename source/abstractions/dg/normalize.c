@@ -78,6 +78,11 @@ CLASS_ATTR_STYLE_LABEL(c,"p",0,"text","Value of p");
 CLASS_ATTR_BASIC(c,"p",0);
 // @description @copy BACH_DOC_NORM_P_ATTRIBUTE_FOR_VECTORS
 
+CLASS_ATTR_CHAR(c, "floatoutput", 0, t_norm, floatoutput); 
+CLASS_ATTR_STYLE_LABEL(c,"floatoutput",0,"text","Floating Point Output");
+CLASS_ATTR_BASIC(c,"floatoutput",0);
+// @description Toggles the ability to always return floating point values
+
 }
 
 // ---------------

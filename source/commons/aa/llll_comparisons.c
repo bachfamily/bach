@@ -91,7 +91,7 @@ long llll_leq_hatom(t_hatom *a_hatom, t_hatom *b_hatom)
                             return a_hatom->h_w.w_pitch.toMC() <= b_hatom->h_w.w_rat;
                             break;
                         case H_DOUBLE:
-                            return a_hatom->h_w.w_pitch.toMC() <= double(b_hatom->h_w.w_double);
+                            return double(a_hatom->h_w.w_pitch.toMC()) <= double(b_hatom->h_w.w_double);
                             break;
                         case H_PITCH:
                             return a_hatom->h_w.w_pitch <= b_hatom->h_w.w_pitch;
@@ -122,6 +122,13 @@ long llll_leq_hatom(t_hatom *a_hatom, t_hatom *b_hatom)
 	} else if (b_type == H_LLLL)
 		return 0;
 	
+    if (a_type == H_FUNCTION) {
+        if (b_type == H_FUNCTION)
+            return ((t_ptr_size) a_hatom->h_w.w_func) <= ((t_ptr_size) b_hatom->h_w.w_func);
+        else
+            return 1;
+    }
+    
     if (a_type == H_OBJ && b_type == H_OBJ) // if we're here, this should be always the case
         return ((t_ptr_size) a_hatom->h_w.w_obj) <= ((t_ptr_size) b_hatom->h_w.w_obj);
     
@@ -214,6 +221,21 @@ long llll_leq_hatom_matchtype(t_hatom *a_hatom, t_hatom *b_hatom)
                     break;
                 case H_LLLL:
                     return llll_leq(a_hatom->h_w.w_llll, b_hatom->h_w.w_llll);
+                default:
+                    return 1;
+            }
+        case H_FUNCTION:
+            switch (b_type) {
+                case H_LONG:
+                case H_RAT:
+                case H_DOUBLE:
+                case H_PITCH:
+                case H_SYM:
+                case H_LLLL:
+                    return 0;
+                    break;
+                case H_FUNCTION:
+                    return ((t_ptr_size) a_hatom->h_w.w_func) <= ((t_ptr_size) b_hatom->h_w.w_func);
                 default:
                     return 1;
             }
@@ -330,16 +352,87 @@ long llll_eq_hatom_ignoretype(t_hatom *h1, t_hatom *h2)
 			if (h2->h_type != H_SYM || h1->h_w.w_sym != h2->h_w.w_sym) 
 				return 0;
 			break;
-		case H_OBJ:
-			if (h2->h_type != H_OBJ || h1->h_w.w_obj != h2->h_w.w_obj) 
+		case H_FUNCTION:
+			if (h2->h_type != H_FUNCTION || h1->h_w.w_func != h2->h_w.w_func)
 				return 0;
 			break;
+        case H_OBJ:
+            if (h2->h_type != H_OBJ || h1->h_w.w_obj != h2->h_w.w_obj)
+                return 0;
+            break;
 		default:
             if (!hatom_is_number(h2))
                 return 0;
-            if (h1->h_type == H_PITCH && h2->h_type == H_PITCH)
-                return h1->h_w.w_pitch == h2->h_w.w_pitch;
-            return hatom_getdouble(h1) == hatom_getdouble(h2);
+            switch (h1->h_type) {
+                case H_LONG:
+                    switch (h2->h_type) {
+                        case H_LONG:
+                            return h1->h_w.w_long == h2->h_w.w_long;
+                            break;
+                        case H_RAT:
+                            return hatom_getrational(h1) == h2->h_w.w_rat;
+                            break;
+                        case H_DOUBLE:
+                            return hatom_getdouble(h1) == h2->h_w.w_double;
+                            break;
+                        case H_PITCH:
+                            return hatom_getrational(h1) == hatom_getrational(h2);
+                            break;
+                        default:
+                            return 0;
+                            break;
+                    }
+                    break;
+                case H_RAT:
+                    switch (h2->h_type) {
+                        case H_LONG:
+                            return h1->h_w.w_rat == hatom_getrational(h2);
+                            break;
+                        case H_RAT:
+                            return h1->h_w.w_rat == h2->h_w.w_rat;
+                            break;
+                        case H_DOUBLE:
+                            return hatom_getdouble(h1) == h2->h_w.w_double;
+                            break;
+                        case H_PITCH:
+                            return h1->h_w.w_rat == hatom_getrational(h2);
+                            break;
+                    }
+                    break;
+                case H_DOUBLE:
+                    switch (h2->h_type) {
+                        case H_LONG:
+                            return h1->h_w.w_double == hatom_getdouble(h2);
+                            break;
+                        case H_RAT:
+                            return h1->h_w.w_double == hatom_getdouble(h2);
+                            break;
+                        case H_DOUBLE:
+                            return h1->h_w.w_double == h2->h_w.w_double;
+                            break;
+                        case H_PITCH:
+                            return h1->h_w.w_double == hatom_getdouble(h2);
+                            break;
+                    }
+                    break;
+                case H_PITCH:
+                    switch (h2->h_type) {
+                        case H_LONG:
+                            return hatom_getlong(h1) == h2->h_w.w_long;
+                            break;
+                        case H_RAT:
+                            return hatom_getrational(h1) == h2->h_w.w_rat;
+                            break;
+                        case H_DOUBLE:
+                            return hatom_getdouble(h1) == h2->h_w.w_double;
+                            break;
+                        case H_PITCH:
+                            return h1->h_w.w_pitch == h2->h_w.w_pitch;
+                            break;
+                    }
+                default:
+                    break;
+            }
 			break;
 	}
 	return 1;
@@ -363,6 +456,7 @@ long llll_eq_hatom_matchtype(t_hatom *h1, t_hatom *h2)
 		case H_LONG:
 		case H_LLLL:
 		case H_OBJ:
+        case H_FUNCTION:
 		case H_SYM:
 			if (h1->h_w.w_long != h2->h_w.w_long)
 				return 0;

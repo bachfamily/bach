@@ -1,10 +1,11 @@
 %option noyywrap nodefault reentrant
 %option noyyalloc noyyrealloc noyyfree
+%option never-interactive
 %option outfile="alterparser.c"
 %option prefix="alterparser_"
 
 
-SEPARATOR ([ \t\n\(\)\[\]\{\}])
+SEPARATOR ([ \t\n\r\(\)\[\]\{\}])
 UINT ([0-9]+)
 UFLOAT (((([0-9]*\.[0-9]+)|([0-9]+\.))([eE][-+]?[0-9]+)?)|([0-9]+[eE][-+]?[0-9]+))
 URAT ({UINT}[/][+-]?{UINT})
@@ -29,6 +30,9 @@ ACCIDENTAL ([n#bxdq+-\^v]+)
         A_MORE,
         A_ERROR
     } e_alterparser_rv;
+    
+    #define YY_NO_UNISTD_H
+    
 %}
 
 %option extra-type = "t_shortRational *"

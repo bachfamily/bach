@@ -5,6 +5,13 @@
 	by Daniele Ghisi
 */
 
+
+#define BACH_DOC_PAINTJIT
+    // The <m>paintjit</m> message, followed by the name of a jitter matrix,
+    // mirrors the canvas of the object onto the jitter matrix.
+    // The matrix should have either 1 or 4 planes, and should have at least 2 dimensions.
+    // The first two dimensions are used; the matrix is automatically resized to the needed dimensions.
+    // Retina resolution is not supported (retina objects are mirrored in standard resolution).
 	
 #define BACH_DOC_REGULARITYBOXES
 	//	Regularity boxes are a concept that helps bach.quantize quantizing properly by preserving untouched important beat positions. 
@@ -992,7 +999,9 @@
 	// the musical content, and will set them: such message will apply to all the existing voices, and will not change the number of voices.
 	// You can use the "auto" symbol instead of any symbol in order to have bach detect automatically the most appropriate clefs
 	// for the given voice, depending on its notes (e.g. <b>clefs auto G FG</b>). However, in this case the message will also change the
-	// <m>numvoices</m> attribute, as for the standard case.
+	// <m>numvoices</m> attribute, as for the standard case. You can restrict the clef to be automatically chosen among a set of clefs by wrapping
+    // them between parentheses, preceded by the "auto" symbol. For instance, <b>clefs G F (auto F G) auto</b> will choose the 3rd clef only between
+    // F and G, while the fourth clef is chosen among a standard set of predefined clefs.
 	// <br /> <br />
 
 #define BACH_DOC_VOICENAMES
@@ -1101,10 +1110,12 @@
 
 #define BACH_DOC_SYMBOLIC_VARIABLES
 	// Symbolic variables are variables that can be used in the conditional selection or parameter modification processes. 
-	// These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m>, <m>tail</m> (position of the 
-	// note end, in ms), <m>voice</m> (voice number). For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration), 
-	// <m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number)
-	// and <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise). <br />
+	// These are: <m>onset</m> (in ms), <m>duration</m> (in ms), <m>velocity</m>, <m>cents</m> (pitch in MIDIcents), <m>pitch</m> (diatonic pitch),
+    // <m>tail</m> (position of the note end, in ms), <m>voice</m> (voice number), <m>part</m> (part number), <m>voiceensemble</m> (voiceensemble number).
+    // For <o>bach.score</o> you can also use: <m>symduration</m> (symbolic rational duration),
+	// <m>symonset</m> (symbolic rational onset inside the measure), <m>symtail</m> (sum of the two previous), <m>measure</m> (the measure number),
+	// <m>tie</m> (which is 1 if a tie starts, 2 if a tie ends and 3 if a tie both starts and ends, 0 otherwise) and <m>grace</m> (1 for
+    // grace chords, 0 otherwise). <br />
 	// In addition, you also have the <m>index</m> symbol, corresponding to the index of the item: the index of the note in the chord (bottom-up),
 	// the index of the chord in the measure or voice (left to right), the index of the measures, voices, markers, pitch breakpoints, etc.
     // (all left to right). In case you need to distinguish between chord index and note index, for a given note, you can explicitly use the
@@ -1484,7 +1495,7 @@
 #define BACH_DOC_MESSAGE_POC
     // The word <m>poc</m> is an acronym for "pitch or cents", and will change either the pitch or the cents of the selected notes
     // depending if the note has user-defined enharmonicities or not. If a note has user-defined enharmonicities, <m>poc</m> will
-    // essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more).
+    // essentially work like the <m>pitch</m> message; if not, it will work like the <m>cents</m> message (see both messages to know more). <br /> <br />
     // @copy BACH_DOC_RELATIVE_MODIFICATIONS
     // @copy BACH_DOC_EQUATION_MODIFICATIONS
 
@@ -1493,7 +1504,7 @@
 	// The word <m>voice</m>, followed by a number, sets the new voice number for all
 	// the selected notes or chords. 
 	// Any of the numbers in the voice syntax can be replaced by an llll containing a relative modification of the existing voice. 
-	// If a single number is inserted, this can be replaced by a generic equation.
+	// If a single number is inserted, this can be replaced by a generic equation. <br /> <br />
 	// @copy BACH_DOC_RELATIVE_MODIFICATIONS
 	// @copy BACH_DOC_EQUATION_MODIFICATIONS 
 
@@ -1728,6 +1739,7 @@
     //    ↪ Add the <m>Shift</m> key to have markers snap to chord onset, note tails or pitch breakpoints <br />
 	//    ↪ Add the <m>Shift+Cmd</m> keys (mac) or <m>Shift+Ctrl</m> keys (win) for fine editing <br />
     //    ↪ Add the <m>Ctrl</m> key (mac) in order to move anything beyond the marker while moving the marker <br />
+    //    ↪ Add the <m>Ctrl+Cmd</m> key (mac) in order to stretch the region between the marker and the previous one<br />
 	// • <m>Alt+click+drag</m>: Duplicate the marker into a new one with an unique name <br />
 	// • <m>doubleclick</m> on a marker name: Edit marker name <br />
 	// 
@@ -2251,6 +2263,12 @@
     // You can purchase November from this web address: www.klemm-music.de/notation/november/.
     // Other supported fonts are: Boulez, Maestro, Petrucci, Engraver Font Set. Not all articulations are supported by all fonts.
     // You can however always define custom articulations with any font of your choice.
+
+#define BACH_DOC_LYRICS_FONT
+    // @description Sets the font used to display lyrics (default is Arial).
+
+#define BACH_DOC_ANNOTATIONS_FONT
+    // @description Sets the font used to display annotations (default is Arial).
 
 #define BACH_DOC_DYNAMICS_SPECTRUM
     // The dynamics spectrum is the sequence of standard dynamics in the piano-to-forte range.

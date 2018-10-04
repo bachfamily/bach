@@ -1553,6 +1553,9 @@ void notationobj_goto_parseargs(t_notation_obj *r_ob, t_llll *args)
     }
     
     
+    if (par.command == _sym_up || par.command == _sym_down || par.command == _llllobj_sym_left || par.command == _llllobj_sym_right)
+        par.polymode = k_GOTO_POLYMODE_NONE;
+    
     switch (notationobj_goto(r_ob, &par)) {
         case k_GOTO_ERROR_NOTFOUND:
             if (par.nullmode) {

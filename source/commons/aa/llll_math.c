@@ -427,6 +427,22 @@ void hatom_fn_jn(t_hatom *a1, t_hatom *a2, t_hatom *res)
     hatom_setdouble(res, bach_jn(order, x));
 }
 
+void hatom_fn_min(t_hatom *a1, t_hatom *a2, t_hatom *res)
+{
+    if (llll_leq_hatom(a1, a2))
+        *res = *a1;
+    else
+        *res = *a2;
+}
+
+void hatom_fn_max(t_hatom *a1, t_hatom *a2, t_hatom *res)
+{
+    if (llll_leq_hatom(a2, a1))
+        *res = *a1;
+    else
+        *res = *a2;
+}
+
 void hatom_fn_approx(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
     switch (hatom_gettype(a1)) {
@@ -597,7 +613,7 @@ void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res)
     } else if (h1_type == H_PITCH && h2_type == H_RAT) { // pr -> p
         hatom_setpitch(res, h1->h_w.w_pitch / h2->h_w.w_rat);
     
-    } else if (h1_type == H_LONG && h2_type == H_LONG) { // ll -> r
+    } else if (h1_type == H_LONG && h2_type == H_LONG) { // ll -> l
         hatom_setlong(res, h1->h_w.w_long / h2->h_w.w_long);
         
     } else if (h1_type == H_LONG && (h2_type == H_RAT || h2_type == H_PITCH)) { // lr lp -> r
@@ -606,7 +622,10 @@ void hatom_op_divdiv(t_hatom *h1, t_hatom *h2, t_hatom *res)
     } else if ((h1_type == H_RAT || h1_type == H_PITCH) && h2_type == H_LONG) { // rl pl -> r
         hatom_setrational(res, hatom_getrational(h1) / h2->h_w.w_long);
         
-    } else { // rr rp
+    } else if (h1_type == H_PITCH && h2_type == H_PITCH) { // pp -> l
+        hatom_setlong(res, hatom_getpitch(h1).divdiv(hatom_getpitch(h2)));
+        
+    } else { // rr rp -> r
         hatom_setrational(res, hatom_getrational(h1) / hatom_getrational(h2));
     }
     

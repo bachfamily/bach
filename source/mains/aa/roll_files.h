@@ -28,6 +28,7 @@ void roll_write(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_writetxt(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_exportom(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 void roll_exportpwgl(t_roll *x, t_symbol *s, long argc, t_atom *argv);
+void roll_exportimage(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 
 void roll_readmidi(t_roll *x, t_symbol *s, read_fn fn);
 void roll_writemidi(t_roll *x, t_symbol *s, long format);

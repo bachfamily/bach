@@ -52,18 +52,22 @@ public:
     constexpr t_urrat(const double d) : r_num(d * 1000), r_den(1000) {}
     
     operator double() const {
+        if (r_den == 0)
+            return r_num;
         return static_cast<double>(r_num) / static_cast<double>(r_den);
     }
     
     operator t_atom_long() const {
+        if (r_den == 0)
+            return r_num;
         return r_num / r_den;
     }
 
-    template <typename Type2> t_urrat(const t_urrat<Type2> &u)
-    { this->r_num = u.num(); this->r_den = u.den(); }
+    template <typename Type2>
+    t_urrat(const t_urrat<Type2> &u) { this->r_num = u.num(); this->r_den = u.den(); }
     
-    template <typename Type2> t_urrat(const t_rat<Type2> &u)
-    { this->r_num = u.num(); this->r_den = u.den(); }
+    template <typename Type2>
+    t_urrat(const t_rat<Type2> &u) { this->r_num = u.num(); this->r_den = u.den(); }
     
     inline T num(void) const { return r_num; };
     inline T den(void) const { return r_den; };

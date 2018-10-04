@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,15 +45,15 @@ extern int strparser_debug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    LONG = 258,
-    DOUBLE = 259,
-    RAT = 260,
-    PITCH = 261,
-    SYMBOL = 262,
-    PUSH = 263,
-    POP = 264,
-    BACHNULL = 265,
-    BACHNIL = 266
+    BACH_LONG = 258,
+    BACH_DOUBLE = 259,
+    BACH_RAT = 260,
+    BACH_PITCH = 261,
+    BACH_SYMBOL = 262,
+    BACH_PUSH = 263,
+    BACH_POP = 264,
+    BACH_NULL = 265,
+    BACH_NIL = 266
   };
 #endif
 

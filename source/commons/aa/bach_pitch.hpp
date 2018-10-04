@@ -10,18 +10,17 @@
 #define bach_pitch_hpp
 
 #include <string>
-#include "bach_mem.h"
 #include "rational.h"
 
 
 /** Accidental preferences.
-	@ingroup	pitch
+    @ingroup    pitch
  */
 typedef enum _accidentals_preferences {
-    k_ACC_AUTO = 0,	///< Automatic choice of accidentals
-    k_ACC_SHARPS,	///< Prefer the use of sharps
-    k_ACC_FLATS,	///< Prefer the use of flats
-    k_ACC_CUSTOM,	///< Accidental are explicitely defined via the "enharmonictable" attribute, and thus the t_notation_obj::full_acc_repr symbol
+    k_ACC_AUTO = 0,    ///< Automatic choice of accidentals
+    k_ACC_SHARPS,    ///< Prefer the use of sharps
+    k_ACC_FLATS,    ///< Prefer the use of flats
+    k_ACC_CUSTOM,    ///< Accidental are explicitely defined via the "enharmonictable" attribute, and thus the t_notation_obj::full_acc_repr symbol
 } e_accidentals_preferences;
 
 
@@ -167,13 +166,19 @@ public:
     t_pitch operator*(const t_rational &b) const;
     t_pitch operator/(const t_atom_long b) const;
     t_pitch operator/(const t_rational &b) const;
-    t_rational operator/(const t_pitch &b) const { return toMC() / b.toMC(); };
+    t_rational operator/(const t_pitch &b) const {
+        t_rational b_toMC = b.toMC();
+        if (b_toMC.r_num == 0)
+            error("Illegal division by C0 (or one of its enharmonic pitches) detected.");
+        return toMC() / b_toMC;
+    };
+    
     t_pitch operator%(const t_atom_long b) const;
     t_pitch operator%(const t_pitch &b) const;
     
-    long divdiv(const t_pitch &b) const {
-        t_rational res = *this / b;
-        return res.num() / res.den();
+
+    t_atom_long divdiv(const t_pitch &b) const {
+        return static_cast<t_atom_long>((*this) / b);
     };
     
     friend t_pitch operator*(const t_atom_long a, const t_pitch b) { return b * a; }
@@ -273,8 +278,8 @@ public:
         if (tone_division <= 0)
             return *this;
         t_shortRational temp = p_alter * tone_division;
-        t_shortRational new_alter_down(temp.r_num / temp.r_den, tone_division);
-        t_shortRational new_alter_up((temp.r_num / temp.r_den) + 1, tone_division);
+        t_shortRational new_alter_down(temp.r_num / temp.r_den, static_cast<long>(tone_division));
+        t_shortRational new_alter_up((temp.r_num / temp.r_den) + 1, static_cast<long>(tone_division));
         return t_pitch(p_degree, (new_alter_up - p_alter < p_alter - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
     }
 
@@ -319,10 +324,10 @@ public:
         return (p_alter.r_den == 0);
     }
     
-    long toTextBuf(char *buf, long bufSize, t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false);
+    long toTextBuf(char *buf, long bufSize, t_bool include_octave = true, t_bool always_positive = false, t_bool addTrailingSpace = false) const;
     
     
-    t_symbol* toSym(t_bool include_octave = true, t_bool always_positive = false)
+    t_symbol* toSym(t_bool include_octave = true, t_bool always_positive = false) const
     {
         char buf[MAX_SYM_LENGTH];
         toTextBuf(buf, MAX_SYM_LENGTH, include_octave, always_positive);
@@ -355,15 +360,18 @@ public:
         int go = 1;
         while (go) {
             switch (**pos) {
-                case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
-                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                case 'x':    alter += t_pitch::dblsharp;        (*pos)++;    break;
+                case '#':    alter += t_pitch::sharp;        (*pos)++;    break;
                     
-                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                case 'b':    alter += t_pitch::flat;            (*pos)++;    break;
+                
+                case 'q':    alter += t_pitch::qrtrsharp;    (*pos)++;    break;
+                case 'd':    alter += t_pitch::qrtrflat;        (*pos)++;    break;
+                
+                case '^':    alter += t_pitch::eighthsharp;    (*pos)++;    break;
+                case 'v':    alter += t_pitch::eighthflat;    (*pos)++;    break;
                     
-                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
-                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
-                    
-                default:	go = 0;	break;
+                default:    go = 0;    break;
             }
         }
         return alter;
@@ -376,21 +384,21 @@ public:
         int go = 1;
         while (go) {
             switch (**pos) {
-                case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
-                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                case 'x':    alter += t_pitch::dblsharp;        (*pos)++;    break;
+                case '#':    alter += t_pitch::sharp;        (*pos)++;    break;
                     
-                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                case 'b':    alter += t_pitch::flat;            (*pos)++;    break;
                     
-                case '+': case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
+                case '+': case 'q':    alter += t_pitch::qrtrsharp;    (*pos)++;    break;
                     
-                case '-': case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                case '-': case 'd':    alter += t_pitch::qrtrflat;        (*pos)++;    break;
                     
-                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
-                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                case '^':    alter += t_pitch::eighthsharp;    (*pos)++;    break;
+                case 'v':    alter += t_pitch::eighthflat;    (*pos)++;    break;
                     
                 case 'n':   (*pos)++;   break;
                     
-                default:	go = 0;	break;
+                default:    go = 0;    break;
             }
         }
         return alter;
