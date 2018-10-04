@@ -128,6 +128,23 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
 }
 
 
+void codableobj_lambda(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
+{
+    if (ac) {
+        defer_low(x, (method) codableobj_code_do, msg, ac, av);
+    } else {
+        x->c_main->decrease();
+        x->c_main = nullptr;
+    }
+    x->c_ob.l_rebuild = 1;
+    return;
+}
+
+void codableobj_dblclick(t_codableobj *x)
+{
+    codableobj_dblclick_helper((t_codableobj *) x, gensym("lambda"));
+}
+
 void codableobj_dblclick_helper(t_codableobj *x, t_symbol *title)
 {
     if (!x->c_editor)
@@ -285,7 +302,7 @@ void codableobj_write(t_codableobj *x, t_symbol *s)
 void codableobj_dowrite(t_codableobj *x, t_symbol *s)
 {
     t_fourcc filetype = 'TEXT', outtype;
-    short numtypes = 1;
+    //short numtypes = 1;
     char filename[512];
     short path;
     if (s == gensym("")) {      // if no argument supplied, ask for file
@@ -388,7 +405,7 @@ void codableobj_code_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
     }
 }
 
-void codableclass_add_standard_methods(t_class *c)
+void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
 {
     class_addmethod(c, (method)codableobj_read,   "forceread",            A_DEFSYM,    0);
     class_addmethod(c, (method)codableobj_read,   "read",            A_DEFSYM,    0);
@@ -399,6 +416,10 @@ void codableclass_add_standard_methods(t_class *c)
     
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
+    if (!isBachCode) {
+        class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
+        class_addmethod(c, (method)codableobj_dblclick,  "dblclick",        A_CANT, 0);
+    }
 }
 
 long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av)

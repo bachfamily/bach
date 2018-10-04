@@ -67,14 +67,13 @@ void intersection_free(t_intersection *x);
 void intersection_bang(t_intersection *x);
 void intersection_int(t_intersection *x, t_atom_long v);
 void intersection_float(t_intersection *x, double v);
+void intersection_lambda(t_intersection *x, t_symbol *msg, long ac, t_atom *av);
+
 void intersection_anything(t_intersection *x, t_symbol *msg, long ac, t_atom *av);
 
 long intersection_func(t_intersection *x, t_llllelem *what1, t_llllelem *what2);
 
 long intersection_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2);
-
-// editor
-void intersection_dblclick(t_intersection *x);
 
 t_class *intersection_class;
 
@@ -116,12 +115,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)intersection_assist,		"assist",		A_CANT,		0);
 	class_addmethod(c, (method)intersection_inletinfo,	"inletinfo",	A_CANT,		0);
 
-    class_addmethod(c, (method)intersection_dblclick,        "dblclick",        A_CANT, 0);
-
-
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
-	
-	
 	
 	class_register(CLASS_BOX, c);
 	intersection_class = c;
@@ -129,11 +123,6 @@ int T_EXPORT main()
 	dev_post("bach.intersection compiled %s %s", __DATE__, __TIME__);
 	
 	return 0;
-}
-
-void intersection_dblclick(t_intersection *x)
-{
-    codableobj_dblclick_helper((t_codableobj *) x, gensym("code"));
 }
 
 void intersection_bang(t_intersection *x)
@@ -158,7 +147,6 @@ void intersection_float(t_intersection *x, double v)
 	intersection_anything(x, _sym_float, 1, &outatom);
 }
 
-
 #ifdef ___destructive
 void intersection_anything(t_intersection *x, t_symbol *msg, long ac, t_atom *av)
 {
@@ -168,16 +156,6 @@ void intersection_anything(t_intersection *x, t_symbol *msg, long ac, t_atom *av
 	
 	switch (inlet) {
 		case 0:
-            if (msg == gensym("lambda")) {
-                if (ac) {
-                    defer_low(x, (method) codableobj_code_do, msg, ac, av);
-                } else {
-                    x->n_ob.c_main->decrease();
-                    x->n_ob.c_main = nullptr;
-                }
-                x->n_ob.c_ob.l_rebuild = 1;
-                return;
-            }
             if (msg != _sym_bang) {
                 inll1 = llllobj_parse_clone_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, 0);
                 if (!inll1)
