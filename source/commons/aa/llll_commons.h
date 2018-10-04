@@ -329,7 +329,6 @@ typedef struct _bach {
 
 
 // some useful function pointer types
-
 typedef long (*sort_fn)(void *data, t_llllelem *a, t_llllelem *b);
 
 // called by llll_union, llll_intersection, llll_symdiff and llll_diff
