@@ -222,7 +222,8 @@
 				The native output is recommended, unless communication with standard Max messages is needed.
 				Disabling unused outputs can be useful if extreme optimization of the patch is needed.
 				<br /> <br />
-				llllobj_class_add_check_attr(c, LLLL_OBJ_VANILLA);
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
