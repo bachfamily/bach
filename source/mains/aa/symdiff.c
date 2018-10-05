@@ -319,7 +319,7 @@ t_symdiff *symdiff_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;	
 	
     if ((x = (t_symdiff *) object_alloc_debug(symdiff_class))) {
-        ac = codableobj_buildCodeAsLambdaAttribute((t_codableobj *) x, ac, av);
+        ac = codableobj_setup((t_codableobj *) x, ac, av);
         attr_args_process(x, ac, av);
         llllobj_obj_setup((t_llllobj_object *) x, 2, "444");
         for (i = 2; i > 0; i--)

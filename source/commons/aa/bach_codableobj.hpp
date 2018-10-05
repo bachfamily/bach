@@ -82,7 +82,7 @@ void codableobj_free(t_codableobj *x);
 
 void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
 
-long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av);
+long codableobj_setup(t_codableobj *x, long ac, t_atom *av);
 
 void codableobj_ownedFunctionsSetup(t_codableobj *x);
 
