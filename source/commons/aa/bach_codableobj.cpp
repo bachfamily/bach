@@ -352,8 +352,10 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
         char *newCode = nullptr;
         dictionary_getstring(d, gensym("code"), (const char **) &newCode);
         if (newCode) {
-            if (x->c_main)
+            if (x->c_main) {
                 x->c_main->decrease();
+                object_warn((t_object *) x, "Code in the editor overrides code in the object box");
+            }
             sysmem_freeptr(x->c_text);
             size_t codeLen = strlen(newCode);
             if (!isspace(*(newCode + codeLen - 1))) {

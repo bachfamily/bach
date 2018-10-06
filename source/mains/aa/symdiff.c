@@ -111,9 +111,7 @@ int T_EXPORT main()
 	class_addmethod(c, (method)symdiff_inletinfo,	"inletinfo",	A_CANT,		0);
 	
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
-	
-	
-	
+
 	class_register(CLASS_BOX, c);
 	symdiff_class = c;
 	
