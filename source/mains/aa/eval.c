@@ -418,7 +418,8 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         d = (t_dictionary *)gensym("#D")->s_thing;
         codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
         
-        x->n_ob.c_main->setOutlets(x->n_dataOutlets);
+        if (x->n_ob.c_main)
+            x->n_ob.c_main->setOutlets(x->n_dataOutlets);
 
     } else
         error(BACH_CANT_INSTANTIATE);

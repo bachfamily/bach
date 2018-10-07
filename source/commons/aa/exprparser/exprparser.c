@@ -1541,7 +1541,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-{ BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_pow, "pow"); }
+{ BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_op_pow, "pow"); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP

@@ -354,7 +354,8 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
         if (newCode) {
             if (x->c_main) {
                 x->c_main->decrease();
-                object_warn((t_object *) x, "Code in the editor overrides code in the object box");
+                if (strcmp(newCode, x->c_text) != 0)
+                    object_warn((t_object *) x, "Code in the editor overrides code in the object box");
             }
             sysmem_freeptr(x->c_text);
             size_t codeLen = strlen(newCode);
