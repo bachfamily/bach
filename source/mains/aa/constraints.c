@@ -37,10 +37,8 @@
  Andrea Agostini
  */
 
-#include "llllobj.h"
-#include "ext_common.h"
-#include "ext_globalsymbol.h"
-#include "ext_strings.h"
+#include "bach_codableobj.hpp"
+#include "ast.hpp"
 
 #define CONSTRAINTS_VARWISE_BLOCK_SIZE	16
 #define POS_OUTPUT_INTERVAL 0
@@ -77,7 +75,7 @@ typedef struct _constraints_rvs
 
 typedef struct _constraints
 {
-	struct llllobj_object 	n_ob;
+	t_codableobj 	        n_ob;
 	void					*n_proxy[3];
 	long					n_in;
 	long					n_nsolutions;
@@ -115,7 +113,11 @@ typedef struct _constraints
     t_constraints_rvs       n_rvs;
 } t_constraints;
 
-
+typedef struct _lambdaData
+{
+    t_constraints *x;
+    t_execContext *context;
+} t_lambdaData;
 
 typedef enum {
 	V_GOOD = 0,
@@ -213,6 +215,7 @@ t_max_err constraints_setattr_goalscore(t_constraints *x, void *attr, long ac, t
 
 
 long constraints_func(t_constraints *x, t_llll *what, t_bool *accepted, long def_accept = 0, long def_result = 0);
+long constraints_code(t_constraints *x, t_llll *what, t_bool *accepted, long def_accept = 0, long def_result = 0);
 void constraints_outpos(t_constraints *x, long current_var, long double tree_size_inv, long nvars, long *positions, long double *pos_weights);
 void constraints_outscore(t_constraints *x, long score);
 void constraints_out_detailed_score(t_constraints *x, long score, t_constraint *constraints, t_score_and_good *score_constraintwise);
@@ -753,7 +756,7 @@ void constraints_anything(t_constraints *x, t_symbol *msg, long ac, t_atom *av)
 			}
 			break;
 		case 1:
-			x->n_ob.l_rebuild = llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, 1) != NULL;
+			x->n_ob.c_ob.l_rebuild = llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, 1) != NULL;
 			break;
 		case 2:
 			if (msg == LLLL_NATIVE_MSG) {
@@ -825,6 +828,23 @@ long constraints_func(t_constraints *x, t_llll *what, t_bool *accepted, long def
 	llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 2, what);
 	*accepted = x->n_rvs.r_accepted;
 	return x->n_rvs.r_result;
+}
+
+long constraints_code_strong(t_lambdaData *data, t_symbol *key, t_llll *what, t_llll *vars)
+{
+    t_execContext *context = data->context;
+    t_llll *key_ll = llll_get();
+    llll_appendsym(key_ll, key);
+    context->scope[gensym("key")]->set(key_ll);
+    context->scope[gensym("tuple")]->set(what);
+    if (vars)
+        context->scope[gensym("vars")]->set(vars);
+    t_llll *resll = data->x->n_ob.c_main->call(context);
+    if (resll->)
+    
+    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 2, what);
+    *accepted = x->n_rvs.r_accepted;
+    return x->n_rvs.r_result;
 }
 
 void constraints_outpos(t_constraints *x, long current_var, long double tree_size_inv, long nvars, long *positions, long double *pos_weights)
@@ -1304,7 +1324,7 @@ t_llll *constraints_simple_backtrack(t_constraints *x, const t_llll *domains_ll,
     long *var_remap_o2r, *var_remap_r2o; // o = original, r = reordered
     long good, found = 0;
     t_llll *test_llll, *sln_llll;
-    t_llll *vars_llll;
+    t_llll *vars_llll = nullptr;
     t_llll *garbage = NULL;
     t_hatom *under_exam; // points to a t_hatom* in the domain of the currently investigated variable
     t_domain *domains = NULL, *this_domains;
@@ -1537,6 +1557,19 @@ t_llll *constraints_simple_backtrack(t_constraints *x, const t_llll *domains_ll,
 
     constraints_calculate_tree_size(nvars, domains, domain_positional_multipliers, &tree_size, &tree_size_inv);
     
+    t_execContext lambdaContext((t_llllobj_object *) x);
+    
+    if (x->n_ob.c_main) {
+        t_symbol *pseudoVarNames[] = {
+            gensym("key"),
+            gensym("tuple"),
+            gensym("vars"),
+            nullptr
+        };
+        lambdaContext.setUniquePseudovariables(pseudoVarNames);
+    }
+    
+    
     // this cycle runs once for each solution to find
     while (this_var != 0 && this_var <= nvars) {
         // this cycle runs once for every variable to assign
@@ -1553,7 +1586,6 @@ t_llll *constraints_simple_backtrack(t_constraints *x, const t_llll *domains_ll,
                 
                 // let's prepare the llll to send out
                 test_llll = llll_get();
-                llll_appendsym(test_llll, this_constraint->c_name, 0, WHITENULL_llll);
                 // if we have to send out the variables as well
                 if (this_constraint->c_outputvars) {
                     // then let's prepare a llll with the variables
@@ -1567,14 +1599,23 @@ t_llll *constraints_simple_backtrack(t_constraints *x, const t_llll *domains_ll,
                     }
                     // let's send out the variables
                     llll_prependsym(vars_llll, _llllobj_sym_vars, 0, WHITENULL_llll);
-                    constraints_func(x, vars_llll, &dummy_accepted);
-                    llll_free(vars_llll);
+                    if (!x->n_ob.c_main) {
+                        constraints_func(x, vars_llll, &dummy_accepted);
+                        llll_free(vars_llll);
+                    }
                 } else {
                     for (this_constraint_var = this_constraint->c_vars + 1; *this_constraint_var != 0; this_constraint_var++) {
                         llll_appendhatom_clone(test_llll, current[*this_constraint_var], 0, WHITENULL_llll);
                     }
                 }
-                good = (constraints_func(x, test_llll, &dummy_accepted, 1, 1) != 0);
+                if (!x->n_ob.c_main) {
+                    llll_prependsym(test_llll, this_constraint->c_name, 0, WHITENULL_llll);
+                    good = (constraints_func(x, test_llll, &dummy_accepted, 1, 1) != 0);
+                } else {
+                    good = (constraints_code(x, this_constraint->c_name, test_llll, vars_llll, &dummy_accepted, 1, 1) != 0);
+                    llll_free(vars_llll);
+                    vars_llll = nullptr;
+                }
                 llll_free(test_llll);
             }
             
