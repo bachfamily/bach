@@ -68,7 +68,7 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
-		<attribute name="ignore" get="1" set="1" type="int" size="1">
+		<attribute name="ignore" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Ignore Categories
 			</digest>
@@ -110,6 +110,8 @@
 				the symbol <b>Mahler</b>,
 				a further sublist only containing the symbol <b>Bernstein</b>,
 				and finally the symbol <b>.aif</b>. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Ignore Categories" />

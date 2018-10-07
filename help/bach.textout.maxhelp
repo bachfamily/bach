@@ -1578,7 +1578,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
+						"rect" : [ 100.0, 126.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1689,8 +1689,8 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 201.0, 305.0, 144.141479, 39.0 ],
-									"presentation_rect" : [ 274.0, 266.0, 144.141479, 39.0 ]
+									"patching_rect" : [ 201.0, 305.0, 100.0, 24.0 ],
+									"presentation_rect" : [ 201.0, 305.0, 100.0, 24.0 ]
 								}
 
 							}
@@ -1724,7 +1724,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 26.0, 112.0, 199.0, 23.0 ],
 									"style" : "",
-									"text" : "`MyHD:/Path/To/Help[1965].mp3"
+									"text" : "`MyHD:/Path/To/Help(1965).mp3"
 								}
 
 							}
@@ -1837,7 +1837,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 851.0, 467.0 ],
+						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,

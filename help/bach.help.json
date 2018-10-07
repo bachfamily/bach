@@ -74,6 +74,13 @@
 			"tags" : [ "llll", "parenthesis", "message", "bracket", "symbol" ],
 			"title" : [ "Introduction to lllls" ]
 		},
+		"B_bracketsorparens" : {
+			"filename" : [ "bach.help.llll.01b_bracketsorparens.maxpat" ],
+			"objects" : [ "all" ],
+			"seealso" : [  ],
+			"tags" : [ "llll", "parenthesis", "message", "bracket", "symbol", "parens", "square", "round" ],
+			"title" : [ "Square brackets or parentheses" ]
+		},
 		"Length" : {
 			"filename" : [ "bach.help.llll.02_length.maxpat" ],
 			"objects" : [ "all" ],
@@ -5007,8 +5014,8 @@
 					"tags" : [ "syntax", "slot", "content", "togglematrix", "intmatrix", "floatmatrix", "matrix", "color" ],
 					"title" : [ "Slot content (3)" ]
 				},
-				"Content4 copy" : {
-					"filename" : [ "bach.help.notation.syntax.80_slots.06_content4 copy.maxpat" ],
+				"Content4" : {
+					"filename" : [ "bach.help.notation.syntax.80_slots.06_content4.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "syntax+slot+content", "addslot" ],
 					"tags" : [ "syntax", "slot", "content", "filter", "dynfilter" ],

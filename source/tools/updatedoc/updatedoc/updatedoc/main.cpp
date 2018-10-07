@@ -112,9 +112,15 @@ int main(int argc, const char * argv[])
 {
     long tot_num_subs = 0;
     
-    tot_num_subs += process_folder("/Users/danieleghisi/Documents/Max 7/Packages/bach/help", "maxhelp", "maxpat");
+//    tot_num_subs += process_folder("/Users/danieleghisi/Documents/Max 7/Packages/bach/help", "maxhelp", "maxpat");
 //    tot_num_subs += process_folder("/Users/danieleghisi/Documents/Max 7/Packages/bach/docs/tutorial-patchers", "maxhelp", "maxpat");
 
+//    tot_num_subs += process_folder("/Users/danieleghisi/Documents/Max 7/Packages/cage/docs/tutorial-patchers/cage-tut", "maxhelp", "maxpat");
+//    tot_num_subs += process_folder("/Users/danieleghisi/Documents/Max 7/Packages/cage/help", "maxhelp", "maxpat");
+
+    tot_num_subs += process_folder("/Users/danieleghisi/Documents/Max 7/Packages/dada/help", "maxhelp", "maxpat");
+
+    
     printf("END OF JOB: %ld conversions performed.\n", tot_num_subs);
     
     return 0;
