@@ -146,7 +146,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.0, 118.5, 333.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name quantoforte) (type dynamics) (key d)))"
+					"text" : "[slotinfo [1 [name quantoforte] [type dynamics] [key d]]]"
 				}
 
 			}

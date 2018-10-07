@@ -64,7 +64,7 @@
 
 	<!--DISCUSSION-->
 	<discussion>
-		The length is computed at the root level only, so e.g. the reported length of <b>(1 2) (3 4)</b> is 2.
+		The length is computed at the root level only, so e.g. the reported length of <b>[1 2] [3 4]</b> is 2.
 	</discussion>
 
 	<!--SEEALSO-->
@@ -85,7 +85,7 @@
 	<misc name = "Discussion">
 		<entry name ="More details">
 			<description>
-		The length is computed at the root level only, so e.g. the reported length of <b>(1 2) (3 4)</b> is 2.
+		The length is computed at the root level only, so e.g. the reported length of <b>[1 2] [3 4]</b> is 2.
 			</description>
 		</entry>
 		<entry name ="Keywords">

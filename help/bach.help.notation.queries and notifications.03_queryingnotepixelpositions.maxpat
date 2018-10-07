@@ -79,7 +79,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 20.5, 162.0, 591.0, 50.0 ],
 					"style" : "",
-					"text" : "(<x-pixel_onset> (<duration_in_horizontal_pixels_note1>  <duration_in_horizontal_pixels_note2> ...)\n  (<y_pixel_noteheadcenter_note1>   <y_pixel_noteheadcenter_note2> ...)\n  (<x_pixel_accidental_left_position_note1> <x_pixel_accidental_left_position_note2> ... ))",
+					"text" : "[<x-pixel_onset> [<duration_in_horizontal_pixels_note1>  <duration_in_horizontal_pixels_note2> ...]\n  [<y_pixel_noteheadcenter_note1>   <y_pixel_noteheadcenter_note2> ...]\n  [<x_pixel_accidental_left_position_note1> <x_pixel_accidental_left_position_note2> ... ]]",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

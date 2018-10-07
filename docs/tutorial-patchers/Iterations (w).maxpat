@@ -245,7 +245,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 (2 a) (c))",
+					"text" : "[1 [2 a] [c]]",
 					"numoutlets" : 1,
 					"id" : "obj-4",
 					"fontname" : "Arial",
@@ -480,7 +480,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (v)",
+					"text" : "Iterations [v]",
 					"numoutlets" : 1,
 					"id" : "obj-12",
 					"fontname" : "Arial",

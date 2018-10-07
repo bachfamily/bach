@@ -332,7 +332,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 282.0, 195.0, 194.0, 19.0 ],
-									"text" : "(1/4 -1/4) (-1/8 1/4 1/8 1/2) (1/1)"
+									"text" : "[1/4 -1/4] [-1/8 1/4 1/8 1/2] [1/1]"
 								}
 
 							}
@@ -346,7 +346,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 195.0, 244.0, 19.0 ],
-									"text" : "(a BAZINGA) ((FOO FEE) d e (f1 f2)) (g)"
+									"text" : "[a BAZINGA] [[FOO FEE] d e [f1 f2]] [g]"
 								}
 
 							}
@@ -774,7 +774,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 35.0, 220.0, 185.0, 56.0 ],
-									"text" : "(6000 6100) nil 6200 6400 (6300 6400) nil (6200 6300)"
+									"text" : "[6000 6100] nil 6200 6400 [6300 6400] nil [6200 6300]"
 								}
 
 							}

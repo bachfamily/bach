@@ -79,7 +79,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 299.0, 102.0, 286.0, 100.0 ],
-					"text" : "consider, for instance, this case: we look for lllls having length = 3. If recursive is off, the object finds ((a b c) (d e f) (g h i)) and does NOT step into it, so this will be the only found llll. On the other hand, if recursive is on, the algorithm steps into our match-llll, and finds two more lllls  matching the criterium: (a b c) and (g h i)"
+					"text" : "consider, for instance, this case: we look for lllls having length = 3. If recursive is off, the object finds [[a b c] [d e f] [g h i]] and does NOT step into it, so this will be the only found llll. On the other hand, if recursive is on, the algorithm steps into our match-llll, and finds two more lllls  matching the criterium: (a b c) and (g h i)"
 				}
 
 			}
@@ -121,7 +121,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 110.0, 120.0, 138.0, 18.0 ],
-					"text" : "((a b c) (d f) (g h i)) (l m)"
+					"text" : "[[a b c] [d f] [g h i]] [l m]"
 				}
 
 			}
@@ -162,7 +162,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 112.0, 259.0, 90.0, 18.0 ],
-					"text" : "(a b (d) (e) c) c"
+					"text" : "[a b [d] [e] c] c"
 				}
 
 			}
@@ -387,7 +387,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 412.0, 140.0, 18.0 ],
-					"text" : "Iterations (o)",
+					"text" : "Iterations [o]",
 					"varname" : "messageA"
 				}
 
@@ -487,7 +487,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 480.0, 412.0, 140.0, 18.0 ],
-					"text" : "Iterations (q)",
+					"text" : "Iterations [q]",
 					"varname" : "messageB"
 				}
 

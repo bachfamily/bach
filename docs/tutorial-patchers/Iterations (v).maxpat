@@ -132,7 +132,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "1 2 (4 5 5) 5 ((4 5))",
+					"text" : "1 2 [4 5 5] 5 [[4 5]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 117.0, 353.0, 111.0, 18.0 ],
@@ -187,7 +187,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "1 2 (4 5 5) 5 ((4 5))",
+					"text" : "1 2 [4 5 5] 5 [[4 5]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 117.0, 279.0, 111.0, 18.0 ],
@@ -269,7 +269,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "1 2 3 (4 5 6) (8 9 (10 12))",
+					"text" : "1 2 3 [4 5 6] [8 9 [10 12]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 117.0, 432.0, 145.0, 18.0 ],
@@ -436,7 +436,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "1 foo 3 (toto 5 tutu) (8 9 (ii 12))",
+					"text" : "1 foo 3 [toto 5 tutu] [8 9 [ii 12]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 423.0, 325.0, 173.0, 18.0 ],
@@ -575,7 +575,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "1 foo 3 (toto 5 tutu) (8 9 (ii 12))",
+					"text" : "1 foo 3 [toto 5 tutu] [8 9 [ii 12]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 423.0, 82.0, 173.0, 18.0 ],
@@ -672,7 +672,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "1 2 3 (4 5 6) (8 9 (10 12))",
+					"text" : "1 2 3 [4 5 6] [8 9 [10 12]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 10.0, 82.0, 145.0, 18.0 ],
@@ -892,7 +892,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (u)",
+					"text" : "Iterations [u]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 575.0, 140.0, 18.0 ],
@@ -991,7 +991,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (w)",
+					"text" : "Iterations [w]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 636.0, 575.0, 140.0, 18.0 ],

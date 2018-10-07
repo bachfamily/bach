@@ -152,23 +152,23 @@
 				<br /> <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -176,8 +176,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -200,9 +200,9 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />

@@ -354,7 +354,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 499.0, 74.0, 81.0, 19.0 ],
-					"text" : "(john (paul))"
+					"text" : "[john [paul]]"
 				}
 
 			}
@@ -428,7 +428,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 388.0, 74.0, 99.0, 19.0 ],
-					"text" : "(1 2 3) ((4 5) 6)"
+					"text" : "[1 2 3] [[4 5] 6]"
 				}
 
 			}

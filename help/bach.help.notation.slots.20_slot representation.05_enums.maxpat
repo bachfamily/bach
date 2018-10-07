@@ -74,7 +74,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 199.0, 331.0, 393.0, 19.0 ],
-					"text" : "(slotinfo (5 (representation ( \"green apple\" pear banana orange))))"
+					"text" : "[slotinfo [5 [representation [ \"green apple\" pear banana orange]]]]"
 				}
 
 			}
@@ -104,7 +104,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 126.0, 317.0, 19.0 ],
-					"text" : "(slotinfo (3 (representation (john paul george ringo))))"
+					"text" : "[slotinfo [3 [representation [john paul george ringo]]]]"
 				}
 
 			}

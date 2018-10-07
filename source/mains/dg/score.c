@@ -1354,7 +1354,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
 				llll_behead(selectllll);
 				llll_behead(selectllll);
 				
-				new_ac = llll_deparse(selectllll, &new_av, 0, 0);
+				new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
 				x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
 
 				if (new_av) 
@@ -1382,7 +1382,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 llll_behead(selectllll);
                 llll_behead(selectllll);
                 
-                new_ac = llll_deparse(selectllll, &new_av, 0, 0);
+                new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
                 x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
                 
                 if (new_av) 
@@ -1481,7 +1481,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 llll_behead(selectllll);
                 llll_behead(selectllll);
                 
-                new_ac = llll_deparse(selectllll, &new_av, 0, 0);
+                new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
                 x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
                 
                 if (new_av)
@@ -1528,7 +1528,7 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 llll_behead(selectllll);
                 llll_behead(selectllll);
                 
-                new_ac = llll_deparse(selectllll, &new_av, 0, 0);
+                new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
                 x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
                 
                 if (new_av)
@@ -4275,29 +4275,29 @@ int T_EXPORT main(void){
 	// namely it outputs only certain voices and within a certain time interval.
 	// The syntax for the <m>subscore</m> message is:
 	// <b>subscore <m>VOICES</m> <m>MEASURE_RANGE</m> <m>optional:SELECTIVE_OPTIONS</m></b>,
-	// <m>VOICES</m> is an llll of the kind <b>(<m>voice_number1</m> <m>voice_number2</m>...)</b>
-	// containing the number of the voices to be output; leave <b>nil</b> or <b>()</b> if you want to output all voices. <br />
-	// <m>MEASURE_RANGE</m> is an llll of the kind <b>(<m>start_measure_number</m> <m>end_measure_number</m>)</b> representing the
+	// <m>VOICES</m> is an llll of the kind <b>[<m>voice_number1</m> <m>voice_number2</m>...]</b>
+	// containing the number of the voices to be output; leave <b>nil</b> or <b>[]</b> if you want to output all voices. <br />
+	// <m>MEASURE_RANGE</m> is an llll of the kind <b>[<m>start_measure_number</m> <m>end_measure_number</m>]</b> representing the
 	// range of measures that has to be output (the defined one are included). 
-	// Leave such list as <b>nil</b> or <b>()</b> if you want this range to be all the measures of the <o>bach.score</o>.
+	// Leave such list as <b>nil</b> or <b>[]</b> if you want this range to be all the measures of the <o>bach.score</o>.
 	// Otherwise <m>start_measure_number</m> is the number of the starting measure in the range, and
 	// <m>end_measure_number</m> is the number of the ending measure in the range; leave any negative value
 	// for <m>end_ms</m> if you want the portion of <o>bach.score</o> to be output to go till the end of the notation object. <br />
 	// The third llll, <m>optional:SELECTIVE_OPTIONS</m>, is optional, and if given might contain a symbol or list of symbols
 	// which handles what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
-	// the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subscore (4 5) (4 9) (clefs markers body)</b>
+	// the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subscore [4 5] [4 9] [clefs markers body]</b>
 	// output voices 4 and 5 in the portion of the <o>bach.score</o> going from measure 4 to measure 9, and outputs in addition to the musical content (the body)
 	// the information about clefs and the markers. 
-	// Leave <b>(body)</b> as third parameter if you only want to dump the music content, and no header information
+	// Leave <b>[body]</b> as third parameter if you only want to dump the music content, and no header information
 	// @marg 0 @name voices @optional 0 @type llll
 	// @marg 1 @name measure_range @optional 0 @type llll
 	// @marg 2 @name selective_options @optional 1 @type llll
-    // @example subscore (1 2 4) (3 7) @caption extract voices 1, 2 and 4, measure 3 through 7
-    // @example subscore () (3 7) @caption extract all voices, from measure 3 to measure 7
-    // @example subscore (1 2) () @caption extract voices 1 and 2 for the whole duration
-    // @example subscore (1 3) (4 -1) @caption extract voices 1 and 3 from measure 4 to the end
-    // @example subroll (1 3) (4 -1) (body) @caption only dump the body
-    // @example subroll (1 3) (4 -1) (clefs markers body) @caption only dump clefs, markers and body
+    // @example subscore [1 2 4] [3 7] @caption extract voices 1, 2 and 4, measure 3 through 7
+    // @example subscore [] [3 7] @caption extract all voices, from measure 3 to measure 7
+    // @example subscore [1 2] [] @caption extract voices 1 and 2 for the whole duration
+    // @example subscore [1 3] [4 -1] @caption extract voices 1 and 3 from measure 4 to the end
+    // @example subroll [1 3] [4 -1] [body] @caption only dump the body
+    // @example subroll [1 3] [4 -1] [clefs markers body] @caption only dump clefs, markers and body
     // @seealso dump
 	class_addmethod(c, (method) score_subscore, "subscore", A_GIMME, 0);
 
@@ -4339,7 +4339,7 @@ int T_EXPORT main(void){
     // from the measure barline boxing. Somehow, this operation corresponds to putting a cursor somewhere in the score, and start "typing"
     // some content. <br />
     // The first argument for the <m>overtype</m> message is the overtyping region, in the form
-    // <b>(<m>START_TIMEPOINT</m> <m>optional_END_TIMEPOINT</m>)</b>, where each one of the two elements must be in the timepoint syntax
+    // <b>[<m>START_TIMEPOINT</m> <m>optional_END_TIMEPOINT</m>]</b>, where each one of the two elements must be in the timepoint syntax
     // (see below). If the second timepoint is not given, then the duration of the overtyping region will be determined by the duration
     // of the overtype content. Notice that the timepoints also include the voices in which the overtype must occurr. <br />
     // The second argument is indeed the content to be overtyped. This is assumed to be in the score gathered-syntax, but without any
@@ -4348,13 +4348,13 @@ int T_EXPORT main(void){
     // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
     // @marg 0 @name region @optional 0 @type llll
     // @marg 1 @name content @optional 0 @type llll
-    // @example overtype ((1) (1 2/4)) (((1/2 (C4 100 0)))) @caption replace first two quarters of measure 1 with a middle C note
-    // @example overtype ((1) (1 1/2)) (((-1/2))) @caption replace first two quarters of measure 1 with rests
-    // @example overtype ((1) (1 1/2)) ((())) @caption exactly the same
-    // @example overtype ((2 3)) (((1/2 (C4 100 0)) (1/2 (E4 100 0)) (1/2 (G4 100 0)))) @caption put a C major arpeggio of half notes in voice 2 starting measure 3
-    // @example overtype ((2 3 1/2)) (((1/4 (C4 100 0)) (1/4 (E4 100 0)) (1/4 (G4 100 0)))) @caption put a C major arpeggio of quarter notes in voice 2, starting from 1/2 after beginning of measure 3
-    // @example overtype ((1 1 3/8) (1 2 1/4)) (((1/8 (C4 100 0)) (1/8 (E4 100 0)) (1/4 (G4 100 0)) (1/8 (C5 100 0)) (1/4 (E5 100 0)) (1/4 (E5 100 0)))) @caption replace content of voice 1, from measure 1 (after 3/4) to measure 2 (after 1/4), with the defined gathered-syntax content (if content overflows boundaries, it is trimmed)
-    // @example overtype ((1 1 3/8) (2 2 1/4)) (((1/8 (C4 100 0)) (1/8 (E4 100 0)) (1/8 (G4 100 0))) (((leveltype 25) (1/12 (7200. 100 0)) (1/12 (7400 100 0)) (1/12 (7600. 100 0))) ((1/8 (7700 100 0)) (1/8 (7900 100 0))) ((-1/8) (1/8 (7700 100 0))))) @caption replace portion of score spanning multiple voices, with content containing rhythmic tree specification
+    // @example overtype [[1] [1 2/4]] [[[1/2 [C4 100 0]]]] @caption replace first two quarters of measure 1 with a middle C note
+    // @example overtype [[1] [1 1/2]] [[[-1/2]]] @caption replace first two quarters of measure 1 with rests
+    // @example overtype [[1] [1 1/2]] [[[]]] @caption exactly the same
+    // @example overtype [[2 3]] [[[1/2 [C4 100 0]] [1/2 [E4 100 0]] [1/2 [G4 100 0]]]] @caption put a C major arpeggio of half notes in voice 2 starting measure 3
+    // @example overtype [[2 3 1/2]] [[[1/4 [C4 100 0]] [1/4 [E4 100 0]] [1/4 [G4 100 0]]]] @caption put a C major arpeggio of quarter notes in voice 2, starting from 1/2 after beginning of measure 3
+    // @example overtype [[1 1 3/8] [1 2 1/4]] [[[1/8 [C4 100 0]] [1/8 [E4 100 0]] [1/4 [G4 100 0]] [1/8 [C5 100 0]] [1/4 [E5 100 0]] [1/4 [E5 100 0]]]] @caption replace content of voice 1, from measure 1 (after 3/4) to measure 2 (after 1/4), with the defined gathered-syntax content (if content overflows boundaries, it is trimmed)
+    // @example overtype [[1 1 3/8] [2 2 1/4]] [[[1/8 [C4 100 0]] [1/8 [E4 100 0]] [1/8 [G4 100 0]]] [[[leveltype 25] [1/12 [7200. 100 0]] [1/12 [7400 100 0]] [1/12 [7600. 100 0]]] [[1/8 [7700 100 0]] [1/8 [7900 100 0]]] [[-1/8] [1/8 [7700 100 0]]]]] @caption replace portion of score spanning multiple voices, with content containing rhythmic tree specification
     // @seealso llll, autobeam
     class_addmethod(c, (method) score_anything, "overtype", A_GIMME, 0);
 
@@ -4365,21 +4365,21 @@ int T_EXPORT main(void){
 	// A simple <m>collapse</m> message will collapse the content of all voices. You can add up to two llll optional arguments, 
 	// to obtain the general syntax:
 	// <b>collapse <m>VOICES</m> <m>SELECTIVE_OPTIONS</m></b>,
-	// <m>VOICES</m> is an llll of the kind <b>(<m>voice_number1</m> <m>voice_number2</m>...)</b>
-	// containing the number of the voices to be output; leave <b>nil</b> or <b>()</b> if you want to output all voices. <br />
+	// <m>VOICES</m> is an llll of the kind <b>[<m>voice_number1</m> <m>voice_number2</m>...]</b>
+	// containing the number of the voices to be output; leave <b>nil</b> or <b>[]</b> if you want to output all voices. <br />
 	// <m>SELECTIVE_OPTIONS</m>, if given, might contain a symbol or list of symbols
 	// which handle what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
-	// the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>collapse (4 5 8) (markers body)</b>
+	// the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>collapse [4 5 8] [markers body]</b>
 	// will collapse voices 4, 5 and 8 into a single voice, preserving also markers. <br />
 	// By default the measureinfo (see <m>llll</m> message) of the first voice is kept. If a <m>VOICES</m> llll is specified, the measureinfo 
 	// of the first entered voice number is kept as reference. If you want to change such reference, just change the order of the numbers inside
-	// <m>VOICES</m>. For instance <b>collapse (5 4 8) (markers body)</b> will act as before, but keeping measureinfo of voice 5.
+	// <m>VOICES</m>. For instance <b>collapse [5 4 8] [markers body]</b> will act as before, but keeping measureinfo of voice 5.
 	// @marg 0 @name voices @optional 0 @type llll
 	// @marg 1 @name selective_options @optional 1 @type llll
     // @example collapse @caption collapse everything onto a single voice
-    // @example collapse (2 3 6) @caption collapse only voices 2, 3 and 6
-    // @example collapse (2 3 6) (body markers) @caption the same, but only dump body and markers
-    // @example collapse () (body) @caption collapse all voices, but only send out the body
+    // @example collapse [2 3 6] @caption collapse only voices 2, 3 and 6
+    // @example collapse [2 3 6] [body markers] @caption the same, but only dump body and markers
+    // @example collapse [] [body] @caption collapse all voices, but only send out the body
     // @seealso quantize
 	class_addmethod(c, (method) score_collapse, "collapse", A_GIMME, 0);
 
@@ -4408,7 +4408,7 @@ int T_EXPORT main(void){
 	// @description A <m>clear</m> message sent in the first inlet will delete all the measures the <o>bach.score</o>, and all the markers.
 	// If an integer argument is given, the message will only clear the content of a specific voice (the one corresponding to the input integer number). <br />
 	// A <m>clear</m> message sent in any of the separate parameters inlets (all inlets but the first one) will clear the content which was
-	// possibly stored in such inlet. This is equivalent to sending a <b>nil</b> or <b>()</b> message in that inlet.
+	// possibly stored in such inlet. This is equivalent to sending a <b>nil</b> or <b>[]</b> message in that inlet.
 	// @marg 0 @name voice_number @optional 1 @type int
     // @example clear @caption delete all measures
     // @example clear 3 @caption the same, only for voice 3
@@ -4434,18 +4434,18 @@ int T_EXPORT main(void){
 	// and append the newly introduced measures. Refer to the <m>llll</m> message to know more about separate parameter syntax of the inlets.<br />
     // If the message has a single integer argument <m>N</m>, <m>N</m> empty measures will be appended to all voices. <br />
     // If the message has a two arguments <m>voice_num</m> and <m>N</m>, <m>N</m> measures will be appended to the specified voice; <m>voice_num</m>
-    // can also be an llll in the form <b>(<m>start_voice_num</m> <m>end_voice_num</m>)</b>, in which case measures are appended to all voices
+    // can also be an llll in the form <b>[<m>start_voice_num</m> <m>end_voice_num</m>]</b>, in which case measures are appended to all voices
     // from <m>start_voice_num</m> to <m>end_voice_num</m>; finally <m>voice_num</m> can also be the "all" symbol, in which case
     // measures are appended to all voices. <br />
 	// If the message has more complex llll arguments, these are supposed to be in llll form, exactly in in the same syntax as the whole <o>bach.score</o>
 	// gathered syntax (without header specification): one llll for each voice,
 	// containing one llll for each measure to add (in measure gathered syntax). If for a given voice
-	// you don't need to add any chord, just set a <b>()</b> llll.
+	// you don't need to add any chord, just set a <b>[]</b> llll.
     // In this case the message syntax becomes:
     // <b>appendmeasures <m>VOICE1</m> <m>VOICE2</m>...</b>,
     // where each voice is an llll in voice gathered syntax.
-	// For instance, a valid message would be <b>appendmeasures ((((3 4)()) (1/4 (7185. 100 0)) (1/4 (6450. 100 0)) (1/4 (7185 100 0)))
-	// (((4 4) ()) (-1/4) (1/12 (5850. 100 0 1)) (1/6 (6300. 100 0 0) 2) (1/6 (6600. 100 0)) (1/12 (6600. 100 1)) (1/4 (6600. 100 0))))</b>
+    // For instance, a valid message would be <b>appendmeasures [[[[3 4][]] [1/4 [7185. 100 0]] [1/4 [6450. 100 0]] [1/4 [7185 100 0]]]
+    // [[[4 4] []] [-1/4] [1/12 [5850. 100 0 1]] [1/6 [6300. 100 0 0] 2] [1/6 [6600. 100 0]] [1/12 [6600. 100 1]] [1/4 [6600. 100 0]]]]</b>
 	// <br /> <br />
 	// @copy BACH_DOC_VOICE_GATHERED_SYNTAX_SCORE
     // @marg 0 @name voice_numbers @optional 1 @type int/symbol/llll
@@ -4454,8 +4454,8 @@ int T_EXPORT main(void){
     // @example appendmeasures 5 @caption append 5 empty measures to all voices
     // @example appendmeasures all 5 @caption exactly the same
     // @example appendmeasures 2 5 @caption append 5 empty measures to voice 2
-    // @example appendmeasures (2 4) 5 @caption append 5 empty measures to voices 2 through 4
-    // @example appendmeasures ((((3 4) ()) (1/4 (C4 100 0)) (2/4 (E4 100 0))) (((2 4) ()) (2/4 (G4 100 0)))) ((((5 4) ()) (-1) (1/4 ( C4 100 0)))) @caption add some measures in gathered syntax (on element for each voice)
+    // @example appendmeasures [2 4] 5 @caption append 5 empty measures to voices 2 through 4
+    // @example appendmeasures [[[[3 4] []] [1/4 [C4 100 0]] [2/4 [E4 100 0]]] [[[2 4] []] [2/4 [G4 100 0]]]] [[[[5 4] []] [-1] [1/4 [ C4 100 0]]]] @caption add some measures in gathered syntax (on element for each voice)
     // @seealso llll, appendmeasure, insertmeasure, insertmeasures, deletemeasures
 	class_addmethod(c, (method) score_anything, "appendmeasures", A_GIMME, 0);
     class_addmethod(c, (method) score_anything, "addmeasures", A_GIMME, 0);
@@ -4469,11 +4469,11 @@ int T_EXPORT main(void){
     // @marg 0 @name measure_number @optional 0 @type int
     // @marg 1 @name tempo @optional 0 @type llll
     // @mattr voices @type llll @default null @digest Numbers of voices to be exported (<b>null</b> means: all voices)
-    // @example addtempo 1 (1/4 90) @caption add the quarter = 90 tempo at the beginning of the score (all voices)
-    // @example addtempo 3 (1/8 200) @caption add eighth = 200 tempo at measure 3 (all voices)
-    // @example addtempo 3 (1/8 200) @voices 1 @caption the same, but for first voice only
-    // @example addtempo 3 (1/8 200) @voices 1 3 @caption the same, for voices 1 and 3
-    // @example addtempo 2 (1/4 30 1/3) @voices 1 3 @caption add the tempo quarter = 30 in measure 2, with offset 1/3
+    // @example addtempo 1 [1/4 90] @caption add the quarter = 90 tempo at the beginning of the score (all voices)
+    // @example addtempo 3 [1/8 200] @caption add eighth = 200 tempo at measure 3 (all voices)
+    // @example addtempo 3 [1/8 200] @voices 1 @caption the same, but for first voice only
+    // @example addtempo 3 [1/8 200] @voices 1 3 @caption the same, for voices 1 and 3
+    // @example addtempo 2 [1/4 30 1/3] @voices 1 3 @caption add the tempo quarter = 30 in measure 2, with offset 1/3
     // @seealso cleartempi
     class_addmethod(c, (method) score_anything, "addtempo", A_GIMME, 0);
 
@@ -4482,22 +4482,22 @@ int T_EXPORT main(void){
     // @method appendmeasure @digest Append a single measure
     // @description An <m>appendmeasure</m> message will append a single measure to the existing ones.
     // The message accepts a voice number as first argument, and the gathered syntax of the measure to add as second argument. <br />
-    // The voice number can also be an llll in the form <b>(<m>start_voice_num</m> <m>end_voice_num</m>)</b>, in which case the measure is
+    // The voice number can also be an llll in the form <b>[<m>start_voice_num</m> <m>end_voice_num</m>]</b>, in which case the measure is
     // appended to all voices from <m>start_voice_num</m> to <m>end_voice_num</m>; <m>voice_num</m> can also be the "all" symbol, in which case
     // measure is appended to all voices. <br />
     // The measure (second argument) is expected to be in gathered syntax (see below).
     // If more than one voice is concerned, and if additional measures (in gathered syntax) are added after this second argument,
     // measure are assigned in voice-wise fashion. If no measure gathered syntax is specified, an empty measure will be appended. <br />
-    // For instance, a valid message would be <b>appendmeasure (2 3) ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4)) (((5 8) ()) (1/4 (5900 100)) (-3/4))</b>
+    // For instance, a valid message would be <b>appendmeasure [2 3] [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] [[[5 8] []] [1/4 [5900 100]] [-3/4]]</b>
     // <br /> <br />
     // @copy BACH_DOC_MEASURE_GATHERED_SYNTAX_SCORE
     // @marg 0 @name voice_numbers @optional 1 @type int/symbol/llll
     // @marg 1 @name measures @optional 1 @type llll
     // @example appendmeasure @caption append 1 empty measure to all voices
-    // @example appendmeasure 2 (((8 8)) ()) @caption append a blank 8/8 measure to voice 2
-    // @example appendmeasure all (((8 8)) ()) @caption append a blank 8/8 measure to all voices
-    // @example appendmeasure (2 5) ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4)) @caption append a measure to voices 2 through 5
-    // @example appendmeasure (2 3) ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4)) (((5 8) ()) (1/4 (5900 100)) (-3/4)) @caption append first measure to voice 2, second measure to voice 3
+    // @example appendmeasure 2 [[[8 8]] []] @caption append a blank 8/8 measure to voice 2
+    // @example appendmeasure all [[[8 8]] []] @caption append a blank 8/8 measure to all voices
+    // @example appendmeasure [2 5] [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] @caption append a measure to voices 2 through 5
+    // @example appendmeasure [2 3] [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] [[[5 8] []] [1/4 [5900 100]] [-3/4]] @caption append first measure to voice 2, second measure to voice 3
     // @seealso appendmeasures, insertmeasure, insertmeasures, deletemeasures
     class_addmethod(c, (method) score_anything, "appendmeasure", A_GIMME, 0);
 
@@ -4506,7 +4506,7 @@ int T_EXPORT main(void){
     // @description An <m>insertmeasures</m> message will insert one or more measures at a given score position.
     // The message expects a voice number as first argument, the measure number for the insertion as second argument,
     // and either the number of (empty) measures to insert, or the gathered syntax of the measures to insert as third argument. <br />
-    // The voice number can also be an llll in the form <b>(<m>start_voice_num</m> <m>end_voice_num</m>)</b>, in which case the measure is
+    // The voice number can also be an llll in the form <b>[<m>start_voice_num</m> <m>end_voice_num</m>]</b>, in which case the measure is
     // inserted in all voices from <m>start_voice_num</m> to <m>end_voice_num</m>; <m>voice_num</m> can also be the "all" symbol, in which case
     // the measure is inserted in all voices (default). <br />
     // The measure number for insertion is the measure index the measure will have once inserted. This can be either positive or negative:
@@ -4516,18 +4516,18 @@ int T_EXPORT main(void){
     // message syntax would become:
     // <b>insertmeasures <m>voice_numbers</m> <m>measure_number_for_insertion</m> <m>VOICE1</m> <m>VOICE2</m>...</b>,
     // where each voice is an llll in voice gathered syntax.
-    // For instance, a valid message would be <b>insertmeasures 2 3 ((((3 4) ()) (1/4 (7185 100)) (1/4 (6450 100)) (1/4 (7185 100))) (((4 4) ())
-    // (-1/4 0) (1/12 (5850 100)) (1/6 (6300 100)) (1/6 (6600 100)) (1/12 (6600 100)) (1/4 (6600 100))))</b>
+    // For instance, a valid message would be <b>insertmeasures 2 3 [[[[3 4] []] [1/4 [7185 100]] [1/4 [6450 100]] [1/4 [7185 100]]] [[[4 4] []]
+    // [-1/4 0] [1/12 [5850 100]] [1/6 [6300 100]] [1/6 [6600 100]] [1/12 [6600 100]] [1/4 [6600 100]]]]</b>
     // <br /> <br />
     // @copy BACH_DOC_VOICE_GATHERED_SYNTAX_SCORE
     // @marg 0 @name voice_numbers @optional 1 @type int/symbol/llll
     // @marg 1 @name measure_position @optional 1 @type int
     // @marg 2 @name voices @optional 1 @type llll
     // @example insertmeasures 2 3 5 @caption insert 5 empty measures at measure 3, voice 2 only
-    // @example insertmeasures (2 4) 1 5 @caption insert 5 empty measures at the beginning, voice 2 through 4
+    // @example insertmeasures [2 4] 1 5 @caption insert 5 empty measures at the beginning, voice 2 through 4
     // @example insertmeasures all -1 3 @caption insert 3 empty measures at the end, for all voices
     // @example insertmeasures all -2 3 @caption insert 3 empty measures before last measure, for all voices
-    // @example insertmeasures 2 3 ((((3 4) ()) (1/4 (7185 100)) (1/4 (6450 100)) (1/4 (7185 100))) (((4 4) ()) (-1/4 0) (1/12 (5850 100)) (1/6 (6300 100)) (1/6 (6600 100)) (1/12 (6600 100)) (1/4 (6600 100)))) @caption insert given measures in voice 2, at measure 3
+    // @example insertmeasures 2 3 [[[[3 4] []] [1/4 [7185 100]] [1/4 [6450 100]] [1/4 [7185 100]]] [[[4 4] []] [-1/4 0] [1/12 [5850 100]] [1/6 [6300 100]] [1/6 [6600 100]] [1/12 [6600 100]] [1/4 [6600 100]]]] @caption insert given measures in voice 2, at measure 3
     // @seealso appendmeasure, appendmeasures, insertmeasure, deletemeasures
     class_addmethod(c, (method) score_anything, "insertmeasures", A_GIMME, 0);
     
@@ -4536,7 +4536,7 @@ int T_EXPORT main(void){
     // @description An <m>insertmeasure</m> message will insert a single measure at a given score position.
     // The message expects a voice number as first argument, the measure number for the insertion as second argument,
     // and the gathered syntax of the measure to insert as third argument. <br />
-    // The voice number can also be an llll in the form <b>(<m>start_voice_num</m> <m>end_voice_num</m>)</b>, in which case the measure is
+    // The voice number can also be an llll in the form <b>[<m>start_voice_num</m> <m>end_voice_num</m>]</b>, in which case the measure is
     // inserted in all voices from <m>start_voice_num</m> to <m>end_voice_num</m>; <m>voice_num</m> can also be the "all" symbol, in which case
     // the measure is inserted in all voices (default). <br />
     // The measure number for insertion is the measure index the measure will have once inserted. This can be either positive or negative:
@@ -4550,12 +4550,12 @@ int T_EXPORT main(void){
     // @marg 1 @name measures @optional 1 @type llll
     // @example insertmeasure all 1 @caption insert a blank measure in all voices, at the beginning
     // @example insertmeasure 2 3 @caption insert a blank measure in voice 2, at measure number 1
-    // @example insertmeasure 2 3 (((8 8)) ()) @caption insert a blank 8/8 measure in voice 2, at measure number 3
-    // @example insertmeasure 2 -2 (((8 8)) ()) @caption the same, before the last measure
-    // @example insertmeasure insert -3 (((8 8)) ()) @caption insert a blank 8/8 measure to all voices, before the one-but-last measure
-    // @example insertmeasure all 2 ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4)) @caption insert a given measure in all voices at measure 2
-    // @example insertmeasure (6 7) 2 ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4)) @caption the same, for voices 6 through 7
-    // @example insertmeasure (6 7) 2 ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4)) (((5 8) ()) (1/4 (5900 100)) (-3/4)) @caption insert first measure in voice 6, second measure in voice 7
+    // @example insertmeasure 2 3 [[[8 8]] []] @caption insert a blank 8/8 measure in voice 2, at measure number 3
+    // @example insertmeasure 2 -2 [[[8 8]] []] @caption the same, before the last measure
+    // @example insertmeasure insert -3 [[[8 8]] []] @caption insert a blank 8/8 measure to all voices, before the one-but-last measure
+    // @example insertmeasure all 2 [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] @caption insert a given measure in all voices at measure 2
+    // @example insertmeasure [6 7] 2 [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] @caption the same, for voices 6 through 7
+    // @example insertmeasure [6 7] 2 [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] [[[5 8] []] [1/4 [5900 100]] [-3/4]] @caption insert first measure in voice 6, second measure in voice 7
     // @seealso appendmeasure, appendmeasures, insertmeasures, deletemeasures
     class_addmethod(c, (method) score_anything, "insertmeasure", A_GIMME, 0);
     
@@ -4579,7 +4579,7 @@ int T_EXPORT main(void){
     // @marg 1 @name voice_or_ref @optional 1 @type int/llll
     // @example insertvoice 2 @caption insert a empty voice as 2nd voice
     // @example insertvoice 2 4 @caption also initialize it with the properties and measureinfo of 4th voice
-    // @example insertvoice 2 ((((3 4) ()) (1/4 (C4 100 0)) (2/4 (E4 100 0))) (((2 4) ()) (2/4 (G4 100 0)))) @caption also fill it with some content
+    // @example insertvoice 2 [[[[3 4] []] [1/4 [C4 100 0]] [2/4 [E4 100 0]]] [[[2 4] []] [2/4 [G4 100 0]]]] @caption also fill it with some content
     // @seealso deletevoice
     class_addmethod(c, (method) score_anything, "insertvoice", A_GIMME, 0);
     
@@ -4630,8 +4630,8 @@ int T_EXPORT main(void){
 	// @description The <m>interp</m> message, followed by a time value (in milliseconds) retrieves
 	// the instantaneous data of all the notes which are active at the given time instant.
 	// The answer is sent through the playout in the following form: <b>interp <m>VOICE1</m> <m>VOICE2</m>...</b>
-	// where each <m>VOICE</m> is in the form <b>(<m>CHORD</m>)</b>, being the chord active at the 
-	// given time instant (if any, or null if none), with <m>CHORD</m> being in the form <b>(<m>NOTE1</m> <m>NOTE2</m>...)</b>, 
+	// where each <m>VOICE</m> is in the form <b>[<m>CHORD</m>]</b>, being the chord active at the 
+	// given time instant (if any, or null if none), with <m>CHORD</m> being in the form <b>[<m>NOTE1</m> <m>NOTE2</m>...]</b>, 
 	// being the chord notes active at
 	// the given time instant, each in the standard note gathered syntax, with two important variations:
 	// there is no tie element, and for each slot marked as temporal only the slot element at the given time instant
@@ -4639,10 +4639,10 @@ int T_EXPORT main(void){
 	// @copy BACH_DOC_NOTE_GATHERED_SYNTAX_SCORE
 	// @marg 0 @name time @optional 0 @type float/llll
     // @example interp 1000 @caption get info on chords being played at 1s
-    // @example interp (3) @caption get info on chords being played at beginning of measure 3
-    // @example interp (3.5) @caption get info on chords being played at half of measure 3
-    // @example interp (3 1/4) @caption get info on chords being played after 1/4 of measure 3
-    // @example interp (2 3 1/4) @caption get info on chords being played after 1/4 of measure 3 of voice 2 (but retrieve all voices!)
+    // @example interp [3] @caption get info on chords being played at beginning of measure 3
+    // @example interp [3.5] @caption get info on chords being played at half of measure 3
+    // @example interp [3 1/4] @caption get info on chords being played after 1/4 of measure 3
+    // @example interp [2 3 1/4] @caption get info on chords being played after 1/4 of measure 3 of voice 2 (but retrieve all voices!)
     // @seealso getcurrentchord, sample
 	class_addmethod(c, (method) score_anything, "interp", A_GIMME, 0);
 	
@@ -4650,15 +4650,15 @@ int T_EXPORT main(void){
 	// @method sample @digest Sample score data
 	// @description The <m>sample</m> message, followed by a integer (the number of sampling points), 
 	// samples the note data (exactly as <m>interp</m> does) throughout the score, at the (uniformly taken) sampling point. 
-	// The answer is sent through the playout in the following form: <b>sample (<m>t1</m> <m>t2</m>...) (<m>RES1</m> <m>RES2</m>...)...</b>
+	// The answer is sent through the playout in the following form: <b>sample [<m>t1</m> <m>t2</m>...] [<m>RES1</m> <m>RES2</m>...]...</b>
 	// where each <m>t</m> is an instant in milliseconds, and each <m>RES</m> is the result of the <m>interp</m> message performed
 	// on such instant (see <m>interp</m> to know more). <br />
     // If the <b>ms</b> symbol is given as second argument, the first numeric argument (which can also be non-integer, in
     // this case) is considered to be the distance between samples (in milliseconds), and not the number of samples. <br />
     // If the <b>timepoint</b> symbol is given as second argument, the first argument is expected to be an interval expressed in the
-    // timepoint syntax; the score will be sampled at multiples of such timepoint. For instance, a timepoint of <b>(1)</b> will sample
-    // the score at the beginning of each measure, while a timepoint of <b>(0 1/4)</b> will sample the score at each quarter note;
-    // a timepoint of <b>(4 0 1/4)</b> will sample the score at each quarter note, taking the fourth voice as "master" to consider
+    // timepoint syntax; the score will be sampled at multiples of such timepoint. For instance, a timepoint of <b>[1]</b> will sample
+    // the score at the beginning of each measure, while a timepoint of <b>[0 1/4]</b> will sample the score at each quarter note;
+    // a timepoint of <b>[4 0 1/4]</b> will sample the score at each quarter note, taking the fourth voice as "master" to consider
     // the timepoints (which might be crucial if voices have different tempi or time signatures). If no voice number is specified, the
     // voice having the most measures is considered. Extended timepoint syntax (with floating point numbers) is not supported. <br /> <br />
     // @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
@@ -4666,9 +4666,9 @@ int T_EXPORT main(void){
     // @marg 1 @name ms_or_timepoint @optional 1 @type symbol
     // @example sample 10 @caption sample score in 10 equally spaced points
     // @example sample 1000 ms @caption sample score each second
-    // @example sample (1) timepoint @caption sample score at the beginning of each measure
-    // @example sample (0 1/4) timepoint @caption sample score at each quarter note
-    // @example sample (2 0 1/2) timepoint @caption sample score at each half note, having as reference the second voice
+    // @example sample [1] timepoint @caption sample score at the beginning of each measure
+    // @example sample [0 1/4] timepoint @caption sample score at each quarter note
+    // @example sample [2 0 1/2] timepoint @caption sample score at each half note, having as reference the second voice
     // @seealso interp, getcurrentchord
 	class_addmethod(c, (method) score_anything, "sample", A_GIMME, 0);
 	
@@ -4748,8 +4748,8 @@ int T_EXPORT main(void){
 	// The syntax of the output answer is: <b>domain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the 
 	// two elements following the "domain" symbol are the starting and ending point of the domain in milliseconds,
 	// and each <m>VOICE</m> is an llll containing the information about the timepoints of each voice (i.e. at which measure and point in measure,
-	// for each voice, the domain starts and ends): its syntax is: <b>((<m>start_measure_number</m> <m>start_sym_onset</m>) 
-	// (<m>end_measure_number</m> <m>end_sym_onset</m>) <m>total_sym_duration</m>)</b>, where <m>start_measure_number</m> is the measure number of the
+    // for each voice, the domain starts and ends]: its syntax is: <b>[[<m>start_measure_number</m> <m>start_sym_onset</m>]
+    // [<m>end_measure_number</m> <m>end_sym_onset</m>] <m>total_sym_duration</m>]</b>, where <m>start_measure_number</m> is the measure number of the
 	// measure where the domain starts, and <m>start_sym_onset</m> is the symbolic onset (point inside the measure) at which the domain start happens;
 	// <m>end_measure_number</m> is the measure number of the
 	// measure where the domain end, and <m>end_sym_onset</m> is the symbolic onset (point inside the measure) at which the domain end happens;
@@ -4781,8 +4781,8 @@ int T_EXPORT main(void){
 	// The syntax of the output answer is: <b>testdomain <m>start_ms</m> <m>end_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the 
 	// two elements following the "testdomain" symbol are the starting and ending point of the hypotetical domain in milliseconds,
 	// and each <m>VOICE</m> is an llll containing the information about the timepoints of each voice (i.e. at which measure and point in measure,
-	// for each voice, the domain would start and end): its syntax is: <b>((<m>start_measure_number</m> <m>start_sym_onset</m>) 
-	// (<m>end_measure_number</m> <m>end_sym_onset</m>) <m>total_sym_duration</m>)</b>, where <m>start_measure_number</m> is the measure number of the
+    // for each voice, the domain would start and end]: its syntax is: <b>[[<m>start_measure_number</m> <m>start_sym_onset</m>]
+    // [<m>end_measure_number</m> <m>end_sym_onset</m>] <m>total_sym_duration</m>]</b>, where <m>start_measure_number</m> is the measure number of the
 	// measure where the domain would start, and <m>start_sym_onset</m> is the symbolic onset (point inside the measure) at which the domain start would happen;
 	// <m>end_measure_number</m> is the measure number of the
 	// measure where the domain would end, and <m>end_sym_onset</m> is the symbolic onset (point inside the measure) at which the domain end would happen;
@@ -4791,9 +4791,9 @@ int T_EXPORT main(void){
 	// @marg 0 @name query_label @optional 1 @type llll
 	// @marg 1 @name domain_start @optional 0 @type llll
     // @example testdomain 200 @caption send domain information if the domain started at 200ms
-    // @example testdomain (2) @caption the same, if it started at measure 2
-    // @example testdomain (1 1/8) @caption the same, if it started at measure 1, after 1/8
-    // @example testdomain (2 1 1/8) @caption the same, if it started at measure 1, after 1/8, in voice 2
+    // @example testdomain [2] @caption the same, if it started at measure 2
+    // @example testdomain [1 1/8] @caption the same, if it started at measure 1, after 1/8
+    // @example testdomain [2 1 1/8] @caption the same, if it started at measure 1, after 1/8, in voice 2
     // @seealso domain, getdomainpixels, getlength
 	class_addmethod(c, (method) score_testdomain, "testdomain", A_GIMME, 0);
 	
@@ -4830,9 +4830,9 @@ int T_EXPORT main(void){
 	// @marg 0 @name query_label @optional 1 @type llll
 	// @marg 1 @name position @optional 0 @type llll
     // @example timetopixel 4000 @caption get the pixel position corresponding to 4s
-    // @example timetopixel (2) @caption get the pixel position corresponding to beginning of measure 2
-    // @example timetopixel (1 1/8) @caption the same, for measure 1 after 1/8
-    // @example timetopixel (3 1 1/8) @caption the same, for measure 1 after 1/8 of voice 3
+    // @example timetopixel [2] @caption get the pixel position corresponding to beginning of measure 2
+    // @example timetopixel [1 1/8] @caption the same, for measure 1 after 1/8
+    // @example timetopixel [3 1 1/8] @caption the same, for measure 1 after 1/8 of voice 3
     // @seealso pixeltotime, timepoint
     class_addmethod(c, (method) score_timetopixel, "timetopixel", A_GIMME, 0);
 	class_addmethod(c, (method) score_getpixelpos, "getpixelpos", A_GIMME, 0); // old, deprecated
@@ -4850,9 +4850,9 @@ int T_EXPORT main(void){
     // @marg 1 @name position @optional 0 @type number/llll
     // @example timepoint 1000 @caption get the timepoints (measure, point in measure) for all voices, for the point corresponding to 1s
     // @example timepoint 2000 @caption get the timepoints at 2s, for all voices
-    // @example timepoint (2) @caption get the millisecond position and the timepoints at beginning of measure 2, first voice
-    // @example timepoint (2 3/8) @caption the same for position at measure 2, after 3/8
-    // @example timepoint (4 2 3/8) @caption the same for position at measure 2, after 3/8, for voice 4
+    // @example timepoint [2] @caption get the millisecond position and the timepoints at beginning of measure 2, first voice
+    // @example timepoint [2 3/8] @caption the same for position at measure 2, after 3/8
+    // @example timepoint [4 2 3/8] @caption the same for position at measure 2, after 3/8, for voice 4
     // @seealso timetopixel, pixeltotime
     class_addmethod(c, (method) score_timepoint, "timepoint", A_GIMME, 0);
 
@@ -4863,7 +4863,7 @@ int T_EXPORT main(void){
 	// The output answer is sent through the playout, and its syntax is: <b>time <m>time_position_ms</m> <m>VOICE1</m> <m>VOICE2</m>...</b>, where the
 	// two elements following the "timeatpixel" symbol are the starting and ending point of the hypotetical domain in milliseconds,
 	// and each <m>VOICE</m> is an llll containing the information about the timepoints of each voice (i.e. at which measure and point in measure,
-	// for each voice, fall on the introduced pixel): its syntax is: <b>(<m>measure_number</m> <m>sym_onset</m>)</b>, where <m>measure_number</m> is the measure number of the
+	// for each voice, fall on the introduced pixel): its syntax is: <b>[<m>measure_number</m> <m>sym_onset</m>]</b>, where <m>measure_number</m> is the measure number of the
 	// measure where the pixel lies, and <m>sym_onset</m> is the symbolic onset (point inside the measure) to which the pixel correspond.
 	// If the pixel does not fall exactly on a chord, by default, the timepoints are output by properly interpolating the timepoints of the chords whose onset are
 	// immediately at left and at right of the pixels. On the other hand, one can modify this behavior by introducing a final symbol argument (the "snap" type), which can be one 
@@ -4905,8 +4905,8 @@ int T_EXPORT main(void){
 	// @description The <m>dumpnotepixelpos</m> message retrieves the pixel position of any chord and note, and outputs it from the playout.
 	// The output answer has the syntax: 
 	// <b>notepixelpos <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form:
-	// <b>(<m>MEASURE1</m> <m>MEASURE2</m>...)</b>, and where each <m>MEASURE</m> is in turn an llll of the form 
-	// <b>(<m>CHORD1</m> <m>CHORD2</m>...)</b>, and where each <m>CHORD</m> is an llll accounting for the pixel position of the chord
+	// <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and where each <m>MEASURE</m> is in turn an llll of the form 
+	// <b>[<m>CHORD1</m> <m>CHORD2</m>...]</b>, and where each <m>CHORD</m> is an llll accounting for the pixel position of the chord
 	// and all its notes, in the form: 
 	// <b>(<m>x-pixel_onset</m> (<m>duration_in_horizontal_pixels_note1</m>  <m>duration_in_horizontal_pixels_note2</m> ...)
 	// (<m>y_pixel_noteheadcenter_note1</m>   <m>y_pixel_noteheadcenter_note2</m> ...)
@@ -4935,8 +4935,8 @@ int T_EXPORT main(void){
     // @description The <m>dumpmeasurepixelpos</m> message retrieves the pixel position of any measure, and outputs it from the playout.
     // The output answer has the syntax:
     // <b>measurepixelpos <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form:
-    // <b>(<m>MEASURE1</m> <m>MEASURE2</m>...)</b>, and where each <m>MEASURE</m> is in turn an llll of the form
-    // <b>((<m>x-start_pixel</m> <m>x-end_pixel</m>) (<m>y-start_pixel</m> <m>y-end_pixel</m>))</b>,
+    // <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and where each <m>MEASURE</m> is in turn an llll of the form
+    // <b>[[<m>x-start_pixel</m> <m>x-end_pixel</m>] [<m>y-start_pixel</m> <m>y-end_pixel</m>]]</b>,
     // i.e. determining a pixel rectangle representing the measure. The y values are the staff topmost and bottommost pixel positions. <br />
     // @copy BACH_DOC_QUERY_LABELS
     // @marg 0 @name query_label @optional 1 @type llll
@@ -4987,7 +4987,7 @@ int T_EXPORT main(void){
 	// @method getnumchords @digest Get the number of chords
 	// @description The <m>getnumchords</m> message forces <o>bach.score</o> to output from the playout the number of chord, for each measure and for each voice.
 	// The syntax of the output answer is: <b>numchords <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
-	// <b>(<m>num_chords_measure1</m> <m>num_chords_measure1</m>...)</b>, 
+	// <b>[<m>num_chords_measure1</m> <m>num_chords_measure1</m>...]</b>, 
 	// i.e. after the "numchords" symbol, a list of lists is given: each outer list represents a voice, and innerly contains an integer for each one
 	// of its measures: such integer is the number of chords of the measure. <br />
 	// @copy BACH_DOC_QUERY_LABELS
@@ -4999,7 +4999,7 @@ int T_EXPORT main(void){
 	// @method getnumnotes @digest Get the number of notes
 	// @description The <m>getnumnotes</m> message forces <o>bach.score</o> to output from the playout the number of notes, for each chord, for each measure and for each voice.
 	// The syntax of the output answer is: <b>numnotes <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
-	// <b>(<m>MEASURE1</m> <m>MEASURE2</m>...)</b>, and each <m>MEASURE</m> is in turn an llll of the form <b>(<m>num_notes_chord1</m> <m>num_notes_chord2</m>...)</b>,
+	// <b>[<m>MEASURE1</m> <m>MEASURE2</m>...]</b>, and each <m>MEASURE</m> is in turn an llll of the form <b>[<m>num_notes_chord1</m> <m>num_notes_chord2</m>...]</b>,
 	// i.e. after the "numnotes" symbol, a list of lists of lists is given: each outer list represents a voice, then one has a level for each measure, 
 	// containing contains an integer for each one of its chords: such integer is the number of notes of the chord. <br />
 	// @copy BACH_DOC_QUERY_LABELS
@@ -5108,13 +5108,13 @@ int T_EXPORT main(void){
     // @example play preschedule @caption accurate prescheduled playback (with limitations)
     // @example play 2000 @caption play starting from 2s till the end
     // @example play 2000 4000 @caption play starting from 2s, stop at 4s
-    // @example play (4) @caption play starting from measure 4
-    // @example play (4 1/4) @caption play starting from measure 4, after 1/4
-    // @example play (4.5) @caption play starting from half of measure 4
-    // @example play (2 4 1/4) @caption play starting from measure 4, after 1/4, for voice 2
-    // @example play (2 4 1/4) (5 10 1/12) @caption the same, but only till measure 10 of voice 5, after 1/12
-    // @example play offline (2 4 1/4) (5 10 1/12) @caption the same, in non-realtime mode
-    // @example play (3.5) (10) @caption play from half of measure 3 to beginning of measure 10 (i.e. end of measure 9)
+    // @example play [4] @caption play starting from measure 4
+    // @example play [4 1/4] @caption play starting from measure 4, after 1/4
+    // @example play [4.5] @caption play starting from half of measure 4
+    // @example play [2 4 1/4] @caption play starting from measure 4, after 1/4, for voice 2
+    // @example play [2 4 1/4] [5 10 1/12] @caption the same, but only till measure 10 of voice 5, after 1/12
+    // @example play offline [2 4 1/4] [5 10 1/12] @caption the same, in non-realtime mode
+    // @example play [3.5] [10] @caption play from half of measure 3 to beginning of measure 10 (i.e. end of measure 9)
     // @seealso stop, pause, setcursor, playselection
 	class_addmethod(c, (method) score_play, "play", A_GIMME, 0);
 
@@ -5196,7 +5196,7 @@ int T_EXPORT main(void){
 	// <b>loop <m>loop_start_ms</m> <m>loop_end_ms</m> <m>LOOP_START_TIMEPOINT</m> <m>LOOP_END_TIMEPOINT</m></b>, where the two parameters 
 	// after the "loop" symbol are the beginning and end position of the loop, in milliseconds (also see the <m>loop</m> attribute), while 
 	// the two last parameters are lllls representing the same milliseconds position but as timepoints, in the form 
-	// <b>(<m>measure_number</m> <m>sym_onset_in_measure</m> <m>voice_number</m>)</b>. The two timepoints might not be linked to the same voice:
+	// <b>[<m>measure_number</m> <m>sym_onset_in_measure</m> <m>voice_number</m>]</b>. The two timepoints might not be linked to the same voice:
 	// the two voice numbers are in general different (depending on the voice where the loop extreme aligns best to a chord).
 	class_addmethod(c, (method) score_getloop, "getloop", 0);
 
@@ -5381,10 +5381,10 @@ int T_EXPORT main(void){
 	// @method sel @digest Select items
 	// @description The word <m>sel</m> add some notation items to the current selection. In the basic behavior,
 	// the word must be followed by four elements, specifying: <br />
-	// - the starting temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>()</b> if you want to select from the beginning); <br />
-	// - the ending temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>()</b> if you want to select until the end); <br />
-	// - the minimum pitch of the selection, in cents (leave <b>nil</b> or <b>()</b> if you don't want to put a lower bound on pitches); <br />
-	// - the maximum pitch of the selection, in cents (leave <b>nil</b> or <b>()</b> if you don't want to put an upper bound on pitches). <br />
+	// - the starting temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>[]</b> if you want to select from the beginning); <br />
+	// - the ending temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>[]</b> if you want to select until the end); <br />
+	// - the minimum pitch of the selection, in cents (leave <b>nil</b> or <b>[]</b> if you don't want to put a lower bound on pitches); <br />
+	// - the maximum pitch of the selection, in cents (leave <b>nil</b> or <b>[]</b> if you don't want to put an upper bound on pitches). <br />
 	// Both the starting and the ending temporal point of the selection can be substituted by timepoints. <br />
 	// @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
 	// Other selection modes are possible: <br />
@@ -5395,31 +5395,31 @@ int T_EXPORT main(void){
 	// - If the word <m>sel</m> is followed by the symbol <b>measure</b> followed by one or two integers (representing an address), a certain measure is selected.
 	// The full syntax for the integers is: <m>voice_number</m> <m>measure_number</m>. If just one integer is given, the voice number is considered
 	// to be by default 1. 
-	// For instance, <b>sel measure 3</b> selects the third measure (of first voice), while <b>sel measure 2 3</b> does the same with the second voice. 
+	// For instance, <b>sel measure 3</b> selects the third measure [of first voice], while <b>sel measure 2 3</b> does the same with the second voice. 
 	// Negative positions are also allowed, counting backwards. Multiple measures can be selected at once, provided that instead of a list integers one gives
-	// a sequence of wrapped lists of integers, for instance <b>sel measure (2 3) (2 4) (2 7) (5 1)</b>.<br />
+	// a sequence of wrapped lists of integers, for instance <b>sel measure [2 3] [2 4] [2 7] [5 1]</b>.<br />
 	// - If the word <m>sel</m> is followed by the symbols <b>measure range</b>, a certain measure range is selected.
 	// If a single argument (after the <b>measure range</b> symbols) is given, this is either a single number, representing the measure number to be selected, 
-	// in all voices, or an llll in the form <b>(<m>start_meas_num</m> <m>end_meas_num</m>)</b>, representing the range of measures (from the one
+	// in all voices, or an llll in the form <b>[<m>start_meas_num</m> <m>end_meas_num</m>]</b>, representing the range of measures (from the one
 	// whose number is <m>start_meas_num</m> to the one whose number is <m>end_meas_num</m>) to be selected, in all voices.
 	// If a second argument is given, this is expected to be an llll containing the numbers of the voices for the selection 
-	// (default being <b>()</b>, meaning: all voices). For instance <b>selmeasures (4 12) (1 2 5)</b> selects the range of measures
+	// (default being <b>[]</b>, meaning: all voices]. For instance <b>selmeasures [4 12] [1 2 5]</b> selects the range of measures
 	// from 4 to 12 only in voices 1, 2 and 5. If a single number is given instead of the voices llll, the selection is performed only
 	// for the voice having such number.
 	// - If the word <m>sel</m> is followed by the symbol <b>chord</b> followed by one, two or three integers (representing an address), a certain chord is selected.
 	// The full syntax for the integers is: <m>voice_number</m> <m>measure_number</m> <m>chord_index</m>. If less elements are given, the first ones are considered
 	// to be by default 1's. The chord index is the counting index of the chord inside the measure. If the <m>measure_number</m> is replaced by the symbol <b>any</b>,
     // then the <m>chord_index</m> is interpreted as global (and not measure-wise).
-	// For instance, <b>sel chord 2 3</b> selects the third chord of second measure (of first voice), while <b>sel chord 4 2 3</b> does the same with the fourth voice. 
+	// For instance, <b>sel chord 2 3</b> selects the third chord of second measure [of first voice], while <b>sel chord 4 2 3</b> does the same with the fourth voice. 
 	// Negative positions are also allowed, counting backwards. Multiple chords can be selected at once, provided that instead of a l ofist integers one gives
-	// a sequence of wrapped lists of integers, for instance <b>sel chord (2 3) (4 1 2) (5 6 1)</b>.<br />
+	// a sequence of wrapped lists of integers, for instance <b>sel chord [2 3] [4 1 2] [5 6 1]</b>.<br />
 	// - If the word <m>sel</m> is followed by the symbol <b>note</b> followed by one, two, three or four integers (representing an address), a certain note is selected.
 	// The full syntax for the integers is: <m>voice_number</m> <m>measure_number</m> <m>chord_index</m> <m>note_index</m>. If less elements are given, the first ones are considered
 	// to be by default 1's. The chord index is the counting index of the chord inside the measure; the note index is taken from the lowest to the highest.
     // If the <m>measure_number</m> is replaced by the symbol <b>any</b>, then the <m>chord_index</m> is interpreted as global (and not measure-wise).
-	// For instance, <b>sel note 4 2 3</b> selects the third note of second chord of fourth measure (of first voice), while <b>sel note 5 4 2 3</b> does the same with the fifth voice. 
+	// For instance, <b>sel note 4 2 3</b> selects the third note of second chord of fourth measure [of first voice], while <b>sel note 5 4 2 3</b> does the same with the fifth voice. 
 	// Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
-	// a sequence of wrapped lists of integers, for instance <b>sel note (5 2 4 3) (1 1 1 -1)</b>.<br />
+	// a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4 3] [1 1 1 -1]</b>.<br />
     // - If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>rest if</b>, <b>marker if</b>, <b>breakpoint if</b>
     // or <b>tail if</b> followed by a
     // condition to be verified, a conditional selection on notes, rests, markers or pitch breakpoints (respectively) is performed.
@@ -5428,7 +5428,7 @@ int T_EXPORT main(void){
 	// You can use symbolic variables inside such expressions. <br />
 	// @copy BACH_DOC_SYMBOLIC_VARIABLES
 	// For instance <b>sel note if velocity == 100</b> selects all notes whose
-	// velocity is exactly equal to 100, while <b>round(cents / 100.) % 12 == 0</b> select all the C's.<br />
+	// velocity is exactly equal to 100, while <b>round[cents / 100.] % 12 == 0</b> select all the C's.<br />
 	// - If the word <m>sel</m> is followed by any other symbol or sequence of symbols, these are interpreted as names, and the notation items
 	// matching all these names (or a single name, if just one symbol is entered) are selected. <br />
 	// @marg 0 @name arguments @optional 0 @type llll
@@ -5450,42 +5450,42 @@ int T_EXPORT main(void){
     // @example sel measure 2 3 @caption select measure 2 in 3rd voice
     // @example sel measure 2 -1 @caption select measure 2 in last voice
     // @example sel measure range 2 @caption select measure 2 in all voices
-    // @example sel measure range (2) @caption the same
-    // @example sel measure range (2 4) @caption select measures from 2 to 4 (included) in all voices
-    // @example sel measure range (2 4) (1 4) @caption the same, but only from voices 1 through 4
-    // @example sel measure range (2 4) 1 @caption the same, but only for voice 1
-    // @example sel measure range (2 4) (1) @caption the same
+    // @example sel measure range [2] @caption the same
+    // @example sel measure range [2 4] @caption select measures from 2 to 4 (included) in all voices
+    // @example sel measure range [2 4] [1 4] @caption the same, but only from voices 1 through 4
+    // @example sel measure range [2 4] 1 @caption the same, but only for voice 1
+    // @example sel measure range [2 4] [1] @caption the same
     // @example sel marker 5 @caption select 5th marker
     // @example sel marker -2 @caption select one-but-last marker
-    // @example sel marker (1) (-2) (5) @caption select multiple markers
-    // @example sel chords (1 3 1) (2 2 2) (-2 5 4) @caption select multiple chord
-    // @example sel notes (1 3 2 4) (1 3 3 2) (2 4 -5 2) @caption select multiple notes
+    // @example sel marker [1] [-2] [5] @caption select multiple markers
+    // @example sel chords [1 3 1] [2 2 2] [-2 5 4] @caption select multiple chord
+    // @example sel notes [1 3 2 4] [1 3 3 2] [2 4 -5 2] @caption select multiple notes
     // @example sel John @caption select all items named 'John'
     // @example sel John Lennon @caption select all items named both 'John' and 'Lennon'
     // @example sel 1000 3000 6000 7200 @caption select notes between 1s and 3s, and between 6000 and 7200cents
     // @example sel 1000 3000 6000 7200 2 @caption same, for second voice only
-    // @example sel 1000 3000 6000 7200 (1 3 4) @caption same, for voices 1, 3 and 4
-    // @example sel 1000 3000 () () @caption select notes between 1s and 3s
-    // @example sel () () 4800 6000 @caption select notes below middle C
-    // @example sel () () () () -1 @caption select every note in last voice
-    // @example sel (3) (9) 6000 7200 @caption select notes in central octave from measure 3 to measure 9 (excluded)
-    // @example sel (3 1/4) (9.5) 6000 7200 @caption the same, from measure 3 after 1/4 to half of measure 9
-    // @example sel (2 1/4 3) (1 5 1/4) 6000 7200 @caption play from measure 3 after 1/4 in 2nd voice to measure 5 after 1/4 in 1st voice
-    // @example sel (2 1/4 3) (1 5 1/4) 6000 7200 4 @caption the same, but only select notes in voice 4
-    // @example sel () (2 2 3/8) () () 2 @caption select all notes before measure 3/8 after beginning of measure 2, voice 2 only
+    // @example sel 1000 3000 6000 7200 [1 3 4] @caption same, for voices 1, 3 and 4
+    // @example sel 1000 3000 [] [] @caption select notes between 1s and 3s
+    // @example sel [] [] 4800 6000 @caption select notes below middle C
+    // @example sel [] [] [] [] -1 @caption select every note in last voice
+    // @example sel [3] [9] 6000 7200 @caption select notes in central octave from measure 3 to measure 9 (excluded)
+    // @example sel [3 1/4] [9.5] 6000 7200 @caption the same, from measure 3 after 1/4 to half of measure 9
+    // @example sel [2 1/4 3] [1 5 1/4] 6000 7200 @caption play from measure 3 after 1/4 in 2nd voice to measure 5 after 1/4 in 1st voice
+    // @example sel [2 1/4 3] [1 5 1/4] 6000 7200 4 @caption the same, but only select notes in voice 4
+    // @example sel [] [2 2 3/8] [] [] 2 @caption select all notes before measure 3/8 after beginning of measure 2, voice 2 only
     // @example sel note if cents == 6000 @caption select all middle C's
-    // @example sel note if (cents % 1200) == 0 @caption select all C's
-    // @example sel note if (cents < 6000) && (duration < 1000) @caption select all notes <1s below middle C
+    // @example sel note if [cents % 1200] == 0 @caption select all C's
+    // @example sel note if [cents < 6000] && [duration < 1000] @caption select all notes <1s below middle C
     // @example sel note if symduration > 1/4 @caption select all notes longer than 1/4
-    // @example sel note if (symonset > 1/4) && (tie == 0) @caption select all notes whose onset in their measure is greater than 1/4 and have no starting or ending tie
+    // @example sel note if [symonset > 1/4] && [tie == 0] @caption select all notes whose onset in their measure is greater than 1/4 and have no starting or ending tie
     // @example sel note if tie == 1 @caption select notes that start a tie but do not end one
     // @example sel note if tie == 2 @caption select notes that end a tie but do not start one
     // @example sel note if tie == 3 @caption select notes that both start and end a tie
     // @example sel note if tie == 0 @caption select notes with no ties
-    // @example sel note if (measure == 4) && (velocity > 100)  @caption select notes in measure 4 with velocity > 100
+    // @example sel note if [measure == 4] && [velocity > 100]  @caption select notes in measure 4 with velocity > 100
     // @example sel rest if symduration <= 1/8 @caption select all rests shorter than 1/8
     // @example sel marker if onset > 5000 @caption select all markers with onset >5s
-    // @example sel breakpoint if (cents > 7200) && (velocity > 100) @caption select all pitch breakpoints >7200cents with velocity >100
+    // @example sel breakpoint if [cents > 7200] && [velocity > 100] @caption select all pitch breakpoints >7200cents with velocity >100
     // @example sel tail if cents > 6000 @caption select all tails above middle C
     // @seealso unsel, select, subsel, clearselection
 	class_addmethod(c, (method) score_select, "sel", A_GIMME, 0);
@@ -5543,8 +5543,8 @@ int T_EXPORT main(void){
     // @mattr where @type llll @default null @digest Sets a condition to be matched by selected items (the other ones are discarded)
     // @mattr until @type llll @default null @digest Sets a condition to be matched, otherwise perform the command again, until condition is met
     // @example goto 1000 @caption set selection to items which are active at 1sec
-    // @example goto (5 7/8) @caption set selection to items which are active at measure 5, after 7/8
-    // @example goto (() 71/8) @caption set selection to items which are active after 71/8 from the beginning (disregarding the measure)
+    // @example goto [5 7/8] @caption set selection to items which are active at measure 5, after 7/8
+    // @example goto [[] 71/8] @caption set selection to items which are active after 71/8 from the beginning (disregarding the measure)
     // @example goto next @caption select next notation item
     // @example goto prev @caption select previous notation item
     // @example goto next @repeat 10 @caption select the 10th next notation item
@@ -5571,7 +5571,7 @@ int T_EXPORT main(void){
     // @mattr incremental @type int @default 0 @digest If non-zero, assigns incremental numbering to selected markers in addition to names
     // @mattr progeny @type int @default 0 @digest If non-zero, assigns names to both selected chords and all their notes
     // @example name George @caption name selected elements as 'George'
-    // @example name (George Martin) (George Harrison) @caption assign complex llll name
+    // @example name [George Martin] [George Harrison] @caption assign complex llll name
     // @example name George @incremental 1 @caption also add unique incremental numbers to selected markers
     // @example name George @progeny 1 @caption if chords are selected also assign name to their notes
     // @seealso nameappend, clearnames, sel, unsel, select
@@ -5583,7 +5583,7 @@ int T_EXPORT main(void){
 	// to the already existing ones (see <m>name</m>).
 	// @marg 0 @name names @optional 0 @type llll
     // @example name Ringo @caption append 'Ringo' to selected element's names
-    // @example name (Ringo Starr) ((Low High Snare) (Sizzle Crash)) @caption append complex llll name
+    // @example name [Ringo Starr] [[Low High Snare] [Sizzle Crash]] @caption append complex llll name
     // @seealso name, clearnames
 	class_addmethod(c, (method) score_nameappend, "nameappend", A_GIMME, 0);
 
@@ -5660,8 +5660,8 @@ int T_EXPORT main(void){
     // @example onset 1000 @caption move selected markers to 1s
     // @example onset = 1000 @caption exactly the same
     // @example onset = onset + 1000 @caption shift selected markers by 1s forward
-    // @example onset = (index - 1) * 1000 @caption space all markers by 1s
-    // @example onset = "(pow(1.4, index) - 1)*1000" @caption the same, in rallentando
+    // @example onset = [index - 1] * 1000 @caption space all markers by 1s
+    // @example onset = "[pow[1.4, index] - 1]*1000" @caption the same, in rallentando
 	class_addmethod(c, (method) score_sel_change_onset, "onset", A_GIMME, 0);
 	
 	
@@ -5672,7 +5672,7 @@ int T_EXPORT main(void){
     // @example velocity = 120 @caption exactly the same
     // @example velocity = velocity * 1.2 @caption increase velocity
     // @example velocity = symduration*127 @caption assign velocity depending on symbolic duration
-    // @example velocity = "random(40, 121)" @caption assign velocity randomly
+    // @example velocity = "random[40, 121]" @caption assign velocity randomly
 	class_addmethod(c, (method) score_sel_change_velocity, "velocity", A_GIMME, 0);
 
     
@@ -5694,8 +5694,8 @@ int T_EXPORT main(void){
     // @example cents 6000 @caption change selected notes to middle C's
     // @example cents = 6000 @caption exactly the same
     // @example cents = cents * 1.2 @caption stretch pitches
-    // @example cents = "random(48, 73)*100" @caption assign pitch randomly
-    // @example cents = 6000 + (cents % 1200) @caption collapse to middle octave
+    // @example cents = "random[48, 73]*100" @caption assign pitch randomly
+    // @example cents = 6000 + [cents % 1200] @caption collapse to middle octave
 	class_addmethod(c, (method) score_sel_change_cents, "cents", A_GIMME, 0);
 
     
@@ -5707,7 +5707,7 @@ int T_EXPORT main(void){
     // @example pitch = pitch + D0 @caption transpose by major second
     // @example pitch = pitch + Eb0 @caption transpose by minor third
     // @example pitch = pitch - C1 @caption transpose one octave down
-    // @example pitch = (pitch % C1) + C5 @caption collapse to middle octave
+    // @example pitch = [pitch % C1] + C5 @caption collapse to middle octave
     class_addmethod(c, (method) score_sel_change_pitch, "pitch", A_GIMME, 0);
 
     
@@ -5718,16 +5718,16 @@ int T_EXPORT main(void){
     
     // @method cents @digest Modify the measureinfo of selected measures
     // @description Modifies the measureinfo of select measures. The expected syntax is the standard measureinfo syntax,
-    // without the outermost level of parentheses (e.g. <b>measureinfo (4 4) (3/8 120)</b> is a valid message). <br />
+    // without the outermost level of parentheses (e.g. <b>measureinfo [4 4] [3/8 120]</b> is a valid message). <br />
     // @copy BACH_DOC_MEASUREINFO_SYNTAX
     // @marg 0 @name measureinfo @optional 0 @type llll
-    // @example measureinfo (5 4) @caption change selected measures' time signature to 5/4
-    // @example measureinfo (5 4) (1/4 120) @caption the same, but also add quarter = 120 tempo
-    // @example measureinfo (5 4) ((1/4 120) (1/4 160 1/2)) @caption the same, but also define a quarter = 160 tempo after 1/2 from the measure beginning
-    // @example measureinfo (5 4) ((1/4 120 0 1) (1/4 160 1/2)) @caption the same, with accelerando
-    // @example measureinfo ((3 2 2) 8) @caption change time signature to 3+2+2/8
-    // @example measureinfo ((3 2 2) 8) ((1/4 120) (1/4 180 1/2)) @caption the same, but also add two tempi inside the measure
-    // @example measureinfo (11 8) (boxes 3/8 2/8 3/8 4/8) @caption change time signature to 11/8 and assign custom 3+2+3+4 boxes
+    // @example measureinfo [5 4] @caption change selected measures' time signature to 5/4
+    // @example measureinfo [5 4] [1/4 120] @caption the same, but also add quarter = 120 tempo
+    // @example measureinfo [5 4] [[1/4 120] [1/4 160 1/2]] @caption the same, but also define a quarter = 160 tempo after 1/2 from the measure beginning
+    // @example measureinfo [5 4] [[1/4 120 0 1] [1/4 160 1/2]] @caption the same, with accelerando
+    // @example measureinfo [[3 2 2] 8] @caption change time signature to 3+2+2/8
+    // @example measureinfo [[3 2 2] 8] [[1/4 120] [1/4 180 1/2]] @caption the same, but also add two tempi inside the measure
+    // @example measureinfo [11 8] [boxes 3/8 2/8 3/8 4/8] @caption change time signature to 11/8 and assign custom 3+2+3+4 boxes
     // @seealso symduration
     class_addmethod(c, (method) score_sel_change_measureinfo, "measureinfo", A_GIMME, 0);
 
@@ -5748,7 +5748,7 @@ int T_EXPORT main(void){
     // @example symduration = symduration * 2 @caption double the duration
     // @example symduration = symduration * 2 @adaptts 1 @caption ...and adapt measureinfo in this voice only
     // @example symduration = symduration * 2 @adaptts 2 @caption ...and adapt measureinfo in all voices
-    // @example symduration = (velocity/16) * 8 @caption assign durations depending on velocity
+    // @example symduration = [velocity/16] * 8 @caption assign durations depending on velocity
     // @seealso measureinfo, autorhythm, autobeam
     class_addmethod(c, (method) score_sel_change_symduration, "symduration", A_GIMME, 0);
 
@@ -5774,15 +5774,15 @@ int T_EXPORT main(void){
 	// @method addslot @digest Set the content of one or more slots for selected notes
 	// @description @copy BACH_DOC_MESSAGE_ADDSLOT
 	// @marg 0 @name slots @optional 0 @type llll
-    // @example addslot (6 0.512) @caption fill (float) slot 6 with number 0.512
-    // @example addslot (5 42) @caption fill (int) slot 5 with number 42
-    // @example addslot (7 "Lorem Ipsum" ) @caption fill (text) slot 7 with some text
-    // @example addslot (10 (John George (Ringo) (Brian)) ) @caption fill (llll) slot 10 with an llll
-    // @example addslot (3 10 20 30) @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
-    // @example addslot (2 (0 0 0) (0.5 0 1) (1 1 0.2) @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
-    // @example addslot (amplienv (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for slot named 'amplienv'
-    // @example addslot (active (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for currently open slot
-    // @example addslot (3 10 20 30) (2 (0 0 0) (0.5 0 1) (1 1 0.2)) @caption set more slots at once
+    // @example addslot [6 0.512] @caption fill (float) slot 6 with number 0.512
+    // @example addslot [5 42] @caption fill (int) slot 5 with number 42
+    // @example addslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
+    // @example addslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
+    // @example addslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
+    // @example addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
+    // @example addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
+    // @example addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
+    // @example addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
     // @seealso changeslotitem, eraseslot, filltiesequenceswithslots
 	class_addmethod(c, (method) score_sel_add_slot, "addslot", A_GIMME, 0);
 
@@ -5872,8 +5872,8 @@ int T_EXPORT main(void){
     // @marg 1 @name element_position_or_wrapped_xcoord @optional 0 @type int/llll
     // @mattr thresh @type float @default 0. @digest Tolerance threshold for X matching
     // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
-    // @example deleteslotitem 3 (0.7) @caption delete item 3rd slot matching X = 0.7
-    // @example deleteslotitem 3 (0.7) @thresh 0.1 @caption the same, with a tolerance of 0.1
+    // @example deleteslotitem 3 [0.7] @caption delete item 3rd slot matching X = 0.7
+    // @example deleteslotitem 3 [0.7] @thresh 0.1 @caption the same, with a tolerance of 0.1
     // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
     class_addmethod(c, (method) score_sel_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 
@@ -5916,10 +5916,10 @@ int T_EXPORT main(void){
     // @example inscreen john @caption display element named 'john' in domain
     // @example inscreen cursor @caption display playhead in domain
     // @example inscreen end @caption display end of score in domain
-    // @example inscreen (4) @caption display measure 4 in domain
-    // @example inscreen (4.5) @caption display position at half of measure 4 in domain
-    // @example inscreen (4 1/4) @caption display position in measure 4 after 1/4 (of first voice) in domain
-    // @example inscreen (3 4 1/4) @caption display position of 1/4 after beginning of measure 4 in 3rd voice in domain
+    // @example inscreen [4] @caption display measure 4 in domain
+    // @example inscreen [4.5] @caption display position at half of measure 4 in domain
+    // @example inscreen [4 1/4] @caption display position in measure 4 after 1/4 (of first voice) in domain
+    // @example inscreen [3 4 1/4] @caption display position of 1/4 after beginning of measure 4 in 3rd voice in domain
     // @seealso inscreenpos, inscreenmeas
 	class_addmethod(c, (method) score_inscreen, "inscreen", A_GIMME, 0);
 
@@ -5936,10 +5936,10 @@ int T_EXPORT main(void){
     // @example inscreenpos 0.9 john @caption display element named 'john' at 90% of the domain
     // @example inscreenpos 0.9 cursor @caption display playhead at 90% of the domain
     // @example inscreenpos 0.9 end @caption display end of score at 90% of the domain
-    // @example inscreenpos 0.2 (4) @caption display beginning of measure 4 at 20% of the domain
-    // @example inscreenpos 0.2 (4.5) @caption the same, for the position at half of measure 4
-    // @example inscreenpos 0.2 (4 1/4) @caption the same, for the position in measure 4 after 1/4 (of first voice) in domain
-    // @example inscreenpos 0.2 (3 4 1/4) @caption the same, for the position of 1/4 after beginning of measure 4 in 3rd voice in domain
+    // @example inscreenpos 0.2 [4] @caption display beginning of measure 4 at 20% of the domain
+    // @example inscreenpos 0.2 [4.5] @caption the same, for the position at half of measure 4
+    // @example inscreenpos 0.2 [4 1/4] @caption the same, for the position in measure 4 after 1/4 (of first voice) in domain
+    // @example inscreenpos 0.2 [3 4 1/4] @caption the same, for the position of 1/4 after beginning of measure 4 in 3rd voice in domain
     // @seealso inscreen, inscreenmeas
 	class_addmethod(c, (method) score_inscreenpos, "inscreenpos", A_GIMME, 0);
 	
@@ -6027,16 +6027,16 @@ int T_EXPORT main(void){
 	// @method setmeasureparameters @digest Set measure parameters
 	// @description The <m>setmeasureparameters</m> will set specified measure parameters for a given measure.
 	// The measure number is given as first argument: if it is a single integer, measure parameters are applied to all measure (throughout all voices)
-	// having such measure number; if it is a wrapped list in the form <b>(<m>voice_number</m> <m>measure_number</m>)</b>, measure parameters are only applied
+	// having such measure number; if it is a wrapped list in the form <b>[<m>voice_number</m> <m>measure_number</m>]</b>, measure parameters are only applied
 	// to the measure identified by the <m>measure_number</m> and for the voice identified by the <m>voice_number</m>.
 	// Any further argument is an <m>SPECIFICATION</m> llll, specifying the measure parameter to be changed, yielding a complete syntax of
 	// <b>setmeasureparameters <m>MEASURE</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...</b>. <br />
 	// @copy BACH_DOC_MEASUREINFO_SYNTAX_SINGLE_SPECIFICATION	
 	// @marg 0 @name measure @optional 0 @type llll
-    // @example setmeasureparameters 3 (width 400) (barline d) @caption set measure 3 to have width 400 pixel and dashed barline
-    // @example setmeasureparameters (2 3) (width 400) (barline d) @caption the same, only for measure 3 of voice 2
-    // @example setmeasureparameters 5 (shownumber -2) (barline h) @caption set measure 5 to have show measure number -2 and have hidden barline
-    // @example setmeasureparameters 2 (shownumber off) @caption set measure 2 not to show any number
+    // @example setmeasureparameters 3 [width 400] [barline d] @caption set measure 3 to have width 400 pixel and dashed barline
+    // @example setmeasureparameters [2 3] [width 400] [barline d] @caption the same, only for measure 3 of voice 2
+    // @example setmeasureparameters 5 [shownumber -2] [barline h] @caption set measure 5 to have show measure number -2 and have hidden barline
+    // @example setmeasureparameters 2 [shownumber off] @caption set measure 2 not to show any number
     // @seealso llll
 	class_addmethod(c, (method) score_setmeasureparameters, "setmeasureparameters", A_GIMME, 0);
 
@@ -6059,10 +6059,10 @@ int T_EXPORT main(void){
 	// The playhead cursor is moved to the first marker matching all the names (if any).
 	// @marg 0 @name position @optional 0 @type llll
     // @example setcursor 2000 @caption set the playhead at 2s
-    // @example setcursor (4) @caption set the playhead at beginning of measure 4
-    // @example setcursor (4.5) @caption set the playhead at half of measure 4
-    // @example setcursor (4 1/4) @caption set the playhead after 1/4 of measure 4
-    // @example setcursor (2 4 1/4) @caption set the playhead after 1/4 of measure 4, in second voice
+    // @example setcursor [4] @caption set the playhead at beginning of measure 4
+    // @example setcursor [4.5] @caption set the playhead at half of measure 4
+    // @example setcursor [4 1/4] @caption set the playhead after 1/4 of measure 4
+    // @example setcursor [2 4 1/4] @caption set the playhead after 1/4 of measure 4, in second voice
     // @example setcursor John @caption set the cursor at the onset of the first item named 'John'
     // @example setcursor John Lennon @caption set the cursor at the onset of the first item named 'John' and 'Lennon'
     // @seealso getcursor, showcursor, hidecursor
@@ -6095,19 +6095,19 @@ int T_EXPORT main(void){
 	// the marker onset, in milliseconds, and the marker is assigned as attached to absolute millisecond position, or a timepoint llll, 
 	// in which case the marker is assigned as measure-attached to the point defined by the timepoint. <br />
 	// @copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
-	// For instance, <b>addmarker 1000 foo</b> adds a marker at 1000ms with the name "foo", while <b>addmarker (1 1/4 3) faa</b> adds a marker 
+	// For instance, <b>addmarker 1000 foo</b> adds a marker at 1000ms with the name "foo", while <b>addmarker [1 1/4 3] faa</b> adds a marker 
 	// named "faa" at attached to the position: measure 1, onset 1/4, voice 3.
 	// If several names need to be associated to the marker, the symbol can be replaced by a list of symbols,
-	// for instance <b>addmarker 1000 (foo fee)</b>. If no names need to be associated to the marker, leave <b>()</b> as
+	// for instance <b>addmarker 1000 [foo fee]</b>. If no names need to be associated to the marker, leave <b>[]</b> as
 	// name llll.
 	// @marg 0 @name position_ms @optional 0 @type float
 	// @marg 1 @name name_or_names @optional 0 @type llll
     // @example addmarker 2000 George @caption add an absolute-position marker named 'George' at 2s
-    // @example addmarker 2000 (Foo Fee Faa) @caption the same, with a complex llll name
+    // @example addmarker 2000 [Foo Fee Faa] @caption the same, with a complex llll name
     // @example addmarker cursor John @caption add an absolute-position marker named 'John' at the current playhead position
-    // @example addmarker (4) John @caption add a measure-attached marker named John at beginning of measure 4 (1st voice)
-    // @example addmarker (4 1/2) John @caption the same, after 1/2 of measure 4 (1st voice)
-    // @example addmarker (3 4 1/2) John @caption the same, after 1/2 of measure 4 (3rd voice)
+    // @example addmarker [4] John @caption add a measure-attached marker named John at beginning of measure 4 (1st voice)
+    // @example addmarker [4 1/2] John @caption the same, after 1/2 of measure 4 (1st voice)
+    // @example addmarker [3 4 1/2] John @caption the same, after 1/2 of measure 4 (3rd voice)
     // @seealso deletemarker, clearmarkers
 	class_addmethod(c, (method) score_addmarker, "addmarker", A_GIMME, 0);
 	
@@ -6130,15 +6130,15 @@ int T_EXPORT main(void){
 	// @method getmarker @digest Retrieve marker information
 	// @description The <m>getmarker</m>, without any further argument, will output all the markers from the playout in the form 
 	// <b>markers <m>MARKER1</m> <m>MARKER2</m>...</b>, where each <m>MARKER</m> is an llll of the form
-	// <b>(<m>POSITION</m> <m>name_or_names</m> none)</b>, where the <m>POSITION</m> is either a floating point number (if marker is attached to
+	// <b>[<m>POSITION</m> <m>name_or_names</m> none]</b>, where the <m>POSITION</m> is either a floating point number (if marker is attached to
 	// an absolute position in milliseconds) or the marker timepoint (if the marker is attached to a given measure position).
 	// The <m>name_or_names</m> parameter is either a single symbol or integer (if the marker has a single name), or an llll containing all the names
-	// listed, in the form <b>(<m>name1</m> <m>name2</m> ...)</b>, where each <m>name</m> is a symbol or an integer. If a marker has no name, 
-	// then <b>()</b> is used. Finally the <b>none</b> symbol represents the marker role (unsupported in <o>bach.score</o> but output for compatibility
+	// listed, in the form <b>[<m>name1</m> <m>name2</m> ...]</b>, where each <m>name</m> is a symbol or an integer. If a marker has no name, 
+	// then <b>[]</b> is used. Finally the <b>none</b> symbol represents the marker role (unsupported in <o>bach.score</o> but output for compatibility
 	// with <o>bach.roll</o> and for a possible future usage). <br />
 	// If you send a message <b>getmarker @namefirst 1</b>, all the markers will be output from the playout in the form
 	// <b>markers <m>MARKER1</m> <m>MARKER2</m>...</b>, where each <m>MARKER</m> is an llll of the form
-	// <b>(<m>name_or_names</m> <m>POSITION</m> none)</b>. <br />
+	// <b>[<m>name_or_names</m> <m>POSITION</m> none]</b>. <br />
 	// You can retrieve the information about a specific marker by adding the marker name or names as arguments. In this case you'll get
 	// from the playout an llll in the form <b>marker <m>name_or_names</m> <m>POSITION</m> none</b>, where all
 	// the parameters are the same as above.
@@ -6163,7 +6163,7 @@ int T_EXPORT main(void){
 	// - Previously saved <o>bach.score</o> content, either in native or in text format (see <m>write</m> and <m>writetxt</m> messages). 
 	// These might include also files exported in bach format from OpenMusic or PWGL. <br />
 	// - MusicXML files (see below for options). <br />
-	// MIDI files are not imported directly into bach score. They should be imported into a <o>bach.roll</o>, possibly with a <b>read (markmeasures 1)</b> specification, 
+	// MIDI files are not imported directly into bach score. They should be imported into a <o>bach.roll</o>, possibly with a <b>read [markmeasures 1]</b> specification, 
 	// and then quantized with <o>bach.quantize</o>. <br />
     // MusicXML files can have some import attributes: <br />
     // - <b>dynamics</b>: if non-zero, dynamics are imported into the currently linked slot (see <m>linkdynamicstoslot</m>). <br />
@@ -6223,12 +6223,12 @@ int T_EXPORT main(void){
     // The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
     // allowing the choice of the location and file name for saving.
     // Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
-    // Such lllls will be in the form <b>(<m>specification_name</m> <m>specification_value</m>)</b>). Available specifications are: <br />
+    // Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
     // - <b>exportmarkers</b> (default: 1): if non-0, all the markers in the score will be exported. <br />
-    // - <b>voices</b> (default: <b>()</b>): if a list of voices is provided, then only the specified voices will be exported.
+    // - <b>voices</b> [default: <b>[]</b>): if a list of voices is provided, then only the specified voices will be exported.
     // If no list is provided, then all the voices of the score will be exported. Ranges can also be
-    // expressed, as sublists. For example, <b>(voices 1 3 5)</b> will export the first, third and fifth voice,
-    // while <b>(voices (1 5) 8)</b> will export all the voices from 1 to 5, and the 8th voice. <br />
+    // expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,
+    // while <b>[voices [1 5] 8]</b> will export all the voices from 1 to 5, and the 8th voice. <br />
     // - <b>format</b> (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks). <br />
     // – <b>resolution</b> (default: 960): the number of MIDI ticks per beat. <br />
     // - <b>temporampsamplingrate</b> (default 240): is an option expressing the maximum duration, expressed in MIDI ticks,
@@ -6258,15 +6258,15 @@ int T_EXPORT main(void){
     // allowing the choice of the location and file name for saving.
     // Furthermore, if a list of voices is provided as "voice" message argument, then only the specified voices will be exported.
     // If no list is provided, then all the voices of the score will be exported. Ranges can also be
-    // expressed, as sublists. For example, <b>(voices 1 3 5)</b> will export the first, third and fifth voice,
-    // while <b>(voices (1 5) 8)</b> will export all the voices from 1 to 5, and the 8th voice. <br />
+    // expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,
+    // while <b>[voices [1 5] 8]</b> will export all the voices from 1 to 5, and the 8th voice. <br />
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr voices @type llll @default null @digest Voices to be exported (<b>null</b> means all voices)
     // @example exportlilypond @caption export LilyPond file via dialog box
     // @example exportlilypond myfile.ly @caption export specific LilyPond file
     // @example exportlilypond myfile.ly @voices 1 3 @caption exports voices 1 and 3
-    // @example exportlilypond myfile.ly @voices (1 3) @caption exports voices 1 through 3
-    // @example exportlilypond myfile.ly @voices (1 3) 5 7 @caption exports voices 1 through 3, 5 and 7
+    // @example exportlilypond myfile.ly @voices [1 3] @caption exports voices 1 through 3
+    // @example exportlilypond myfile.ly @voices [1 3] 5 7 @caption exports voices 1 through 3, 5 and 7
     // @seealso write, writetxt, read, exportxml, exportom, exportpwgl, exportlilypondpdf
     class_addmethod(c, (method) score_exportlilypond, "exportlilypond", A_GIMME, 0);
     
@@ -6289,17 +6289,17 @@ int T_EXPORT main(void){
     // The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
     // allowing the choice of the location and file name for saving.
     // Furthermore, some exporting specifications are available, and each has to be given as llll after the (optional) file name.
-    // Such lllls will be in the form <b>(<m>specification_name</m> <m>specification_value</m>)</b>). Available specifications are: <br />
+    // Such lllls will be in the form <b>[<m>specification_name</m> <m>specification_value</m>]</b>). Available specifications are: <br />
     // - <b>velocity</b> (default: 0): if non-0, the velocity for each note will be exported as a MusicXML direction.
     // This is not always desirable, as the direction itself will appear as an empty expression when
     // imported, for instance, into a software like Finale. <br />
-    // - <b>directionslots</b> (default: <b>null</b>): if one or more slots numbers are specified, their contents will be converted
-    // into text and exported as generic text directions. You can use range syntax to specify slot ranges, such as <b>(7 10)</b> meaning from 7th to 10th slot. <br />
+    // - <b>directionslots</b> [default: <b>null</b>): if one or more slots numbers are specified, their contents will be converted
+    // into text and exported as generic text directions. You can use range syntax to specify slot ranges, such as <b>[7 10]</b> meaning from 7th to 10th slot. <br />
     // - <b>dynamics</b>: if non-zero, dynamics are exported from the currently linked slot (see <m>linkdynamicstoslot</m>). <br />
     // - <b>noteheads</b>: if non-zero, dynamics are exported from the currently linked slot (see <m>linknoteheadstoslot</m>). <br />
     // - <b>articulations</b>: if non-zero, articulations are exported from the currently linked slot (see <m>linkarticulationstoslot</m>). <br />
     // - <b>lyrics</b>: if non-zero, lyrics are exported from the currently linked slot (see <m>linklyricstoslot</m>). <br />
-    // - <b>parenthesizedquartertones</b> (default: <b>0</b>): export quarter tones as parenthesized versions of semitonal accidentals
+    // - <b>parenthesizedquartertones</b> [default: <b>0</b>): export quarter tones as parenthesized versions of semitonal accidentals
     // which are a quartertone lower. For instance, if you set this specification to 1, a quarter sharp will be exported as a parenthesized
     // natural, a quarter flat will be exported as a parenthesized flat, and so on.
     // This specification should be considered as a workaround to ease quartertone export to Finale or similar pieces of software.
@@ -6312,7 +6312,7 @@ int T_EXPORT main(void){
     // of the standard accidentals. You can easily map inside finale the parenthesized accidentals to the glyphs of
     // quartertone accidentals, via your favorite quartertone accidental font. A parenthesized natural will be displayed as
     // a quarter-sharp; a parenthesized sharp as a three-quarter-sharp, and so on. Everything, if parenthesized, will step up a
-    // quarter tone. Once you have set up your new Finale document in this way, you can use the <b>(parenthesizedquartertones 1)</b>
+    // quarter tone. Once you have set up your new Finale document in this way, you can use the <b>[parenthesizedquartertones 1]</b>
     // specification in order to export quartertones in this way.
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr velocity @type int @default 0 @digest If non-zero, notes velocity i s exported as MusicXML direction
@@ -6323,14 +6323,14 @@ int T_EXPORT main(void){
     // @mattr lyrics @type int @default 1 @digest If non-zero, lyrics are exported from the lyrics slot, if any
     // @mattr parenthesizedquartertones @type int @default 0 @digest If non-zero, exports quarter tones as parenthesized version of semitonal accidentals
     // @example exportxml @caption export MusicXML file via dialog box
-    // @example exportxml myfile.xml (velocity 1) @caption also export velocity as MusicXML direction
-    // @example exportxml myfile.xml (directionslots 7) @caption also export content of slot 7 as MusicXML directions
-    // @example exportxml myfile.xml (directionslots 7 9) @caption also export content of slot 7 and 9 as MusicXML directions
-    // @example exportxml myfile.xml (directionslots (7 11)) @caption also export content of slots 7 through 11 as MusicXML directions
-    // @example exportxml myfile.xml (dynamics 0) @caption don't export dynamics
-    // @example exportxml myfile.xml (lyrics 0) (articulations 0) @caption don't export lyrics, nor articulations
-    // @example exportxml myfile.xml (noteheads 0) @caption don't export noteheads
-    // @example exportxml myfile.xml (parenthesizedquartertones 1) @caption also export quartertones as parenthesized versions of the standard accidentals right below them (only useful with Finale)
+    // @example exportxml myfile.xml [velocity 1] @caption also export velocity as MusicXML direction
+    // @example exportxml myfile.xml [directionslots 7] @caption also export content of slot 7 as MusicXML directions
+    // @example exportxml myfile.xml [directionslots 7 9] @caption also export content of slot 7 and 9 as MusicXML directions
+    // @example exportxml myfile.xml [directionslots [7 11]] @caption also export content of slots 7 through 11 as MusicXML directions
+    // @example exportxml myfile.xml [dynamics 0] @caption don't export dynamics
+    // @example exportxml myfile.xml [lyrics 0] [articulations 0] @caption don't export lyrics, nor articulations
+    // @example exportxml myfile.xml [noteheads 0] @caption don't export noteheads
+    // @example exportxml myfile.xml [parenthesizedquartertones 1] @caption also export quartertones as parenthesized versions of the standard accidentals right below them (only useful with Finale)
     // @seealso write, writetxt, read, exportxml, exportom, exportpwgl, exportlilypond, exportlilypondpdf
     class_addmethod(c, (method) score_exportxml, "exportxml", A_GIMME, 0);
     
@@ -6514,19 +6514,19 @@ int T_EXPORT main(void){
     // • the "exp" attribute sets the exponent for the conversion. <br />
     // @copy BACH_DOC_DYNAMICS_SPECTRUM
     // Moreover, the "mapping" attribute defines a non-standard or more general mapping via an llll specification. Such parameter has syntax
-    // <b>(<m>dynamics1</m> <m>velocity1</m>) (<m>dynamics2</m> <m>velocity2</m>)</b>.
+    // <b>[<m>dynamics1</m> <m>velocity1</m>] [<m>dynamics2</m> <m>velocity2</m>]</b>.
     // You might also define a the dynamics association you want to drift from the default values; any other marking which does not show up in the
     // mapping will be converted via the default conversion equation.
     // @marg 0 @name selection @optional 1 @type symbol
     // @marg 1 @name slot_number @optional 1 @type int
     // @mattr maxchars @type int @default 4 @digest Width of the dynamics spectrum
     // @mattr exp @type float @default 0.8 @digest Exponent for the conversion
-    // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs
+    // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>[<m>dynamics</m> <m>velocity</m>]</b> pairs
     // @mattr breakpointmode @type int @default 0 @digest Breakpoint handling (0 = handle existing ones, 1 = add new ones to match dynamics, 2 = also clear)
     // @seealso velocities2dynamics, checkdynamics, fixdynamics
     // @example dynamics2velocities @caption convert dynamics to velocities throughout the whole score
     // @example dynamics2velocities selection @caption same thing, for selected items only
-    // @example dynamics2velocities @mapping (mp 70) (mf 80) @caption customly map "mp" to velocity = 70 and "mf" to velocity = 80
+    // @example dynamics2velocities @mapping [mp 70] [mf 80] @caption customly map "mp" to velocity = 70 and "mf" to velocity = 80
     // @example dynamics2velocities @maxchars 6 @caption use broader dynamics spectrum (from "pppppp" to "ffffff")
     // @example dynamics2velocities @maxchars 2 @caption use narrower dynamics spectrum (from "pp" to "ff")
     // @example dynamics2velocities @maxchars 2 @exp 0.5 @caption use narrower spectrum and a steeper mapping curve
@@ -6544,7 +6544,7 @@ int T_EXPORT main(void){
     // • the "exp" attribute sets the exponent for the conversion. <br />
     // @copy BACH_DOC_DYNAMICS_SPECTRUM
     // Moreover, the "mapping" attribute defines a non-standard or more general mapping via an llll specification. Such parameter has syntax
-    // <b>(mapping (<m>dynamics1</m> <m>velocity1</m>) (<m>dynamics2</m> <m>velocity2</m>)...)</b>.
+    // <b>[mapping [<m>dynamics1</m> <m>velocity1</m>] [<m>dynamics2</m> <m>velocity2</m>]...]</b>.
     // Differently from <m>dynamics2velocities</m>, if you define a mapping, you need to define the velocity association for each of the dynamic marking
     // you want to use. <br />
     // An "unnecessary" attribute toggles whether unnecessary dynamic markings should by default be dropped (default is 1: yes, use 0 to turn this of). <br />
@@ -6553,13 +6553,13 @@ int T_EXPORT main(void){
     // @marg 1 @name slot_number @optional 1 @type int
     // @mattr maxchars @type int @default 4 @digest Width of the dynamics spectrum
     // @mattr exp @type float @default 0.8 @digest Exponent for the conversion
-    // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs
+    // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>[<m>dynamics</m> <m>velocity</m>]</b> pairs
     // @mattr unnecessary @type int @default 1 @digest If non-zero, drops unnecessary dynamic markings
     // @mattr thresh @type float @default 1. @digest Hairpin detection threshold
     // @seealso dynamics2velocities, checkdynamics, fixdynamics
     // @example velocities2dynamics @caption convert velocities to dynamics throughout the whole score
     // @example velocities2dynamics selection @caption same thing, for selected items only
-    // @example velocities2dynamics @mapping (p 40) (mp 70) (mf 90) (f 110) @caption use only "p", "mp", "mf", "f" symbols, with the defined mappings
+    // @example velocities2dynamics @mapping [p 40] [mp 70] [mf 90] [f 110] @caption use only "p", "mp", "mf", "f" symbols, with the defined mappings
     // @example velocities2dynamics @maxchars 6 @caption use broader dynamics spectrum (from "pppppp" to "ffffff")
     // @example velocities2dynamics @maxchars 2 @caption use narrower dynamics spectrum (from "pp" to "ff")
     // @example velocities2dynamics @maxchars 2 @exp 0.5 @caption use narrower spectrum and a steeper mapping curve
@@ -6578,8 +6578,8 @@ int T_EXPORT main(void){
     // inside the <b>bach.score</b> which exist at the given timepoint: a left- and a right-sided note. All breakpoints and temporal slots will be
     // properly split accordingly. If timepoints contain voice numbers, only specific voices will be split; otherwise all voices will be split
     // @marg 0 @name timepoints @optional 0 @type llll
-    // @example slice (3 1/2) @caption slice all notes at measure 3 after 1/2
-    // @example slice (4 3 1/2) @caption ...only in voice 4
+    // @example slice [3 1/2] @caption slice all notes at measure 3 after 1/2
+    // @example slice [4 3 1/2] @caption ...only in voice 4
     class_addmethod(c, (method) score_slice, "slice", A_GIMME, 0);
     
     
@@ -6868,7 +6868,7 @@ int T_EXPORT main(void){
 	// This attribute is active only if <m>outputtrees</m> is set to "All Outlets": in this case the duration outlet will
 	// output durations structured as the rhythmic tree. If this attribute is set to 1, after each note which starts a tie,
 	// a "t" symbol will be put, identifying such tie. For instance: 
-	// <b>( ( ( 1/8 t ( 1/24 1/24 1/24 ) ) ( ( ( -1/16 1/64 t ) ( 1/64 1/64 1/64 t ) ) ( 1/16 1/16 ) ) -1/2 ) )</b>.
+	// <b>[ [ [ 1/8 t [ 1/24 1/24 1/24 ] ] [ [ [ -1/16 1/64 t ] [ 1/64 1/64 1/64 t ] ] [ 1/16 1/16 ] ] -1/2 ] ]</b>.
 
 	CLASS_ATTR_CHAR(c,"writetrees",0, t_notation_obj, write_trees);
 	CLASS_ATTR_STYLE_LABEL(c,"writetrees",0,"onoff","Incorporate Tree Information Upon Write or Writetxt");
@@ -6893,8 +6893,8 @@ int T_EXPORT main(void){
 	// @description Toggles the ability to join tuplets automatically when possible. 
 	// For instance, it will to gather two adjacent triplets into a single 6-plet.
 	// This is handy in most situations; for instance if we had a rhythm whose duration tree looked like
-	// <b>((1/24 1/24 1/24) (1/24 1/24 1/24))</b>, the algorithm would join the two triplets of sixteenth notes into
-	// a single sextuplet <b>(1/24 1/24 1/24 1/24 1/24 1/24)</b>. 
+	// <b>[[1/24 1/24 1/24] [1/24 1/24 1/24]]</b>, the algorithm would join the two triplets of sixteenth notes into
+	// a single sextuplet <b>[1/24 1/24 1/24 1/24 1/24 1/24]</b>. 
 	// Such joining is performed by taking care of delimiting beat levels (e.g. in a 4/4 time signature, eighth triplets are never 
 	// joined into 6-plets).
 
@@ -6904,9 +6904,9 @@ int T_EXPORT main(void){
 	CLASS_ATTR_FILTER_CLIP(c,"simplifytuplets", 0, 1);
 	CLASS_ATTR_ACCESSORS(c, "simplifytuplets", (method)NULL, (method)score_setattr_simplifytuplets);	
 	// @description Toggles the ability to parse adjacent tuplets into simple ones, having bigger units. 
-	// For instance, if we had a rhythm whose duration tree looked like <b>(1/6 1/12 t) (1/12 1/6)</b>,
+	// For instance, if we had a rhythm whose duration tree looked like <b>[1/6 1/12 t] [1/12 1/6]</b>,
 	// where "t" represents a tie, the algorithm would merge the two tuplets of eighth notes into a bigger
-	// tuplet of quarter notes: <b>(1/6 1/6 1/6)</b>.
+	// tuplet of quarter notes: <b>[1/6 1/6 1/6]</b>.
 
 	CLASS_ATTR_CHAR(c,"beamgracesequences",0, t_notation_obj, try_to_beam_grace_sequences);
 	CLASS_ATTR_STYLE_LABEL(c,"beamgracesequences",0,"onoff","Beam Grace Sequences When Possible");

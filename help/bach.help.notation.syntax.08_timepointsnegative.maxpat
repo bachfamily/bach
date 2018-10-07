@@ -109,7 +109,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 318.666687, 126.0, 23.0 ],
 					"style" : "",
-					"text" : "inscreenpos 0.5 (-1)"
+					"text" : "inscreenpos 0.5 [-1]"
 				}
 
 			}
@@ -200,7 +200,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 68.5, 125.0, 23.0 ],
 					"style" : "",
-					"text" : "addmarker (-1) john"
+					"text" : "addmarker [-1] john"
 				}
 
 			}
@@ -215,7 +215,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 61.5, 150.5, 163.0, 23.0 ],
 					"style" : "",
-					"text" : "addmarker (1 1 -1/4) ringo"
+					"text" : "addmarker [1 1 -1/4] ringo"
 				}
 
 			}
@@ -230,7 +230,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 34.5, 104.5, 177.0, 23.0 ],
 					"style" : "",
-					"text" : "addmarker (-1 -2 1/4) george"
+					"text" : "addmarker [-1 -2 1/4] george"
 				}
 
 			}

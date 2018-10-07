@@ -160,7 +160,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 41.0, 233.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (type function) (range 0 1)))"
+					"text" : "[slotinfo [1 [type function] [range 0 1]]]"
 				}
 
 			}

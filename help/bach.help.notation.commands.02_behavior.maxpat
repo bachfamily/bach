@@ -47,7 +47,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 451.5, 451.0, 126.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (key w)))"
+					"text" : "[slotinfo [1 [key w]]]"
 				}
 
 			}
@@ -224,7 +224,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 137.0, 605.0, 52.0 ],
 					"style" : "",
-					"text" : "(commands (1 (note granularnote) (chord granularchord) (key g)) (2 (note plainnote) (chord plainchord) (key p)) (3 (note notequery) (chord chordquery) (key q)) (4 (note thismsg) (chord thismsg) (rest thismsg) (key S)) (5 (note undefined) (chord undefined)))"
+					"text" : "[commands [1 [note granularnote] [chord granularchord] [key g]] [2 [note plainnote] [chord plainchord] [key p]] [3 [note notequery] [chord chordquery] [key q]] [4 [note thismsg] [chord thismsg] [rest thismsg] [key S]] [5 [note undefined] [chord undefined]]]"
 				}
 
 			}

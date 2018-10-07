@@ -354,7 +354,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "A Mazing Grace (b)",
+					"text" : "A Mazing Grace [b]",
 					"patching_rect" : [ 565.0, 562.0, 140.0, 18.0 ],
 					"id" : "obj-6",
 					"fontname" : "Arial",

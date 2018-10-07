@@ -146,7 +146,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 117.0, 560.0, 19.0 ],
-					"text" : "(slotinfo (1 (type text) (name english)) (2 (type text) (name french)) (3 (type text) (name italian)))"
+					"text" : "[slotinfo [1 [type text] [name english]] [2 [type text] [name french]] [3 [type text] [name italian]]]"
 				}
 
 			}

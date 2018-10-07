@@ -121,7 +121,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 233.0, 147.5, 78.0, 19.0 ],
 									"presentation_rect" : [ 273.0, 147.0, 0.0, 0.0 ],
-									"text" : "-1 -1 (1 4 6)"
+									"text" : "-1 -1 [1 4 6]"
 								}
 
 							}
@@ -135,7 +135,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 268.0, 191.0, 137.0, 19.0 ],
-									"text" : "-1 -1 (1 (3 6) 2 (-1 -3))"
+									"text" : "-1 -1 [1 [3 6] 2 [-1 -3]]"
 								}
 
 							}
@@ -193,7 +193,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 339.0, 350.0, 134.0, 21.0 ],
-									"text" : "bach.nth ((3 1) (6 -1))"
+									"text" : "bach.nth [[3 1] [6 -1]]"
 								}
 
 							}
@@ -307,7 +307,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 20.0, 267.0, 274.0, 21.0 ],
-									"text" : "bach.nth 6 2 (0 (3 5) (4 6))"
+									"text" : "bach.nth 6 2 [0 [3 5] [4 6]]"
 								}
 
 							}
@@ -335,7 +335,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 155.0, 182.5, 85.0, 43.0 ],
-									"text" : "-1 -1 (1 (3 6) 2 (-1 -3))"
+									"text" : "-1 -1 [1 [3 6] 2 [-1 -3]]"
 								}
 
 							}
@@ -363,7 +363,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.0, 164.0, 120.0, 61.5 ],
-									"text" : "a b c (d e f (g) h i (j k (l x y))) m n (o p (q r s t u v w))"
+									"text" : "a b c [d e f [g] h i [j k [l x y]]] m n [o p [q r s t u v w]]"
 								}
 
 							}
@@ -598,7 +598,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 330.0, 267.0, 48.0, 19.0 ],
 									"presentation_rect" : [ 240.0, 277.0, 0.0, 0.0 ],
-									"text" : "(1 2 3)"
+									"text" : "[1 2 3]"
 								}
 
 							}
@@ -644,7 +644,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 307.0, 210.0, 85.0, 19.0 ],
-									"text" : "7 3 (1 4 7 -2)"
+									"text" : "7 3 [1 4 7 -2]"
 								}
 
 							}
@@ -757,7 +757,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 160.0, 285.0, 109.0, 27.0 ],
-									"text" : "7 3 (1 4 7 -2)"
+									"text" : "7 3 [1 4 7 -2]"
 								}
 
 							}
@@ -785,7 +785,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 23.0, 160.0, 133.0, 69.0 ],
-									"text" : "a b c (d e f (g) h i (j k (l x y))) m n (o p (q r s t u v w))"
+									"text" : "a b c [d e f [g] h i [j k [l x y]]] m n [o p [q r s t u v w]]"
 								}
 
 							}
@@ -1182,7 +1182,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 21.0, 139.0, 138.0, 89.0 ],
-									"text" : "a b c (d e f (g) h i (j k (l x y))) m n (o p (q r s t u v w))"
+									"text" : "a b c [d e f [g] h i [j k [l x y]]] m n [o p [q r s t u v w]]"
 								}
 
 							}
@@ -1440,7 +1440,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 389.0, 219.0, 167.0, 67.0 ],
 									"presentation_rect" : [ 349.0, 114.0, 0.0, 0.0 ],
-									"text" : "foo (fee FEE) faa (john george (yoko)) louis"
+									"text" : "foo [fee FEE] faa [john george [yoko]] louis"
 								}
 
 							}
@@ -1525,7 +1525,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 25.0, 109.0, 167.0, 67.0 ],
-									"text" : "foo (fee FEE) faa (john george (yoko)) louis"
+									"text" : "foo [fee FEE] faa [john george [yoko]] louis"
 								}
 
 							}
@@ -1990,7 +1990,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 35.0, 200.5, 134.0, 44.0 ],
-									"text" : "a b c (D1 D2 D3) e f (G1 (Goo Gaa))"
+									"text" : "a b c [D1 D2 D3] e f [G1 [Goo Gaa]]"
 								}
 
 							}

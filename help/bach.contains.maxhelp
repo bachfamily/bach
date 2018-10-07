@@ -295,7 +295,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 142.0, 135.0, 293.0, 19.0 ],
 									"style" : "",
-									"text" : "1 2 3 (4. 5. 6. (seven eight nine (10/3 11/4 12/5)))"
+									"text" : "1 2 3 [4. 5. 6. [seven eight nine [10/3 11/4 12/5]]]"
 								}
 
 							}
@@ -587,7 +587,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 208.0, 135.0, 154.0, 23.0 ],
 									"style" : "",
-									"text" : "1 foo 3/4 (4/5 (c d e)) 9/8"
+									"text" : "1 foo 3/4 [4/5 [c d e]] 9/8"
 								}
 
 							}
@@ -602,7 +602,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 135.0, 192.0, 23.0 ],
 									"style" : "",
-									"text" : "1 2 3 (4.5 5.6 0.3e12 (c D#4 e))"
+									"text" : "1 2 3 [4.5 5.6 0.3e12 [c D#4 e]]"
 								}
 
 							}

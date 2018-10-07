@@ -384,7 +384,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 567.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Slot Machines (c)",
+					"text" : "Slot Machines [c]",
 					"varname" : "messageA"
 				}
 
@@ -477,7 +477,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 511.0, 567.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Slot Machines (e)",
+					"text" : "Slot Machines [e]",
 					"varname" : "messageB"
 				}
 

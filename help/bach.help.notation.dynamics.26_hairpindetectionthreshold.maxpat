@@ -92,7 +92,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 51.0, 159.5, 200.0, 23.0 ],
 					"style" : "",
-					"text" : "velocities2dynamics ( thresh $1 )"
+					"text" : "velocities2dynamics [ thresh $1 ]"
 				}
 
 			}
@@ -122,7 +122,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 79.0, 214.5, 287.0, 23.0 ],
 					"style" : "",
-					"text" : "velocities2dynamics (thresh 0) (unnecessary 0)"
+					"text" : "velocities2dynamics [thresh 0] [unnecessary 0]"
 				}
 
 			}

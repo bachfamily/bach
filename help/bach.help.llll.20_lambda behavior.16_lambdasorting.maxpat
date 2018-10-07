@@ -127,7 +127,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 283.0, 214.0, 197.0, 19.0 ],
-					"text" : "(tiny 0) (huge 3) (small 1) (big 2)"
+					"text" : "[tiny 0] [huge 3] [small 1] [big 2]"
 				}
 
 			}

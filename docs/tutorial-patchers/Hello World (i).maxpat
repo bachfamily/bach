@@ -554,7 +554,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 251.0, 38.0, 157.0, 31.0 ],
-					"text" : "Hello ((Earth Moon) (Mars Deimos Phobos) Venus)"
+					"text" : "Hello [[Earth Moon] [Mars Deimos Phobos] Venus]"
 				}
 
 			}
@@ -676,7 +676,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 565.0, 140.0, 18.0 ],
-					"text" : "Hello World (h)",
+					"text" : "Hello World [h]",
 					"varname" : "messageA"
 				}
 
@@ -776,7 +776,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 606.0, 565.0, 140.0, 18.0 ],
-					"text" : "Hello World (j)",
+					"text" : "Hello World [j]",
 					"varname" : "messageB"
 				}
 

@@ -1173,7 +1173,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Abstract Thinking (a)",
+					"text" : "Abstract Thinking [a]",
 					"patching_rect" : [ 5.0, 507.0, 140.0, 18.0 ],
 					"id" : "obj-7",
 					"fontname" : "Arial",
@@ -1272,7 +1272,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Abstract Thinking (c)",
+					"text" : "Abstract Thinking [c]",
 					"patching_rect" : [ 632.0, 507.0, 140.0, 18.0 ],
 					"id" : "obj-16",
 					"fontname" : "Arial",

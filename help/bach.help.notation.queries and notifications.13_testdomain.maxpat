@@ -129,7 +129,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 59.0, 217.5, 126.0, 23.0 ],
 					"style" : "",
-					"text" : "testdomain (2 1 1/8)"
+					"text" : "testdomain [2 1 1/8]"
 				}
 
 			}
@@ -162,7 +162,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 33.380936, 157.0, 94.0, 23.0 ],
 					"style" : "",
-					"text" : "testdomain (2)"
+					"text" : "testdomain [2]"
 				}
 
 			}
@@ -177,7 +177,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 44.380936, 185.0, 115.0, 23.0 ],
 					"style" : "",
-					"text" : "testdomain (1 1/8)"
+					"text" : "testdomain [1 1/8]"
 				}
 
 			}

@@ -158,7 +158,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.0, 136.5, 154.0, 86.0 ],
 									"style" : "",
-									"text" : "Do#4 D#+5 (Eb3 F G A+) (Cbb4 Dd3) D3 Dbd3 C^4 C#+^2 Bv3 Bdv"
+									"text" : "Do#4 D#+5 [Eb3 F G A+] [Cbb4 Dd3] D3 Dbd3 C^4 C#+^2 Bv3 Bdv"
 								}
 
 							}
@@ -353,7 +353,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 113.0, 242.0, 98.0, 23.0 ],
 									"style" : "",
-									"text" : "C D E F (G F#)"
+									"text" : "C D E F [G F#]"
 								}
 
 							}
@@ -525,7 +525,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 22.0, 177.0, 128.0, 45.0 ],
 									"style" : "",
-									"text" : "C#4 D#5 (Eb3 Fx2 G A) (Cbb4 D3)"
+									"text" : "C#4 D#5 [Eb3 Fx2 G A] [Cbb4 D3]"
 								}
 
 							}

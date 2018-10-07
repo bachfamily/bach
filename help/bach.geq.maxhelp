@@ -251,7 +251,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 393.5, 236.5, 70.0, 19.0 ],
 									"presentation_rect" : [ 292.0, 254.0, 0.0, 0.0 ],
-									"text" : "1 3 (2 1) 1"
+									"text" : "1 3 [2 1] 1"
 								}
 
 							}
@@ -266,7 +266,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 314.5, 236.5, 70.0, 19.0 ],
 									"presentation_rect" : [ 282.0, 244.0, 0.0, 0.0 ],
-									"text" : "1 1 (4 3) 2"
+									"text" : "1 1 [4 3] 2"
 								}
 
 							}
@@ -281,7 +281,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 238.5, 236.5, 70.0, 19.0 ],
 									"presentation_rect" : [ 171.5, 217.5, 0.0, 0.0 ],
-									"text" : "1 1 (4 1) 2"
+									"text" : "1 1 [4 1] 2"
 								}
 
 							}
@@ -296,7 +296,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 219.5, 192.5, 144.0, 19.0 ],
 									"presentation_rect" : [ 216.5, 187.5, 0.0, 0.0 ],
-									"text" : "word wrap (foo fee) car"
+									"text" : "word wrap [foo fee] car"
 								}
 
 							}
@@ -311,7 +311,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 209.5, 168.5, 146.0, 19.0 ],
 									"presentation_rect" : [ 206.5, 163.5, 0.0, 0.0 ],
-									"text" : "ant castle (foo fee) east"
+									"text" : "ant castle [foo fee] east"
 								}
 
 							}
@@ -326,7 +326,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 195.0, 145.5, 157.0, 19.0 ],
 									"presentation_rect" : [ 192.0, 140.5, 0.0, 0.0 ],
-									"text" : "ant beer (deer car) ebony"
+									"text" : "ant beer [deer car] ebony"
 								}
 
 							}
@@ -341,7 +341,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 183.0, 122.5, 169.0, 19.0 ],
 									"presentation_rect" : [ 180.0, 117.5, 0.0, 0.0 ],
-									"text" : "ant beer (castle dog) ebony"
+									"text" : "ant beer [castle dog] ebony"
 								}
 
 							}
@@ -356,7 +356,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 44.5, 192.5, 144.0, 19.0 ],
 									"presentation_rect" : [ 224.5, 194.0, 0.0, 0.0 ],
-									"text" : "word wrap (foo fee) car"
+									"text" : "word wrap [foo fee] car"
 								}
 
 							}
@@ -371,7 +371,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 34.5, 168.5, 146.0, 19.0 ],
 									"presentation_rect" : [ 212.0, 163.0, 0.0, 0.0 ],
-									"text" : "ant castle (foo fee) east"
+									"text" : "ant castle [foo fee] east"
 								}
 
 							}
@@ -386,7 +386,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 20.0, 145.5, 157.0, 19.0 ],
 									"presentation_rect" : [ 200.0, 135.0, 0.0, 0.0 ],
-									"text" : "ant beer (deer car) ebony"
+									"text" : "ant beer [deer car] ebony"
 								}
 
 							}
@@ -400,7 +400,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 8.0, 122.5, 169.0, 19.0 ],
-									"text" : "ant beer (castle dog) ebony"
+									"text" : "ant beer [castle dog] ebony"
 								}
 
 							}

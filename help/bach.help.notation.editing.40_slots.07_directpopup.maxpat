@@ -192,7 +192,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 202.0, 164.0, 155.0, 19.0 ],
-					"text" : "(slotinfo (1 (rightclick 1)))"
+					"text" : "[slotinfo [1 [rightclick 1]]]"
 				}
 
 			}

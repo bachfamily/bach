@@ -69,7 +69,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "preventedit (notes cents delete create) (marker name)",
+					"text" : "preventedit [notes cents delete create] [marker name]",
 					"numoutlets" : 1,
 					"id" : "obj-39",
 					"fontname" : "Arial",
@@ -125,7 +125,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "preventedit (notes onset delete create)",
+					"text" : "preventedit [notes onset delete create]",
 					"numoutlets" : 1,
 					"id" : "obj-29",
 					"fontname" : "Arial",
@@ -139,7 +139,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "preventedit (notes onset)",
+					"text" : "preventedit [notes onset]",
 					"numoutlets" : 1,
 					"id" : "obj-22",
 					"fontname" : "Arial",
@@ -344,7 +344,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Edit Path (e)",
+					"text" : "Edit Path [e]",
 					"numoutlets" : 1,
 					"id" : "obj-7",
 					"fontname" : "Arial",
@@ -443,7 +443,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Edit Path (g)",
+					"text" : "Edit Path [g]",
 					"numoutlets" : 1,
 					"id" : "obj-16",
 					"fontname" : "Arial",

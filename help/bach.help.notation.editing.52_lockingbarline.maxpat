@@ -71,7 +71,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 191.5, 271.0, 19.0 ],
-					"text" : "((nil nil (width 150)) (nil nil (width 170))), bang"
+					"text" : "[[nil nil [width 150]] [nil nil [width 170]]], bang"
 				}
 
 			}

@@ -105,7 +105,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 156.0, 135.0, 176.0, 19.0 ],
-					"text" : "voicenames () () Bratsche nil"
+					"text" : "voicenames [] [] Bratsche nil"
 				}
 
 			}
@@ -202,7 +202,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 134.0, 106.0, 302.0, 19.0 ],
-					"text" : "voicenames (Violin 1) (Violin 2) (Viola Bratsche) nil"
+					"text" : "voicenames [Violin 1] [Violin 2] [Viola Bratsche] nil"
 				}
 
 			}

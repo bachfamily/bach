@@ -163,7 +163,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 25.0, 212.0, 340.0, 23.0 ],
 					"style" : "",
-					"text" : "setmeasureparameters (2 3) (shownumber -2) (barline h)"
+					"text" : "setmeasureparameters [2 3] [shownumber -2] [barline h]"
 				}
 
 			}
@@ -194,7 +194,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 127.0, 282.0, 23.0 ],
 					"style" : "",
-					"text" : "setmeasureparameters 3 (width 400) (barline t)"
+					"text" : "setmeasureparameters 3 [width 400] [barline t]"
 				}
 
 			}

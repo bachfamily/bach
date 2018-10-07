@@ -64,7 +64,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 68.25, 308.0, 154.5, 38.0 ],
 					"style" : "",
-					"text" : "changeslotitem 9 1 nil (20 plus) (10 minus) 4"
+					"text" : "changeslotitem 9 1 nil [20 plus] [10 minus] 4"
 				}
 
 			}
@@ -130,7 +130,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 56.5, 262.0, 232.0, 38.0 ],
 					"style" : "",
-					"text" : "changeslotitem \"amplitude envelope\" 2 0.5 (10 minus) (0.2 times)"
+					"text" : "changeslotitem \"amplitude envelope\" 2 0.5 [10 minus] [0.2 times]"
 				}
 
 			}
@@ -175,7 +175,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 56.5, 176.0, 178.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotitem 3 2 (2.1 div)"
+					"text" : "changeslotitem 3 2 [2.1 div]"
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 36.0, 149.0, 192.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotitem 3 2 (2.1 times)"
+					"text" : "changeslotitem 3 2 [2.1 times]"
 				}
 
 			}
@@ -235,7 +235,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.0, 122.0, 198.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotitem 3 all (13 minus)"
+					"text" : "changeslotitem 3 all [13 minus]"
 				}
 
 			}
@@ -265,7 +265,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 94.0, 181.0, 23.0 ],
 					"style" : "",
-					"text" : "changeslotitem 3 2 (13 plus)"
+					"text" : "changeslotitem 3 2 [13 plus]"
 				}
 
 			}

@@ -1101,8 +1101,8 @@ int T_EXPORT main(void){
 	// @marg 0 @name points @optional 0 @type llll
     // @example add 7100 7300 @caption in 1st inlet, adds points with 7100 and 7300cents
     // @example add 5 2 @caption in 2nd inlet, adds points with pitch classes 5 or 2
-    // @example add (2 4) @caption in 3rd inlet, adds a single point points with intervals 2 diatonic steps and 4 chromatic steps
-    // @example add (-1 -0) (-3 1) @caption in 4th inlet, adds two points given their coordinates
+    // @example add [2 4] @caption in 3rd inlet, adds a single point points with intervals 2 diatonic steps and 4 chromatic steps
+    // @example add [-1 -0] [-3 1] @caption in 4th inlet, adds two points given their coordinates
     // @seealso delete, replace
 	class_addmethod(c, (method) tonnetz_anything, "add", A_GIMME, 0);
 
@@ -1117,8 +1117,8 @@ int T_EXPORT main(void){
 	// @marg 0 @name points @optional 0 @type llll
     // @example delete 7100 7300 @caption in 1st inlet, deletes points with 7100 and 7300cents
     // @example delete 5 2 @caption in 2nd inlet, deletes points with pitch classes 5 or 2
-    // @example delete (2 4) @caption in 3rd inlet, deletes a point points with intervals 2 diatonic steps and 4 chromatic steps
-    // @example delete (-1 -0) (-3 1) @caption in 4th inlet, deletes two points given their coordinates
+    // @example delete [2 4] @caption in 3rd inlet, deletes a point points with intervals 2 diatonic steps and 4 chromatic steps
+    // @example delete [-1 -0] [-3 1] @caption in 4th inlet, deletes two points given their coordinates
     // @seealso add, replace
 	class_addmethod(c, (method) tonnetz_anything, "delete", A_GIMME, 0);
 
@@ -1133,7 +1133,7 @@ int T_EXPORT main(void){
 	// @marg 0 @name points @optional 0 @type llll
     // @seealso clear, add, delete
     // @example replace @caption clear tonnetz and output note-offs
-    // @example replace (0 0) (0 1) (0 2) (1 1) @caption in 4th inlet, set the new selected points from their coordinates, and output note-offs for previously selected ones
+    // @example replace [0 0] [0 1] [0 2] [1 1] @caption in 4th inlet, set the new selected points from their coordinates, and output note-offs for previously selected ones
 	class_addmethod(c, (method) tonnetz_anything, "replace", A_GIMME, 0);
 
     

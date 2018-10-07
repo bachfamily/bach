@@ -57,17 +57,17 @@
 				the routing <b>breakpoint</b> symbol, and without the outer level
 				of parenthesis. <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
@@ -200,17 +200,17 @@
 				of parenthesis. <br />
 				An llll in any other inlet is converted into a number (see <m>float</m> and <m>int</m>). <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
@@ -288,17 +288,17 @@
 				the routing <b>breakpoint</b> symbol, and without the outer level
 				of parenthesis. <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of

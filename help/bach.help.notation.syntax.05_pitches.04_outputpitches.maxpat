@@ -212,7 +212,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 134.0, 194.0, 189.0, 23.0 ],
 					"style" : "",
-					"text" : "( B#4 6100 Ebbb5 Bx+5), bang"
+					"text" : "[ B#4 6100 Ebbb5 Bx+5], bang"
 				}
 
 			}

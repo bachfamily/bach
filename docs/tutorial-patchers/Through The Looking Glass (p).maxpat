@@ -758,7 +758,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Through The Looking Glass (o)",
+					"text" : "Through The Looking Glass [o]",
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 510.0, 174.0, 18.0 ],

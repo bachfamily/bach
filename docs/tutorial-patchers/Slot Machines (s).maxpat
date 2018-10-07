@@ -40,7 +40,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (5 (representation ((fshift transp degrade) (sfiles fshift transp degrade)))))",
+					"text" : "[slotinfo [5 [representation [[fshift transp degrade] [sfiles fshift transp degrade]]]]]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 466.0, 443.0, 18.0 ],
@@ -67,7 +67,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (5 (representation (3 4))))",
+					"text" : "[slotinfo [5 [representation [3 4]]]]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 121.0, 427.0, 191.0, 18.0 ],
@@ -108,7 +108,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (5 (name routing) (type togglematrix) (key m)))",
+					"text" : "[slotinfo [5 [name routing] [type togglematrix] [key m]]]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 70.0, 346.0, 302.0, 18.0 ],
@@ -159,7 +159,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (5 (name \"my llll matrix\" ) (type llll) (key m)))",
+					"text" : "[slotinfo [5 [name \"my llll matrix\" ] [type llll] [key m]]]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 475.0, 107.0, 288.0, 18.0 ],
@@ -375,7 +375,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (r)",
+					"text" : "Slot Machines [r]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 571.0, 140.0, 18.0 ],
@@ -474,7 +474,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (t)",
+					"text" : "Slot Machines [t]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 632.0, 571.0, 140.0, 18.0 ],

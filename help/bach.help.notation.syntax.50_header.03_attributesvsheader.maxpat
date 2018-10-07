@@ -47,7 +47,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 287.450012, 241.0, 117.0, 23.0 ],
 					"style" : "",
-					"text" : "loop (1 1 0) (1 3 0)"
+					"text" : "loop [1 1 0] [1 3 0]"
 				}
 
 			}
@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 298.450012, 271.0, 126.0, 23.0 ],
 					"style" : "",
-					"text" : "(loop (1 1 0) (1 3 0))"
+					"text" : "[loop [1 1 0] [1 3 0]]"
 				}
 
 			}
@@ -111,7 +111,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 213.450012, 192.0, 85.0, 23.0 ],
 					"style" : "",
-					"text" : "(clefs G F G)"
+					"text" : "[clefs G F G]"
 				}
 
 			}
@@ -156,7 +156,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 74.450012, 122.0, 101.0, 23.0 ],
 					"style" : "",
-					"text" : "(keys CM C#m)"
+					"text" : "[keys CM C#m]"
 				}
 
 			}

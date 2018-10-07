@@ -2,44 +2,69 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 6,
-			"minor" : 1,
-			"revision" : 6,
-			"architecture" : "x86"
+			"major" : 7,
+			"minor" : 3,
+			"revision" : 4,
+			"architecture" : "x64",
+			"modernui" : 1
 		}
 ,
-		"rect" : [ 56.0, 44.0, 938.0, 508.0 ],
+		"rect" : [ 56.0, 79.0, 938.0, 508.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
-		"gridonopen" : 0,
+		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 0,
+		"gridsnaponopen" : 1,
+		"objectsnaponopen" : 1,
 		"statusbarvisible" : 2,
 		"toolbarvisible" : 1,
+		"lefttoolbarpinned" : 0,
+		"toptoolbarpinned" : 0,
+		"righttoolbarpinned" : 0,
+		"bottomtoolbarpinned" : 0,
+		"toolbars_unpinned_last_save" : 0,
+		"tallnewobj" : 0,
 		"boxanimatetime" : 200,
-		"imprint" : 0,
 		"enablehscroll" : 1,
 		"enablevscroll" : 1,
 		"devicewidth" : 0.0,
 		"description" : "",
 		"digest" : "",
 		"tags" : "",
+		"style" : "",
+		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-32",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 106.0, 334.833313, 91.0, 23.0 ],
+					"presentation_rect" : [ 98.0, 334.833313, 0.0, 0.0 ],
+					"style" : "",
+					"text" : "(0 1000 2000)"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"bubble" : 1,
 					"bubblepoint" : 0.2,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-64",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 774.5, 421.833313, 147.5, 40.0 ],
+					"style" : "",
 					"text" : "\"nil\" is also a special symbol for \"()\""
 				}
 
@@ -48,12 +73,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
 					"id" : "obj-62",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 695.0, 410.833313, 48.0, 20.0 ],
+					"style" : "",
 					"text" : "<------>"
 				}
 
@@ -67,7 +92,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 748.0, 410.833313, 32.5, 19.0 ],
+					"patching_rect" : [ 748.0, 410.833313, 32.5, 23.0 ],
+					"style" : "",
 					"text" : "nil"
 				}
 
@@ -77,13 +103,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-56",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 700.0, 367.833313, 174.0, 40.0 ],
+					"style" : "",
 					"text" : "\"null\" is a special simbol for a completely empty llll"
 				}
 
@@ -95,7 +121,8 @@
 					"id" : "obj-50",
 					"maxclass" : "fpic",
 					"numinlets" : 1,
-					"numoutlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "jit_matrix" ],
 					"patching_rect" : [ 548.828552, 369.833313, 61.171448, 71.166687 ],
 					"pic" : "Macintosh HD:/Users/danieleghisi/Desktop/Screen shot 2014-01-20 at 14.49.33.png"
 				}
@@ -105,12 +132,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
 					"id" : "obj-25",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 604.0, 410.833313, 48.0, 20.0 ],
+					"style" : "",
 					"text" : "<------>"
 				}
 
@@ -119,12 +146,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
 					"id" : "obj-28",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 604.0, 378.833313, 48.0, 20.0 ],
+					"style" : "",
 					"text" : "<------>"
 				}
 
@@ -138,7 +165,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 657.0, 410.833313, 32.5, 19.0 ],
+					"patching_rect" : [ 657.0, 410.833313, 29.5, 23.0 ],
+					"style" : "",
 					"text" : "()"
 				}
 
@@ -152,7 +180,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 657.0, 378.833313, 32.5, 19.0 ],
+					"patching_rect" : [ 657.0, 378.833313, 32.5, 23.0 ],
+					"style" : "",
 					"text" : "null"
 				}
 
@@ -163,29 +192,30 @@
 					"bubbleside" : 3,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-48",
 					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 356.5, 284.833313, 187.0, 83.0 ],
+					"style" : "",
 					"text" : "Since there's no outer level of parentheses, the root level is just a sequence of elements, separated by spaces"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-60",
-					"linecount" : 3,
+					"linecount" : 6,
 					"maxclass" : "bach.hypercomment",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 2.0, 381.833313, 285.0, 50.0 ],
-					"text" : "Thus the correspondence between OM and bach list  breaks down to just removing or adding the outermost level of parenthesis:"
+					"patching_rect" : [ 2.0, 369.833313, 285.0, 94.0 ],
+					"text" : "Thus the correspondence between OM and bach list  breaks down to just removing or adding the outermost level of parenthesis!\nRemember: normal parentheses are perfectly accepted by bach also! They are just not the default look – while square brackets are."
 				}
 
 			}
@@ -193,12 +223,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
 					"id" : "obj-59",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 380.0, 443.833313, 48.0, 20.0 ],
+					"patching_rect" : [ 384.0, 443.833313, 48.0, 20.0 ],
+					"style" : "",
 					"text" : "<------>"
 				}
 
@@ -207,12 +237,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
 					"id" : "obj-58",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 380.0, 410.833313, 48.0, 20.0 ],
+					"patching_rect" : [ 384.0, 410.833313, 48.0, 20.0 ],
+					"style" : "",
 					"text" : "<------>"
 				}
 
@@ -221,12 +251,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
 					"id" : "obj-57",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 380.0, 378.833313, 48.0, 20.0 ],
+					"patching_rect" : [ 384.0, 378.833313, 48.0, 20.0 ],
+					"style" : "",
 					"text" : "<------>"
 				}
 
@@ -240,7 +270,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 433.0, 442.833313, 79.0, 19.0 ],
+					"patching_rect" : [ 437.0, 442.833313, 79.0, 23.0 ],
+					"style" : "",
 					"text" : "0 (a (b) c) ()"
 				}
 
@@ -254,7 +285,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 433.0, 408.833313, 81.0, 19.0 ],
+					"patching_rect" : [ 437.0, 408.833313, 81.0, 23.0 ],
+					"style" : "",
 					"text" : "0 (a b) 2000"
 				}
 
@@ -268,7 +300,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 433.0, 378.833313, 83.0, 19.0 ],
+					"patching_rect" : [ 437.0, 378.833313, 83.0, 23.0 ],
+					"style" : "",
 					"text" : "0 1000 2000"
 				}
 
@@ -280,8 +313,9 @@
 					"id" : "obj-52",
 					"maxclass" : "fpic",
 					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 268.0, 365.833313, 127.0, 118.0 ],
+					"numoutlets" : 1,
+					"outlettype" : [ "jit_matrix" ],
+					"patching_rect" : [ 272.0, 365.833313, 127.0, 118.0 ],
 					"pic" : "Macintosh HD:/Users/danieleghisi/Desktop/Screen shot 2014-01-20 at 14.26.44.png"
 				}
 
@@ -291,13 +325,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-49",
 					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 742.0, 285.833313, 174.0, 83.0 ],
+					"style" : "",
 					"text" : "Which means that this is actually a list, containing ONE element: which is in turns a list, having three elements"
 				}
 
@@ -310,9 +344,10 @@
 					"maxclass" : "number",
 					"numinlets" : 1,
 					"numoutlets" : 2,
-					"outlettype" : [ "int", "bang" ],
+					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 644.5, 343.0, 53.0, 21.0 ]
+					"patching_rect" : [ 644.5, 343.0, 53.0, 23.0 ],
+					"style" : ""
 				}
 
 			}
@@ -324,9 +359,10 @@
 					"maxclass" : "number",
 					"numinlets" : 1,
 					"numoutlets" : 2,
-					"outlettype" : [ "int", "bang" ],
+					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 548.828552, 343.0, 53.0, 21.0 ]
+					"patching_rect" : [ 548.828552, 343.0, 53.0, 23.0 ],
+					"style" : ""
 				}
 
 			}
@@ -339,7 +375,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
-					"patching_rect" : [ 644.5, 316.833313, 79.0, 21.0 ],
+					"patching_rect" : [ 644.5, 316.833313, 79.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.length"
 				}
 
@@ -353,7 +394,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
-					"patching_rect" : [ 548.828552, 316.833313, 79.0, 21.0 ],
+					"patching_rect" : [ 548.828552, 316.833313, 79.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.length"
 				}
 
@@ -367,8 +413,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 644.5, 288.833313, 91.0, 19.0 ],
-					"text" : "(0 1000 2000)"
+					"patching_rect" : [ 644.5, 288.833313, 91.0, 23.0 ],
+					"style" : "",
+					"text" : "[0 1000 2000]"
 				}
 
 			}
@@ -381,7 +428,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 548.828552, 288.833313, 83.0, 19.0 ],
+					"patching_rect" : [ 548.828552, 288.833313, 83.0, 23.0 ],
+					"style" : "",
 					"text" : "0 1000 2000"
 				}
 
@@ -391,13 +439,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-37",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 107.0, 331.833313, 106.0, 25.0 ],
-					"text" : "Good bach llll"
+					"patching_rect" : [ 199.0, 334.833313, 113.0, 25.0 ],
+					"style" : "",
+					"text" : "Good bach lllls"
 				}
 
 			}
@@ -410,8 +458,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 334.833313, 91.0, 19.0 ],
-					"text" : "(0 1000 2000)"
+					"patching_rect" : [ 12.0, 334.833313, 91.0, 23.0 ],
+					"style" : "",
+					"text" : "[0 1000 2000]"
 				}
 
 			}
@@ -420,18 +469,19 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-36",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 105.0, 303.833313, 229.0, 25.0 ],
+					"style" : "",
 					"text" : "Good Max list, hence good bach llll"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-35",
@@ -450,13 +500,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-34",
 					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 700.0, 77.5, 191.0, 54.0 ],
+					"style" : "",
 					"text" : "Of course this is still true, in case of lists having deeper levels of parentheses."
 				}
 
@@ -467,13 +517,13 @@
 					"bubbleside" : 3,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-30",
 					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 286.0, 66.0, 167.0, 112.0 ],
+					"style" : "",
 					"text" : "The length of an OpenMusic list is thus the number of elements at the root level, which is the one identified by the outermost level of parenthesis"
 				}
 
@@ -485,7 +535,8 @@
 					"id" : "obj-31",
 					"maxclass" : "fpic",
 					"numinlets" : 1,
-					"numoutlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "jit_matrix" ],
 					"patching_rect" : [ 445.0, 50.0, 264.0, 156.0 ],
 					"pic" : "Macintosh HD:/Users/danieleghisi/Desktop/Screen shot 2014-01-20 at 14.13.36.png"
 				}
@@ -500,7 +551,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 306.833313, 83.0, 19.0 ],
+					"patching_rect" : [ 12.0, 306.833313, 83.0, 23.0 ],
+					"style" : "",
 					"text" : "0 1000 2000"
 				}
 
@@ -510,12 +562,12 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-27",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 120.0, 112.0, 103.0, 25.0 ],
+					"style" : "",
 					"text" : "Good OM list"
 				}
 
@@ -525,12 +577,12 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-26",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 120.0, 77.0, 95.0, 25.0 ],
+					"style" : "",
 					"text" : "Bad OM list"
 				}
 
@@ -542,7 +594,8 @@
 					"id" : "obj-22",
 					"maxclass" : "fpic",
 					"numinlets" : 1,
-					"numoutlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "jit_matrix" ],
 					"patching_rect" : [ 2.0, 70.0, 125.0, 86.0 ],
 					"pic" : "Macintosh HD:/Users/danieleghisi/Desktop/Screen shot 2014-01-20 at 14.11.30.png"
 				}
@@ -550,6 +603,7 @@
 			}
 , 			{
 				"box" : 				{
+					"fontface" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
@@ -571,7 +625,8 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 485.583374, 128.0, 21.0 ],
+					"patching_rect" : [ 13.0, 485.583374, 128.0, 23.0 ],
+					"style" : "",
 					"text" : "bach.help.searchtag"
 				}
 
@@ -586,7 +641,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 199.0, 490.0, 81.0, 18.0 ],
+					"patching_rect" : [ 199.0, 490.0, 81.0, 22.0 ],
+					"style" : "",
 					"text" : "clean, wclose",
 					"varname" : "wclose"
 				}
@@ -602,7 +658,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 199.0, 542.5, 249.0, 20.0 ],
+					"patching_rect" : [ 199.0, 542.5, 249.0, 22.0 ],
+					"style" : "",
 					"text" : "linksections 1 1 k \"From OpenMusic to bach\""
 				}
 
@@ -617,8 +674,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 199.0, 515.0, 69.0, 20.0 ],
+					"patching_rect" : [ 199.0, 515.0, 69.0, 22.0 ],
 					"save" : [ "#N", "thispatcher", ";", "#Q", "end", ";" ],
+					"style" : "",
 					"text" : "thispatcher"
 				}
 
@@ -632,7 +690,8 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 700.0, 7.74086, 56.0, 20.0 ],
+					"patching_rect" : [ 700.0, 7.74086, 56.0, 22.0 ],
+					"style" : "",
 					"text" : "onecopy"
 				}
 
@@ -641,12 +700,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
 					"id" : "obj-87",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 2.0, 19.0, 444.0, 20.0 ],
+					"style" : "",
 					"text" : "_________________________________________________________________"
 				}
 
@@ -656,13 +715,13 @@
 					"fontface" : 2,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-61",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 545.828552, 465.0, 234.0, 36.0 ],
+					"style" : "",
 					"text" : "Good to know. But then why the lllls in the previous section coincided?",
 					"textcolor" : [ 0.0, 0.168627, 0.67451, 1.0 ]
 				}
@@ -672,12 +731,12 @@
 				"box" : 				{
 					"fontname" : "Arial Italic",
 					"fontsize" : 16.787033,
-					"frgb" : 0.0,
 					"id" : "obj-20",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 286.0, 7.74086, 317.0, 25.0 ],
+					"style" : "",
 					"text" : "- lllls"
 				}
 
@@ -686,27 +745,26 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 22.256727,
-					"frgb" : 0.0,
 					"id" : "obj-13",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 2.0, 2.924051, 300.0, 31.0 ],
+					"style" : "",
 					"text" : "From OpenMusic to bach (k)"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-21",
+					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 5.0, 608.0, 140.0, 18.0 ],
+					"patching_rect" : [ 5.0, 608.0, 140.0, 22.0 ],
+					"style" : "",
 					"text" : "pcontrol",
 					"varname" : "pcontrolA"
 				}
@@ -714,15 +772,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-24",
+					"id" : "obj-2",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 5.0, 583.0, 140.0, 18.0 ],
+					"patching_rect" : [ 5.0, 583.0, 140.0, 22.0 ],
+					"style" : "",
 					"text" : "prepend load",
 					"varname" : "prependA"
 				}
@@ -730,15 +787,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-32",
+					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 5.0, 558.0, 140.0, 18.0 ],
+					"patching_rect" : [ 5.0, 558.0, 140.0, 22.0 ],
+					"style" : "",
 					"text" : "tosymbol",
 					"varname" : "tosymbolA"
 				}
@@ -746,16 +802,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-65",
-					"linecount" : 2,
+					"id" : "obj-6",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 5.0, 533.0, 140.0, 18.0 ],
+					"patching_rect" : [ 5.0, 533.0, 158.0, 22.0 ],
+					"style" : "",
 					"text" : "From OpenMusic to bach (j)",
 					"varname" : "messageA"
 				}
@@ -763,15 +817,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-66",
+					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "bang" ],
-					"patching_rect" : [ 5.0, 508.0, 40.0, 18.0 ],
+					"patching_rect" : [ 5.0, 508.0, 40.0, 22.0 ],
+					"style" : "",
 					"text" : "t b b",
 					"varname" : "triggerA"
 				}
@@ -779,19 +832,17 @@
 			}
 , 			{
 				"box" : 				{
+					"bgcolor" : [ 0.75, 0.75, 0.75, 1.0 ],
 					"bgoncolor" : [ 0.51, 0.59, 0.64, 1.0 ],
-					"bgovercolor" : [ 0.64, 0.65, 0.72, 1.0 ],
-					"bordercolor" : [ 0.63, 0.7, 0.75, 1.0 ],
 					"fontface" : 2,
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-68",
+					"id" : "obj-9",
 					"maxclass" : "textbutton",
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "int" ],
 					"parameter_enable" : 0,
 					"patching_rect" : [ 5.0, 483.0, 151.0, 20.0 ],
+					"style" : "",
 					"text" : "Back to section (j)",
 					"varname" : "textbuttonA"
 				}
@@ -799,15 +850,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-69",
+					"id" : "obj-10",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 783.0, 608.0, 140.0, 18.0 ],
+					"patching_rect" : [ 783.0, 608.0, 140.0, 22.0 ],
+					"style" : "",
 					"text" : "pcontrol",
 					"varname" : "pcontrolB"
 				}
@@ -815,15 +865,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-70",
+					"id" : "obj-11",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 783.0, 583.0, 140.0, 18.0 ],
+					"patching_rect" : [ 783.0, 583.0, 140.0, 22.0 ],
+					"style" : "",
 					"text" : "prepend load",
 					"varname" : "prependB"
 				}
@@ -831,15 +880,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-71",
+					"id" : "obj-12",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 783.0, 558.0, 140.0, 18.0 ],
+					"patching_rect" : [ 783.0, 558.0, 140.0, 22.0 ],
+					"style" : "",
 					"text" : "tosymbol",
 					"varname" : "tosymbolB"
 				}
@@ -847,16 +895,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-73",
-					"linecount" : 2,
+					"id" : "obj-15",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 783.0, 533.0, 140.0, 18.0 ],
+					"patching_rect" : [ 783.0, 533.0, 158.0, 22.0 ],
+					"style" : "",
 					"text" : "From OpenMusic to bach (l)",
 					"varname" : "messageB"
 				}
@@ -864,15 +910,14 @@
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
 					"hidden" : 1,
-					"id" : "obj-74",
+					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "bang", "bang" ],
-					"patching_rect" : [ 783.0, 508.0, 40.0, 18.0 ],
+					"patching_rect" : [ 783.0, 508.0, 40.0, 22.0 ],
+					"style" : "",
 					"text" : "t b b",
 					"varname" : "triggerB"
 				}
@@ -880,19 +925,17 @@
 			}
 , 			{
 				"box" : 				{
+					"bgcolor" : [ 0.75, 0.75, 0.75, 1.0 ],
 					"bgoncolor" : [ 0.51, 0.59, 0.64, 1.0 ],
-					"bgovercolor" : [ 0.64, 0.65, 0.72, 1.0 ],
-					"bordercolor" : [ 0.63, 0.7, 0.75, 1.0 ],
 					"fontface" : 2,
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-76",
+					"id" : "obj-18",
 					"maxclass" : "textbutton",
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "int" ],
 					"parameter_enable" : 0,
 					"patching_rect" : [ 783.0, 483.0, 151.0, 20.0 ],
+					"style" : "",
 					"text" : "Continue to section (l)",
 					"varname" : "textbuttonB"
 				}
@@ -901,8 +944,55 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-10", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-11", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-11", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-12", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-12", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-15", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-15", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-16", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-23", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-18", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-51", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"midpoints" : [ 208.5, 568.5, 190.5, 568.5, 190.5, 510.0, 208.5, 510.0 ],
 					"source" : [ "obj-198", 0 ]
@@ -911,8 +1001,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-51", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-23", 0 ]
 				}
@@ -920,27 +1017,15 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
-					"disabled" : 0,
+					"destination" : [ "obj-2", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-24", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-24", 0 ],
-					"disabled" : 0,
-					"hidden" : 1,
-					"source" : [ "obj-32", 0 ]
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-43", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-41", 0 ]
 				}
 
@@ -948,8 +1033,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-44", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-42", 0 ]
 				}
 
@@ -957,8 +1040,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-46", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-43", 0 ]
 				}
 
@@ -966,8 +1047,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-47", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-44", 0 ]
 				}
 
@@ -975,7 +1054,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-198", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-51", 0 ]
 				}
@@ -983,105 +1061,47 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-32", 0 ],
-					"disabled" : 0,
+					"destination" : [ "obj-3", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-65", 0 ]
+					"source" : [ "obj-6", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-23", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
-					"source" : [ "obj-66", 0 ]
+					"source" : [ "obj-7", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-65", 0 ],
-					"disabled" : 0,
+					"destination" : [ "obj-6", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-66", 1 ]
+					"source" : [ "obj-7", 1 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-66", 0 ],
-					"disabled" : 0,
+					"destination" : [ "obj-7", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-68", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-69", 0 ],
-					"disabled" : 0,
-					"hidden" : 1,
-					"source" : [ "obj-70", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-70", 0 ],
-					"disabled" : 0,
-					"hidden" : 1,
-					"source" : [ "obj-71", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-71", 0 ],
-					"disabled" : 0,
-					"hidden" : 1,
-					"source" : [ "obj-73", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-23", 0 ],
-					"disabled" : 0,
-					"hidden" : 1,
-					"source" : [ "obj-74", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-73", 0 ],
-					"disabled" : 0,
-					"hidden" : 1,
-					"source" : [ "obj-74", 1 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-74", 0 ],
-					"disabled" : 0,
-					"hidden" : 1,
-					"source" : [ "obj-76", 0 ]
+					"source" : [ "obj-9", 0 ]
 				}
 
 			}
  ],
 		"dependency_cache" : [ 			{
 				"name" : "linksections.maxpat",
-				"bootpath" : "/Applications/Max 6.1/packages/bach/docs/tutorial-patchers",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/docs/tutorial-patchers",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.help.searchtag.maxpat",
-				"bootpath" : "/Applications/Max 6.1/packages/bach/help",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../../help",
 				"type" : "JSON",
 				"implicit" : 1
@@ -1098,7 +1118,8 @@
 				"name" : "bach.length.mxo",
 				"type" : "iLaX"
 			}
- ]
+ ],
+		"autosave" : 0
 	}
 
 }

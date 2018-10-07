@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 81.0, 256.0, 253.0, 23.0 ],
 					"style" : "",
-					"text" : "addchord 2 (1400 (6100 1000 50)) @sel 1"
+					"text" : "addchord 2 [1400 [6100 1000 50]] @sel 1"
 				}
 
 			}
@@ -109,7 +109,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.5, 128.5, 209.0, 23.0 ],
 					"style" : "",
-					"text" : "addchord 2 (1000 (6100 1000 50))"
+					"text" : "addchord 2 [1000 [6100 1000 50]]"
 				}
 
 			}
@@ -124,7 +124,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 78.5, 198.0, 23.0 ],
 					"style" : "",
-					"text" : "addchord (1000 (6100 1000 50))"
+					"text" : "addchord [1000 [6100 1000 50]]"
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 61.0, 203.0, 266.0, 38.0 ],
 					"style" : "",
-					"text" : "addchord (1500 (7400 1000 50 (breakpoints (0 0 0) (1 -500 0)) (slots (3 10))))"
+					"text" : "addchord [1500 [7400 1000 50 [breakpoints [0 0 0] [1 -500 0]] [slots [3 10]]]]"
 				}
 
 			}
@@ -193,7 +193,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 37.5, 173.0, 293.0, 23.0 ],
 					"style" : "",
-					"text" : "addchord 1 (300 (6000 500 120) (7000 500 120))"
+					"text" : "addchord 1 [300 [6000 500 120] [7000 500 120]]"
 				}
 
 			}

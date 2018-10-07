@@ -128,7 +128,7 @@
 					"patching_rect" : [ 40.0, 132.5, 273.0, 23.0 ],
 					"presentation_rect" : [ 41.0, 102.0, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "sel marker 2, role timesig (3 4), clearselection"
+					"text" : "sel marker 2, role timesig [3 4], clearselection"
 				}
 
 			}

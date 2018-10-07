@@ -364,7 +364,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 22.0, 166.0, 87.0, 40.0 ],
-									"text" : "a b (c d) e"
+									"text" : "a b [c d] e"
 								}
 
 							}
@@ -631,7 +631,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 153.5, 146.0, 69.0, 19.0 ],
-									"text" : "a b (c d) e"
+									"text" : "a b [c d] e"
 								}
 
 							}
@@ -741,7 +741,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 210.0, 324.0, 69.0, 19.0 ],
-									"text" : "a b (c d) e"
+									"text" : "a b [c d] e"
 								}
 
 							}
@@ -1123,7 +1123,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 125.0, 301.0, 89.79689, 50.0 ],
-									"text" : "1 (3 2) 4"
+									"text" : "1 [3 2] 4"
 								}
 
 							}
@@ -1150,7 +1150,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 14.0, 301.0, 97.0, 51.0 ],
-									"text" : "a b (c d) e"
+									"text" : "a b [c d] e"
 								}
 
 							}
@@ -1223,7 +1223,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 236.0, 125.0, 94.0, 50.0 ],
-									"text" : "(woah) (yeah) (wah)"
+									"text" : "[woah] [yeah] [wah]"
 								}
 
 							}
@@ -1305,7 +1305,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 125.0, 125.0, 89.79689, 50.0 ],
-									"text" : "(1) (3 2) (4)"
+									"text" : "[1] [3 2] [4]"
 								}
 
 							}
@@ -1332,7 +1332,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 14.0, 125.0, 97.0, 51.0 ],
-									"text" : "a b (c d) e"
+									"text" : "a b [c d] e"
 								}
 
 							}
@@ -1941,7 +1941,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 24.0, 148.0, 120.0, 51.0 ],
-									"text" : "a (b c d e) f"
+									"text" : "a [b c d e] f"
 								}
 
 							}

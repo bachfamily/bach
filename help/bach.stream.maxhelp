@@ -619,7 +619,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 91.0, 180.0, 164.0, 23.0 ],
 									"style" : "",
-									"text" : "(john paul), (ringo), george"
+									"text" : "[john paul], [ringo], george"
 								}
 
 							}
@@ -679,7 +679,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 76.875, 154.0, 60.0, 23.0 ],
 									"style" : "",
-									"text" : "(foo fee)"
+									"text" : "[foo fee]"
 								}
 
 							}
@@ -694,7 +694,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 127.0, 213.0, 134.0, 23.0 ],
 									"style" : "",
-									"text" : "1 (2) (34 5) 6 8 (9 11)"
+									"text" : "1 [2] [34 5] 6 8 [9 11]"
 								}
 
 							}

@@ -51,7 +51,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 55.0, 153.0, 117.0, 18.0 ],
-					"text" : "play (1 3 1/4) 10000"
+					"text" : "play [1 3 1/4] 10000"
 				}
 
 			}
@@ -150,7 +150,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 38.0, 126.0, 81.0, 18.0 ],
-					"text" : "play (1 3 1/4)"
+					"text" : "play [1 3 1/4]"
 				}
 
 			}
@@ -403,7 +403,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 496.0, 433.0, 142.0, 18.0 ],
-					"text" : "The Gift Of Synthesis (b)",
+					"text" : "The Gift Of Synthesis [b]",
 					"varname" : "messageB"
 				}
 

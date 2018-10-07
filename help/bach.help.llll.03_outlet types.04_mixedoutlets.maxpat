@@ -306,7 +306,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 243.499985, 107.5, 222.0, 19.0 ],
-					"text" : "((Lennon McCartney) Starr) Harrison"
+					"text" : "[[Lennon McCartney] Starr] Harrison"
 				}
 
 			}
@@ -334,7 +334,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 4.0, 107.5, 170.0, 19.0 ],
-					"text" : "((John Paul) Ringo) George"
+					"text" : "[[John Paul] Ringo] George"
 				}
 
 			}

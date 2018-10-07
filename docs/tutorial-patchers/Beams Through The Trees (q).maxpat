@@ -1497,7 +1497,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 616.0, 170.0, 22.0 ],
 					"style" : "",
-					"text" : "Beams Through The Trees (p)",
+					"text" : "Beams Through The Trees [p]",
 					"varname" : "messageA"
 				}
 

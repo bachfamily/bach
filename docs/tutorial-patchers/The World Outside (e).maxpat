@@ -223,7 +223,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "read \"Real Time Stories (g) - bach.mid\" (markmeasures 1)",
+					"text" : "read \"Real Time Stories [g] - bach.mid\" [markmeasures 1]",
 					"id" : "obj-69",
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -419,7 +419,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "The World Outside (d)",
+					"text" : "The World Outside [d]",
 					"id" : "obj-7",
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -518,7 +518,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "The World Outside (f)",
+					"text" : "The World Outside [f]",
 					"id" : "obj-15",
 					"fontname" : "Arial",
 					"fontsize" : 12.0,

@@ -47,7 +47,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 407.88092, 442.0, 156.0, 23.0 ],
 					"style" : "",
-					"text" : "getdomain (label george)"
+					"text" : "getdomain [label george]"
 				}
 
 			}
@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 218.0, 442.0, 180.0, 23.0 ],
 					"style" : "",
-					"text" : "testdomain (label ringo) 1000"
+					"text" : "testdomain [label ringo] 1000"
 				}
 
 			}
@@ -77,7 +77,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 11.0, 442.0, 182.0, 23.0 ],
 					"style" : "",
-					"text" : "timetopixel (label john) (1 1/8)"
+					"text" : "timetopixel [label john] [1 1/8]"
 				}
 
 			}
@@ -290,7 +290,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 57.380936, 115.0, 154.0, 23.0 ],
 					"style" : "",
-					"text" : "getnumchords (label fee)"
+					"text" : "getnumchords [label fee]"
 				}
 
 			}
@@ -305,7 +305,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.380936, 89.0, 155.0, 23.0 ],
 					"style" : "",
-					"text" : "getnumchords (label foo)"
+					"text" : "getnumchords [label foo]"
 				}
 
 			}

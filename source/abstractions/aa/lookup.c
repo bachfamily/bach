@@ -70,7 +70,7 @@ llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 CLASS_ATTR_LONG(c, "nils", 0, t_lookup, n_nils);
 CLASS_ATTR_FILTER_CLIP(c, "nils", 0, 1);
 CLASS_ATTR_STYLE(c, "nils", 0, "nil for Not Found");	
-// @description When set to 1, if no element was present at the requested address <b>()</b> is output.
+// @description When set to 1, if no element was present at the requested address <b>[]</b> is output.
 // When set to 0 (default), <b>null</b> is output.
 
 CLASS_ATTR_LONG(c, "unwrap", 0,	t_lookup, n_unwrap);
@@ -79,8 +79,8 @@ CLASS_ATTR_FILTER_CLIP(c, "unwrap", 0, 1);
 CLASS_ATTR_STYLE(c, "unwrap", 0, "onoff");
 // @description
 // When set to 1, the outermost couple of parentheses of any sublist to be output is removed.
-// For instance, if the llll <b>a b (c d e)</b> is input and its third element is requested,
-// <b>c d e</b> will be output instead of <b>(c d e)</b>.
+// For instance, if the llll <b>a b [c d e]</b> is input and its third element is requested,
+// <b>c d e</b> will be output instead of <b>[c d e]</b>.
 // Defaults to 0.
 
 

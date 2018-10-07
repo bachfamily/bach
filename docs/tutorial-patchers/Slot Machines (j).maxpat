@@ -41,7 +41,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (name staticfilter) (key f) (width 120) (range -120 10) (domain 0 22500) (slope -0.5) (domainslope 0.5)))",
+					"text" : "[slotinfo [1 [name staticfilter] [key f] [width 120] [range -120 10] [domain 0 22500] [slope -0.5] [domainslope 0.5]]]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 300.0, 618.0, 18.0 ],
 					"id" : "obj-43",
@@ -106,7 +106,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "( slotinfo ( 1 (name \"amplitude envelope\" ) (type function) (range -120 10) (slope -0.5) (key a) (width temporal)))",
+					"text" : "[ slotinfo [ 1 [name \"amplitude envelope\" ] [type function] [range -120 10] [slope -0.5] [key a] [width temporal]]]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 105.0, 601.0, 18.0 ],
 					"id" : "obj-58",
@@ -309,7 +309,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (i)",
+					"text" : "Slot Machines [i]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 518.0, 140.0, 18.0 ],
 					"id" : "obj-7",
@@ -408,7 +408,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (k)",
+					"text" : "Slot Machines [k]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 546.0, 518.0, 140.0, 18.0 ],
 					"id" : "obj-16",

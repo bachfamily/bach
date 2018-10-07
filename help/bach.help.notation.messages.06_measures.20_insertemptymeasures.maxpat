@@ -143,7 +143,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 40.0, 136.0, 151.0, 23.0 ],
 					"style" : "",
-					"text" : "insertmeasures (2 4) 1 3"
+					"text" : "insertmeasures [2 4] 1 3"
 				}
 
 			}

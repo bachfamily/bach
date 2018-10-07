@@ -329,7 +329,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Edit Path (b)",
+					"text" : "Edit Path [b]",
 					"numoutlets" : 1,
 					"id" : "obj-7",
 					"fontname" : "Arial",

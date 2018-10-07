@@ -431,7 +431,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Through The Looking Glass (k)",
+					"text" : "Through The Looking Glass [k]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -530,7 +530,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Through The Looking Glass (m)",
+					"text" : "Through The Looking Glass [m]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,

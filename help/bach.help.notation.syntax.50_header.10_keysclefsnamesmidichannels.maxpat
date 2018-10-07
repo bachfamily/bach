@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 473.0, 375.5, 128.0, 23.0 ],
 					"style" : "",
-					"text" : "(midichannels 1 3 5)"
+					"text" : "[midichannels 1 3 5]"
 				}
 
 			}
@@ -245,7 +245,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 24.450012, 335.0, 392.0, 23.0 ],
 					"style" : "",
-					"text" : "(clefs Percussion F FG) (voicenames Perc (Electric Bass) Piano)"
+					"text" : "[clefs Percussion F FG] [voicenames Perc [Electric Bass] Piano]"
 				}
 
 			}
@@ -276,7 +276,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 291.5, 179.0, 23.0 ],
 					"style" : "",
-					"text" : "(keys CM C#m) (clefs G F G)"
+					"text" : "[keys CM C#m] [clefs G F G]"
 				}
 
 			}

@@ -408,7 +408,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2) (1/4 3)",
+					"text" : "[1 2] [1/4 3]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 396.0, 322.0, 73.0, 18.0 ],
@@ -506,7 +506,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 a) (1/4 3)",
+					"text" : "[1 2 a] [1/4 3]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 322.0, 83.0, 18.0 ],
@@ -560,7 +560,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(me)",
+					"text" : "[me]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 6.0, 140.0, 35.0, 18.0 ],
@@ -588,7 +588,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2) (3 1.5)",
+					"text" : "[1 2] [3 1.5]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 250.0, 115.0, 73.0, 18.0 ],
@@ -615,7 +615,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 a) (1/4 3 1.5)",
+					"text" : "[1 2 a] [1/4 3 1.5]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 114.0, 103.0, 18.0 ],
@@ -642,7 +642,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3) (4 5 6) (5 8 9) (1 2 4)",
+					"text" : "[1 2 3] [4 5 6] [5 8 9] [1 2 4]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 92.0, 159.0, 18.0 ],
@@ -765,7 +765,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Into The Matrix (b)",
+					"text" : "Into The Matrix [b]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 533.0, 603.0, 140.0, 18.0 ],

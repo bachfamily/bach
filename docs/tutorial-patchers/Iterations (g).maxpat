@@ -57,7 +57,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(6200 6700 7000)",
+					"text" : "[6200 6700 7000]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -677,7 +677,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (f)",
+					"text" : "Iterations [f]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -776,7 +776,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (h)",
+					"text" : "Iterations [h]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

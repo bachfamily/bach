@@ -296,7 +296,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ -688.0, 218.0, 631.0, 451.0 ],
 					"style" : "",
-					"text" : "score ( slotinfo ( 1 ( name \"rest prob\" ) ( type float ) ( key p ) ( range 0. 1. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 2 ( name \"slot function\" ) ( type function ) ( key q ) ( range 0. 1. ) ( slope 0. ) ( representation ) ( ysnap ( ) ) ( width temporal ) ) ( 3 ( name \"slot longlist\" ) ( type intlist ) ( key w ) ( range 0. 127. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 4 ( name \"slot floatlist\" ) ( type floatlist ) ( key e ) ( range 0. 1. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 5 ( name \"slot long\" ) ( type int ) ( key r ) ( range 0. 127. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 6 ( name \"slot float\" ) ( type float ) ( key t ) ( range 0. 1. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 7 ( name \"slot text\" ) ( type text ) ( key y ) ( width 100. ) ) ( 8 ( name filelist ) ( type filelist ) ( key u ) ( width 100. ) ) ( 9 ( name spat ) ( type spat ) ( key i ) ( range 0. 10. ) ( slope 0. ) ( representation ) ( width temporal ) ) ( 10 ( name \"slot 10\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 11 ( name \"slot 11\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 12 ( name \"slot 12\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 13 ( name \"slot 13\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 14 ( name \"slot 14\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 15 ( name \"slot 15\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 16 ( name \"slot 16\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 17 ( name \"slot 17\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 18 ( name \"slot 18\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 19 ( name \"slot 19\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 20 ( name \"slot 20\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 21 ( name \"slot 21\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 22 ( name \"slot 22\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 23 ( name \"slot 23\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 24 ( name \"slot 24\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 25 ( name \"slot 25\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 26 ( name \"slot 26\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 27 ( name \"slot 27\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 28 ( name \"slot 28\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 29 ( name \"slot 29\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 30 ( name \"slot 30\" ) ( type none ) ( key 0 ) ( width 0. ) ) ) ( commands ( 1 notecmd chordcmd 0 ) ( 2 notecmd chordcmd 0 ) ( 3 notecmd chordcmd 0 ) ( 4 notecmd chordcmd 0 ) ( 5 notecmd chordcmd 0 ) ) ( clefs G G F ) ( keys CM CM CM ) ( midichannels 1 2 3 ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 6500. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) 0 ) 0 ) ( 1/16 ( 7500. 127 0 ( graphic 7600 -1/2 ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.8 ) ) 0 ) 0 ) ( 1/8 ( 7700. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.26142 ) ) 0 ) 0 ) ( 1/16 ( 7500. 127 0 ( graphic 7600 -1/2 ) 0 ) 0 ) 0 ) ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) 0 ) 0 ) ( 1/16 ( 6800. 127 0 ( graphic 6900 -1/2 ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) 0 ) 0 ) ( 1/16 ( 7200. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6500. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) 0 ) 0 ) ( 1/16 ( 7000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) 0 ) ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 4600. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/8 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) 0 ) 0 ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) 0 ) )"
+					"text" : "score [ slotinfo [ 1 [ name \"rest prob\" ] [ type float ] [ key p ] [ range 0. 1. ] [ slope 0. ] [ representation ] [ width 100. ] ] [ 2 [ name \"slot function\" ] [ type function ] [ key q ] [ range 0. 1. ] [ slope 0. ] [ representation ) ( ysnap ( ) ) ( width temporal ) ) ( 3 ( name \"slot longlist\" ) ( type intlist ) ( key w ) ( range 0. 127. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 4 ( name \"slot floatlist\" ) ( type floatlist ) ( key e ) ( range 0. 1. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 5 ( name \"slot long\" ) ( type int ) ( key r ) ( range 0. 127. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 6 ( name \"slot float\" ) ( type float ) ( key t ) ( range 0. 1. ) ( slope 0. ) ( representation ) ( width 100. ) ) ( 7 ( name \"slot text\" ) ( type text ) ( key y ) ( width 100. ) ) ( 8 ( name filelist ) ( type filelist ) ( key u ) ( width 100. ) ) ( 9 ( name spat ) ( type spat ) ( key i ) ( range 0. 10. ) ( slope 0. ) ( representation ) ( width temporal ) ) ( 10 ( name \"slot 10\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 11 ( name \"slot 11\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 12 ( name \"slot 12\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 13 ( name \"slot 13\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 14 ( name \"slot 14\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 15 ( name \"slot 15\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 16 ( name \"slot 16\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 17 ( name \"slot 17\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 18 ( name \"slot 18\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 19 ( name \"slot 19\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 20 ( name \"slot 20\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 21 ( name \"slot 21\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 22 ( name \"slot 22\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 23 ( name \"slot 23\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 24 ( name \"slot 24\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 25 ( name \"slot 25\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 26 ( name \"slot 26\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 27 ( name \"slot 27\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 28 ( name \"slot 28\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 29 ( name \"slot 29\" ) ( type none ) ( key 0 ) ( width 0. ) ) ( 30 ( name \"slot 30\" ) ( type none ) ( key 0 ) ( width 0. ) ) ) ( commands ( 1 notecmd chordcmd 0 ) ( 2 notecmd chordcmd 0 ) ( 3 notecmd chordcmd 0 ) ( 4 notecmd chordcmd 0 ) ( 5 notecmd chordcmd 0 ) ) ( clefs G G F ) ( keys CM CM CM ) ( midichannels 1 2 3 ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 6500. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) 0 ) 0 ) ( 1/16 ( 7500. 127 0 ( graphic 7600 -1/2 ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.8 ) ) 0 ) 0 ) ( 1/8 ( 7700. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.26142 ) ) 0 ) 0 ) ( 1/16 ( 7500. 127 0 ( graphic 7600 -1/2 ) 0 ) 0 ) 0 ) ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) 0 ) 0 ) ( 1/16 ( 6800. 127 0 ( graphic 6900 -1/2 ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) 0 ) 0 ) ( 1/16 ( 7200. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6500. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) 0 ) 0 ) ( 1/16 ( 7000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) 0 ) ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 4600. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/8 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) 0 ) 0 ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) ( 1/16 ( 6000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) 0 ) 0 ) 0 ) )"
 				}
 
 			}
@@ -417,7 +417,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 675.0, 86.0, 63.0, 18.0 ],
 									"style" : "",
-									"text" : "( ( 1 $1 ) )"
+									"text" : "[ [ 1 $1 ] ]"
 								}
 
 							}
@@ -451,7 +451,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 462.0, 86.0, 63.0, 18.0 ],
 									"style" : "",
-									"text" : "( ( 1 $1 ) )"
+									"text" : "[ [ 1 $1 ] ]"
 								}
 
 							}
@@ -485,7 +485,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 249.0, 86.0, 63.0, 18.0 ],
 									"style" : "",
-									"text" : "( ( 1 $1 ) )"
+									"text" : "[ [ 1 $1 ] ]"
 								}
 
 							}
@@ -563,7 +563,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 555.0, 306.0, 63.0, 18.0 ],
 									"style" : "",
-									"text" : "( ( 1 $1 ) )"
+									"text" : "[ [ 1 $1 ] ]"
 								}
 
 							}
@@ -592,7 +592,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 422.0, 306.0, 57.0, 18.0 ],
 									"style" : "",
-									"text" : "( (1 $1) )"
+									"text" : "[ [1 $1] ]"
 								}
 
 							}
@@ -4178,7 +4178,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 531.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "The Minimal Way (d)",
+					"text" : "The Minimal Way [d]",
 					"varname" : "messageA"
 				}
 
@@ -4271,7 +4271,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 744.0, 531.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "The Minimal Way (f)",
+					"text" : "The Minimal Way [f]",
 					"varname" : "messageB"
 				}
 

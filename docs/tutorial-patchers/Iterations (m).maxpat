@@ -647,7 +647,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (l)",
+					"text" : "Iterations [l]",
 					"patching_rect" : [ 5.0, 558.0, 140.0, 18.0 ],
 					"numinlets" : 2,
 					"id" : "obj-7",
@@ -746,7 +746,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (n)",
+					"text" : "Iterations [n]",
 					"patching_rect" : [ 580.0, 558.0, 140.0, 18.0 ],
 					"numinlets" : 2,
 					"id" : "obj-16",

@@ -2531,7 +2531,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Graphical Synchronization (e)",
+					"text" : "Graphical Synchronization [e]",
 					"id" : "obj-7",
 					"fontname" : "Arial",
 					"numinlets" : 2,

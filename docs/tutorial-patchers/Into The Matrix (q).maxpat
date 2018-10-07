@@ -411,7 +411,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(( $1 $2 $3 $4 )), bang",
+					"text" : "[[ $1 $2 $3 $4 ]], bang",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -742,7 +742,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 1 1 1) (-1 1 0 0) (-1 0 1 0) (-1 0 -1 2)",
+					"text" : "[1 1 1 1] [-1 1 0 0] [-1 0 1 0] [-1 0 -1 2]",
 					"linecount" : 4,
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -876,7 +876,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Into The Matrix (p)",
+					"text" : "Into The Matrix [p]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"hidden" : 1,

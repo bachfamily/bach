@@ -379,7 +379,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 154.0, 120.0, 51.0 ],
 									"style" : "",
-									"text" : "a b (c d) (e f g) h"
+									"text" : "a b [c d] [e f g] h"
 								}
 
 							}

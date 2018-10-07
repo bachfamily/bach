@@ -47,7 +47,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 66.5, 195.0, 515.0, 50.0 ],
 					"style" : "",
-					"text" : "Answer is routed by \"measurepixelpos\", and for each voice it returns an llll containing an llll for each measure, formatted as:\n((<x_pixel_start> <x_pixel_end>) (<y_pixel_start> <y_pixel_end>))",
+					"text" : "Answer is routed by \"measurepixelpos\", and for each voice it returns an llll containing an llll for each measure, formatted as:\n[[<x_pixel_start> <x_pixel_end>] [<y_pixel_start> <y_pixel_end>]]",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

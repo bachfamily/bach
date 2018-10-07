@@ -617,12 +617,12 @@ int T_EXPORT main(void){
     // The argument is the wrapped address of the node to be clicked. Such address can be replaced by the "prev" or "next" symbols
     // in order to click on the previous or next node, with respect to the one being currently clicked (if any).
     // The ordering of nodes is assumed to be the one used by <o>bach.iter</o> while iterating.
-    // For instance, <b>click (1 3 4)</b> clicks on the llll element having address <b>1 3 4</b>, and <b>click next</b> then clicks on
+    // For instance, <b>click [1 3 4]</b> clicks on the llll element having address <b>1 3 4</b>, and <b>click next</b> then clicks on
     // the following address.
     // If the clicked node was inside folded levels, such levels are properly unfolded.
     // @marg 0 @name wrapped_address @optional 0 @type llll/symbol
-    // @example click (1 3 4) @caption click on the point having address (1 3 4)
-    // @example click () @caption click on root node
+    // @example click [1 3 4] @caption click on the point having address (1 3 4)
+    // @example click [] @caption click on root node
     // @example click next @caption click on the next element
     // @example click prev @caption click on the previous element
     // @seealso open, close, switch
@@ -642,7 +642,7 @@ int T_EXPORT main(void){
     // @example open 1 @caption open nodes at first level
     // @example open 2 4 @caption open nodes between 2nd and 4th depth level
     // @example open 3 -1 @caption open nodes at the 3rd level or deeper
-    // @example open (1 4 2) @caption open node at address (1 4 2)
+    // @example open [1 4 2] @caption open node at address (1 4 2)
     // @seealso close, switch, click
     class_addmethod(c, (method) tree_open, "open", A_GIMME, 0);
     
@@ -660,7 +660,7 @@ int T_EXPORT main(void){
     // @example close 1 @caption close nodes at first level
     // @example close 2 4 @caption close nodes between 2nd and 4th depth level
     // @example close 3 -1 @caption close nodes at the 3rd level or deeper
-    // @example close (1 4 2) @caption close node at address (1 4 2)
+    // @example close [1 4 2] @caption close node at address (1 4 2)
     // @seealso open, switch, click
     class_addmethod(c, (method) tree_close, "close", A_GIMME, 0);
     
@@ -678,7 +678,7 @@ int T_EXPORT main(void){
     // @example switch 1 @caption switch nodes at first level
     // @example switch 2 4 @caption switch nodes between 2nd and 4th depth level
     // @example switch 3 -1 @caption switch nodes at the 3rd level or deeper
-    // @example switch (1 4 2) @caption switch node at address (1 4 2)
+    // @example switch [1 4 2] @caption switch node at address (1 4 2)
     // @seealso open, close, click
     class_addmethod(c, (method) tree_switch, "switch", A_GIMME, 0);
 
@@ -715,7 +715,7 @@ int T_EXPORT main(void){
     // @example setcheck all @caption check all elements
     // @example setcheck none @caption uncheck all elements
     // @example setcheck 1 0 0 1 @caption check first and last element of a plain list
-    // @example setcheck -1 (-1 (1 1 1 1) (-1 0 1)) @caption set (mixed) checking for more complex llll
+    // @example setcheck -1 [-1 [1 1 1 1] [-1 0 1]] @caption set (mixed) checking for more complex llll
     class_addmethod(c, (method) tree_setcheckvalues, "setcheck", A_GIMME, 0);
     
     

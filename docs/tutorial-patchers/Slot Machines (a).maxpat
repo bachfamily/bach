@@ -316,7 +316,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 612.0, 491.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Slot Machines (b)",
+					"text" : "Slot Machines [b]",
 					"varname" : "messageB"
 				}
 

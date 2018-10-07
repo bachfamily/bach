@@ -260,7 +260,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Abstract Thinking (b)",
+					"text" : "Abstract Thinking [b]",
 					"fontsize" : 12.0,
 					"hidden" : 1,
 					"numinlets" : 2,

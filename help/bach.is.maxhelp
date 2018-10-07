@@ -257,7 +257,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 257.5, 124.0, 59.0, 23.0 ],
 									"style" : "",
-									"text" : "1 (2) c 3"
+									"text" : "1 [2] c 3"
 								}
 
 							}

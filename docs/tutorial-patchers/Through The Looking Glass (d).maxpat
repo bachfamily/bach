@@ -74,7 +74,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "cents ( $1 plus)",
+					"text" : "cents [ $1 plus]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 329.0, 154.0, 93.0, 18.0 ],
@@ -88,7 +88,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "cents (-1 times)",
+					"text" : "cents [-1 times]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 447.0, 139.0, 93.0, 18.0 ],
@@ -185,7 +185,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "select all, cents (-1 times), cents ( $1 plus), clearselection",
+					"text" : "select all, cents [-1 times], cents [ $1 plus], clearselection",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 28.0, 219.0, 315.0, 18.0 ],
@@ -267,7 +267,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "score ( ( ( ( 4 4 ) ( ) ) ( 1/4 ( 5200. 127 0 ( graphic 5200 0 ) 0 ) 0 ) ( 1/32 ( 6300. 127 0 ( graphic 6200 1/2 ) 0 ) 0 ) ( 1/32 ( 6000. 127 0 ( graphic 6000 0 ) 0 ) 0 ) ( 1/16 ( 6100. 127 0 ( graphic 6000 1/2 ) 0 ) 0 ) ( 1/16 ( 5900. 127 0 ( graphic 5900 0 ) 0 ) 0 ) ( 1/16 ( 5400. 127 0 ( graphic 5300 1/2 ) 0 ) 0 ) ( 1/4 ( 4700. 127 1 ( graphic 4700 0 ) 0 ) 0 ) ( 1/12 ( 4700. 127 0 ( graphic 4700 0 ) 0 ) 0 ) ( 1/12 ( 4700. 127 0 ( graphic 4700 0 ) 0 ) 0 ) ( 1/12 ( 4600. 127 0 ( graphic 4700 -1/2 ) 0 ) 0 ) 0 ) ( ( ( 4 4 ) ( ) ) ( 1/2 ( 5500. 127 0 ( graphic 5500 0 ) 0 ) 0 ) ( 1/2 ( 5000. 127 0 ( graphic 5000 0 ) 0 ) 0 ) 0 ) )",
+					"text" : "score [ [ [ [ 4 4 ] [ ] ] [ 1/4 [ 5200. 127 0 [ graphic 5200 0 ] 0 ] 0 ] [ 1/32 [ 6300. 127 0 [ graphic 6200 1/2 ] 0 ] 0 ] [ 1/32 [ 6000. 127 0 [ graphic 6000 0 ] 0 ] 0 ] [ 1/16 [ 6100. 127 0 [ graphic 6000 1/2 ] 0 ] 0 ] [ 1/16 [ 5900. 127 0 ( graphic 5900 0 ) 0 ) 0 ) ( 1/16 ( 5400. 127 0 ( graphic 5300 1/2 ) 0 ) 0 ) ( 1/4 ( 4700. 127 1 ( graphic 4700 0 ) 0 ) 0 ) ( 1/12 ( 4700. 127 0 ( graphic 4700 0 ) 0 ) 0 ) ( 1/12 ( 4700. 127 0 ( graphic 4700 0 ) 0 ) 0 ) ( 1/12 ( 4600. 127 0 ( graphic 4700 -1/2 ) 0 ) 0 ) 0 ) ( ( ( 4 4 ) ( ) ) ( 1/2 ( 5500. 127 0 ( graphic 5500 0 ) 0 ) 0 ) ( 1/2 ( 5000. 127 0 ( graphic 5000 0 ) 0 ) 0 ) 0 ) )",
 					"linecount" : 6,
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -415,7 +415,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Through The Looking Glass (c)",
+					"text" : "Through The Looking Glass [c]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 490.0, 174.0, 18.0 ],
@@ -514,7 +514,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Through The Looking Glass (e)",
+					"text" : "Through The Looking Glass [e]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 497.0, 490.0, 174.0, 18.0 ],

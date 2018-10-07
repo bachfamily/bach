@@ -284,11 +284,11 @@ int T_EXPORT main(void){
 
 	// @method add @digest Add a point
 	// @description Add a point to the diagram. The argument can be, as in the standard <m>llll</m> method,
-	// either a plain list (representing point indices) or an interlaced list <b>(<m>pt1</m> <m>vel1</m>) (<m>pt2</m> <m>vel2</m>)...</b>
+	// either a plain list (representing point indices) or an interlaced list <b>[<m>pt1</m> <m>vel1</m>] [<m>pt2</m> <m>vel2</m>]...</b>
 	// representing points and velocities
 	// @marg 0 @name points @optional 0 @type llll
     // @example add 2 4 5 @caption add some points
-    // @example add (2 60) (4 100 (5 120) @caption add some points with their velocities
+    // @example add [2 60] [4 100 [5 120] @caption add some points with their velocities
     // @seealso delete
 	class_addmethod(c, (method) circle_anything, "add", A_GIMME, 0);
 

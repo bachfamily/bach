@@ -66,7 +66,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 42.25, 218.0, 196.0, 52.0 ],
 					"style" : "",
-					"text" : "(((4 4) (60) (shownumber auto)) ((3 4) (70) (shownumber -4)) ((4 4) () (shownumber off))), bang"
+					"text" : "[[[4 4] [60] [shownumber auto]] [[3 4] [70] [shownumber -4]] [[4 4] [] [shownumber off]]], bang"
 				}
 
 			}
@@ -111,7 +111,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 424.75, 278.0, 171.0, 23.0 ],
 					"style" : "",
-					"text" : "((4 4) () ( shownumber $1 ))"
+					"text" : "[[4 4] [] [ shownumber $1 ]]"
 				}
 
 			}

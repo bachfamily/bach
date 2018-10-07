@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 68.0, 222.0, 152.0, 23.0 ],
 					"style" : "",
-					"text" : "appendmeasures (2 3) 2"
+					"text" : "appendmeasures [2 3] 2"
 				}
 
 			}

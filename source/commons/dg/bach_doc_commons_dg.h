@@ -19,9 +19,9 @@
 	//  on the time signature in general), and then performs the quantization in each box. This allows things falling almost exactly on box boundaries to be kept exactly on the box boundaries,
 	//  so that they may not float due to quantization errors. You can assign custom boxes by explicitely saying which boxes you want. 
 	//  You have to give a llll for each voice (in our case, just one), containing for each measure: either a rational number, which represents the 
-	//  width of each box (e.g. <b>1/8</b>) and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>(1/4 3/4)</b>.
-	//  This has to be done for each voice, so that for instance a list like <b>(1/8 2/4) () ((1/4 3/4) 1/8)</b> sets to 1/8 the boxes for firt measure of first voice, 
-	//  to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>(1/4 3/4)</b> the boxes for
+	//  width of each box (e.g. <b>1/8</b>] and which will be repeated; or a list, containing explicitely the box width for each box, e.g. <b>[1/4 3/4]</b>.
+	//  This has to be done for each voice, so that for instance a list like <b>[1/8 2/4] [] [[1/4 3/4] 1/8]</b> sets to 1/8 the boxes for firt measure of first voice, 
+	//  to 2/4 the boxes for second measure of first voice (and all the possibly following ones); leaves by default the boxes of second voice; sets explicitely to <b>[1/4 3/4]</b> the boxes for
 	//  the first measure of the third voice and then to 1/8 for all the following ones.
 	//  <br /> <br />
 	
@@ -77,7 +77,7 @@
 
 #define BACH_DOC_MATRIXCALCULUS_MATRIX
 	// 	In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-	//  For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+	//  For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 	//  i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same 
 	//  as the number of rows.
 	//  <br /> <br />
@@ -171,9 +171,9 @@
 	//  and the content as fourth parameter. Alternatively, roles and content can be set via the marker inspector.
 	//	Roles can be: <br />
 	//  <m>Time Signature</m>: set by the symbol "timesig", it represents a time signature, and expects the time signature llll as content.
-	//  For instance, a message to add such a marker could be <b>addmarker 0 foo timesig (4 4)</b>.<br />
+	//  For instance, a message to add such a marker could be <b>addmarker 0 foo timesig [4 4]</b>.<br />
 	//  <m>Tempo</m>: set by the symbol "tempo", it represents a time signature, and expects the tempo llll as content (tempo figure and tempo
-	//  value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo (1/8 50)</b>, meaning
+	//  value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo [1/8 50]</b>, meaning
 	//  that the tempo is 1/8 = 50.<br />
 	//  <m>Measure Barlines</m>: set by the symbol "barline", it represents a barline, and expects no content.
 	//  For instance, a message to add such a marker could be <b>addmarker 0 foo barline</b>. <br />
@@ -317,10 +317,10 @@
 	//  or at offline play, or selection dump).
 	//  The playout syntax is a slight variation of the standard chord gathered syntax. Two different cases apply, according to the <m>playmode</m>
 	//  attribute value. If the <m>playmode</m> is set to Chordwise, the information about each chord is output in the form <br />
-	//  <b>chord <m>voice_number</m> <m>MIDI_channel</m> (<m>onset</m> <m>NOTE1</m> <m>NOTE2</m> <m>NOTE3</m> <m>chord_flag</m>) </b> <br />
+	//  <b>chord <m>voice_number</m> <m>MIDI_channel</m> [<m>onset</m> <m>NOTE1</m> <m>NOTE2</m> <m>NOTE3</m> <m>chord_flag</m>] </b> <br />
 	//  where each <b><m>NOTE</m></b> is the gathered syntax of the note (see below).
 	//  If the <m>playmode</m> is set to Notewise, information about each note is output as if the note were the only note in the chord, i.e. in the form <br />
-	//  <b>note <m>voice_number</m> <m>MIDI_channel</m> (<m>onset</m> <m>NOTE</m> <m>chord_flag</m>) </b> <br />
+	//  <b>note <m>voice_number</m> <m>MIDI_channel</m> [<m>onset</m> <m>NOTE</m> <m>chord_flag</m>] </b> <br />
 	//  where <b><m>NOTE</m></b> is the note gathered syntax.
 	//  The <m>MIDI_channels</m> is the one associated with the voice to which the note or chord belongs. The <m>onset</m> is in milliseconds,
 	//  The <m>chord_flag</m> is a bitfield summing values of 1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
@@ -338,24 +338,24 @@
 	//  and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
 	//  Differently from absolute millisecond positions,
 	//  timepoints are represented by lllls, in one of the following syntaxes: <br />
-	//  - <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice. 
-	//  For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
-	//  - <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+	//  - <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice. 
+	//  For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
+	//  - <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
 	//  but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-	//  For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
-	//  - <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number, 
+	//  For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+	//  - <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number, 
 	//  in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-	//  For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+	//  For instance, <b>[2 4 1/4]</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
 	//  important if voices don't have the same tempi or time signatures. 
 	//  <br />
-	//  A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
-	//  point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1. 
+	//  A timepoint can also  be specified via a <b>[<m>float_measure_number</m>]</b>, representing the point in a floating
+	//  point position between two measures (referred to the first voice). For instance, <b>[4.2]</b> represents the point at the 20% of measure 4, voice 1. 
 	//  Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end 
-	//  of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+	//  of the measure (1); for instance <b>[1 4 0.2]</b> represents the point after 20% of measure 4, voice 1.
     //  <br />
     //  If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
-    //  For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-    //  <b>(3 any 27/4)</b> does the same for voice 3.
+    //  For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+    //  <b>[3 any 27/4]</b> does the same for voice 3.
     //  <br /> <br />
 	
 
@@ -373,7 +373,7 @@
 	//  <m>onset_from_score_beginning_in_ms</m> <m>NOTE</m> <m>note_flag</m>) </b> <br />
 	//  where <m>NOTE</m> is the note gathered syntax. <br />
 	//  If <m>playrest</m> is set to 1, and the chord is a rest, the router symbol is <b>rest</b> instead of chord, and there is no <m>NOTE</m> llll. <br />
-	//  In case the played note or chord is just a grace chord, the <m>symbolic_duration</m> becomes an llll in the form <b>(g <m>grace_symbolic_duration</m>)</b>.
+	//  In case the played note or chord is just a grace chord, the <m>symbolic_duration</m> becomes an llll in the form <b>[g <m>grace_symbolic_duration</m>]</b>.
 	//  The <m>MIDI_channels</m> is the one associated with the voice to which the note or chord belongs. The <m>onset</m> is in milliseconds,
 	//  The <m>chord_flag</m> is a bitfield summing values of 1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
 	//  The playout syntax also concerns markers: they are output in the form: <b>marker <m>NAME_OR_NAMES</m> <m>ONSET</m> none</b>
@@ -383,9 +383,9 @@
 	//  the onset timepoint (if the marker is attached to the position inside the measure). <br />
     //  The playout syntax also concerns tempi: they are output in the form <b>tempo <m>voice_number</m> <m>tempo</m> <m>TEMPO_LLLL</m></b>,
     //  where <m>tempo</m> is the floating point tempo referred to the quarter note, and
-    //  <m>TEMPO_LLLL</m> is in the form <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b>.
+    //  <m>TEMPO_LLLL</m> is in the form <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b>.
     //  If the tempo starts an accelerando/rallentando (i.e. interpolation is set to 1), then the <m>tempo</m> element is substituted by the llll
-    //  <b>(<m>tempo</m> <m>next_tempo</m> <m>interp_duration_ms</m>)</b>.  <br />
+    //  <b>[<m>tempo</m> <m>next_tempo</m> <m>interp_duration_ms</m>]</b>.  <br />
     //  The playout syntax also concerns measures: if <m>playmeasures</m> is 1, at the beginning of each measure (for each voice), an llll is output
     //  in the form <b>measure <m>voice_number</m> <m>measure_number</m> <m>MEASUREINFO_LLLL</m></b>.
     //  If a tempo and/or a chord lie at the beginning of a measure, the order of output for the elements is: measure, tempo, chord (or notes). <br /> 
@@ -410,7 +410,7 @@
 	// 	The gathered syntax of a whole <o>bach.roll</o> is in the form <b>roll <m>HEADER</m> <m>BODY</m></b>, where
 	//  the first symbol is optional as input (but always given as output). <m>HEADER</m> is an llll containing all the 
 	//  <o>bach.roll</o> meta-information (such as key signatures, clefs, markers...), 
-	//  while <m>BODY</m> has the form of a sequence of voices: <b>(<m>VOICE1</m> <m>VOICE2</m>...)</b>
+	//  while <m>BODY</m> has the form of a sequence of voices: <b>[<m>VOICE1</m> <m>VOICE2</m>...]</b>
 	//  where each voice is an llll in gathered syntax (see below for more information about this). <br /> <br />
 	//  @copy BACH_DOC_HEADER_SYNTAX
 	//  @copy BACH_DOC_VOICE_GATHERED_SYNTAX_ROLL
@@ -420,38 +420,38 @@
 	// 	The gathered syntax of a whole <o>bach.score</o> is in the form <b>score <m>HEADER</m> <m>BODY</m></b>, where
 	//  the first symbol is optional as input (but always given as output). <m>HEADER</m> is an llll containing all the 
 	//  <o>bach.score</o> meta-information (such as key signatures, clefs, markers...),
-	//  while <m>BODY</m> has the form of a sequence of voices: <b>(<m>VOICE1</m> <m>VOICE2</m>...)</b>
+	//  while <m>BODY</m> has the form of a sequence of voices: <b>[<m>VOICE1</m> <m>VOICE2</m>...]</b>
 	//  where each voice is an llll in gathered syntax (see below for more information about this). <br /> <br />
 	//  @copy BACH_DOC_HEADER_SYNTAX
 	//  @copy BACH_DOC_VOICE_GATHERED_SYNTAX_SCORE
 
 
 #define BACH_DOC_VOICE_GATHERED_SYNTAX_ROLL
-	// 	For <o>bach.roll</o>, the gathered syntax for any voice, in its simplest form <b>(<m>CHORD1</m> <m>CHORD1</m>... <m>voice_flag</m>)</b>
+	// 	For <o>bach.roll</o>, the gathered syntax for any voice, in its simplest form <b>[<m>CHORD1</m> <m>CHORD1</m>... <m>voice_flag</m>]</b>
 	//  where each <m>CHORD</m> is an llll representing a chord in gathered syntax, and the <m>voice_flag</m> is an optional bitfield summing values of 
 	//  1 (if voice is locked), 2 (if voice is muted), 4 (if voice is solo). <br />
 	//  @copy BACH_DOC_CHORD_GATHERED_SYNTAX_ROLL
 	
 
 #define BACH_DOC_VOICE_GATHERED_SYNTAX_SCORE
-	// 	For <o>bach.score</o>, the gathered syntax for any voice, in its simplest form <b>(<m>MEASURE1</m> <m>MEASURE2</m>... <m>voice_flag</m>)</b>
+	// 	For <o>bach.score</o>, the gathered syntax for any voice, in its simplest form <b>[<m>MEASURE1</m> <m>MEASURE2</m>... <m>voice_flag</m>]</b>
 	//  where each <m>MEASURE</m> is an llll representing a measure in gathered syntax, and the <m>voice_flag</m> is an optional bitfield summing values of 
 	//  1 (if voice is locked), 2 (if voice is muted), 4 (if voice is solo). <br /> <br />
 	//  @copy BACH_DOC_MEASURE_GATHERED_SYNTAX_SCORE
 
 
 #define BACH_DOC_MEASURE_GATHERED_SYNTAX_SCORE
-	// 	For <o>bach.score</o>, the gathered syntax for any measure is, in its simplest form <b>(<m>MEASUREINFO</m> <m>CHORD1</m> <m>CHORD2</m>... <m>measure_flag</m>)</b>
+	// 	For <o>bach.score</o>, the gathered syntax for any measure is, in its simplest form <b>[<m>MEASUREINFO</m> <m>CHORD1</m> <m>CHORD2</m>... <m>measure_flag</m>]</b>
 	//  where <m>MEASUREINFO</m> is the information concerning time signatures and tempi, as well as possibly other information regarding barlines, widths and more (see below), 
 	//  each <m>CHORD</m> is an llll representing a chord and must be in the chord gathered syntax, and the <m>measure_flag</m> is an optional bitfield summing values of 
 	//  1 (if measure is locked), 2 (if measure is muted), 4 (if measure is solo), 8 (if measure rhythmic tree is locked). <br /> 
 	//  In the most general form, chord information is not represented linearly as a sequence of <m>CHORD</m> lllls, rather as a rhythmic tree, so
 	//  chord lllls are in general wrapped into further levels of parentheses. This is not necessary as input, although you can define such levels
 	//  also as input, in order to suggest to <o>bach.score</o> the rhythmic tree you want to have,
-	//  for instance: <b>(<m>MEASUREINFO</m> ((<m>CHORD1</m> <m>CHORD2</m>) <m>CHORD3</m>)... <m>measure_flag</m>)</b>.
+	//  for instance: <b>[<m>MEASUREINFO</m> [[<m>CHORD1</m> <m>CHORD2</m>] <m>CHORD3</m>]... <m>measure_flag</m>]</b>.
 	//  These additional levels act as suggestions on the bach algorithms, which might create further levels (e.g. by refining levels) or modify the existing ones
 	//  according to the <m>treehandling</m> and <m>maketreecompatiblewithts</m> attributes.
-	//  Each level llll by default has as first element, while output, an llll in the form <b>(leveltype <m>type</m>)</b>, where <m>type</m> is a number
+	//  Each level llll by default has as first element, while output, an llll in the form <b>[leveltype <m>type</m>]</b>, where <m>type</m> is a number
 	//  which accounts for the "lifecycle" of the level (was it created by the user? was it refined by bach itself?...) and which should be 
 	//  opaque to the user: such level type should never be set by hand, only kept to guarantee a good storage or rebuilding of <o>bach.score</o>.
 	//  The interpretation of rhythmic tree levels as input will depend on all the rhythmic tree attributes, the most important of which are
@@ -460,49 +460,49 @@
 	//  depending on the <m>saveleveltypes</m> attribute. <br /> 
 	//  Grace chords are characterized by being elements inside grace levels. Grace levels are identified by a "g" symbol at the very beginning
 	//  of the level. A grace level may contain sub-levels as any other ordinary level. Indeed, grace chords may have any symbolic duration,
-	//  they may also be rests, or organized in tuplets. The general form of the grace level is thus <b>(g <m>CHORD_OR_CHORDS</m>)</b>,
-	//  where <m>CHORD_OR_CHORDS</m> may be a complex llll containing the gathered syntax of chords. For instance: <b>(g (1/8 (6000 127 1)) ((-1/12) (1/24 (6000 127 1))))</b>.
+	//  they may also be rests, or organized in tuplets. The general form of the grace level is thus <b>[g <m>CHORD_OR_CHORDS</m>]</b>,
+	//  where <m>CHORD_OR_CHORDS</m> may be a complex llll containing the gathered syntax of chords. For instance: <b>[g [1/8 [6000 127 1]] [[-1/12] [1/24 [6000 127 1]]]]</b>.
 	//  <br /> <br />
 	//  @copy BACH_DOC_MEASUREINFO_SYNTAX
 	//  @copy BACH_DOC_CHORD_GATHERED_SYNTAX_SCORE
 
 
 #define BACH_DOC_CHORD_GATHERED_SYNTAX_ROLL
-	// 	For <o>bach.roll</o>, the gathered syntax for any chord, in its simplest form <b>(<m>onset_ms</m> <m>NOTE1</m> <m>NOTE2</m>... <m>chord_flag</m>)</b>
+	// 	For <o>bach.roll</o>, the gathered syntax for any chord, in its simplest form <b>[<m>onset_ms</m> <m>NOTE1</m> <m>NOTE2</m>... <m>chord_flag</m>]</b>
 	//  where <m>onset_ms</m> is the onset of the chord (starting temporal point) in milliseconds each <m>NOTE</m>
 	//  is an llll representing a note in gathered syntax, and the <m>chord_flag</m> is an optional bitfield summing values of 
 	//  1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
 	//  In its most general form, each chord can have a specification defining its name(s). This specification must be in the form
-	//  <b>(name <m>NAME_OR_LLLL_OF_NAMES</m>)</b>, and must be put after the last note llll,
+	//  <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>, and must be put after the last note llll,
 	//  before the <m>chord_flag</m>. For instance, a chord definition might 
-	//  have the form <b>(500 (7000. 500 127) (7200. 1200 100) (name paul) 0)</b>
+	//  have the form <b>[500 [7000. 500 127] [7200. 1200 100] [name paul] 0]</b>
 	//  <br /> <br />
 	//  @copy BACH_DOC_NOTE_GATHERED_SYNTAX_ROLL
 
 
 #define BACH_DOC_CHORD_GATHERED_SYNTAX_SCORE
-	// 	For <o>bach.score</o>, the gathered syntax for any chord, in its simplest form <b>(<m>sym_duration</m> <m>NOTE1</m> <m>NOTE2</m>... <m>chord_flag</m>)</b>
+	// 	For <o>bach.score</o>, the gathered syntax for any chord, in its simplest form <b>[<m>sym_duration</m> <m>NOTE1</m> <m>NOTE2</m>... <m>chord_flag</m>]</b>
 	//  where <m>sym_duration</m> is the symbolic rational duration of the chord, as a fraction of the whole note (e.g. <b>1/4</b>), each <m>NOTE</m>
 	//  is an llll representing a note in gathered syntax, and the <m>chord_flag</m> is an optional bitfield summing values of 
 	//  1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
 	//  In its most general form, each chord can have specifications defining its name(s) or its slots.
-	//  Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the last note llll,
+	//  Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the last note llll,
 	//  and before the <m>chord_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a chord definition might 
-	//  have the form <b>(1/4 (7000. 127 1) (7200. 100 0) (name john) (slots (10 fermata)) 0)</b>.
+	//  have the form <b>[1/4 [7000. 127 1] [7200. 100 0] [name john] [slots [10 fermata]] 0]</b>.
 	//  <br /> <br />
 	//  @copy BACH_DOC_NOTE_GATHERED_SYNTAX_SCORE
 
 
 #define BACH_DOC_NOTE_GATHERED_SYNTAX_ROLL
-	// 	For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>)</b>
+	// 	For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 	//  where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
 	//  is a value from 1 to 127 corresponding to the note dynamic, and
 	//  the <m>note_flag</m> is an optional bitfield summing values of 1 (if note is locked), 2 (if note is muted), 4 (if note is solo). <br />
 	//  In its most general form, each note can have different specifications and attributes, defining 
 	//  graphics, pitch breakpoints, slots, names.
-	//  Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the <m>velocity</m>
+	//  Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the <m>velocity</m>
 	//  and before the <m>note_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a note definition might have the form
-	//  <b>(7300. 136. 127 (graphic 7400 -1/2) (slots (1 (0. 0. 0.) (0.294118 81.138889 0.) (0.294118 38.805556 0.) (1. 0. 0.))) (name pippo) 0 )</b>
+	//  <b>[7300. 136. 127 [graphic 7400 -1/2] [slots [1 [0. 0. 0.] [0.294118 81.138889 0.] [0.294118 38.805556 0.] [1. 0. 0.]]] [name pippo] 0 ]</b>
 	//  <br /> <br />
 	//  @copy BACH_DOC_PITCHES_ALSO_AS_NOTENAMES
 	//  @copy BACH_DOC_NOTE_GRAPHIC_SYNTAX
@@ -511,15 +511,15 @@
 	//  @copy BACH_DOC_NAME_SYNTAX
 
 #define BACH_DOC_NOTE_GATHERED_SYNTAX_SCORE
-	// 	For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>)</b>
+	// 	For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 	//  where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 	//  is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
 	//  the <m>note_flag</m> is an optional bitfield summing values of 1 (if note is locked), 2 (if note is muted), 4 (if note is solo). <br />
 	//  In its most general form, each note can have different specifications and attributes, defining one of the possible extras:
 	//  graphics, pitch breakpoints, slots, names, articulations.
-	//  Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the <m>tie?</m>
+	//  Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the <m>tie?</m>
 	//  and before the <m>note_flag</m>. The order in which the specifications are listed is, on the other hand, unimportant. For instance, a note definition might have the form
-	//  <b>(7000. 127 1 (graphic 6900 1/2) (slots (1 (0. 112.5 0.) (1. 0. 0.))) (articulation stacc) (name foo) 0)</b>.
+	//  <b>[7000. 127 1 [graphic 6900 1/2] [slots [1 [0. 112.5 0.] [1. 0. 0.]]] [articulation stacc] [name foo] 0]</b>.
 	//  <br /> <br />
 	//  @copy BACH_DOC_NOTE_GRAPHIC_SYNTAX
 	//  @copy BACH_DOC_NOTE_BREAKPOINT_SYNTAX
@@ -530,26 +530,26 @@
 
 #define BACH_DOC_NOTE_GRAPHIC_SYNTAX
 	//  The <m>graphic</m> specification informs about the enharmonicity status of a note. 
-	//  It is given by an llll in the form <b>(<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>)</b>,
+	//  It is given by an llll in the form <b>[<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>]</b>,
 	//  where <m>displayed_midicents_ignoring_accidental</m> are the cents of the diatonic displayed note (ignoring any accidental that it might have),
 	//  and <m>displayed_accidental</m> is the displayed accidental in rational form (sharp corresponding to 1/2, flat to -1/2, quarterflat to -1/4 and so on).
-	//  For instance, a Db just above the middle C would have a graphic specification of <b>(graphics 6200 -1/2)</b>.
+	//  For instance, a Db just above the middle C would have a graphic specification of <b>[graphics 6200 -1/2]</b>.
 	//  <br /> <br />
 
 
 #define BACH_DOC_NOTE_BREAKPOINT_SYNTAX
 	//  The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-	//  It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-	//  where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+	//  It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+	//  where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 	//  <m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to 
 	//  the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 	//  <m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint 
 	//  is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 	//  Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-	//  be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+	//  be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 	//  If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 	//  specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-	//	will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+	//	will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 	//  If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 	//  (<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 	//  where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
@@ -558,32 +558,32 @@
 
 #define BACH_DOC_NOTE_SLOTS_SYNTAX
 	//  The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note. 
-	//  It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+	//  It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 	//  where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-	//	<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+	//	<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 	//  @copy BACH_DOC_NOTE_SLOT_CONTENT
 
 
 #define BACH_DOC_NOTE_SLOT_CONTENT
 	//  The slot content syntax depends on the slot type. <br />
 	//  - For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-	//  <m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is 
+	//  <m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is 
 	//  a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 	//  - For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 	//  - For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 	//  - For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-	//  - For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+	//  - For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 	//  - For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>, 
 	//    where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 	//  - For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-	//  <m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>, 
+	//  <m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>, 
 	//  where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 	//  (distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 	//  Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 	//  - For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 	//  the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 	//  - For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-	//  <m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is 
+	//  <m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is 
 	//  a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 	//  - For slot of type <m>filter</m>, when you need to input content you can use the syntax: 
 	//  <b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -591,8 +591,8 @@
 	//  You can equivalently use for input the syntax
 	//  <b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 	//  Finally, when data is output, the syntax is always a combination of the two:
-	//  <b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-	//  - For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+	//  <b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+	//  - For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 	//  each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
     //  - For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
     //  articulations introduced as symbols.
@@ -602,21 +602,21 @@
     //  @copy BACH_DOC_NOTEHEAD_SYMBOLS
     //  Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 	//  - For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-	//  equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+	//  equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 	//  @copy BACH_DOC_MATRIXCALCULUS_MATRIX
 
 #define BACH_DOC_NAME_SYNTAX
 	//  The <m>name</m> specification informs us about a possible name (or possibles names) of a notation item.
-	//  It is simply given by an llll in the form <b>(name <m>NAME_OR_LLLL_OF_NAMES</m>)</b>,
+	//  It is simply given by an llll in the form <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>,
 	//  where <m>NAME_OR_LLLL_OF_NAMES</m> is either a single of symbols or integer, or an llll corresponding to the name(s) of the notation item.
-	//  For instance, an item named as "john george" will correspond to the llll <b>(name john george)</b>.
-	//  An item named "(high 1) (low 2)" will correspond to the llll <b>(name (high 1) (low 2))</b>.
+	//  For instance, an item named as "john george" will correspond to the llll <b>[name john george]</b>.
+	//  An item named "(high 1) (low 2)" will correspond to the llll <b>[name [high 1] [low 2]]</b>.
 	//  If an element has no names, the <m>name</m> specification is never given as output.
 	//  <br /> <br />
 
 #define BACH_DOC_ARTICULATIONS_SYNTAX
 	//  The <m>articulation</m> specification informs us about an articulation assigned either to a chord or to a note.
-	//  It is simply given by an llll in the form <b>(articulation <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m>)</b>,
+	//  It is simply given by an llll in the form <b>[articulation <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m>]</b>,
 	//  where <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m> is a list of symbols idenfitying articulations to be added to the notation item.
 	//  The symbols of the list are allowed to be the following ones: "staccato" or "stacc", "staccatissimo" or "staccmo", 
 	//  "fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
@@ -650,44 +650,44 @@
 
 #define BACH_DOC_TEMPO_SYNTAX
     //  A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
-    //  - <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
-    //  - <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-    //  The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
-    //  - <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
-    //  tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
+    //  - <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
+    //  - <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+    //  The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
+    //  - <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
+    //  tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
     //  but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-    //  - <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
+    //  - <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
     //  but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-    //  yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b>
+    //  yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
     //  will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
     //  If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-    //  <b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
-    //  <b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant,
+    //  <b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
+    //  <b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
     //  only their onset is accounted for. <br />
 
 #define BACH_DOC_MEASUREINFO_SYNTAX
 	//	Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
 	//	This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
-	//  an llll in the form <b>(<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
+	//  an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
 	//  All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
 	//  The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
-	//  - <b>(<m>numerator</m> <m>denominator</m>)</b> for standard time signatures. For instance, <b>(4 4)</b> corresponds to a 4/4 time signature. <br />
-	//  - <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
-	//  signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
+	//  - <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
+	//  - <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
+	//  signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
 	//  corresponds to a (3+2+3)/8 time signature. <br /> <br />
     //  The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
     //  @copy BACH_DOC_TEMPO_SYNTAX
 	//  Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
-	//  certain number of measures, such as <b>(<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
-	//  For instance <b>(5 (4 4) ((80) (1/4 160 1/2)))</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
+	//  certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+	//  For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
 	//  until 1/4 = 160 exactly at half of the measure. For instance
-	//  <b> (((4 4) (1/8 60)) ((2 4) (1/4 50 1/4 1)) (4 (4 4)) (nil (180)))</b> means that we start a bar 1 in 4/4 and octave note = 60, then we 
+	//  <b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we 
 	//  pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures, 
 	//  and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
 	//  @copy BACH_DOC_MEASUREINFO_SYNTAX_SINGLE_SPECIFICATION
  
 #define BACH_DOC_MEASUREINFO_SYNTAX_SINGLE_SPECIFICATION
-	//  Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>(<m>parameter_name</m> <m>parameter_value</m>)</b>.
+	//  Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
 	//  The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding 
 	//  values is the following one: <br />
 	//  - <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
@@ -702,24 +702,24 @@
 	//  can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 	//  't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
 	//  - <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will 
-	//  not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>(shownumber -4)</b> will
+	//  not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 	//  show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically 
 	//  assigned measure number (default). <br />
 	//  - <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers. 
 	//  Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise. 
 	//  Each number of the expected list is the symbolic width of each beaming box inside the measure. 
 	//  If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
-	//  <b>(boxes 1/8)</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
-	//  This is equivalent to <b>(boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8)</b>. 
-	//  Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
+	//  <b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
+	//  This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>. 
+	//  Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
 	//  As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 	//  compresses the measure by a factor of two, hides its final barline and its number. 
 	//  <br /> <br />
 	
 	
 #define BACH_DOC_HEADER_SYNTAX
-	//  The header contains meta-information about the score. Such information is given in the form <b>(<m>HEADER_LLLL1</m> <m>HEADER_LLLL2</m>...)</b>
-	//  where each <m>HEADER_LLLL</m> is in the form <b>(<m>header_element_name</m> <m>CONTENT</m>)</b>. The complete list of header element names
+	//  The header contains meta-information about the score. Such information is given in the form <b>[<m>HEADER_LLLL1</m> <m>HEADER_LLLL2</m>...]</b>
+	//  where each <m>HEADER_LLLL</m> is in the form <b>[<m>header_element_name</m> <m>CONTENT</m>]</b>. The complete list of header element names
 	//  and the expected content is the following one: <br />
 	//  – <b>clefs</b>: introduces the used clefs; one clef symbol for each voice is expected. The number of voices is automatically
 	//  updated to the number of clef symbols inserted.
@@ -729,7 +729,7 @@
 	//  Since key signatures can be set both as header element and as attribute, also see the <m>keys</m> attribute. 
 	//  @copy BACH_DOC_KEY_SIGNATURE_SYMBOL
 	//  – <b>voicenames</b>: introduces the voice names specification, one name (atom) for each voice is expected.
-	//  If a voice have more than one name, an llll with the list of names must be introduced. To skip names for a voice use <b>nil</b> or <b>()</b>.
+	//  If a voice have more than one name, an llll with the list of names must be introduced. To skip names for a voice use <b>nil</b> or <b>[]</b>.
 	//  Since voice names can be set both as header element and as attribute, also see the <m>voicenames</m> attribute. 
 	//  <br /> <br />
 	//  – <b>midichannels</b>: introduces the MIDI channels specification, one integer for each voice is expected.
@@ -738,17 +738,17 @@
 	//  – <b>stafflines</b>: set the staff lines configurations. A list of elements (one for each voice) is expected. Since staff lines can be set both as header element and 
 	//  as attribute, also see the <m>stafflines</m> attribute. Each element can be in one of the following forms:
 	//  either <b><m>number_of_stafflines</m></b>, setting the number of stafflines for the voice, which will be distributed evenly around
-	//  the middle line of the default staff, or a wrapped llll in the form <b>(<m>index_staff_line1</m> <m>index_staff_line2</m>...)</b>
+	//  the middle line of the default staff, or a wrapped llll in the form <b>[<m>index_staff_line1</m> <m>index_staff_line2</m>...]</b>
 	//  where each index is the position of a line to be drawn. Line 1 correspond to the bottommost staffline of a standard staff; 
 	//  line 5 correspond to the topmost staffline of a standard staff. Integers need not be positive: indices like -2 or 7 will be 
 	//  extrapolated from the standard staff. The total number of lines is thus the length of such llll.
 	//  <br /> <br />
 	//  – <b>markers</b>: specifies the markers. A list of elements (one for each marker) is expected. For <o>bach.roll</o> markers, or for 
 	//  <o>bach.score</o> markers attached to milliseconds position, each element
-	//  must be in the form <b>(<m>position_ms</m> <m>marker_name(s)</m> <m>role</m> <m>content</m>)</b> where the two last parameters
+	//  must be in the form <b>[<m>position_ms</m> <m>marker_name[s]</m> <m>role</m> <m>content</m>]</b> where the two last parameters
 	//  are optional and only supported by <o>bach.roll</o> (ignore them in <o>bach.score</o>). The <m>position_ms</m> is a floating number
 	//  specifying the marker position in milliseconds; the <m>marker_name(s)</m> is either a single symbol, or a wrapped llll, or 
-	//  <b>nil</b> or <b>()</b> if marker has no name. For <o>bach.score</o> measure-attached markers the syntax is: <b>(<m>TIMEPOINT</m> <m>marker_name(s)</m>)</b>
+	//  <b>nil</b> or <b>[]</b> if marker has no name. For <o>bach.score</o> measure-attached markers the syntax is: <b>[<m>TIMEPOINT</m> <m>marker_name[s]</m>]</b>
 	//  where <m>TIMEPOINT</m> identifies a time point.
 	// 	@copy BACH_DOC_TIMEPOINT_SYNTAX_SCORE
 	//  – <b>slotinfo</b>: specifies the information about the types and the global characteristics of each slot.
@@ -761,9 +761,9 @@
 	//  Usually, such information is only dealt with via the interface (i.e. by grouping and ungrouping things), 
 	//  and the group header element is only a way to embed or save such information with the object. 
 	//  Nevertheless, nothing in principle prevents you from setting groups via message. The syntax is the following one:
-	//  <b>(groups <m>GROUP1</m> <m>GROUP2</m>...)</b>, where each <m>GROUP</m> is an llll having the syntax
-	//  <b>(<m>ADDRESS_CHORD1</m> <m>ADDRESS_CHORD2</m> <m>ADDRESS_CHORD3</m>...)</b>, where each address llll identifies one of the 
-	//  chord inside the groups, via the following syntax: <b>(<m>voice_number</m> <m>chord_index</m>)</b>, 
+	//  <b>[groups <m>GROUP1</m> <m>GROUP2</m>...]</b>, where each <m>GROUP</m> is an llll having the syntax
+	//  <b>[<m>ADDRESS_CHORD1</m> <m>ADDRESS_CHORD2</m> <m>ADDRESS_CHORD3</m>...]</b>, where each address llll identifies one of the 
+	//  chord inside the groups, via the following syntax: <b>[<m>voice_number</m> <m>chord_index</m>]</b>, 
 	//  where the chord index is the position of the chord inside the sequence of chords of the voice (ordered by onsets).
     //  – <b>articulationinfo</b>: specifies the information about custom defined articulation.
     //  @copy BACH_DOC_ARTICULATIONINFO_SYNTAX
@@ -773,8 +773,8 @@
     //  – <b>loop</b>: specifies the information about the loop, as for the <m>loop</m> attribute, as a starting and ending point (in milliseconds, or as timepoints).
 
 #define BACH_DOC_ARTICULATIONINFO_SYNTAX
-    //  The general syntax for the articulationinfo llll in a notation object header is: <b>(articulationinfo <m>CUSTOMARTICULATION1</m> <m>CUSTOMARTICULATION2</m>...)</b>.
-    //  Each <m>CUSTOMARTICULATION</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+    //  The general syntax for the articulationinfo llll in a notation object header is: <b>[articulationinfo <m>CUSTOMARTICULATION1</m> <m>CUSTOMARTICULATION2</m>...]</b>.
+    //  Each <m>CUSTOMARTICULATION</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
     //  each <m>parameter</m> is some propriety of the custom articulation to be defined, followed by its value.
     //  The complete list of parameters symbols and their corresponding expected content is the following one: <br />
     // – <b>fullname</b>: a symbol defining the articulation full name (e.g. "myfermata"). <br />
@@ -820,8 +820,8 @@
 
 
 #define BACH_DOC_NOTEHEADINFO_SYNTAX
-    //  The general syntax for the articulationinfo llll in a notation object header is: <b>(articulationinfo <m>CUSTOMNOTEHEAD1</m> <m>CUSTOMNOTEHEAD2</m>...)</b>.
-    //  Each <m>CUSTOMNOTEHEAD</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+    //  The general syntax for the articulationinfo llll in a notation object header is: <b>[articulationinfo <m>CUSTOMNOTEHEAD1</m> <m>CUSTOMNOTEHEAD2</m>...]</b>.
+    //  Each <m>CUSTOMNOTEHEAD</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
     //  each <m>parameter</m> is some propriety of the custom notehead to be defined, followed by its value.
     //  The complete list of parameters symbols and their corresponding expected content is the following one: <br />
     // – <b>fullname</b>: a symbol defining the articulation full name (e.g. "curly").<br />
@@ -845,11 +845,11 @@
 
 #define BACH_DOC_COMMANDS_SYNTAX
 	//  The general syntax for an llll defining commands in a notation object header is:
-	//  <b>(commands (<m>command_num1</m> <m>SPECIFICATIONS1</m>) (<m>command_num2</m> <m>SPECIFICATIONS2</m>)...)</b>
+	//  <b>[commands [<m>command_num1</m> <m>SPECIFICATIONS1</m>] [<m>command_num2</m> <m>SPECIFICATIONS2</m>]...]</b>
 	//  where the <m>command_num1</m> are the command numbers (1 to 30), followed by their corresponding command specification. You don't need to give the information about all slots
 	//  at input (only the one that you will use), nor the command numbers have to be sorted in any way. On the other hand, at output, the commands
 	//  are always output for all commands, sorted in ascending order.
-	//  Each <m>SPECIFICATIONS</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+	//  Each <m>SPECIFICATIONS</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 	//  each <m>parameter</m> is a symbol followed by some content specifying a field of the commands.
 	//  The list of parameters symbols and their corresponding expected content is the following one: <br />
 	//  – <b>note</b>: expects the symbol which will replace the "note" symbol in the playout (given as a unique symbol). <br />
@@ -859,11 +859,11 @@
 	//  <br /> <br />
 
 #define BACH_DOC_SLOTINFO_SYNTAX
-	//  The general syntax for a slotinfo llll in a notation object header is: <b>(slotinfo (<m>slot_num1</m> <m>SPECIFICATIONS1</m>) (<m>slot_num2</m> <m>SPECIFICATIONS2</m>)...)</b>,
+	//  The general syntax for a slotinfo llll in a notation object header is: <b>[slotinfo [<m>slot_num1</m> <m>SPECIFICATIONS1</m>] [<m>slot_num2</m> <m>SPECIFICATIONS2</m>]...]</b>,
 	//  where the <m>slot_num</m> are the slot numbers (1 to 30), followed by their corresponding slotinfo specification. You don't need to give the information about all slots
 	//  at input (only the one that you will use), nor the slot numbers have to be sorted in any way. On the other hand, at output, the slotinfo
 	//  is always output for all slots, sorted in ascending order.
-	//  Each <m>SPECIFICATIONS</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+	//  Each <m>SPECIFICATIONS</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 	//  each <m>parameter</m> is a symbol followed by some content specifying a field of the slotinfo.
 	//  The complete list of parameters symbols and their corresponding expected content is the following one: <br />
 	//  – <b>name</b>: expects the name you want to give to the slot (given as a unique symbol). <br />
@@ -897,7 +897,7 @@
 	//  – <b>representation</b>: it could expect one of the following things. 1: Symbols defining units of measurement (e.g. "Hz", "ms"...), for numeric 
 	//  slots one symbol is expected, for function slots if one symbol is given, it is applied to the Y axis, if two symbols are given they are 
 	//  applied to the X and Y axis, for 3dfunction slots up to three symbols can be given, the third one referring to the Z axis, use <b>nil</b> or
-	//  <b>()</b> to skip assignment for an axis. For filter and dynfilter slots, you can assign "Hz" or "cents" as unit of measurement
+	//  <b>[]</b> to skip assignment for an axis. For filter and dynfilter slots, you can assign "Hz" or "cents" as unit of measurement
 	//  and it will be used to display the cutoff frequency accordingly. 2: An enumeration list (only for int 
 	//  and intlist slots), mapping each integer to an element of this enumeration list (e.g. in an int slot from 1 to 3, a 
 	//  slot_representation "(one two three)" will display "one" at the place of 1, "two" at the place of 2, "three" at the place of 3). 
@@ -1000,7 +1000,7 @@
 	// You can use the "auto" symbol instead of any symbol in order to have bach detect automatically the most appropriate clefs
 	// for the given voice, depending on its notes (e.g. <b>clefs auto G FG</b>). However, in this case the message will also change the
 	// <m>numvoices</m> attribute, as for the standard case. You can restrict the clef to be automatically chosen among a set of clefs by wrapping
-    // them between parentheses, preceded by the "auto" symbol. For instance, <b>clefs G F (auto F G) auto</b> will choose the 3rd clef only between
+    // them between parentheses, preceded by the "auto" symbol. For instance, <b>clefs G F [auto F G] auto</b> will choose the 3rd clef only between
     // F and G, while the fourth clef is chosen among a standard set of predefined clefs.
 	// <br /> <br />
 
@@ -1009,8 +1009,8 @@
 	// if less elements are input, the last one is padded.
 	// Each voice name can be either a single symbol, or a wrapped llll, for multiple naming (if you want to assign
 	// more than one name to the same voice).
-	// Use the <b>()</b> or <b>nil</b> list to skip the naming for a voice.
-	// For instance: <b>voicenames Foo (John Ringo) () "Electric Piano"</b> sets "Foo" as name for the first voice,
+	// Use the <b>[]</b> or <b>nil</b> list to skip the naming for a voice.
+	// For instance: <b>voicenames Foo [John Ringo] [] "Electric Piano"</b> sets "Foo" as name for the first voice,
 	// sets both "John" and "Ringo" as names for the second one, leaves the third voice without name, and sets "Electric Piano"
 	// (as a single symbol) as name for the fourth voice. 
 	// <br /> <br />
@@ -1023,9 +1023,9 @@
 	// located around the middle line of a standard 5-lines-staff), or an llll, containing the explicit
 	// indices of the lines to be displayed. In this case, 1 correspond to the bottommost staffline of 
 	// the standard 5-lines-staff, 5 to the topmost one, and all other numbers work accordingly.
-	// Zero or negative indices are also allowed. For instance, <b>(0 5 6)</b> will set as stafflines the one below
+	// Zero or negative indices are also allowed. For instance, <b>[0 5 6]</b> will set as stafflines the one below
 	// the bottommost default one, the topmost line of a default staff, and the one above.
-	// Use <b>0</b> or <b>nil</b> or <b>()</b> to hide all the stafflines of a staff. 
+	// Use <b>0</b> or <b>nil</b> or <b>[]</b> to hide all the stafflines of a staff. 
 	// <br /> <br />
 
 
@@ -1075,7 +1075,7 @@
 	// in order to know how it should behave towards such levels: it'll take great care of the level you've introduced yourself, while it'll 
 	// bother less to modify levels it had refined itself, and so on. This information is thus useful for a correct handling of the score interface. <br />
 	// Level type information can only be stored in gathered-syntax lllls, at the beginning of each level in an llll of the following form: 
-	// <b>(leveltype <m>type</m>)</b>, where <m>type</m> is an integer defining the type of the level.
+	// <b>[leveltype <m>type</m>]</b>, where <m>type</m> is an integer defining the type of the level.
 	// Such integer is undocumented, and you should always consider level types as being opaque for the user: never set them "manually", only
 	// deal with them at output or while saving the content. Removing leveltype lllls yields a perfectly valid <o>bach.score</o> llll.
 	// <br /> <br />
@@ -1090,10 +1090,10 @@
 
 #define BACH_DOC_RELATIVE_MODIFICATIONS
 	// All parameters, except for <o>bach.score</o>'s timepoints, also support a relative modification syntax, which modifies the existing values instead
-	// Relative modifications of a parameter are handled via lllls of the type <b>(<m>value</m> <m>function</m>)</b>, where
+	// Relative modifications of a parameter are handled via lllls of the type <b>[<m>value</m> <m>function</m>]</b>, where
 	// the <m>function</m> is one of the following symbols: "plus", "minus", "times", "div". Such modification applies the corresponding
-	// function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>(100 minus)</b> removes 100 to the current
-	// value of the parameter, while <b>(2. times)</b> multiplies it by two.
+	// function to the current value of the parameter and the inserted <m>value</m>. For instance, <b>[100 minus]</b> removes 100 to the current
+	// value of the parameter, while <b>[2. times]</b> multiplies it by two.
 	// <br /> <br />
 
 
@@ -1103,7 +1103,7 @@
 	// The standard symbolic variables are available. <br />
 	// @copy BACH_DOC_SYMBOLIC_VARIABLES
 	// For instance, one could define <b>velocity = duration / 100. + onset * 0.01</b> or <b>cents = cents + 200</b>, or
-	// <b>onset = (cents - 6000) / 100 + 2000 * (voice - 1)</b>.
+	// <b>onset = [cents - 6000] / 100 + 2000 * [voice - 1]</b>.
 	// The equation syntax extends in a sense the relative modification syntax; however it is applied to the globality of the selection, and 
 	// one cannot apply different equations to different notes inside the chord.
 	// <br /> <br />
@@ -1296,10 +1296,10 @@
 	// Moreover, each query can have in bach as very first argument a label, kept inside the query answer, 
 	// which can be useful to retrieve queries separately (for instance to keep track of queries coming from different threads). 
 	// To assign a label to a query, you have to put as very first argument after the query message (before any other query argument) an llll in the form
-	// <b>(label <m>label_name</m>)</b>, where <m>label_name</m> is a symbol you want to assign to the label. 
+	// <b>[label <m>label_name</m>]</b>, where <m>label_name</m> is a symbol you want to assign to the label. 
 	// When the answer of a labelled query is output from the playout, after the first router symbol, the label will appear, thus yielding a 
 	// general form <b><m>query_router_symbol</m> <m>label_name</m> <m>QUERY_ANSWER</m></b>. Just to make an example, 
-	// the answer of <b>pixeltotime (label john) 6000</b> might be something like <b>pixel john 300.</b>.
+	// the answer of <b>pixeltotime [label john] 6000</b> might be something like <b>pixel john 300.</b>.
 	// It works accordingly for any other query.
 	// <br /> <br /> 
 
@@ -1309,15 +1309,15 @@
 	// to which it can be applied. The llll should be properly structured depending on the hierarchical structure. <br />
 	// In <o>bach.roll</o>, onsets are the only parameter assigned chordwise (they are a propriety of chords, rather than notes).
 	// The separate syntax for onsets will be thus structured as: an llll for each voice, containing a value for each chord.
-	// For instance: <b>(0 1000 2000 3000) (100 400) (250 2500)</b>. <br />
+	// For instance: <b>[0 1000 2000 3000] [100 400] [250 2500]</b>. <br />
 	// Cents, durations, velocities and extras are all assigned notewise in <o>bach.roll</o> (they are propriety of notes, rather than chords).
 	// The separate syntax for any of such parameters will be thus structured as: an llll for each voice, containing an llll for each chord,
 	// containing a value for each note. For instance, a cents assignment can have the following form: 
-	// <b>((6000) (6000 6400) (6200) (6200 6500)) ((7200) (6500 7200 7500)) ((5500) (5400))</b>. <br />
+	// <b>[[6000] [6000 6400] [6200] [6200 6500]] [[7200] [6500 7200 7500]] [[5500] [5400]]</b>. <br />
 	// While using separate syntax as input, for all notewise parameter, except for extras, a shortcut is tolerated: one can assign a 
 	// single value for each chord (and not each note) meaning that such value must be applied to the whole chord. If no chord exists,
 	// and such value must create a chord, then a chord with a single note si created. For instance, <o>bach.roll</o> can properly understand
-	// <b>(6000 (6000 6400) 6200 (6200 6500)) ((7200) (6500 7200 7500)) (5500 5400)</b>. However, when the separate syntax is retrieven as
+	// <b>[6000 [6000 6400] 6200 [6200 6500]] [[7200] [6500 7200 7500]] [5500 5400]</b>. However, when the separate syntax is retrieven as
 	// output, the llll will be always properly shaped, according to the musical hierarchy, without any shortcut. 
 	// <br /> <br />
 
@@ -1330,29 +1330,29 @@
 	// Durations are assigned chordwise (they are symbolic durations: a propriety of chords, rather than notes):
 	// the separate syntax for durations will be thus structured as: an llll for each voice, containing an llll for each measure,
 	// possibly containing an llll for each rhythmic level (see below), containing a rational value for each chord.
-	// For instance: <b>((1/4 1/4 ((1/8 1/16) (1/32 1/32)) -1/4) (1/12 1/12 1/12 -3/4)) ((-1) (1/4 -3/4))</b>. 
-	// The symbol "t" is also accepted in input to tie a duration to the following one, e.g. <b>((1/4 t 1/16 -3/16 -2/4))</b>. 
+	// For instance: <b>[[1/4 1/4 [[1/8 1/16] [1/32 1/32]] -1/4] [1/12 1/12 1/12 -3/4]] [[-1] [1/4 -3/4]]</b>. 
+	// The symbol "t" is also accepted in input to tie a duration to the following one, e.g. <b>[[1/4 t 1/16 -3/16 -2/4]]</b>. 
 	// If the <m>outputtrees</m> algorithm is set to output trees in all outlets, and if the <m>outputtiesindurationtree</m> is set to 1, 
 	// such "t" symbols are also always output in the durations separate syntax. 
 	// Grace chords are defined either by setting a rational duration of 0 (converted into 1/8 grace chords) or by setting
-	// a rhythmic level starting with a "g" symbol, which will thus contain all grace elements, e.g. <b>((1/4 (g 1/8 1/16 1/16) 1/4 1/4 0 1/4))</b>.
+	// a rhythmic level starting with a "g" symbol, which will thus contain all grace elements, e.g. <b>[[1/4 [g 1/8 1/16 1/16] 1/4 1/4 0 1/4]]</b>.
 	// If the <m>outputtrees</m> algorithm is set to output trees in all outlets, grace chords are output, in the durations gathered syntax, 
 	// with the grace levels syntax, otherwise they are output as chords with 0 duration. <br />
 	// Cents, velocities, ties and extras are all assigned notewise in <o>bach.score</o> (they propriety of notes, rather than chords).
 	// The separate syntax for any of such parameters will be thus structured as: an llll for each voice, containing an llll for each chord,
 	// containing a value for each note. For instance, a cents assignment can have the following form: 
-	// <b>(((6000) (6000 6400) (6200) (6200 6500)) ((7200) (6500 7200 7500))) (((5500) (5400)))</b>. <br />
+	// <b>[[[6000] [6000 6400] [6200] [6200 6500]] [[7200] [6500 7200 7500]]] [[[5500] [5400]]]</b>. <br />
 	// While using separate syntax as input, for all notewise parameter, except for extras, a shortcut is tolerated: one can assign a 
 	// single value for each chord (and not each note) meaning that such value must be applied to the whole chord. If no chord exists,
 	// and such value must create a chord, then a chord with a single note si created. For instance, <o>bach.scire</o> can properly understand
-	// <b>((6000 (6000 6400) 6200 (6200 6500)) ((7200) (6500 7200 7500))) ((5500 5400))</b>. However, when the separate syntax is retrieven as
+	// <b>[[6000 [6000 6400] 6200 [6200 6500]] [[7200] [6500 7200 7500]]] [[5500 5400]]</b>. However, when the separate syntax is retrieven as
 	// output, the llll will be always properly shaped, according to the musical hierarchy, without any shortcut. <br /> <br />
 	// <br /> <br />
 	
 			
 #define BACH_DOC_SEPARATE_SYNTAX_EXTRAS
 	// Extras are defined in the separate syntax via lllls sent through the Extras inlet, in the form 
-	// <b>(<m>extra_name</m> <m>GLOBAL_CONTENT</m>) (<m>extra_name</m> <m>GLOBAL_CONTENT</m>)...</b>
+	// <b>[<m>extra_name</m> <m>GLOBAL_CONTENT</m>] [<m>extra_name</m> <m>GLOBAL_CONTENT</m>]...</b>
 	// where each sublist is thus composed by a name (a symbol identifying the extra, one of the following: "graphics", "breakpoints", "slots") 
 	// and a global content, which is just an llll structured exactly according to the object's hierarchy. 
 	// This llll is no different than any other separate parameter llll (say: Cents), only instead of having a single element (number) 
@@ -1360,13 +1360,13 @@
 	// (a level of parentheses is needed for each note). If this latter level is dropped, and the information concerns a rest, the extra is assigned to the
     // rest, if applicable (e.g. slots).
     // For instance, the pitch breakpoints specification for a given note may have the form
-	// <b>((0. 0. 0.) (0.5 500 0.5) (1. 0. 0.))</b>, whereas a complete list of extras to be introduced in the Extras inlet may have the form
+	// <b>[[0. 0. 0.] [0.5 500 0.5] [1. 0. 0.]]</b>, whereas a complete list of extras to be introduced in the Extras inlet may have the form
 	// <b>(breakpoints (((( 0. 0. 0. ) (0.5 500 0.5) (1. 0. 0.)) (( 0. 0. 0. ) (0.5 -500 0.5) (1. 0. 0.))) ((( 0. 0. 0. ) (0.5 -200 0.1) 
 	// (1. 0. 0.)))) (((( 0. 0. 0. ) (0.5 500 0.5) (1. 0. 0.))) ((( 0. 0. 0. ) (0.5 -200 0.1) (1. 0. 0.))))) (slots ( (((3 10 20 30) (4 0.4)) 
 	// ((3 10 20 30) (4 0.1))) (())) ())</b>. Notes, chords or voices which don't need a given extras are allowed to be represented as input by
-	// an empty <b>()</b> llll. <br />
+	// an empty <b>[]</b> llll. <br />
 	// The content of each extra is exactly the same as the gathered syntax of such extra, provided that the starting symbol is dropped.
-	// For instance, instead of <b>(graphics 6200 -1/2)</b>, one should just have <b>(6200 -1/2)</b> as graphic content for a given note, and so on.
+	// For instance, instead of <b>[graphics 6200 -1/2]</b>, one should just have <b>[6200 -1/2]</b> as graphic content for a given note, and so on.
 	// The syntax for the gathered syntax of all extras is provided below. Remember to drop the extra router symbol to obtain the content
 	// to be put in the separate syntax llll. <br /> <br />
 	//  @copy BACH_DOC_NOTE_GRAPHIC_SYNTAX
@@ -1377,7 +1377,7 @@
 
 #define BACH_DOC_MESSAGE_CLEARALL
 	// A <m>clearall</m> message will clear the content input in all the separate parameters inlets (all inlets but the first one).
-	// This is equivalent to sending a <b>nil</b> or <b>()</b> message in any of such inlets. <br />
+	// This is equivalent to sending a <b>nil</b> or <b>[]</b> message in any of such inlets. <br />
 
 
 #define BACH_DOC_MESSAGE_CLEARMARKERS
@@ -1517,8 +1517,8 @@
 	// Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
     // They and should be immediately followed by the possible accidentals and the
 	// octave number, without any space (e.g. <b>D#4</b>). <br />
-    // Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
-    // <b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
+    // Accidentals are: <b>#</b> [sharp], <b>b</b> [flat], <b>x</b> [double sharp], <b>q</b> [quartertone sharp], <b>d</b> (quartertone flat),
+    // <b>^</b> [eighth-tone sharp], <b>v</b> (eighth-tone flat)
     // One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
     // middle C, 1/16 tone up.
 	// <br /> <br />
@@ -1544,7 +1544,7 @@
 
 #define BACH_DOC_MESSAGE_ADDSLOT
 	// An <m>addslot</m> message will replace the content of one or more slots, for all the selected notes.
-	// The syntax is <b>addslot (<m>slot_number</m> <m>SLOT_CONTENT</m>) (<m>slot_number</m> <m>SLOT_CONTENT</m>)...</b>. <br />
+	// The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
 
 
@@ -1574,7 +1574,7 @@
 	// The element content is a single element in the lists of the slot content syntax: a single point for a slot <m>function</m>, a single number for an <m>intlist</m> or <m>floatlist</m> slot,
 	// and so on. Such element must be unwrapped from its outer level of parentheses (if any). For instance, for a function,
 	// a good syntax is <b>changeslotitem 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
-	// to the point <b>(0.5 20 0)</b>. <br />
+	// to the point <b>[0.5 20 0]</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
 	
 
@@ -1619,7 +1619,7 @@
 	// The <m>dumpvoicepixelpos</m> message retrieves the pixel position of any voices, and outputs it from the playout.
 	// The output answer has the syntax: 
 	// <b>voicepixelpos <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
-	// <b>(<m>y_pixel_middleC</m> <m>y_pixel_bottom_staffline</m> <m>y-pixel_top_staffline</m>)</b>. The three values are: the vertical position
+	// <b>[<m>y_pixel_middleC</m> <m>y_pixel_bottom_staffline</m> <m>y-pixel_top_staffline</m>]</b>. The three values are: the vertical position
 	// in pixels of the middle C, and the bottommost and topmost staffline position (in pixels). <br />
 	// @copy BACH_DOC_QUERY_LABELS
 	

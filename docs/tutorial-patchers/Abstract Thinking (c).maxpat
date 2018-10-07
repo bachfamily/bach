@@ -492,7 +492,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Abstract Thinking (b)",
+					"text" : "Abstract Thinking [b]",
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 504.0, 140.0, 18.0 ],
@@ -591,7 +591,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Abstract Thinking (d)",
+					"text" : "Abstract Thinking [d]",
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 599.0, 504.0, 140.0, 18.0 ],

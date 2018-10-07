@@ -1507,7 +1507,7 @@ void notationobj_goto_parseargs(t_notation_obj *r_ob, t_llll *args)
     
     if (where_ll) {
         t_atom *new_av = NULL;
-        long new_ac = llll_deparse(where_ll, &new_av, 0, 0);
+        long new_ac = llll_deparse(where_ll, &new_av, 0, LLLL_D_PARENS);
         par.where = notation_obj_lexpr_new(new_ac, new_av);
         
         if (new_av)
@@ -1520,7 +1520,7 @@ void notationobj_goto_parseargs(t_notation_obj *r_ob, t_llll *args)
 
     if (until_ll) {
         t_atom *new_av = NULL;
-        long new_ac = llll_deparse(until_ll, &new_av, 0, 0);
+        long new_ac = llll_deparse(until_ll, &new_av, 0, LLLL_D_PARENS);
         par.until = notation_obj_lexpr_new(new_ac, new_av);
         
         if (new_av)

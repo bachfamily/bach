@@ -124,14 +124,14 @@ int T_EXPORT main()
 	
 	// @method llll @digest Derive breakpoint function or lambda-defined function
 	// @description In auto mode (see arguments), an <m>llll</m> in the first inlet is considered to be a breakpoint function
-	// defined as a sequence of points in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>. Such function
+	// defined as a sequence of points in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>. Such function
 	// is derived exactly if the function is piecewise linear, i.e. all slopes are negligible; otherwise
 	// the derivation is performed via a sampling process (the original function is sampled in a certain number
 	// of points, defined by the <m>numsamples</m> attribute).
 	// The resulting derivative is output in the same breakpoint function form from the left outlet
 	// (all slopes will be 0: output function is always piecewise linear). <br />
 	// In lambda mode (see arguments), an <m>llll</m> in the first inlet must be either in the form 
-	// <b>(<m>domain_start</m> <m>domain_end</m>) <m>num_sampling_points</m></b>, or must be a plain list of
+	// <b>[<m>domain_start</m> <m>domain_end</m>] <m>num_sampling_points</m></b>, or must be a plain list of
 	// explicit sampling points (points in which derivative function should be sampled). The domain points are output one by one
 	// from the lamdba outlet, and values of the function to derive are collected in the lambda inlet. 
 	// After deriving, the resulting derivative function is output in the breakpoint function form 
@@ -383,7 +383,7 @@ void derive_assist(t_derive *x, void *b, long m, long a, char *s)
 			// @in 0 @type bang/llll @digest Breakpoint function llll or sampling parameters
 			// @description In auto mode, an <m>llll</m> in the first inlet is the breakpoint function to be derived. 
 			// In lambda mode, a flat <m>llll</m> contains an explicit sampling, whereas an <m>llll</m> in the form
-			// <b>(<m>domain_start</m> <m>domain_end</m>) <m>num_sampling_points</m></b> sets an uniform sampling.
+			// <b>[<m>domain_start</m> <m>domain_end</m>] <m>num_sampling_points</m></b> sets an uniform sampling.
 			sprintf(s, x->mode == 0 ? "llll: Breakpoint Function" : "llll: Domain and Number of Sampling Points");
 		else // @in 1 @type number/llll @digest Lambda inlet
 			// @description @copy BACH_DOC_LAMBDA_INLET_GENERAL_HEADER
@@ -395,7 +395,7 @@ void derive_assist(t_derive *x, void *b, long m, long a, char *s)
 		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
 		if (a == 0) // @out 0 @type llll @digest Derived breakpoint function llll
 			// @description The llll with the derived breakpoint function, as a list of points, where each
-			// point is in the form <b>(<m>x</m> <m>y</m> 0)</b>. Notice that the slope is always 0, since the
+			// point is in the form <b>[<m>x</m> <m>y</m> 0]</b>. Notice that the slope is always 0, since the
 			// output function is always piecewise linear.
 			sprintf(s, "llll (%s): Derived Breakpoint Function", type);
 		else // @out 1 @type llll @digest Lambda Outlet

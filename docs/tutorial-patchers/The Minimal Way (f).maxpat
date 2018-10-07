@@ -620,7 +620,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ -622.0, 186.0, 626.0, 236.0 ],
 					"style" : "",
-					"text" : "score ( clefs G G F ) ( keys CM CM CM ) ( midichannels 1 2 3 ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 6500. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.1 ) ) 0 ) 0 ) ( 1/16 ( 7500. 127 0 ( graphic 7600 -1/2 ) ( slots ( 1 0.1 ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/8 ( 7700. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 7500. 127 0 ( graphic 7600 -1/2 ) ( slots ( 1 0.1 ) ) 0 ) 0 ) 0 ) ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) ( slots ( 1 0.1 ) ) 0 ) 0 ) ( 1/16 ( 6800. 127 0 ( graphic 6900 -1/2 ) ( slots ( 1 0.05 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 7200. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 6500. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) ( slots ( 1 0.05 ) ) 0 ) 0 ) ( 1/16 ( 7000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.05 ) ) 0 ) 0 ) 0 ) ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 4600. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.1 ) ) 0 ) 0 ) ( 1/16 ( 6000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.05 ) ) 0 ) 0 ) ( 1/8 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 6000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.01 ) ) 0 ) 0 ) 0 ) )"
+					"text" : "score [ clefs G G F ] [ keys CM CM CM ] [ midichannels 1 2 3 ] [ [ [ [ 2 4 ] [ [ 1/4 120 ] ] ] [ 1/16 [ 6500. 127 0 [ breakpoints [ 0. 0. 0. 100 ] [ 1. 0. 0. 100 ] ] [ slots [ 1 0. ] ] 0 ] 0 ] [ 1/16 [ 7300. 127 0 [ graphic 7400 -1/2 ] [ slots ( 1 0.1 ) ) 0 ) 0 ) ( 1/16 ( 7500. 127 0 ( graphic 7600 -1/2 ) ( slots ( 1 0.1 ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/8 ( 7700. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 7300. 127 0 ( graphic 7400 -1/2 ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 7500. 127 0 ( graphic 7600 -1/2 ) ( slots ( 1 0.1 ) ) 0 ) 0 ) 0 ) ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) ( slots ( 1 0.1 ) ) 0 ) 0 ) ( 1/16 ( 6800. 127 0 ( graphic 6900 -1/2 ) ( slots ( 1 0.05 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 7200. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 6500. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) ( slots ( 1 0.05 ) ) 0 ) 0 ) ( 1/16 ( 7000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.05 ) ) 0 ) 0 ) 0 ) ) ( ( ( ( 2 4 ) ( ( 1/4 120 ) ) ) ( 1/16 ( 4600. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.1 ) ) 0 ) 0 ) ( 1/16 ( 6000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.05 ) ) 0 ) 0 ) ( 1/8 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 6600. 127 0 ( graphic 6700 -1/2 ) ( slots ( 1 0. ) ) 0 ) 0 ) ( 1/16 ( 5800. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.2 ) ) 0 ) 0 ) ( 1/16 ( 6000. 127 0 ( breakpoints ( 0. 0. 0. 100 ) ( 1. 0. 0. 100 ) ) ( slots ( 1 0.01 ) ) 0 ) 0 ) 0 ) )"
 				}
 
 			}
@@ -741,7 +741,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 675.0, 86.0, 63.0, 18.0 ],
 									"style" : "",
-									"text" : "( ( 1 $1 ) )"
+									"text" : "[ [ 1 $1 ] ]"
 								}
 
 							}
@@ -775,7 +775,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 462.0, 86.0, 63.0, 18.0 ],
 									"style" : "",
-									"text" : "( ( 1 $1 ) )"
+									"text" : "[ [ 1 $1 ] ]"
 								}
 
 							}
@@ -809,7 +809,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 249.0, 86.0, 63.0, 18.0 ],
 									"style" : "",
-									"text" : "( ( 1 $1 ) )"
+									"text" : "[ [ 1 $1 ] ]"
 								}
 
 							}
@@ -887,7 +887,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 555.0, 306.0, 63.0, 18.0 ],
 									"style" : "",
-									"text" : "( ( 1 $1 ) )"
+									"text" : "[ [ 1 $1 ] ]"
 								}
 
 							}
@@ -916,7 +916,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 422.0, 306.0, 57.0, 18.0 ],
 									"style" : "",
-									"text" : "( (1 $1) )"
+									"text" : "[ [1 $1] ]"
 								}
 
 							}
@@ -1564,7 +1564,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 927.0, 888.0, 68.0, 22.0 ],
 									"style" : "",
-									"text" : "((a) (b) (c))"
+									"text" : "[[a] [b] [c]]"
 								}
 
 							}
@@ -1579,7 +1579,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 556.0, 808.0, 478.0, 74.0 ],
 									"style" : "",
-									"text" : "Tip: [bach.flat -1 -1] is a shortcut to avoid to duplicate the velocities for all the notes we've added in [p add_chords]. What we do is to have one velocity value for the whole chord, and thus it'll be applied to every note in the chord..So we flatten the *last element* of the list! Indeed: bach.flat from level -1 (last level of parenthesis) to level -1 (last level). So just flat last level! A list like ((a) (b) (c)) becomes (a b c)."
+									"text" : "Tip: [bach.flat -1 -1] is a shortcut to avoid to duplicate the velocities for all the notes we've added in [p add_chords]. What we do is to have one velocity value for the whole chord, and thus it'll be applied to every note in the chord..So we flatten the *last element* of the list! Indeed: bach.flat from level -1 (last level of parenthesis) to level -1 (last level). So just flat last level! A list like [[a] [b] [c]] becomes [a b c]."
 								}
 
 							}
@@ -6711,7 +6711,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 584.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "The Minimal Way (e)",
+					"text" : "The Minimal Way [e]",
 					"varname" : "messageA"
 				}
 
@@ -6804,7 +6804,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 734.0, 584.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "The Minimal Way (g)",
+					"text" : "The Minimal Way [g]",
 					"varname" : "messageB"
 				}
 

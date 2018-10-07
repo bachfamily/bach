@@ -75,7 +75,7 @@
 // the number of free channels will be 5 (each channel has to be mapped on 3 channels, 5*3 = 15).
 
 // @method list @digest Send messages to <o>noteout</o>
-// @description A list in the first inlet is expected to be in the <o>noteout</o>-like syntax: <b>(<m>pitch</m> <m>velocity</m> <m>MIDIchannel</m>)</b>
+// @description A list in the first inlet is expected to be in the <o>noteout</o>-like syntax: <b>[<m>pitch</m> <m>velocity</m> <m>MIDIchannel</m>]</b>
 // where, on the other hand, the <m>pitch</m> is expected to be in MIDIcents (and not as MIDI number). The velocity must range from 1 to 127,
 // a velocity of 0 is considered as a note-off. <br />
 // A list in the third inlet is automatically sent to the <o>noteout</o> object contained in the

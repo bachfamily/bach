@@ -93,8 +93,8 @@
 	// The address of an element in a sublist is a list composed by the position of the element in the sublist,
 	// preceded by the position of the sublist in the parent llll, 
 	// and so on up to the root level, as a sort of "path" to the element.<br />
-	// For instance, given the llll <b>a b c (d e (f g) h i) j k</b> the position of <b>c</b> is <b>3</b>;
-	// the position of <b>(d e (f g) h i)</b> is <b>4</b>;
+	// For instance, given the llll <b>a b c [d e [f g] h i] j k</b> the position of <b>c</b> is <b>3</b>;
+	// the position of <b>[d e [f g] h i]</b> is <b>4</b>;
 	// the position if <b>e</b> is <b>4 2</b> since to reach it it takes to go to the 4th element of the root level, which is a sublist,
 	// and to the 2nd element of that sublist. 
 	// By reading the address from right to left, it can be seen that this is equivalent to saying 
@@ -110,7 +110,7 @@
 #define BACH_DOC_ADDRESS_MULTIPLE
 	// <b>_NAME</b> also accepts a special syntax to indicate multiple elements of one level of the llll:
 	// a sublist in the address will be interpreted as a sequence of elements in the corresponding level.
-	// In this way, the address <b>4 (2 4 5)</b> means "the 2nd, 4th and 5th of the 4th", that is <b>e h i</b>.
+	// In this way, the address <b>4 [2 4 5]</b> means "the 2nd, 4th and 5th of the 4th", that is <b>e h i</b>.
 	// Negative positions are accepted here as well.
 	// Any number after the multiple-element sublist in the address llll is ignored.<br />
 
@@ -118,8 +118,8 @@
 	// The multiple-element sublist can contain sublists in its turn. These are called "range sublists".
 	// A range sublist is composed by two positions, and indicates all the elements comprised between these two positions.
 	// Either or both positions of a range sublist can be negative.
-	// So, the address <b> 4 ((2 -1) 1)</b> means "From the 2nd to the last (i.e. the 1st from the right) and the 1st of the 4th",
-	// that is <b>e (f g) h i d</b>.
+	// So, the address <b> 4 [[2 -1] 1]</b> means "From the 2nd to the last (i.e. the 1st from the right) and the 1st of the 4th",
+	// that is <b>e [f g] h i d</b>.
 	// As a tip, notice that to retrieve all the contents of a sublist (as opposed to the sublist itself)
 	// the range (1 -1) can be specified.
 
@@ -175,7 +175,7 @@
 // Furthermore, some message attributes are available, for fine-tuning of the text formatting.
 // Available attributes are: <br />
 // - <b>maxdecimals</b> (default: 10): the precision for floating-point numbers. <br />
-// - <b>indent</b> (default: <b>tab</b>): if set to <m>tab</m>, every sublist that is encountered (up to <b>maxdepth</b>, see below)
+// - <b>indent</b> [default: <b>tab</b>]: if set to <m>tab</m>, every sublist that is encountered [up to <b>maxdepth</b>, see below)
 // will be placed on a new line, indented by a number of tabs equal to the depth level of the sublist itself.
 // If set to an integer, the indentation for each depth level will be the corresponding number of spaces.<br />
 // - <b>maxdepth</b> (default: -1, i.e. no limitation): the maximum depth at which sublists are placed in new lines.

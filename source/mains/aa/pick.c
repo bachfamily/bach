@@ -102,8 +102,8 @@ int T_EXPORT main()
 	CLASS_ATTR_STYLE(c, "unwrap", 0, "onoff");
 	// @description
 	// When set to 1 (default), the outermost couple of parentheses of any sublist to be output is removed.
-	// For instance, if the llll <b>a b (c d e)</b> is input and its third element is requested,
-	// <b>c d e</b> will be output instead of <b>(c d e)</b>.
+	// For instance, if the llll <b>a b [c d e]</b> is input and its third element is requested,
+	// <b>c d e</b> will be output instead of <b>[c d e]</b>.
 	
 	CLASS_ATTR_LONG(c, "nullmode", 0,	t_pick, n_nullmode);
 	CLASS_ATTR_LABEL(c, "nullmode", 0, "Output Null");

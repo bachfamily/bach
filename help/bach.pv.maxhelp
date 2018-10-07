@@ -170,7 +170,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.0, 359.5, 263.0, 21.0 ],
-									"text" : "bach.pv public_llll john (george (paul ringo))"
+									"text" : "bach.pv public_llll john [george [paul ringo]]"
 								}
 
 							}
@@ -343,7 +343,7 @@
 													"outlettype" : [ "", "int", "", "" ],
 													"parameter_enable" : 0,
 													"patching_rect" : [ 259.5, 68.0, 118.0, 51.0 ],
-													"text" : "1 (2 3 (4 5 6))"
+													"text" : "1 [2 3 [4 5 6]]"
 												}
 
 											}
@@ -453,7 +453,7 @@
 													"outlettype" : [ "", "int", "", "" ],
 													"parameter_enable" : 0,
 													"patching_rect" : [ 18.0, 68.0, 118.0, 51.0 ],
-													"text" : "1 (2 3 (4 5 6))"
+													"text" : "1 [2 3 [4 5 6]]"
 												}
 
 											}
@@ -727,7 +727,7 @@
 													"outlettype" : [ "", "int", "", "" ],
 													"parameter_enable" : 0,
 													"patching_rect" : [ 259.5, 68.0, 118.0, 51.0 ],
-													"text" : "1 (2 3 (4 5 6))"
+													"text" : "1 [2 3 [4 5 6]]"
 												}
 
 											}
@@ -837,7 +837,7 @@
 													"outlettype" : [ "", "int", "", "" ],
 													"parameter_enable" : 0,
 													"patching_rect" : [ 18.0, 68.0, 118.0, 51.0 ],
-													"text" : "1 (2 3 (4 5 6))"
+													"text" : "1 [2 3 [4 5 6]]"
 												}
 
 											}
@@ -1075,7 +1075,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 17.0, 163.0, 118.0, 51.0 ],
-									"text" : "1 (2 3 (4 5 6))"
+									"text" : "1 [2 3 [4 5 6]]"
 								}
 
 							}

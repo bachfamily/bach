@@ -313,7 +313,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((1/36 1/36 1/36) 1/12 1/12 t (1/16 (1/16 1/16)) -1/16 -1/4 1/4)), bang",
+					"text" : "[[[1/36 1/36 1/36] 1/12 1/12 t [1/16 [1/16 1/16]] -1/16 -1/4 1/4]], bang",
 					"numinlets" : 2,
 					"patching_rect" : [ 160.0, 204.0, 375.0, 18.0 ],
 					"id" : "obj-39",
@@ -506,7 +506,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Beams Through The Trees (m)",
+					"text" : "Beams Through The Trees [m]",
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 557.0, 172.0, 18.0 ],
 					"id" : "obj-7",
@@ -605,7 +605,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Beams Through The Trees (o)",
+					"text" : "Beams Through The Trees [o]",
 					"numinlets" : 2,
 					"patching_rect" : [ 569.0, 557.0, 169.0, 18.0 ],
 					"id" : "obj-16",

@@ -273,7 +273,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 48.335938, 124.0, 175.5, 41.0 ],
-									"text" : "a (b b) c d (e E) (f) g h (i j)"
+									"text" : "a [b b] c d [e E] [f] g h [i j]"
 								}
 
 							}
@@ -1084,7 +1084,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 78.171875, 111.0, 129.0, 19.0 ],
-									"text" : "0 (1 3) 2 3 (35 2 4.1)"
+									"text" : "0 [1 3] 2 3 [35 2 4.1]"
 								}
 
 							}
@@ -1274,7 +1274,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 12.171875, 140.0, 160.0, 19.0 ],
-									"text" : "1 (2 (a b)) 3 4 (5 (c d e) 6)"
+									"text" : "1 [2 [a b]] 3 4 [5 [c d e] 6]"
 								}
 
 							}
@@ -1534,7 +1534,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 253.0, 250.0, 90.0, 19.0 ],
-									"text" : "1 (2 1) (3 4) 5"
+									"text" : "1 [2 1] [3 4] 5"
 								}
 
 							}
@@ -1577,7 +1577,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 208.0, 131.0, 179.0, 19.0 ],
-									"text" : "1 (2 (3 4 5)) (6 (5 (4 (3 2)))) 1"
+									"text" : "1 [2 [3 4 5]] [6 [5 [4 [3 2]]]] 1"
 								}
 
 							}
@@ -1708,7 +1708,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 11.0, 117.0, 162.0, 19.0 ],
-									"text" : "a (b (c d e)) (f (g (h (i j)))) l"
+									"text" : "a [b [c d e]] [f [g [h [i j]]]] l"
 								}
 
 							}
@@ -2136,7 +2136,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 25.0, 175.0, 484.0, 36.0 ],
-									"text" : "bach.wrandom @default ((john lennon) (paul mc cartney)) (george harrison) ringo @maxdepth -2 @weights (10 10) 3 1"
+									"text" : "bach.wrandom @default [[john lennon] [paul mc cartney]] [george harrison] ringo @maxdepth -2 @weights [10 10] 3 1"
 								}
 
 							}
@@ -2529,7 +2529,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 192.0, 130.0, 40.0 ],
-									"text" : "a b c d e (f) g h (i j)"
+									"text" : "a b c d e [f] g h [i j]"
 								}
 
 							}

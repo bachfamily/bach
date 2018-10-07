@@ -906,7 +906,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 566.0, 148.0, 18.0 ],
-					"text" : "God Solve The Queens (j)",
+					"text" : "God Solve The Queens [j]",
 					"varname" : "messageA"
 				}
 
@@ -1006,7 +1006,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 641.0, 566.0, 148.0, 18.0 ],
-					"text" : "God Solve The Queens (l)",
+					"text" : "God Solve The Queens [l]",
 					"varname" : "messageB"
 				}
 

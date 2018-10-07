@@ -312,7 +312,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 415.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "The World Outside (a)",
+					"text" : "The World Outside [a]",
 					"varname" : "messageA"
 				}
 
@@ -405,7 +405,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 486.0, 415.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "The World Outside (c)",
+					"text" : "The World Outside [c]",
 					"varname" : "messageB"
 				}
 

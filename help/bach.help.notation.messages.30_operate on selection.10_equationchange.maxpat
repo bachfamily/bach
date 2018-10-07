@@ -94,7 +94,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 83.030609, 255.5, 156.0, 23.0 ],
 					"style" : "",
-					"text" : "pitch = (pitch % C1) + C5"
+					"text" : "pitch = [pitch % C1] + C5"
 				}
 
 			}
@@ -156,7 +156,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 199.0, 147.0, 130.0, 23.0 ],
 					"style" : "",
-					"text" : "velocity = sqrt(cents)"
+					"text" : "velocity = sqrt[cents]"
 				}
 
 			}
@@ -266,7 +266,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 26.0, 113.0, 142.0, 23.0 ],
 					"style" : "",
-					"text" : "onset = log(onset) * 10"
+					"text" : "onset = log[onset] * 10"
 				}
 
 			}
@@ -281,7 +281,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 63.030609, 221.0, 300.0, 23.0 ],
 					"style" : "",
-					"text" : "cents = \"cents + voice * 100 + random(0, 3) * 100\""
+					"text" : "cents = \"cents + voice * 100 + random[0, 3] * 100\""
 				}
 
 			}

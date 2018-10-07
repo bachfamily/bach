@@ -225,7 +225,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 217.0, 195.0, 46.0, 19.0 ],
-									"text" : "g (h) i"
+									"text" : "g [h] i"
 								}
 
 							}
@@ -239,7 +239,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 172.0, 195.0, 45.0, 19.0 ],
-									"text" : "d (e) f"
+									"text" : "d [e] f"
 								}
 
 							}
@@ -253,7 +253,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 127.0, 195.0, 48.0, 19.0 ],
-									"text" : "a (b) c"
+									"text" : "a [b] c"
 								}
 
 							}
@@ -320,7 +320,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 153.666672, 99.0, 46.0, 19.0 ],
-									"text" : "g (h) i"
+									"text" : "g [h] i"
 								}
 
 							}
@@ -334,7 +334,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 91.333336, 99.0, 45.0, 19.0 ],
-									"text" : "d (e) f"
+									"text" : "d [e] f"
 								}
 
 							}
@@ -348,7 +348,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 29.0, 99.0, 48.0, 19.0 ],
-									"text" : "a (b) c"
+									"text" : "a [b] c"
 								}
 
 							}
@@ -679,7 +679,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 39.0, 198.5, 134.0, 44.0 ],
-									"text" : "a b c (D1 D2 D3) e f (G1 (Goo Gaa))"
+									"text" : "a b c [D1 D2 D3] e f [G1 [Goo Gaa]]"
 								}
 
 							}

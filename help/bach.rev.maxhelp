@@ -161,7 +161,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 174.0, 128.5, 320.0, 42.0 ],
-									"text" : "0 1 2 3 (john paul george) (foo fee (a b c d (x y z)))"
+									"text" : "0 1 2 3 [john paul george] [foo fee [a b c d [x y z]]]"
 								}
 
 							}
@@ -644,7 +644,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 46.0, 168.0, 168.0, 53.0 ],
-									"text" : "0 1 2 3 (john george paul) 7.4 foo"
+									"text" : "0 1 2 3 [john george paul] 7.4 foo"
 								}
 
 							}

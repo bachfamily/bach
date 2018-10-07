@@ -206,7 +206,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 147.5, 147.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (range 0 1)))"
+					"text" : "[slotinfo [1 [range 0 1]]]"
 				}
 
 			}
@@ -221,7 +221,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 223.0, 363.5, 180.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (6 (range -150 150)))"
+					"text" : "[slotinfo [6 [range -150 150]]]"
 				}
 
 			}

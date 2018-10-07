@@ -934,7 +934,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 91.327698, 195.0, 144.0, 23.0 ],
 									"style" : "",
-									"text" : "foo bar 2/4 (12 14 (15))"
+									"text" : "foo bar 2/4 [12 14 [15]]"
 								}
 
 							}
@@ -1273,7 +1273,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 851.0, 467.0 ],
+						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1646,7 +1646,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 169.333328, 153.0, 128.0, 23.0 ],
 									"style" : "",
-									"text" : "1/2 1/2+1/4 f(x)+g(x)"
+									"text" : "1/2 1/2+1/4 f[x]+g[x]"
 								}
 
 							}
@@ -1724,7 +1724,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 26.0, 112.0, 199.0, 23.0 ],
 									"style" : "",
-									"text" : "`MyHD:/Path/To/Help(1965).mp3"
+									"text" : "`MyHD:/Path/To/Help[1965].mp3"
 								}
 
 							}
@@ -1837,7 +1837,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
+						"rect" : [ 100.0, 126.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -2182,7 +2182,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 26.0, 175.0, 367.0, 23.0 ],
 									"style" : "",
-									"text" : "`MyHD:/Path/To/Help(1965).mp3 1/2 `1/2 ( 1/2+1/4 `f(x)+g(x) )"
+									"text" : "`MyHD:/Path/To/Help(1965).mp3 1/2 `1/2 [ 1/2+1/4 `f[x]+g[x] ]"
 								}
 
 							}

@@ -919,7 +919,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 578.0, 170.0, 22.0 ],
 					"style" : "",
-					"text" : "Beams Through The Trees (o)",
+					"text" : "Beams Through The Trees [o]",
 					"varname" : "messageA"
 				}
 
@@ -1012,7 +1012,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 742.0, 578.0, 170.0, 22.0 ],
 					"style" : "",
-					"text" : "Beams Through The Trees (q)",
+					"text" : "Beams Through The Trees [q]",
 					"varname" : "messageB"
 				}
 

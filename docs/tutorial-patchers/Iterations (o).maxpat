@@ -60,7 +60,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((a b c) (c d e)) ((e f g) (g h i)))",
+					"text" : "[[[a b c] [c d e]] [[e f g] [g h i]]]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -101,7 +101,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((a b c) (c d e)) ((e f g) (g h i)))",
+					"text" : "[[[a b c] [c d e]] [[e f g] [g h i]]]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -170,7 +170,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((a b) (c d)) ((e f) (g h)))",
+					"text" : "[[[a b] [c d]] [[e f] [g h]]]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -292,7 +292,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "a b c (a c) (a (c)) c (((c (c))))",
+					"text" : "a b c [a c] [a [c]] c [[[c [c]]]]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -500,7 +500,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (n)",
+					"text" : "Iterations [n]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -599,7 +599,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (p)",
+					"text" : "Iterations [p]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,

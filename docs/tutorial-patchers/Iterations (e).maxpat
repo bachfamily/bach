@@ -181,7 +181,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 335.666656, 188.0, 156.0, 22.0 ],
 					"style" : "",
-					"text" : "(C1 (C2 D3)) (F#4 (G4)) A5"
+					"text" : "[C1 [C2 D3]] [F#4 [G4]] A5"
 				}
 
 			}
@@ -196,7 +196,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 194.333328, 188.0, 95.0, 22.0 ],
 					"style" : "",
-					"text" : "(a (b c)) (d (e)) f"
+					"text" : "[a [b c]] [d [e]] f"
 				}
 
 			}
@@ -226,7 +226,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 25.0, 188.0, 133.0, 22.0 ],
 					"style" : "",
-					"text" : "(1 (20 40)) (55 (66)) 44"
+					"text" : "[1 [20 40]] [55 [66]] 44"
 				}
 
 			}
@@ -331,7 +331,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 369.666656, 80.0, 95.0, 22.0 ],
 					"style" : "",
-					"text" : "(a (b c)) (d (e)) f"
+					"text" : "[a [b c]] [d [e]] f"
 				}
 
 			}
@@ -346,7 +346,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 198.333328, 80.0, 95.0, 22.0 ],
 					"style" : "",
-					"text" : "(a (b c)) (d (e)) f"
+					"text" : "[a [b c]] [d [e]] f"
 				}
 
 			}
@@ -376,7 +376,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 27.0, 80.0, 133.0, 22.0 ],
 					"style" : "",
-					"text" : "(1 (20 40)) (55 (66)) 44"
+					"text" : "[1 [20 40]] [55 [66]] 44"
 				}
 
 			}
@@ -559,7 +559,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 451.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Iterations (d)",
+					"text" : "Iterations [d]",
 					"varname" : "messageA"
 				}
 
@@ -652,7 +652,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 497.0, 451.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Iterations (f)",
+					"text" : "Iterations [f]",
 					"varname" : "messageB"
 				}
 

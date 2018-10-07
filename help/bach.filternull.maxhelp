@@ -137,7 +137,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 116.5, 177.0, 32.5, 19.0 ],
 									"presentation_rect" : [ 208.0, 194.0, 0.0, 0.0 ],
-									"text" : "()"
+									"text" : "[]"
 								}
 
 							}
@@ -179,7 +179,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 169.0, 162.0, 112.0, 34.0 ],
-									"text" : "(toto)"
+									"text" : "[toto]"
 								}
 
 							}
@@ -467,7 +467,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 201.0, 252.0, 99.0, 19.0 ],
-									"text" : "foo (fee faa) 12"
+									"text" : "foo [fee faa] 12"
 								}
 
 							}
@@ -536,7 +536,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 69.0, 252.0, 76.0, 19.0 ],
-									"text" : "(1 (2 a) (c))"
+									"text" : "[1 [2 a] [c]]"
 								}
 
 							}
@@ -564,7 +564,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 30.0, 159.0, 124.0, 59.0 ],
-									"text" : "5/3 ringo (paul) ((george))"
+									"text" : "5/3 ringo [paul] [[george]]"
 								}
 
 							}

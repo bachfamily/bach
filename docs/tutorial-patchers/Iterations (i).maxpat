@@ -163,7 +163,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3 4) (1 4 8 10) (1 9 15 24)",
+					"text" : "[1 2 3 4] [1 4 8 10] [1 9 15 24]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -218,7 +218,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3 4) (1 4 8 10) (1 9 15 24)",
+					"text" : "[1 2 3 4] [1 4 8 10] [1 9 15 24]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -245,7 +245,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "newobj",
-					"text" : "bach.nth ((1 2))",
+					"text" : "bach.nth [[1 2]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -487,7 +487,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (h)",
+					"text" : "Iterations [h]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -586,7 +586,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (j)",
+					"text" : "Iterations [j]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

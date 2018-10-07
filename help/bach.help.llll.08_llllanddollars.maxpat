@@ -141,7 +141,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 325.0, 296.0, 96.0, 19.0 ],
-					"text" : "( $1 $2 ) $3 $4"
+					"text" : "[ $1 $2 ] $3 $4"
 				}
 
 			}
@@ -182,7 +182,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 27.0, 152.0, 89.0, 19.0 ],
-					"text" : "($1 $2) $3 $4"
+					"text" : "[$1 $2] $3 $4"
 				}
 
 			}

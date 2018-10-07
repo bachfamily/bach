@@ -481,7 +481,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (t)",
+					"text" : "Iterations [t]",
 					"numoutlets" : 1,
 					"id" : "obj-7",
 					"fontname" : "Arial",
@@ -580,7 +580,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (v)",
+					"text" : "Iterations [v]",
 					"numoutlets" : 1,
 					"id" : "obj-16",
 					"fontname" : "Arial",

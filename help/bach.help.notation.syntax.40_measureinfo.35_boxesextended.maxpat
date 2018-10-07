@@ -112,7 +112,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 79.833336, 141.0, 202.0, 23.0 ],
 					"style" : "",
-					"text" : "setmeasureparameters 1 (boxes)"
+					"text" : "setmeasureparameters 1 [boxes]"
 				}
 
 			}
@@ -176,7 +176,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 40.833336, 110.0, 142.0, 23.0 ],
 					"style" : "",
-					"text" : "((nil nil (boxes))), bang"
+					"text" : "[[nil nil [boxes]]], bang"
 				}
 
 			}

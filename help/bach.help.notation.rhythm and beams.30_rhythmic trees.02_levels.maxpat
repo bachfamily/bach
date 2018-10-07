@@ -98,7 +98,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 132.5, 338.0, 372.0, 23.0 ],
 					"style" : "",
-					"text" : "((1/8 1/24 1/24 1/24 1/16 1/64 1/64 1/64 1/64 1/16 1/16)), bang"
+					"text" : "[[1/8 1/24 1/24 1/24 1/16 1/64 1/64 1/64 1/64 1/16 1/16]], bang"
 				}
 
 			}
@@ -159,7 +159,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 711.0, 133.777771, 404.0, 35.0 ],
 					"style" : "",
-					"text" : "measure ( \"beam level\" chord ( \"tuplet level\" chord chord chord )) ( \"beam level\" chord ( \"beam level\" chord chord chord chord ) chord chord )"
+					"text" : "measure [ \"beam level\" chord [ \"tuplet level\" chord chord chord ]] [ \"beam level\" chord [ \"beam level\" chord chord chord chord ] chord chord ]"
 				}
 
 			}

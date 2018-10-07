@@ -223,7 +223,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 288.0, 266.0, 77.0, 45.0 ],
-									"text" : "1 (2 B) 3 S"
+									"text" : "1 [2 B] 3 S"
 								}
 
 							}
@@ -618,7 +618,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 98.0, 221.0, 77.0, 45.0 ],
-									"text" : "1 (2 B) 3 S"
+									"text" : "1 [2 B] 3 S"
 								}
 
 							}
