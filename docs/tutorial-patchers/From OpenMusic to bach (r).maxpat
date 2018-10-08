@@ -249,7 +249,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 398.899994, 65.0, 135.0, 18.0 ],
-					"text" : "((C4 D4 F#4 A4)), bang"
+					"text" : "[[C4 D4 F#4 A4]], bang"
 				}
 
 			}
@@ -455,7 +455,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 495.0, 162.0, 18.0 ],
-					"text" : "From OpenMusic to bach (q)",
+					"text" : "From OpenMusic to bach [q]",
 					"varname" : "messageA"
 				}
 
@@ -555,7 +555,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 710.0, 495.0, 162.0, 18.0 ],
-					"text" : "From OpenMusic to bach (s)",
+					"text" : "From OpenMusic to bach [s]",
 					"varname" : "messageB"
 				}
 

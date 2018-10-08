@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 53.0, 302.5, 235.0, 23.0 ],
 					"style" : "",
-					"text" : "exportxml foo.xml @directionslots (4 9)"
+					"text" : "exportxml foo.xml @directionslots [4 9]"
 				}
 
 			}

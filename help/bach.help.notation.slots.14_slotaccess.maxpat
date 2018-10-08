@@ -81,7 +81,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 93.0, 292.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (2 (access readonly)) (3 (access none)))"
+					"text" : "[slotinfo [2 [access readonly]] [3 [access none]]]"
 				}
 
 			}

@@ -108,7 +108,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 22.0, 248.5, 227.0, 38.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (popup 1) (background 1)) (7 (linkto lyrics)))"
+					"text" : "[slotinfo [1 [popup 1] [background 1]] [7 [linkto lyrics]]]"
 				}
 
 			}

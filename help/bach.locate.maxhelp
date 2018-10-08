@@ -295,7 +295,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 249.0, 219.0, 188.0, 56.0 ],
 									"style" : "",
-									"text" : "john george (ringo paul john (paul ringo (george)))"
+									"text" : "john george [ringo paul john [paul ringo [george]]]"
 								}
 
 							}

@@ -204,7 +204,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 62.0, 153.0, 213.0, 19.0 ],
-					"text" : "addmarker 2000 (Octopus Garden)"
+					"text" : "addmarker 2000 [Octopus Garden]"
 				}
 
 			}
@@ -248,7 +248,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 61.5, 388.0, 19.0 ],
-					"text" : "addchord 1 ( 500 ( 6100. 405. 100 ( name Paul ) ) ( name John ) )"
+					"text" : "addchord 1 [ 500 [ 6100. 405. 100 [ name Paul ] ] [ name John ] ]"
 				}
 
 			}

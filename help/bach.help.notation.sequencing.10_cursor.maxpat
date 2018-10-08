@@ -186,7 +186,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 216.0, 228.0, 116.0, 23.0 ],
 					"style" : "",
-					"text" : "setcursor (1 2 1/4)"
+					"text" : "setcursor [1 2 1/4]"
 				}
 
 			}

@@ -485,7 +485,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 438.0, 142.0, 22.0 ],
 					"style" : "",
-					"text" : "The Gift Of Synthesis (a)",
+					"text" : "The Gift Of Synthesis [a]",
 					"varname" : "messageA"
 				}
 
@@ -578,7 +578,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 498.0, 438.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "The Gift Of Synthesis (c)",
+					"text" : "The Gift Of Synthesis [c]",
 					"varname" : "messageB"
 				}
 

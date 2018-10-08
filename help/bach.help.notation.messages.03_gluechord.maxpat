@@ -64,7 +64,7 @@
 					"patching_rect" : [ 77.0, 285.0, 288.0, 23.0 ],
 					"presentation_rect" : [ 61.0, 307.0, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "gluechord (4005 (6210 1000 100)) 10 30 @sel 1"
+					"text" : "gluechord [4005 [6210 1000 100]] 10 30 @sel 1"
 				}
 
 			}
@@ -111,7 +111,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 47.0, 180.0, 318.0, 23.0 ],
 					"style" : "",
-					"text" : "gluechord 2 (2000 (6200 1000 100) (6700 1000 100))"
+					"text" : "gluechord 2 [2000 [6200 1000 100] [6700 1000 100]]"
 				}
 
 			}
@@ -158,7 +158,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 66.0, 250.0, 245.0, 23.0 ],
 					"style" : "",
-					"text" : "gluechord (3005 (6210 1000 100)) 10 30"
+					"text" : "gluechord [3005 [6210 1000 100]] 10 30"
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 27.5, 130.0, 314.0, 23.0 ],
 					"style" : "",
-					"text" : "gluechord (2000 (6200 1000 100) (6700 1000 100))"
+					"text" : "gluechord [2000 [6200 1000 100] [6700 1000 100]]"
 				}
 
 			}
@@ -220,7 +220,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 14.0, 79.0, 206.0, 23.0 ],
 					"style" : "",
-					"text" : "addchord (1000 (6200 1000 100))"
+					"text" : "addchord [1000 [6200 1000 100]]"
 				}
 
 			}

@@ -220,7 +220,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 82.0, 282.0, 34.0 ],
-					"text" : "(slotinfo (5 (name whois) (type int) (range 1 4) (representation ( john george ringo paul ))))"
+					"text" : "[slotinfo [5 [name whois] [type int] [range 1 4] [representation [ john george ringo paul ]]]]"
 				}
 
 			}

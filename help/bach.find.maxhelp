@@ -76,7 +76,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 334.0, 319.0, 47.0, 19.0 ],
-									"text" : "(1 2) z"
+									"text" : "[1 2] z"
 								}
 
 							}
@@ -267,7 +267,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 27.0, 105.0, 107.0, 30.0 ],
-									"text" : "x y (x y (x y))"
+									"text" : "x y [x y [x y]]"
 								}
 
 							}
@@ -407,7 +407,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 202.0, 239.5, 97.0, 51.0 ],
-									"text" : "0 1 2 3 4 5 (a 1 2 3 b) (1 2) z"
+									"text" : "0 1 2 3 4 5 [a 1 2 3 b] [1 2] z"
 								}
 
 							}
@@ -751,7 +751,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 141.0, 327.0, 34.0 ],
-									"text" : "(2 positive) (-1 negative) (-4 negative) (3 positive)"
+									"text" : "[2 positive] [-1 negative] [-4 negative] [3 positive]"
 								}
 
 							}
@@ -838,7 +838,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 490.0, 201.0, 161.0, 42.0 ],
-									"text" : "(2 positive) (-1 negative) (-4 negative) (3 positive)"
+									"text" : "[2 positive] [-1 negative] [-4 negative] [3 positive]"
 								}
 
 							}
@@ -1343,7 +1343,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 361.851562, 188.0, 66.0, 32.5 ],
-									"text" : "(1)"
+									"text" : "[1]"
 								}
 
 							}
@@ -1368,7 +1368,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 478.351562, 230.0, 32.5, 19.0 ],
-									"text" : "(1)"
+									"text" : "[1]"
 								}
 
 							}
@@ -1464,7 +1464,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 240.101562, 160.5, 96.0, 59.5 ],
-									"text" : "1.0 2 s a (1) 0 (-1/2 1 f (1))"
+									"text" : "1.0 2 s a [1] 0 [-1/2 1 f [1]]"
 								}
 
 							}
@@ -2069,7 +2069,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 441.0, 272.0, 157.0, 50.0 ],
-									"text" : "(pitch E) (key C) (tempo 120) (title (key and lock)) (annotations key trill)"
+									"text" : "[pitch E] [key C] [tempo 120] [title [key and lock]] [annotations key trill]"
 								}
 
 							}
@@ -2472,7 +2472,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 156.0, 96.0, 28.0 ],
-									"text" : "(a (b))"
+									"text" : "[a [b]]"
 								}
 
 							}
@@ -2498,7 +2498,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 305.0, 542.0, 65.0 ],
-									"text" : "In this example, (a (b)) is found not being equal to c - and therefore a match with address 0.\nIf recursive is 1, since this match is indeed a llll, its elements will be scanned too. So, we also find that a is a match with address 0 0, (b) is a match with address 0 1 and - because (b) is another llll - b as well is tested against c and recognized as a match with address 0 1 0.",
+									"text" : "In this example, [a [b]] is found not being equal to c - and therefore a match with address 0.\nIf recursive is 1, since this match is indeed a llll, its elements will be scanned too. So, we also find that a is a match with address 0 0, (b) is a match with address 0 1 and - because (b) is another llll - b as well is tested against c and recognized as a match with address 0 1 0.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -2765,7 +2765,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 188.75, 186.5, 66.0, 32.5 ],
-									"text" : "(1)"
+									"text" : "[1]"
 								}
 
 							}
@@ -2820,7 +2820,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 312.25, 202.5, 32.5, 19.0 ],
-									"text" : "(1)"
+									"text" : "[1]"
 								}
 
 							}
@@ -3028,7 +3028,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 31.0, 159.5, 139.0, 54.0 ],
-									"text" : "1 a b c (1) d (e 1 f (1))"
+									"text" : "1 a b c [1] d [e 1 f [1]]"
 								}
 
 							}

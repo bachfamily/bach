@@ -427,7 +427,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Graphical Synchronization (a)",
+					"text" : "Graphical Synchronization [a]",
 					"id" : "obj-7",
 					"fontname" : "Arial",
 					"outlettype" : [ "" ],
@@ -526,7 +526,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Graphical Synchronization (c)",
+					"text" : "Graphical Synchronization [c]",
 					"id" : "obj-34",
 					"fontname" : "Arial",
 					"outlettype" : [ "" ],

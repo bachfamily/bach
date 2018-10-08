@@ -2350,7 +2350,7 @@
 																	"numoutlets" : 0,
 																	"patching_rect" : [ 303.0, 9.5, 426.0, 288.0 ],
 																	"style" : "",
-																	"text" : "The idea here is that, once a provisional has been set, all the values it contains are forbidden for the next variable to assign. We use bach.diff to strip the values of the provisional out of the domain of the next variable.\nSo, when a provisional is received in the second inlet, it is sent to the second inlet of bach.diff. Its length is then used to calculate the index of the variables whose domain we want to filter out: if the provisional has a length of 10, it means that the 11th domain must be processed, and so we send [getdomains 11] to the lambda inlet of bach.constraints.\nIn response, bach.constraints returns the domain of the 11th variable, in the form [domains (x y z ...)]. We retrieve it, stripped out of the \"domain\" keyword, through the left inlet, and we perform the filtering. After this, we give it back to the lambda inlet of bach.constraints, in the form [setdomains (11 (x y z ...))].\n\nThe syntax of getdomains allows asking for more than one domain: for example, [getdomains 11 12 15] will return the corresponding domains in the form [domains (a b c ...) (p q r ...) (x y z...)], where (a b c), (p q r), (x y z) are respectively the elements of the 11th, 12th and 15th domain.\n\nCorrespondingly, \"setdomains\" can set more than one domain: [setdomains (11 (a b c) (m n o)) (15 (p q r))] will set the domains of the 11th, 12th (because it follows the 11th in the same sublist) and 15th variables.",
+																	"text" : "The idea here is that, once a provisional has been set, all the values it contains are forbidden for the next variable to assign. We use bach.diff to strip the values of the provisional out of the domain of the next variable.\nSo, when a provisional is received in the second inlet, it is sent to the second inlet of bach.diff. Its length is then used to calculate the index of the variables whose domain we want to filter out: if the provisional has a length of 10, it means that the 11th domain must be processed, and so we send [getdomains 11] to the lambda inlet of bach.constraints.\nIn response, bach.constraints returns the domain of the 11th variable, in the form [domains (x y z ...)]. We retrieve it, stripped out of the \"domain\" keyword, through the left inlet, and we perform the filtering. After this, we give it back to the lambda inlet of bach.constraints, in the form setdomains [11 [x y z ...]].\n\nThe syntax of getdomains allows asking for more than one domain: for example, [getdomains 11 12 15] will return the corresponding domains in the form [domains (a b c ...) (p q r ...) (x y z...)], where (a b c), (p q r), (x y z) are respectively the elements of the 11th, 12th and 15th domain.\n\nCorrespondingly, \"setdomains\" can set more than one domain: setdomains [11 [a b c] [m n o]] [15 [p q r]]] will set the domains of the 11th, 12th (because it follows the 11th in the same sublist) and 15th variables.",
 																	"textcolor" : [ 0.501961, 0.501961, 0.501961, 1.0 ]
 																}
 
@@ -9506,7 +9506,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 260.0, 191.0, 246.0, 23.0 ],
 									"style" : "",
-									"text" : "(almostC (1)) (almostE (2)) (almostG (3))"
+									"text" : "[almostC [1]] [almostE [2]] [almostG [3]]"
 								}
 
 							}
@@ -10806,7 +10806,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 140.0, 350.0, 495.0, 23.0 ],
 									"style" : "",
-									"text" : "(dist (1 2) (2 3) (3 4) (4 5)) (diff (1 2) (1 3) (1 4) (1 5) (2 3) (2 4) (2 5) (3 4) (3 5) (4 5))"
+									"text" : "[dist [1 2] [2 3] [3 4] [4 5]] [diff [1 2] [1 3] [1 4] [1 5] [2 3] [2 4] [2 5] [3 4] [3 5] [4 5]]"
 								}
 
 							}
@@ -11428,7 +11428,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 266.5, 353.0, 245.0, 23.0 ],
 									"style" : "",
-									"text" : "(diff (1 2) (1 3) (2 3)) (pythagoras (1 2 3))"
+									"text" : "[diff [1 2] [1 3] [2 3]] [pythagoras [1 2 3]]"
 								}
 
 							}
@@ -11444,7 +11444,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 200.0, 308.0, 240.0, 38.0 ],
 									"style" : "",
-									"text" : "(1 2 3 4 5 6 7 8 9 10) (7 8 9 10 11 12 13) (8 9 10 11 12 13 14 15 16 17 18 19)"
+									"text" : "[1 2 3 4 5 6 7 8 9 10] [7 8 9 10 11 12 13] [8 9 10 11 12 13 14 15 16 17 18 19]"
 								}
 
 							}
@@ -12336,7 +12336,7 @@
 																	"outlettype" : [ "" ],
 																	"patching_rect" : [ 99.5, 420.0, 80.0, 22.0 ],
 																	"style" : "",
-																	"text" : "(2 2) (1/2 80)"
+																	"text" : "[2 2] [1/2 80]"
 																}
 
 															}
@@ -13696,7 +13696,7 @@
 																					"outlettype" : [ "", "", "", "", "", "", "", "" ],
 																					"patching_rect" : [ 32.0, 71.0, 373.0, 22.0 ],
 																					"style" : "",
-																					"text" : "bach.pick (1 1) (1 2) (1 3) (1 4) (2 1) (2 2) (2 3) (2 4)"
+																					"text" : "bach.pick [1 1] [1 2] [1 3] [1 4] [2 1] [2 2] [2 3] [2 4]"
 																				}
 
 																			}
@@ -14803,7 +14803,7 @@
 																									"outlettype" : [ "", "" ],
 																									"patching_rect" : [ 67.5, 133.0, 176.0, 22.0 ],
 																									"style" : "",
-																									"text" : "bach.pick (1 4) (2 4) @out t"
+																									"text" : "bach.pick [1 4] [2 4] @out t"
 																								}
 
 																							}
@@ -15459,7 +15459,7 @@
 																					"outlettype" : [ "" ],
 																					"patching_rect" : [ 84.0, 84.0, 291.0, 22.0 ],
 																					"style" : "",
-																					"text" : "(1 3) (7100 6700 6200 5500) (7200 6700 6400 5500)"
+																					"text" : "[1 3] [7100 6700 6200 5500] [7200 6700 6400 5500]"
 																				}
 
 																			}
@@ -16346,7 +16346,7 @@
 																									"outlettype" : [ "", "" ],
 																									"patching_rect" : [ 67.5, 133.0, 176.0, 22.0 ],
 																									"style" : "",
-																									"text" : "bach.pick (1 4) (2 4) @out t"
+																									"text" : "bach.pick [1 4] [2 4] @out t"
 																								}
 
 																							}
@@ -18018,7 +18018,7 @@
 																									"outlettype" : [ "" ],
 																									"patching_rect" : [ 77.0, 179.0, 175.0, 22.0 ],
 																									"style" : "",
-																									"text" : "(1 2) (1 3) (1 4) (2 3) (2 4) (3 4)"
+																									"text" : "[1 2] [1 3] [1 4] [2 3] [2 4] [3 4]"
 																								}
 
 																							}
@@ -18935,7 +18935,7 @@
 																									"outlettype" : [ "" ],
 																									"patching_rect" : [ 77.0, 179.0, 175.0, 22.0 ],
 																									"style" : "",
-																									"text" : "(1 2) (1 3) (1 4) (2 3) (2 4) (3 4)"
+																									"text" : "[1 2] [1 3] [1 4] [2 3] [2 4] [3 4]"
 																								}
 
 																							}
@@ -19616,7 +19616,7 @@
 																					"outlettype" : [ "" ],
 																					"patching_rect" : [ 70.0, 3.0, 203.0, 35.0 ],
 																					"style" : "",
-																					"text" : "(7200 6700 6400 6000) (7900 7400 6700 5900)"
+																					"text" : "[7200 6700 6400 6000] [7900 7400 6700 5900]"
 																				}
 
 																			}
@@ -19867,7 +19867,7 @@
 																									"outlettype" : [ "" ],
 																									"patching_rect" : [ 77.0, 179.0, 91.0, 22.0 ],
 																									"style" : "",
-																									"text" : "(1 2) (2 3) (3 4)"
+																									"text" : "[1 2] [2 3] [3 4]"
 																								}
 
 																							}
@@ -22648,7 +22648,7 @@
 																									"outlettype" : [ "" ],
 																									"patching_rect" : [ 77.0, 179.0, 175.0, 22.0 ],
 																									"style" : "",
-																									"text" : "(1 2) (1 3) (1 4) (2 3) (2 4) (3 4)"
+																									"text" : "[1 2] [1 3] [1 4] [2 3] [2 4] [3 4]"
 																								}
 
 																							}
@@ -24899,7 +24899,7 @@
 																													"outlettype" : [ "" ],
 																													"patching_rect" : [ 134.0, 62.0, 91.0, 18.0 ],
 																													"style" : "",
-																													"text" : "(1 2) (2 3) (3 4)"
+																													"text" : "[1 2] [2 3] [3 4]"
 																												}
 
 																											}
@@ -24914,7 +24914,7 @@
 																													"outlettype" : [ "" ],
 																													"patching_rect" : [ 30.0, 62.0, 55.0, 18.0 ],
 																													"style" : "",
-																													"text" : "(1 2 3 4)"
+																													"text" : "[1 2 3 4]"
 																												}
 
 																											}
@@ -25404,7 +25404,7 @@
 																																	"outlettype" : [ "" ],
 																																	"patching_rect" : [ 50.0, 100.0, 145.0, 31.0 ],
 																																	"style" : "",
-																																	"text" : "(6000 8200) (5500 7400) (4800 6900) (3900 6000)"
+																																	"text" : "[6000 8200] [5500 7400] [4800 6900] [3900 6000]"
 																																}
 
 																															}
@@ -25636,7 +25636,7 @@
 																													"outlettype" : [ "" ],
 																													"patching_rect" : [ 329.0, 134.0, 157.0, 49.0 ],
 																													"style" : "",
-																													"text" : "(0 400 700) (200 500 900) (400 700 1100) (500 900 0) (700 1100 200) (900 0 400)"
+																													"text" : "[0 400 700] [200 500 900] [400 700 1100] [500 900 0] [700 1100 200] [900 0 400]"
 																												}
 
 																											}
@@ -26726,7 +26726,7 @@
 																									"outlettype" : [ "" ],
 																									"patching_rect" : [ 77.0, 179.0, 175.0, 22.0 ],
 																									"style" : "",
-																									"text" : "(1 2) (1 3) (1 4) (2 3) (2 4) (3 4)"
+																									"text" : "[1 2] [1 3] [1 4] [2 3] [2 4] [3 4]"
 																								}
 
 																							}
@@ -29949,7 +29949,7 @@
 																	"outlettype" : [ "" ],
 																	"patching_rect" : [ 412.5, 258.0, 52.0, 22.0 ],
 																	"style" : "",
-																	"text" : "()"
+																	"text" : "[]"
 																}
 
 															}
@@ -29964,7 +29964,7 @@
 																	"outlettype" : [ "" ],
 																	"patching_rect" : [ 50.0, 230.0, 54.0, 22.0 ],
 																	"style" : "",
-																	"text" : "((1 1)) ()"
+																	"text" : "[[1 1]] []"
 																}
 
 															}
@@ -29979,7 +29979,7 @@
 																	"outlettype" : [ "" ],
 																	"patching_rect" : [ 653.0, 331.0, 205.0, 22.0 ],
 																	"style" : "",
-																	"text" : "((2 1) (2 2) (4 1)) () ((5 1)) () ((1 1)) ()"
+																	"text" : "[[2 1] [2 2] [4 1]] [] [[5 1]] [] [[1 1]] []"
 																}
 
 															}
@@ -31872,7 +31872,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 54.5, 287.0, 162.0, 38.0 ],
 									"style" : "",
-									"text" : "(noncons (1 2) (1 3) (2 3)) (pythagoras (1 2 3))"
+									"text" : "[noncons [1 2] [1 3] [2 3]] [pythagoras [1 2 3]]"
 								}
 
 							}
@@ -31888,7 +31888,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 11.0, 201.0, 284.0, 38.0 ],
 									"style" : "",
-									"text" : "(1 2 3 4 5 6 7 8 9 10) (7 8 9 10 11 12 13 14 15) (8 9 10 11 12 13 14 15 16 17 18 19)"
+									"text" : "[1 2 3 4 5 6 7 8 9 10] [7 8 9 10 11 12 13 14 15] [8 9 10 11 12 13 14 15 16 17 18 19]"
 								}
 
 							}

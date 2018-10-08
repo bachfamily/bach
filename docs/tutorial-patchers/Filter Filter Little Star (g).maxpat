@@ -218,7 +218,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(commands (1 changenotefilterfreq changechordfilterfreq f))",
+					"text" : "[commands [1 changenotefilterfreq changechordfilterfreq f]]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 342.0, 151.0, 327.0, 18.0 ],
@@ -246,7 +246,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (representation Hz)))",
+					"text" : "[slotinfo [1 [representation Hz]]]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 689.0, 56.0, 181.0, 18.0 ],
@@ -419,7 +419,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (representation cents)))",
+					"text" : "[slotinfo [1 [representation cents]]]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 483.0, 56.0, 195.0, 18.0 ],
@@ -598,7 +598,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Filter Filter Little Star (f)",
+					"text" : "Filter Filter Little Star [f]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 602.0, 140.0, 18.0 ],
@@ -697,7 +697,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Filter Filter Little Star (h)",
+					"text" : "Filter Filter Little Star [h]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 761.0, 602.0, 140.0, 18.0 ],

@@ -118,7 +118,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 251.75, 384.0, 38.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (type function) (range -1 1) (key m) (name modulate)) (2 (type intlist) (range 0 127) (key v) (name velocities)))"
+					"text" : "[slotinfo [1 [type function] [range -1 1] [key m] [name modulate]] [2 [type intlist] [range 0 127] [key v] [name velocities]]]"
 				}
 
 			}

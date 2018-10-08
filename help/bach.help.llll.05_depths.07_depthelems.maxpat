@@ -191,7 +191,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 120.5, 309.0, 19.0 ],
-					"text" : "((((John) (Paul)) (George Ringo)) (Martin)) (Epstein)"
+					"text" : "[[[[John] [Paul]] [George Ringo]] [Martin]] [Epstein]"
 				}
 
 			}

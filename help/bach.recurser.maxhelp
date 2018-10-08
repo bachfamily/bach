@@ -56,7 +56,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 909.0, 497.0 ],
+						"rect" : [ 0.0, 26.0, 909.0, 471.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -135,13 +135,13 @@
 									"numinlets" : 4,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 576.0, 142.0, 285.0, 23.0 ],
+									"patching_rect" : [ 576.0, 142.0, 283.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80001
 									}
 ,
 									"style" : "",
-									"text" : "bach.recurser (0. 0.1) none $x1-$x2 100 @out t"
+									"text" : "bach.recurser [0. 0.1] none $x1-$x2 100 @out t"
 								}
 
 							}
@@ -197,13 +197,13 @@
 									"numinlets" : 4,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 306.68866, 320.0, 246.0, 23.0 ],
+									"patching_rect" : [ 306.68866, 320.0, 245.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80001
 									}
 ,
 									"style" : "",
-									"text" : "bach.recurser (1.05) none pow($x1\\,2) 10"
+									"text" : "bach.recurser [1.05] none pow($x1\\,2) 10"
 								}
 
 							}
@@ -267,7 +267,7 @@
 									}
 ,
 									"style" : "",
-									"text" : "bach.recurser (1) 1024 2*$x1 none"
+									"text" : "bach.recurser [1] 1024 2*$x1 none"
 								}
 
 							}
@@ -326,13 +326,13 @@
 									"numinlets" : 4,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 284.18866, 158.0, 224.0, 23.0 ],
+									"patching_rect" : [ 284.18866, 158.0, 223.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80001
 									}
 ,
 									"style" : "",
-									"text" : "bach.recurser (2 1) none $x1+$x2 20"
+									"text" : "bach.recurser [2 1] none $x1+$x2 20"
 								}
 
 							}
@@ -391,13 +391,13 @@
 									"numinlets" : 4,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.18866, 158.0, 224.0, 23.0 ],
+									"patching_rect" : [ 24.18866, 158.0, 223.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80001
 									}
 ,
 									"style" : "",
-									"text" : "bach.recurser (0 1) none $x1+$x2 20"
+									"text" : "bach.recurser [0 1] none $x1+$x2 20"
 								}
 
 							}
@@ -545,7 +545,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 909.0, 497.0 ],
+						"rect" : [ 100.0, 152.0, 909.0, 471.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -584,7 +584,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 715.0, 270.0, 151.0, 40.0 ],
-									"presentation_rect" : [ 715.0, 269.0, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "CLICK (max_items defaults to 1000)"
 								}
@@ -597,7 +596,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 679.5, 338.0, 68.0, 23.0 ],
-									"presentation_rect" : [ 679.5, 338.0, 0.0, 0.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80001
 									}
@@ -615,7 +613,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
 									"patching_rect" : [ 679.5, 278.0, 24.0, 24.0 ],
-									"presentation_rect" : [ 679.5, 269.0, 0.0, 0.0 ],
 									"style" : ""
 								}
 
@@ -770,9 +767,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 266.0, 238.0, 86.0, 23.0 ],
+									"patching_rect" : [ 266.0, 238.0, 136.0, 23.0 ],
 									"style" : "",
-									"text" : "$x1+cos($f2)"
+									"text" : "2*($x1+$x2)+cos($f2)"
 								}
 
 							}
@@ -937,8 +934,8 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 286.0, 385.0, 239.537476, 84.0 ],
-									"presentation_rect" : [ 286.0, 385.0, 239.537476, 84.0 ]
+									"patching_rect" : [ 286.0, 385.0, 100.0, 24.0 ],
+									"presentation_rect" : [ 286.0, 385.0, 100.0, 24.0 ]
 								}
 
 							}
@@ -1265,7 +1262,7 @@
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 909.0, 497.0 ],
+						"rect" : [ 0.0, 26.0, 909.0, 471.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,

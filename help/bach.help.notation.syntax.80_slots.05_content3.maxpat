@@ -65,7 +65,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 338.0, 426.0, 151.0, 19.0 ],
-					"text" : "addslot ( 7 $1 $2 $3 $4 )"
+					"text" : "addslot [ 7 $1 $2 $3 $4 ]"
 				}
 
 			}
@@ -96,7 +96,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 193.0, 354.5, 119.0, 19.0 ],
-					"text" : "addslot ( 7 1 1 0 1)"
+					"text" : "addslot [ 7 1 1 0 1]"
 				}
 
 			}
@@ -273,7 +273,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 118.0, 130.5, 162.0, 19.0 ],
-					"text" : "addslot ( 7 (0 1 2) (3 4 5) )"
+					"text" : "addslot [ 7 [0 1 2] [3 4 5] ]"
 				}
 
 			}
@@ -287,7 +287,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 391.0, 130.5, 170.0, 19.0 ],
-					"text" : "addslot ( 7 ((0 1 2) (3 4 5)) )"
+					"text" : "addslot [ 7 [[0 1 2] [3 4 5]] ]"
 				}
 
 			}

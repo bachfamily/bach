@@ -146,8 +146,8 @@
 			<description>
 				The <m>set</m> attribute allows providing the inlets of <o>bach.join</o> with default lllls.
 				The contents of each sublist of the <m>set</m> attribute is assigned to one inlet.
-				So <b>set (a b) (c d) ((e f))</b> will assign <b>a b</b> to the first inlet, <b>c d</b> to the second,
-				<b>(e f)</b> to the third. If <o>bach.join</o> has less inlets than the size of the <m>set</m> llll,
+				So <b>set [a b] [c d] [[e f]]</b> will assign <b>a b</b> to the first inlet, <b>c d</b> to the second,
+				<b>[e f]</b> to the third. If <o>bach.join</o> has less inlets than the size of the <m>set</m> llll,
 				the elements in excess are ignored. If it has more inlets, the inlets in excess are cleared.
 				<b>set null</b> clears all the inlets. <br />
 				Elements without parentheses are assigned to distinct inlets, as if each had a couple of parentheses around it.

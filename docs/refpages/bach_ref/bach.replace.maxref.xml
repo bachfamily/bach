@@ -130,12 +130,12 @@
 				Such llll will trigger the substitution and the result llll will be output through the first outlet. <br />
 				An llll in the second inlet contains the element which has to be searched (in order to replace it). Such llll
 				is thus expected to have length 1, although it can represent a complex wrapped llll to be found, such as
-				<b>(1 2 3)</b>. <br />
+				<b>[1 2 3]</b>. <br />
 				An llll in the third inlet contains the element(s) which will be replaced for each occurrence. Such llll can be of any
 				type. <br />
-				For instance, if the element to be substituted is <b>1</b> in the llll <b>1 a b c (1) d (e 1 f)</b>, and
-				the replacing elements are <b>foo (fee faa)</b>, the result will be
-				<b>foo (fee faa) a b c (foo (fee faa)) d (e foo (fee faa) f)</b>. <br />
+				For instance, if the element to be substituted is <b>1</b> in the llll <b>1 a b c [1] d [e 1 f]</b>, and
+				the replacing elements are <b>foo [fee faa]</b>, the result will be
+				<b>foo [fee faa] a b c [foo [fee faa]] d [e foo [fee faa] f]</b>. <br />
 				An llll in the fourth inlet is converted into an <m>int</m>.
 			</description>
 		</method>

@@ -214,11 +214,11 @@ void poset_assist(t_poset *x, void *b, long m, long a, char *s)
 		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
 		switch (a) {
 			case 0:	sprintf(s, "llll (%s): Lattice Edges", type);	break;	// @out 0 @type llll @digest Edges of the lattices
-																			// @description Each edge is an element in the form <b>(<m>A</m> <m>B</m>)</b>
+																			// @description Each edge is an element in the form <b>[<m>A</m> <m>B</m>]</b>
 																			// where <m>A</m> and <m>B</m> are the elements respectively at the beginning
 																			// and at the end of the edge
 			case 1:	sprintf(s, "llll (%s): Adjacency List", type);	break;	// @out 1 @type llll @digest Adjacency list 
-																			// @description Each element has the form <b>(<m>A</m> <m>B1</m> <m>B2</m>...)</b>
+																			// @description Each element has the form <b>[<m>A</m> <m>B1</m> <m>B2</m>...]</b>
 																			// where all the <m>Bi</m> are the elements to which <m>A</m> is connected.
 			case 2:	sprintf(s, "llll (%s): Minima", type);	break;	// @out 2 @type llll @digest Lattice minima 
 			case 3:	sprintf(s, "llll (%s): Maxima", type);	break;	// @out 3 @type llll @digest Lattice maxima 

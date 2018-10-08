@@ -54,7 +54,7 @@
 				Edges of the lattices
 			</digest>
 			<description>
-				Each edge is an element in the form <b>(<m>A</m> <m>B</m>)</b>
+				Each edge is an element in the form <b>[<m>A</m> <m>B</m>]</b>
 				where <m>A</m> and <m>B</m> are the elements respectively at the beginning
 				and at the end of the edge
 			</description>
@@ -64,7 +64,7 @@
 				Adjacency list
 			</digest>
 			<description>
-				Each element has the form <b>(<m>A</m> <m>B1</m> <m>B2</m>...)</b>
+				Each element has the form <b>[<m>A</m> <m>B1</m> <m>B2</m>...]</b>
 				where all the <m>Bi</m> are the elements to which <m>A</m> is connected.
 			</description>
 		</outlet>
@@ -225,7 +225,7 @@
 		<entry name ="Outlet 1 (llll)">
 			<description>
 				Edges of the lattices.
-				Each edge is an element in the form <b>(<m>A</m> <m>B</m>)</b>
+				Each edge is an element in the form <b>[<m>A</m> <m>B</m>]</b>
 				where <m>A</m> and <m>B</m> are the elements respectively at the beginning
 				and at the end of the edge
 			</description>
@@ -233,7 +233,7 @@
 		<entry name ="Outlet 2 (llll)">
 			<description>
 				Adjacency list.
-				Each element has the form <b>(<m>A</m> <m>B1</m> <m>B2</m>...)</b>
+				Each element has the form <b>[<m>A</m> <m>B1</m> <m>B2</m>...]</b>
 				where all the <m>Bi</m> are the elements to which <m>A</m> is connected.
 			</description>
 		</entry>

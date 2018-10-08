@@ -225,7 +225,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 806.0, 475.0, 55.0, 18.0 ],
-					"text" : "(( 1 \" \" ))"
+					"text" : "[[ 1 \" \" ]]"
 				}
 
 			}
@@ -253,7 +253,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 705.0, 479.0, 57.0, 18.0 ],
-					"text" : "(( 1 $1 ))"
+					"text" : "[[ 1 $1 ]]"
 				}
 
 			}
@@ -937,7 +937,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 671.0, 140.0, 18.0 ],
-					"text" : "Lambda Scores (h)",
+					"text" : "Lambda Scores [h]",
 					"varname" : "messageA"
 				}
 

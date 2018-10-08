@@ -190,13 +190,13 @@ int T_EXPORT main()
 	CLASS_ATTR_ENUMINDEX(c, "spikemode", 0, "Distinct Ignore Nulls");
 	// @description
 	// A spike in an llll is a sequence of parentheses at least two of which are opposite:
-	// for instance, <b>()</b> or <b>((()</b> or <b>))()(</b>.
+	// for instance, <b>[]</b> or <b>[[[]</b> or <b>]][][</b>.
 	// The <m>spikemode</m> attribute controls <o>bach.iter</o>'s behavior when a spike is met.
 	// When set to 0 (the default), a distinct integer for each sequence of same-direction parentheses 
 	// is output from the rightmost outlet:
-	// for instance, <b>()</b> will cause the sequence <m>1</m>, <m>-1</m> to be output;
-	// <b>((()</b> will cause <m>3</m>, <m>-1</m> to be output;
-	// <b>))()(</b> will cause <m>-2</m>, <m>1</m>, <m>-1</m>, <m>1</m> to be output.
+	// for instance, <b>[]</b> will cause the sequence <m>1</m>, <m>-1</m> to be output;
+	// <b>[[[]</b> will cause <m>3</m>, <m>-1</m> to be output;
+	// <b>]][][</b> will cause <m>-2</m>, <m>1</m>, <m>-1</m>, <m>1</m> to be output.
 	// This setting is most useful in conjunction with <o>bach.collect</o>. <br />
 	// When the <m>spikemode</m> attribute is set to 1, a single integer is output from the rightmost outlet for the whole spike.
 	// The integer represents the depth difference between the last element before the spike and the first element after it.

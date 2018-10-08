@@ -40,7 +40,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (name staticfilter) (width 120) (range -120 10) (domain 0 22500)))",
+					"text" : "[slotinfo [1 [name staticfilter] [width 120] [range -120 10] [domain 0 22500]]]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 217.0, 331.0, 416.0, 18.0 ],
 					"id" : "obj-31",
@@ -133,7 +133,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (width 40)))",
+					"text" : "[slotinfo [1 [width 40]]]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 348.0, 105.0, 131.0, 18.0 ],
 					"id" : "obj-22",
@@ -147,7 +147,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (width 120)))",
+					"text" : "[slotinfo [1 [width 120]]]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 182.0, 105.0, 137.0, 18.0 ],
 					"id" : "obj-21",
@@ -161,7 +161,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (width temporal)))",
+					"text" : "[slotinfo [1 [width temporal]]]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 105.0, 164.0, 18.0 ],
 					"id" : "obj-58",
@@ -364,7 +364,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (h)",
+					"text" : "Slot Machines [h]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 547.0, 140.0, 18.0 ],
 					"id" : "obj-7",
@@ -463,7 +463,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (j)",
+					"text" : "Slot Machines [j]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 603.0, 547.0, 140.0, 18.0 ],
 					"id" : "obj-16",

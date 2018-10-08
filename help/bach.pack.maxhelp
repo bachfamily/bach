@@ -137,7 +137,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 270.5, 310.0, 70.0, 19.0 ],
-									"text" : "3 (tre drei)"
+									"text" : "3 [tre drei]"
 								}
 
 							}
@@ -151,7 +151,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 141.5, 310.0, 81.0, 19.0 ],
-									"text" : "2 (due zwei)"
+									"text" : "2 [due zwei]"
 								}
 
 							}
@@ -165,7 +165,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 12.5, 310.0, 79.0, 19.0 ],
-									"text" : "1 (uno eins)"
+									"text" : "1 [uno eins]"
 								}
 
 							}
@@ -279,7 +279,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 268.0, 114.0, 70.0, 19.0 ],
-									"text" : "3 (tre drei)"
+									"text" : "3 [tre drei]"
 								}
 
 							}
@@ -307,7 +307,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 114.0, 79.0, 19.0 ],
-									"text" : "1 (uno eins)"
+									"text" : "1 [uno eins]"
 								}
 
 							}
@@ -570,7 +570,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 293.0, 350.0, 70.0, 19.0 ],
-									"text" : "3 (tre drei)"
+									"text" : "3 [tre drei]"
 								}
 
 							}
@@ -595,7 +595,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 164.0, 350.0, 81.0, 19.0 ],
-									"text" : "2 (due zwei)"
+									"text" : "2 [due zwei]"
 								}
 
 							}
@@ -609,7 +609,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 35.0, 350.0, 79.0, 19.0 ],
-									"text" : "1 (uno eins)"
+									"text" : "1 [uno eins]"
 								}
 
 							}
@@ -676,7 +676,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 293.0, 238.0, 70.0, 19.0 ],
-									"text" : "3 (tre drei)"
+									"text" : "3 [tre drei]"
 								}
 
 							}
@@ -701,7 +701,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 164.0, 238.0, 81.0, 19.0 ],
-									"text" : "2 (due zwei)"
+									"text" : "2 [due zwei]"
 								}
 
 							}
@@ -715,7 +715,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 35.0, 238.0, 79.0, 19.0 ],
-									"text" : "1 (uno eins)"
+									"text" : "1 [uno eins]"
 								}
 
 							}
@@ -771,7 +771,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 268.0, 131.0, 70.0, 19.0 ],
-									"text" : "3 (tre drei)"
+									"text" : "3 [tre drei]"
 								}
 
 							}
@@ -796,7 +796,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 139.0, 131.0, 81.0, 19.0 ],
-									"text" : "2 (due zwei)"
+									"text" : "2 [due zwei]"
 								}
 
 							}
@@ -810,7 +810,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 131.0, 79.0, 19.0 ],
-									"text" : "1 (uno eins)"
+									"text" : "1 [uno eins]"
 								}
 
 							}
@@ -1269,7 +1269,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 336.0, 202.0, 134.0, 39.0 ],
-									"text" : "a b (c d) ((e f) g)"
+									"text" : "a b [c d] [[e f] g]"
 								}
 
 							}
@@ -1362,7 +1362,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 189.5, 202.0, 108.0, 33.0 ],
-									"text" : "(1/4 60)"
+									"text" : "[1/4 60]"
 								}
 
 							}
@@ -1390,7 +1390,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 43.0, 202.0, 135.0, 39.0 ],
-									"text" : "(Michelle ma belle) these are words"
+									"text" : "[Michelle ma belle] these are words"
 								}
 
 							}

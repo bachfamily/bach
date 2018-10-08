@@ -345,7 +345,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 104.666664, 170.0, 121.0, 19.0 ],
-									"text" : "a b c d (e) f g h (i j)"
+									"text" : "a b c d [e] f g h [i j]"
 								}
 
 							}
@@ -1062,7 +1062,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 104.666664, 228.0, 121.0, 19.0 ],
-									"text" : "a b c d (e) f g h (i j)"
+									"text" : "a b c d [e] f g h [i j]"
 								}
 
 							}

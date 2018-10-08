@@ -275,7 +275,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 607.0, 421.0, 156.0, 22.0 ],
 					"style" : "",
-					"text" : "Standalone Applications (b)",
+					"text" : "Standalone Applications [b]",
 					"varname" : "messageB"
 				}
 

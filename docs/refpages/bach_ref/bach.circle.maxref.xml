@@ -126,10 +126,10 @@
 				Syntax: <b>add <m>&lt;llll: points&gt;</m> </b><br />
 				Examples:<br />
 				• <b>add 2 4 5</b>   <i>→ add some points</i><br />
-				• <b>add (2 60) (4 100 (5 120)</b>   <i>→ add some points with their velocities</i><br />
+				• <b>add [2 60] [4 100 [5 120]</b>   <i>→ add some points with their velocities</i><br />
 				<br />
 				Add a point to the diagram. The argument can be, as in the standard <m>llll</m> method,
-				either a plain list (representing point indices) or an interlaced list <b>(<m>pt1</m> <m>vel1</m>) (<m>pt2</m> <m>vel2</m>)...</b>
+				either a plain list (representing point indices) or an interlaced list <b>[<m>pt1</m> <m>vel1</m>] [<m>pt2</m> <m>vel2</m>]...</b>
 				representing points and velocities
 				<br />				See also:<m>delete</m><br />
 			</description>

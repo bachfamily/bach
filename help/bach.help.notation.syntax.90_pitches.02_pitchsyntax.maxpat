@@ -132,7 +132,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 299.333344, 308.0, 23.0 ],
 					"style" : "",
-					"text" : "( Cq5 D5 Ev5 6500 G#5+1/12t A5 Bb5 7200 ), bang"
+					"text" : "[ Cq5 D5 Ev5 6500 G#5+1/12t A5 Bb5 7200 ], bang"
 				}
 
 			}

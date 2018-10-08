@@ -154,7 +154,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.0, 136.5, 154.0, 86.0 ],
 									"style" : "",
-									"text" : "Do#4 D#+5 (Eb3 F G A+) (Cbb4 Dd3) D3 Dbd3 C^4 C#+^2 Bv3 Bdv"
+									"text" : "Do#4 D#+5 [Eb3 F G A+] [Cbb4 Dd3] D3 Dbd3 C^4 C#+^2 Bv3 Bdv"
 								}
 
 							}
@@ -426,7 +426,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 288.0, 193.0, 181.0, 60.0 ],
 									"style" : "",
-									"text" : "C#4 D#q5 (Eb3 F1 G2 Aq0) (Cbb4 Dd3) D3 Dbd3 C^4 C#q^2 Bv3 Bdv"
+									"text" : "C#4 D#q5 [Eb3 F1 G2 Aq0] [Cbb4 Dd3] D3 Dbd3 C^4 C#q^2 Bv3 Bdv"
 								}
 
 							}
@@ -530,7 +530,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 22.0, 177.0, 128.0, 45.0 ],
 									"style" : "",
-									"text" : "C#4 D#5 (Eb3 Fx2 G2 A3) (Cbb4 D3)"
+									"text" : "C#4 D#5 [Eb3 Fx2 G2 A3] [Cbb4 D3]"
 								}
 
 							}

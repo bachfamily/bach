@@ -122,8 +122,8 @@ int T_EXPORT main()
     // - <b>l</b> stands for open and closed parens marking llll sublists,
     // only if they do not appear in a symbol of their own
     // (i.e., with the <b>l</b> category set,
-    // <b>(</b> is interpreted as the beginning of a sublist,
-    // whereas <b>(1</b> is interpreted just as a plain symbol,
+    // <b>[</b> is interpreted as the beginning of a sublist,
+    // whereas <b>[1</b> is interpreted just as a plain symbol,
     // as opposed to what would happen normally,
     // when it would mark the beginning of a sublist
     // whose first element is <b>1</b>). <br />
@@ -140,9 +140,9 @@ int T_EXPORT main()
     // - <b>-</b> stands for no category, and it is the default.
     // If it is present alongside other specifiers (e.g., <b>-p</b>), it is ignored. <br />
     // For example, the <m>ignore</m> attribute could be set to <b>lp</b>,
-    // which would cause a file containing <b>( a001 Mahler(Bernstein).aif )</b>
+    // which would cause a file containing <b>[ a001 Mahler[Bernstein].aif ]</b>
     // to be read as an llll containing a sublist, containing in turn the symbols <b>a001</b> and
-    // <b>Mahler(Bernstein).aif</b>.
+    // <b>Mahler[Bernstein].aif</b>.
     // Without setting the <m>ignore</m> attribute, the same file would be interpreted
     // as an llll containing a sublist containing the pitch <b>A1</b>,
     // the symbol <b>Mahler</b>,
@@ -150,8 +150,8 @@ int T_EXPORT main()
     // and finally the symbol <b>.aif</b>. <br />
     // As a final note, it should be remarked that symbols in double quotes
     // are always interpreted literally: for example, the symbol
-    // <b>"Mahler (Bernstein).aif"</b> would be interpreted as the single symbol
-    // <b>Mahler (Bernstein).aif</b> even if the <m>ignore</m> attribute is not set.
+    // <b>"Mahler [Bernstein].aif"</b> would be interpreted as the single symbol
+    // <b>Mahler [Bernstein].aif</b> even if the <m>ignore</m> attribute is not set.
     
 	class_register(CLASS_BOX, c);
 	read_class = c;

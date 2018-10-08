@@ -48,7 +48,7 @@
 					"patching_rect" : [ 283.0, 238.0, 85.0, 23.0 ],
 					"presentation_rect" : [ 296.0, 251.0, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "subroll (3) nil"
+					"text" : "subroll [3] nil"
 				}
 
 			}
@@ -155,7 +155,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 47.0, 181.0, 136.0, 23.0 ],
 					"style" : "",
-					"text" : "subroll (1 2) (1800 -1)"
+					"text" : "subroll [1 2] [1800 -1]"
 				}
 
 			}
@@ -170,7 +170,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 38.0, 136.0, 97.0, 23.0 ],
 					"style" : "",
-					"text" : "subroll (1 2) nil"
+					"text" : "subroll [1 2] nil"
 				}
 
 			}
@@ -200,7 +200,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.5, 114.0, 140.0, 23.0 ],
 					"style" : "",
-					"text" : "subroll nil (1000 3000)"
+					"text" : "subroll nil [1000 3000]"
 				}
 
 			}
@@ -263,7 +263,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 68.0, 165.0, 23.0 ],
 					"style" : "",
-					"text" : "subroll (1 2 5) (1000 3000)"
+					"text" : "subroll [1 2 5] [1000 3000]"
 				}
 
 			}

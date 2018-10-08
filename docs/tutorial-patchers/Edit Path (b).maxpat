@@ -458,7 +458,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Edit Path (a)",
+					"text" : "Edit Path [a]",
 					"numoutlets" : 1,
 					"id" : "obj-7",
 					"fontname" : "Arial",
@@ -557,7 +557,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Edit Path (c)",
+					"text" : "Edit Path [c]",
 					"numoutlets" : 1,
 					"id" : "obj-16",
 					"fontname" : "Arial",

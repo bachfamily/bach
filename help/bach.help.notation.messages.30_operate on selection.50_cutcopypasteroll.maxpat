@@ -209,7 +209,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 259.625, 132.499969, 65.0, 23.0 ],
 					"style" : "",
-					"text" : "paste () 2"
+					"text" : "paste [] 2"
 				}
 
 			}

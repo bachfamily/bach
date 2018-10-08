@@ -54,7 +54,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 90.0, 183.5, 494.0, 36.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "You can also define voice ranges as in the #address+range syntax, e.g. \n((1 3) 5 (7 9)) will take voices from 1 to 3, then voice 5, and then voices from 7 to 9.",
+					"text" : "You can also define voice ranges as in the #address+range syntax, e.g. \n[[1 3] 5 [7 9]] will take voices from 1 to 3, then voice 5, and then voices from 7 to 9.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -84,7 +84,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 53.0, 158.5, 133.0, 19.0 ],
-					"text" : "slice (880 1500) (1 3)"
+					"text" : "slice [880 1500] [1 3]"
 				}
 
 			}
@@ -128,7 +128,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 31.0, 108.5, 143.0, 19.0 ],
-					"text" : "slice (2000 2400 2700)"
+					"text" : "slice [2000 2400 2700]"
 				}
 
 			}

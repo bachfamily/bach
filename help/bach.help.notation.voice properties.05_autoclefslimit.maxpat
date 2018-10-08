@@ -100,7 +100,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 94.0, 213.0, 23.0 ],
 					"style" : "",
-					"text" : "clefs G G (auto F Tenor) (auto F G)"
+					"text" : "clefs G G [auto F Tenor] [auto F G]"
 				}
 
 			}

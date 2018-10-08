@@ -142,7 +142,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 354.0, 277.0, 193.0, 67.0 ],
 									"style" : "",
-									"text" : "((Aller action) (blues brother) (candy cane) (dummy destiny)) ((altri attimi) (basso bi) (calde case) (dodici diavoli))"
+									"text" : "[[Aller action] [blues brother] [candy cane] [dummy destiny]] [[altri attimi] [basso bi] [calde case] [dodici diavoli]]"
 								}
 
 							}
@@ -310,7 +310,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 28.0, 160.0, 157.0, 52.0 ],
 									"style" : "",
-									"text" : "a b c (d e f (g h i) j k) l m"
+									"text" : "a b c [d e f [g h i] j k] l m"
 								}
 
 							}
@@ -636,7 +636,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 235.0, 258.0, 206.0, 23.0 ],
 									"style" : "",
-									"text" : "1 2 3 (a b c) ((J H W) (foo fee fii))"
+									"text" : "1 2 3 [a b c] [[J H W] [foo fee fii]]"
 								}
 
 							}

@@ -192,7 +192,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ -313.0, 88.0, 154.0, 23.0 ],
 					"style" : "",
-					"text" : "sel (1 1/2) (1 3/4) nil nil 1"
+					"text" : "sel [1 1/2] [1 3/4] nil nil 1"
 				}
 
 			}

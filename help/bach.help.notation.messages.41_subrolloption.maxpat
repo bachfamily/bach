@@ -72,7 +72,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 295.0, 284.0, 199.0, 19.0 ],
-					"text" : "subroll onset (1 2 5) (1000 3000)"
+					"text" : "subroll onset [1 2 5] [1000 3000]"
 				}
 
 			}
@@ -133,7 +133,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 38.0, 133.0, 224.0, 19.0 ],
-					"text" : "subroll (4 5) (1000 3000) (clefs body)"
+					"text" : "subroll [4 5] [1000 3000] [clefs body]"
 				}
 
 			}
@@ -162,7 +162,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.5, 111.0, 193.0, 19.0 ],
-					"text" : "subroll (4 5) (1000 3000) (body)"
+					"text" : "subroll [4 5] [1000 3000] [body]"
 				}
 
 			}
@@ -222,7 +222,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 68.0, 153.0, 19.0 ],
-					"text" : "subroll (4 5) (1000 3000)"
+					"text" : "subroll [4 5] [1000 3000]"
 				}
 
 			}

@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.0, 208.0, 198.0, 38.0 ],
 					"style" : "",
-					"text" : "sel note if chordindex == 1, addslot (23 acc), clearselection"
+					"text" : "sel note if chordindex == 1, addslot [23 acc], clearselection"
 				}
 
 			}
@@ -92,7 +92,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 23.5, 159.0, 336.0, 38.0 ],
 					"style" : "",
-					"text" : "sel note if symduration == 1/8, addslot (23 whitesquare), clearselection"
+					"text" : "sel note if symduration == 1/8, addslot [23 whitesquare], clearselection"
 				}
 
 			}
@@ -148,7 +148,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 130.0, 382.0, 23.0 ],
 					"style" : "",
-					"text" : "sel note if cents % 1200 == 0, addslot (23 cross), clearselection"
+					"text" : "sel note if cents % 1200 == 0, addslot [23 cross], clearselection"
 				}
 
 			}

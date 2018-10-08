@@ -101,7 +101,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((5 4) (60)) ((4 4) (1/8 90)) ((3 4))), bang",
+					"text" : "[[[5 4] [60]] [[4 4] [1/8 90]] [[3 4]]], bang",
 					"patching_rect" : [ 471.0, 376.0, 226.0, 18.0 ],
 					"id" : "obj-49",
 					"fontname" : "Arial",
@@ -115,7 +115,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((5 4) (1/8 60 1/4 1))), bang",
+					"text" : "[[[5 4] [1/8 60 1/4 1]]], bang",
 					"patching_rect" : [ 529.0, 343.0, 159.0, 18.0 ],
 					"id" : "obj-48",
 					"fontname" : "Arial",
@@ -129,7 +129,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((5 4) (1/8 60))), bang",
+					"text" : "[[[5 4] [1/8 60]]], bang",
 					"patching_rect" : [ 390.0, 352.0, 129.0, 18.0 ],
 					"id" : "obj-47",
 					"fontname" : "Arial",
@@ -199,7 +199,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(3 4) (90), bang",
+					"text" : "[3 4] [90], bang",
 					"patching_rect" : [ 95.0, 148.0, 93.0, 18.0 ],
 					"id" : "obj-21",
 					"fontname" : "Arial",
@@ -268,7 +268,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(5 4) (60), bang",
+					"text" : "[5 4] [60], bang",
 					"patching_rect" : [ 49.0, 80.0, 93.0, 18.0 ],
 					"id" : "obj-22",
 					"fontname" : "Arial",
@@ -458,7 +458,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Brother John (d)",
+					"text" : "Brother John [d]",
 					"patching_rect" : [ 5.0, 466.0, 140.0, 18.0 ],
 					"id" : "obj-6",
 					"fontname" : "Arial",
@@ -557,7 +557,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Brother John (f)",
+					"text" : "Brother John [f]",
 					"patching_rect" : [ 568.0, 466.0, 140.0, 18.0 ],
 					"id" : "obj-15",
 					"fontname" : "Arial",

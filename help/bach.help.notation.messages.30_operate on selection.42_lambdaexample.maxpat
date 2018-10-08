@@ -267,7 +267,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 21.5, 113.0, 281.0, 23.0 ],
 					"style" : "",
-					"text" : "(commands (1 makedynamic makedynamic d))"
+					"text" : "[commands [1 makedynamic makedynamic d]]"
 				}
 
 			}

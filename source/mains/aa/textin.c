@@ -56,6 +56,7 @@ typedef struct _textin
     long				n_in;
     
     long                n_ignore;
+    t_symbol            *n_ignore_sym;
 } t_textin;
 
 void textin_assist(t_textin *x, void *b, long m, long a, char *s);
@@ -109,9 +110,10 @@ int T_EXPORT main()
     
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
     
-    /*
-     CLASS_ATTR_LONG(c, "ignore",	0,	t_textin, n_flags);
+     CLASS_ATTR_SYM(c, "ignore",	0,	t_textin, n_ignore_sym);
      CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
+     CLASS_ATTR_BASIC(c, "ignore", 0);
+     CLASS_ATTR_ACCESSORS(c, "ignore", (method)NULL, (method)llllobj_dummy_setter)
      // @description The <m>ignore</m> attribute allows preventing certain categories
      // of elements from being interpreted according to the usual bach syntax.
      // Categories are expressed by letters, according to the following table:<br />
@@ -121,8 +123,8 @@ int T_EXPORT main()
      // - <b>l</b> stands for open and closed parens marking llll sublists,
      // only if they do not appear in a symbol of their own
      // (i.e., with the <b>l</b> category set,
-     // <b>(</b> is interpreted as the beginning of a sublist,
-     // whereas <b>(1</b> is interpreted just as a plain symbol,
+     // <b>[</b> is interpreted as the beginning of a sublist,
+     // whereas <b>[1</b> is interpreted just as a plain symbol,
      // as opposed to what would happen normally,
      // when it would mark the beginning of a sublist
      // whose first element is <b>1</b>). <br />
@@ -141,16 +143,16 @@ int T_EXPORT main()
      // - <b>0</b> stands for no category, and is the default.
      // If it is present alongside other specifiers (e.g., <b>-p</b>), it is ignored. <br />
      // For example, the <m>ignore</m> attribute could be set to <b>lp</b>,
-     // which would cause a message containing <b>( a001 Mahler(Bernstein).aif )</b>
+     // which would cause a message containing <b>[ a001 Mahler[Bernstein].aif ]</b>
      // to be interpreted as an llll containing a sublist, 
-     // containing in turn the symbols <b>a001</b> and <b>Mahler(Bernstein).aif</b>.
+     // containing in turn the symbols <b>a001</b> and <b>Mahler[Bernstein].aif</b>.
      // Without setting the <m>ignore</m> attribute, the same message would be interpreted
      // as an llll containing a sublist containing the pitch <b>A1</b>,
      // the symbol <b>Mahler</b>,
      // a further sublist only containing the symbol <b>Bernstein</b>,
      // and finally the symbol <b>.aif</b>. <br />
-     */
-
+     // @copy BACH_DOC_STATIC_ATTR
+ 
     
     class_register(CLASS_BOX, c);
     textin_class = c;
@@ -283,7 +285,8 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
                         break;
                 }
                 
-                
+                x->n_ignore_sym = gensym(ignore_txt);
+
                 long negative = 0;
                 while (*ignore_txt) {
                     switch (*ignore_txt) {
@@ -304,6 +307,8 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
                 if (negative) {
                     x->n_ignore = LLLL_I_ALL ^ x->n_ignore;
                 }
+                
+                object_attr_setdisabled((t_object *)x, gensym("ignore"), true);
                 
             } else if (!strcmp(attrname, "out")) {
                 llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, av + i);

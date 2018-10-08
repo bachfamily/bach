@@ -110,7 +110,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 61.0, 187.385803, 181.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time 3000 @voices (2 4)"
+					"text" : "goto time 3000 @voices [2 4]"
 				}
 
 			}

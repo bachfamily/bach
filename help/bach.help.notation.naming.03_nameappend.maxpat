@@ -48,7 +48,7 @@
 					"patching_rect" : [ 77.0, 177.5, 153.0, 23.0 ],
 					"presentation_rect" : [ 77.0, 177.5, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "nameappend (George 2)"
+					"text" : "nameappend [George 2]"
 				}
 
 			}
@@ -64,7 +64,7 @@
 					"patching_rect" : [ 56.0, 149.5, 153.0, 23.0 ],
 					"presentation_rect" : [ 59.0, 149.5, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "nameappend (George 1)"
+					"text" : "nameappend [George 1]"
 				}
 
 			}

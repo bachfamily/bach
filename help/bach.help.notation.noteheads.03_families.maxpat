@@ -78,7 +78,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 40.5, 188.5, 248.0, 38.0 ],
 					"style" : "",
-					"text" : "sel note if measure >= 1 && measure <= 2, addslot (23 triangle), clearselection"
+					"text" : "sel note if measure >= 1 && measure <= 2, addslot [23 triangle], clearselection"
 				}
 
 			}
@@ -135,7 +135,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 30.5, 147.0, 246.0, 38.0 ],
 					"style" : "",
-					"text" : "sel note if measure >= 1 && measure <= 2, addslot (23 square), clearselection"
+					"text" : "sel note if measure >= 1 && measure <= 2, addslot [23 square], clearselection"
 				}
 
 			}
@@ -165,7 +165,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 107.0, 260.0, 38.0 ],
 					"style" : "",
-					"text" : "sel note if measure >= 1 && measure <= 2, addslot (23 rhombus), clearselection"
+					"text" : "sel note if measure >= 1 && measure <= 2, addslot [23 rhombus], clearselection"
 				}
 
 			}

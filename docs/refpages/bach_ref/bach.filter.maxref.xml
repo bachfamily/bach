@@ -122,7 +122,7 @@
 				By summing up these values you can let multiple type pass through. For instance,
 				<b>14</b>, which is 2 (integers) + 4 (rationals) + 8 (floats), will let all numbers
 				through. Add a negative sign to the number in order to invert the selection; for instance
-				<b>-33</b> will accept everything but lllls (<b>null</b> llll included).
+				<b>-33</b> will accept everything but lllls [<b>null</b> llll included).
 			</description>
 		</method>
 		<method name="llll">
@@ -138,7 +138,7 @@
 				The incoming data is taken as a whole: if a single element is entered, the data type
 				will be the type of such element (e.g. <b>5.4</b> is a floating point number, while
 				<b>foo</b> is a symbol); if more than one elements are entered, the data type
-				will be "llll" (e.g. <b>12 foo</b>, or <b>(12 foo) (1 2 ())</b>). The <b>null</b>
+				will be "llll" (e.g. <b>12 foo</b>, or <b>[12 foo] [1 2 []]</b>]. The <b>null</b>
 				llll belong to a separate "null" type (see <m>list</m> message).
 			</description>
 		</method>

@@ -102,7 +102,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 331.0, 312.0, 38.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name notehead) (type int) (range 0 256) (width 150) (key h))), linknoteheadtoslot 1"
+					"text" : "[slotinfo [1 [name notehead] [type int] [range 0 256] [width 150] [key h]]], linknoteheadtoslot 1"
 				}
 
 			}
@@ -206,7 +206,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 164.0, 437.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name notehead) (type int) (range 32 255) (width 100) (key h)))"
+					"text" : "[slotinfo [1 [name notehead] [type int] [range 32 255] [width 100] [key h]]]"
 				}
 
 			}

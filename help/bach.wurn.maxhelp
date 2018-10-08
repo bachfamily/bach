@@ -404,7 +404,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 244.0, 111.0, 152.0, 43.0 ],
 									"style" : "",
-									"text" : "1 2 (3 4) (c h) (d y) e f"
+									"text" : "1 2 [3 4] [c h] [d y] e f"
 								}
 
 							}
@@ -854,7 +854,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 190.671875, 130.0, 111.0, 43.0 ],
 									"style" : "",
-									"text" : "0.1 (2 4) 100 1 (2 4 0.9)"
+									"text" : "0.1 [2 4] 100 1 [2 4 0.9]"
 								}
 
 							}
@@ -1152,7 +1152,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 48.671875, 132.0, 111.0, 43.0 ],
 									"style" : "",
-									"text" : "1 (2 (a b)) 3 4 (5 (c d e) 6)"
+									"text" : "1 [2 [a b]] 3 4 [5 [c d e] 6]"
 								}
 
 							}
@@ -1458,7 +1458,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 325.0, 248.0, 90.0, 19.0 ],
 									"style" : "",
-									"text" : "1 (2 1) (3 4) 5"
+									"text" : "1 [2 1] [3 4] 5"
 								}
 
 							}
@@ -1503,7 +1503,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 260.0, 134.0, 179.0, 19.0 ],
 									"style" : "",
-									"text" : "1 (2 (3 4 5)) (6 (5 (4 (3 2)))) 1"
+									"text" : "1 [2 [3 4 5]] [6 [5 [4 [3 2]]]] 1"
 								}
 
 							}
@@ -1635,7 +1635,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 68.0, 103.5, 162.0, 19.0 ],
 									"style" : "",
-									"text" : "a (b (c d e)) (f (g (h (i j)))) l"
+									"text" : "a [b [c d e]] [f [g [h [i j]]]] l"
 								}
 
 							}
@@ -2585,7 +2585,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 212.0, 188.0, 111.0, 43.0 ],
 									"style" : "",
-									"text" : "1 2 (3 4) c d e f"
+									"text" : "1 2 [3 4] c d e f"
 								}
 
 							}

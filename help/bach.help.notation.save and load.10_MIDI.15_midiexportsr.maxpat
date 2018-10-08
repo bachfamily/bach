@@ -86,7 +86,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 167.0, 401.0, 23.0 ],
 					"style" : "",
-					"text" : "exportmidi @voices (2 4) @format 1 @temporampsamplingrate 480"
+					"text" : "exportmidi @voices [2 4] @format 1 @temporampsamplingrate 480"
 				}
 
 			}

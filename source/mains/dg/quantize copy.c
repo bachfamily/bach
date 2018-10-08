@@ -476,19 +476,19 @@ int T_EXPORT main()
     // If an <m>allow</m> list has one more level of parenthesis, such as "allow ((1/16 1/16 1/16 1/16) (1/16 1/16 1/8) (1/8 1/8) (1/4)) ((1/12 1/12 1/12) (1/6 1/12) (1/12 1/6) (1/4))"
     // bach considers that different <m>allow</m> specification will apply to the different voices (possibly looping the last one, if needed).
     // @marg 0 @name allowed_configurations @optional 1 @type llll
-    // @example allow (1/16 1/16 1/8) (1/8 1/16 1/16) (1/4) @caption only allow some patterns
-    // @example allow ((1/16 1/16 1/8) (1/8 1/16 1/16) (1/4)) ((1/16 1/8 1/16) (1/8 1/8)) @caption allow differen patterns for different voices
+    // @example allow [1/16 1/16 1/8] [1/8 1/16 1/16] [1/4] @caption only allow some patterns
+    // @example allow [[1/16 1/16 1/8] [1/8 1/16 1/16] [1/4]] [[1/16 1/8 1/16] [1/8 1/8]] @caption allow differen patterns for different voices
     class_addmethod(c, (method)quantize_allow,	"allow",	A_GIMME,	0);
     
     // @method forbid @digest Forbid some rhythmic configurations
     // @description	Via a <m>forbid</m> message one can force a box NOT to have some rhythmic configurations.
-    // For instance <b>forbid (1/16 1/8 1/16) (1/16 1/16 1/8)</b> denies the two given possibilities (one for each sublist).
+    // For instance <b>forbid [1/16 1/8 1/16] [1/16 1/16 1/8]</b> denies the two given possibilities (one for each sublist).
     // Just use <b>forbid</b> with no further arguments in order to revert to the default behaviour of no configurations denied.
-    // If an <m>forbid</m> list has one more level of parenthesis, such as <b>forbid ((1/16 1/8 1/16)) ((1/16 3/16))</b>
+    // If an <m>forbid</m> list has one more level of parenthesis, such as <b>forbid [[1/16 1/8 1/16]] [[1/16 3/16]]</b>
     // bach considers that different <m>forbid</m> specification will apply to the different voices (possibly looping the last one, if needed).
     // @marg 0 @name forbidden_configurations @optional 1 @type llll
-    // @example forbid (1/16 1/16 1/8) (1/8 1/16 1/16) (1/4) @caption forbid some patterns
-    // @example forbid ((1/16 1/16 1/8) (1/8 1/16 1/16) (1/4)) ((1/16 1/8 1/16) (1/8 1/8)) @caption forbid differen patterns for different voices
+    // @example forbid [1/16 1/16 1/8] [1/8 1/16 1/16] [1/4] @caption forbid some patterns
+    // @example forbid [[1/16 1/16 1/8] [1/8 1/16 1/16] [1/4]] [[1/16 1/8 1/16] [1/8 1/8]] @caption forbid differen patterns for different voices
     class_addmethod(c, (method)quantize_deny,	"forbid",		A_GIMME,	0);
     class_addmethod(c, (method)quantize_deny,	"deny",		A_GIMME,	0);
     

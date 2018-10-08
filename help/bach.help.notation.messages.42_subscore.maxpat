@@ -48,7 +48,7 @@
 					"patching_rect" : [ 359.5, 277.0, 99.0, 23.0 ],
 					"presentation_rect" : [ 361.0, 277.0, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "subscore (3) nil"
+					"text" : "subscore [3] nil"
 				}
 
 			}
@@ -155,7 +155,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 47.0, 217.0, 128.0, 23.0 ],
 					"style" : "",
-					"text" : "subscore (1 2) (3 -1)"
+					"text" : "subscore [1 2] [3 -1]"
 				}
 
 			}
@@ -170,7 +170,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 38.0, 160.0, 110.0, 23.0 ],
 					"style" : "",
-					"text" : "subscore (1 2) nil"
+					"text" : "subscore [1 2] nil"
 				}
 
 			}
@@ -200,7 +200,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.5, 133.0, 110.0, 23.0 ],
 					"style" : "",
-					"text" : "subscore nil (2 4)"
+					"text" : "subscore nil [2 4]"
 				}
 
 			}
@@ -267,7 +267,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 74.0, 124.0, 23.0 ],
 					"style" : "",
-					"text" : "subscore (1 3) (1 2)"
+					"text" : "subscore [1 3] [1 2]"
 				}
 
 			}

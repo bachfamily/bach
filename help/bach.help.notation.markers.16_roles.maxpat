@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 40.0, 300.5, 245.0, 23.0 ],
 					"style" : "",
-					"text" : "addmarker 0 (dont care) tempo (1/4 120)"
+					"text" : "addmarker 0 [dont care] tempo [1/4 120]"
 				}
 
 			}
@@ -175,7 +175,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 25.0, 236.0, 247.0, 23.0 ],
 					"style" : "",
-					"text" : "addmarker 0 (not important) timesig (4 4)"
+					"text" : "addmarker 0 [not important] timesig [4 4]"
 				}
 
 			}

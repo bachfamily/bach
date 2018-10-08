@@ -77,7 +77,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 112.5, 163.0, 23.0 ],
 					"style" : "",
-					"text" : "addmarker (any 13/4) john"
+					"text" : "addmarker [any 13/4] john"
 				}
 
 			}
@@ -92,7 +92,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 33.0, 167.5, 178.0, 23.0 ],
 					"style" : "",
-					"text" : "addmarker (2 any 13/4) ringo"
+					"text" : "addmarker [2 any 13/4] ringo"
 				}
 
 			}

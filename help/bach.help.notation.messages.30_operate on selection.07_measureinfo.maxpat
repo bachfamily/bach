@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 90.749992, 205.5, 308.0, 23.0 ],
 					"style" : "",
-					"text" : "measureinfo (11 8) (1/4 130) (boxes 3/8 3/8 2/8 3/8)"
+					"text" : "measureinfo [11 8] [1/4 130] [boxes 3/8 3/8 2/8 3/8]"
 				}
 
 			}
@@ -94,7 +94,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 72.749992, 157.5, 168.0, 23.0 ],
 					"style" : "",
-					"text" : "measureinfo (5 4) (1/4 120)"
+					"text" : "measureinfo [5 4] [1/4 120]"
 				}
 
 			}
@@ -139,7 +139,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 53.749992, 122.0, 112.0, 23.0 ],
 					"style" : "",
-					"text" : "measureinfo (5 4)"
+					"text" : "measureinfo [5 4]"
 				}
 
 			}
@@ -154,7 +154,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 24.749992, 87.0, 150.0, 23.0 ],
 					"style" : "",
-					"text" : "sel measure range (2 2)"
+					"text" : "sel measure range [2 2]"
 				}
 
 			}

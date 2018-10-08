@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 112.0, 135.0, 941.0, 639.0 ],
+		"rect" : [ 75.0, 179.0, 941.0, 639.0 ],
 		"bgcolor" : [ 0.941176, 0.941176, 0.941176, 1.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 789.0, 9.0, 141.0, 19.0 ],
 					"style" : "",
-					"text" : "(build 1523287179)",
+					"text" : "(build 1538930157)",
 					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
 					"textjustification" : 2,
 					"varname" : "autohelp_top_digest[1]"
@@ -429,7 +429,7 @@
 					"spacing_y" : 0.0,
 					"style" : "",
 					"tabcolor" : [ 0.337255, 0.45098, 0.156863, 0.058824 ],
-					"tabs" : [ "Help Center", "What's new in bach 0.8", "Explorer", "Tutorials", "Feedback", "Licence and credits" ],
+					"tabs" : [ "Help Center", "What's new", "Explorer", "Tutorials", "Feedback", "Licence and credits" ],
 					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
 					"valign" : 2
 				}
@@ -480,7 +480,7 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, -4856.0 ],
+					"offset" : [ 0.0, 0.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
@@ -521,6 +521,54 @@
 						"subpatcher_template" : "",
 						"boxes" : [ 							{
 								"box" : 								{
+									"fontsize" : 25.257102,
+									"hidden" : 1,
+									"id" : "obj-147",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 114.0, 5868.0, 54.0, 37.0 ],
+									"presentation_rect" : [ 240.0, 5790.5, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Lllls"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 12.0,
+									"id" : "obj-129",
+									"linecount" : 7,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 232.0, 5491.0, 455.0, 104.0 ],
+									"presentation_rect" : [ 130.0, 5491.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Yes, we decided to switch to using square brackets by default, but don't worry! ALL backward compatibility is preserved, and you can still go on using round parentheses if you liked them so much – and you can always display round parentheses via bach.textout.\nAlso, our internal llll parsing has been completely rewritten. We have improved some important points, and if you ever are annoyed by backticks, you should definitely read this"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 25.257102,
+									"id" : "obj-146",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 24.0, 5510.5, 197.0, 65.0 ],
+									"presentation_rect" : [ 24.0, 5491.820312, 0.0, 0.0 ],
+									"style" : "",
+									"text" : "Lllls have square brackets!"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"fontname" : "Arial",
 									"fontsize" : 15.0,
 									"id" : "obj-384",
@@ -538,11 +586,12 @@
 , 							{
 								"box" : 								{
 									"bubble" : 1,
+									"fontsize" : 12.0,
 									"id" : "obj-382",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 102.0, 5711.320312, 277.0, 24.0 ],
+									"patching_rect" : [ 102.0, 5734.712891, 277.0, 24.0 ],
 									"style" : "",
 									"text" : "Now voices can be displayed on the same staff"
 								}
@@ -556,7 +605,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5703.820312, 69.0, 37.0 ],
+									"patching_rect" : [ 24.0, 5728.439941, 69.0, 37.0 ],
 									"style" : "",
 									"text" : "Parts"
 								}
@@ -565,11 +614,12 @@
 , 							{
 								"box" : 								{
 									"bubble" : 1,
+									"fontsize" : 12.0,
 									"id" : "obj-381",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 102.0, 5761.320312, 236.0, 24.0 ],
+									"patching_rect" : [ 102.0, 5776.53125, 236.0, 24.0 ],
 									"style" : "",
 									"text" : "A brand new system to navigate scores"
 								}
@@ -578,26 +628,13 @@
 , 							{
 								"box" : 								{
 									"bubble" : 1,
-									"id" : "obj-380",
-									"linecount" : 3,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 83.0, 5646.820312, 423.0, 51.0 ],
-									"style" : "",
-									"text" : "Our internal llll parsing has been completely rewritten. We have improved some important points, and if you ever are annoyed by backticks, you should definitely read this"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"bubble" : 1,
+									"fontsize" : 12.0,
 									"id" : "obj-379",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 188.0, 5593.820312, 334.0, 51.0 ],
+									"patching_rect" : [ 188.0, 5678.439453, 334.0, 51.0 ],
 									"style" : "",
 									"text" : "Some modules have been deprecated in favour of new ones, and you'll need to change some of your habits! In exchange for that, your bach life will be easier ;-)"
 								}
@@ -606,12 +643,13 @@
 , 							{
 								"box" : 								{
 									"bubble" : 1,
+									"fontsize" : 12.0,
 									"id" : "obj-378",
 									"linecount" : 3,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 102.0, 5540.820312, 363.0, 51.0 ],
+									"patching_rect" : [ 102.0, 5634.111328, 363.0, 51.0 ],
 									"style" : "",
 									"text" : "Slots have improved! They support dynamics, articulations, noteheads, lyrics. Also you can use temporal slots in the new \"milliseconds\" mode"
 								}
@@ -620,12 +658,12 @@
 , 							{
 								"box" : 								{
 									"bubble" : 1,
+									"fontsize" : 12.0,
 									"id" : "obj-377",
-									"linecount" : 2,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 130.0, 5499.820312, 150.0, 37.0 ],
+									"patching_rect" : [ 125.0, 5605.99707, 231.0, 24.0 ],
 									"style" : "",
 									"text" : "Yes, we do have REAL pitches now :-)"
 								}
@@ -639,7 +677,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5601.820312, 156.0, 37.0 ],
+									"patching_rect" : [ 24.0, 5685.130371, 156.0, 37.0 ],
 									"style" : "",
 									"text" : "NewModules"
 								}
@@ -653,9 +691,9 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 193.5, 5860.0, 187.0, 22.0 ],
+									"patching_rect" : [ 193.5, 5860.0, 198.0, 22.0 ],
 									"style" : "",
-									"text" : "sprintf symout WhatsNew0.8_%s"
+									"text" : "sprintf symout WhatsNew0.8.1_%s"
 								}
 
 							}
@@ -667,23 +705,9 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5550.820312, 67.0, 37.0 ],
+									"patching_rect" : [ 24.0, 5642.475586, 67.0, 37.0 ],
 									"style" : "",
 									"text" : "Slots"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontsize" : 25.257102,
-									"id" : "obj-372",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5652.820312, 54.0, 37.0 ],
-									"style" : "",
-									"text" : "Lllls"
 								}
 
 							}
@@ -695,7 +719,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5499.820312, 93.0, 37.0 ],
+									"patching_rect" : [ 24.0, 5599.820312, 93.0, 37.0 ],
 									"style" : "",
 									"text" : "Pitches"
 								}
@@ -709,7 +733,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 24.0, 5754.820312, 70.0, 37.0 ],
+									"patching_rect" : [ 24.0, 5771.095215, 70.0, 37.0 ],
 									"style" : "",
 									"text" : "GoTo"
 								}
@@ -725,7 +749,7 @@
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 5398.0, 525.0, 44.0 ],
 									"style" : "",
-									"text" : "What's new in bach 0.8"
+									"text" : "What's new in bach 0.8.1"
 								}
 
 							}
@@ -738,9 +762,9 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 16.0, 5442.0, 542.0, 40.0 ],
+									"patching_rect" : [ 16.0, 5442.0, 550.0, 40.0 ],
 									"style" : "",
-									"text" : "Here's a collection of things that you need to know when upgrading to bach 0.8.\nClick on each message to open the corresponding scrolldown primer!",
+									"text" : "Here's a collection of things that you need to know when upgrading to bach 0.8.1\nClick on each message to open the corresponding scrolldown primer!",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -1240,11 +1264,10 @@
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-14",
-									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 389.0, 4103.063477, 127.0, 60.0 ],
+									"patching_rect" : [ 389.0, 4103.063477, 522.0, 20.0 ],
 									"style" : "",
 									"text" : "displaying lllls, creating lllls, modifying lllls, handling lllls",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -7909,6 +7932,22 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-147", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-146", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-374", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-147", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-181", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-149", 1 ]
@@ -8925,14 +8964,6 @@
 								"patchline" : 								{
 									"destination" : [ "obj-374", 0 ],
 									"hidden" : 1,
-									"source" : [ "obj-372", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-374", 0 ],
-									"hidden" : 1,
 									"source" : [ "obj-373", 0 ]
 								}
 
@@ -9252,7 +9283,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 7.0, 142.0, 929.0, 476.0 ],
+					"patching_rect" : [ 6.0, 144.0, 929.0, 476.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 113.274521, 128.0, 143.0, 93.0 ],
 					"viewvisibility" : 1
@@ -9474,37 +9505,9 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.notation.sequencing.06_playmode.maxpat",
+				"name" : "bach.help.introduction.05_bach and Lisp-based environments.01_bachlisp1.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.ezmidiplay.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.gcd.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.approx.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
-				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "bach.filter.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
-				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
@@ -9524,6 +9527,13 @@
 			}
 , 			{
 				"name" : "bach.sum.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.filter.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
@@ -9586,7 +9596,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.explorer.empty.maxpat",
+				"name" : "bach.explorer.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
 				"type" : "JSON",
@@ -9642,75 +9652,7 @@
 				"type" : "iLaX"
 			}
 , 			{
-				"name" : "bach.score.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.playkeys.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.expr.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.length.mxo",
-				"type" : "iLaX"
-			}
-, 			{
 				"name" : "bach.iter.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.flat.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.pick.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.args.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.reg.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.print.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.keys.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.portal.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.gt.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.is.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.neq.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.eq.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.nth.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.slice.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9722,7 +9664,31 @@
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.keys.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.nth.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.reg.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.portal.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.args.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.find.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.flat.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9730,11 +9696,43 @@
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.slice.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.rev.mxo",
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.length.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.eq.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.join.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.expr.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.is.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.neq.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.pick.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.contains.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9775,6 +9773,10 @@
 			}
 , 			{
 				"name" : "bach.geq.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.gt.mxo",
 				"type" : "iLaX"
 			}
 , 			{

@@ -206,7 +206,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 165.0, 244.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name mynumber) (type int)))"
+					"text" : "[slotinfo [1 [name mynumber] [type int]]]"
 				}
 
 			}
@@ -221,7 +221,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 308.0, 378.0, 151.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (6 (type intlist)))"
+					"text" : "[slotinfo [6 [type intlist]]]"
 				}
 
 			}

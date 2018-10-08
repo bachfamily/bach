@@ -68,7 +68,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 498.5, 190.0, 70.0, 19.0 ],
-					"text" : "((( 6 $1 )))"
+					"text" : "[[[ 6 $1 ]]]"
 				}
 
 			}

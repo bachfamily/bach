@@ -139,7 +139,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 140.0, 252.0, 149.0, 19.0 ],
-					"text" : "(slotinfo (3 (default 52)))"
+					"text" : "[slotinfo [3 [default 52]]]"
 				}
 
 			}

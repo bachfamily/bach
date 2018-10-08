@@ -61,7 +61,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 316.0, 66.0, 23.0 ],
 					"style" : "",
-					"text" : "(4 4) (60)"
+					"text" : "[4 4] [60]"
 				}
 
 			}
@@ -162,7 +162,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 109.0, 155.0, 484.0, 82.0 ],
 					"style" : "",
-					"text" : "(articulationinfo ((fullname irregulartremolo) (shortname itrem) (basept 12) (font Arial) (mainchar z ) (flippedchar z) (mainyshift 8) (flippedyshift -5) (mainheight 6) (flippedheight 6) (mainxshift 0) (flippedxshift 0) (position stemsidenearflag) (flippedycenter 8) (mainycenter 5) (options copywhencloned copywhensplit centeroverstem shiftwithbeams)) ((fullname respiro) (shortname resp) (alias breath br) (basept 24) (font \"Times New Roman\" ) (mainchar \\, ) (mainyshift 8) (mainheight 6) (mainxshift -8) (position abovenote) (mainycenter 22) (options copywhencloned)))"
+					"text" : "[articulationinfo [[fullname irregulartremolo] [shortname itrem] [basept 12] [font Arial] [mainchar z ] [flippedchar z] [mainyshift 8] [flippedyshift -5] [mainheight 6] [flippedheight 6] [mainxshift 0] [flippedxshift 0] [position stemsidenearflag] [flippedycenter 8] [mainycenter 5] [options copywhencloned copywhensplit centeroverstem shiftwithbeams]] [[fullname respiro] [shortname resp] [alias breath br] [basept 24] [font \"Times New Roman\" ] [mainchar \\, ] [mainyshift 8] [mainheight 6] [mainxshift -8] [position abovenote] [mainycenter 22] [options copywhencloned]]]"
 				}
 
 			}

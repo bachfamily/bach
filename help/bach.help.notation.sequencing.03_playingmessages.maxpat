@@ -95,7 +95,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 308.5, 269.5, 95.0, 23.0 ],
 					"style" : "",
-					"text" : "play (1) (2 1/2)"
+					"text" : "play [1] [2 1/2]"
 				}
 
 			}
@@ -144,7 +144,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 280.5, 231.0, 76.0, 23.0 ],
 					"style" : "",
-					"text" : "play (2 1/4)"
+					"text" : "play [2 1/4]"
 				}
 
 			}

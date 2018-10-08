@@ -1312,7 +1312,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 399.0, 327.0, 169.0, 49.0 ],
 					"style" : "",
-					"text" : "clearselection, addchord 1 ( $1 ( $2 0 $3 ) ), inscreenpos 0.5 $1, select $1 $1 nil nil 1"
+					"text" : "clearselection, addchord 1 [ $1 [ $2 0 $3 ] ], inscreenpos 0.5 $1, select $1 $1 nil nil 1"
 				}
 
 			}
@@ -1541,7 +1541,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 573.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Real Time Stories (c)",
+					"text" : "Real Time Stories [c]",
 					"varname" : "messageA"
 				}
 
@@ -1634,7 +1634,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 849.0, 573.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Real Time Stories (e)",
+					"text" : "Real Time Stories [e]",
 					"varname" : "messageB"
 				}
 

@@ -78,7 +78,7 @@ CLASS_ATTR_BASIC(c,"nullmode",0);
 // @description The <m>nullmode</m> attribute handles the case when a note has only trivial pitch breakpoints
 // (note head, note tail, without any glissando). If <m>nullmode</m> is 1, <b>null</b> is output from the 
 // pitch breakpoints outlet; if <m>nullmode</m> is 0 (default), the trivial 
-// breakpoints <b>(0. 0. 0.) (1. 0. 0.)</b> are output instead, or <b>(0. 0. 0. <m>vel</m>) (1. 0. 0. <m>vel</m>)</b>
+// breakpoints <b>[0. 0. 0.] [1. 0. 0.]</b> are output instead, or <b>[0. 0. 0. <m>vel</m>] [1. 0. 0. <m>vel</m>]</b>
 // if <m>breakpointshavevelocity</m> is set to 1 (with <m>vel</m> being the note velocity).
 
 CLASS_ATTR_CHAR(c, "extras", 0, t_unpacknote, extras); 
@@ -92,7 +92,7 @@ CLASS_ATTR_CHAR(c, "breakpointshavevelocity", 0, t_unpacknote, breakpointshaveve
 CLASS_ATTR_STYLE_LABEL(c,"breakpointshavevelocity",0,"onoff","Breakpoints Have Velocity");
 // @description If the <m>breakpointshavevelocity</m> attribute is set to 1, when <m>nullmode</m> is 0 and when a note has 
 // no inner pitch breakpoints, the note velocity is output as last element along with the trivial breakpoint data, which thus
-// becomes <b>(0. 0. 0. <m>vel</m>) (1. 0. 0. <m>vel</m>)</b>, with <m>vel</m> being the note velocity.
+// becomes <b>[0. 0. 0. <m>vel</m>] [1. 0. 0. <m>vel</m>]</b>, with <m>vel</m> being the note velocity.
 
 
 }

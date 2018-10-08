@@ -53,7 +53,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(note ( \"playing style\" text) ( \"treatment routing system\" togglematrix floatmatrix) ( \"FM modulant frequency\" float) ( \"RGBA note color\" floatlist) ( \"notehead information\" long) )",
+					"text" : "[note [ \"playing style\" text] [ \"treatment routing system\" togglematrix floatmatrix] [ \"FM modulant frequency\" float] [ \"RGBA note color\" floatlist] [ \"notehead information\" long] ]",
 					"linecount" : 2,
 					"outlettype" : [ "" ],
 					"id" : "obj-33",
@@ -112,7 +112,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(note (lyrics text) ( \"amplitude envelope\" function) ( \"soundfile to play\" filelist) ( \"panning path\" float spat) ( \"a whole score\" llll) ( \"synth parameters\" intlist floatlist text llll) ( \"freqshift amount\" float ) )",
+					"text" : "[note [lyrics text] [ \"amplitude envelope\" function] [ \"soundfile to play\" filelist] [ \"panning path\" float spat] [ \"a whole score\" llll] [ \"synth parameters\" intlist floatlist text llll] [ \"freqshift amount\" float ] ]",
 					"linecount" : 2,
 					"outlettype" : [ "" ],
 					"id" : "obj-18",
@@ -311,7 +311,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (a)",
+					"text" : "Slot Machines [a]",
 					"outlettype" : [ "" ],
 					"id" : "obj-29",
 					"fontname" : "Arial",
@@ -410,7 +410,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (c)",
+					"text" : "Slot Machines [c]",
 					"outlettype" : [ "" ],
 					"id" : "obj-41",
 					"fontname" : "Arial",

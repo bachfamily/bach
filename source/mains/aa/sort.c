@@ -139,10 +139,10 @@ int T_EXPORT main()
 	// @copy BACH_DOC_ADDRESS_BASIC
 	// @copy BACH_DOC_ADDRESS_NEGATIVE
 	// Elements without parentheses are treated as distinct addresses. So, for example, the value
-	// <b>(2)</b> means that the sorting key is the second element of each sublist of the root llll-
-	// <b>(2) (2 3)</b> means that the first sorting key is the second element, and in case of equality 
+	// <b>[2]</b> means that the sorting key is the second element of each sublist of the root llll-
+	// <b>[2] [2 3]</b> means that the first sorting key is the second element, and in case of equality 
 	// the second sorting key is the third element of the second element of each sublist.
-	// <b>2 3 (2 3)</b> means that the first sorting key is the second element; 
+	// <b>2 3 [2 3]</b> means that the first sorting key is the second element; 
 	// in case of equality the second sorting key is the third element;
 	// and in case of further equality the third sorting key is the third element of the second element of each sublist.
 	

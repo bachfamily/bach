@@ -55,7 +55,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (type function) (name myenvelope) (singleslotfortiednotes 1) (width temporal)) (2 (type int) (range 0 128) (name myvalue) (singleslotfortiednotes 0)))",
+					"text" : "[slotinfo [1 [type function] [name myenvelope] [singleslotfortiednotes 1] [width temporal]] [2 [type int] [range 0 128] [name myvalue] [singleslotfortiednotes 0]]]",
 					"linecount" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 136.0, 487.0, 32.0 ],
@@ -259,7 +259,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (v)",
+					"text" : "Slot Machines [v]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 491.0, 140.0, 18.0 ],
 					"fontname" : "Arial",
@@ -358,7 +358,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (x)",
+					"text" : "Slot Machines [x]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 459.0, 491.0, 140.0, 18.0 ],
 					"fontname" : "Arial",

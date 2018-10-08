@@ -112,7 +112,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 251.0, 191.5, 67.0, 23.0 ],
 									"style" : "",
-									"text" : "(a (b c) d)"
+									"text" : "[a [b c] d]"
 								}
 
 							}
@@ -144,7 +144,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 232.0, 144.0, 88.0, 23.0 ],
 									"style" : "",
-									"text" : "set (a (b c) d)"
+									"text" : "set [a [b c] d]"
 								}
 
 							}
@@ -300,7 +300,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 81.0, 215.5, 105.0, 23.0 ],
 									"style" : "",
-									"text" : "(0 1. 4/2 (3)) 4 5"
+									"text" : "[0 1. 4/2 [3]] 4 5"
 								}
 
 							}
@@ -315,7 +315,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 69.0, 191.5, 68.0, 23.0 ],
 									"style" : "",
-									"text" : "(a (b c) d)"
+									"text" : "[a [b c] d]"
 								}
 
 							}
@@ -330,7 +330,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 53.0, 168.5, 68.0, 23.0 ],
 									"style" : "",
-									"text" : "(a (b c) d)"
+									"text" : "[a [b c] d]"
 								}
 
 							}
@@ -345,7 +345,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 100.5, 149.0, 23.0 ],
 									"style" : "",
-									"text" : "john (ringo george) paul"
+									"text" : "john [ringo george] paul"
 								}
 
 							}
@@ -628,7 +628,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 59.0, 276.5, 105.0, 23.0 ],
 									"style" : "",
-									"text" : "(0 1. 4/2 (3)) 4 5"
+									"text" : "[0 1. 4/2 [3]] 4 5"
 								}
 
 							}
@@ -643,7 +643,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 47.0, 252.5, 90.0, 23.0 ],
 									"style" : "",
-									"text" : "(0 1 2 (3)) 4 5"
+									"text" : "[0 1 2 [3]] 4 5"
 								}
 
 							}
@@ -658,7 +658,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 31.0, 229.5, 68.0, 23.0 ],
 									"style" : "",
-									"text" : "(a (b c) d)"
+									"text" : "[a [b c] d]"
 								}
 
 							}
@@ -718,7 +718,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.0, 205.5, 68.0, 23.0 ],
 									"style" : "",
-									"text" : "(a (b c) d)"
+									"text" : "[a [b c] d]"
 								}
 
 							}

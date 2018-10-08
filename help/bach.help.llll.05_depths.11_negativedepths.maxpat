@@ -182,7 +182,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 54.0, 78.0, 242.0, 19.0 ],
-					"text" : "(And I'll Send) (All (My Loving) (To You))"
+					"text" : "[And I'll Send] [All [My Loving] [To You]]"
 				}
 
 			}

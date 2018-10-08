@@ -282,7 +282,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "a 3 (foo dummy) C",
+					"text" : "a 3 [foo dummy] C",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 22.0, 187.0, 110.0, 18.0 ],
@@ -594,7 +594,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Through The Looking Glass (m)",
+					"text" : "Through The Looking Glass [m]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 524.0, 178.0, 18.0 ],
@@ -693,7 +693,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Through The Looking Glass (o)",
+					"text" : "Through The Looking Glass [o]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 805.0, 524.0, 174.0, 18.0 ],

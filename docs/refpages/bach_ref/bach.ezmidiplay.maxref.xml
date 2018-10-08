@@ -35,10 +35,10 @@
 				or at offline play, or selection dump).
 				The playout syntax is a slight variation of the standard chord gathered syntax. Two different cases apply, according to the <m>playmode</m>
 				attribute value. If the <m>playmode</m> is set to Chordwise, the information about each chord is output in the form <br />
-				<b>chord <m>voice_number</m> <m>MIDI_channel</m> (<m>onset</m> <m>NOTE1</m> <m>NOTE2</m> <m>NOTE3</m> <m>chord_flag</m>) </b> <br />
+				<b>chord <m>voice_number</m> <m>MIDI_channel</m> [<m>onset</m> <m>NOTE1</m> <m>NOTE2</m> <m>NOTE3</m> <m>chord_flag</m>] </b> <br />
 				where each <b><m>NOTE</m></b> is the gathered syntax of the note (see below).
 				If the <m>playmode</m> is set to Notewise, information about each note is output as if the note were the only note in the chord, i.e. in the form <br />
-				<b>note <m>voice_number</m> <m>MIDI_channel</m> (<m>onset</m> <m>NOTE</m> <m>chord_flag</m>) </b> <br />
+				<b>note <m>voice_number</m> <m>MIDI_channel</m> [<m>onset</m> <m>NOTE</m> <m>chord_flag</m>] </b> <br />
 				where <b><m>NOTE</m></b> is the note gathered syntax.
 				The <m>MIDI_channels</m> is the one associated with the voice to which the note or chord belongs. The <m>onset</m> is in milliseconds,
 				The <m>chord_flag</m> is a bitfield summing values of 1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
@@ -53,9 +53,9 @@
 				and the content as fourth parameter. Alternatively, roles and content can be set via the marker inspector.
 				Roles can be: <br />
 				<m>Time Signature</m>: set by the symbol "timesig", it represents a time signature, and expects the time signature llll as content.
-				For instance, a message to add such a marker could be <b>addmarker 0 foo timesig (4 4)</b>.<br />
+				For instance, a message to add such a marker could be <b>addmarker 0 foo timesig [4 4]</b>.<br />
 				<m>Tempo</m>: set by the symbol "tempo", it represents a time signature, and expects the tempo llll as content (tempo figure and tempo
-				value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo (1/8 50)</b>, meaning
+				value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo [1/8 50]</b>, meaning
 				that the tempo is 1/8 = 50.<br />
 				<m>Measure Barlines</m>: set by the symbol "barline", it represents a barline, and expects no content.
 				For instance, a message to add such a marker could be <b>addmarker 0 foo barline</b>. <br />
@@ -66,15 +66,15 @@
 				All these marker can be parsed by bach.quantize in order to automatically retrieve the measureinfo of the
 				entire bach.roll.
 				<br /> <br />
-				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>)</b>
+				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, and
 				the <m>note_flag</m> is an optional bitfield summing values of 1 (if note is locked), 2 (if note is muted), 4 (if note is solo). <br />
 				In its most general form, each note can have different specifications and attributes, defining
 				graphics, pitch breakpoints, slots, names.
-				Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the <m>velocity</m>
+				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the <m>velocity</m>
 				and before the <m>note_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a note definition might have the form
-				<b>(7300. 136. 127 (graphic 7400 -1/2) (slots (1 (0. 0. 0.) (0.294118 81.138889 0.) (0.294118 38.805556 0.) (1. 0. 0.))) (name pippo) 0 )</b>
+				<b>[7300. 136. 127 [graphic 7400 -1/2] [slots [1 [0. 0. 0.] [0.294118 81.138889 0.] [0.294118 38.805556 0.] [1. 0. 0.]]] [name pippo] 0 ]</b>
 				<br /> <br />
 				Instead of MIDIcents (or cents), one can also instert pitches.
 				The syntax for the single note must be an unique symbol (no spaces) with:
@@ -83,57 +83,57 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
-				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
+				Accidentals are: <b>#</b> [sharp], <b>b</b> [flat], <b>x</b> [double sharp], <b>q</b> [quartertone sharp], <b>d</b> (quartertone flat),
+				<b>^</b> [eighth-tone sharp], <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
 				The <m>graphic</m> specification informs about the enharmonicity status of a note.
-				It is given by an llll in the form <b>(<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>)</b>,
+				It is given by an llll in the form <b>[<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>]</b>,
 				where <m>displayed_midicents_ignoring_accidental</m> are the cents of the diatonic displayed note (ignoring any accidental that it might have),
 				and <m>displayed_accidental</m> is the displayed accidental in rational form (sharp corresponding to 1/2, flat to -1/2, quarterflat to -1/4 and so on).
-				For instance, a Db just above the middle C would have a graphic specification of <b>(graphics 6200 -1/2)</b>.
+				For instance, a Db just above the middle C would have a graphic specification of <b>[graphics 6200 -1/2]</b>.
 				<br /> <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
 				the velocity between them is considered to be interpolatory, for instance by abstractions like <o>bach.dl2line</o> or <o>bach.dl2curve</o>.
 				<br /> <br />
 				The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note.
-				It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+				It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 				where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-				<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+				<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -141,8 +141,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -165,17 +165,17 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
 				The <m>name</m> specification informs us about a possible name (or possibles names) of a notation item.
-				It is simply given by an llll in the form <b>(name <m>NAME_OR_LLLL_OF_NAMES</m>)</b>,
+				It is simply given by an llll in the form <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>,
 				where <m>NAME_OR_LLLL_OF_NAMES</m> is either a single of symbols or integer, or an llll corresponding to the name(s) of the notation item.
-				For instance, an item named as "john george" will correspond to the llll <b>(name john george)</b>.
-				An item named "(high 1) (low 2)" will correspond to the llll <b>(name (high 1) (low 2))</b>.
+				For instance, an item named as "john george" will correspond to the llll <b>[name john george]</b>.
+				An item named "(high 1) (low 2)" will correspond to the llll <b>[name [high 1] [low 2]]</b>.
 				If an element has no names, the <m>name</m> specification is never given as output.
 				<br /> <br />
 				For <o>bach.score</o>, the playout syntax is used whenever the information about a note or chord is sent through the playout (either at playtime
@@ -191,7 +191,7 @@
 				<m>onset_from_score_beginning_in_ms</m> <m>NOTE</m> <m>note_flag</m>) </b> <br />
 				where <m>NOTE</m> is the note gathered syntax. <br />
 				If <m>playrest</m> is set to 1, and the chord is a rest, the router symbol is <b>rest</b> instead of chord, and there is no <m>NOTE</m> llll. <br />
-				In case the played note or chord is just a grace chord, the <m>symbolic_duration</m> becomes an llll in the form <b>(g <m>grace_symbolic_duration</m>)</b>.
+				In case the played note or chord is just a grace chord, the <m>symbolic_duration</m> becomes an llll in the form <b>[g <m>grace_symbolic_duration</m>]</b>.
 				The <m>MIDI_channels</m> is the one associated with the voice to which the note or chord belongs. The <m>onset</m> is in milliseconds,
 				The <m>chord_flag</m> is a bitfield summing values of 1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
 				The playout syntax also concerns markers: they are output in the form: <b>marker <m>NAME_OR_NAMES</m> <m>ONSET</m> none</b>
@@ -201,9 +201,9 @@
 				the onset timepoint (if the marker is attached to the position inside the measure). <br />
 				The playout syntax also concerns tempi: they are output in the form <b>tempo <m>voice_number</m> <m>tempo</m> <m>TEMPO_LLLL</m></b>,
 				where <m>tempo</m> is the floating point tempo referred to the quarter note, and
-				<m>TEMPO_LLLL</m> is in the form <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b>.
+				<m>TEMPO_LLLL</m> is in the form <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b>.
 				If the tempo starts an accelerando/rallentando (i.e. interpolation is set to 1), then the <m>tempo</m> element is substituted by the llll
-				<b>(<m>tempo</m> <m>next_tempo</m> <m>interp_duration_ms</m>)</b>.  <br />
+				<b>[<m>tempo</m> <m>next_tempo</m> <m>interp_duration_ms</m>]</b>.  <br />
 				The playout syntax also concerns measures: if <m>playmeasures</m> is 1, at the beginning of each measure (for each voice), an llll is output
 				in the form <b>measure <m>voice_number</m> <m>measure_number</m> <m>MEASUREINFO_LLLL</m></b>.
 				If a tempo and/or a chord lie at the beginning of a measure, the order of output for the elements is: measure, tempo, chord (or notes). <br />
@@ -214,81 +214,81 @@
 				and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
 				Differently from absolute millisecond positions,
 				timepoints are represented by lllls, in one of the following syntaxes: <br />
-				- <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
-				For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
-				- <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
+				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
+				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
 				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
-				- <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number,
+				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+				For instance, <b>[2 4 1/4]</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
 				important if voices don't have the same tempi or time signatures.
 				<br />
-				A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
-				point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1.
+				A timepoint can also  be specified via a <b>[<m>float_measure_number</m>]</b>, representing the point in a floating
+				point position between two measures (referred to the first voice). For instance, <b>[4.2]</b> represents the point at the 20% of measure 4, voice 1.
 				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
-				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+				of the measure (1); for instance <b>[1 4 0.2]</b> represents the point after 20% of measure 4, voice 1.
 				<br />
 				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
-				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-				<b>(3 any 27/4)</b> does the same for voice 3.
+				For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>[3 any 27/4]</b> does the same for voice 3.
 				<br /> <br />
-				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>)</b>
+				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
 				the <m>note_flag</m> is an optional bitfield summing values of 1 (if note is locked), 2 (if note is muted), 4 (if note is solo). <br />
 				In its most general form, each note can have different specifications and attributes, defining one of the possible extras:
 				graphics, pitch breakpoints, slots, names, articulations.
-				Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the <m>tie?</m>
+				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the <m>tie?</m>
 				and before the <m>note_flag</m>. The order in which the specifications are listed is, on the other hand, unimportant. For instance, a note definition might have the form
-				<b>(7000. 127 1 (graphic 6900 1/2) (slots (1 (0. 112.5 0.) (1. 0. 0.))) (articulation stacc) (name foo) 0)</b>.
+				<b>[7000. 127 1 [graphic 6900 1/2] [slots [1 [0. 112.5 0.] [1. 0. 0.]]] [articulation stacc] [name foo] 0]</b>.
 				<br /> <br />
 				The <m>graphic</m> specification informs about the enharmonicity status of a note.
-				It is given by an llll in the form <b>(<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>)</b>,
+				It is given by an llll in the form <b>[<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>]</b>,
 				where <m>displayed_midicents_ignoring_accidental</m> are the cents of the diatonic displayed note (ignoring any accidental that it might have),
 				and <m>displayed_accidental</m> is the displayed accidental in rational form (sharp corresponding to 1/2, flat to -1/2, quarterflat to -1/4 and so on).
-				For instance, a Db just above the middle C would have a graphic specification of <b>(graphics 6200 -1/2)</b>.
+				For instance, a Db just above the middle C would have a graphic specification of <b>[graphics 6200 -1/2]</b>.
 				<br /> <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
 				the velocity between them is considered to be interpolatory, for instance by abstractions like <o>bach.dl2line</o> or <o>bach.dl2curve</o>.
 				<br /> <br />
 				The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note.
-				It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+				It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 				where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-				<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+				<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -296,8 +296,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -320,21 +320,21 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
 				The <m>name</m> specification informs us about a possible name (or possibles names) of a notation item.
-				It is simply given by an llll in the form <b>(name <m>NAME_OR_LLLL_OF_NAMES</m>)</b>,
+				It is simply given by an llll in the form <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>,
 				where <m>NAME_OR_LLLL_OF_NAMES</m> is either a single of symbols or integer, or an llll corresponding to the name(s) of the notation item.
-				For instance, an item named as "john george" will correspond to the llll <b>(name john george)</b>.
-				An item named "(high 1) (low 2)" will correspond to the llll <b>(name (high 1) (low 2))</b>.
+				For instance, an item named as "john george" will correspond to the llll <b>[name john george]</b>.
+				An item named "(high 1) (low 2)" will correspond to the llll <b>[name [high 1] [low 2]]</b>.
 				If an element has no names, the <m>name</m> specification is never given as output.
 				<br /> <br />
 				The <m>articulation</m> specification informs us about an articulation assigned either to a chord or to a note.
-				It is simply given by an llll in the form <b>(articulation <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m>)</b>,
+				It is simply given by an llll in the form <b>[articulation <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m>]</b>,
 				where <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m> is a list of symbols idenfitying articulations to be added to the notation item.
 				The symbols of the list are allowed to be the following ones: "staccato" or "stacc", "staccatissimo" or "staccmo",
 				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
@@ -348,37 +348,37 @@
 				<br /> <br />
 				Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
 				This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
-				an llll in the form <b>(<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
+				an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
 				All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
 				The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
-				- <b>(<m>numerator</m> <m>denominator</m>)</b> for standard time signatures. For instance, <b>(4 4)</b> corresponds to a 4/4 time signature. <br />
-				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
-				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
+				- <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
+				- <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
+				signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
 				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
 				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
-				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
-				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
+				- <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
+				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
 				but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
 				but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b>
+				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
 				will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
 				If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-				<b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
-				<b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant,
+				<b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
+				<b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
 				only their onset is accounted for. <br />
 				Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
-				certain number of measures, such as <b>(<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
-				For instance <b>(5 (4 4) ((80) (1/4 160 1/2)))</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
+				certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+				For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
 				until 1/4 = 160 exactly at half of the measure. For instance
-				<b> (((4 4) (1/8 60)) ((2 4) (1/4 50 1/4 1)) (4 (4 4)) (nil (180)))</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
+				<b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
 				pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures,
 				and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
-				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>(<m>parameter_name</m> <m>parameter_value</m>)</b>.
+				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
 				The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding
 				values is the following one: <br />
 				- <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
@@ -393,16 +393,16 @@
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
-				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>(shownumber -4)</b> will
+				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
 				assigned measure number (default). <br />
 				- <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers.
 				Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise.
 				Each number of the expected list is the symbolic width of each beaming box inside the measure.
 				If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
-				<b>(boxes 1/8)</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
-				This is equivalent to <b>(boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8)</b>.
-				Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
+				<b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
+				This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>.
+				Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
 				<br /> <br />
@@ -508,7 +508,7 @@
 				Send messages to <o>noteout</o>
 			</digest>
 			<description>
-				A list in the first inlet is expected to be in the <o>noteout</o>-like syntax: <b>(<m>pitch</m> <m>velocity</m> <m>MIDIchannel</m>)</b>
+				A list in the first inlet is expected to be in the <o>noteout</o>-like syntax: <b>[<m>pitch</m> <m>velocity</m> <m>MIDIchannel</m>]</b>
 				where, on the other hand, the <m>pitch</m> is expected to be in MIDIcents (and not as MIDI number). The velocity must range from 1 to 127,
 				a velocity of 0 is considered as a note-off. <br />
 				A list in the third inlet is automatically sent to the <o>noteout</o> object contained in the
@@ -537,10 +537,10 @@
 				or at offline play, or selection dump).
 				The playout syntax is a slight variation of the standard chord gathered syntax. Two different cases apply, according to the <m>playmode</m>
 				attribute value. If the <m>playmode</m> is set to Chordwise, the information about each chord is output in the form <br />
-				<b>chord <m>voice_number</m> <m>MIDI_channel</m> (<m>onset</m> <m>NOTE1</m> <m>NOTE2</m> <m>NOTE3</m> <m>chord_flag</m>) </b> <br />
+				<b>chord <m>voice_number</m> <m>MIDI_channel</m> [<m>onset</m> <m>NOTE1</m> <m>NOTE2</m> <m>NOTE3</m> <m>chord_flag</m>] </b> <br />
 				where each <b><m>NOTE</m></b> is the gathered syntax of the note (see below).
 				If the <m>playmode</m> is set to Notewise, information about each note is output as if the note were the only note in the chord, i.e. in the form <br />
-				<b>note <m>voice_number</m> <m>MIDI_channel</m> (<m>onset</m> <m>NOTE</m> <m>chord_flag</m>) </b> <br />
+				<b>note <m>voice_number</m> <m>MIDI_channel</m> [<m>onset</m> <m>NOTE</m> <m>chord_flag</m>] </b> <br />
 				where <b><m>NOTE</m></b> is the note gathered syntax.
 				The <m>MIDI_channels</m> is the one associated with the voice to which the note or chord belongs. The <m>onset</m> is in milliseconds,
 				The <m>chord_flag</m> is a bitfield summing values of 1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
@@ -555,9 +555,9 @@
 				and the content as fourth parameter. Alternatively, roles and content can be set via the marker inspector.
 				Roles can be: <br />
 				<m>Time Signature</m>: set by the symbol "timesig", it represents a time signature, and expects the time signature llll as content.
-				For instance, a message to add such a marker could be <b>addmarker 0 foo timesig (4 4)</b>.<br />
+				For instance, a message to add such a marker could be <b>addmarker 0 foo timesig [4 4]</b>.<br />
 				<m>Tempo</m>: set by the symbol "tempo", it represents a time signature, and expects the tempo llll as content (tempo figure and tempo
-				value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo (1/8 50)</b>, meaning
+				value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo [1/8 50]</b>, meaning
 				that the tempo is 1/8 = 50.<br />
 				<m>Measure Barlines</m>: set by the symbol "barline", it represents a barline, and expects no content.
 				For instance, a message to add such a marker could be <b>addmarker 0 foo barline</b>. <br />
@@ -568,15 +568,15 @@
 				All these marker can be parsed by bach.quantize in order to automatically retrieve the measureinfo of the
 				entire bach.roll.
 				<br /> <br />
-				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>)</b>
+				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, and
 				the <m>note_flag</m> is an optional bitfield summing values of 1 (if note is locked), 2 (if note is muted), 4 (if note is solo). <br />
 				In its most general form, each note can have different specifications and attributes, defining
 				graphics, pitch breakpoints, slots, names.
-				Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the <m>velocity</m>
+				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the <m>velocity</m>
 				and before the <m>note_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a note definition might have the form
-				<b>(7300. 136. 127 (graphic 7400 -1/2) (slots (1 (0. 0. 0.) (0.294118 81.138889 0.) (0.294118 38.805556 0.) (1. 0. 0.))) (name pippo) 0 )</b>
+				<b>[7300. 136. 127 [graphic 7400 -1/2] [slots [1 [0. 0. 0.] [0.294118 81.138889 0.] [0.294118 38.805556 0.] [1. 0. 0.]]] [name pippo] 0 ]</b>
 				<br /> <br />
 				Instead of MIDIcents (or cents), one can also instert pitches.
 				The syntax for the single note must be an unique symbol (no spaces) with:
@@ -585,57 +585,57 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
-				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
+				Accidentals are: <b>#</b> [sharp], <b>b</b> [flat], <b>x</b> [double sharp], <b>q</b> [quartertone sharp], <b>d</b> (quartertone flat),
+				<b>^</b> [eighth-tone sharp], <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
 				The <m>graphic</m> specification informs about the enharmonicity status of a note.
-				It is given by an llll in the form <b>(<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>)</b>,
+				It is given by an llll in the form <b>[<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>]</b>,
 				where <m>displayed_midicents_ignoring_accidental</m> are the cents of the diatonic displayed note (ignoring any accidental that it might have),
 				and <m>displayed_accidental</m> is the displayed accidental in rational form (sharp corresponding to 1/2, flat to -1/2, quarterflat to -1/4 and so on).
-				For instance, a Db just above the middle C would have a graphic specification of <b>(graphics 6200 -1/2)</b>.
+				For instance, a Db just above the middle C would have a graphic specification of <b>[graphics 6200 -1/2]</b>.
 				<br /> <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
 				the velocity between them is considered to be interpolatory, for instance by abstractions like <o>bach.dl2line</o> or <o>bach.dl2curve</o>.
 				<br /> <br />
 				The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note.
-				It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+				It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 				where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-				<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+				<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -643,8 +643,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -667,17 +667,17 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
 				The <m>name</m> specification informs us about a possible name (or possibles names) of a notation item.
-				It is simply given by an llll in the form <b>(name <m>NAME_OR_LLLL_OF_NAMES</m>)</b>,
+				It is simply given by an llll in the form <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>,
 				where <m>NAME_OR_LLLL_OF_NAMES</m> is either a single of symbols or integer, or an llll corresponding to the name(s) of the notation item.
-				For instance, an item named as "john george" will correspond to the llll <b>(name john george)</b>.
-				An item named "(high 1) (low 2)" will correspond to the llll <b>(name (high 1) (low 2))</b>.
+				For instance, an item named as "john george" will correspond to the llll <b>[name john george]</b>.
+				An item named "(high 1) (low 2)" will correspond to the llll <b>[name [high 1] [low 2]]</b>.
 				If an element has no names, the <m>name</m> specification is never given as output.
 				<br /> <br />
 				For <o>bach.score</o>, the playout syntax is used whenever the information about a note or chord is sent through the playout (either at playtime
@@ -693,7 +693,7 @@
 				<m>onset_from_score_beginning_in_ms</m> <m>NOTE</m> <m>note_flag</m>) </b> <br />
 				where <m>NOTE</m> is the note gathered syntax. <br />
 				If <m>playrest</m> is set to 1, and the chord is a rest, the router symbol is <b>rest</b> instead of chord, and there is no <m>NOTE</m> llll. <br />
-				In case the played note or chord is just a grace chord, the <m>symbolic_duration</m> becomes an llll in the form <b>(g <m>grace_symbolic_duration</m>)</b>.
+				In case the played note or chord is just a grace chord, the <m>symbolic_duration</m> becomes an llll in the form <b>[g <m>grace_symbolic_duration</m>]</b>.
 				The <m>MIDI_channels</m> is the one associated with the voice to which the note or chord belongs. The <m>onset</m> is in milliseconds,
 				The <m>chord_flag</m> is a bitfield summing values of 1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
 				The playout syntax also concerns markers: they are output in the form: <b>marker <m>NAME_OR_NAMES</m> <m>ONSET</m> none</b>
@@ -703,9 +703,9 @@
 				the onset timepoint (if the marker is attached to the position inside the measure). <br />
 				The playout syntax also concerns tempi: they are output in the form <b>tempo <m>voice_number</m> <m>tempo</m> <m>TEMPO_LLLL</m></b>,
 				where <m>tempo</m> is the floating point tempo referred to the quarter note, and
-				<m>TEMPO_LLLL</m> is in the form <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b>.
+				<m>TEMPO_LLLL</m> is in the form <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b>.
 				If the tempo starts an accelerando/rallentando (i.e. interpolation is set to 1), then the <m>tempo</m> element is substituted by the llll
-				<b>(<m>tempo</m> <m>next_tempo</m> <m>interp_duration_ms</m>)</b>.  <br />
+				<b>[<m>tempo</m> <m>next_tempo</m> <m>interp_duration_ms</m>]</b>.  <br />
 				The playout syntax also concerns measures: if <m>playmeasures</m> is 1, at the beginning of each measure (for each voice), an llll is output
 				in the form <b>measure <m>voice_number</m> <m>measure_number</m> <m>MEASUREINFO_LLLL</m></b>.
 				If a tempo and/or a chord lie at the beginning of a measure, the order of output for the elements is: measure, tempo, chord (or notes). <br />
@@ -716,81 +716,81 @@
 				and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
 				Differently from absolute millisecond positions,
 				timepoints are represented by lllls, in one of the following syntaxes: <br />
-				- <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
-				For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
-				- <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
+				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
+				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
 				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
-				- <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number,
+				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+				For instance, <b>[2 4 1/4]</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
 				important if voices don't have the same tempi or time signatures.
 				<br />
-				A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
-				point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1.
+				A timepoint can also  be specified via a <b>[<m>float_measure_number</m>]</b>, representing the point in a floating
+				point position between two measures (referred to the first voice). For instance, <b>[4.2]</b> represents the point at the 20% of measure 4, voice 1.
 				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
-				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+				of the measure (1); for instance <b>[1 4 0.2]</b> represents the point after 20% of measure 4, voice 1.
 				<br />
 				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
-				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-				<b>(3 any 27/4)</b> does the same for voice 3.
+				For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>[3 any 27/4]</b> does the same for voice 3.
 				<br /> <br />
-				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>)</b>
+				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
 				the <m>note_flag</m> is an optional bitfield summing values of 1 (if note is locked), 2 (if note is muted), 4 (if note is solo). <br />
 				In its most general form, each note can have different specifications and attributes, defining one of the possible extras:
 				graphics, pitch breakpoints, slots, names, articulations.
-				Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the <m>tie?</m>
+				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the <m>tie?</m>
 				and before the <m>note_flag</m>. The order in which the specifications are listed is, on the other hand, unimportant. For instance, a note definition might have the form
-				<b>(7000. 127 1 (graphic 6900 1/2) (slots (1 (0. 112.5 0.) (1. 0. 0.))) (articulation stacc) (name foo) 0)</b>.
+				<b>[7000. 127 1 [graphic 6900 1/2] [slots [1 [0. 112.5 0.] [1. 0. 0.]]] [articulation stacc] [name foo] 0]</b>.
 				<br /> <br />
 				The <m>graphic</m> specification informs about the enharmonicity status of a note.
-				It is given by an llll in the form <b>(<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>)</b>,
+				It is given by an llll in the form <b>[<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>]</b>,
 				where <m>displayed_midicents_ignoring_accidental</m> are the cents of the diatonic displayed note (ignoring any accidental that it might have),
 				and <m>displayed_accidental</m> is the displayed accidental in rational form (sharp corresponding to 1/2, flat to -1/2, quarterflat to -1/4 and so on).
-				For instance, a Db just above the middle C would have a graphic specification of <b>(graphics 6200 -1/2)</b>.
+				For instance, a Db just above the middle C would have a graphic specification of <b>[graphics 6200 -1/2]</b>.
 				<br /> <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
 				the velocity between them is considered to be interpolatory, for instance by abstractions like <o>bach.dl2line</o> or <o>bach.dl2curve</o>.
 				<br /> <br />
 				The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note.
-				It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+				It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 				where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-				<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+				<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -798,8 +798,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -822,21 +822,21 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
 				The <m>name</m> specification informs us about a possible name (or possibles names) of a notation item.
-				It is simply given by an llll in the form <b>(name <m>NAME_OR_LLLL_OF_NAMES</m>)</b>,
+				It is simply given by an llll in the form <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>,
 				where <m>NAME_OR_LLLL_OF_NAMES</m> is either a single of symbols or integer, or an llll corresponding to the name(s) of the notation item.
-				For instance, an item named as "john george" will correspond to the llll <b>(name john george)</b>.
-				An item named "(high 1) (low 2)" will correspond to the llll <b>(name (high 1) (low 2))</b>.
+				For instance, an item named as "john george" will correspond to the llll <b>[name john george]</b>.
+				An item named "(high 1) (low 2)" will correspond to the llll <b>[name [high 1] [low 2]]</b>.
 				If an element has no names, the <m>name</m> specification is never given as output.
 				<br /> <br />
 				The <m>articulation</m> specification informs us about an articulation assigned either to a chord or to a note.
-				It is simply given by an llll in the form <b>(articulation <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m>)</b>,
+				It is simply given by an llll in the form <b>[articulation <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m>]</b>,
 				where <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m> is a list of symbols idenfitying articulations to be added to the notation item.
 				The symbols of the list are allowed to be the following ones: "staccato" or "stacc", "staccatissimo" or "staccmo",
 				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
@@ -850,37 +850,37 @@
 				<br /> <br />
 				Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
 				This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
-				an llll in the form <b>(<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
+				an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
 				All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
 				The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
-				- <b>(<m>numerator</m> <m>denominator</m>)</b> for standard time signatures. For instance, <b>(4 4)</b> corresponds to a 4/4 time signature. <br />
-				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
-				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
+				- <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
+				- <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
+				signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
 				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
 				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
-				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
-				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
+				- <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
+				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
 				but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
 				but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b>
+				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
 				will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
 				If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-				<b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
-				<b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant,
+				<b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
+				<b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
 				only their onset is accounted for. <br />
 				Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
-				certain number of measures, such as <b>(<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
-				For instance <b>(5 (4 4) ((80) (1/4 160 1/2)))</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
+				certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+				For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
 				until 1/4 = 160 exactly at half of the measure. For instance
-				<b> (((4 4) (1/8 60)) ((2 4) (1/4 50 1/4 1)) (4 (4 4)) (nil (180)))</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
+				<b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
 				pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures,
 				and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
-				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>(<m>parameter_name</m> <m>parameter_value</m>)</b>.
+				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
 				The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding
 				values is the following one: <br />
 				- <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
@@ -895,16 +895,16 @@
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
-				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>(shownumber -4)</b> will
+				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
 				assigned measure number (default). <br />
 				- <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers.
 				Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise.
 				Each number of the expected list is the symbolic width of each beaming box inside the measure.
 				If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
-				<b>(boxes 1/8)</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
-				This is equivalent to <b>(boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8)</b>.
-				Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
+				<b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
+				This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>.
+				Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
 				<br /> <br />
@@ -1025,10 +1025,10 @@
 				or at offline play, or selection dump).
 				The playout syntax is a slight variation of the standard chord gathered syntax. Two different cases apply, according to the <m>playmode</m>
 				attribute value. If the <m>playmode</m> is set to Chordwise, the information about each chord is output in the form <br />
-				<b>chord <m>voice_number</m> <m>MIDI_channel</m> (<m>onset</m> <m>NOTE1</m> <m>NOTE2</m> <m>NOTE3</m> <m>chord_flag</m>) </b> <br />
+				<b>chord <m>voice_number</m> <m>MIDI_channel</m> [<m>onset</m> <m>NOTE1</m> <m>NOTE2</m> <m>NOTE3</m> <m>chord_flag</m>] </b> <br />
 				where each <b><m>NOTE</m></b> is the gathered syntax of the note (see below).
 				If the <m>playmode</m> is set to Notewise, information about each note is output as if the note were the only note in the chord, i.e. in the form <br />
-				<b>note <m>voice_number</m> <m>MIDI_channel</m> (<m>onset</m> <m>NOTE</m> <m>chord_flag</m>) </b> <br />
+				<b>note <m>voice_number</m> <m>MIDI_channel</m> [<m>onset</m> <m>NOTE</m> <m>chord_flag</m>] </b> <br />
 				where <b><m>NOTE</m></b> is the note gathered syntax.
 				The <m>MIDI_channels</m> is the one associated with the voice to which the note or chord belongs. The <m>onset</m> is in milliseconds,
 				The <m>chord_flag</m> is a bitfield summing values of 1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
@@ -1043,9 +1043,9 @@
 				and the content as fourth parameter. Alternatively, roles and content can be set via the marker inspector.
 				Roles can be: <br />
 				<m>Time Signature</m>: set by the symbol "timesig", it represents a time signature, and expects the time signature llll as content.
-				For instance, a message to add such a marker could be <b>addmarker 0 foo timesig (4 4)</b>.<br />
+				For instance, a message to add such a marker could be <b>addmarker 0 foo timesig [4 4]</b>.<br />
 				<m>Tempo</m>: set by the symbol "tempo", it represents a time signature, and expects the tempo llll as content (tempo figure and tempo
-				value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo (1/8 50)</b>, meaning
+				value). For instance, a message to add such a marker could be <b>addmarker 0 foo tempo [1/8 50]</b>, meaning
 				that the tempo is 1/8 = 50.<br />
 				<m>Measure Barlines</m>: set by the symbol "barline", it represents a barline, and expects no content.
 				For instance, a message to add such a marker could be <b>addmarker 0 foo barline</b>. <br />
@@ -1056,15 +1056,15 @@
 				All these marker can be parsed by bach.quantize in order to automatically retrieve the measureinfo of the
 				entire bach.roll.
 				<br /> <br />
-				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>)</b>
+				For <o>bach.roll</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>duration</m> <m>velocity</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>duration</m> is measured in milliseconds, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, and
 				the <m>note_flag</m> is an optional bitfield summing values of 1 (if note is locked), 2 (if note is muted), 4 (if note is solo). <br />
 				In its most general form, each note can have different specifications and attributes, defining
 				graphics, pitch breakpoints, slots, names.
-				Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the <m>velocity</m>
+				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the <m>velocity</m>
 				and before the <m>note_flag</m>. The order in which the specifications are listed is, on the other hand, irrelevant. For instance, a note definition might have the form
-				<b>(7300. 136. 127 (graphic 7400 -1/2) (slots (1 (0. 0. 0.) (0.294118 81.138889 0.) (0.294118 38.805556 0.) (1. 0. 0.))) (name pippo) 0 )</b>
+				<b>[7300. 136. 127 [graphic 7400 -1/2] [slots [1 [0. 0. 0.] [0.294118 81.138889 0.] [0.294118 38.805556 0.] [1. 0. 0.]]] [name pippo] 0 ]</b>
 				<br /> <br />
 				Instead of MIDIcents (or cents), one can also instert pitches.
 				The syntax for the single note must be an unique symbol (no spaces) with:
@@ -1073,57 +1073,57 @@
 				Names are in anglo-saxon syntax ("C", "D", "E"...), and are case insentitive. Middle C is C5.
 				They and should be immediately followed by the possible accidentals and the
 				octave number, without any space (e.g. <b>D#4</b>). <br />
-				Accidentals are: <b>#</b> (sharp), <b>b</b> (flat), <b>x</b> (double sharp), <b>q</b> (quartertone sharp), <b>d</b> (quartertone flat),
-				<b>^</b> (eighth-tone sharp), <b>v</b> (eighth-tone flat)
+				Accidentals are: <b>#</b> [sharp], <b>b</b> [flat], <b>x</b> [double sharp], <b>q</b> [quartertone sharp], <b>d</b> (quartertone flat),
+				<b>^</b> [eighth-tone sharp], <b>v</b> (eighth-tone flat)
 				One can also extend the accidental by setting a rational specification followed by a <b>t</b>. For instance <b>C5+1/16t</b> is
 				middle C, 1/16 tone up.
 				<br /> <br />
 				The <m>graphic</m> specification informs about the enharmonicity status of a note.
-				It is given by an llll in the form <b>(<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>)</b>,
+				It is given by an llll in the form <b>[<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>]</b>,
 				where <m>displayed_midicents_ignoring_accidental</m> are the cents of the diatonic displayed note (ignoring any accidental that it might have),
 				and <m>displayed_accidental</m> is the displayed accidental in rational form (sharp corresponding to 1/2, flat to -1/2, quarterflat to -1/4 and so on).
-				For instance, a Db just above the middle C would have a graphic specification of <b>(graphics 6200 -1/2)</b>.
+				For instance, a Db just above the middle C would have a graphic specification of <b>[graphics 6200 -1/2]</b>.
 				<br /> <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
 				the velocity between them is considered to be interpolatory, for instance by abstractions like <o>bach.dl2line</o> or <o>bach.dl2curve</o>.
 				<br /> <br />
 				The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note.
-				It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+				It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 				where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-				<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+				<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -1131,8 +1131,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -1155,17 +1155,17 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
 				The <m>name</m> specification informs us about a possible name (or possibles names) of a notation item.
-				It is simply given by an llll in the form <b>(name <m>NAME_OR_LLLL_OF_NAMES</m>)</b>,
+				It is simply given by an llll in the form <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>,
 				where <m>NAME_OR_LLLL_OF_NAMES</m> is either a single of symbols or integer, or an llll corresponding to the name(s) of the notation item.
-				For instance, an item named as "john george" will correspond to the llll <b>(name john george)</b>.
-				An item named "(high 1) (low 2)" will correspond to the llll <b>(name (high 1) (low 2))</b>.
+				For instance, an item named as "john george" will correspond to the llll <b>[name john george]</b>.
+				An item named "(high 1) (low 2)" will correspond to the llll <b>[name [high 1] [low 2]]</b>.
 				If an element has no names, the <m>name</m> specification is never given as output.
 				<br /> <br />
 				For <o>bach.score</o>, the playout syntax is used whenever the information about a note or chord is sent through the playout (either at playtime
@@ -1181,7 +1181,7 @@
 				<m>onset_from_score_beginning_in_ms</m> <m>NOTE</m> <m>note_flag</m>) </b> <br />
 				where <m>NOTE</m> is the note gathered syntax. <br />
 				If <m>playrest</m> is set to 1, and the chord is a rest, the router symbol is <b>rest</b> instead of chord, and there is no <m>NOTE</m> llll. <br />
-				In case the played note or chord is just a grace chord, the <m>symbolic_duration</m> becomes an llll in the form <b>(g <m>grace_symbolic_duration</m>)</b>.
+				In case the played note or chord is just a grace chord, the <m>symbolic_duration</m> becomes an llll in the form <b>[g <m>grace_symbolic_duration</m>]</b>.
 				The <m>MIDI_channels</m> is the one associated with the voice to which the note or chord belongs. The <m>onset</m> is in milliseconds,
 				The <m>chord_flag</m> is a bitfield summing values of 1 (if chord is locked), 2 (if chord is muted), 4 (if chord is solo). <br />
 				The playout syntax also concerns markers: they are output in the form: <b>marker <m>NAME_OR_NAMES</m> <m>ONSET</m> none</b>
@@ -1191,9 +1191,9 @@
 				the onset timepoint (if the marker is attached to the position inside the measure). <br />
 				The playout syntax also concerns tempi: they are output in the form <b>tempo <m>voice_number</m> <m>tempo</m> <m>TEMPO_LLLL</m></b>,
 				where <m>tempo</m> is the floating point tempo referred to the quarter note, and
-				<m>TEMPO_LLLL</m> is in the form <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b>.
+				<m>TEMPO_LLLL</m> is in the form <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b>.
 				If the tempo starts an accelerando/rallentando (i.e. interpolation is set to 1), then the <m>tempo</m> element is substituted by the llll
-				<b>(<m>tempo</m> <m>next_tempo</m> <m>interp_duration_ms</m>)</b>.  <br />
+				<b>[<m>tempo</m> <m>next_tempo</m> <m>interp_duration_ms</m>]</b>.  <br />
 				The playout syntax also concerns measures: if <m>playmeasures</m> is 1, at the beginning of each measure (for each voice), an llll is output
 				in the form <b>measure <m>voice_number</m> <m>measure_number</m> <m>MEASUREINFO_LLLL</m></b>.
 				If a tempo and/or a chord lie at the beginning of a measure, the order of output for the elements is: measure, tempo, chord (or notes). <br />
@@ -1204,81 +1204,81 @@
 				and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
 				Differently from absolute millisecond positions,
 				timepoints are represented by lllls, in one of the following syntaxes: <br />
-				- <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
-				For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
-				- <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
+				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
+				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
 				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
-				- <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number,
+				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+				For instance, <b>[2 4 1/4]</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
 				important if voices don't have the same tempi or time signatures.
 				<br />
-				A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
-				point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1.
+				A timepoint can also  be specified via a <b>[<m>float_measure_number</m>]</b>, representing the point in a floating
+				point position between two measures (referred to the first voice). For instance, <b>[4.2]</b> represents the point at the 20% of measure 4, voice 1.
 				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
-				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+				of the measure (1); for instance <b>[1 4 0.2]</b> represents the point after 20% of measure 4, voice 1.
 				<br />
 				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
-				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-				<b>(3 any 27/4)</b> does the same for voice 3.
+				For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>[3 any 27/4]</b> does the same for voice 3.
 				<br /> <br />
-				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>(<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>)</b>
+				For <o>bach.score</o>, the gathered syntax for any note is, in its simplest form <b>[<m>pitch_cents</m> <m>velocity</m> <m>tie?</m> <m>note_flag</m>]</b>
 				where <m>pitch_cents</m> is the pitch of the note in MIDI cents, the <m>velocity</m>
 				is a value from 1 to 127 corresponding to the note dynamic, the <m>tie?</m> value is 1 only if the note starts a tie and 0 otherwise, and
 				the <m>note_flag</m> is an optional bitfield summing values of 1 (if note is locked), 2 (if note is muted), 4 (if note is solo). <br />
 				In its most general form, each note can have different specifications and attributes, defining one of the possible extras:
 				graphics, pitch breakpoints, slots, names, articulations.
-				Each of these specifications is done in the form <b>(<m>specification_name</m> <m>SPECIFICATION CONTENT</m>)</b>, and must be put after the <m>tie?</m>
+				Each of these specifications is done in the form <b>[<m>specification_name</m> <m>SPECIFICATION CONTENT</m>]</b>, and must be put after the <m>tie?</m>
 				and before the <m>note_flag</m>. The order in which the specifications are listed is, on the other hand, unimportant. For instance, a note definition might have the form
-				<b>(7000. 127 1 (graphic 6900 1/2) (slots (1 (0. 112.5 0.) (1. 0. 0.))) (articulation stacc) (name foo) 0)</b>.
+				<b>[7000. 127 1 [graphic 6900 1/2] [slots [1 [0. 112.5 0.] [1. 0. 0.]]] [articulation stacc] [name foo] 0]</b>.
 				<br /> <br />
 				The <m>graphic</m> specification informs about the enharmonicity status of a note.
-				It is given by an llll in the form <b>(<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>)</b>,
+				It is given by an llll in the form <b>[<m>graphic</m> <m>displayed_midicents_ignoring_accidental</m> <m>displayed_accidental</m>]</b>,
 				where <m>displayed_midicents_ignoring_accidental</m> are the cents of the diatonic displayed note (ignoring any accidental that it might have),
 				and <m>displayed_accidental</m> is the displayed accidental in rational form (sharp corresponding to 1/2, flat to -1/2, quarterflat to -1/4 and so on).
-				For instance, a Db just above the middle C would have a graphic specification of <b>(graphics 6200 -1/2)</b>.
+				For instance, a Db just above the middle C would have a graphic specification of <b>[graphics 6200 -1/2]</b>.
 				<br /> <br />
 				The <m>breakpoint</m> specification informs about possible pitch breakpoints that a note duration line has. This is useful to represent glissandi.
-				It is given by an llll in the form <b>(<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...)</b>,
-				where each <m>BPT</m> is an llll in the form <b>(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>)</b>, where
+				It is given by an llll in the form <b>[<m>breakpoints</m> <m>BPT1</m> <m>BPT2</m> <m>BPT3</m>...]</b>,
+				where each <m>BPT</m> is an llll in the form <b>[<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m>]</b>, where
 				<m>relative_x_position</m> is a double precision number from 0 to 1 representing the point where the breakpoint is, 0 corresponding to
 				the notehead and 1 corresponding to the note tail; <m>delta_midicents</m> is the pitch difference (in midicents) between the breakpoint pitch and the base note pitch;
 				<m>slope</m> is a value from -1 to 1 corresponding to the curvature of the segment of duration line preceding the breakpoint (this implies that the slope of the first breakpoint
 				is always ignored), as for Max <o>curve</o> object (thus 0 being linear). <br />
 				Two breakpoints are always present: the first breakpoint corresponds always to (0 0 0), and can never
-				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>(1 <m>delta_midicents</m> <m>slope</m>)</b>.
+				be different than this; the last breakpoint corresponds always to the note tail, and must always be in the form <b>[1 <m>delta_midicents</m> <m>slope</m>]</b>.
 				If all breakpoints are trivial (thus if there are just two breakpoints: notehead and tail, and the notetail has <m>delta_midicents</m> = 0), the breakpoint
 				specification is never given as output. For instance, a note making a glissando upwards and then downwards of 200cents, linear while ascending and exponential in the descent,
-				will have the breakpoint specification of the form <b>(breakpoints (0 0 0) (0.5 200 0) (1 0 0.5))</b>. <br />
+				will have the breakpoint specification of the form <b>[breakpoints [0 0 0] [0.5 200 0] [1 0 0.5]]</b>. <br />
 				If the <m>breakpointshavevelocity</m> attribute is set to 1, pitch breakpoints also have velocities, thus the complete <m>BPT</m> specification is in the form
 				(<m>relative_x_position</m> <m>delta_midicents</m> <m>slope</m> <m>velocity</m>),
 				where <m>velocity</m> is a number from 1 to 127 corresponding to the pitch breakpoint dynamic. If different breapoints have different dynamics, the behavior of
 				the velocity between them is considered to be interpolatory, for instance by abstractions like <o>bach.dl2line</o> or <o>bach.dl2curve</o>.
 				<br /> <br />
 				The <m>slots</m> specification informs about the content of each one (or a subset) of the slots of a note.
-				It is given by an llll in the form <b>(slots <m>SLOT1</m> <m>SLOT2</m>...)</b>,
+				It is given by an llll in the form <b>[slots <m>SLOT1</m> <m>SLOT2</m>...]</b>,
 				where each one of the <m>SLOT</m> is an llll containing the information about one slot, in the form
-				<b>(<m>slot_number</m> <m>SLOT_CONTENT</m>)</b>. <br />
+				<b>[<m>slot_number</m> <m>SLOT_CONTENT</m>]</b>. <br />
 				The slot content syntax depends on the slot type. <br />
 				- For slot of type <m>function</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>slope</m>)</b>, where the first two elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>slope</m>]</b>, where the first two elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>int</m> or <m>float</m> the content must be in the simplest form: <b><m>number</m></b>. <br />
 				- For slot of type <m>intlist</m> or <m>floatlist</m> the content must be in the form: <b><m>number1</m> <m>number2</m>...</b>. <br />
 				- For slot of type <m>text</m> the content must be in the form: <b><m>text_as_an_unique_symbol</m></b>. <br />
-				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>(<m>LLLL</m>)</b>.  <br />
+				- For slot of type <m>llll</m> the content must be in the form: <b><m>WRAPPED_LLLL</m></b>, equivalent to <b>[<m>LLLL</m>]</b>.  <br />
 				- For slot of type <m>filelist</m> the content must be in the form: <b><m>filepath1</m> <m>filepath2</m> <m>filepath3</m>... <m>active_file_index</m></b>,
 				where <m>active_file_index</m> is the index of the file which will appear as clicked (active). <br />
 				- For slot of type <m>spat</m> the content must be in the form: <b><m>SPATPOINT1</m> <m>SPATPOINT2</m> <m>SPATPOINT3</m>...</b> where each
-				<m>SPATPOINT</m> is in turn in the form <b>(<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>)</b>,
+				<m>SPATPOINT</m> is in turn in the form <b>[<m>t</m> <m>radius</m> <m>angle</m> <m>interpolation_type</m>]</b>,
 				where the first element is the time position (by default, if the domain is temporal, this is between 0 and 1), then comes the radius
 				(distance of the sound from the listener) and the angle which the sound makes with respect to a reference vertical direction.
 				Last parameter is an interpolation type, which is 0 (default) for circular spatialization and 1 for linear spatialization. <br />
 				- For slot of type <m>color</m> the content must be in the form: <b><m>red</m> <m>green</m> <m>blue</m> <m>alpha</m></b>, where
 				the parameters are the components of the RGBA color representation (from 0. to 1.).  <br />
 				- For slot of type <m>3dfunction</m> the content must be in the form: <b><m>POINT1</m> <m>POINT2</m> <m>POINT3</m>...</b> where each
-				<m>POINT</m> is in turn in the form <b>(<m>x</m> <m>y</m> <m>z</m> <m>slope</m>)</b>, where the first three elements are the coordinates of the point, and the last one is
+				<m>POINT</m> is in turn in the form <b>[<m>x</m> <m>y</m> <m>z</m> <m>slope</m>]</b>, where the first three elements are the coordinates of the point, and the last one is
 				a slope parameter, from -1 to 1, corresponding to the curvature of the segment preceding the point. <br />
 				- For slot of type <m>filter</m>, when you need to input content you can use the syntax:
 				<b><m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m></b>, where <m>filtertype</m> is one of the following symbols:
@@ -1286,8 +1286,8 @@
 				You can equivalently use for input the syntax
 				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m></b>, where the parameters are the coefficients of a biquad filter, as for <o>biquad~</o>.
 				Finally, when data is output, the syntax is always a combination of the two:
-				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> (<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>)</b>. <br />
-				- For slot of type <m>dynfilter</m> the content must be in the form: <b>(<m>t1</m> <m>FILTER1</m>) (<m>t2</m> <m>FILTER2</m>) (<m>t3</m> <m>FILTER3</m>)...</b>, where
+				<b><m>a0</m> <m>a0</m> <m>a2</m> <m>b1</m> <m>b2</m> [<m>filtertype</m> <m>cutoff_frequency_Hz</m> <m>gain_dB</m> <m>Q_or_slope</m>]</b>. <br />
+				- For slot of type <m>dynfilter</m> the content must be in the form: <b>[<m>t1</m> <m>FILTER1</m>] [<m>t2</m> <m>FILTER2</m>] [<m>t3</m> <m>FILTER3</m>]...</b>, where
 				each <m>FILTER</m> is in the form defined for slot of type <m>filter</m>, just above. <br />
 				- For slot of type <m>articulations</m> the content must be in the form: <b><m>art1</m> <m>art2</m>...</b>, i.e. a sequence of
 				articulations introduced as symbols.
@@ -1310,21 +1310,21 @@
 				As for articulations, not all fonts support all symbols.
 				Notehead symbols can also be retrieved by hovering on the corresponding element in the slot window. <br />
 				- For slot of type <m>togglematrix</m>, <m>intmatrix</m> or <m>floatmatrix</m> the content must be in the form: <b><m>WRAPPED_MATRIX_AS_LLLL</m></b>,
-				equivalent to <b>(<m>ROW1</m> <m>ROW2</m>...)</b>, where each row is a wrapped llll.
+				equivalent to <b>[<m>ROW1</m> <m>ROW2</m>...]</b>, where each row is a wrapped llll.
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
 				The <m>name</m> specification informs us about a possible name (or possibles names) of a notation item.
-				It is simply given by an llll in the form <b>(name <m>NAME_OR_LLLL_OF_NAMES</m>)</b>,
+				It is simply given by an llll in the form <b>[name <m>NAME_OR_LLLL_OF_NAMES</m>]</b>,
 				where <m>NAME_OR_LLLL_OF_NAMES</m> is either a single of symbols or integer, or an llll corresponding to the name(s) of the notation item.
-				For instance, an item named as "john george" will correspond to the llll <b>(name john george)</b>.
-				An item named "(high 1) (low 2)" will correspond to the llll <b>(name (high 1) (low 2))</b>.
+				For instance, an item named as "john george" will correspond to the llll <b>[name john george]</b>.
+				An item named "(high 1) (low 2)" will correspond to the llll <b>[name [high 1] [low 2]]</b>.
 				If an element has no names, the <m>name</m> specification is never given as output.
 				<br /> <br />
 				The <m>articulation</m> specification informs us about an articulation assigned either to a chord or to a note.
-				It is simply given by an llll in the form <b>(articulation <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m>)</b>,
+				It is simply given by an llll in the form <b>[articulation <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m>]</b>,
 				where <m>ARTICULATION_OR_LIST_OF_ARTICULATIONS</m> is a list of symbols idenfitying articulations to be added to the notation item.
 				The symbols of the list are allowed to be the following ones: "staccato" or "stacc", "staccatissimo" or "staccmo",
 				"fermata" or "ferm", "portato" or "por", "accent" or "acc", "accentstaccato" or "accstacc", "accentportato" or "accport",
@@ -1338,37 +1338,37 @@
 				<br /> <br />
 				Measureinfo is the information about time signature and tempo, plus some other optional specifications concerning the measure itself.
 				This can be a single <b><m>TIME_SIGNATURE</m> <m>TEMPO</m></b> valid for all voices and all measures, or a llll containing for each measure and each voice
-				an llll in the form <b>(<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
+				an llll in the form <b>[<m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
 				All elements except for the <m>TIME_SIGNATURE</m> are optional. <br /> <br />
 				The <m>TIME_SIGNATURE</m> is an llll containing the measure time signature, in one of the following forms: <br />
-				- <b>(<m>numerator</m> <m>denominator</m>)</b> for standard time signatures. For instance, <b>(4 4)</b> corresponds to a 4/4 time signature. <br />
-				- <b>((<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...) <m>denominator</m>)</b> for time
-				signatures where the numerator is a sum of numbers.For instance <b>((3 2 3) 8)</b>
+				- <b>[<m>numerator</m> <m>denominator</m>]</b> for standard time signatures. For instance, <b>[4 4]</b> corresponds to a 4/4 time signature. <br />
+				- <b>[[<m>numerator1</m> <m>numerator2</m> <m>numerator3</m>...] <m>denominator</m>]</b> for time
+				signatures where the numerator is a sum of numbers.For instance <b>[[3 2 3] 8]</b>
 				corresponds to a (3+2+3)/8 time signature. <br /> <br />
 				The <m>TEMPO_OR_LIST_OF_TEMPI</m> represent in its simplest form, a single tempo. <br />
 				A tempo, defined for a measure of a <o>bach.score</o> has one of the following syntaxes: <br />
-				- <b>(<m>tempo_value</m>)</b> will assign a quarter tempo at the beginning of the measure. For instance <b>(60)</b> will set a 1/4 = 60 tempo. <br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m>)</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
-				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>(3/8 40)</b> will set a tempo of a dotted quarter = 40.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>)</b> will assign the tempo value to the specified symbolic unit and will put the
-				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>(3/8 40 1/4)</b> will set a tempo of a dotted quarter = 40
+				- <b>[<m>tempo_value</m>]</b> will assign a quarter tempo at the beginning of the measure. For instance <b>[60]</b> will set a 1/4 = 60 tempo. <br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m>]</b> will assign the tempo value to the specified symbolic unit (at the beginning of the measure).
+				The <m>tempo_figure</m> is indeed the tempo symbolic unit: for instance <b>[3/8 40]</b> will set a tempo of a dotted quarter = 40.<br />
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m>]</b> will assign the tempo value to the specified symbolic unit and will put the
+				tempo at the point inside the measure specified by the <m>tempo_sym_onset</m>. For instance <b>[3/8 40 1/4]</b> will set a tempo of a dotted quarter = 40
 				but not at the beginning of the measure, rather after 1/4 from the beginning.<br />
-				- <b>(<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>)</b> will do exactly as the previous case
+				- <b>[<m>tempo_figure</m> <m>tempo_value</m> <m>tempo_sym_onset</m> <m>interpolation_to_next?</m>]</b> will do exactly as the previous case
 				but if <m>interpolation_to_next?</m> is non-zero it will also toggle the interpolation from this tempo to the following one,
-				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>(3/8 40 1/4 1)</b>
+				yielding an accelerando or rallentando (depending if the next tempo is faster or slower). For instance <b>[3/8 40 1/4 1]</b>
 				will set a tempo of a dotted quarter = 40, after 1/4 from the beginning, and will toggle the tempo interpolation to next tempo.<br />
 				If more than one tempo need to be assigned to a given measure, one needs to use the general syntax for <m>TEMPO_OR_LIST_OF_TEMPI</m>, which is
-				<b>(<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...)</b>, where each tempo must be in one the forms explained above. As an example, consider
-				<b>((60) (1/4 70 1/16) (1/8 60 1/8 1) (1/8 80 3/8))</b>, where four tempi have been defined. The order of tempi is irrelevant,
+				<b>[<m>TEMPO1</m> <m>TEMPO2</m> <m>TEMPO3</m>...]</b>, where each tempo must be in one the forms explained above. As an example, consider
+				<b>[[60] [1/4 70 1/16] [1/8 60 1/8 1] [1/8 80 3/8]]</b>, where four tempi have been defined. The order of tempi is irrelevant,
 				only their onset is accounted for. <br />
 				Also, one might add an integer number at the beginning of each measure llll to indicate that the given measureinfo reference is valid for a
-				certain number of measures, such as <b>(<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...)</b>.
-				For instance <b>(5 (4 4) ((80) (1/4 160 1/2)))</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
+				certain number of measures, such as <b>[<m>how_many_measures</m> <m>TIME_SIGNATURE</m> <m>TEMPO_OR_LIST_OF_TEMPI</m> <m>SPECIFICATION1</m> <m>SPECIFICATION2</m>...]</b>.
+				For instance <b>[5 [4 4] [[80] [1/4 160 1/2]]]</b> creates 5 measures of 4/4, each one starting with quarter = 80, and then each one accelerating
 				until 1/4 = 160 exactly at half of the measure. For instance
-				<b> (((4 4) (1/8 60)) ((2 4) (1/4 50 1/4 1)) (4 (4 4)) (nil (180)))</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
+				<b> [[[4 4] [1/8 60]] [[2 4] [1/4 50 1/4 1]] [4 [4 4]] [nil [180]]]</b> means that we start a bar 1 in 4/4 and octave note = 60, then we
 				pass at 2/4 and quarter = 50 after 1/4 of measure 2, and at that moment, an accelerando starts. The accelerando lasts during 4 4/4-measures,
 				and then ends at the following measure on a new tempo of quarter = 180. <br /> <br />
-				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>(<m>parameter_name</m> <m>parameter_value</m>)</b>.
+				Each <m>SPECIFICATION</m> is an optional llll representing a given measure parameter, in the form <b>[<m>parameter_name</m> <m>parameter_value</m>]</b>.
 				The <m>parameter_name</m> is a symbol identifying the parameter. The complete list of parameters symbols and their corresponding
 				values is the following one: <br />
 				- <b>width</b>: assigns a fixed width to a measure. It expects as value a fixed width in pixels that the measure will have (referred to the default
@@ -1383,16 +1383,16 @@
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
 				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
-				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>(shownumber -4)</b> will
+				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
 				assigned measure number (default). <br />
 				- <b>boxes</b>: assign custom beaming boxes. It expects custom beaming boxes for the measure, as a plain list of rational numbers.
 				Custom boxing allows you to handle beam grouping inside the measure differently than beat-wise.
 				Each number of the expected list is the symbolic width of each beaming box inside the measure.
 				If the given boxes don't fill the whole measure, the last one is padded. For instance, in a 4/4 measure,
-				<b>(boxes 1/8)</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
-				This is equivalent to <b>(boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8)</b>.
-				Analogously, <b>(boxes 1/2 1/8 1/4 1/8)</b> is a more exotic boxing for the same time signature. <br />
+				<b>[boxes 1/8]</b> will simply use eight 1/8-wide boxes to beam elements inside the measure, instead of the default 1/4 wide ones (beats).
+				This is equivalent to <b>[boxes 1/8 1/8 1/8 1/8 1/8 1/8 1/8 1/8]</b>.
+				Analogously, <b>[boxes 1/2 1/8 1/4 1/8]</b> is a more exotic boxing for the same time signature. <br />
 				As a final example, (((4 4) (60) (widthfactor 0.5) (barline h) (shownumber off))) for a given measure sets a 4/4 time signature, a quarter = 60 tempo,
 				compresses the measure by a factor of two, hides its final barline and its number.
 				<br /> <br />

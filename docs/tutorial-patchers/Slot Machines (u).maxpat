@@ -41,7 +41,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (5 (name routing) (type floatmatrix) (key m) (range -120 10) (width 160) (slope -0.5) (representation ((fshift transp degrade OUT) (sfiles fshift degrade spat)))))",
+					"text" : "[slotinfo [5 [name routing] [type floatmatrix] [key m] [range -120 10] [width 160] [slope -0.5] [representation [[fshift transp degrade OUT] [sfiles fshift degrade spat]]]]]",
 					"linecount" : 2,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -356,7 +356,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (t)",
+					"text" : "Slot Machines [t]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 460.0, 140.0, 18.0 ],
@@ -455,7 +455,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (v)",
+					"text" : "Slot Machines [v]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 575.0, 460.0, 140.0, 18.0 ],

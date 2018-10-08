@@ -84,7 +84,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 106.5, 109.5, 501.5, 80.0 ],
-					"text" : "The answer depends on the object. For bach.roll it is: domain <start_ms> <end_ms>\nFor bach.score it is: domain <start_ms> <end_ms> <VOICE1> <VOICE2> ... \nwhere each <VOICE> is an llll in the form: ((<start_meas> <pos_in_meas>) (<end_meas> <pos_in_meas>) <symbolic_duration_of_domain>). \nFor bach.slot it is: domain <slot_number> <start> <end>",
+					"text" : "The answer depends on the object. For bach.roll it is: domain <start_ms> <end_ms>\nFor bach.score it is: domain <start_ms> <end_ms> <VOICE1> <VOICE2> ... \nwhere each <VOICE> is an llll in the form: [[<start_meas> <pos_in_meas>] [<end_meas> <pos_in_meas>] <symbolic_duration_of_domain>]. \nFor bach.slot it is: domain <slot_number> <start> <end>",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

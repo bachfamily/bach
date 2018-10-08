@@ -27,7 +27,7 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "( ? ( ( ( 2 4 ) ( ( 1 ( 1 ( 1 ( 3 1 ) ) ) ) ( 1 ( 1 ) ) ) ) ) )",
+					"text" : "[ ? [ [ [ 2 4 ] [ [ 1 [ 1 [ 1 [ 3 1 ] ] ] ] [ 1 [ 1 ] ] ] ] ] ]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 200.0, 326.0, 269.0, 18.0 ],
@@ -94,7 +94,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "( ( 1 ( 1 ( 1 ( 3 1 ) ) ) ) ( 1 ( 1 ) ) )",
+					"text" : "[ [ 1 [ 1 [ 1 [ 3 1 ] ] ] ] [ 1 [ 1 ] ] ]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 234.0, 131.0, 180.0, 18.0 ],
@@ -222,7 +222,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1/8 (3/32 1/32)) (1/4)",
+					"text" : "[1/8 [3/32 1/32]] [1/4]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 372.0, 84.0, 125.0, 18.0 ],
@@ -485,7 +485,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "The World Outside (j)",
+					"text" : "The World Outside [j]",
 					"numinlets" : 2,
 					"fontname" : "Arial",
 					"patching_rect" : [ 5.0, 508.0, 140.0, 18.0 ],

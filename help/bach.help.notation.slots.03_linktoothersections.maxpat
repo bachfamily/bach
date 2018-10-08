@@ -79,7 +79,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 312.0, 290.5, 127.0, 23.0 ],
 					"style" : "",
-					"text" : "addslot (3 10 20 30)"
+					"text" : "addslot [3 10 20 30]"
 				}
 
 			}

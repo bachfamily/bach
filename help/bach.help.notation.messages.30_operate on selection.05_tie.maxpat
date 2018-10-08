@@ -79,7 +79,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 73.25, 148.0, 140.0, 38.0 ],
 					"style" : "",
-					"text" : "clearselection, sel measure (2 2), tie 3"
+					"text" : "clearselection, sel measure [2 2], tie 3"
 				}
 
 			}

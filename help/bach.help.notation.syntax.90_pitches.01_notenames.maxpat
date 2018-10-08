@@ -65,7 +65,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 152.333344, 450.0, 23.0 ],
 					"style" : "",
-					"text" : "addmeasures ((((4 4) (60)) (1/2 (Db5 100 0)) (1/2 (E#5 100 0) (G#4 100 0))))"
+					"text" : "addmeasures [[[[4 4] [60]] [1/2 [Db5 100 0]] [1/2 [E#5 100 0] [G#4 100 0]]]]"
 				}
 
 			}
@@ -129,7 +129,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 286.333344, 258.0, 23.0 ],
 					"style" : "",
-					"text" : "( C#5 D5 E5 6500 G5 A5 Bb5 7200 ), bang"
+					"text" : "[ C#5 D5 E5 6500 G5 A5 Bb5 7200 ], bang"
 				}
 
 			}

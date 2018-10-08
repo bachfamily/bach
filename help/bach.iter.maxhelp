@@ -233,7 +233,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 20.101562, 322.0, 97.0, 19.0 ],
-									"text" : "(1 2) (3 ((4))) ()"
+									"text" : "[1 2] [3 [[4]]] []"
 								}
 
 							}
@@ -300,7 +300,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 20.101562, 122.0, 97.0, 19.0 ],
-									"text" : "(1 2) (3 ((4))) ()"
+									"text" : "[1 2] [3 [[4]]] []"
 								}
 
 							}
@@ -595,7 +595,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 156.0, 347.0, 107.0, 21.0 ],
-									"text" : "bach.pick (1 1 1)"
+									"text" : "bach.pick [1 1 1]"
 								}
 
 							}
@@ -653,7 +653,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 213.0, 280.0, 38.0 ],
-									"text" : "(jack of all trades) (james and the giant peach) (jill and (jack the ripper))"
+									"text" : "[jack of all trades] [james and the giant peach] [jill and [jack the ripper]]"
 								}
 
 							}
@@ -1042,7 +1042,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 33.0, 168.0, 167.050781, 33.0 ],
-									"text" : "(1 2 3) (a b c) (d e f)"
+									"text" : "[1 2 3] [a b c] [d e f]"
 								}
 
 							}
@@ -1295,7 +1295,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 217.101562, 338.0, 72.0, 19.0 ],
-									"text" : "() ((a)) () ()"
+									"text" : "[] [[a]] [] []"
 								}
 
 							}
@@ -1439,7 +1439,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 178.101562, 115.0, 97.0, 19.0 ],
-									"text" : "(1 2) (3 ((4))) ()"
+									"text" : "[1 2] [3 [[4]]] []"
 								}
 
 							}
@@ -1845,7 +1845,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 495.5, 368.0, 97.0, 19.0 ],
-									"text" : "(1 2) (3 ((4))) ()"
+									"text" : "[1 2] [3 [[4]]] []"
 								}
 
 							}
@@ -2257,7 +2257,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 76.0, 695.0, 36.0 ],
-									"text" : "We call a \"spike\" a sequence of parentheses, two of which are opposite nothing between them: e.g. () or ((() or ))(( .\nThe \"spikemode\" attribute handles the way spikes are output from the right outlet."
+									"text" : "We call a \"spike\" a sequence of parentheses, two of which are opposite nothing between them: e.g. [] or [[[] or ]][[ .\nThe \"spikemode\" attribute handles the way spikes are output from the right outlet."
 								}
 
 							}
@@ -2338,7 +2338,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 51.0, 163.0, 133.0, 66.0 ],
-									"text" : "(a b) (c d) (() e) (())"
+									"text" : "[a b] [c d] [[] e] [[]]"
 								}
 
 							}
@@ -2621,7 +2621,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 618.333313, 280.0, 60.0, 35.0 ],
-									"text" : "1 (2 3 (4 5)) 7"
+									"text" : "1 [2 3 [4 5]] 7"
 								}
 
 							}
@@ -4044,7 +4044,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 263.666656, 169.0, 96.0, 39.0 ],
-									"text" : "w x (y z)"
+									"text" : "w x [y z]"
 								}
 
 							}
@@ -4085,7 +4085,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 146.333328, 169.0, 83.0, 39.0 ],
-									"text" : "1 2 (3 4) 5"
+									"text" : "1 2 [3 4] 5"
 								}
 
 							}
@@ -4231,7 +4231,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 29.0, 169.0, 88.0, 39.0 ],
-									"text" : "a b (c d)"
+									"text" : "a b [c d]"
 								}
 
 							}
@@ -5103,7 +5103,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 51.0, 169.5, 170.0, 57.0 ],
-									"text" : "a b c (d e f (g) h i (j k (l x y))) m n (o p (q r s t u v w))"
+									"text" : "a b c [d e f [g] h i [j k [l x y]]] m n [o p [q r s t u v w]]"
 								}
 
 							}

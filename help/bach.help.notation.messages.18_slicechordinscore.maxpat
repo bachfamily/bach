@@ -125,7 +125,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 31.0, 108.5, 141.0, 23.0 ],
 					"style" : "",
-					"text" : "slice (1 13/16) (3 1/12)"
+					"text" : "slice [1 13/16] [3 1/12]"
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 75.5, 78.0, 23.0 ],
 					"style" : "",
-					"text" : "slice (1 3/8)"
+					"text" : "slice [1 3/8]"
 				}
 
 			}

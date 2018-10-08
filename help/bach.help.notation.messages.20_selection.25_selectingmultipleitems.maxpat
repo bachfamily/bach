@@ -64,7 +64,7 @@
 					"patching_rect" : [ 60.0, 278.833344, 130.0, 23.0 ],
 					"presentation_rect" : [ 140.5, 275.333344, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "sel marker (1) (3) (4)"
+					"text" : "sel marker [1] [3] [4]"
 				}
 
 			}
@@ -111,7 +111,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 94.5, 237.333344, 164.0, 23.0 ],
 					"style" : "",
-					"text" : "sel note (-1 1 2 2) (1 1 1 1)"
+					"text" : "sel note [-1 1 2 2] [1 1 1 1]"
 				}
 
 			}
@@ -126,7 +126,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 163.0, 175.333344, 142.0, 23.0 ],
 					"style" : "",
-					"text" : "sel measure (1 1) (2 2)"
+					"text" : "sel measure [1 1] [2 2]"
 				}
 
 			}
@@ -189,7 +189,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 26.5, 135.5, 254.0, 23.0 ],
 					"style" : "",
-					"text" : "select chord (1 -1) (1 -2) (1 -3) (1 -4) (1 -5)"
+					"text" : "select chord [1 -1] [1 -2] [1 -3] [1 -4] [1 -5]"
 				}
 
 			}
@@ -220,7 +220,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 95.5, 138.0, 23.0 ],
 					"style" : "",
-					"text" : "sel note (2 4 1) (1 2 1)"
+					"text" : "sel note [2 4 1] [1 2 1]"
 				}
 
 			}

@@ -110,7 +110,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 306.0, 236.5, 185.0, 23.0 ],
 					"style" : "",
-					"text" : "subsel (1 2 0) (1 2 3/8) nil nil 1"
+					"text" : "subsel [1 2 0] [1 2 3/8] nil nil 1"
 				}
 
 			}

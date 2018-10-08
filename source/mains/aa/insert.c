@@ -87,7 +87,7 @@ int T_EXPORT main()
 	// The syntax depends on the value of the <m>multi</m> attribute:
 	// if it is 0, a single address is expected; if it is 1, an llll whose sublists are separate addresses, at which separate insertions have to be performed, is expected.
 	// If single elements at the root level are encountered, they are treated as single-element sublist.
-	// This means that in the multiple insertions case the lllls <b>(1) (2 3) (4) (5)</b> and <b>1 (2 3) 4 (5)</b> are considered the same,
+	// This means that in the multiple insertions case the lllls <b>[1] [2 3] [4] [5]</b> and <b>1 [2 3] 4 [5]</b> are considered the same,
 	// and in both cases four insertions are performed.
 	// As a general rule, for each insertion the first inserted element will have the specified address.
 	// In the case of multiple insertions, these leads to some additional complexity managed through the <m>mode</m> attribute.
@@ -103,7 +103,7 @@ int T_EXPORT main()
 	// if it is 0, a single sequence of elements is expected;
 	// if it is 1, an llll whose sublists are separate sequence of elements, each to be inserted at the corresponding given address, is expected.
 	// If single elements at the root level are encountered, they are treated as single-element sublist.
-	// This means that in the multiple insertions case the lllls <b>(a) (b c) (d) (e)</b> and <b>a (b c) d (e)</b> are considered the same.
+	// This means that in the multiple insertions case the lllls <b>[a] [b c] [d] [e]</b> and <b>a [b c] d [e]</b> are considered the same.
 	// If less sequences to insert than addresses are provided, the last sequence is repeated over and over. 
 	// This is especially useful to insert the same sequence at many addresses, as providing the sequence only once is enough.
 	// If more sequences than addresses are provided, the exceeding sequences are ignored.
@@ -139,8 +139,8 @@ int T_EXPORT main()
 	// @description
 	// The <m>mode</m> attribute controls the detailed meaning of the addresses for multiple insertions.
 	// When set to 0 (default), the addresses refer to positions in the original llll.
-	// This means, e.g., that if the llll <b>(a) (b)</b> is received in the third inlet (sequences to insert),
-	// the llll <b>(2) (3)</b> is received in the second inlet (addresses),
+	// This means, e.g., that if the llll <b>[a] [b]</b> is received in the third inlet (sequences to insert),
+	// the llll <b>[2] [3]</b> is received in the second inlet (addresses),
 	// and the llll <b>10 20 30</b> is received in the left inlet (llll to perform the insertion upon),
 	// the result of the double insertion will be <b>10 a 20 b 30</b>, that is the addresses are computed independently
 	// with respect to the original llll, and the insertions are performed "right before" the specified original addresses.

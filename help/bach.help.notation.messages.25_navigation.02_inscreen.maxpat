@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 35.0, 154.385803, 182.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (1 5 0) @inscreen 1"
+					"text" : "goto time [1 5 0] @inscreen 1"
 				}
 
 			}
@@ -135,7 +135,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 104.385803, 106.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (1 5 0)"
+					"text" : "goto time [1 5 0]"
 				}
 
 			}

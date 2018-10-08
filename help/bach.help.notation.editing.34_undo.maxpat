@@ -68,7 +68,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 152.0, 345.0, 210.0, 19.0 ],
-					"text" : "addchord 1 (1000 (6000 100 100))"
+					"text" : "addchord 1 [1000 [6000 100 100]]"
 				}
 
 			}

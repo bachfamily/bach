@@ -64,7 +64,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 343.0, 364.0, 171.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (3 (background 1)))"
+					"text" : "[slotinfo [3 [background 1]]]"
 				}
 
 			}

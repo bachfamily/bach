@@ -960,7 +960,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 43.916672, 157.0, 299.0, 23.0 ],
 					"style" : "",
-					"text" : "addchord 1 ( $1 ( $2 100 127 ) ( name index $3 ) )"
+					"text" : "addchord 1 [ $1 [ $2 100 127 ] [ name index $3 ] ]"
 				}
 
 			}

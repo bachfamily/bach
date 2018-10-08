@@ -98,7 +98,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3/4) (4 5.21 6) (0 1.2 2/3)",
+					"text" : "[1 2 3/4] [4 5.21 6] [0 1.2 2/3]",
 					"linecount" : 3,
 					"id" : "obj-28",
 					"numinlets" : 2,
@@ -233,7 +233,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3/4) (4 5.21 6) (0 1.2 2/3)",
+					"text" : "[1 2 3/4] [4 5.21 6] [0 1.2 2/3]",
 					"linecount" : 3,
 					"id" : "obj-55",
 					"numinlets" : 2,
@@ -346,7 +346,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3/4) (4 5.21 6) (0 1.2 2/3)",
+					"text" : "[1 2 3/4] [4 5.21 6] [0 1.2 2/3]",
 					"linecount" : 3,
 					"id" : "obj-39",
 					"numinlets" : 2,
@@ -505,7 +505,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1/4 2 0) (4 5.9 6)",
+					"text" : "[1/4 2 0] [4 5.9 6]",
 					"linecount" : 2,
 					"id" : "obj-129",
 					"numinlets" : 2,
@@ -520,7 +520,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3) (4 5 6)",
+					"text" : "[1 2 3] [4 5 6]",
 					"linecount" : 2,
 					"id" : "obj-130",
 					"numinlets" : 2,
@@ -581,7 +581,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1/4 2 0) (4 5.9 6)",
+					"text" : "[1/4 2 0] [4 5.9 6]",
 					"linecount" : 2,
 					"id" : "obj-135",
 					"numinlets" : 2,
@@ -596,7 +596,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3) (4 5 6)",
+					"text" : "[1 2 3] [4 5 6]",
 					"linecount" : 2,
 					"id" : "obj-136",
 					"numinlets" : 2,
@@ -686,7 +686,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1/4 2 0) (4 5.9 6)",
+					"text" : "[1/4 2 0] [4 5.9 6]",
 					"linecount" : 2,
 					"id" : "obj-124",
 					"numinlets" : 2,
@@ -701,7 +701,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3) (4 5 6)",
+					"text" : "[1 2 3] [4 5 6]",
 					"linecount" : 2,
 					"id" : "obj-125",
 					"numinlets" : 2,
@@ -776,7 +776,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1/4 2 0) (4 5.9 6)",
+					"text" : "[1/4 2 0] [4 5.9 6]",
 					"linecount" : 2,
 					"id" : "obj-116",
 					"numinlets" : 2,
@@ -791,7 +791,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 2 3) (4 5 6)",
+					"text" : "[1 2 3] [4 5 6]",
 					"linecount" : 2,
 					"id" : "obj-115",
 					"numinlets" : 2,
@@ -966,7 +966,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Into The Matrix (c)",
+					"text" : "Into The Matrix [c]",
 					"id" : "obj-7",
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -1065,7 +1065,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Into The Matrix (e)",
+					"text" : "Into The Matrix [e]",
 					"id" : "obj-16",
 					"numinlets" : 2,
 					"numoutlets" : 1,

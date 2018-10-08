@@ -793,7 +793,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 221.5, 312.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (temporalmode milliseconds) (extend 1)))"
+					"text" : "[slotinfo [1 [temporalmode milliseconds] [extend 1]]]"
 				}
 
 			}

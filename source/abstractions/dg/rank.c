@@ -26,7 +26,7 @@
 	@discussion
 	The determinant of the matrix is computed by Gaussian elimination and then 
 	by counting the number of pivots. By convention the rank of <b>null</b> is -1 and
-	the rank of <b>()</b> is 0. <br /> <br />
+	the rank of <b>[]</b> is 0. <br /> <br />
 	@copy BACH_DOC_MATRIXCALCULUS_MATRIX
 	
 	@category

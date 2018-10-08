@@ -47,7 +47,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 426.0, 329.5, 155.0, 25.0 ],
-					"presentation_rect" : [ 432.25, 321.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "This is an existing file!"
 				}
@@ -64,7 +63,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 503.0, 424.0, 76.0, 25.0 ],
-					"presentation_rect" : [ 528.25, 427.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Works!"
 				}
@@ -82,7 +80,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 369.25, 424.0, 76.0, 40.0 ],
-					"presentation_rect" : [ 402.25, 423.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "Doesn't work"
 				}
@@ -97,7 +94,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 323.0, 393.0, 89.0, 23.0 ],
-					"presentation_rect" : [ 362.0, 400.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "prepend read"
 				}
@@ -112,7 +108,6 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "", "bang", "int" ],
 					"patching_rect" : [ 323.0, 424.0, 42.0, 23.0 ],
-					"presentation_rect" : [ 362.0, 431.5, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "text"
 				}
@@ -146,7 +141,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 323.0, 329.5, 96.0, 23.0 ],
-					"presentation_rect" : [ 362.0, 337.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "`HenryIV(1).txt"
 				}

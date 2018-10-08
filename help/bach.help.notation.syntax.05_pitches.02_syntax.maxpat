@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 7,
 			"minor" : 3,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -45,7 +45,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 347.0, 408.0, 61.0, 23.0 ],
-					"presentation_rect" : [ 351.0, 405.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "E3+5/6t"
 				}
@@ -61,7 +60,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 347.0, 344.0, 33.0, 23.0 ],
-					"presentation_rect" : [ 348.0, 344.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "F#0"
 				}
@@ -77,6 +75,10 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 347.0, 374.0, 212.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
 					"style" : "",
 					"text" : "bach.expr ($x1*7 // 2) % C1 @out t"
 				}
@@ -93,7 +95,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 346.0, 338.0, 21.0 ],
-					"presentation_rect" : [ 6.0, 339.0, 0.0, 0.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "More complex arithmetics is also possible, for instance:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -110,7 +111,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 476.0, 242.0, 57.0, 23.0 ],
-					"presentation_rect" : [ 476.0, 231.0, 0.0, 0.0 ],
 					"style" : "",
 					"text" : "E2+1/3t"
 				}
@@ -172,7 +172,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 246.0, 402.0, 65.0 ],
-					"presentation_rect" : [ 3.0, 235.0, 0.0, 0.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "Pitch can be added and substracted. Notice that the lowest pitches also operate as intervals. For instance, to transpose up a major third, one might simply add the pitch E0; to transpose up an augmented octave, one can add the pitch C#1, and so on.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -265,8 +264,6 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-17", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-14", 0 ]
 				}
 
@@ -274,8 +271,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-14", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-16", 0 ]
 				}
 
@@ -283,8 +278,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-6", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-2", 0 ]
 				}
 
@@ -292,8 +285,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-4", 0 ]
 				}
 
@@ -301,8 +292,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-7", 0 ]
 				}
 
@@ -311,6 +300,7 @@
 		"dependency_cache" : [ 			{
 				"name" : "bach.+.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}

@@ -64,7 +64,7 @@
 					"patching_rect" : [ 145.0, 160.0, 130.0, 23.0 ],
 					"presentation_rect" : [ 67.380936, 181.0, 0.0, 0.0 ],
 					"style" : "",
-					"text" : "timepoint (1 any 6/4)"
+					"text" : "timepoint [1 any 6/4]"
 				}
 
 			}
@@ -97,7 +97,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 321.5, 213.0, 151.0, 23.0 ],
 					"style" : "",
-					"text" : "timepoint (2 1 1/8) interp"
+					"text" : "timepoint [2 1 1/8] interp"
 				}
 
 			}
@@ -112,7 +112,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 321.5, 185.0, 144.0, 23.0 ],
 					"style" : "",
-					"text" : "timepoint (2 1 1/8) right"
+					"text" : "timepoint [2 1 1/8] right"
 				}
 
 			}
@@ -144,7 +144,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 145.0, 213.0, 136.0, 23.0 ],
 					"style" : "",
-					"text" : "timepoint (2 1 1/8) left"
+					"text" : "timepoint [2 1 1/8] left"
 				}
 
 			}
@@ -159,7 +159,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 145.0, 185.0, 162.0, 23.0 ],
 					"style" : "",
-					"text" : "timepoint (2 1 1/8) nearest"
+					"text" : "timepoint [2 1 1/8] nearest"
 				}
 
 			}
@@ -204,7 +204,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 124.0, 136.0, 115.0, 23.0 ],
 					"style" : "",
-					"text" : "timepoint (2 1 1/8)"
+					"text" : "timepoint [2 1 1/8]"
 				}
 
 			}
@@ -237,7 +237,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 96.0, 111.0, 104.0, 23.0 ],
 					"style" : "",
-					"text" : "timepoint (1 1/8)"
+					"text" : "timepoint [1 1/8]"
 				}
 
 			}
