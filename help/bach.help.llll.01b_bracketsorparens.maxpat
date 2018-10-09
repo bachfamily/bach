@@ -40,15 +40,63 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
+					"id" : "obj-17",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 170.0, 439.0, 274.0, 23.0 ],
+					"style" : "",
+					"text" : "[ [ 2.6 0.515501 ] 6.76 ] -0.856889"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontsize" : 13.0,
+					"format" : 6,
+					"id" : "obj-9",
+					"maxclass" : "flonum",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 174.0, 375.0, 54.0, 23.0 ],
+					"style" : ""
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "[[$x1 sin($x1)] pow($x1,2)] cos($x1) ",
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-7",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 174.0, 403.0, 321.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
+					"text" : "bach.eval [[$x1 sin($x1)] pow($x1\\,2)] cos($x1) @out t"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
 					"id" : "obj-6",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 287.0, 542.0, 21.0 ],
-					"presentation_rect" : [ 6.0, 271.0, 0.0, 0.0 ],
+					"patching_rect" : [ 6.0, 263.0, 542.0, 21.0 ],
 					"style" : "",
-					"text" : "no compatibility whatsoever is lost",
-					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
+					"text" : "no compatibility whatsoever is lost"
 				}
 
 			}
@@ -63,8 +111,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 183.0, 70.0, 160.0, 40.0 ],
-					"presentation_rect" : [ 161.5, 171.5, 0.0, 0.0 ],
+					"patching_rect" : [ 183.0, 61.0, 160.0, 40.0 ],
 					"style" : "",
 					"text" : "These are the same thing"
 				}
@@ -81,7 +128,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 183.0, 70.0, 160.0, 40.0 ],
+					"patching_rect" : [ 183.0, 61.0, 160.0, 40.0 ],
 					"style" : "",
 					"text" : "These are the same thing"
 				}
@@ -96,10 +143,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 228.0, 542.0, 166.0 ],
-					"presentation_rect" : [ 3.0, 182.0, 0.0, 0.0 ],
+					"patching_rect" : [ 6.0, 204.0, 542.0, 166.0 ],
 					"style" : "",
-					"text" : "However, square brackets are by default used as output. \n\nUntil bach 0.8.0.1, the default for parentheses was the normal parens (). \nWe have decided now to move to square brackets [], having taken all precautions: \n\n\nnormal parens are still very well accepted by any object.\nHowever we have migrated to using square brackets by default for some important reasons, most notably a full compatibility with the new coding environment of [bach.eval], where standard parentheses are used in function application, such as sin($x1). This choice, in turns, ensures the compatibility with the expr/bach.expr syntax.",
+					"text" : "However, square brackets are by default used as output. \n\nUntil bach 0.8.0.1, the default for parentheses was the normal parens (). \nWe have decided now to move to square brackets [], having taken all precautions: \n\n\nRounded parens are still very well accepted by any object.\nHowever we have migrated to using square brackets by default for some important reasons, most notably a full compatibility with the new coding environment of [bach.eval], where standard parentheses are used in function application, such as sin($x1). This choice, in turns, ensures the compatibility with the expr/bach.expr syntax.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -112,8 +158,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 291.0, 185.0, 69.0, 23.0 ],
-					"presentation_rect" : [ 291.0, 144.0, 0.0, 0.0 ],
+					"patching_rect" : [ 291.0, 176.0, 69.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -132,8 +177,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 291.0, 149.0, 72.0, 23.0 ],
-					"presentation_rect" : [ 291.0, 108.0, 0.0, 0.0 ],
+					"patching_rect" : [ 291.0, 140.0, 72.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -152,8 +196,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 291.0, 117.5, 186.0, 23.0 ],
-					"presentation_rect" : [ 291.0, 76.5, 0.0, 0.0 ],
+					"patching_rect" : [ 291.0, 108.5, 186.0, 23.0 ],
 					"style" : "",
 					"text" : "((John Paul) George) ( Ringo )"
 				}
@@ -167,7 +210,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 54.0, 185.0, 69.0, 23.0 ],
+					"patching_rect" : [ 54.0, 176.0, 69.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -186,7 +229,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 54.0, 149.0, 72.0, 23.0 ],
+					"patching_rect" : [ 54.0, 140.0, 72.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -205,7 +248,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 54.0, 117.5, 186.0, 23.0 ],
+					"patching_rect" : [ 54.0, 108.5, 186.0, 23.0 ],
 					"style" : "",
 					"text" : "[[John Paul] George] [ Ringo ]"
 				}
@@ -301,8 +344,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 32.0, 585.0, 21.0 ],
 					"style" : "",
-					"text" : "Both square brackets and parentheses are perfectly accepted as list delimiters by any bach object.",
-					"textcolor" : [ 0.0, 0.0, 0.0, 1.0 ]
+					"text" : "Both square brackets and parentheses are perfectly accepted as list delimiters by any bach object."
 				}
 
 			}
@@ -335,6 +377,20 @@
 				}
 
 			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-17", 1 ],
+					"source" : [ "obj-7", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-9", 0 ]
+				}
+
+			}
  ],
 		"dependency_cache" : [ 			{
 				"name" : "bach.rev.mxo",
@@ -342,6 +398,10 @@
 			}
 , 			{
 				"name" : "bach.print.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.eval.mxo",
 				"type" : "iLaX"
 			}
  ],
