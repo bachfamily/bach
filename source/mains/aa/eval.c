@@ -1,12 +1,12 @@
 /**
  @file
- code.c
+ eval.c
  
  @name
- bach.code
+ bach.eval
  
  @realname
- bach.code
+ bach.eval
  
  @type
  object
@@ -18,19 +18,22 @@
  bachproject
  
  @digest
- Compare two lllls for greater than or equal condition
+ Evaluate advanced expressions
  
  @description
- Compares two lllls for greater than or equal condition, in numerical/lexicographical order.
+ Evaluates expressions with variables, branching, loops and user-defined functions.
+ 
+ @discussion
+ The syntax of <o>bach.code</o> is based upon <o>bach.expr</o>'s, but a full, Turing-complete programming language is implemented.
  
  @category
- bach, bach objects, bach llll
+ bach, bach objects, bach llll, bach math
  
  @keywords
- compare, greater, equal, condition, lexicographical, order, numerical
- 
+ expression, evaluate, variable, number, calculate, compute, function, code, if, branching
+
  @seealso
- bach.==, bach.!=, bach.&gt;, bach.&lt;, bach.&lt;=, bach.filter, bach.sieve
+ expr, vexpr, bach.expr
  
  @owner
  Andrea Agostini
@@ -83,14 +86,22 @@ int T_EXPORT main()
     
     codableclass_add_standard_methods(c);
 
-    // @method llll @digest Store data and perform comparison
+    // @method llll @digest Store values for the expression variables
     // @description
-    // In first inlet: The llll in the right inlet is compared to the llll and the result is output.<br />
-    // In second inlet: The llll is stored, to be compared with an llll received in the first inlet.<br />
-    // @copy BACH_DOC_LLLL_COMPARISON
+    // The lllls provide the data to the expression.
+    // An llll received in the leftmost inlet will trigger the evaluation and cause the result to be output.
     class_addmethod(c, (method)eval_anything,	"anything",		A_GIMME,	0);
     
+    // @method expr @digest Expression to evaluate
+    // @description
+    // The <m>expr</m> message, followed by a valid expression, will set the new expression to be evaluated by <o>bach.eval</o>.
+    // For more details on the expression syntax, please refer to <o>bach.eval</o>'s help patcher.
+    class_addmethod(c, (method)eval_anything,    "expr",            A_GIMME,    0);
+    
+    // @method bang @digest Perform the last operation
+    // @description Return the result of the evaluation of the most recently received lllls and expression.
     class_addmethod(c, (method)eval_bang,		"bang",			0);
+   
     class_addmethod(c, (method)eval_int,		"int",			A_LONG,		0);
     class_addmethod(c, (method)eval_float,		"float",		A_FLOAT,	0);
     class_addmethod(c, (method)eval_anything,	"list",			A_GIMME,	0);
@@ -102,7 +113,7 @@ int T_EXPORT main()
     class_addmethod(c, (method)eval_inletinfo,	"inletinfo",	A_CANT,		0);
 
     // @method (doubleclick) @digest Edit llll as text
-    // @description Doubleclicking on the object forces a text editor to open up, where the llll can be edited directly in text form.
+    // @description Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.
     class_addmethod(c, (method)eval_dblclick,		"dblclick",		A_CANT, 0);
 
     CLASS_ATTR_LONG(c, "inlets",    0,    t_eval, n_dataInlets);
@@ -268,8 +279,10 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
     //true_ac = attr_args_offset(ac, av);
 
     if ((x = (t_eval *) object_alloc_debug(eval_class))) {
-        // @arg 0 @name default @optional 1 @digest Default comparison llll
-
+        // @arg 0 @name expression @optional 1 @type anything @digest Expression to evaluate
+        // @description The syntax of the expression is based upon <o>bach.expr</o>'s,
+        // but it can contain branching and loop statements, and user-defined variables and functions.
+        // For a complete description of the expression syntax, please refer to the help file.
         eval_ownedFunctionsSetup(x);
         x->n_ob.c_embed = 1;
 
