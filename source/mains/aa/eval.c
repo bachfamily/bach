@@ -84,7 +84,7 @@ int T_EXPORT main()
     
     c = class_new("bach.eval", (method)eval_new, (method)eval_free, (short)sizeof(t_eval), 0L, A_GIMME, 0);
     
-    codableclass_add_standard_methods(c);
+    codableclass_add_standard_methods(c, true);
 
     // @method llll @digest Store values for the expression variables
     // @description
@@ -144,7 +144,7 @@ int T_EXPORT main()
     CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
     CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
     CLASS_ATTR_BASIC(c, "embed", 0);
-    CLASS_ATTR_ACCESSORS(c, "embed", (method)NULL, (method)llllobj_dummy_setter)
+    //CLASS_ATTR_ACCESSORS(c, "embed", (method)NULL, (method)llllobj_dummy_setter)
     // @description When set to 1, the stored code is saved with the patcher.
     // @copy BACH_DOC_STATIC_ATTR
 
@@ -152,14 +152,14 @@ int T_EXPORT main()
     CLASS_ATTR_LABEL(c, "auto", 0, "Automatically Run Code");
     CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
     CLASS_ATTR_BASIC(c, "auto", 0);
-    CLASS_ATTR_ACCESSORS(c, "auto", (method)NULL, (method)llllobj_dummy_setter)
+    //CLASS_ATTR_ACCESSORS(c, "auto", (method)NULL, (method)llllobj_dummy_setter)
     // @description When set to 1, the stored code is automatically run at startup.
     // @copy BACH_DOC_STATIC_ATTR
 
     llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
     // @copy BACH_DOC_STATIC_ATTR
 
-    CLASS_ATTR_ACCESSORS(c, "out", (method)NULL, (method)llllobj_dummy_setter)
+    //CLASS_ATTR_ACCESSORS(c, "out", (method)NULL, (method)llllobj_dummy_setter)
 
 
     class_register(CLASS_BOX, c);
@@ -169,6 +169,7 @@ int T_EXPORT main()
     
     return 0;
 }
+
 
 void eval_dblclick(t_eval *x)
 {
@@ -188,12 +189,12 @@ void eval_bang(t_eval *x)
         context.argv[i] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
     }
     context.argc = dataInlets;
-
     
     long outlets = x->n_dataOutlets;
     x->n_ob.c_main->setOutlets(outlets); // in case the code has just changed
 
     x->n_ob.c_main->clearOutletData();
+    context.setRootParams(x->n_ob.c_nparams, x->n_ob.c_paramsnames, x->n_ob.c_paramsvalues);
     t_llll *result = x->n_ob.c_main->call(context);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);
     llll_free(result);
@@ -417,9 +418,9 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         object_attr_setdisabled((t_object *)x, gensym("inlets"), true);
         object_attr_setdisabled((t_object *)x, gensym("directins"), true);
         object_attr_setdisabled((t_object *)x, gensym("directouts"), true);
-        object_attr_setdisabled((t_object *)x, gensym("auto"), true);
-        object_attr_setdisabled((t_object *)x, gensym("embed"), true);
-        object_attr_setdisabled((t_object *)x, gensym("out"), true);
+        //object_attr_setdisabled((t_object *)x, gensym("auto"), true);
+        //object_attr_setdisabled((t_object *)x, gensym("embed"), true);
+        //object_attr_setdisabled((t_object *)x, gensym("out"), true);
 
         
         x->n_proxies = CLAMP(totInlets - 1, 0, LLLL_MAX_INLETS);

@@ -29,7 +29,14 @@ typedef struct _codableobj
     t_mainFunction *c_main;
     t_atom_long c_embed;
     char *c_text;
+    long c_dummysize;
+    //long c_codeac;
+    //t_atom *c_codeav;
     t_bool c_auto;
+    long c_nparams;
+    t_symbol *c_paramsnames[256];
+    t_llll *c_paramsvalues[256];
+    t_llll *c_paramsll;
     t_bach_atomic_lock c_lock;
 } t_codableobj;
 

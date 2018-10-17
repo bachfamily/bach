@@ -127,11 +127,26 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
     }
 }
 
-
-void codableobj_lambda(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
+t_max_err codableobj_lambda_get(t_codableobj *x, t_object *attr, long *ac, t_atom **av)
 {
-    if (ac) {
-        defer_low(x, (method) codableobj_expr_do, msg, ac, av);
+    /**ac = x->c_codeac;
+    *av = (t_atom *) bach_newptr(*ac * sizeof(t_atom));
+    bach_copyptr(x->c_codeav, *av, *ac * sizeof(t_atom));*/
+    
+    char alloc;
+    atom_alloc(ac, av, &alloc);
+    if (x->c_text) {
+        atom_setsym(*av, gensym(x->c_text));
+    } else {
+        atom_setsym(*av, gensym(""));
+    }
+    return MAX_ERR_NONE;
+}
+
+void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        defer_low(x, (method) codableobj_expr_do, nullptr, ac, av);
     } else {
         x->c_main->decrease();
         x->c_main = nullptr;
@@ -139,6 +154,63 @@ void codableobj_lambda(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
     x->c_ob.l_rebuild = 1;
     return;
 }
+
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_codableobj, c_paramsll, codableobj_params_get)
+
+void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
+{
+    t_llll *ll = nullptr;
+    t_llll *subll = nullptr;
+    if (ac == 0 || av) {
+        if ((ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, ac, av, LLLL_PARSE_CLONE))) {
+            
+            t_llllelem *elem;
+            long i;
+            
+            // first we validate it
+            for (elem = ll->l_head; elem; elem = elem->l_next) {
+                subll = hatom_getllll(&elem->l_hatom);
+                if (!subll)
+                    goto codableobj_params_set_error;
+                if (subll->l_size < 1)
+                    goto codableobj_params_set_error;
+                t_symbol *varname = hatom_getsym(&subll->l_head->l_hatom);
+                if (!varname || *varname->s_name != '$' || *(varname->s_name + 1) == 0)
+                    goto codableobj_params_set_error;
+            }
+            
+            // then we clean the previous params
+            for (i = 0; i < x->c_nparams; i++) {
+                llll_free(x->c_paramsvalues[i]);
+            }
+            
+            // then we parse it
+            for (elem = ll->l_head, i = 0;
+                 elem;
+                 elem = elem->l_next, i++) {
+                subll = hatom_getllll(&elem->l_hatom);
+                x->c_paramsnames[i] = gensym(hatom_getsym(&subll->l_head->l_hatom)->s_name + 1);
+                t_llll *value = llll_clone(subll);
+                llll_destroyelem(value->l_head);
+                x->c_paramsvalues[i] = value;
+            }
+        }
+        
+        llll_free(x->c_paramsll);
+        x->c_paramsll = ll;
+        x->c_nparams = ll->l_size;
+    }
+    
+    x->c_ob.l_rebuild = 1;
+    return;
+    
+codableobj_params_set_error:
+    object_error((t_object *) x, "Bad format for params attribute");
+    llll_free(ll);
+    llll_free(subll);
+    return;
+}
+
 
 void codableobj_dblclick(t_codableobj *x)
 {
@@ -350,8 +422,8 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
 {
     if (d) {
         char *newCode = nullptr;
-        dictionary_getstring(d, gensym("code"), (const char **) &newCode);
-        if (newCode) {
+        t_max_err err = dictionary_getstring(d, gensym("code"), (const char **) &newCode);
+        if (err == MAX_ERR_NONE && newCode) {
             if (x->c_main) {
                 x->c_main->decrease();
                 if (strcmp(newCode, x->c_text) != 0)
@@ -383,6 +455,9 @@ void codableobj_free(t_codableobj *x)
         sysmem_freeptr(x->c_text);
     if (x->c_filename)
         bach_freeptr(x->c_filename);
+    for (int i = 0; i < x->c_nparams; i++)
+        llll_free(x->c_paramsvalues[i]);
+    llll_free(x->c_paramsll);
     object_free_debug(x->c_editor);
     llllobj_obj_free((t_llllobj_object *) x);
 }
@@ -419,8 +494,12 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
+    
+    CLASS_ATTR_LLLL(c, "params", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
+    CLASS_ATTR_LABEL(c, "params", 0, "Extra Parameters");
+
     if (!isBachCode) {
-        class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
+        //class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
         class_addmethod(c, (method)codableobj_dblclick,  "dblclick",        A_CANT, 0);
         CLASS_ATTR_LONG(c, "embed",    0,    t_codableobj, c_embed);
         CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);
@@ -428,6 +507,12 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
         CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
         CLASS_ATTR_SAVE(c, "embed", 0);
         CLASS_ATTR_BASIC(c, "embed", 0);
+        
+        CLASS_ATTR_CHAR_VARSIZE(c, "lambda", 0, t_codableobj, c_text, c_dummysize, 32767);
+        CLASS_ATTR_LABEL(c, "lambda", 0, "Expression For Lambda Function");
+        //CLASS_ATTR_SAVE(c, "lambda", 0);
+        //CLASS_ATTR_BASIC(c, "lambda", 0);
+        CLASS_ATTR_ACCESSORS(c, "lambda", codableobj_lambda_get, codableobj_lambda_set);
     }
 }
 
@@ -437,7 +522,9 @@ long codableobj_setup(t_codableobj *x, long ac, t_atom *av)
     long i;
     for (i = 0; i < ac - 1; i++) {
         if (atom_getsym(av + i) == gensym("@lambda")) {
-            codableobj_getCodeFromAtoms(x, ac - i - 1, av + i + 1);
+            long size = ac - i - 1;
+            t_atom *atoms = av + i + 1;
+            codableobj_getCodeFromAtoms(x, size, atoms);
             if (codableobj_buildAst(x) != MAX_ERR_NONE)
                 object_error((t_object *) x, "Invalid code");
             return i;
