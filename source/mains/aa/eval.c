@@ -193,9 +193,7 @@ void eval_bang(t_eval *x)
     long outlets = x->n_dataOutlets;
     x->n_ob.c_main->setOutlets(outlets); // in case the code has just changed
 
-    x->n_ob.c_main->clearOutletData();
-    context.setRootParams(x->n_ob.c_nparams, x->n_ob.c_paramsnames, x->n_ob.c_paramsvalues);
-    t_llll *result = x->n_ob.c_main->call(context);
+    t_llll *result = codableobj_run((t_codableobj *) x, context);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);
     llll_free(result);
     for (int i = outlets - 1; i >= 0; i--) {

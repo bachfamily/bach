@@ -228,7 +228,7 @@ long classify_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2)
     context->argv[0] = what1->l_thing.w_llll;
     context->argv[1] = what2->l_thing.w_llll;
     context->resetLocalVariables();
-    t_llll *resll = data->x->n_ob.c_main->call(context);
+    t_llll *resll = codableobj_run((t_codableobj *) data->x, *context);
     long r = llll_istrue(resll);
     llll_free(resll);
     return r;

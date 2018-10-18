@@ -495,8 +495,6 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
     
-    CLASS_ATTR_LLLL(c, "params", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
-    CLASS_ATTR_LABEL(c, "params", 0, "Extra Parameters");
 
     if (!isBachCode) {
         //class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
@@ -513,6 +511,11 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
         //CLASS_ATTR_SAVE(c, "lambda", 0);
         //CLASS_ATTR_BASIC(c, "lambda", 0);
         CLASS_ATTR_ACCESSORS(c, "lambda", codableobj_lambda_get, codableobj_lambda_set);
+        CLASS_ATTR_LLLL(c, "lambdaparams", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
+        CLASS_ATTR_LABEL(c, "lambdaparams", 0, "Extra Parameters To Lambda Function");
+    } else {
+        CLASS_ATTR_LLLL(c, "params", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
+        CLASS_ATTR_LABEL(c, "params", 0, "Extra Parameters");
     }
 }
 
@@ -539,4 +542,10 @@ void codableobj_ownedFunctionsSetup(t_codableobj *x)
     x->c_ofTable["directout"] = new t_fnDirectout_dummy((t_object *) x);
     x->c_ofTable["directin"] = new t_fnDirectin_dummy((t_object *)x);
     x->c_ofTable["print"] = new t_fnPrint((t_object *) x);
+}
+
+t_llll *codableobj_run(t_codableobj* x, t_execContext &context)
+{
+    context.setRootParams(x->c_nparams, x->c_paramsnames, x->c_paramsvalues);
+    return x->c_main->call(context);
 }
