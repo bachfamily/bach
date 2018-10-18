@@ -50,6 +50,8 @@ typedef struct _pack
 	long					n_triggers[LLLL_MAX_INLETS];
 	long					n_ntriggers;
 	long					n_in;
+    t_llll                  *n_prepend;
+    t_llll                  *n_append;
 	t_bach_atomic_lock		n_lock;
 } t_pack;
 
@@ -67,6 +69,12 @@ void pack_anything(t_pack *x, t_symbol *msg, long ac, t_atom *av);
 long pack_ishot(t_pack *x, long inlet);
 
 t_class *pack_class;
+
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_pack, n_prepend, pack_prepend_attr_get)
+DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_pack, n_prepend, pack_prepend_attr_set)
+
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_pack, n_append, pack_append_attr_get)
+DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_pack, n_append, pack_append_attr_set)
 
 int T_EXPORT main()
 {
@@ -102,7 +110,6 @@ int T_EXPORT main()
 	
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
-
 	CLASS_ATTR_LONG(c, "nullmode",		0,	t_pack, n_nullmode);
 	CLASS_ATTR_LABEL(c, "nullmode",		0, "Null Mode");	
 	CLASS_ATTR_STYLE(c, "nullmode",		0, "onoff");
@@ -114,6 +121,15 @@ int T_EXPORT main()
 	// @description A list setting which inlets are "hot" (i.e., which will will trigger the result).
 	// <m>-1</m> means all inlets are hot. No arguments mean all inlets are cold. Default is 1.
 	
+    CLASS_ATTR_LLLL(c, "prepend", 0, t_pack, n_prepend, pack_prepend_attr_get, pack_prepend_attr_set);
+    CLASS_ATTR_LABEL(c, "prepend", 0, "Items To Prepend");
+    // @description An optional llll to be prepended at the beginning of the llll
+    // resulting from the assemblage of the specified keys.
+    
+    CLASS_ATTR_LLLL(c, "append", 0, t_pack, n_append, pack_append_attr_get, pack_append_attr_set);
+    CLASS_ATTR_LABEL(c, "append", 0, "Items To Append");
+    // @description An optional llll to be appended at the end of the llll
+    // resulting from the assemblage of the specified keys.
 	class_register(CLASS_BOX, c);
 	pack_class = c;
 	
@@ -170,15 +186,22 @@ void pack_anything(t_pack *x, t_symbol *msg, long ac, t_atom *av)
 				llll_prependhatom(cloned_ll, x->n_keys + i, 0, WHITENULL_llll);
 			llll_appendllll(out_ll, cloned_ll, 0, WHITENULL_llll);
 		}
+        
+        if (x->n_prepend) {
+            t_llll *first = llll_clone(x->n_prepend);
+            t_llll *second = out_ll;
+            llll_chain(first, second);
+            out_ll = first;
+        }
+        if (x->n_append) {
+            t_llll *second = llll_clone(x->n_append);
+            llll_chain(out_ll, second);
+        }
+        
 		x->n_ob.l_rebuild = 0;
 		llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, out_ll, 0);
 		llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
 	}
-}
-
-long pack_func(t_hatom *key, t_llll *what)
-{
-	return hatom_eq(key, &what->l_head->l_hatom);
 }
 
 void pack_assist(t_pack *x, void *b, long m, long a, char *s)
@@ -227,6 +250,8 @@ void pack_free(t_pack *x)
 	bach_freeptr(x->n_keys);
 	for (i = x->n_proxies; i > 0; i--)
 		object_free_debug(x->n_proxy[i]);
+    llll_free(x->n_prepend);
+    llll_free(x->n_append);
 	bach_freeptr(x->n_proxy);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
