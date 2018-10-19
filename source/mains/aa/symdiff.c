@@ -317,8 +317,10 @@ t_symdiff *symdiff_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;	
 	
     if ((x = (t_symdiff *) object_alloc_debug(symdiff_class))) {
-        ac = codableobj_setup((t_codableobj *) x, ac, av);
-        attr_args_process(x, ac, av);
+        if (codableobj_setup((t_codableobj *) x, ac, av) < 0) {
+            object_free_debug(x);
+            return nullptr;
+        }
         llllobj_obj_setup((t_llllobj_object *) x, 2, "444");
         for (i = 2; i > 0; i--)
             x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
