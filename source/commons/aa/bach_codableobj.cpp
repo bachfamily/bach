@@ -28,6 +28,7 @@ long bach_atoms2text(long ac, t_atom *av, char **buf)
             (*(c+1) == ',' || *(c+1) == ';' || *(c+1) == '$')) {
             for (char *d = c; *d; d++)
                 *d = *(d + 1);
+            textsize--;
         }
     }
 
@@ -35,18 +36,51 @@ long bach_atoms2text(long ac, t_atom *av, char **buf)
 }
 
 
+long bach_atoms2textWithSeparators(long ac, t_atom *av, char **buf)
+{
+    long textsize = 0;
+    
+    // only for calculating textsize
+    atom_gettext(ac, av, &textsize, buf, OBEX_UTIL_ATOM_GETTEXT_NUM_HI_RES);
+    *buf = sysmem_resizeptr(*buf, textsize + 1);
+
+    char *pos = *buf;
+    textsize = 0;
+    for (int i = 0; i < ac; i++) {
+        char *oneatombuf = nullptr;
+        long len;
+        atom_gettext(1, av + i, &len, &oneatombuf, OBEX_UTIL_ATOM_GETTEXT_NUM_HI_RES);
+        strncpy_zero(pos, oneatombuf, len);
+        for (char *c = pos; *c; c++) {
+            if (*c == '\\' &&
+                (*(c+1) == ',' || *(c+1) == ';' || *(c+1) == '$')) {
+                for (char *d = c; *d; d++)
+                    *d = *(d + 1);
+                len--;
+            }
+        }
+        pos += len;
+        *(pos-1) = 1;
+        textsize += len;
+    }
+    *pos = 0;
+    return textsize + 1;
+}
+
+
 t_max_err codableobj_buildAst(t_codableobj *x,
-                           t_atom_long *dataInlets,
-                           t_atom_long *dataOutlets,
-                           t_atom_long *directInlets,
-                           t_atom_long *directOutlets)
+                              long *codeac,
+                              t_atom_long *dataInlets,
+                              t_atom_long *dataOutlets,
+                              t_atom_long *directInlets,
+                              t_atom_long *directOutlets)
 {
     if (!x->c_text || !(*x->c_text))
         return 0;
     t_max_err err = MAX_ERR_NONE;
     if (x->c_main)
         (x->c_main)->decrease();
-    t_mainFunction *newMain = codableobj_parse_buffer(x, dataInlets, dataOutlets, directInlets, directOutlets);
+    t_mainFunction *newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
     if (newMain)
         x->c_main = newMain;
     else
@@ -74,7 +108,8 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
     }
     oldCode = x->c_text;
     x->c_text = newCode;
-    err = codableobj_buildAst(x);
+    long dummyfirstattr;
+    err = codableobj_buildAst(x, &dummyfirstattr);
     
     if (!err) {
         sysmem_freeptr(oldCode);
@@ -131,7 +166,7 @@ t_max_err codableobj_lambda_get(t_codableobj *x, t_object *attr, long *ac, t_ato
 {
     /**ac = x->c_codeac;
     *av = (t_atom *) bach_newptr(*ac * sizeof(t_atom));
-    bach_copyptr(x->c_codeav, *av, *ac * sizeof(t_atom));*/
+    bach_copyptr(x->c_codeac, *av, *ac * sizeof(t_atom));*/
     
     char alloc;
     atom_alloc(ac, av, &alloc);
@@ -153,6 +188,54 @@ void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
     }
     x->c_ob.l_rebuild = 1;
     return;
+}
+
+// ac is set to the number of arguments before @lambda
+// returns the index of the first attribute after lambda,
+// or -1 if none
+// or -2 if error
+long codableobj_parseLambdaAttrArg(t_codableobj *x, short *ac, t_atom *av)
+{
+    int i;
+    t_atom_long dataInlets = -1, dataOutlets = -1, directInlets = -1, directOutlets = -1; // all dummies
+    for (i = 0; i < *ac; i++) {
+        t_symbol *s = atom_getsym(av + i);
+        if (strcmp(s->s_name, "@lambda") == 0) {
+            long codeac = -1;
+            
+            // we build the ast from the text with the atom separators,
+            // as this allows us to figure out where the object attributes begin
+            codableobj_getCodeFromAtomsWithSeparators(x, (*ac) - i - 1, av + i + 1);
+            t_max_err err = codableobj_buildAst(x, &codeac, &dataInlets, &dataOutlets, &directInlets, &directOutlets);
+            if (err == MAX_ERR_NONE) {
+                sysmem_freeptr(x->c_text);
+                
+                // then we convert again the code in the object box to text,
+                // this time without the atom separators and leaving out the object attributes,
+                // for the text editor etc.
+                if (codeac < 0) {
+                    codableobj_getCodeFromAtoms(x, (*ac) - i - 1, av + i + 1);
+                    *ac = i;
+                    return -1;
+                } else if (codeac == 0) {
+                    x->c_main->decrease();
+                    x->c_main = nullptr;
+                    sysmem_freeptr(x->c_text);
+                    x->c_text = nullptr;
+                    *ac = i;
+                    return i + 1;
+                } else {
+                    codableobj_getCodeFromAtoms(x, codeac, av + i + 1);
+                    *ac = i;
+                    return codeac + i + 1;
+                }
+            } else {
+                object_error((t_object *) x, "Invalid code");
+                return -2; // stands for error
+            }
+        }
+    }
+    return 0;
 }
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_codableobj, c_paramsll, codableobj_params_get)
@@ -327,7 +410,8 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
     
     oldCode = x->c_text;
     x->c_text = newCode;
-    err = codableobj_buildAst(x);
+    long dummyfirstattr;
+    err = codableobj_buildAst(x, &dummyfirstattr);
     
     if (!err) {
         sysmem_freeptr(oldCode);
@@ -404,13 +488,20 @@ void codableobj_writefile(t_codableobj *x, char *filename, short path)
 }
 
 
+long codableobj_getCodeFromAtomsWithSeparators(t_codableobj *x, long ac, t_atom *av)
+{
+    char *buf = NULL;
+    long textsize = bach_atoms2textWithSeparators(ac, av, &buf);
+    bach_atomic_lock(&x->c_lock);
+    x->c_text = buf;
+    bach_atomic_unlock(&x->c_lock);
+    return textsize + 1;
+}
+
 long codableobj_getCodeFromAtoms(t_codableobj *x, long ac, t_atom *av)
 {
-    long textsize;
     char *buf = NULL;
-    
-    textsize = bach_atoms2text(ac, av, &buf);
-    
+    long textsize = bach_atoms2text(ac, av, &buf);
     bach_atomic_lock(&x->c_lock);
     x->c_text = buf;
     bach_atomic_unlock(&x->c_lock);
@@ -441,8 +532,8 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
                 strncpy(x->c_text, newCode, codeLen);
                 *(x->c_text + codeLen) = 0;
             }
-            
-            codableobj_buildAst(x, dataInlets, dataOutlets, directInlets, directOutlets);
+            long dummy;
+            codableobj_buildAst(x, &dummy, dataInlets, dataOutlets, directInlets, directOutlets);
         }
     }
 }
@@ -451,8 +542,8 @@ void codableobj_free(t_codableobj *x)
 {
     if (x->c_main)
         x->c_main->decrease();
-    if (x->c_text)
-        sysmem_freeptr(x->c_text);
+    //if (x->c_text)
+    //    sysmem_freeptr(x->c_text);
     if (x->c_filename)
         bach_freeptr(x->c_filename);
     for (int i = 0; i < x->c_nparams; i++)
@@ -471,7 +562,8 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
     if (oldMain)
         oldMain->increase();
     codableobj_getCodeFromAtoms(x, ac, av);
-    err = codableobj_buildAst(x);
+    long dummy;
+    err = codableobj_buildAst(x, &dummy);
     if (!err) {
         sysmem_freeptr(oldText);
         if (oldMain)
@@ -519,21 +611,23 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     }
 }
 
-long codableobj_setup(t_codableobj *x, long ac, t_atom *av)
+short codableobj_setup(t_codableobj *x, short ac, t_atom *av)
 {
-    x->c_embed = 1;
-    long i;
-    for (i = 0; i < ac - 1; i++) {
-        if (atom_getsym(av + i) == gensym("@lambda")) {
-            long size = ac - i - 1;
-            t_atom *atoms = av + i + 1;
-            codableobj_getCodeFromAtoms(x, size, atoms);
-            if (codableobj_buildAst(x) != MAX_ERR_NONE)
-                object_error((t_object *) x, "Invalid code");
-            return i;
-        }
+    short true_ac = attr_args_offset(ac, av);
+    short attr_ac = ac - true_ac;
+    short orig_attr_ac = attr_ac;
+    t_atom *attr_av = av + true_ac;
+    long next = codableobj_parseLambdaAttrArg(x, &attr_ac, attr_av);
+    
+    if (next == -2) {
+        return -1;
     }
-    return ac;
+    
+    x->c_embed = 1;
+    attr_args_process(x, attr_ac, attr_av); // the attributes before @lambda
+    if (next >= 0)
+        attr_args_process(x, orig_attr_ac - next, attr_av + next);
+    return true_ac;
 }
 
 

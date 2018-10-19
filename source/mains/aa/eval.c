@@ -54,6 +54,7 @@ void eval_bang(t_eval *x);
 void eval_int(t_eval *x, t_atom_long v);
 void eval_float(t_eval *x, double v);
 void eval_anything(t_eval *x, t_symbol *msg, long ac, t_atom *av);
+void eval_expr(t_eval *x, t_symbol *msg, long ac, t_atom *av);
 
 void eval_deferbang(t_eval *x, t_symbol *msg, long ac, t_atom *av);
 
@@ -96,7 +97,7 @@ int T_EXPORT main()
     // @description
     // The <m>expr</m> message, followed by a valid expression, will set the new expression to be evaluated by <o>bach.eval</o>.
     // For more details on the expression syntax, please refer to <o>bach.eval</o>'s help patcher.
-    class_addmethod(c, (method)eval_anything,    "expr",            A_GIMME,    0);
+    class_addmethod(c, (method)eval_expr,    "expr",            A_GIMME,    0);
     
     // @method bang @digest Perform the last operation
     // @description Return the result of the evaluation of the most recently received lllls and expression.
@@ -118,32 +119,32 @@ int T_EXPORT main()
 
     CLASS_ATTR_LONG(c, "inlets",    0,    t_eval, n_dataInlets);
     CLASS_ATTR_LABEL(c, "inlets", 0, "Number of Inlets");
-    CLASS_ATTR_ACCESSORS(c, "inlets", (method)NULL, (method)llllobj_dummy_setter)
+    //CLASS_ATTR_ACCESSORS(c, "inlets", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of data inlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
     CLASS_ATTR_LONG(c, "outlets",    0,    t_eval, n_dataOutlets);
     CLASS_ATTR_LABEL(c, "outlets", 0, "Number of Outlets");
-    CLASS_ATTR_ACCESSORS(c, "outlets", (method)NULL, (method)llllobj_dummy_setter)
+    //CLASS_ATTR_ACCESSORS(c, "outlets", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of data outlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
     CLASS_ATTR_LONG(c, "directins",    0,    t_eval, n_directInlets);
     CLASS_ATTR_LABEL(c, "directins", 0, "Number of Direct Inlets");
-    CLASS_ATTR_ACCESSORS(c, "directins", (method)NULL, (method)llllobj_dummy_setter)
+    //CLASS_ATTR_ACCESSORS(c, "directins", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of direct inlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
     
     CLASS_ATTR_LONG(c, "directouts",    0,    t_eval, n_directOutlets);
     CLASS_ATTR_LABEL(c, "directouts", 0, "Number of Outlets");
-    CLASS_ATTR_ACCESSORS(c, "directouts", (method)NULL, (method)llllobj_dummy_setter)
+    //CLASS_ATTR_ACCESSORS(c, "directouts", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of direct outlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
     CLASS_ATTR_LONG(c, "embed",    0,    t_codableobj, c_embed);
     CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
     CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
-    CLASS_ATTR_BASIC(c, "embed", 0);
+    //CLASS_ATTR_BASIC(c, "embed", 0);
     //CLASS_ATTR_ACCESSORS(c, "embed", (method)NULL, (method)llllobj_dummy_setter)
     // @description When set to 1, the stored code is saved with the patcher.
     // @copy BACH_DOC_STATIC_ATTR
@@ -151,7 +152,7 @@ int T_EXPORT main()
     CLASS_ATTR_LONG(c, "auto",    0,    t_codableobj, c_auto);
     CLASS_ATTR_LABEL(c, "auto", 0, "Automatically Run Code");
     CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
-    CLASS_ATTR_BASIC(c, "auto", 0);
+    //CLASS_ATTR_BASIC(c, "auto", 0);
     //CLASS_ATTR_ACCESSORS(c, "auto", (method)NULL, (method)llllobj_dummy_setter)
     // @description When set to 1, the stored code is automatically run at startup.
     // @copy BACH_DOC_STATIC_ATTR
@@ -226,12 +227,14 @@ void eval_float(t_eval *x, double v)
 void eval_anything(t_eval *x, t_symbol *msg, long ac, t_atom *av)
 {
     long inlet = proxy_getinlet((t_object *) x);
-    if (msg != gensym("expr")) {
-        llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet);
-        if (inlet == 0)
-            eval_bang(x);
-    } else
-        defer_low(x, (method) codableobj_expr_do, msg, ac, av);
+    llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet);
+    if (inlet == 0)
+        eval_bang(x);
+}
+
+void eval_expr(t_eval *x, t_symbol *msg, long ac, t_atom *av)
+{
+    codableobj_lambda_set((t_codableobj *) x, nullptr, ac, av);
 }
 
 void eval_assist(t_eval *x, void *b, long m, long a, char *s)
@@ -287,104 +290,34 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
 
         true_ac = ac;
         
-        t_symbol *symattr;
-        char *attrname;
-        
         t_atom_long dataInlets = -1, dataOutlets = -1, directInlets = -1, directOutlets = -1;
         
-        t_bool attrParseErr = false;
-        
-        while (true_ac >= 2 &&
-               (symattr = atom_getsym(av + true_ac - 2)) &&
-               *(attrname = symattr->s_name) == '@') {
-            attrname++;
-            t_atom *this_av = av + true_ac - 1;
-            if (!strcmp(attrname, "inlets")) {
-                long type = atom_gettype(this_av);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(this_av);
-                    dataInlets = CLAMP(val, 0, LLLL_MAX_INLETS);
-                } else {
-                    if (type == A_SYM && !strchr(atom_getsym(this_av)->s_name, '}'))
-                        object_error((t_object *) x, "Bad value for inlets attribute");
-                    attrParseErr = true;
-                }
-            } else if (!strcmp(attrname, "outlets")) {
-                long type = atom_gettype(this_av);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(this_av);
-                    dataOutlets = CLAMP(val, 0, LLLL_MAX_INLETS);
-                } else {
-                    if (type == A_SYM && !strchr(atom_getsym(this_av)->s_name, '}'))
-                        object_error((t_object *) x, "Bad value for outlets attribute");
-                    attrParseErr = true;
-                }
-            } else if (!strcmp(attrname, "directins")) {
-                long type = atom_gettype(this_av);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(this_av);
-                    directInlets = CLAMP(val, 0, LLLL_MAX_INLETS);
-                } else {
-                    if (type == A_SYM && !strchr(atom_getsym(this_av)->s_name, '}'))
-                        object_error((t_object *) x, "Bad value for directins attribute");
-                    attrParseErr = true;
-                }
-            } else if (!strcmp(attrname, "directouts")) {
-                long type = atom_gettype(this_av);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(this_av);
-                    directOutlets = CLAMP(val, 0, LLLL_MAX_INLETS);
-                } else {
-                    if (type == A_SYM && !strchr(atom_getsym(this_av)->s_name, '}'))
-                        object_error((t_object *) x, "Bad value for directouts attribute");
-                    attrParseErr = true;
-                }
-            } else if (!strcmp(attrname, "auto")) {
-                long type = atom_gettype(this_av);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(this_av);
-                    x->n_ob.c_auto = val != 0;
-                } else {
-                    if (type == A_SYM && !strchr(atom_getsym(this_av)->s_name, '}'))
-                        object_error((t_object *) x, "Bad value for auto attribute");
-                    attrParseErr = true;
-                }
-            } else if (!strcmp(attrname, "embed")) {
-                long type = atom_gettype(this_av);
-                if (type == A_LONG || type == A_FLOAT) {
-                    t_atom_long val = atom_getlong(this_av);
-                    x->n_ob.c_embed = val != 0;
-                } else {
-                    if (type == A_SYM && !strchr(atom_getsym(this_av)->s_name, '}'))
-                        object_error((t_object *) x, "Bad value for auto attribute");
-                    attrParseErr = true;
-                }
-            } else if (!strcmp(attrname, "out")) {
-                t_max_err err = MAX_ERR_NONE;
-                char *outtypes = atom_getsym(this_av)->s_name;
-                llllobj_conform_outtypes((t_object *) x, LLLL_OBJ_VANILLA, &outtypes, 1, &err);
-                bach_freeptr(outtypes);
-                if (!err)
-                    llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, this_av);
-                else {
-                    if (atom_gettype(this_av) != A_SYM ||
-                        !strchr(atom_getsym(this_av)->s_name, '}'))
-                        object_error((t_object *) x, "Bad value for out attribute");
-                    attrParseErr = true;
-                }
-            } else {
-                //object_error((t_object *) x, "Unknown attribute %s", attrname);
-                attrParseErr = true;
-            }
-            if (!attrParseErr)
-                true_ac -= 2;
-            else
-                break;
-        }
+        long codeac = -1;
 
-        if (true_ac) {
-            codableobj_getCodeFromAtoms((t_codableobj *) x, true_ac, av);
-            err = codableobj_buildAst((t_codableobj *) x, &dataInlets, &dataOutlets, &directInlets, &directOutlets);
+        if (ac) {
+            // we build the ast from the text with the atom separators,
+            // as this allows us to figure out where the object attributes begin
+            codableobj_getCodeFromAtomsWithSeparators((t_codableobj *) x, ac, av);
+            err = codableobj_buildAst((t_codableobj *) x, &codeac, &dataInlets, &dataOutlets, &directInlets, &directOutlets);
+            if (err == MAX_ERR_NONE) {
+                if (codeac < 0) codeac = ac;
+                
+                // then we convert again the code in the object box to text,
+                // this time without the atom separators and leaving out the object attributes,
+                // for the text editor etc.
+                sysmem_freeptr(x->n_ob.c_text);
+                codableobj_getCodeFromAtoms((t_codableobj *) x, codeac, av);
+            } else {
+                // if the code was invalid, the attributes can't be parsed
+                // so it's better to abort the object instantiation
+                object_error((t_object *) x, "Invalid code");
+                object_free_debug(x);
+                return nullptr;
+            }
+        }
+        
+        if (codeac >= 0) {
+            attr_args_process(x, ac - codeac, av + codeac);
         }
 
         if (x->n_dataInlets < 1 || err)
@@ -420,7 +353,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         //object_attr_setdisabled((t_object *)x, gensym("embed"), true);
         //object_attr_setdisabled((t_object *)x, gensym("out"), true);
 
-        
         x->n_proxies = CLAMP(totInlets - 1, 0, LLLL_MAX_INLETS);
         
         x->n_proxy = (void **) bach_newptr((x->n_proxies + 1) * sizeof (void *));

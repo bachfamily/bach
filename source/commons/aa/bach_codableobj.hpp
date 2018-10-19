@@ -31,7 +31,7 @@ typedef struct _codableobj
     char *c_text;
     long c_dummysize;
     //long c_codeac;
-    //t_atom *c_codeav;
+    //t_atom *c_codeac;
     t_bool c_auto;
     long c_nparams;
     t_symbol *c_paramsnames[256];
@@ -45,18 +45,20 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode = false);
 
 
 t_mainFunction *codableobj_parse_buffer(t_codableobj *x,
+                                        long *codeac,
                                         t_atom_long *dataInlets = nullptr,
                                         t_atom_long *dataOutlets = nullptr,
                                         t_atom_long *directInlets = nullptr,
                                         t_atom_long *directOutlets = nullptr);
 
 t_max_err codableobj_buildAst(t_codableobj *x,
+                              long *codeac,
                               t_atom_long *dataInlets = nullptr,
                               t_atom_long *dataOutlets = nullptr,
                               t_atom_long *directInlets = nullptr,
                               t_atom_long *directOutlets = nullptr);
 
-void codableobj_lambda(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
+void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av);
 
 void codableobj_dblclick(t_codableobj *x);
 
@@ -75,7 +77,15 @@ void codableobj_read(t_codableobj *x, t_symbol *s);
 
 void codableobj_write(t_codableobj *x, t_symbol *s);
 
+long codableobj_getCodeFromAtomsWithSeparators(t_codableobj *x, long ac, t_atom *av);
 long codableobj_getCodeFromAtoms(t_codableobj *x, long ac, t_atom *av);
+
+// ac is set to the number of arguments before @lambda
+// returns the index of the first attribute after lambda,
+// or 0 if none
+// or -1 if error
+long codableobj_parseLambdaAttrArg(t_codableobj *x, short *ac, t_atom *av);
+
 void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x,
                                               t_dictionary *d,
                                               t_atom_long *dataInlets = nullptr,
@@ -89,7 +99,7 @@ void codableobj_free(t_codableobj *x);
 
 void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
 
-long codableobj_setup(t_codableobj *x, long ac, t_atom *av);
+short codableobj_setup(t_codableobj *x, short ac, t_atom *av);
 
 void codableobj_ownedFunctionsSetup(t_codableobj *x);
 
