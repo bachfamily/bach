@@ -39,12 +39,28 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-1",
+					"linecount" : 6,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 208.0, 216.0, 383.0, 94.0 ],
+					"presentation_linecount" : 6,
+					"text" : "As the name suggests, the value of a local variable is local to the object in which it is used. If variables with the same name are used in different objects, the values they contain are independent. \n(Spoiler: this is actually a simplification, but for a more accurate view on the subject we need to talk about functions first.)",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-31",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 322.0, 251.0, 22.0 ],
+					"patching_rect" : [ 38.0, 330.0, 251.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -59,7 +75,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 437.0, 91.0, 22.0 ],
+					"patching_rect" : [ 6.0, 445.0, 91.0, 22.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -71,7 +87,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 410.0, 74.0, 22.0 ],
+					"patching_rect" : [ 6.0, 418.0, 74.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -87,7 +103,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 379.0, 29.5, 22.0 ],
+					"patching_rect" : [ 6.0, 387.0, 29.5, 22.0 ],
 					"text" : "t l l"
 				}
 
@@ -100,7 +116,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 322.0, 24.0, 24.0 ]
+					"patching_rect" : [ 6.0, 330.0, 24.0, 24.0 ]
 				}
 
 			}
@@ -113,7 +129,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 354.5, 349.5, 144.0, 25.0 ],
+					"patching_rect" : [ 354.5, 357.5, 144.0, 25.0 ],
 					"text" : "Another way to do it."
 				}
 
@@ -127,7 +143,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 351.0, 334.0, 22.0 ],
+					"patching_rect" : [ 6.0, 359.0, 334.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -142,7 +158,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 282.0, 91.0, 22.0 ],
+					"patching_rect" : [ 6.0, 264.0, 91.0, 22.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -154,7 +170,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 255.0, 74.0, 22.0 ],
+					"patching_rect" : [ 6.0, 237.0, 74.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -170,7 +186,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 162.0, 154.0, 70.0, 22.0 ],
+					"patching_rect" : [ 162.0, 136.0, 70.0, 22.0 ],
 					"text" : "loadmess 0"
 				}
 
@@ -182,7 +198,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 219.0, 29.5, 22.0 ],
+					"patching_rect" : [ 6.0, 201.0, 29.5, 22.0 ],
 					"text" : "t l l"
 				}
 
@@ -195,7 +211,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 154.0, 24.0, 24.0 ]
+					"patching_rect" : [ 6.0, 136.0, 24.0, 24.0 ]
 				}
 
 			}
@@ -209,7 +225,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 243.5, 175.0, 232.0, 54.0 ],
+					"patching_rect" : [ 208.0, 157.0, 232.0, 54.0 ],
 					"text" : "If you need to keep a value persistent, you can output it and reinject it in the object."
 				}
 
@@ -223,7 +239,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 191.0, 175.0, 22.0 ],
+					"patching_rect" : [ 6.0, 173.0, 175.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -240,7 +256,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 69.0, 24.0, 24.0 ]
+					"patching_rect" : [ 6.0, 60.0, 24.0, 24.0 ]
 				}
 
 			}
@@ -254,7 +270,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 367.5, 90.0, 232.0, 54.0 ],
+					"patching_rect" : [ 375.5, 81.0, 232.0, 54.0 ],
 					"text" : "Try banging repeatedly bach.eval: you'll see that, at the beginning of every evaluation, $x is reset to null."
 				}
 
@@ -268,7 +284,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 106.0, 363.0, 22.0 ],
+					"patching_rect" : [ 6.0, 97.0, 363.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -376,7 +392,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-31", 0 ],
-					"midpoints" : [ 26.0, 406.0, 345.75, 406.0, 345.75, 312.0, 47.5, 312.0 ],
+					"midpoints" : [ 26.0, 414.0, 345.75, 414.0, 345.75, 320.0, 47.5, 320.0 ],
 					"source" : [ "obj-24", 1 ]
 				}
 
@@ -419,7 +435,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-5", 1 ],
-					"midpoints" : [ 26.0, 247.0, 200.0, 247.0, 200.0, 185.0, 171.5, 185.0 ],
+					"midpoints" : [ 26.0, 229.0, 200.0, 229.0, 200.0, 167.0, 171.5, 167.0 ],
 					"source" : [ "obj-6", 1 ]
 				}
 
