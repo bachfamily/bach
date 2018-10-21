@@ -66,10 +66,6 @@ void eval_ownedFunctionsSetup(t_eval *x);
 
 t_class *eval_class;
 
-//static t_safeTable<t_sharedVariable> *gvt;
-//static std::unordered_map<std::string, t_function *> *bifTable;
-
-
 
 int T_EXPORT main()
 {
