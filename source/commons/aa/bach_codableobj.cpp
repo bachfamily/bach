@@ -587,7 +587,10 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
     
-
+    CLASS_ATTR_ATOM_LONG(c, "maxtime",    0,    t_codableobj, c_maxtime);
+    CLASS_ATTR_LABEL(c, "maxtime", 0, "Maximum Duration Of Evaluation");
+    CLASS_ATTR_FILTER_MIN(c, "maxtime", 0);
+    
     if (!isBachCode) {
         //class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
         class_addmethod(c, (method)codableobj_dblclick,  "dblclick",        A_CANT, 0);
@@ -624,6 +627,7 @@ short codableobj_setup(t_codableobj *x, short ac, t_atom *av)
     }
     
     x->c_embed = 1;
+    x->c_maxtime = 1000;
     attr_args_process(x, attr_ac, attr_av); // the attributes before @lambda
     if (next >= 0)
         attr_args_process(x, orig_attr_ac - next, attr_av + next);
@@ -641,5 +645,6 @@ void codableobj_ownedFunctionsSetup(t_codableobj *x)
 t_llll *codableobj_run(t_codableobj* x, t_execContext &context)
 {
     context.setRootParams(x->c_nparams, x->c_paramsnames, x->c_paramsvalues);
+    context.stopTime = x->c_maxtime > 0 ? x->c_maxtime + systime_ms() : 0;
     return x->c_main->call(context);
 }

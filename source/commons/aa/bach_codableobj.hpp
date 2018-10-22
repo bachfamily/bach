@@ -38,6 +38,7 @@ typedef struct _codableobj
     t_llll *c_paramsvalues[256];
     t_llll *c_paramsll;
     t_bach_atomic_lock c_lock;
+    t_atom_long c_maxtime;
 } t_codableobj;
 
 

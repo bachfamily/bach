@@ -283,7 +283,8 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         // For a complete description of the expression syntax, please refer to the help file.
         eval_ownedFunctionsSetup(x);
         x->n_ob.c_embed = 1;
-
+        x->n_ob.c_maxtime = 1000;
+        
         true_ac = ac;
         
         t_atom_long dataInlets = -1, dataOutlets = -1, directInlets = -1, directOutlets = -1;
