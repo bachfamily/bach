@@ -1,1 +1,1 @@
-( null ) (a0 b1 c2 z3) ( 6/8 5e6 ) ( `backtick!!! )
+[ null ] [a0 b1 c2 z3] [ 6/8 5e6 ] [ `backtick!!! ]

@@ -106,8 +106,8 @@
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.factorize" />
-		<seealso name="bach./" />
-		<seealso name="bach.%" />
+		<seealso name="bach.div" display="bach./" type="refpage" />
+		<seealso name="bach.remainder" display="bach.%" type="refpage" />
 		<seealso name="bach.expr" />
 	</seealsolist>
 

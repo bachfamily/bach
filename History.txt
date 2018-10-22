@@ -4,6 +4,15 @@ v0.8.1b
 
 Scroll down for very important things you should now about v0.8b (v0.8.1 being a minor update, fixing a few bugs)
 
+**********************
+*** VERY IMPORTANT ***
+**********************
+
+- bach has switched to square brackets [] instead of parens ().
+  	THIS WILL NOT BREAK BACKWARD COMPATIBILITY and you can still continue using () if you liked them.
+  	However we had good reasons for pushing forward this change.
+
+
 *****************
 *** IMPORTANT ***
 *****************
@@ -29,6 +38,8 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 ***********************
 
 - all objects	Fixed issues with negative midicents
+
+- bach.eval	New object and scripting language
 
 - bach.recurser	New object
 

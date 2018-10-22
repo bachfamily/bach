@@ -1,1 +1,1 @@
-( john george ) paul ( ( ringo ) ) 1 2 ( 4 ) 3 ( )
+[ john george ] paul [ [ ringo ] ] 1 2 [ 4 ] 3 [ ]

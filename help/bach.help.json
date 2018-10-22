@@ -1741,7 +1741,7 @@
 				"filename" : [ "bach.help.notation.messages.01_addchord.maxpat" ],
 				"objects" : [ "bach.roll" ],
 				"seealso" : [ "addchords", "gluechord", "sel" ],
-				"tags" : [ "message", "addchord", "add", "chord", "adding", "select", "sel", "selection" ],
+				"tags" : [ "message", "addchord", "add", "chord", "adding", "select", "sel", "selection", "note" ],
 				"title" : [ "Adding a chord in bach.roll" ]
 			},
 			"B_addchords" : {
