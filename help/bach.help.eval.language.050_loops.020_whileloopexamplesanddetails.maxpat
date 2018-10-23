@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 129.0, 265.0, 617.0, 539.0 ],
+		"rect" : [ 58.0, 104.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -47,9 +47,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 142.0, 301.5, 449.0, 141.0 ],
-					"presentation_linecount" : 26,
-					"text" : "Multiplication tables—a complicated one, with nested while loops.\nA notable thing is that if the body of the while loop contains a sequence of operations (;), it must be surrounded by parens. This kind of structure is much more readable if indented, so this time the code is not in the object box, but in the internal text editor. Double-click bach.eval to view it.\nAlso, notice how the result we want to obtain is not the last value of the while loop, but the value of a variable we define and update in the middle of it: so, the last item of our sequence of evaluation is the variable itself, so as to return its value finally."
+					"patching_rect" : [ 142.0, 301.5, 452.0, 141.0 ],
+					"text" : "Multiplication tables—a complicated one, with nested while loops.\nA notable thing is that if the body of the \"while\" loop contains a sequence of operations (;), it must be surrounded by parens. This kind of structure is much more readable if indented, so this time the code is not in the object box, but in the internal text editor. Double-click bach.eval to view it.\nAlso, notice how the result we want to obtain is not the last value of the while loop, but the value of a variable we define and update in the middle of it: so, the last item of our sequence of evaluation is the variable itself, so as to return its value finally."
 				}
 
 			}
