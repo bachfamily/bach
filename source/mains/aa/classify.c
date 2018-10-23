@@ -228,7 +228,7 @@ long classify_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2)
     context->argv[0] = what1->l_thing.w_llll;
     context->argv[1] = what2->l_thing.w_llll;
     context->resetLocalVariables();
-    t_llll *resll = data->x->n_ob.c_main->call(context);
+    t_llll *resll = codableobj_run((t_codableobj *) data->x, *context);
     long r = llll_istrue(resll);
     llll_free(resll);
     return r;
@@ -272,8 +272,10 @@ t_classify *classify_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;
 
 	if ((x = (t_classify *) object_alloc_debug(classify_class))) {
-        ac = codableobj_setup((t_codableobj *) x, ac, av);
-		attr_args_process(x, ac, av);
+        if (codableobj_setup((t_codableobj *) x, ac, av) < 0) {
+            object_free_debug(x);
+            return nullptr;
+        }
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "444");
 		x->n_proxy = proxy_new_debug((t_object *) x, 1, &x->n_in);
         t_dictionary* d = (t_dictionary *)gensym("#D")->s_thing;

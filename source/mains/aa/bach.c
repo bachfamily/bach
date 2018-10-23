@@ -10,8 +10,10 @@
 #endif
 
 #ifdef WIN_VERSION
+
     #include <windows.h>
     HINSTANCE hinst;
+
 #endif
 
 #include "ast.hpp"
@@ -41,6 +43,9 @@ int bach_mmi_comp(const t_memmap_item **a, const t_memmap_item **b);
 void bach_poolstatus(t_bach *x);
 void bach_pooldump(t_bach *x);
 void bach_version(t_bach *x);
+void bach_printglobals(t_bach *x);
+void bach_printglobalswithvalues(t_bach *x);
+void bach_clearglobals(t_bach *x);
 void bach_sendbuildnumber(t_bach *x, t_symbol *s);
 void bach_sendversion(t_bach *x, t_symbol *s);
 void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s);
@@ -132,6 +137,9 @@ void ext_main(void *moduleRef)
 	class_addmethod(c, (method) bach_poolstatus, "poolstatus", 0);
 	class_addmethod(c, (method) bach_pooldump, "pooldump", 0);
     class_addmethod(c, (method) bach_version, "version", 0);
+    class_addmethod(c, (method) bach_printglobals, "printglobals", 0);
+    class_addmethod(c, (method) bach_printglobalswithvalues, "printglobalswithvalues", 0);
+    class_addmethod(c, (method) bach_clearglobals, "clearglobals", 0);
     class_addmethod(c, (method) bach_sendversion, "sendversion", A_SYM, 0);
     class_addmethod(c, (method) bach_sendversionwithbuildnumber, "sendversionwithbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
@@ -430,6 +438,21 @@ void bach_version(t_bach *x)
     dev_post("--- size of t_hatom: %ld", (long) sizeof(t_hatom));
 }
 
+void bach_printglobals(t_bach *x)
+{
+    x->b_gvt->postNames();
+}
+
+void bach_clearglobals(t_bach *x)
+{
+    x->b_gvt->clearAll();
+}
+
+void bach_printglobalswithvalues(t_bach *x)
+{
+    x->b_gvt->postNamesAndValues();
+}
+
 void bach_sendbuildnumber(t_bach *x, t_symbol *s)
 {
     if (s && s->s_thing) {
@@ -457,7 +480,6 @@ void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s)
         object_method_typed(s->s_thing, gensym(bach_get_current_version_string_verbose_with_build()), 1, &vnum, NULL);
     }
 }
-
 
 void bach_donors(t_bach *x)
 {
@@ -1135,7 +1157,7 @@ long bach_getbuildnumber(void)
 void bach_init_bifs(t_bach *x)
 {
     auto bifTable = x->b_bifTable = new std::unordered_map<std::string, t_function *>;
-    x->b_gvt = new t_safeTable<t_sharedVariable>;
+    x->b_gvt = new t_globalVariableTable;
 
     (*bifTable)["$args"] = new t_fnArgs;
     (*bifTable)["$argcount"] = new t_fnArgcount;

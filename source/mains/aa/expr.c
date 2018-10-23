@@ -33,7 +33,7 @@
  expression, evaluate, variable, number, calculate, compute
 
  @seealso
- bach.+, bach.-, bach.*, bach./, bach.%, expr, vexpr 
+ bach.+, bach.-, bach.*, bach./, bach.%, expr, vexpr
  
  @owner
  Andrea Agostini
@@ -102,7 +102,7 @@ int T_EXPORT main()
 	
 	c = class_new("bach.expr", (method)bach_expr_new, (method)bach_expr_free, (short)sizeof(t_bach_expr), 0L, A_GIMME, 0);
 	
-	// @method llll @digest Store values to the expression variables
+	// @method llll @digest Store values for the expression variables
 	// @description
 	// The lllls are iterated against each other (as in <o>bach.iter</o> with <m>recursionmode 1</m>),
 	// the values they contain are assigned to the variables according to the inlet each llll is received in and the llll is evaluated.
