@@ -28,6 +28,7 @@ long bach_atoms2text(long ac, t_atom *av, char **buf)
             (*(c+1) == ',' || *(c+1) == ';' || *(c+1) == '$')) {
             for (char *d = c; *d; d++)
                 *d = *(d + 1);
+            textsize--;
         }
     }
 
@@ -35,18 +36,51 @@ long bach_atoms2text(long ac, t_atom *av, char **buf)
 }
 
 
+long bach_atoms2textWithSeparators(long ac, t_atom *av, char **buf)
+{
+    long textsize = 0;
+    
+    // only for calculating textsize
+    atom_gettext(ac, av, &textsize, buf, OBEX_UTIL_ATOM_GETTEXT_NUM_HI_RES);
+    *buf = sysmem_resizeptr(*buf, textsize + 1);
+
+    char *pos = *buf;
+    textsize = 0;
+    for (int i = 0; i < ac; i++) {
+        char *oneatombuf = nullptr;
+        long len;
+        atom_gettext(1, av + i, &len, &oneatombuf, OBEX_UTIL_ATOM_GETTEXT_NUM_HI_RES);
+        strncpy_zero(pos, oneatombuf, len);
+        for (char *c = pos; *c; c++) {
+            if (*c == '\\' &&
+                (*(c+1) == ',' || *(c+1) == ';' || *(c+1) == '$')) {
+                for (char *d = c; *d; d++)
+                    *d = *(d + 1);
+                len--;
+            }
+        }
+        pos += len;
+        *(pos-1) = 1;
+        textsize += len;
+    }
+    *pos = 0;
+    return textsize + 1;
+}
+
+
 t_max_err codableobj_buildAst(t_codableobj *x,
-                           t_atom_long *dataInlets,
-                           t_atom_long *dataOutlets,
-                           t_atom_long *directInlets,
-                           t_atom_long *directOutlets)
+                              long *codeac,
+                              t_atom_long *dataInlets,
+                              t_atom_long *dataOutlets,
+                              t_atom_long *directInlets,
+                              t_atom_long *directOutlets)
 {
     if (!x->c_text || !(*x->c_text))
         return 0;
     t_max_err err = MAX_ERR_NONE;
     if (x->c_main)
         (x->c_main)->decrease();
-    t_mainFunction *newMain = codableobj_parse_buffer(x, dataInlets, dataOutlets, directInlets, directOutlets);
+    t_mainFunction *newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
     if (newMain)
         x->c_main = newMain;
     else
@@ -74,7 +108,8 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
     }
     oldCode = x->c_text;
     x->c_text = newCode;
-    err = codableobj_buildAst(x);
+    long dummyfirstattr;
+    err = codableobj_buildAst(x, &dummyfirstattr);
     
     if (!err) {
         sysmem_freeptr(oldCode);
@@ -127,11 +162,26 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
     }
 }
 
-
-void codableobj_lambda(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
+t_max_err codableobj_lambda_get(t_codableobj *x, t_object *attr, long *ac, t_atom **av)
 {
-    if (ac) {
-        defer_low(x, (method) codableobj_expr_do, msg, ac, av);
+    /**ac = x->c_codeac;
+    *av = (t_atom *) bach_newptr(*ac * sizeof(t_atom));
+    bach_copyptr(x->c_codeac, *av, *ac * sizeof(t_atom));*/
+    
+    char alloc;
+    atom_alloc(ac, av, &alloc);
+    if (x->c_text) {
+        atom_setsym(*av, gensym(x->c_text));
+    } else {
+        atom_setsym(*av, gensym(""));
+    }
+    return MAX_ERR_NONE;
+}
+
+void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
+{
+    if (ac && av) {
+        defer_low(x, (method) codableobj_expr_do, nullptr, ac, av);
     } else {
         x->c_main->decrease();
         x->c_main = nullptr;
@@ -139,6 +189,111 @@ void codableobj_lambda(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
     x->c_ob.l_rebuild = 1;
     return;
 }
+
+// ac is set to the number of arguments before @lambda
+// returns the index of the first attribute after lambda,
+// or -1 if none
+// or -2 if error
+long codableobj_parseLambdaAttrArg(t_codableobj *x, short *ac, t_atom *av)
+{
+    int i;
+    t_atom_long dataInlets = -1, dataOutlets = -1, directInlets = -1, directOutlets = -1; // all dummies
+    for (i = 0; i < *ac; i++) {
+        t_symbol *s = atom_getsym(av + i);
+        if (strcmp(s->s_name, "@lambda") == 0) {
+            long codeac = -1;
+            
+            // we build the ast from the text with the atom separators,
+            // as this allows us to figure out where the object attributes begin
+            codableobj_getCodeFromAtomsWithSeparators(x, (*ac) - i - 1, av + i + 1);
+            t_max_err err = codableobj_buildAst(x, &codeac, &dataInlets, &dataOutlets, &directInlets, &directOutlets);
+            if (err == MAX_ERR_NONE) {
+                sysmem_freeptr(x->c_text);
+                
+                // then we convert again the code in the object box to text,
+                // this time without the atom separators and leaving out the object attributes,
+                // for the text editor etc.
+                if (codeac < 0) {
+                    codableobj_getCodeFromAtoms(x, (*ac) - i - 1, av + i + 1);
+                    *ac = i;
+                    return -1;
+                } else if (codeac == 0) {
+                    x->c_main->decrease();
+                    x->c_main = nullptr;
+                    sysmem_freeptr(x->c_text);
+                    x->c_text = nullptr;
+                    *ac = i;
+                    return i + 1;
+                } else {
+                    codableobj_getCodeFromAtoms(x, codeac, av + i + 1);
+                    *ac = i;
+                    return codeac + i + 1;
+                }
+            } else {
+                object_error((t_object *) x, "Invalid code");
+                return -2; // stands for error
+            }
+        }
+    }
+    return 0;
+}
+
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_codableobj, c_paramsll, codableobj_params_get)
+
+void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
+{
+    t_llll *ll = nullptr;
+    t_llll *subll = nullptr;
+    if (ac == 0 || av) {
+        if ((ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, ac, av, LLLL_PARSE_CLONE))) {
+            
+            t_llllelem *elem;
+            long i;
+            
+            // first we validate it
+            for (elem = ll->l_head; elem; elem = elem->l_next) {
+                subll = hatom_getllll(&elem->l_hatom);
+                if (!subll)
+                    goto codableobj_params_set_error;
+                if (subll->l_size < 1)
+                    goto codableobj_params_set_error;
+                t_symbol *varname = hatom_getsym(&subll->l_head->l_hatom);
+                if (!varname || *varname->s_name != '$' || *(varname->s_name + 1) == 0)
+                    goto codableobj_params_set_error;
+            }
+            
+            // then we clean the previous params
+            for (i = 0; i < x->c_nparams; i++) {
+                llll_free(x->c_paramsvalues[i]);
+            }
+            
+            // then we parse it
+            for (elem = ll->l_head, i = 0;
+                 elem;
+                 elem = elem->l_next, i++) {
+                subll = hatom_getllll(&elem->l_hatom);
+                x->c_paramsnames[i] = gensym(hatom_getsym(&subll->l_head->l_hatom)->s_name + 1);
+                t_llll *value = llll_clone(subll);
+                llll_destroyelem(value->l_head);
+                x->c_paramsvalues[i] = value;
+            }
+        }
+        
+        llll_free(x->c_paramsll);
+        x->c_paramsll = ll;
+        x->c_nparams = ll->l_size;
+    }
+    
+    x->c_ob.l_rebuild = 1;
+    return;
+    
+codableobj_params_set_error:
+    object_error((t_object *) x, "Bad format for params attribute");
+    llll_free(ll);
+    llll_free(subll);
+    return;
+}
+
 
 void codableobj_dblclick(t_codableobj *x)
 {
@@ -255,7 +410,8 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
     
     oldCode = x->c_text;
     x->c_text = newCode;
-    err = codableobj_buildAst(x);
+    long dummyfirstattr;
+    err = codableobj_buildAst(x, &dummyfirstattr);
     
     if (!err) {
         sysmem_freeptr(oldCode);
@@ -332,13 +488,20 @@ void codableobj_writefile(t_codableobj *x, char *filename, short path)
 }
 
 
+long codableobj_getCodeFromAtomsWithSeparators(t_codableobj *x, long ac, t_atom *av)
+{
+    char *buf = NULL;
+    long textsize = bach_atoms2textWithSeparators(ac, av, &buf);
+    bach_atomic_lock(&x->c_lock);
+    x->c_text = buf;
+    bach_atomic_unlock(&x->c_lock);
+    return textsize + 1;
+}
+
 long codableobj_getCodeFromAtoms(t_codableobj *x, long ac, t_atom *av)
 {
-    long textsize;
     char *buf = NULL;
-    
-    textsize = bach_atoms2text(ac, av, &buf);
-    
+    long textsize = bach_atoms2text(ac, av, &buf);
     bach_atomic_lock(&x->c_lock);
     x->c_text = buf;
     bach_atomic_unlock(&x->c_lock);
@@ -350,8 +513,8 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
 {
     if (d) {
         char *newCode = nullptr;
-        dictionary_getstring(d, gensym("code"), (const char **) &newCode);
-        if (newCode) {
+        t_max_err err = dictionary_getstring(d, gensym("code"), (const char **) &newCode);
+        if (err == MAX_ERR_NONE && newCode) {
             if (x->c_main) {
                 x->c_main->decrease();
                 if (strcmp(newCode, x->c_text) != 0)
@@ -369,8 +532,8 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
                 strncpy(x->c_text, newCode, codeLen);
                 *(x->c_text + codeLen) = 0;
             }
-            
-            codableobj_buildAst(x, dataInlets, dataOutlets, directInlets, directOutlets);
+            long dummy;
+            codableobj_buildAst(x, &dummy, dataInlets, dataOutlets, directInlets, directOutlets);
         }
     }
 }
@@ -379,10 +542,13 @@ void codableobj_free(t_codableobj *x)
 {
     if (x->c_main)
         x->c_main->decrease();
-    if (x->c_text)
-        sysmem_freeptr(x->c_text);
+    //if (x->c_text)
+    //    sysmem_freeptr(x->c_text);
     if (x->c_filename)
         bach_freeptr(x->c_filename);
+    for (int i = 0; i < x->c_nparams; i++)
+        llll_free(x->c_paramsvalues[i]);
+    llll_free(x->c_paramsll);
     object_free_debug(x->c_editor);
     llllobj_obj_free((t_llllobj_object *) x);
 }
@@ -396,7 +562,8 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
     if (oldMain)
         oldMain->increase();
     codableobj_getCodeFromAtoms(x, ac, av);
-    err = codableobj_buildAst(x);
+    long dummy;
+    err = codableobj_buildAst(x, &dummy);
     if (!err) {
         sysmem_freeptr(oldText);
         if (oldMain)
@@ -419,8 +586,13 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
+    
+    CLASS_ATTR_ATOM_LONG(c, "maxtime",    0,    t_codableobj, c_maxtime);
+    CLASS_ATTR_LABEL(c, "maxtime", 0, "Maximum Duration Of Evaluation");
+    CLASS_ATTR_FILTER_MIN(c, "maxtime", 0);
+    
     if (!isBachCode) {
-        class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
+        //class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
         class_addmethod(c, (method)codableobj_dblclick,  "dblclick",        A_CANT, 0);
         CLASS_ATTR_LONG(c, "embed",    0,    t_codableobj, c_embed);
         CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);
@@ -428,22 +600,38 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
         CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
         CLASS_ATTR_SAVE(c, "embed", 0);
         CLASS_ATTR_BASIC(c, "embed", 0);
+        
+        CLASS_ATTR_CHAR_VARSIZE(c, "lambda", 0, t_codableobj, c_text, c_dummysize, 32767);
+        CLASS_ATTR_LABEL(c, "lambda", 0, "Expression For Lambda Function");
+        //CLASS_ATTR_SAVE(c, "lambda", 0);
+        //CLASS_ATTR_BASIC(c, "lambda", 0);
+        CLASS_ATTR_ACCESSORS(c, "lambda", codableobj_lambda_get, codableobj_lambda_set);
+        CLASS_ATTR_LLLL(c, "lambdaparams", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
+        CLASS_ATTR_LABEL(c, "lambdaparams", 0, "Extra Parameters To Lambda Function");
+    } else {
+        CLASS_ATTR_LLLL(c, "params", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
+        CLASS_ATTR_LABEL(c, "params", 0, "Extra Parameters");
     }
 }
 
-long codableobj_setup(t_codableobj *x, long ac, t_atom *av)
+short codableobj_setup(t_codableobj *x, short ac, t_atom *av)
 {
-    x->c_embed = 1;
-    long i;
-    for (i = 0; i < ac - 1; i++) {
-        if (atom_getsym(av + i) == gensym("@lambda")) {
-            codableobj_getCodeFromAtoms(x, ac - i - 1, av + i + 1);
-            if (codableobj_buildAst(x) != MAX_ERR_NONE)
-                object_error((t_object *) x, "Invalid code");
-            return i;
-        }
+    short true_ac = attr_args_offset(ac, av);
+    short attr_ac = ac - true_ac;
+    short orig_attr_ac = attr_ac;
+    t_atom *attr_av = av + true_ac;
+    long next = codableobj_parseLambdaAttrArg(x, &attr_ac, attr_av);
+    
+    if (next == -2) {
+        return -1;
     }
-    return ac;
+    
+    x->c_embed = 1;
+    x->c_maxtime = 1000;
+    attr_args_process(x, attr_ac, attr_av); // the attributes before @lambda
+    if (next >= 0)
+        attr_args_process(x, orig_attr_ac - next, attr_av + next);
+    return true_ac;
 }
 
 
@@ -452,4 +640,11 @@ void codableobj_ownedFunctionsSetup(t_codableobj *x)
     x->c_ofTable["directout"] = new t_fnDirectout_dummy((t_object *) x);
     x->c_ofTable["directin"] = new t_fnDirectin_dummy((t_object *)x);
     x->c_ofTable["print"] = new t_fnPrint((t_object *) x);
+}
+
+t_llll *codableobj_run(t_codableobj* x, t_execContext &context)
+{
+    context.setRootParams(x->c_nparams, x->c_paramsnames, x->c_paramsvalues);
+    context.stopTime = x->c_maxtime > 0 ? x->c_maxtime + systime_ms() : 0;
+    return x->c_main->call(context);
 }
