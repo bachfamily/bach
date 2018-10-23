@@ -428,8 +428,6 @@ long hypercomment_keyfilter(t_hypercomment *x, t_object *patcherview, long *keyc
 
 void hypercomment_enter(t_hypercomment *x)	// enter is triggerd at "endeditbox time"
 {
-    char foo = 5;
-    foo++;
 /*	long size	= 0;
 	char *text	= NULL;
 	t_object *textfield = jbox_get_textfield((t_object *)x);
