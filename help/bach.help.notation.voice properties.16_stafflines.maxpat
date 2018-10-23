@@ -69,7 +69,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 160.5, 346.5, 162.0, 19.0 ],
-					"text" : "stafflines 3 1 0 (-1 0 5 8) 5"
+					"text" : "stafflines 3 1 0 [-1 0 5 8] 5"
 				}
 
 			}
@@ -100,7 +100,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 173.5, 263.5, 136.0, 19.0 ],
-					"text" : "stafflines 3 1 0 (1 5) 5"
+					"text" : "stafflines 3 1 0 [1 5] 5"
 				}
 
 			}

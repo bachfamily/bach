@@ -37,7 +37,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 39.25, 340.5, 226.0, 19.0 ],
-					"text" : "(slotinfo (5 (representation \" Hertz\" )))"
+					"text" : "[slotinfo [5 [representation \" Hertz\" ]]]"
 				}
 
 			}
@@ -67,7 +67,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 312.0, 363.5, 175.0, 19.0 ],
-					"text" : "(slotinfo (6 (representation)))"
+					"text" : "[slotinfo [6 [representation]]]"
 				}
 
 			}
@@ -81,7 +81,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 284.0, 340.5, 196.0, 19.0 ],
-					"text" : "(slotinfo (6 (representation mc)))"
+					"text" : "[slotinfo [6 [representation mc]]]"
 				}
 
 			}
@@ -111,7 +111,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 260.0, 317.5, 210.0, 19.0 ],
-					"text" : "(slotinfo (6 (representation cents)))"
+					"text" : "[slotinfo [6 [representation cents]]]"
 				}
 
 			}
@@ -165,7 +165,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 20.75, 317.5, 195.0, 19.0 ],
-					"text" : "(slotinfo (5 (representation Hz)))"
+					"text" : "[slotinfo [5 [representation Hz]]]"
 				}
 
 			}
@@ -231,7 +231,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 89.5, 269.0, 19.0 ],
-					"text" : "(slotinfo (3 (name speed) (representation x)))"
+					"text" : "[slotinfo [3 [name speed] [representation x]]]"
 				}
 
 			}
@@ -245,7 +245,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 83.0, 121.5, 350.0, 19.0 ],
-					"text" : "(slotinfo (3 (name duration) (representation \" light years\" )))"
+					"text" : "[slotinfo [3 [name duration] [representation \" light years\" ]]]"
 				}
 
 			}

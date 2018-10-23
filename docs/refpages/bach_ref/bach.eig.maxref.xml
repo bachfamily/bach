@@ -63,7 +63,7 @@
 			<description>
 				The object outputs the eigenvalues and the eigenvectors of the incoming matrix. <br />
 				In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-				For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+				For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 				i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 				as the number of rows.
 				<br /> <br />
@@ -138,7 +138,7 @@
 		be surely 0, N being is the dimension of the kernel (these zero-eigenvalues correspond to the
 		kernel spanning eigenvectors). <br />
 		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-		For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 		as the number of rows.
 		<br /> <br />
@@ -177,7 +177,7 @@
 		be surely 0, N being is the dimension of the kernel (these zero-eigenvalues correspond to the
 		kernel spanning eigenvectors). <br />
 		In the bach environment, a matrix is just a llll having depth two, whose first-level sublllls are the rows of the matrix.
-		For instance the matrix <b>(1 0 0) (0 1 0) (0 0 1)</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
+		For instance the matrix <b>[1 0 0] [0 1 0] [0 0 1]</b> is the 3 by 3 identity matrix. A "good" matrix is supposed to be well formed,
 		i.e. all its rows must have the same length. A matrix is square if the length of the rows (which is the number of columns) is the same
 		as the number of rows.
 		<br /> <br />

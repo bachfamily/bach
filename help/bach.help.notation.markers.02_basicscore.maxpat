@@ -86,7 +86,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 20.5, 115.0, 130.0, 19.0 ],
-					"text" : "addmarker (1 1/4) fix"
+					"text" : "addmarker [1 1/4] fix"
 				}
 
 			}
@@ -209,7 +209,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 41.5, 198.5, 168.0, 19.0 ],
-					"text" : "addmarker 2500 (foo fee 4)"
+					"text" : "addmarker 2500 [foo fee 4]"
 				}
 
 			}

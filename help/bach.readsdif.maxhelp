@@ -77,7 +77,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 74.0, 522.0, 195.0 ],
-									"text" : "The body of the SDIF file, that is the sequence of all the matrices of all the streams, is formatted intp an llll with one sublist for each stream, as follows:\n\n (<stream ID> (<frame signature> <time> (<Matrix> <Matrix> ...))\n                       (<frame signature> <time> (<Matrix> <Matrix> ...)) ...) \n (<stream ID> (<frame signature> <time> (<Matrix> <Matrix> ...))\n                       (<frame signature> <time> (<Matrix> <Matrix> ...)) ...)\n\n<time> is expressed in milliseconds.\nEach <Matrix> has the form (<Matrix signature> (<Row> <Row> ...))\nIf the matrix data type is numeric, each <Row> has the form (<data> <data> ...).\nIf the matrix data type is text, each <Row> has the form <symbol> - that is, its contents are formatted as a single symbol.",
+									"text" : "The body of the SDIF file, that is the sequence of all the matrices of all the streams, is formatted intp an llll with one sublist for each stream, as follows:\n\n [<stream ID> [<frame signature> <time> [<Matrix> <Matrix> ...]]\n                       [<frame signature> <time> [<Matrix> <Matrix> ...]] ...] \n [<stream ID> [<frame signature> <time> [<Matrix> <Matrix> ...]]\n                       [<frame signature> <time> [<Matrix> <Matrix> ...]] ...]\n\n<time> is expressed in milliseconds.\nEach <Matrix> has the form [<Matrix signature> [<Row> <Row> ...]]\nIf the matrix data type is numeric, each <Row> has the form [<data> <data> ...].\nIf the matrix data type is text, each <Row> has the form <symbol> - that is, its contents are formatted as a single symbol.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -169,7 +169,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 74.0, 555.0, 253.0 ],
-									"text" : "The SDIF header is formatted into an llll composed by three optionals sublists, respectively for the name-value tables, the frame definitions and the matrix definitions. The order of appearance of these three sublists, if they exist, may vary from file to file.\n\nThe structure of the name-value sublist is\n(nvt ((<name> <value>) (<name> <value>) ...)\n       ((<name> <value>) (<name> <value>) ...)\n      \t  ...)\n\nThe structure of the frame definitions sublist is\n(frametypes (<frame signature> ((<matrix signature> <component name>) (<matrix signature> <component name>) ...) ...) ...)\n\nThe structure of the matrix definitions sublist is\n(matrixtypes (<matrix signature> (<column name> <column name> ...)) ...)\n\nThe header llll for a simple SDIF file may be empty.",
+									"text" : "The SDIF header is formatted into an llll composed by three optionals sublists, respectively for the name-value tables, the frame definitions and the matrix definitions. The order of appearance of these three sublists, if they exist, may vary from file to file.\n\nThe structure of the name-value sublist is\n[nvt [[<name> <value>] [<name> <value>] ...]\n       [[<name> <value>] [<name> <value>] ...]\n      \t  ...]\n\nThe structure of the frame definitions sublist is\n[frametypes [<frame signature> [[<matrix signature> <component name>] [<matrix signature> <component name>] ...] ...] ...]\n\nThe structure of the matrix definitions sublist is\n[matrixtypes [<matrix signature> [<column name> <column name> ...]] ...]\n\nThe header llll for a simple SDIF file may be empty.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 

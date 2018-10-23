@@ -352,8 +352,11 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
         char *newCode = nullptr;
         dictionary_getstring(d, gensym("code"), (const char **) &newCode);
         if (newCode) {
-            if (x->c_main)
+            if (x->c_main) {
                 x->c_main->decrease();
+                if (strcmp(newCode, x->c_text) != 0)
+                    object_warn((t_object *) x, "Code in the editor overrides code in the object box");
+            }
             sysmem_freeptr(x->c_text);
             size_t codeLen = strlen(newCode);
             if (!isspace(*(newCode + codeLen - 1))) {
@@ -419,11 +422,18 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     if (!isBachCode) {
         class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
         class_addmethod(c, (method)codableobj_dblclick,  "dblclick",        A_CANT, 0);
+        CLASS_ATTR_LONG(c, "embed",    0,    t_codableobj, c_embed);
+        CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);
+        CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
+        CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
+        CLASS_ATTR_SAVE(c, "embed", 0);
+        CLASS_ATTR_BASIC(c, "embed", 0);
     }
 }
 
-long codableobj_buildCodeAsLambdaAttribute(t_codableobj *x, long ac, t_atom *av)
+long codableobj_setup(t_codableobj *x, long ac, t_atom *av)
 {
+    x->c_embed = 1;
     long i;
     for (i = 0; i < ac - 1; i++) {
         if (atom_getsym(av + i) == gensym("@lambda")) {

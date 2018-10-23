@@ -236,7 +236,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 22.0, 94.0, 337.0, 22.0 ],
 					"style" : "",
-					"text" : "(commands (1 noteup chordup u) (2 notedown chorddown d))"
+					"text" : "[commands [1 noteup chordup u] [2 notedown chorddown d]]"
 				}
 
 			}
@@ -528,7 +528,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 539.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Lambda Scores (e)",
+					"text" : "Lambda Scores [e]",
 					"varname" : "messageA"
 				}
 
@@ -621,7 +621,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 561.0, 539.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Lambda Scores (g)",
+					"text" : "Lambda Scores [g]",
 					"varname" : "messageB"
 				}
 

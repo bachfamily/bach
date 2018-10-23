@@ -1537,7 +1537,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 150.5, 160.0, 115.0, 41.0 ],
 									"style" : "",
-									"text" : "a b c (d e)"
+									"text" : "a b c [d e]"
 								}
 
 							}
@@ -1610,7 +1610,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.0, 160.0, 117.0, 41.0 ],
 									"style" : "",
-									"text" : "1 (2 3 (4 5 6))"
+									"text" : "1 [2 3 [4 5 6]]"
 								}
 
 							}
@@ -2084,7 +2084,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 14.0, 164.0, 113.0, 36.0 ],
 									"style" : "",
-									"text" : "1 (2 3 (4 5 6))"
+									"text" : "1 [2 3 [4 5 6]]"
 								}
 
 							}

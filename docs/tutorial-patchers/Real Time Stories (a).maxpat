@@ -441,7 +441,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 607.0, 588.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Real Time Stories (b)",
+					"text" : "Real Time Stories [b]",
 					"varname" : "messageB"
 				}
 

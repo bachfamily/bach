@@ -136,7 +136,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 27.0, 348.0, 180.0, 19.0 ],
-									"text" : "addchord 1 ( $2 ( $1 10 10 ) )"
+									"text" : "addchord 1 [ $2 [ $1 10 10 ] ]"
 								}
 
 							}
@@ -526,7 +526,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 228.0, 218.0, 207.0, 19.0 ],
-									"text" : "clear, addchord 1 ( 0 ( $1 10 10 ) )"
+									"text" : "clear, addchord 1 [ 0 [ $1 10 10 ] ]"
 								}
 
 							}
@@ -641,7 +641,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 181.0, 96.0, 60.0 ],
-									"text" : "(110.5 221) (331.5 442)\n((448 (1024)))"
+									"text" : "[110.5 221] [331.5 442]\n[[448 [1024]]]"
 								}
 
 							}

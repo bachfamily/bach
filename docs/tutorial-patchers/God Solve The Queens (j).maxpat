@@ -129,7 +129,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 243.0, 40.0, 532.0, 60.0 ],
-					"text" : "We slightly complexify the situation, by adding two more constraints: we want that inside the resulting chord be at least an interval of fifth, and we also want that the centroid of each chord be \"not-too-distant\" from the centroid of the previously chosen one. These constraints apply on all the set of data, so we need to set a (atleastafifth (1 2 3 4 5)) and a (centroid (1 2 3 4 5)) constraints."
+					"text" : "We slightly complexify the situation, by adding two more constraints: we want that inside the resulting chord be at least an interval of fifth, and we also want that the centroid of each chord be \"not-too-distant\" from the centroid of the previously chosen one. These constraints apply on all the set of data, so we need to set a [atleastafifth [1 2 3 4 5]] and a [centroid [1 2 3 4 5]] constraints."
 				}
 
 			}
@@ -634,7 +634,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 391.0, 128.0, 73.0, 18.0 ],
-									"text" : "( fifth (1 2) )"
+									"text" : "[ fifth [1 2] ]"
 								}
 
 							}
@@ -1208,7 +1208,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 50.0, 152.0, 39.0, 18.0 ],
-									"text" : "( $1 )"
+									"text" : "[ $1 ]"
 								}
 
 							}
@@ -1868,7 +1868,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 542.0, 148.0, 18.0 ],
-					"text" : "God Solve The Queens (i)",
+					"text" : "God Solve The Queens [i]",
 					"varname" : "messageA"
 				}
 
@@ -1968,7 +1968,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 621.0, 542.0, 152.0, 18.0 ],
-					"text" : "God Solve The Queens (k)",
+					"text" : "God Solve The Queens [k]",
 					"varname" : "messageB"
 				}
 

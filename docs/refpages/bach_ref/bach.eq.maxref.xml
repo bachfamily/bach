@@ -103,7 +103,7 @@
 
 	<!--SEEALSO-->
 	<seealsolist>
-		<seealso name="bach.!=" />
+		<seealso name="bach.neq" display="bach.!=" type="refpage" />
 		<seealso name="bach.&gt;" />
 		<seealso name="bach.&lt;" />
 		<seealso name="bach.&gt;=" />

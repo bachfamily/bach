@@ -3666,7 +3666,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 643.0, 109.0, 56.0, 23.0 ],
 									"style" : "",
-									"text" : "(u i o p)"
+									"text" : "[u i o p]"
 								}
 
 							}
@@ -3814,7 +3814,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 484.0, 109.0, 59.0, 23.0 ],
 									"style" : "",
-									"text" : "(r) (t) (y)"
+									"text" : "[r] [t] [y]"
 								}
 
 							}
@@ -4024,7 +4024,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 55.0, 148.0, 59.0, 23.0 ],
 									"style" : "",
-									"text" : "(r) (t) (y)"
+									"text" : "[r] [t] [y]"
 								}
 
 							}
@@ -4549,7 +4549,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 546.0, 171.0, 73.0, 23.0 ],
 									"style" : "",
-									"text" : "((x) (y) (z))"
+									"text" : "[[x] [y] [z]]"
 								}
 
 							}
@@ -4564,7 +4564,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 486.0, 171.0, 48.0, 23.0 ],
 									"style" : "",
-									"text" : "a (b) c"
+									"text" : "a [b] c"
 								}
 
 							}
@@ -4594,7 +4594,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 110.0, 171.0, 73.0, 23.0 ],
 									"style" : "",
-									"text" : "((x) (y) (z))"
+									"text" : "[[x] [y] [z]]"
 								}
 
 							}
@@ -4609,7 +4609,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 50.0, 171.0, 48.0, 23.0 ],
 									"style" : "",
-									"text" : "a (b) c"
+									"text" : "a [b] c"
 								}
 
 							}

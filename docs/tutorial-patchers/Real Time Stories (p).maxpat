@@ -667,7 +667,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 297.0, 108.0, 39.0, 18.0 ],
-									"text" : "( $1 )"
+									"text" : "[ $1 ]"
 								}
 
 							}
@@ -2209,7 +2209,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 531.0, 140.0, 18.0 ],
-					"text" : "Real Time Stories (o)",
+					"text" : "Real Time Stories [o]",
 					"varname" : "messageA"
 				}
 

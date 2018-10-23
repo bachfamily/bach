@@ -3,13 +3,13 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 7,
-			"minor" : 2,
-			"revision" : 1,
+			"minor" : 3,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 651.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 402.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -96,7 +96,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 285.5, 238.0, 54.0 ],
+					"patching_rect" : [ 12.0, 268.5, 238.0, 54.0 ],
 					"style" : "",
 					"text" : "Notice by the way that level parenthesis attached to or detached from the content is the same."
 				}
@@ -111,6 +111,10 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 240.0, 391.0, 69.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
 					"style" : "",
 					"text" : "bach.print"
 				}
@@ -126,6 +130,10 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 240.0, 355.0, 72.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
 					"style" : "",
 					"text" : "bach.rev 1"
 				}
@@ -140,9 +148,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 256.0, 291.5, 186.0, 23.0 ],
+					"patching_rect" : [ 256.0, 274.5, 186.0, 23.0 ],
 					"style" : "",
-					"text" : "((John Paul) George) ( Ringo )"
+					"text" : "[[John Paul] George] [ Ringo ]"
 				}
 
 			}
@@ -158,7 +166,8 @@
 					"out" : "nnnn",
 					"outlettype" : [ "", "", "", "", "bang" ],
 					"patching_rect" : [ 313.0, 329.0, 234.0, 112.0 ],
-					"whole_tree_data_0000000000" : [ "(", "(", "John", "Paul", ")", "George", ")", "(", "Ringo", ")" ],
+					"versionnumber" : 80001,
+					"whole_tree_data_0000000000" : [ "[", "[", "John", "Paul", "]", "George", "]", "[", "Ringo", "]" ],
 					"whole_tree_data_count" : [ 1 ]
 				}
 
@@ -172,7 +181,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 244.5, 530.0, 36.0 ],
+					"patching_rect" : [ 12.0, 205.5, 530.0, 36.0 ],
 					"style" : "",
 					"text" : "On the other hand, all the object of the bach library will be perfectly able to recognize inside that list a nested tree structure, and will interact with it properly",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -191,9 +200,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 323.0, 154.5, 214.0, 84.0 ],
+					"patching_rect" : [ 323.0, 119.5, 214.0, 84.0 ],
 					"style" : "",
-					"text" : "... but also a Max list, of course:\nMax will interpret this list as 4 symbols: \"((John\", \"Paul)\", \"George)\", then \"(\", \"Ringo\" and \")\"."
+					"text" : "... but also a Max list, of course:\nMax will interpret this list as 4 symbols: \"[[John\", \"Paul]\", \"George]\", then \"[\", \"Ringo\" and \"]\"."
 				}
 
 			}
@@ -206,7 +215,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 184.5, 302.0, 50.0 ],
+					"patching_rect" : [ 12.0, 149.5, 302.0, 50.0 ],
 					"style" : "",
 					"text" : "Lisp like linked lists can be of course written inside standard Max messages, because they are perfectly formed Max lists.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -216,15 +225,14 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubblepoint" : 0.05,
-					"bubbleside" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 352.5, 124.0, 141.0, 40.0 ],
+					"patching_rect" : [ 467.5, 87.5, 105.5, 40.0 ],
 					"style" : "",
 					"text" : "Lisp-like linked list (llll)"
 				}
@@ -233,15 +241,14 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubblepoint" : 0.05,
-					"bubbleside" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 65.0, 124.0, 128.0, 40.0 ],
+					"patching_rect" : [ 167.0, 87.5, 88.0, 40.0 ],
 					"style" : "",
 					"text" : "Standard Max list"
 				}
@@ -271,9 +278,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 240.0, 96.0, 186.0, 23.0 ],
+					"patching_rect" : [ 285.5, 96.0, 186.0, 23.0 ],
 					"style" : "",
-					"text" : "((John Paul) George) ( Ringo )"
+					"text" : "[[John Paul] George] [ Ringo ]"
 				}
 
 			}
@@ -377,8 +384,7 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-18", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
+					"order" : 0,
 					"source" : [ "obj-19", 0 ]
 				}
 
@@ -386,8 +392,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-21", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
+					"order" : 1,
 					"source" : [ "obj-19", 0 ]
 				}
 
@@ -395,8 +400,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-22", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-21", 0 ]
 				}
 

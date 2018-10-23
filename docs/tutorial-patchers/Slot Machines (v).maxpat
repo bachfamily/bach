@@ -175,7 +175,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (6 (name \"surround pan\" ) (type spat) (range 0 10) (key s)))",
+					"text" : "[slotinfo [6 [name \"surround pan\" ] [type spat] [range 0 10] [key s]]]",
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],
 					"fontname" : "Arial",
@@ -377,7 +377,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (u)",
+					"text" : "Slot Machines [u]",
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],
 					"fontname" : "Arial",
@@ -476,7 +476,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (w)",
+					"text" : "Slot Machines [w]",
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],
 					"fontname" : "Arial",

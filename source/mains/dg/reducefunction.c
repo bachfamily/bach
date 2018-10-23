@@ -106,7 +106,7 @@ int T_EXPORT main()
     // @method llll @digest Simplify incoming breakpoint function
     // @description
     // A breakpoint function in the form
-    // <b>(<m>x</m> <m>y</m> <m>slope</m>) (<m>x</m> <m>y</m> <m>slope</m>)...</b>
+    // <b>[<m>x</m> <m>y</m> <m>slope</m>] [<m>x</m> <m>y</m> <m>slope</m>]...</b>
     // is expected and then simplified by pruning negligeable points.
     // Result is output from the outlet in the same form.
     class_addmethod(c, (method)reducefunction_anything,					"anything",				A_GIMME,	0);

@@ -54,7 +54,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 213.0, 447.5, 175.0, 19.0 ],
 					"presentation_rect" : [ 215.0, 450.5, 0.0, 0.0 ],
-					"text" : "(slotinfo (1 (representation)))"
+					"text" : "[slotinfo [1 [representation]]]"
 				}
 
 			}
@@ -86,7 +86,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 196.0, 230.5, 175.0, 19.0 ],
 					"presentation_rect" : [ 197.0, 118.5, 0.0, 0.0 ],
-					"text" : "(slotinfo (1 (representation)))"
+					"text" : "[slotinfo [1 [representation]]]"
 				}
 
 			}
@@ -116,7 +116,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 213.0, 419.0, 227.0, 19.0 ],
-					"text" : "(slotinfo (1 (representation nil m cm)))"
+					"text" : "[slotinfo [1 [representation nil m cm]]]"
 				}
 
 			}
@@ -178,7 +178,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 213.0, 335.25, 229.0, 19.0 ],
-					"text" : "(slotinfo (1 (representation TNT mm)))"
+					"text" : "[slotinfo [1 [representation TNT mm]]]"
 				}
 
 			}
@@ -192,7 +192,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 213.0, 296.0, 240.0, 19.0 ],
-					"text" : "(slotinfo (1 (representation nanoacres)))"
+					"text" : "[slotinfo [1 [representation nanoacres]]]"
 				}
 
 			}
@@ -239,7 +239,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 196.0, 182.0, 215.0, 19.0 ],
-					"text" : "(slotinfo (1 (representation sec () )))"
+					"text" : "[slotinfo [1 [representation sec [] ]]]"
 				}
 
 			}
@@ -285,7 +285,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 213.0, 378.0, 234.0, 19.0 ],
-					"text" : "(slotinfo (1 (representation sec m cm)))"
+					"text" : "[slotinfo [1 [representation sec m cm]]]"
 				}
 
 			}
@@ -369,7 +369,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 196.0, 128.5, 219.0, 19.0 ],
-					"text" : "(slotinfo (1 (representation sec dB)))"
+					"text" : "[slotinfo [1 [representation sec dB]]]"
 				}
 
 			}
@@ -383,7 +383,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 196.0, 83.5, 195.0, 19.0 ],
-					"text" : "(slotinfo (1 (representation dB)))"
+					"text" : "[slotinfo [1 [representation dB]]]"
 				}
 
 			}

@@ -319,7 +319,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 376.0, 156.0, 22.0 ],
 					"style" : "",
-					"text" : "Standalone Applications (b)",
+					"text" : "Standalone Applications [b]",
 					"varname" : "messageA"
 				}
 
@@ -412,7 +412,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 499.0, 376.0, 156.0, 22.0 ],
 					"style" : "",
-					"text" : "Standalone Applications (d)",
+					"text" : "Standalone Applications [d]",
 					"varname" : "messageB"
 				}
 

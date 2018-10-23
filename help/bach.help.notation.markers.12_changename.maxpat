@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 54.5, 142.0, 154.0, 23.0 ],
 					"style" : "",
-					"text" : "name (paul 1) (george 2)"
+					"text" : "name [paul 1] [george 2]"
 				}
 
 			}

@@ -111,7 +111,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 46.0, 239.0, 308.0, 19.0 ],
-					"text" : "pitcheditrange (6000 6200 (E4 E5) D5 (7600 7900))"
+					"text" : "pitcheditrange [6000 6200 [E4 E5] D5 [7600 7900]]"
 				}
 
 			}
@@ -126,7 +126,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 23.0, 196.0, 261.0, 34.0 ],
-					"text" : "pitcheditrange (6000 6200 6400 6500 6700 6900 7100 7200 7400 7600 7700 7900)"
+					"text" : "pitcheditrange [6000 6200 6400 6500 6700 6900 7100 7200 7400 7600 7700 7900]"
 				}
 
 			}
@@ -156,7 +156,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 139.5, 231.0, 19.0 ],
-					"text" : "pitcheditrange ((6000 7200)) ((E4 E5))"
+					"text" : "pitcheditrange [[6000 7200]] [[E4 E5]]"
 				}
 
 			}
@@ -200,7 +200,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 68.0, 602.0, 65.0 ],
-					"text" : "The attribute expects one element for each voice (if less voices are given, last element is padded for remaining voices), and each element can be either in the form ((<min_mc> <max_mc>)), defining a midicent range, or in the form (<allowed_midicents_list>) to explicitely define a certain fixed number of pitch possibilities.",
+					"text" : "The attribute expects one element for each voice (if less voices are given, last element is padded for remaining voices), and each element can be either in the form [[<min_mc> <max_mc>]], defining a midicent range, or in the form [<allowed_midicents_list>] to explicitely define a certain fixed number of pitch possibilities.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

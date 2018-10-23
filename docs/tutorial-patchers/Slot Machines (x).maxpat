@@ -348,7 +348,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(commands (1 getsubrollnote getsubrollchord g) )",
+					"text" : "[commands [1 getsubrollnote getsubrollchord g] ]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -386,7 +386,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (name subroll) (type llll) (key b) (width 300)))",
+					"text" : "[slotinfo [1 [name subroll] [type llll] [key b] [width 300]]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -587,7 +587,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (w)",
+					"text" : "Slot Machines [w]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

@@ -54,7 +54,7 @@
 // and all elements satisfying the condition (for which the operator returns a non-zero value) are retained, while
 // all elements for which the condition is not matched (operator returning zero) are dropped.
 // For instance, if the operator is <b>&gt;</b>, with comparison value <b>1</b>, and the llll coming
-// through the first inlet is <b>0 (1.1 -2 (4 3/2 -5.2))</b>, the output llll will be <b>(1.1 (4 3/2))</b>, i.e.
+// through the first inlet is <b>0 [1.1 -2 [4 3/2 -5.2]]</b>, the output llll will be <b>[1.1 [4 3/2]]</b>, i.e.
 // only elements greater than 1 have been retained.
 // If a lambda loop is present the llll received in the second inlet is ignored,
 // the chunks (whose size is determined by the <m>size</m> attribute) are output from the lambda outlet

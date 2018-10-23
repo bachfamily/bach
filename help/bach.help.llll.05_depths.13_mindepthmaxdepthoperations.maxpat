@@ -317,7 +317,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 57.0, 291.0, 19.0 ],
-					"text" : "(((a b c) (1 2 3)) (john paul george ringo)) foo fee"
+					"text" : "[[[a b c] [1 2 3]] [john paul george ringo]] foo fee"
 				}
 
 			}

@@ -289,7 +289,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Filter Filter Little Star (b)",
+					"text" : "Filter Filter Little Star [b]",
 					"id" : "obj-7",
 					"fontsize" : 12.0,
 					"numinlets" : 2,

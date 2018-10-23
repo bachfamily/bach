@@ -148,7 +148,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 15.0, 377.0, 285.0, 19.0 ],
-									"text" : "close, open (1), open (2), open (2 3), open (2 4)"
+									"text" : "close, open [1], open [2], open [2 3], open [2 4]"
 								}
 
 							}
@@ -269,7 +269,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 117.0, 528.333313, 113.0 ],
-									"text" : "(banana (category (fruit good (summer june july)) yellow))\n(avocado (category (fruit bad (summer june)) green weird))\n(martian (category (alien real!) green weird))\n(C-3PO (category (alien fictional) metal))\n(strawberry (category (fruit good (spring march april may)) red))\n(apricot (category (fruit good (spring april may june)) yellow))\n(ET (category (alien fictional) weird))"
+									"text" : "[banana [category [fruit good [summer june july]] yellow]]\n[avocado [category [fruit bad [summer june]] green weird]]\n[martian [category [alien real!] green weird]]\n[C-3PO [category [alien fictional] metal]]\n[strawberry [category [fruit good [spring march april may]] red]]\n[apricot [category [fruit good [spring april may june]] yellow]]\n[ET [category [alien fictional] weird]]"
 								}
 
 							}
@@ -701,7 +701,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.0, 208.0, 236.333328, 72.0 ],
-									"text" : "(banana (category fruit yellow good))\n(avocado (category fruit green weird))\n(martian (category alien green weird))\n(C-3PO (category alien metal good))"
+									"text" : "[banana [category fruit yellow good]]\n[avocado [category fruit green weird]]\n[martian [category alien green weird]]\n[C-3PO [category alien metal good]]"
 								}
 
 							}

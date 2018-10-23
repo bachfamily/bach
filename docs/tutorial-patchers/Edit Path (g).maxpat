@@ -81,7 +81,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "preventedit markers (notes delete) popupmenu",
+					"text" : "preventedit markers [notes delete] popupmenu",
 					"fontname" : "Arial",
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -350,7 +350,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Edit Path (f)",
+					"text" : "Edit Path [f]",
 					"fontname" : "Arial",
 					"numinlets" : 2,
 					"numoutlets" : 1,

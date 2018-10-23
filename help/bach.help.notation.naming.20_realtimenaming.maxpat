@@ -1951,7 +1951,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 134.0, 295.0, 111.0, 23.0 ],
 					"style" : "",
-					"text" : "cents (1200 plus)"
+					"text" : "cents [1200 plus]"
 				}
 
 			}
@@ -1981,7 +1981,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 134.0, 275.0, 122.0, 23.0 ],
 					"style" : "",
-					"text" : "cents (2400 minus)"
+					"text" : "cents [2400 minus]"
 				}
 
 			}
@@ -2070,7 +2070,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 39.810814, 146.0, 188.0, 38.0 ],
 					"style" : "",
-					"text" : "addchord 1 ( $2 ( $1 100 127 ) ( name $3 ) )"
+					"text" : "addchord 1 [ $2 [ $1 100 127 ] [ name $3 ] ]"
 				}
 
 			}

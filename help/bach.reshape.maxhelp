@@ -159,7 +159,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 265.0, 210.0, 94.0, 36.0 ],
-									"text" : "(a b) ((c) d)"
+									"text" : "[a b] [[c] d]"
 								}
 
 							}

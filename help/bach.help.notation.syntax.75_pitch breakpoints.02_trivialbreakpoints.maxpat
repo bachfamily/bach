@@ -58,7 +58,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 260.75, 326.5, 247.5, 34.0 ],
 					"presentation_rect" : [ 257.0, 296.5, 0.0, 0.0 ],
-					"text" : "addchord 1 (0 (G4 1000 100 (breakpoints (0 0 0) (0.5 800 0.8) (1 0 0))))"
+					"text" : "addchord 1 [0 [G4 1000 100 [breakpoints [0 0 0] [0.5 800 0.8] [1 0 0]]]]"
 				}
 
 			}
@@ -240,7 +240,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 161.5, 351.0, 19.0 ],
-					"text" : "addchord 1 (0 (6000 1000 100 (breakpoints (0.5 800 0.8))))"
+					"text" : "addchord 1 [0 [6000 1000 100 [breakpoints [0.5 800 0.8]]]]"
 				}
 
 			}

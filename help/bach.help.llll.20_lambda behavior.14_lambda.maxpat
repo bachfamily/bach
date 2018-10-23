@@ -68,7 +68,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 351.0, 287.0, 169.0, 19.0 ],
-					"text" : "(5 4 3) (1 2 3) (2 1 5) (d d t)"
+					"text" : "[5 4 3] [1 2 3] [2 1 5] [d d t]"
 				}
 
 			}

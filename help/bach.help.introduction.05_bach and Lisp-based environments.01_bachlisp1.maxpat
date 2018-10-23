@@ -3,13 +3,13 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 7,
-			"minor" : 2,
-			"revision" : 1,
+			"minor" : 3,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 480.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 716.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -41,13 +41,13 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-9",
-					"linecount" : 3,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 403.0, 585.0, 50.0 ],
+					"patching_rect" : [ 6.0, 403.0, 585.0, 65.0 ],
 					"style" : "",
-					"text" : "Furthermore, using bach does not imply abandoning Lisp-based environments: the syntax of llll is a very close relative to the Lisp lists, which makes the communication between different pieces of software (like bach and OM, or bach and PWGL) extremely easy.",
+					"text" : "Furthermore, using bach does not imply abandoning Lisp-based environments: the syntax of llll is a very close relative to the Lisp lists, which makes the communication between different pieces of software (like bach and OM, or bach and PWGL) extremely easy.\nHave a look at the tutorials \"The World Outside\" and \"From OpenMusic to bach\" to know more.",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 				}
 
@@ -92,7 +92,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 226.0, 585.0, 94.0 ],
+					"patching_rect" : [ 6.0, 226.0, 587.0, 94.0 ],
 					"style" : "",
 					"text" : "Of course, not every OM or Lisp function has a corresponding object or abstraction in bach. In some cases, it might be very simple to obtain the desired functionality by patching together few objects (e.g. create-list). Or a single bach tool could replace several OM functions (e.g. bach.find for range-filter, band-filter, posn-filter). Moreover, we have deliberately chosen not to implement some advanced OM features, because we felt they didn't fit well with the real-time vocation of bach and Max. ",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
@@ -124,7 +124,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 140.0, 35.0, 451.0, 79.0 ],
+					"patching_rect" : [ 140.0, 35.0, 455.0, 79.0 ],
 					"style" : "",
 					"text" : "If you are interested in computer-aided composition, it is likely that you already know at least one of the excellent existing CAC environments, such as PatchWork, OpenMusic or PWGL. If this is the case, you might find useful to have a look in here - the information provided specifically refers to OM, but the general principles apply at least to all the Lisp-based environments.",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]

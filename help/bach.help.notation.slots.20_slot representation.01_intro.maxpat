@@ -90,7 +90,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 215.5, 323.5, 271.0, 19.0 ],
-					"text" : "(slotinfo (3 (representation \" football fields\" )))"
+					"text" : "[slotinfo [3 [representation \" football fields\" ]]]"
 				}
 
 			}

@@ -15,6 +15,6 @@
 			"bach.mod*" : "bach.modtimes"
 		},
 		
-		"exclusions" : ["bach.eq", "bach.geq", "bach.gt", "bach.leq", "bach.lt", "bach.neq", "bach.div", "bach.mod", "bach.rdiv", "bach.rminus", "bach.times", "bach.modtimes", "bach.help.searchtag", "bach.help.home", "bach.ninsert", "bach.nsubs", "bach.embed", "bach.mdelace", "bach.ssort", "bach.append"]
+		"exclusions" : ["bach.help.searchtag", "bach.help.home", "bach.ninsert", "bach.nsubs", "bach.embed", "bach.mdelace", "bach.ssort", "bach.append"]
 	}
 }

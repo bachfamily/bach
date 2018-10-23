@@ -138,11 +138,11 @@
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.expr" />
-		<seealso name="bach./" />
+		<seealso name="bach.div" display="bach./" type="refpage" />
 		<seealso name="bach.+" />
 		<seealso name="bach.-" />
 		<seealso name="*" />
-		<seealso name="bach.mod*" />
+		<seealso name="bach.modtimes" display="bach.mod*" type="refpage" />
 	</seealsolist>
 
 	<misc name = "Input">

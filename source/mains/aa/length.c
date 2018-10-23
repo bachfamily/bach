@@ -24,7 +24,7 @@
  Returns the length of an llll. 
  
  @discussion
- The length is computed at the root level only, so e.g. the reported length of <b>(1 2) (3 4)</b> is 2.
+ The length is computed at the root level only, so e.g. the reported length of <b>[1 2] [3 4]</b> is 2.
 
  @category
  bach, bach objects, bach llll

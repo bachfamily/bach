@@ -809,7 +809,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 93.0, 345.5, 134.0, 19.0 ],
-									"text" : "linkend . : \\, \\; ( ) [ ] { }"
+									"text" : "linkend . : \\, \\; [ ] [ ] { }"
 								}
 
 							}

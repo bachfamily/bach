@@ -138,7 +138,7 @@
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.expr" />
-		<seealso name="bach.*" />
+		<seealso name="bach.times" display="bach.*" type="refpage" />
 		<seealso name="pow" />
 		<seealso name="bach.mpow" />
 	</seealsolist>

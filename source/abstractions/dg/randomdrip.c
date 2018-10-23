@@ -77,8 +77,8 @@ CLASS_ATTR_CHAR(c, "unwrap", 0, t_random, unwrap);
 CLASS_ATTR_STYLE_LABEL(c,"unwrap",0,"text","Automatically Unwrap lllls When Picked");
 CLASS_ATTR_BASIC(c,"unwrap",0);
 // @description Toggles the ability to unwrap automatically the llll when picked (default: 1).
-// For instance, if this attribute is active, and the llll is <b>1 2 (3 (4 4)) 5</b>, with 
-// <m>maxdepth</m> 1, when the <b>(3 (4 4))</b> element is picked, the flattened <b>3 (4 4)</b> llll
+// For instance, if this attribute is active, and the llll is <b>1 2 [3 [4 4]] 5</b>, with 
+// <m>maxdepth</m> 1, when the <b>[3 [4 4]]</b> element is picked, the flattened <b>3 [4 4]</b> llll
 // is output.
 
 

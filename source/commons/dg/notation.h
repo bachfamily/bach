@@ -2047,7 +2047,7 @@ typedef struct _notation_item
 	unsigned long	ID;			///< ID (> 0) of the notation item, or 0 if none. Not all items have ID, only the ones whose tracking is meaningful for undo purposes.
 								///< Beware that, for instance, if #type = #k_MEASURE, this ID is by no means the measure number, just a variously assigned ID.
 
-	t_llll			*names;				///< llll containing the name or names of the notation item. Names can be also organized in sublist, such as <b>(foo 1) (fee 2 bar) (bar 3)</b>
+	t_llll			*names;				///< llll containing the name or names of the notation item. Names can be also organized in sublist, such as <b>[foo 1] [fee 2 bar] [bar 3]</b>
 	t_llll			*label_families;	///< Name-labeling families to which the item belongs, in the form of (<pointer_to_family> <pointer_to_llllelem_corresponding_to_notation_item>) (<family> <lllelem>)... 
 										///< where the pointer to the family is a H_OBJ pointing to the correct t_bach_family structure.
 	

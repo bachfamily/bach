@@ -245,7 +245,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 17.523438, 116.0, 150.0, 51.0 ],
-									"text" : "foo (fee FEE) faa (john george (yoko)) louis"
+									"text" : "foo [fee FEE] faa [john george [yoko]] louis"
 								}
 
 							}
@@ -578,7 +578,7 @@
 									"numoutlets" : 4,
 									"outlettype" : [ "", "", "", "" ],
 									"patching_rect" : [ 25.0, 276.0, 175.0, 21.0 ],
-									"text" : "bach.pick 1 (2 1) 5 -1 @out t"
+									"text" : "bach.pick 1 [2 1] 5 -1 @out t"
 								}
 
 							}
@@ -595,7 +595,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 25.0, 155.0, 138.0, 50.0 ],
-									"text" : "foo (fee FEE) faa (john george (yoko)) louis"
+									"text" : "foo [fee FEE] faa [john george [yoko]] louis"
 								}
 
 							}

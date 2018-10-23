@@ -54,7 +54,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (type dynfilter)))",
+					"text" : "[slotinfo [1 [type dynfilter]]]",
 					"id" : "obj-54",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -68,7 +68,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (type filter)))",
+					"text" : "[slotinfo [1 [type filter]]]",
 					"id" : "obj-53",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -95,7 +95,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (2 (type dynfilter)))",
+					"text" : "[slotinfo [2 [type dynfilter]]]",
 					"id" : "obj-49",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -109,7 +109,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "comment",
-					"text" : "bach will set up some standard stuff for domain and ranges. This might NOT be what you exactly want, in which case, it's much better if you handle your slotinfo properly. This is also more advisable, as bach usually tries to convert slots as it can. For instance if you had a customly defined filter slot, redefining just \"(slotinfo (1 (type filter)))\" won't have any effect whatsoever, since bach will keep the values the slot already had (the information you're defining is \"compatible\" with the slot form!). The same is true for any slot conversion (e.g. bach will also try to convert from a filterslot to a dynfilter slot): if you want to be sure of what's your domain, range, slopes, be careful to send them properly.\nThis might seem a weird behaviour (why does bach try to convert?!), yet, this is by no means awkward: imagine you had a filterslot, and you wrote a whole score with it, but suddently you realizes that what you actually need are dynamic filter; there's nothing easier: just REDEFINE the type of the slot as \"dynfilter\". With this, bach will try to perform the conversion (which is indeed possible in this case), and your information will be preserved, ready to be augmented by other filter interpolations! ",
+					"text" : "bach will set up some standard stuff for domain and ranges. This might NOT be what you exactly want, in which case, it's much better if you handle your slotinfo properly. This is also more advisable, as bach usually tries to convert slots as it can. For instance if you had a customly defined filter slot, redefining just \"[slotinfo [1 [type filter]]]\" won't have any effect whatsoever, since bach will keep the values the slot already had (the information you're defining is \"compatible\" with the slot form!). The same is true for any slot conversion (e.g. bach will also try to convert from a filterslot to a dynfilter slot): if you want to be sure of what's your domain, range, slopes, be careful to send them properly.\nThis might seem a weird behaviour (why does bach try to convert?!), yet, this is by no means awkward: imagine you had a filterslot, and you wrote a whole score with it, but suddently you realizes that what you actually need are dynamic filter; there's nothing easier: just REDEFINE the type of the slot as \"dynfilter\". With this, bach will try to perform the conversion (which is indeed possible in this case), and your information will be preserved, ready to be augmented by other filter interpolations! ",
 					"linecount" : 10,
 					"id" : "obj-48",
 					"fontsize" : 12.0,
@@ -123,7 +123,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (type filter)))",
+					"text" : "[slotinfo [1 [type filter]]]",
 					"id" : "obj-46",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -330,7 +330,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Filter Filter Little Star (a)",
+					"text" : "Filter Filter Little Star [a]",
 					"id" : "obj-7",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -429,7 +429,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Filter Filter Little Star (c)",
+					"text" : "Filter Filter Little Star [c]",
 					"id" : "obj-16",
 					"fontsize" : 12.0,
 					"numinlets" : 2,

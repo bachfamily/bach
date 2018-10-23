@@ -143,7 +143,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 69.0, 198.807343, 61.0, 22.0 ],
 					"style" : "",
-					"text" : "(((C4) ()))"
+					"text" : "[[[C4] []]]"
 				}
 
 			}
@@ -186,7 +186,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 102.0, 135.807343, 209.0, 23.0 ],
 					"style" : "",
-					"text" : "(slots ((((( 10 ferm ))) ((10 ferm)))))"
+					"text" : "[slots [[[[[ 10 ferm ]]] [[10 ferm]]]]]"
 				}
 
 			}

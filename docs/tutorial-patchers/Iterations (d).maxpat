@@ -84,7 +84,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 (20 (40))) (((55)) (66)) 44",
+					"text" : "[1 [20 [40]]] [[[55]] [66]] 44",
 					"id" : "obj-38",
 					"fontname" : "Arial",
 					"numinlets" : 2,
@@ -360,7 +360,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(4 4) (120)",
+					"text" : "[4 4] [120]",
 					"id" : "obj-39",
 					"fontname" : "Arial",
 					"numinlets" : 2,
@@ -590,7 +590,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1 (20 40)) (55 (66)) 44",
+					"text" : "[1 [20 40]] [55 [66]] 44",
 					"id" : "obj-25",
 					"fontname" : "Arial",
 					"numinlets" : 2,
@@ -824,7 +824,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (c)",
+					"text" : "Iterations [c]",
 					"id" : "obj-8",
 					"fontname" : "Arial",
 					"numinlets" : 2,
@@ -923,7 +923,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (e)",
+					"text" : "Iterations [e]",
 					"id" : "obj-18",
 					"fontname" : "Arial",
 					"numinlets" : 2,

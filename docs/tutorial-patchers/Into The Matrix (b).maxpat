@@ -773,7 +773,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Into The Matrix (a)",
+					"text" : "Into The Matrix [a]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 594.0, 140.0, 18.0 ],
@@ -872,7 +872,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Into The Matrix (c)",
+					"text" : "Into The Matrix [c]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 551.0, 594.0, 140.0, 18.0 ],

@@ -136,7 +136,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 19.0, 300.0, 548.0, 19.0 ],
-									"text" : "(1 summer) (2 spring) (4 summer) (3.2 fall) (-2 summer) (0.1 fall) (0 fall) (3 winter) (0.1 spring)"
+									"text" : "[1 summer] [2 spring] [4 summer] [3.2 fall] [-2 summer] [0.1 fall] [0 fall] [3 winter] [0.1 spring]"
 								}
 
 							}
@@ -208,7 +208,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 19.0, 114.0, 125.0, 19.0 ],
-									"text" : "(1 a) (2 b) (5 f) (3 c)"
+									"text" : "[1 a] [2 b] [5 f] [3 c]"
 								}
 
 							}
@@ -249,7 +249,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 293.0, 114.0, 229.0, 19.0 ],
-									"text" : "((1 2) a) ((2 0.1) b) ((5 -0.1) f) ((3 2) c)"
+									"text" : "[[1 2] a] [[2 0.1] b] [[5 -0.1] f] [[3 2] c]"
 								}
 
 							}
@@ -699,7 +699,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 37.550781, 130.0, 134.0, 56.0 ],
-									"text" : "(two 2) (one 1) (four 4) (three 3)"
+									"text" : "[two 2] [one 1] [four 4] [three 3]"
 								}
 
 							}

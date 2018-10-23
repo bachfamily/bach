@@ -138,10 +138,10 @@
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.expr" />
-		<seealso name="bach.!-" />
+		<seealso name="bach.rminus" display="bach.!-" type="refpage" />
 		<seealso name="bach.+" />
-		<seealso name="bach.*" />
-		<seealso name="bach./" />
+		<seealso name="bach.times" display="bach.*" type="refpage" />
+		<seealso name="bach.div" display="bach./" type="refpage" />
 		<seealso name="-" />
 		<seealso name="bach.mod-" />
 	</seealsolist>

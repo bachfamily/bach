@@ -2327,7 +2327,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Graphical Synchronization (d)",
+					"text" : "Graphical Synchronization [d]",
 					"patching_rect" : [ 5.0, 665.0, 167.0, 18.0 ],
 					"id" : "obj-7",
 					"fontname" : "Arial",
@@ -2426,7 +2426,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Graphical Synchronization (f)",
+					"text" : "Graphical Synchronization [f]",
 					"patching_rect" : [ 745.0, 665.0, 163.0, 18.0 ],
 					"id" : "obj-16",
 					"fontname" : "Arial",

@@ -64,7 +64,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 64.5, 265.5, 162.0, 38.0 ],
 					"style" : "",
-					"text" : "insertslotitem 1 (0.5 12 0) @modify 1 @thresh 0.01"
+					"text" : "insertslotitem 1 [0.5 12 0] @modify 1 @thresh 0.01"
 				}
 
 			}
@@ -79,7 +79,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 61.5, 195.5, 180.0, 23.0 ],
 					"style" : "",
-					"text" : "insertslotitem 2 (3000 0.01 0)"
+					"text" : "insertslotitem 2 [3000 0.01 0]"
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 54.5, 170.5, 172.0, 23.0 ],
 					"style" : "",
-					"text" : "insertslotitem 2 (1000 0.5 0)"
+					"text" : "insertslotitem 2 [1000 0.5 0]"
 				}
 
 			}
@@ -142,7 +142,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.5, 136.5, 164.0, 23.0 ],
 					"style" : "",
-					"text" : "insertslotitem 1 (0.24 22 0)"
+					"text" : "insertslotitem 1 [0.24 22 0]"
 				}
 
 			}
@@ -173,7 +173,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 111.5, 165.0, 23.0 ],
 					"style" : "",
-					"text" : "insertslotitem 1 (0.2 100 0)"
+					"text" : "insertslotitem 1 [0.2 100 0]"
 				}
 
 			}

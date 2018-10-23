@@ -1065,7 +1065,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 486.0, 160.0, 18.0 ],
-					"text" : "From OpenMusic to bach (r)",
+					"text" : "From OpenMusic to bach [r]",
 					"varname" : "messageA"
 				}
 

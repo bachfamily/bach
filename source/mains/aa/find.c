@@ -195,11 +195,11 @@ int T_EXPORT main()
 	CLASS_ATTR_FILTER_CLIP(c, "depthpolicy", 0, 1);
 	// @description When set to 1 (default) and a lambda loop is not present,
 	// sequences whose overall depth is greater than the depth of the comparison llll are not considered matches.
-	// This means that, for example, if the <b>1 (2 (3))</b> llll is searched for <b>2</b> with the <m>!=</m> operator
+	// This means that, for example, if the <b>1 [2 [3]]</b> llll is searched for <b>2</b> with the <m>!=</m> operator
 	// (that is, items different from <b>2</b> are looked for), the found matches will be <b>1</b> and <b>3</b>.
-	// If <m>depthpolicy</m> was set to 0, the <b>(2 (3))</b> sublist (whose depth is 3) would be compared with <b>2</b> (whose depth is 1), 
+	// If <m>depthpolicy</m> was set to 0, the <b>[2 [3]]</b> sublist [whose depth is 3] would be compared with <b>2</b> (whose depth is 1), 
 	// found to be different and subsequently considered a match.
-	// Moreover, with the <m>recursive</m> attribute set to 0, the <b>(2 (3))</b> sublist would not be entered and <b>3</b> would not be found.
+	// Moreover, with the <m>recursive</m> attribute set to 0, the <b>[2 [3]]</b> sublist would not be entered and <b>3</b> would not be found.
 	// If a lambda loop is present, the <m>depthpolicy</m> attribute is ignored.
 	
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);

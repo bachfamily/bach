@@ -95,7 +95,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 152.0, 217.5, 141.0, 19.0 ],
-									"text" : "10 (-10 foo (3 fee) 0.4)"
+									"text" : "10 [-10 foo [3 fee] 0.4]"
 								}
 
 							}
@@ -143,7 +143,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 47.0, 153.0, 144.0, 39.0 ],
-									"text" : "10 -10 (-1/2 (9 -8.2))"
+									"text" : "10 -10 [-1/2 [9 -8.2]]"
 								}
 
 							}

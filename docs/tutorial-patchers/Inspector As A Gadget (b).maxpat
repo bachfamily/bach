@@ -239,7 +239,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Inspector As A Gadget (a)",
+					"text" : "Inspector As A Gadget [a]",
 					"patching_rect" : [ 5.0, 340.0, 145.0, 18.0 ],
 					"id" : "obj-6",
 					"fontname" : "Arial",
@@ -338,7 +338,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Inspector As A Gadget (c)",
+					"text" : "Inspector As A Gadget [c]",
 					"patching_rect" : [ 480.0, 340.0, 145.0, 18.0 ],
 					"id" : "obj-17",
 					"fontname" : "Arial",

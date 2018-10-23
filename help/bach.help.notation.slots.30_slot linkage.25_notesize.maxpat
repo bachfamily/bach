@@ -153,7 +153,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 117.5, 227.0, 34.0 ],
-					"text" : "(slotinfo (4 (name size) (type floatlist) (default 100) (range 10 400)))"
+					"text" : "[slotinfo [4 [name size] [type floatlist] [default 100] [range 10 400]]]"
 				}
 
 			}

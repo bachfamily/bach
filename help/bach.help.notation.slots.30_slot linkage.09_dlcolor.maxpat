@@ -178,7 +178,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 131.0, 400.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name color) (type color) (width 130))), linkdlcolortoslot 1"
+					"text" : "[slotinfo [1 [name color] [type color] [width 130]]], linkdlcolortoslot 1"
 				}
 
 			}

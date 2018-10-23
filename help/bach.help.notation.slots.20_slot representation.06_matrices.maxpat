@@ -72,7 +72,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 145.0, 452.0, 298.0, 19.0 ],
 					"presentation_rect" : [ 224.0, 431.5, 0.0, 0.0 ],
-					"text" : "(slotinfo (2 (representation ((eq fshift dist trans)))))"
+					"text" : "[slotinfo [2 [representation [[eq fshift dist trans]]]]]"
 				}
 
 			}
@@ -103,7 +103,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 224.0, 388.5, 206.0, 19.0 ],
 					"presentation_rect" : [ 224.0, 403.5, 0.0, 0.0 ],
-					"text" : "(slotinfo (2 (representation (4 5))))"
+					"text" : "[slotinfo [2 [representation [4 5]]]]"
 				}
 
 			}
@@ -169,7 +169,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 224.0, 249.5, 206.0, 19.0 ],
 					"presentation_rect" : [ 194.0, 263.5, 0.0, 0.0 ],
-					"text" : "(slotinfo (2 (representation (4 5))))"
+					"text" : "[slotinfo [2 [representation [4 5]]]]"
 				}
 
 			}
@@ -185,7 +185,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 224.0, 289.5, 239.0, 34.0 ],
 					"presentation_rect" : [ 209.0, 281.5, 0.0, 0.0 ],
-					"text" : "(slotinfo (2 (representation ((IN eq fshift dist) (eq fshift dist OUT1 OUT2)))))"
+					"text" : "[slotinfo [2 [representation [[IN eq fshift dist] [eq fshift dist OUT1 OUT2]]]]]"
 				}
 
 			}
@@ -201,7 +201,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 224.0, 342.5, 186.0, 34.0 ],
 					"presentation_rect" : [ 238.0, 289.5, 0.0, 0.0 ],
-					"text" : "(slotinfo (2 (representation (4 (eq fshift dist OUT1 OUT2)))))"
+					"text" : "[slotinfo [2 [representation [4 [eq fshift dist OUT1 OUT2]]]]]"
 				}
 
 			}
@@ -323,7 +323,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 173.0, 157.0, 195.0, 19.0 ],
 					"presentation_rect" : [ 194.0, 114.0, 0.0, 0.0 ],
-					"text" : "(slotinfo (1 (representation (8))))"
+					"text" : "[slotinfo [1 [representation [8]]]]"
 				}
 
 			}
@@ -337,7 +337,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 173.0, 99.5, 206.0, 19.0 ],
-					"text" : "(slotinfo (1 (representation (4 7))))"
+					"text" : "[slotinfo [1 [representation [4 7]]]]"
 				}
 
 			}

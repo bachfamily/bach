@@ -239,7 +239,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 28.0, 158.0, 157.0, 52.0 ],
-									"text" : "((a b c) ((d e f) (g h i) (j k))) (l m)"
+									"text" : "[[a b c] [[d e f] [g h i] [j k]]] [l m]"
 								}
 
 							}
@@ -555,7 +555,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 56.0, 160.0, 151.0, 51.0 ],
-									"text" : " (1.0123456789 (2 gigi)) 3"
+									"text" : " [1.0123456789 [2 gigi]] 3"
 								}
 
 							}
@@ -767,7 +767,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 37.0, 325.5, 110.0, 19.0 ],
-									"text" : "(0 (1 2) (3 4 5) 6)"
+									"text" : "[0 [1 2] [3 4 5] 6]"
 								}
 
 							}
@@ -858,7 +858,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 37.0, 150.0, 189.0, 19.0 ],
-									"text" : "(george (john yoko) paul) ringo"
+									"text" : "[george [john yoko] paul] ringo"
 								}
 
 							}
@@ -872,7 +872,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 112.0, 210.0, 189.0, 19.0 ],
-									"text" : "(george (john yoko) paul) ringo"
+									"text" : "[george [john yoko] paul] ringo"
 								}
 
 							}

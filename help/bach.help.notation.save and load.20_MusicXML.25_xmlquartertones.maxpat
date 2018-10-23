@@ -130,7 +130,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 24.0, 325.5, 245.0, 23.0 ],
 					"style" : "",
-					"text" : "exportxml (parenthesizedquartertones 1)"
+					"text" : "exportxml [parenthesizedquartertones 1]"
 				}
 
 			}

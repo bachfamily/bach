@@ -93,7 +93,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "((1/16 (1/16 (1/16 1/16) 1/8) 1/8 -2/4)), bang",
+					"text" : "[[1/16 [1/16 [1/16 1/16] 1/8] 1/8 -2/4]], bang",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],
@@ -148,7 +148,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "((1/16 1/16 1/16 1/16 1/8 1/8 -2/4)), bang",
+					"text" : "[[1/16 1/16 1/16 1/16 1/8 1/8 -2/4]], bang",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],
@@ -228,7 +228,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "((1/16 1/16 1/16 1/16 1/8 1/8 -2/4)), bang",
+					"text" : "[[1/16 1/16 1/16 1/16 1/8 1/8 -2/4]], bang",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],
@@ -269,7 +269,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "((1/16 (1/16 1/16 1/16) 1/8 1/8 -2/4)), bang",
+					"text" : "[[1/16 [1/16 1/16 1/16] 1/8 1/8 -2/4]], bang",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],
@@ -311,7 +311,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "((1/16 1/16) (1/16 1/16 1/8)) -1/8",
+					"text" : "[[1/16 1/16] [1/16 1/16 1/8]] -1/8",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],
@@ -521,7 +521,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Beams Through The Trees (b)",
+					"text" : "Beams Through The Trees [b]",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"outlettype" : [ "" ],

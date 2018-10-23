@@ -26,7 +26,7 @@
 	
 	@discussion
 	From a list in the form <b>X Y Z W</b> one gets to a list in the form
-	<b>(1 X) (2 Y) (3 Z) (4 W)</b>, where the offset and step of the numbering can
+	<b>[1 X] [2 Y] [3 Z] [4 W]</b>, where the offset and step of the numbering can
 	be set via attributes
 
 	@category
@@ -48,10 +48,10 @@
 
 // @method llll @digest Index incoming llll, output result
 // @description An <m>llll</m> in the first inlet will be indexed so that each element will be 
-// substituted by an llll in the form <b>(<m>index</m> <m>original_element</m>)</b>.
+// substituted by an llll in the form <b>[<m>index</m> <m>original_element</m>]</b>.
 // By default, <m>index</m> starts from 1 and increases by 1 for each element of the original llll.
 // These parameters can be changed via the arguments or the attributes.
-// For instance a list in the form <b>X Y Z W</b> becomes <b>(1 X) (2 Y) (3 Z) (4 W)</b>.
+// For instance a list in the form <b>X Y Z W</b> becomes <b>[1 X] [2 Y] [3 Z] [4 W]</b>.
 
 // @method bang @digest Output result
 // @description Outputs the indexed result on the most recently received input data.

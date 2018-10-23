@@ -296,7 +296,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 256.0, 327.0, 83.0, 18.0 ],
-					"text" : "(1 2 3) (4 5 6)"
+					"text" : "[1 2 3] [4 5 6]"
 				}
 
 			}
@@ -670,7 +670,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 497.0, 140.0, 18.0 ],
-					"text" : "Hello World (k)",
+					"text" : "Hello World [k]",
 					"varname" : "messageA"
 				}
 

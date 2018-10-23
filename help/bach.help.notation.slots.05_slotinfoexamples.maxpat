@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 403.0, 110.0, 178.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (width temporal)))"
+					"text" : "[slotinfo [1 [width temporal]]]"
 				}
 
 			}
@@ -78,7 +78,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 162.0, 332.0, 403.0, 38.0 ],
 					"style" : "",
-					"text" : "(slotinfo (3 (name routing) (key r) (type floatmatrix) (range 0 1) (width 80) (default 0.5) (representation ((in1 in2) (out1 out2 out3)))))"
+					"text" : "[slotinfo [3 [name routing] [key r] [type floatmatrix] [range 0 1] [width 80] [default 0.5] [representation [[in1 in2] [out1 out2 out3]]]]]"
 				}
 
 			}
@@ -154,7 +154,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 63.0, 272.0, 373.0, 38.0 ],
 					"style" : "",
-					"text" : "(slotinfo (2 (name pan) (key p) (type function) (range -180 180) (ysnap (-180 0 180)) (representation °) (width temporal)))"
+					"text" : "[slotinfo [2 [name pan] [key p] [type function] [range -180 180] [ysnap [-180 0 180]] [representation °] [width temporal]]]"
 				}
 
 			}
@@ -187,7 +187,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 336.0, 209.0, 134.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (slope 0)))"
+					"text" : "[slotinfo [1 [slope 0]]]"
 				}
 
 			}
@@ -217,7 +217,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 72.0, 188.0, 523.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name frequency) (key f) (type function) (range 0 22050) (representation Hz)))"
+					"text" : "[slotinfo [1 [name frequency] [key f] [type function] [range 0 22050] [representation Hz]]]"
 				}
 
 			}
@@ -232,7 +232,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 425.0, 88.0, 146.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (slope 0.5)))"
+					"text" : "[slotinfo [1 [slope 0.5]]]"
 				}
 
 			}
@@ -262,7 +262,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 21.5, 68.0, 523.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name frequency) (key f) (type function) (range 0 22050) (representation Hz)))"
+					"text" : "[slotinfo [1 [name frequency] [key f] [type function] [range 0 22050] [representation Hz]]]"
 				}
 
 			}

@@ -89,7 +89,7 @@ int T_EXPORT main()
 	// The syntax depends on the value of the <m>multi</m> attribute:
 	// if it is 0, a single address is expected; if it is 1, an llll whose sublists are separate addresses, at which separate substitutions have to be performed, is expected.
 	// If single elements at the root level are encountered, they are treated as single-element sublist.
-	// This means that in the multiple substitutions case the lllls <b>(1) (2 3) (4) (5)</b> and <b>1 (2 3) 4 (5)</b> are considered the same,
+	// This means that in the multiple substitutions case the lllls <b>[1] [2 3] [4] [5]</b> and <b>1 [2 3] 4 [5]</b> are considered the same,
 	// and in both cases four substitutions are performed.
 	// Both positive and negative addresses are correctly treated, 
 	// but the result can be hardly predictable when multiple substitutions are performed mixing positive and negative addresses on a single sublist. <br />
@@ -101,7 +101,7 @@ int T_EXPORT main()
 	// if it is 0, a single sequence of elements is expected;
 	// if it is 1, an llll whose sublists are separate sequence of elements, each to be inserted at the corresponding given address, is expected.
 	// If single elements at the root level are encountered, they are treated as single-element sublist.
-	// This means that in the multiple substitutions case the lllls <b>(a) (b c) (d) (e)</b> and <b>a (b c) d (e)</b> are considered the same.
+	// This means that in the multiple substitutions case the lllls <b>[a] [b c] [d] [e]</b> and <b>a [b c] d [e]</b> are considered the same.
 	// If less replacement sequences than addresses are provided, the last sequence is repeated over and over. 
 	// This is especially useful to substitute the same sequence at many addresses, as providing the sequence only once is enough.
 	// If more sequences than addresses are provided, the exceeding sequences are ignored.

@@ -338,7 +338,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 146.5, 204.0, 91.0, 36.0 ],
-									"text" : "2 3 (5 (-1 3))"
+									"text" : "2 3 [5 [-1 3]]"
 								}
 
 							}
@@ -379,7 +379,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 204.0, 116.5, 36.0 ],
-									"text" : "10 10 (10 (9 8))"
+									"text" : "10 10 [10 [9 8]]"
 								}
 
 							}

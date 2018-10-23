@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 81.0, 175.502991, 102.0, 23.0 ],
 					"style" : "",
-					"text" : "pitch (D#1 plus)"
+					"text" : "pitch [D#1 plus]"
 				}
 
 			}
@@ -124,7 +124,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 107.5, 284.0, 226.0, 23.0 ],
 					"style" : "",
-					"text" : "cents (100 plus) (200 plus) (300 plus)"
+					"text" : "cents [100 plus] [200 plus] [300 plus]"
 				}
 
 			}
@@ -170,7 +170,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 26.0, 107.616768, 93.0, 23.0 ],
 					"style" : "",
-					"text" : "onset (1.1 div)"
+					"text" : "onset [1.1 div]"
 				}
 
 			}
@@ -200,7 +200,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 63.0, 152.502991, 114.0, 23.0 ],
 					"style" : "",
-					"text" : "cents (100 minus)"
+					"text" : "cents [100 minus]"
 				}
 
 			}
@@ -367,7 +367,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 45.0, 130.71257, 108.0, 23.0 ],
 					"style" : "",
-					"text" : "velocity (10 plus)"
+					"text" : "velocity [10 plus]"
 				}
 
 			}
@@ -397,7 +397,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 85.305389, 112.0, 23.0 ],
 					"style" : "",
-					"text" : "duration (2 times)"
+					"text" : "duration [2 times]"
 				}
 
 			}

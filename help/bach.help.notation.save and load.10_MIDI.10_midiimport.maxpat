@@ -200,7 +200,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 71.0, 236.0, 23.0 ],
 					"style" : "",
-					"text" : "read \"Real Time Stories (g) - bach.mid\""
+					"text" : "read \"Real Time Stories [g] - bach.mid\""
 				}
 
 			}

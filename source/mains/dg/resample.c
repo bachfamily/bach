@@ -866,7 +866,7 @@ void resample_assist(t_resample *x, void *b, long m, long a, char *s)
         else
             sprintf(s, "Resampling coefficients (%s)", type); // @in 1 @type llll @digest Resampling coefficients
                                 // @description For each of the output samples an llll of the type
-                                // <m>(<b>el_idx1</b> <b>coeff1</b>) (<b>el_idx2</b> <b>coeff2</b>)...</m>
+                                // <m>(<b>el_idx1</b> <b>coeff1</b>] [<b>el_idx2</b> <b>coeff2</b>)...</m>
                                 // is output; the sample is actually the linear combination <b>el_1 * coeff1 + el_2 * coeff2...</b>,
                                 // where <m>el_i</m> is the element of the original list at position <m>el_idxi</m>.
 	}

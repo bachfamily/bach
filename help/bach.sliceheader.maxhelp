@@ -196,7 +196,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 76.0, 184.0, 113.0, 19.0 ],
-									"text" : "subscore (1) (2 2)"
+									"text" : "subscore [1] [2 2]"
 								}
 
 							}
@@ -264,7 +264,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 289.0, 198.0, 154.0, 19.0 ],
-									"text" : "subroll (1 2) (1000 5000)"
+									"text" : "subroll [1 2] [1000 5000]"
 								}
 
 							}

@@ -684,7 +684,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 522.0, 162.0, 22.0 ],
 					"style" : "",
-					"text" : "From OpenMusic to bach (d)",
+					"text" : "From OpenMusic to bach [d]",
 					"varname" : "messageA"
 				}
 
@@ -777,7 +777,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 786.0, 522.0, 158.0, 22.0 ],
 					"style" : "",
-					"text" : "From OpenMusic to bach (f)",
+					"text" : "From OpenMusic to bach [f]",
 					"varname" : "messageB"
 				}
 

@@ -72,7 +72,7 @@
 				Initial values for recurrence
 			</digest>
 			<description>
-				The initial values for the recurrence, wrapped in a level of parenthesis. Default is <b>(0)</b>
+				The initial values for the recurrence, wrapped in a level of parenthesis. Default is <b>[0]</b>
 			</description>
 		</objarg>
 		<objarg name="end" optional="1" type="number/none">

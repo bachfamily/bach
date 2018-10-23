@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 82.0, 278.385803, 126.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (any 25/4)"
+					"text" : "goto time [any 25/4]"
 				}
 
 			}
@@ -110,7 +110,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 82.0, 221.885803, 262.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (2 1/4) @type chord @skiprests 1"
+					"text" : "goto time [2 1/4] @type chord @skiprests 1"
 				}
 
 			}
@@ -157,7 +157,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 82.0, 162.885803, 105.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (2 1/4)"
+					"text" : "goto time [2 1/4]"
 				}
 
 			}

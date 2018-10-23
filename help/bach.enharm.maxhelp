@@ -285,7 +285,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 14.0, 208.0, 127.0, 55.0 ],
 									"style" : "",
-									"text" : "(C#5 D#5 E5 F6 Gb6) (Gx#0)"
+									"text" : "[C#5 D#5 E5 F6 Gb6] [Gx#0]"
 								}
 
 							}

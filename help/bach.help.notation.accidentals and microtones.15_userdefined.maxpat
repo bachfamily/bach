@@ -246,7 +246,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 127.0, 98.0, 179.0, 23.0 ],
 					"style" : "",
-					"text" : "( B#4 (Ddb5 C6) Bxq5), bang"
+					"text" : "[ B#4 [Ddb5 C6] Bxq5], bang"
 				}
 
 			}

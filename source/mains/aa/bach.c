@@ -468,6 +468,7 @@ void bach_donors(t_bach *x)
     post(" - Dimitri Fergadis");
     post("        (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research)");
     post("        Proprietor of Halocyan Records");
+    post(" - Pete Kellock");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
@@ -1217,7 +1218,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["alter"] = new t_mathUnaryFunctionAA<hatom_fn_alter>("alter");
     (*bifTable)["cents"] = new t_mathUnaryFunctionAA<hatom_fn_cents>("cents");
     
-    (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_fn_pow>("base", "exponent", "pow");
+    (*bifTable)["pow"] = new t_mathBinaryFunctionAAA<hatom_op_pow>("base", "exponent", "pow");
     (*bifTable)["mod"] = new t_mathBinaryFunctionAAA<hatom_fn_mod>("x", "y", "mod");
     (*bifTable)["min"] = new t_mathBinaryFunctionAAA<hatom_fn_min>("x", "y", "min");
     (*bifTable)["max"] = new t_mathBinaryFunctionAAA<hatom_fn_max>("x", "y", "max");

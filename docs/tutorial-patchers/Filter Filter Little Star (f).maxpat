@@ -41,7 +41,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "changeslotvalue 1 1 nil (1.5 times) nil nil",
+					"text" : "changeslotvalue 1 1 nil [1.5 times] nil nil",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 92.0, 368.0, 223.0, 18.0 ],
@@ -97,7 +97,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "addslot (1 lowpass 2000 -2 1.5)",
+					"text" : "addslot [1 lowpass 2000 -2 1.5]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 379.0, 294.0, 178.0, 18.0 ],
@@ -301,7 +301,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "addslot (1 bandpass 5550 0 4.5)",
+					"text" : "addslot [1 bandpass 5550 0 4.5]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 4.0, 224.0, 183.0, 18.0 ],
@@ -501,7 +501,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Filter Filter Little Star (e)",
+					"text" : "Filter Filter Little Star [e]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 586.0, 140.0, 18.0 ],
@@ -600,7 +600,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Filter Filter Little Star (g)",
+					"text" : "Filter Filter Little Star [g]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 725.0, 586.0, 140.0, 18.0 ],

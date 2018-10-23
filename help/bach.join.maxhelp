@@ -229,7 +229,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 436.0, 154.0, 120.0, 48.0 ],
 									"style" : "",
-									"text" : "a b (c d) ((e f) g)"
+									"text" : "a b [c d] [[e f] g]"
 								}
 
 							}
@@ -356,7 +356,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 176.0, 154.0, 114.0, 48.0 ],
 									"style" : "",
-									"text" : "0 1 2 3 (4 5 6)"
+									"text" : "0 1 2 3 [4 5 6]"
 								}
 
 							}
@@ -652,7 +652,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 293.0, 350.0, 104.0, 23.0 ],
 									"style" : "",
-									"text" : "a b (c d) ((e f) g)"
+									"text" : "a b [c d] [[e f] g]"
 								}
 
 							}
@@ -694,7 +694,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 35.0, 350.0, 91.0, 23.0 ],
 									"style" : "",
-									"text" : "0 1 2 3 (4 5 6)"
+									"text" : "0 1 2 3 [4 5 6]"
 								}
 
 							}
@@ -765,7 +765,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 293.0, 238.0, 104.0, 23.0 ],
 									"style" : "",
-									"text" : "a b (c d) ((e f) g)"
+									"text" : "a b [c d] [[e f] g]"
 								}
 
 							}
@@ -807,7 +807,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 35.0, 238.0, 91.0, 23.0 ],
 									"style" : "",
-									"text" : "0 1 2 3 (4 5 6)"
+									"text" : "0 1 2 3 [4 5 6]"
 								}
 
 							}
@@ -866,7 +866,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 268.0, 131.0, 104.0, 23.0 ],
 									"style" : "",
-									"text" : "a b (c d) ((e f) g)"
+									"text" : "a b [c d] [[e f] g]"
 								}
 
 							}
@@ -908,7 +908,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 131.0, 91.0, 23.0 ],
 									"style" : "",
-									"text" : "0 1 2 3 (4 5 6)"
+									"text" : "0 1 2 3 [4 5 6]"
 								}
 
 							}
@@ -1415,7 +1415,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 25.0, 238.0, 257.0, 23.0 ],
 									"style" : "",
-									"text" : "bach.join 3 @set ((one 1)) (two 2) (three 3)"
+									"text" : "bach.join 3 @set [[one 1]] [two 2] [three 3]"
 								}
 
 							}
@@ -1804,7 +1804,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 336.0, 238.0, 134.0, 39.0 ],
 									"style" : "",
-									"text" : "a b (c d) ((e f) g)"
+									"text" : "a b [c d] [[e f] g]"
 								}
 
 							}
@@ -1931,7 +1931,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 43.0, 238.0, 135.0, 39.0 ],
 									"style" : "",
-									"text" : "0 1 2 3 (4 5 6)"
+									"text" : "0 1 2 3 [4 5 6]"
 								}
 
 							}

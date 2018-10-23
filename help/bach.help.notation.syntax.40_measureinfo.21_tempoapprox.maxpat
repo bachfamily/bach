@@ -136,7 +136,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 75.5, 220.0, 238.0, 22.0 ],
 					"style" : "",
-					"text" : "sel measure 1, measureinfo (3 4) ( 1/4 $1 )"
+					"text" : "sel measure 1, measureinfo [3 4] [ 1/4 $1 ]"
 				}
 
 			}

@@ -104,7 +104,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 128.5, 280.0, 406.0, 19.0 ],
-					"text" : "((1/8 1/24 1/24 1/24 ((1/16 1/64) (1/64 1/64 1/64)) (1/16 1/16))), bang"
+					"text" : "[[1/8 1/24 1/24 1/24 [[1/16 1/64] [1/64 1/64 1/64]] [1/16 1/16]]], bang"
 				}
 
 			}
@@ -193,7 +193,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 128.5, 123.0, 372.0, 19.0 ],
-					"text" : "((1/8 1/24 1/24 1/24 1/16 1/64 1/64 1/64 1/64 1/16 1/16)), bang"
+					"text" : "[[1/8 1/24 1/24 1/24 1/16 1/64 1/64 1/64 1/64 1/16 1/16]], bang"
 				}
 
 			}
@@ -234,7 +234,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 711.0, 133.777771, 404.0, 31.0 ],
-					"text" : "measure ( \"beam level\" chord ( \"tuplet level\" chord chord chord )) ( \"beam level\" chord ( \"beam level\" chord chord chord chord ) chord chord )"
+					"text" : "measure [ \"beam level\" chord [ \"tuplet level\" chord chord chord ]] [ \"beam level\" chord [ \"beam level\" chord chord chord chord ] chord chord ]"
 				}
 
 			}

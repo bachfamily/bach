@@ -87,7 +87,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (name staticfilter) (key f) (width 120) (range -120 10) (domain 0 22500) (slope -0.5) (domainslope 0.5) (representation Hz dB)))",
+					"text" : "[slotinfo [1 [name staticfilter] [key f] [width 120] [range -120 10] [domain 0 22500] [slope -0.5] [domainslope 0.5] [representation Hz dB]]]",
 					"linecount" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -116,7 +116,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "( slotinfo ( 1 (name \"amplitude envelope\" ) (type function) (range -120 10) (slope -0.5) (key A) (width temporal) (representation dB)))",
+					"text" : "[ slotinfo [ 1 [name \"amplitude envelope\" ] [type function] [range -120 10] [slope -0.5] [key A] [width temporal] [representation dB]]]",
 					"linecount" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -320,7 +320,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (j)",
+					"text" : "Slot Machines [j]",
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
@@ -419,7 +419,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (l)",
+					"text" : "Slot Machines [l]",
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],

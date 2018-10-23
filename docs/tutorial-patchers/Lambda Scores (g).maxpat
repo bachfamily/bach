@@ -268,7 +268,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 22.0, 79.0, 473.0, 22.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (type text) (name dynamic))) (commands (1 makedynamic makedynamic d))"
+					"text" : "[slotinfo [1 [type text] [name dynamic]]] [commands [1 makedynamic makedynamic d]]"
 				}
 
 			}
@@ -520,7 +520,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 527.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Lambda Scores (f)",
+					"text" : "Lambda Scores [f]",
 					"varname" : "messageA"
 				}
 
@@ -613,7 +613,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 567.0, 527.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Lambda Scores (h)",
+					"text" : "Lambda Scores [h]",
 					"varname" : "messageB"
 				}
 

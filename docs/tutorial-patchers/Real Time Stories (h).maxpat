@@ -760,7 +760,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Real Time Stories (g)",
+					"text" : "Real Time Stories [g]",
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
 					"hidden" : 1,
@@ -859,7 +859,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Real Time Stories (i)",
+					"text" : "Real Time Stories [i]",
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
 					"hidden" : 1,

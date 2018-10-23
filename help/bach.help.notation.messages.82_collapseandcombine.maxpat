@@ -204,7 +204,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 144.5, 125.0, 111.0, 23.0 ],
 					"style" : "",
-					"text" : "collapse (1 2 3 4)"
+					"text" : "collapse [1 2 3 4]"
 				}
 
 			}
@@ -289,7 +289,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 26.5, 125.0, 90.0, 23.0 ],
 					"style" : "",
-					"text" : "collapse (5 6)"
+					"text" : "collapse [5 6]"
 				}
 
 			}

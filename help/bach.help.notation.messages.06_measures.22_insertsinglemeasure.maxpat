@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 58.0, 279.5, 269.0, 23.0 ],
 					"style" : "",
-					"text" : "insertmeasure all -2 (((2 4)) (2/4 (6000 100)))"
+					"text" : "insertmeasure all -2 [[[2 4]] [2/4 [6000 100]]]"
 				}
 
 			}
@@ -95,7 +95,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 49.0, 214.5, 317.0, 38.0 ],
 					"style" : "",
-					"text" : "insertmeasure (2 3) 2 ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4)) (((5 8) ()) (1/4 (5900 100)) (-3/4))"
+					"text" : "insertmeasure [2 3] 2 [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]] [[[5 8] []] [1/4 [5900 100]] [-3/4]]"
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 40.0, 183.0, 345.0, 23.0 ],
 					"style" : "",
-					"text" : "insertmeasure (2 3) 2 ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4))"
+					"text" : "insertmeasure [2 3] 2 [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]]"
 				}
 
 			}
@@ -157,7 +157,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 27.0, 141.0, 200.0, 38.0 ],
 					"style" : "",
-					"text" : "insertmeasure all 2 ((((3 2) 8) ()) (3/8 (6000 100)) (-1/4))"
+					"text" : "insertmeasure all 2 [[[[3 2] 8] []] [3/8 [6000 100]] [-1/4]]"
 				}
 
 			}
@@ -205,7 +205,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 113.0, 174.0, 23.0 ],
 					"style" : "",
-					"text" : "insertmeasure 2 1 (((8 8)) ())"
+					"text" : "insertmeasure 2 1 [[[8 8]] []]"
 				}
 
 			}

@@ -56,7 +56,7 @@
 // and range of the <o>function</o> obejct accordingly. What is expected is the slotinfo only regarding
 // one specific slot, or even just the two specifications of <b>range</b> and <b>domain</b> (see below
 // to know more about the general slotinfo syntax: for <o>bach.slot2function</o> you need to only send a single
-// <b>(<m>slot_num</m> <m>SPECIFICATIONS</m>)</b> specification.) <br /> <br />
+// <b>[<m>slot_num</m> <m>SPECIFICATIONS</m>]</b> specification.) <br /> <br />
 // @copy BACH_DOC_NOTE_SLOT_CONTENT
 // @copy BACH_DOC_SLOTINFO_SYNTAX
 

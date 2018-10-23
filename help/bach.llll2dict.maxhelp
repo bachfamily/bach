@@ -183,7 +183,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 315.0, 394.5, 180.0, 19.0 ],
-									"text" : "( wheels foo ( 1 fee faa ) ) foo"
+									"text" : "[ wheels foo [ 1 fee faa ] ] foo"
 								}
 
 							}
@@ -226,7 +226,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 14.5, 171.5, 532.0, 48.0 ],
-									"text" : "( wheels ( front ( spokecount 28 ) ( lacing radial ) ( tirewidth 18 ) ) ( rear ( spokecount 32 ) ( lacing 2-cross ) ( tirewidth 21 ) ( brand profile ) ) ) ( drivetrain ( chainring ( make FSA ) ( cogs 51 31 ) ) ( cassette ( make Campagnolo ) ( cogs 12 13 14 15 16 17 19 21 23 25 ) ) )"
+									"text" : "[ wheels [ front [ spokecount 28 ] [ lacing radial ] [ tirewidth 18 ] ] [ rear [ spokecount 32 ] [ lacing 2-cross ] [ tirewidth 21 ] [ brand profile ] ] ] [ drivetrain [ chainring [ make FSA ] [ cogs 51 31 ] ] [ cassette [ make Campagnolo ) ( cogs 12 13 14 15 16 17 19 21 23 25 ) ) )"
 								}
 
 							}

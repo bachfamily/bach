@@ -223,7 +223,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 112.0, 248.0, 67.0 ],
 					"style" : "",
-					"text" : "(commands (1 granularnote granularchord g) (2 plainnote plainchord p) (3 notequery chordquery q) (4 thismsg thismsg S) (5 undefined undefined 0))"
+					"text" : "[commands [1 granularnote granularchord g] [2 plainnote plainchord p] [3 notequery chordquery q] [4 thismsg thismsg S] [5 undefined undefined 0]]"
 				}
 
 			}

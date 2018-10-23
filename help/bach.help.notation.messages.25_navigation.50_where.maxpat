@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 86.0, 197.385803, 323.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (3 5 2/4), subsel note if cents % 1200 != 200"
+					"text" : "goto time [3 5 2/4], subsel note if cents % 1200 != 200"
 				}
 
 			}
@@ -111,7 +111,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 73.885803, 283.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (3 5 2/4) @where symduration == 1/2"
+					"text" : "goto time [3 5 2/4] @where symduration == 1/2"
 				}
 
 			}
@@ -159,7 +159,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 35.0, 111.885803, 361.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (3 5 2/4) @where cents % 1200 != 200 @type note"
+					"text" : "goto time [3 5 2/4] @where cents % 1200 != 200 @type note"
 				}
 
 			}

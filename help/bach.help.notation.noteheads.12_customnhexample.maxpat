@@ -197,7 +197,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 50.0, 206.0, 151.0, 23.0 ],
 									"style" : "",
-									"text" : "lambda addslot ( 23 $1 )"
+									"text" : "lambda addslot [ 23 $1 ]"
 								}
 
 							}
@@ -350,7 +350,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 110.0, 594.0, 110.0 ],
 					"style" : "",
-					"text" : "(noteheadinfo ((fullname letter_a) (shortname A) (basept 12) (font Arial) (char A) (yshift -23) (width 7)) ((fullname letter_b) (shortname B) (basept 12) (font Arial) (char B) (yshift -23) (width 7)) ((fullname letter_c) (shortname C) (basept 12) (font Arial) (char C) (yshift -23) (width 7)) ((fullname letter_d) (shortname D) (basept 12) (font Arial) (char D) (yshift -23) (width 7)) ((fullname letter_e) (shortname E) (basept 12) (font Arial) (char E) (yshift -23) (width 7)) ((fullname letter_f) (shortname F) (basept 12) (font Arial) (char F) (yshift -23) (width 7)) ((fullname letter_g) (shortname G) (basept 12) (font Arial) (char G) (yshift -23) (width 7)))"
+					"text" : "[noteheadinfo [[fullname letter_a] [shortname A] [basept 12] [font Arial] [char A] [yshift -23] [width 7]] [[fullname letter_b] [shortname B] [basept 12] [font Arial] [char B] [yshift -23] [width 7]] [[fullname letter_c] [shortname C] [basept 12] [font Arial] [char C] [yshift -23] [width 7]] [[fullname letter_d] [shortname D] [basept 12] [font Arial] [char D] [yshift -23] [width 7]] [[fullname letter_e] [shortname E] [basept 12] [font Arial] [char E] [yshift -23] [width 7]] [[fullname letter_f] [shortname F] [basept 12] [font Arial] [char F] [yshift -23] [width 7]] [[fullname letter_g] [shortname G] [basept 12] [font Arial] [char G] [yshift -23] [width 7]]]"
 				}
 
 			}

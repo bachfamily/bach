@@ -287,7 +287,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 160.0, 154.0, 46.0 ],
-									"text" : "(1.5 (1 2)) (1 2) (ringo) paul"
+									"text" : "[1.5 [1 2]] [1 2] [ringo] paul"
 								}
 
 							}

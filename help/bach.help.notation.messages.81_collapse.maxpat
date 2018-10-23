@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 349.0, 135.0, 70.0, 23.0 ],
 					"style" : "",
-					"text" : "collapse ()"
+					"text" : "collapse []"
 				}
 
 			}
@@ -110,7 +110,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 42.0, 192.0, 190.0, 23.0 ],
 					"style" : "",
-					"text" : "collapse (2 3 6) (body markers)"
+					"text" : "collapse [2 3 6] [body markers]"
 				}
 
 			}
@@ -171,7 +171,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 23.0, 134.0, 100.0, 23.0 ],
 					"style" : "",
-					"text" : "collapse (2 3 6)"
+					"text" : "collapse [2 3 6]"
 				}
 
 			}

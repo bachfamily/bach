@@ -2252,7 +2252,7 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 		// already started but not yet ended. In this case, all temporal information (temporal slots, pitch breakpoints)
 		// is properly trimmed, and the corresponding partial note is played.
 		// By default this is 1 (quiet playing); if you set the attribute to 2 (verbosely), instead of the onset a
-        // llll in the form <b>(partial <m>original_onset</m> <m>played_onset</m> <m>offset</m>)</b> is output.
+        // llll in the form <b>[partial <m>original_onset</m> <m>played_onset</m> <m>offset</m>]</b> is output.
 
 		CLASS_ATTR_CHAR(c,"highlightplay",0, t_notation_obj, highlight_played_notes);
 		CLASS_ATTR_STYLE_LABEL(c,"highlightplay",0,"onoff","Highlight Played Notes");
@@ -2289,23 +2289,23 @@ void notation_class_add_play_attributes(t_class *c, char obj_type){
 		// The playout syntax normally has as first element the voice number of the output item (note or chord).
 		// By default this attribute is 0, and the simple voice number is output as first element. <br />
 		// If this flag is active, for <o>bach.roll</o>, the voice number is substituted with the list
-		// <b>(<m>voice_number</m> <m>chord_index</m>)</b>, if the <m>playmode</m> is chord-wise, or 
-		// <b>(<m>voice_number</m> <m>chord_index</m> <m>note_index</m>)</b>, if the <m>playmode</m> is note-wise.
+		// <b>[<m>voice_number</m> <m>chord_index</m>]</b>, if the <m>playmode</m> is chord-wise, or 
+		// <b>[<m>voice_number</m> <m>chord_index</m> <m>note_index</m>]</b>, if the <m>playmode</m> is note-wise.
 		// The <m>chord_index</m> is the index of the chord, when ordered by onsets. The <m>note_index</m> is the
 		// index of the note (from the lowest to highest one).
-		// For instance, instead of <b>note 1 1 (...)</b> one might have <b>note (1 4 2) 1 (...)</b>, meaning that
+		// For instance, instead of <b>note 1 1 [...]</b> one might have <b>note [1 4 2] 1 [...]</b>, meaning that
 		// the output information concerns the 2nd note of 4th chord of 1st voice. 
 		// Voice is anyway always the first element in the output llll. <br />
 		// If this flag is active, for <o>bach.score</o>, the voice number is substituted with a list of lists, namely
-		// <b>(<m>LIST1</m> <m>LIST2</m>...)</b>. The slightly complex form is due to the fact that
+		// <b>[<m>LIST1</m> <m>LIST2</m>...]</b>. The slightly complex form is due to the fact that
 		// tied notes or chords are output just once for all from the playout, so that each output element
 		// may be a combination of subsequently tied notes or chords. Each one of the <m>LIST</m>s represents one of these elements,
 		// and has the form
-		// <b>(<m>voice_number</m> <m>measure_number</m> <m>chord_index</m>)</b>, if the <m>playmode</m> is chord-wise, or 
-		// <b>(<m>voice_number</m> <m>measure_number</m> <m>chord_index</m> <m>note_index</m>)</b>, if the <m>playmode</m> is note-wise.
+		// <b>[<m>voice_number</m> <m>measure_number</m> <m>chord_index</m>]</b>, if the <m>playmode</m> is chord-wise, or 
+		// <b>[<m>voice_number</m> <m>measure_number</m> <m>chord_index</m> <m>note_index</m>]</b>, if the <m>playmode</m> is note-wise.
 		// The <m>chord_index</m> is the index of the chord inside the measure. The <m>note_index</m> is the
 		// index of the note (from the lowest to highest one).
-		// For instance, instead of <b>note 1 1 (...)</b> one might have <b>note ((1 3 4 2) (1 4 1 3)) 1 (...)</b>,
+		// For instance, instead of <b>note 1 1 [...]</b> one might have <b>note [[1 3 4 2] [1 4 1 3]] 1 [...]</b>,
 		// meaning that the output information concerns two notes: the 2nd note of 4th chord of 3rd measure of 1st voice, 
 		// which is tied to the 3rd note of 1st chord of 4th measure of 1st voice.
 		// Voice is anyway always the first element in the output llll. <br />
@@ -2482,16 +2482,16 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
     // The llll must contain at its root level: <br />
     // - either single symbols, with the items or features names to be completely "locked", e.g. <b>preventedit measure lyrics inspector</b> will prevent the editing of all measures
     // (one cannot create, delete, modify them), lyrics, and will not allow the opening of the bach inspector; <br />
-    // - or lllls in the form <b>(<m>item_or_feature_name</m> <m>property1</m> <m>property2</m> <m>property3</m>...)</b>, where properties are symbols which restrict the locking
-    // only to a given aspect of the item or feature. For instance, <b>preventedit (measure create delete) (marker onset)</b> will prevent the creation and deletion of measures
+    // - or lllls in the form <b>[<m>item_or_feature_name</m> <m>property1</m> <m>property2</m> <m>property3</m>...]</b>, where properties are symbols which restrict the locking
+    // only to a given aspect of the item or feature. For instance, <b>preventedit [measure create delete] [marker onset]</b> will prevent the creation and deletion of measures
     // (but not their modification!), and will also prevent the movement of existing markers (but not the creation of new ones!). <br/>
     // The two approaches. <br />
     // Here is the complete list of symbols which can be used to define items and feature names; parentheses list symbols for the single properties which one can block for them: <br />
     // notes (create, delete, onset, duration, pitch, velocity, modify), measures (create, delete, rhythmictree, modify), voice (create, delete, name, clef, key, position, modify),
     // breakpoints (create, delete, onset, pitch, velocity, modify), tempi (create, delete, modify), slots, markers (create, delete, onset, name, modify), articulations (create, delete),
     // selection, zooming, dilationrectangle, groups, inspector, popup, slotinfo, lyrics, cursor, loop, scrollbar, drop. <br />
-    // The "modify" symbol only refers to modification different from the previously defined ones. For instance: <b>preventedit (breakpoints modify)</b> will not
-    // prevent the modification of breakpoints onsets, but will, as an example, prevent the modification of breakpoints slopes. Use <b>preventedit (breakpoints onset modify)</b> to do both.
+    // The "modify" symbol only refers to modification different from the previously defined ones. For instance: <b>preventedit [breakpoints modify]</b> will not
+    // prevent the modification of breakpoints onsets, but will, as an example, prevent the modification of breakpoints slopes. Use <b>preventedit [breakpoints onset modify]</b> to do both.
     
     if (obj_type != k_NOTATION_OBJECT_SLOT) {
 		CLASS_ATTR_LLLL(c, "pitcheditrange", 0, t_notation_obj, constraint_pitches_when_editing, notation_obj_getattr_pitcheditrange, notation_obj_setattr_pitcheditrange);
@@ -2501,14 +2501,14 @@ void notation_class_add_edit_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Force edited pitches to lie in a given range, given by the specified llll. 
 		// One sublist for each voice is expected. For any given voice, the sublist must be in one of the following forms: <br />
-		// - a plain llll specifies a list of allowed midicents, e.g. <b>(6000 6200 6400 6500 6700 6900 7100 7200)</b> will
+		// - a plain llll specifies a list of allowed midicents, e.g. <b>[6000 6200 6400 6500 6700 6900 7100 7200]</b> will
 		// force edited notes to lie in the C major scale in middle octave; <br/>
-		// - a two-elements wrapped llll specifies a range of allowed midicents, e.g. <b>((6000 7200))</b> will do the same as above, but will also
+		// - a two-elements wrapped llll specifies a range of allowed midicents, e.g. <b>[[6000 7200]]</b> will do the same as above, but will also
 		// allow notes in principle to have any microtonal value such as 6050;<br/>
-		// - you can combine the two syntaxes to have the general one. For instance <b>(3600 4800 (6000 7200) 8400 9600))</b> will 
+		// - you can combine the two syntaxes to have the general one. For instance <b>[3600 4800 [6000 7200] 8400 9600]]</b> will 
 		// force pitches to be in one of the specified C's or in the middle octave.<br/>
-		// Such list must be given for any voice. Use a <b>nil</b> or <b>()</b> list to allow all possibilities for a voice.
-		// For instance: <b>pitchededitrange (7100) ((6000 7200)) ()</b> will force first voice's edited notes to snap to 7100 mc (and no other note can be inserted or edited!),
+		// Such list must be given for any voice. Use a <b>nil</b> or <b>[]</b> list to allow all possibilities for a voice.
+		// For instance: <b>pitchededitrange [7100] [[6000 7200]] []</b> will force first voice's edited notes to snap to 7100 mc (and no other note can be inserted or edited!),
 		// second voice's edited notes to lie in middle octave, and third voice's edited notes to assume any available pitch. <br />
 		// Note names (in latin or anglo-saxon syntax) can always be used instead of midicents.
 

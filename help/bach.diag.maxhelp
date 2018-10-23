@@ -301,7 +301,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 131.0, 236.0, 121.0, 19.0 ],
-									"text" : "a b (c d) e f (g h) i l"
+									"text" : "a b [c d] e f [g h] i l"
 								}
 
 							}

@@ -876,7 +876,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 112.0, 188.0, 124.0, 34.0 ],
-									"text" : "b 1 (2 boo) 3 a"
+									"text" : "b 1 [2 boo] 3 a"
 								}
 
 							}

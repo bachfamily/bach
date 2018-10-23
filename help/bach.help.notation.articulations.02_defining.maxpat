@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 32.0, 232.0, 232.0, 38.0 ],
 					"style" : "",
-					"text" : "sel note if chordindex == 1, addslot (22 portato fermata), clearselection"
+					"text" : "sel note if chordindex == 1, addslot [22 portato fermata], clearselection"
 				}
 
 			}
@@ -162,7 +162,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 154.0, 383.0, 23.0 ],
 					"style" : "",
-					"text" : "sel note if cents % 1200 == 0, addslot (22 accent), clearselection"
+					"text" : "sel note if cents % 1200 == 0, addslot [22 accent], clearselection"
 				}
 
 			}

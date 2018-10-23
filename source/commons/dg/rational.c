@@ -947,8 +947,9 @@ t_rational rat_clip(t_rational rat, t_rational min, t_rational max)
 
 t_atom_long ipow(t_atom_long num, int power)
 {
-	if (power == 0) return 1;
-	if (power == 1) return num;
+	if (power == 0 || num == 1) return 1;
+	if (power == 1 || num == 0) return num;
+
 	// ----------------------
 	int n = 31;
 	while ((power <<= 1) >= 0) n--;
@@ -965,6 +966,8 @@ t_rational rat_long_pow(t_rational rat, t_atom_long num)
 	t_rational res;
 	res.r_num = ipow(num > 0 ? rat.r_num : rat.r_den, num > 0 ? num : -num);
 	res.r_den = ipow(num > 0 ? rat.r_den : rat.r_num, num > 0 ? num : -num);
+    if (res.r_den == 0)
+        res = t_rational(0, 1);
 	// no need of reducing anything, if the incoming rational is already reduced
 	return res;
 }

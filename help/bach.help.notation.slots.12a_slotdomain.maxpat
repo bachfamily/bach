@@ -151,7 +151,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 182.5, 319.0, 188.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (2 (domainslope $1 )))"
+					"text" : "[slotinfo [2 [domainslope $1 ]]]"
 				}
 
 			}
@@ -199,7 +199,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 154.5, 126.0, 171.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (domain 0 100)))"
+					"text" : "[slotinfo [1 [domain 0 100]]]"
 				}
 
 			}

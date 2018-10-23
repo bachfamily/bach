@@ -252,7 +252,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 14.0, 164.0, 119.0, 56.0 ],
-									"text" : "0 1 2 3 (4 5 6) (5 4 (a b c d (x y z)))"
+									"text" : "0 1 2 3 [4 5 6] [5 4 [a b c d [x y z]]]"
 								}
 
 							}

@@ -53,6 +53,11 @@ typedef struct _textout
     t_object            *n_tempobj;
     t_llll              *n_deathrow;
     long                n_flags;
+    
+    long                n_flags_negative_octaves;
+    long                n_flags_escape;
+    long                n_flags_parens;
+    t_llll              *n_selectors;
 } t_textout;
 
 void textout_assist(t_textout *x, void *b, long m, long a, char *s);
@@ -69,6 +74,8 @@ t_max_err textout_notify(t_textout *x, t_symbol *s, t_symbol *msg, void *sender,
 void textout_patchlineupdate(t_textout *x, t_object *line, t_patchline_updatetype updatetype, t_object *src, long srcout, t_object *dst, long dstin);
 void textout_add_symbol(t_textout *x, t_symbol *sym, t_object *obj);
 void textout_add_symbol_to_this(t_textout *x, t_symbol *sym);
+
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_textout, n_selectors, textout_getattr_selectors);
 
 
 t_class *textout_class;
@@ -116,8 +123,7 @@ int T_EXPORT main()
     
     llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
 
-    /*
-     CLASS_ATTR_LONG(c, "escape",	0,	t_textout, n_flags);
+     CLASS_ATTR_LONG(c, "escape",	0,	t_textout, n_flags_escape);
      CLASS_ATTR_FILTER_CLIP(c, "escape", 0, 1);
      CLASS_ATTR_LABEL(c, "escape", 0, "Escaping style");
      CLASS_ATTR_ENUMINDEX(c,"escape", 0, "None Backtick");
@@ -126,12 +132,11 @@ int T_EXPORT main()
      // distinct from the corresponding integer, rational or pitch, but potentially interpreted as such by any bach object)
      // are returned with a preceding backtick (in the above example, respectively <b>`12</b>, <b>`1/3</b>, <b>`A1</b>).
      // This is the normal behavior for the llll text format.<br />
-     // When set to 0, no backtick is added.
-     */
+     // When set to 0, no backtick is added. <br />
+     // @copy BACH_DOC_STATIC_ATTR
+
     
-    
-    /*
-     CLASS_ATTR_LONG(c, "negativeoctaves",	0,	t_textout, n_flags);
+     CLASS_ATTR_LONG(c, "negativeoctaves",	0,	t_textout, n_flags_negative_octaves);
      CLASS_ATTR_FILTER_CLIP(c, "negativeoctaves", 0, 1);
      CLASS_ATTR_LABEL(c, "negativeoctaves", 0, "Use Negative Octaves");
      CLASS_ATTR_STYLE(c, "negativeoctaves", 0, "onoff");
@@ -142,30 +147,29 @@ int T_EXPORT main()
      // and is more likely to be convenient as very low pitches are usually employed to denote descending intervals.
      // Notice that the pitch class of -Eb0 is A anyway.<br />
      // When set to 1, pitches at octaves lower then octave 0 are represented as positive pitches with negative octaves.
-     // For example, the pitch A-1 and its equivalent form -Eb0 are both represented as A-1.
-     */
-    
-    /*
-     CLASS_ATTR_SYM_VARSIZE(c, "selectors", 0, t_textout, foo, foo, 12345);
+     // For example, the pitch A-1 and its equivalent form -Eb0 are both represented as A-1. <br />
+     // @copy BACH_DOC_STATIC_ATTR
+
+     CLASS_ATTR_LLLL(c, "selectors", 0, t_textout, n_selectors, textout_getattr_selectors, (method)llllobj_dummy_setter);
      CLASS_ATTR_LABEL(c, "selectors", 0, "Potential Message Selectors");
      // @description Through the <m>selectors</m> attribute, it is possible to specify a list
      // of symbols that, when encountered at the beginning of an llll, 
      // are output with a preceding backtick, to prevent them from being interpreted
      // as message selectors by other Max objects.
      // This list adds up to the names of the attributes of the objects connected to <o>bach.textout</o>'s rightmost outlet,
-     // and to the usual set of reserved symbols that are backticked anyway.
-     */
-    
-    /*
-     CLASS_ATTR_LONG(c, "parens",    0,    t_textout, n_flags);
+     // and to the usual set of reserved symbols that are backticked anyway. <br />
+     // @copy BACH_DOC_STATIC_ATTR
+
+     CLASS_ATTR_LONG(c, "parens",    0,    t_textout, n_flags_parens);
      CLASS_ATTR_FILTER_CLIP(c, "parens", 0, 1);
      CLASS_ATTR_LABEL(c, "parens", 0, "Use Parens");
      CLASS_ATTR_STYLE(c, "parens", 0, "onoff");
+     CLASS_ATTR_ACCESSORS(c, "parens", (method)NULL, (method)llllobj_dummy_setter)
      // @description When set to 0 (default),
      // list levels are marked by square brackets.
      // When set to 1, they are marked by parens.
-     // This is especially useful when exporting data to Lisp programs.
-     */
+     // This is especially useful when exporting data to Lisp programs. <br />
+     // @copy BACH_DOC_STATIC_ATTR
 
     class_register(CLASS_BOX, c);
     textout_class = c;
@@ -305,6 +309,7 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
             }
         }
         
+        x->n_selectors = llll_make();
         x->n_flags = LLLL_D_QUOTE;
         for (i = true_ac ; i < ac - 1; i++) {
             t_symbol *symattr = atom_getsym(av + i);
@@ -325,6 +330,7 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
                     }
                     else if (first == '`')
                         sym = gensym(sym->s_name + 1);
+                    llll_appendsym(x->n_selectors, sym);
                     textout_add_symbol_to_this(x, sym);
                 }
             } else if (!strcmp(attrname, "escape")) {
@@ -351,6 +357,19 @@ t_textout *textout_new(t_symbol *s, short ac, t_atom *av)
         if (i < ac)
             object_error((t_object *) x, "Bad argument list");
         
+        
+        if (x->n_flags & LLLL_D_NEGOCTAVES)
+            x->n_flags_negative_octaves = 1;
+        if (x->n_flags & LLLL_D_QUOTE)
+            x->n_flags_escape = 1;
+        if (x->n_flags & LLLL_D_PARENS)
+            x->n_flags_parens = 1;
+        
+        object_attr_setdisabled((t_object *)x, gensym("escape"), true);
+        object_attr_setdisabled((t_object *)x, gensym("parens"), true);
+        object_attr_setdisabled((t_object *)x, gensym("selectors"), true);
+        object_attr_setdisabled((t_object *)x, gensym("negativeoctaves"), true);
+
         
         x->n_proxies = inlets - 1;
         x->n_proxy = (void **) bach_newptr(inlets * sizeof(void *));

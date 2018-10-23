@@ -604,7 +604,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 353.75, 219.0, 136.0, 41.0 ],
 									"style" : "",
-									"text" : "a b (foo) fee 3.2"
+									"text" : "a b [foo] fee 3.2"
 								}
 
 							}
@@ -1037,7 +1037,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 160.0, 136.0, 41.0 ],
 									"style" : "",
-									"text" : "a b (foo) fee 3.2"
+									"text" : "a b [foo] fee 3.2"
 								}
 
 							}
@@ -1067,7 +1067,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 182.0, 279.5, 49.0, 23.0 ],
 									"style" : "",
-									"text" : "(1 2 4)"
+									"text" : "[1 2 4]"
 								}
 
 							}

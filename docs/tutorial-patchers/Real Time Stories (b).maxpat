@@ -568,7 +568,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "addchord 1 ( $1 ( $2 1000 $3 ) )",
+					"text" : "addchord 1 [ $1 [ $2 1000 $3 ] ]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -786,7 +786,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Real Time Stories (a)",
+					"text" : "Real Time Stories [a]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -885,7 +885,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Real Time Stories (c)",
+					"text" : "Real Time Stories [c]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

@@ -95,7 +95,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "minimalunits dynamic ( 1/16 1/12 ) 10 ( 1/16 1/24 ) 15 ( 1/32 1/24 )",
+					"text" : "minimalunits dynamic [ 1/16 1/12 ] 10 [ 1/16 1/24 ] 15 [ 1/32 1/24 ]",
 					"id" : "obj-42",
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -607,7 +607,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Real Time Stories (n)",
+					"text" : "Real Time Stories [n]",
 					"id" : "obj-8",
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -706,7 +706,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Real Time Stories (p)",
+					"text" : "Real Time Stories [p]",
 					"id" : "obj-20",
 					"fontname" : "Arial",
 					"fontsize" : 12.0,

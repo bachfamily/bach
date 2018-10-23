@@ -228,7 +228,7 @@ int T_EXPORT main()
 	// @method llll @digest Train or feed network
 	// @description An <m>llll</m> in first inlet is considered as a list of input values to be fed to the network. 
 	// The corresponding output values are output from the first outlet. An <m>llll</m> in second inlet is considered as a list of 
-	// training items; each item must be in the form <b>((<m>input1</m> <m>input2</m>...) (<m>target1</m> <m>target2</m>...))</b>
+	// training items; each item must be in the form <b>[[<m>input1</m> <m>input2</m>...] [<m>target1</m> <m>target2</m>...]]</b>
 	// containing the inputs and the expected targets for such inputs. Once the training is over, a message containing the results is output
 	// through the third outlet (see outlet documentation for more information).
 	class_addmethod(c, (method)neuralnet_anything,					"anything",				A_GIMME,	0);
@@ -259,11 +259,11 @@ int T_EXPORT main()
     // @copy BACH_DOC_WRITETXT_TEXT_FORMAT_AND_ARGUMENTS
     // @example writetxt @caption export the network as a text file, opening a dialog box for the file name
     // @example writetxt myfile.txt @caption export the network as a text file with the provided file name
-    // @example writetxt myfile.txt (maxdecimals 3) @caption export the network with a floating-point precision of 3 decimal digits
-    // @example writetxt myfile.txt (maxdecimals 3) (wrap 40) @caption as the above, limiting the length of each line to 40 characters
-    // @example writetxt myfile.txt (indent 1) @caption export the network indenting each sublist by one space per depth level
-    // @example writetxt myfile.txt (indent 1) (maxdepth 2) @caption as the above, but only first-level sublists are placed on new lines
-    // @example writetxt myfile.txt (maxdepth 1) @caption no indentation is performed
+    // @example writetxt myfile.txt [maxdecimals 3] @caption export the network with a floating-point precision of 3 decimal digits
+    // @example writetxt myfile.txt [maxdecimals 3] [wrap 40] @caption as the above, limiting the length of each line to 40 characters
+    // @example writetxt myfile.txt [indent 1] @caption export the network indenting each sublist by one space per depth level
+    // @example writetxt myfile.txt [indent 1] [maxdepth 2] @caption as the above, but only first-level sublists are placed on new lines
+    // @example writetxt myfile.txt [maxdepth 1] @caption no indentation is performed
     // @marg 0 @name filename @optional 1 @type symbol
     // @marg 1 @name specifications @optional 1 @type llll
     // @seealso read, write
@@ -273,12 +273,12 @@ int T_EXPORT main()
 	
 	// @method dump @digest Dump network state
 	// @description The <m>dump</m> message dumps the network state (model) from the second outlet. This is an llll having the form
-	// <b><m>NEURONS</m> <m>WEIGHTS</m></b>. The <m>NEURONS</m> llll is in the form <b>(<m>INPUT</m> <m>HIDDENLAYER1</m> <m>HIDDENLAYER2</m>... <m>OUTPUT</m>)</b>
+	// <b><m>NEURONS</m> <m>WEIGHTS</m></b>. The <m>NEURONS</m> llll is in the form <b>[<m>INPUT</m> <m>HIDDENLAYER1</m> <m>HIDDENLAYER2</m>... <m>OUTPUT</m>]</b>
 	// and contains the wrapped lists of the activation values of all neurons in each one of the layers. 
-	// If the network is not recurrent, the <m>WEIGHTS</m> llll is in the form <b>(<m>InputToHidden1</m> <m>Hidden1ToHidden2</m> ... <m>LastHiddenLayerToOutput</m>)</b>
+	// If the network is not recurrent, the <m>WEIGHTS</m> llll is in the form <b>[<m>InputToHidden1</m> <m>Hidden1ToHidden2</m> ... <m>LastHiddenLayerToOutput</m>]</b>
 	// where each one of the sub elements is indeed a matrix containing all the weights to pass from a given layer to the next one. 
 	// If the network is recurrent, between any two elements of such lists are interleaved the weights for passing from a layer to itself, yielding the form
-	// <b>(<m>InputToHidden1</m> <m>Hidden1ToHidden1</m> <m>Hidden1ToHidden2</m> <m>Hidden2ToHidden2</m> ... <m>LastHiddenLayerToLastHiddenLayer</m> <m>LastHiddenLayerToOutput</m>)</b>
+	// <b>[<m>InputToHidden1</m> <m>Hidden1ToHidden1</m> <m>Hidden1ToHidden2</m> <m>Hidden2ToHidden2</m> ... <m>LastHiddenLayerToLastHiddenLayer</m> <m>LastHiddenLayerToOutput</m>]</b>
 	class_addmethod(c, (method)neuralnet_anything,					"dump",					A_GIMME,	0);
 
 	// @method setstate @digest Set network state
@@ -391,7 +391,7 @@ int T_EXPORT main()
     CLASS_ATTR_ENUMINDEX(c, "verbose", 0, "None Max Window Last Outlet");
 	CLASS_ATTR_ACCESSORS(c, "verbose", (method)NULL, (method)neuralnet_setattr_verbose);
 	// @description Toggles the ability to verbosely print training information in the Max window (if verbose == 1) or from the 
-	// last outlet, in the form <b>verbose <m>epoch</m> (<m>TSaccuracy</m> <m>TSmeansquarederror</m>) (<m>GSaccuracy</m> <m>GSmeansquarederror</m>)</b>.
+	// last outlet, in the form <b>verbose <m>epoch</m> [<m>TSaccuracy</m> <m>TSmeansquarederror</m>] [<m>GSaccuracy</m> <m>GSmeansquarederror</m>]</b>.
 	// Some acronyms are used, namely: TS = Training Set, GS = Generalization Set, VS = Validation Set. 
 	
 	
@@ -702,7 +702,7 @@ void neuralnet_assist(t_neuralnet *x, void *b, long m, long a, char *s)
 			sprintf(s, "llll: Feed Input"); // @in 0 @type list/llll @digest The values of the input nodes, to be feeded to the network
 		else
 			sprintf(s, "llll: Training Data"); // @in 1 @type llll @digest The training data in llll form
-												// @discussion The correct syntax is <b>((<m>input1</m> <m>input2</m>...) (<m>target1</m> <m>target2</m>...))</b>
+												// @discussion The correct syntax is <b>[[<m>input1</m> <m>input2</m>...] [<m>target1</m> <m>target2</m>...]]</b>
 												// for each training event.
 	} else {
 		char *type = NULL; 
@@ -716,7 +716,7 @@ void neuralnet_assist(t_neuralnet *x, void *b, long m, long a, char *s)
 		else								  // @description The advancement is a floating point value between 0 (training starts) and 1 (training ends)
 			sprintf(s, "llll (%s): Training Results", type); // @out 3 @type llll @digest Output training results when training has ended
 															// @description The output message is in the form 
-															// <b>(<m>TS_accuracy</m> <m>GS_accuracy</m> <m>VS_accuracy</m>) (<m>TS_mse</m> <m>GS_mse</m> <m>VS_mse</m>)</b>
+															// <b>[<m>TS_accuracy</m> <m>GS_accuracy</m> <m>VS_accuracy</m>] [<m>TS_mse</m> <m>GS_mse</m> <m>VS_mse</m>]</b>
 															// where TS is the training set, GS is the generalization set, VS is the validation set,
 															// and mse is the mean squared error.
 	}

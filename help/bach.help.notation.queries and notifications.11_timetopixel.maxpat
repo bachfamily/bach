@@ -92,7 +92,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 82.0, 236.0, 125.0, 23.0 ],
 					"style" : "",
-					"text" : "timetopixel (2 1 1/8)"
+					"text" : "timetopixel [2 1 1/8]"
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 33.380936, 177.0, 92.0, 23.0 ],
 					"style" : "",
-					"text" : "timetopixel (2)"
+					"text" : "timetopixel [2]"
 				}
 
 			}
@@ -140,7 +140,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 55.380936, 208.0, 114.0, 23.0 ],
 					"style" : "",
-					"text" : "timetopixel (1 1/8)"
+					"text" : "timetopixel [1 1/8]"
 				}
 
 			}

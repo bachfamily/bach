@@ -85,7 +85,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 112.5, 131.0, 19.0 ],
-					"text" : "addmarker (3.5) john"
+					"text" : "addmarker [3.5] john"
 				}
 
 			}
@@ -99,7 +99,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 55.5, 225.5, 157.0, 19.0 ],
-					"text" : "addmarker (2 2 0.9) ringo"
+					"text" : "addmarker [2 2 0.9] ringo"
 				}
 
 			}
@@ -113,7 +113,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 33.0, 167.5, 142.0, 19.0 ],
-					"text" : "addmarker (1 0.2) john"
+					"text" : "addmarker [1 0.2] john"
 				}
 
 			}

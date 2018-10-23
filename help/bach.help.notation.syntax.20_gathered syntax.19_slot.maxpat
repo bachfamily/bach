@@ -55,7 +55,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 237.400024, 399.666656, 252.0, 34.0 ],
-					"text" : "( slotinfo ( 1 ( name comment ) ( type text ) ( key c ) ) ) ( slots ( 1 \"foo fee faa\" ) )"
+					"text" : "[ slotinfo [ 1 [ name comment ] [ type text ] [ key c ] ] ] [ slots [ 1 \"foo fee faa\" ] ]"
 				}
 
 			}
@@ -256,7 +256,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 229.0, 321.0, 48.0 ],
-					"text" : "slot ( slots ( 1 ( 0. 0. 0. ) ( 0.137566 92.363632 0. ) ( 0.185185 51.13 0. ) ( 0.624339 51.13 0. ) ( 1. 0. 0. ) ) ( 2 ( 0. 1. 0. ) ( 1. 0. -0.555556 ) ) ( 3 64 22 46 93 ) )"
+					"text" : "slot [ slots [ 1 [ 0. 0. 0. ] [ 0.137566 92.363632 0. ] [ 0.185185 51.13 0. ] [ 0.624339 51.13 0. ] [ 1. 0. 0. ] ] [ 2 [ 0. 1. 0. ] [ 1. 0. -0.555556 ] ] [ 3 64 22 46 93 ] ]"
 				}
 
 			}

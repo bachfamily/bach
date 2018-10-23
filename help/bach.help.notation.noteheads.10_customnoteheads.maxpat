@@ -103,7 +103,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 22.0, 258.0, 367.0, 23.0 ],
 					"style" : "",
-					"text" : "sel note if cents % 1200 == 900, addslot (23 a), clearselection"
+					"text" : "sel note if cents % 1200 == 900, addslot [23 a], clearselection"
 				}
 
 			}
@@ -134,7 +134,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 224.0, 600.0, 23.0 ],
 					"style" : "",
-					"text" : "(noteheadinfo ((fullname letter_a) (shortname a) (basept 12) (font Arial) (char a) (yshift -23) (width 7)))"
+					"text" : "[noteheadinfo [[fullname letter_a] [shortname a] [basept 12] [font Arial] [char a] [yshift -23] [width 7]]]"
 				}
 
 			}

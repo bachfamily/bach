@@ -121,7 +121,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 34.5, 384.5, 357.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (range -120 10) (slope -0.4) (representation dB)))"
+					"text" : "[slotinfo [1 [range -120 10] [slope -0.4] [representation dB]]]"
 				}
 
 			}
@@ -256,7 +256,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 355.5, 303.0, 145.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (slope $1 )))"
+					"text" : "[slotinfo [1 [slope $1 ]]]"
 				}
 
 			}
@@ -304,7 +304,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 303.5, 155.0, 166.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (range -40 80)))"
+					"text" : "[slotinfo [1 [range -40 80]]]"
 				}
 
 			}

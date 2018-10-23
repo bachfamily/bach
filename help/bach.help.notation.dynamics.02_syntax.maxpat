@@ -410,7 +410,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 11.0, 310.0, 175.0, 23.0 ],
 					"style" : "",
-					"text" : "sel chord 3, addslot ( 20 $1 )"
+					"text" : "sel chord 3, addslot [ 20 $1 ]"
 				}
 
 			}
