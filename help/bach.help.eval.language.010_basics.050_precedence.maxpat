@@ -13,7 +13,7 @@
 		"rect" : [ 47.0, 115.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
+		"default_fontsize" : 13.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
 		"gridonopen" : 1,
@@ -43,12 +43,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-67",
-					"linecount" : 4,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 270.0, 386.0, 321.0, 69.0 ],
-					"text" : "In general, it is a good rule to use parens even when not necessary, except for the obvious cases. Precedence rules are complex, and being spingy with parens can lead to unreadable expressions."
+					"patching_rect" : [ 287.0, 380.5, 287.0, 83.0 ],
+					"text" : "In general, it is a good rule to use parens even when not necessary, except for the obvious cases. Precedence rules are complex, and being stingy with parens can lead to unreadable expressions."
 				}
 
 			}
@@ -59,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 380.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 380.5, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -70,7 +70,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 440.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 440.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -84,7 +84,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 409.5, 240.0, 22.0 ],
+					"patching_rect" : [ 18.0, 409.5, 260.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -103,7 +103,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 287.0, 271.5, 296.0, 98.0 ],
+					"patching_rect" : [ 303.0, 272.5, 277.0, 98.0 ],
 					"text" : "See the difference? Also, notice how we can use parens to delimitate lllls. This is just a consequence of the general meaning of parens as precedence markers: in this example, we first assemble the two lllls, and then sum them together."
 				}
 
@@ -115,7 +115,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 280.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 280.5, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -126,7 +126,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 340.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 340.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -140,7 +140,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 309.5, 254.0, 22.0 ],
+					"patching_rect" : [ 18.0, 309.5, 276.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -159,7 +159,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 255.0, 188.5, 170.0, 54.0 ],
+					"patching_rect" : [ 270.0, 189.5, 170.0, 54.0 ],
 					"text" : "Arithmetical operators have higher precedence than concatenation."
 				}
 
@@ -171,7 +171,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 175.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 175.5, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -182,7 +182,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 235.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 235.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -196,7 +196,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 204.5, 225.0, 22.0 ],
+					"patching_rect" : [ 18.0, 204.5, 243.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -212,7 +212,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 223.0, 72.5, 35.0, 22.0 ],
+					"patching_rect" : [ 223.0, 72.5, 37.0, 23.0 ],
 					"text" : "2 3 4"
 				}
 
@@ -223,7 +223,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 223.0, 132.5, 91.0, 22.0 ],
+					"patching_rect" : [ 223.0, 132.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -237,7 +237,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 223.0, 101.5, 196.0, 22.0 ],
+					"patching_rect" : [ 223.0, 101.5, 212.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -256,7 +256,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 430.0, 85.5, 182.0, 54.0 ],
+					"patching_rect" : [ 447.0, 86.5, 157.0, 54.0 ],
 					"text" : "Arithmetical operators follow the usual precedence rules."
 				}
 
@@ -268,7 +268,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 72.5, 35.0, 22.0 ],
+					"patching_rect" : [ 18.0, 72.5, 37.0, 23.0 ],
 					"text" : "2 3 4"
 				}
 
@@ -279,7 +279,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 132.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 132.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -293,7 +293,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 101.5, 182.0, 22.0 ],
+					"patching_rect" : [ 18.0, 101.5, 196.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

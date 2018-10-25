@@ -13,7 +13,7 @@
 		"rect" : [ 147.0, 240.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
+		"default_fontsize" : 13.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
 		"gridonopen" : 1,
@@ -47,8 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 217.0, 393.5, 245.0, 40.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 239.0, 396.5, 245.0, 40.0 ],
 					"text" : "Pitches are not symbols, and as such must not be escaped with backticks!"
 				}
 
@@ -60,8 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 373.5, 72.0, 22.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 18.0, 375.5, 78.0, 23.0 ],
 					"text" : "G3 F5 4800"
 				}
 
@@ -72,7 +70,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 432.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 434.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -86,7 +84,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 402.5, 189.0, 22.0 ],
+					"patching_rect" : [ 18.0, 404.5, 205.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -105,7 +103,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 297.0, 261.5, 277.0, 98.0 ],
+					"patching_rect" : [ 314.0, 263.5, 277.0, 98.0 ],
 					"text" : "llll literals can contain symbols, which must all be escaped with backticks. Notice the space between `five and the closed paren: with no space, the paren would be considered part of the `five) symbol, thus leading to a syntax error."
 				}
 
@@ -120,7 +118,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 297.0, 86.5, 231.0, 40.0 ],
+					"patching_rect" : [ 320.0, 87.5, 231.0, 40.0 ],
 					"text" : "The length of the llll 1 3 5, that is 3, is added to $l1."
 				}
 
@@ -132,7 +130,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 263.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 263.5, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -143,7 +141,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 335.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 335.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -158,7 +156,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 292.5, 269.0, 36.0 ],
+					"patching_rect" : [ 18.0, 292.5, 290.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -174,7 +172,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 159.5, 72.0, 22.0 ],
+					"patching_rect" : [ 18.0, 163.5, 78.0, 23.0 ],
 					"text" : "40 30 20 10"
 				}
 
@@ -185,7 +183,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 219.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 223.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -199,7 +197,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 188.5, 283.0, 22.0 ],
+					"patching_rect" : [ 18.0, 192.5, 307.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -215,7 +213,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 66.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 66.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -226,7 +224,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 126.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 126.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -240,7 +238,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 95.5, 269.0, 22.0 ],
+					"patching_rect" : [ 18.0, 95.5, 291.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -258,7 +256,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 312.5, 188.5, 200.0, 25.0 ],
+					"patching_rect" : [ 335.5, 192.5, 200.0, 25.0 ],
 					"text" : "Deep llll literals are supported."
 				}
 

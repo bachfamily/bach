@@ -13,7 +13,7 @@
 		"rect" : [ 147.0, 240.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
+		"default_fontsize" : 13.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
 		"gridonopen" : 1,
@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 284.5, 75.0, 22.0 ],
+					"patching_rect" : [ 18.0, 284.5, 81.0, 23.0 ],
 					"text" : "100 200 300"
 				}
 
@@ -55,7 +55,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 344.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 344.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -69,7 +69,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 313.5, 182.0, 22.0 ],
+					"patching_rect" : [ 18.0, 313.5, 196.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -88,7 +88,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 207.0, 297.5, 298.0, 54.0 ],
+					"patching_rect" : [ 223.0, 298.5, 298.0, 54.0 ],
 					"text" : "Because there is a space between $l1 and -, and no space between - and 10, this is the concatenation of $l1 and -10."
 				}
 
@@ -100,7 +100,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 383.5, 75.0, 22.0 ],
+					"patching_rect" : [ 18.0, 383.5, 81.0, 23.0 ],
 					"text" : "100 200 300"
 				}
 
@@ -111,7 +111,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 443.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 443.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -125,7 +125,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 412.5, 175.0, 22.0 ],
+					"patching_rect" : [ 18.0, 412.5, 189.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -144,7 +144,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 207.0, 396.5, 296.0, 54.0 ],
+					"patching_rect" : [ 214.0, 397.5, 296.0, 54.0 ],
 					"text" : "But, because there is no space between $l1 and -, nor between - and 10, this is a subtraction."
 				}
 
@@ -159,7 +159,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 225.0, 195.5, 228.0, 40.0 ],
+					"patching_rect" : [ 234.0, 203.5, 228.0, 40.0 ],
 					"text" : "Because there is a space between - and 10, this is a subtraction."
 				}
 
@@ -171,7 +171,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 182.5, 75.0, 22.0 ],
+					"patching_rect" : [ 18.0, 182.5, 81.0, 23.0 ],
 					"text" : "100 200 300"
 				}
 
@@ -182,7 +182,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 242.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 242.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -196,7 +196,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 211.5, 189.0, 22.0 ],
+					"patching_rect" : [ 18.0, 211.5, 205.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -212,7 +212,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 83.5, 35.0, 22.0 ],
+					"patching_rect" : [ 18.0, 83.5, 37.0, 23.0 ],
 					"text" : "2 3 4"
 				}
 
@@ -223,7 +223,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 143.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 143.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -237,7 +237,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 112.5, 160.0, 22.0 ],
+					"patching_rect" : [ 18.0, 112.5, 174.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -256,8 +256,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 193.0, 96.5, 275.0, 40.0 ],
-					"text" : "There can be no space between a unary operator and the values it is applied upon."
+					"patching_rect" : [ 201.5, 104.5, 275.0, 40.0 ],
+					"text" : "There can be no space between a unary operator and the value it is applied to."
 				}
 
 			}

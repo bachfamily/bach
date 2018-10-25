@@ -13,7 +13,7 @@
 		"rect" : [ 58.0, 135.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
+		"default_fontsize" : 13.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
 		"gridonopen" : 1,
@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 378.0, 299.5, 182.0, 40.0 ],
+					"patching_rect" : [ 405.0, 300.5, 182.0, 40.0 ],
 					"text" : "The llll construction works with sublists too!"
 				}
 
@@ -59,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 340.0, 279.5, 30.0, 22.0 ],
+					"patching_rect" : [ 368.0, 279.5, 32.0, 23.0 ],
 					"text" : "Eb5"
 				}
 
@@ -70,7 +70,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 33.0, 337.5, 91.0, 22.0 ],
+					"patching_rect" : [ 33.0, 340.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -108,7 +108,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 279.5, 35.0, 22.0 ],
+					"patching_rect" : [ 18.0, 279.5, 37.0, 23.0 ],
 					"text" : "1000"
 				}
 
@@ -122,7 +122,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 308.5, 341.0, 22.0 ],
+					"patching_rect" : [ 18.0, 308.5, 369.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -138,7 +138,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 181.5, 55.0, 22.0 ],
+					"patching_rect" : [ 18.0, 181.5, 59.0, 23.0 ],
 					"text" : "10 20 30"
 				}
 
@@ -149,7 +149,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 241.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 241.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -163,7 +163,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 210.5, 240.0, 22.0 ],
+					"patching_rect" : [ 18.0, 210.5, 260.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -179,7 +179,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 72.5, 55.0, 22.0 ],
+					"patching_rect" : [ 18.0, 72.5, 59.0, 23.0 ],
 					"text" : "10 20 30"
 				}
 
@@ -190,7 +190,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 132.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 132.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -204,7 +204,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 101.5, 225.0, 22.0 ],
+					"patching_rect" : [ 18.0, 101.5, 243.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

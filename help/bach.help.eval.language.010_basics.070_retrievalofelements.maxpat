@@ -13,7 +13,7 @@
 		"rect" : [ 147.0, 240.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
+		"default_fontsize" : 13.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
 		"gridonopen" : 1,
@@ -46,7 +46,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 74.0, 383.5, 83.0, 25.0 ],
+					"patching_rect" : [ 74.0, 378.5, 83.0, 25.0 ],
 					"text" : "Move me!"
 				}
 
@@ -59,7 +59,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 201.0, 357.7069091796875, 49.0, 18.0 ],
+					"patching_rect" : [ 201.0, 352.7069091796875, 49.0, 18.0 ],
 					"text" : "loadbang"
 				}
 
@@ -72,7 +72,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 385.0, 50.0, 22.0 ]
+					"patching_rect" : [ 18.0, 380.0, 50.0, 23.0 ]
 				}
 
 			}
@@ -83,8 +83,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 201.0, 385.0, 273.0, 22.0 ],
-					"text" : "(john yoko) (paul linda) (george patty) (ringo moe)"
+					"patching_rect" : [ 201.0, 380.0, 299.0, 23.0 ],
+					"text" : "(john yoko) (paul linda) (george pattie) (ringo moe)"
 				}
 
 			}
@@ -94,7 +94,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 447.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 447.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -108,7 +108,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 416.5, 456.0, 22.0 ],
+					"patching_rect" : [ 18.0, 416.5, 494.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -126,7 +126,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 230.0, 302.0, 312.0, 25.0 ],
+					"patching_rect" : [ 245.0, 303.5, 312.0, 25.0 ],
 					"text" : "The : operator supports the full syntax of bach.nth"
 				}
 
@@ -138,7 +138,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 269.0, 273.0, 22.0 ],
+					"patching_rect" : [ 18.0, 269.0, 295.0, 23.0 ],
 					"text" : "(john yoko) (paul linda) (george patty) (ringo moe)"
 				}
 
@@ -149,7 +149,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 334.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 334.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -163,7 +163,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 303.5, 204.0, 22.0 ],
+					"patching_rect" : [ 18.0, 303.5, 220.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -206,7 +206,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 181.0, 169.5, 128.0, 22.0 ],
+					"patching_rect" : [ 181.0, 169.5, 138.0, 23.0 ],
 					"text" : "john paul george ringo"
 				}
 
@@ -219,7 +219,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 169.5, 50.0, 22.0 ]
+					"patching_rect" : [ 18.0, 169.5, 50.0, 23.0 ]
 				}
 
 			}
@@ -229,7 +229,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 234.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 234.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -243,7 +243,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 203.5, 182.0, 22.0 ],
+					"patching_rect" : [ 18.0, 203.5, 196.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -259,7 +259,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 67.5, 128.0, 22.0 ],
+					"patching_rect" : [ 18.0, 67.5, 138.0, 23.0 ],
 					"text" : "john paul george ringo"
 				}
 
@@ -270,7 +270,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 127.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 127.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -284,7 +284,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 167.0, 22.0 ],
+					"patching_rect" : [ 18.0, 96.5, 181.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -302,7 +302,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 194.0, 96.5, 191.0, 25.0 ],
+					"patching_rect" : [ 209.0, 96.5, 191.0, 25.0 ],
 					"text" : "Retrieve the second element"
 				}
 

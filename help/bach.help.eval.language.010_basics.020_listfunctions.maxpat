@@ -13,7 +13,7 @@
 		"rect" : [ 444.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
+		"default_fontsize" : 13.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
 		"gridonopen" : 1,
@@ -45,7 +45,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 412.0, 346.0, 21.0 ],
+					"patching_rect" : [ 6.0, 418.0, 346.0, 21.0 ],
 					"text" : "For a comprehensive list of the supported functions, see ...",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -58,7 +58,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 347.0, 305.5, 79.0, 22.0 ],
+					"patching_rect" : [ 347.0, 299.5, 85.0, 23.0 ],
 					"text" : "4 [5 6] 7 [8 9]"
 				}
 
@@ -70,7 +70,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 297.0, 305.5, 35.0, 22.0 ],
+					"patching_rect" : [ 297.0, 299.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -81,7 +81,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 297.0, 365.5, 91.0, 22.0 ],
+					"patching_rect" : [ 297.0, 385.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -91,11 +91,12 @@
 					"code" : "length($l1) * depth($l1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-43",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 297.0, 334.5, 305.0, 22.0 ],
+					"patching_rect" : [ 297.0, 334.5, 282.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -111,7 +112,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 68.0, 305.5, 79.0, 22.0 ],
+					"patching_rect" : [ 68.0, 299.5, 85.0, 23.0 ],
 					"text" : "4 [5 6] 7 [8 9]"
 				}
 
@@ -123,7 +124,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 305.5, 35.0, 22.0 ],
+					"patching_rect" : [ 18.0, 299.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -134,7 +135,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 365.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 385.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -144,11 +145,12 @@
 					"code" : "length(flat($l1)) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-39",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 334.5, 254.0, 22.0 ],
+					"patching_rect" : [ 18.0, 334.5, 228.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -164,7 +166,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 68.0, 199.5, 79.0, 22.0 ],
+					"patching_rect" : [ 68.0, 194.5, 85.0, 23.0 ],
 					"text" : "4 [5 6] 7 [8 9]"
 				}
 
@@ -176,7 +178,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 199.5, 35.0, 22.0 ],
+					"patching_rect" : [ 18.0, 194.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -187,7 +189,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 259.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 259.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -201,7 +203,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 228.5, 196.0, 22.0 ],
+					"patching_rect" : [ 18.0, 228.5, 212.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -217,8 +219,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 68.0, 96.5, 79.0, 22.0 ],
-					"presentation_linecount" : 3,
+					"patching_rect" : [ 68.0, 90.5, 85.0, 23.0 ],
 					"text" : "4 [5 6] 7 [8 9]"
 				}
 
@@ -230,7 +231,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 35.0, 22.0 ],
+					"patching_rect" : [ 18.0, 90.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -241,7 +242,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 156.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 156.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -255,7 +256,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 125.5, 211.0, 22.0 ],
+					"patching_rect" : [ 18.0, 125.5, 229.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -274,8 +275,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 246.0, 109.5, 285.0, 54.0 ],
-					"text" : "This is why in bach.eval the $l1 form is used: the idea is that we're not referring to single items, but to whole lists."
+					"patching_rect" : [ 262.0, 110.5, 287.0, 54.0 ],
+					"text" : "This is why the $l1 form is used in bach.eval: the idea is that we're not referring to single items, but to whole lists."
 				}
 
 			}
@@ -348,7 +349,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 384.0, 36.0 ],
+					"patching_rect" : [ 6.0, 32.0, 386.0, 36.0 ],
 					"text" : "bach.eval implements functions that can operate upon whole lllls. Most of them correspond to individual bach objects.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
