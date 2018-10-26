@@ -1510,6 +1510,7 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
 {
     t_symbol *curr_dyn_sym[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
     t_symbol *next_dyn_sym[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
+    t_symbol *prev_last_dyn_sym = NULL;
     long curr_hairpins[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
     long next_hairpins[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
     long curr_num_dynamics = 0, next_num_dynamics = 0;
@@ -1530,13 +1531,20 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
         for (t_chord *ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
             if (ch == next_dyn_chord) {
 //                if (next_num_dynamics > 0 && !is_dynamics_local(r_ob, dyn_vel_associations, next_dyn_sym[next_num_dynamics-1], 1)) {
-                    curr_dyn_chord = next_dyn_chord;
-                    curr_dyn_onset = next_dyn_onset;
-                    curr_num_dynamics = next_num_dynamics;
-                    curr_open_hairpin = next_open_hairpin;
-                    bach_copyptr(next_hairpins, curr_hairpins, CONST_MAX_NUM_DYNAMICS_PER_CHORD * sizeof(long));
-                    bach_copyptr(next_dyn_sym, curr_dyn_sym, CONST_MAX_NUM_DYNAMICS_PER_CHORD * sizeof(t_symbol *));
-                    next_dyn_chord = dynamics_get_next(r_ob, voice, slot_num, next_dyn_chord, &next_num_dynamics, next_dyn_sym, next_hairpins, &next_open_hairpin, &next_dyn_onset);
+                prev_last_dyn_sym = curr_num_dynamics > 0 ? curr_dyn_sym[curr_num_dynamics-1] : NULL;
+                curr_dyn_chord = next_dyn_chord;
+                curr_dyn_onset = next_dyn_onset;
+                curr_num_dynamics = next_num_dynamics;
+                curr_open_hairpin = next_open_hairpin;
+                bach_copyptr(next_hairpins, curr_hairpins, CONST_MAX_NUM_DYNAMICS_PER_CHORD * sizeof(long));
+                bach_copyptr(next_dyn_sym, curr_dyn_sym, CONST_MAX_NUM_DYNAMICS_PER_CHORD * sizeof(t_symbol *));
+                next_dyn_chord = dynamics_get_next(r_ob, voice, slot_num, next_dyn_chord, &next_num_dynamics, next_dyn_sym, next_hairpins, &next_open_hairpin, &next_dyn_onset);
+                if (curr_num_dynamics > 0 && curr_dyn_sym[0] == _llllobj_sym_empty_symbol && prev_last_dyn_sym && prev_last_dyn_sym != _llllobj_sym_empty_symbol) {
+                    // this deals with the case of no initial dynamics in a chord-assigned marking, e.g. just "<" or "<ff>p",
+                    // which means that the initial dynamics of the crescendo/diminuendo must be the last used one (if any)
+                    curr_dyn_sym[0] = prev_last_dyn_sym;
+                }
+                    
 //                }
             }
             

@@ -15433,15 +15433,23 @@ void roll_enter(t_roll *x)	// enter is triggerd at "endeditbox time"
     } else if (x->r_ob.is_editing_type == k_DYNAMICS && x->r_ob.is_editing_chord) {
         t_notation_item *nitem = notation_item_get_to_which_dynamics_should_be_assigned((t_notation_obj *)x, (t_notation_item *)x->r_ob.is_editing_chord);
         if (nitem) {
-            t_llll *new_text_as_llll = llll_get();
-            llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
-            lock_general_mutex((t_notation_obj *)x);
-            create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
-            notation_item_change_slotitem((t_notation_obj *) x, nitem, x->r_ob.link_dynamics_to_slot - 1, 1, new_text_as_llll);
-            llll_free(new_text_as_llll);
-            x->r_ob.is_editing_chord->need_recompute_parameters = true;
-            unlock_general_mutex((t_notation_obj *)x);
-            handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DYNAMICS);
+            if (strlen(text) > 0) {
+                t_llll *new_text_as_llll = llll_get();
+                llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
+                lock_general_mutex((t_notation_obj *)x);
+                create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
+                notation_item_change_slotitem((t_notation_obj *) x, nitem, x->r_ob.link_dynamics_to_slot - 1, 1, new_text_as_llll);
+                llll_free(new_text_as_llll);
+                x->r_ob.is_editing_chord->need_recompute_parameters = true;
+                unlock_general_mutex((t_notation_obj *)x);
+                handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DYNAMICS);
+            } else {
+                lock_general_mutex((t_notation_obj *)x);
+                create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
+                delete_chord_dynamics((t_notation_obj *)x, notation_item_get_parent_chord((t_notation_obj *) x, nitem));
+                unlock_general_mutex((t_notation_obj *)x);
+                handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DYNAMICS);
+            }
         }
     } else if (x->r_ob.is_editing_type == k_LLLL_IN_SLOT) {
 		t_llll *my_llll = llll_from_text_buf(text, size > MAX_SYM_LENGTH);

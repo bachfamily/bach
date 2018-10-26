@@ -1,4 +1,198 @@
 {
+	"Eval" : {
+		"Language" : {
+			"Basics" : {
+				"Simpleexpressions" : {
+					"filename" : [ "bach.help.eval.language.010_basics.010_simpleexpressions.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Simple expressions" ]
+				},
+				"Listfunctions" : {
+					"filename" : [ "bach.help.eval.language.010_basics.020_listfunctions.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "List functions" ]
+				},
+				"Llllliterals" : {
+					"filename" : [ "bach.help.eval.language.010_basics.030_llllliterals.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "llll literals" ]
+				},
+				"Implicitllllconstruction" : {
+					"filename" : [ "bach.help.eval.language.010_basics.040_implicitllllconstruction.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Implicit llll construction" ]
+				},
+				"Precedence" : {
+					"filename" : [ "bach.help.eval.language.010_basics.050_precedence.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Precedence" ]
+				},
+				"Unaryoperators" : {
+					"filename" : [ "bach.help.eval.language.010_basics.060_unaryoperators.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Unary operators" ]
+				},
+				"Retrievalofelements" : {
+					"filename" : [ "bach.help.eval.language.010_basics.070_retrievalofelements.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Retrieval of elements" ]
+				},
+				"Print" : {
+					"filename" : [ "bach.help.eval.language.010_basics.080_print.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Print" ]
+				},
+				"Examples" : {
+					"filename" : [ "bach.help.eval.language.010_basics.090_examples.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Examples" ]
+				}
+			},
+			"Conditionals" : {
+				"Ifthen" : {
+					"filename" : [ "bach.help.eval.language.020_conditionals.010_ifthen.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "If ... then" ]
+				},
+				"Ifthenelse" : {
+					"filename" : [ "bach.help.eval.language.020_conditionals.020_ifthenelse.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "If ... then ... else" ]
+				},
+				"Chainedifs" : {
+					"filename" : [ "bach.help.eval.language.020_conditionals.030_chainedifs.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Chained ifs" ]
+				},
+				"Conditions" : {
+					"filename" : [ "bach.help.eval.language.020_conditionals.040_conditions.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Conditions" ]
+				},
+				"Booleans" : {
+					"filename" : [ "bach.help.eval.language.020_conditionals.050_booleans.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Booleans" ]
+				},
+				"Conditionalbooleans" : {
+					"filename" : [ "bach.help.eval.language.020_conditionals.060_conditionalbooleans.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Conditional booleans" ]
+				}
+			},
+			"Sequence" : {
+				"filename" : [ "bach.help.eval.language.030_sequence.maxpat" ],
+				"objects" : [ "bach.eval" ],
+				"seealso" : [  ],
+				"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+				"title" : [ "Sequence" ]
+			},
+			"Variables" : {
+				"Localvariables" : {
+					"filename" : [ "bach.help.eval.language.040_variables.010_localvariables.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [  ],
+					"title" : [ "Local variables" ]
+				},
+				"Localvariablesdetails" : {
+					"filename" : [ "bach.help.eval.language.040_variables.020_localvariablesdetails.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Local variables: details" ]
+				},
+				"Localvariablesmoredetails" : {
+					"filename" : [ "bach.help.eval.language.040_variables.030_localvariablesmoredetails.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Local variables: more details" ]
+				},
+				"Localvariableslifecycle" : {
+					"filename" : [ "bach.help.eval.language.040_variables.040_localvariableslifecycle.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Lifecycle of local variables" ]
+				},
+				"Globalvariables" : {
+					"filename" : [ "bach.help.eval.language.040_variables.050_globalvariables.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Global variables" ]
+				},
+				"Globalvariablesreservedwords" : {
+					"filename" : [ "bach.help.eval.language.040_variables.060_globalvariablesreservedwords.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Global variables: reserved words" ]
+				},
+				"Queryingandresettingglobalvariables" : {
+					"filename" : [ "bach.help.eval.language.040_variables.070_queryingandresettingglobalvariables.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "Querying and resetting global variables" ]
+				}
+			},
+			"Loops" : {
+				"Whileloops" : {
+					"filename" : [ "bach.help.eval.language.050_loops.010_whileloops.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "\"While\" loops" ]
+				},
+				"Whileloopexamplesanddetails" : {
+					"filename" : [ "bach.help.eval.language.050_loops.020_whileloopexamplesanddetails.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "\"While\" loop examples and details" ]
+				},
+				"Forloops" : {
+					"filename" : [ "bach.help.eval.language.050_loops.030_forloops.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
+					"title" : [ "\"For\" loops" ]
+				}
+			}
+		}
+	},
 	"Introduction" : {
 		"Whatisbach" : {
 			"filename" : [ "bach.help.introduction.01_whatisbach.maxpat" ],
