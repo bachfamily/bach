@@ -163,13 +163,13 @@ ESCAPES ("\\\\"|"\\ "|"\\\t"|"\\\n"|"\\,"|"\\;"|"\\\"")
 
 <INITIAL,NO_b,NO_e,NO_be,NO_p,NO_bp,NO_ep,NO_bep,NO_r,NO_br,NO_er,NO_ber,NO_pr,NO_bpr,NO_epr,NO_bepr,NO_s,NO_bs,NO_es,NO_bes,NO_ps,NO_bps,NO_eps,NO_beps,NO_rs,NO_brs,NO_ers,NO_bers,NO_prs,NO_bprs,NO_eprs,NO_beprs>{
     
-    [^\(\)\\ \t\n\r]* {
+    [^\(\)\[\]\\ \t\n\r]* {
         parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym(yytext);
         return BACH_SYMBOL;
     }
     
-    ([^\(\) \t\n\r]|("\\"[^\(\)]))*"\\"? {
+    ([^\(\)\[\] \t\n\r]|("\\"[^\(\)\[\]]))*"\\"? {
         parserpost(" lex: BACH_SYMBOL %s\n", yytext);
         yylval->sym = gensym_unescape(yytext);
         return BACH_SYMBOL;
