@@ -247,7 +247,7 @@ void llll_read(t_object *x, t_symbol *s, read_fn outfn, long ignore)
 void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
 {
     t_fourcc outtype = 0;
-    t_llll *ll;
+    t_llll *ll = NULL;
     void (*outfn)(t_object *x, t_llll *outll) = (read_fn) atom_getobj(av);
     long ignore = atom_getlong(av + 1);
     t_fourcc filetype[] = {'LLLL', 'TEXT'};
@@ -263,7 +263,8 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
     if (dictionary_read(filename, path, &dict) == MAX_ERR_NONE) {
         ll = llll_retrieve_from_dictionary(dict, "data");
         object_free(dict);
-    } else {
+    }
+    if (!ll) {
         if (bach_readfile(x, filename, path, &fh) != MAX_ERR_NONE)
             return;
         ll = llll_readfile(x, fh, ignore);
