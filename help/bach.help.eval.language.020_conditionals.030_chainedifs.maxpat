@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 265.0, 341.5, 29.5, 22.0 ],
+					"patching_rect" : [ 336.0, 341.5, 31.5, 23.0 ],
 					"text" : "200"
 				}
 
@@ -56,7 +56,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 216.0, 341.5, 29.5, 22.0 ],
+					"patching_rect" : [ 287.0, 341.5, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -70,7 +70,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 349.0, 376.0, 212.0, 25.0 ],
+					"patching_rect" : [ 366.0, 377.5, 212.0, 25.0 ],
 					"text" : "... better use parens generously!"
 				}
 
@@ -82,7 +82,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 341.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 341.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -94,7 +94,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 341.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 341.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -106,7 +106,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 341.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 341.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -117,7 +117,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 419.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 419.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -132,7 +132,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 370.5, 321.0, 36.0 ],
+					"patching_rect" : [ 18.0, 370.5, 337.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -148,7 +148,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 265.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 238.0, 205.5, 31.5, 23.0 ],
 					"text" : "200"
 				}
 
@@ -160,7 +160,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 216.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 189.0, 205.5, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -175,7 +175,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 296.5, 225.0, 257.0, 69.0 ],
+					"patching_rect" : [ 298.5, 227.0, 259.0, 69.0 ],
 					"text" : "The dangling else problem. \nQ: does the final else clause refer to the first (outer) or the second (inner) if? \nA: to the second, but..."
 				}
 
@@ -187,7 +187,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 205.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 205.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -199,7 +199,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 205.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -211,7 +211,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 205.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -222,7 +222,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 294.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 294.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -237,7 +237,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 234.5, 239.0, 50.0 ],
+					"patching_rect" : [ 18.0, 234.5, 239.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -253,7 +253,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 67.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 67.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -265,7 +265,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 67.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 67.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -277,7 +277,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 67.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 67.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -288,7 +288,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 156.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 156.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -303,7 +303,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 292.0, 50.0 ],
+					"patching_rect" : [ 18.0, 96.5, 292.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

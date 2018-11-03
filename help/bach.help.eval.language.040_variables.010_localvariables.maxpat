@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 311.5, 29.5, 22.0 ],
+					"patching_rect" : [ 14.0, 311.5, 29.5, 23.0 ],
 					"text" : "9"
 				}
 
@@ -70,7 +70,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 399.5, 91.0, 22.0 ],
+					"patching_rect" : [ 14.0, 399.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -85,7 +85,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 342.0, 189.0, 50.0 ],
+					"patching_rect" : [ 14.0, 342.0, 189.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -103,7 +103,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 187.0, 517.5, 79.0 ],
+					"patching_rect" : [ 14.0, 205.0, 517.5, 79.0 ],
 					"text" : "The name of a variable must start with a letter or an underscore, and the following characters can be letters, underscores or numbers.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$l<N>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, where <N> is any non-negative integer.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -116,7 +116,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 97.5, 29.5, 22.0 ],
+					"patching_rect" : [ 14.0, 97.5, 29.5, 23.0 ],
 					"text" : "47"
 				}
 
@@ -131,7 +131,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 284.25, 97.5, 294.25, 83.0 ],
+					"patching_rect" : [ 301.25, 97.5, 289.75, 83.0 ],
 					"text" : "Local variable names are preceded by $.\nTo assign a value to a variable, use the assignment operator := .\nTo read the value of a variable, just evaluate it as if it was a number or a function."
 				}
 
@@ -142,7 +142,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 158.5, 91.0, 22.0 ],
+					"patching_rect" : [ 14.0, 158.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -156,7 +156,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 128.0, 261.0, 22.0 ],
+					"patching_rect" : [ 14.0, 128.0, 283.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

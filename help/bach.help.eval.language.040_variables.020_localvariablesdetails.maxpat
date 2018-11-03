@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 320.0, 29.5, 22.0 ],
+					"patching_rect" : [ 11.0, 320.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -59,8 +59,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 321.25, 342.0, 165.25, 40.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 340.25, 343.0, 165.25, 40.0 ],
 					"text" : "You can also make chains of assignments."
 				}
 
@@ -71,7 +70,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 385.5, 91.0, 22.0 ],
+					"patching_rect" : [ 11.0, 385.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -85,7 +84,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 351.0, 297.0, 22.0 ],
+					"patching_rect" : [ 11.0, 351.0, 323.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -116,7 +115,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 171.0, 29.5, 22.0 ],
+					"patching_rect" : [ 11.0, 171.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -132,8 +131,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 130.25, 229.0, 227.25, 69.0 ],
-					"presentation_linecount" : 3,
+					"patching_rect" : [ 130.25, 229.0, 229.0, 69.0 ],
 					"text" : "This can be used to make expressions more compact, but it can make the expression less readable."
 				}
 
@@ -144,7 +142,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 238.0, 91.0, 22.0 ],
+					"patching_rect" : [ 11.0, 238.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -158,7 +156,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 202.0, 384.0, 22.0 ],
+					"patching_rect" : [ 11.0, 202.0, 416.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -174,7 +172,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 53.0, 29.5, 22.0 ],
+					"patching_rect" : [ 11.0, 53.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -189,7 +187,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 290.25, 75.0, 236.25, 40.0 ],
+					"patching_rect" : [ 297.25, 76.0, 236.25, 40.0 ],
 					"text" : "The return value of the assignment operator is the assigned value."
 				}
 
@@ -200,7 +198,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 118.5, 91.0, 22.0 ],
+					"patching_rect" : [ 11.0, 118.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -214,7 +212,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 84.0, 261.0, 22.0 ],
+					"patching_rect" : [ 11.0, 84.0, 283.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

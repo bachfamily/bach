@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 136.0, 345.5, 29.5, 22.0 ],
+					"patching_rect" : [ 136.0, 345.5, 29.5, 23.0 ],
 					"text" : "0."
 				}
 
@@ -56,7 +56,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 95.0, 345.5, 29.5, 22.0 ],
+					"patching_rect" : [ 95.0, 345.5, 29.5, 23.0 ],
 					"text" : "C0"
 				}
 
@@ -68,7 +68,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 56.0, 345.5, 29.5, 22.0 ],
+					"patching_rect" : [ 56.0, 345.5, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
@@ -80,7 +80,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 222.0, 345.5, 39.0, 22.0 ],
+					"patching_rect" : [ 222.0, 345.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -92,7 +92,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 177.0, 345.5, 29.5, 22.0 ],
+					"patching_rect" : [ 177.0, 345.5, 29.5, 23.0 ],
 					"text" : "1"
 				}
 
@@ -104,7 +104,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 345.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 345.5, 29.5, 23.0 ],
 					"text" : "0"
 				}
 
@@ -115,7 +115,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 419.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 419.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -130,7 +130,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 374.5, 276.0, 36.0 ],
+					"patching_rect" : [ 18.0, 374.5, 295.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -146,7 +146,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 136.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 136.0, 205.5, 29.5, 23.0 ],
 					"text" : "0."
 				}
 
@@ -158,7 +158,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 95.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 95.0, 205.5, 29.5, 23.0 ],
 					"text" : "C0"
 				}
 
@@ -170,7 +170,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 56.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 56.0, 205.5, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
@@ -185,7 +185,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 222.0, 87.5, 343.0, 40.0 ],
+					"patching_rect" : [ 238.0, 88.5, 345.0, 40.0 ],
 					"text" : "Conditional operators (with the exception of conditional booleans—see later) return 1 for true and 0 for false"
 				}
 
@@ -200,7 +200,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 301.5, 372.5, 248.0, 40.0 ],
+					"patching_rect" : [ 335.0, 374.5, 248.0, 40.0 ],
 					"text" : "As a general rule, it is better to state explicitly what you want anyway!"
 				}
 
@@ -215,7 +215,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 296.5, 222.0, 300.0, 69.0 ],
+					"patching_rect" : [ 283.0, 219.5, 300.0, 69.0 ],
 					"text" : "But when a truth value is required (for example by an \"if\" clause), null and zeroes (that is, 0, 0., 0/1 and C0) are considered false and everything else is considered true."
 				}
 
@@ -227,7 +227,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 222.0, 205.5, 39.0, 22.0 ],
+					"patching_rect" : [ 222.0, 205.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -239,7 +239,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 177.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 177.0, 205.5, 29.5, 23.0 ],
 					"text" : "1"
 				}
 
@@ -251,7 +251,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 205.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 205.5, 29.5, 23.0 ],
 					"text" : "0"
 				}
 
@@ -262,7 +262,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 279.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 279.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -277,7 +277,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 234.5, 211.0, 36.0 ],
+					"patching_rect" : [ 18.0, 234.5, 211.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -293,7 +293,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 67.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 67.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -305,7 +305,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 67.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 67.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -317,7 +317,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 67.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 67.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -328,7 +328,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 126.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 126.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -342,7 +342,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 196.0, 22.0 ],
+					"patching_rect" : [ 18.0, 96.5, 212.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -39,6 +39,38 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"bubble" : 1,
+					"bubblepoint" : 0.4,
+					"bubbleside" : 2,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-3",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 415.5, 55.0, 110.0, 40.0 ],
+					"text" : "|| is the logical or."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"bubblepoint" : 0.4,
+					"bubbleside" : 2,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-2",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 117.5, 55.0, 132.0, 40.0 ],
+					"text" : "&& is the logical and."
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-56",
@@ -61,8 +93,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 245.5, 389.0, 189.0, 40.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 245.5, 389.0, 191.0, 40.0 ],
 					"text" : "Can you predict what will be printed in the Max console?"
 				}
 
@@ -74,7 +105,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 110.0, 362.0, 29.5, 22.0 ],
+					"patching_rect" : [ 110.0, 362.0, 29.5, 23.0 ],
 					"text" : "0"
 				}
 
@@ -86,7 +117,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 362.0, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 362.0, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -98,7 +129,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 362.0, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 362.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -109,7 +140,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 436.0, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 436.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -124,7 +155,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 393.0, 200.0, 36.0 ],
+					"patching_rect" : [ 18.0, 393.0, 204.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -140,7 +171,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 110.0, 222.0, 29.5, 22.0 ],
+					"patching_rect" : [ 110.0, 222.0, 29.5, 23.0 ],
 					"text" : "0"
 				}
 
@@ -152,7 +183,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 222.0, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 222.0, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -164,7 +195,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 222.0, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 222.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -175,7 +206,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 296.0, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 296.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -190,7 +221,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 251.0, 215.0, 36.0 ],
+					"patching_rect" : [ 18.0, 251.0, 215.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -206,7 +237,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 355.0, 67.5, 29.5, 22.0 ],
+					"patching_rect" : [ 355.0, 67.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -218,7 +249,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 307.0, 67.5, 29.5, 22.0 ],
+					"patching_rect" : [ 307.0, 67.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -229,7 +260,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 307.0, 126.5, 91.0, 22.0 ],
+					"patching_rect" : [ 307.0, 139.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -239,11 +270,12 @@
 					"code" : "$l1 < 5 || $l1 > 15 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-40",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 307.0, 96.5, 269.0, 22.0 ],
+					"patching_rect" : [ 307.0, 96.5, 236.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -258,11 +290,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 13,
+					"linecount" : 14,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 238.0, 169.5, 375.5, 199.0 ],
+					"patching_rect" : [ 238.0, 163.5, 349.0, 214.0 ],
 					"text" : "&& and || are short-circuit boolean operators, that is, as soon as they can determine their result they stop evaluating their arguments. \nHere, we need to evaluate both arguments for 10 and 20, but with 0 it is sufficient to see that the first condition is not satisfied (because it is not > 5) to know the result of the expression. As a consequence, the second argument is not evaluated. You can see the difference in the Max window. \nThe fact that these operators are short-circuit is relevant in two cases: first, when there are side effects, as they will not be produced; second, when at least one of the two clauses is computationally expensive, because in this case its evaluation can be avoided."
 				}
 
@@ -274,7 +306,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 67.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 67.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -286,7 +318,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 67.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 67.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -297,7 +329,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 126.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 139.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -307,11 +339,12 @@
 					"code" : "$l1 > 5 && $l1 < 15 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 269.0, 22.0 ],
+					"patching_rect" : [ 18.0, 96.5, 238.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

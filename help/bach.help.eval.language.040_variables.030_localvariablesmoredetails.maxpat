@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 67.25, 390.142852783203125, 61.0, 22.0 ],
+					"patching_rect" : [ 67.25, 390.142852783203125, 65.0, 23.0 ],
 					"text" : "cigarettes"
 				}
 
@@ -55,7 +55,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 448.20172119140625, 91.0, 22.0 ],
+					"patching_rect" : [ 6.0, 448.20172119140625, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -67,7 +67,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 390.142852783203125, 44.0, 22.0 ],
+					"patching_rect" : [ 6.0, 390.142852783203125, 48.0, 23.0 ],
 					"text" : "motels"
 				}
 
@@ -114,7 +114,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 252.0, 277.083984375, 29.5, 22.0 ],
+					"patching_rect" : [ 256.0, 277.083984375, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -129,7 +129,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 281.5, 297.142852783203125, 303.0, 54.0 ],
+					"patching_rect" : [ 288.0, 297.142852783203125, 303.0, 54.0 ],
 					"text" : "A variable can be reassigned, in which case its previous value is lost (unless, of course, it has been previously assigned to another variable)."
 				}
 
@@ -141,7 +141,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 50.0, 174.0, 29.5, 22.0 ],
+					"patching_rect" : [ 50.0, 174.0, 29.5, 23.0 ],
 					"text" : "74"
 				}
 
@@ -153,7 +153,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 133.25, 44.0, 71.0, 22.0 ],
+					"patching_rect" : [ 133.25, 44.0, 77.0, 23.0 ],
 					"text" : "frappuccino"
 				}
 
@@ -165,7 +165,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 67.25, 44.0, 33.0, 22.0 ],
+					"patching_rect" : [ 67.25, 44.0, 35.0, 23.0 ],
 					"text" : "r2d2"
 				}
 
@@ -191,11 +191,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 2,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 311.0, 193.0, 265.0, 40.0 ],
+					"patching_rect" : [ 340.75, 187.0, 217.0, 54.0 ],
 					"text" : "... including another assignment: this one assigns the same value to $x and $y."
 				}
 
@@ -207,7 +207,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 174.0, 29.5, 22.0 ],
+					"patching_rect" : [ 6.0, 174.0, 29.5, 23.0 ],
 					"text" : "47"
 				}
 
@@ -218,7 +218,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 233.0, 91.0, 22.0 ],
+					"patching_rect" : [ 6.0, 233.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -232,7 +232,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 202.0, 297.0, 22.0 ],
+					"patching_rect" : [ 6.0, 202.0, 323.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -247,7 +247,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 347.142852783203125, 91.0, 22.0 ],
+					"patching_rect" : [ 6.0, 347.142852783203125, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -259,7 +259,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 277.083984375, 29.5, 22.0 ],
+					"patching_rect" : [ 6.0, 277.083984375, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -275,7 +275,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 306.142852783203125, 265.0, 36.0 ],
+					"patching_rect" : [ 6.0, 306.142852783203125, 269.0, 36.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -291,7 +291,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 44.0, 29.5, 22.0 ],
+					"patching_rect" : [ 6.0, 44.0, 29.5, 23.0 ],
 					"text" : "47"
 				}
 
@@ -302,7 +302,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 130.0, 91.0, 22.0 ],
+					"patching_rect" : [ 6.0, 130.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -317,7 +317,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 74.0, 355.0, 50.0 ],
+					"patching_rect" : [ 6.0, 74.0, 355.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -4,13 +4,13 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 498.0, 317.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -62,8 +62,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 255.5, 315.0, 337.0, 112.0 ],
-					"text" : "This one means: if count has a value (that is, it is not null) keep it, otherwise set it to 0. Then, increment it by one. Notice that, at every re-evaluation, count has retained the value it was previously assigned.\nThis is a way to keep persistent values, but keep in mind that if you have the same global variable name in another box, it will be affected too."
+					"patching_rect" : [ 260.0, 316.5, 331.0, 112.0 ],
+					"text" : "This one means: if Count has a value (that is, it is not null) keep it, otherwise set it to 0. Then, increment it by one. Notice that, at every re-evaluation, Count has retained the value it was previously assigned.\nThis is a way to keep persistent values, but keep in mind that if you have the same global variable name in another box, it will be affected too."
 				}
 
 			}
@@ -73,7 +73,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 395.0, 91.0, 22.0 ],
+					"patching_rect" : [ 14.0, 395.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -90,7 +90,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 46.5, 72.0, 520.5, 84.0 ],
+					"patching_rect" : [ 46.5, 72.0, 521.0, 84.0 ],
 					"text" : "Global variable names don't have the $ sign. The general rules for the names are the same as for local variables, but there are several reserved words that cannot be used.\nOn the other hand, since the reserved words are all lowercase, if you choose capitalized names for global variables you are surely safe."
 				}
 
@@ -105,7 +105,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 353.0, 247.0, 36.0 ],
+					"patching_rect" : [ 14.0, 353.0, 245.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -136,7 +136,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 159.5, 233.5, 354.0, 69.0 ],
+					"patching_rect" : [ 169.5, 234.5, 355.0, 69.0 ],
 					"text" : "... and then this one.  Even if you destroy all the objects referencing the \"A\" variable, its value is retained anyway. Try to close the patch, reopen it and bang again this object box, and you'll see."
 				}
 
@@ -147,7 +147,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 290.0, 91.0, 22.0 ],
+					"patching_rect" : [ 14.0, 290.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -161,7 +161,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 257.0, 139.0, 22.0 ],
+					"patching_rect" : [ 14.0, 257.0, 149.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -188,7 +188,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 192.0, 91.0, 22.0 ],
+					"patching_rect" : [ 14.0, 192.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -216,7 +216,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 280.5, 140.5, 233.0, 69.0 ],
+					"patching_rect" : [ 302.5, 141.5, 233.0, 69.0 ],
 					"text" : "Global variables mostly behave like local variables, but their values are shared throughout the whole Max session: bang this object..."
 				}
 
@@ -230,7 +230,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 160.0, 261.0, 22.0 ],
+					"patching_rect" : [ 14.0, 160.0, 283.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

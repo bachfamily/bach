@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -46,8 +46,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 208.0, 216.0, 383.0, 94.0 ],
-					"presentation_linecount" : 6,
+					"patching_rect" : [ 208.0, 216.0, 385.0, 94.0 ],
 					"text" : "As the name suggests, the value of a local variable is local to the object in which it is used. If variables with the same name are used in different objects, the values they contain are independent. \n(Spoiler: this is actually a simplification, but for a more accurate view on the subject we need to talk about functions first.)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -60,7 +59,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 38.0, 330.0, 251.0, 22.0 ],
+					"patching_rect" : [ 38.0, 330.0, 271.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -75,7 +74,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 445.0, 91.0, 22.0 ],
+					"patching_rect" : [ 6.0, 445.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -87,7 +86,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 418.0, 74.0, 22.0 ],
+					"patching_rect" : [ 6.0, 418.0, 80.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -103,7 +102,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 387.0, 29.5, 22.0 ],
+					"patching_rect" : [ 6.0, 387.0, 29.5, 23.0 ],
 					"text" : "t l l"
 				}
 
@@ -129,7 +128,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 354.5, 357.5, 144.0, 25.0 ],
+					"patching_rect" : [ 374.5, 359.0, 144.0, 25.0 ],
 					"text" : "Another way to do it."
 				}
 
@@ -143,7 +142,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 359.0, 334.0, 22.0 ],
+					"patching_rect" : [ 6.0, 359.0, 362.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -158,7 +157,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 264.0, 91.0, 22.0 ],
+					"patching_rect" : [ 6.0, 264.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -170,7 +169,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 237.0, 74.0, 22.0 ],
+					"patching_rect" : [ 6.0, 237.0, 80.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -186,7 +185,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 162.0, 136.0, 70.0, 22.0 ],
+					"patching_rect" : [ 176.0, 132.0, 76.0, 23.0 ],
 					"text" : "loadmess 0"
 				}
 
@@ -198,7 +197,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 201.0, 29.5, 22.0 ],
+					"patching_rect" : [ 6.0, 201.0, 29.5, 23.0 ],
 					"text" : "t l l"
 				}
 
@@ -239,7 +238,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 173.0, 175.0, 22.0 ],
+					"patching_rect" : [ 6.0, 173.0, 189.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -266,11 +265,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-20",
-					"linecount" : 3,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 375.5, 81.0, 232.0, 54.0 ],
+					"patching_rect" : [ 411.5, 67.5, 160.0, 83.0 ],
 					"text" : "Try banging repeatedly bach.eval: you'll see that, at the beginning of every evaluation, $x is reset to null."
 				}
 
@@ -284,7 +283,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 97.0, 363.0, 22.0 ],
+					"patching_rect" : [ 6.0, 97.0, 393.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -392,7 +391,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-31", 0 ],
-					"midpoints" : [ 26.0, 414.0, 345.75, 414.0, 345.75, 320.0, 47.5, 320.0 ],
+					"midpoints" : [ 26.0, 414.0, 371.75, 414.0, 371.75, 320.0, 47.5, 320.0 ],
 					"source" : [ "obj-24", 1 ]
 				}
 
@@ -435,7 +434,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-5", 1 ],
-					"midpoints" : [ 26.0, 229.0, 200.0, 229.0, 200.0, 167.0, 171.5, 167.0 ],
+					"midpoints" : [ 26.0, 229.0, 200.0, 229.0, 200.0, 167.0, 185.5, 167.0 ],
 					"source" : [ "obj-6", 1 ]
 				}
 

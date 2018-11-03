@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -47,8 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 357.0, 348.5, 234.0, 54.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 357.0, 350.0, 234.0, 54.0 ],
 					"text" : "... and its value is the actual return value of the if ... then ... else statement if the condition is not true."
 				}
 
@@ -60,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 328.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 328.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -72,7 +71,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 328.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 328.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -84,7 +83,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 328.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 328.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -95,14 +94,14 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 404.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 404.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "(if $l1 == 10 then 3 else 6)+$l1 ",
+					"code" : "(if $l1 == 10 then 3 else 6) + $l1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
 					"linecount" : 2,
@@ -110,12 +109,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 357.5, 320.0, 36.0 ],
+					"patching_rect" : [ 18.0, 357.5, 308.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval (if $l1 == 10 then 3 else 6)+$l1 @out m"
+					"text" : "bach.eval (if $l1 == 10 then 3 else 6) + $l1 @out m"
 				}
 
 			}
@@ -126,7 +125,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 265.0, 203.5, 45.0, 22.0 ],
+					"patching_rect" : [ 319.0, 203.5, 49.0, 23.0 ],
 					"text" : "4 5 6 7"
 				}
 
@@ -138,7 +137,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 216.0, 203.5, 35.0, 22.0 ],
+					"patching_rect" : [ 266.0, 203.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -153,7 +152,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 315.0, 230.5, 185.0, 40.0 ],
+					"patching_rect" : [ 391.0, 232.5, 185.0, 40.0 ],
 					"text" : "The else clause too can consist of any expression..."
 				}
 
@@ -165,7 +164,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 203.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 203.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -177,7 +176,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 203.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 203.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -189,7 +188,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 203.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 203.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -200,7 +199,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 278.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 278.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -215,7 +214,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 232.5, 266.0, 36.0 ],
+					"patching_rect" : [ 18.0, 232.5, 320.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -231,7 +230,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 71.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 71.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -243,7 +242,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 71.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 71.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -270,7 +269,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 71.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 71.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -281,7 +280,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 141.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 141.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -296,7 +295,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 100.5, 207.0, 36.0 ],
+					"patching_rect" : [ 18.0, 100.5, 221.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

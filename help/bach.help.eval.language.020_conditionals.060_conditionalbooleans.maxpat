@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -58,7 +58,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 399.5, 304.0, 29.5, 22.0 ],
+					"patching_rect" : [ 399.5, 304.0, 29.5, 23.0 ],
 					"text" : "null",
 					"textcolor" : [ 0.996078431606293, 0.121568627655506, 0.121568627655506, 1.0 ]
 				}
@@ -71,7 +71,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 334.5, 304.0, 35.0, 22.0 ],
+					"patching_rect" : [ 334.5, 304.0, 37.0, 23.0 ],
 					"text" : "1000"
 				}
 
@@ -95,7 +95,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 227.166671752929688, 304.0, 29.5, 22.0 ],
+					"patching_rect" : [ 227.166671752929688, 304.0, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -106,7 +106,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.5, 380.0, 91.0, 22.0 ],
+					"patching_rect" : [ 12.5, 380.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -118,7 +118,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 119.833335876464844, 304.0, 29.5, 22.0 ],
+					"patching_rect" : [ 119.833335876464844, 304.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -132,7 +132,7 @@
 					"numinlets" : 4,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 347.0, 341.0, 22.0 ],
+					"patching_rect" : [ 12.5, 347.0, 369.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -147,7 +147,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 373.5, 250.0, 91.0, 22.0 ],
+					"patching_rect" : [ 373.5, 250.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -159,7 +159,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 565.5, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 565.5, 185.0, 31.5, 23.0 ],
 					"text" : "200"
 				}
 
@@ -171,7 +171,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 520.5, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 520.5, 185.0, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
@@ -183,7 +183,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 420.5, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 420.5, 185.0, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -195,7 +195,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 373.5, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 373.5, 185.0, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
@@ -209,7 +209,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 373.5, 217.0, 211.0, 22.0 ],
+					"patching_rect" : [ 373.5, 217.0, 229.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -224,7 +224,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.5, 250.0, 91.0, 22.0 ],
+					"patching_rect" : [ 12.5, 250.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -236,7 +236,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 204.5, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 204.5, 185.0, 31.5, 23.0 ],
 					"text" : "200"
 				}
 
@@ -248,7 +248,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 159.5, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 159.5, 185.0, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
@@ -260,7 +260,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 59.5, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 59.5, 185.0, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -272,7 +272,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 12.5, 185.0, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
@@ -286,7 +286,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 217.0, 211.0, 22.0 ],
+					"patching_rect" : [ 12.5, 217.0, 229.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -302,12 +302,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-52",
-					"linecount" : 6,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 359.0, 343.0, 253.0, 98.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 204.5, 373.0, 340.0, 69.0 ],
 					"text" : "||| can be particularly useful for setting up easily hierarchies of defaults and fallbacks. In this case, it returns the data from the leftmost inlet that has received a value, or nope if all the inputs are empty."
 				}
 

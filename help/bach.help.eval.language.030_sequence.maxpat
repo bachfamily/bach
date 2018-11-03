@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -47,8 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 298.75, 391.0, 163.0, 40.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 289.75, 395.0, 163.0, 40.0 ],
 					"text" : "The above form is equivalent to this one."
 				}
 
@@ -60,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 260.5, 363.0, 32.0, 22.0 ],
+					"patching_rect" : [ 260.5, 363.0, 34.0, 23.0 ],
 					"text" : "5 50"
 				}
 
@@ -71,7 +70,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.5, 447.0, 91.0, 22.0 ],
+					"patching_rect" : [ 12.5, 447.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -83,7 +82,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 363.0, 45.0, 22.0 ],
+					"patching_rect" : [ 12.5, 363.0, 49.0, 23.0 ],
 					"text" : "10 100"
 				}
 
@@ -98,7 +97,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 395.0, 267.0, 36.0 ],
+					"patching_rect" : [ 12.5, 395.0, 267.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -117,8 +116,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 298.75, 208.0, 250.0, 112.0 ],
-					"presentation_linecount" : 7,
+					"patching_rect" : [ 289.75, 209.5, 253.0, 112.0 ],
 					"text" : "Simple, two-term sequences can be chained, so as to build longer sequences with more terms. Because ; is left-associative, the resulting behavior is intuitive: all the terms are evaluated, and the result of the last one is returned."
 				}
 
@@ -130,8 +128,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 247.5, 214.0, 32.0, 22.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 247.5, 214.0, 34.0, 23.0 ],
 					"text" : "5 50"
 				}
 
@@ -142,7 +139,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.5, 298.0, 91.0, 22.0 ],
+					"patching_rect" : [ 12.5, 298.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -154,8 +151,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 214.0, 45.0, 22.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 12.5, 214.0, 49.0, 23.0 ],
 					"text" : "10 100"
 				}
 
@@ -170,7 +166,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 246.0, 254.0, 36.0 ],
+					"patching_rect" : [ 12.5, 246.0, 254.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -189,7 +185,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 301.75, 66.0, 247.0, 98.0 ],
+					"patching_rect" : [ 315.75, 67.0, 251.0, 98.0 ],
 					"text" : "; is useful only when the first argument causes side effects. For now, the only situation where we can use it meaningfully is with the print function, but as soon as variables come into play its role will become clearer."
 				}
 
@@ -200,7 +196,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.5, 137.0, 91.0, 22.0 ],
+					"patching_rect" : [ 12.5, 137.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -212,7 +208,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 72.0, 45.0, 22.0 ],
+					"patching_rect" : [ 12.5, 72.0, 49.0, 23.0 ],
 					"text" : "10 100"
 				}
 
@@ -226,7 +222,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 104.0, 276.0, 22.0 ],
+					"patching_rect" : [ 12.5, 104.0, 298.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -303,8 +299,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 496.0, 21.0 ],
-					"text" : "The ; operator performs both its arguments, and returns the result of the second one. ",
+					"patching_rect" : [ 6.0, 32.0, 504.0, 21.0 ],
+					"text" : "The ; operator evaluates both its arguments, and returns the result of the second one. ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

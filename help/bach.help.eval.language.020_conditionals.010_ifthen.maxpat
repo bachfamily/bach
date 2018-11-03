@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -47,9 +47,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 337.0, 326.5, 260.0, 98.0 ],
-					"presentation_linecount" : 7,
-					"text" : "... and, perhaps more importantly, the value of an if ... then statement can be used as the input for any other expression. In this case, if the input data is 10 the length of 6 6 6 (that is, 3), otherwise the length of null (that is, 0)"
+					"patching_rect" : [ 350.5, 328.5, 240.0, 98.0 ],
+					"text" : "... and the value of an \"if ... then\" statement can be used as the input for any other expression. In this case, if the input data is 10 the length of 6 6 6 (that is, 3), otherwise the length of null (that is, 0)"
 				}
 
 			}
@@ -60,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 328.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 328.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -72,7 +71,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 328.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 328.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -84,7 +83,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 328.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 328.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -95,7 +94,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 416.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 416.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -110,7 +109,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 357.5, 305.0, 36.0 ],
+					"patching_rect" : [ 18.0, 357.5, 329.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -126,7 +125,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 314.0, 203.5, 45.0, 22.0 ],
+					"patching_rect" : [ 314.0, 203.5, 49.0, 23.0 ],
 					"text" : "4 5 6 7"
 				}
 
@@ -138,7 +137,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 265.0, 203.5, 35.0, 22.0 ],
+					"patching_rect" : [ 265.0, 203.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -153,8 +152,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 366.0, 209.0, 249.0, 69.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 350.5, 210.5, 240.0, 69.0 ],
 					"text" : "... but there are a few difference: first of all, not only the \"if\" clause can be any expression, but the \"then\" clause as well can be any expression..."
 				}
 
@@ -166,7 +164,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 203.5, 39.0, 22.0 ],
+					"patching_rect" : [ 111.0, 203.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -178,7 +176,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 203.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 203.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -190,7 +188,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 203.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 203.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -201,7 +199,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 265.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 281.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -211,11 +209,12 @@
 					"code" : "if $l1 == 10 then length($l2) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 232.5, 341.0, 22.0 ],
+					"patching_rect" : [ 18.0, 232.5, 315.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -231,8 +230,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 71.5, 39.0, 22.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 111.0, 71.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -244,7 +242,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 71.5, 29.5, 22.0 ],
+					"patching_rect" : [ 66.0, 71.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -259,8 +257,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 337.0, 77.0, 249.0, 69.0 ],
-					"text" : "This is apparently quite similar to what happens with Max's if statement, except that if the condition is false null is returned..."
+					"patching_rect" : [ 357.0, 78.0, 234.0, 69.0 ],
+					"text" : "This is quite similar to what happens with Max's if statement, except that if the condition is false null is returned..."
 				}
 
 			}
@@ -271,7 +269,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 71.5, 29.5, 22.0 ],
+					"patching_rect" : [ 18.0, 71.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -282,7 +280,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 133.5, 91.0, 22.0 ],
+					"patching_rect" : [ 18.0, 133.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -296,7 +294,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 100.5, 305.0, 22.0 ],
+					"patching_rect" : [ 18.0, 100.5, 329.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
