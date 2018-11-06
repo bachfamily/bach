@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -194,7 +194,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 181.0, 143.706893920898438, 49.0, 18.0 ],
+					"patching_rect" : [ 195.0, 143.706893920898438, 49.0, 18.0 ],
 					"text" : "loadbang"
 				}
 
@@ -206,7 +206,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 181.0, 169.5, 138.0, 23.0 ],
+					"patching_rect" : [ 195.0, 169.5, 138.0, 23.0 ],
 					"text" : "john paul george ringo"
 				}
 

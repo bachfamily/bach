@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 498.0, 317.0, 617.0, 539.0 ],
+		"rect" : [ 115.0, 173.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -58,11 +58,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 7,
+					"linecount" : 8,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 260.0, 316.5, 331.0, 112.0 ],
+					"patching_rect" : [ 271.0, 300.0, 320.0, 127.0 ],
 					"text" : "This one means: if Count has a value (that is, it is not null) keep it, otherwise set it to 0. Then, increment it by one. Notice that, at every re-evaluation, Count has retained the value it was previously assigned.\nThis is a way to keep persistent values, but keep in mind that if you have the same global variable name in another box, it will be affected too."
 				}
 
@@ -105,7 +105,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 353.0, 245.0, 39.0 ],
+					"patching_rect" : [ 14.0, 353.0, 251.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

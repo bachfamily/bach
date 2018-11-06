@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -60,8 +60,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 336.0, 155.0, 35.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 14.0, 336.0, 167.0, 38.0 ],
 					"text" : ";\rbach printglobalswithvalues"
 				}
 
@@ -86,7 +85,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 174.0, 91.0, 22.0 ],
+					"patching_rect" : [ 14.0, 174.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -100,7 +99,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 146.0, 232.0, 22.0 ],
+					"patching_rect" : [ 14.0, 146.0, 252.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -156,7 +155,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 389.0, 102.0, 35.0 ],
+					"patching_rect" : [ 14.0, 389.0, 110.0, 38.0 ],
 					"text" : ";\rbach clearglobals"
 				}
 
@@ -186,7 +185,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 215.0, 319.0, 36.0 ],
+					"patching_rect" : [ 14.0, 215.0, 319.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -206,7 +205,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 301.5, 59.0, 286.0, 127.0 ],
+					"patching_rect" : [ 308.5, 59.0, 287.0, 127.0 ],
 					"text" : "@auto 1 means that the code is immediately evaluated as soon as the object is created. \nIts typical use is setting the starting value of some global variables. \nIf you have more than one bach.eval object setting the same global variables with @auto 1, the actual values they will take among the ones provides is undefined."
 				}
 
@@ -221,7 +220,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 66.5, 283.0, 36.0 ],
+					"patching_rect" : [ 14.0, 66.5, 290.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -253,7 +252,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 280.0, 99.0, 35.0 ],
+					"patching_rect" : [ 14.0, 280.0, 107.0, 38.0 ],
 					"text" : ";\rbach printglobals"
 				}
 

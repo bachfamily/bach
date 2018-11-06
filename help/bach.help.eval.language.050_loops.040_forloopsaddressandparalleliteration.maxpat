@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 112.0, 223.0, 617.0, 539.0 ],
+		"rect" : [ 79.0, 195.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,141 +39,94 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-19",
+					"id" : "obj-16",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 320.0, 29.5, 23.0 ],
-					"text" : "10"
+					"patching_rect" : [ 379.0, 340.0, 81.0, 23.0 ],
+					"text" : "100 200 300"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-20",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 340.25, 343.0, 165.25, 40.0 ],
-					"text" : "You can also make chains of assignments."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-21",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 385.5, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "$a := $b := $l1 ; $a $b ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-22",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 351.0, 323.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval $a := $b := $l1 \\; $a $b @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"bubbleside" : 2,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
 					"id" : "obj-18",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 330.25, 162.5, 57.0, 40.0 ],
-					"text" : "Meet pi!"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-14",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 171.0, 29.5, 23.0 ],
-					"text" : "10"
+					"patching_rect" : [ 12.0, 340.0, 77.0, 23.0 ],
+					"text" : "10 20 30 40"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubbleside" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-15",
+					"id" : "obj-19",
 					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 130.25, 229.0, 229.0, 69.0 ],
-					"text" : "This can be used to make expressions more compact, but it can make the expression less readable."
+					"patching_rect" : [ 405.0, 369.5, 192.0, 54.0 ],
+					"text" : "Address variables in parallel iterations. This will get more interesting in a while, too."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-16",
+					"id" : "obj-22",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 238.0, 99.0, 23.0 ],
+					"patching_rect" : [ 12.0, 431.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "($radius := $l1 / 2) * $radius * pi ",
+					"code" : "for $x $xaddr in $l1, $y $yaddr in $l2 repeat $res := $res $x * $xaddr + $y * $yaddr ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-17",
+					"id" : "obj-23",
+					"linecount" : 3,
 					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 202.0, 416.0, 24.0 ],
+					"patching_rect" : [ 12.0, 369.5, 392.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval ($radius := $l1 / 2) * $radius * pi @out m"
+					"text" : "bach.eval for $x $xaddr in $l1\\, $y $yaddr in $l2 repeat $res := $res $x * $xaddr + $y * $yaddr @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-9",
+					"id" : "obj-6",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 53.0, 29.5, 23.0 ],
-					"text" : "10"
+					"patching_rect" : [ 275.0, 210.0, 37.0, 23.0 ],
+					"text" : "1 2 3"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 12.0, 210.0, 77.0, 23.0 ],
+					"text" : "10 20 30 40"
 				}
 
 			}
@@ -182,13 +135,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 2,
+					"id" : "obj-3",
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 297.25, 76.0, 236.25, 40.0 ],
-					"text" : "The return value of the assignment operator is the assigned value."
+					"patching_rect" : [ 318.0, 224.5, 241.0, 69.0 ],
+					"text" : "Parallel iterations are possible. In general, the for loop stops at the end of the shortest list, with one possible exception we'll meet shortly."
 				}
 
 			}
@@ -198,26 +151,84 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 118.5, 99.0, 23.0 ],
+					"patching_rect" : [ 12.0, 291.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$radius := $l1 / 2 ",
+					"code" : "for $x in $l1, $y in $l2 repeat $res := $res $x + $y ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-7",
+					"id" : "obj-5",
+					"linecount" : 2,
 					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 84.0, 283.0, 24.0 ],
+					"patching_rect" : [ 12.0, 239.5, 282.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $radius := $l1 / 2 @out m"
+					"text" : "bach.eval for $x in $l1\\, $y in $l2 repeat $res := $res $x + $y @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 12.0, 44.0, 107.0, 23.0 ],
+					"text" : "100 300 500 700"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-21",
+					"linecount" : 7,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 313.0, 44.5, 245.0, 112.0 ],
+					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address.\nThe return value of the for loop is the value taken by the \"repeat\" clause at the end of the last iteration."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-17",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 12.0, 133.0, 99.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "for $data $address in $l1 repeat $res := $res $data + $address ",
+					"fontname" : "Menlo Regular",
+					"id" : "obj-20",
+					"linecount" : 3,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 12.0, 73.5, 298.0, 54.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval for $data $address in $l1 repeat $res := $res $data + $address @out m"
 				}
 
 			}
@@ -260,8 +271,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 174.0, 23.0 ],
-					"text" : "Local variables: details",
+					"patching_rect" : [ 6.0, 8.0, 309.0, 23.0 ],
+					"text" : "\"For\" loops: address and parallel iteration",
 					"varname" : "title"
 				}
 
@@ -284,43 +295,57 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-14", 0 ]
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-1", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
-					"source" : [ "obj-17", 0 ]
+					"destination" : [ "obj-23", 1 ],
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-23", 0 ],
+					"source" : [ "obj-18", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-20", 0 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-20", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-22", 0 ],
-					"source" : [ "obj-19", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
-					"source" : [ "obj-22", 0 ]
+					"source" : [ "obj-23", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-7", 0 ]
+					"source" : [ "obj-5", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-9", 0 ]
+					"destination" : [ "obj-5", 1 ],
+					"source" : [ "obj-6", 0 ]
 				}
 
 			}

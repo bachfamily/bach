@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 1,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 142.0, 301.5, 452.0, 141.0 ],
+					"patching_rect" : [ 137.0, 301.5, 454.0, 141.0 ],
 					"text" : "Multiplication tables—a complicated one, with nested while loops.\nA notable thing is that if the body of the \"while\" loop contains a sequence of operations (;), it must be surrounded by parens. This kind of structure is much more readable if indented, so this time the code is not in the object box, but in the internal text editor. Double-click bach.eval to view it.\nAlso, notice how the result we want to obtain is not the last value of the while loop, but the value of a variable we define and update in the middle of it: so, the last item of our sequence of evaluation is the variable itself, so as to return its value finally."
 				}
 
@@ -59,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 103.0, 320.0, 29.5, 22.0 ],
+					"patching_rect" : [ 103.0, 320.0, 29.5, 23.0 ],
 					"text" : "12"
 				}
 
@@ -71,7 +71,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 53.0, 320.0, 29.5, 22.0 ],
+					"patching_rect" : [ 53.0, 320.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -83,7 +83,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 320.0, 29.5, 22.0 ],
+					"patching_rect" : [ 10.0, 320.0, 29.5, 23.0 ],
 					"text" : "5"
 				}
 
@@ -94,7 +94,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 10.0, 397.0, 61.0, 22.0 ],
+					"patching_rect" : [ 10.0, 397.0, 67.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -105,7 +105,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x := 1 ; \r\nwhile $x <= $l1 repeat (\r\n\t$row := null ; \r\n\t$y := 1 ; \r\n\twhile $y <= $l1 repeat (\r\n\t\t$row := $row $x * $y ; \r\n\t\t$y := $y + 1) ; \r\n\t$res := $res [$row] ; \r\n\t$x := $x + 1) ; \r\n$res ",
+					"code" : "$x := 1 ; \r\nwhile $x <= $l1 repeat (\r\n\t$row := null ; \r\n\t$y := 1 ; \r\n\twhile $y <= $l1 repeat (\r\n\t\t$row := $row $x * $y ; \r\n\t\t$y := $y + 1) ; \r\n\t$res := $res [$row] ; \r\n\t$x := $x + 1\r\n\t) ; \r\n$res ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 12.0,
 					"id" : "obj-17",
@@ -143,7 +143,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 10.0, 268.0, 91.0, 22.0 ],
+					"patching_rect" : [ 10.0, 268.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -155,7 +155,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 45.0, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 45.0, 185.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -167,7 +167,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 185.0, 29.5, 22.0 ],
+					"patching_rect" : [ 10.0, 185.0, 29.5, 23.0 ],
 					"text" : "5"
 				}
 
@@ -213,7 +213,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 10.0, 139.0, 91.0, 22.0 ],
+					"patching_rect" : [ 10.0, 139.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -225,7 +225,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 45.0, 44.0, 29.5, 22.0 ],
+					"patching_rect" : [ 45.0, 44.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -237,7 +237,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 44.0, 29.5, 22.0 ],
+					"patching_rect" : [ 10.0, 44.0, 29.5, 23.0 ],
 					"text" : "5"
 				}
 
@@ -252,7 +252,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 77.5, 327.0, 50.0 ],
+					"patching_rect" : [ 10.0, 77.5, 327.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

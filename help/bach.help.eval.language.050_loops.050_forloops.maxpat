@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 50.0, 128.0, 617.0, 539.0 ],
+		"rect" : [ 109.0, 294.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -41,41 +41,26 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-4",
-					"linecount" : 8,
+					"id" : "obj-76",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 219.0, 579.0, 123.0 ],
-					"presentation_linecount" : 26,
-					"text" : "where the lllls, attribute values, condition and body are expression of any complexity.\n\nThe general idea is that the \"for\" loop roughly behave like bach.iter: given one or more lllls, their elements (optionally alongside the respective addresses) are iteratively assigned to the given variables, for each element or set of elements the loop body is evaluated, and the value of the \"for\" loop is the last value of the body. The optional \"with\" clause allows setting some attributes to control the details of the parallel iteration of multiple lllls, and the optional \"as\" clause allows setting a condition to be checked before every iteration, and causing the iteration to terminate if false.",
+					"patching_rect" : [ 6.0, 39.0, 534.0, 36.0 ],
+					"text" : "The \"as\" clause allows setting an condition to be checked before every iteration of the loop. The iteration stops as soon as the condition becomes false.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontface" : 1,
-					"fontname" : "Courier New",
-					"id" : "obj-3",
-					"linecount" : 8,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 87.0, 445.0, 124.0 ],
-					"text" : "for <index variable 1> [address variable 1] in <llll 1>\n    [<index variable 2> [address variable 2] in <llll 2>\n     [...] ]\n    [with @<attribute name 1> <attribute value 1> \n          [@<attribute name 2> <attribute value 2>] \n          [...] ]\n    [as <condition>]\nrepeat <body>"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
+					"id" : "obj-18",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 357.0, 78.0, 23.0 ],
-					"text" : "10 20 30 40"
+					"patching_rect" : [ 11.0, 93.0, 113.0, 23.0 ],
+					"text" : "10 20 30 40 50 60"
 				}
 
 			}
@@ -84,57 +69,43 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-21",
-					"linecount" : 2,
+					"id" : "obj-19",
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 207.0, 385.5, 384.0, 40.0 ],
-					"text" : "The elements of the incoming llll are printed one by one in the Max console, and the last one is the result of the expression."
+					"patching_rect" : [ 380.0, 205.5, 192.0, 54.0 ],
+					"text" : "Address variables in parallel iterations. This will get more interesting in a while, too."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-17",
+					"id" : "obj-22",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 431.0, 99.0, 23.0 ],
+					"patching_rect" : [ 11.0, 184.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $i in $l1 repeat print($i) ",
+					"code" : "$sum := 0 ; for $x in $l1 as ($sum := $sum + $x) < 100 repeat $res := $res $x ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-20",
+					"id" : "obj-23",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 386.5, 190.0, 39.0 ],
+					"patching_rect" : [ 11.0, 127.5, 513.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $i in $l1 repeat print($i) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-22",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 64.0, 181.0, 21.0 ],
-					"text" : "The syntax of the \"for\" loop is:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"text" : "bach.eval $sum := 0 \\; for $x in $l1 as ($sum := $sum + $x) < 100 repeat $res := $res $x @out m"
 				}
 
 			}
@@ -177,8 +148,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 91.0, 23.0 ],
-					"text" : "\"For\" loops",
+					"patching_rect" : [ 6.0, 8.0, 168.0, 23.0 ],
+					"text" : "\"For\" loops: as clause",
 					"varname" : "title"
 				}
 
@@ -198,32 +169,18 @@
 				}
 
 			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 169.0, 21.0 ],
-					"text" : "\"For\" loops iterate upon lllls.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-20", 0 ],
-					"source" : [ "obj-2", 0 ]
+					"destination" : [ "obj-23", 0 ],
+					"source" : [ "obj-18", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-20", 0 ]
+					"destination" : [ "obj-22", 0 ],
+					"source" : [ "obj-23", 0 ]
 				}
 
 			}
