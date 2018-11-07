@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 1134.0, 222.0, 617.0, 539.0 ],
+		"rect" : [ 857.0, 253.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,42 +39,89 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-4",
-					"linecount" : 8,
+					"id" : "obj-3",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 219.0, 579.0, 123.0 ],
-					"text" : "where the lllls, attribute values, condition and body are expressions of any complexity.\n\nThe general idea is that the \"for\" loop roughly behave like bach.iter: given one or more lllls, their elements (optionally alongside the respective addresses) are iteratively assigned to the given variables, for each element or set of elements the loop body is evaluated, and the value of the \"for\" loop is the last value of the body. The optional \"with\" clause allows setting some attributes to control the details of the parallel iteration of multiple lllls, and the optional \"as\" clause allows setting a condition to be checked before every iteration, and causing the iteration to terminate if false.",
+					"patching_rect" : [ 277.0, 266.0, 184.0, 40.0 ],
+					"presentation_linecount" : 3,
+					"text" : "... or not, in case you prefer a more Max-like look!"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 232.0, 121.0, 23.0 ],
+					"text" : "10 20 [30 40] 50 60"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 321.0, 99.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "for $x $addr in $l1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) ",
+					"fontname" : "Menlo Regular",
+					"id" : "obj-6",
+					"linecount" : 3,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 259.0, 254.0, 54.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval for $x $addr in $l1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-2",
+					"linecount" : 5,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 381.0, 178.0, 79.0 ],
+					"presentation_linecount" : 5,
+					"text" : "maxdepth (defaults to 1)\nscalarmode (defaults to 1)\nunwrap (defaults to 0)\nrecursionmode (defaults to 0)\nspikemode (defaults to 0)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontface" : 1,
-					"fontname" : "Courier New",
-					"id" : "obj-3",
-					"linecount" : 8,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-1",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 87.0, 461.0, 124.0 ],
-					"text" : "for <index variable 1> [address variable 1] in <llll 1>\n    [, <index variable 2> [address variable 2] in <llll 2>\n     [...] ]\n    [with @<attribute name 1> <attribute value 1> \n          [[,] @<attribute name 2> <attribute value 2>] \n          [...] ]\n    [as <condition>]\nrepeat <body>"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 357.0, 78.0, 23.0 ],
-					"text" : "10 20 30 40"
+					"patching_rect" : [ 6.0, 358.0, 472.0, 21.0 ],
+					"text" : "The attributes of the \"for\" loop correspond exactly to those of bach.iter. They are:",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -83,43 +130,55 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-21",
+					"id" : "obj-14",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 207.0, 385.5, 384.0, 40.0 ],
-					"text" : "The elements of the incoming llll are printed one by one in the Max console, and the last one is the result of the expression."
+					"patching_rect" : [ 277.0, 126.0, 177.0, 40.0 ],
+					"text" : "Multiple attributes can be separated by commas..."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-17",
+					"id" : "obj-15",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 99.0, 121.0, 23.0 ],
+					"text" : "10 20 [30 40] 50 60"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 431.0, 99.0, 23.0 ],
+					"patching_rect" : [ 13.0, 188.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $i in $l1 repeat print($i) ",
+					"code" : "for $x $addr in $l1 with @maxdepth 1, @unwrap 1 repeat print($x [$addr]) ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-20",
-					"linecount" : 2,
+					"id" : "obj-17",
+					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 386.5, 196.0, 39.0 ],
+					"patching_rect" : [ 13.0, 126.0, 254.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $i in $l1 repeat print($i) @out m"
+					"text" : "bach.eval for $x $addr in $l1 with @maxdepth 1\\, @unwrap 1 repeat print($x [$addr]) @out m"
 				}
 
 			}
@@ -127,12 +186,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-22",
+					"id" : "obj-76",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 64.0, 181.0, 21.0 ],
-					"text" : "The syntax of the \"for\" loop is:",
+					"patching_rect" : [ 6.0, 39.0, 536.0, 36.0 ],
+					"text" : "The \"with\" clause of the for loop allows fine-tuning the iteration behavior, through the use of attributes corresponding to those of bach.iter.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -176,8 +236,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 91.0, 23.0 ],
-					"text" : "\"For\" loops",
+					"patching_rect" : [ 6.0, 8.0, 268.0, 23.0 ],
+					"text" : "\"For\" loops: \"with\" clause attributes",
 					"varname" : "title"
 				}
 
@@ -197,32 +257,32 @@
 				}
 
 			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 169.0, 21.0 ],
-					"text" : "\"For\" loops iterate upon lllls.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-20", 0 ],
-					"source" : [ "obj-2", 0 ]
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-15", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-20", 0 ]
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-17", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-6", 0 ],
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-6", 0 ]
 				}
 
 			}
