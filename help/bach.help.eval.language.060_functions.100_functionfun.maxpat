@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 122.0, 125.0, 617.0, 539.0 ],
+		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -42,26 +42,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-21",
-					"linecount" : 2,
+					"id" : "obj-18",
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 243.0, 408.0, 319.0, 40.0 ],
-					"presentation_linecount" : 3,
-					"text" : "Watch out: there can't be any whitespace between the name of the function and the open paren!"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-6",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 386.0, 63.0, 23.0 ],
-					"text" : "1 4 [9 16]"
+					"patching_rect" : [ 395.0, 360.0, 196.0, 98.0 ],
+					"text" : "Another fun, but hardly useful, fact: functions can return functions.\nBy the way, here's how we define and call functions with no arguments."
 				}
 
 			}
@@ -71,27 +58,40 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 447.0, 99.0, 23.0 ],
+					"patching_rect" : [ 6.0, 435.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "sqrt ($l1) ",
-					"color" : [ 0.92549, 0.364706, 0.341176, 1.0 ],
-					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 360.0, 48.0, 23.0 ],
+					"text" : "3.1415"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$funfun = (-> (cos sin):random(1, 2)) ; $$funfun()($l1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-21",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 416.0, 220.0, 24.0 ],
+					"patching_rect" : [ 6.0, 389.5, 382.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval sqrt ($l1) @out m"
+					"text" : "bach.eval $funfun = (-> (cos sin):random(1\\, 2)) \\; $$funfun()($l1) @out m"
 				}
 
 			}
@@ -100,25 +100,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-7",
-					"linecount" : 2,
+					"id" : "obj-8",
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 268.0, 318.0, 276.0, 40.0 ],
-					"text" : "Functions can iterate multiple-element lllls against single-element ones when relevant."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-8",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 299.0, 31.0, 23.0 ],
-					"text" : "1 -1"
+					"patching_rect" : [ 381.0, 279.5, 211.0, 54.0 ],
+					"text" : "Built-in functions can be treated as any other value, and assigned to variables as well."
 				}
 
 			}
@@ -128,109 +116,8 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 356.0, 99.0, 23.0 ],
+					"patching_rect" : [ 6.0, 320.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "atan2($l1, 0) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-18",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 326.0, 243.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval atan2($l1\\, 0) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-5",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 253.0, 203.0, 53.0, 23.0 ],
-					"text" : "0 -1 0 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-1",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 281.0, 227.0, 263.0, 40.0 ],
-					"text" : "Multiple parameters passed to a function are separated by commas."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 203.0, 53.0, 23.0 ],
-					"text" : "1 0 -1 0"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-3",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 264.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "atan2($l1, $l2) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-4",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 235.0, 259.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval atan2($l1\\, $l2) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"linecount" : 6,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 233.0, 97.0, 311.0, 98.0 ],
-					"text" : "sqrt is a built-in function computing the square root of a number. The parameters passed to a function are surrounded by parens.\nIn general, all the built-in functions of bell are listable, that is, they perform their operation upon a whole llll if provided."
 				}
 
 			}
@@ -241,52 +128,142 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 104.0, 63.0, 23.0 ],
-					"text" : "1 4 [9 16]"
+					"patching_rect" : [ 6.0, 258.0, 48.0, 23.0 ],
+					"text" : "3.1415"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"code" : "$cosine = cos ; $cosine($l1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
 					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 287.5, 361.0, 24.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $cosine = cos \\; $cosine($l1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-7",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 165.0, 99.0, 23.0 ],
+					"patching_rect" : [ 355.0, 166.5, 236.0, 69.0 ],
+					"text" : "Here $funlist is assigned not just a functions, but a llll of functions. When we call it, both functions are applied in sequence."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 224.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "sqrt($l1) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-17",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"id" : "obj-5",
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 134.0, 212.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval sqrt($l1) @out m"
+					"patching_rect" : [ 6.0, 142.0, 29.5, 23.0 ],
+					"text" : "10"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"code" : "$funlist = ($x->$x*2) ($x->$x*3) ; $funlist($l1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-6",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 174.5, 345.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $funlist = ($x->$x*2) ($x->$x*3) \\; $funlist($l1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-3",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 107.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 48.0, 48.0, 23.0 ],
+					"text" : "10 100"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"linecount" : 2,
+					"id" : "obj-14",
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 39.0, 565.0, 36.0 ],
-					"text" : "bell provides a number of built-in functions, and allows the user to define new ones.\nAs far as calling them is concerned, built-in and user-defined functions behave exactly the same.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 272.0, 61.5, 330.0, 54.0 ],
+					"text" : "Here we call directly a function literal, without assigning it to a variable. Though this can hardly be useful, it is possible by virtue of how functions work."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "($x->$x*2)($l1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-17",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 76.5, 259.0, 24.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval ($x->$x*2)($l1) @out m"
 				}
 
 			}
@@ -329,8 +306,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 109.0, 23.0 ],
-					"text" : "Function calls",
+					"patching_rect" : [ 6.0, 8.0, 99.0, 23.0 ],
+					"text" : "Function fun",
 					"varname" : "title"
 				}
 
@@ -353,64 +330,57 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
+					"destination" : [ "obj-16", 0 ],
 					"source" : [ "obj-15", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
-					"source" : [ "obj-17", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-9", 0 ],
-					"source" : [ "obj-18", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-2", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-19", 0 ],
-					"source" : [ "obj-20", 0 ]
+					"source" : [ "obj-16", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-3", 0 ],
-					"source" : [ "obj-4", 0 ]
+					"source" : [ "obj-17", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 1 ],
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-21", 0 ],
+					"source" : [ "obj-20", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-19", 0 ],
+					"source" : [ "obj-21", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-6", 0 ],
 					"source" : [ "obj-5", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-20", 0 ],
+					"destination" : [ "obj-4", 0 ],
 					"source" : [ "obj-6", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-18", 0 ],
-					"source" : [ "obj-8", 0 ]
 				}
 
 			}
@@ -420,8 +390,7 @@
 				"type" : "iLaX"
 			}
  ],
-		"autosave" : 0,
-		"accentcolor" : [ 0.501961, 0.501961, 0.501961, 1.0 ]
+		"autosave" : 0
 	}
 
 }
