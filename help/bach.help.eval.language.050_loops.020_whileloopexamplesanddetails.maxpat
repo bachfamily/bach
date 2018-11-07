@@ -105,7 +105,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x = 1 ; \r\nwhile $x <= $l1 repeat (\r\n\t$row = null ; \r\n\t$y = 1 ; \r\n\twhile $y <= $l1 repeat (\r\n\t\t$row = $row $x * $y ; \r\n\t\t$y = $y + 1) ; \r\n\t$res = $res [$row] ; \r\n\t$x = $x + 1\r\n\t) ; \r\n$res ",
+					"code" : "$x = 1 ; \r\nwhile $x <= $l1 repeat (\r\n\t$row = null ; \r\n\t$y = 1 ; \r\n\twhile $y <= $l1 repeat (\r\n\t\t$row _= $x * $y ; \r\n\t\t$y += 1) ; \r\n\t$res = $res [$row] ; \r\n\t$x += 1\r\n\t) ; \r\n$res ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
@@ -174,7 +174,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fibo = 1 1 ; while length($fibo) < $l1 repeat $fibo = $fibo ($fibo:-1 + $fibo:-2) ",
+					"code" : "$fibo = 1 1 ; while length($fibo) < $l1 repeat $fibo _= $fibo:-1 + $fibo:-2 ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
@@ -183,12 +183,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 219.0, 396.0, 39.0 ],
+					"patching_rect" : [ 10.0, 219.0, 398.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $fibo = 1 1 \\; while length($fibo) < $l1 repeat $fibo = $fibo ($fibo:-1 + $fibo:-2) @out m"
+					"text" : "bach.eval $fibo = 1 1 \\; while length($fibo) < $l1 repeat $fibo _= $fibo:-1 + $fibo:-2 @out m"
 				}
 
 			}
@@ -198,12 +198,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-15",
-					"linecount" : 3,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 266.0, 77.5, 209.0, 54.0 ],
-					"text" : "The factorial of a number (ok, we could have used bach.fact, but it was a nice example)."
+					"patching_rect" : [ 257.0, 77.5, 327.0, 69.0 ],
+					"text" : "The factorial of a number (ok, we could have used bach.fact, but it was a nice example).\nIf the *= ... += thing seems weird, think that it can be unrolled into $fact = $fact * ($i = $i + 1)."
 				}
 
 			}
@@ -244,7 +244,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$i = $fact = 1 ; while print($i) < $l1 repeat $fact = $fact * $i += 1 ",
+					"code" : "$i = $fact = 1 ; while print($i) < $l1 repeat $fact *= $i += 1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"linecount" : 3,
@@ -252,12 +252,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 77.5, 250.0, 54.0 ],
+					"patching_rect" : [ 10.0, 77.5, 233.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $i = $fact = 1 \\; while print($i) < $l1 repeat $fact = $fact * $i += 1 @out m"
+					"text" : "bach.eval $i = $fact = 1 \\; while print($i) < $l1 repeat $fact *= $i += 1 @out m"
 				}
 
 			}

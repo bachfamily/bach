@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 79.0, 195.0, 617.0, 539.0 ],
+		"rect" : [ 63.0, 165.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,13 +39,130 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-16",
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-8",
+					"linecount" : 6,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 333.5, 316.5, 257.5, 98.0 ],
+					"presentation_linecount" : 6,
+					"text" : "Another way to do the same thing. Here $sum is updated in the \"repeat\" clause, thus requiring a little more stuff inside the loop, but avoiding the need for subtracting $x after the loop has ended. \nIt is just a matter of taste..."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 144.0, 271.0, 24.0, 24.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 4,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 144.0, 304.0, 138.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.arithmser 1 1000"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 379.0, 340.0, 81.0, 23.0 ],
-					"text" : "100 200 300"
+					"patching_rect" : [ 13.0, 304.0, 113.0, 23.0 ],
+					"text" : "10 20 30 40 50 60"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-6",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 418.0, 99.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$sum = 0 ; [for $x in $l1 as $sum + $x <= 100 repeat ($sum += $x ; $res _= $x)] $sum ",
+					"fontname" : "Menlo Regular",
+					"id" : "obj-7",
+					"linecount" : 3,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 338.5, 313.0, 54.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $sum = 0 \\; [for $x in $l1 as $sum + $x <= 100 repeat ($sum += $x \\; $res _= $x)] $sum @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-3",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 144.0, 94.0, 24.0, 24.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "newobj",
+					"numinlets" : 4,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 144.0, 127.0, 138.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.arithmser 1 1000"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-76",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 39.0, 536.0, 36.0 ],
+					"text" : "The \"as\" clause allows setting an condition to be checked before every iteration of the loop. The iteration stops as soon as the condition becomes false.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -56,8 +173,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 340.0, 77.0, 23.0 ],
-					"text" : "10 20 30 40"
+					"patching_rect" : [ 13.0, 127.0, 113.0, 23.0 ],
+					"text" : "10 20 30 40 50 60"
 				}
 
 			}
@@ -67,12 +184,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 3,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 405.0, 369.5, 192.0, 54.0 ],
-					"text" : "Address variables in parallel iterations. This will get more interesting in a while, too."
+					"patching_rect" : [ 292.0, 140.0, 299.0, 112.0 ],
+					"text" : "This one only retains the elements of the incoming llll until their sum doesn't exceed 100.\n$sum actually gets incremented past 100 during the last evaluation of the \"as\" clause: as a consequence, after the end of the loop we subtract $x (which now holds the last value it has taken during the loop) from it."
 				}
 
 			}
@@ -82,153 +199,27 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 431.0, 99.0, 23.0 ],
+					"patching_rect" : [ 13.0, 241.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $xaddr in $l1, $y $yaddr in $l2 repeat $res _= $x * $xaddr + $y * $yaddr ",
+					"code" : "$sum = 0 ; [for $x in $l1 as ($sum += print($x)) <= 100 repeat $res _= $x] $sum - $x ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 369.5, 386.0, 39.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $x $xaddr in $l1\\, $y $yaddr in $l2 repeat $res _= $x * $xaddr + $y * $yaddr @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-6",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 275.0, 210.0, 37.0, 23.0 ],
-					"text" : "1 2 3"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-1",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 210.0, 77.0, 23.0 ],
-					"text" : "10 20 30 40"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-3",
 					"linecount" : 4,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 318.0, 224.5, 241.0, 69.0 ],
-					"text" : "Parallel iterations are possible. In general, the for loop stops at the end of the shortest list, with one possible exception we'll meet shortly."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-4",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 291.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "for $x in $l1, $y in $l2 repeat $res _= $x + $y ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-5",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 239.5, 282.0, 39.0 ],
+					"patching_rect" : [ 13.0, 161.5, 263.0, 69.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x in $l1\\, $y in $l2 repeat $res _= $x + $y @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 44.0, 107.0, 23.0 ],
-					"text" : "100 300 500 700"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-21",
-					"linecount" : 7,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 334.0, 37.0, 245.0, 112.0 ],
-					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address.\nThe return value of the for loop is the value taken by the \"repeat\" clause at the end of the last iteration."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-17",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 133.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "for $data $address in $l1 repeat $res _= $data + $address ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-20",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 73.5, 310.0, 39.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $data $address in $l1 repeat $res _= $data + $address @out m"
+					"text" : "bach.eval $sum = 0 \\; [for $x in $l1 as ($sum += print($x)) <= 100 repeat $res _= $x] $sum - $x @out m"
 				}
 
 			}
@@ -271,8 +262,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 309.0, 23.0 ],
-					"text" : "\"For\" loops: address and parallel iteration",
+					"patching_rect" : [ 6.0, 8.0, 168.0, 23.0 ],
+					"text" : "\"For\" loops: as clause",
 					"varname" : "title"
 				}
 
@@ -295,15 +286,8 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
+					"destination" : [ "obj-23", 0 ],
 					"source" : [ "obj-1", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-23", 1 ],
-					"source" : [ "obj-16", 0 ]
 				}
 
 			}
@@ -316,15 +300,8 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-20", 0 ],
+					"destination" : [ "obj-4", 0 ],
 					"source" : [ "obj-2", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-20", 0 ]
 				}
 
 			}
@@ -337,21 +314,39 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
+					"destination" : [ "obj-1", 0 ],
+					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-5", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 1 ],
-					"source" : [ "obj-6", 0 ]
+					"destination" : [ "obj-6", 0 ],
+					"source" : [ "obj-7", 0 ]
 				}
 
 			}
  ],
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.arithmser.mxo",
 				"type" : "iLaX"
 			}
  ],
