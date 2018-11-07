@@ -55,6 +55,7 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
+					"bubblepoint" : 0.52,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
@@ -62,7 +63,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 271.0, 300.0, 320.0, 127.0 ],
+					"patching_rect" : [ 273.0, 305.5, 322.0, 127.0 ],
 					"text" : "This one means: if Count has a value (that is, it is not null) keep it, otherwise set it to 0. Then, increment it by one. Notice that, at every re-evaluation, Count has retained the value it was previously assigned.\nThis is a way to keep persistent values, but keep in mind that if you have the same global variable name in another box, it will be affected too."
 				}
 
@@ -97,7 +98,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "Count := Count ||| 0 ; Count := Count + 1 ",
+					"code" : "Count = Count ||| 0 ; Count = Count + 1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-15",
 					"linecount" : 2,
@@ -105,12 +106,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 353.0, 251.0, 39.0 ],
+					"patching_rect" : [ 14.0, 353.0, 255.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Count := Count ||| 0 \\; Count := Count + 1 @out m"
+					"text" : "bach.eval Count = Count ||| 0 \\; Count = Count + 1 @out m"
 				}
 
 			}
@@ -223,19 +224,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "A := 12345 ; A * 2 ",
+					"code" : "A = 12345 ; A * 2 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 160.0, 283.0, 24.0 ],
+					"patching_rect" : [ 14.0, 160.0, 275.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval A := 12345 \\; A * 2 @out m"
+					"text" : "bach.eval A = 12345 \\; A * 2 @out m"
 				}
 
 			}

@@ -77,7 +77,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$side := $l1 ; $area := $side * $side ; $area ",
+					"code" : "$side = $l1 ; $area = $side * $side ; $area ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"linecount" : 3,
@@ -85,12 +85,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 342.0, 189.0, 54.0 ],
+					"patching_rect" : [ 14.0, 342.0, 193.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $side := $l1 \\; $area := $side * $side \\; $area @out m"
+					"text" : "bach.eval $side = $l1 \\; $area = $side * $side \\; $area @out m"
 				}
 
 			}
@@ -127,12 +127,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-87",
-					"linecount" : 5,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 301.25, 97.5, 289.75, 83.0 ],
-					"text" : "Local variable names are preceded by $.\nTo assign a value to a variable, use the assignment operator := .\nTo read the value of a variable, just evaluate it as if it was a number or a function."
+					"patching_rect" : [ 297.0, 91.0, 294.0, 98.0 ],
+					"text" : "Local variable names are preceded by $.\nTo assign a value to a variable, use the assignment operator = (not to be confused with the equality comparison operator ==).\nTo read the value of a variable, just evaluate it as if it was a number or a function."
 				}
 
 			}
@@ -149,19 +149,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$c74 := $l1 ; $c74 ",
+					"code" : "$c74 = $l1 ; $c74 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 128.0, 283.0, 24.0 ],
+					"patching_rect" : [ 14.0, 128.0, 275.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $c74 := $l1 \\; $c74 @out m"
+					"text" : "bach.eval $c74 = $l1 \\; $c74 @out m"
 				}
 
 			}

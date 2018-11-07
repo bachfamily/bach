@@ -89,7 +89,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $xaddr in $l1, $y $yaddr in $l2 repeat $res := $res $x * $xaddr + $y * $yaddr ",
+					"code" : "for $x $xaddr in $l1, $y $yaddr in $l2 repeat $res = $res $x * $xaddr + $y * $yaddr ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
 					"linecount" : 3,
@@ -97,12 +97,12 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 369.5, 392.0, 54.0 ],
+					"patching_rect" : [ 12.0, 369.5, 386.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x $xaddr in $l1\\, $y $yaddr in $l2 repeat $res := $res $x * $xaddr + $y * $yaddr @out m"
+					"text" : "bach.eval for $x $xaddr in $l1\\, $y $yaddr in $l2 repeat $res = $res $x * $xaddr + $y * $yaddr @out m"
 				}
 
 			}
@@ -158,7 +158,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x in $l1, $y in $l2 repeat $res := $res $x + $y ",
+					"code" : "for $x in $l1, $y in $l2 repeat $res = $res $x + $y ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"linecount" : 2,
@@ -171,7 +171,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x in $l1\\, $y in $l2 repeat $res := $res $x + $y @out m"
+					"text" : "bach.eval for $x in $l1\\, $y in $l2 repeat $res = $res $x + $y @out m"
 				}
 
 			}
@@ -197,7 +197,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 313.0, 44.5, 245.0, 112.0 ],
+					"patching_rect" : [ 306.0, 44.5, 245.0, 112.0 ],
 					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address.\nThe return value of the for loop is the value taken by the \"repeat\" clause at the end of the last iteration."
 				}
 
@@ -215,7 +215,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $data $address in $l1 repeat $res := $res $data + $address ",
+					"code" : "for $data $address in $l1 repeat $res = $res $data + $address ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"linecount" : 3,
@@ -223,12 +223,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 73.5, 298.0, 54.0 ],
+					"patching_rect" : [ 12.0, 73.5, 292.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $data $address in $l1 repeat $res := $res $data + $address @out m"
+					"text" : "bach.eval for $data $address in $l1 repeat $res = $res $data + $address @out m"
 				}
 
 			}

@@ -177,7 +177,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "George := \"Here comes the sun\" ; Ringo := \"Octopus's Garden\" ",
+					"code" : "George = \"Here comes the sun\" ; Ringo = \"Octopus's Garden\" ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"linecount" : 2,
@@ -185,12 +185,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 215.0, 319.0, 39.0 ],
+					"patching_rect" : [ 14.0, 215.0, 314.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval George := \"Here comes the sun\" \\; Ringo := \"Octopus's Garden\""
+					"text" : "bach.eval George = \"Here comes the sun\" \\; Ringo = \"Octopus's Garden\""
 				}
 
 			}
@@ -212,7 +212,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "John := \"Lucy in the sky\" ; Paul := \"Hey Jude\" ",
+					"code" : "John = \"Lucy in the sky\" ; Paul = \"Hey Jude\" ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"linecount" : 2,
@@ -220,12 +220,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 66.5, 290.0, 39.0 ],
+					"patching_rect" : [ 14.0, 66.5, 282.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval John := \"Lucy in the sky\" \\; Paul := \"Hey Jude\" @auto 1"
+					"text" : "bach.eval John = \"Lucy in the sky\" \\; Paul = \"Hey Jude\" @auto 1"
 				}
 
 			}

@@ -74,7 +74,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$a := $l1 ; $a := 200 $a ; $a ",
+					"code" : "$a = $l1 ; $a = 200 $a ; $a ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 12.0,
 					"id" : "obj-31",
@@ -82,12 +82,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 420.20172119140625, 341.0, 22.0 ],
+					"patching_rect" : [ 6.0, 420.20172119140625, 326.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $a := $l1 \\; $a := 200 $a \\; $a @out m"
+					"text" : "bach.eval $a = $l1 \\; $a = 200 $a \\; $a @out m"
 				}
 
 			}
@@ -180,7 +180,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 365.5, 72.0, 183.0, 54.0 ],
+					"patching_rect" : [ 386.5, 74.0, 183.0, 54.0 ],
 					"text" : "The value assigned to a variable can be the result of any kind of expression..."
 				}
 
@@ -195,7 +195,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 340.75, 187.0, 217.0, 54.0 ],
+					"patching_rect" : [ 316.75, 187.0, 217.0, 54.0 ],
 					"text" : "... including another assignment: this one assigns the same value to $x and $y."
 				}
 
@@ -225,19 +225,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x := $y := $l1 ; $x $y ",
+					"code" : "$x = $y = $l1 ; $x $y ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-18",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 202.0, 323.0, 24.0 ],
+					"patching_rect" : [ 6.0, 202.0, 306.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $x := $y := $l1 \\; $x $y @out m"
+					"text" : "bach.eval $x = $y = $l1 \\; $x $y @out m"
 				}
 
 			}
@@ -266,7 +266,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$a := $l1 * 2 ; print($a) ; $a := $l2 * 3; $a ",
+					"code" : "$a = $l1 * 2 ; print($a) ; $a = $l2 * 3; $a ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 12.0,
 					"id" : "obj-1",
@@ -280,7 +280,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $a := $l1 * 2 \\; print($a) \\; $a := $l2 * 3\\; $a @out m"
+					"text" : "bach.eval $a = $l1 * 2 \\; print($a) \\; $a = $l2 * 3\\; $a @out m"
 				}
 
 			}
@@ -309,7 +309,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$franchise := if $l1 == 47 then `trek else if $l1 == `r2d2 then `wars else `bucks ; `star $franchise ",
+					"code" : "$franchise = if $l1 == 47 then `trek else if $l1 == `r2d2 then `wars else `bucks ; `star $franchise ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"linecount" : 3,
@@ -317,12 +317,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 74.0, 355.0, 54.0 ],
+					"patching_rect" : [ 6.0, 74.0, 371.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $franchise := if $l1 == 47 then `trek else if $l1 == `r2d2 then `wars else `bucks \\; `star $franchise @out m"
+					"text" : "bach.eval $franchise = if $l1 == 47 then `trek else if $l1 == `r2d2 then `wars else `bucks \\; `star $franchise @out m"
 				}
 
 			}
