@@ -39,20 +39,79 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"code" : "SumReduce = $func, <...>, $sum -> ($sum = 0 ; for $x in arithmser(2, $argcount) repeat $sum += reduce($args($x), $func)) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-19",
-					"linecount" : 3,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"id" : "obj-22",
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 340.0, 384.0, 54.0 ],
+					"patching_rect" : [ 238.0, 413.0, 162.0, 23.0 ],
+					"text" : "Sir James Paul McCartney"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "Greet(`Hi , $l1, $l2) ",
+					"fontname" : "Menlo Regular",
+					"id" : "obj-21",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 444.0, 251.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval SumReduce = $func\\, <...>\\, $sum -> ($sum = 0 \\; for $x in arithmser(2\\, $argcount) repeat $sum += reduce($args($x)\\, $func)) @auto 1"
+					"text" : "bach.eval Greet(`Hi \\, $l1\\, $l2)"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-19",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 413.0, 162.0, 23.0 ],
+					"text" : "John Winston Ono Lennon"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"bubbleside" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-8",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 347.0, 464.0, 55.0 ],
+					"presentation_linecount" : 5,
+					"text" : "A right-variadic function. If you look closely, you'll see a problem: if the caller contains a variable named $x, Greet will modify it. For now, we don't care."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "Greet = $greeting, <...> -> for $x in arithmser(2, $argcount) repeat print($greeting $args($x)) ",
+					"fontname" : "Menlo Regular",
+					"id" : "obj-6",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 306.0, 568.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval Greet = $greeting\\, <...> -> for $x in arithmser(2\\, $argcount) repeat print($greeting $args($x)) @auto 1"
 				}
 
 			}
@@ -66,7 +125,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 353.0, 231.0, 230.0, 54.0 ],
+					"patching_rect" : [ 374.0, 224.0, 217.0, 54.0 ],
 					"text" : "Because Choose is left-variadic, the only way to set the $idx parameter is by name."
 				}
 
@@ -92,7 +151,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 277.0, 100.0, 23.0 ],
+					"patching_rect" : [ 6.0, 270.0, 100.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -106,7 +165,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 213.0, 57.0, 23.0 ]
+					"patching_rect" : [ 6.0, 206.0, 57.0, 23.0 ]
 				}
 
 			}
@@ -118,7 +177,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 332.0, 213.0, 68.0, 23.0 ],
+					"patching_rect" : [ 332.0, 206.0, 68.0, 23.0 ],
 					"text" : "Mick Keith"
 				}
 
@@ -131,7 +190,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 169.0, 213.0, 66.0, 23.0 ],
+					"patching_rect" : [ 169.0, 206.0, 66.0, 23.0 ],
 					"text" : "John Paul"
 				}
 
@@ -145,7 +204,7 @@
 					"numinlets" : 3,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 246.0, 345.0, 24.0 ],
+					"patching_rect" : [ 6.0, 239.0, 345.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -182,8 +241,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 38.0, 589.0, 108.0 ],
-					"text" : "Functions having a variable number of arguments are called \"variadic\".\nThere are two kinds of variadic functions: left-variadic and right-variadic. Left-variadic functions allow passing a variable number of arguments by position, optionally followed by one or more arguments passed by name. Right-variadic functions impose a number of mandatory arguments passed by position, followed by the actual variable-number arguments.\nThe placeholder <...> at the beginning or at the end of the function's argument list indicates that the function itself is respectively left- or right-variadic.",
+					"patching_rect" : [ 6.0, 38.0, 585.0, 108.0 ],
+					"text" : "Functions having a variable number of arguments are called \"variadic\".\nThere are two kinds of variadic functions: left-variadic and right-variadic. Left-variadic functions allow passing a variable number of arguments by position, optionally followed by one or more arguments passed by name. Right-variadic functions impose a number of mandatory arguments passed by position, followed by the actual variable-number arguments.\nThe placeholder <...>, at the beginning or not of the function's argument list, indicates that the function itself is respectively left- or right-variadic.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -251,8 +310,22 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-21", 0 ],
+					"source" : [ "obj-19", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-15", 0 ],
 					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-21", 1 ],
+					"source" : [ "obj-22", 0 ]
 				}
 
 			}
