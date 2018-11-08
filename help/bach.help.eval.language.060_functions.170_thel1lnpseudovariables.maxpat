@@ -39,89 +39,117 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-9",
+					"id" : "obj-14",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 97.5, 395.0, 45.0, 23.0 ],
-					"presentation_linecount" : 3,
-					"text" : "10000"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-8",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 58.5, 395.0, 29.5, 23.0 ],
+					"patching_rect" : [ 14.0, 330.0, 50.0, 23.0 ],
 					"text" : "10"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-7",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 395.0, 29.5, 23.0 ],
-					"text" : "1"
+					"id" : "obj-6",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 406.5, 98.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) ; $fun($l1) ",
+					"code" : "$fun = ($x -> ($x += 1 ; $l1 $x)) ; $fun($l1) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
-					"id" : "obj-4",
+					"id" : "obj-8",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 423.5, 335.0, 39.0 ],
+					"patching_rect" : [ 13.0, 358.5, 345.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) \\; $fun($l1)"
+					"text" : "bach.eval $fun = ($x -> ($x += 1 \\; $l1 $x)) \\; $fun($l1) @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 5,
+					"id" : "obj-9",
+					"linecount" : 8,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 52.0, 305.0, 539.0, 79.0 ],
-					"presentation_linecount" : 6,
-					"text" : "(The whole story: bell doesn't perform tail recursion optimization, so recursion is not only inefficient, but, in principle, dangerous as well. To protect against the risk of crashing Max with recursive functions, there is a hard limit of 999 to the allowed recursion depth. This doesn't mean that in some practical cases recursion can't be useful, but you can't use it as liberally as you would do in, say, Scheme or Haskell.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 368.5, 314.5, 214.0, 127.0 ],
+					"text" : "Named function arguments are seen by the function as variables, which can be modified. This, on the other hand, doesn't modify the actual value of the argument, which can still be accessed through the $l<n> pseudo-variables."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"linecount" : 5,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 269.5, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 191.0, 37.0, 23.0 ],
+					"text" : "5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$myDiv = ($x, $y -> $l1 / $l2) ; $myDiv(@y 3, @x $l1 * 2) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-3",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 221.5, 353.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $myDiv = ($x\\, $y -> $l1 / $l2) \\; $myDiv(@y 3\\, @x $l1 * 2) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-4",
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 202.0, 457.0, 79.0 ],
-					"text" : "Recursion can be a very elegant way of expressing problems, but bell's implementation of recursion is currently not very optimized. In general, if efficiency is your goal, it is recommended to refactor recursive problems iteratively when not too complicated (it has been proven that it's always possible, but this doesn't mean that it's easy).",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 375.0, 192.0, 216.0, 98.0 ],
+					"text" : "The argument order $l1 ... $l<n> refer to is that of the function definition, and doesn't depend on the order in which named parameters appear in the function call."
 				}
 
 			}
@@ -130,11 +158,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 37.0, 457.0, 21.0 ],
-					"text" : "By virtue of the visibility rules, setting up recursive functions is straightforward.",
+					"patching_rect" : [ 13.0, 37.0, 580.0, 36.0 ],
+					"text" : "The $l1 ... $l<n> pseudo-variables (that is, entities that can be read as variables but can't be modified) can be used in any function, where they refer to the corresponding argument.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -164,7 +193,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) ; $fact($l1) ",
+					"code" : "$myDiv = ($x, $y -> $l1 / $l2) ; $myDiv($l1 * 2, 3) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
@@ -178,7 +207,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) \\; $fact($l1) @out m"
+					"text" : "bach.eval $myDiv = ($x\\, $y -> $l1 / $l2) \\; $myDiv($l1 * 2\\, 3) @out m"
 				}
 
 			}
@@ -188,12 +217,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
-					"linecount" : 6,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 360.0, 80.0, 233.0, 98.0 ],
-					"text" : "A classic example: implementation of factorial by recursion. The $fact function (that is, more precisely, the function held by the $fact variable) is available inside itself as it is defined in the scope of the caller."
+					"patching_rect" : [ 360.0, 94.5, 237.0, 69.0 ],
+					"text" : "$l1 and $l2 in the $myDiv function body respectively refer to the first and second argument passed to the function."
 				}
 
 			}
@@ -236,8 +265,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 82.0, 23.0 ],
-					"text" : "Recursion",
+					"patching_rect" : [ 6.0, 8.0, 243.0, 23.0 ],
+					"text" : "The $l1 ... $l<n> pseudovariables",
 					"varname" : "title"
 				}
 
@@ -260,6 +289,20 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-8", 0 ],
+					"source" : [ "obj-14", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-29", 0 ],
 					"source" : [ "obj-28", 0 ]
 				}
@@ -274,22 +317,15 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-7", 0 ]
+					"destination" : [ "obj-1", 0 ],
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
+					"destination" : [ "obj-6", 0 ],
 					"source" : [ "obj-8", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-9", 0 ]
 				}
 
 			}

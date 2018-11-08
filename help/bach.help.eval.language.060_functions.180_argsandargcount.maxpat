@@ -39,89 +39,126 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
 					"id" : "obj-9",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 97.5, 395.0, 45.0, 23.0 ],
-					"presentation_linecount" : 3,
-					"text" : "10000"
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 417.0, 572.0, 21.0 ],
+					"presentation_linecount" : 2,
+					"text" : "The usefulness of $args and $argcount will become apparent when discussing variadic functions.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 58.5, 395.0, 29.5, 23.0 ],
-					"text" : "10"
+					"linecount" : 5,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 387.0, 298.5, 204.0, 83.0 ],
+					"presentation_linecount" : 3,
+					"text" : "The value returned by $argcount includes the values that are not actually passed, and whose values are set to the respective defaults."
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-7",
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"maxclass" : "button",
+					"numinlets" : 1,
 					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 395.0, 29.5, 23.0 ],
-					"text" : "1"
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 13.0, 284.0, 24.0, 24.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) ; $fun($l1) ",
+					"id" : "obj-3",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 371.5, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$howMany = ($x, $y = 100, $z = 1000 -> $argcount) ; $howMany(10) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
-					"id" : "obj-4",
+					"id" : "obj-5",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 423.5, 335.0, 39.0 ],
+					"patching_rect" : [ 13.0, 320.5, 365.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) \\; $fun($l1)"
+					"text" : "bach.eval $howMany = ($x\\, $y = 100\\, $z = 1000 -> $argcount) \\; $howMany(10) @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 5,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 52.0, 305.0, 539.0, 79.0 ],
-					"presentation_linecount" : 6,
-					"text" : "(The whole story: bell doesn't perform tail recursion optimization, so recursion is not only inefficient, but, in principle, dangerous as well. To protect against the risk of crashing Max with recursive functions, there is a hard limit of 999 to the allowed recursion depth. This doesn't mean that in some practical cases recursion can't be useful, but you can't use it as liberally as you would do in, say, Scheme or Haskell.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"linecount" : 5,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 208.0, 29.5, 23.0 ],
+					"text" : "1 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-17",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 70.0, 208.0, 41.0, 23.0 ],
+					"text" : "[1] [2]"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-15",
+					"maxclass" : "number",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 13.0, 85.0, 50.0, 23.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-4",
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 202.0, 457.0, 79.0 ],
-					"text" : "Recursion can be a very elegant way of expressing problems, but bell's implementation of recursion is currently not very optimized. In general, if efficiency is your goal, it is recommended to refactor recursive problems iteratively when not too complicated (it has been proven that it's always possible, but this doesn't mean that it's easy).",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 124.0, 192.5, 403.0, 54.0 ],
+					"text" : "You can ask $arg for more than one argument. The structure of the query is reflected in its result: if you want each argument to be in its own sublist, just put the corresponding indices in sublists."
 				}
 
 			}
@@ -130,11 +167,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 37.0, 457.0, 21.0 ],
-					"text" : "By virtue of the visibility rules, setting up recursive functions is straightforward.",
+					"patching_rect" : [ 13.0, 37.0, 524.0, 36.0 ],
+					"text" : "The $args function returns one or more arguments of a function according to their indices.\nThe $argcount pseudovariable returns the number of arguments of the function.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -145,26 +183,14 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 157.5, 98.0, 23.0 ],
+					"patching_rect" : [ 13.0, 174.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-28",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 79.0, 37.0, 23.0 ],
-					"text" : "5"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "$fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) ; $fact($l1) ",
+					"code" : "$choose = ($x, $y, $z, $n -> $args($n)) ; $choose(10, 20, 30, $l1) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
@@ -173,27 +199,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 109.5, 345.0, 39.0 ],
+					"patching_rect" : [ 13.0, 125.5, 415.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) \\; $fact($l1) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-5",
-					"linecount" : 6,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 360.0, 80.0, 233.0, 98.0 ],
-					"text" : "A classic example: implementation of factorial by recursion. The $fact function (that is, more precisely, the function held by the $fact variable) is available inside itself as it is defined in the scope of the caller."
+					"text" : "bach.eval $choose = ($x\\, $y\\, $z\\, $n -> $args($n)) \\; $choose(10\\, 20\\, 30\\, $l1) @out m"
 				}
 
 			}
@@ -236,8 +247,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 82.0, 23.0 ],
-					"text" : "Recursion",
+					"patching_rect" : [ 6.0, 8.0, 156.0, 23.0 ],
+					"text" : "$args and $argcount",
 					"varname" : "title"
 				}
 
@@ -261,7 +272,23 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-29", 0 ],
-					"source" : [ "obj-28", 0 ]
+					"midpoints" : [ 22.5, 241.0, 5.5, 241.0, 5.5, 114.5, 22.5, 114.5 ],
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-29", 0 ],
+					"source" : [ "obj-15", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-29", 0 ],
+					"midpoints" : [ 79.5, 241.0, 5.5, 241.0, 5.5, 114.5, 22.5, 114.5 ],
+					"source" : [ "obj-17", 0 ]
 				}
 
 			}
@@ -274,22 +301,15 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-5", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
 					"source" : [ "obj-7", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-8", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-9", 0 ]
 				}
 
 			}
