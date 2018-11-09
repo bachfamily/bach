@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 288.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 48.0, 90.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,25 +39,6 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"code" : "SumReduce = $func, <...>, $sum -> ($sum = 0 ; for $x in arithmser(2, $argcount) repeat $sum += reduce($args($x), $func)) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-19",
-					"linecount" : 3,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 340.0, 384.0, 54.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval SumReduce = $func\\, <...>\\, $sum -> ($sum = 0 \\; for $x in arithmser(2\\, $argcount) repeat $sum += reduce($args($x)\\, $func)) @auto 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
@@ -66,8 +47,9 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 353.0, 231.0, 230.0, 54.0 ],
-					"text" : "Because Choose is left-variadic, the only way to set the $idx parameter is by name."
+					"patching_rect" : [ 372.0, 376.0, 223.0, 54.0 ],
+					"presentation_linecount" : 3,
+					"text" : "Because $idx appears after <...> in the function definition, the only way to set it is by name."
 				}
 
 			}
@@ -77,12 +59,13 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-16",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 427.0, 148.5, 98.0, 54.0 ],
-					"text" : "Choose is a left-variadic function."
+					"patching_rect" : [ 431.0, 308.0, 126.0, 40.0 ],
+					"presentation_linecount" : 3,
+					"text" : "Choose is a variadic function."
 				}
 
 			}
@@ -92,7 +75,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 277.0, 100.0, 23.0 ],
+					"patching_rect" : [ 6.0, 422.0, 100.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -106,7 +89,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 213.0, 57.0, 23.0 ]
+					"patching_rect" : [ 6.0, 358.0, 57.0, 23.0 ]
 				}
 
 			}
@@ -118,7 +101,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 332.0, 213.0, 68.0, 23.0 ],
+					"patching_rect" : [ 332.0, 358.0, 68.0, 23.0 ],
 					"text" : "Mick Keith"
 				}
 
@@ -131,7 +114,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 169.0, 213.0, 66.0, 23.0 ],
+					"patching_rect" : [ 169.0, 358.0, 66.0, 23.0 ],
 					"text" : "John Paul"
 				}
 
@@ -145,7 +128,7 @@
 					"numinlets" : 3,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 246.0, 345.0, 24.0 ],
+					"patching_rect" : [ 6.0, 391.0, 345.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -164,7 +147,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 156.0, 415.0, 39.0 ],
+					"patching_rect" : [ 6.0, 308.0, 415.0, 39.0 ],
+					"presentation_linecount" : 2,
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -178,12 +162,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 7,
+					"linecount" : 17,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 38.0, 589.0, 108.0 ],
-					"text" : "Functions having a variable number of arguments are called \"variadic\".\nThere are two kinds of variadic functions: left-variadic and right-variadic. Left-variadic functions allow passing a variable number of arguments by position, optionally followed by one or more arguments passed by name. Right-variadic functions impose a number of mandatory arguments passed by position, followed by the actual variable-number arguments.\nThe placeholder <...> at the beginning or at the end of the function's argument list indicates that the function itself is respectively left- or right-variadic.",
+					"patching_rect" : [ 6.0, 38.0, 589.0, 253.0 ],
+					"text" : "Functions having a variable number of arguments are called \"variadic\". Besides their regular, named arguments, variadic functions have the <...> placeholder in the function definition, indicating that from that point an arbitrary number of arguments passed by position can be set. Being nameless, these arguments can only be accessed through $l<n> or $args.\nThe rules for passing arguments in variadic functions are basically the same as for regular functions: arguments passed by position must come before arguments passed by name. Because the variadic arguments have no names, this means that all the arguments up to the variadic ones included must be passed by position. After the variadic arguments, it is possible to pass more arguments by name. Thus, the series of variadic arguments is terminated either by the end of the argument list itself, or by the first argument passed by name. A corollary of this is that only one <...> placeholder can appear in the argument list of a function definition.\nIf more named arguments are specified after the <...> placeholder, they can only be set by name after the series of variadic arguments passed by position, and they will not be seen by $l<n> and $args.\n$argcount is especially useful with variadic functions. In this case, the value it returns is the number of the arguments passed by position, that is, the number of the named arguments before <...> plus the number of variadic arguments passed to the function.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

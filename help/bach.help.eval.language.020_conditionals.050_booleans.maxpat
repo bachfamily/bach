@@ -93,7 +93,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 245.5, 389.0, 191.0, 40.0 ],
+					"patching_rect" : [ 226.25, 393.0, 191.0, 40.0 ],
 					"text" : "Can you predict what will be printed in the Max console?"
 				}
 
@@ -275,7 +275,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 307.0, 96.5, 236.0, 39.0 ],
+					"patching_rect" : [ 307.0, 96.5, 243.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -294,7 +294,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 238.0, 163.5, 349.0, 214.0 ],
+					"patching_rect" : [ 238.0, 163.5, 353.0, 214.0 ],
 					"text" : "&& and || are short-circuit boolean operators, that is, as soon as they can determine their result they stop evaluating their arguments. \nHere, we need to evaluate both arguments for 10 and 20, but with 0 it is sufficient to see that the first condition is not satisfied (because it is not > 5) to know the result of the expression. As a consequence, the second argument is not evaluated. You can see the difference in the Max window. \nThe fact that these operators are short-circuit is relevant in two cases: first, when there are side effects, as they will not be produced; second, when at least one of the two clauses is computationally expensive, because in this case its evaluation can be avoided."
 				}
 
@@ -344,7 +344,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 238.0, 39.0 ],
+					"patching_rect" : [ 18.0, 96.5, 243.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

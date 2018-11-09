@@ -42,6 +42,20 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
+					"id" : "obj-1",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 60.0, 359.0, 128.0, 25.0 ],
+					"text" : "Click repeatedly..."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
 					"id" : "obj-18",
 					"linecount" : 6,
 					"maxclass" : "comment",
@@ -77,7 +91,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$funfun = (-> (cos sin):random(1, 2)) ; $$funfun()($l1) ",
+					"code" : "$funfun = (-> (cos sin):random(1, 2)) ; $funfun()($l1) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
@@ -86,12 +100,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 389.5, 382.0, 39.0 ],
+					"patching_rect" : [ 6.0, 389.5, 384.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $funfun = (-> (cos sin):random(1\\, 2)) \\; $$funfun()($l1) @out m"
+					"text" : "bach.eval $funfun = (-> (cos sin):random(1\\, 2)) \\; $funfun()($l1) @out m"
 				}
 
 			}

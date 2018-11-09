@@ -42,13 +42,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
-					"linecount" : 11,
+					"linecount" : 13,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 300.0, 579.0, 166.0 ],
-					"presentation_linecount" : 11,
-					"text" : "The definition of a function and its assignment to a variable are two completely separate steps, which can be easily confounded. The function definition itself, as it appears in the expression, can be seen as a \"function literal\": it is a special kind of value, like a number or a symbol. As soon as the object receives the expression (because it is typed in the object box, or in the text editor, or set through a message, or loaded from a file), the function definition is there. When the code is evaluated, the function definition is assigned to the variable, and when the variable is read it returns the function itself, that can subsequently be called.\nFrom a strictly functional point of view, assigning a function to a variable is a side effect, but if all the function definitions and assignments are moved at the beginning of the expression, and the corresponding variables are never updated, we can say that there is a \"true\" body of the program (after the function assignments) that, if it doesn't contain side effects, can be considered pure.",
+					"patching_rect" : [ 6.0, 277.0, 579.0, 195.0 ],
+					"text" : "The definition of a function and its assignment to a variable are two completely separate steps, which can be easily confounded. The function definition itself, as it appears in the expression, can be seen as a \"function literal\": it is a special kind of value, like a number or a symbol. As soon as the object receives the expression (because it is typed in the object box, or in the text editor, or set through a message, or loaded from a file), the function definition is there. When the code is evaluated, the function definition is assigned to the variable, and when the variable is read it returns the function itself, that can subsequently be called. This is pretty efficient, by the way, because all the work needed to translate the textual code into something that can actually be executed is carried out only once, when the code itself is received.\nFrom a strictly functional point of view, assigning a function to a variable is a side effect, but if all the function definitions and assignments are moved at the beginning of the expression, and the corresponding variables are never updated, we can say that there is a \"true\" body of the program (after the function assignments) that, if it doesn't contain side effects, can be considered pure.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -62,7 +61,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 261.0, 231.0, 69.0, 25.0 ],
+					"patching_rect" : [ 261.0, 220.0, 69.0, 25.0 ],
 					"text" : "Indeed."
 				}
 
@@ -73,7 +72,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 263.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 252.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -85,7 +84,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 203.0, 70.0, 23.0 ],
+					"patching_rect" : [ 6.0, 192.0, 70.0, 23.0 ],
 					"text" : "6000 7200"
 				}
 
@@ -100,7 +99,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 231.0, 251.0, 24.0 ],
+					"patching_rect" : [ 6.0, 220.0, 251.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -119,8 +118,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 225.0, 132.0, 246.0, 40.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 225.0, 121.0, 246.0, 40.0 ],
 					"text" : "... which makes it available to all the objects in the Max session."
 				}
 
@@ -131,7 +129,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 169.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 158.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -143,7 +141,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 111.0, 70.0, 23.0 ],
+					"patching_rect" : [ 6.0, 100.0, 70.0, 23.0 ],
 					"text" : "6000 7200"
 				}
 
@@ -158,7 +156,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 140.0, 212.0, 24.0 ],
+					"patching_rect" : [ 6.0, 129.0, 212.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -177,8 +175,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 345.0, 40.5, 246.0, 69.0 ],
-					"presentation_linecount" : 3,
+					"patching_rect" : [ 345.0, 29.5, 246.0, 69.0 ],
 					"text" : "A user-defined function with two arguments (the second one with a default). The function is automatically assigned to a global variable..."
 				}
 
@@ -194,7 +191,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 48.0, 326.0, 54.0 ],
+					"patching_rect" : [ 6.0, 37.0, 329.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

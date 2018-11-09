@@ -45,7 +45,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 97.5, 395.0, 45.0, 23.0 ],
-					"presentation_linecount" : 3,
 					"text" : "10000"
 				}
 
@@ -85,7 +84,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 423.5, 335.0, 39.0 ],
+					"patching_rect" : [ 13.0, 423.5, 337.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -103,9 +102,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 52.0, 305.0, 539.0, 79.0 ],
-					"presentation_linecount" : 6,
-					"text" : "(The whole story: bell doesn't perform tail recursion optimization, so recursion is not only inefficient, but, in principle, dangerous as well. To protect against the risk of crashing Max with recursive functions, there is a hard limit of 999 to the allowed recursion depth. This doesn't mean that in some practical cases recursion can't be useful, but you can't use it as liberally as you would do in, say, Scheme or Haskell.",
+					"patching_rect" : [ 52.0, 305.0, 509.0, 79.0 ],
+					"text" : "(The whole story: bell doesn't perform tail call optimization, so recursion is not only inefficient, but, in principle, dangerous as well. To protect against the risk of crashing Max with recursive functions, there is a hard limit of 999 to the allowed recursion depth. This doesn't mean that there aren't any practical cases in which recursion can be useful, but you can't use it as liberally as you would do in, say, Scheme or Haskell.)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

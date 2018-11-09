@@ -47,8 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 324.0, 345.5, 219.0, 54.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 324.0, 345.5, 220.0, 54.0 ],
 					"text" : "The fact that a value is passed to $octave in one specific call doesn't affect its general default."
 				}
 
@@ -78,7 +77,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2fStretchable($l1) ",
+					"code" : "Mc2fStretchable($l1) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
@@ -91,7 +90,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval mc2fStretchable($l1) @out m"
+					"text" : "bach.eval Mc2fStretchable($l1) @out m"
 				}
 
 			}
@@ -135,7 +134,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2fStretchable($l1 @octave 2.01) ",
+					"code" : "Mc2fStretchable($l1 @octave 2.01) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
@@ -148,7 +147,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval mc2fStretchable($l1 @octave 2.01) @out m"
+					"text" : "bach.eval Mc2fStretchable($l1 @octave 2.01) @out m"
 				}
 
 			}
@@ -169,7 +168,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2fStretchable = $mc, $pitch = 440, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) ",
+					"code" : "Mc2fStretchable = $mc, $pitch = 440, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
@@ -178,12 +177,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 118.0, 469.0, 39.0 ],
+					"patching_rect" : [ 13.0, 118.0, 470.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval mc2fStretchable = $mc\\, $pitch = 440\\, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) @auto 1"
+					"text" : "bach.eval Mc2fStretchable = $mc\\, $pitch = 440\\, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) @auto 1"
 				}
 
 			}

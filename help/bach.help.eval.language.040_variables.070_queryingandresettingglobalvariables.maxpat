@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 176.5, 333.5, 232.0, 40.0 ],
+					"patching_rect" : [ 190.0, 336.0, 232.0, 40.0 ],
 					"text" : "Print in the Max console the names and values of the global variables."
 				}
 
@@ -185,7 +185,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 215.0, 314.0, 39.0 ],
+					"patching_rect" : [ 14.0, 215.0, 322.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -239,7 +239,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 121.0, 270.5, 383.0, 54.0 ],
+					"patching_rect" : [ 125.0, 272.0, 383.0, 54.0 ],
 					"text" : "If you are not sure of the global variables existing in the current session, bach can list their names in the Max console in response to the \"printglobals\" message."
 				}
 
@@ -267,7 +267,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 121.0, 379.5, 404.0, 40.0 ],
+					"patching_rect" : [ 127.0, 389.0, 404.0, 40.0 ],
 					"text" : "If you need a fresh start, you can send the clearglobals message to bach, which will reset them all to null."
 				}
 

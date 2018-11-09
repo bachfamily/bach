@@ -143,7 +143,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 36.0, 585.0, 108.0 ],
-					"text" : "Saying that the visibility of local variables is limited to the object is inaccurate when functions come into play. Actually, the visibility of a local variable propagates to all the functions that are called by a function in which the variable itself is visible, with the exception of the functions declaring a parameter with the same name.\nTo really make the concept solid, let's define the main function of an object as the portion of code that is not contained in any function definition (because, as a matter of fact, it is a function, whose arguments can be set from outside).",
+					"text" : "Saying that the visibility of local variables is limited to the object is inaccurate when functions come into play. Actually, the visibility of a local variable propagates to all the functions that are called by a function in which the variable itself is visible, with the exception of the functions declaring a parameter with the same name. We call this dynamic scoping.\nTo really make the concept solid, let's define the main function of an object as the portion of code that is not contained in any function definition (because, as a matter of fact, it is a function, whose arguments can be set from the outside).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

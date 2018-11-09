@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 330.0, 50.0, 23.0 ],
+					"patching_rect" : [ 13.0, 330.0, 50.0, 23.0 ],
 					"text" : "10"
 				}
 
@@ -71,7 +71,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 358.5, 345.0, 39.0 ],
+					"patching_rect" : [ 13.0, 358.5, 353.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -86,12 +86,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-9",
-					"linecount" : 8,
+					"linecount" : 9,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 368.5, 314.5, 214.0, 127.0 ],
-					"text" : "Named function arguments are seen by the function as variables, which can be modified. This, on the other hand, doesn't modify the actual value of the argument, which can still be accessed through the $l<n> pseudo-variables."
+					"patching_rect" : [ 371.5, 307.5, 214.0, 141.0 ],
+					"text" : "Named function arguments are seen by the function as variables and, as such, they can be modified. \nDoint this, on the other hand, doesn't modify the actual value of the argument, which can still be accessed through the $l<n> pseudo-variables."
 				}
 
 			}

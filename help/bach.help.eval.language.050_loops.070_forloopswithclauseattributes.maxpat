@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 857.0, 253.0, 617.0, 539.0 ],
+		"rect" : [ 135.0, 140.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -47,8 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 277.0, 266.0, 184.0, 40.0 ],
-					"presentation_linecount" : 3,
+					"patching_rect" : [ 277.0, 266.0, 187.0, 40.0 ],
 					"text" : "... or not, in case you prefer a more Max-like look!"
 				}
 
@@ -105,7 +104,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 13.0, 381.0, 178.0, 79.0 ],
-					"presentation_linecount" : 5,
 					"text" : "maxdepth (defaults to 1)\nscalarmode (defaults to 1)\nunwrap (defaults to 0)\nrecursionmode (defaults to 0)\nspikemode (defaults to 0)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}

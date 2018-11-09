@@ -39,6 +39,19 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-3",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 136.0, 329.0, 97.0, 23.0 ],
+					"presentation_linecount" : 3,
+					"text" : "maxtime 60000"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
@@ -46,8 +59,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 148.5, 565.0, 152.0 ],
-					"presentation_linecount" : 10,
+					"patching_rect" : [ 6.0, 148.5, 569.0, 152.0 ],
 					"text" : "where the argument names follow the same convention as local variables, the argument defaults are expressions that are evaluated only if the corresponding argument is not passed at function call, and the body is an expression that is evaluated at every function call, and can refer the argument names as if they were regular local variables. The return value of the body is the return value of the function call.\n\n(note: the above structure leaves out variadic functions, which will be discussed further)\n\nAlthough not strictly necessary, in most practical cases a function definition is assigned to a variable, thus allowing subsequent parts of the program to call it later.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -63,7 +75,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 16.0, 70.0, 369.0, 65.0 ],
-					"presentation_linecount" : 6,
 					"text" : "[<argument name 1> [= <argument default 1>]\n [, <argument name 2> [= <argument default 2>]\n [...] ] ]\n-> <body> "
 				}
 
@@ -93,7 +104,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 307.0, 340.0, 284.0, 83.0 ],
-					"presentation_linecount" : 5,
 					"text" : "We define a function that multiplies by two the data it receives, and we assign the function to the local variable $double. Then, we call the function the variable refers to, passing it $l1 as its first (and only) argument."
 				}
 
@@ -131,7 +141,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 16.0, 362.0, 281.0, 39.0 ],
+					"patching_rect" : [ 16.0, 362.0, 282.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -212,6 +222,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-16", 0 ],
 					"source" : [ "obj-17", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}

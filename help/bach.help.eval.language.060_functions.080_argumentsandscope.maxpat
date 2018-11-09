@@ -104,7 +104,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 356.0, 275.0, 235.0, 127.0 ],
-					"presentation_linecount" : 6,
 					"text" : "This is the correct way to do it: all the variables used in the function are declared as arguments.\nIn this way, $res inside GoodFunnel will refer to a variable different from $res outside it, and there will not be any data corruption or other unwanted side effects."
 				}
 
@@ -120,7 +119,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 311.5, 339.0, 54.0 ],
+					"patching_rect" : [ 15.0, 311.5, 345.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -139,7 +138,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 251.0, 172.0, 327.0, 98.0 ],
+					"patching_rect" : [ 251.0, 172.0, 328.0, 98.0 ],
 					"text" : "Let's pretend to inadvertently use a variable named $res, without considering (or even knowing) that it is used inside BadFunnel. Thus, both the result of the function and the value of $res after calling it are not what we probably expect, as the function has both read and modified $res."
 				}
 
@@ -197,7 +196,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 334.0, 99.0, 257.0, 69.0 ],
+					"patching_rect" : [ 334.0, 99.0, 261.0, 69.0 ],
 					"text" : "This function needs three local variables for doing its own business: $x, $y and $res, but doesn't declare them as parameters. This is looking for trouble."
 				}
 

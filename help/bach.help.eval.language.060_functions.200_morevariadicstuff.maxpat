@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 251.0, 325.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,94 +39,113 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
+					"id" : "obj-7",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 459.0, 345.0, 122.0, 25.0 ],
+					"text" : "Just to be sure..."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 434.0, 314.0, 62.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "Babilonia"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 220.0, 314.0, 56.0, 23.0 ],
+					"text" : "Vietnam"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "Greet( \"Good Morning,\" , $l1, $l2, $l3) ",
+					"fontname" : "Menlo Regular",
+					"id" : "obj-3",
+					"maxclass" : "newobj",
+					"numinlets" : 3,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 345.0, 447.0, 24.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval Greet( \"Good Morning,\" \\, $l1\\, $l2\\, $l3) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-4",
-					"linecount" : 4,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 355.0, 587.0, 65.0 ],
-					"text" : "In fact, these are not very polite examples, as in general if you want to pass a value to a function the proper way to do it is through an argument, not through the propagation of the visibility of a variable. The propagation technique is useful in some specific scenarios that will be discussed later, namely recursion and lambda functions.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-28",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 323.0, 265.5, 209.0, 40.0 ],
-					"text" : "... and the same happens here, with a different $y variable."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-25",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 15.0, 312.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-26",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 235.5, 50.0, 23.0 ],
-					"text" : "3"
+					"patching_rect" : [ 6.0, 314.0, 67.0, 23.0 ],
+					"text" : "Mr. Orwell"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$y = 10 ; PlusYglobal($l1) ",
-					"fontname" : "Menlo Regular",
-					"fontsize" : 13.0,
-					"id" : "obj-27",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"id" : "obj-22",
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 265.5, 298.0, 39.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval $y = 10 \\; PlusYglobal($l1) @out m"
+					"patching_rect" : [ 246.0, 200.0, 162.0, 23.0 ],
+					"text" : "Sir James Paul McCartney"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "PlusYglobal = ($x -> $x + $y) ",
+					"code" : "Greet(`Hi , $l1, $l2) ",
 					"fontname" : "Menlo Regular",
-					"fontsize" : 13.0,
-					"id" : "obj-24",
+					"id" : "obj-21",
 					"linecount" : 2,
 					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 51.5, 201.0, 39.0 ],
+					"patching_rect" : [ 6.0, 231.0, 259.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval PlusYglobal = ($x -> $x + $y) @auto 1"
+					"text" : "bach.eval Greet(`Hi \\, $l1\\, $l2) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-1",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 200.0, 162.0, 23.0 ],
+					"text" : "John Winston Ono Lennon"
 				}
 
 			}
@@ -135,71 +154,32 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-19",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 323.0, 149.5, 268.0, 40.0 ],
-					"text" : "Here we have a variable called $y, which will be passed to plusYglobal at call..."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-18",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 227.0, 51.5, 274.0, 40.0 ],
-					"text" : "Here we define a function referring a $y variables, and make it available globally."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-16",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 15.0, 196.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-8",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 119.5, 50.0, 23.0 ],
-					"text" : "3"
+					"linecount" : 8,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 347.0, 43.5, 244.0, 127.0 ],
+					"text" : "Here, we can pass $greeting by position. We use $argcount and $args in a loop for iterating over the incoming lists.\nAlso, notice that we declare a $x variable after <...>, for preventing $x to be passed to Greet by propagation, and that $x is not seen by $argcount."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$y = 2 ; PlusYglobal($l1) ",
+					"code" : "Greet = $greeting, <...>, $x -> for $x in arithmser(2, $argcount) repeat print($greeting $args($x)) ",
 					"fontname" : "Menlo Regular",
-					"fontsize" : 13.0,
-					"id" : "obj-17",
-					"linecount" : 2,
+					"id" : "obj-6",
+					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 149.5, 294.0, 39.0 ],
+					"patching_rect" : [ 6.0, 80.0, 335.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $y = 2 \\; PlusYglobal($l1) @out m"
+					"text" : "bach.eval Greet = $greeting\\, <...>\\, $x -> for $x in arithmser(2\\, $argcount) repeat print($greeting $args($x)) @auto 1"
 				}
 
 			}
@@ -242,8 +222,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 257.0, 23.0 ],
-					"text" : "Scope of local variables: examples",
+					"patching_rect" : [ 6.0, 8.0, 142.0, 23.0 ],
+					"text" : "More variadic stuff",
 					"varname" : "title"
 				}
 
@@ -266,29 +246,36 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
-					"source" : [ "obj-17", 0 ]
+					"destination" : [ "obj-21", 0 ],
+					"source" : [ "obj-1", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-27", 0 ],
-					"source" : [ "obj-26", 0 ]
+					"destination" : [ "obj-3", 1 ],
+					"source" : [ "obj-2", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-25", 0 ],
-					"source" : [ "obj-27", 0 ]
+					"destination" : [ "obj-21", 1 ],
+					"source" : [ "obj-22", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-8", 0 ]
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 2 ],
+					"source" : [ "obj-5", 0 ]
 				}
 
 			}

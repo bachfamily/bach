@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 379.0, 340.0, 81.0, 23.0 ],
+					"patching_rect" : [ 385.0, 340.0, 81.0, 23.0 ],
 					"text" : "100 200 300"
 				}
 
@@ -97,7 +97,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 369.5, 386.0, 39.0 ],
+					"patching_rect" : [ 12.0, 369.5, 392.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -58,7 +58,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 442.5, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 427.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -81,12 +81,12 @@
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-18",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 378.5, 254.0, 54.0 ],
+					"patching_rect" : [ 6.0, 378.5, 267.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -105,7 +105,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 324.0, 192.5, 267.0, 156.0 ],
+					"patching_rect" : [ 324.0, 192.5, 270.0, 156.0 ],
 					"text" : "... but this default can be changed: in fact, you can pass it a function as its third argument. Here, we pass a function returning true if it receives a number \"close enough\" to our target.\nThe two arguments of $closeEnough are directly set by finditems when it calls its lambda, respectively with an element to inspect and the target that has been set as finditem's second argument."
 				}
 
@@ -144,7 +144,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 243.5, 316.0, 54.0 ],
+					"patching_rect" : [ 6.0, 243.5, 322.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -164,7 +164,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 287.0, 127.5, 266.0, 54.0 ],
-					"text" : "The finditems functions looks for its second argument in its first argument. By default, it only accepts exact matches..."
+					"text" : "The finditems function looks for its second argument in its first argument. By default, it only accepts exact matches..."
 				}
 
 			}

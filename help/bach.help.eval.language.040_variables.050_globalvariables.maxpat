@@ -64,7 +64,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 273.0, 305.5, 322.0, 127.0 ],
-					"text" : "This one means: if Count has a value (that is, it is not null) keep it, otherwise set it to 0. Then, increment it by one. Notice that, at every re-evaluation, Count has retained the value it was previously assigned.\nThis is a way to keep persistent values, but keep in mind that if you have the same global variable name in another box, it will be affected too."
+					"text" : "This one means: if Count has a value (that is, it is not null) keep it, otherwise set it to 0. Then, increment it by one. Notice that, at every re-evaluation, Count has retained the value that was previously assigned to it.\nThis is a way to keep persistent values, but keep in mind that if you have the same global variable name in another box, it will be affected too."
 				}
 
 			}
@@ -106,7 +106,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 353.0, 255.0, 39.0 ],
+					"patching_rect" : [ 14.0, 353.0, 259.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

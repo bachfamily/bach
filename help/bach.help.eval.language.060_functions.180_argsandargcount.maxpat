@@ -46,7 +46,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 417.0, 572.0, 21.0 ],
-					"presentation_linecount" : 2,
 					"text" : "The usefulness of $args and $argcount will become apparent when discussing variadic functions.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -63,7 +62,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 387.0, 298.5, 204.0, 83.0 ],
-					"presentation_linecount" : 3,
 					"text" : "The value returned by $argcount includes the values that are not actually passed, and whose values are set to the respective defaults."
 				}
 
@@ -93,7 +91,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$howMany = ($x, $y = 100, $z = 1000 -> $argcount) ; $howMany(10) ",
+					"code" : "$howMany = ($x, $y = 100, $z = 1000, $empty -> $argcount) ; $howMany(10) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
@@ -102,12 +100,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 320.5, 365.0, 39.0 ],
+					"patching_rect" : [ 13.0, 320.5, 369.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $howMany = ($x\\, $y = 100\\, $z = 1000 -> $argcount) \\; $howMany(10) @out m"
+					"text" : "bach.eval $howMany = ($x\\, $y = 100\\, $z = 1000\\, $empty -> $argcount) \\; $howMany(10) @out m"
 				}
 
 			}

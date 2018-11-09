@@ -59,7 +59,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 340.25, 343.0, 165.25, 40.0 ],
+					"patching_rect" : [ 320.25, 343.0, 165.25, 40.0 ],
 					"text" : "You can also make chains of assignments."
 				}
 
@@ -103,7 +103,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 323.25, 162.5, 57.0, 40.0 ],
+					"patching_rect" : [ 325.25, 157.5, 57.0, 40.0 ],
 					"text" : "Meet pi!"
 				}
 

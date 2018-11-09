@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 143.0, 302.5, 448.0, 141.0 ],
+					"patching_rect" : [ 146.0, 302.5, 448.0, 141.0 ],
 					"text" : "Multiplication tables—a complicated one, with nested while loops.\nA notable thing is that if the body of the \"while\" loop contains a sequence of operations (;), it must be surrounded by parens. This kind of structure is much more readable if indented, so this time the code is not in the object box, but in the internal text editor. Double-click bach.eval to view it.\nAlso, notice how the result we want to obtain is not the last value of the while loop, but the value of a variable we define and update in the middle of it: so, the last item of our sequence of evaluation is the variable itself, so as to return its value finally."
 				}
 
@@ -94,12 +94,8 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 10.0, 397.0, 67.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.print"
+					"patching_rect" : [ 10.0, 397.0, 99.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
@@ -132,7 +128,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 410.0, 189.5, 174.0, 98.0 ],
+					"patching_rect" : [ 417.0, 189.5, 174.0, 98.0 ],
 					"text" : "The Fibonacci sequence, up to the n-th term. Notice how we build the result by appending to each new term the sum of the two previous ones."
 				}
 
@@ -183,7 +179,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 219.0, 398.0, 39.0 ],
+					"patching_rect" : [ 10.0, 219.0, 400.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -202,7 +198,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 257.0, 77.5, 327.0, 69.0 ],
+					"patching_rect" : [ 255.0, 70.0, 329.0, 69.0 ],
 					"text" : "The factorial of a number (ok, we could have used bach.fact, but it was a nice example).\nIf the *= ... += thing seems weird, think that it can be unrolled into $fact = $fact * ($i = $i + 1)."
 				}
 
@@ -252,7 +248,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 77.5, 233.0, 54.0 ],
+					"patching_rect" : [ 10.0, 77.5, 235.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -395,10 +391,6 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.print.mxo",
 				"type" : "iLaX"
 			}
  ],

@@ -47,8 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 333.5, 316.5, 257.5, 98.0 ],
-					"presentation_linecount" : 6,
+					"patching_rect" : [ 333.5, 316.5, 258.0, 98.0 ],
 					"text" : "Another way to do the same thing. Here $sum is updated in the \"repeat\" clause, thus requiring a little more stuff inside the loop, but avoiding the need for subtracting $x after the loop has ended. \nIt is just a matter of taste..."
 				}
 
@@ -114,7 +113,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 338.5, 313.0, 54.0 ],
+					"patching_rect" : [ 13.0, 338.5, 314.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -214,7 +213,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 161.5, 263.0, 69.0 ],
+					"patching_rect" : [ 13.0, 161.5, 267.0, 69.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

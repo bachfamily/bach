@@ -66,8 +66,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 256.0, 400.5, 335.0, 40.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 256.0, 400.5, 338.0, 40.0 ],
 					"text" : "There is also an assigning version of the dot operator. This is equivalent to:"
 				}
 
@@ -116,7 +115,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 304.0, 258.0, 274.0, 36.0 ],
+					"patching_rect" : [ 304.0, 258.0, 277.0, 36.0 ],
 					"text" : "For comparison, the example above, rewritten with regular function-calls, would look like this:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -213,7 +212,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 192.0, 76.5, 183.0, 39.0 ],
+					"patching_rect" : [ 192.0, 76.5, 189.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -233,7 +232,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 307.0, 198.0, 292.0, 54.0 ],
-					"text" : "Dataflow-style function calls can make chains of calls more readable, and more similar to how they would be expressed in Max."
+					"text" : "Dataflow-style function calls can make chains of calls more readable, and more similar to how they would be expressed by patching."
 				}
 
 			}
@@ -271,7 +270,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 205.5, 293.0, 39.0 ],
+					"patching_rect" : [ 6.0, 205.5, 298.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -290,7 +289,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 381.0, 54.5, 218.0, 83.0 ],
+					"patching_rect" : [ 381.0, 54.5, 222.0, 83.0 ],
 					"text" : "These two forms are equivalent. In general, a dot can be used for moving the first, nameless argument of a function call before the reference to the function."
 				}
 
@@ -329,7 +328,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 76.5, 174.0, 39.0 ],
+					"patching_rect" : [ 6.0, 76.5, 181.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

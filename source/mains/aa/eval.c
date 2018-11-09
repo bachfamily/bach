@@ -183,7 +183,7 @@ void eval_bang(t_eval *x)
     long dataInlets = x->n_dataInlets;
     
     for (int i = 0; i < dataInlets; i++) {
-        context.argv[i] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
+        context.argv[i + 1] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
     }
     context.argc = dataInlets;
     

@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
+		"rect" : [ 101.0, 127.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 414.0, 346.0, 29.5, 23.0 ],
+					"patching_rect" : [ 418.0, 346.0, 29.5, 23.0 ],
 					"text" : "0.1"
 				}
 
@@ -56,7 +56,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 368.0, 346.0, 34.0, 23.0 ],
+					"patching_rect" : [ 372.0, 346.0, 34.0, 23.0 ],
 					"text" : "0.05"
 				}
 
@@ -68,7 +68,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 327.0, 346.0, 29.5, 23.0 ],
+					"patching_rect" : [ 331.0, 346.0, 29.5, 23.0 ],
 					"text" : "0"
 				}
 
@@ -133,52 +133,17 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-24",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 450.0, 214.0, 29.5, 23.0 ],
-					"text" : "0.1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-25",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 404.0, 214.0, 34.0, 23.0 ],
-					"text" : "0.05"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-26",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 363.0, 214.0, 29.5, 23.0 ],
-					"text" : "0"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-27",
-					"linecount" : 7,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 471.0, 208.0, 120.0, 112.0 ],
-					"text" : "A more robust way: $closeEnough would work even if $epsilon were not set in the caller."
+					"patching_rect" : [ 323.0, 251.5, 268.0, 40.0 ],
+					"presentation_linecount" : 7,
+					"text" : "A more robust way: $closeEnough work even if we don't set $epsilon in the caller."
 				}
 
 			}
@@ -207,21 +172,21 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$closeEnough = ($x, $y, $epsilon -> abs($x - $y) <= $epsilon ||| 0) ; $epsilon = $l2 ; finditems($l1, 1, $closeEnough) ",
+					"code" : "$closeEnough = ($x, $y -> abs($x - $y) <= ($epsilon ||| 0)) ; finditems($l1, 1, $closeEnough) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-30",
 					"linecount" : 3,
 					"maxclass" : "newobj",
-					"numinlets" : 2,
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 244.5, 470.0, 54.0 ],
+					"patching_rect" : [ 6.0, 244.5, 309.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $closeEnough = ($x\\, $y\\, $epsilon -> abs($x - $y) <= $epsilon ||| 0) \\; $epsilon = $l2 \\; finditems($l1\\, 1\\, $closeEnough) @out m"
+					"text" : "bach.eval $closeEnough = ($x\\, $y -> abs($x - $y) <= ($epsilon ||| 0)) \\; finditems($l1\\, 1\\, $closeEnough) @out m"
 				}
 
 			}
@@ -420,27 +385,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-14", 1 ],
 					"source" : [ "obj-22", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-30", 1 ],
-					"source" : [ "obj-24", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-30", 1 ],
-					"source" : [ "obj-25", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-30", 1 ],
-					"source" : [ "obj-26", 0 ]
 				}
 
 			}
