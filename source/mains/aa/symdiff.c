@@ -264,8 +264,8 @@ long symdiff_func(t_symdiff *x, t_llllelem *what1, t_llllelem *what2)
 long symdiff_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2)
 {
     t_execContext *context = data->context;
-    context->argv[0] = what1->l_thing.w_llll;
-    context->argv[1] = what2->l_thing.w_llll;
+    context->argv[1] = what1->l_thing.w_llll;
+    context->argv[2] = what2->l_thing.w_llll;
     context->resetLocalVariables();
     t_llll *resll = codableobj_run((t_codableobj *) data->x, *context);
     long r = llll_istrue(resll);

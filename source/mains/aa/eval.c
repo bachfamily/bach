@@ -119,8 +119,8 @@ int T_EXPORT main()
     // @description Number of data inlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
-    CLASS_ATTR_LONG(c, "outlets",    0,    t_eval, n_dataOutlets);
-    CLASS_ATTR_LABEL(c, "outlets", 0, "Number of Outlets");
+    CLASS_ATTR_LONG(c, "extraoutlets",    0,    t_eval, n_dataOutlets);
+    CLASS_ATTR_LABEL(c, "extraoutlets", 0, "Number of Extra Outlets");
     //CLASS_ATTR_ACCESSORS(c, "outlets", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of data outlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
@@ -183,13 +183,14 @@ void eval_bang(t_eval *x)
     long dataInlets = x->n_dataInlets;
     
     for (int i = 0; i < dataInlets; i++) {
-        context.argv[i] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
+        context.argv[i + 1] = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i);
     }
     context.argc = dataInlets;
     
     long outlets = x->n_dataOutlets;
     x->n_ob.c_main->setOutlets(outlets); // in case the code has just changed
 
+    x->n_ob.c_main->clearOutletData();
     t_llll *result = codableobj_run((t_codableobj *) x, context);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);
     llll_free(result);
@@ -342,7 +343,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         long totInlets = x->n_dataInlets + x->n_directInlets;
         llllobj_obj_setup((t_llllobj_object *) x, totInlets, outlet_str);
 
-        object_attr_setdisabled((t_object *)x, gensym("outlets"), true);
+        object_attr_setdisabled((t_object *)x, gensym("extraoutlets"), true);
         object_attr_setdisabled((t_object *)x, gensym("inlets"), true);
         object_attr_setdisabled((t_object *)x, gensym("directins"), true);
         object_attr_setdisabled((t_object *)x, gensym("directouts"), true);
