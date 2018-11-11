@@ -156,10 +156,7 @@ int T_EXPORT main()
 
 void bach_expr_bang(t_bach_expr *x)
 {	
-	if (x->n_ob.l_rebuild != 0 || proxy_getinlet((t_object *) x) != 0)
-		bach_expr_anything(x, _sym_bang, 0, NULL);
-	else
-		llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
+    bach_expr_anything(x, _sym_bang, 0, NULL);
 }
 
 void bach_expr_int(t_bach_expr *x, t_atom_long v)
@@ -187,7 +184,6 @@ void bach_expr_anything(t_bach_expr *x, t_symbol *msg, long ac, t_atom *av)
 			new_lexpr = lexpr_new(ac, av, 0, NULL, (t_object *) x);
 		else
 			new_lexpr = NULL;		
-		x->n_ob.l_rebuild = 1;
 
 		if (!new_lexpr) {
 			object_error((t_object *) x, "Bad expression");
@@ -204,63 +200,62 @@ void bach_expr_anything(t_bach_expr *x, t_symbol *msg, long ac, t_atom *av)
 		}
 		bach_atomic_unlock(&x->n_lock);
 		lexpr_free(old_lexpr);
-	} else {
-		t_lexpr *lexpr;
-		if (msg != _sym_bang) 
-			x->n_ob.l_rebuild = llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet) ? 1 : 0;
-		
-		if (inlet == 0 && x->n_ob.l_rebuild) {
-			
-			t_expr_iteration_data data, *data_ptr = &data;
-			t_llll *lists[LEXPR_MAX_VARS], *result;
-			bach_atomic_lock(&x->n_lock);
-			if (!(lexpr = x->n_lexpr)) {
-				bach_atomic_unlock(&x->n_lock);
-				return;
-			}
-			lexpr_retain(lexpr);
-			bach_atomic_unlock(&x->n_lock);
-			// if it is a constant expression and the stored llll is empty then store a dummy llll and evaluate it
-			// this will retrieve the value of the expression, to be output when a bang is received
-			if (lexpr->l_numvars == 0) {
-				t_llll *stored_llll = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0);
-				if (stored_llll->l_size == 0)
-					llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, x->n_dummy, 0);
-				llll_release(stored_llll);
-				data.e_count = 1;
-			} else
-				data.e_count = lexpr->l_numvars;
-			
-			data.e_collector = collector_new(1, 0);
-			data.e_lexpr = lexpr;
-			data.e_evaluate = 0;
-			
-			for (i = 0; i < data.e_count; i++) {
-				lists[i] = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i, 0);
-			}
-
-			llll_iter(data.e_count, lists, -1,
+    } else {
+        t_lexpr *lexpr;
+        if (msg != _sym_bang)
+            llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet) ? 1 : 0;
+        
+        if (inlet == 0) {
+            
+            t_expr_iteration_data data, *data_ptr = &data;
+            t_llll *lists[LEXPR_MAX_VARS], *result;
+            bach_atomic_lock(&x->n_lock);
+            if (!(lexpr = x->n_lexpr)) {
+                bach_atomic_unlock(&x->n_lock);
+                return;
+            }
+            lexpr_retain(lexpr);
+            bach_atomic_unlock(&x->n_lock);
+            // if it is a constant expression and the stored llll is empty then store a dummy llll and evaluate it
+            // this will retrieve the value of the expression, to be output when a bang is received
+            if (lexpr->l_numvars == 0) {
+                t_llll *stored_llll = llllobj_get_retained_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0);
+                if (stored_llll->l_size == 0)
+                    llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, x->n_dummy, 0);
+                llll_release(stored_llll);
+                data.e_count = 1;
+            } else
+                data.e_count = lexpr->l_numvars;
+            
+            data.e_collector = collector_new(1, 0);
+            data.e_lexpr = lexpr;
+            data.e_evaluate = 0;
+            
+            for (i = 0; i < data.e_count; i++) {
+                lists[i] = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, i, 0);
+            }
+            
+            llll_iter(data.e_count, lists, -1,
                       x->n_scalarmode,
                       LLLL_M_RECURSION_UNROLL,
                       LLLL_M_ITERATION_STOP,
                       LLLL_M_SPIKE_VERBOSE,
                       0, NULL,
-					  (iter_datafn) bach_expr_get_data, data_ptr, NULL, NULL, (iter_cmdfn) bach_expr_cmd, data_ptr, NULL, NULL, NULL, NULL);
-
-			bach_expr_cmd(data_ptr, 0);
-			lexpr_release(lexpr);
-			result = collector_output(data.e_collector, 0, 0);
-			collector_clear(data.e_collector);   
-			llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, result, 0);
-			x->n_ob.l_rebuild = 0;
-			for (i = 0; i < data.e_count; i++) {
-				llll_release(lists[i]);
-
-			}
-			collector_free(data.e_collector);
-			llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
-			}
-	}
+                      (iter_datafn) bach_expr_get_data, data_ptr, NULL, NULL, (iter_cmdfn) bach_expr_cmd, data_ptr, NULL, NULL, NULL, NULL);
+            
+            bach_expr_cmd(data_ptr, 0);
+            lexpr_release(lexpr);
+            result = collector_output(data.e_collector, 0, 0);
+            collector_clear(data.e_collector);
+            llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, result, 0);
+            for (i = 0; i < data.e_count; i++) {
+                llll_release(lists[i]);
+                
+            }
+            collector_free(data.e_collector);
+            llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
+        }
+    }
 }
 
 
@@ -360,8 +355,6 @@ t_bach_expr *bach_expr_new(t_symbol *s, short ac, t_atom *av)
 			if (x->n_lexpr) {
 //				object_post((t_object *) x, "good expr!");
 				x->n_maxvars = x->n_lexpr->l_numvars;
-				if (x->n_lexpr->l_numvars == 0)
-					x->n_ob.l_rebuild = 1;
 			} else {
 				object_error((t_object *) x, "Bad expression");
 //				post("true_ac = %ld, av = %p", true_ac, av);
