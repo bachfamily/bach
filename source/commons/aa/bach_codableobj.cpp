@@ -517,7 +517,7 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
         if (err == MAX_ERR_NONE && newCode) {
             if (x->c_main) {
                 x->c_main->decrease();
-                if (strcmp(newCode, x->c_text) != 0)
+                if (x->c_text && *x->c_text && strcmp(newCode, x->c_text) != 0)
                     object_warn((t_object *) x, "Code in the editor overrides code in the object box");
             }
             sysmem_freeptr(x->c_text);
