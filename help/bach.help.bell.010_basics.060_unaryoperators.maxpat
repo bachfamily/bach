@@ -62,7 +62,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 -10 ",
+					"code" : "$x1 -10 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-77",
 					"maxclass" : "newobj",
@@ -74,7 +74,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1 -10 @out m"
+					"text" : "bach.eval $x1 -10 @out m"
 				}
 
 			}
@@ -89,7 +89,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 223.0, 298.5, 298.0, 54.0 ],
-					"text" : "Because there is a space between $l1 and -, and no space between - and 10, this is the concatenation of $l1 and -10."
+					"text" : "Because there is a space between $x1 and -, and no space between - and 10, this is the concatenation of $x1 and -10."
 				}
 
 			}
@@ -118,7 +118,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1-10 ",
+					"code" : "$x1-10 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-73",
 					"maxclass" : "newobj",
@@ -130,7 +130,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1-10 @out m"
+					"text" : "bach.eval $x1-10 @out m"
 				}
 
 			}
@@ -145,7 +145,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 214.0, 397.5, 296.0, 54.0 ],
-					"text" : "But, because there is no space between $l1 and -, nor between - and 10, this is a subtraction."
+					"text" : "But, because there is no space between $x1 and -, nor between - and 10, this is a subtraction."
 				}
 
 			}
@@ -189,7 +189,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 - 10 ",
+					"code" : "$x1 - 10 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-58",
 					"maxclass" : "newobj",
@@ -201,7 +201,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1 - 10 @out m"
+					"text" : "bach.eval $x1 - 10 @out m"
 				}
 
 			}
@@ -230,7 +230,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "-$l1 ",
+					"code" : "-$x1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
@@ -242,7 +242,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval -$l1 @out m"
+					"text" : "bach.eval -$x1 @out m"
 				}
 
 			}

@@ -74,7 +74,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$a = $l1 ; $a = 200 $a ; $a ",
+					"code" : "$a = $x1 ; $a = 200 $a ; $a ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 12.0,
 					"id" : "obj-31",
@@ -87,7 +87,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $a = $l1 \\; $a = 200 $a \\; $a @out m"
+					"text" : "bach.eval $a = $x1 \\; $a = 200 $a \\; $a @out m"
 				}
 
 			}
@@ -225,7 +225,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x = $y = $l1 ; $x $y ",
+					"code" : "$x = $y = $x1 ; $x $y ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-18",
 					"maxclass" : "newobj",
@@ -237,7 +237,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $x = $y = $l1 \\; $x $y @out m"
+					"text" : "bach.eval $x = $y = $x1 \\; $x $y @out m"
 				}
 
 			}
@@ -266,7 +266,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$a = $l1 * 2 ; print($a) ; $a = $l2 * 3; $a ",
+					"code" : "$a = $x1 * 2 ; print($a) ; $a = $x2 * 3; $a ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 12.0,
 					"id" : "obj-1",
@@ -280,7 +280,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $a = $l1 * 2 \\; print($a) \\; $a = $l2 * 3\\; $a @out m"
+					"text" : "bach.eval $a = $x1 * 2 \\; print($a) \\; $a = $x2 * 3\\; $a @out m"
 				}
 
 			}
@@ -309,7 +309,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$franchise = if $l1 == 47 then `trek else if $l1 == `r2d2 then `wars else `bucks ; `star $franchise ",
+					"code" : "$franchise = if $x1 == 47 then `trek else if $x1 == `r2d2 then `wars else `bucks ; `star $franchise ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"linecount" : 3,
@@ -322,7 +322,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $franchise = if $l1 == 47 then `trek else if $l1 == `r2d2 then `wars else `bucks \\; `star $franchise @out m"
+					"text" : "bach.eval $franchise = if $x1 == 47 then `trek else if $x1 == `r2d2 then `wars else `bucks \\; `star $franchise @out m"
 				}
 
 			}

@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 97.0, 117.0, 617.0, 539.0 ],
+		"rect" : [ 70.0, 201.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,15 +39,12 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-26",
-					"maxclass" : "comment",
+					"id" : "obj-22",
+					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 463.0, 404.0, 108.0, 25.0 ],
-					"text" : "... and so on..."
+					"patching_rect" : [ 16.0, 445.5, 99.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
@@ -59,36 +56,53 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 256.5, 369.0, 24.0, 24.0 ]
+					"patching_rect" : [ 16.0, 386.0, 24.0, 24.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-24",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 256.5, 441.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "X %= 12 ",
+					"code" : "1 2 ## Ho @out m ",
+					"color" : [ 0.92549, 0.364706, 0.341176, 1.0 ],
 					"fontname" : "Menlo Regular",
-					"id" : "obj-25",
+					"id" : "obj-24",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 256.5, 404.5, 196.0, 24.0 ],
+					"patching_rect" : [ 16.0, 414.5, 220.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval X %= 12 @out m"
+					"text" : "bach.eval 1 2 ## Ho @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-25",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 248.0, 399.5, 324.0, 54.0 ],
+					"presentation_linecount" : 3,
+					"text" : "End-of-line comments, on the other hand, should generally not be used in object boxes, as they prevent the object attributes from working."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-21",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 16.0, 353.5, 99.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
@@ -100,118 +114,96 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 369.0, 24.0, 24.0 ]
+					"patching_rect" : [ 16.0, 293.5, 24.0, 24.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-21",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 10.0, 441.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "X **= 1/2 ",
+					"code" : "1 #(Hi)# 2 ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-22",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 404.5, 212.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval X **= 1/2 @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-17",
-					"maxclass" : "button",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 211.0, 250.0, 24.0, 24.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-18",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 211.0, 322.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "X /= 2 ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-19",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 211.0, 285.5, 189.0, 24.0 ],
+					"patching_rect" : [ 16.0, 322.5, 220.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval X /= 2 @out m"
+					"text" : "bach.eval 1 #(Hi)# 2 @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-14",
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-16",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 248.0, 307.5, 324.0, 54.0 ],
+					"presentation_linecount" : 3,
+					"text" : "In general, comments are meant to be used in the text editor or external files, but nothing prevents from having block comments in object box code."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-8",
 					"maxclass" : "button",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 250.0, 24.0, 24.0 ]
+					"patching_rect" : [ 16.0, 202.0, 24.0, 24.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-15",
+					"id" : "obj-9",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 10.0, 322.0, 98.0, 23.0 ],
+					"patching_rect" : [ 16.0, 260.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "X *= 2 ",
+					"code" : "1 2 #( A block comment has a beginning and an end marker )# 3 4\r\n5 6 #( Which allow placing it in the middle of a line. )# 7 8\r\n\r\n#(\r\nYou can also have block comments \r\nspanning several lines.\r\n)#\r\n\r\n\r\n#(\r\nIn case you wonder, block comments can't be nested:\r\nthe following line will just close this block comment\r\n#( voilà )#\r\n\r\n9 10 ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-16",
+					"id" : "obj-14",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 285.5, 189.0, 24.0 ],
+					"patching_rect" : [ 16.0, 230.5, 134.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval X *= 2 @out m"
+					"text" : "bach.eval @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-15",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 159.0, 230.0, 222.0, 25.0 ],
+					"text" : "An example with block comments."
 				}
 
 			}
@@ -223,77 +215,36 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 211.0, 131.0, 24.0, 24.0 ]
+					"patching_rect" : [ 16.0, 107.0, 24.0, 24.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-8",
+					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 211.0, 203.0, 98.0, 23.0 ],
+					"patching_rect" : [ 16.0, 167.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "X = X + 1 ",
+					"code" : "## A comment: everything in this line following the ## marker is not evaluated\r\n1 2 3 ## This is why it's called an end-of line comment\r\n##\r\n## (yes, you can have empty end-of-line comments)\r\n##\r\n4 5 ## Always leave a space before ##\r\n## unless the comment takes the whole line! \r\n\r\n##############\r\n## ## ## ## ##\r\n##############\r\n\r\n## (yes, you can do nice decorations with end-of-line comments)\r\n\r\n##############\r\n\r\n\r\n#! This is another way to introduce an end-of-line comment,\r\n#! but the ## form should be preferred \r\n#! unless, for some reason, you need a shebang.\r\n#! If \"shebang\" means nothing to you, just stick to ##\r\n",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-9",
+					"id" : "obj-4",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 211.0, 166.5, 212.0, 24.0 ],
+					"patching_rect" : [ 16.0, 136.5, 134.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval X = X + 1 @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-5",
-					"maxclass" : "button",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 131.0, 24.0, 24.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 10.0, 203.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "X += 1 ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-1",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 166.5, 189.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval X += 1 @out m"
+					"text" : "bach.eval @out m"
 				}
 
 			}
@@ -302,31 +253,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-6",
-					"linecount" : 4,
+					"id" : "obj-5",
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 434.0, 144.0, 161.0, 69.0 ],
-					"text" : "These two forms are equivalent (but the first one can be slightly more efficient)"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "X = 1 ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-4",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 85.5, 189.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval X = 1 @auto 1"
+					"patching_rect" : [ 159.0, 107.0, 433.0, 83.0 ],
+					"text" : "An example with end-of-line comments: double-click to see the code.\nNotice, by the way, that bell code can span several lines.\nIn fact, line breaks are treated exactly as spaces in bell, with the only exception of line comments, which end at the end of the line.\nLine breaks can greatly help the readability of the code."
 				}
 
 			}
@@ -339,7 +272,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: global+variable, auto+attribute",
+					"text" : "See Also: return+value",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -369,8 +302,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 154.0, 23.0 ],
-					"text" : "Assigning operators",
+					"patching_rect" : [ 6.0, 8.0, 86.0, 23.0 ],
+					"text" : "Comments",
 					"varname" : "title"
 				}
 
@@ -384,7 +317,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, variable, assignment, operator, assigning",
+					"text" : "Tags: bell, comment, block, end, of, line, hash, shebang",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -395,12 +328,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 2,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 525.0, 36.0 ],
-					"text" : "Every binary operator has an assigning variant, which updates the value of the variable according to its own specific operation and a provided second argument.",
+					"patching_rect" : [ 6.0, 32.0, 445.0, 65.0 ],
+					"text" : "Comments are pieces of text in the code that don't get evaluated, but are used for documenting the code itself.\nThere are two comment styles in bell: end-of-line comments, introduced by #! or ##, and block comments, delimited by #( and )#.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -408,85 +341,59 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-1", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
+					"destination" : [ "obj-9", 0 ],
 					"source" : [ "obj-14", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
-					"source" : [ "obj-16", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-19", 0 ],
-					"source" : [ "obj-17", 0 ]
+					"destination" : [ "obj-21", 0 ],
+					"midpoints" : [ 25.5, 350.0 ],
+					"source" : [ "obj-18", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-18", 0 ],
-					"source" : [ "obj-19", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-22", 0 ],
 					"source" : [ "obj-20", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
-					"source" : [ "obj-22", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-25", 0 ],
+					"destination" : [ "obj-24", 0 ],
 					"source" : [ "obj-23", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-24", 0 ],
-					"source" : [ "obj-25", 0 ]
+					"destination" : [ "obj-22", 0 ],
+					"midpoints" : [ 25.5, 442.0 ],
+					"source" : [ "obj-24", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-1", 0 ],
-					"source" : [ "obj-5", 0 ]
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-4", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-9", 0 ],
+					"destination" : [ "obj-4", 0 ],
 					"source" : [ "obj-7", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-8", 0 ],
-					"source" : [ "obj-9", 0 ]
+					"destination" : [ "obj-14", 0 ],
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}

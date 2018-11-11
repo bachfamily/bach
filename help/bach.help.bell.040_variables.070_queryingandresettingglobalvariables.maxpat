@@ -205,7 +205,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 298.0, 58.0, 295.0, 141.0 ],
+					"patching_rect" : [ 298.0, 58.0, 298.0, 141.0 ],
 					"text" : "@auto 1 (bach.eval only) means that the code is immediately evaluated as soon as the object is created. \nIts typical use is setting the starting value of some global variables. \nIf you have more than one bach.eval object setting the same global variables with @auto 1, the actual values they will take among the ones provides is undefined."
 				}
 
@@ -327,7 +327,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
-					"text" : "Tags: bell, variable, global, assignment, persistence, query, reset, printglobals, printglobalswithvalues, clearglobals, auto",
+					"text" : "Tags: bell, variable, global, assignment, persistence, query, reset, printglobals, printglobalswithvalues, clearglobals, auto, attribute",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

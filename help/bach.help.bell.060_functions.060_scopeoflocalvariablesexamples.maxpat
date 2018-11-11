@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 53.0, 116.0, 617.0, 539.0 ],
+		"rect" : [ 35.0, 94.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -41,88 +41,92 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-30",
+					"id" : "obj-4",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 355.0, 587.0, 65.0 ],
+					"text" : "In fact, these are not very polite examples, as in general if you want to pass a value to a function the proper way to do it is through an argument, not through the propagation of the visibility of a variable. The propagation technique is useful in some specific scenarios that will be discussed later, namely recursion and lambda functions.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-28",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 276.0, 319.0, 306.0, 36.0 ],
-					"text" : ".= (dataflow-style function application operator: see the \"functions\" section)",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 323.0, 265.5, 209.0, 40.0 ],
+					"text" : "... and the same happens here, with a different $y variable."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-29",
-					"linecount" : 3,
-					"maxclass" : "comment",
+					"id" : "obj-25",
+					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 222.0, 319.0, 27.0, 50.0 ],
-					"text" : "_=\n!_=\n:=",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 15.0, 312.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-28",
-					"linecount" : 5,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 147.0, 319.0, 42.0, 79.0 ],
-					"text" : "||=\n^^=\n&&=\n|||=\n&&&=",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"id" : "obj-26",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 235.5, 50.0, 23.0 ],
+					"text" : "3"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
+					"code" : "$y = 10 ; PlusYglobal($x1) ",
+					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-27",
-					"linecount" : 5,
-					"maxclass" : "comment",
+					"linecount" : 2,
+					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 92.0, 319.0, 31.0, 79.0 ],
-					"text" : "|=\n^=\n&=\n<<=\n>>=",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 265.5, 298.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $y = 10 \\; PlusYglobal($x1) @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
+					"code" : "PlusYglobal = ($x -> $x + $y) ",
+					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
-					"id" : "obj-26",
-					"linecount" : 7,
-					"maxclass" : "comment",
+					"id" : "obj-24",
+					"linecount" : 2,
+					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 31.0, 319.0, 28.0, 108.0 ],
-					"text" : "+=\n-=\n*=\n/=\n//=\n%=\n**=",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-25",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 290.0, 277.0, 21.0 ],
-					"text" : "The complete list of the assigning operators is:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 51.5, 201.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval PlusYglobal = ($x -> $x + $y) @auto 1"
 				}
 
 			}
@@ -132,53 +136,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 300.0, 190.5, 264.0, 54.0 ],
-					"text" : "The !_= operator does the same, but the new elements are prepended rather than appended."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-20",
-					"maxclass" : "number",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 167.0, 50.0, 23.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-21",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 242.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "Backwards !_= $x1 ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-22",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 205.5, 275.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval Backwards !_= $x1 @out m"
+					"patching_rect" : [ 323.0, 149.5, 268.0, 40.0 ],
+					"text" : "Here we have a variable called $y, which will be passed to plusYglobal at call..."
 				}
 
 			}
@@ -188,53 +151,55 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-18",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 262.0, 70.5, 261.0, 54.0 ],
-					"text" : "The _= operator performs concatenation and assignment. It's a handy way to build lllls elements by elements."
+					"patching_rect" : [ 227.0, 51.5, 274.0, 40.0 ],
+					"text" : "Here we define a function referring a $y variables, and make it available globally."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-17",
-					"maxclass" : "number",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 47.0, 50.0, 23.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
+					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 122.0, 98.0, 23.0 ],
+					"patching_rect" : [ 15.0, 196.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "Built _= $x1 ",
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 119.5, 50.0, 23.0 ],
+					"text" : "3"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$y = 2 ; PlusYglobal($x1) ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-16",
+					"fontsize" : 13.0,
+					"id" : "obj-17",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 85.5, 235.0, 24.0 ],
+					"patching_rect" : [ 15.0, 149.5, 294.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Built _= $x1 @out m"
+					"text" : "bach.eval $y = 2 \\; PlusYglobal($x1) @out m"
 				}
 
 			}
@@ -247,7 +212,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: global+variable, concatenation",
+					"text" : "See Also: global+variable, global+function",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -277,8 +242,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 192.0, 23.0 ],
-					"text" : "More assigning operators",
+					"patching_rect" : [ 6.0, 8.0, 257.0, 23.0 ],
+					"text" : "Scope of local variables: examples",
 					"varname" : "title"
 				}
 
@@ -292,7 +257,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, variable, assignment, operator, assigning",
+					"text" : "Tags: bell, function, user, defined, variable, local, assignment, scope, visibility, dynamic, scoping, propagation",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -301,13 +266,6 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
-					"source" : [ "obj-16", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-16", 0 ],
 					"source" : [ "obj-17", 0 ]
 				}
@@ -315,15 +273,22 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-22", 0 ],
-					"source" : [ "obj-20", 0 ]
+					"destination" : [ "obj-27", 0 ],
+					"source" : [ "obj-26", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
-					"source" : [ "obj-22", 0 ]
+					"destination" : [ "obj-25", 0 ],
+					"source" : [ "obj-27", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}

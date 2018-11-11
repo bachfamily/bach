@@ -231,7 +231,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x = $l2 + 1 ",
+					"code" : "$x = $x2 + 1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"maxclass" : "newobj",
@@ -243,7 +243,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $x = $l2 + 1"
+					"text" : "bach.eval $x = $x2 + 1"
 				}
 
 			}

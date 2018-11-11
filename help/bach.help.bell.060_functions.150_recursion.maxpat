@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 135.0, 140.0, 617.0, 539.0 ],
+		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,58 +39,57 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-3",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 277.0, 266.0, 187.0, 40.0 ],
-					"text" : "... or not, in case you prefer a more Max-like look!"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-4",
+					"id" : "obj-9",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 232.0, 121.0, 23.0 ],
-					"text" : "10 20 [30 40] 50 60"
+					"patching_rect" : [ 97.5, 395.0, 45.0, 23.0 ],
+					"text" : "10000"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-5",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 321.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 58.5, 395.0, 29.5, 23.0 ],
+					"text" : "10"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) ",
+					"id" : "obj-7",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 14.0, 395.0, 29.5, 23.0 ],
+					"text" : "1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) ; $fun($x1) ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-6",
-					"linecount" : 3,
+					"fontsize" : 13.0,
+					"id" : "obj-4",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 259.0, 254.0, 54.0 ],
+					"patching_rect" : [ 13.0, 423.5, 337.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) @out m"
+					"text" : "bach.eval $fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) \\; $fun($x1)"
 				}
 
 			}
@@ -103,8 +102,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 381.0, 178.0, 79.0 ],
-					"text" : "maxdepth (defaults to 1)\nscalarmode (defaults to 1)\nunwrap (defaults to 0)\nrecursionmode (defaults to 0)\nspikemode (defaults to 0)",
+					"patching_rect" : [ 52.0, 305.0, 513.0, 79.0 ],
+					"text" : "(The whole story: bell doesn't perform tail call optimization, so recursion is not only inefficient, but, in principle, dangerous as well. To protect against the risk of crashing Max with recursive functions, there is a hard limit of 999 to the allowed recursion depth. This doesn't mean that there aren't any practical cases in which recursion can be useful, but you can't use it as liberally as you would do in, say, Scheme or Haskell.)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -114,69 +113,13 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 358.0, 472.0, 21.0 ],
-					"text" : "The attributes of the \"for\" loop correspond exactly to those of bach.iter. They are:",
+					"patching_rect" : [ 13.0, 202.0, 457.0, 79.0 ],
+					"text" : "Recursion can be a very elegant way of expressing problems, but bell's implementation of recursion is currently not very optimized. In general, if efficiency is your goal, it is recommended to refactor recursive problems iteratively when not too complicated (it has been proven that it's always possible, but this doesn't mean that it's easy).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 277.0, 126.0, 177.0, 40.0 ],
-					"text" : "Multiple attributes can be separated by commas..."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 99.0, 121.0, 23.0 ],
-					"text" : "10 20 [30 40] 50 60"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-16",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 188.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1, @unwrap 1 repeat print($x [$addr]) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-17",
-					"linecount" : 3,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 126.0, 254.0, 54.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1\\, @unwrap 1 repeat print($x [$addr]) @out m"
 				}
 
 			}
@@ -185,13 +128,70 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 39.0, 536.0, 36.0 ],
-					"text" : "The \"with\" clause of the for loop allows fine-tuning the iteration behavior, through the use of attributes corresponding to those of bach.iter.",
+					"patching_rect" : [ 13.0, 37.0, 457.0, 21.0 ],
+					"text" : "By virtue of the visibility rules, setting up recursive functions is straightforward.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-27",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 157.5, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-28",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 79.0, 37.0, 23.0 ],
+					"text" : "5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) ; $fact($x1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-29",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 109.5, 345.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) \\; $fact($x1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-5",
+					"linecount" : 6,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 360.0, 80.0, 233.0, 98.0 ],
+					"text" : "A classic example: implementation of factorial by recursion. The $fact function (that is, more precisely, the function held by the $fact variable) is available inside itself as it is defined in the scope of the caller."
 				}
 
 			}
@@ -204,7 +204,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: recursion, while+loop",
+					"text" : "See Also: bell+loop, scope",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -234,8 +234,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 268.0, 23.0 ],
-					"text" : "\"For\" loops: \"with\" clause attributes",
+					"patching_rect" : [ 6.0, 8.0, 82.0, 23.0 ],
+					"text" : "Recursion",
 					"varname" : "title"
 				}
 
@@ -249,7 +249,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, loop, for, condition, with, clause, attributes, maxdepth, unwrap, scalarmode, recursionmode, spikemode",
+					"text" : "Tags: bell, function, scope, recursion, recursive, factorial",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -258,29 +258,36 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-15", 0 ]
+					"destination" : [ "obj-29", 0 ],
+					"source" : [ "obj-28", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
-					"source" : [ "obj-17", 0 ]
+					"destination" : [ "obj-27", 0 ],
+					"source" : [ "obj-29", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-4", 0 ]
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-7", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
-					"source" : [ "obj-6", 0 ]
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-8", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-9", 0 ]
 				}
 
 			}

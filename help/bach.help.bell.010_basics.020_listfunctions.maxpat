@@ -88,7 +88,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "length($l1) * depth($l1) ",
+					"code" : "length($x1) * depth($x1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-43",
 					"linecount" : 2,
@@ -101,7 +101,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval length($l1) * depth($l1) @out m"
+					"text" : "bach.eval length($x1) * depth($x1) @out m"
 				}
 
 			}
@@ -142,7 +142,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "length(flat($l1)) ",
+					"code" : "length(flat($x1)) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-39",
 					"linecount" : 2,
@@ -155,7 +155,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval length(flat($l1)) @out m"
+					"text" : "bach.eval length(flat($x1)) @out m"
 				}
 
 			}
@@ -196,7 +196,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "flat($l1) ",
+					"code" : "flat($x1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-35",
 					"maxclass" : "newobj",
@@ -208,7 +208,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval flat($l1) @out m"
+					"text" : "bach.eval flat($x1) @out m"
 				}
 
 			}
@@ -249,7 +249,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "length($l1) ",
+					"code" : "length($x1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
@@ -261,7 +261,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval length($l1) @out m"
+					"text" : "bach.eval length($x1) @out m"
 				}
 
 			}
@@ -276,7 +276,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 262.0, 110.5, 287.0, 54.0 ],
-					"text" : "This is why the $l1 form is used in bach.eval: the idea is that we're not referring to single items, but to whole lists."
+					"text" : "This is why the $x1 form is used in bach.eval: the idea is that we're not referring to single items, but to whole lists."
 				}
 
 			}

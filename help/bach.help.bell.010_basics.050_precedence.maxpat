@@ -77,7 +77,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "10 ($l1 + 2) 20 ",
+					"code" : "10 ($x1 + 2) 20 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-66",
 					"maxclass" : "newobj",
@@ -89,7 +89,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval 10 ($l1 + 2) 20 @out m"
+					"text" : "bach.eval 10 ($x1 + 2) 20 @out m"
 				}
 
 			}
@@ -133,7 +133,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "(10 $l1) + (2 20) ",
+					"code" : "(10 $x1) + (2 20) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-62",
 					"maxclass" : "newobj",
@@ -145,7 +145,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval (10 $l1) + (2 20) @out m"
+					"text" : "bach.eval (10 $x1) + (2 20) @out m"
 				}
 
 			}
@@ -189,7 +189,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "10 $l1 + 2 20 ",
+					"code" : "10 $x1 + 2 20 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-58",
 					"maxclass" : "newobj",
@@ -201,7 +201,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval 10 $l1 + 2 20 @out m"
+					"text" : "bach.eval 10 $x1 + 2 20 @out m"
 				}
 
 			}
@@ -230,7 +230,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "(2+3)*$l1 ",
+					"code" : "(2+3)*$x1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
@@ -242,7 +242,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval (2+3)*$l1 @out m"
+					"text" : "bach.eval (2+3)*$x1 @out m"
 				}
 
 			}
@@ -286,7 +286,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "2+3*$l1 ",
+					"code" : "2+3*$x1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
@@ -298,7 +298,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval 2+3*$l1 @out m"
+					"text" : "bach.eval 2+3*$x1 @out m"
 				}
 
 			}

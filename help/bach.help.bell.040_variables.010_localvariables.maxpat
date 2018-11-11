@@ -92,7 +92,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$side = $l1 ; $area = $side * $side ; $area ",
+					"code" : "$side = $x1 ; $area = $side * $side ; $area ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"linecount" : 3,
@@ -105,7 +105,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $side = $l1 \\; $area = $side * $side \\; $area @out m"
+					"text" : "bach.eval $side = $x1 \\; $area = $side * $side \\; $area @out m"
 				}
 
 			}
@@ -119,7 +119,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 14.0, 205.0, 517.5, 79.0 ],
-					"text" : "The name of a local variable, after the dollar sign, must start with a letter or an underscore, and the following characters can be letters, underscores or numbers.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$l<N>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, where <N> is any non-negative integer.",
+					"text" : "The name of a local variable, after the dollar sign, must start with a letter or an underscore, and the following characters can be letters, underscores or numbers.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$x<n>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, where <N> is any non-negative integer.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -164,7 +164,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$c74 = $l1 ; $c74 ",
+					"code" : "$c74 = $x1 ; $c74 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
@@ -176,7 +176,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $c74 = $l1 \\; $c74 @out m"
+					"text" : "bach.eval $c74 = $x1 \\; $c74 @out m"
 				}
 
 			}

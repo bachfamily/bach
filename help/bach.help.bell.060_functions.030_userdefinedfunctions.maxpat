@@ -103,7 +103,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 307.0, 340.0, 284.0, 83.0 ],
-					"text" : "We define a function that multiplies by two the data it receives, and we assign the function to the local variable $double. Then, we call the function the variable refers to, passing it $l1 as its first (and only) argument."
+					"text" : "We define a function that multiplies by two the data it receives, and we assign the function to the local variable $double. Then, we call the function the variable refers to, passing it $x1 as its first (and only) argument."
 				}
 
 			}
@@ -132,7 +132,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$double = ($x -> $x*2) ; $double($l1) ",
+					"code" : "$double = ($x -> $x*2) ; $double($x1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-17",
 					"linecount" : 2,
@@ -145,7 +145,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $double = ($x -> $x*2) \\; $double($l1) @out m"
+					"text" : "bach.eval $double = ($x -> $x*2) \\; $double($x1) @out m"
 				}
 
 			}

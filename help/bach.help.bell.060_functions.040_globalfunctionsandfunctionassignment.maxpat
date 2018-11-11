@@ -91,7 +91,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2f($l1, 442) ",
+					"code" : "mc2f($x1, 442) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-20",
@@ -104,7 +104,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval mc2f($l1\\, 442) @out m"
+					"text" : "bach.eval mc2f($x1\\, 442) @out m"
 				}
 
 			}
@@ -148,7 +148,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2f($l1) ",
+					"code" : "mc2f($x1) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
@@ -161,7 +161,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval mc2f($l1) @out m"
+					"text" : "bach.eval mc2f($x1) @out m"
 				}
 
 			}
@@ -209,7 +209,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: global+variable",
+					"text" : "See Also: global+variable, auto+attribute",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

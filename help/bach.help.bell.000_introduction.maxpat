@@ -403,7 +403,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if length($l1) > length($l2) then $l1 else $l2 ",
+					"code" : "if length($x1) > length($x2) then $x1 else $x2 ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
@@ -416,7 +416,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if length($l1) > length($l2) then $l1 else $l2 @out m"
+					"text" : "bach.eval if length($x1) > length($x2) then $x1 else $x2 @out m"
 				}
 
 			}

@@ -101,7 +101,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "length(if $l1 == 10 then 6 6 6) ",
+					"code" : "length(if $x1 == 10 then 6 6 6) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
 					"linecount" : 2,
@@ -114,7 +114,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval length(if $l1 == 10 then 6 6 6) @out m"
+					"text" : "bach.eval length(if $x1 == 10 then 6 6 6) @out m"
 				}
 
 			}
@@ -206,7 +206,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 == 10 then length($l2) ",
+					"code" : "if $x1 == 10 then length($x2) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"linecount" : 2,
@@ -219,7 +219,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 == 10 then length($l2) @out m"
+					"text" : "bach.eval if $x1 == 10 then length($x2) @out m"
 				}
 
 			}
@@ -287,7 +287,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 == 10 then `bingo ",
+					"code" : "if $x1 == 10 then `bingo ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
@@ -299,7 +299,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 == 10 then `bingo @out m"
+					"text" : "bach.eval if $x1 == 10 then `bingo @out m"
 				}
 
 			}

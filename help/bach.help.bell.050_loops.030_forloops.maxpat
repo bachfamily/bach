@@ -106,7 +106,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $i in $l1 repeat print($i) ",
+					"code" : "for $i in $x1 repeat print($i) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"linecount" : 2,
@@ -119,7 +119,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $i in $l1 repeat print($i) @out m"
+					"text" : "bach.eval for $i in $x1 repeat print($i) @out m"
 				}
 
 			}

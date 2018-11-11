@@ -101,7 +101,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "(if $l1 == 10 then 3 else 6) + $l1 ",
+					"code" : "(if $x1 == 10 then 3 else 6) + $x1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
 					"linecount" : 2,
@@ -114,7 +114,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval (if $l1 == 10 then 3 else 6) + $l1 @out m"
+					"text" : "bach.eval (if $x1 == 10 then 3 else 6) + $x1 @out m"
 				}
 
 			}
@@ -206,7 +206,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 == 10 then length($l2) else length($l1) ",
+					"code" : "if $x1 == 10 then length($x2) else length($x1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"linecount" : 2,
@@ -219,7 +219,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 == 10 then length($l2) else length($l1) @out m"
+					"text" : "bach.eval if $x1 == 10 then length($x2) else length($x1) @out m"
 				}
 
 			}
@@ -287,7 +287,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 == 10 then `bingo else `bongo ",
+					"code" : "if $x1 == 10 then `bingo else `bongo ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"linecount" : 2,
@@ -300,7 +300,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 == 10 then `bingo else `bongo @out m"
+					"text" : "bach.eval if $x1 == 10 then `bingo else `bongo @out m"
 				}
 
 			}

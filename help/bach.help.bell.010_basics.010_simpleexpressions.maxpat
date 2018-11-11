@@ -95,7 +95,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 * $l2 ",
+					"code" : "$x1 * $x2 ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-15",
@@ -108,7 +108,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1 * $l2 @out m"
+					"text" : "bach.eval $x1 * $x2 @out m"
 				}
 
 			}
@@ -184,7 +184,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "sqrt(pow($l1, 2) + pow($l2, 2)) + $l3 ",
+					"code" : "sqrt(pow($x1, 2) + pow($x2, 2)) + $x3 ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-28",
@@ -198,7 +198,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval sqrt(pow($l1\\, 2) + pow($l2\\, 2)) + $l3 @out m"
+					"text" : "bach.eval sqrt(pow($x1\\, 2) + pow($x2\\, 2)) + $x3 @out m"
 				}
 
 			}
@@ -260,7 +260,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "sqrt($l1) + $l2 * 2 ",
+					"code" : "sqrt($x1) + $x2 * 2 ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
@@ -273,7 +273,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval sqrt($l1) + $l2 * 2 @out m"
+					"text" : "bach.eval sqrt($x1) + $x2 * 2 @out m"
 				}
 
 			}
@@ -320,7 +320,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 + $l2 + 1 ",
+					"code" : "$x1 + $x2 + 1 ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-3",
@@ -333,7 +333,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1 + $l2 + 1 @out m"
+					"text" : "bach.eval $x1 + $x2 + 1 @out m"
 				}
 
 			}
@@ -343,12 +343,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 9,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 278.0, 54.0, 313.0, 141.0 ],
-					"text" : "$l1, $l2 etc. are called input pseudovariables, and refer to the data the object receives from its inlets. (Spoiler: they can do more, but we'll talk about this later). \nexpr-style $i1 and $f1, and bach.expr-style $r1 and $x1 are also accepted, but for now they are simply aliases to $l1.\n$l1 actually means \"the list in the first inlet\" (hence the l): we'll see why in a moment."
+					"patching_rect" : [ 278.0, 68.5, 313.0, 112.0 ],
+					"text" : "$x1, $x2 etc. are called input pseudovariables, and refer to the data the object receives from its inlets. (Spoiler: they can do more, but we'll talk about this later). \nbell also supports bach.expr-style input pseudovariables like $i1, $r1, $f1 and $p1, but they are generally not recommended."
 				}
 
 			}

@@ -62,7 +62,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "print($l1, \"Half $l1:\" )/2 ",
+					"code" : "print($x1, \"Half $x1:\" )/2 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-8",
 					"linecount" : 2,
@@ -75,7 +75,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval print($l1\\, \"Half $l1:\" )/2 @out m"
+					"text" : "bach.eval print($x1\\, \"Half $x1:\" )/2 @out m"
 				}
 
 			}
@@ -119,7 +119,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "10*print(log10(print($l1*$l1, `Power: )), `Bels: ) ",
+					"code" : "10*print(log10(print($x1*$x1, `Power: )), `Bels: ) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"linecount" : 2,
@@ -132,7 +132,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval 10*print(log10(print($l1*$l1\\, `Power: ))\\, `Bels: ) @out m"
+					"text" : "bach.eval 10*print(log10(print($x1*$x1\\, `Power: ))\\, `Bels: ) @out m"
 				}
 
 			}
@@ -190,7 +190,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "print($l1)*2 ",
+					"code" : "print($x1)*2 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
@@ -202,7 +202,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval print($l1)*2 @out m"
+					"text" : "bach.eval print($x1)*2 @out m"
 				}
 
 			}

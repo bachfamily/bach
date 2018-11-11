@@ -119,7 +119,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "Choose($l2, $l3, @idx $l1) ",
+					"code" : "Choose($x2, $x3, @idx $x1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-2",
 					"maxclass" : "newobj",
@@ -131,7 +131,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Choose($l2\\, $l3\\, @idx $l1) @out m"
+					"text" : "bach.eval Choose($x2\\, $x3\\, @idx $x1) @out m"
 				}
 
 			}
@@ -178,7 +178,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: $l, dollar, $l1, $l<n>, argument",
+					"text" : "See Also: $l, dollar, $x1, $x<n>, argument",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

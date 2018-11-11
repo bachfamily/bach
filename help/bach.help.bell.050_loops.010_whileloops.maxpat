@@ -129,7 +129,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$i = 0 ; while $i < $l1 repeat print($i += 1) ",
+					"code" : "$i = 0 ; while $i < $x1 repeat print($i += 1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"linecount" : 2,
@@ -142,7 +142,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $i = 0 \\; while $i < $l1 repeat print($i += 1) @out m"
+					"text" : "bach.eval $i = 0 \\; while $i < $x1 repeat print($i += 1) @out m"
 				}
 
 			}

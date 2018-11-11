@@ -124,7 +124,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 == 10 then (if $l2 == 100 then `ooh else `yeah ) else `baby ",
+					"code" : "if $x1 == 10 then (if $x2 == 100 then `ooh else `yeah ) else `baby ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-22",
 					"linecount" : 2,
@@ -137,7 +137,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 == 10 then (if $l2 == 100 then `ooh else `yeah ) else `baby @out m"
+					"text" : "bach.eval if $x1 == 10 then (if $x2 == 100 then `ooh else `yeah ) else `baby @out m"
 				}
 
 			}
@@ -229,7 +229,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 == 10 then if $l2 == 100 then `ooh else `yeah ",
+					"code" : "if $x1 == 10 then if $x2 == 100 then `ooh else `yeah ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"linecount" : 3,
@@ -242,7 +242,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 == 10 then if $l2 == 100 then `ooh else `yeah @out m"
+					"text" : "bach.eval if $x1 == 10 then if $x2 == 100 then `ooh else `yeah @out m"
 				}
 
 			}
@@ -295,7 +295,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 == 10 then `ten else if $l1 == 20 then `twenty else `dunno ",
+					"code" : "if $x1 == 10 then `ten else if $x1 == 20 then `twenty else `dunno ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"linecount" : 3,
@@ -308,7 +308,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 == 10 then `ten else if $l1 == 20 then `twenty else `dunno @out m"
+					"text" : "bach.eval if $x1 == 10 then `ten else if $x1 == 20 then `twenty else `dunno @out m"
 				}
 
 			}

@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 72.0, 103.0, 617.0, 539.0 ],
+		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,94 +39,44 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-16",
+					"id" : "obj-14",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 385.0, 340.0, 81.0, 23.0 ],
-					"text" : "100 200 300"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-18",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 340.0, 77.0, 23.0 ],
-					"text" : "10 20 30 40"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-19",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 405.0, 369.5, 192.0, 54.0 ],
-					"text" : "Address variables in parallel iterations. This will get more interesting in a while, too."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-22",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 431.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "for $x $xaddr in $x1, $y $yaddr in $x2 repeat $res _= $x * $xaddr + $y * $yaddr ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-23",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 369.5, 392.0, 39.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $x $xaddr in $x1\\, $y $yaddr in $x2 repeat $res _= $x * $xaddr + $y * $yaddr @out m"
+					"patching_rect" : [ 13.0, 346.0, 50.0, 23.0 ],
+					"text" : "10"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-6",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 275.0, 210.0, 37.0, 23.0 ],
-					"text" : "1 2 3"
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 422.5, 98.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-1",
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"code" : "$fun = ($x -> ($x += 1 ; $x1 $x)) ; $fun($x1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-8",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 210.0, 77.0, 23.0 ],
-					"text" : "10 20 30 40"
+					"patching_rect" : [ 13.0, 374.5, 353.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $fun = ($x -> ($x += 1 \\; $x1 $x)) \\; $fun($x1) @out m"
 				}
 
 			}
@@ -135,43 +85,24 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-3",
-					"linecount" : 4,
+					"id" : "obj-9",
+					"linecount" : 9,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 318.0, 224.5, 241.0, 69.0 ],
-					"text" : "Parallel iterations are possible. In general, the for loop stops at the end of the shortest list, with one possible exception we'll meet shortly."
+					"patching_rect" : [ 372.0, 316.0, 225.0, 141.0 ],
+					"text" : "Named function arguments are seen by the function as variables and, as such, they can be modified. \nDoing this, on the other hand, doesn't modify the actual value of the argument as it is passed, which can still be accessed through the input pseudovariables."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-4",
+					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 291.0, 99.0, 23.0 ],
+					"patching_rect" : [ 13.0, 285.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "for $x in $x1, $y in $x2 repeat $res _= $x + $y ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-5",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 239.5, 282.0, 39.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $x in $x1\\, $y in $x2 repeat $res _= $x + $y @out m"
 				}
 
 			}
@@ -182,8 +113,28 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 44.0, 107.0, 23.0 ],
-					"text" : "100 300 500 700"
+					"patching_rect" : [ 13.0, 207.0, 37.0, 23.0 ],
+					"text" : "5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$myDiv = ($x, $y -> $x1 / $x2) ; $myDiv(@y 3, @x $x1 * 2) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-3",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 237.5, 353.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $myDiv = ($x\\, $y -> $x1 / $x2) \\; $myDiv(@y 3\\, @x $x1 * 2) @out m"
 				}
 
 			}
@@ -192,43 +143,86 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-21",
-					"linecount" : 7,
+					"id" : "obj-4",
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 334.0, 37.0, 245.0, 112.0 ],
-					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address.\nThe return value of the for loop is the value taken by the \"repeat\" clause at the end of the last iteration."
+					"patching_rect" : [ 375.0, 208.0, 218.0, 98.0 ],
+					"text" : "The argument order $x1 ... $x<n> refer to is that of the function definition, and doesn't depend on the order in which named parameters appear in the function call."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-17",
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-76",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 13.0, 37.0, 580.0, 50.0 ],
+					"text" : "The $x1 ... $x<n> input pseudovariables can be used in any function, where they refer to the corresponding argument. We call them pseudovariables because you can read them as if they were variables, but you can't assign new values to them.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-27",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 133.0, 99.0, 23.0 ],
+					"patching_rect" : [ 13.0, 173.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $data $address in $x1 repeat $res _= $data + $address ",
+					"id" : "obj-28",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 13.0, 95.0, 37.0, 23.0 ],
+					"text" : "5"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$myDiv = ($x, $y -> $x1 / $x2) ; $myDiv($x1 * 2, 3) ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-20",
+					"fontsize" : 13.0,
+					"id" : "obj-29",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 73.5, 310.0, 39.0 ],
+					"patching_rect" : [ 13.0, 125.5, 345.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $data $address in $x1 repeat $res _= $data + $address @out m"
+					"text" : "bach.eval $myDiv = ($x\\, $y -> $x1 / $x2) \\; $myDiv($x1 * 2\\, 3) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-5",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 360.0, 110.5, 237.0, 69.0 ],
+					"text" : "$x1 and $x2 in the $myDiv function body respectively refer to the first and second argument passed to the function."
 				}
 
 			}
@@ -241,7 +235,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: recursion, while+loop, condition",
+					"text" : "See Also: local+variable, casting+input+pseudovariable",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -271,8 +265,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 309.0, 23.0 ],
-					"text" : "\"For\" loops: address and parallel iteration",
+					"patching_rect" : [ 6.0, 8.0, 168.0, 23.0 ],
+					"text" : "Input pseudovariables",
 					"varname" : "title"
 				}
 
@@ -286,7 +280,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, loop, for, repeat, address, parallel, iteration",
+					"text" : "Tags: bell, function, dollar, input, pseudovariable, argument, position",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -295,57 +289,43 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
-					"source" : [ "obj-1", 0 ]
+					"destination" : [ "obj-8", 0 ],
+					"source" : [ "obj-14", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-23", 1 ],
-					"source" : [ "obj-16", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-23", 0 ],
-					"source" : [ "obj-18", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-20", 0 ],
+					"destination" : [ "obj-3", 0 ],
 					"source" : [ "obj-2", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-20", 0 ]
+					"destination" : [ "obj-29", 0 ],
+					"source" : [ "obj-28", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-22", 0 ],
-					"source" : [ "obj-23", 0 ]
+					"destination" : [ "obj-27", 0 ],
+					"source" : [ "obj-29", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-5", 0 ]
+					"destination" : [ "obj-1", 0 ],
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 1 ],
-					"source" : [ "obj-6", 0 ]
+					"destination" : [ "obj-6", 0 ],
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}

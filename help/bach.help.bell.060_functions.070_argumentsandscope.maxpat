@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 115.0, 131.0, 617.0, 539.0 ],
+		"rect" : [ 89.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -42,94 +42,12 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-8",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 289.75, 395.0, 163.0, 40.0 ],
-					"text" : "The above form is equivalent to this one."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-9",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 260.5, 363.0, 34.0, 23.0 ],
-					"text" : "5 50"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-14",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 12.5, 447.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 363.0, 49.0, 23.0 ],
-					"text" : "10 100"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "(print($x1) ; print($x2)) ; $x1 + $x2 ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-16",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 395.0, 267.0, 39.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval (print($x1) \\; print($x2)) \\; $x1 + $x2 @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
 					"id" : "obj-7",
-					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 289.75, 209.5, 260.0, 98.0 ],
-					"text" : "Simple, two-term sequences can be chained, so as to build longer sequences with more terms. Because ; is left-associative, the resulting behavior is intuitive: all the terms are evaluated, and the result of the last one is returned."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-6",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 247.5, 214.0, 34.0, 23.0 ],
-					"text" : "5 50"
+					"patching_rect" : [ 123.0, 434.0, 69.0, 25.0 ],
+					"text" : "Indeed."
 				}
 
 			}
@@ -139,39 +57,39 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.5, 298.0, 99.0, 23.0 ],
+					"patching_rect" : [ 15.0, 434.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-4",
+					"id" : "obj-5",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 214.0, 49.0, 23.0 ],
-					"text" : "10 100"
+					"patching_rect" : [ 15.0, 384.0, 50.0, 23.0 ],
+					"text" : "3"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "print($x1) ; print($x2) ; $x1 + $x2 ",
+					"code" : "$res = 100 ; $fun = GoodFunnel($res + $x1) ; $res $fun ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-5",
-					"linecount" : 2,
+					"fontsize" : 13.0,
+					"id" : "obj-6",
 					"maxclass" : "newobj",
-					"numinlets" : 2,
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 246.0, 254.0, 39.0 ],
+					"patching_rect" : [ 15.0, 409.0, 567.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval print($x1) \\; print($x2) \\; $x1 + $x2 @out m"
+					"text" : "bach.eval $res = 100 \\; $fun = GoodFunnel($res + $x1) \\; $res $fun @out m"
 				}
 
 			}
@@ -180,54 +98,141 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-87",
-					"linecount" : 6,
+					"id" : "obj-2",
+					"linecount" : 8,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 315.75, 67.0, 251.0, 98.0 ],
-					"text" : "; is useful only when the first argument causes side effects. For now, the only situation where we can use it meaningfully is with the print function, but as soon as variables come into play its role will become clearer."
+					"patching_rect" : [ 356.0, 275.0, 235.0, 127.0 ],
+					"text" : "This is the correct way to do it: all the variables used in the function are declared as arguments.\nIn this way, $res inside GoodFunnel will refer to a variable different from $res outside it, and there will not be any data corruption or other unwanted side effects."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-65",
+					"code" : "GoodFunnel = ($l, $x, $y, $res -> for $x $y in $l repeat $res _= [$x $y]) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-1",
+					"linecount" : 3,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 311.5, 353.0, 54.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval GoodFunnel = ($l\\, $x\\, $y\\, $res -> for $x $y in $l repeat $res _= [$x $y]) @auto 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-19",
+					"linecount" : 6,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 251.0, 172.0, 328.0, 98.0 ],
+					"text" : "Let's pretend to inadvertently use a variable named $res, without considering (or even knowing) that it is used inside BadFunnel. Thus, both the result of the function and the value of $res after calling it are not what we probably expect, as the function has both read and modified $res."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-20",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.5, 137.0, 99.0, 23.0 ],
+					"patching_rect" : [ 15.0, 254.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-61",
+					"id" : "obj-21",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 72.0, 49.0, 23.0 ],
-					"text" : "10 100"
+					"patching_rect" : [ 15.0, 164.0, 50.0, 23.0 ],
+					"text" : "3"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "print($x1) ; $x1 * 2 ",
+					"code" : "$res = 100 ; $fun = BadFunnel($res + $x1) ; $res $fun ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-59",
+					"fontsize" : 13.0,
+					"id" : "obj-22",
+					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 104.0, 298.0, 24.0 ],
+					"patching_rect" : [ 15.0, 194.0, 229.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval print($x1) \\; $x1 * 2 @out m"
+					"text" : "bach.eval $res = 100 \\; $fun = BadFunnel($res + $x1) \\; $res $fun @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-18",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 334.0, 99.0, 261.0, 69.0 ],
+					"text" : "This function needs three local variables for doing its own business: $x, $y and $res, but doesn't declare them as parameters. This is looking for trouble."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-4",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 33.0, 585.0, 65.0 ],
+					"text" : "Named arguments of functions hide the visibility of variables of the same name from the calling function.\nIf a user-defined functions needs private variables independent from those of the caller, declaring them as arguments is the way to go.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "BadFunnel = ($l -> for $x $y in $l repeat $res _= [$x $y]) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-17",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 114.0, 314.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval BadFunnel = ($l -> for $x $y in $l repeat $res _= [$x $y]) @auto 1"
 				}
 
 			}
@@ -240,7 +245,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: precedence, return+value",
+					"text" : "See Also: ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -270,8 +275,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 79.0, 23.0 ],
-					"text" : "Sequence",
+					"patching_rect" : [ 6.0, 8.0, 166.0, 23.0 ],
+					"text" : "Arguments and scope",
 					"varname" : "title"
 				}
 
@@ -281,84 +286,43 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, sequence, semicolon",
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
+					"text" : "Tags: bell, function, user, defined, variable, local, assignment, scope, visibility, dynamic, scoping, propagation, argument",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 504.0, 21.0 ],
-					"text" : "The ; operator evaluates both its arguments, and returns the result of the second one. ",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
-					"source" : [ "obj-15", 0 ]
+					"destination" : [ "obj-22", 0 ],
+					"source" : [ "obj-21", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-14", 0 ],
-					"source" : [ "obj-16", 0 ]
+					"destination" : [ "obj-20", 0 ],
+					"source" : [ "obj-22", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
-					"source" : [ "obj-4", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-3", 0 ],
+					"destination" : [ "obj-6", 0 ],
 					"source" : [ "obj-5", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-65", 0 ],
-					"source" : [ "obj-59", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-5", 1 ],
+					"destination" : [ "obj-3", 0 ],
 					"source" : [ "obj-6", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-59", 0 ],
-					"source" : [ "obj-61", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-16", 1 ],
-					"source" : [ "obj-9", 0 ]
 				}
 
 			}

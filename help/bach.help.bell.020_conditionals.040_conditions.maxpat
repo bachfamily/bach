@@ -122,7 +122,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 != null && $l1 != 0 then `true else `false ",
+					"code" : "if $x1 != null && $x1 != 0 then `true else `false ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-36",
 					"linecount" : 2,
@@ -135,7 +135,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 != null && $l1 != 0 then `true else `false @out m"
+					"text" : "bach.eval if $x1 != null && $x1 != 0 then `true else `false @out m"
 				}
 
 			}
@@ -269,7 +269,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $l1 then `true else `false ",
+					"code" : "if $x1 then `true else `false ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"linecount" : 2,
@@ -282,7 +282,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if $l1 then `true else `false @out m"
+					"text" : "bach.eval if $x1 then `true else `false @out m"
 				}
 
 			}
@@ -335,7 +335,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 == 10 ",
+					"code" : "$x1 == 10 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
@@ -347,7 +347,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1 == 10 @out m"
+					"text" : "bach.eval $x1 == 10 @out m"
 				}
 
 			}

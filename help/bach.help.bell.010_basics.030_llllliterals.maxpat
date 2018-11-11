@@ -77,7 +77,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 + C2 ",
+					"code" : "$x1 + C2 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"maxclass" : "newobj",
@@ -89,7 +89,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1 + C2 @out m"
+					"text" : "bach.eval $x1 + C2 @out m"
 				}
 
 			}
@@ -119,7 +119,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 320.0, 87.5, 231.0, 40.0 ],
-					"text" : "The length of the llll 1 3 5, that is 3, is added to $l1."
+					"text" : "The length of the llll 1 3 5, that is 3, is added to $x1."
 				}
 
 			}
@@ -148,7 +148,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "length(`one 2 3 4 `five ) + $l1 ",
+					"code" : "length(`one 2 3 4 `five ) + $x1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-39",
 					"linecount" : 2,
@@ -161,7 +161,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval length(`one 2 3 4 `five ) + $l1 @out m"
+					"text" : "bach.eval length(`one 2 3 4 `five ) + $x1 @out m"
 				}
 
 			}
@@ -190,7 +190,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "flat(1 [2 3] 4) + $l1 ",
+					"code" : "flat(1 [2 3] 4) + $x1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-35",
 					"maxclass" : "newobj",
@@ -202,7 +202,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval flat(1 [2 3] 4) + $l1 @out m"
+					"text" : "bach.eval flat(1 [2 3] 4) + $x1 @out m"
 				}
 
 			}
@@ -231,7 +231,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "length(1 3 5) + $l1 ",
+					"code" : "length(1 3 5) + $x1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
@@ -243,7 +243,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval length(1 3 5) + $l1 @out m"
+					"text" : "bach.eval length(1 3 5) + $x1 @out m"
 				}
 
 			}

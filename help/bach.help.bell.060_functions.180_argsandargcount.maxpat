@@ -188,7 +188,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$choose = ($x, $y, $z, $n -> $args($n)) ; $choose(10, 20, 30, $l1) ",
+					"code" : "$choose = ($x, $y, $z, $n -> $args($n)) ; $choose(10, 20, 30, $x1) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
@@ -202,7 +202,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $choose = ($x\\, $y\\, $z\\, $n -> $args($n)) \\; $choose(10\\, 20\\, 30\\, $l1) @out m"
+					"text" : "bach.eval $choose = ($x\\, $y\\, $z\\, $n -> $args($n)) \\; $choose(10\\, 20\\, 30\\, $x1) @out m"
 				}
 
 			}
@@ -215,7 +215,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: $l, dollar, $l1, $l<n>",
+					"text" : "See Also: $l, dollar, $x1, $x<n>",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

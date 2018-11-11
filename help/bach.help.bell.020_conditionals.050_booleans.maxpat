@@ -147,7 +147,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "print($l1) < 5 || print($l1) > 15 ",
+					"code" : "print($x1) < 5 || print($x1) > 15 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-51",
 					"linecount" : 2,
@@ -160,7 +160,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval print($l1) < 5 || print($l1) > 15 @out m"
+					"text" : "bach.eval print($x1) < 5 || print($x1) > 15 @out m"
 				}
 
 			}
@@ -213,7 +213,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "print($l1) > 5 && print($l1) < 15 ",
+					"code" : "print($x1) > 5 && print($x1) < 15 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-45",
 					"linecount" : 2,
@@ -226,7 +226,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval print($l1) > 5 && print($l1) < 15 @out m"
+					"text" : "bach.eval print($x1) > 5 && print($x1) < 15 @out m"
 				}
 
 			}
@@ -267,7 +267,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 < 5 || $l1 > 15 ",
+					"code" : "$x1 < 5 || $x1 > 15 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-40",
 					"linecount" : 2,
@@ -280,7 +280,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1 < 5 || $l1 > 15 @out m"
+					"text" : "bach.eval $x1 < 5 || $x1 > 15 @out m"
 				}
 
 			}
@@ -336,7 +336,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 > 5 && $l1 < 15 ",
+					"code" : "$x1 > 5 && $x1 < 15 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"linecount" : 2,
@@ -349,7 +349,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $l1 > 5 && $l1 < 15 @out m"
+					"text" : "bach.eval $x1 > 5 && $x1 < 15 @out m"
 				}
 
 			}

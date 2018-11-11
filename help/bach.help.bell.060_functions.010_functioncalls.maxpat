@@ -77,7 +77,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "sqrt ($l1) ",
+					"code" : "sqrt ($x1) ",
 					"color" : [ 0.92549, 0.364706, 0.341176, 1.0 ],
 					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
@@ -90,7 +90,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval sqrt ($l1) @out m"
+					"text" : "bach.eval sqrt ($x1) @out m"
 				}
 
 			}
@@ -134,7 +134,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "atan2($l1, 0) ",
+					"code" : "atan2($x1, 0) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-18",
 					"maxclass" : "newobj",
@@ -146,7 +146,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval atan2($l1\\, 0) @out m"
+					"text" : "bach.eval atan2($x1\\, 0) @out m"
 				}
 
 			}
@@ -202,7 +202,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "atan2($l1, $l2) ",
+					"code" : "atan2($x1, $x2) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
@@ -214,7 +214,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval atan2($l1\\, $l2) @out m"
+					"text" : "bach.eval atan2($x1\\, $x2) @out m"
 				}
 
 			}
@@ -258,7 +258,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "sqrt($l1) ",
+					"code" : "sqrt($x1) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-17",
 					"maxclass" : "newobj",
@@ -270,7 +270,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval sqrt($l1) @out m"
+					"text" : "bach.eval sqrt($x1) @out m"
 				}
 
 			}

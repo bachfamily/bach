@@ -74,7 +74,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 % Modulo == $l2 % Modulo ",
+					"code" : "$x1 % Modulo == $x2 % Modulo ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-9",
 					"maxclass" : "newobj",
@@ -87,7 +87,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.diff @lambda $l1 % Modulo == $l2 % Modulo @out m"
+					"text" : "bach.diff @lambda $x1 % Modulo == $x2 % Modulo @out m"
 				}
 
 			}
@@ -140,7 +140,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$l1 % Modulo == $l2 % Modulo ",
+					"code" : "$x1 % Modulo == $x2 % Modulo ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
@@ -153,7 +153,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.intersection @lambda $l1 % Modulo == $l2 % Modulo @out m"
+					"text" : "bach.intersection @lambda $x1 % Modulo == $x2 % Modulo @out m"
 				}
 
 			}
@@ -186,7 +186,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "Modulo = $l1 ||| 1200 ",
+					"code" : "Modulo = $x1 ||| 1200 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
@@ -198,7 +198,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Modulo = $l1 ||| 1200 @auto 1"
+					"text" : "bach.eval Modulo = $x1 ||| 1200 @auto 1"
 				}
 
 			}

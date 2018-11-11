@@ -77,7 +77,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "Greet( \"Good Morning,\" , $l1, $l2, $l3) ",
+					"code" : "Greet( \"Good Morning,\" , $x1, $x2, $x3) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
@@ -89,7 +89,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Greet( \"Good Morning,\" \\, $l1\\, $l2\\, $l3) @out m"
+					"text" : "bach.eval Greet( \"Good Morning,\" \\, $x1\\, $x2\\, $x3) @out m"
 				}
 
 			}
@@ -119,7 +119,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "Greet(`Hi , $l1, $l2) ",
+					"code" : "Greet(`Hi , $x1, $x2) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-21",
 					"linecount" : 2,
@@ -132,7 +132,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Greet(`Hi \\, $l1\\, $l2) @out m"
+					"text" : "bach.eval Greet(`Hi \\, $x1\\, $x2) @out m"
 				}
 
 			}
@@ -191,7 +191,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: $l, dollar, $l1, $l<n>, argument, $args, $argcount",
+					"text" : "See Also: $l, dollar, $x1, $x<n>, argument, $args, $argcount",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

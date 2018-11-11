@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 316.0, 145.0, 617.0, 539.0 ],
+		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -40,58 +40,14 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubblepoint" : 0.62,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-5",
-					"linecount" : 8,
+					"id" : "obj-1",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 189.5, 347.0, 402.0, 127.0 ],
-					"text" : "The rot function has other arguments, which we had left to their defaults so far: mindepth and maxdepth.\nHere we see a meaningful way to use named arguments: if we want to cherrypick the arguments that we want to set, especially in functions that have many, and leave the other to their defaults, we can set them by name, and even mix them with arguments passed by position: the only rule is that all the arguments passed by position must come before."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-6",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 374.0, 120.0, 23.0 ],
-					"text" : "a b c d e [1 2 3 4 5]"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-7",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 451.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "rot($x1 @maxdepth -1) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-20",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 405.0, 173.0, 39.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval rot($x1 @maxdepth -1) @out m"
+					"patching_rect" : [ 60.0, 359.0, 128.0, 25.0 ],
+					"text" : "Click repeatedly..."
 				}
 
 			}
@@ -100,37 +56,71 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 3,
+					"id" : "obj-18",
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 231.0, 288.0, 283.0, 54.0 ],
-					"text" : "Function arguments have defaults. The shift argument of rot, for instance, defaults to 1, so if that's what we want we can omit it."
+					"patching_rect" : [ 395.0, 360.0, 196.0, 98.0 ],
+					"text" : "Another fun, but hardly useful, fact: functions can return functions.\nBy the way, here's how we define and call functions with no arguments."
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-19",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 152.0, 120.0, 23.0 ],
-					"text" : "a b c d e [1 2 3 4 5]"
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 435.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-8",
+					"id" : "obj-20",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 272.0, 120.0, 23.0 ],
-					"text" : "a b c d e [1 2 3 4 5]"
+					"patching_rect" : [ 6.0, 360.0, 48.0, 23.0 ],
+					"text" : "3.1415"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$funfun = (-> (cos sin):random(1, 2)) ; $funfun()($x1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-21",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 389.5, 384.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $funfun = (-> (cos sin):random(1\\, 2)) \\; $funfun()($x1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-8",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 380.0, 272.5, 211.0, 54.0 ],
+					"text" : "Built-in functions can be treated as any other value, and assigned to variables as well."
 				}
 
 			}
@@ -140,86 +130,8 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 335.0, 99.0, 23.0 ],
+					"patching_rect" : [ 6.0, 320.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "rot($x1) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-18",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 303.0, 204.0, 24.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval rot($x1) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-1",
-					"linecount" : 5,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 219.0, 162.0, 318.0, 83.0 ],
-					"text" : "But function arguments also have names that can be used to refer to them without worrying of their order. The syntax for passing arguments by name is reminescent of Max's object box arguments (the comma is optional)."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-3",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 234.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "rot(@shift 2, @llll $x1) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-4",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 184.0, 196.0, 39.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval rot(@shift 2\\, @llll $x1) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"linecount" : 6,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 246.0, 42.0, 342.0, 98.0 ],
-					"text" : "The most basic way to pass arguments to a function is by position. The rot function, for instance, rotates the list passed as its first argument by a number of steps passed as its second argument. \nSo, the order of the arguments determines their meaning."
 				}
 
 			}
@@ -230,37 +142,142 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 42.0, 120.0, 23.0 ],
-					"text" : "a b c d e [1 2 3 4 5]"
+					"patching_rect" : [ 6.0, 258.0, 48.0, 23.0 ],
+					"text" : "3.1415"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"code" : "$cosine = cos ; $cosine($x1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
 					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 287.5, 361.0, 24.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $cosine = cos \\; $cosine($x1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-7",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 114.0, 99.0, 23.0 ],
+					"patching_rect" : [ 361.0, 159.5, 217.0, 69.0 ],
+					"text" : "Here $funlist is assigned not just a function, but a llll of functions. When we call it, both functions are applied in sequence."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 224.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "rot($x1, 2) ",
+					"id" : "obj-5",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 142.0, 29.5, 23.0 ],
+					"text" : "10"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$funlist = ($x->$x*2) ($x->$x*3) ; $funlist($x1) ",
 					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-6",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 174.5, 345.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $funlist = ($x->$x*2) ($x->$x*3) \\; $funlist($x1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-3",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 107.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 6.0, 48.0, 48.0, 23.0 ],
+					"text" : "10 100"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-14",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 272.0, 61.5, 330.0, 54.0 ],
+					"text" : "Here we call directly a function literal, without assigning it to a variable. Though this can hardly be useful, it is possible by virtue of how functions work."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "($x->$x*2)($x1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 77.0, 228.0, 24.0 ],
+					"patching_rect" : [ 6.0, 76.5, 259.0, 24.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval rot($x1\\, 2) @out m"
+					"text" : "bach.eval ($x->$x*2)($x1) @out m"
 				}
 
 			}
@@ -273,7 +290,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: ",
+					"text" : "See Also: local+variable, lambda",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -303,8 +320,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 232.0, 23.0 ],
-					"text" : "Named arguments and defaults",
+					"patching_rect" : [ 6.0, 8.0, 99.0, 23.0 ],
+					"text" : "Function fun",
 					"varname" : "title"
 				}
 
@@ -318,7 +335,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, function, built, in, rot, argument, name, named, position, at, default",
+					"text" : "Tags: bell, function, literal, user, defined, argument",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -327,57 +344,57 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
+					"destination" : [ "obj-16", 0 ],
 					"source" : [ "obj-15", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
-					"source" : [ "obj-17", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-9", 0 ],
-					"source" : [ "obj-18", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-19", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-20", 0 ]
+					"source" : [ "obj-16", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-3", 0 ],
-					"source" : [ "obj-4", 0 ]
+					"source" : [ "obj-17", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-20", 0 ],
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-21", 0 ],
+					"source" : [ "obj-20", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-19", 0 ],
+					"source" : [ "obj-21", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-6", 0 ],
+					"source" : [ "obj-5", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
 					"source" : [ "obj-6", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-18", 0 ],
-					"source" : [ "obj-8", 0 ]
 				}
 
 			}

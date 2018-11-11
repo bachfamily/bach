@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 135.0, 140.0, 617.0, 539.0 ],
+		"rect" : [ 89.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -42,84 +42,56 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-3",
-					"linecount" : 2,
+					"id" : "obj-19",
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 277.0, 266.0, 187.0, 40.0 ],
-					"text" : "... or not, in case you prefer a more Max-like look!"
+					"patching_rect" : [ 323.0, 325.5, 268.0, 69.0 ],
+					"text" : "Here, $plusIncrementedY not only reads the value of $y, but modifies it as well. In fact, at the end of the computation $y holds the value 2."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-4",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 232.0, 121.0, 23.0 ],
-					"text" : "10 20 [30 40] 50 60"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-5",
+					"id" : "obj-20",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 321.0, 99.0, 23.0 ],
+					"patching_rect" : [ 15.0, 396.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) ",
+					"id" : "obj-21",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 303.0, 50.0, 23.0 ],
+					"text" : "3"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$plusIncrementedY = ($x -> $x + ($y += 1)) ; $y = 1 ; $plusIncrementedY($x1) $y ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-6",
+					"fontsize" : 13.0,
+					"id" : "obj-22",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 259.0, 254.0, 54.0 ],
+					"patching_rect" : [ 15.0, 333.0, 299.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 5,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 381.0, 178.0, 79.0 ],
-					"text" : "maxdepth (defaults to 1)\nscalarmode (defaults to 1)\nunwrap (defaults to 0)\nrecursionmode (defaults to 0)\nspikemode (defaults to 0)",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-1",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 358.0, 472.0, 21.0 ],
-					"text" : "The attributes of the \"for\" loop correspond exactly to those of bach.iter. They are:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"text" : "bach.eval $plusIncrementedY = ($x -> $x + ($y += 1)) \\; $y = 1 \\; $plusIncrementedY($x1) $y @out m"
 				}
 
 			}
@@ -128,25 +100,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"linecount" : 2,
+					"id" : "obj-18",
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 277.0, 126.0, 177.0, 40.0 ],
-					"text" : "Multiple attributes can be separated by commas..."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 99.0, 121.0, 23.0 ],
-					"text" : "10 20 [30 40] 50 60"
+					"patching_rect" : [ 317.0, 165.0, 275.0, 98.0 ],
+					"text" : "The function assigned to $plusY (which we will simply refer to as $plusY from now on) reads the value of the $y variable, which is defined in the main function. When $plusY is called from the main function, it gains access to $y."
 				}
 
 			}
@@ -156,27 +116,20 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 188.0, 99.0, 23.0 ],
+					"patching_rect" : [ 15.0, 241.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1, @unwrap 1 repeat print($x [$addr]) ",
-					"fontname" : "Menlo Regular",
-					"id" : "obj-17",
-					"linecount" : 3,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 126.0, 254.0, 54.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1\\, @unwrap 1 repeat print($x [$addr]) @out m"
+					"patching_rect" : [ 15.0, 165.0, 50.0, 23.0 ],
+					"text" : "3"
 				}
 
 			}
@@ -184,14 +137,34 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"linecount" : 2,
+					"id" : "obj-4",
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 39.0, 536.0, 36.0 ],
-					"text" : "The \"with\" clause of the for loop allows fine-tuning the iteration behavior, through the use of attributes corresponding to those of bach.iter.",
+					"patching_rect" : [ 6.0, 36.0, 585.0, 108.0 ],
+					"text" : "Saying that the visibility of local variables is limited to the object is inaccurate when functions come into play. Actually, the visibility of a local variable propagates to all the functions that are called by a function in which the variable itself is visible, with the exception of the functions declaring a parameter with the same name. We call this dynamic scoping.\nTo really make the concept solid, let's define the main function of an object as the portion of code that is not contained in any function definition (because, as a matter of fact, it is a function, whose arguments can be set from the outside).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$plusY = ($x -> $x + $y) ; $y = 1 ; $plusY($x1) ",
+					"fontname" : "Menlo Regular",
+					"fontsize" : 13.0,
+					"id" : "obj-17",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 195.0, 298.0, 39.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $plusY = ($x -> $x + $y) \\; $y = 1 \\; $plusY($x1) @out m"
 				}
 
 			}
@@ -204,7 +177,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: recursion, while+loop",
+					"text" : "See Also: ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -234,8 +207,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 268.0, 23.0 ],
-					"text" : "\"For\" loops: \"with\" clause attributes",
+					"patching_rect" : [ 6.0, 8.0, 179.0, 23.0 ],
+					"text" : "Scope of local variables",
 					"varname" : "title"
 				}
 
@@ -249,7 +222,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, loop, for, condition, with, clause, attributes, maxdepth, unwrap, scalarmode, recursionmode, spikemode",
+					"text" : "Tags: bell, function, user, defined, variable, local, assignment, scope, visibility, dynamic, scoping, propagation",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -258,13 +231,6 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-15", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-16", 0 ],
 					"source" : [ "obj-17", 0 ]
 				}
@@ -272,15 +238,22 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-4", 0 ]
+					"destination" : [ "obj-22", 0 ],
+					"source" : [ "obj-21", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
-					"source" : [ "obj-6", 0 ]
+					"destination" : [ "obj-20", 0 ],
+					"source" : [ "obj-22", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}

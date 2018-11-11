@@ -101,7 +101,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x = 1 ; \r\nwhile $x <= $l1 repeat (\r\n\t$row = null ; \r\n\t$y = 1 ; \r\n\twhile $y <= $l1 repeat (\r\n\t\t$row _= $x * $y ; \r\n\t\t$y += 1) ; \r\n\t$res = $res [$row] ; \r\n\t$x += 1\r\n\t) ; \r\n$res ",
+					"code" : "$x = 1 ; \r\nwhile $x <= $x1 repeat (\r\n\t$row = null ; \r\n\t$y = 1 ; \r\n\twhile $y <= $x1 repeat (\r\n\t\t$row _= $x * $y ; \r\n\t\t$y += 1) ; \r\n\t$res = $res [$row] ; \r\n\t$x += 1\r\n\t) ; \r\n$res ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
@@ -170,7 +170,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fibo = 1 1 ; while length($fibo) < $l1 repeat $fibo _= $fibo:-1 + $fibo:-2 ",
+					"code" : "$fibo = 1 1 ; while length($fibo) < $x1 repeat $fibo _= $fibo:-1 + $fibo:-2 ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
@@ -184,7 +184,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $fibo = 1 1 \\; while length($fibo) < $l1 repeat $fibo _= $fibo:-1 + $fibo:-2 @out m"
+					"text" : "bach.eval $fibo = 1 1 \\; while length($fibo) < $x1 repeat $fibo _= $fibo:-1 + $fibo:-2 @out m"
 				}
 
 			}
@@ -240,7 +240,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$i = $fact = 1 ; while print($i) < $l1 repeat $fact *= $i += 1 ",
+					"code" : "$i = $fact = 1 ; while print($i) < $x1 repeat $fact *= $i += 1 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"linecount" : 3,
@@ -253,7 +253,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $i = $fact = 1 \\; while print($i) < $l1 repeat $fact *= $i += 1 @out m"
+					"text" : "bach.eval $i = $fact = 1 \\; while print($i) < $x1 repeat $fact *= $i += 1 @out m"
 				}
 
 			}

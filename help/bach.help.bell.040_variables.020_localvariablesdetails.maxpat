@@ -77,7 +77,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$a = $b = $l1 ; $a $b ",
+					"code" : "$a = $b = $x1 ; $a $b ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-22",
 					"maxclass" : "newobj",
@@ -89,7 +89,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $a = $b = $l1 \\; $a $b @out m"
+					"text" : "bach.eval $a = $b = $x1 \\; $a $b @out m"
 				}
 
 			}
@@ -133,7 +133,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "($radius = $l1 / 2) * $radius * pi ",
+					"code" : "($radius = $x1 / 2) * $radius * pi ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-17",
 					"maxclass" : "newobj",
@@ -145,7 +145,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval ($radius = $l1 / 2) * $radius * pi @out m"
+					"text" : "bach.eval ($radius = $x1 / 2) * $radius * pi @out m"
 				}
 
 			}
@@ -189,7 +189,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$radius = $l1 / 2 ",
+					"code" : "$radius = $x1 / 2 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
@@ -201,7 +201,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $radius = $l1 / 2 @out m"
+					"text" : "bach.eval $radius = $x1 / 2 @out m"
 				}
 
 			}
