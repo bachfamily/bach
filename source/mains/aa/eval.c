@@ -297,6 +297,10 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
             // as this allows us to figure out where the object attributes begin
             codableobj_getCodeFromAtomsWithSeparators((t_codableobj *) x, ac, av);
             err = codableobj_buildAst((t_codableobj *) x, &codeac, &dataInlets, &dataOutlets, &directInlets, &directOutlets);
+            
+            if (dataInlets < 1 || err)
+                dataInlets = 1;
+            
             if (err == MAX_ERR_NONE) {
                 if (codeac < 0) codeac = ac;
                 
@@ -318,9 +322,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
             attr_args_process(x, ac - codeac, av + codeac);
         }
 
-        if (x->n_dataInlets < 1 || err)
-            x->n_dataInlets = 1;
-        
+        /*
         if (dataInlets >= 0)
             x->n_dataInlets = dataInlets;
         if (dataOutlets >= 0)
@@ -329,11 +331,20 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
             x->n_directInlets = directInlets;
         if (directOutlets >= 0)
             x->n_directOutlets = directOutlets;
+         */
+        
+        if (dataInlets > x->n_dataInlets)
+            x->n_dataInlets = dataInlets;
+        if (dataOutlets > x->n_dataOutlets)
+            x->n_dataOutlets = dataOutlets;
+        if (directInlets > x->n_directInlets)
+            x->n_directInlets = directInlets;
+        if (directOutlets > x->n_directOutlets)
+            x->n_directOutlets = directOutlets;
         
         CLIP_ASSIGN(x->n_dataOutlets, 0, 127);
         CLIP_ASSIGN(x->n_directOutlets, 0, 126);
 
-        
         char outlet_str[256];
         long totOutlets = x->n_dataOutlets + x->n_directOutlets;
         for (i = 0; i <= totOutlets; i++)
