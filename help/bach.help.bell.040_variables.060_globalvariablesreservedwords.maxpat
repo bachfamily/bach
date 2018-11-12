@@ -56,12 +56,13 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
-					"linecount" : 11,
+					"linecount" : 12,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 485.0, 95.0, 87.0, 166.0 ],
-					"text" : "sort\rsqrt\rsubs\rsymdiff\rtan\rtanh\rthin\rtrans\rtrunc\runion\rwrap",
+					"patching_rect" : [ 485.0, 95.0, 87.0, 181.0 ],
+					"presentation_linecount" : 12,
+					"text" : "slice\nsort\rsqrt\rsubs\rsymdiff\rtan\rtanh\rthin\rtrans\rtrunc\runion\rwrap",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -76,7 +77,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 385.0, 95.0, 87.0, 355.0 ],
-					"text" : "max\rmin\rminmax\rmod\rnth\rnum\roctave\rperm\rpitch\rpow\rpow\rprimeser\rrandom\rrat\rreduce\rrev\rright\rrot\rround\rscramble\rsgn\rsin\rsinh\rslice",
+					"presentation_linecount" : 24,
+					"text" : "map\nmax\rmin\rminmax\rmod\rnth\rnum\roctave\noutlet\rperm\rpitch\rpow\rprimeser\rrandom\rrat\rreduce\rrev\rright\rrot\rround\rscramble\rsgn\rsin\nsinh",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -91,7 +93,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 285.0, 95.0, 87.0, 355.0 ],
-					"text" : "enharm\rexp\rexp2\rfind\rfindaddrs\rfinditems\rflat\rfloat\rfloor\rfmod\rgeomser\rgroup\rhypot\rinsert\rint\rintersection\rleft\rlength\rlog\rlog10\rlog2\rmakepitch\rmakepitchsc\rmap",
+					"presentation_linecount" : 24,
+					"text" : "enharm\rexp\rexp2\rfind\rfindaddrs\rfinditems\rflat\rfloat\rfloor\rfmod\rgeomser\rgroup\rhypot\ninclude\rinsert\rint\rintersection\rleft\rlength\rlog\rlog10\rlog2\rmakepitch\rmakepitchsc",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

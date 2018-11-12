@@ -114,12 +114,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"linecount" : 5,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 205.0, 517.5, 79.0 ],
-					"text" : "The name of a local variable, after the dollar sign, must start with a letter or an underscore, and the following characters can be letters, underscores or numbers.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$x<n>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, where <N> is any non-negative integer.",
+					"patching_rect" : [ 14.0, 205.0, 576.5, 94.0 ],
+					"text" : "The name of a local variable, after the dollar sign, must start with a letter or an underscore, and the following characters can be letters, underscores or numbers.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$x<n>, $l<N>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, $dx<N>, where <N> is any non-negative integer.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

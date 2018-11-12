@@ -39,81 +39,82 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-15",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 135.0, 446.0, 121.0, 23.0 ],
+					"text" : "print two @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-16",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 259.0, 446.0, 133.0, 23.0 ],
+					"text" : "print result @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-17",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 11.0, 371.0, 24.0, 24.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-18",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 11.0, 446.0, 123.0, 23.0 ],
+					"text" : "print one @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"bubble" : 1,
+					"bubblepoint" : 0.7,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-15",
-					"linecount" : 2,
+					"id" : "obj-19",
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 365.0, 405.0, 192.0, 40.0 ],
-					"text" : "Quite often, the result outlet is the one you don't need..."
+					"patching_rect" : [ 280.0, 375.0, 292.0, 69.0 ],
+					"presentation_linecount" : 4,
+					"text" : "It is possible to assign data to more than one outlet with a single call to the outlet function. The return value of outlet is always the last value of its argument list."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-22",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 174.0, 448.0, 116.0, 23.0 ],
-					"text" : "print no @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-23",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 448.0, 123.0, 23.0 ],
-					"text" : "print yes @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "$outlet($l1, if length($l1) == 3 then 1 else 2) ",
+					"code" : "outlet(1 2, 123, 456) ",
 					"fontname" : "Menlo Regular",
-					"id" : "obj-21",
+					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 11.0, 405.0, 345.0, 39.0 ],
+					"patching_rect" : [ 11.0, 400.0, 267.0, 39.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $outlet($l1\\, if length($l1) == 3 then 1 else 2) @extraoutlets 2 @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-20",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 61.0, 377.0, 51.0, 23.0 ],
-					"text" : "4 5 6 7"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-19",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 377.0, 37.0, 23.0 ],
-					"text" : "1 2 3"
+					"text" : "bach.eval outlet(1 2\\, 123\\, 456) @extraoutlets 2 @out m"
 				}
 
 			}
@@ -123,7 +124,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 145.0, 346.0, 121.0, 23.0 ],
+					"patching_rect" : [ 135.0, 346.0, 121.0, 23.0 ],
 					"text" : "print two @popup 1"
 				}
 
@@ -134,7 +135,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 279.0, 346.0, 133.0, 23.0 ],
+					"patching_rect" : [ 259.0, 346.0, 133.0, 23.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -165,22 +166,21 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubblepoint" : 0.7,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 4,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 300.0, 266.5, 290.0, 69.0 ],
-					"text" : "If the $outlet function is called multiple times, the last call is the one whose value is retained. In case you need it, the return value of $outlet is the value it assigns."
+					"patching_rect" : [ 280.0, 295.0, 297.0, 40.0 ],
+					"text" : "If the outlet function is called multiple times, the last call is the one whose value is retained."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$outlet(123, 2) ; $outlet(456, 1) ; $outlet(789, 2) ",
+					"code" : "outlet(2, 123) ; outlet(1, 456) ; outlet(2, 789) ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-9",
 					"linecount" : 3,
@@ -188,12 +188,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 11.0, 288.0, 287.0, 54.0 ],
+					"patching_rect" : [ 11.0, 288.0, 267.0, 54.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $outlet(123\\, 2) \\; $outlet(456\\, 1) \\; $outlet(789\\, 2) @extraoutlets 2 @out m"
+					"text" : "bach.eval outlet(2\\, 123) \\; outlet(1\\, 456) \\; outlet(2\\, 789) @extraoutlets 2 @out m"
 				}
 
 			}
@@ -203,7 +203,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 244.0, 227.5, 133.0, 23.0 ],
+					"patching_rect" : [ 251.0, 227.5, 133.0, 23.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -241,7 +241,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 35.0, 588.0, 108.0 ],
-					"text" : "bach.code can output data from multiple outlets at the end of the evaluation. There are two syntaxes for achieving this: the $outlet function or the outlet pseudovariables ($o1 ... $o<n>).\nIn both cases, it is possible to output data independently from the actual result of the computation, that will be output anyway from a separate outlet.\nbach.eval can have an arbitrary number of outlets in addition to its main outlet returning the final result of the evaluation. These extra outlets are always on the left of the main outlet, and the data are output in right-to-left order, regardless of the order in which they appear in the code.",
+					"text" : "bach.code can output data from multiple outlets at the end of the evaluation. There are two syntaxes for achieving this: the \"outlet\" function or the outlet pseudovariables ($o1 ... $o<n>).\nIn both cases, it is possible to output data independently from the actual result of the computation, that will be output anyway from a separate outlet.\nbach.eval can have an arbitrary number of outlets in addition to its main outlet returning the final result of the evaluation. These extra outlets are always on the left of the main outlet, and the data are output in right-to-left order, regardless of the order in which they appear in the code.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -258,13 +258,13 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 274.0, 149.0, 288.0, 69.0 ],
-					"text" : "The $outlet function tells bach.eval to output specific data from a specific outlet at the end of the evaluation. The extraoutlets attribute sets the number of non-result outlets."
+					"text" : "The outlet function tells bach.eval to output specific data from a specific outlet at the end of the evaluation. The extraoutlets attribute sets the number of non-result outlets."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$outlet(123, 1) ; 456 ",
+					"code" : "outlet(1, 123) ; 456 ",
 					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"linecount" : 2,
@@ -277,7 +277,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $outlet(123\\, 1) \\; 456 @extraoutlets 1 @out m"
+					"text" : "bach.eval outlet(1\\, 123) \\; 456 @extraoutlets 1 @out m"
 				}
 
 			}
@@ -344,8 +344,8 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
-					"source" : [ "obj-19", 0 ]
+					"destination" : [ "obj-20", 0 ],
+					"source" : [ "obj-17", 0 ]
 				}
 
 			}
@@ -358,22 +358,22 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
+					"destination" : [ "obj-15", 0 ],
+					"source" : [ "obj-20", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-20", 2 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-18", 0 ],
 					"source" : [ "obj-20", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-22", 0 ],
-					"source" : [ "obj-21", 1 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-23", 0 ],
-					"source" : [ "obj-21", 0 ]
 				}
 
 			}
