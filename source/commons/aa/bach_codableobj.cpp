@@ -642,7 +642,7 @@ void codableobj_ownedFunctionsSetup(t_codableobj *x)
     x->c_ofTable["print"] = new t_fnPrint((t_object *) x);
 }
 
-t_llll *codableobj_run(t_codableobj* x, t_execContext &context)
+t_llll *codableobj_run(t_codableobj* x, t_execEnv &context)
 {
     context.setRootParams(x->c_nparams, x->c_paramsnames, x->c_paramsvalues);
     context.stopTime = x->c_maxtime > 0 ? x->c_maxtime + systime_ms() : 0;

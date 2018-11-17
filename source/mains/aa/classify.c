@@ -57,7 +57,7 @@ typedef struct _classify
 typedef struct _lambdaData
 {
     t_classify *x;
-    t_execContext *context;
+    t_execEnv *context;
 } t_lambdaData;
 
 void classify_assist(t_classify *x, void *b, long m, long a, char *s);
@@ -174,7 +174,7 @@ void classify_anything(t_classify *x, t_symbol *msg, long ac, t_atom *av)
                 ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 1);
             if (ll->l_size >= 2) {
                 if (x->n_ob.c_main) {
-                    t_execContext lambdaContext((t_llllobj_object *) x);
+                    t_execEnv lambdaContext((t_llllobj_object *) x);
                     lambdaContext.argc = 2;
                     t_lambdaData lambdaData = {
                         x,
@@ -224,7 +224,7 @@ long classify_func(t_classify *x, t_llllelem *a, t_llllelem *b)
 
 long classify_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2)
 {
-    t_execContext *context = data->context;
+    t_execEnv *context = data->context;
     context->argv[1] = what1->l_thing.w_llll;
     context->argv[2] = what2->l_thing.w_llll;
     context->resetLocalVariables();
