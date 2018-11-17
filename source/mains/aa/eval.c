@@ -179,7 +179,7 @@ void eval_bang(t_eval *x)
     
     if (!x->n_ob.c_main)
         return;
-    t_execContext context((t_llllobj_object *) x);
+    t_execEnv context((t_llllobj_object *) x);
     long dataInlets = x->n_dataInlets;
     
     for (int i = 0; i < dataInlets; i++) {

@@ -57,7 +57,7 @@ typedef struct _union
 typedef struct _lambdaData
 {
     t_union *x;
-    t_execContext *context;
+    t_execEnv *context;
 } t_lambdaData;
 
 void union_assist(t_union *x, void *b, long m, long a, char *s);
@@ -164,7 +164,7 @@ void union_anything(t_union *x, t_symbol *msg, long ac, t_atom *av)
                 inll1 = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 1);
             inll2 = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 1);
             if (x->n_ob.c_main) {
-                t_execContext lambdaContext((t_llllobj_object *) x);
+                t_execEnv lambdaContext((t_llllobj_object *) x);
                 lambdaContext.argc = 2;
                 t_lambdaData lambdaData = {
                     x,
@@ -270,7 +270,7 @@ long union_func(t_union *x, t_llllelem *what1, t_llllelem *what2)
 
 long union_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2)
 {
-    t_execContext *context = data->context;
+    t_execEnv *context = data->context;
     context->argv[1] = what1->l_thing.w_llll;
     context->argv[2] = what2->l_thing.w_llll;
     context->resetLocalVariables();

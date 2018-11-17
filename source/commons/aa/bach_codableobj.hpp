@@ -104,8 +104,8 @@ short codableobj_setup(t_codableobj *x, short ac, t_atom *av);
 
 void codableobj_ownedFunctionsSetup(t_codableobj *x);
 
-class t_execContext;
+class t_execEnv;
 
-t_llll *codableobj_run(t_codableobj* x, t_execContext &context);
+t_llll *codableobj_run(t_codableobj* x, t_execEnv &context);
 
 #endif /* bach_codableobj_hpp */
