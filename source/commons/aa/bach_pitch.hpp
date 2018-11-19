@@ -278,8 +278,8 @@ public:
         if (tone_division <= 0)
             return *this;
         t_shortRational temp = p_alter * tone_division;
-        t_shortRational new_alter_down(temp.r_num / temp.r_den, static_cast<long>(tone_division));
-        t_shortRational new_alter_up((temp.r_num / temp.r_den) + 1, static_cast<long>(tone_division));
+        t_shortRational new_alter_down(temp.r_num / temp.r_den, static_cast<t_atom_short>(tone_division));
+        t_shortRational new_alter_up((temp.r_num / temp.r_den) + 1, static_cast<t_atom_short>(tone_division));
         return t_pitch(p_degree, (new_alter_up - p_alter < p_alter - new_alter_down) ? new_alter_up : new_alter_down, p_octave);
     }
 
@@ -404,7 +404,7 @@ public:
         return alter;
     }
     
-    static int text2degree(char name)
+    static t_atom_short text2degree(char name)
     {
         char notename = tolower(name);
         return notename >= 'c' ? notename - 'c' : notename - 'a' + 5;

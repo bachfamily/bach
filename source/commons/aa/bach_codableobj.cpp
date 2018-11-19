@@ -126,7 +126,12 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
             t_object *wind = object_attr_getobj(x->c_editor, _sym_wind);
             short r;
 #ifdef MAC_VERSION
-            r = wind_advise_explain(wind, (char *) "Cannot parse code", nullptr, "Keep Errors", "Revert to Previous Version", "Stop and Fix Code");
+            r = wind_advise_explain(wind,
+                                    const_cast<char *>("Cannot parse code"),
+                                    nullptr,
+                                    const_cast<char *>("Keep Errors"),
+                                    const_cast<char *>("Revert to Previous Version"),
+                                    const_cast<char *>("Stop and Fix Code"));
 #else
             // on Windows, the buttons are too narrow...
             r = wind_advise_explain(wind, "Cannot parse code", nullptr, "Keep", "Revert", "Fix");

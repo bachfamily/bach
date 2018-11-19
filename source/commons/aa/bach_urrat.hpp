@@ -64,7 +64,7 @@ public:
     }
 
     template <typename Type2>
-    t_urrat(const t_urrat<Type2> &u) { this->r_num = u.num(); this->r_den = u.den(); }
+    t_urrat(const t_urrat<Type2> &u) { this->r_num = static_cast<T>(u.num()); this->r_den = static_cast<T>(u.den()); }
     
     template <typename Type2>
     t_urrat(const t_rat<Type2> &u) { this->r_num = u.num(); this->r_den = u.den(); }

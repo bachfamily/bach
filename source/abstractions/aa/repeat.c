@@ -70,7 +70,7 @@ void main_foo() {
 
 llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
-CLASS_ATTR_LONG(c, "inwrap", 0, t_repeat, inwrap); 
+CLASS_ATTR_LONG(c, "inwrap", 0, t_repeat, inwrap);
 CLASS_ATTR_STYLE_LABEL(c,"inwrap",0,"text","Wrap Input");
 CLASS_ATTR_BASIC(c,"unwrap",0);
 // @description @copy BACH_DOC_INWRAP

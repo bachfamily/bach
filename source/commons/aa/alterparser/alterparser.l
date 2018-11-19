@@ -13,7 +13,9 @@ NOTENAME ([a-g]|[A-G])
 ACCIDENTAL ([n#bxdq+-\^v]+)
 
 %{
+    #ifndef BACH_MAX
     #define BACH_MAX
+    #endif
     #ifdef BACH_MAX
     #include "llllobj.h"
     #include "ext_common.h"

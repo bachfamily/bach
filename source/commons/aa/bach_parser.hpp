@@ -35,8 +35,8 @@ private:
             return -p;
     }
     
-    static long eatSign(char **pos) {
-        t_atom_long sign = 1;
+    static t_atom_short eatSign(char **pos) {
+        t_atom_short sign = 1;
         switch (**pos) {
             case '-':
                 sign = -1;
@@ -98,45 +98,47 @@ public:
     
     static t_pitch eatPitchAsNameAccInt(char *pos)
     {
-        long sign = eatSign(&pos);
-        long degree = t_pitch::text2degree(*pos);
+        t_atom_short sign = eatSign(&pos);
+        t_atom_short degree = t_pitch::text2degree(*pos);
         ++pos;
         t_shortRational alter = t_pitch::text2alter(&pos);
-        long octave = strtol(pos, NULL, 10);
+        t_atom_short octave = static_cast<t_atom_short>(strtol(pos, NULL, 10));
         return adjustPitchSign(t_pitch(degree, alter, octave), sign);
     }
     
     static t_pitch eatPitchAsNameIntAcc(char *pos)
     {
-        long sign = eatSign(&pos);
-        long degree = t_pitch::text2degree(*pos);
+        t_atom_short sign = eatSign(&pos);
+        t_atom_short degree = t_pitch::text2degree(*pos);
         char *acc;
-        long octave = strtol(pos + 1, &acc, 10);
+        t_atom_short octave = static_cast<t_atom_short>(strtol(pos + 1, &acc, 10));
         t_shortRational alter = t_pitch::text2alter(&acc);
         return adjustPitchSign(t_pitch(degree, alter, octave), sign);
     }
     
     static t_pitch eatPitchAsNameAccIntIntT(char *pos)
     {
-        long sign = eatSign(&pos);
-        long degree = t_pitch::text2degree(*pos);
+        t_atom_short sign = eatSign(&pos);
+        t_atom_short degree = t_pitch::text2degree(*pos);
         char *next = pos + 1;
         t_shortRational alter = t_pitch::text2alter(&next);
-        long octave = strtol(next, &next, 10);
+        t_atom_short octave = static_cast<t_atom_short>(strtol(next, &next, 10));
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        p.p_alter += t_shortRational(strtol(next, NULL, 10), 1);
+        p.p_alter += t_shortRational(static_cast<t_atom_short>(strtol(next, NULL, 10)),
+                                     1);
         return p;
     }
     
     static t_pitch eatPitchAsNameAccIntRatT(char *pos)
     {
-        long sign = eatSign(&pos);
-        long degree = t_pitch::text2degree(*pos);
+        t_atom_short sign = eatSign(&pos);
+        t_atom_short degree = t_pitch::text2degree(*pos);
         char *next = pos + 1;
         t_shortRational alter = t_pitch::text2alter(&next);
         long octave = strtol(next, &next, 10);
         t_pitch p = adjustPitchSign(t_pitch(degree, alter, octave), sign);
-        p.p_alter += t_shortRational(strtol(next, &next, 10),  strtol(next + 1, NULL, 10));
+        p.p_alter += t_shortRational(static_cast<t_atom_short>(strtol(next, &next, 10)),
+                                     static_cast<t_atom_short>(strtol(next + 1, NULL, 10)));
         return p;
     }
     
