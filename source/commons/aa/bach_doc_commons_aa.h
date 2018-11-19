@@ -87,19 +87,19 @@
     // meaning that the specified depth range is excluded from the search, rather than included.
 
 #define BACH_DOC_ADDRESS_BASIC
-    // An address is an llll providing a unique representation of the position of an element in another llll.
-    // It is a concept shared by many bach object.
-    // The address of each element of an llll's root level is simply its position counting from 1.
-    // The address of an element in a sublist is a list composed by the position of the element in the sublist,
-    // preceded by the position of the sublist in the parent llll, 
-    // and so on up to the root level, as a sort of "path" to the element.<br />
-    // For instance, given the llll <b>a b c (d e (f g) h i) j k</b> the position of <b>c</b> is <b>3</b>;
-    // the position of <b>(d e (f g) h i)</b> is <b>4</b>;
-    // the position if <b>e</b> is <b>4 2</b> since to reach it it takes to go to the 4th element of the root level, which is a sublist,
-    // and to the 2nd element of that sublist. 
-    // By reading the address from right to left, it can be seen that this is equivalent to saying 
-    // that the pointed element is the 2nd of the 4th.
-    // Likewise, in the above llll <b>f</b> has the address <b>4 3 1</b> since it is the 1st of the 3rd of the 4th.<br />
+	// An address is an llll providing a unique representation of the position of an element in another llll.
+	// It is a concept shared by many bach object.
+	// The address of each element of an llll's root level is simply its position counting from 1.
+	// The address of an element in a sublist is a list composed by the position of the element in the sublist,
+	// preceded by the position of the sublist in the parent llll, 
+	// and so on up to the root level, as a sort of "path" to the element.<br />
+	// For instance, given the llll <b>a b c [d e [f g] h i] j k</b> the position of <b>c</b> is <b>3</b>;
+	// the position of <b>[d e [f g] h i]</b> is <b>4</b>;
+	// the position if <b>e</b> is <b>4 2</b> since to reach it it takes to go to the 4th element of the root level, which is a sublist,
+	// and to the 2nd element of that sublist. 
+	// By reading the address from right to left, it can be seen that this is equivalent to saying 
+	// that the pointed element is the 2nd of the 4th.
+	// Likewise, in the above llll <b>f</b> has the address <b>4 3 1</b> since it is the 1st of the 3rd of the 4th.<br />
 
 #define BACH_DOC_ADDRESS_NEGATIVE
     // In addition, addresses sent to bach objects can contain negative positions, 
@@ -108,20 +108,20 @@
     // Thus, the address of the element <b>g</b> can be expressed as <b>4 3 2</b> as well as <b>4 3 -1</b> or <b>-3 -3 -1</b>.<br />
 
 #define BACH_DOC_ADDRESS_MULTIPLE
-    // <b>_NAME</b> also accepts a special syntax to indicate multiple elements of one level of the llll:
-    // a sublist in the address will be interpreted as a sequence of elements in the corresponding level.
-    // In this way, the address <b>4 (2 4 5)</b> means "the 2nd, 4th and 5th of the 4th", that is <b>e h i</b>.
-    // Negative positions are accepted here as well.
-    // Any number after the multiple-element sublist in the address llll is ignored.<br />
+	// <b>_NAME</b> also accepts a special syntax to indicate multiple elements of one level of the llll:
+	// a sublist in the address will be interpreted as a sequence of elements in the corresponding level.
+	// In this way, the address <b>4 [2 4 5]</b> means "the 2nd, 4th and 5th of the 4th", that is <b>e h i</b>.
+	// Negative positions are accepted here as well.
+	// Any number after the multiple-element sublist in the address llll is ignored.<br />
 
 #define BACH_DOC_ADDRESS_RANGE
-    // The multiple-element sublist can contain sublists in its turn. These are called "range sublists".
-    // A range sublist is composed by two positions, and indicates all the elements comprised between these two positions.
-    // Either or both positions of a range sublist can be negative.
-    // So, the address <b> 4 ((2 -1) 1)</b> means "From the 2nd to the last (i.e. the 1st from the right) and the 1st of the 4th",
-    // that is <b>e (f g) h i d</b>.
-    // As a tip, notice that to retrieve all the contents of a sublist (as opposed to the sublist itself)
-    // the range (1 -1) can be specified.
+	// The multiple-element sublist can contain sublists in its turn. These are called "range sublists".
+	// A range sublist is composed by two positions, and indicates all the elements comprised between these two positions.
+	// Either or both positions of a range sublist can be negative.
+	// So, the address <b> 4 [[2 -1] 1]</b> means "From the 2nd to the last (i.e. the 1st from the right) and the 1st of the 4th",
+	// that is <b>e [f g] h i d</b>.
+	// As a tip, notice that to retrieve all the contents of a sublist (as opposed to the sublist itself)
+	// the range (1 -1) can be specified.
 
 #define BACH_DOC_FIND_MINDEPTH
     // @copy BACH_DOC_MINDEPTH

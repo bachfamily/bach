@@ -213,49 +213,49 @@ t_class *neuralnet_class;
 
 int T_EXPORT main()
 {
-    t_class *c;
-    
-    common_symbols_init();
-    llllobj_common_symbols_init();
-    
-    if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
-        error("bach: bad installation");
-        return 1;
-    }
-    
-    c = class_new("bach.neuralnet", (method)neuralnet_new, (method)neuralnet_free, (short)sizeof(t_neuralnet), 0L, A_GIMME, 0);
-    
-    // @method llll @digest Train or feed network
-    // @description An <m>llll</m> in first inlet is considered as a list of input values to be fed to the network. 
-    // The corresponding output values are output from the first outlet. An <m>llll</m> in second inlet is considered as a list of 
-    // training items; each item must be in the form <b>((<m>input1</m> <m>input2</m>...) (<m>target1</m> <m>target2</m>...))</b>
-    // containing the inputs and the expected targets for such inputs. Once the training is over, a message containing the results is output
-    // through the third outlet (see outlet documentation for more information).
-    class_addmethod(c, (method)neuralnet_anything,                    "anything",                A_GIMME,    0);
-    class_addmethod(c, (method)neuralnet_int,                        "int",                    A_LONG,        0);
-    class_addmethod(c, (method)neuralnet_float,                        "float",                A_FLOAT,    0);
-    class_addmethod(c, (method)neuralnet_anything,                    "list",                    A_GIMME,    0);
-    class_addmethod(c, (method)neuralnet_appendtodictionary,        "appendtodictionary",    A_CANT, 0);
+	t_class *c;
+	
+	common_symbols_init();
+	llllobj_common_symbols_init();
+	
+	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
+		error("bach: bad installation");
+		return 1;
+	}
+	
+	c = class_new("bach.neuralnet", (method)neuralnet_new, (method)neuralnet_free, (short)sizeof(t_neuralnet), 0L, A_GIMME, 0);
+	
+	// @method llll @digest Train or feed network
+	// @description An <m>llll</m> in first inlet is considered as a list of input values to be fed to the network.
+	// The corresponding output values are output from the first outlet. An <m>llll</m> in second inlet is considered as a list of
+	// training items; each item must be in the form <b>[[<m>input1</m> <m>input2</m>...] [<m>target1</m> <m>target2</m>...]]</b>
+	// containing the inputs and the expected targets for such inputs. Once the training is over, a message containing the results is output
+	// through the third outlet (see outlet documentation for more information).
+	class_addmethod(c, (method)neuralnet_anything,					"anything",				A_GIMME,	0);
+	class_addmethod(c, (method)neuralnet_int,						"int",					A_LONG,		0);
+	class_addmethod(c, (method)neuralnet_float,						"float",				A_FLOAT,	0);
+	class_addmethod(c, (method)neuralnet_anything,					"list",					A_GIMME,	0);
+	class_addmethod(c, (method)neuralnet_appendtodictionary,		"appendtodictionary",	A_CANT, 0);
 
-    
-    
-    // @method read @digest Read network state from disk
-    // @description The specified file is read from disk and the llll it contains is considered to be the model (network state)
-    // The input model must be an llll of the same form as the one output by the <m>dump</m> message (see <m>dump</m> for more information).
-    // @marg 0 @name file_name @optional 1 @type symbol
-    class_addmethod(c, (method)neuralnet_read,        "read",            A_DEFSYM,    0);
+	
+	
+	// @method read @digest Read network state from disk
+	// @description The specified file is read from disk and the llll it contains is considered to be the model (network state)
+	// The input model must be an llll of the same form as the one output by the <m>dump</m> message (see <m>dump</m> for more information).
+	// @marg 0 @name file_name @optional 1 @type symbol
+	class_addmethod(c, (method)neuralnet_read,		"read",			A_DEFSYM,	0);
 
-    
-    // @method write @digest Save network state in native format
-    // @description A <m>write</m> message will save the network state in a file, in native format. 
-    // If an argument is given, this is the filename (if the file is in the search path 
-    // or in the same folder) or the full file path. If no argument is given, a dialog window pops up.
-    // @marg 0 @name file @optional 1 @type symbol
-    class_addmethod(c, (method) neuralnet_write, "write", A_GIMME, 0);
-    
-    
-    // @method writetxt @digest Save network state in text format
-    // @description A <m>writetxt</m> message will save the network state (as llll) in a file, in readable text format.
+	
+	// @method write @digest Save network state in native format
+	// @description A <m>write</m> message will save the network state in a file, in native format. 
+	// If an argument is given, this is the filename (if the file is in the search path
+	// or in the same folder) or the full file path. If no argument is given, a dialog window pops up.
+	// @marg 0 @name file @optional 1 @type symbol
+	class_addmethod(c, (method) neuralnet_write, "write", A_GIMME, 0);
+	
+	
+	// @method writetxt @digest Save network state in text format
+	// @description A <m>writetxt</m> message will save the network state (as llll) in a file, in readable text format.
     // @copy BACH_DOC_WRITETXT_TEXT_FORMAT_AND_ARGUMENTS
     // @example writetxt @caption export the network as a text file, opening a dialog box for the file name
     // @example writetxt myfile.txt @caption export the network as a text file with the provided file name
@@ -267,52 +267,52 @@ int T_EXPORT main()
     // @marg 0 @name filename @optional 1 @type symbol
     // @marg 1 @name specifications @optional 1 @type llll
     // @seealso read, write
-    class_addmethod(c, (method) neuralnet_writetxt, "writetxt", A_GIMME, 0);
+	class_addmethod(c, (method) neuralnet_writetxt, "writetxt", A_GIMME, 0);
 
-    
-    
-    // @method dump @digest Dump network state
-    // @description The <m>dump</m> message dumps the network state (model) from the second outlet. This is an llll having the form
-    // <b><m>NEURONS</m> <m>WEIGHTS</m></b>. The <m>NEURONS</m> llll is in the form <b>(<m>INPUT</m> <m>HIDDENLAYER1</m> <m>HIDDENLAYER2</m>... <m>OUTPUT</m>)</b>
-    // and contains the wrapped lists of the activation values of all neurons in each one of the layers. 
-    // If the network is not recurrent, the <m>WEIGHTS</m> llll is in the form <b>(<m>InputToHidden1</m> <m>Hidden1ToHidden2</m> ... <m>LastHiddenLayerToOutput</m>)</b>
-    // where each one of the sub elements is indeed a matrix containing all the weights to pass from a given layer to the next one. 
-    // If the network is recurrent, between any two elements of such lists are interleaved the weights for passing from a layer to itself, yielding the form
-    // <b>(<m>InputToHidden1</m> <m>Hidden1ToHidden1</m> <m>Hidden1ToHidden2</m> <m>Hidden2ToHidden2</m> ... <m>LastHiddenLayerToLastHiddenLayer</m> <m>LastHiddenLayerToOutput</m>)</b>
-    class_addmethod(c, (method)neuralnet_anything,                    "dump",                    A_GIMME,    0);
+	
+	
+	// @method dump @digest Dump network state
+	// @description The <m>dump</m> message dumps the network state (model) from the second outlet. This is an llll having the form
+	// <b><m>NEURONS</m> <m>WEIGHTS</m></b>. The <m>NEURONS</m> llll is in the form <b>[<m>INPUT</m> <m>HIDDENLAYER1</m> <m>HIDDENLAYER2</m>... <m>OUTPUT</m>]</b>
+	// and contains the wrapped lists of the activation values of all neurons in each one of the layers. 
+	// If the network is not recurrent, the <m>WEIGHTS</m> llll is in the form <b>[<m>InputToHidden1</m> <m>Hidden1ToHidden2</m> ... <m>LastHiddenLayerToOutput</m>]</b>
+	// where each one of the sub elements is indeed a matrix containing all the weights to pass from a given layer to the next one. 
+	// If the network is recurrent, between any two elements of such lists are interleaved the weights for passing from a layer to itself, yielding the form
+	// <b>[<m>InputToHidden1</m> <m>Hidden1ToHidden1</m> <m>Hidden1ToHidden2</m> <m>Hidden2ToHidden2</m> ... <m>LastHiddenLayerToLastHiddenLayer</m> <m>LastHiddenLayerToOutput</m>]</b>
+	class_addmethod(c, (method)neuralnet_anything,					"dump",					A_GIMME,	0);
 
-    // @method setstate @digest Set network state
-    // @description An <m>llll</m> after the <m>setstate</m> message sets the state to the network to the input model.
-    // The input model must be an llll of the same form as the one output by the <m>dump</m> message (see <m>dump</m> for more information).
-    class_addmethod(c, (method)neuralnet_anything,                    "setstate",                    A_GIMME,    0);
+	// @method setstate @digest Set network state
+	// @description An <m>llll</m> after the <m>setstate</m> message sets the state to the network to the input model.
+	// The input model must be an llll of the same form as the one output by the <m>dump</m> message (see <m>dump</m> for more information).
+	class_addmethod(c, (method)neuralnet_anything,					"setstate",					A_GIMME,	0);
 
-    // @method reset @digest Reset network
-    // @description The <m>reset</m> message in the second inlet resets the weights of the network to random values, the neurons activation values to 0, and 
-    // resets the obtained training results.
-    // If the <m>reset</m> message is followed by one of the symbols <m>weights</m>, <m>neurons</m>, <m>results</m>, only the corresponding data is reset,
-    // while the others are preserved.
-    // @marg 0 @name what @optional 1 @type symbol
-    class_addmethod(c, (method)neuralnet_anything,                    "reset",                    A_GIMME,    0);
-    
-    // @method stop @digest Stop training
-    // @description A <m>stop</m> message will cause the training to stop immediately.
-    class_addmethod(c, (method)neuralnet_stop,                        "stop",                    A_GIMME,    0);
-    
-    // @method bang @digest Train network with last used training data.
-    // @description A bang in the second inlet will train the network with the last used training data.
-    class_addmethod(c, (method)neuralnet_bang,                        "bang",        0);
-    
-    class_addmethod(c, (method)neuralnet_assist,        "assist",        A_CANT,        0);
-    class_addmethod(c, (method)neuralnet_inletinfo,    "inletinfo",    A_CANT,        0);
+	// @method reset @digest Reset network
+	// @description The <m>reset</m> message in the second inlet resets the weights of the network to random values, the neurons activation values to 0, and 
+	// resets the obtained training results.
+	// If the <m>reset</m> message is followed by one of the symbols <m>weights</m>, <m>neurons</m>, <m>results</m>, only the corresponding data is reset,
+	// while the others are preserved.
+	// @marg 0 @name what @optional 1 @type symbol
+	class_addmethod(c, (method)neuralnet_anything,					"reset",					A_GIMME,	0);
+	
+	// @method stop @digest Stop training
+	// @description A <m>stop</m> message will cause the training to stop immediately.
+	class_addmethod(c, (method)neuralnet_stop,						"stop",					A_GIMME,	0);
+	
+	// @method bang @digest Train network with last used training data.
+	// @description A bang in the second inlet will train the network with the last used training data.
+	class_addmethod(c, (method)neuralnet_bang,						"bang",		0);
+	
+	class_addmethod(c, (method)neuralnet_assist,		"assist",		A_CANT,		0);
+	class_addmethod(c, (method)neuralnet_inletinfo,	"inletinfo",	A_CANT,		0);
 
-    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
-    
-    
-    CLASS_STICKY_ATTR(c, "category", 0, "Training");
+	
+	
+	CLASS_STICKY_ATTR(c, "category", 0, "Training");
 
-    CLASS_ATTR_DOUBLE(c, "learningrate", 0, t_neuralnet, learning_rate);
-    CLASS_ATTR_ACCESSORS(c, "learningrate", (method)NULL, (method)neuralnet_setattr_learningrate);
+	CLASS_ATTR_DOUBLE(c, "learningrate", 0, t_neuralnet, learning_rate);
+	CLASS_ATTR_ACCESSORS(c, "learningrate", (method)NULL, (method)neuralnet_setattr_learningrate);
     CLASS_ATTR_STYLE_LABEL(c, "learningrate", 0, "text", "Learning Rate");
     CLASS_ATTR_BASIC(c, "learningrate", 0);
     // @description Sets the learning rate for the neural net, defaults to 0.001.
@@ -389,29 +389,29 @@ int T_EXPORT main()
     CLASS_ATTR_CHAR(c, "verbose", 0, t_neuralnet, verbose);
     CLASS_ATTR_STYLE_LABEL(c, "verbose", 0, "enumindex", "Verbose Training");
     CLASS_ATTR_ENUMINDEX(c, "verbose", 0, "None Max Window Last Outlet");
-    CLASS_ATTR_ACCESSORS(c, "verbose", (method)NULL, (method)neuralnet_setattr_verbose);
-    // @description Toggles the ability to verbosely print training information in the Max window (if verbose == 1) or from the 
-    // last outlet, in the form <b>verbose <m>epoch</m> (<m>TSaccuracy</m> <m>TSmeansquarederror</m>) (<m>GSaccuracy</m> <m>GSmeansquarederror</m>)</b>.
-    // Some acronyms are used, namely: TS = Training Set, GS = Generalization Set, VS = Validation Set. 
-    
-    
-    CLASS_ATTR_CHAR(c, "parallel",    0,    t_neuralnet, parallel);
-    CLASS_ATTR_LABEL(c, "parallel", 0, "Parallel");
-    CLASS_ATTR_FILTER_CLIP(c, "parallel", 0, 1);
-    CLASS_ATTR_STYLE(c, "parallel", 0, "onoff");
-    // @description When set to 1, the training is performed in a separate thread.
-    // This means that the normal Max operation is not interrupted.
-    // The <m>parallel</m> attribute is highly experimental and can lead to serious problems,
-    // including data corruption and crashes.
-    // In general, it is essential that the patch is not saved or closed
-    // as long as the search is going on. Such operations are more than likely to crash Max.
+	CLASS_ATTR_ACCESSORS(c, "verbose", (method)NULL, (method)neuralnet_setattr_verbose);
+	// @description Toggles the ability to verbosely print training information in the Max window (if verbose == 1) or from the 
+	// last outlet, in the form <b>verbose <m>epoch</m> [<m>TSaccuracy</m> <m>TSmeansquarederror</m>] [<m>GSaccuracy</m> <m>GSmeansquarederror</m>]</b>.
+	// Some acronyms are used, namely: TS = Training Set, GS = Generalization Set, VS = Validation Set. 
+	
+	
+	CLASS_ATTR_CHAR(c, "parallel",	0,	t_neuralnet, parallel);
+	CLASS_ATTR_LABEL(c, "parallel", 0, "Parallel");
+	CLASS_ATTR_FILTER_CLIP(c, "parallel", 0, 1);
+	CLASS_ATTR_STYLE(c, "parallel", 0, "onoff");
+	// @description When set to 1, the training is performed in a separate thread.
+	// This means that the normal Max operation is not interrupted.
+	// The <m>parallel</m> attribute is highly experimental and can lead to serious problems,
+	// including data corruption and crashes.
+	// In general, it is essential that the patch is not saved or closed
+	// as long as the search is going on. Such operations are more than likely to crash Max.
 
-    CLASS_STICKY_ATTR_CLEAR(c, "category");
+	CLASS_STICKY_ATTR_CLEAR(c, "category");
 
-    
-    CLASS_STICKY_ATTR(c, "category", 0, "Dataset");
-    
-    CLASS_ATTR_DOUBLE_ARRAY(c,"datasetsplit",0, t_neuralnet, dataset_split, 2);
+	
+	CLASS_STICKY_ATTR(c, "category", 0, "Dataset");
+	
+	CLASS_ATTR_DOUBLE_ARRAY(c,"datasetsplit",0, t_neuralnet, dataset_split, 2);
     CLASS_ATTR_STYLE_LABEL(c, "datasetsplit", 0, "text", "Dataset Split");
     CLASS_ATTR_BASIC(c, "datasetsplit", 0);
     // @description Sets the splitting ratios for generalization and validation segments of the dataset.
@@ -696,30 +696,30 @@ void neuralnet_anything(t_neuralnet *x, t_symbol *msg, long ac, t_atom *av)
 
 
 void neuralnet_assist(t_neuralnet *x, void *b, long m, long a, char *s)
-{    
-    if (m == ASSIST_INLET) { 
-        if (a == 0)
-            sprintf(s, "llll: Feed Input"); // @in 0 @type list/llll @digest The values of the input nodes, to be feeded to the network
-        else
-            sprintf(s, "llll: Training Data"); // @in 1 @type llll @digest The training data in llll form
-                                                // @discussion The correct syntax is <b>((<m>input1</m> <m>input2</m>...) (<m>target1</m> <m>target2</m>...))</b>
-                                                // for each training event.
-    } else {
-        char *type = NULL; 
-        llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
-        if (a == 0)
-            sprintf(s, "llll (%s): Output", type); // @out 0 @type llll @digest The output data for the incoming input data
-        else if (a == 1)
-            sprintf(s, "llll (%s): Dump Outlet", type); // @out 1 @type llll @digest Dump outlet for the state of the network
-        else if (a == 2)
-            sprintf(s, "float: Advancement"); // @out 2 @type float @digest Advancement during training 
-        else                                  // @description The advancement is a floating point value between 0 (training starts) and 1 (training ends)
-            sprintf(s, "llll (%s): Training Results", type); // @out 3 @type llll @digest Output training results when training has ended
-                                                            // @description The output message is in the form 
-                                                            // <b>(<m>TS_accuracy</m> <m>GS_accuracy</m> <m>VS_accuracy</m>) (<m>TS_mse</m> <m>GS_mse</m> <m>VS_mse</m>)</b>
-                                                            // where TS is the training set, GS is the generalization set, VS is the validation set,
-                                                            // and mse is the mean squared error.
-    }
+{	
+	if (m == ASSIST_INLET) { 
+		if (a == 0)
+			sprintf(s, "llll: Feed Input"); // @in 0 @type list/llll @digest The values of the input nodes, to be feeded to the network
+		else
+			sprintf(s, "llll: Training Data"); // @in 1 @type llll @digest The training data in llll form
+												// @discussion The correct syntax is <b>[[<m>input1</m> <m>input2</m>...] [<m>target1</m> <m>target2</m>...]]</b>
+												// for each training event.
+	} else {
+		char *type = NULL; 
+		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
+		if (a == 0)
+			sprintf(s, "llll (%s): Output", type); // @out 0 @type llll @digest The output data for the incoming input data
+		else if (a == 1)
+			sprintf(s, "llll (%s): Dump Outlet", type); // @out 1 @type llll @digest Dump outlet for the state of the network
+		else if (a == 2)
+			sprintf(s, "float: Advancement"); // @out 2 @type float @digest Advancement during training 
+		else								  // @description The advancement is a floating point value between 0 (training starts) and 1 (training ends)
+			sprintf(s, "llll (%s): Training Results", type); // @out 3 @type llll @digest Output training results when training has ended
+															// @description The output message is in the form 
+															// <b>[<m>TS_accuracy</m> <m>GS_accuracy</m> <m>VS_accuracy</m>] [<m>TS_mse</m> <m>GS_mse</m> <m>VS_mse</m>]</b>
+															// where TS is the training set, GS is the generalization set, VS is the validation set,
+															// and mse is the mean squared error.
+	}
 }
 
 void neuralnet_inletinfo(t_neuralnet *x, void *b, long a, char *t)
