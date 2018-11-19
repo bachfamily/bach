@@ -88,7 +88,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 406.0, 178.0, 188.0, 19.0 ],
-					"text" : "minimalunits (1/16) (1/16 1/24)"
+					"text" : "minimalunits [1/16] [1/16 1/24]"
 				}
 
 			}
@@ -102,7 +102,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 380.0, 153.0, 225.0, 19.0 ],
-					"text" : "minimalunits (1/16) (1/16 1/24) (1/20)"
+					"text" : "minimalunits [1/16] [1/16 1/24] [1/20]"
 				}
 
 			}
@@ -193,7 +193,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 197.0, 65.0, 19.0 ],
-					"text" : "(3 4) (60)"
+					"text" : "[3 4] [60]"
 				}
 
 			}

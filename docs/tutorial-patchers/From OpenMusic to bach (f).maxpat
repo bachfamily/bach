@@ -38,7 +38,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 314.0, 399.0, 284.0, 19.0 ],
-					"text" : "preventedit (burglars enter) (mailman ringtwice)",
+					"text" : "preventedit [burglars enter] [mailman ringtwice]",
 					"varname" : "wclose[1]"
 				}
 
@@ -357,7 +357,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 454.0, 140.0, 18.0 ],
-					"text" : "From OpenMusic to bach (e)",
+					"text" : "From OpenMusic to bach [e]",
 					"varname" : "messageA"
 				}
 
@@ -458,7 +458,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 636.0, 454.0, 140.0, 18.0 ],
-					"text" : "From OpenMusic to bach (g)",
+					"text" : "From OpenMusic to bach [g]",
 					"varname" : "messageB"
 				}
 

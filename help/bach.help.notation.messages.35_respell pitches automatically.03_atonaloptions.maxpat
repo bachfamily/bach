@@ -64,7 +64,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 28.5, 331.0, 344.0, 23.0 ],
 					"style" : "",
-					"text" : "respell @algorithm atonal @stdevthresh 21/(numnotes+1)"
+					"text" : "respell @algorithm atonal @stdevthresh 21/[numnotes+1]"
 				}
 
 			}

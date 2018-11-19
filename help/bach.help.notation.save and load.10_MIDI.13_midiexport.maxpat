@@ -140,7 +140,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 34.0, 165.0, 582.0, 65.0 ],
 					"showhand" : 0,
-					"text" : "– voices (default: null): if a list of voices is provided, then only the specified voices will be exported.\n    If no list is provided, then all the voices of the score will be exported. Ranges can also be\n    expressed, as sublists. For example, (voices (1 3 5)) will export the first, third and fifth voice,\n    while (voices ((1 5) 8)) will export all the voices from 1 to 5, and the 8th voice..",
+					"text" : "– voices (default: null): if a list of voices is provided, then only the specified voices will be exported.\n    If no list is provided, then all the voices of the score will be exported. Ranges can also be\n    expressed, as sublists. For example, [voices [1 3 5]] will export the first, third and fifth voice,\n    while [voices [[1 5] 8]] will export all the voices from 1 to 5, and the 8th voice..",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"underline" : 0
 				}

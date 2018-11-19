@@ -274,7 +274,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 20.0, 153.0, 154.0, 46.0 ],
-									"text" : "(1.5 (1 2)) (george (1 2)) (ringo)"
+									"text" : "[1.5 [1 2]] [george [1 2]] [ringo]"
 								}
 
 							}

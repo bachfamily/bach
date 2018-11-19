@@ -122,7 +122,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 498.0, 293.0, 37.0, 19.0 ],
-					"text" : "(a b)"
+					"text" : "[a b]"
 				}
 
 			}
@@ -164,7 +164,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 620.0, 293.0, 37.0, 19.0 ],
-					"text" : "(a b)"
+					"text" : "[a b]"
 				}
 
 			}
@@ -195,7 +195,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 231.5, 403.0, 44.0, 19.0 ],
-					"text" : "( a b )"
+					"text" : "[ a b ]"
 				}
 
 			}
@@ -237,7 +237,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 231.5, 293.0, 37.0, 19.0 ],
-					"text" : "(a b)"
+					"text" : "[a b]"
 				}
 
 			}
@@ -388,7 +388,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 223.0, 122.0, 82.0, 19.0 ],
-					"text" : "0 (a b) 2000"
+					"text" : "0 [a b] 2000"
 				}
 
 			}
@@ -433,7 +433,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 223.0, 217.0, 54.0, 19.0 ],
-					"text" : "( a b )"
+					"text" : "[ a b ]"
 				}
 
 			}
@@ -646,7 +646,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 510.0, 158.0, 18.0 ],
-					"text" : "From OpenMusic to bach (l)",
+					"text" : "From OpenMusic to bach [l]",
 					"varname" : "messageA"
 				}
 
@@ -746,7 +746,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 621.0, 510.0, 162.0, 18.0 ],
-					"text" : "From OpenMusic to bach (n)",
+					"text" : "From OpenMusic to bach [n]",
 					"varname" : "messageB"
 				}
 

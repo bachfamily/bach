@@ -69,7 +69,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "read \"Real Time Stories (g) - bach.mid\"",
+					"text" : "read \"Real Time Stories [g] - bach.mid\"",
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
 					"patching_rect" : [ 10.0, 45.0, 218.0, 18.0 ],
@@ -263,7 +263,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "The World Outside (c)",
+					"text" : "The World Outside [c]",
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
 					"patching_rect" : [ 5.0, 367.0, 140.0, 18.0 ],
@@ -362,7 +362,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "The World Outside (e)",
+					"text" : "The World Outside [e]",
 					"outlettype" : [ "" ],
 					"fontsize" : 12.0,
 					"patching_rect" : [ 383.0, 367.0, 140.0, 18.0 ],

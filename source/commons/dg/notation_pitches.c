@@ -1554,7 +1554,7 @@ t_autospell_params notationobj_autospell_get_default_params(t_notation_obj *r_ob
     
     t_llll *stdev_thresh_ll = llll_from_text_buf("21/(numnotes+1)");
     t_atom *stdev_thresh_av = NULL;
-    long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, 0);
+    long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, LLLL_D_PARENS);
     par.stdev_thresh = lexpr_new(stdev_thresh_ac, stdev_thresh_av, subs_count, subs, (t_object *)r_ob);
     llll_free(stdev_thresh_ll);
     
@@ -1609,7 +1609,7 @@ void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args)
             lexpr_free(par.stdev_thresh);
         
         t_atom *stdev_thresh_av = NULL;
-        long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, 0);
+        long stdev_thresh_ac = llll_deparse(stdev_thresh_ll, &stdev_thresh_av, 0, LLLL_D_PARENS);
         par.stdev_thresh = lexpr_new(stdev_thresh_ac, stdev_thresh_av, subs_count, subs, (t_object *)r_ob);
         bach_freeptr(stdev_thresh_av);
     }

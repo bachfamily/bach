@@ -83,7 +83,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 42.0, 246.5, 184.0, 19.0 ],
-					"text" : "(slotinfo (1 ( width temporal )))"
+					"text" : "[slotinfo [1 [ width temporal ]]]"
 				}
 
 			}
@@ -160,7 +160,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 21.0, 205.0, 148.0, 19.0 ],
-					"text" : "(slotinfo (1 ( width $1 )))"
+					"text" : "[slotinfo [1 [ width $1 ]]]"
 				}
 
 			}

@@ -185,7 +185,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "((a) (b) (c) (d) (e)) (a b c d e) a b c d e ((((a b c d e))))",
+					"text" : "[[a] [b] [c] [d] [e]] [a b c d e] a b c d e [[[[a b c d e]]]]",
 					"linecount" : 2,
 					"numinlets" : 2,
 					"fontsize" : 12.0,
@@ -833,7 +833,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (p)",
+					"text" : "Iterations [p]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -932,7 +932,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (r)",
+					"text" : "Iterations [r]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,

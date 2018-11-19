@@ -9114,7 +9114,7 @@ t_bool llll_istrue(const t_llll *ll)
             t_llllelem *head = ll->l_head;
             t_hatom *head_hatom = &head->l_hatom;
             long type = hatom_gettype(head_hatom);
-            if (type != H_LONG && type != H_DOUBLE)
+            if (!hatom_type_is_number(type))
                 return true;
             if (hatom_getdouble(head_hatom) != 0.)
                 return true;

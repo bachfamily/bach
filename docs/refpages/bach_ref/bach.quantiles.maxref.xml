@@ -86,7 +86,7 @@
 				(i.e. the list of <m>q</m>'s determining the <m>q</m> quantiles). For instance, if such
 				list is <b>1/4 1/2 3/4</b>, the first 4-quantile, the median and the third 4-quantile are
 				output once the left lllls comes in. Quantiles can be rational or floating point numbers. Alternatively, numbers
-				can be substituted by a range-syntax lllls in the form <b>(<m>start_quantile</m> <m>end_quantile</m>)</b>;
+				can be substituted by a range-syntax lllls in the form <b>[<m>start_quantile</m> <m>end_quantile</m>]</b>;
 				in this case what will be output are not the quantiles, rather the original llll filtered so that
 				only numbers lying within the two quantiles will be kept (numbers equal to either one of the two quantile extremes
 				are also kept).
@@ -104,10 +104,10 @@
 				Toggles the ability to interpret quantiles not as relative proportion, rather
 				as absolute integer position in the list. For instance, 3 will mean "third element",
 				and -4 "fourth element counted backwards", as for <o>bach.nth</o>. If <m>absolute</m> mode is active,
-				asking for quantile points such as <b>(-4 -1)</b> will return essentially the four biggest numbers in
+				asking for quantile points such as <b>[-4 -1]</b> will return essentially the four biggest numbers in
 				the llll - except if the fourth biggest number has more than one occurrence in the list, in which case
 				it will be returned as many times as the number of occurrences. In general, then, asking for a
-				<b>(<m>M</m> <m>N</m>)</b> quantile region will not necessarily yield <m>N</m> - <m>M</m> + 1 values.
+				<b>[<m>M</m> <m>N</m>]</b> quantile region will not necessarily yield <m>N</m> - <m>M</m> + 1 values.
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Absolute Mode" />

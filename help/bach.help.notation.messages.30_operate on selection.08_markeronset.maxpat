@@ -64,7 +64,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 166.0, 233.0, 83.0, 23.0 ],
 					"style" : "",
-					"text" : "onset (1 3/4)"
+					"text" : "onset [1 3/4]"
 				}
 
 			}

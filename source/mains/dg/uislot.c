@@ -566,9 +566,9 @@ int T_EXPORT main(void){
     // @example interp 2 0.4 @caption get y value of slot 2 at x = 0.4
     // @example interp ampenv 0.4 @caption the same for slot named "ampenv"
     // @example interp active 0.4 @caption the same for currently open slot
-    // @example interp (1 2 3) 0.4 @caption interpolate slots 1, 2, 3 at once
-    // @example interp active (0.2 0.4 0.9) @caption interpolate active slot on multiple values
-    // @example interp (1 2 3) (0.2 0.4 0.9) @caption interpolate slots 1, 2, 3 on multiple values
+    // @example interp [1 2 3] 0.4 @caption interpolate slots 1, 2, 3 at once
+    // @example interp active [0.2 0.4 0.9] @caption interpolate active slot on multiple values
+    // @example interp [1 2 3] [0.2 0.4 0.9] @caption interpolate slots 1, 2, 3 on multiple values
     // @seealso sample
 	class_addmethod(c, (method) uislot_anything, "interp", A_GIMME, 0);
 
@@ -616,19 +616,19 @@ int T_EXPORT main(void){
 
 	// @method addslot @digest Set the conent of one or more slots
 	// @description An <m>addslot</m> message will modify all the content of one or more slots.
-	// The syntax is <b>addslot (<m>slot_number</m> <m>SLOT_CONTENT</m>) (<m>slot_number</m> <m>SLOT_CONTENT</m>)...</b>. <br />
+	// The syntax is <b>addslot [<m>slot_number</m> <m>SLOT_CONTENT</m>] [<m>slot_number</m> <m>SLOT_CONTENT</m>]...</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
 	// Instead of the slot number, you can use slot names, or you can the word "active" to refer to the currently open slot. 
 	// @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
-    // @example addslot (6 0.512) @caption fill (float) slot 6 with number 0.512
-    // @example addslot (5 42) @caption fill (int) slot 5 with number 42
-    // @example addslot (7 "Lorem Ipsum" ) @caption fill (text) slot 7 with some text
-    // @example addslot (10 (John George (Ringo) (Brian)) ) @caption fill (llll) slot 10 with an llll
-    // @example addslot (3 10 20 30) @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
-    // @example addslot (2 (0 0 0) (0.5 0 1) (1 1 0.2) @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
-    // @example addslot (amplienv (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for slot named 'amplienv'
-    // @example addslot (active (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for currently open slot
-    // @example addslot (3 10 20 30) (2 (0 0 0) (0.5 0 1) (1 1 0.2)) @caption set more slots at once
+    // @example addslot [6 0.512] @caption fill (float) slot 6 with number 0.512
+    // @example addslot [5 42] @caption fill (int) slot 5 with number 42
+    // @example addslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
+    // @example addslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
+    // @example addslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
+    // @example addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
+    // @example addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
+    // @example addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
+    // @example addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
     // @seealso changeslotitem, eraseslot
 	class_addmethod(c, (method) uislot_add_slot, "addslot", A_GIMME, 0);
 
@@ -676,7 +676,7 @@ int T_EXPORT main(void){
 	// The element content is a single element in the lists of the slot content syntax: a single point for a slot <m>function</m>, a single number for an <m>intlist</m> or <m>floatlist</m> slot,
 	// and so on. Such element must be unwrapped from its outer level of parentheses (if any). For instance, for a function,
 	// a good syntax is <b>changeslotvalue 2 3 0.5 20 0</b> which will change the 3rd point of the function contained in the second slot
-	// to the point <b>(0.5 20 0)</b>. <br />
+	// to the point <b>[0.5 20 0]</b>. <br />
 	// @copy BACH_DOC_NOTE_SLOT_CONTENT
 	// @marg 0 @name slot_number_or_name @optional 0 @type int/symbol
 	// @marg 1 @name element_index @optional 0 @type int
@@ -730,8 +730,8 @@ int T_EXPORT main(void){
     // @marg 1 @name element_position_or_wrapped_xcoord @optional 0 @type int/llll
     // @mattr thresh @type float @default 0. @digest Tolerance threshold for X matching
     // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
-    // @example deleteslotitem 3 (0.7) @caption delete item 3rd slot matching X = 0.7
-    // @example deleteslotitem 3 (0.7) @thresh 0.1 @caption the same, with a tolerance of 0.1
+    // @example deleteslotitem 3 [0.7] @caption delete item 3rd slot matching X = 0.7
+    // @example deleteslotitem 3 [0.7] @thresh 0.1 @caption the same, with a tolerance of 0.1
     // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
     class_addmethod(c, (method) uislot_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 

@@ -80,7 +80,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 460.0, 188.0, 86.0, 38.0 ],
 					"style" : "",
-					"text" : "fixdynamics (verbose 1)"
+					"text" : "fixdynamics [verbose 1]"
 				}
 
 			}

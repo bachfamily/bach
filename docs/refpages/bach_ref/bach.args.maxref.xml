@@ -5,330 +5,330 @@
 
 <c74object name="bach.args" module="bach">
 
-    <digest>
-        Manage subpatcher arguments
-    </digest>
+	<digest>
+		Manage subpatcher arguments
+	</digest>
 
-    <description>
-        Parses and retrieves the subpatcher's "normal" and attribute-style arguments.
-        <o>bach.args</o> should be used in every subpatch or abstraction accepting arguments,
-        and all the patcher's inlets should be connected to it.
-    </description>
+	<description>
+		Parses and retrieves the subpatcher's "normal" and attribute-style arguments.
+		<o>bach.args</o> should be used in every subpatch or abstraction accepting arguments,
+		and all the patcher's inlets should be connected to it.
+	</description>
 
-    <!--METADATA-->
-    <metadatalist>
-        <metadata name="author">bachproject</metadata>
-        <metadata name="tag">bach</metadata>
-        <metadata name="tag">bach objects</metadata>
-        <metadata name="tag">bach llll</metadata>
-    </metadatalist>
+	<!--METADATA-->
+	<metadatalist>
+		<metadata name="author">bachproject</metadata>
+		<metadata name="tag">bach</metadata>
+		<metadata name="tag">bach objects</metadata>
+		<metadata name="tag">bach llll</metadata>
+	</metadatalist>
 
-    <!--INLETS-->
-    <inletlist>
-        <inlet id="0" type="INLET_TYPE">
-            <digest>
-                Incoming lllls
-            </digest>
-            <description>
-            </description>
-        </inlet>
-        <inlet id="1" type="INLET_TYPE">
-            <digest>
-                Bang to output all the arguments
-            </digest>
-            <description>
-            </description>
-        </inlet>
-    </inletlist>
+	<!--INLETS-->
+	<inletlist>
+		<inlet id="0" type="INLET_TYPE">
+			<digest>
+				Incoming lllls
+			</digest>
+			<description>
+			</description>
+		</inlet>
+		<inlet id="1" type="INLET_TYPE">
+			<digest>
+				Bang to output all the arguments
+			</digest>
+			<description>
+			</description>
+		</inlet>
+	</inletlist>
 
-    <!--OUTLETS-->
-    <outletlist>
-        <outlet id="0" type="INLET_TYPE">
-            <digest>
-                Bang after all the stored lllls have been output
-            </digest>
-            <description>
-            </description>
-        </outlet>
-        <outlet id="1" type="INLET_TYPE">
-            <digest>
-                Incoming lllls
-            </digest>
-            <description>
-            </description>
-        </outlet>
-        <outlet id="2" type="INLET_TYPE">
-            <digest>
-                Normal arguments
-            </digest>
-            <description>
-            </description>
-        </outlet>
-        <outlet id="3" type="INLET_TYPE">
-            <digest>
-                Attribute-style arguments
-            </digest>
-            <description>
-            </description>
-        </outlet>
-    </outletlist>
+	<!--OUTLETS-->
+	<outletlist>
+		<outlet id="0" type="INLET_TYPE">
+			<digest>
+				Bang after all the stored lllls have been output
+			</digest>
+			<description>
+			</description>
+		</outlet>
+		<outlet id="1" type="INLET_TYPE">
+			<digest>
+				Incoming lllls
+			</digest>
+			<description>
+			</description>
+		</outlet>
+		<outlet id="2" type="INLET_TYPE">
+			<digest>
+				Normal arguments
+			</digest>
+			<description>
+			</description>
+		</outlet>
+		<outlet id="3" type="INLET_TYPE">
+			<digest>
+				Attribute-style arguments
+			</digest>
+			<description>
+			</description>
+		</outlet>
+	</outletlist>
 
-    <!--ARGUMENTS-->
-    <objarglist>
-        <objarg name="arguments" optional="1" type="llll">
-            <digest>
-                Arguments
-            </digest>
-            <description>
-                The default arguments (normal and attribute-style)
-            </description>
-        </objarg>
-    </objarglist>
+	<!--ARGUMENTS-->
+	<objarglist>
+		<objarg name="arguments" optional="1" type="llll">
+			<digest>
+				Arguments
+			</digest>
+			<description>
+				The default arguments (normal and attribute-style)
+			</description>
+		</objarg>
+	</objarglist>
 
-    <!--MESSAGES-->
-    <methodlist>
-        <method name="bang">
-            <arglist />
-            <digest>
-                Output the patcher arguments
-            </digest>
-            <description>
-                A bang in the rightmost inlet will cause all the patcher arguments to be re-output
-            </description>
-        </method>
-        <method name="llll">
-            <arglist />
-            <digest>
-                lllls to the patch
-            </digest>
-            <description>
-                An llll received in any inlet except the rightmost one
-                (that is, any additional inlet specified through the <m>ins</m> attribute)
-                will be output unchanged from the corresponding outlet, unless before loadbang time -
-                in which case the llll will not be output.
-                If the <m>ins</m> attribute is not present or it is set to 0, then lllls are not accepted in any inlet.
-            </description>
-        </method>
-    </methodlist>
+	<!--MESSAGES-->
+	<methodlist>
+		<method name="bang">
+			<arglist />
+			<digest>
+				Output the patcher arguments
+			</digest>
+			<description>
+				A bang in the rightmost inlet will cause all the patcher arguments to be re-output
+			</description>
+		</method>
+		<method name="llll">
+			<arglist />
+			<digest>
+				lllls to the patch
+			</digest>
+			<description>
+				An llll received in any inlet except the rightmost one
+				(that is, any additional inlet specified through the <m>ins</m> attribute)
+				will be output unchanged from the corresponding outlet, unless before loadbang time -
+				in which case the llll will not be output.
+				If the <m>ins</m> attribute is not present or it is set to 0, then lllls are not accepted in any inlet.
+			</description>
+		</method>
+	</methodlist>
 
-    <!--ATTRIBUTES-->
-    <attributelist>
-        <attribute name="attrs" get="1" set="1" type="sym_array" size="0">
-            <digest>
-                Known Attributes
-            </digest>
-            <description>
-                An optional set of keywords to be considered as attributes, and therefore output as attribute-style arguments. <br />
-                This is a static attribute which can only be set by typing it in the object box.
-                <br /> <br />
-            </description>
-            <attributelist>
-                <attribute name="label" get="1" set="1" type="symbol" size="1" value="Known Attributes" />
-                <attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-            </attributelist>
-        </attribute>
-        <attribute name="backtick" get="1" set="1" type="int" size="1">
-            <digest>
-                Backtick bach Object Arguments
-            </digest>
-            <description>
-                When set to 1, if the first element of the "normal arguments" llll is an attribute of any bach object,
-                then a backtick is prepended to it. In this way, it will not be interpreted as an attribute by any bach object you feed it into. <br />
-                This is a static attribute which can only be set by typing it in the object box.
-                <br /> <br />
-            </description>
-            <attributelist>
-                <attribute name="label" get="1" set="1" type="symbol" size="1" value="Backtick bach Object Arguments" />
-                <attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-            </attributelist>
-        </attribute>
-        <attribute name="done" get="1" set="1" type="int" size="1">
-            <digest>
-                Output 'done' Message
-            </digest>
-            <description>
-                When set to 1, the message <m>done</m> is output after the last attribute-style argument, just like in <o>patcherargs</o>. <br />
-                This is a static attribute which can only be set by typing it in the object box.
-                <br /> <br />
-            </description>
-            <attributelist>
-                <attribute name="label" get="1" set="1" type="symbol" size="1" value="Output 'done' Message" />
-                <attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-            </attributelist>
-        </attribute>
-        <attribute name="ins" get="1" set="1" type="int" size="1">
-            <digest>
-                Number of llll Inlets
-            </digest>
-            <description>
-                The number of llll inlets and outlets. In principle, it should match the number of inlets of the patcher. <br />
-                This is a static attribute which can only be set by typing it in the object box.
-                <br /> <br />
-            </description>
-            <attributelist>
-                <attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of llll Inlets" />
-                <attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-            </attributelist>
-        </attribute>
-        <attribute name="mode" get="1" set="1" type="int" size="1">
-            <digest>
-                Mode
-            </digest>
-            <description>
-                When set to 1, the "normal arguments" llll is always at least the length of the typed-in arguments.
-                If not enough arguments are specified in the enclosing patcher, the missing ones will be taken from the <o>bach.args</o>' object box.
-                This is especially useful for providing an abstraction with a minimal set of default values. <br />
-                This is a static attribute which can only be set by typing it in the object box.
-                <br /> <br />
-            </description>
-            <attributelist>
-                <attribute name="label" get="1" set="1" type="symbol" size="1" value="Mode" />
-                <attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-            </attributelist>
-        </attribute>
-        <attribute name="nullmode" get="1" set="1" type="int" size="1">
-            <digest>
-                Null Mode
-            </digest>
-            <description>
-                When set to 1, <b>null</b> is output if no patcher argument is provided. <br />
-                This is a static attribute which can only be set by typing it in the object box.
-                <br /> <br />
-            </description>
-            <attributelist>
-                <attribute name="label" get="1" set="1" type="symbol" size="1" value="Null Mode" />
-                <attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-            </attributelist>
-        </attribute>
-        <attribute name="out" get="1" set="1" type="symbol" size="1">
-            <digest>
-                Outlet Types
-            </digest>
-            <description>
-                The <m>out</m> attribute is a sequence of characters identifying the outlet types (one character for each llll outlet). Characters can be one of the following: <br />
-                <m>n</m> (default): 'native' output: faster and more precise between bach objects, but unreadable by standard Max objects (an "bach.llll" message appears instead). <br />
-                <m>t</m>: 'text' output: slower and limited in size, but readable by standard Max objects. A plain llll in text format is a generic Max message.
-                To keep the representation invertible (i.e., to allow a bach object receiving a text-format llll to interpret it exactly as if it was native format,
-                except for the size limitation), some specific kinds of symbols are preceded by a backtick: namely, symbols containing parens, or containing textual
-                representations of numbers or pitches, or beginning with a backtick, plus the symbols "null" and "nil" (distinct from the reserved words
-                "null" and "nil" representing the empty list and the empty sublist) are preceded by a backtick. Moreover, the symbols "int", "float" or "list"
-                are preceded by a backtick only if they are the first element of an llll, to distinguish them from the corresponding reserved messages of Max. <br />
-                <m>m</m>: 'max' output: mostly equivalent to the "t" specifier, but no symbol is backticket except "int", "float" and "list" at the beginning of an llll.
-                It is important to notice that, differently from text-format lllls proper, Max-format lllls might not be invertible even if they do not reach the size
-                limit for Max message. This means that a bach object receiving a Max-format llll output from another bach object might interpret it differently
-                from the original, or in some cases might even reject it. <br />
-                <m>x</m>: disabled output (nothing is output) <br />
-                <m>p</m>: 'portal' output: only used by bach.portal to intercept the @out attribute specified while creating the abstraction (see bach.portal). <br />
-                The native output is recommended, unless communication with standard Max messages is needed.
-                Disabling unused outputs can be useful if extreme optimization of the patch is needed.
-                <br /> <br />
-                This is a static attribute which can only be set by typing it in the object box.
-                <br /> <br />
-            </description>
-            <attributelist>
-                <attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
-                <attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
-                <attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-            </attributelist>
-        </attribute>
-        <attribute name="outout" get="1" set="1" type="int" size="1">
-            <digest>
-                Output &amp;quot;out&amp;quot; patcher attribute
-            </digest>
-            <description>
-                When set to 1, the <b>out</b> attribute of the containing patcher, if present,
-                as well as any <m>out</m> message received by <o>bach.args</o>, is output as an attribute-style argument. <br />
-                When set to 0, which is the default, the <b>out</b> attribute of the containing patcher is ignored,
-                as it is assumed that it is meant for a <o>bach.portal</o> object in the same patcher.
-                Also, any <m>out</m> message received by <o>bach.args</o> will be passed to all the <o>bach.portal</o> objects
-                contained in the same patcher of <o>bach.args</o>.<br />
-                This is a static attribute which can only be set by typing it in the object box.
-                <br /> <br />
-            </description>
-            <attributelist>
-                <attribute name="label" get="1" set="1" type="symbol" size="1" value="Output &amp;quot;out&amp;quot; patcher attribute" />
-                <attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
-            </attributelist>
-        </attribute>
-    </attributelist>
+	<!--ATTRIBUTES-->
+	<attributelist>
+		<attribute name="attrs" get="1" set="1" type="sym_array" size="0">
+			<digest>
+				Known Attributes
+			</digest>
+			<description>
+				An optional set of keywords to be considered as attributes, and therefore output as attribute-style arguments. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Known Attributes" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="backtick" get="1" set="1" type="int" size="1">
+			<digest>
+				Backtick bach Object Arguments
+			</digest>
+			<description>
+				When set to 1, if the first element of the "normal arguments" llll is an attribute of any bach object,
+				then a backtick is prepended to it. In this way, it will not be interpreted as an attribute by any bach object you feed it into. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Backtick bach Object Arguments" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="done" get="1" set="1" type="int" size="1">
+			<digest>
+				Output 'done' Message
+			</digest>
+			<description>
+				When set to 1, the message <m>done</m> is output after the last attribute-style argument, just like in <o>patcherargs</o>. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output 'done' Message" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="ins" get="1" set="1" type="int" size="1">
+			<digest>
+				Number of llll Inlets
+			</digest>
+			<description>
+				The number of llll inlets and outlets. In principle, it should match the number of inlets of the patcher. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of llll Inlets" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="mode" get="1" set="1" type="int" size="1">
+			<digest>
+				Mode
+			</digest>
+			<description>
+				When set to 1, the "normal arguments" llll is always at least the length of the typed-in arguments.
+				If not enough arguments are specified in the enclosing patcher, the missing ones will be taken from the <o>bach.args</o>' object box.
+				This is especially useful for providing an abstraction with a minimal set of default values. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Mode" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="nullmode" get="1" set="1" type="int" size="1">
+			<digest>
+				Null Mode
+			</digest>
+			<description>
+				When set to 1, <b>null</b> is output if no patcher argument is provided. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Null Mode" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="out" get="1" set="1" type="symbol" size="1">
+			<digest>
+				Outlet Types
+			</digest>
+			<description>
+				The <m>out</m> attribute is a sequence of characters identifying the outlet types (one character for each llll outlet). Characters can be one of the following: <br />
+				<m>n</m> (default): 'native' output: faster and more precise between bach objects, but unreadable by standard Max objects (an "bach.llll" message appears instead). <br />
+				<m>t</m>: 'text' output: slower and limited in size, but readable by standard Max objects. A plain llll in text format is a generic Max message.
+				To keep the representation invertible (i.e., to allow a bach object receiving a text-format llll to interpret it exactly as if it was native format,
+				except for the size limitation), some specific kinds of symbols are preceded by a backtick: namely, symbols containing parens, or containing textual
+				representations of numbers or pitches, or beginning with a backtick, plus the symbols "null" and "nil" (distinct from the reserved words
+				"null" and "nil" representing the empty list and the empty sublist) are preceded by a backtick. Moreover, the symbols "int", "float" or "list"
+				are preceded by a backtick only if they are the first element of an llll, to distinguish them from the corresponding reserved messages of Max. <br />
+				<m>m</m>: 'max' output: mostly equivalent to the "t" specifier, but no symbol is backticket except "int", "float" and "list" at the beginning of an llll.
+				It is important to notice that, differently from text-format lllls proper, Max-format lllls might not be invertible even if they do not reach the size
+				limit for Max message. This means that a bach object receiving a Max-format llll output from another bach object might interpret it differently
+				from the original, or in some cases might even reject it. <br />
+				<m>x</m>: disabled output (nothing is output) <br />
+				<m>p</m>: 'portal' output: only used by bach.portal to intercept the @out attribute specified while creating the abstraction (see bach.portal). <br />
+				The native output is recommended, unless communication with standard Max messages is needed.
+				Disabling unused outputs can be useful if extreme optimization of the patch is needed.
+				<br /> <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="outout" get="1" set="1" type="int" size="1">
+			<digest>
+				Output &amp;quot;out&amp;quot; patcher attribute
+			</digest>
+			<description>
+				When set to 1, the <b>out</b> attribute of the containing patcher, if present,
+				as well as any <m>out</m> message received by <o>bach.args</o>, is output as an attribute-style argument. <br />
+				When set to 0, which is the default, the <b>out</b> attribute of the containing patcher is ignored,
+				as it is assumed that it is meant for a <o>bach.portal</o> object in the same patcher.
+				Also, any <m>out</m> message received by <o>bach.args</o> will be passed to all the <o>bach.portal</o> objects
+				contained in the same patcher of <o>bach.args</o>.<br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Output &amp;quot;out&amp;quot; patcher attribute" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+	</attributelist>
 
-    <!--DISCUSSION-->
-    <discussion>
-        The basic behavior of <m>bach.args</m> is similar to <m>patcherargs</m>'s,
-        with improved support for correct synchronization and order preservation of messages and arguments.
-        Everytime the subpatch is loaded, all its arguments and attribute-style arguments are parsed and output, or substituted by specified defaults.
-        If a patch containing nested subpatches or abstractions each with its own instance of <m>bach.args</m> is loaded,
-        the various instances of <o>bach.args</o> will output their arguments in order of depth:
-        that is, the deepest instances will output first, the less deep ones last.
-        The output order of different <o>bach.args</o> objects at the same depth is undefined.
-        <o>bach.args</o> also has a communication mechanism with <o>bach.portal</o>,
-        assuring that each subpatcher's <o>bach.portal</o> is ready when the <o>bach.args</o> object in the same subpatch outputs its arguments.
-        In this way, it is safe for the arguments of the patch to trigger messages to the outside of the patch itself.
-    </discussion>
+	<!--DISCUSSION-->
+	<discussion>
+		The basic behavior of <m>bach.args</m> is similar to <m>patcherargs</m>'s,
+		with improved support for correct synchronization and order preservation of messages and arguments.
+		Everytime the subpatch is loaded, all its arguments and attribute-style arguments are parsed and output, or substituted by specified defaults.
+		If a patch containing nested subpatches or abstractions each with its own instance of <m>bach.args</m> is loaded,
+		the various instances of <o>bach.args</o> will output their arguments in order of depth:
+		that is, the deepest instances will output first, the less deep ones last.
+		The output order of different <o>bach.args</o> objects at the same depth is undefined.
+		<o>bach.args</o> also has a communication mechanism with <o>bach.portal</o>,
+		assuring that each subpatcher's <o>bach.portal</o> is ready when the <o>bach.args</o> object in the same subpatch outputs its arguments.
+		In this way, it is safe for the arguments of the patch to trigger messages to the outside of the patch itself.
+	</discussion>
 
-    <!--SEEALSO-->
-    <seealsolist>
-        <seealso name="bach.portal" />
-        <seealso name="patcherargs" />
-        <seealso name="12-Abstract Thinking" module="bach" type="tutorial" />
-    </seealsolist>
+	<!--SEEALSO-->
+	<seealsolist>
+		<seealso name="bach.portal" />
+		<seealso name="patcherargs" />
+		<seealso name="12-Abstract Thinking" module="bach" type="tutorial" />
+	</seealsolist>
 
-    <misc name = "Input">
-        <entry name ="Inlets 1, 2, 3...">
-            <description>
-                Incoming lllls.
-            </description>
-        </entry>
-        <entry name ="The last Inlet (bang)">
-            <description>
-                Bang to output all the arguments.
-            </description>
-        </entry>
-    </misc>
+	<misc name = "Input">
+		<entry name ="Inlets 1, 2, 3...">
+			<description>
+				Incoming lllls.
+			</description>
+		</entry>
+		<entry name ="The last Inlet (bang)">
+			<description>
+				Bang to output all the arguments.
+			</description>
+		</entry>
+	</misc>
 
-    <misc name = "Output">
-        <entry name ="Outlet 1 (bang)">
-            <description>
-                Bang after all the stored lllls have been output.
-            </description>
-        </entry>
-        <entry name ="Outlets 2, 3, 4... (llll)">
-            <description>
-                Incoming lllls.
-            </description>
-        </entry>
-        <entry name ="The last but 1 Outlet (llll)">
-            <description>
-                Normal arguments.
-            </description>
-        </entry>
-        <entry name ="The last Outlet (anything)">
-            <description>
-                Attribute-style arguments.
-            </description>
-        </entry>
-    </misc>
+	<misc name = "Output">
+		<entry name ="Outlet 1 (bang)">
+			<description>
+				Bang after all the stored lllls have been output.
+			</description>
+		</entry>
+		<entry name ="Outlets 2, 3, 4... (llll)">
+			<description>
+				Incoming lllls.
+			</description>
+		</entry>
+		<entry name ="The last but 1 Outlet (llll)">
+			<description>
+				Normal arguments.
+			</description>
+		</entry>
+		<entry name ="The last Outlet (anything)">
+			<description>
+				Attribute-style arguments.
+			</description>
+		</entry>
+	</misc>
 
-    <misc name = "Discussion">
-        <entry name ="More details">
-            <description>
-        The basic behavior of <m>bach.args</m> is similar to <m>patcherargs</m>'s,
-        with improved support for correct synchronization and order preservation of messages and arguments.
-        Everytime the subpatch is loaded, all its arguments and attribute-style arguments are parsed and output, or substituted by specified defaults.
-        If a patch containing nested subpatches or abstractions each with its own instance of <m>bach.args</m> is loaded,
-        the various instances of <o>bach.args</o> will output their arguments in order of depth:
-        that is, the deepest instances will output first, the less deep ones last.
-        The output order of different <o>bach.args</o> objects at the same depth is undefined.
-        <o>bach.args</o> also has a communication mechanism with <o>bach.portal</o>,
-        assuring that each subpatcher's <o>bach.portal</o> is ready when the <o>bach.args</o> object in the same subpatch outputs its arguments.
-        In this way, it is safe for the arguments of the patch to trigger messages to the outside of the patch itself.
-            </description>
-        </entry>
-        <entry name ="Keywords">
-            <description>
+	<misc name = "Discussion">
+		<entry name ="More details">
+			<description>
+		The basic behavior of <m>bach.args</m> is similar to <m>patcherargs</m>'s,
+		with improved support for correct synchronization and order preservation of messages and arguments.
+		Everytime the subpatch is loaded, all its arguments and attribute-style arguments are parsed and output, or substituted by specified defaults.
+		If a patch containing nested subpatches or abstractions each with its own instance of <m>bach.args</m> is loaded,
+		the various instances of <o>bach.args</o> will output their arguments in order of depth:
+		that is, the deepest instances will output first, the less deep ones last.
+		The output order of different <o>bach.args</o> objects at the same depth is undefined.
+		<o>bach.args</o> also has a communication mechanism with <o>bach.portal</o>,
+		assuring that each subpatcher's <o>bach.portal</o> is ready when the <o>bach.args</o> object in the same subpatch outputs its arguments.
+		In this way, it is safe for the arguments of the patch to trigger messages to the outside of the patch itself.
+			</description>
+		</entry>
+		<entry name ="Keywords">
+			<description>
 subpatcher, abstraction, argument, attribute, synchronize, manage.
-            </description>
-        </entry>
-    </misc>
+			</description>
+		</entry>
+	</misc>
 
 </c74object>

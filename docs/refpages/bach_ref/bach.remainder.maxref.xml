@@ -142,8 +142,8 @@
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.expr" />
-		<seealso name="bach./" />
-		<seealso name="bach.*" />
+		<seealso name="bach.div" display="bach./" type="refpage" />
+		<seealso name="bach.times" display="bach.*" type="refpage" />
 		<seealso name="bach.+" />
 		<seealso name="bach.-" />
 		<seealso name="%" />

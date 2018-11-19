@@ -130,7 +130,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 349.0, 146.0, 201.0, 59.0 ],
-									"text" : "(1/4 -1/8 1/8 1/12 1/12 -1/12 1/2) (1/2 1/8 -1/8 -1/4) (1/3 -1/3 1/3 -1/2)"
+									"text" : "[1/4 -1/8 1/8 1/12 1/12 -1/12 1/2] [1/2 1/8 -1/8 -1/4] [1/3 -1/3 1/3 -1/2]"
 								}
 
 							}
@@ -198,7 +198,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 32.0, 146.0, 211.5, 59.0 ],
-									"text" : "(a B c d e F g) (h i J K) (l M n O)"
+									"text" : "[a B c d e F g] [h i J K] [l M n O]"
 								}
 
 							}
@@ -609,7 +609,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 18.0, 227.0, 192.5, 42.0 ],
-									"text" : "(a) BAZINGA charles (d e) (f 12) FOO george"
+									"text" : "[a] BAZINGA charles [d e] [f 12] FOO george"
 								}
 
 							}

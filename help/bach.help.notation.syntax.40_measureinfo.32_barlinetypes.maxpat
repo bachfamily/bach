@@ -83,7 +83,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 62.5, 253.0, 526.0, 38.0 ],
 					"style" : "",
-					"text" : "(((4 4) (60) (barline h)) ((4 4) () (barline d)) ((4 4) () (barline p)) ((4 4) () (barline t)) ((4 4) () (barline s)) ((4 4) () (barline f)) ((4 4) () (barline a))), bang"
+					"text" : "[[[4 4] [60] [barline h]] [[4 4] [] [barline d]] [[4 4] [] [barline p]] [[4 4] [] [barline t]] [[4 4] [] [barline s]] [[4 4] [] [barline f]] [[4 4] [] [barline a]]], bang"
 				}
 
 			}
@@ -169,7 +169,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 221.0, 180.0, 23.0 ],
 					"style" : "",
-					"text" : "(((4 4) (60) (barline h))), bang"
+					"text" : "[[[4 4] [60] [barline h]]], bang"
 				}
 
 			}

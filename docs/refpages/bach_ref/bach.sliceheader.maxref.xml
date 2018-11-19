@@ -85,8 +85,8 @@
 				meta-information about the object (such as key signatures, clefs, markers...), while <m>BODY</m> is the llll
 				containing the actual content of the notation object (i.e. the content of each voice, or measure, or chord,
 				or note: the form varies depending on the notation object). <br /> <br />
-				The header contains meta-information about the score. Such information is given in the form <b>(<m>HEADER_LLLL1</m> <m>HEADER_LLLL2</m>...)</b>
-				where each <m>HEADER_LLLL</m> is in the form <b>(<m>header_element_name</m> <m>CONTENT</m>)</b>. The complete list of header element names
+				The header contains meta-information about the score. Such information is given in the form <b>[<m>HEADER_LLLL1</m> <m>HEADER_LLLL2</m>...]</b>
+				where each <m>HEADER_LLLL</m> is in the form <b>[<m>header_element_name</m> <m>CONTENT</m>]</b>. The complete list of header element names
 				and the expected content is the following one: <br />
 				– <b>clefs</b>: introduces the used clefs; one clef symbol for each voice is expected. The number of voices is automatically
 				updated to the number of clef symbols inserted.
@@ -119,7 +119,7 @@
 				The mode can be either "M" (major) or "m" minor. If no mode is defined, the major is used by default.
 				<br /> <br />
 				– <b>voicenames</b>: introduces the voice names specification, one name (atom) for each voice is expected.
-				If a voice have more than one name, an llll with the list of names must be introduced. To skip names for a voice use <b>nil</b> or <b>()</b>.
+				If a voice have more than one name, an llll with the list of names must be introduced. To skip names for a voice use <b>nil</b> or <b>[]</b>.
 				Since voice names can be set both as header element and as attribute, also see the <m>voicenames</m> attribute.
 				<br /> <br />
 				– <b>midichannels</b>: introduces the MIDI channels specification, one integer for each voice is expected.
@@ -128,48 +128,48 @@
 				– <b>stafflines</b>: set the staff lines configurations. A list of elements (one for each voice) is expected. Since staff lines can be set both as header element and
 				as attribute, also see the <m>stafflines</m> attribute. Each element can be in one of the following forms:
 				either <b><m>number_of_stafflines</m></b>, setting the number of stafflines for the voice, which will be distributed evenly around
-				the middle line of the default staff, or a wrapped llll in the form <b>(<m>index_staff_line1</m> <m>index_staff_line2</m>...)</b>
+				the middle line of the default staff, or a wrapped llll in the form <b>[<m>index_staff_line1</m> <m>index_staff_line2</m>...]</b>
 				where each index is the position of a line to be drawn. Line 1 correspond to the bottommost staffline of a standard staff;
 				line 5 correspond to the topmost staffline of a standard staff. Integers need not be positive: indices like -2 or 7 will be
 				extrapolated from the standard staff. The total number of lines is thus the length of such llll.
 				<br /> <br />
 				– <b>markers</b>: specifies the markers. A list of elements (one for each marker) is expected. For <o>bach.roll</o> markers, or for
 				<o>bach.score</o> markers attached to milliseconds position, each element
-				must be in the form <b>(<m>position_ms</m> <m>marker_name(s)</m> <m>role</m> <m>content</m>)</b> where the two last parameters
+				must be in the form <b>[<m>position_ms</m> <m>marker_name[s]</m> <m>role</m> <m>content</m>]</b> where the two last parameters
 				are optional and only supported by <o>bach.roll</o> (ignore them in <o>bach.score</o>). The <m>position_ms</m> is a floating number
 				specifying the marker position in milliseconds; the <m>marker_name(s)</m> is either a single symbol, or a wrapped llll, or
-				<b>nil</b> or <b>()</b> if marker has no name. For <o>bach.score</o> measure-attached markers the syntax is: <b>(<m>TIMEPOINT</m> <m>marker_name(s)</m>)</b>
+				<b>nil</b> or <b>[]</b> if marker has no name. For <o>bach.score</o> measure-attached markers the syntax is: <b>[<m>TIMEPOINT</m> <m>marker_name[s]</m>]</b>
 				where <m>TIMEPOINT</m> identifies a time point.
 				A timepoint represents a given instant inside <o>bach.score</o>, as a measure-attached position.
 				It identifies such point according to a measure, a position inside such measure,
 				and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
 				Differently from absolute millisecond positions,
 				timepoints are represented by lllls, in one of the following syntaxes: <br />
-				- <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
-				For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
-				- <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+				- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
+				For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
+				- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
 				but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
-				- <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number,
+				For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+				- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 				in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-				For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+				For instance, <b>[2 4 1/4]</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
 				important if voices don't have the same tempi or time signatures.
 				<br />
-				A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
-				point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1.
+				A timepoint can also  be specified via a <b>[<m>float_measure_number</m>]</b>, representing the point in a floating
+				point position between two measures (referred to the first voice). For instance, <b>[4.2]</b> represents the point at the 20% of measure 4, voice 1.
 				Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
-				of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+				of the measure (1); for instance <b>[1 4 0.2]</b> represents the point after 20% of measure 4, voice 1.
 				<br />
 				If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
-				For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-				<b>(3 any 27/4)</b> does the same for voice 3.
+				For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+				<b>[3 any 27/4]</b> does the same for voice 3.
 				<br /> <br />
 				– <b>slotinfo</b>: specifies the information about the types and the global characteristics of each slot.
-				The general syntax for a slotinfo llll in a notation object header is: <b>(slotinfo (<m>slot_num1</m> <m>SPECIFICATIONS1</m>) (<m>slot_num2</m> <m>SPECIFICATIONS2</m>)...)</b>,
+				The general syntax for a slotinfo llll in a notation object header is: <b>[slotinfo [<m>slot_num1</m> <m>SPECIFICATIONS1</m>] [<m>slot_num2</m> <m>SPECIFICATIONS2</m>]...]</b>,
 				where the <m>slot_num</m> are the slot numbers (1 to 30), followed by their corresponding slotinfo specification. You don't need to give the information about all slots
 				at input (only the one that you will use), nor the slot numbers have to be sorted in any way. On the other hand, at output, the slotinfo
 				is always output for all slots, sorted in ascending order.
-				Each <m>SPECIFICATIONS</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+				Each <m>SPECIFICATIONS</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 				each <m>parameter</m> is a symbol followed by some content specifying a field of the slotinfo.
 				The complete list of parameters symbols and their corresponding expected content is the following one: <br />
 				– <b>name</b>: expects the name you want to give to the slot (given as a unique symbol). <br />
@@ -203,7 +203,7 @@
 				– <b>representation</b>: it could expect one of the following things. 1: Symbols defining units of measurement (e.g. "Hz", "ms"...), for numeric
 				slots one symbol is expected, for function slots if one symbol is given, it is applied to the Y axis, if two symbols are given they are
 				applied to the X and Y axis, for 3dfunction slots up to three symbols can be given, the third one referring to the Z axis, use <b>nil</b> or
-				<b>()</b> to skip assignment for an axis. For filter and dynfilter slots, you can assign "Hz" or "cents" as unit of measurement
+				<b>[]</b> to skip assignment for an axis. For filter and dynfilter slots, you can assign "Hz" or "cents" as unit of measurement
 				and it will be used to display the cutoff frequency accordingly. 2: An enumeration list (only for int
 				and intlist slots), mapping each integer to an element of this enumeration list (e.g. in an int slot from 1 to 3, a
 				slot_representation "(one two three)" will display "one" at the place of 1, "two" at the place of 2, "three" at the place of 3).
@@ -238,11 +238,11 @@
 				<br />
 				– <b>commands</b>: specifies the information about the commands. A list of elements (one for each command) is expected.
 				The general syntax for an llll defining commands in a notation object header is:
-				<b>(commands (<m>command_num1</m> <m>SPECIFICATIONS1</m>) (<m>command_num2</m> <m>SPECIFICATIONS2</m>)...)</b>
+				<b>[commands [<m>command_num1</m> <m>SPECIFICATIONS1</m>] [<m>command_num2</m> <m>SPECIFICATIONS2</m>]...]</b>
 				where the <m>command_num1</m> are the command numbers (1 to 30), followed by their corresponding command specification. You don't need to give the information about all slots
 				at input (only the one that you will use), nor the command numbers have to be sorted in any way. On the other hand, at output, the commands
 				are always output for all commands, sorted in ascending order.
-				Each <m>SPECIFICATIONS</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+				Each <m>SPECIFICATIONS</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 				each <m>parameter</m> is a symbol followed by some content specifying a field of the commands.
 				The list of parameters symbols and their corresponding expected content is the following one: <br />
 				– <b>note</b>: expects the symbol which will replace the "note" symbol in the playout (given as a unique symbol). <br />
@@ -256,13 +256,13 @@
 				Usually, such information is only dealt with via the interface (i.e. by grouping and ungrouping things),
 				and the group header element is only a way to embed or save such information with the object.
 				Nevertheless, nothing in principle prevents you from setting groups via message. The syntax is the following one:
-				<b>(groups <m>GROUP1</m> <m>GROUP2</m>...)</b>, where each <m>GROUP</m> is an llll having the syntax
-				<b>(<m>ADDRESS_CHORD1</m> <m>ADDRESS_CHORD2</m> <m>ADDRESS_CHORD3</m>...)</b>, where each address llll identifies one of the
-				chord inside the groups, via the following syntax: <b>(<m>voice_number</m> <m>chord_index</m>)</b>,
+				<b>[groups <m>GROUP1</m> <m>GROUP2</m>...]</b>, where each <m>GROUP</m> is an llll having the syntax
+				<b>[<m>ADDRESS_CHORD1</m> <m>ADDRESS_CHORD2</m> <m>ADDRESS_CHORD3</m>...]</b>, where each address llll identifies one of the
+				chord inside the groups, via the following syntax: <b>[<m>voice_number</m> <m>chord_index</m>]</b>,
 				where the chord index is the position of the chord inside the sequence of chords of the voice (ordered by onsets).
 				– <b>articulationinfo</b>: specifies the information about custom defined articulation.
-				The general syntax for the articulationinfo llll in a notation object header is: <b>(articulationinfo <m>CUSTOMARTICULATION1</m> <m>CUSTOMARTICULATION2</m>...)</b>.
-				Each <m>CUSTOMARTICULATION</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+				The general syntax for the articulationinfo llll in a notation object header is: <b>[articulationinfo <m>CUSTOMARTICULATION1</m> <m>CUSTOMARTICULATION2</m>...]</b>.
+				Each <m>CUSTOMARTICULATION</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 				each <m>parameter</m> is some propriety of the custom articulation to be defined, followed by its value.
 				The complete list of parameters symbols and their corresponding expected content is the following one: <br />
 				– <b>fullname</b>: a symbol defining the articulation full name (e.g. "myfermata"). <br />
@@ -306,8 +306,8 @@
 				· shiftwithbeams: shift vertically according to beams.<br />
 				<br />
 				– <b>noteheadinfo</b>: specifies the information about custom defined noteheads.
-				The general syntax for the articulationinfo llll in a notation object header is: <b>(articulationinfo <m>CUSTOMNOTEHEAD1</m> <m>CUSTOMNOTEHEAD2</m>...)</b>.
-				Each <m>CUSTOMNOTEHEAD</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+				The general syntax for the articulationinfo llll in a notation object header is: <b>[articulationinfo <m>CUSTOMNOTEHEAD1</m> <m>CUSTOMNOTEHEAD2</m>...]</b>.
+				Each <m>CUSTOMNOTEHEAD</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 				each <m>parameter</m> is some propriety of the custom notehead to be defined, followed by its value.
 				The complete list of parameters symbols and their corresponding expected content is the following one: <br />
 				– <b>fullname</b>: a symbol defining the articulation full name (e.g. "curly").<br />
@@ -375,8 +375,8 @@
 		meta-information about the object (such as key signatures, clefs, markers...), while <m>BODY</m> is the llll
 		containing the actual content of the notation object (i.e. the content of each voice, or measure, or chord,
 		or note: the form varies depending on the notation object). <br /> <br />
-		The header contains meta-information about the score. Such information is given in the form <b>(<m>HEADER_LLLL1</m> <m>HEADER_LLLL2</m>...)</b>
-		where each <m>HEADER_LLLL</m> is in the form <b>(<m>header_element_name</m> <m>CONTENT</m>)</b>. The complete list of header element names
+		The header contains meta-information about the score. Such information is given in the form <b>[<m>HEADER_LLLL1</m> <m>HEADER_LLLL2</m>...]</b>
+		where each <m>HEADER_LLLL</m> is in the form <b>[<m>header_element_name</m> <m>CONTENT</m>]</b>. The complete list of header element names
 		and the expected content is the following one: <br />
 		– <b>clefs</b>: introduces the used clefs; one clef symbol for each voice is expected. The number of voices is automatically
 		updated to the number of clef symbols inserted.
@@ -409,7 +409,7 @@
 		The mode can be either "M" (major) or "m" minor. If no mode is defined, the major is used by default.
 		<br /> <br />
 		– <b>voicenames</b>: introduces the voice names specification, one name (atom) for each voice is expected.
-		If a voice have more than one name, an llll with the list of names must be introduced. To skip names for a voice use <b>nil</b> or <b>()</b>.
+		If a voice have more than one name, an llll with the list of names must be introduced. To skip names for a voice use <b>nil</b> or <b>[]</b>.
 		Since voice names can be set both as header element and as attribute, also see the <m>voicenames</m> attribute.
 		<br /> <br />
 		– <b>midichannels</b>: introduces the MIDI channels specification, one integer for each voice is expected.
@@ -418,48 +418,48 @@
 		– <b>stafflines</b>: set the staff lines configurations. A list of elements (one for each voice) is expected. Since staff lines can be set both as header element and
 		as attribute, also see the <m>stafflines</m> attribute. Each element can be in one of the following forms:
 		either <b><m>number_of_stafflines</m></b>, setting the number of stafflines for the voice, which will be distributed evenly around
-		the middle line of the default staff, or a wrapped llll in the form <b>(<m>index_staff_line1</m> <m>index_staff_line2</m>...)</b>
+		the middle line of the default staff, or a wrapped llll in the form <b>[<m>index_staff_line1</m> <m>index_staff_line2</m>...]</b>
 		where each index is the position of a line to be drawn. Line 1 correspond to the bottommost staffline of a standard staff;
 		line 5 correspond to the topmost staffline of a standard staff. Integers need not be positive: indices like -2 or 7 will be
 		extrapolated from the standard staff. The total number of lines is thus the length of such llll.
 		<br /> <br />
 		– <b>markers</b>: specifies the markers. A list of elements (one for each marker) is expected. For <o>bach.roll</o> markers, or for
 		<o>bach.score</o> markers attached to milliseconds position, each element
-		must be in the form <b>(<m>position_ms</m> <m>marker_name(s)</m> <m>role</m> <m>content</m>)</b> where the two last parameters
+		must be in the form <b>[<m>position_ms</m> <m>marker_name[s]</m> <m>role</m> <m>content</m>]</b> where the two last parameters
 		are optional and only supported by <o>bach.roll</o> (ignore them in <o>bach.score</o>). The <m>position_ms</m> is a floating number
 		specifying the marker position in milliseconds; the <m>marker_name(s)</m> is either a single symbol, or a wrapped llll, or
-		<b>nil</b> or <b>()</b> if marker has no name. For <o>bach.score</o> measure-attached markers the syntax is: <b>(<m>TIMEPOINT</m> <m>marker_name(s)</m>)</b>
+		<b>nil</b> or <b>[]</b> if marker has no name. For <o>bach.score</o> measure-attached markers the syntax is: <b>[<m>TIMEPOINT</m> <m>marker_name[s]</m>]</b>
 		where <m>TIMEPOINT</m> identifies a time point.
 		A timepoint represents a given instant inside <o>bach.score</o>, as a measure-attached position.
 		It identifies such point according to a measure, a position inside such measure,
 		and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
 		Differently from absolute millisecond positions,
 		timepoints are represented by lllls, in one of the following syntaxes: <br />
-		- <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
-		For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
-		- <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+		- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
+		For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
+		- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
 		but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-		For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
-		- <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number,
+		For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+		- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 		in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-		For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+		For instance, <b>[2 4 1/4]</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
 		important if voices don't have the same tempi or time signatures.
 		<br />
-		A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
-		point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1.
+		A timepoint can also  be specified via a <b>[<m>float_measure_number</m>]</b>, representing the point in a floating
+		point position between two measures (referred to the first voice). For instance, <b>[4.2]</b> represents the point at the 20% of measure 4, voice 1.
 		Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
-		of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+		of the measure (1); for instance <b>[1 4 0.2]</b> represents the point after 20% of measure 4, voice 1.
 		<br />
 		If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
-		For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-		<b>(3 any 27/4)</b> does the same for voice 3.
+		For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+		<b>[3 any 27/4]</b> does the same for voice 3.
 		<br /> <br />
 		– <b>slotinfo</b>: specifies the information about the types and the global characteristics of each slot.
-		The general syntax for a slotinfo llll in a notation object header is: <b>(slotinfo (<m>slot_num1</m> <m>SPECIFICATIONS1</m>) (<m>slot_num2</m> <m>SPECIFICATIONS2</m>)...)</b>,
+		The general syntax for a slotinfo llll in a notation object header is: <b>[slotinfo [<m>slot_num1</m> <m>SPECIFICATIONS1</m>] [<m>slot_num2</m> <m>SPECIFICATIONS2</m>]...]</b>,
 		where the <m>slot_num</m> are the slot numbers (1 to 30), followed by their corresponding slotinfo specification. You don't need to give the information about all slots
 		at input (only the one that you will use), nor the slot numbers have to be sorted in any way. On the other hand, at output, the slotinfo
 		is always output for all slots, sorted in ascending order.
-		Each <m>SPECIFICATIONS</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+		Each <m>SPECIFICATIONS</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 		each <m>parameter</m> is a symbol followed by some content specifying a field of the slotinfo.
 		The complete list of parameters symbols and their corresponding expected content is the following one: <br />
 		– <b>name</b>: expects the name you want to give to the slot (given as a unique symbol). <br />
@@ -508,8 +508,8 @@
 		meta-information about the object (such as key signatures, clefs, markers...), while <m>BODY</m> is the llll
 		containing the actual content of the notation object (i.e. the content of each voice, or measure, or chord,
 		or note: the form varies depending on the notation object). <br /> <br />
-		The header contains meta-information about the score. Such information is given in the form <b>(<m>HEADER_LLLL1</m> <m>HEADER_LLLL2</m>...)</b>
-		where each <m>HEADER_LLLL</m> is in the form <b>(<m>header_element_name</m> <m>CONTENT</m>)</b>. The complete list of header element names
+		The header contains meta-information about the score. Such information is given in the form <b>[<m>HEADER_LLLL1</m> <m>HEADER_LLLL2</m>...]</b>
+		where each <m>HEADER_LLLL</m> is in the form <b>[<m>header_element_name</m> <m>CONTENT</m>]</b>. The complete list of header element names
 		and the expected content is the following one: <br />
 		– <b>clefs</b>: introduces the used clefs; one clef symbol for each voice is expected. The number of voices is automatically
 		updated to the number of clef symbols inserted.
@@ -542,7 +542,7 @@
 		The mode can be either "M" (major) or "m" minor. If no mode is defined, the major is used by default.
 		<br /> <br />
 		– <b>voicenames</b>: introduces the voice names specification, one name (atom) for each voice is expected.
-		If a voice have more than one name, an llll with the list of names must be introduced. To skip names for a voice use <b>nil</b> or <b>()</b>.
+		If a voice have more than one name, an llll with the list of names must be introduced. To skip names for a voice use <b>nil</b> or <b>[]</b>.
 		Since voice names can be set both as header element and as attribute, also see the <m>voicenames</m> attribute.
 		<br /> <br />
 		– <b>midichannels</b>: introduces the MIDI channels specification, one integer for each voice is expected.
@@ -551,48 +551,48 @@
 		– <b>stafflines</b>: set the staff lines configurations. A list of elements (one for each voice) is expected. Since staff lines can be set both as header element and
 		as attribute, also see the <m>stafflines</m> attribute. Each element can be in one of the following forms:
 		either <b><m>number_of_stafflines</m></b>, setting the number of stafflines for the voice, which will be distributed evenly around
-		the middle line of the default staff, or a wrapped llll in the form <b>(<m>index_staff_line1</m> <m>index_staff_line2</m>...)</b>
+		the middle line of the default staff, or a wrapped llll in the form <b>[<m>index_staff_line1</m> <m>index_staff_line2</m>...]</b>
 		where each index is the position of a line to be drawn. Line 1 correspond to the bottommost staffline of a standard staff;
 		line 5 correspond to the topmost staffline of a standard staff. Integers need not be positive: indices like -2 or 7 will be
 		extrapolated from the standard staff. The total number of lines is thus the length of such llll.
 		<br /> <br />
 		– <b>markers</b>: specifies the markers. A list of elements (one for each marker) is expected. For <o>bach.roll</o> markers, or for
 		<o>bach.score</o> markers attached to milliseconds position, each element
-		must be in the form <b>(<m>position_ms</m> <m>marker_name(s)</m> <m>role</m> <m>content</m>)</b> where the two last parameters
+		must be in the form <b>[<m>position_ms</m> <m>marker_name[s]</m> <m>role</m> <m>content</m>]</b> where the two last parameters
 		are optional and only supported by <o>bach.roll</o> (ignore them in <o>bach.score</o>). The <m>position_ms</m> is a floating number
 		specifying the marker position in milliseconds; the <m>marker_name(s)</m> is either a single symbol, or a wrapped llll, or
-		<b>nil</b> or <b>()</b> if marker has no name. For <o>bach.score</o> measure-attached markers the syntax is: <b>(<m>TIMEPOINT</m> <m>marker_name(s)</m>)</b>
+		<b>nil</b> or <b>[]</b> if marker has no name. For <o>bach.score</o> measure-attached markers the syntax is: <b>[<m>TIMEPOINT</m> <m>marker_name[s]</m>]</b>
 		where <m>TIMEPOINT</m> identifies a time point.
 		A timepoint represents a given instant inside <o>bach.score</o>, as a measure-attached position.
 		It identifies such point according to a measure, a position inside such measure,
 		and possibly a voice (in case tempi and time signatures are not synchronous for all voices).
 		Differently from absolute millisecond positions,
 		timepoints are represented by lllls, in one of the following syntaxes: <br />
-		- <b>(<m>measure_number</m>)</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
-		For instance, <b>(4)</b> represents the point at the very beginning of measure 4, voice 1. <br />
-		- <b>(<m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
+		- <b>[<m>measure_number</m>]</b>: represents the point is at the beginning of the measure identified by the introduced measure number, in the first voice.
+		For instance, <b>[4]</b> represents the point at the very beginning of measure 4, voice 1. <br />
+		- <b>[<m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number (in the first voice),
 		but not necessarily at the beginning, rather at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-		For instance, <b>(4 1/4)</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
-		- <b>(<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>)</b>: represents the point inside the measure identified by the introduced measure number,
+		For instance, <b>[4 1/4]</b> represents the point at measure 4, voice 1, after 1/4 from the beginning of the measure. <br />
+		- <b>[<m>voice_number</m> <m>measure_number</m> <m>sym_onset_in_measure</m>]</b>: represents the point inside the measure identified by the introduced measure number,
 		in the voice identified, by the introduced voice number, at the generic position in measure identified by the symbolic onset <m>sym_onset_in_measure</m>.
-		For instance, <b>(2 4 1/4)</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
+		For instance, <b>[2 4 1/4]</b> represents the point at measure 4, voice 2, after 1/4 from the beginning of the measure. Specifying voice numbers explicitly is especially
 		important if voices don't have the same tempi or time signatures.
 		<br />
-		A timepoint can also  be specified via a <b>(<m>float_measure_number</m>)</b>, representing the point in a floating
-		point position between two measures (referred to the first voice). For instance, <b>(4.2)</b> represents the point at the 20% of measure 4, voice 1.
+		A timepoint can also  be specified via a <b>[<m>float_measure_number</m>]</b>, representing the point in a floating
+		point position between two measures (referred to the first voice). For instance, <b>[4.2]</b> represents the point at the 20% of measure 4, voice 1.
 		Furthermore, the <m>sym_onset_in_measure</m> can be replaced by a float between 0 and 1 to represent a point between the beginning (0) and the end
-		of the measure (1); for instance <b>(1 4 0.2)</b> represents the point after 20% of measure 4, voice 1.
+		of the measure (1); for instance <b>[1 4 0.2]</b> represents the point after 20% of measure 4, voice 1.
 		<br />
 		If the measure number is replaced by the <b>any</b> symbol, then the following rational is interpreted as a global symbolic onset inside the score.
-		For instance, <b>(any 27/4)</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
-		<b>(3 any 27/4)</b> does the same for voice 3.
+		For instance, <b>[any 27/4]</b> represents the point at 27/4 after the beginning of the score, referred to the measureinfo of voice 1;
+		<b>[3 any 27/4]</b> does the same for voice 3.
 		<br /> <br />
 		– <b>slotinfo</b>: specifies the information about the types and the global characteristics of each slot.
-		The general syntax for a slotinfo llll in a notation object header is: <b>(slotinfo (<m>slot_num1</m> <m>SPECIFICATIONS1</m>) (<m>slot_num2</m> <m>SPECIFICATIONS2</m>)...)</b>,
+		The general syntax for a slotinfo llll in a notation object header is: <b>[slotinfo [<m>slot_num1</m> <m>SPECIFICATIONS1</m>] [<m>slot_num2</m> <m>SPECIFICATIONS2</m>]...]</b>,
 		where the <m>slot_num</m> are the slot numbers (1 to 30), followed by their corresponding slotinfo specification. You don't need to give the information about all slots
 		at input (only the one that you will use), nor the slot numbers have to be sorted in any way. On the other hand, at output, the slotinfo
 		is always output for all slots, sorted in ascending order.
-		Each <m>SPECIFICATIONS</m> llll has the form <b>(<m>parameter1</m> <m>content1</m>) (<m>parameter2</m> <m>content2</m>)...</b>, where
+		Each <m>SPECIFICATIONS</m> llll has the form <b>[<m>parameter1</m> <m>content1</m>] [<m>parameter2</m> <m>content2</m>]...</b>, where
 		each <m>parameter</m> is a symbol followed by some content specifying a field of the slotinfo.
 		The complete list of parameters symbols and their corresponding expected content is the following one: <br />
 		– <b>name</b>: expects the name you want to give to the slot (given as a unique symbol). <br />

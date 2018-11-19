@@ -569,7 +569,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 60.0, 313.0, 23.0 ],
 					"style" : "",
-					"text" : "sel nil nil 6500 8000, cents (200 plus), clearselection"
+					"text" : "sel nil nil 6500 8000, cents [200 plus], clearselection"
 				}
 
 			}

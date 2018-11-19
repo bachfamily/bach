@@ -112,7 +112,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 132.5, 258.0, 357.0, 19.0 ],
-					"text" : "minimalunits dynamic (1/4) 6 (1/16 1/12) 12 (1/16 1/24 1/20)"
+					"text" : "minimalunits dynamic [1/4] 6 [1/16 1/12] 12 [1/16 1/24 1/20]"
 				}
 
 			}

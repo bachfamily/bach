@@ -280,7 +280,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "A Mazing Grace (b)",
+					"text" : "A Mazing Grace [b]",
 					"numoutlets" : 1,
 					"id" : "obj-6",
 					"fontname" : "Arial",
@@ -379,7 +379,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "A Mazing Grace (d)",
+					"text" : "A Mazing Grace [d]",
 					"numoutlets" : 1,
 					"id" : "obj-15",
 					"fontname" : "Arial",

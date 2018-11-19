@@ -71,7 +71,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 354.0, 140.0, 19.0 ],
-					"text" : "sel nil (2 2 3/8) nil nil 2"
+					"text" : "sel nil [2 2 3/8] nil nil 2"
 				}
 
 			}
@@ -133,7 +133,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 324.0, 312.0, 207.0, 19.0 ],
-					"text" : "sel (2 1 1/4) (2 2 3/8) 5900 8000 2"
+					"text" : "sel [2 1 1/4] [2 2 3/8] 5900 8000 2"
 				}
 
 			}
@@ -147,7 +147,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 157.0, 185.0, 19.0 ],
-					"text" : "sel (1 1/4) (2 3/8) 5900 8000 1"
+					"text" : "sel [1 1/4] [2 3/8] 5900 8000 1"
 				}
 
 			}

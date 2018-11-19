@@ -53,7 +53,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 114.0, 185.0, 48.0 ],
-					"text" : "(((2 4) (60) (barline h)) ((2 4)) ((2 4) (shownumber off)) ((2 4) (shownumber -1))), bang"
+					"text" : "[[[2 4] [60] [barline h]] [[2 4]] [[2 4] [shownumber off]] [[2 4] [shownumber -1]]], bang"
 				}
 
 			}

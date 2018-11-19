@@ -644,7 +644,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 74.0, 548.0, 195.0 ],
-									"text" : "The body of the SDIF file, that is the sequence of all the matrices of all the streams, must be formatted into an llll with one sublist for each stream, as follows:\n\n (<stream ID> (<frame signature> <time> (<Matrix> <Matrix> ...))\n                       (<frame signature> <time> (<Matrix> <Matrix> ...)) ...) \n (<stream ID> (<frame signature> <time> (<Matrix> <Matrix> ...))\n                       (<frame signature> <time> (<Matrix> <Matrix> ...)) ...)\n\n<time> is expressed in milliseconds.\nEach <Matrix> has the form (<Matrix signature> (<Row> <Row> ...))\nIf the matrix data type is numeric, each <Row> has the form (<data> <data> ...).\nIf the matrix data type is text, each <Row> has the form <symbol> - that is, its contents are formatted as a single symbol.",
+									"text" : "The body of the SDIF file, that is the sequence of all the matrices of all the streams, must be formatted into an llll with one sublist for each stream, as follows:\n\n [<stream ID> [<frame signature> <time> [<Matrix> <Matrix> ...]]\n                       [<frame signature> <time> [<Matrix> <Matrix> ...]] ...] \n [<stream ID> [<frame signature> <time> [<Matrix> <Matrix> ...]]\n                       [<frame signature> <time> [<Matrix> <Matrix> ...]] ...]\n\n<time> is expressed in milliseconds.\nEach <Matrix> has the form [<Matrix signature> [<Row> <Row> ...]]\nIf the matrix data type is numeric, each <Row> has the form [<data> <data> ...].\nIf the matrix data type is text, each <Row> has the form <symbol> - that is, its contents are formatted as a single symbol.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -736,7 +736,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 74.0, 559.0, 253.0 ],
-									"text" : "The SDIF header must be formatted into an llll composed by three optionals sublists, respectively for the name-value tables, the frame definitions and the matrix definitions. The order of appearance of these three sublists, if they exist, may vary from file to file.\n\nThe structure of the name-value sublist is\n(nvt ((<name> <value>) (<name> <value>) ...)\n       ((<name> <value>) (<name> <value>) ...)\n      \t  ...)\n\nThe structure of the frame definitions sublist is\n(frametypes (<frame signature> ((<matrix signature> <component name>) (<matrix signature> <component name>) ...) ...) ...)\n\nThe structure of the matrix definitions sublist is\n(matrixtypes (<matrix signature> (<column name> <column name> ...)) ...)\n\nThe header llll for a simple SDIF file may be empty.",
+									"text" : "The SDIF header must be formatted into an llll composed by three optionals sublists, respectively for the name-value tables, the frame definitions and the matrix definitions. The order of appearance of these three sublists, if they exist, may vary from file to file.\n\nThe structure of the name-value sublist is\n[nvt [[<name> <value>] [<name> <value>] ...]\n       [[<name> <value>] [<name> <value>] ...]\n      \t  ...]\n\nThe structure of the frame definitions sublist is\n[frametypes [<frame signature> [[<matrix signature> <component name>] [<matrix signature> <component name>] ...] ...] ...]\n\nThe structure of the matrix definitions sublist is\n[matrixtypes [<matrix signature> [<column name> <column name> ...]] ...]\n\nThe header llll for a simple SDIF file may be empty.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -877,7 +877,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 158.0, 123.0, 311.0, 112.0 ],
-									"text" : "( nvt ( ( User johnnyrotten ) ( TableName WriterInfo ) ) ) ( frametypes ( 1NVT ( 1NVT NameValueTable ) ) ( XFOO ( 1FQ0 FundamentalFrequency ) ( 1FOF FormantParameters ) ) ( 1TYP ( 1TYP TypeDefinitions ) ) ) ( matrixtypes ( 1FOF ( Frequency Amplitude BandWidth Tex DebAtt Atten Phase ) ) ( 1NVT ( NVTText ) ) ( 1TYP ( TYPText ) ) ( 1FQ0 ( Frequency Confidence Score RealAmplitude ) ) )"
+									"text" : "[ nvt [ [ User johnnyrotten ] [ TableName WriterInfo ] ] ] [ frametypes [ 1NVT [ 1NVT NameValueTable ] ] [ XFOO [ 1FQ0 FundamentalFrequency ] [ 1FOF FormantParameters ] ] [ 1TYP [ 1TYP TypeDefinitions ] ] ] [ matrixtypes [ 1FOF [ Frequency Amplitude BandWidth Tex DebAtt Atten Phase ) ) ( 1NVT ( NVTText ) ) ( 1TYP ( TYPText ) ) ( 1FQ0 ( Frequency Confidence Score RealAmplitude ) ) )"
 								}
 
 							}
@@ -892,7 +892,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 223.0, 241.0, 238.0, 45.0 ],
-									"text" : "( 9 ( XFOO 1640. ( 1FQ0 ( ( 1. ) ) ) ( 1FOF ( ( 1. 2. 1. 1. ) ) ) ) ( XFOO 3392.118022 ( 1FQ0 ( ( 2. ) ) ) ( 1FOF ( ( 2. 4. 2. 2. ) ) ) ) )"
+									"text" : "[ 9 [ XFOO 1640. [ 1FQ0 [ [ 1. ] ] ] [ 1FOF [ [ 1. 2. 1. 1. ] ] ] ] [ XFOO 3392.118022 [ 1FQ0 [ [ 2. ] ] ] [ 1FOF [ [ 2. 4. 2. 2. ] ] ] ] ]"
 								}
 
 							}

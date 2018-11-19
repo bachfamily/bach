@@ -145,7 +145,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 432.0, 436.0, 141.0, 23.0 ],
 					"style" : "",
-					"text" : "lambda cents ( $1 $2 )"
+					"text" : "lambda cents [ $1 $2 ]"
 				}
 
 			}
@@ -354,7 +354,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 100.0, 387.0, 23.0 ],
 					"style" : "",
-					"text" : "(commands (1 (note upnote) (key u)) (2 (note downnote) (key d)))"
+					"text" : "[commands [1 [note upnote] [key u]] [2 [note downnote] [key d]]]"
 				}
 
 			}

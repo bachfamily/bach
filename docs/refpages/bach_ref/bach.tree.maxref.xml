@@ -61,8 +61,8 @@
 				The address of an element in a sublist is a list composed by the position of the element in the sublist,
 				preceded by the position of the sublist in the parent llll,
 				and so on up to the root level, as a sort of "path" to the element.<br />
-				For instance, given the llll <b>a b c (d e (f g) h i) j k</b> the position of <b>c</b> is <b>3</b>;
-				the position of <b>(d e (f g) h i)</b> is <b>4</b>;
+				For instance, given the llll <b>a b c [d e [f g] h i] j k</b> the position of <b>c</b> is <b>3</b>;
+				the position of <b>[d e [f g] h i]</b> is <b>4</b>;
 				the position if <b>e</b> is <b>4 2</b> since to reach it it takes to go to the 4th element of the root level, which is a sublist,
 				and to the 2nd element of that sublist.
 				By reading the address from right to left, it can be seen that this is equivalent to saying
@@ -163,8 +163,8 @@
 			<description>
 				Syntax: <b>click <m>&lt;llll/symbol: wrapped_address&gt;</m> </b><br />
 				Examples:<br />
-				• <b>click (1 3 4)</b>   <i>→ click on the point having address (1 3 4)</i><br />
-				• <b>click ()</b>   <i>→ click on root node</i><br />
+				• <b>click [1 3 4]</b>   <i>→ click on the point having address (1 3 4)</i><br />
+				• <b>click []</b>   <i>→ click on root node</i><br />
 				• <b>click next</b>   <i>→ click on the next element</i><br />
 				• <b>click prev</b>   <i>→ click on the previous element</i><br />
 				<br />
@@ -173,7 +173,7 @@
 				The argument is the wrapped address of the node to be clicked. Such address can be replaced by the "prev" or "next" symbols
 				in order to click on the previous or next node, with respect to the one being currently clicked (if any).
 				The ordering of nodes is assumed to be the one used by <o>bach.iter</o> while iterating.
-				For instance, <b>click (1 3 4)</b> clicks on the llll element having address <b>1 3 4</b>, and <b>click next</b> then clicks on
+				For instance, <b>click [1 3 4]</b> clicks on the llll element having address <b>1 3 4</b>, and <b>click next</b> then clicks on
 				the following address.
 				If the clicked node was inside folded levels, such levels are properly unfolded.
 				<br />				See also:<m>open</m>,<m>close</m>,<m>switch</m><br />
@@ -191,7 +191,7 @@
 				• <b>close 1</b>   <i>→ close nodes at first level</i><br />
 				• <b>close 2 4</b>   <i>→ close nodes between 2nd and 4th depth level</i><br />
 				• <b>close 3 -1</b>   <i>→ close nodes at the 3rd level or deeper</i><br />
-				• <b>close (1 4 2)</b>   <i>→ close node at address (1 4 2)</i><br />
+				• <b>close [1 4 2]</b>   <i>→ close node at address (1 4 2)</i><br />
 				<br />
 				In the Outline or Checkbox Outline <m>mode</m>, folds the lllls for a certain range of depths. <br /> <br />
 				If no arguments are given, this folds all the llll levels. <br />
@@ -290,7 +290,7 @@
 				• <b>open 1</b>   <i>→ open nodes at first level</i><br />
 				• <b>open 2 4</b>   <i>→ open nodes between 2nd and 4th depth level</i><br />
 				• <b>open 3 -1</b>   <i>→ open nodes at the 3rd level or deeper</i><br />
-				• <b>open (1 4 2)</b>   <i>→ open node at address (1 4 2)</i><br />
+				• <b>open [1 4 2]</b>   <i>→ open node at address (1 4 2)</i><br />
 				<br />
 				In the Outline or Checkbox Outline <m>mode</m>, unfolds the lllls for a certain range of depths. <br />
 				If no arguments are given, this unfolds all the llll levels. <br />
@@ -331,7 +331,7 @@
 				• <b>setcheck all</b>   <i>→ check all elements</i><br />
 				• <b>setcheck none</b>   <i>→ uncheck all elements</i><br />
 				• <b>setcheck 1 0 0 1</b>   <i>→ check first and last element of a plain list</i><br />
-				• <b>setcheck -1 (-1 (1 1 1 1) (-1 0 1))</b>   <i>→ set (mixed) checking for more complex llll</i><br />
+				• <b>setcheck -1 [-1 [1 1 1 1] [-1 0 1]]</b>   <i>→ set (mixed) checking for more complex llll</i><br />
 				<br />
 				In the Checkbox Outline <m>mode</m>, sets the checkbox values for
 				each element from a given llll (0 = unchecked, 1 = checked). The <m>setcheck all</m> message
@@ -350,7 +350,7 @@
 				• <b>switch 1</b>   <i>→ switch nodes at first level</i><br />
 				• <b>switch 2 4</b>   <i>→ switch nodes between 2nd and 4th depth level</i><br />
 				• <b>switch 3 -1</b>   <i>→ switch nodes at the 3rd level or deeper</i><br />
-				• <b>switch (1 4 2)</b>   <i>→ switch node at address (1 4 2)</i><br />
+				• <b>switch [1 4 2]</b>   <i>→ switch node at address (1 4 2)</i><br />
 				<br />
 				In the Outline or Checkbox Outline <m>mode</m>, folds the unfolded llll levels, and unfolds the folded llll levels, for a certain range of depths <br /> <br />
 				If no arguments are given, this switches all the llll levels. <br />
@@ -661,7 +661,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Value" />
-				<attribute name="default" get="1" set="1" type="symbol" size="1" value="(...)" />
+				<attribute name="default" get="1" set="1" type="symbol" size="1" value="[...]" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Placeholder for lllls" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
@@ -1064,8 +1064,8 @@
 				The address of an element in a sublist is a list composed by the position of the element in the sublist,
 				preceded by the position of the sublist in the parent llll,
 				and so on up to the root level, as a sort of "path" to the element.<br />
-				For instance, given the llll <b>a b c (d e (f g) h i) j k</b> the position of <b>c</b> is <b>3</b>;
-				the position of <b>(d e (f g) h i)</b> is <b>4</b>;
+				For instance, given the llll <b>a b c [d e [f g] h i] j k</b> the position of <b>c</b> is <b>3</b>;
+				the position of <b>[d e [f g] h i]</b> is <b>4</b>;
 				the position if <b>e</b> is <b>4 2</b> since to reach it it takes to go to the 4th element of the root level, which is a sublist,
 				and to the 2nd element of that sublist.
 				By reading the address from right to left, it can be seen that this is equivalent to saying

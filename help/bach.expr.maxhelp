@@ -149,7 +149,7 @@
 									"patching_rect" : [ 584.0, 144.0, 138.0, 23.0 ],
 									"presentation_rect" : [ 503.0, 218.0, 0.0, 0.0 ],
 									"style" : "",
-									"text" : "(D#4 E3 C2 C4) (Fq5)"
+									"text" : "[D#4 E3 C2 C4] [Fq5]"
 								}
 
 							}
@@ -163,7 +163,7 @@
 									"patching_rect" : [ 440.0, 144.0, 138.0, 23.0 ],
 									"presentation_rect" : [ 440.0, 188.0, 0.0, 0.0 ],
 									"style" : "",
-									"text" : "(C5 D5 D#5 E5) (F#5)"
+									"text" : "[C5 D5 D#5 E5] [F#5]"
 								}
 
 							}
@@ -334,7 +334,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 144.0, 138.0, 23.0 ],
 									"style" : "",
-									"text" : "(C5 D5 D#5 E5) (F#5)"
+									"text" : "[C5 D5 D#5 E5] [F#5]"
 								}
 
 							}
@@ -837,7 +837,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 494.0, 300.0, 105.0, 50.0 ],
 									"style" : "",
-									"text" : "3 3. (2 4.)"
+									"text" : "3 3. [2 4.]"
 								}
 
 							}
@@ -910,7 +910,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 299.0, 300.0, 105.0, 50.0 ],
 									"style" : "",
-									"text" : "3 3. (2 4.)"
+									"text" : "3 3. [2 4.]"
 								}
 
 							}
@@ -1000,7 +1000,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 19.0, 164.0, 105.0, 50.0 ],
 									"style" : "",
-									"text" : "3 3. (2 4.)"
+									"text" : "3 3. [2 4.]"
 								}
 
 							}
@@ -1761,7 +1761,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 134.0, 153.0, 113.0, 23.0 ],
 									"style" : "",
-									"text" : "expr $i1 * log($f2)"
+									"text" : "expr $i1 * log[$f2]"
 								}
 
 							}
@@ -2499,7 +2499,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 365.0, 253.0, 149.0, 23.0 ],
 									"style" : "",
-									"text" : "0.1 0.1 ((0.3 1.9) (12.3))"
+									"text" : "0.1 0.1 [[0.3 1.9] [12.3]]"
 								}
 
 							}
@@ -2647,7 +2647,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 170.0, 222.0, 117.0, 35.0 ],
 									"style" : "",
-									"text" : "3 1 ((0 9) (12))"
+									"text" : "3 1 [[0 9] [12]]"
 								}
 
 							}

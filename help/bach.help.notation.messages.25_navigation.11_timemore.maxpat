@@ -62,7 +62,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 70.5, 209.885803, 227.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (3 5 2/4) @include head tail"
+					"text" : "goto time [3 5 2/4] @include head tail"
 				}
 
 			}
@@ -109,7 +109,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 45.5, 144.885803, 207.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (3 5 2/4) @include head"
+					"text" : "goto time [3 5 2/4] @include head"
 				}
 
 			}
@@ -124,7 +124,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 58.5, 180.385803, 194.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (3 5 2/4) @include tail"
+					"text" : "goto time [3 5 2/4] @include tail"
 				}
 
 			}
@@ -172,7 +172,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 29.0, 104.885803, 291.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (3 5 2/4) @where cents % 1200 != 200"
+					"text" : "goto time [3 5 2/4] @where cents % 1200 != 200"
 				}
 
 			}
@@ -220,7 +220,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 36.885803, 116.0, 23.0 ],
 					"style" : "",
-					"text" : "goto time (3 5 2/4)"
+					"text" : "goto time [3 5 2/4]"
 				}
 
 			}

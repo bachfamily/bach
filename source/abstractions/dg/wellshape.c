@@ -109,7 +109,7 @@ CLASS_ATTR_BASIC(c,"numcols",0);
 // @description The padding element is the element used to 
 // to fill any defective line while performing the rectangularization.
 // This is usually a single atom (number or symbol), but can also be a complex
-// llll, provided that it has length 1. For instance <b>(12 13)</b> is fine, whereas
+// llll, provided that it has length 1. For instance <b>[12 13]</b> is fine, whereas
 // if one puts <b>12 13</b> only the first number will be accounted for.
 // By default this is 0.
 

@@ -195,7 +195,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 88.5, 250.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name annotation) (type text)))"
+					"text" : "[slotinfo [1 [name annotation] [type text]]]"
 				}
 
 			}

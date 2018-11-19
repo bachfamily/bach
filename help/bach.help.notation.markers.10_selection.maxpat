@@ -132,7 +132,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 296.0, 290.0, 94.0, 19.0 ],
-					"text" : "onset (1 1 7/8)"
+					"text" : "onset [1 1 7/8]"
 				}
 
 			}

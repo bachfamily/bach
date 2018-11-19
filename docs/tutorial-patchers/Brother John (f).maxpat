@@ -211,7 +211,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 298.0, 312.0, 177.0, 22.0 ],
 					"style" : "",
-					"text" : "( ( 1/4 5/16 2/16 1/16 1/8 1/8 ) )"
+					"text" : "[ [ 1/4 5/16 2/16 1/16 1/8 1/8 ] ]"
 				}
 
 			}
@@ -319,7 +319,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 182.0, 144.0, 199.0, 22.0 ],
 					"style" : "",
-					"text" : "( ( C5 D5 E5 C5 ) ( C5 D5 E5 C5 ) )"
+					"text" : "[ [ C5 D5 E5 C5 ] [ C5 D5 E5 C5 ] ]"
 				}
 
 			}
@@ -381,7 +381,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 406.0, 145.0, 131.0, 22.0 ],
 					"style" : "",
-					"text" : "( ( 0 0 0 1 ) ( 0 0 0 0 ) )"
+					"text" : "[ [ 0 0 0 1 ] [ 0 0 0 0 ] ]"
 				}
 
 			}
@@ -529,7 +529,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 496.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Brother John (e)",
+					"text" : "Brother John [e]",
 					"varname" : "messageA"
 				}
 
@@ -622,7 +622,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 569.0, 496.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Brother John (g)",
+					"text" : "Brother John [g]",
 					"varname" : "messageB"
 				}
 

@@ -54,7 +54,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 204.0, 265.0, 177.0, 19.0 ],
-					"text" : "select measure range 2 (1 3)"
+					"text" : "select measure range 2 [1 3]"
 				}
 
 			}
@@ -68,7 +68,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 204.0, 239.5, 177.0, 19.0 ],
-					"text" : "select measure range (3 4) 1"
+					"text" : "select measure range [3 4] 1"
 				}
 
 			}
@@ -157,7 +157,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 48.0, 156.5, 196.0, 19.0 ],
-					"text" : "select measure range (1 4) (1 2)"
+					"text" : "select measure range [1 4] [1 2]"
 				}
 
 			}
@@ -186,7 +186,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 31.0, 130.5, 182.0, 19.0 ],
-					"text" : "unsel measure range (3 4) (1)"
+					"text" : "unsel measure range [3 4] [1]"
 				}
 
 			}
@@ -215,7 +215,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 75.5, 149.0, 19.0 ],
-					"text" : "sel measure range (2 4)"
+					"text" : "sel measure range [2 4]"
 				}
 
 			}

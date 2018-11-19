@@ -178,7 +178,7 @@ void extractbasis_assist(t_extractbasis *x, void *b, long m, long a, char *s)
 {	
 	if (m == ASSIST_INLET) { // @in 0 @type llll @digest The original vectors
 		sprintf(s, "llll: Containing the Vectors"); // @description This is expected to be a list of plain lists, where each vector corresponds to a sublist.
-													// such as <b>(0 0 1) (0 1 1) (0 2 0) (1 2 1)</b>.
+													// such as <b>[0 0 1] [0 1 1] [0 2 0] [1 2 1]</b>.
 	} else {
 		char *type = NULL;
 		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);

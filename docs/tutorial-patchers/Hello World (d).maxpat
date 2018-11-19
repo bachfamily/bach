@@ -223,7 +223,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "Hello (Mercury Venus)",
+					"text" : "Hello [Mercury Venus]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 97.0, 248.0, 129.0, 18.0 ],
@@ -265,7 +265,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "Hello ((Earth Moon) (Mars Deimos Phobos) (Pluto Charon))",
+					"text" : "Hello [[Earth Moon] [Mars Deimos Phobos] [Pluto Charon]]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 233.0, 248.0, 327.0, 18.0 ],
@@ -292,7 +292,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(a) ((b)) c",
+					"text" : "[a] [[b]] c",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"patching_rect" : [ 495.0, 95.0, 60.0, 18.0 ],
@@ -333,7 +333,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(C4 C5 C6) ((C3) (D4 G5)) C6 C7",
+					"text" : "[C4 C5 C6] [[C3] [D4 G5]] C6 C7",
 					"linecount" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -416,7 +416,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(Hello Earth) (Mars) Venus",
+					"text" : "[Hello Earth] [Mars] Venus",
 					"linecount" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -461,7 +461,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "Hello (Earth Mars Venus)",
+					"text" : "Hello [Earth Mars Venus]",
 					"linecount" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -552,7 +552,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Hello World (c)",
+					"text" : "Hello World [c]",
 					"fontsize" : 12.0,
 					"hidden" : 1,
 					"numinlets" : 2,
@@ -651,7 +651,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Hello World (e)",
+					"text" : "Hello World [e]",
 					"fontsize" : 12.0,
 					"hidden" : 1,
 					"numinlets" : 2,

@@ -456,11 +456,11 @@ int T_EXPORT main()
     // @description List of router symbols which will be accepted. Leave empty to process all possible routers.
     // E.g. <b>note tempo</b> will only accept "note"- and "tempo"-routed playout lllls. <br />
     // You can have <o>bach.playkeys</o> intercept commands as well, provided that you set aliases via an llll starting
-    // with "note", "chord" or "rest" (depending on the type of alias). E.g. <b>@routers note (note mynotecommand1 mynotecommand2)</b>
+    // with "note", "chord" or "rest" (depending on the type of alias). E.g. <b>@routers note [note mynotecommand1 mynotecommand2]</b>
     // will intercept <b>note</b> messages, as well as note commands <b>mynotecommand1</b> and <b>mynotecommand2</b>.
-    // To only intercept commands, simply use something like <b>@routers (note mynotecommand1 mynotecommand2)</b>.
+    // To only intercept commands, simply use something like <b>@routers [note mynotecommand1 mynotecommand2]</b>.
     // If you want to add some commands for acceptance (and to keep everything else accepted) use "+" as first element, such as in
-    // <b>@routers + (rest myrestcommand)</b>.
+    // <b>@routers + [rest myrestcommand]</b>.
 
     
     
@@ -2052,11 +2052,11 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
     if ((x = (t_playkeys *) object_alloc_debug(playkeys_class))) {
         // @arg 0 @name playkeys @type anything @digest parameters
         // @description The names of the parameters to retrieve.
-        // Use an llll of type <b>(slot <m>number</m>)</b> or
-        // <b>(slot <m>name</m>)</b> to retrieve a given slot.
+        // Use an llll of type <b>[slot <m>number</m>]</b> or
+        // <b>[slot <m>name</m>]</b> to retrieve a given slot.
         // If you need to retrieve multiple slots you can also
         // join them in a single llll in the form
-        // <b>(slot <m>name_or_number</m> <m>name_or_number</m>...)</b>.
+        // <b>[slot <m>name_or_number</m> <m>name_or_number</m>...]</b>.
         // Allowed parameters to retrieve correspond to the following symbols:
         // "type", "onset", "symonset", "cents", "pitch", "duration", "symduration", "tail", "velocity",
         // "midichannel", "tie", "voicenumber", "chordindex", "noteindex, "path" (these last three only meaningful

@@ -255,7 +255,8 @@ void recurser_bang(t_recurser *x)
 {	
 	if (x->n_ob.l_rebuild != 0) {
 		x->n_ob.l_rebuild = 0;
-		llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, llll_recurser(x->n_initial_values, x->n_max, x->n_recurrence_lexpr, x->n_maxcount, (t_object *) x), 0);
+        if (x->n_recurrence_lexpr)
+            llllobj_gunload_llll((t_object *)x, LLLL_OBJ_VANILLA, llll_recurser(x->n_initial_values, x->n_max, x->n_recurrence_lexpr, x->n_maxcount, (t_object *) x), 0);
 	}
 	llllobj_shoot_llll((t_object *) x, LLLL_OBJ_VANILLA, 0);
 }
@@ -326,7 +327,7 @@ t_max_err recurser_parse_llll(t_recurser *x, t_llll *inlist, long inlet, const c
         case 2:
         {
             t_atom *av = NULL;
-            long ac = llll_deparse(inlist, &av, 0, LLLL_D_NONE);
+            long ac = llll_deparse(inlist, &av, 0, LLLL_D_PARENS);
             if (x->n_recurrence_lexpr)
                 lexpr_free(x->n_recurrence_lexpr);
             if (!(x->n_recurrence_lexpr = lexpr_new(ac, av, 0, NULL, (t_object *) x)))
@@ -411,7 +412,7 @@ t_recurser *recurser_new(t_symbol *s, short ac, t_atom *av)
 	
 	if ((x = (t_recurser *) object_alloc_debug(recurser_class))) {
 		// @arg 0 @name wrapped_initial_values @optional 1 @type llll @digest Initial values for recurrence
-		// @description The initial values for the recurrence, wrapped in a level of parenthesis. Default is <b>(0)</b>
+		// @description The initial values for the recurrence, wrapped in a level of parenthesis. Default is <b>[0]</b>
 
 		// @arg 1 @name end @optional 1 @type number/none @digest Ending value
 		// @description The ending value for the series, which can also be the <m>none</m> symbol (see <m>llll</m> message).
@@ -441,7 +442,7 @@ t_recurser *recurser_new(t_symbol *s, short ac, t_atom *av)
             } else {
                 // finding the corresponding symbol with closed bracket
                 for (; atom_idx < ac; atom_idx++) {
-                    if (atom_gettype(av + atom_idx) == A_SYM && strstr(atom_getsym(av+atom_idx)->s_name, ")"))
+                    if (atom_gettype(av + atom_idx) == A_SYM && (strstr(atom_getsym(av+atom_idx)->s_name, ")") || strstr(atom_getsym(av+atom_idx)->s_name, "]")))
                         break;
                 }
                 x->n_initial_values = llll_parse(atom_idx + 1, av);

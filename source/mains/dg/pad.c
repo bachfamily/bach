@@ -100,7 +100,7 @@ int T_EXPORT main()
     // In second inlet: the incoming llll is converted into an <m>int</m>.<br />
     // In third inlet: sets the padding element (or elements, for "Loop" <m>mode</m>).
     // This can be a single symbol or integer, such as <b>0</b> or <b>foo</b>, or a complex llll of size 1, such as
-    // <b>(1 2 4)</b>, or - in "Loop" <m>mode</m> - any complex <m>llll</m>, from which the padding elements should be picked.
+    // <b>[1 2 4]</b>, or - in "Loop" <m>mode</m> - any complex <m>llll</m>, from which the padding elements should be picked.
     // Setting <b>null</b> forces <o>bach.pad</o> to repeat the elements of the incoming list (default).
     class_addmethod(c, (method)pad_anything,    "anything",        A_GIMME,    0);
     
@@ -282,7 +282,7 @@ t_pad *pad_new(t_symbol *s, short ac, t_atom *av)
                 // @arg 1 @name padding_elements @optional 1 @type llll @digest Padding element or elements
                 // @description The second argument sets the element used for padding (or elements, in "Loop" <m>mode</m>).
                 // This can be a single symbol or integer, such as <b>0</b> or <b>foo</b>, or a complex llll of size 1, such as
-                // <b>(1 2 4)</b>, or - in "Loop" <m>mode</m> - any complex <m>llll</m>, from which the padding elements should be picked.
+                // <b>[1 2 4]</b>, or - in "Loop" <m>mode</m> - any complex <m>llll</m>, from which the padding elements should be picked.
                 // Not setting this argument, or setting it as <b>null</b> forces <o>bach.pad</o> to repeat the
                 // elements of the incoming list (default).
                 llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, _sym_list, true_ac - 1, av + 1, 2);

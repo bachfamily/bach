@@ -50,7 +50,7 @@ typedef enum _llll_deparse_flags {
     LLLL_D_MAX          = 0x02, // backtick "int", "float" and "list" if they appear at the beginning of an llll
     LLLL_D_FLOAT64      = 0x04,    // encode 64-bit floats as a special token and two longs (useful to store lllls in dictionaries and similar)
     LLLL_D_NEGOCTAVES   = 0x08,  // pitches with negative octaves can be output
-    LLLL_D_PARENS       = 0x10,  // pitches with negative octaves can be output
+    LLLL_D_PARENS       = 0x10,  // use round parentheses instead of square brackets
     LLLL_D_ALL          = 0x1F
 } e_llll_deparse_flags;
 
@@ -278,10 +278,6 @@ typedef struct _simpllelem {
 
 class t_function;
 
-template <typename T> class t_safeTable;
-
-class t_sharedVariable;
-
 // the bach NOBOX object
 typedef struct _bach {
     t_object            b_ob;
@@ -322,7 +318,7 @@ typedef struct _bach {
     
     t_hashtab           *b_reservedselectors;
     
-    t_safeTable<t_sharedVariable> *b_gvt;
+    class t_globalVariableTable *b_gvt;
     std::unordered_map<std::string, t_function *> *b_bifTable;
     
 } t_bach;
@@ -1121,7 +1117,7 @@ void *llll_stack_pop(t_llll_stack *x);
 // if *buf is NULL, it will be allocated and must be freed with bach_freeptr(). if it's not, it might as well be relocated!
 // offset is relative to *buf
 // max_decimals is used when converting doubles to string
-// for flags see e_llll_text_flags
+// for flags see #e_llll_text_flags
 // it is mainly used by the write functions, but can be very helpful for debugging as well
 // if fn != NULL, it is called for every hatom that is met.
 // fn must return a char* to be put in the buffer instead of the standard thing,
@@ -1129,12 +1125,12 @@ void *llll_stack_pop(t_llll_stack *x);
 // the return value of fn will then be freed by llll_to_text_buf
 t_atom_long llll_to_text_buf(t_llll *ll,
                              char **buf,
-                             t_atom_long offset,
-                             t_atom_long max_decimals,
-                             long general_flags,
-                             long escape_flags,
-                             long backslash_flags,
-                             text_buf_fn fn);
+                             t_atom_long offset = 0,
+                             t_atom_long max_decimals = 6,
+                             long general_flags = 0,
+                             long escape_flags = 0,
+                             long backslash_flags = 0,
+                             text_buf_fn fn = nullptr);
 
 // as llll_to_text_buf, with some extra formatting:
 // wrap is the maximum length of one line of the output buffer; if wrap == 0, no word wrapping is performed

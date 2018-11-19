@@ -90,7 +90,7 @@ int T_EXPORT main()
     // @description
     // Returns all the combinations of the given llll, within the optionally given cardinality range.
     // Combinations are grouped in sublists one by one, and these sublists are utterly grouped by cardinality.
-    // For instance the llll <b>a b c</b>, with no cardinality limits, will trigger the result <b>(()) ((a)(b)(c)) ((a b)(a c)(b c)) ((a b c))</b>
+    // For instance the llll <b>a b c</b>, with no cardinality limits, will trigger the result <b>[[]] [[a][b][c]] [[a b][a c][b c]] [[a b c]]</b>
 
     class_addmethod(c, (method)comb_anything,    "anything",        A_GIMME,    0);
     

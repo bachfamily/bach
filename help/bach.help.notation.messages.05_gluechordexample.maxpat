@@ -214,7 +214,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 14.0, 318.0, 297.0, 19.0 ],
-					"text" : "gluechord ( $3 ( $1 $2 100 ) ), inscreenpos 0.7 $3"
+					"text" : "gluechord [ $3 [ $1 $2 100 ] ], inscreenpos 0.7 $3"
 				}
 
 			}

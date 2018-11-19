@@ -112,7 +112,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 278.0, 350.0, 23.0 ],
 					"style" : "",
-					"text" : "clear, addchord (200 (6029.4 300 127 (graphic 6100 -1/4)))"
+					"text" : "clear, addchord [200 [6029.4 300 127 [graphic 6100 -1/4]]]"
 				}
 
 			}
@@ -127,7 +127,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 254.0, 346.0, 23.0 ],
 					"style" : "",
-					"text" : "clear, addchord (200 (6029.4 300 127 (graphic 6000 1/4)))"
+					"text" : "clear, addchord [200 [6029.4 300 127 [graphic 6000 1/4]]]"
 				}
 
 			}
@@ -142,7 +142,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 230.0, 350.0, 23.0 ],
 					"style" : "",
-					"text" : "clear, addchord (200 (6029.4 300 127 (graphic 6400 -7/4)))"
+					"text" : "clear, addchord [200 [6029.4 300 127 [graphic 6400 -7/4]]]"
 				}
 
 			}
@@ -157,7 +157,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 205.0, 326.0, 23.0 ],
 					"style" : "",
-					"text" : "clear, addchord (200 (6029.4 300 127 (graphic Ddb5)))"
+					"text" : "clear, addchord [200 [6029.4 300 127 [graphic Ddb5]]]"
 				}
 
 			}
@@ -172,7 +172,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 8.0, 180.0, 237.0, 23.0 ],
 					"style" : "",
-					"text" : "clear, addchord (200 (6029.4 300 127))"
+					"text" : "clear, addchord [200 [6029.4 300 127]]"
 				}
 
 			}

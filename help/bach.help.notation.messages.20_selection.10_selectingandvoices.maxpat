@@ -86,7 +86,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 74.0, 185.5, 116.0, 19.0 ],
 					"presentation_rect" : [ 74.0, 185.5, 0.0, 0.0 ],
-					"text" : "sel 0 1000 nil nil ()"
+					"text" : "sel 0 1000 nil nil []"
 				}
 
 			}
@@ -133,7 +133,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 34.0, 129.5, 191.0, 19.0 ],
 					"presentation_rect" : [ 34.0, 129.5, 0.0, 0.0 ],
-					"text" : "unsel 1300 2000 4900 8000 (2)"
+					"text" : "unsel 1300 2000 4900 8000 [2]"
 				}
 
 			}
@@ -149,7 +149,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 319.0, 268.5, 261.0, 65.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "You can also define voice ranges as in the #address+range syntax, e.g. \n((1 3) 5 (7 9)) will take voices from 1 to 3, then voice 5, and then voices from 7 to 9.",
+					"text" : "You can also define voice ranges as in the #address+range syntax, e.g. \n[[1 3] 5 [7 9]] will take voices from 1 to 3, then voice 5, and then voices from 7 to 9.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -180,7 +180,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 15.0, 77.5, 189.0, 19.0 ],
-					"text" : "sel 1300 2000 4900 8000 (1 2)"
+					"text" : "sel 1300 2000 4900 8000 [1 2]"
 				}
 
 			}
@@ -272,7 +272,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ -245.0, 113.0, 190.0, 187.0 ],
-					"text" : "roll ( slotinfo ( 1 \"`amplitude envelope\" function 0. 127. 97 ) ( 2 \"`slot function\" function 0. 1. 113 ) ( 3 \"`slot longlist\" intlist 0. 127. 119 ) ( 4 \"`slot floatlist\" floatlist 0. 1. 101 ) ( 5 \"`slot long\" int 0. 127. 114 ) ( 6 \"`slot float\" float 0. 1. 116 ) ( 7 \"`slot text\" text 0. 1. 121 ) ( 8 filelist filelist 0. 1. 117 ) ( 9 \"`slot 9\" none 0. 1. ) ( 10 \"`slot 10\" none 0. 1. ) ( 11 \"`slot 11\" none 0. 1. ) ( 12 \"`slot 12\" none 0. 1. ) ( 13 \"`slot 13\" none 0. 1. ) ( 14 \"`slot 14\" none 0. 1. ) ( 15 \"`slot 15\" none 0. 1. ) ) ( midichannels 5 2 3 4 5 ) ( ( 270. ( 7200. 347. 127 ) ) ( 780. ( 6066.666504 347. 127 ) ) ( 2050. ( 7533.333496 347. 127 ) ) ) ( ( 540. ( 7100. 747. 127 ) ) ( 1520. ( 6433.333496 147. 127 ) ) ( 1880. ( 7266.666504 147. 127 ) ) ) ( ( 350. ( 7533.333496 347. 127 ) ) ( 740. ( 6766.666504 347. 127 ) ) ( 1320. ( 5500. 347. 127 ) ) ( 2100. ( 6633.333496 647. 127 ) ) ) ( ( 1040. ( 5866.666504 747. 127 ) ) ( 2020. ( 5200. 147. 127 ) ) ( 2380. ( 6033.333496 147. 127 ) ) ) ( ( 230. ( 5366.666504 947. 127 ) ) ( 1210. ( 4700. 347. 127 ) ) ( 1570. ( 5533.333496 347. 127 ) ) ( 2540. ( 5000. 347. 127 ) ) )"
+					"text" : "roll [ slotinfo [ 1 \"`amplitude envelope\" function 0. 127. 97 ] [ 2 \"`slot function\" function 0. 1. 113 ] [ 3 \"`slot longlist\" intlist 0. 127. 119 ] [ 4 \"`slot floatlist\" floatlist 0. 1. 101 ] [ 5 \"`slot long\" int 0. 127. 114 ] [ 6 \"`slot float\" float 0. 1. 116 ) ( 7 \"`slot text\" text 0. 1. 121 ) ( 8 filelist filelist 0. 1. 117 ) ( 9 \"`slot 9\" none 0. 1. ) ( 10 \"`slot 10\" none 0. 1. ) ( 11 \"`slot 11\" none 0. 1. ) ( 12 \"`slot 12\" none 0. 1. ) ( 13 \"`slot 13\" none 0. 1. ) ( 14 \"`slot 14\" none 0. 1. ) ( 15 \"`slot 15\" none 0. 1. ) ) ( midichannels 5 2 3 4 5 ) ( ( 270. ( 7200. 347. 127 ) ) ( 780. ( 6066.666504 347. 127 ) ) ( 2050. ( 7533.333496 347. 127 ) ) ) ( ( 540. ( 7100. 747. 127 ) ) ( 1520. ( 6433.333496 147. 127 ) ) ( 1880. ( 7266.666504 147. 127 ) ) ) ( ( 350. ( 7533.333496 347. 127 ) ) ( 740. ( 6766.666504 347. 127 ) ) ( 1320. ( 5500. 347. 127 ) ) ( 2100. ( 6633.333496 647. 127 ) ) ) ( ( 1040. ( 5866.666504 747. 127 ) ) ( 2020. ( 5200. 147. 127 ) ) ( 2380. ( 6033.333496 147. 127 ) ) ) ( ( 230. ( 5366.666504 947. 127 ) ) ( 1210. ( 4700. 347. 127 ) ) ( 1570. ( 5533.333496 347. 127 ) ) ( 2540. ( 5000. 347. 127 ) ) )"
 				}
 
 			}

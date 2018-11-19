@@ -1803,7 +1803,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             llll_behead(selectllll);
             llll_behead(selectllll);
             
-            new_ac = llll_deparse(selectllll, &new_av, 0, 0);
+            new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
             x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
             
             if (new_av)
@@ -1829,7 +1829,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             llll_behead(selectllll);
             llll_behead(selectllll);
             
-            new_ac = llll_deparse(selectllll, &new_av, 0, 0);
+            new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
             x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
             
             if (new_av)
@@ -1895,7 +1895,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 			llll_behead(selectllll);
 			llll_behead(selectllll);
 			
-			new_ac = llll_deparse(selectllll, &new_av, 0, 0);
+			new_ac = llll_deparse(selectllll, &new_av, 0, LLLL_D_PARENS);
 			x->r_ob.n_lexpr = notation_obj_lexpr_new(new_ac, new_av);
 			
 			if (new_av) 
@@ -4543,29 +4543,29 @@ int T_EXPORT main(void){
 	// namely it outputs only certain voices and within a certain time interval.
 	// The syntax for the <m>subroll</m> message is:
 	// <b>subroll <m>VOICES</m> <m>TIME_LAPSE</m> <m>optional:SELECTIVE_OPTIONS</m></b>,
-	// <m>VOICES</m> is an llll of the kind <b>(<m>voice_number1</m> <m>voice_number2</m>...)</b>
-	// containing the number of the voices to be output; leave <b>nil</b> or <b>()</b> if you want to output all voices. <br />
-	// <m>TIME_LAPSE</m> is an llll of the kind <b>(<m>start_ms</m> <m>end_ms</m>)</b> containing the time lapse that
-	// has to be output. Leave such list as <b>nil</b> or <b>()</b> if you want this lapse to be all the length of the <o>bach.roll</o>.
+	// <m>VOICES</m> is an llll of the kind <b>[<m>voice_number1</m> <m>voice_number2</m>...]</b>
+	// containing the number of the voices to be output; leave <b>nil</b> or <b>[]</b> if you want to output all voices. <br />
+	// <m>TIME_LAPSE</m> is an llll of the kind <b>[<m>start_ms</m> <m>end_ms</m>]</b> containing the time lapse that
+	// has to be output. Leave such list as <b>nil</b> or <b>[]</b> if you want this lapse to be all the length of the <o>bach.roll</o>.
 	// Otherwise <m>start_ms</m> is the beginning of the portion of <o>bach.roll</o> to be output (in milliseconds), and 
 	// <m>end_ms</m> is the end of the portion of <o>bach.roll</o> to be output (in milliseconds); leave any negative value
 	// for <m>end_ms</m> if you want the portion of <o>bach.roll</o> to be output to go till the end of the notation object. <br />
 	// The third llll, <m>optional:SELECTIVE_OPTIONS</m>, is optional, and if given might contain a symbol or list of symbols
 	// which handle what part of the header should be dumped. By default all header is output. Options for these symbols are exactly
-	// the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subroll (4 5) (1000 3000) (clefs markers body)</b>
+	// the same as for the <m>dump</m> message (see its documentation to know more). For instance <b>subroll [4 5] [1000 3000] [clefs markers body]</b>
 	// output voices 4 and 5 in the portion of the <o>bach.roll</o> going from 1000ms to 3000ms, and outputs in addition to the musical content (the body)
 	// the information about clefs and the markers. 
-	// Leave <b>(body)</b> as third parameter if you only want to dump the music content, and no header information
+	// Leave <b>[body]</b> as third parameter if you only want to dump the music content, and no header information
 	// @marg 0 @name voices @optional 0 @type llll
 	// @marg 1 @name time_lapse @optional 0 @type llll
 	// @marg 2 @name selective_options @optional 1 @type llll
-    // @example subroll (1 2 4) (1000 3000) @caption extract voices 1, 2 and 4 from 1s to 3s
-    // @example subroll () (1000 3000) @caption extract all voices from 1s to 3s
-    // @example subroll (1 2) () @caption extract voices 1 and 2 for the whole duration
-    // @example subroll (1 3) (2000 -1) @caption extract voices 1 and 3 from 2s to the end
-    // @example subroll onset (1 3) (2000 -1) @caption only extract notes whose onset is after 2s (no partial notes)
-    // @example subroll (4 5) (1000 3000) (body) @caption only dump the body
-    // @example subroll (4 5) (1000 3000) (clefs markers body) @caption only dump clefs, markers and body
+    // @example subroll [1 2 4] [1000 3000] @caption extract voices 1, 2 and 4 from 1s to 3s
+    // @example subroll [] [1000 3000] @caption extract all voices from 1s to 3s
+    // @example subroll [1 2] [] @caption extract voices 1 and 2 for the whole duration
+    // @example subroll [1 3] [2000 -1] @caption extract voices 1 and 3 from 2s to the end
+    // @example subroll onset [1 3] [2000 -1] @caption only extract notes whose onset is after 2s (no partial notes)
+    // @example subroll [4 5] [1000 3000] [body] @caption only dump the body
+    // @example subroll [4 5] [1000 3000] [clefs markers body] @caption only dump clefs, markers and body
     // @seealso dump
 	class_addmethod(c, (method) roll_subroll, "subroll", A_GIMME, 0);
 
@@ -4678,10 +4678,10 @@ int T_EXPORT main(void){
 	// @method sel @digest Select items
 	// @description The word <m>sel</m> add some notation items to the current selection. In the basic behavior,
 	// the word must be followed by four elements, specifying: <br />
-	// - the starting temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>()</b> if you want to select from the beginning); <br />
-	// - the ending temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>()</b> if you want to select until the end); <br />
-	// - the minimum pitch of the selection, in cents (leave <b>nil</b> or <b>()</b> if you don't want to put a lower bound on pitches); <br />
-	// - the maximum pitch of the selection, in cents (leave <b>nil</b> or <b>()</b> if you don't want to put an upper bound on pitches). <br />
+	// - the starting temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>[]</b> if you want to select from the beginning); <br />
+	// - the ending temporal point of the selection, in milliseconds (leave <b>nil</b> or <b>[]</b> if you want to select until the end); <br />
+	// - the minimum pitch of the selection, in cents (leave <b>nil</b> or <b>[]</b> if you don't want to put a lower bound on pitches); <br />
+	// - the maximum pitch of the selection, in cents (leave <b>nil</b> or <b>[]</b> if you don't want to put an upper bound on pitches). <br />
 	// Other selection modes are possible: <br />
 	// - If the word <m>sel</m> is followed by the symbol <b>all</b>, all notes, chords and markers are selected. <br />
     // - If the word <m>sel</m> is followed by a category plural symbol, all the corresponding elements are selected.
@@ -4690,15 +4690,15 @@ int T_EXPORT main(void){
 	// - If the word <m>sel</m> is followed by the symbol <b>chord</b> followed by one or two integers (representing an address), a certain chord is selected.
 	// The full syntax for the integers is: <m>voice_number</m> <m>chord_index</m>. If just an element is given, the voice number is considered
 	// to be by default 1. The chord index is the index of chords, sorted by onset. 
-	// For instance, <b>sel chord 2</b> selects the second chord (of first voice), while <b>sel chord 3 2</b> does the same with the third voice. 
+	// For instance, <b>sel chord 2</b> selects the second chord [of first voice], while <b>sel chord 3 2</b> does the same with the third voice. 
 	// Negative positions are also allowed, counting backwards. Multiple chords can be selected at once, provided that instead of a list integers one gives
-	// a sequence of wrapped lists of integers, for instance <b>sel chord (1 1) (1 2) (1 3) (2 1) (3 -1)</b>.<br />
+	// a sequence of wrapped lists of integers, for instance <b>sel chord [1 1] [1 2] [1 3] [2 1] [3 -1]</b>.<br />
 	// - If the word <m>sel</m> is followed by the symbol <b>note</b> followed by one, two or three integers (representing an address), a certain note is selected.
 	// The full syntax for the integers is: <m>voice_number</m> <m>chord_index</m> <m>note_index</m>. If less elements are given, the first ones are considered
 	// to be by default 1's. The chord index is the index of chords, sorted by onset; the note index is taken from the lowest to the highest.
-	// For instance, <b>sel note 2 3</b> selects the third note of second chord (of first voice), while <b>sel note 4 2 3</b> does the same with the fourth voice. 
+	// For instance, <b>sel note 2 3</b> selects the third note of second chord [of first voice], while <b>sel note 4 2 3</b> does the same with the fourth voice. 
 	// Negative positions are also allowed, counting backwards. Multiple notes can be selected at once, provided that instead of a list integers one gives
-	// a sequence of wrapped lists of integers, for instance <b>sel note (5 2 4) (1 1 -1)</b>.<br />
+	// a sequence of wrapped lists of integers, for instance <b>sel note [5 2 4] [1 1 -1]</b>.<br />
     // - If the word <m>sel</m> is followed by the symbols <b>note if</b>, <b>rest if</b>, <b>marker if</b>, <b>breakpoint if</b>
     // or <b>tail if</b> followed by a
     // condition to be verified, a conditional selection on notes,  markers or pitch breakpoints (respectively) is performed.
@@ -4707,7 +4707,7 @@ int T_EXPORT main(void){
 	// You can use symbolic variables inside such expressions. <br />
 	// @copy BACH_DOC_SYMBOLIC_VARIABLES
 	// For instance <b>sel note if velocity == 100</b> selects all notes whose
-	// velocity is exactly equal to 100, while <b>round(cents / 100.) % 12 == 0</b> select all the C's.<br />
+	// velocity is exactly equal to 100, while <b>round[cents / 100.] % 12 == 0</b> select all the C's.<br />
 	// - If the word <m>sel</m> is followed by any other symbol or sequence of symbols, these are interpreted as names, and the notation items
 	// matching all these names (or a single name, if just one symbol is entered) are selected. <br />
 	// @marg 0 @name arguments @optional 0 @type llll
@@ -4722,22 +4722,22 @@ int T_EXPORT main(void){
     // @example sel note 3 4 -1 @caption select last note of 4th chord of 3rd voice
     // @example sel marker 5 @caption select 5th marker
     // @example sel marker -2 @caption select one-but-last marker
-    // @example sel marker (1) (-2) (5) @caption select multiple markers
-    // @example sel chords (1 3) (2 2) (-2 5) @caption select multiple chord
-    // @example sel notes (1 3 2) (1 3 3) (2 4 5) @caption select multiple notes
+    // @example sel marker [1] [-2] [5] @caption select multiple markers
+    // @example sel chords [1 3] [2 2] [-2 5] @caption select multiple chord
+    // @example sel notes [1 3 2] [1 3 3] [2 4 5] @caption select multiple notes
     // @example sel John @caption select all items named 'John'
     // @example sel John Lennon @caption select all items named both 'John' and 'Lennon'
     // @example sel 1000 3000 6000 7200 @caption select notes between 1s and 3s, and between 6000 and 7200cents
     // @example sel 1000 3000 6000 7200 2 @caption same, for second voice only
-    // @example sel 1000 3000 6000 7200 (1 3 4) @caption same, for voices 1, 3 and 4
-    // @example sel 1000 3000 () () @caption select notes between 1s and 3s
-    // @example sel () () 4800 6000 @caption select notes below middle C
-    // @example sel () () () () -1 @caption select every note in last voice
+    // @example sel 1000 3000 6000 7200 [1 3 4] @caption same, for voices 1, 3 and 4
+    // @example sel 1000 3000 [] [] @caption select notes between 1s and 3s
+    // @example sel [] [] 4800 6000 @caption select notes below middle C
+    // @example sel [] [] [] [] -1 @caption select every note in last voice
     // @example sel note if cents == 6000 @caption select all middle C's
-    // @example sel note if (cents % 1200) == 0 @caption select all C's
-    // @example sel note if (cents < 6000) && (duration < 1000) @caption select all notes <1s below middle C
+    // @example sel note if [cents % 1200] == 0 @caption select all C's
+    // @example sel note if [cents < 6000] && [duration < 1000] @caption select all notes <1s below middle C
     // @example sel marker if onset > 5000 @caption select all markers with onset >5s
-    // @example sel breakpoint if (cents > 7200) && (velocity > 100) @caption select all pitch breakpoints >7200cents with velocity > 100
+    // @example sel breakpoint if [cents > 7200] && [velocity > 100] @caption select all pitch breakpoints >7200cents with velocity > 100
     // @example sel tail if cents > 6000 @caption select all tails above middle C
     // @seealso unsel, select, subsel, clearselection
 	class_addmethod(c, (method) roll_select, "sel", A_GIMME, 0);
@@ -4814,7 +4814,7 @@ int T_EXPORT main(void){
     // @mattr incremental @type int @default 0 @digest If non-zero, assigns incremental numbering to selected markers in addition to names
     // @mattr progeny @type int @default 0 @digest If non-zero, assigns names to both selected chords and all their notes
     // @example name George @caption name selected elements as 'George'
-    // @example name (George Martin) (George Harrison) @caption assign complex llll name
+    // @example name [George Martin] [George Harrison] @caption assign complex llll name
     // @example name George @incremental 1 @caption also add unique incremental numbers to selected markers
     // @example name George @progeny 1 @caption if chords are selected also assign name to their notes
     // @seealso nameappend, clearnames, sel, unsel, select
@@ -4826,7 +4826,7 @@ int T_EXPORT main(void){
 	// to the already existing ones (see <m>name</m>).
 	// @marg 0 @name names @optional 0 @type llll
     // @example name Ringo @caption append 'Ringo' to selected element's names
-    // @example name (Ringo Starr) ((Low High Snare) (Sizzle Crash)) @caption append complex llll name
+    // @example name [Ringo Starr] [[Low High Snare] [Sizzle Crash]] @caption append complex llll name
     // @seealso name, clearnames
 	class_addmethod(c, (method) roll_nameappend, "nameappend", A_GIMME, 0);
 	
@@ -4879,7 +4879,7 @@ int T_EXPORT main(void){
     // @marg 0 @name role @optional 0 @type symbol
     // @marg 1 @name content @optional 1 @type llll
     // @example role barline @caption assign 'barline' role to selected markers
-    // @example role timesig (3 4) @caption assign a 3/4 'time signature' role
+    // @example role timesig [3 4] @caption assign a 3/4 'time signature' role
     // @example role none @caption reset roles to none
     // @seealso name, sel, unsel, select
     class_addmethod(c, (method) roll_role, "role", A_GIMME, 0);
@@ -4908,8 +4908,8 @@ int T_EXPORT main(void){
     // @example onset 1000 @caption move selected items to 1s
     // @example onset = 1000 @caption exactly the same
     // @example onset = onset + 1000 @caption shift selected items by 1s forward
-    // @example onset = (chordindex - 1) * 1000 @caption space all chords by 1s
-    // @example onset = "(pow(1.4, chordindex) - 1)*1000" @caption the same, in rallentando
+    // @example onset = [chordindex - 1] * 1000 @caption space all chords by 1s
+    // @example onset = "[pow[1.4, chordindex] - 1]*1000" @caption the same, in rallentando
     // @seealso distribute
 	class_addmethod(c, (method) roll_sel_change_onset, "onset", A_GIMME, 0);
 
@@ -4951,7 +4951,7 @@ int T_EXPORT main(void){
     // @example tail = 1000 @caption exactly the same
     // @example tail = tail + 1000 @caption lengthen selected notes by 1s
     // @example tail = 30000 @caption make selection end together at 30s
-    // @example tail = "onset + random(0, 1000)" @caption assign duration randomly
+    // @example tail = "onset + random[0, 1000]" @caption assign duration randomly
     // @seealso duration, legato
 	class_addmethod(c, (method) roll_sel_change_tail, "tail", A_GIMME, 0);
 
@@ -4963,7 +4963,7 @@ int T_EXPORT main(void){
     // @example velocity = 120 @caption exactly the same
     // @example velocity = velocity * 1.2 @caption increase velocity
     // @example velocity = duration/1000. @caption assign velocity depending on duration
-    // @example velocity = "random(40, 121)" @caption assign velocity randomly
+    // @example velocity = "random[40, 121]" @caption assign velocity randomly
     class_addmethod(c, (method) roll_sel_change_velocity, "velocity", A_GIMME, 0);
 
 
@@ -4973,8 +4973,8 @@ int T_EXPORT main(void){
     // @example cents 6000 @caption change selected notes to middle C's
     // @example cents = 6000 @caption exactly the same
     // @example cents = cents * 1.2 @caption stretch pitches
-    // @example cents = "random(48, 73)*100" @caption assign pitch randomly
-    // @example cents = 6000 + (cents % 1200) @caption collapse to middle octave
+    // @example cents = "random[48, 73]*100" @caption assign pitch randomly
+    // @example cents = 6000 + [cents % 1200] @caption collapse to middle octave
 	class_addmethod(c, (method) roll_sel_change_cents, "cents", A_GIMME, 0);
 
     
@@ -4986,7 +4986,7 @@ int T_EXPORT main(void){
     // @example pitch = pitch + D0 @caption transpose by major second
     // @example pitch = pitch + Eb0 @caption transpose by minor third
     // @example pitch = pitch - C1 @caption transpose one octave down
-    // @example pitch = (pitch % C1) + C5 @caption collapse to middle octave
+    // @example pitch = [pitch % C1] + C5 @caption collapse to middle octave
     class_addmethod(c, (method) roll_sel_change_pitch, "pitch", A_GIMME, 0);
 
     
@@ -5002,8 +5002,8 @@ int T_EXPORT main(void){
     // @example voice 2 @caption put selected notes in second voice
     // @example voice = 2 @caption exactly the same
     // @example voice = voice + 1 @caption shift voices
-    // @example voice = "random(1, 4)" @caption assign voice randomly between 1 and 3
-    // @example voice = (3 - voice)*(voice <= 2) + voice * (voice > 2) @caption swap first two voices
+    // @example voice = "random[1, 4]" @caption assign voice randomly between 1 and 3
+    // @example voice = [3 - voice]*[voice <= 2] + voice * [voice > 2] @caption swap first two voices
     // @see insertvoice
 	class_addmethod(c, (method) roll_sel_change_voice, "voice", A_GIMME, 0);
 	
@@ -5030,15 +5030,15 @@ int T_EXPORT main(void){
 	// @method addslot @digest Set the content of one or more slots for selected items
 	// @description @copy BACH_DOC_MESSAGE_ADDSLOT
 	// @marg 0 @name slots @optional 0 @type llll
-    // @example addslot (6 0.512) @caption fill (float) slot 6 with number 0.512
-    // @example addslot (5 42) @caption fill (int) slot 5 with number 42
-    // @example addslot (7 "Lorem Ipsum" ) @caption fill (text) slot 7 with some text
-    // @example addslot (10 (John George (Ringo) (Brian)) ) @caption fill (llll) slot 10 with an llll
-    // @example addslot (3 10 20 30) @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
-    // @example addslot (2 (0 0 0) (0.5 0 1) (1 1 0.2) @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
-    // @example addslot (amplienv (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for slot named 'amplienv'
-    // @example addslot (active (0 0 0) (0.5 0 1) (1 1 0.2)) @caption the same for currently open slot
-    // @example addslot (3 10 20 30) (2 (0 0 0) (0.5 0 1) (1 1 0.2)) @caption set more slots at once
+    // @example addslot [6 0.512] @caption fill (float) slot 6 with number 0.512
+    // @example addslot [5 42] @caption fill (int) slot 5 with number 42
+    // @example addslot [7 "Lorem Ipsum" ] @caption fill (text) slot 7 with some text
+    // @example addslot [10 [John George [Ringo] [Brian]] ] @caption fill (llll) slot 10 with an llll
+    // @example addslot [3 10 20 30] @caption fill (intlist) slot 3 of selected notes with list of values 10, 20, 30
+    // @example addslot [2 [0 0 0] [0.5 0 1] [1 1 0.2] @caption fill (function) slot 2 with a breakpoint function in (x y slope) form
+    // @example addslot [amplienv [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for slot named 'amplienv'
+    // @example addslot [active [0 0 0] [0.5 0 1] [1 1 0.2]] @caption the same for currently open slot
+    // @example addslot [3 10 20 30] [2 [0 0 0] [0.5 0 1] [1 1 0.2]] @caption set more slots at once
     // @seealso changeslotitem, eraseslot
 	class_addmethod(c, (method) roll_sel_add_slot, "addslot", A_GIMME, 0);
 
@@ -5127,8 +5127,8 @@ int T_EXPORT main(void){
     // @marg 1 @name element_position_or_wrapped_xcoord @optional 0 @type int/llll
     // @mattr thresh @type float @default 0. @digest Tolerance threshold for X matching
     // @example deleteslotitem 3 2 @caption delete 2nd item of 3rd slot
-    // @example deleteslotitem 3 (0.7) @caption delete item 3rd slot matching X = 0.7
-    // @example deleteslotitem 3 (0.7) @thresh 0.1 @caption the same, with a tolerance of 0.1
+    // @example deleteslotitem 3 [0.7] @caption delete item 3rd slot matching X = 0.7
+    // @example deleteslotitem 3 [0.7] @thresh 0.1 @caption the same, with a tolerance of 0.1
     // @seealso appendslotitem, prependslotitem, insertslotitem, changeslotitem, addslot, eraseslot
     class_addmethod(c, (method) roll_sel_delete_slot_item, "deleteslotitem", A_GIMME, 0);
 
@@ -5321,12 +5321,12 @@ int T_EXPORT main(void){
 	// At least two arguments are needed: the position of the marker in milliseconds (or the "cursor" symbol) and the marker name, as symbol.
 	// For instance, <b>addmarker 1000 foo</b> adds a marker at 1000ms with the name "foo".
 	// If more than one name need to be associated to the marker, the symbol can be replaced by a list of symbols,
-	// for instance <b>addmarker 1000 (foo fee)</b>. If no names need to be associated to the marker, leave <b>()</b> as
+	// for instance <b>addmarker 1000 [foo fee]</b>. If no names need to be associated to the marker, leave <b>[]</b> as
 	// name llll. The millisecond position can be replaced by the "cursor" symbol or by the "end" symbol (end of score). <br />
 	// If the marker has a role (see below), this should be stated as symbol as third argument.	The choice is among the 
 	// following symbols: "none" (default: no role), "timesig" (time signature), "tempo", "barline" and "division".
 	// If the specified role requires a content, this should be indicated as fourth argument. For instance
-	// <b>addmarker 0 (not important) timesig (4 4)</b> adds a marker at the beginning of the <o>bach.roll</o>, having a
+	// <b>addmarker 0 [not important] timesig [4 4]</b> adds a marker at the beginning of the <o>bach.roll</o>, having a
 	// time signature role, corresponding to a 4/4 time signature. <br /> <br />
 	// @copy BACH_DOC_MARKERROLES
 	// @marg 0 @name position @optional 0 @type float/symbol
@@ -5334,12 +5334,12 @@ int T_EXPORT main(void){
 	// @marg 2 @name role @optional 1 @type symbol
 	// @marg 3 @name content @optional 1 @type llll
     // @example addmarker 2000 George @caption add a marker named 'George' at 2s
-    // @example addmarker 2000 (Foo Fee Faa) @caption the same, with a complex llll name
+    // @example addmarker 2000 [Foo Fee Faa] @caption the same, with a complex llll name
     // @example addmarker cursor John @caption add a 'John' marker at the current playhead position
     // @example addmarker 1000 whatever barline @caption add a barline marker at 1s
     // @example addmarker 500 whatever division @caption add a division marker at 0.5s
-    // @example addmarker 0 whatever timesig (2 4) @caption add a 2/4 time signature marker at the beginning
-    // @example addmarker 0 whatever tempo (1/4 120) @caption add a quarter = 120 tempo marker at the beginning
+    // @example addmarker 0 whatever timesig [2 4] @caption add a 2/4 time signature marker at the beginning
+    // @example addmarker 0 whatever tempo [1/4 120] @caption add a quarter = 120 tempo marker at the beginning
     // @seealso deletemarker, clearmarkers
 	class_addmethod(c, (method) roll_addmarker, "addmarker", A_GIMME, 0);
 
@@ -5362,15 +5362,15 @@ int T_EXPORT main(void){
 	// @method getmarker @digest Retrieve marker information
 	// @description The <m>getmarker</m>, without any further argument, will output all the markers from the playout in the form 
 	// <b>markers <m>MARKER1</m> <m>MARKER2</m>...</b>, where each <m>MARKER</m> is an llll of the form
-	// <b>(<m>position_ms</m> <m>name_or_names</m> <m>role</m> <m>optional:content</m>)</b>, where the <m>content</m> is only output
+	// <b>[<m>position_ms</m> <m>name_or_names</m> <m>role</m> <m>optional:content</m>]</b>, where the <m>content</m> is only output
 	// if the marker <m>role</m> requires it (see below to know more about marker roles). 
 	// Markers are in any case always output ordered according to their positions.
 	// The <m>name_or_names</m> parameter is either a single symbol or integer (if the marker has a single name), or an llll containing all the names
-	// listed, in the form <b>(<m>name1</m> <m>name2</m> ...)</b>, where each <m>name</m> is a symbol or an integer. If a marker has no name, 
-	// then <b>()</b> is used.  <br />
+	// listed, in the form <b>[<m>name1</m> <m>name2</m> ...]</b>, where each <m>name</m> is a symbol or an integer. If a marker has no name, 
+	// then <b>[]</b> is used.  <br />
 	// If you send a message <b>getmarker @namefirst 1</b>, all the markers will be output from the playout in the form
 	// <b>markers <m>MARKER1</m> <m>MARKER2</m>...</b>, where each <m>MARKER</m> is an llll of the form
-	// <b>(<m>name_or_names</m> <m>position_ms</m> <m>role</m> <m>optional:content</m>)</b>. <br />
+	// <b>[<m>name_or_names</m> <m>position_ms</m> <m>role</m> <m>optional:content</m>]</b>. <br />
 	// You can retrieve the information about a specific marker by adding the marker name or names as arguments. In this case you'll get
 	// from the playout an llll in the form <b>marker <m>name_or_names</m> <m>position_ms</m> <m>role</m> <m>optional:content</m></b>, where all
 	// the parameters are the same as above.
@@ -5459,7 +5459,7 @@ int T_EXPORT main(void){
 	// @description A <m>clear</m> message sent in the first inlet will delete all the chords of the <o>bach.roll</o>, and all the markers.
 	// If an integer argument is given, the message will only clear the content of a specific voice (the one corresponding to the input integer number). <br />
 	// A <m>clear</m> message sent in any of the separate parameters inlets (all inlets but the first one) will clear the content which was
-	// possibly stored in such inlet. This is equivalent to sending a <b>nil</b> or <b>()</b> message in that inlet.
+	// possibly stored in such inlet. This is equivalent to sending a <b>nil</b> or <b>[]</b> message in that inlet.
 	// @marg 0 @name voice_number @optional 1 @type int
     // @example clear @caption clear all items
     // @example clear 3 @caption the same, only for voice 3
@@ -5488,8 +5488,8 @@ int T_EXPORT main(void){
 	// @description The <m>interp</m> message, followed by a time value (in milliseconds) retrieves
 	// the instantaneous data of all the notes which are active at the given time instant.
 	// The answer is sent through the playout in the following form: <b>interp <m>VOICE1</m> <m>VOICE2</m>...</b>
-	// where each <m>VOICE</m> is in the form <b>(<m>CHORD1</m> <m>CHORD2</m>...)</b>, being the chords active at the 
-	// given time instant, each in the form <b>(<m>NOTE1</m> <m>NOTE2</m>...)</b>, being the chord notes active at
+	// where each <m>VOICE</m> is in the form <b>[<m>CHORD1</m> <m>CHORD2</m>...]</b>, being the chords active at the 
+	// given time instant, each in the form <b>[<m>NOTE1</m> <m>NOTE2</m>...]</b>, being the chord notes active at
 	// the given time instant, each in the standard note gathered syntax, with two important variations:
 	// there is no duration element, and for each slot marked as temporal only the slot element at the given time instant
 	// is output (e.g. the interpolated function point of a function slot). <br /> <br />
@@ -5503,7 +5503,7 @@ int T_EXPORT main(void){
 	// @method sample @digest Sample score data
 	// @description The <m>sample</m> message, followed by a integer (the number of sampling points), 
 	// samples the note data (exactly as <m>interp</m> does) throughout the score, at the (uniformly taken) sampling point. 
-	// The answer is sent through the playout in the following form: <b>sample (<m>t1</m> <m>t2</m>...) (<m>RES1</m> <m>RES2</m>...)...</b>
+	// The answer is sent through the playout in the following form: <b>sample [<m>t1</m> <m>t2</m>...] [<m>RES1</m> <m>RES2</m>...]...</b>
 	// where each <m>t</m> is an instant in milliseconds, and each <m>RES</m> is the result of the <m>interp</m> message performed
 	// on such instant (see <m>interp</m> to know more). <br />
     // If the <b>ms</b> symbol is given as second argument, the first numeric argument (which can also be non-integer, in
@@ -5525,8 +5525,8 @@ int T_EXPORT main(void){
 	// @marg 0 @name positions @optional 0 @type number/llll
 	// @marg 1 @name voices @optional 1 @type llll
     // @example slice 1000 @caption slice score at 1s
-    // @example slice (2000 3000 5000) @caption slice score at 1s, 2s and 5s
-    // @example slice (2000 3000 5000) (1 3) @caption the same, but only voices 1 and 3
+    // @example slice [2000 3000 5000] @caption slice score at 1s, 2s and 5s
+    // @example slice [2000 3000 5000] [1 3] @caption the same, but only voices 1 and 3
 	class_addmethod(c, (method) roll_slice, "slice", A_GIMME, 0);
 	
 	
@@ -5577,18 +5577,18 @@ int T_EXPORT main(void){
 	// @method addchord @digest Add a chord
 	// @description An <m>addchord</m> message will add a new chord to the existing ones.
 	// The first optional integer argument is the number of the voice in which the chord should be placed.
-	// Then, the chord must be given in its gathered syntax llll form as argument. For instance, <b>addchord 2 (1000 (6100 1000 50))</b>
+	// Then, the chord must be given in its gathered syntax llll form as argument. For instance, <b>addchord 2 [1000 [6100 1000 50]]</b>
 	// adds a chord in the second voice having onset 1000 and a single note (pitch 6100 midicents, duration 1000 ms, velocity 50).
 	// If no voice number is given, first voice is used by default. <br /> <br />
 	// @copy BACH_DOC_CHORD_GATHERED_SYNTAX_ROLL
 	// @marg 0 @name voice_number @optional 1 @type int
 	// @marg 1 @name chord @optional 0 @type llll
     // @mattr sel @type int @default 0 @digest Also select the added chord
-    // @example addchord (1000 (6000 500 50)) @caption add a middle C at 1s, lasting 0.5s and with velocity 50
-    // @example addchord 2 (1000 (6000 500 50)) @caption the same, in second voice
-    // @example addchord 2 (1000 (6000 500 50)) @sel 1 @caption the same, also selecting the chord
-    // @example addchord 2 (1000 (6000 500 50) (7200 0.5 50)) @caption add a chord with two notes
-    // @example addchord 2 (1000 (6000 500 50 (slots (3 10 20 30))) (7200 0.5 50 (breakpoints (0 0 0) (1 -500 0)))) @caption and with extra information
+    // @example addchord [1000 [6000 500 50]] @caption add a middle C at 1s, lasting 0.5s and with velocity 50
+    // @example addchord 2 [1000 [6000 500 50]] @caption the same, in second voice
+    // @example addchord 2 [1000 [6000 500 50]] @sel 1 @caption the same, also selecting the chord
+    // @example addchord 2 [1000 [6000 500 50] [7200 0.5 50]] @caption add a chord with two notes
+    // @example addchord 2 [1000 [6000 500 50 [slots [3 10 20 30]]] [7200 0.5 50 [breakpoints [0 0 0] [1 -500 0]]]] @caption and with extra information
     // @seealso gluechord, addchords, delete
 	class_addmethod(c, (method) roll_anything, "addchord", A_GIMME, 0);
 
@@ -5612,7 +5612,7 @@ int T_EXPORT main(void){
     // @marg 1 @name voice_or_ref @optional 1 @type llll
     // @example insertvoice 2 @caption insert a empty voice as 2nd voice
     // @example insertvoice 2 4 @caption also initialize it with the properties of 4th voice
-    // @example insertvoice 2 ((125 (6300 105 100)) (457 (7500 405 100)) (780 (7000 405 100))) @caption also fill it with some content
+    // @example insertvoice 2 [[125 [6300 105 100]] [457 [7500 405 100]] [780 [7000 405 100]]] @caption also fill it with some content
     // @seealso deletevoice
     class_addmethod(c, (method) roll_anything, "insertvoice", A_GIMME, 0);
 
@@ -5626,16 +5626,16 @@ int T_EXPORT main(void){
     // Further arguments are supposed to be llll form, exactly in in the same syntax as the whole <o>bach.roll</o>
 	// gathered syntax (without header specification): one llll for each voice,
 	// containing one llll for each chord to add (in chord gathered syntax, also see the <m>addchord</m> message). If for a given voice
-	// you don't need to add any chord, just set a <b>()</b> llll.
-	// More precisely the expected syntax for the argument is <b>(<m>VOICE1</m> <m>VOICE2</m>...)</b>
+	// you don't need to add any chord, just set a <b>[]</b> llll.
+	// More precisely the expected syntax for the argument is <b>[<m>VOICE1</m> <m>VOICE2</m>...]</b>
 	// where each voice is an llll in gathered syntax. <br /> <br />
-	// For instance, a valid message would be <b>addchords ((217. (7185. 492. 100)) (971. (6057. 492. 100))) ((1665. (7157. 492. 100)))</b>
+	// For instance, a valid message would be <b>addchords [[217. [7185. 492. 100]] [971. [6057. 492. 100]]] [[1665. [7157. 492. 100]]]</b>
 	// <br /> <br />
 	// @copy BACH_DOC_VOICE_GATHERED_SYNTAX_ROLL
     // @marg 0 @name offset @optional 1 @type number
 	// @marg 1 @name chords @optional 1 @type llll
-    // @example addchords ((217 (7185 492 100)) (971 (6057 492 100))) ((1665 (7157 492 100))) @caption add some chords in gathered syntax
-    // @example addchords 1500 ((217 (7185 492 100)) (971 (6057 492 100))) ((1665 (7157 492 100))) @caption same thing, shifted by 1.5 seconds
+    // @example addchords [[217 [7185 492 100]] [971 [6057 492 100]]] [[1665 [7157 492 100]]] @caption add some chords in gathered syntax
+    // @example addchords 1500 [[217 [7185 492 100]] [971 [6057 492 100]]] [[1665 [7157 492 100]]] @caption same thing, shifted by 1.5 seconds
     // @seealso addchord
 	class_addmethod(c, (method) roll_anything, "addchords", A_GIMME, 0);
 
@@ -5661,9 +5661,9 @@ int T_EXPORT main(void){
 	// @marg 3 @name threshold_cents @optional 1 @type float
 	// @marg 4 @name smooth_ms @optional 1 @type atom
     // @mattr sel @type int @default 0 @digest Also select the added or glued chord
-    // @example gluechord (3000 (6210 1000 100)) @caption glue the chord to a contiguous one, if any
-    // @example gluechord (3000 (6210 1000 100)) 10 30 @caption ...only if they join seamlessly within 10ms and 30cents
-    // @example gluechord (3000 (6210 1000 100)) 10 30 @sel 1 @caption ...and select the added or glued chord
+    // @example gluechord [3000 [6210 1000 100]] @caption glue the chord to a contiguous one, if any
+    // @example gluechord [3000 [6210 1000 100]] 10 30 @caption ...only if they join seamlessly within 10ms and 30cents
+    // @example gluechord [3000 [6210 1000 100]] 10 30 @sel 1 @caption ...and select the added or glued chord
     // @seealso addchord
 	class_addmethod(c, (method) roll_anything, "gluechord", A_GIMME, 0);
 
@@ -5739,7 +5739,7 @@ int T_EXPORT main(void){
 	// @method getnumnotes @digest Get the number of notes
 	// @description The <m>getnumnotes</m> message forces <o>bach.roll</o> to output from the playout the number of notes, for each chord and for each voice.
 	// The syntax of the output answer is: <b>numnotes <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
-	// <b>(<m>num_notes_chord1</m> <m>num_notes_chord2</m>...)</b>, 
+	// <b>[<m>num_notes_chord1</m> <m>num_notes_chord2</m>...]</b>, 
 	// i.e. after the "numnotes" symbol, a list of lists is given: each outer list represents a voice, and innerly contains an integer for each one
 	// of its chords: such integer is the number of notes of the chord. <br />
 	// @copy BACH_DOC_QUERY_LABELS
@@ -5795,7 +5795,7 @@ int T_EXPORT main(void){
 	// @description The <m>dumpnotepixelpos</m> message retrieves the pixel position of any chord and note, and outputs it from the playout.
 	// The output answer has the syntax: 
 	// <b>notepixelpos <m>VOICE1</m> <m>VOICE2</m>...</b>, where each <m>VOICE</m> is an llll of the form
-	// <b>(<m>CHORD1</m> <m>CHORD2</m>...)</b>, and where each <m>CHORD</m> is an llll accounting for the pixel position of the chord
+	// <b>[<m>CHORD1</m> <m>CHORD2</m>...]</b>, and where each <m>CHORD</m> is an llll accounting for the pixel position of the chord
 	// and all its notes, in the form: 
 	// <b>(<m>x-pixel_onset</m> (<m>duration_in_horizontal_pixels_note1</m>  <m>duration_in_horizontal_pixels_note2</m> ...)
 	// (<m>y_pixel_noteheadcenter_note1</m>   <m>y_pixel_noteheadcenter_note2</m> ...)
@@ -6024,7 +6024,7 @@ int T_EXPORT main(void){
 	// @method paste @digest Paste
 	// @description Pastes the content contained in the global clipboard. <br />
 	// If the clipboard contains a portion of score, this score is pasted at its exact original position. Two optional arguments
-	// changes this behavior: the first argument is a floating point number setting the onset at which the copied portion should be pasted (use <b>()</b>
+	// changes this behavior: the first argument is a floating point number setting the onset at which the copied portion should be pasted (use <b>[]</b>
 	// or <b>nil</b> to keep the original position, use the "end" symbol to paste at the end of the score,
     // use the "replace" symbol to paste replacing current selection), the second argument is an integer
     // setting the number of the uppermost voice for pasting (pasting will retain original voices if no second argument is set). <br />
@@ -6044,7 +6044,7 @@ int T_EXPORT main(void){
     // @example paste end @repeat 200 @caption append 200 times
     // @example paste replace @caption paste replacing current selection
     // @example paste 1000 2 @caption paste at 1 sec starting at voice 2
-    // @example paste () 2 @caption paste at original position starting at voice 2
+    // @example paste [] 2 @caption paste at original position starting at voice 2
     // @example paste slot @caption paste copied slot(s) to selection
     // @example paste slot all @caption the same
     // @example paste slot 3 @caption paste copied slot to slot 3 of selection
@@ -6127,10 +6127,10 @@ int T_EXPORT main(void){
     // Furthermore, some exporting message attributes are available, and each has to be given as llll after the (optional) file name.
     // Available attributes are: <br />
     // - <b>exportmarkers</b> (default: 1): if non-0, all the markers in the score will be exported. <br />
-    // - <b>voices</b> (default: <b>()</b>): if a list of voices is provided, then only the specified voices will be exported.
+    // - <b>voices</b> [default: <b>[]</b>): if a list of voices is provided, then only the specified voices will be exported.
     // If no list is provided, then all the voices of the score will be exported. Ranges can also be
-    // expressed, as sublists. For example, <b>(voices 1 3 5)</b> will export the first, third and fifth voice,
-    // while <b>(voices (1 5) 8)</b> will export all the voices from 1 to 5, and the 8th voice. <br />
+    // expressed, as sublists. For example, <b>[voices 1 3 5]</b> will export the first, third and fifth voice,
+    // while <b>[voices [1 5] 8]</b> will export all the voices from 1 to 5, and the 8th voice. <br />
     // - <b>format</b> (default: 0): the MIDI file format (0 = single track, 1 = multiple tracks). <br />
     // – <b>resolution</b> (default: 960): the number of MIDI ticks per beat. <br />
     // - <b>exportbarlines</b> (default: 1): the barline markers are exported as MIDI marker events, with the name "bach barline". <br />
@@ -6142,11 +6142,11 @@ int T_EXPORT main(void){
     // @mattr resolution @type int @default 960 @digest Number of MIDI ticks per beat
     // @example exportmidi @caption export MIDI file via dialog box
     // @example exportmidi mymidi.mid @caption export MIDI file
-    // @example exportmidi mymidi.mid (exportmarkers 0) @caption the same, but don't export markers
-    // @example exportmidi mymidi.mid (voices 1 3) (format 1) @caption exports voices 1 and 3 in format 1
-    // @example exportmidi mymidi.mid (voices ((1 3))) (format 1) @caption exports voices 1 through 3
-    // @example exportmidi mymidi.mid (voices ((1 3) 4 7)) (format 1) @caption exports voices 1 through 3, 4 and 7
-    // @example exportmidi mymidi.mid (resolution 1920) @caption exports with a resolution of 1920 ticks per beat
+    // @example exportmidi mymidi.mid [exportmarkers 0] @caption the same, but don't export markers
+    // @example exportmidi mymidi.mid [voices 1 3] [format 1] @caption exports voices 1 and 3 in format 1
+    // @example exportmidi mymidi.mid [voices [[1 3]]] [format 1] @caption exports voices 1 through 3
+    // @example exportmidi mymidi.mid [voices [[1 3] 4 7]] [format 1] @caption exports voices 1 through 3, 4 and 7
+    // @example exportmidi mymidi.mid [resolution 1920] @caption exports with a resolution of 1920 ticks per beat
     // @seealso write, writetxt, read, exportimage
     class_addmethod(c, (method) roll_exportmidi, "exportmidi", A_GIMME, 0);
 
@@ -6344,19 +6344,19 @@ int T_EXPORT main(void){
     // • the "exp" attribute sets the exponent for the conversion. <br />
     // @copy BACH_DOC_DYNAMICS_SPECTRUM
     // Moreover, the "mapping" attribute defines a non-standard or more general mapping via an llll specification. Such parameter has syntax
-    // <b>(<m>dynamics1</m> <m>velocity1</m>) (<m>dynamics2</m> <m>velocity2</m>)</b>.
+    // <b>[<m>dynamics1</m> <m>velocity1</m>] [<m>dynamics2</m> <m>velocity2</m>]</b>.
     // You might also define a the dynamics association you want to drift from the default values; any other marking which does not show up in the
     // mapping will be converted via the default conversion equation.
     // @marg 0 @name selection @optional 1 @type symbol
     // @marg 1 @name slot_number @optional 1 @type int
     // @mattr maxchars @type int @default 4 @digest Width of the dynamics spectrum
     // @mattr exp @type float @default 0.8 @digest Exponent for the conversion
-    // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs
+    // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>[<m>dynamics</m> <m>velocity</m>]</b> pairs
     // @mattr breakpointmode @type int @default 0 @digest Breakpoint handling (0 = handle existing ones, 1 = add new ones to match dynamics, 2 = also clear)
     // @seealso velocities2dynamics, checkdynamics, fixdynamics
     // @example dynamics2velocities @caption convert dynamics to velocities throughout the whole score
     // @example dynamics2velocities selection @caption same thing, for selected items only
-    // @example dynamics2velocities @mapping (mp 70) (mf 80) @caption customly map "mp" to velocity = 70 and "mf" to velocity = 80
+    // @example dynamics2velocities @mapping [mp 70] [mf 80] @caption customly map "mp" to velocity = 70 and "mf" to velocity = 80
     // @example dynamics2velocities @maxchars 6 @caption use broader dynamics spectrum (from "pppppp" to "ffffff")
     // @example dynamics2velocities @maxchars 2 @caption use narrower dynamics spectrum (from "pp" to "ff")
     // @example dynamics2velocities @maxchars 2 @exp 0.5 @caption use narrower spectrum and a steeper mapping curve
@@ -6374,7 +6374,7 @@ int T_EXPORT main(void){
     // • the "exp" attribute sets the exponent for the conversion. <br />
     // @copy BACH_DOC_DYNAMICS_SPECTRUM
     // Moreover, the "mapping" attribute defines a non-standard or more general mapping via an llll specification. Such parameter has syntax
-    // <b>(mapping (<m>dynamics1</m> <m>velocity1</m>) (<m>dynamics2</m> <m>velocity2</m>)...)</b>.
+    // <b>[mapping [<m>dynamics1</m> <m>velocity1</m>] [<m>dynamics2</m> <m>velocity2</m>]...]</b>.
     // Differently from <m>dynamics2velocities</m>, if you define a mapping, you need to define the velocity association for each of the dynamic marking
     // you want to use. <br />
     // An "unnecessary" attribute toggles whether unnecessary dynamic markings should by default be dropped (default is 1: yes, use 0 to turn this of). <br />
@@ -6383,13 +6383,13 @@ int T_EXPORT main(void){
     // @marg 1 @name slot_number @optional 1 @type int
     // @mattr maxchars @type int @default 4 @digest Width of the dynamics spectrum
     // @mattr exp @type float @default 0.8 @digest Exponent for the conversion
-    // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>(<m>dynamics</m> <m>velocity</m>)</b> pairs
+    // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>[<m>dynamics</m> <m>velocity</m>]</b> pairs
     // @mattr unnecessary @type int @default 1 @digest If non-zero, drops unnecessary dynamic markings
     // @mattr thresh @type float @default 1. @digest Hairpin detection threshold
     // @seealso dynamics2velocities, checkdynamics, fixdynamics
     // @example velocities2dynamics @caption convert velocities to dynamics throughout the whole score
     // @example velocities2dynamics selection @caption same thing, for selected items only
-    // @example velocities2dynamics @mapping (p 40) (mp 70) (mf 90) (f 110) @caption use only "p", "mp", "mf", "f" symbols, with the defined mappings
+    // @example velocities2dynamics @mapping [p 40] [mp 70] [mf 90] [f 110] @caption use only "p", "mp", "mf", "f" symbols, with the defined mappings
     // @example velocities2dynamics @maxchars 6 @caption use broader dynamics spectrum (from "pppppp" to "ffffff")
     // @example velocities2dynamics @maxchars 2 @caption use narrower dynamics spectrum (from "pp" to "ff")
     // @example velocities2dynamics @maxchars 2 @exp 0.5 @caption use narrower spectrum and a steeper mapping curve

@@ -84,7 +84,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(name \"Odd one out!)\"",
+					"text" : "[name \"Odd one out!]\"",
 					"presentation_rect" : [ 343.0, 413.0, 0.0, 0.0 ],
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -113,7 +113,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(name \"Odd one out!\" )",
+					"text" : "[name \"Odd one out!\" ]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 343.0, 395.0, 133.0, 18.0 ],
@@ -228,7 +228,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (4 (name \"Odd one out!\" ) (type intlist) (range 1 5) (representation (John George Ringo Yoko Paul))))",
+					"text" : "[slotinfo [4 [name \"Odd one out!\" ] [type intlist] [range 1 5] [representation [John George Ringo Yoko Paul]]]]",
 					"linecount" : 2,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -257,7 +257,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "( slotinfo ( 3 (name \"loop on/off\" ) (type int) (range 0 1) (representation ( \"Loop Off\" \"Loop On\" ))))",
+					"text" : "[ slotinfo [ 3 [name \"loop on/off\" ] [type int] [range 0 1] [representation [ \"Loop Off\" \"Loop On\" ]]]]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 11.0, 102.0, 524.0, 18.0 ],
@@ -460,7 +460,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (n)",
+					"text" : "Slot Machines [n]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 5.0, 535.0, 140.0, 18.0 ],
@@ -559,7 +559,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (p)",
+					"text" : "Slot Machines [p]",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"patching_rect" : [ 632.0, 535.0, 140.0, 18.0 ],

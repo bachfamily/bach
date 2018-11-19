@@ -146,6 +146,33 @@
       "bach.sieve"
     ]
   },
+  "bach.code": {
+    "digest": "Compare two lllls for greater than or equal condition",
+    "module": "bach",
+    "category": [
+      "bach",
+      "bach objects",
+      "bach llll"
+    ],
+    "keywords": [
+      "compare",
+      "greater",
+      "equal",
+      "condition",
+      "lexicographical",
+      "order",
+      "numerical"
+    ],
+    "seealso": [
+      "bach.==",
+      "bach.!=",
+      "bach.&gt;",
+      "bach.&lt;",
+      "bach.&lt;=",
+      "bach.filter",
+      "bach.sieve"
+    ]
+  },
   "bach.collect": {
     "digest": "Collect elements into lllls",
     "module": "bach",
@@ -569,7 +596,7 @@
     ]
   },
   "bach.classify": {
-    "digest": "Arrange element into classes",
+    "digest": "Arrange elements into classes",
     "module": "bach",
     "category": [
       "bach",
@@ -1314,33 +1341,6 @@
       "bach.perm",
       "bach.cartesianprod",
       "God Solve the Queens"
-    ]
-  },
-  "bach.code": {
-    "digest": "Compare two lllls for greater than or equal condition",
-    "module": "bach",
-    "category": [
-      "bach",
-      "bach objects",
-      "bach llll"
-    ],
-    "keywords": [
-      "compare",
-      "greater",
-      "equal",
-      "condition",
-      "lexicographical",
-      "order",
-      "numerical"
-    ],
-    "seealso": [
-      "bach.==",
-      "bach.!=",
-      "bach.&gt;",
-      "bach.&lt;",
-      "bach.&lt;=",
-      "bach.filter",
-      "bach.sieve"
     ]
   },
   "bach.find": {

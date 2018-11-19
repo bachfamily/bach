@@ -249,10 +249,10 @@
 			<description>
 				A llll of depth 2 in the first inlet will compactly combine multiple increments or decrements, and then
 				output the updated multi-index.
-				It expects a list in the syntax <b>(Index NumberOfTimes) (Index NumberOfTimes)...</b>, where <b>Index</b> can be
+				It expects a list in the syntax <b>[Index NumberOfTimes] [Index NumberOfTimes]...</b>, where <b>Index</b> can be
 				positive or negative, depending if you need to increment it or decrement it (see <m>int</m> method).
-				For instance, the llll <b>(1 4) (2 5) (-2 3)</b> will increment the first index by 4 units, inrement the second one by 5 units
-				and decrement the second one by three units. Essentially <b>(1 4)</b> thus coincides with <b>1 1 1 1</b> and so on.
+				For instance, the llll <b>[1 4] [2 5] [-2 3]</b> will increment the first index by 4 units, inrement the second one by 5 units
+				and decrement the second one by three units. Essentially <b>[1 4]</b> thus coincides with <b>1 1 1 1</b> and so on.
 				All the minima, maxima, local and global carry are correctly handled: refer to the <m>list</m>, <m>int</m>
 				and <m>bang</m> methods to know more about them.
 			</description>

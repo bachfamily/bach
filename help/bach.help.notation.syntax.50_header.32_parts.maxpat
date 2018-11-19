@@ -60,7 +60,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 212.0, 168.0, 106.0, 23.0 ],
 					"style" : "",
-					"text" : "(numparts 3 1 2)"
+					"text" : "[numparts 3 1 2]"
 				}
 
 			}

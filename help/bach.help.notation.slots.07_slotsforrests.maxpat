@@ -46,7 +46,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 7.5, 84.0, 301.0, 23.0 ],
 					"style" : "",
-					"text" : "sel rest if symduration <= 1/4, addslot (22 fermata)"
+					"text" : "sel rest if symduration <= 1/4, addslot [22 fermata]"
 				}
 
 			}

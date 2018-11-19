@@ -1032,7 +1032,9 @@ static const flex_int16_t yy_chk[1195] =
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 
+    #ifndef BACH_MAX
     #define BACH_MAX
+    #endif
     #ifdef BACH_MAX
     #include "llllobj.h"
     #include "ext_common.h"

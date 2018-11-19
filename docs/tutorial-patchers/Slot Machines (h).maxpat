@@ -488,7 +488,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 549.0, 140.0, 18.0 ],
-					"text" : "Slot Machines (g)",
+					"text" : "Slot Machines [g]",
 					"varname" : "messageA"
 				}
 
@@ -588,7 +588,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 749.0, 549.0, 140.0, 18.0 ],
-					"text" : "Slot Machines (i)",
+					"text" : "Slot Machines [i]",
 					"varname" : "messageB"
 				}
 

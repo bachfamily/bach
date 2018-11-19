@@ -166,7 +166,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "inscreenpos 0 (1)",
+					"text" : "inscreenpos 0 [1]",
 					"id" : "obj-79",
 					"fontname" : "Arial",
 					"numinlets" : 2,
@@ -380,7 +380,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "message",
-									"text" : "inscreenpos 0.5 ( $1 )",
+									"text" : "inscreenpos 0.5 [ $1 ]",
 									"id" : "obj-4",
 									"fontname" : "Arial",
 									"numinlets" : 2,
@@ -605,7 +605,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "( $1 $2 ) ( $3 )",
+					"text" : "[ $1 $2 ] [ $3 ]",
 					"id" : "obj-7",
 					"fontname" : "Arial",
 					"numinlets" : 2,
@@ -1429,7 +1429,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "message",
-									"text" : "addchord 1 ( $1 ( $2 0 $3 (slots (1 2)))), inscreenpos 0.5 $1, select $1 $1 $2 $2 1",
+									"text" : "addchord 1 [ $1 [ $2 0 $3 [slots [1 2]]]], inscreenpos 0.5 $1, select $1 $1 $2 $2 1",
 									"linecount" : 4,
 									"id" : "obj-83",
 									"fontname" : "Arial",
@@ -1847,7 +1847,7 @@
 , 							{
 								"box" : 								{
 									"maxclass" : "message",
-									"text" : "addchord 1 ( $1 ( $2 0 $3 (slots (1 1)))), inscreenpos 0.5 $1, select $1 $1 $2 $2 1",
+									"text" : "addchord 1 [ $1 [ $2 0 $3 [slots [1 1]]]], inscreenpos 0.5 $1, select $1 $1 $2 $2 1",
 									"linecount" : 6,
 									"id" : "obj-31",
 									"fontname" : "Arial",
@@ -6380,7 +6380,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Real Time Stories (m)",
+					"text" : "Real Time Stories [m]",
 					"id" : "obj-9",
 					"fontname" : "Arial",
 					"numinlets" : 2,
@@ -6479,7 +6479,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Real Time Stories (o)",
+					"text" : "Real Time Stories [o]",
 					"id" : "obj-21",
 					"fontname" : "Arial",
 					"numinlets" : 2,

@@ -78,7 +78,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 204.0, 271.5, 270.0, 23.0 ],
 					"style" : "",
-					"text" : "sel all, velocity = sqrt(velocity), clearselection"
+					"text" : "sel all, velocity = sqrt[velocity], clearselection"
 				}
 
 			}
@@ -201,7 +201,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 26.5, 210.0, 230.0, 23.0 ],
 					"style" : "",
-					"text" : "sel all, cents (100 plus), clearselection"
+					"text" : "sel all, cents [100 plus], clearselection"
 				}
 
 			}

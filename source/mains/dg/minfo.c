@@ -111,8 +111,8 @@ int T_EXPORT main()
 	CLASS_ATTR_STYLE_LABEL(c,"matchtype",0,"onoff","Match Type for Symmetricity");
 	CLASS_ATTR_BASIC(c,"matchtype",0);
 	// @discussion If this flag is set, the symmetricity check for a matrix will take 
-	// into account the types of elements. For instance, <b>(0 1) (1. 0)</b> would not be
-	// a symmetric matrix, while <b>(0 1.) (1. 0)</b> would be perfectly symmetric.
+	// into account the types of elements. For instance, <b>[0 1] [1. 0]</b> would not be
+	// a symmetric matrix, while <b>[0 1.] [1. 0]</b> would be perfectly symmetric.
 	// If the flag is not set, the element types are ignored, and both previous matrices
 	// are considered symmetric. 
 	

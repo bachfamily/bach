@@ -47,11 +47,11 @@
 // @method llll @digest Repeat llll
 // @description An llll in the first inlet will be repeated a certain number of times
 // (defined by the number in the right inlet or by the argument), and then output
-// through the outlet. For instance, repeating <b>foo (fee faa)</b> three times will yield
-// <b>foo (fee faa) foo (fee faa) foo (fee faa)</b>. Via the <m>inwrap</m> and <m>outwrap</m> 
+// through the outlet. For instance, repeating <b>foo [fee faa]</b> three times will yield
+// <b>foo [fee faa] foo [fee faa] foo [fee faa]</b>. Via the <m>inwrap</m> and <m>outwrap</m> 
 // attributes you can add level of parenthesis for each individual repetition or for the whole 
 // output llll, which allows you to obtain more complicate output lllls, such as 
-// <b>(((foo (fee faa))) ((foo (fee faa))) ((foo (fee faa))))</b>.
+// <b>[[[foo [fee faa]]] [[foo [fee faa]]] [[foo [fee faa]]]]</b>.
 
 // @method int @digest Set number of repetitions
 // @description A non-negative integer in the second inlet sets the number of times the
@@ -70,7 +70,7 @@ void main_foo() {
 
 llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 
-CLASS_ATTR_LONG(c, "inwrap", 0, t_repeat, inwrap); 
+CLASS_ATTR_LONG(c, "inwrap", 0, t_repeat, inwrap);
 CLASS_ATTR_STYLE_LABEL(c,"inwrap",0,"text","Wrap Input");
 CLASS_ATTR_BASIC(c,"unwrap",0);
 // @description @copy BACH_DOC_INWRAP

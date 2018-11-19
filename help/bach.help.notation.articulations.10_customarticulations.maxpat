@@ -89,7 +89,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 19.0, 303.0, 380.0, 23.0 ],
 					"style" : "",
-					"text" : "sel note if cents % 1200 == 700, addslot (22 cap), clearselection"
+					"text" : "sel note if cents % 1200 == 700, addslot [22 cap], clearselection"
 				}
 
 			}
@@ -121,7 +121,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 247.0, 588.0, 52.0 ],
 					"style" : "",
-					"text" : "(articulationinfo ((fullname cap) (shortname cap) (basept 12) (font Arial) (mainchar ^ ) (flippedchar v) (mainyshift 3) (flippedyshift -2) (mainheight 6) (flippedheight 9) (position noteside) (flippedycenter 8) (mainycenter 5) (options outsidestaff copywhencloned)))"
+					"text" : "[articulationinfo [[fullname cap] [shortname cap] [basept 12] [font Arial] [mainchar ^ ] [flippedchar v] [mainyshift 3] [flippedyshift -2] [mainheight 6] [flippedheight 9] [position noteside] [flippedycenter 8] [mainycenter 5] [options outsidestaff copywhencloned]]]"
 				}
 
 			}

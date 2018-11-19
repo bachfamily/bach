@@ -675,10 +675,10 @@ void hatom_op_pow(t_hatom *h1, t_hatom *h2, t_hatom *res)
     else if (!(hatom_type_is_number(h2_type)))
         *res = *h2;
     
-    else if (h1_type == H_LONG && h2_type == H_LONG) { // ll -> l
+    else if (h1_type == H_LONG && h2_type == H_LONG && h2->h_w.w_long >= 0) { // ll -> l
         hatom_setlong(res, ipow(h1->h_w.w_long, h2->h_w.w_long));
         
-    } else if ((h1_type == H_RAT || h1_type == H_PITCH) && h2_type == H_LONG) {
+    } else if (h1_type != H_DOUBLE && h2_type == H_LONG) {
         hatom_setrational(res, rat_long_pow(hatom_getrational(h1), h2->h_w.w_long));
     
     } else

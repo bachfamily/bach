@@ -390,7 +390,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 445.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Lambda Scores (g)",
+					"text" : "Lambda Scores [g]",
 					"varname" : "messageA"
 				}
 
@@ -483,7 +483,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 469.0, 445.0, 140.0, 22.0 ],
 					"style" : "",
-					"text" : "Lambda Scores (i)",
+					"text" : "Lambda Scores [i]",
 					"varname" : "messageB"
 				}
 

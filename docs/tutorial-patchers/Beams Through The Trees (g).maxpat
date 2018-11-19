@@ -40,7 +40,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((1/60 1/60 1/60) (1/60 1/60 1/60) (1/60 1/60 1/60) (1/60 1/60 1/60) (1/60 1/60 1/60) 1/4 1/4 1/4)), bang",
+					"text" : "[[[1/60 1/60 1/60] [1/60 1/60 1/60] [1/60 1/60 1/60] [1/60 1/60 1/60] [1/60 1/60 1/60] 1/4 1/4 1/4]], bang",
 					"numinlets" : 2,
 					"patching_rect" : [ 8.0, 413.0, 557.0, 18.0 ],
 					"id" : "obj-38",
@@ -109,7 +109,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((1/60 1/60 1/60 1/60 1/60) (1/60 1/60 1/60 1/60 1/60) (1/60 1/60 1/60 1/60 1/60) 1/4 1/4 1/4)), bang",
+					"text" : "[[[1/60 1/60 1/60 1/60 1/60] [1/60 1/60 1/60 1/60 1/60] [1/60 1/60 1/60 1/60 1/60] 1/4 1/4 1/4]], bang",
 					"numinlets" : 2,
 					"patching_rect" : [ 8.0, 236.0, 541.0, 18.0 ],
 					"id" : "obj-34",
@@ -178,7 +178,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "((1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/4 1/4 1/4)), bang",
+					"text" : "[[1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/60 1/4 1/4 1/4]], bang",
 					"numinlets" : 2,
 					"patching_rect" : [ 8.0, 75.0, 517.0, 18.0 ],
 					"id" : "obj-77",
@@ -400,7 +400,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Beams Through The Trees (f)",
+					"text" : "Beams Through The Trees [f]",
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 605.0, 165.0, 18.0 ],
 					"id" : "obj-7",
@@ -499,7 +499,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Beams Through The Trees (h)",
+					"text" : "Beams Through The Trees [h]",
 					"numinlets" : 2,
 					"patching_rect" : [ 442.0, 605.0, 169.0, 18.0 ],
 					"id" : "obj-16",

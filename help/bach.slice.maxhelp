@@ -240,7 +240,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 15.0, 149.0, 125.0, 52.0 ],
-									"text" : "a b c d e (1 2 3) f g"
+									"text" : "a b c d e [1 2 3] f g"
 								}
 
 							}

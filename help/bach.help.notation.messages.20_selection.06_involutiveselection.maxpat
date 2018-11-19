@@ -70,7 +70,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 306.0, 266.5, 193.0, 19.0 ],
-					"text" : "select (2 1 1/4) (2 2 1/2) nil nil 1"
+					"text" : "select [2 1 1/4] [2 2 1/2] nil nil 1"
 				}
 
 			}

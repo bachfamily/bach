@@ -557,7 +557,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (f)",
+					"text" : "Slot Machines [f]",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"patching_rect" : [ 5.0, 564.0, 140.0, 18.0 ],
@@ -656,7 +656,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (h)",
+					"text" : "Slot Machines [h]",
 					"numoutlets" : 1,
 					"fontsize" : 12.0,
 					"patching_rect" : [ 746.0, 564.0, 140.0, 18.0 ],

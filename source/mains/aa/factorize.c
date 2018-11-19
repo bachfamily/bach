@@ -129,7 +129,7 @@ void factorize_assist(t_factorize *x, void *b, long m, long a, char *s)
 		sprintf(s, "llll (%s): Result", type);
 		// @out 0 @type llll @digest Factorization
 		// @description The factorization is returned as an llll whose sublists contain each a prime factor and its exponent.
-		// For instance, the factorization of 12 is expressed as <b>(2 2) (3 1)</b>
+		// For instance, the factorization of 12 is expressed as <b>[2 2] [3 1]</b>
 	}
 }
 

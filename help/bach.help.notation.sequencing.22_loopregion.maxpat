@@ -113,7 +113,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 300.0, 206.5, 97.0, 19.0 ],
-					"text" : "loop (1 3/8) (2)"
+					"text" : "loop [1 3/8] [2]"
 				}
 
 			}

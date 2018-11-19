@@ -111,7 +111,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 286.0, 274.0, 175.0, 19.0 ],
-					"text" : "(slotinfo (2 (representation)))"
+					"text" : "[slotinfo [2 [representation]]]"
 				}
 
 			}
@@ -173,7 +173,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 99.0, 161.5, 210.0, 19.0 ],
-					"text" : "(slotinfo (2 (representation cents)))"
+					"text" : "[slotinfo [2 [representation cents]]]"
 				}
 
 			}
@@ -187,7 +187,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 4.5, 112.5, 195.0, 19.0 ],
-					"text" : "(slotinfo (2 (representation Hz)))"
+					"text" : "[slotinfo [2 [representation Hz]]]"
 				}
 
 			}

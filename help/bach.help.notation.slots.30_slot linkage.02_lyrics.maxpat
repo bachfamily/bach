@@ -146,7 +146,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.0, 110.0, 259.0, 23.0 ],
 					"style" : "",
-					"text" : "(slotinfo (1 (name lyrics) (type text) (key l)))"
+					"text" : "[slotinfo [1 [name lyrics] [type text] [key l]]]"
 				}
 
 			}

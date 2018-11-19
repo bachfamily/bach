@@ -259,11 +259,11 @@ int T_EXPORT main()
     // @copy BACH_DOC_WRITETXT_TEXT_FORMAT_AND_ARGUMENTS
     // @example writetxt @caption export the network as a text file, opening a dialog box for the file name
     // @example writetxt myfile.txt @caption export the network as a text file with the provided file name
-    // @example writetxt myfile.txt (maxdecimals 3) @caption export the network with a floating-point precision of 3 decimal digits
-    // @example writetxt myfile.txt (maxdecimals 3) (wrap 40) @caption as the above, limiting the length of each line to 40 characters
-    // @example writetxt myfile.txt (indent 1) @caption export the network indenting each sublist by one space per depth level
-    // @example writetxt myfile.txt (indent 1) (maxdepth 2) @caption as the above, but only first-level sublists are placed on new lines
-    // @example writetxt myfile.txt (maxdepth 1) @caption no indentation is performed
+    // @example writetxt myfile.txt [maxdecimals 3] @caption export the network with a floating-point precision of 3 decimal digits
+    // @example writetxt myfile.txt [maxdecimals 3] [wrap 40] @caption as the above, limiting the length of each line to 40 characters
+    // @example writetxt myfile.txt [indent 1] @caption export the network indenting each sublist by one space per depth level
+    // @example writetxt myfile.txt [indent 1] [maxdepth 2] @caption as the above, but only first-level sublists are placed on new lines
+    // @example writetxt myfile.txt [maxdepth 1] @caption no indentation is performed
     // @marg 0 @name filename @optional 1 @type symbol
     // @marg 1 @name specifications @optional 1 @type llll
     // @seealso read, write

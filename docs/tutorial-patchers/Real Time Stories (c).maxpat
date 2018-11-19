@@ -891,7 +891,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "clearselection, addchord 1 ( $1 ( $2 0 $3 ) ), select $1 $1 nil nil 1",
+					"text" : "clearselection, addchord 1 [ $1 [ $2 0 $3 ] ], select $1 $1 nil nil 1",
 					"linecount" : 2,
 					"fontsize" : 12.0,
 					"numinlets" : 2,
@@ -1079,7 +1079,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Real Time Stories (b)",
+					"text" : "Real Time Stories [b]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,
@@ -1178,7 +1178,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Real Time Stories (d)",
+					"text" : "Real Time Stories [d]",
 					"fontsize" : 12.0,
 					"numinlets" : 2,
 					"numoutlets" : 1,

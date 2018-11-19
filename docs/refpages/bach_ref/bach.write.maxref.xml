@@ -101,7 +101,7 @@
 				Furthermore, some message attributes are available, for fine-tuning of the text formatting.
 				Available attributes are: <br />
 				- <b>maxdecimals</b> (default: 10): the precision for floating-point numbers. <br />
-				- <b>indent</b> (default: <b>tab</b>): if set to <m>tab</m>, every sublist that is encountered (up to <b>maxdepth</b>, see below)
+				- <b>indent</b> [default: <b>tab</b>]: if set to <m>tab</m>, every sublist that is encountered [up to <b>maxdepth</b>, see below)
 				will be placed on a new line, indented by a number of tabs equal to the depth level of the sublist itself.
 				If set to an integer, the indentation for each depth level will be the corresponding number of spaces.<br />
 				- <b>maxdepth</b> (default: -1, i.e. no limitation): the maximum depth at which sublists are placed in new lines.

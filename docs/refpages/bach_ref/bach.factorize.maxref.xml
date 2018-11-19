@@ -40,7 +40,7 @@
 			</digest>
 			<description>
 				The factorization is returned as an llll whose sublists contain each a prime factor and its exponent.
-				For instance, the factorization of 12 is expressed as <b>(2 2) (3 1)</b>
+				For instance, the factorization of 12 is expressed as <b>[2 2] [3 1]</b>
 			</description>
 		</outlet>
 	</outletlist>
@@ -125,7 +125,7 @@
 			<description>
 				Factorization.
 				The factorization is returned as an llll whose sublists contain each a prime factor and its exponent.
-				For instance, the factorization of 12 is expressed as <b>(2 2) (3 1)</b>
+				For instance, the factorization of 12 is expressed as <b>[2 2] [3 1]</b>
 			</description>
 		</entry>
 	</misc>

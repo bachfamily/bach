@@ -143,7 +143,7 @@
 	<!--SEEALSO-->
 	<seealsolist>
 		<seealso name="bach.sum" />
-		<seealso name="bach.*" />
+		<seealso name="bach.times" display="bach.*" type="refpage" />
 	</seealsolist>
 
 	<misc name = "Input">

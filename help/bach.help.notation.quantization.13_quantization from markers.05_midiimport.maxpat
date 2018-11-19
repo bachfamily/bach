@@ -116,7 +116,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 101.0, 346.0, 23.0 ],
 					"style" : "",
-					"text" : "read \"Real Time Stories (g) - bach.mid\" (markmeasures 1)"
+					"text" : "read \"Real Time Stories [g] - bach.mid\" [markmeasures 1]"
 				}
 
 			}

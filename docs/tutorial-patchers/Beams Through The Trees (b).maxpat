@@ -134,7 +134,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 291.0, 454.0, 194.0, 22.0 ],
 					"style" : "",
-					"text" : "((1/16 1/16 1/16 1/16 1/8 1/8 -2/4))"
+					"text" : "[[1/16 1/16 1/16 1/16 1/8 1/8 -2/4]]"
 				}
 
 			}
@@ -227,7 +227,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 52.0, 138.0, 227.0, 22.0 ],
 					"style" : "",
-					"text" : "((1/16 1/16 1/16 1/16 1/8 1/8 -2/4)), bang"
+					"text" : "[[1/16 1/16 1/16 1/16 1/8 1/8 -2/4]], bang"
 				}
 
 			}
@@ -310,7 +310,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 339.0, 137.0, 227.0, 22.0 ],
 					"style" : "",
-					"text" : "((1/16 1/16 1/16 1/16 1/8 1/8 -2/4)), bang"
+					"text" : "[[1/16 1/16 1/16 1/16 1/8 1/8 -2/4]], bang"
 				}
 
 			}
@@ -508,7 +508,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 5.0, 652.0, 170.0, 22.0 ],
 					"style" : "",
-					"text" : "Beams Through The Trees (a)",
+					"text" : "Beams Through The Trees [a]",
 					"varname" : "messageA"
 				}
 
@@ -601,7 +601,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 650.0, 652.0, 168.0, 22.0 ],
 					"style" : "",
-					"text" : "Beams Through The Trees (c)",
+					"text" : "Beams Through The Trees [c]",
 					"varname" : "messageB"
 				}
 

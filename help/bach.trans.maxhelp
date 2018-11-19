@@ -304,7 +304,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 121.0, 508.0, 58.0 ],
-									"text" : "(((a A alpha) (b B beta) (c C gamma)) ((d D delta) (e E epsilon) (f F zeta)) ((g G eta) (h H theta) (i I iota))) (((1 uno one) (2 due two) (3 tre three)) ((4 quattro four) (5 cinque five) (6 sei six)) ((7 sette seven) (8 otto eight) (9 nove nine)))"
+									"text" : "[[[a A alpha] [b B beta] [c C gamma]] [[d D delta] [e E epsilon] [f F zeta]] [[g G eta] [h H theta] [i I iota]]] [[[1 uno one] [2 due two] [3 tre three]] [[4 quattro four] [5 cinque five] [6 sei six]] [[7 sette seven] [8 otto eight] [9 nove nine]]]"
 								}
 
 							}
@@ -719,7 +719,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 113.0, 165.0, 43.0 ],
-									"text" : "(a b c) (d e f) (g h i j) (k l)"
+									"text" : "[a b c] [d e f] [g h i j] [k l]"
 								}
 
 							}
@@ -1078,7 +1078,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 68.0, 168.0, 165.0, 43.0 ],
-									"text" : "(a b c) (d e f) (g h i) (j h l)"
+									"text" : "[a b c] [d e f] [g h i] [j h l]"
 								}
 
 							}

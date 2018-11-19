@@ -204,7 +204,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 251.5, 244.0, 67.0 ],
 					"style" : "",
-					"text" : "(commands (1 (note granularnote) (chord granularchord) (rest granularrest) (key g)) (2 (note plainnote) (chord plainchord) (rest plainrest) (key p)))"
+					"text" : "[commands [1 [note granularnote] [chord granularchord] [rest granularrest] [key g]] [2 [note plainnote] [chord plainchord] [rest plainrest] [key p]]]"
 				}
 
 			}

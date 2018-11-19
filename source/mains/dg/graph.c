@@ -339,7 +339,7 @@ int T_EXPORT main(void){
 	// Via <m>exprx</m> one defines the formula for the X variable, as X = f(T), where T is the independent variable.
 	// After the <m>exprx</m> symbol, a formula in <o>bach.expr</o> 
 	// style is expected. The free variable T is represented by $f1.
-	// For instance, a valid expression can be <b>exprx sin($f1+cos($f1)+$f2)</b>, where <b>$f2</b> is a parameter whose value has to be 
+	// For instance, a valid expression can be <b>exprx sin[$f1+cos[$f1]+$f2]</b>, where <b>$f2</b> is a parameter whose value has to be 
 	// input from the right inlet.
 	// @marg 0 @name expression @optional 0 @type llll
     // @exemple exprx sin($f1+cos($f1)) @caption define formula for x
@@ -352,7 +352,7 @@ int T_EXPORT main(void){
 	// Y = f(T), in parametric mode (see <m>graphtype</m> attribute), where X and T are the indepentent variables.
 	// After the <m>expry</m> symbol, a formula in <o>bach.expr</o> 
 	// style is expected. The free variable X or T is represented by $f1.
-	// For instance, a valid expression can be <b>expry sin($f1*$f1+$f2)+$f3</b>, where <b>$f2</b> and <b>$f3</b> are parameters whose values 
+	// For instance, a valid expression can be <b>expry sin[$f1*$f1+$f2]+$f3</b>, where <b>$f2</b> and <b>$f3</b> are parameters whose values 
 	// have to be input from the right inlet.
 	// @marg 0 @name expression @optional 0 @type llll
     // @exemple expry $f1*sin($f1*$f1) @caption define formula for y
@@ -381,7 +381,7 @@ int T_EXPORT main(void){
 	// @description The <m>dump</m> message outputs from <o>bach.graph</o>'s outlet the points of the graph in an interlaced list of 
 	// X values and Y values such as <b>0. 0. 0.338538 1.91993 -7.327899 2.667156 -8.773019 -15.195196...</b>.
 	// If you want to isolate couples, use <o>bach.group</o> with 2 as argument, which will get you to the form
-	// <b>(0. 0.) (0.338538 1.91993) (-7.327899 2.667156) (-8.773019 -15.195196)...</b>
+	// <b>[0. 0.] [0.338538 1.91993] [-7.327899 2.667156] [-8.773019 -15.195196]...</b>
 	// where each <b>X Y</b> couple is wrapped. <br />
 	// The output points are the sampling that bach.graph does according to all the values of its attributes, except for the
 	// Cartesian Points or Polar Points graph (see <m>graphtype</m> attribute), for which the output points are the ones

@@ -7,6 +7,7 @@
 <refpage name='bach.lisp.maxref.xml'/>
 <refpage name='bach.diff.maxref.xml'/>
 <refpage name='bach.gt.maxref.xml'/>
+<refpage name='bach.code.maxref.xml'/>
 <refpage name='bach.collect.maxref.xml'/>
 <refpage name='bach.args.maxref.xml'/>
 <refpage name='bach.join.maxref.xml'/>
@@ -62,7 +63,6 @@
 <refpage name='bach.step.maxref.xml'/>
 <refpage name='bach.swap.maxref.xml'/>
 <refpage name='bach.constraints.maxref.xml'/>
-<refpage name='bach.code.maxref.xml'/>
 <refpage name='bach.find.maxref.xml'/>
 <refpage name='bach.write.maxref.xml'/>
 <refpage name='bach.rev.maxref.xml'/>

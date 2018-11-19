@@ -68,7 +68,7 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
-		<attribute name="ignore" get="1" set="1" type="int" size="1">
+		<attribute name="ignore" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Ignore Categories
 			</digest>
@@ -82,8 +82,8 @@
 				- <b>l</b> stands for open and closed parens marking llll sublists,
 				only if they do not appear in a symbol of their own
 				(i.e., with the <b>l</b> category set,
-				<b>(</b> is interpreted as the beginning of a sublist,
-				whereas <b>(1</b> is interpreted just as a plain symbol,
+				<b>[</b> is interpreted as the beginning of a sublist,
+				whereas <b>[1</b> is interpreted just as a plain symbol,
 				as opposed to what would happen normally,
 				when it would mark the beginning of a sublist
 				whose first element is <b>1</b>). <br />
@@ -102,14 +102,16 @@
 				- <b>0</b> stands for no category, and is the default.
 				If it is present alongside other specifiers (e.g., <b>-p</b>), it is ignored. <br />
 				For example, the <m>ignore</m> attribute could be set to <b>lp</b>,
-				which would cause a message containing <b>( a001 Mahler(Bernstein).aif )</b>
+				which would cause a message containing <b>[ a001 Mahler[Bernstein].aif ]</b>
 				to be interpreted as an llll containing a sublist,
-				containing in turn the symbols <b>a001</b> and <b>Mahler(Bernstein).aif</b>.
+				containing in turn the symbols <b>a001</b> and <b>Mahler[Bernstein].aif</b>.
 				Without setting the <m>ignore</m> attribute, the same message would be interpreted
 				as an llll containing a sublist containing the pitch <b>A1</b>,
 				the symbol <b>Mahler</b>,
 				a further sublist only containing the symbol <b>Bernstein</b>,
 				and finally the symbol <b>.aif</b>. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Ignore Categories" />

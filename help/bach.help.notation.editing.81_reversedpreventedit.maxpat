@@ -70,7 +70,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 36.0, 336.833313, 240.0, 19.0 ],
 					"presentation_rect" : [ 234.0, 343.0, 0.0, 0.0 ],
-					"text" : "preventedit - (selection single) inspector"
+					"text" : "preventedit - [selection single] inspector"
 				}
 
 			}
@@ -163,7 +163,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 399.5, 250.416656, 192.0, 19.0 ],
 					"presentation_rect" : [ 278.0, 207.0, 0.0, 0.0 ],
-					"text" : "sel all, preventedit - (note pitch)"
+					"text" : "sel all, preventedit - [note pitch]"
 				}
 
 			}
@@ -236,7 +236,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 111.0, 253.0, 19.0 ],
-					"text" : "preventedit - (note pitch) (selection single)"
+					"text" : "preventedit - [note pitch] [selection single]"
 				}
 
 			}

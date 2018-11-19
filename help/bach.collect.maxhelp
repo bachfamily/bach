@@ -131,7 +131,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 57.5, 303.0, 50.0, 19.0 ],
-									"text" : "1 (2) 3"
+									"text" : "1 [2] 3"
 								}
 
 							}
@@ -188,7 +188,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 124.5, 135.5, 57.0, 19.0 ],
-									"text" : "(1 (2) 3)"
+									"text" : "[1 [2] 3]"
 								}
 
 							}
@@ -2308,7 +2308,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 99.0, 174.0, 124.0, 38.0 ],
-									"text" : "1 2 3 (4 5) (8 12)"
+									"text" : "1 2 3 [4 5] [8 12]"
 								}
 
 							}
@@ -2658,7 +2658,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 220.0, 126.0, 89.0, 27.0 ],
-									"text" : "1 2 (3 4 5)"
+									"text" : "1 2 [3 4 5]"
 								}
 
 							}
@@ -3026,7 +3026,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 261.0, 404.0, 97.0, 19.0 ],
-									"text" : "(1 2) (3 ((4))) ()"
+									"text" : "[1 2] [3 [[4]]] []"
 								}
 
 							}
@@ -3247,7 +3247,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 258.0, 302.5, 365.0, 19.0 ],
-									"text" : "0 1 2 john paul george ringo (one two (guess who) three four)"
+									"text" : "0 1 2 john paul george ringo [one two [guess who] three four]"
 								}
 
 							}
@@ -3276,7 +3276,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 38.0, 213.5, 306.0, 19.0 ],
-									"text" : "0 1 2 john paul george ringo (one two (guess who))"
+									"text" : "0 1 2 john paul george ringo [one two [guess who]]"
 								}
 
 							}
@@ -3306,7 +3306,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 264.5, 173.5, 231.0, 19.0 ],
-									"text" : "0 1 2 john paul george ringo (one two)"
+									"text" : "0 1 2 john paul george ringo [one two]"
 								}
 
 							}
@@ -3763,7 +3763,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 462.0, 243.002899, 263.0, 19.0 ],
-													"text" : "(a b c d e f) (b c d e f) (c d e f) (d e f) (e f) (f)"
+													"text" : "[a b c d e f] [b c d e f] [c d e f] [d e f] [e f] [f]"
 												}
 
 											}
@@ -3852,7 +3852,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 9.0, 935.0, 157.0, 19.0 ],
-													"text" : "1 (2 3) (4) ((5 6 (7))) 8 (9)"
+													"text" : "1 [2 3] [4] [[5 6 [7]]] 8 [9]"
 												}
 
 											}
@@ -7109,7 +7109,7 @@
 													"outlettype" : [ "", "int", "", "" ],
 													"parameter_enable" : 0,
 													"patching_rect" : [ 37.0, 1669.0, 204.0, 60.0 ],
-													"text" : "q w (9 () 8 7) e (r t y (u i o) (z x c)) (l k j) (4 5 3 6)"
+													"text" : "q w [9 [] 8 7] e [r t y [u i o] [z x c]] [l k j] [4 5 3 6]"
 												}
 
 											}
@@ -7209,7 +7209,7 @@
 													"numoutlets" : 1,
 													"outlettype" : [ "" ],
 													"patching_rect" : [ 54.0, 504.5, 129.0, 19.0 ],
-													"text" : "(a b c) (d e f g) (h i j)"
+													"text" : "[a b c] [d e f g] [h i j]"
 												}
 
 											}
@@ -7472,7 +7472,7 @@
 													"outlettype" : [ "", "int", "", "" ],
 													"parameter_enable" : 0,
 													"patching_rect" : [ 54.0, 51.38261, 163.0, 29.057972 ],
-													"text" : "a b c d e f g h i j k (l m n)"
+													"text" : "a b c d e f g h i j k [l m n]"
 												}
 
 											}
@@ -8597,7 +8597,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 598.0, 181.0, 93.0, 33.0 ],
-									"text" : "1 2 (3 4 5)"
+									"text" : "1 2 [3 4 5]"
 								}
 
 							}
@@ -8641,7 +8641,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 499.0, 181.0, 92.0, 33.0 ],
-									"text" : "a b (c d e)"
+									"text" : "a b [c d e]"
 								}
 
 							}

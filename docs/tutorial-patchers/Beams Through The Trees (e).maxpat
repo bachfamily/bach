@@ -41,7 +41,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1/32 1/32 1/32 1/32) (1/16 1/16) -3/4",
+					"text" : "[1/32 1/32 1/32 1/32] [1/16 1/16] -3/4",
 					"numinlets" : 2,
 					"patching_rect" : [ 220.0, 269.0, 207.0, 18.0 ],
 					"id" : "obj-27",
@@ -55,7 +55,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "((1/32 1/32 1/32 1/32) 1/16 1/16) -3/4",
+					"text" : "[[1/32 1/32 1/32 1/32] 1/16 1/16] -3/4",
 					"numinlets" : 2,
 					"patching_rect" : [ 62.0, 251.0, 207.0, 18.0 ],
 					"id" : "obj-24",
@@ -69,7 +69,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(1/32 1/32 1/32 1/32) 1/16 1/16 -3/4",
+					"text" : "[1/32 1/32 1/32 1/32] 1/16 1/16 -3/4",
 					"numinlets" : 2,
 					"patching_rect" : [ 316.0, 236.0, 199.0, 18.0 ],
 					"id" : "obj-21",
@@ -110,7 +110,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((1/32 1/32 1/32 1/32) 1/16 1/16 -3/4)), bang",
+					"text" : "[[[1/32 1/32 1/32 1/32] 1/16 1/16 -3/4]], bang",
 					"numinlets" : 2,
 					"patching_rect" : [ 275.0, 85.0, 249.0, 18.0 ],
 					"id" : "obj-77",
@@ -166,7 +166,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(((1/32 1/32 1/32 1/32) 1/16 1/16 -3/4)), bang",
+					"text" : "[[[1/32 1/32 1/32 1/32] 1/16 1/16 -3/4]], bang",
 					"numinlets" : 2,
 					"patching_rect" : [ 8.0, 85.0, 249.0, 18.0 ],
 					"id" : "obj-72",
@@ -403,7 +403,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Beams Through The Trees (d)",
+					"text" : "Beams Through The Trees [d]",
 					"numinlets" : 2,
 					"patching_rect" : [ 5.0, 439.0, 169.0, 18.0 ],
 					"id" : "obj-7",
@@ -502,7 +502,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Beams Through The Trees (f)",
+					"text" : "Beams Through The Trees [f]",
 					"numinlets" : 2,
 					"patching_rect" : [ 412.0, 439.0, 165.0, 18.0 ],
 					"id" : "obj-16",

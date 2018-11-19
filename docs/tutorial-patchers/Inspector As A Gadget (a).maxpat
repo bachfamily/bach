@@ -267,7 +267,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 547.0, 464.0, 146.0, 18.0 ],
-					"text" : "Inspector As A Gadget (b)",
+					"text" : "Inspector As A Gadget [b]",
 					"varname" : "messageB"
 				}
 

@@ -192,7 +192,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 131.0, 435.0, 19.0 ],
-					"text" : "(slotinfo (1 (name RGBA) (type floatlist) (range 0 1))), linknotecolortoslot 1"
+					"text" : "[slotinfo [1 [name RGBA] [type floatlist] [range 0 1]]], linknotecolortoslot 1"
 				}
 
 			}

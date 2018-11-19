@@ -249,7 +249,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Lambda Scores (b)",
+					"text" : "Lambda Scores [b]",
 					"numoutlets" : 1,
 					"patching_rect" : [ 607.0, 456.0, 140.0, 18.0 ],
 					"id" : "obj-7",

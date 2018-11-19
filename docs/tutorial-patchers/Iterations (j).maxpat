@@ -272,7 +272,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "Q W (E R) T",
+					"text" : "Q W [E R] T",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -286,7 +286,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "1 (2 3) 4 5",
+					"text" : "1 [2 3] 4 5",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -300,7 +300,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "a (b c) d e",
+					"text" : "a [b c] d e",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -534,7 +534,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Iterations (i)",
+					"text" : "Iterations [i]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,
@@ -633,7 +633,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Iterations (k)",
+					"text" : "Iterations [k]",
 					"numinlets" : 2,
 					"fontsize" : 12.0,
 					"numoutlets" : 1,

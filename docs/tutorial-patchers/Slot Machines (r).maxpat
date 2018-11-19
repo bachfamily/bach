@@ -55,7 +55,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (type float) (name freqshift) (range -1000 1000) (representation Hz) (default 0)))",
+					"text" : "[slotinfo [1 [type float] [name freqshift] [range -1000 1000] [representation Hz] [default 0]]]",
 					"linecount" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
@@ -132,7 +132,7 @@
 , 			{
 				"box" : 				{
 					"maxclass" : "message",
-					"text" : "(slotinfo (1 (ysnap (-120 -60 -30 -15 0 10))))",
+					"text" : "[slotinfo [1 [ysnap [-120 -60 -30 -15 0 10]]]]",
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"fontname" : "Arial",
@@ -334,7 +334,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageA",
-					"text" : "Slot Machines (q)",
+					"text" : "Slot Machines [q]",
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"fontname" : "Arial",
@@ -433,7 +433,7 @@
 				"box" : 				{
 					"maxclass" : "message",
 					"varname" : "messageB",
-					"text" : "Slot Machines (s)",
+					"text" : "Slot Machines [s]",
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"fontname" : "Arial",

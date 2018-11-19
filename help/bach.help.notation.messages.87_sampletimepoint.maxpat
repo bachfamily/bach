@@ -63,7 +63,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 57.5, 168.0, 161.0, 23.0 ],
 					"style" : "",
-					"text" : "sample (2 0 1/2) timepoint"
+					"text" : "sample [2 0 1/2] timepoint"
 				}
 
 			}
@@ -94,7 +94,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 40.5, 127.0, 150.0, 23.0 ],
 					"style" : "",
-					"text" : "sample (0 1/4) timepoint"
+					"text" : "sample [0 1/4] timepoint"
 				}
 
 			}
@@ -125,7 +125,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 11.5, 78.0, 128.0, 23.0 ],
 					"style" : "",
-					"text" : "sample (1) timepoint"
+					"text" : "sample [1] timepoint"
 				}
 
 			}
@@ -190,7 +190,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 386.5, 585.0, 65.0 ],
 					"sendto" : "bach.help.filtertags",
-					"text" : "Output syntax is: \nsample ((<t1> <tp1>) (<t2> <tp2>)...) (<RES1> <RES2>...) \nwhere <t>'s are time instants in milliseconds, while <tp>'s are the corresponding timepoints, and <RES> are the corresponding sampled data, output in the same form as for the #interp+message.",
+					"text" : "Output syntax is: \nsample [[<t1> <tp1>] [<t2> <tp2>]...] [<RES1> <RES2>...] \nwhere <t>'s are time instants in milliseconds, while <tp>'s are the corresponding timepoints, and <RES> are the corresponding sampled data, output in the same form as for the #interp+message.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

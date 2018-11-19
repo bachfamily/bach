@@ -163,7 +163,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 31.0, 282.0, 53.0, 23.0 ],
 									"style" : "",
-									"text" : "4 (4 -1)"
+									"text" : "4 [4 -1]"
 								}
 
 							}
@@ -263,7 +263,7 @@
 									"parameter_enable" : 0,
 									"patching_rect" : [ 249.0, 204.0, 111.0, 52.0 ],
 									"style" : "",
-									"text" : "a b c (d e f (g) h i (j k (l x y))) m n (o p (q r s t u v w))"
+									"text" : "a b c [d e f [g] h i [j k [l x y]]] m n [o p [q r s t u v w]]"
 								}
 
 							}

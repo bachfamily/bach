@@ -64,7 +64,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 35.0, 184.0, 449.0, 23.0 ],
 					"style" : "",
-					"text" : "velocities2dynamics (mapping (pp 20) (p 40) (mp 70) (mf 90) (f 110) (ff 125))"
+					"text" : "velocities2dynamics [mapping [pp 20] [p 40] [mp 70] [mf 90] [f 110] [ff 125]]"
 				}
 
 			}

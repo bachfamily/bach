@@ -124,8 +124,8 @@ public:
         t_atom_long up = b;
         t_atom_long dn = t_rat<T>::r_den;
         t_rat<t_atom_long>::reduce(up, dn);
-        t_rat<T>::r_num *= up;
-        t_rat<T>::r_den = dn;
+        t_rat<T>::r_num *= static_cast<T>(up);
+        t_rat<T>::r_den = static_cast<T>(dn);
         return *this;
     }
 
@@ -133,8 +133,8 @@ public:
         t_atom_long up = t_rat<T>::r_num;
         t_atom_long dn = b;
         t_rat<t_atom_long>::reduce(up, dn);
-        t_rat<T>::r_num = up;
-        t_rat<T>::r_den *= dn;
+        t_rat<T>::r_num = static_cast<T>(up);
+        t_rat<T>::r_den *= static_cast<T>(dn);
         return *this;
     }
     

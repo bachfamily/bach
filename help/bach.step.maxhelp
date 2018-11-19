@@ -115,7 +115,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 140.601562, 311.0, 126.0, 19.0 ],
-									"text" : "(1 2 3) (a b c) (d e f)"
+									"text" : "[1 2 3] [a b c] [d e f]"
 								}
 
 							}
@@ -336,7 +336,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 149.101562, 154.0, 97.0, 19.0 ],
-									"text" : "(1 2) (3 ((4))) ()"
+									"text" : "[1 2] [3 [[4]]] []"
 								}
 
 							}
@@ -680,7 +680,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 156.0, 347.0, 107.0, 21.0 ],
-									"text" : "bach.pick (1 1 1)"
+									"text" : "bach.pick [1 1 1]"
 								}
 
 							}
@@ -738,7 +738,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 83.0, 212.0, 280.0, 38.0 ],
-									"text" : "(jack of all trades) (james and the giant peach) (jill and (jack the ripper))"
+									"text" : "[jack of all trades] [james and the giant peach] [jill and [jack the ripper]]"
 								}
 
 							}
@@ -2022,7 +2022,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 167.0, 178.0, 167.050781, 33.0 ],
-									"text" : "(1 2 3) (a b c) (d e f)"
+									"text" : "[1 2 3] [a b c] [d e f]"
 								}
 
 							}
@@ -2316,7 +2316,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 282.101562, 351.0, 72.0, 19.0 ],
-									"text" : "() ((a)) () ()"
+									"text" : "[] [[a]] [] []"
 								}
 
 							}
@@ -2459,7 +2459,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 271.101562, 115.0, 97.0, 19.0 ],
-									"text" : "(1 2) (3 ((4))) ()"
+									"text" : "[1 2] [3 [[4]]] []"
 								}
 
 							}
@@ -2827,7 +2827,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 76.0, 695.0, 36.0 ],
-									"text" : "We call a \"spike\" a sequence of parentheses, two of which are opposite nothing between them: e.g. () or ((() or ))(( etc.\nThe \"spikemode\" attribute handles the way such spikes are output from the right outlet."
+									"text" : "We call a \"spike\" a sequence of parentheses, two of which are opposite nothing between them: e.g. [] or [[[] or ]][[ etc.\nThe \"spikemode\" attribute handles the way such spikes are output from the right outlet."
 								}
 
 							}
@@ -2908,7 +2908,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 677.0, 248.0, 133.0, 66.0 ],
-									"text" : "(a b) (c d) (() e) (())"
+									"text" : "[a b] [c d] [[] e] [[]]"
 								}
 
 							}
@@ -3256,7 +3256,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 683.333313, 280.0, 60.0, 35.0 ],
-									"text" : "1 (2 3 (4 5)) 7"
+									"text" : "1 [2 3 [4 5]] 7"
 								}
 
 							}
@@ -4821,7 +4821,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 407.0, 206.0, 93.0, 36.0 ],
-									"text" : "w x (y z)"
+									"text" : "w x [y z]"
 								}
 
 							}
@@ -4862,7 +4862,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 319.0, 206.0, 80.0, 36.0 ],
-									"text" : "1 2 (3 4) 5"
+									"text" : "1 2 [3 4] 5"
 								}
 
 							}
@@ -4995,7 +4995,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 231.0, 206.0, 85.0, 36.0 ],
-									"text" : "a b (c d)"
+									"text" : "a b [c d]"
 								}
 
 							}
@@ -6014,7 +6014,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 519.75, 155.5, 170.0, 57.0 ],
-									"text" : "a (b c (d) e (f g (h i j))) k l m n (o p (q r))"
+									"text" : "a [b c [d] e [f g [h i j]]] k l m n [o p [q r]]"
 								}
 
 							}

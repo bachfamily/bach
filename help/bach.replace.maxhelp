@@ -277,7 +277,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 27.0, 105.0, 107.0, 30.0 ],
-									"text" : "x y (x y (x y))"
+									"text" : "x y [x y [x y]]"
 								}
 
 							}
@@ -543,7 +543,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 447.101562, 213.5, 100.0, 31.0 ],
-									"text" : "uno (eins one)"
+									"text" : "uno [eins one]"
 								}
 
 							}
@@ -814,7 +814,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 240.101562, 175.5, 96.0, 59.5 ],
-									"text" : "1.0 2 s a (1) 0 (-1/2 1 f (1))"
+									"text" : "1.0 2 s a [1] 0 [-1/2 1 f [1]]"
 								}
 
 							}
@@ -1420,7 +1420,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 441.0, 272.0, 157.0, 50.0 ],
-									"text" : "(pitch E) (key C) (tempo 120) (title (key and lock)) (annotations key trill)"
+									"text" : "[pitch E] [key C] [tempo 120] [title [key and lock]] [annotations key trill]"
 								}
 
 							}
@@ -1814,7 +1814,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 36.0, 164.25, 127.0, 45.0 ],
-									"text" : "1 2 f 3 s 4 (re) toto 12"
+									"text" : "1 2 f 3 s 4 [re] toto 12"
 								}
 
 							}
@@ -2132,7 +2132,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 183.833328, 387.0, 152.0, 19.0 ],
-									"text" : "(1 2 3) 4 (a b (1 2 3) c d)"
+									"text" : "[1 2 3] 4 [a b [1 2 3] c d]"
 								}
 
 							}
@@ -2173,7 +2173,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 13.833328, 387.0, 152.0, 19.0 ],
-									"text" : "(1 2 3) 4 (a b (1 2 3) c d)"
+									"text" : "[1 2 3] 4 [a b [1 2 3] c d]"
 								}
 
 							}
@@ -2230,7 +2230,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 142.666672, 273.5, 32.5, 19.0 ],
-									"text" : "(1)"
+									"text" : "[1]"
 								}
 
 							}
@@ -2461,7 +2461,7 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 14.0, 175.5, 85.0, 50.0 ],
-									"text" : "1 a b c (1) d (e 1 f)"
+									"text" : "1 a b c [1] d [e 1 f]"
 								}
 
 							}

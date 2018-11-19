@@ -116,7 +116,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 73.0, 318.5, 179.0, 19.0 ],
 					"presentation_rect" : [ 73.0, 318.5, 0.0, 0.0 ],
-					"text" : "((John Paul) George) (Ringo)"
+					"text" : "[[John Paul] George] [Ringo]"
 				}
 
 			}
@@ -193,7 +193,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 73.0, 201.5, 170.0, 19.0 ],
 					"presentation_rect" : [ 92.0, 218.5, 0.0, 0.0 ],
-					"text" : "(John Paul) George (Ringo)"
+					"text" : "[John Paul] George [Ringo]"
 				}
 
 			}

@@ -69,7 +69,7 @@ void hatom_fn_enharm(t_hatom *h1, t_hatom *h2, t_hatom *res);
 
 
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res);
-void hatom_fn_pow(t_hatom *h1, t_hatom *h2, t_hatom *res);
+void hatom_fn_pow(t_hatom *h1, t_hatom *h2, t_hatom *res); // deprecated: use hatom_op_pow instead
 void hatom_fn_abs(t_hatom *arg, t_hatom *res);
 void hatom_fn_sgn(t_hatom *arg, t_hatom *res);
 void hatom_fn_mod(t_hatom *a1, t_hatom *a2, t_hatom *res);

@@ -55,7 +55,7 @@ typedef struct _intersection
 typedef struct _lambdaData
 {
     t_intersection *x;
-    t_execContext *context;
+    t_execEnv *context;
 } t_lambdaData;
 
 void intersection_assist(t_intersection *x, void *b, long m, long a, char *s);
@@ -164,7 +164,7 @@ void intersection_anything(t_intersection *x, t_symbol *msg, long ac, t_atom *av
                 inll1 = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 1);
             inll2 = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 1);
             if (x->n_ob.c_main) {
-                t_execContext lambdaContext((t_llllobj_object *) x);
+                t_execEnv lambdaContext((t_llllobj_object *) x);
                 lambdaContext.argc = 2;
                 t_lambdaData lambdaData = {
                     x,
@@ -268,11 +268,11 @@ long intersection_func(t_intersection *x, t_llllelem *what1, t_llllelem *what2)
 
 long intersection_code(t_lambdaData *data, t_llllelem *what1, t_llllelem *what2)
 {
-    t_execContext *context = data->context;
-    context->argv[0] = what1->l_thing.w_llll;
-    context->argv[1] = what2->l_thing.w_llll;
+    t_execEnv *context = data->context;
+    context->argv[1] = what1->l_thing.w_llll;
+    context->argv[2] = what2->l_thing.w_llll;
     context->resetLocalVariables();
-    t_llll *resll = data->x->n_ob.c_main->call(context);
+    t_llll *resll = codableobj_run((t_codableobj *) data->x, *context);
     long r = llll_istrue(resll);
     llll_free(resll);
     return r;
@@ -322,9 +322,10 @@ t_intersection *intersection_new(t_symbol *s, short ac, t_atom *av)
 	t_max_err err = MAX_ERR_NONE;
 	
 	if ((x = (t_intersection *) object_alloc_debug(intersection_class))) {
-        ac = codableobj_buildCodeAsLambdaAttribute((t_codableobj *) x, ac, av);
-        
-		attr_args_process(x, ac, av);
+        if (codableobj_setup((t_codableobj *) x, ac, av) < 0) {
+            object_free_debug(x);
+            return nullptr;
+        }
 		llllobj_obj_setup((t_llllobj_object *) x, 2, "444");
 		for (i = 2; i > 0; i--)
 			x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
