@@ -298,9 +298,6 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
             codableobj_getCodeFromAtomsWithSeparators((t_codableobj *) x, ac, av);
             err = codableobj_buildAst((t_codableobj *) x, &codeac, &dataInlets, &dataOutlets, &directInlets, &directOutlets);
             
-            if (dataInlets < 1 || err)
-                dataInlets = 1;
-            
             if (err == MAX_ERR_NONE) {
                 if (codeac < 0) codeac = ac;
                 
@@ -317,6 +314,9 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
                 return nullptr;
             }
         }
+        
+        if (dataInlets < 1)
+            dataInlets = 1;
         
         if (codeac >= 0) {
             attr_args_process(x, ac - codeac, av + codeac);
