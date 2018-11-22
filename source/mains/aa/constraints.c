@@ -698,9 +698,12 @@ void constraints_anything(t_constraints *x, t_symbol *msg, long ac, t_atom *av)
             }
             if (msg != _sym_bang) {
                 in_ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_RETAIN);
-                if (!in_ll)
+                if (!in_ll) {
+                    bach_atomic_unlock(&x->n_inuse);
                     return;
+                }
                 if (in_ll->l_size == 0) {
+                    bach_atomic_unlock(&x->n_inuse);
                     object_error((t_object *) x, "Needs at least one domain");
                     return;
                 }
