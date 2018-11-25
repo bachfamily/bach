@@ -795,13 +795,13 @@ void llllobj_outlet_anything_prudent(t_object *x, e_llllobj_obj_types type, long
 
 void outlet_anything_prudent(void *o, t_symbol *s, short ac, t_atom *av)
 {
-	if (s == _sym_int)
+/*	if (s == _sym_int)
 		outlet_int(o, atom_getlong(av));
 	else if (s == _sym_float)
 		outlet_float(o, atom_getfloat(av));
 	else if (s == _sym_list)
 		outlet_list(o, NULL, ac, av);
-	else
+	else */
 		outlet_anything(o, s, ac, av);
 }
 
