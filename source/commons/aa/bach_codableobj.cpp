@@ -599,7 +599,7 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     if (!isBachCode) {
         //class_addmethod(c, (method)codableobj_lambda,    "lambda",        A_GIMME,    0);
         class_addmethod(c, (method)codableobj_dblclick,  "dblclick",        A_CANT, 0);
-        CLASS_ATTR_LONG(c, "embed",    0,    t_codableobj, c_embed);
+        CLASS_ATTR_ATOM_LONG(c, "embed",    0,    t_codableobj, c_embed);
         CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);
         CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
         CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
