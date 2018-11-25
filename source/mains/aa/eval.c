@@ -113,31 +113,31 @@ int T_EXPORT main()
     // @description Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.
     class_addmethod(c, (method)eval_dblclick,		"dblclick",		A_CANT, 0);
 
-    CLASS_ATTR_LONG(c, "inlets",    0,    t_eval, n_dataInlets);
+    CLASS_ATTR_ATOM_LONG(c, "inlets",    0,    t_eval, n_dataInlets);
     CLASS_ATTR_LABEL(c, "inlets", 0, "Number of Inlets");
     //CLASS_ATTR_ACCESSORS(c, "inlets", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of data inlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
-    CLASS_ATTR_LONG(c, "extraoutlets",    0,    t_eval, n_dataOutlets);
+	CLASS_ATTR_ATOM_LONG(c, "extraoutlets",    0,    t_eval, n_dataOutlets);
     CLASS_ATTR_LABEL(c, "extraoutlets", 0, "Number of Extra Outlets");
     //CLASS_ATTR_ACCESSORS(c, "outlets", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of data outlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
-    CLASS_ATTR_LONG(c, "directins",    0,    t_eval, n_directInlets);
+	CLASS_ATTR_ATOM_LONG(c, "directins",    0,    t_eval, n_directInlets);
     CLASS_ATTR_LABEL(c, "directins", 0, "Number of Direct Inlets");
     //CLASS_ATTR_ACCESSORS(c, "directins", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of direct inlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
     
-    CLASS_ATTR_LONG(c, "directouts",    0,    t_eval, n_directOutlets);
+	CLASS_ATTR_ATOM_LONG(c, "directouts",    0,    t_eval, n_directOutlets);
     CLASS_ATTR_LABEL(c, "directouts", 0, "Number of Outlets");
     //CLASS_ATTR_ACCESSORS(c, "directouts", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of direct outlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
-    CLASS_ATTR_LONG(c, "embed",    0,    t_codableobj, c_embed);
+	CLASS_ATTR_ATOM_LONG(c, "embed",    0,    t_codableobj, c_embed);
     CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
     CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
     //CLASS_ATTR_BASIC(c, "embed", 0);
@@ -145,7 +145,7 @@ int T_EXPORT main()
     // @description When set to 1, the stored code is saved with the patcher.
     // @copy BACH_DOC_STATIC_ATTR
 
-    CLASS_ATTR_LONG(c, "auto",    0,    t_codableobj, c_auto);
+	CLASS_ATTR_ATOM_LONG(c, "auto",    0,    t_codableobj, c_auto);
     CLASS_ATTR_LABEL(c, "auto", 0, "Automatically Run Code");
     CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
     //CLASS_ATTR_BASIC(c, "auto", 0);

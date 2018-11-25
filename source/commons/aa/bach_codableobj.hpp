@@ -32,7 +32,7 @@ typedef struct _codableobj
     long c_dummysize;
     //long c_codeac;
     //t_atom *c_codeac;
-    t_bool c_auto;
+    t_atom_long c_auto;
     long c_nparams;
     t_symbol *c_paramsnames[256];
     t_llll *c_paramsvalues[256];

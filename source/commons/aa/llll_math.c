@@ -12,12 +12,12 @@ double cbrt(double number)
 	else
 		return -pow(-number, 1./3.);
 }
-
+/*
 double exp2(double number)
 {
        return pow(2, number);
 }
-
+*/
 /*
 double log2(double number)
 {
@@ -25,6 +25,7 @@ double log2(double number)
 }
 */
 
+/*
 double acosh(double number)
 {
        return log(number + sqrt(number*number-1));
@@ -39,7 +40,7 @@ double atanh(double number)
 {
        return 0.5*log((1+number)/(1-number));
 }
-
+*/
 /*
 double round(double number)
 {
@@ -50,12 +51,12 @@ double round(double number)
                return floored+1;
 }
 */
-
+/*
 double trunc(double number)
 {
 	return floor(number);
 }
-
+*/
 double trunc_at(double number, long position)
 {
        return floor(pow(10., position)*number) / pow(10., position);

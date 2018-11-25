@@ -62,6 +62,7 @@
     <ClCompile Include="..\..\commons\dg\bach_cursors.c" />
     <ClCompile Include="..\..\commons\dg\bach_graphics.c" />
     <ClCompile Include="..\..\commons\dg\bach_inspector.c" />
+    <ClCompile Include="..\..\commons\dg\bach_jit.c" />
     <ClCompile Include="..\..\commons\dg\bach_math_utilities.c" />
     <ClCompile Include="..\..\commons\dg\bach_slots.c" />
     <ClCompile Include="..\..\commons\dg\llll_commons_ext.c" />
@@ -69,6 +70,7 @@
     <ClCompile Include="..\..\commons\dg\llll_settheory.c" />
     <ClCompile Include="..\..\commons\dg\notation_commons.c" />
     <ClCompile Include="..\..\commons\dg\notation_dynamics.c" />
+    <ClCompile Include="..\..\commons\dg\notation_export.c" />
     <ClCompile Include="..\..\commons\dg\notation_goto.c" />
     <ClCompile Include="..\..\commons\dg\notation_maxinterface.c" />
     <ClCompile Include="..\..\commons\dg\notation_pitches.c" />
@@ -172,6 +174,7 @@
     <ClInclude Include="..\..\commons\bach.h" />
     <ClInclude Include="..\..\commons\dg\bach_cursors.h" />
     <ClInclude Include="..\..\commons\dg\bach_graphics.h" />
+    <ClInclude Include="..\..\commons\dg\bach_jit.h" />
     <ClInclude Include="..\..\commons\dg\bach_math_utilities.h" />
     <ClInclude Include="..\..\commons\dg\llll_commons_ext.h" />
     <ClInclude Include="..\..\commons\dg\llll_linearalgebra.h" />
@@ -285,7 +288,7 @@
     <OutDir>..\vs_stuff\lib\</OutDir>
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib32</TargetName>
-    <IncludePath>..\..\mains\aa;..\..\..\..\code\source\code\stringparser;..\..\..\..\code\source\code;..\..\commons\gpc232-release;..\..\commons\nn;..\..\commons\SDIF-3.11.4-src\include;..\..\commons\SDIF-3.11.4-src\sdif;..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;..\..\commons\kiss_fft;..\..\commons\mxml;;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;..\..\mains\aa;..\..\..\..\code\source\code\stringparser;..\..\..\..\code\source\code;..\..\commons\gpc232-release;..\..\commons\nn;..\..\commons\SDIF-3.11.4-src\include;..\..\commons\SDIF-3.11.4-src\sdif;..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;..\..\commons\kiss_fft;..\..\commons\mxml;;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -294,7 +297,7 @@
     <OutDir>..\vs_stuff\lib\</OutDir>
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib64</TargetName>
-    <IncludePath>..\..\mains\aa;..\..\..\..\code\source\code\stringparser;..\..\..\..\code\source\code;..\..\commons\gpc232-release;..\..\commons\nn;..\..\commons\SDIF-3.11.4-src\include;..\..\commons\SDIF-3.11.4-src\sdif;..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;..\..\commons\kiss_fft;..\..\commons\mxml;;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;..\..\mains\aa;..\..\..\..\code\source\code\stringparser;..\..\..\..\code\source\code;..\..\commons\gpc232-release;..\..\commons\nn;..\..\commons\SDIF-3.11.4-src\include;..\..\commons\SDIF-3.11.4-src\sdif;..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;..\..\commons\kiss_fft;..\..\commons\mxml;;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -303,7 +306,7 @@
     <OutDir>..\vs_stuff\lib\</OutDir>
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib32</TargetName>
-    <IncludePath>..\..\mains\aa;..\..\..\..\code\source\code\stringparser;..\..\..\..\code\source\code;..\..\commons\gpc232-release;..\..\commons\nn;..\..\commons\SDIF-3.11.4-src\include;..\..\commons\SDIF-3.11.4-src\sdif;..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;..\..\commons\kiss_fft;..\..\commons\mxml;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;..\..\mains\aa;..\..\..\..\code\source\code\stringparser;..\..\..\..\code\source\code;..\..\commons\gpc232-release;..\..\commons\nn;..\..\commons\SDIF-3.11.4-src\include;..\..\commons\SDIF-3.11.4-src\sdif;..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;..\..\commons\kiss_fft;..\..\commons\mxml;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -312,7 +315,7 @@
     <OutDir>..\vs_stuff\lib\</OutDir>
     <IntDir>..\vs_stuff\lib_temp\</IntDir>
     <TargetName>bach_lib64</TargetName>
-    <IncludePath>..\..\mains\aa;..\..\..\..\code\source\code\stringparser;..\..\..\..\code\source\code;..\..\commons\gpc232-release;..\..\commons\nn;..\..\commons\SDIF-3.11.4-src\include;..\..\commons\SDIF-3.11.4-src\sdif;..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;..\..\commons\kiss_fft;..\..\commons\mxml;;$(IncludePath)</IncludePath>
+    <IncludePath>..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes;..\..\mains\aa;..\..\..\..\code\source\code\stringparser;..\..\..\..\code\source\code;..\..\commons\gpc232-release;..\..\commons\nn;..\..\commons\SDIF-3.11.4-src\include;..\..\commons\SDIF-3.11.4-src\sdif;..\..\commons;..\..\commons\dg;..\..\commons\aa;..\..\commons\aa\alterparser;..\..\commons\aa\chkparser;..\..\commons\aa\exprparser;..\..\commons\aa\pitchparser;..\..\commons\aa\strparser;..\..\commons\aa\symparser;..\..\commons\kiss_fft;..\..\commons\mxml;;$(IncludePath)</IncludePath>
     <LibraryPath>..\..\..\max-sdk-7.3.3\source\c74support\max-includes\x64;..\..\..\..\max-sdk-7.3.3\source\c74support\msp-includes\x64;..\..\..\..\max-sdk-7.3.3\source\c74support\jit-includes\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

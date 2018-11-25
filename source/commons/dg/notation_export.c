@@ -169,7 +169,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         char new_temp_filename[MAX_FILENAME_CHARS];
         char extension[MAX_FILENAME_CHARS];
         get_filename_extension(filename_sym->s_name, extension, false);
-        if (strcasecmp(extension, "png") != 0) {
+        if (strcmp_case_insensitive(extension, "png") != 0) {
             snprintf_zero(new_temp_filename, MAX_FILENAME_CHARS, "%s.png", filename_sym->s_name);
             filename_sym = gensym(new_temp_filename);
         }
@@ -179,9 +179,9 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         if (filename_sym) {
             char extension[MAX_FILENAME_CHARS];
             get_filename_extension(filename_sym->s_name, extension, false);
-            if (strcasecmp(extension, "png") == 0)
+            if (strcmp_case_insensitive(extension, "png") == 0)
                 type_sym = gensym("png");
-            else if (strcasecmp(extension, "jpg") == 0 || strcasecmp(extension, "jpeg") == 0)
+            else if (strcmp_case_insensitive(extension, "jpg") == 0 || strcmp_case_insensitive(extension, "jpeg") == 0)
                 type_sym = gensym("jpeg");
             else
                 type_sym = gensym("png");
@@ -355,11 +355,11 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             if (view == gensym("scroll") || view == gensym("page")) {
                 jgraphics_image_surface_draw(page_g, shot_surface, shot_rect, build_rect(0, (i-1) * (h + systemvshift_pixels), w, h));
             } else {
-                if (type_sym && strcasecmp(extension, "png") == 0) {
+                if (type_sym && strcmp_case_insensitive(extension, "png") == 0) {
                     if (jgraphics_image_surface_writepng(shot_surface, filename_temp, path, dpi) != MAX_ERR_NONE) {
                         object_error((t_object *)r_ob, "Error while exporting image.");
                     }
-                } else if (type_sym && (strcasecmp(extension, "jpeg") == 0 || strcasecmp(extension, "jpg") == 0)) {
+                } else if (type_sym && (strcmp_case_insensitive(extension, "jpeg") == 0 || strcmp_case_insensitive(extension, "jpg") == 0)) {
                     if (jgraphics_image_surface_writejpeg(shot_surface, filename_temp, path) != MAX_ERR_NONE) {
                         object_error((t_object *)r_ob, "Error while exporting image.");
                     }
@@ -371,11 +371,11 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         }
         
         if ((view == gensym("scroll") || view == gensym("page")) && page_g && page_surface) {
-            if (type_sym && strcasecmp(extension, "png") == 0) {
+            if (type_sym && strcmp_case_insensitive(extension, "png") == 0) {
                 if (jgraphics_image_surface_writepng(page_surface, filename, path, dpi) != MAX_ERR_NONE) {
                     object_error((t_object *)r_ob, "Error while exporting image.");
                 }
-            } else if (type_sym && (strcasecmp(extension, "jpeg") == 0 || strcasecmp(extension, "jpg") == 0)) {
+            } else if (type_sym && (strcmp_case_insensitive(extension, "jpeg") == 0 || strcmp_case_insensitive(extension, "jpg") == 0)) {
                 if (jgraphics_image_surface_writejpeg(page_surface, filename, path) != MAX_ERR_NONE) {
                     object_error((t_object *)r_ob, "Error while exporting image.");
                 }
