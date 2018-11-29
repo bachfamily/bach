@@ -282,6 +282,8 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         // @description The syntax of the expression is based upon <o>bach.expr</o>'s,
         // but it can contain branching and loop statements, and user-defined variables and functions.
         // For a complete description of the expression syntax, please refer to the help file.
+        
+        x->n_ob.c_ofTable = new t_ofTable;
         eval_ownedFunctionsSetup(x);
         x->n_ob.c_embed = 1;
         x->n_ob.c_maxtime = 1000;
@@ -396,7 +398,7 @@ void eval_deferbang(t_eval *x, t_symbol *msg, long ac, t_atom *av)
 
 void eval_ownedFunctionsSetup(t_eval *x)
 {
-    x->n_ob.c_ofTable["directout"] = new t_fnDirectout(x);
-    x->n_ob.c_ofTable["directin"] = new t_fnDirectin(x);
-    x->n_ob.c_ofTable["print"] = new t_fnPrint((t_object *) x);
+    (*x->n_ob.c_ofTable)["directout"] = new t_fnDirectout(x);
+    (*x->n_ob.c_ofTable)["directin"] = new t_fnDirectin(x);
+    (*x->n_ob.c_ofTable)["print"] = new t_fnPrint((t_object *) x);
 }

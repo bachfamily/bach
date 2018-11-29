@@ -22,7 +22,7 @@ typedef std::unordered_map<std::string, t_ownedFunction *> t_ofTable;
 typedef struct _codableobj
 {
     t_llllobj_object c_ob;
-    t_ofTable c_ofTable;
+    t_ofTable *c_ofTable;
     t_object *c_editor;
     char *c_filename;
     short c_path;

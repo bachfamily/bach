@@ -554,6 +554,7 @@ void codableobj_free(t_codableobj *x)
     for (int i = 0; i < x->c_nparams; i++)
         llll_free(x->c_paramsvalues[i]);
     llll_free(x->c_paramsll);
+    delete x->c_ofTable;
     object_free_debug(x->c_editor);
     llllobj_obj_free((t_llllobj_object *) x);
 }
@@ -625,6 +626,9 @@ short codableobj_setup(t_codableobj *x, short ac, t_atom *av)
     short attr_ac = ac - true_ac;
     short orig_attr_ac = attr_ac;
     t_atom *attr_av = av + true_ac;
+    
+    x->c_ofTable = new t_ofTable;
+    
     long next = codableobj_parseLambdaAttrArg(x, &attr_ac, attr_av);
     
     if (next == -2) {
@@ -642,9 +646,9 @@ short codableobj_setup(t_codableobj *x, short ac, t_atom *av)
 
 void codableobj_ownedFunctionsSetup(t_codableobj *x)
 {
-    x->c_ofTable["directout"] = new t_fnDirectout_dummy((t_object *) x);
-    x->c_ofTable["directin"] = new t_fnDirectin_dummy((t_object *)x);
-    x->c_ofTable["print"] = new t_fnPrint((t_object *) x);
+    (*x->c_ofTable)["directout"] = new t_fnDirectout_dummy((t_object *) x);
+    (*x->c_ofTable)["directin"] = new t_fnDirectin_dummy((t_object *)x);
+    (*x->c_ofTable)["print"] = new t_fnPrint((t_object *) x);
 }
 
 t_llll *codableobj_run(t_codableobj* x, t_execEnv &context)
