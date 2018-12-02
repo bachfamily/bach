@@ -42,11 +42,68 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
+					"id" : "obj-5",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 224.0, 402.0, 353.0, 54.0 ],
+					"presentation_linecount" : 16,
+					"text" : "The full syntax of bach.nth is supported: a sublist specifies a set of elements to be retrieved, and a sublist into it specifies a range."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 18.0, 387.0, 76.0, 23.0 ],
+					"text" : "q w e r t y u"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 18.0, 446.5, 99.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$x1:[1 3 [5 -1]] ",
+					"fontname" : "Arial",
+					"id" : "obj-1",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 18.0, 417.5, 200.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval $x1:[1 3 [5 -1]] @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
 					"id" : "obj-112",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 74.0, 378.5, 83.0, 25.0 ],
+					"patching_rect" : [ 74.0, 284.5, 83.0, 25.0 ],
 					"text" : "Move me!"
 				}
 
@@ -59,7 +116,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 201.0, 352.7069091796875, 49.0, 18.0 ],
+					"patching_rect" : [ 201.0, 258.7069091796875, 49.0, 18.0 ],
 					"text" : "loadbang"
 				}
 
@@ -72,7 +129,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 380.0, 50.0, 23.0 ]
+					"patching_rect" : [ 18.0, 286.0, 50.0, 23.0 ]
 				}
 
 			}
@@ -83,7 +140,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 201.0, 380.0, 299.0, 23.0 ],
+					"patching_rect" : [ 201.0, 286.0, 299.0, 23.0 ],
 					"text" : "(john yoko) (paul linda) (george pattie) (ringo moe)"
 				}
 
@@ -94,7 +151,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 447.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 353.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -102,13 +159,13 @@
 , 			{
 				"box" : 				{
 					"code" : "`The `ballad `of $x2:($x1 1) `and $x2:($x1 2) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-105",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 416.5, 494.0, 24.0 ],
+					"patching_rect" : [ 18.0, 322.5, 372.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -126,7 +183,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 245.0, 303.5, 312.0, 25.0 ],
+					"patching_rect" : [ 194.5, 209.5, 312.0, 25.0 ],
 					"text" : "The : operator supports the full syntax of bach.nth"
 				}
 
@@ -138,7 +195,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 269.0, 295.0, 23.0 ],
+					"patching_rect" : [ 18.0, 175.0, 295.0, 23.0 ],
 					"text" : "(john yoko) (paul linda) (george patty) (ringo moe)"
 				}
 
@@ -149,7 +206,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 334.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 240.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -157,13 +214,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1:(-1 2) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-98",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 303.5, 220.0, 24.0 ],
+					"patching_rect" : [ 18.0, 209.5, 173.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -181,7 +238,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 74.0, 169.5, 83.0, 25.0 ],
+					"patching_rect" : [ 365.0, 80.5, 83.0, 25.0 ],
 					"text" : "Move me!"
 				}
 
@@ -194,7 +251,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 195.0, 143.706893920898438, 49.0, 18.0 ],
+					"patching_rect" : [ 453.0, 54.706893920898438, 49.0, 18.0 ],
 					"text" : "loadbang"
 				}
 
@@ -206,7 +263,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 195.0, 169.5, 138.0, 23.0 ],
+					"patching_rect" : [ 453.0, 80.5, 138.0, 23.0 ],
 					"text" : "john paul george ringo"
 				}
 
@@ -219,7 +276,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 169.5, 50.0, 23.0 ]
+					"patching_rect" : [ 309.0, 80.5, 50.0, 23.0 ]
 				}
 
 			}
@@ -229,7 +286,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 234.5, 99.0, 23.0 ],
+					"patching_rect" : [ 309.0, 145.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -237,13 +294,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x2:$x1 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-83",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 203.5, 196.0, 24.0 ],
+					"patching_rect" : [ 309.0, 114.5, 163.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -278,13 +335,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1:2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 181.0, 24.0 ],
+					"patching_rect" : [ 18.0, 96.5, 149.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -299,10 +356,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-52",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 209.0, 96.5, 191.0, 25.0 ],
+					"patching_rect" : [ 175.0, 88.0, 121.0, 40.0 ],
 					"text" : "Retrieve the second element"
 				}
 
@@ -384,6 +442,13 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-98", 0 ],
 					"source" : [ "obj-100", 0 ]
 				}
@@ -414,6 +479,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-108", 0 ],
 					"source" : [ "obj-111", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"source" : [ "obj-4", 0 ]
 				}
 
 			}

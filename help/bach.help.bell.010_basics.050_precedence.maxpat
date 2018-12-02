@@ -43,11 +43,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-67",
-					"linecount" : 5,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 287.0, 380.5, 287.0, 83.0 ],
+					"patching_rect" : [ 234.0, 386.5, 317.0, 69.0 ],
 					"text" : "In general, it is a good rule to use parens even when not necessary, except for the obvious cases. Precedence rules are complex, and being stingy with parens can lead to unreadable expressions."
 				}
 
@@ -78,13 +78,13 @@
 , 			{
 				"box" : 				{
 					"code" : "10 ($x1 + 2) 20 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-66",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 409.5, 260.0, 24.0 ],
+					"patching_rect" : [ 18.0, 409.5, 206.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -99,11 +99,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-63",
-					"linecount" : 6,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 303.0, 272.5, 284.0, 98.0 ],
+					"patching_rect" : [ 241.0, 280.5, 333.0, 83.0 ],
 					"text" : "See the difference? Also, notice how we can use parens to delimitate lllls. This is just a consequence of the general meaning of parens as precedence markers: in this example, we first assemble the two lllls, and then sum them together."
 				}
 
@@ -134,13 +134,13 @@
 , 			{
 				"box" : 				{
 					"code" : "(10 $x1) + (2 20) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-62",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 309.5, 276.0, 24.0 ],
+					"patching_rect" : [ 18.0, 309.5, 215.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -155,11 +155,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-59",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 270.0, 189.5, 170.0, 54.0 ],
+					"patching_rect" : [ 227.0, 196.0, 235.0, 40.0 ],
 					"text" : "Arithmetical operators have higher precedence than concatenation."
 				}
 
@@ -190,13 +190,13 @@
 , 			{
 				"box" : 				{
 					"code" : "10 $x1 + 2 20 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-58",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 204.5, 243.0, 24.0 ],
+					"patching_rect" : [ 18.0, 204.5, 196.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -231,13 +231,13 @@
 , 			{
 				"box" : 				{
 					"code" : "(2+3)*$x1 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 223.0, 101.5, 212.0, 24.0 ],
+					"patching_rect" : [ 223.0, 101.5, 174.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -256,7 +256,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 447.0, 86.5, 157.0, 54.0 ],
+					"patching_rect" : [ 406.0, 86.0, 157.0, 54.0 ],
 					"text" : "Arithmetical operators follow the usual precedence rules."
 				}
 
@@ -287,13 +287,13 @@
 , 			{
 				"box" : 				{
 					"code" : "2+3*$x1 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 101.5, 196.0, 24.0 ],
+					"patching_rect" : [ 18.0, 101.5, 165.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

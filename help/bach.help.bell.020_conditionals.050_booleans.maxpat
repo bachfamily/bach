@@ -48,7 +48,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 415.5, 55.0, 110.0, 40.0 ],
+					"patching_rect" : [ 376.5, 55.0, 110.0, 40.0 ],
 					"text" : "|| is the logical or."
 				}
 
@@ -64,7 +64,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 117.5, 55.0, 132.0, 40.0 ],
+					"patching_rect" : [ 87.5, 55.0, 132.0, 40.0 ],
 					"text" : "&& is the logical and."
 				}
 
@@ -93,7 +93,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 226.25, 393.0, 191.0, 40.0 ],
+					"patching_rect" : [ 320.25, 384.5, 191.0, 40.0 ],
 					"text" : "Can you predict what will be printed in the Max console?"
 				}
 
@@ -148,14 +148,12 @@
 , 			{
 				"box" : 				{
 					"code" : "print($x1) < 5 || print($x1) > 15 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-51",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 393.0, 204.0, 39.0 ],
+					"patching_rect" : [ 18.0, 393.0, 292.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -214,14 +212,13 @@
 , 			{
 				"box" : 				{
 					"code" : "print($x1) > 5 && print($x1) < 15 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-45",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 251.0, 215.0, 39.0 ],
+					"patching_rect" : [ 18.0, 251.0, 165.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -237,7 +234,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 355.0, 67.5, 29.5, 23.0 ],
+					"patching_rect" : [ 343.0, 67.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -268,14 +265,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 < 5 || $x1 > 15 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-40",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 307.0, 96.5, 243.0, 39.0 ],
+					"patching_rect" : [ 307.0, 96.5, 224.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -290,11 +285,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 14,
+					"linecount" : 13,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 238.0, 163.5, 353.0, 214.0 ],
+					"patching_rect" : [ 190.0, 170.5, 369.0, 199.0 ],
 					"text" : "&& and || are short-circuit boolean operators, that is, as soon as they can determine their result they stop evaluating their arguments. \nHere, we need to evaluate both arguments for 10 and 20, but with 0 it is sufficient to see that the first condition is not satisfied (because it is not > 5) to know the result of the expression. As a consequence, the second argument is not evaluated. You can see the difference in the Max window. \nThe fact that these operators are short-circuit is relevant in two cases: first, when there are side effects, as they will not be produced; second, when at least one of the two clauses is computationally expensive, because in this case its evaluation can be avoided."
 				}
 
@@ -306,7 +301,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 67.5, 29.5, 23.0 ],
+					"patching_rect" : [ 54.0, 67.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -337,14 +332,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 > 5 && $x1 < 15 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 243.0, 39.0 ],
+					"patching_rect" : [ 18.0, 96.5, 235.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

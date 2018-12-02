@@ -75,7 +75,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 397.0, 91.5, 163.0, 54.0 ],
+					"patching_rect" : [ 363.0, 85.0, 163.0, 54.0 ],
 					"text" : "A slightly complicated example of stuff you can do with sublists."
 				}
 
@@ -133,13 +133,13 @@
 , 			{
 				"box" : 				{
 					"code" : "`addchord 1 [$x2 * 1000 [$x1*100 500 127]] ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-119",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 315.5, 416.0, 24.0 ],
+					"patching_rect" : [ 18.0, 315.5, 320.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -155,7 +155,7 @@
 					"numinlets" : 5,
 					"numoutlets" : 4,
 					"outlettype" : [ "int", "", "", "int" ],
-					"patching_rect" : [ 383.0, 286.0, 61.0, 23.0 ],
+					"patching_rect" : [ 319.0, 285.0, 61.0, 23.0 ],
 					"text" : "counter"
 				}
 
@@ -167,7 +167,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "bang" ],
-					"patching_rect" : [ 18.0, 252.0, 384.0, 23.0 ],
+					"patching_rect" : [ 18.0, 252.0, 320.0, 23.0 ],
 					"text" : "t i b"
 				}
 
@@ -212,14 +212,13 @@
 , 			{
 				"box" : 				{
 					"code" : "-[[$x1]*3 `funky [$x1 42]*2] length($x1) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-55",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 100.5, 370.0, 39.0 ],
+					"patching_rect" : [ 18.0, 100.5, 339.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
+		"rect" : [ 89.0, 164.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -182,7 +182,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "mc2f = $mc, $pitch = 440 -> $pitch * (2 ** (1/1200)) ** ($mc - 6900) ",
+					"code" : "mc2f = ($mc, $pitch = 440 -> $pitch * (2 ** (1/1200)) ** ($mc - 6900)) ",
 					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
@@ -196,7 +196,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval mc2f = $mc\\, $pitch = 440 -> $pitch * (2 ** (1/1200)) ** ($mc - 6900) @auto 1"
+					"text" : "bach.eval mc2f = ($mc\\, $pitch = 440 -> $pitch * (2 ** (1/1200)) ** ($mc - 6900)) @auto 1"
 				}
 
 			}

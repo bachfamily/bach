@@ -383,7 +383,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 506.0, 175.0, 48.0, 23.0 ],
+					"patching_rect" : [ 382.0, 175.0, 48.0, 23.0 ],
 					"text" : "a b c d"
 				}
 
@@ -404,14 +404,14 @@
 , 			{
 				"box" : 				{
 					"code" : "if length($x1) > length($x2) then $x1 else $x2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 23.0, 203.142852783203125, 502.0, 24.0 ],
+					"patching_rect" : [ 23.0, 203.142852783203125, 378.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

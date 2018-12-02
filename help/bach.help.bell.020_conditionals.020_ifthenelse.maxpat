@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 357.0, 350.0, 234.0, 54.0 ],
+					"patching_rect" : [ 334.0, 353.0, 234.0, 54.0 ],
 					"text" : "... and its value is the actual return value of the if ... then ... else statement if the condition is not true."
 				}
 
@@ -59,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 328.5, 41.0, 23.0 ],
+					"patching_rect" : [ 111.0, 339.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -71,7 +71,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 328.5, 29.5, 23.0 ],
+					"patching_rect" : [ 66.0, 339.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -83,7 +83,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 328.5, 29.5, 23.0 ],
+					"patching_rect" : [ 18.0, 339.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -94,7 +94,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 404.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 400.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -102,14 +102,12 @@
 , 			{
 				"box" : 				{
 					"code" : "(if $x1 == 10 then 3 else 6) + $x1 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 357.5, 314.0, 39.0 ],
+					"patching_rect" : [ 18.0, 368.5, 308.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -125,7 +123,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 319.0, 203.5, 49.0, 23.0 ],
+					"patching_rect" : [ 234.0, 203.5, 49.0, 23.0 ],
 					"text" : "4 5 6 7"
 				}
 
@@ -137,7 +135,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 266.0, 203.5, 37.0, 23.0 ],
+					"patching_rect" : [ 181.0, 203.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -152,7 +150,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 391.0, 232.5, 185.0, 40.0 ],
+					"patching_rect" : [ 258.0, 232.5, 185.0, 40.0 ],
 					"text" : "The else clause too can consist of any expression..."
 				}
 
@@ -207,14 +205,13 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 == 10 then length($x2) else length($x1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 232.5, 322.0, 39.0 ],
+					"patching_rect" : [ 18.0, 232.5, 235.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -257,7 +254,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 252.0, 99.5, 216.0, 40.0 ],
+					"patching_rect" : [ 352.0, 92.0, 216.0, 40.0 ],
 					"text" : "If the condition is not true, the value of else clause is returned."
 				}
 
@@ -288,14 +285,12 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 == 10 then `bingo else `bongo ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 100.5, 228.0, 39.0 ],
+					"patching_rect" : [ 18.0, 100.5, 325.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -373,7 +368,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 32.0, 387.0, 21.0 ],
-					"text" : "Just like in Max's if oblect, if ... then supports an \"else\" clause too.",
+					"text" : "Just like in Max's if object, if ... then supports an \"else\" clause too.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

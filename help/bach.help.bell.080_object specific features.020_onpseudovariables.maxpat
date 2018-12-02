@@ -158,7 +158,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval if length($l1) == 3 then $o1 = $l1 else $o2 = $l1 @extraoutlets 2 @out m"
+					"text" : "bach.eval if length($l1) == 3 then $o1 = $l1 else $o2 = $l1 @out m"
 				}
 
 			}

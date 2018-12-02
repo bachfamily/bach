@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 405.0, 300.5, 182.0, 40.0 ],
+					"patching_rect" : [ 311.0, 300.0, 182.0, 40.0 ],
 					"text" : "The llll construction works with sublists too!"
 				}
 
@@ -59,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 368.0, 279.5, 32.0, 23.0 ],
+					"patching_rect" : [ 285.0, 279.5, 32.0, 23.0 ],
 					"text" : "Eb5"
 				}
 
@@ -116,13 +116,13 @@
 , 			{
 				"box" : 				{
 					"code" : "`addchord 1 [$x1 [$x2 100 1]] ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-39",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 308.5, 369.0, 24.0 ],
+					"patching_rect" : [ 18.0, 308.5, 286.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -157,13 +157,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 length($x1) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-35",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 210.5, 260.0, 24.0 ],
+					"patching_rect" : [ 18.0, 210.5, 208.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -198,13 +198,13 @@
 , 			{
 				"box" : 				{
 					"code" : "`foo $x1 `bar ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 101.5, 243.0, 24.0 ],
+					"patching_rect" : [ 18.0, 101.5, 191.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

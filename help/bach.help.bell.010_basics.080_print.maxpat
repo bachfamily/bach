@@ -63,14 +63,13 @@
 , 			{
 				"box" : 				{
 					"code" : "print($x1, \"Half $x1:\" )/2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-8",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 200.0, 298.0, 39.0 ],
+					"patching_rect" : [ 18.0, 200.0, 254.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -89,7 +88,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 322.0, 185.0, 276.0, 69.0 ],
+					"patching_rect" : [ 280.0, 177.0, 276.0, 69.0 ],
 					"text" : "A second, optional argument to print is prepended to the llll printed in the Max window (but not to the return value of print, which is just its first argument anyway)."
 				}
 
@@ -120,14 +119,14 @@
 , 			{
 				"box" : 				{
 					"code" : "10*print(log10(print($x1*$x1, `Power: )), `Bels: ) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-4",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 330.5, 322.0, 39.0 ],
+					"patching_rect" : [ 18.0, 330.5, 299.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -146,7 +145,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 347.0, 294.0, 251.0, 112.0 ],
+					"patching_rect" : [ 322.0, 293.5, 239.0, 112.0 ],
 					"text" : "You can put print in the middle of any expression to monitor what's going on without altering the evaluation; and you can have multiple print statements in your expression, which will print to the Max console the data in the order they get evaluated."
 				}
 
@@ -191,13 +190,13 @@
 , 			{
 				"box" : 				{
 					"code" : "print($x1)*2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 236.0, 24.0 ],
+					"patching_rect" : [ 18.0, 96.5, 185.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -216,7 +215,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 265.0, 88.5, 251.0, 40.0 ],
+					"patching_rect" : [ 217.0, 88.0, 251.0, 40.0 ],
 					"text" : "The print function prints to the Max console what it receives, and returns it."
 				}
 
