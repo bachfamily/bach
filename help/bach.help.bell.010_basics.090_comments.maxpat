@@ -64,13 +64,13 @@
 				"box" : 				{
 					"code" : "1 2 ## Ho @out m ",
 					"color" : [ 0.92549, 0.364706, 0.341176, 1.0 ],
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-24",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 16.0, 414.5, 220.0, 24.0 ],
+					"patching_rect" : [ 16.0, 414.5, 180.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -89,9 +89,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 248.0, 399.5, 324.0, 54.0 ],
-					"presentation_linecount" : 3,
-					"text" : "End-of-line comments, on the other hand, should generally not be used in object boxes, as they prevent the object attributes from working."
+					"patching_rect" : [ 206.0, 399.0, 297.0, 54.0 ],
+					"text" : "End-of-line comments, on the other hand, should generally not be used in object boxes, as they prevent object attributes from working."
 				}
 
 			}
@@ -121,13 +120,13 @@
 , 			{
 				"box" : 				{
 					"code" : "1 #(Hi)# 2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-18",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 16.0, 322.5, 220.0, 24.0 ],
+					"patching_rect" : [ 16.0, 322.5, 174.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -146,8 +145,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 248.0, 307.5, 324.0, 54.0 ],
-					"presentation_linecount" : 3,
+					"patching_rect" : [ 202.0, 307.0, 324.0, 54.0 ],
 					"text" : "In general, comments are meant to be used in the text editor or external files, but nothing prevents from having block comments in object box code."
 				}
 
@@ -178,13 +176,13 @@
 , 			{
 				"box" : 				{
 					"code" : "1 2 #( A block comment has a beginning and an end marker )# 3 4\r\n5 6 #( Which allow placing it in the middle of a line. )# 7 8\r\n\r\n#(\r\nYou can also have block comments \r\nspanning several lines.\r\n)#\r\n\r\n\r\n#(\r\nIn case you wonder, block comments can't be nested:\r\nthe following line will just close this block comment\r\n#( voilà )#\r\n\r\n9 10 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-14",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 16.0, 230.5, 134.0, 24.0 ],
+					"patching_rect" : [ 16.0, 230.5, 113.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -202,7 +200,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 159.0, 230.0, 222.0, 25.0 ],
+					"patching_rect" : [ 135.0, 230.5, 222.0, 25.0 ],
 					"text" : "An example with block comments."
 				}
 
@@ -233,13 +231,13 @@
 , 			{
 				"box" : 				{
 					"code" : "## A comment: everything in this line following the ## marker is not evaluated\r\n1 2 3 ## This is why it's called an end-of line comment\r\n##\r\n## (yes, you can have empty end-of-line comments)\r\n##\r\n4 5 ## Always leave a space before ##\r\n## unless the comment takes the whole line! \r\n\r\n##############\r\n## ## ## ## ##\r\n##############\r\n\r\n## (yes, you can do nice decorations with end-of-line comments)\r\n\r\n##############\r\n\r\n\r\n#! This is another way to introduce an end-of-line comment,\r\n#! but the ## form should be preferred \r\n#! unless, for some reason, you need a shebang.\r\n#! If \"shebang\" means nothing to you, just stick to ##\r\n",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 16.0, 136.5, 134.0, 24.0 ],
+					"patching_rect" : [ 16.0, 136.5, 113.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -258,7 +256,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 159.0, 107.0, 433.0, 83.0 ],
+					"patching_rect" : [ 135.0, 107.0, 433.0, 83.0 ],
 					"text" : "An example with end-of-line comments: double-click to see the code.\nNotice, by the way, that bell code can span several lines.\nIn fact, line breaks are treated exactly as spaces in bell, with the only exception of line comments, which end at the end of the line.\nLine breaks can greatly help the readability of the code."
 				}
 

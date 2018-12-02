@@ -46,7 +46,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 438.75, 302.5, 71.0, 25.0 ],
+					"patching_rect" : [ 356.75, 302.5, 71.0, 25.0 ],
 					"text" : "reset all"
 				}
 
@@ -58,7 +58,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 399.5, 304.0, 29.5, 23.0 ],
+					"patching_rect" : [ 317.5, 304.0, 29.5, 23.0 ],
 					"text" : "null",
 					"textcolor" : [ 0.996078431606293, 0.121568627655506, 0.121568627655506, 1.0 ]
 				}
@@ -71,7 +71,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 334.5, 304.0, 37.0, 23.0 ],
+					"patching_rect" : [ 258.5, 304.0, 37.0, 23.0 ],
 					"text" : "1000"
 				}
 
@@ -95,13 +95,14 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 227.166671752929688, 304.0, 31.5, 23.0 ],
+					"patching_rect" : [ 176.5, 304.0, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"fontname" : "Arial",
 					"id" : "obj-72",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -113,12 +114,13 @@
 			}
 , 			{
 				"box" : 				{
+					"fontname" : "Arial",
 					"id" : "obj-73",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 119.833335876464844, 304.0, 29.5, 23.0 ],
+					"patching_rect" : [ 94.5, 304.0, 30.0, 23.0 ],
 					"text" : "10"
 				}
 
@@ -126,13 +128,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x2 ||| $x3 ||| $x4 ||| `nope ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-78",
 					"maxclass" : "newobj",
 					"numinlets" : 4,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 347.0, 369.0, 24.0 ],
+					"patching_rect" : [ 12.5, 347.0, 265.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -159,7 +161,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 565.5, 185.0, 31.5, 23.0 ],
+					"patching_rect" : [ 530.5, 185.0, 31.5, 23.0 ],
 					"text" : "200"
 				}
 
@@ -171,7 +173,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 520.5, 185.0, 29.5, 23.0 ],
+					"patching_rect" : [ 491.5, 185.0, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
@@ -203,13 +205,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 ||| $x2 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-71",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 373.5, 217.0, 229.0, 24.0 ],
+					"patching_rect" : [ 373.5, 217.0, 176.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -220,6 +221,7 @@
 			}
 , 			{
 				"box" : 				{
+					"fontname" : "Arial",
 					"id" : "obj-65",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
@@ -236,7 +238,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 204.5, 185.0, 31.5, 23.0 ],
+					"patching_rect" : [ 186.5, 185.0, 31.5, 23.0 ],
 					"text" : "200"
 				}
 
@@ -248,19 +250,20 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 159.5, 185.0, 29.5, 23.0 ],
+					"patching_rect" : [ 141.5, 185.0, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
 			}
 , 			{
 				"box" : 				{
+					"fontname" : "Arial",
 					"id" : "obj-62",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 59.5, 185.0, 31.5, 23.0 ],
+					"patching_rect" : [ 59.5, 185.0, 32.0, 23.0 ],
 					"text" : "100"
 				}
 
@@ -280,13 +283,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 &&& $x2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 217.0, 229.0, 24.0 ],
+					"patching_rect" : [ 12.5, 217.0, 193.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -306,7 +309,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 204.5, 373.0, 340.0, 69.0 ],
+					"patching_rect" : [ 176.5, 372.0, 340.0, 69.0 ],
 					"text" : "||| can be particularly useful for setting up easily hierarchies of defaults and fallbacks. In this case, it returns the data from the leftmost inlet that has received a value, or nope if all the inputs are empty."
 				}
 

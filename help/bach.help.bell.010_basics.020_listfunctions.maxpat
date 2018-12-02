@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 107.0, 218.0, 617.0, 539.0 ],
+		"rect" : [ 53.0, 123.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -42,11 +42,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-44",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 418.0, 346.0, 21.0 ],
-					"text" : "For a comprehensive list of the supported functions, see ...",
+					"patching_rect" : [ 6.0, 428.0, 308.0, 36.0 ],
+					"text" : "For a comprehensive list of the supported functions, see the relevant section of the help center.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -58,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 347.0, 299.5, 85.0, 23.0 ],
+					"patching_rect" : [ 347.0, 309.5, 85.0, 23.0 ],
 					"text" : "4 [5 6] 7 [8 9]"
 				}
 
@@ -70,7 +71,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 297.0, 299.5, 37.0, 23.0 ],
+					"patching_rect" : [ 297.0, 309.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -81,7 +82,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 297.0, 385.5, 99.0, 23.0 ],
+					"patching_rect" : [ 297.0, 380.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -89,14 +90,13 @@
 , 			{
 				"box" : 				{
 					"code" : "length($x1) * depth($x1) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-43",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 297.0, 334.5, 282.0, 39.0 ],
+					"patching_rect" : [ 297.0, 344.5, 257.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -112,7 +112,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 68.0, 299.5, 85.0, 23.0 ],
+					"patching_rect" : [ 68.0, 309.5, 85.0, 23.0 ],
 					"text" : "4 [5 6] 7 [8 9]"
 				}
 
@@ -124,7 +124,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 299.5, 37.0, 23.0 ],
+					"patching_rect" : [ 18.0, 309.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -135,7 +135,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 385.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 380.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -143,14 +143,13 @@
 , 			{
 				"box" : 				{
 					"code" : "length(flat($x1)) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-39",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 334.5, 228.0, 39.0 ],
+					"patching_rect" : [ 18.0, 344.5, 208.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -166,7 +165,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 68.0, 194.5, 85.0, 23.0 ],
+					"patching_rect" : [ 68.0, 198.5, 85.0, 23.0 ],
 					"text" : "4 [5 6] 7 [8 9]"
 				}
 
@@ -178,7 +177,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 194.5, 37.0, 23.0 ],
+					"patching_rect" : [ 18.0, 198.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -189,7 +188,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 259.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 263.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -197,13 +196,13 @@
 , 			{
 				"box" : 				{
 					"code" : "flat($x1) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-35",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 228.5, 212.0, 24.0 ],
+					"patching_rect" : [ 18.0, 232.5, 164.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -250,33 +249,18 @@
 , 			{
 				"box" : 				{
 					"code" : "length($x1) ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 125.5, 229.0, 24.0 ],
+					"patching_rect" : [ 18.0, 125.5, 183.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
 					"text" : "bach.eval length($x1) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-6",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 262.0, 110.5, 287.0, 54.0 ],
-					"text" : "This is why the $x1 form is used in bach.eval: the idea is that we're not referring to single items, but to whole lists."
 				}
 
 			}

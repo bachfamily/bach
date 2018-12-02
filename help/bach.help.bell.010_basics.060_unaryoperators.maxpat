@@ -63,13 +63,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 -10 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-77",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 313.5, 196.0, 24.0 ],
+					"patching_rect" : [ 18.0, 313.5, 160.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -88,7 +88,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 223.0, 298.5, 298.0, 54.0 ],
+					"patching_rect" : [ 184.0, 298.0, 298.0, 54.0 ],
 					"text" : "Because there is a space between $x1 and -, and no space between - and 10, this is the concatenation of $x1 and -10."
 				}
 
@@ -119,13 +119,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1-10 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-73",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 412.5, 189.0, 24.0 ],
+					"patching_rect" : [ 18.0, 412.5, 157.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -144,7 +144,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 214.0, 397.5, 296.0, 54.0 ],
+					"patching_rect" : [ 179.0, 397.0, 296.0, 54.0 ],
 					"text" : "But, because there is no space between $x1 and -, nor between - and 10, this is a subtraction."
 				}
 
@@ -159,7 +159,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 234.0, 203.5, 228.0, 40.0 ],
+					"patching_rect" : [ 190.0, 203.0, 228.0, 40.0 ],
 					"text" : "Because there is a space between - and 10, this is a subtraction."
 				}
 
@@ -190,13 +190,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 - 10 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-58",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 211.5, 205.0, 24.0 ],
+					"patching_rect" : [ 18.0, 211.5, 165.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -231,13 +231,13 @@
 , 			{
 				"box" : 				{
 					"code" : "-$x1 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 112.5, 174.0, 24.0 ],
+					"patching_rect" : [ 18.0, 112.5, 143.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -256,7 +256,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 201.5, 104.5, 275.0, 40.0 ],
+					"patching_rect" : [ 172.5, 104.0, 275.0, 40.0 ],
 					"text" : "There can be no space between a unary operator and the value it is applied to."
 				}
 

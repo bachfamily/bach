@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 239.0, 396.5, 245.0, 40.0 ],
+					"patching_rect" : [ 197.0, 396.0, 245.0, 40.0 ],
 					"text" : "Pitches are not symbols, and as such must not be escaped with backticks!"
 				}
 
@@ -78,13 +78,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 + C2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 404.5, 205.0, 24.0 ],
+					"patching_rect" : [ 18.0, 404.5, 170.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -103,8 +103,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 314.0, 263.5, 277.0, 98.0 ],
-					"text" : "llll literals can contain symbols, which must all be escaped with backticks. Notice the space between `five and the closed paren: with no space, the paren would be considered part of the `five) symbol, thus leading to a syntax error."
+					"patching_rect" : [ 314.0, 255.0, 277.0, 98.0 ],
+					"text" : "llll literals can contain symbols, which must all be escaped with backticks. \nNotice the space between `five and the closed paren: with no space, the paren would be considered part of the `five) symbol, thus leading to a syntax error."
 				}
 
 			}
@@ -118,7 +118,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 320.0, 87.5, 231.0, 40.0 ],
+					"patching_rect" : [ 253.0, 87.0, 231.0, 40.0 ],
 					"text" : "The length of the llll 1 3 5, that is 3, is added to $x1."
 				}
 
@@ -149,14 +149,13 @@
 , 			{
 				"box" : 				{
 					"code" : "length(`one 2 3 4 `five ) + $x1 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-39",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 292.5, 290.0, 39.0 ],
+					"patching_rect" : [ 18.0, 292.5, 288.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -191,13 +190,13 @@
 , 			{
 				"box" : 				{
 					"code" : "flat(1 [2 3] 4) + $x1 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-35",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 192.5, 307.0, 24.0 ],
+					"patching_rect" : [ 18.0, 192.5, 227.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -232,13 +231,13 @@
 , 			{
 				"box" : 				{
 					"code" : "length(1 3 5) + $x1 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 95.5, 291.0, 24.0 ],
+					"patching_rect" : [ 18.0, 95.5, 227.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -253,11 +252,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 335.5, 192.5, 200.0, 25.0 ],
-					"text" : "Deep llll literals are supported."
+					"patching_rect" : [ 253.0, 184.0, 245.0, 40.0 ],
+					"text" : "Deep llll literals, with sublists marked by square brackets, are supported. "
 				}
 
 			}

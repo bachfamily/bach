@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 336.0, 341.5, 31.5, 23.0 ],
+					"patching_rect" : [ 251.0, 341.5, 31.5, 23.0 ],
 					"text" : "200"
 				}
 
@@ -56,7 +56,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 287.0, 341.5, 31.5, 23.0 ],
+					"patching_rect" : [ 202.0, 341.5, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -70,7 +70,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 366.0, 377.5, 212.0, 25.0 ],
+					"patching_rect" : [ 282.5, 377.0, 212.0, 25.0 ],
 					"text" : "... better use parens generously!"
 				}
 
@@ -125,14 +125,13 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 == 10 then (if $x2 == 100 then `ooh else `yeah ) else `baby ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-22",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 370.5, 337.0, 39.0 ],
+					"patching_rect" : [ 18.0, 370.5, 252.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -148,7 +147,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 238.0, 205.5, 31.5, 23.0 ],
+					"patching_rect" : [ 251.0, 205.5, 31.5, 23.0 ],
 					"text" : "200"
 				}
 
@@ -160,7 +159,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 189.0, 205.5, 31.5, 23.0 ],
+					"patching_rect" : [ 202.0, 205.5, 31.5, 23.0 ],
 					"text" : "100"
 				}
 
@@ -175,7 +174,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 298.5, 227.0, 259.0, 69.0 ],
+					"patching_rect" : [ 278.5, 219.0, 259.0, 69.0 ],
 					"text" : "The dangling else problem. \nQ: does the final else clause refer to the first (outer) or the second (inner) if? \nA: to the second, but..."
 				}
 
@@ -222,7 +221,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 294.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 282.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -230,14 +229,13 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 == 10 then if $x2 == 100 then `ooh else `yeah ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 234.5, 239.0, 54.0 ],
+					"patching_rect" : [ 18.0, 234.5, 252.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -296,14 +294,13 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 == 10 then `ten else if $x1 == 20 then `twenty else `dunno ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 292.0, 54.0 ],
+					"patching_rect" : [ 18.0, 96.5, 227.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

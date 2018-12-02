@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 350.5, 328.5, 240.0, 98.0 ],
+					"patching_rect" : [ 318.5, 320.0, 240.0, 98.0 ],
 					"text" : "... and the value of an \"if ... then\" statement can be used as the input for any other expression. In this case, if the input data is 10 the length of 6 6 6 (that is, 3), otherwise the length of null (that is, 0)"
 				}
 
@@ -102,14 +102,12 @@
 , 			{
 				"box" : 				{
 					"code" : "length(if $x1 == 10 then 6 6 6) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 357.5, 337.0, 39.0 ],
+					"patching_rect" : [ 18.0, 357.5, 291.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -125,7 +123,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 314.0, 203.5, 49.0, 23.0 ],
+					"patching_rect" : [ 282.0, 203.5, 49.0, 23.0 ],
 					"text" : "4 5 6 7"
 				}
 
@@ -137,7 +135,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 265.0, 203.5, 37.0, 23.0 ],
+					"patching_rect" : [ 233.0, 203.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -152,7 +150,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 350.5, 210.5, 243.0, 69.0 ],
+					"patching_rect" : [ 333.0, 209.5, 243.0, 69.0 ],
 					"text" : "... but there are a few difference: first of all, not only the \"if\" clause can be any expression, but the \"then\" clause as well can be any expression..."
 				}
 
@@ -207,14 +205,12 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 == 10 then length($x2) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 232.5, 322.0, 39.0 ],
+					"patching_rect" : [ 18.0, 232.5, 283.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -257,7 +253,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 357.0, 78.0, 234.0, 69.0 ],
+					"patching_rect" : [ 282.0, 77.5, 234.0, 69.0 ],
 					"text" : "This is quite similar to what happens with Max's if statement, except that if the condition is false null is returned..."
 				}
 
@@ -288,13 +284,12 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 == 10 then `bingo ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 100.5, 329.0, 24.0 ],
+					"patching_rect" : [ 18.0, 100.5, 254.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

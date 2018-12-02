@@ -123,14 +123,13 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 != null && $x1 != 0 then `true else `false ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-36",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 374.5, 298.0, 39.0 ],
+					"patching_rect" : [ 18.0, 374.5, 211.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -146,7 +145,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 136.0, 205.5, 29.5, 23.0 ],
+					"patching_rect" : [ 136.0, 199.5, 29.5, 23.0 ],
 					"text" : "0."
 				}
 
@@ -158,7 +157,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 95.0, 205.5, 29.5, 23.0 ],
+					"patching_rect" : [ 95.0, 199.5, 29.5, 23.0 ],
 					"text" : "C0"
 				}
 
@@ -170,7 +169,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 56.0, 205.5, 29.5, 23.0 ],
+					"patching_rect" : [ 56.0, 199.5, 29.5, 23.0 ],
 					"text" : "null"
 				}
 
@@ -200,7 +199,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 335.0, 374.5, 248.0, 40.0 ],
+					"patching_rect" : [ 234.0, 373.5, 248.0, 40.0 ],
 					"text" : "As a general rule, it is better to state explicitly what you want anyway!"
 				}
 
@@ -211,11 +210,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 4,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 283.0, 219.5, 300.0, 69.0 ],
+					"patching_rect" : [ 186.0, 226.5, 405.0, 54.0 ],
 					"text" : "But when a truth value is required (for example by an \"if\" clause), null and zeroes (that is, 0, 0., 0/1 and C0) are considered false and everything else is considered true."
 				}
 
@@ -227,7 +226,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 222.0, 205.5, 41.0, 23.0 ],
+					"patching_rect" : [ 222.0, 199.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -239,7 +238,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 177.0, 205.5, 29.5, 23.0 ],
+					"patching_rect" : [ 177.0, 199.5, 29.5, 23.0 ],
 					"text" : "1"
 				}
 
@@ -251,7 +250,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 205.5, 29.5, 23.0 ],
+					"patching_rect" : [ 18.0, 199.5, 29.5, 23.0 ],
 					"text" : "0"
 				}
 
@@ -270,14 +269,13 @@
 , 			{
 				"box" : 				{
 					"code" : "if $x1 then `true else `false ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 234.5, 211.0, 39.0 ],
+					"patching_rect" : [ 18.0, 234.5, 164.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -336,13 +334,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 == 10 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 96.5, 212.0, 24.0 ],
+					"patching_rect" : [ 18.0, 96.5, 175.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

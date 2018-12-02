@@ -13,9 +13,9 @@
 		"rect" : [ 64.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
-		"default_fontsize" : 12.0,
+		"default_fontsize" : 13.0,
 		"default_fontface" : 0,
-		"default_fontname" : "Courier New",
+		"default_fontname" : "Arial",
 		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
 		"gridsnaponopen" : 1,
@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 240.0, 405.5, 351.0, 54.0 ],
+					"patching_rect" : [ 195.0, 406.0, 346.0, 54.0 ],
 					"text" : "A notable difference with respect to bach.expr is that a single-element llll is always iterated against a longer llll, as if bach.expr's scalarmode attribute was always on."
 				}
 
@@ -61,7 +61,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 211.0, 392.5, 29.5, 23.0 ],
+					"patching_rect" : [ 170.0, 392.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -96,14 +96,14 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 * $x2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-15",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 421.5, 212.0, 24.0 ],
+					"patching_rect" : [ 18.0, 421.5, 171.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -121,7 +121,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 219.0, 289.5, 102.0, 23.0 ],
+					"patching_rect" : [ 287.0, 276.5, 102.0, 23.0 ],
 					"text" : "1685 1756 1770"
 				}
 
@@ -136,7 +136,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 253.0, 318.5, 247.0, 54.0 ],
+					"patching_rect" : [ 321.0, 297.5, 247.0, 54.0 ],
 					"text" : "In principle, there is no limit to the complexity of the expression, and you can have up to 255 inlet variables."
 				}
 
@@ -150,7 +150,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 118.5, 289.5, 52.0, 23.0 ],
+					"patching_rect" : [ 152.5, 276.5, 52.0, 23.0 ],
 					"text" : "4 12 24"
 				}
 
@@ -164,7 +164,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 289.5, 37.0, 23.0 ],
+					"patching_rect" : [ 18.0, 276.5, 37.0, 23.0 ],
 					"text" : "3 5 7"
 				}
 
@@ -177,7 +177,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 360.5, 98.0, 23.0 ],
+					"patching_rect" : [ 18.0, 347.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -185,7 +185,7 @@
 , 			{
 				"box" : 				{
 					"code" : "sqrt(pow($x1, 2) + pow($x2, 2)) + $x3 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-28",
 					"linecount" : 2,
@@ -193,7 +193,7 @@
 					"numinlets" : 3,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 318.5, 220.0, 39.0 ],
+					"patching_rect" : [ 18.0, 305.5, 288.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -208,11 +208,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-23",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 311.5, 221.5, 266.0, 54.0 ],
+					"patching_rect" : [ 269.5, 204.0, 325.5, 40.0 ],
 					"text" : "All the mathematical functions and operators supported by bach.expr can be used in bach.eval."
 				}
 
@@ -226,7 +226,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 249.0, 201.5, 59.0, 23.0 ],
+					"patching_rect" : [ 223.0, 183.5, 59.0, 23.0 ],
 					"text" : "30 20 10"
 				}
 
@@ -240,7 +240,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 201.5, 52.0, 23.0 ],
+					"patching_rect" : [ 18.0, 183.5, 52.0, 23.0 ],
 					"text" : "9 16 25"
 				}
 
@@ -253,7 +253,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 257.5, 98.0, 23.0 ],
+					"patching_rect" : [ 18.0, 239.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -261,14 +261,14 @@
 , 			{
 				"box" : 				{
 					"code" : "sqrt($x1) + $x2 * 2 ",
-					"fontname" : "Menlo Regular",
+					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 230.5, 290.0, 24.0 ],
+					"patching_rect" : [ 18.0, 212.5, 224.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -286,7 +286,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 202.0, 83.5, 59.0, 23.0 ],
+					"patching_rect" : [ 195.0, 83.5, 59.0, 23.0 ],
 					"text" : "30 20 10"
 				}
 
@@ -321,14 +321,15 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 + $x2 + 1 ",
-					"fontname" : "Menlo Regular",
+					"fontface" : 0,
+					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 112.5, 243.0, 24.0 ],
+					"patching_rect" : [ 18.0, 112.5, 196.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -343,11 +344,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 7,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 278.0, 68.5, 313.0, 112.0 ],
+					"patching_rect" : [ 244.0, 75.0, 351.0, 98.0 ],
 					"text" : "$x1, $x2 etc. are called input pseudovariables, and refer to the data the object receives from its inlets. (Spoiler: they can do more, but we'll talk about this later). \nbell also supports bach.expr-style input pseudovariables like $i1, $r1, $f1 and $p1, but they are generally not recommended."
 				}
 
