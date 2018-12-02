@@ -36,25 +36,25 @@
 
 typedef struct _score // [bach.score] structure
 {
-	t_notation_obj r_ob;  // root: notation object (all the common attributes) 
+    t_notation_obj r_ob;  // root: notation object (all the common attributes) 
 
     // elements in the score
-	t_scorevoice	*firstvoice;
-	t_scorevoice	*lastvoice;
-	
-	
-	double			non_inspector_ux_screen_start;
-	
-	// utilities
-	char		durations_given;
-	char		need_repaint;
-	char		can_need_repaint;
-	char		not_clicked_anything;
-	char		n_rebuild;
-	char		debug;
-	char		must_append_measures;
-	
-	long m_in;   // space for the inlet number used by all the proxies
+    t_scorevoice    *firstvoice;
+    t_scorevoice    *lastvoice;
+    
+    
+    double            non_inspector_ux_screen_start;
+    
+    // utilities
+    char        durations_given;
+    char        need_repaint;
+    char        can_need_repaint;
+    char        not_clicked_anything;
+    char        n_rebuild;
+    char        debug;
+    char        must_append_measures;
+    
+    long m_in;   // space for the inlet number used by all the proxies
     void *m_proxy1;
     void *m_proxy2;
     void *m_proxy3;
@@ -69,12 +69,12 @@ typedef struct _score // [bach.score] structure
 
 
 // verbose?
-#define verbose		false
+#define verbose        false
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE
 #endif
-	
+    
 void score_hidecursor(t_score *x);
 void score_showcursor(t_score *x);
 
@@ -314,9 +314,9 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
 double get_linear_edit_cursor_ux_position(t_score *x);
 
 void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_ts, t_jfont *jf_tempi,
-						 t_jfont *jf_text, char *there_is_legend, char *legend_text);
+                         t_jfont *jf_text, char *there_is_legend, char *legend_text);
 void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_acc_bogus, t_jfont *jf_text, t_jfont *jf_ts, t_jfont *jf_tempi,
-						 char *there_is_legend, char *legend_text);
+                         char *there_is_legend, char *legend_text);
 
 void create_whole_score_undo_tick(t_score *x);
 void check_if_need_to_splatter_level_when_turning_note_to_rest(t_score *x, t_chord *chord);
@@ -333,11 +333,11 @@ void score_ceilmeasures_ext(t_score *x, t_scorevoice *from, t_scorevoice *to, lo
 
 
 /** Add all measures starting together (in all voices) to the preselection.
-	This measure block is identifying by a reference measure belonging to it.
-	@ingroup			selection
-	@param	r_ob		The notation object
-	@param	ref_measure	The reference measure
-	@param	except_ref_measure	If non-zero means: don't preselect the reference measure
+    This measure block is identifying by a reference measure belonging to it.
+    @ingroup            selection
+    @param    r_ob        The notation object
+    @param    ref_measure    The reference measure
+    @param    except_ref_measure    If non-zero means: don't preselect the reference measure
  */
 void preselect_measure_in_all_voices(t_score *x, t_measure *ref_measure, char except_ref_measure);
 

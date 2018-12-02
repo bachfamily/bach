@@ -1,44 +1,44 @@
 /**
-	@file
-	partition.c
-	
-	@name
-	bach.partition
-	
-	@realname
-	bach.partition
+    @file
+    partition.c
+    
+    @name
+    bach.partition
+    
+    @realname
+    bach.partition
  
-	@type
-	object
-	
-	@module
-	bach
+    @type
+    object
+    
+    @module
+    bach
  
-	@author
-	bachproject
-	
-	@digest
-	Compute integer or set partitions
-	
-	@description
-	Computes the integer partition of the incoming non-negative number or the partition of the incoming set
-	
-	@discussion
-	Integer partition are often displayed in Young diagrams.
-	The integer partition algorithm is inspired by the iterative algorithm exposed in
-	http://jeromekelleher.net/generating-integer-partitions.html
-	
-	@category
-	bach, bach abstractions, bach math
+    @author
+    bachproject
+    
+    @digest
+    Compute integer or set partitions
+    
+    @description
+    Computes the integer partition of the incoming non-negative number or the partition of the incoming set
+    
+    @discussion
+    Integer partition are often displayed in Young diagrams.
+    The integer partition algorithm is inspired by the iterative algorithm exposed in
+    http://jeromekelleher.net/generating-integer-partitions.html
+    
+    @category
+    bach, bach abstractions, bach math
  
-	@keywords
-	compute, calculate, partition, number, young, diagram, set, subset
-	
-	@seealso
-	bach.fact, bach.prod
-	
-	@owner
-	Daniele Ghisi
+    @keywords
+    compute, calculate, partition, number, young, diagram, set, subset
+    
+    @seealso
+    bach.fact, bach.prod
+    
+    @owner
+    Daniele Ghisi
  */
 
 
@@ -51,7 +51,7 @@
 
 typedef struct _partition
 {
-	t_llllobj_object 	n_ob;
+    t_llllobj_object     n_ob;
     char                n_mode; // if non-zero, it's in set mode, otherwise it's in integer mode
     char                n_distinct; //  only return distinct set partitions
 } t_partition;
@@ -74,37 +74,37 @@ t_class *partition_class;
 
 int T_EXPORT main()
 {
-	t_class *c;
-	
-	common_symbols_init();
-	llllobj_common_symbols_init();
-	
-	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
-		error("bach: bad installation");
-		return 1;
-	}
-	
-	c = class_new("bach.partition", (method)partition_new, (method)partition_free, (short)sizeof(t_partition), 0L, A_GIMME, 0);
-	
+    t_class *c;
+    
+    common_symbols_init();
+    llllobj_common_symbols_init();
+    
+    if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
+        error("bach: bad installation");
+        return 1;
+    }
+    
+    c = class_new("bach.partition", (method)partition_new, (method)partition_free, (short)sizeof(t_partition), 0L, A_GIMME, 0);
+    
     // @method llll @digest Set set, output result
     // @description If the <m>mode</m> attribute is set to 1 (set), any <m>llll</m> in the second inlet is considered as the set to be partitioned.
     // Partitions are then output from the outlet, each wrapped in a level of parenthesis.
-    class_addmethod(c, (method)partition_anything,	"anything",		A_GIMME,	0);
-	
+    class_addmethod(c, (method)partition_anything,    "anything",        A_GIMME,    0);
+    
     // @method int @digest Set number, output result
     // @description If the <m>mode</m> attribute is set to 0 (integer), An integer number will trigger the computation of its integer partitions
     // which are subsequently output through the outlet, each wrapped in a level of parentheses,
     // and in decreasing lexicographical order.
-	class_addmethod(c, (method)partition_int,			"int",			A_LONG,		0);
-	class_addmethod(c, (method)partition_float,		"float",		A_FLOAT,	0);
-    class_addmethod(c, (method)partition_anything,	"list",			A_GIMME,	0);
-	
+    class_addmethod(c, (method)partition_int,            "int",            A_LONG,        0);
+    class_addmethod(c, (method)partition_float,        "float",        A_FLOAT,    0);
+    class_addmethod(c, (method)partition_anything,    "list",            A_GIMME,    0);
+    
     // @method bang @digest Output last obtained result
     // @description Outputs the result obtained from the most recently received input data.
-    class_addmethod(c, (method)partition_bang,	"bang",	0);
+    class_addmethod(c, (method)partition_bang,    "bang",    0);
     
-	class_addmethod(c, (method)partition_assist,		"assist",		A_CANT,		0);
-	class_addmethod(c, (method)partition_inletinfo,	"inletinfo",	A_CANT,		0);
+    class_addmethod(c, (method)partition_assist,        "assist",        A_CANT,        0);
+    class_addmethod(c, (method)partition_inletinfo,    "inletinfo",    A_CANT,        0);
 
     CLASS_ATTR_CHAR(c, "mode", 0, t_partition, n_mode);
     CLASS_ATTR_STYLE_LABEL(c,"mode",0,"enumindex","Mode");
@@ -117,29 +117,29 @@ int T_EXPORT main()
     // @description If <m>mode</m> is 1 (Sets), this attribute toggles the ability to only output distinct partitions of a set (in case
     // some elements are repeated inside the set).
 
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
-	
+    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    
 
-	class_register(CLASS_BOX, c);
-	partition_class = c;
-	
-	dev_post("bach.partition compiled %s %s", __DATE__, __TIME__);
-	
-	return 0;
+    class_register(CLASS_BOX, c);
+    partition_class = c;
+    
+    dev_post("bach.partition compiled %s %s", __DATE__, __TIME__);
+    
+    return 0;
 }
 
 void partition_int(t_partition *x, t_atom_long v)
 {
-	t_atom outatom;
-	atom_setlong(&outatom, v);
-	partition_anything(x, _sym_int, 1, &outatom);
+    t_atom outatom;
+    atom_setlong(&outatom, v);
+    partition_anything(x, _sym_int, 1, &outatom);
 }
 
 void partition_float(t_partition *x, double v)
 {
-	t_atom outatom;
-	atom_setfloat(&outatom, v);
-	partition_anything(x, _sym_float, 1, &outatom);
+    t_atom outatom;
+    atom_setfloat(&outatom, v);
+    partition_anything(x, _sym_float, 1, &outatom);
 }
 
 
@@ -230,7 +230,7 @@ t_llll *get_set_partitions(t_llll *set, char distinct_only)
 
 void partition_anything(t_partition *x, t_symbol *msg, long ac, t_atom *av)
 {
-	t_llll *ll;
+    t_llll *ll;
     char mode = x->n_mode;
     char distinct = x->n_distinct;
     t_llll *out = NULL;
@@ -261,16 +261,16 @@ void partition_anything(t_partition *x, t_symbol *msg, long ac, t_atom *av)
 }
 
 void partition_assist(t_partition *x, void *b, long m, long a, char *s)
-{	
+{    
     if (m == ASSIST_INLET) {
-		sprintf(s, "number/llll: Number or Set to be partitioned"); // @in 0 @type number/llll @digest The number or set to be partitioned
+        sprintf(s, "number/llll: Number or Set to be partitioned"); // @in 0 @type number/llll @digest The number or set to be partitioned
                                                                     // @description First inlet accepts a number or a set (llll) to be partitioned,
                                                                     // depending on the value of the <m>mode</m> attribute
     } else {
-		char *type = NULL;
-		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
+        char *type = NULL;
+        llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
         sprintf(s, "number/symbol: Converted Number"); // @out 0 @type llll @digest Partitions of the number or set
-	}
+    }
 }
 
 void partition_inletinfo(t_partition *x, void *b, long a, char *t)
@@ -286,21 +286,21 @@ void partition_free(t_partition *x)
 
 t_partition *partition_new(t_symbol *s, short ac, t_atom *av)
 {
-	t_partition *x = NULL;
-	t_max_err err = 0;
-	
-	
-	if ((x = (t_partition *) object_alloc_debug(partition_class))) {
+    t_partition *x = NULL;
+    t_max_err err = 0;
+    
+    
+    if ((x = (t_partition *) object_alloc_debug(partition_class))) {
         x->n_mode = 0;
-		attr_args_process(x, ac, av);
-		llllobj_obj_setup((t_llllobj_object *) x, 3, "4");
-	} else
-		error(BACH_CANT_INSTANTIATE);		
-	
-	llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+        attr_args_process(x, ac, av);
+        llllobj_obj_setup((t_llllobj_object *) x, 3, "4");
+    } else
+        error(BACH_CANT_INSTANTIATE);        
+    
+    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
     if (x && err == MAX_ERR_NONE)
-		return x;
-	
-	object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL
-	return NULL;
+        return x;
+    
+    object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL
+    return NULL;
 }

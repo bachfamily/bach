@@ -14,13 +14,13 @@
 
 
 /** Accidental preferences.
-	@ingroup	pitch
+    @ingroup    pitch
  */
 typedef enum _accidentals_preferences {
-    k_ACC_AUTO = 0,	///< Automatic choice of accidentals
-    k_ACC_SHARPS,	///< Prefer the use of sharps
-    k_ACC_FLATS,	///< Prefer the use of flats
-    k_ACC_CUSTOM,	///< Accidental are explicitely defined via the "enharmonictable" attribute, and thus the t_notation_obj::full_acc_repr symbol
+    k_ACC_AUTO = 0,    ///< Automatic choice of accidentals
+    k_ACC_SHARPS,    ///< Prefer the use of sharps
+    k_ACC_FLATS,    ///< Prefer the use of flats
+    k_ACC_CUSTOM,    ///< Accidental are explicitely defined via the "enharmonictable" attribute, and thus the t_notation_obj::full_acc_repr symbol
 } e_accidentals_preferences;
 
 
@@ -360,18 +360,18 @@ public:
         int go = 1;
         while (go) {
             switch (**pos) {
-                case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
-                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                case 'x':    alter += t_pitch::dblsharp;        (*pos)++;    break;
+                case '#':    alter += t_pitch::sharp;        (*pos)++;    break;
                     
-                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                case 'b':    alter += t_pitch::flat;            (*pos)++;    break;
                 
-                case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
-                case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                case 'q':    alter += t_pitch::qrtrsharp;    (*pos)++;    break;
+                case 'd':    alter += t_pitch::qrtrflat;        (*pos)++;    break;
                 
-                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
-                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                case '^':    alter += t_pitch::eighthsharp;    (*pos)++;    break;
+                case 'v':    alter += t_pitch::eighthflat;    (*pos)++;    break;
                     
-                default:	go = 0;	break;
+                default:    go = 0;    break;
             }
         }
         return alter;
@@ -384,21 +384,21 @@ public:
         int go = 1;
         while (go) {
             switch (**pos) {
-                case 'x':	alter += t_pitch::dblsharp;		(*pos)++;	break;
-                case '#':	alter += t_pitch::sharp;		(*pos)++;	break;
+                case 'x':    alter += t_pitch::dblsharp;        (*pos)++;    break;
+                case '#':    alter += t_pitch::sharp;        (*pos)++;    break;
                     
-                case 'b':	alter += t_pitch::flat;			(*pos)++;	break;
+                case 'b':    alter += t_pitch::flat;            (*pos)++;    break;
                     
-                case '+': case 'q':	alter += t_pitch::qrtrsharp;	(*pos)++;	break;
+                case '+': case 'q':    alter += t_pitch::qrtrsharp;    (*pos)++;    break;
                     
-                case '-': case 'd':	alter += t_pitch::qrtrflat;		(*pos)++;	break;
+                case '-': case 'd':    alter += t_pitch::qrtrflat;        (*pos)++;    break;
                     
-                case '^':	alter += t_pitch::eighthsharp;	(*pos)++;	break;
-                case 'v':	alter += t_pitch::eighthflat;	(*pos)++;	break;
+                case '^':    alter += t_pitch::eighthsharp;    (*pos)++;    break;
+                case 'v':    alter += t_pitch::eighthflat;    (*pos)++;    break;
                     
                 case 'n':   (*pos)++;   break;
                     
-                default:	go = 0;	break;
+                default:    go = 0;    break;
             }
         }
         return alter;
