@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 354.0, 163.0, 617.0, 539.0 ],
+		"rect" : [ 110.0, 180.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -57,11 +57,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 5,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 387.0, 298.5, 204.0, 83.0 ],
+					"patching_rect" : [ 310.0, 305.0, 231.0, 69.0 ],
 					"text" : "The value returned by $argcount includes the values that are not actually passed, and whose values are set to the respective defaults."
 				}
 
@@ -92,7 +92,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$howMany = ($x, $y = 100, $z = 1000, $empty -> $argcount) ; $howMany(10) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
 					"linecount" : 2,
@@ -100,7 +99,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 320.5, 376.0, 39.0 ],
+					"patching_rect" : [ 13.0, 320.5, 291.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -189,7 +188,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$choose = ($x, $y, $z, $n -> $args($n)) ; $choose(10, 20, 30, $x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
 					"linecount" : 2,
@@ -197,7 +195,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 125.5, 415.0, 39.0 ],
+					"patching_rect" : [ 13.0, 125.5, 299.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 323.0, 325.5, 268.0, 69.0 ],
+					"patching_rect" : [ 337.0, 317.5, 230.0, 69.0 ],
 					"text" : "Here, $plusIncrementedY not only reads the value of $y, but modifies it as well. In fact, at the end of the computation $y holds the value 2."
 				}
 
@@ -78,15 +78,14 @@
 , 			{
 				"box" : 				{
 					"code" : "$plusIncrementedY = ($x -> $x + ($y += 1)) ; $y = 1 ; $plusIncrementedY($x1) $y ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-22",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 333.0, 299.0, 54.0 ],
+					"patching_rect" : [ 15.0, 333.0, 318.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -101,11 +100,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-18",
-					"linecount" : 6,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 317.0, 165.0, 275.0, 98.0 ],
+					"patching_rect" : [ 234.0, 172.5, 295.0, 83.0 ],
 					"text" : "The function assigned to $plusY (which we will simply refer to as $plusY from now on) reads the value of the $y variable, which is defined in the main function. When $plusY is called from the main function, it gains access to $y."
 				}
 
@@ -151,7 +150,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$plusY = ($x -> $x + $y) ; $y = 1 ; $plusY($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"linecount" : 2,
@@ -159,7 +157,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 195.0, 298.0, 39.0 ],
+					"patching_rect" : [ 15.0, 195.0, 214.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

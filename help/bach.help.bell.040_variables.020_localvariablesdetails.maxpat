@@ -59,7 +59,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 320.25, 343.0, 165.25, 40.0 ],
+					"patching_rect" : [ 256.25, 342.5, 165.25, 40.0 ],
 					"text" : "You can also make chains of assignments."
 				}
 
@@ -78,13 +78,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$a = $b = $x1 ; $a $b ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-22",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 351.0, 306.0, 24.0 ],
+					"patching_rect" : [ 11.0, 351.0, 240.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -103,7 +102,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 325.25, 157.5, 57.0, 40.0 ],
+					"patching_rect" : [ 224.25, 158.5, 57.0, 40.0 ],
 					"text" : "Meet pi!"
 				}
 
@@ -134,13 +133,12 @@
 , 			{
 				"box" : 				{
 					"code" : "($radius = $x1 / 2) * $radius * pi ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 202.0, 408.0, 24.0 ],
+					"patching_rect" : [ 11.0, 202.0, 300.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -171,7 +169,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 297.25, 76.0, 236.25, 40.0 ],
+					"patching_rect" : [ 234.25, 75.5, 236.25, 40.0 ],
 					"text" : "The return value of the assignment operator is the assigned value."
 				}
 
@@ -190,13 +188,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$radius = $x1 / 2 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 84.0, 275.0, 24.0 ],
+					"patching_rect" : [ 11.0, 84.0, 214.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

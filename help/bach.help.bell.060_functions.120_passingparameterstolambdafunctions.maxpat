@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 418.0, 346.0, 29.5, 23.0 ],
+					"patching_rect" : [ 387.0, 367.0, 29.5, 23.0 ],
 					"text" : "0.1"
 				}
 
@@ -56,7 +56,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 372.0, 346.0, 34.0, 23.0 ],
+					"patching_rect" : [ 341.0, 367.0, 34.0, 23.0 ],
 					"text" : "0.05"
 				}
 
@@ -68,7 +68,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 331.0, 346.0, 29.5, 23.0 ],
+					"patching_rect" : [ 300.0, 367.0, 29.5, 23.0 ],
 					"text" : "0"
 				}
 
@@ -79,11 +79,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-34",
-					"linecount" : 8,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 442.0, 340.0, 149.0, 127.0 ],
+					"patching_rect" : [ 409.0, 367.0, 182.0, 98.0 ],
 					"text" : "Even better: since the defaults are only evaluated once in lambda calls, we don't waste time checking if $epsilon is non-null at every tested value."
 				}
 
@@ -94,7 +94,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 439.5, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 442.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -106,7 +106,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 346.0, 160.0, 23.0 ],
+					"patching_rect" : [ 6.0, 367.0, 160.0, 23.0 ],
 					"text" : "1 2 3 1 4 5 0.99 1.08 3 2 1"
 				}
 
@@ -114,15 +114,14 @@
 , 			{
 				"box" : 				{
 					"code" : "$closeEnough = ($x, $y, $e = $epsilon ||| 0 -> abs($x - $y) <= $e) ; $epsilon = $x2 ; finditems($x1, 1, $closeEnough) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-37",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 376.5, 431.0, 54.0 ],
+					"patching_rect" : [ 6.0, 397.5, 400.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -141,7 +140,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 323.0, 251.5, 268.0, 40.0 ],
+					"patching_rect" : [ 264.0, 250.5, 268.0, 40.0 ],
 					"text" : "A more robust way: $closeEnough work even if we don't set $epsilon in the caller."
 				}
 
@@ -172,7 +171,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$closeEnough = ($x, $y -> abs($x - $y) <= ($epsilon ||| 0)) ; finditems($x1, 1, $closeEnough) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-30",
 					"linecount" : 3,
@@ -180,7 +178,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 244.5, 309.0, 54.0 ],
+					"patching_rect" : [ 6.0, 244.5, 250.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -235,7 +233,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 400.0, 118.5, 173.0, 40.0 ],
+					"patching_rect" : [ 385.0, 111.5, 173.0, 40.0 ],
 					"text" : "$epsilon is passed by propagation."
 				}
 
@@ -246,7 +244,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 174.5, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 155.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -266,15 +264,14 @@
 , 			{
 				"box" : 				{
 					"code" : "$closeEnough = ($x, $y -> abs($x - $y) <= $epsilon) ; $epsilon = $x2 ||| 0 ; finditems($x1, 1, $closeEnough) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-14",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 111.5, 392.0, 54.0 ],
+					"patching_rect" : [ 6.0, 111.5, 377.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

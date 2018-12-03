@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 216.0, 264.0, 102.0, 23.0 ],
+					"patching_rect" : [ 183.0, 264.0, 102.0, 23.0 ],
 					"text" : "7200 5400 4800"
 				}
 
@@ -75,13 +75,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 % Modulo == $x2 % Modulo ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-9",
 					"maxclass" : "newobj",
 					"numinlets" : 3,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 14.0, 297.0, 423.0, 24.0 ],
+					"patching_rect" : [ 14.0, 297.0, 357.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -110,7 +109,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 247.5, 156.0, 102.0, 23.0 ],
+					"patching_rect" : [ 207.5, 156.0, 102.0, 23.0 ],
 					"text" : "7200 5400 4800"
 				}
 
@@ -141,13 +140,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 % Modulo == $x2 % Modulo ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
 					"numinlets" : 3,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 14.0, 189.0, 486.0, 24.0 ],
+					"patching_rect" : [ 14.0, 189.0, 406.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -187,13 +185,12 @@
 , 			{
 				"box" : 				{
 					"code" : "Modulo = $x1 ||| 1200 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 105.0, 314.0, 24.0 ],
+					"patching_rect" : [ 14.0, 105.0, 245.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

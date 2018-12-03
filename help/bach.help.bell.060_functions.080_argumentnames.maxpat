@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 324.0, 345.5, 220.0, 54.0 ],
+					"patching_rect" : [ 264.0, 345.0, 220.0, 54.0 ],
 					"text" : "The fact that a value is passed to $octave in one specific call doesn't affect its general default."
 				}
 
@@ -78,14 +78,13 @@
 , 			{
 				"box" : 				{
 					"code" : "Mc2fStretchable($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 360.5, 298.0, 24.0 ],
+					"patching_rect" : [ 13.0, 360.5, 241.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -135,14 +134,13 @@
 , 			{
 				"box" : 				{
 					"code" : "Mc2fStretchable($x1 @octave 2.01) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 230.5, 400.0, 24.0 ],
+					"patching_rect" : [ 13.0, 230.5, 325.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -161,7 +159,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 416.0, 215.5, 174.0, 54.0 ],
+					"patching_rect" : [ 347.0, 215.0, 174.0, 54.0 ],
 					"text" : "@octave sets the $octave argument as per the function definition."
 				}
 
@@ -169,7 +167,6 @@
 , 			{
 				"box" : 				{
 					"code" : "Mc2fStretchable = $mc, $pitch = 440, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"linecount" : 2,
@@ -177,7 +174,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 118.0, 470.0, 39.0 ],
+					"patching_rect" : [ 13.0, 118.0, 355.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -61,7 +61,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 261.0, 220.0, 69.0, 25.0 ],
+					"patching_rect" : [ 217.0, 220.0, 69.0, 25.0 ],
 					"text" : "Indeed."
 				}
 
@@ -92,14 +92,13 @@
 , 			{
 				"box" : 				{
 					"code" : "mc2f($x1, 442) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-20",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 220.0, 251.0, 24.0 ],
+					"patching_rect" : [ 6.0, 220.0, 204.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -118,7 +117,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 225.0, 121.0, 246.0, 40.0 ],
+					"patching_rect" : [ 189.0, 120.5, 246.0, 40.0 ],
 					"text" : "... which makes it available to all the objects in the Max session."
 				}
 
@@ -149,14 +148,13 @@
 , 			{
 				"box" : 				{
 					"code" : "mc2f($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 129.0, 212.0, 24.0 ],
+					"patching_rect" : [ 6.0, 129.0, 175.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -171,11 +169,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-14",
-					"linecount" : 4,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 345.0, 29.5, 246.0, 69.0 ],
+					"patching_rect" : [ 249.0, 37.0, 298.0, 54.0 ],
 					"text" : "A user-defined function with two arguments (the second one with a default). The function is automatically assigned to a global variable..."
 				}
 
@@ -183,7 +181,6 @@
 , 			{
 				"box" : 				{
 					"code" : "mc2f = ($mc, $pitch = 440 -> $pitch * (2 ** (1/1200)) ** ($mc - 6900)) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"linecount" : 3,
@@ -191,7 +188,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 37.0, 329.0, 54.0 ],
+					"patching_rect" : [ 6.0, 37.0, 239.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

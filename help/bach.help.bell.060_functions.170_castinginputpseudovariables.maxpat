@@ -63,14 +63,13 @@
 , 			{
 				"box" : 				{
 					"code" : "[$x1] [$i1] [$r1] [$f1] [$p1] ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 19.0, 316.0, 369.0, 24.0 ],
+					"patching_rect" : [ 19.0, 316.0, 265.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

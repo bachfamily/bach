@@ -102,7 +102,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 307.0, 340.0, 284.0, 83.0 ],
+					"patching_rect" : [ 223.0, 339.5, 288.0, 83.0 ],
 					"text" : "We define a function that multiplies by two the data it receives, and we assign the function to the local variable $double. Then, we call the function the variable refers to, passing it $x1 as its first (and only) argument."
 				}
 
@@ -133,14 +133,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$double = ($x -> $x*2) ; $double($x1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-17",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 16.0, 362.0, 282.0, 39.0 ],
+					"patching_rect" : [ 16.0, 362.0, 205.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -43,7 +43,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 197.0, 283.5, 133.0, 23.0 ],
+					"patching_rect" : [ 155.0, 283.5, 133.0, 23.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -82,7 +82,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 220.0, 178.0, 341.0, 98.0 ],
+					"patching_rect" : [ 183.0, 177.0, 341.0, 98.0 ],
 					"text" : "Instead of the $outlet function, you can use the $o<n> pseudovariables, which can be set but not read.\nThe number of extra outlets is automatically inferred from the $o<n> pseudovariables used in the code.\nThis can be useful if you plan to change dynamically the expression with one addressing more outlets."
 				}
 
@@ -90,14 +90,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$o1 = 5 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-9",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 20.0, 237.0, 196.0, 39.0 ],
+					"patching_rect" : [ 20.0, 237.0, 154.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -116,7 +115,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 273.5, 371.0, 192.0, 40.0 ],
+					"patching_rect" : [ 237.5, 363.0, 192.0, 40.0 ],
 					"text" : "Quite often, the result outlet is the one you don't need."
 				}
 
@@ -127,7 +126,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 149.0, 429.0, 116.0, 23.0 ],
+					"patching_rect" : [ 149.0, 415.0, 116.0, 23.0 ],
 					"text" : "print no @popup 1"
 				}
 
@@ -138,7 +137,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 20.0, 429.0, 123.0, 23.0 ],
+					"patching_rect" : [ 20.0, 415.0, 123.0, 23.0 ],
 					"text" : "print yes @popup 1"
 				}
 
@@ -146,14 +145,13 @@
 , 			{
 				"box" : 				{
 					"code" : "if length($l1) == 3 then $o1 = $l1 else $o2 = $l1 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-21",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 20.0, 364.0, 245.0, 54.0 ],
+					"patching_rect" : [ 20.0, 364.0, 208.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -192,7 +190,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 197.0, 133.5, 133.0, 23.0 ],
+					"patching_rect" : [ 162.0, 133.5, 133.0, 23.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -231,7 +229,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 220.0, 54.0, 339.0, 69.0 ],
+					"patching_rect" : [ 185.0, 53.0, 339.0, 69.0 ],
 					"text" : "Instead of the $outlet function, you can use the $o<n> pseudovariables, which can be set but not read.\nThe number of extra outlets is automatically inferred from the $o<n> pseudovariables used in the code."
 				}
 
@@ -239,13 +237,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$o1 = 5 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 20.0, 99.0, 196.0, 24.0 ],
+					"patching_rect" : [ 20.0, 99.0, 161.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

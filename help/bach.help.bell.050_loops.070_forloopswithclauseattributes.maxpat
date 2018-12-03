@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 277.0, 266.0, 187.0, 40.0 ],
+					"patching_rect" : [ 217.0, 265.0, 187.0, 40.0 ],
 					"text" : "... or not, in case you prefer a more Max-like look!"
 				}
 
@@ -78,14 +78,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x $addr in $x1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-6",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 259.0, 254.0, 54.0 ],
+					"patching_rect" : [ 13.0, 259.0, 195.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -133,7 +132,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 277.0, 126.0, 177.0, 40.0 ],
+					"patching_rect" : [ 217.0, 132.0, 177.0, 40.0 ],
 					"text" : "Multiple attributes can be separated by commas..."
 				}
 
@@ -164,14 +163,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x $addr in $x1 with @maxdepth 1, @unwrap 1 repeat print($x [$addr]) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-17",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 126.0, 254.0, 54.0 ],
+					"patching_rect" : [ 13.0, 126.0, 195.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

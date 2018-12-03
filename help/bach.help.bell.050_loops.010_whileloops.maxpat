@@ -46,7 +46,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 116.0, 595.0, 224.0 ],
+					"patching_rect" : [ 6.0, 116.0, 585.0, 224.0 ],
 					"text" : "where condition and body are two expressions of any complexity.\nThe condition is an expression returning true or false according to the same criteria as \"if...then\".\nThe \"while\" loop first evaluates the condition; if it is true, it evaluates the body and re-evaluates the condition; if it is still true, it evaluates the body again, and so on until the condition remains true. As soon as the condition is false, the iteration stops, returning the value of the body at the end of the last iteration. If the condition is false at the beginning of the first iteration, the body doesn't get evaluated at all and the loop returns null.\nIn general, care must be taken for the condition to actually change its truth value at some point, otherwise the evaluation gets stuck in an infinite loop. Anyway, bach.eval has a maxtime attribute setting the maximum duration of an evaluation, so you won't be forced to quit Max anyway.\nBecause bach.eval is not interactive, that is, you can't feed data into it while its computation is running, there is no way to change the truth value of the condition from the outside, and in general you need at least one control variable involved, keeping track of some data to watch at every iteration of the loop. If you are a fan of functional programming languages, worry not: bach.eval has map, reduce and recursive functions, so you'll never be forced to use loops if you don't like them.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -83,11 +83,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
-					"linecount" : 9,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 292.0, 335.5, 299.0, 141.0 ],
+					"patching_rect" : [ 213.0, 349.5, 378.0, 112.0 ],
 					"text" : "This pretty useless expression counts in the Max console from 1 to the incoming number. \nThe control variable here is $i, which is set to 0 before entering the loop. At every iteration, we check whether it is smaller than the incoming value, and if it is not we increment it by 1 and print it by the way.\nWhat happens if you enter a number smaller than 0?"
 				}
 
@@ -130,14 +130,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$i = 0 ; while $i < $x1 repeat print($i += 1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 386.5, 275.0, 39.0 ],
+					"patching_rect" : [ 12.0, 386.5, 193.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

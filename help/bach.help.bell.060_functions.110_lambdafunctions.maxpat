@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 282.0, 371.0, 298.0, 54.0 ],
+					"patching_rect" : [ 233.0, 370.5, 277.0, 54.0 ],
 					"text" : "Actually, there is no need to assign the lambda to a variable, especially if this is the only place where it is meant to be used."
 				}
 
@@ -78,7 +78,6 @@
 , 			{
 				"box" : 				{
 					"code" : "finditems($x1, 1, ($x, $y -> abs($x - $y) < 0.1)) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-18",
 					"linecount" : 2,
@@ -86,7 +85,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 378.5, 267.0, 39.0 ],
+					"patching_rect" : [ 6.0, 378.5, 222.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -101,11 +100,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
-					"linecount" : 10,
+					"linecount" : 8,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 324.0, 192.5, 270.0, 156.0 ],
+					"patching_rect" : [ 243.0, 206.0, 330.0, 127.0 ],
 					"text" : "... but this default can be changed: in fact, you can pass it a function as its third argument. Here, we pass a function returning true if it receives a number \"close enough\" to our target.\nThe two arguments of $closeEnough are directly set by finditems when it calls its lambda, respectively with an element to inspect and the target that has been set as finditem's second argument."
 				}
 
@@ -116,7 +115,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 309.5, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 317.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -136,7 +135,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$closeEnough = ($x, $y -> abs($x - $y) < 0.1) ; finditems($x1, 1, $closeEnough) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-14",
 					"linecount" : 3,
@@ -144,7 +142,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 243.5, 322.0, 54.0 ],
+					"patching_rect" : [ 6.0, 243.5, 230.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -163,7 +161,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 287.0, 127.5, 266.0, 54.0 ],
+					"patching_rect" : [ 229.0, 127.0, 266.0, 54.0 ],
 					"text" : "The finditems function looks for its second argument in its first argument. By default, it only accepts exact matches..."
 				}
 
@@ -194,14 +192,13 @@
 , 			{
 				"box" : 				{
 					"code" : "finditems($x1, 1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 142.5, 275.0, 24.0 ],
+					"patching_rect" : [ 6.0, 142.5, 213.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

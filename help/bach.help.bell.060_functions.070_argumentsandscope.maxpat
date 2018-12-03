@@ -77,14 +77,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$res = 100 ; $fun = GoodFunnel($res + $x1) ; $res $fun ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 409.0, 567.0, 24.0 ],
+					"patching_rect" : [ 15.0, 409.0, 436.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -99,11 +98,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
-					"linecount" : 8,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 356.0, 275.0, 235.0, 127.0 ],
+					"patching_rect" : [ 295.0, 281.5, 300.0, 98.0 ],
 					"text" : "This is the correct way to do it: all the variables used in the function are declared as arguments.\nIn this way, $res inside GoodFunnel will refer to a variable different from $res outside it, and there will not be any data corruption or other unwanted side effects."
 				}
 
@@ -111,15 +110,14 @@
 , 			{
 				"box" : 				{
 					"code" : "GoodFunnel = ($l, $x, $y, $res -> for $x $y in $l repeat $res _= [$x $y]) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 311.5, 353.0, 54.0 ],
+					"patching_rect" : [ 15.0, 311.5, 275.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -134,11 +132,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 6,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 251.0, 172.0, 328.0, 98.0 ],
+					"patching_rect" : [ 230.0, 178.5, 365.0, 83.0 ],
 					"text" : "Let's pretend to inadvertently use a variable named $res, without considering (or even knowing) that it is used inside BadFunnel. Thus, both the result of the function and the value of $res after calling it are not what we probably expect, as the function has both read and modified $res."
 				}
 
@@ -169,7 +167,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$res = 100 ; $fun = BadFunnel($res + $x1) ; $res $fun ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-22",
 					"linecount" : 3,
@@ -177,7 +174,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 194.0, 229.0, 54.0 ],
+					"patching_rect" : [ 15.0, 194.0, 210.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -219,7 +216,6 @@
 , 			{
 				"box" : 				{
 					"code" : "BadFunnel = ($l -> for $x $y in $l repeat $res _= [$x $y]) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"linecount" : 2,
@@ -227,7 +223,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 114.0, 314.0, 39.0 ],
+					"patching_rect" : [ 15.0, 114.0, 258.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

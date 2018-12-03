@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 258.0, 278.5, 209.0, 54.0 ],
+					"patching_rect" : [ 219.0, 278.0, 209.0, 54.0 ],
 					"text" : "... or this, since cos takes as its first (and only) argument the exact thing that map passes."
 				}
 
@@ -78,14 +78,13 @@
 , 			{
 				"box" : 				{
 					"code" : "map($x1, cos) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-25",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 293.5, 243.0, 24.0 ],
+					"patching_rect" : [ 6.0, 293.5, 199.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -104,7 +103,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 337.0, 171.5, 206.0, 54.0 ],
+					"patching_rect" : [ 270.0, 171.0, 206.0, 54.0 ],
 					"text" : "Now imagine that we want to calculate the cosine of each item of an llll: we can do this..."
 				}
 
@@ -135,14 +134,13 @@
 , 			{
 				"box" : 				{
 					"code" : "map($x1, $x -> cos($x)) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 186.5, 322.0, 24.0 ],
+					"patching_rect" : [ 6.0, 186.5, 255.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -157,11 +155,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
-					"linecount" : 4,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 352.0, 58.0, 191.0, 69.0 ],
+					"patching_rect" : [ 285.0, 57.5, 206.0, 54.0 ],
 					"text" : "The \"map\" function processes all the items of the incoming llll with its lambda, one by one."
 				}
 
@@ -192,14 +190,13 @@
 , 			{
 				"box" : 				{
 					"code" : "map($x1, $x -> $x % 1200) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 80.5, 337.0, 24.0 ],
+					"patching_rect" : [ 6.0, 80.5, 274.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

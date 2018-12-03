@@ -43,11 +43,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 6,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 333.0, 316.5, 258.0, 98.0 ],
+					"patching_rect" : [ 222.0, 330.5, 320.0, 83.0 ],
 					"text" : "Another way to do the same thing. Here $sum is updated in the \"repeat\" clause, thus requiring a little more stuff inside the loop, but avoiding the need for subtracting $x after the loop has ended. \nIt is just a matter of taste..."
 				}
 
@@ -106,14 +106,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$sum = 0 ; [for $x in $x1 as $sum + $x <= 100 repeat ($sum += $x ; $res _= $x)] $sum ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-7",
-					"linecount" : 3,
+					"linecount" : 4,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 338.5, 314.0, 54.0 ],
+					"patching_rect" : [ 13.0, 338.5, 207.0, 67.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -180,14 +179,15 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
+					"bubblepoint" : 0.37,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 8,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 306.0, 125.0, 278.5, 127.0 ],
+					"patching_rect" : [ 243.0, 152.0, 348.0, 98.0 ],
 					"text" : "This one only retains the elements of the incoming llll until their sum doesn't exceed 100.\n$sum actually gets incremented past 100 during the last evaluation of the \"as\" clause: as a consequence, after the end of the loop we subtract $x (which now holds the last value it has taken during the loop) from it."
 				}
 
@@ -206,14 +206,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$sum = 0 ; [for $x in $x1 as ($sum += print($x)) <= 100 repeat $res _= $x] $sum - $x ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 161.5, 284.0, 54.0 ],
+					"patching_rect" : [ 13.0, 161.5, 225.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -54,7 +54,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 97.5, 395.0, 45.0, 23.0 ],
+					"patching_rect" : [ 97.5, 405.0, 45.0, 23.0 ],
 					"text" : "10000"
 				}
 
@@ -66,7 +66,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 58.5, 395.0, 29.5, 23.0 ],
+					"patching_rect" : [ 58.5, 405.0, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -78,7 +78,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 395.0, 29.5, 23.0 ],
+					"patching_rect" : [ 14.0, 405.0, 29.5, 23.0 ],
 					"text" : "1"
 				}
 
@@ -86,15 +86,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) ; $fun($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 423.5, 337.0, 39.0 ],
+					"patching_rect" : [ 13.0, 433.5, 440.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -112,8 +110,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 52.0, 305.0, 513.0, 79.0 ],
-					"text" : "(The whole story: bell doesn't perform tail call optimization, so recursion is not only inefficient, but, in principle, dangerous as well. To protect against the risk of crashing Max with recursive functions, there is a hard limit of 999 to the allowed recursion depth. This doesn't mean that there aren't any practical cases in which recursion can be useful, but you can't use it as liberally as you would do in, say, Scheme or Haskell.)",
+					"patching_rect" : [ 42.0, 316.0, 513.0, 79.0 ],
+					"text" : "(The whole story: bell doesn't perform tail call optimization, so recursion is not only inefficient, but, in principle, dangerous as well. To protect against the risk of crashing Max with recursive functions, there is a hard limit of 999 to the allowed recursion depth. This doesn't mean that there aren't any practical cases in which recursion can be useful, but you can't use it as liberally as you would in, say, Scheme or Haskell.)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -173,7 +171,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) ; $fact($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
 					"linecount" : 2,
@@ -181,7 +178,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 109.5, 345.0, 39.0 ],
+					"patching_rect" : [ 13.0, 109.5, 249.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -196,11 +193,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
-					"linecount" : 6,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 360.0, 80.0, 233.0, 98.0 ],
+					"patching_rect" : [ 268.0, 79.0, 278.0, 83.0 ],
 					"text" : "A classic example: implementation of factorial by recursion. The $fact function (that is, more precisely, the function held by the $fact variable) is available inside itself as it is defined in the scope of the caller."
 				}
 

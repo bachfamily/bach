@@ -48,7 +48,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 189.5, 347.0, 402.0, 127.0 ],
+					"patching_rect" : [ 167.0, 347.0, 378.0, 127.0 ],
 					"text" : "The rot function has other arguments, which we had left to their defaults so far: mindepth and maxdepth.\nHere we see a meaningful way to use named arguments: if we want to cherrypick the arguments that we want to set, especially in functions that have many, and leave the other to their defaults, we can set them by name, and even mix them with arguments passed by position: the only rule is that all the arguments passed by position must come before."
 				}
 
@@ -79,14 +79,13 @@
 , 			{
 				"box" : 				{
 					"code" : "rot($x1 @maxdepth -1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 405.0, 173.0, 39.0 ],
+					"patching_rect" : [ 13.0, 405.0, 152.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -105,7 +104,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 231.0, 288.0, 283.0, 54.0 ],
+					"patching_rect" : [ 185.0, 287.5, 283.0, 54.0 ],
 					"text" : "Function arguments have defaults. The shift argument of rot, for instance, defaults to 1, so if that's what we want we can omit it."
 				}
 
@@ -148,13 +147,12 @@
 , 			{
 				"box" : 				{
 					"code" : "rot($x1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-18",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 303.0, 204.0, 24.0 ],
+					"patching_rect" : [ 13.0, 303.0, 162.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -192,14 +190,13 @@
 , 			{
 				"box" : 				{
 					"code" : "rot(@shift 2, @llll $x1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 184.0, 196.0, 39.0 ],
+					"patching_rect" : [ 13.0, 184.0, 197.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -249,13 +246,12 @@
 , 			{
 				"box" : 				{
 					"code" : "rot($x1, 2) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 77.0, 228.0, 24.0 ],
+					"patching_rect" : [ 13.0, 77.0, 176.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
