@@ -21,9 +21,11 @@
 
 #define YY_FATAL_ERROR(msg) t_parser::fatalError(msg)
 
+#define PARSER_POOL_SIZE (34000)
+
 class t_parser {
 private:
-    char pool[65535];
+    char pool[PARSER_POOL_SIZE];
     char *basepoolptr;
     char *poolptr;
     
