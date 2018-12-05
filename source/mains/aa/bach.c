@@ -559,8 +559,12 @@ long parse_version_string(char *str, long *major, long *minor, long *revision, l
 
 t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 {
-	if (bach)
+    if (bach || gensym("bach")->s_thing) {
+        object_error_obtrusive(nullptr, "Restart Max to use the bach library");
+        bach = nullptr;
+        gensym("bach")->s_thing = nullptr;
 		return NULL;
+    }
 	t_bach *x = (t_bach *) object_alloc(bach_class);
 #ifdef BACH_TRACK_MEMORY_ALLOCATION
 	//t_object *dummy;
