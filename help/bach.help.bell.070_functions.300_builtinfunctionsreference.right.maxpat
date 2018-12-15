@@ -62,18 +62,18 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "slice(1 [2 3] 4 [5 [6 [7]]], $x1) ",
+					"code" : "left(1 [2 3] 4 [5 [6 [7]]], $x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 118.0, 281.0, 23.0 ],
+					"patching_rect" : [ 9.0, 118.0, 272.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval slice(1 [2 3] 4 [5 [6 [7]]]\\, $x1) @out m"
+					"text" : "bach.eval left(1 [2 3] 4 [5 [6 [7]]]\\, $x1) @out m"
 				}
 
 			}
@@ -100,8 +100,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 438.0, 21.0 ],
-					"text" : "The slice() function divides an llll into two sublists according to a split point.",
+					"patching_rect" : [ 9.0, 39.0, 394.0, 21.0 ],
+					"text" : "The left() function returns the right part of an llll relative to an index.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -146,7 +146,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 187.0, 23.0 ],
-					"text" : "slice() function reference",
+					"text" : "right() function reference",
 					"varname" : "title"
 				}
 

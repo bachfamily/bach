@@ -39,13 +39,13 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-8",
-					"maxclass" : "number",
+					"id" : "obj-14",
+					"maxclass" : "button",
 					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 9.0, 86.0, 50.0, 23.0 ]
+					"patching_rect" : [ 9.0, 84.0, 24.0, 24.0 ]
 				}
 
 			}
@@ -62,18 +62,18 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "slice(1 [2 3] 4 [5 [6 [7]]], $x1) ",
+					"code" : "scramble(1 [2 3] 4 5 6 7) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 118.0, 281.0, 23.0 ],
+					"patching_rect" : [ 9.0, 118.0, 258.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval slice(1 [2 3] 4 [5 [6 [7]]]\\, $x1) @out m"
+					"text" : "bach.eval scramble(1 [2 3] 4 5 6 7) @out m"
 				}
 
 			}
@@ -82,12 +82,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 3,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 414.0, 97.0, 105.0, 50.0 ],
-					"text" : "Arguments:\nllll\nindex (default: 1)",
+					"patching_rect" : [ 414.0, 97.0, 131.0, 65.0 ],
+					"text" : "Arguments:\nllll\nmindepth (default: 1)\nmaxdepth (default: 1)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -97,11 +97,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 438.0, 21.0 ],
-					"text" : "The slice() function divides an llll into two sublists according to a split point.",
+					"patching_rect" : [ 9.0, 39.0, 522.0, 36.0 ],
+					"text" : "The insert() function inserts one or more elements in a list according to their positions, like the bach.subs object.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -145,8 +146,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 187.0, 23.0 ],
-					"text" : "slice() function reference",
+					"patching_rect" : [ 6.0, 8.0, 219.0, 23.0 ],
+					"text" : "scramble() function reference",
 					"varname" : "title"
 				}
 
@@ -169,15 +170,15 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
-					"source" : [ "obj-7", 0 ]
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-14", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-8", 0 ]
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-7", 0 ]
 				}
 
 			}
