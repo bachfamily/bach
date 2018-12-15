@@ -44,7 +44,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 385.0, 340.0, 81.0, 23.0 ],
+					"patching_rect" : [ 290.0, 340.0, 81.0, 23.0 ],
 					"text" : "100 200 300"
 				}
 
@@ -71,7 +71,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 405.0, 369.5, 192.0, 54.0 ],
+					"patching_rect" : [ 316.0, 361.5, 192.0, 54.0 ],
 					"text" : "Address variables in parallel iterations. This will get more interesting in a while, too."
 				}
 
@@ -90,14 +90,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x $xaddr in $x1, $y $yaddr in $x2 repeat $res _= $x * $xaddr + $y * $yaddr ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 369.5, 392.0, 39.0 ],
+					"patching_rect" : [ 12.0, 369.5, 297.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -113,7 +112,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 275.0, 210.0, 37.0, 23.0 ],
+					"patching_rect" : [ 195.0, 210.0, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -136,11 +135,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-3",
-					"linecount" : 4,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 318.0, 224.5, 241.0, 69.0 ],
+					"patching_rect" : [ 225.0, 224.0, 295.0, 54.0 ],
 					"text" : "Parallel iterations are possible. In general, the for loop stops at the end of the shortest list, with one possible exception we'll meet shortly."
 				}
 
@@ -159,14 +158,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x in $x1, $y in $x2 repeat $res _= $x + $y ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 239.5, 282.0, 39.0 ],
+					"patching_rect" : [ 12.0, 239.5, 202.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -193,11 +191,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
-					"linecount" : 7,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 334.0, 37.0, 245.0, 112.0 ],
+					"patching_rect" : [ 267.5, 44.0, 316.0, 98.0 ],
 					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address.\nThe return value of the for loop is the value taken by the \"repeat\" clause at the end of the last iteration."
 				}
 
@@ -216,14 +214,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $data $address in $x1 repeat $res _= $data + $address ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 73.5, 310.0, 39.0 ],
+					"patching_rect" : [ 12.0, 73.5, 251.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

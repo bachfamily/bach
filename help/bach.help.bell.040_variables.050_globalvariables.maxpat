@@ -59,11 +59,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 8,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 273.0, 305.5, 322.0, 127.0 ],
+					"patching_rect" : [ 202.5, 308.5, 388.5, 112.0 ],
 					"text" : "This one means: if Count has a value (that is, it is not null) keep it, otherwise set it to 0. Then, increment it by one. Notice that, at every re-evaluation, Count has retained the value that was previously assigned to it.\nThis is a way to keep persistent values, but keep in mind that if you have the same global variable name in another object, it will be affected too."
 				}
 
@@ -82,7 +82,7 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubblepoint" : 0.09,
+					"bubblepoint" : 0.06,
 					"bubbleside" : 2,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
@@ -99,14 +99,13 @@
 , 			{
 				"box" : 				{
 					"code" : "Count = Count ||| 0 ; Count = Count + 1 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-15",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 353.0, 259.0, 39.0 ],
+					"patching_rect" : [ 14.0, 353.0, 188.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -137,7 +136,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 169.5, 234.5, 355.0, 69.0 ],
+					"patching_rect" : [ 144.5, 234.0, 355.0, 69.0 ],
 					"text" : "... and then this one. Even if you destroy all the objects referencing the \"A\" variable, its value is retained anyway. Try to close the patch, reopen it and bang again this object box, and you'll see."
 				}
 
@@ -156,13 +155,12 @@
 , 			{
 				"box" : 				{
 					"code" : "A ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 257.0, 149.0, 24.0 ],
+					"patching_rect" : [ 14.0, 257.0, 124.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -217,7 +215,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 302.5, 141.5, 233.0, 69.0 ],
+					"patching_rect" : [ 233.5, 140.5, 233.0, 69.0 ],
 					"text" : "Global variables mostly behave like local variables, but their values are shared throughout the whole Max session: bang this object..."
 				}
 
@@ -225,13 +223,12 @@
 , 			{
 				"box" : 				{
 					"code" : "A = 12345 ; A * 2 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 160.0, 275.0, 24.0 ],
+					"patching_rect" : [ 14.0, 160.0, 213.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

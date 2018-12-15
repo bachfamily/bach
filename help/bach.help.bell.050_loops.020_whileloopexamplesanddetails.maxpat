@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 146.0, 302.5, 448.0, 141.0 ],
+					"patching_rect" : [ 128.0, 302.0, 447.0, 141.0 ],
 					"text" : "Multiplication tables—a complicated one, with nested while loops.\nA notable thing is that if the body of the \"while\" loop contains a sequence of operations (;), it must be surrounded by parens. This kind of structure is much more readable if indented, so this time the code is not in the object box, but in the internal text editor. Double-click bach.eval to view it.\nAlso, notice how the result we want to obtain is not the last value of the while loop, but the value of a variable we define and update in the middle of it: so, the last item of our sequence of evaluation is the variable itself, so as to return its value finally."
 				}
 
@@ -102,14 +102,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x = 1 ; \r\nwhile $x <= $x1 repeat (\r\n\t$row = null ; \r\n\t$y = 1 ; \r\n\twhile $y <= $x1 repeat (\r\n\t\t$row _= $x * $y ; \r\n\t\t$y += 1) ; \r\n\t$res = $res [$row] ; \r\n\t$x += 1\r\n\t) ; \r\n$res ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 361.0, 134.0, 24.0 ],
+					"patching_rect" : [ 10.0, 361.0, 113.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -124,11 +123,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
-					"linecount" : 6,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 417.0, 189.5, 174.0, 98.0 ],
+					"patching_rect" : [ 301.0, 203.5, 243.0, 69.0 ],
 					"text" : "The Fibonacci sequence, up to the n-th term. Notice how we build the result by appending to each new term the sum of the two previous ones."
 				}
 
@@ -171,7 +170,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$fibo = 1 1 ; while length($fibo) < $x1 repeat $fibo _= $fibo:-1 + $fibo:-2 ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
 					"linecount" : 2,
@@ -179,7 +177,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 219.0, 400.0, 39.0 ],
+					"patching_rect" : [ 10.0, 219.0, 285.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -198,7 +196,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 255.0, 70.0, 329.0, 69.0 ],
+					"patching_rect" : [ 190.0, 69.0, 298.0, 69.0 ],
 					"text" : "The factorial of a number (ok, we could have used bach.fact, but it was a nice example).\nIf the *= ... += thing seems weird, think that it can be unrolled into $fact = $fact * ($i = $i + 1)."
 				}
 
@@ -241,14 +239,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$i = $fact = 1 ; while print($i) < $x1 repeat $fact *= $i += 1 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 10.0, 77.5, 235.0, 54.0 ],
+					"patching_rect" : [ 10.0, 77.5, 170.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

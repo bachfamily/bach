@@ -40,14 +40,13 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"code" : "L = L.left(-1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-36",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 399.0, 423.5, 196.0, 24.0 ],
+					"patching_rect" : [ 338.0, 423.0, 138.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -66,7 +65,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 256.0, 400.5, 338.0, 40.0 ],
+					"patching_rect" : [ 195.0, 400.0, 338.0, 40.0 ],
 					"text" : "There is also an assigning version of the dot operator. This is equivalent to:"
 				}
 
@@ -115,7 +114,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 304.0, 258.0, 277.0, 36.0 ],
+					"patching_rect" : [ 256.0, 247.5, 277.0, 36.0 ],
 					"text" : "For comparison, the example above, rewritten with regular function-calls, would look like this:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -124,14 +123,13 @@
 , 			{
 				"box" : 				{
 					"code" : "L .= left(-1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 408.5, 243.0, 24.0 ],
+					"patching_rect" : [ 6.0, 408.5, 180.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -143,14 +141,13 @@
 , 			{
 				"box" : 				{
 					"code" : "L = 1 2 3 4 5 6 7 8 ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-28",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 349.5, 298.0, 24.0 ],
+					"patching_rect" : [ 6.0, 349.5, 225.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -162,14 +159,13 @@
 , 			{
 				"box" : 				{
 					"code" : "left(flat(rot($x1, 4)), -2) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-26",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 304.0, 290.5, 298.0, 24.0 ],
+					"patching_rect" : [ 256.0, 280.0, 198.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -204,7 +200,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1.length() ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-22",
 					"linecount" : 2,
@@ -212,7 +207,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 192.0, 76.5, 189.0, 39.0 ],
+					"patching_rect" : [ 192.0, 76.5, 137.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -231,7 +226,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 307.0, 198.0, 292.0, 54.0 ],
+					"patching_rect" : [ 256.0, 190.0, 292.0, 54.0 ],
 					"text" : "Dataflow-style function calls can make chains of calls more readable, and more similar to how they would be expressed by patching."
 				}
 
@@ -262,15 +257,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1.rot(4).flat().left(-2) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-16",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 205.5, 298.0, 39.0 ],
+					"patching_rect" : [ 6.0, 205.5, 243.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -289,7 +282,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 381.0, 54.5, 222.0, 83.0 ],
+					"patching_rect" : [ 336.0, 54.0, 222.0, 83.0 ],
 					"text" : "These two forms are equivalent. In general, a dot can be used for moving the first, nameless argument of a function call before the reference to the function."
 				}
 
@@ -300,7 +293,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 132.0, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 122.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -320,7 +313,6 @@
 , 			{
 				"box" : 				{
 					"code" : "length($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"linecount" : 2,
@@ -328,7 +320,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 76.5, 181.0, 39.0 ],
+					"patching_rect" : [ 6.0, 76.5, 134.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

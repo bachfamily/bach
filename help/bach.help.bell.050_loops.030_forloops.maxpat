@@ -88,7 +88,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 207.0, 385.5, 384.0, 40.0 ],
+					"patching_rect" : [ 165.0, 385.5, 384.0, 40.0 ],
 					"text" : "The elements of the incoming llll are printed one by one in the Max console, and the last one is the result of the expression."
 				}
 
@@ -107,14 +107,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $i in $x1 repeat print($i) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 386.5, 196.0, 39.0 ],
+					"patching_rect" : [ 12.0, 386.5, 148.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

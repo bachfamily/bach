@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 554.0, 175.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,147 +39,85 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 264.0, 345.0, 220.0, 54.0 ],
-					"text" : "The fact that a value is passed to $octave in one specific call doesn't affect its general default."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 393.5, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-3",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 325.5, 102.0, 23.0 ],
-					"text" : "5700 6900 8100"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "Mc2fStretchable($x1) ",
-					"fontsize" : 13.0,
-					"id" : "obj-5",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 360.5, 241.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval Mc2fStretchable($x1) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-4",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 43.0, 579.0, 36.0 ],
-					"text" : "The names of the function arguments used in the function definitions can be used in a function call for passing the arguments by name. ",
+					"patching_rect" : [ 6.0, 192.0, 75.0, 36.0 ],
+					"presentation_linecount" : 2,
+					"text" : "Arguments:\nllll",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-15",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 263.5, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-9",
+					"id" : "obj-5",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 195.5, 102.0, 23.0 ],
-					"text" : "5700 6900 8100"
+					"patching_rect" : [ 70.5, 75.0, 66.0, 23.0 ],
+					"presentation_linecount" : 3,
+					"text" : "1 [2 3 4 5]"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "Mc2fStretchable($x1 @octave 2.01) ",
-					"fontsize" : 13.0,
-					"id" : "obj-7",
-					"maxclass" : "newobj",
+					"id" : "obj-2",
+					"maxclass" : "number",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 230.5, 325.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval Mc2fStretchable($x1 @octave 2.01) @out m"
+					"numoutlets" : 2,
+					"outlettype" : [ "", "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 14.5, 139.0, 50.0, 23.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"linecount" : 3,
+					"id" : "obj-76",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 347.0, 215.0, 174.0, 54.0 ],
-					"text" : "@octave sets the $octave argument as per the function definition."
+					"patching_rect" : [ 6.0, 38.0, 455.0, 21.0 ],
+					"text" : "The length() function returns the number of elements in the root level of an llll.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "Mc2fStretchable = $mc, $pitch = 440, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) ",
-					"fontsize" : 13.0,
-					"id" : "obj-17",
-					"linecount" : 2,
+					"code" : "length($x1) ",
+					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 118.0, 355.0, 38.0 ],
+					"patching_rect" : [ 14.5, 106.0, 182.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Mc2fStretchable = $mc\\, $pitch = 440\\, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) @auto 1"
+					"text" : "bach.eval length($x1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 14.5, 75.0, 40.0, 23.0 ],
+					"text" : "q w e"
 				}
 
 			}
@@ -192,7 +130,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: global+variable, global+function",
+					"text" : "See Also: depth",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -222,8 +160,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 131.0, 23.0 ],
-					"text" : "Argument names",
+					"patching_rect" : [ 6.0, 8.0, 199.0, 23.0 ],
+					"text" : "length() function reference",
 					"varname" : "title"
 				}
 
@@ -237,7 +175,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, function, user, argument, variable, local, passing",
+					"text" : "Tags: bell, built, in, function, length",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -246,29 +184,22 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
+					"destination" : [ "obj-2", 0 ],
 					"source" : [ "obj-3", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
 					"source" : [ "obj-5", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
-					"source" : [ "obj-7", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-9", 0 ]
 				}
 
 			}

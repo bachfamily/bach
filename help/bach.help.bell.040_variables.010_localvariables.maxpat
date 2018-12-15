@@ -74,7 +74,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 214.25, 340.0, 294.25, 54.0 ],
+					"patching_rect" : [ 171.25, 342.0, 294.25, 54.0 ],
 					"text" : "Variables are seldom necessary, but they can improve the readability of the code, especially if you choose meaningful names for them."
 				}
 
@@ -85,7 +85,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 399.5, 99.0, 23.0 ],
+					"patching_rect" : [ 14.0, 402.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -93,14 +93,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$side = $x1 ; $area = $side * $side ; $area ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 342.0, 196.0, 54.0 ],
+					"patching_rect" : [ 14.0, 342.0, 148.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -118,7 +117,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 205.0, 576.5, 94.0 ],
+					"patching_rect" : [ 14.0, 205.0, 580.0, 94.0 ],
 					"text" : "The name of a local variable, after the dollar sign, must start with a letter or an underscore, and the following characters can be letters, underscores or numbers.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$x<n>, $l<N>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, $dx<N>, where <N> is any non-negative integer.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -146,7 +145,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 297.0, 91.0, 294.0, 98.0 ],
+					"patching_rect" : [ 240.0, 90.5, 294.0, 98.0 ],
 					"text" : "Local variable names are preceded by $.\nTo assign a value to a variable, use the assignment operator = (not to be confused with the equality comparison operator ==).\nTo read the value of a variable, just evaluate it as if it was a number or a function."
 				}
 
@@ -165,13 +164,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$c74 = $x1 ; $c74 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 128.0, 275.0, 24.0 ],
+					"patching_rect" : [ 14.0, 128.0, 220.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

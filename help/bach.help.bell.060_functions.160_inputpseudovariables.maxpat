@@ -63,7 +63,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$fun = ($x -> ($x += 1 ; $x1 $x)) ; $fun($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
 					"linecount" : 2,
@@ -71,7 +70,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 374.5, 353.0, 39.0 ],
+					"patching_rect" : [ 13.0, 374.5, 260.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -86,11 +85,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-9",
-					"linecount" : 9,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 372.0, 316.0, 225.0, 141.0 ],
+					"patching_rect" : [ 278.0, 337.5, 273.0, 112.0 ],
 					"text" : "Named function arguments are seen by the function as variables and, as such, they can be modified. \nDoing this, on the other hand, doesn't modify the actual value of the argument as it is passed, which can still be accessed through the input pseudovariables."
 				}
 
@@ -121,7 +120,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$myDiv = ($x, $y -> $x1 / $x2) ; $myDiv(@y 3, @x $x1 * 2) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-3",
 					"linecount" : 2,
@@ -129,7 +127,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 237.5, 353.0, 39.0 ],
+					"patching_rect" : [ 13.0, 237.5, 250.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -144,11 +142,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
-					"linecount" : 6,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 375.0, 208.0, 218.0, 98.0 ],
+					"patching_rect" : [ 268.0, 222.0, 283.0, 69.0 ],
 					"text" : "The argument order $x1 ... $x<n> refer to is that of the function definition, and doesn't depend on the order in which named parameters appear in the function call."
 				}
 
@@ -194,7 +192,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$myDiv = ($x, $y -> $x1 / $x2) ; $myDiv($x1 * 2, 3) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
 					"linecount" : 2,
@@ -202,7 +199,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 125.5, 345.0, 39.0 ],
+					"patching_rect" : [ 13.0, 125.5, 250.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -217,11 +214,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
-					"linecount" : 4,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 360.0, 110.5, 237.0, 69.0 ],
+					"patching_rect" : [ 268.0, 117.5, 267.0, 54.0 ],
 					"text" : "$x1 and $x2 in the $myDiv function body respectively refer to the first and second argument passed to the function."
 				}
 

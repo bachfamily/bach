@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 84.0, 81.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,27 +39,13 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-6",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 264.0, 345.0, 220.0, 54.0 ],
-					"text" : "The fact that a value is passed to $octave in one specific call doesn't affect its general default."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 393.5, 98.0, 23.0 ],
-					"text" : "print @popup 1"
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 94.0, 86.0, 29.5, 23.0 ],
+					"text" : "null"
 				}
 
 			}
@@ -70,116 +56,79 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 325.5, 102.0, 23.0 ],
-					"text" : "5700 6900 8100"
+					"patching_rect" : [ 43.25, 86.0, 37.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "a b c"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "Mc2fStretchable($x1) ",
-					"fontsize" : 13.0,
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 86.0, 29.5, 23.0 ],
+					"text" : "q"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 360.5, 241.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval Mc2fStretchable($x1) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-4",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 43.0, 579.0, 36.0 ],
-					"text" : "The names of the function arguments used in the function definitions can be used in a function call for passing the arguments by name. ",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 263.5, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 149.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-9",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 195.5, 102.0, 23.0 ],
-					"text" : "5700 6900 8100"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "Mc2fStretchable($x1 @octave 2.01) ",
-					"fontsize" : 13.0,
+					"code" : "subs(1 [2 3] 4 5 6 7, 3, $x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 230.5, 325.0, 23.0 ],
+					"patching_rect" : [ 9.0, 118.0, 275.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Mc2fStretchable($x1 @octave 2.01) @out m"
+					"text" : "bach.eval subs(1 [2 3] 4 5 6 7\\, 3\\, $x1) @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"linecount" : 3,
+					"id" : "obj-6",
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 347.0, 215.0, 174.0, 54.0 ],
-					"text" : "@octave sets the $octave argument as per the function definition."
+					"patching_rect" : [ 414.0, 97.0, 123.0, 94.0 ],
+					"text" : "Arguments:\nllll\naddress (default: 1)\nmodel (default: null)\nmulti (default: 0)\nsizes (default: 0)",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "Mc2fStretchable = $mc, $pitch = 440, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) ",
+					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-17",
+					"id" : "obj-76",
 					"linecount" : 2,
-					"maxclass" : "newobj",
+					"maxclass" : "comment",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 118.0, 355.0, 38.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval Mc2fStretchable = $mc\\, $pitch = 440\\, $octave = 2 -> $pitch * ($octave ** (1/1200)) ** ($mc - 6900) @auto 1"
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 39.0, 522.0, 36.0 ],
+					"text" : "The subs() function substitutes one or more elements of a list according to their positions, like the bach.subs object.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -192,7 +141,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: global+variable, global+function",
+					"text" : "See Also:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -207,7 +156,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"text" : "Objects: bach.eval, bach.diff, bach.intersection, bach.symdiff, bach.union",
+					"text" : "Objects: bach.eval",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -222,8 +171,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 131.0, 23.0 ],
-					"text" : "Argument names",
+					"patching_rect" : [ 6.0, 8.0, 189.0, 23.0 ],
+					"text" : "subs() function reference",
 					"varname" : "title"
 				}
 
@@ -237,7 +186,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, function, user, argument, variable, local, passing",
+					"text" : "Tags: bell, built, in, function, outlet",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -246,21 +195,21 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-3", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-5", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-5", 0 ],
 					"source" : [ "obj-7", 0 ]
 				}
 
@@ -268,7 +217,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-9", 0 ]
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}

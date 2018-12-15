@@ -90,7 +90,6 @@
 , 			{
 				"box" : 				{
 					"code" : "(print($x1) ; print($x2)) ; $x1 + $x2 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-16",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -112,11 +111,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
-					"linecount" : 6,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 289.75, 209.5, 260.0, 98.0 ],
+					"patching_rect" : [ 232.5, 223.5, 344.0, 83.0 ],
 					"text" : "Simple, two-term sequences can be chained, so as to build longer sequences with more terms. Because ; is left-associative, the resulting behavior is intuitive: all the terms are evaluated, and the result of the last one is returned."
 				}
 
@@ -128,7 +127,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 247.5, 214.0, 34.0, 23.0 ],
+					"patching_rect" : [ 191.5, 214.0, 34.0, 23.0 ],
 					"text" : "5 50"
 				}
 
@@ -159,14 +158,13 @@
 , 			{
 				"box" : 				{
 					"code" : "print($x1) ; print($x2) ; $x1 + $x2 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 246.0, 254.0, 39.0 ],
+					"patching_rect" : [ 12.5, 246.0, 198.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -181,11 +179,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-87",
-					"linecount" : 6,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 315.75, 67.0, 251.0, 98.0 ],
+					"patching_rect" : [ 246.0, 81.0, 345.0, 69.0 ],
 					"text" : "; is useful only when the first argument causes side effects. For now, the only situation where we can use it meaningfully is with the print function, but as soon as variables come into play its role will become clearer."
 				}
 
@@ -216,13 +214,12 @@
 , 			{
 				"box" : 				{
 					"code" : "print($x1) ; $x1 * 2 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.5, 104.0, 298.0, 24.0 ],
+					"patching_rect" : [ 12.5, 104.0, 223.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

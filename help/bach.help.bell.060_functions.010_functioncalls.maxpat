@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 243.0, 408.0, 319.0, 40.0 ],
+					"patching_rect" : [ 190.0, 407.5, 319.0, 40.0 ],
 					"text" : "Watch out: there can't be any whitespace between the name of the function and the open paren!"
 				}
 
@@ -79,13 +79,12 @@
 				"box" : 				{
 					"code" : "sqrt ($x1) ",
 					"color" : [ 0.92549, 0.364706, 0.341176, 1.0 ],
-					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 416.0, 220.0, 24.0 ],
+					"patching_rect" : [ 13.0, 416.0, 172.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -104,7 +103,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 268.0, 318.0, 276.0, 40.0 ],
+					"patching_rect" : [ 214.0, 317.5, 276.0, 40.0 ],
 					"text" : "Functions can iterate multiple-element lllls against single-element ones when relevant."
 				}
 
@@ -135,13 +134,12 @@
 , 			{
 				"box" : 				{
 					"code" : "atan2($x1, 0) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-18",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 326.0, 243.0, 24.0 ],
+					"patching_rect" : [ 13.0, 326.0, 194.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -157,7 +155,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 253.0, 203.0, 53.0, 23.0 ],
+					"patching_rect" : [ 201.0, 203.0, 53.0, 23.0 ],
 					"text" : "0 -1 0 1"
 				}
 
@@ -172,7 +170,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 281.0, 227.0, 263.0, 40.0 ],
+					"patching_rect" : [ 227.0, 226.5, 263.0, 40.0 ],
 					"text" : "Multiple parameters passed to a function are separated by commas."
 				}
 
@@ -203,13 +201,12 @@
 , 			{
 				"box" : 				{
 					"code" : "atan2($x1, $x2) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 235.0, 259.0, 24.0 ],
+					"patching_rect" : [ 13.0, 235.0, 207.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -228,7 +225,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 233.0, 97.0, 311.0, 98.0 ],
+					"patching_rect" : [ 190.0, 96.5, 311.0, 98.0 ],
 					"text" : "sqrt is a built-in function computing the square root of a number. The arguments passed to a function are surrounded by parens.\nIn general, all the built-in functions of bell are listable, that is, they perform their operation upon a whole llll if provided."
 				}
 
@@ -259,13 +256,12 @@
 , 			{
 				"box" : 				{
 					"code" : "sqrt($x1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 134.0, 212.0, 24.0 ],
+					"patching_rect" : [ 13.0, 134.0, 168.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

@@ -71,7 +71,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 277.0, 299.5, 303.0, 98.0 ],
+					"patching_rect" : [ 288.0, 298.5, 303.0, 98.0 ],
 					"text" : "The value of the attributes of the \"with\" clauses are just expressions, so you can make them dynamic, or dependent on anything you want. The \"with\" clause is evaluated before the start of the actual loop, so you don't have access to the iterated elements of the incoming lllls in it."
 				}
 
@@ -102,14 +102,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x $addr in $x1 with @maxdepth $x2 ||| -1 repeat print($x [$addr]) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 321.5, 254.0, 54.0 ],
+					"patching_rect" : [ 13.0, 321.5, 270.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -174,7 +173,6 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x $addr in $x1 with @maxdepth -1 repeat print($x [$addr]) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-23",
 					"linecount" : 3,
 					"maxclass" : "newobj",

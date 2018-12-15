@@ -94,7 +94,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 280.0, 375.0, 292.0, 69.0 ],
-					"presentation_linecount" : 4,
 					"text" : "It is possible to assign data to more than one outlet with a single call to the outlet function. The return value of outlet is always the last value of its argument list."
 				}
 
@@ -102,7 +101,6 @@
 , 			{
 				"box" : 				{
 					"code" : "outlet(1 2, 123, 456) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -173,7 +171,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 280.0, 295.0, 297.0, 40.0 ],
+					"patching_rect" : [ 280.0, 287.0, 297.0, 40.0 ],
 					"text" : "If the outlet function is called multiple times, the last call is the one whose value is retained."
 				}
 
@@ -181,14 +179,13 @@
 , 			{
 				"box" : 				{
 					"code" : "outlet(2, 123) ; outlet(1, 456) ; outlet(2, 789) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-9",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 11.0, 288.0, 267.0, 54.0 ],
+					"patching_rect" : [ 11.0, 288.0, 267.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -203,7 +200,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 251.0, 227.5, 133.0, 23.0 ],
+					"patching_rect" : [ 171.0, 227.5, 133.0, 23.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -249,15 +246,14 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
-					"bubblepoint" : 0.76,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
-					"linecount" : 4,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 274.0, 149.0, 288.0, 69.0 ],
+					"patching_rect" : [ 192.0, 171.0, 372.0, 54.0 ],
 					"text" : "The outlet function tells bach.eval to output specific data from a specific outlet at the end of the evaluation. The extraoutlets attribute sets the number of non-result outlets."
 				}
 
@@ -265,14 +261,13 @@
 , 			{
 				"box" : 				{
 					"code" : "outlet(1, 123) ; 456 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 11.0, 179.0, 259.0, 39.0 ],
+					"patching_rect" : [ 11.0, 179.0, 179.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

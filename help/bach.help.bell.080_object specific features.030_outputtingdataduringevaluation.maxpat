@@ -40,14 +40,15 @@
 		"boxes" : [ 			{
 				"box" : 				{
 					"bubble" : 1,
+					"bubblepoint" : 0.56,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-25",
-					"linecount" : 6,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 371.0, 376.0, 220.0, 98.0 ],
+					"patching_rect" : [ 291.0, 376.5, 300.0, 69.0 ],
 					"text" : "Another way to directly output data at runtime is through the pseudovariables $do<1> ... $do<n>. Just like $o<n>, these don't generally require setting explicitly the directouts attribute."
 				}
 
@@ -70,7 +71,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 258.0, 447.5, 108.0, 23.0 ],
+					"patching_rect" : [ 251.0, 447.5, 108.0, 23.0 ],
 					"text" : "print y @popup 1"
 				}
 
@@ -81,7 +82,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 143.5, 447.5, 108.0, 23.0 ],
+					"patching_rect" : [ 141.0, 447.5, 108.0, 23.0 ],
 					"text" : "print x @popup 1"
 				}
 
@@ -100,14 +101,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x $y in $x1 with @maxdepth -1 repeat ($do2 = $y ; $do1 = $x) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-24",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 6.0, 397.5, 361.0, 39.0 ],
+					"patching_rect" : [ 6.0, 397.5, 280.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -134,7 +134,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 258.0, 331.5, 108.0, 23.0 ],
+					"patching_rect" : [ 291.0, 331.5, 108.0, 23.0 ],
 					"text" : "print y @popup 1"
 				}
 
@@ -142,14 +142,15 @@
 , 			{
 				"box" : 				{
 					"bubble" : 1,
+					"bubblepoint" : 0.63,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 10,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 371.0, 218.0, 220.0, 156.0 ],
+					"patching_rect" : [ 319.0, 217.5, 272.0, 112.0 ],
 					"text" : "Just as with the outlet function, you can send out values to multiple outlets at once. Unlike what happens with \"outlet\", the data are output in the order you pass them to the function; thus, if you want them to be output from right to left, you have to pass them in reverse order, so to speak."
 				}
 
@@ -160,7 +161,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 143.5, 331.5, 108.0, 23.0 ],
+					"patching_rect" : [ 148.5, 331.5, 108.0, 23.0 ],
 					"text" : "print x @popup 1"
 				}
 
@@ -179,14 +180,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x $y in $x1 with @maxdepth -1 repeat directout(2 1, $y, $x) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-9",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 6.0, 269.0, 361.0, 54.0 ],
+					"patching_rect" : [ 6.0, 269.0, 304.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -232,7 +232,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 313.5, 98.5, 280.5, 83.0 ],
+					"patching_rect" : [ 268.5, 100.5, 280.5, 83.0 ],
 					"text" : "The data are sent out the direct outlet as soon as the directout function is evaluated.\nNotice that the number of direct outlets (the ones outputting data during evaluation) is set through the directouts object attribute."
 				}
 
@@ -243,7 +243,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 293.0, 185.5, 133.0, 23.0 ],
+					"patching_rect" : [ 245.0, 185.5, 133.0, 23.0 ],
 					"text" : "print direct @popup 1"
 				}
 
@@ -262,14 +262,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x in arithmser(1, $x1) repeat directout(1, $x) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 123.0, 306.0, 54.0 ],
+					"patching_rect" : [ 6.0, 123.0, 258.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

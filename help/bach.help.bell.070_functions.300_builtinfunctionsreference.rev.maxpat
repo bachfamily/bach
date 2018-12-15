@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 234.0, 107.0, 617.0, 539.0 ],
+		"rect" : [ 84.0, 81.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,166 +39,125 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-19",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 320.0, 29.5, 23.0 ],
-					"text" : "10"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-20",
-					"linecount" : 2,
-					"maxclass" : "comment",
+					"id" : "obj-1",
+					"maxclass" : "button",
 					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 256.25, 342.5, 165.25, 40.0 ],
-					"text" : "You can also make chains of assignments."
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 9.0, 252.5, 24.0, 24.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-21",
+					"id" : "obj-2",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 385.5, 99.0, 23.0 ],
+					"patching_rect" : [ 9.0, 314.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$a = $b = $x1 ; $a $b ",
-					"id" : "obj-22",
+					"code" : "rev(1 2 [3 4] 5 @maxdepth -1) ",
+					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 351.0, 240.0, 23.0 ],
+					"patching_rect" : [ 9.0, 283.0, 291.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $a = $b = $x1 \\; $a $b @out m"
+					"text" : "bach.eval rev(1 2 [3 4] 5 @maxdepth -1) @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"bubble" : 1,
-					"bubbleside" : 2,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-18",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 224.25, 158.5, 57.0, 40.0 ],
-					"text" : "Meet pi!"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-14",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 171.0, 29.5, 23.0 ],
-					"text" : "10"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-16",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 238.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "($radius = $x1 / 2) * $radius * pi ",
-					"id" : "obj-17",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 202.0, 300.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval ($radius = $x1 / 2) * $radius * pi @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-9",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 53.0, 29.5, 23.0 ],
-					"text" : "10"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-2",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 234.25, 75.5, 236.25, 40.0 ],
-					"text" : "The return value of the assignment operator is the assigned value."
+					"patching_rect" : [ 9.0, 188.0, 326.0, 36.0 ],
+					"text" : "By default, only the root level is changed. This can be changed with the mindepth and maxdepth arguments.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-4",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 9.0, 67.5, 24.0, 24.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 11.0, 118.5, 99.0, 23.0 ],
+					"patching_rect" : [ 9.0, 129.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$radius = $x1 / 2 ",
+					"code" : "rev(1 2 [3 4] 5) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 11.0, 84.0, 214.0, 23.0 ],
+					"patching_rect" : [ 9.0, 98.0, 202.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $radius = $x1 / 2 @out m"
+					"text" : "bach.eval rev(1 2 [3 4] 5) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-6",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 436.0, 101.5, 131.0, 65.0 ],
+					"text" : "Arguments:\noutlets\nmindepth (default: 1)\nmaxdepth (default: 1)",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-76",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 39.0, 430.0, 21.0 ],
+					"text" : "The rev() function reverses the contents of an llll, like the bach.rev object.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -211,7 +170,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: return+value, bell+sequence",
+					"text" : "See Also:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -226,7 +185,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"text" : "Objects: bach.eval, bach.diff, bach.intersection, bach.symdiff, bach.union",
+					"text" : "Objects: bach.eval",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -241,8 +200,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 174.0, 23.0 ],
-					"text" : "Local variables: details",
+					"patching_rect" : [ 6.0, 8.0, 199.0, 23.0 ],
+					"text" : "rev() function reference",
 					"varname" : "title"
 				}
 
@@ -256,7 +215,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, variables, local, assignment, equal, operator, pi, chain",
+					"text" : "Tags: bell, built, in, function, outlet",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -265,43 +224,29 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-14", 0 ]
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-1", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-16", 0 ],
-					"source" : [ "obj-17", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-22", 0 ],
-					"source" : [ "obj-19", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
-					"source" : [ "obj-22", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-7", 0 ]
+					"destination" : [ "obj-2", 0 ],
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-9", 0 ]
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-7", 0 ]
 				}
 
 			}

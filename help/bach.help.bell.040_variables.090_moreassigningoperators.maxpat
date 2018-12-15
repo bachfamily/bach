@@ -132,11 +132,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-19",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 300.0, 190.5, 264.0, 54.0 ],
+					"patching_rect" : [ 255.0, 197.0, 298.0, 40.0 ],
 					"text" : "The !_= operator does the same, but the new elements are prepended rather than appended."
 				}
 
@@ -167,13 +167,12 @@
 , 			{
 				"box" : 				{
 					"code" : "Backwards !_= $x1 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-22",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 205.5, 275.0, 24.0 ],
+					"patching_rect" : [ 18.0, 205.5, 227.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -192,7 +191,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 262.0, 70.5, 261.0, 54.0 ],
+					"patching_rect" : [ 216.0, 70.0, 261.0, 54.0 ],
 					"text" : "The _= operator performs concatenation and assignment. It's a handy way to build lllls elements by elements."
 				}
 
@@ -223,13 +222,12 @@
 , 			{
 				"box" : 				{
 					"code" : "Built _= $x1 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 85.5, 235.0, 24.0 ],
+					"patching_rect" : [ 18.0, 85.5, 185.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

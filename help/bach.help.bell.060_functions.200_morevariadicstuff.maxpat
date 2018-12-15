@@ -46,7 +46,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 459.0, 345.0, 122.0, 25.0 ],
+					"patching_rect" : [ 357.0, 345.0, 122.0, 25.0 ],
 					"text" : "Just to be sure..."
 				}
 
@@ -58,7 +58,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 434.0, 314.0, 62.0, 23.0 ],
+					"patching_rect" : [ 332.0, 314.0, 62.0, 23.0 ],
 					"text" : "Babilonia"
 				}
 
@@ -70,7 +70,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 220.0, 314.0, 56.0, 23.0 ],
+					"patching_rect" : [ 169.0, 314.0, 56.0, 23.0 ],
 					"text" : "Vietnam"
 				}
 
@@ -78,13 +78,12 @@
 , 			{
 				"box" : 				{
 					"code" : "Greet( \"Good Morning,\" , $x1, $x2, $x3) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 3,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 345.0, 447.0, 24.0 ],
+					"patching_rect" : [ 6.0, 345.0, 345.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -112,7 +111,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 246.0, 200.0, 162.0, 23.0 ],
+					"patching_rect" : [ 222.0, 200.0, 162.0, 23.0 ],
 					"text" : "Sir James Paul McCartney"
 				}
 
@@ -120,14 +119,12 @@
 , 			{
 				"box" : 				{
 					"code" : "Greet(`Hi , $x1, $x2) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-21",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 231.0, 259.0, 39.0 ],
+					"patching_rect" : [ 6.0, 231.0, 235.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -154,11 +151,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 9,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 347.0, 36.5, 248.0, 141.0 ],
+					"patching_rect" : [ 260.0, 57.0, 316.0, 98.0 ],
 					"text" : "Here, we can pass $greeting by position. We use $argcount and $args in a loop for iterating over the incoming lists.\nAlso, notice that we declare a $x variable after the ellipsis, for preventing $x to be passed to Greet by propagation, and that $x is not seen by $argcount."
 				}
 
@@ -166,14 +163,13 @@
 , 			{
 				"box" : 				{
 					"code" : "Greet = $greeting, <...>, $x -> for $x in arithmser(2, $argcount) repeat print($greeting $args($x)) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-6",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 80.0, 337.0, 54.0 ],
+					"patching_rect" : [ 6.0, 80.0, 244.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

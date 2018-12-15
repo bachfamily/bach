@@ -62,7 +62,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 323.0, 265.5, 209.0, 40.0 ],
+					"patching_rect" : [ 297.0, 257.0, 209.0, 40.0 ],
 					"text" : "... and the same happens here, with a different $y variable."
 				}
 
@@ -93,15 +93,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$y = 10 ; PlusYglobal($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-27",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 265.5, 298.0, 39.0 ],
+					"patching_rect" : [ 15.0, 265.5, 269.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -113,7 +111,6 @@
 , 			{
 				"box" : 				{
 					"code" : "PlusYglobal = ($x -> $x + $y) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-24",
 					"linecount" : 2,
@@ -121,7 +118,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 51.5, 201.0, 39.0 ],
+					"patching_rect" : [ 15.0, 51.5, 152.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -140,7 +137,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 323.0, 149.5, 268.0, 40.0 ],
+					"patching_rect" : [ 284.0, 141.0, 268.0, 40.0 ],
 					"text" : "Here we have a variable called $y, which will be passed to plusYglobal at call..."
 				}
 
@@ -155,7 +152,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 227.0, 51.5, 274.0, 40.0 ],
+					"patching_rect" : [ 176.0, 51.5, 274.0, 40.0 ],
 					"text" : "Here we define a function referring a $y variables, and make it available globally."
 				}
 
@@ -186,15 +183,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$y = 2 ; PlusYglobal($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 15.0, 149.5, 294.0, 39.0 ],
+					"patching_rect" : [ 15.0, 149.5, 262.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

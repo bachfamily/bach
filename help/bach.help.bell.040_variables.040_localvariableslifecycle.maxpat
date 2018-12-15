@@ -128,7 +128,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 374.5, 359.0, 144.0, 25.0 ],
+					"patching_rect" : [ 292.5, 359.0, 144.0, 25.0 ],
 					"text" : "Another way to do it."
 				}
 
@@ -136,13 +136,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x = $count + 1 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-27",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 359.0, 353.0, 24.0 ],
+					"patching_rect" : [ 6.0, 359.0, 278.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -185,7 +184,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 168.0, 136.0, 76.0, 23.0 ],
+					"patching_rect" : [ 126.0, 136.0, 76.0, 23.0 ],
 					"text" : "loadmess 0"
 				}
 
@@ -224,7 +223,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 200.0, 158.0, 232.0, 54.0 ],
+					"patching_rect" : [ 161.5, 157.5, 190.0, 54.0 ],
 					"text" : "If you need to keep a value persistent, you can output it and reinject it in the object."
 				}
 
@@ -232,13 +231,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x = $x2 + 1 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 173.0, 181.0, 24.0 ],
+					"patching_rect" : [ 6.0, 173.0, 139.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -269,7 +267,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 395.5, 67.5, 165.0, 83.0 ],
+					"patching_rect" : [ 292.5, 67.0, 165.0, 83.0 ],
 					"text" : "Try banging repeatedly bach.eval: you'll see that, at the beginning of every evaluation, $x is reset to null."
 				}
 
@@ -277,13 +275,12 @@
 , 			{
 				"box" : 				{
 					"code" : "print($x) ; $x = 42 ; print($x) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 97.0, 384.0, 24.0 ],
+					"patching_rect" : [ 6.0, 97.0, 277.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -391,7 +388,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-31", 0 ],
-					"midpoints" : [ 26.0, 414.0, 366.75, 414.0, 366.75, 320.0, 47.5, 320.0 ],
+					"midpoints" : [ 26.0, 414.0, 317.75, 414.0, 317.75, 320.0, 47.5, 320.0 ],
 					"source" : [ "obj-24", 1 ]
 				}
 
@@ -434,7 +431,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-5", 1 ],
-					"midpoints" : [ 26.0, 229.0, 200.0, 229.0, 200.0, 167.0, 177.5, 167.0 ],
+					"midpoints" : [ 26.0, 229.0, 156.0, 229.0, 156.0, 167.0, 135.5, 167.0 ],
 					"source" : [ "obj-6", 1 ]
 				}
 

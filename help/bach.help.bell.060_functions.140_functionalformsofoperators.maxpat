@@ -63,8 +63,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 235.0, 373.5, 284.0, 40.0 ],
-					"text" : "#/ is a function to all effects and purposes (it even has its parameter names, $x and $y)."
+					"patching_rect" : [ 91.0, 373.5, 284.0, 40.0 ],
+					"text" : "#/ is a function to all effects and purposes (it even has parameter names, $x and $y)."
 				}
 
 			}
@@ -94,14 +94,13 @@
 , 			{
 				"box" : 				{
 					"code" : "#/(2, $x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-18",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 411.5, 220.0, 24.0 ],
+					"patching_rect" : [ 13.0, 411.5, 172.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -119,7 +118,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 283.5, 317.5, 284.0, 25.0 ],
+					"patching_rect" : [ 225.5, 316.5, 284.0, 25.0 ],
 					"text" : "We can use the functional form of division: #/"
 				}
 
@@ -150,14 +149,13 @@
 , 			{
 				"box" : 				{
 					"code" : "reduce($x1, #/) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 317.5, 259.0, 24.0 ],
+					"patching_rect" : [ 13.0, 317.5, 205.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -207,14 +205,13 @@
 , 			{
 				"box" : 				{
 					"code" : "reduce($x1, pow) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 219.5, 267.0, 24.0 ],
+					"patching_rect" : [ 13.0, 219.5, 218.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -233,7 +230,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 289.0, 204.5, 267.0, 54.0 ],
+					"patching_rect" : [ 242.5, 204.0, 267.0, 54.0 ],
 					"text" : "This one shouldn't come as a surprise. But what if we want to reduce by division, rather than by power?"
 				}
 
@@ -264,15 +261,13 @@
 , 			{
 				"box" : 				{
 					"code" : "reduce($x1, ($x, $y -> pow($x, $y))) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
-					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 109.5, 376.0, 39.0 ],
+					"patching_rect" : [ 13.0, 109.5, 323.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -287,11 +282,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
-					"linecount" : 5,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 388.0, 87.5, 201.0, 83.0 ],
+					"patching_rect" : [ 342.0, 86.5, 249.0, 69.0 ],
 					"text" : "Meet the \"reduce\" function: it accumulates the result of a lambda function. Here we compute 2 raised to 3 raised to 4."
 				}
 

@@ -44,7 +44,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "bang", "int" ],
-					"patching_rect" : [ 442.5, 431.0, 117.0, 23.0 ],
+					"patching_rect" : [ 344.5, 413.0, 117.0, 23.0 ],
 					"text" : "text halfFun.txt"
 				}
 
@@ -56,7 +56,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "bang", "int" ],
-					"patching_rect" : [ 442.5, 406.0, 117.0, 23.0 ],
+					"patching_rect" : [ 344.5, 388.0, 117.0, 23.0 ],
 					"text" : "text doubleFun.txt"
 				}
 
@@ -94,8 +94,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 157.0, 134.5, 243.0, 69.0 ],
-					"presentation_linecount" : 10,
+					"patching_rect" : [ 157.0, 134.5, 247.0, 69.0 ],
 					"text" : "The read message loads the contents of a text file in the editor.\nIf you double-click the editor, you'll see the code that has been loaded."
 				}
 
@@ -138,13 +137,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x1 * 2 ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 157.0, 134.0, 24.0 ],
+					"patching_rect" : [ 6.0, 157.0, 113.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -159,11 +157,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-16",
-					"linecount" : 11,
+					"linecount" : 10,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 305.0, 253.0, 302.0, 170.0 ],
+					"patching_rect" : [ 245.0, 252.0, 346.0, 156.0 ],
 					"text" : "The \"include\" directive gets virtually replaced by the contents of the file in parens. By \"virtually\" we mean that, if you double-click the editor, you will still see the \"include\" directive, but the code works as if, at its place, there were the content of the specified file.\nNotice that, strictly speaking, the semicolons are not there to separate the include directives, but their contents one from another.\nDouble-click the text objects to see the contents of the included files:"
 				}
 
@@ -171,14 +169,13 @@
 , 			{
 				"box" : 				{
 					"code" : "include(doubleFun.txt) ; include(halfFun.txt) ; $doubleFun($x1) $halfFun($x1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-1",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 311.0, 293.0, 54.0 ],
+					"patching_rect" : [ 6.0, 311.0, 230.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

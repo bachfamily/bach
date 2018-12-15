@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
+		"rect" : [ 84.0, 81.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,42 +39,69 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-14",
+					"id" : "obj-3",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 19.0, 287.5, 110.0, 23.0 ],
-					"text" : "1.2 3/4 G6+1/7t"
+					"patching_rect" : [ 43.25, 86.0, 37.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "a b c"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-6",
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 86.0, 29.5, 23.0 ],
+					"text" : "q"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 19.0, 349.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 149.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "[$x1] [$i1] [$r1] [$f1] [$p1] ",
-					"fontsize" : 13.0,
-					"id" : "obj-8",
+					"code" : "insert(1 [2 3] 4 5 6 7, 3, $x1) ",
+					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 19.0, 316.0, 265.0, 23.0 ],
+					"patching_rect" : [ 9.0, 118.0, 280.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval [$x1] [$i1] [$r1] [$f1] [$p1] @out m"
+					"text" : "bach.eval insert(1 [2 3] 4 5 6 7\\, 3\\, $x1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-6",
+					"linecount" : 6,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 414.0, 97.0, 121.0, 94.0 ],
+					"text" : "Arguments:\nllll\naddress (default: 1)\nmodel\nmulti (default: 0)\nsizes (default: 0)",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -83,12 +110,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 12,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 37.0, 580.0, 181.0 ],
-					"text" : "In addition to the $x1 ... $x<n> pseudovariables, bell also supports the casting input pseudovariables $i<n>, $r<n>, $f<n> and $p<n>, which return the corresponding input data (either from an inlet or from the arguments passed in a function calls) converted respectively to integers, rationals, floats or pitches.\nStrictly speaking, no conversion happens without any loss of information or precision. Moreover, symbols are always converted to 0 or C0.\nThe conversion performed by the casting input pseudovariables is performed for every occurrence of each pseudovariable in the expression, and as a consequence the process is potentially inefficient; moreover, casting pseudovariables are less readable than the corresponding built-in functions (namely, int, rat, float and pitch). For these reasons, the use of casting input pseudovariables is generally discouraged, and they are implemented only for the sake of compatibility with bach.expr.",
+					"patching_rect" : [ 9.0, 39.0, 522.0, 36.0 ],
+					"text" : "The insert() function inserts one or more elements in a list according to their positions, like the bach.subs object.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -102,7 +129,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: local+variable, input+pseudovariable, built+in+function",
+					"text" : "See Also:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -117,7 +144,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"text" : "Objects: bach.eval, bach.diff, bach.intersection, bach.symdiff, bach.union",
+					"text" : "Objects: bach.eval",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -132,8 +159,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 227.0, 23.0 ],
-					"text" : "Casting input pseudovariables",
+					"patching_rect" : [ 6.0, 8.0, 194.0, 23.0 ],
+					"text" : "insert() function reference",
 					"varname" : "title"
 				}
 
@@ -147,7 +174,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, function, dollar, casting, input, pseudovariable, argument, position",
+					"text" : "Tags: bell, built, in, function, outlet",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -156,15 +183,22 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-8", 0 ],
-					"source" : [ "obj-14", 0 ]
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-2", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-8", 0 ]
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-7", 0 ]
 				}
 
 			}

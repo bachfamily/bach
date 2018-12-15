@@ -75,14 +75,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$a = $x1 ; $a = 200 $a ; $a ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 12.0,
 					"id" : "obj-31",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 420.20172119140625, 326.0, 22.0 ],
+					"patching_rect" : [ 6.0, 420.20172119140625, 252.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -102,7 +101,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 353.5, 386.142852783203125, 237.5, 83.0 ],
+					"patching_rect" : [ 260.75, 383.142852783203125, 251.5, 83.0 ],
 					"text" : "Reassignment is useful in more complex situations, including loops, where a variable typically takes a new value based upon its previous one. Here's an in vitro example."
 				}
 
@@ -180,7 +179,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 386.5, 74.0, 183.0, 54.0 ],
+					"patching_rect" : [ 288.0, 74.0, 183.0, 54.0 ],
 					"text" : "The value assigned to a variable can be the result of any kind of expression..."
 				}
 
@@ -195,7 +194,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 316.75, 187.0, 217.0, 54.0 ],
+					"patching_rect" : [ 254.0, 186.5, 217.0, 54.0 ],
 					"text" : "... including another assignment: this one assigns the same value to $x and $y."
 				}
 
@@ -226,13 +225,12 @@
 , 			{
 				"box" : 				{
 					"code" : "$x = $y = $x1 ; $x $y ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-18",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 202.0, 306.0, 24.0 ],
+					"patching_rect" : [ 6.0, 202.0, 237.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -267,7 +265,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$a = $x1 * 2 ; print($a) ; $a = $x2 * 3; $a ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 12.0,
 					"id" : "obj-1",
 					"linecount" : 2,
@@ -275,7 +272,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 306.142852783203125, 276.0, 36.0 ],
+					"patching_rect" : [ 6.0, 306.142852783203125, 269.0, 35.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -310,14 +307,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$franchise = if $x1 == 47 then `trek else if $x1 == `r2d2 then `wars else `bucks ; `star $franchise ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-59",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 74.0, 376.0, 54.0 ],
+					"patching_rect" : [ 6.0, 74.0, 276.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

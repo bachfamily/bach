@@ -61,7 +61,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 395.0, 360.0, 196.0, 98.0 ],
+					"patching_rect" : [ 301.0, 359.0, 196.0, 98.0 ],
 					"text" : "Another fun, but hardly useful, fact: functions can return functions.\nBy the way, here's how we define and call functions with no arguments."
 				}
 
@@ -92,7 +92,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$funfun = (-> (cos sin):random(1, 2)) ; $funfun()($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
 					"linecount" : 2,
@@ -100,7 +99,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 389.5, 384.0, 39.0 ],
+					"patching_rect" : [ 6.0, 389.5, 287.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -119,7 +118,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 380.0, 272.5, 211.0, 54.0 ],
+					"patching_rect" : [ 297.0, 276.5, 211.0, 54.0 ],
 					"text" : "Built-in functions can be treated as any other value, and assigned to variables as well."
 				}
 
@@ -150,14 +149,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$cosine = cos ; $cosine($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 287.5, 361.0, 24.0 ],
+					"patching_rect" : [ 6.0, 287.5, 282.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -176,7 +174,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 361.0, 159.5, 217.0, 69.0 ],
+					"patching_rect" : [ 274.0, 159.0, 217.0, 69.0 ],
 					"text" : "Here $funlist is assigned not just a function, but a llll of functions. When we call it, both functions are applied in sequence."
 				}
 
@@ -207,7 +205,6 @@
 , 			{
 				"box" : 				{
 					"code" : "$funlist = ($x->$x*2) ($x->$x*3) ; $funlist($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
 					"linecount" : 2,
@@ -215,7 +212,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 174.5, 345.0, 39.0 ],
+					"patching_rect" : [ 6.0, 174.5, 257.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -257,7 +254,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 272.0, 61.5, 330.0, 54.0 ],
+					"patching_rect" : [ 223.0, 61.0, 330.0, 54.0 ],
 					"text" : "Here we call directly a function literal, without assigning it to a variable. Though this can hardly be useful, it is possible by virtue of how functions work."
 				}
 
@@ -265,14 +262,13 @@
 , 			{
 				"box" : 				{
 					"code" : "($x->$x*2)($x1) ",
-					"fontname" : "Menlo Regular",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 76.5, 259.0, 24.0 ],
+					"patching_rect" : [ 6.0, 76.5, 207.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}

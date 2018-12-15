@@ -63,8 +63,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 320.0, 271.5, 271.0, 141.0 ],
-					"presentation_linecount" : 15,
+					"patching_rect" : [ 320.0, 263.5, 271.0, 141.0 ],
 					"text" : "A somewhat more complex example. Here, we \"outsource\" the lambda function of sort to the lambda loop.\nThe basic principle is the same: all the lambda function we pass to sort is outputting data to the direct outlets and subsequently retrieving other data from the lambda inlet, which constitute the actual return value of the lambda function."
 				}
 
@@ -76,7 +75,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
-					"patching_rect" : [ 141.0, 409.5, 55.0, 23.0 ],
+					"patching_rect" : [ 145.5, 391.5, 55.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -92,7 +91,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 227.0, 380.0, 84.0, 23.0 ],
+					"patching_rect" : [ 231.5, 362.0, 84.0, 23.0 ],
 					"text" : "bach.% 1200"
 				}
 
@@ -116,7 +115,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 141.0, 380.0, 84.0, 23.0 ],
+					"patching_rect" : [ 145.5, 362.0, 84.0, 23.0 ],
 					"text" : "bach.% 1200"
 				}
 
@@ -139,7 +138,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 409.5, 133.0, 23.0 ],
+					"patching_rect" : [ 6.0, 362.0, 133.0, 23.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -147,14 +146,13 @@
 , 			{
 				"box" : 				{
 					"code" : "$l1.sort(($x $y -> directout(2 1, $y $x) ; directin(1))) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-14",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 6.0, 315.0, 301.0, 54.0 ],
+					"patching_rect" : [ 6.0, 315.0, 298.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -182,7 +180,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 297.0, 154.0, 84.0, 23.0 ],
+					"patching_rect" : [ 235.0, 153.5, 84.0, 23.0 ],
 					"text" : "bach.% 1200"
 				}
 
@@ -208,7 +206,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 35.0, 591.0, 36.0 ],
+					"patching_rect" : [ 6.0, 35.0, 594.0, 36.0 ],
 					"text" : "The directin function, and the corresponding pseudovariables $dx<1> ... $dx<n>, allow receiving data during the evaluation. Their typical use is for setting up lambda loops.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -220,11 +218,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-15",
-					"linecount" : 9,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 383.0, 95.0, 201.75, 141.0 ],
+					"patching_rect" : [ 325.0, 116.0, 261.0, 98.0 ],
 					"text" : "Here, we set up an external lambda loop. At every iteration of the for loop, a value is output from the direct outlet, and subsequently a new value is read from the direct inlet. The direct inlet values are then concatenated to form the result."
 				}
 
@@ -243,14 +241,13 @@
 , 			{
 				"box" : 				{
 					"code" : "for $x in $x1 repeat ($do1 = $x ; $res _= $dx1) ",
-					"fontname" : "Menlo Regular",
 					"id" : "obj-3",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 146.0, 269.0, 39.0 ],
+					"patching_rect" : [ 6.0, 146.0, 210.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -358,7 +355,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-14", 1 ],
-					"midpoints" : [ 150.5, 439.0, 316.0, 439.0, 316.0, 300.0, 297.5, 300.0 ],
+					"midpoints" : [ 155.0, 422.0, 320.0, 422.0, 320.0, 300.0, 294.5, 300.0 ],
 					"source" : [ "obj-17", 0 ]
 				}
 
