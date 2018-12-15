@@ -9913,7 +9913,7 @@ t_note *build_note_from_ac_av(t_notation_obj *r_ob, long argc, double *argv){
 #endif
     
 	note->durationline = build_duration_line(note);
-	note->parent = (t_chord *)WHITENULL;
+    note->parent = NULL; // was: (t_chord *)WHITENULL; but why?
 
 	// adding the new note
 	if (argc == 2) { // onset duration midicents

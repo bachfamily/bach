@@ -2050,7 +2050,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
     true_ac = MIN(attr_args_offset(ac, av), LLLL_MAX_OUTLETS - 1);
     
     if ((x = (t_playkeys *) object_alloc_debug(playkeys_class))) {
-        // @arg 0 @name playkeys @type anything @digest parameters
+        // @arg 0 @name playkeys @type anything @digest Parameters
         // @description The names of the parameters to retrieve.
         // Use an llll of type <b>[slot <m>number</m>]</b> or
         // <b>[slot <m>name</m>]</b> to retrieve a given slot.

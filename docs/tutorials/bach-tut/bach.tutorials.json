@@ -4,7 +4,7 @@
 		"filename" : [ "Hello World (a).maxpat" ],
 		"digest" : [ "First steps with the bach nested lists (lllls)" ],
 		"description" : [ "In this tutorial you'll move your first steps with the Lisp-like linked lists (lllls for short), which are the standard communication mechanism throughout all the bach environment" ],
-		"numsections" : [ 12 ],
+		"numsections" : [ 13 ],
 		"topics" : [ "displaying lllls, creating lllls, modifying lllls, handling lllls" ],
 		"seealso": [ "bach.tree", "bach.print", "bach.portal", "bach.reg", "bach.length", "bach.depth", "bach.nth", "bach.find", "bach.filternull", "bach.roll", "bach.score" ]
 	},

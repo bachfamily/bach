@@ -2914,7 +2914,7 @@
 		9118C2061941D8CD00BA58AF /* life.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = life.c; sourceTree = "<group>"; };
 		911A5BB5183219CB00E8A26C /* notation_attrs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_attrs.h; sourceTree = "<group>"; };
 		911B65D220684BAA00464E16 /* eval.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = eval.c; sourceTree = "<group>"; };
-		911B65D420684C0400464E16 /* libcode.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcode.a; path = "../../../../../../Library/Developer/Xcode/DerivedData/bach-bqoboivcgdedwoagckavjkxwtvql/Build/Products/Development/libcode.a"; sourceTree = "<group>"; };
+		911B65D420684C0400464E16 /* libcode.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcode.a; path = ../../../code/lib/libcode.a; sourceTree = "<group>"; };
 		911BB20817CBA88F00B513E8 /* jit.agl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jit.agl.h; sourceTree = "<group>"; };
 		911BB20917CBA88F00B513E8 /* jit.altivec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jit.altivec.h; sourceTree = "<group>"; };
 		911BB20A17CBA88F00B513E8 /* jit.bin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jit.bin.h; sourceTree = "<group>"; };

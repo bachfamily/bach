@@ -3,13 +3,13 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 7,
-			"minor" : 2,
-			"revision" : 2,
+			"minor" : 3,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 132.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 132.0, 79.0, 800.0, 741.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -51,7 +51,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 317.0, 620.0, 36.0 ],
-					"presentation_rect" : [ 5.0, 317.0, 0.0, 0.0 ],
 					"showhand" : 0,
 					"text" : "The xmlornament, xmltechnical and xmlarticulations tags handle MusicXML export as \"ornament\", \"technical\" (default: \"none\") and/or \"articulations\" (default: \"custom\" = set up a \"other-articulations\" tag)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
@@ -74,7 +73,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 211.5, 612.0, 108.0 ],
-					"presentation_rect" : [ 6.0, 140.0, 0.0, 0.0 ],
 					"showhand" : 0,
 					"text" : "The following specifications will refer to unzoomed situations, and will be scaled according to the zoom:\n– mainxshift, mainyshift: x and y shift of positioning for the main character (positive y shift moves up)\n– flippedxshift, flippedyshift: x and y shift of positioning for the flipped character\n– mainheight, flippedheight: height of the main and flipped characters\n– mainycenter, flippedycenter: position of the vertical center of the articulation for main and flipped char\n– outsidestaffynudge: additional y shift to push articulation farther from staff\n– extyshift: horizontal offset for the beginning of the articulation extensions",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
@@ -97,7 +95,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 151.0, 612.0, 65.0 ],
-					"presentation_rect" : [ 6.0, 67.0, 0.0, 0.0 ],
 					"showhand" : 0,
 					"text" : "The following specifications determine the characters used:\n– mainchar: symbol or unicode value determining the main articulation character (above notes)\n– flippedchar: symbol or unicode value determining the flipped articulation character (below notes)\n– extchar: symbol or unicode value of the articulation extension, if any (e.g.: the tilde in a trill line)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
@@ -251,7 +248,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 602.0, 80.0 ],
 					"style" : "",
-					"text" : "Tags: articulation, define, custom, specification, syntax, spec, xml, export, musicxml, xshift, yshift, fullname, shortname, alias, font, basept, position, pt, mainchar, char, flippedchar, mainxshift, mainyshift, flippedxshift, flippedyshift, mainheight, flippedheight, height, center, ycenter, mainycenter, flippedycenter, outsidestaffynudge, extyshift, xmlornament, xmltechnical, xmlarticulations, ornament, technical, articulation, option, avoid, avoidlines, outside, staff, outsidestaff, center, centerovernote, note, centeroverstem, stemp, spanties, tie, span, copy, cloned, copywhencloned, copywhenclonedsamechord, split, copywhensplit, shift, beam, shiftwithbeams",
+					"text" : "Tags: articulation, define, custom, specification, syntax, spec, xml, export, musicxml, xshift, yshift, fullname, shortname, alias, font, basept, position, pt, mainchar, char, flippedchar, mainxshift, mainyshift, flippedxshift, flippedyshift, mainheight, flippedheight, height, center, ycenter, mainycenter, flippedycenter, outsidestaffynudge, extyshift, xmlornament, xmltechnical, xmlarticulations, ornament, technical, articulation, option, avoid, avoidlines, outside, staff, outsidestaff, center, centerovernote, note, centeroverstem, stemp, spanties, tie, span, copy, cloned, copywhencloned, copywhenclonedsamechord, split, copywhensplit, shift, beam, shiftwithbeams, extchar, extension",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

@@ -146,31 +146,31 @@
       "bach.sieve"
     ]
   },
-  "bach.code": {
-    "digest": "Compare two lllls for greater than or equal condition",
+  "bach.eval": {
+    "digest": "Evaluate advanced expressions",
     "module": "bach",
     "category": [
       "bach",
       "bach objects",
-      "bach llll"
+      "bach llll",
+      "bach math"
     ],
     "keywords": [
-      "compare",
-      "greater",
-      "equal",
-      "condition",
-      "lexicographical",
-      "order",
-      "numerical"
+      "expression",
+      "evaluate",
+      "variable",
+      "number",
+      "calculate",
+      "compute",
+      "function",
+      "code",
+      "if",
+      "branching"
     ],
     "seealso": [
-      "bach.==",
-      "bach.!=",
-      "bach.&gt;",
-      "bach.&lt;",
-      "bach.&lt;=",
-      "bach.filter",
-      "bach.sieve"
+      "expr",
+      "vexpr",
+      "bach.expr"
     ]
   },
   "bach.collect": {

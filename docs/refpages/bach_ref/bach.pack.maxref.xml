@@ -84,6 +84,19 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="append" get="1" set="1" type="llll" size="1">
+			<digest>
+				Items To Append
+			</digest>
+			<description>
+				An optional llll to be appended at the end of the llll
+				resulting from the assemblage of the specified keys.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Items To Append" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="nullmode" get="1" set="1" type="int" size="1">
 			<digest>
 				Null Mode
@@ -122,6 +135,19 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="prepend" get="1" set="1" type="llll" size="1">
+			<digest>
+				Items To Prepend
+			</digest>
+			<description>
+				An optional llll to be prepended at the beginning of the llll
+				resulting from the assemblage of the specified keys.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Items To Prepend" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>

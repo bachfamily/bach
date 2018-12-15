@@ -5,7 +5,7 @@ max oblist "bach objects" bach.is;
 max oblist "bach objects" bach.lisp;
 max oblist "bach objects" bach.diff;
 max oblist "bach objects" bach.>;
-max oblist "bach objects" bach.code;
+max oblist "bach objects" bach.eval;
 max oblist "bach objects" bach.collect;
 max oblist "bach objects" bach.args;
 max oblist "bach objects" bach.join;

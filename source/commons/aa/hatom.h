@@ -268,6 +268,7 @@ typedef enum _llll_leveltypes {
     L_FLATTENED = 0xF0 // private, only used by llll_flat
 } e_llll_leveltypes;
 
+
 /*
  Useful with llll_getindex()
  */
