@@ -78,9 +78,8 @@
 // When the index or maximum or minimum is reached, the "Maxima" or "Minima" list (depending
 // on the direction) will be updated and sent out, as well as the local carry and possibly the global carry.
 // Refer to the <m>bang</m> method to know more about maxima and minima lists, as well as about local and global carry. <br />
-// An integer in the second inlet sets the direction, as for <o>counter</o>: 0 is Up, 1 is Down, and 2 is Up And Down.
-// When direction is Up, indices range from their minimum to their maximum, when direction is Down they do the opposite.
-// When direction is Up And Down, they go from their minimum configuration to the maximum configuration, and then come back. <br />
+// An integer in the second inlet sets the direction, as for <o>counter</o>: 0 is Up, 1 is Down.
+// When direction is Up, indices range from their minimum to their maximum, when direction is Down they do the opposite. <br />
 // An integer in the third inlet sets a global minimum for all indices. <br />
 // An integer in the fourth inlet sets a global maximum for all indices <br />.
 
@@ -136,7 +135,7 @@
 // @description Outputs the current multi-index out the first outlet, without changing it.
 
 // @method reset @digest Reset counting
-// @description Reset the counting either to all minimum values (if direction is Up or Up And Down) or
+// @description Reset the counting either to all minimum values (if direction is Up) or
 // to all maximum values (if direction is Down).
 // (except if the <m>strictly</m> attribute is set, refer to it for more information)
 
@@ -160,7 +159,7 @@ CLASS_ATTR_CHAR(c, "strictly", 0, t_counter, strictly);
 CLASS_ATTR_STYLE_LABEL(c,"strictly",0,"onoff","Force Strictly Increasing Or Decreasing Indices");
 CLASS_ATTR_BASIC(c,"strictly",0);
 // @description If the <m>strictly</m> attribute is set to 1 (which by default is not the case),
-// the element of the multi-index will be forced to be strictly increasing (if direction is Up or Up And Down)
+// the element of the multi-index will be forced to be strictly increasing (if direction is Up)
 // or strictly decreasing (if direction is Down). This makes sense essentially while circularly cycling on
 // the multi-index with bangs. For instance, if we have three indices, each
 // of which can range from 0 to 3, when <m>strictly</m> is 0, a bang will iterate through the lists: 
@@ -199,7 +198,7 @@ CLASS_ATTR_STYLE_LABEL(c,"verbose",0,"onoff","Verbose Minima And Maxima");
 
 // @in 1 @type int @digest Direction
 // @description An integer in the second inlet defines the counting direction.
-// As for <o>counter</o>, a 0 means "Up" and 1 means "Down" and a 2 means "Up And Down".
+// As for <o>counter</o>, a 0 means "Up" and 1 means "Down".
 
 // @in 2 @type list @digest Minimum value for each index
 // @description An integer or list in the third inlet sets the minima for all indices
@@ -242,7 +241,7 @@ CLASS_ATTR_STYLE_LABEL(c,"verbose",0,"onoff","Verbose Minima And Maxima");
 // If there are two options, the first number sets the global minimum value for all indices,
 // and the second number sets the global maximum value of all indices (direction will be by default Up). 
 // If there are three options, the first number 
-// specifies the direction of the count (0 being Up, 1 being Down, 2 being Up And Down), the second number 
+// specifies the direction of the count (0 being Up, 1 being Down), the second number 
 // specifies the global minimum for all indices, and the third argument specifies the global maximum.
 // If no options are specified, the direction will be U, the minimum for all indices will be 0
 // and the maximum for all indices will be 65535.

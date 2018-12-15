@@ -142,7 +142,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     }
     
     must_cleanup = (view != gensym("raw"));
-    
+
     if (fadepredomain < 0)
         fadepredomain = (view == gensym("raw") ? r_ob->fade_predomain : 0);
     
@@ -158,7 +158,10 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         char full_filename_temp[MAX_PATH_CHARS];
         full_filename_temp[0] = 0;
         short path = 0;
-        if (saveasdialog_extended(filename_temp, &path, &outtype, &filetype, 1) == 0) {
+        strncpy_zero(filename_temp, "Untitled.png", MAX_PATH_CHARS);
+
+        short c = saveasdialog_extended(filename_temp, &path, &outtype, &filetype, 1);
+        if (c == 0) {
             path_topotentialname(path, filename_temp, full_filename_temp, 0);
             if (full_filename_temp[0])
                 filename_sym = gensym(full_filename_temp);
@@ -187,7 +190,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                 type_sym = gensym("png");
         }
     }
-    
+
     if (filename_sym) {
         // getting output path
         short path = path_getdefault();
@@ -282,8 +285,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             t_rect bg = build_rect(0, 0, w, h * num_shots + (num_shots - 1) * systemvshift_pixels);
             paint_rect(page_g, &bg, NULL, &r_ob->j_background_rgba, 0, 0);
         }
-        
-        
+
         t_llllelem *tpt_el = tuttipoint_system_layout ? tuttipoint_system_layout->l_head : NULL;
         for (long i = 1; i <= num_shots; i++, tpt_el = (tpt_el ? tpt_el->l_next : NULL)) {
             // adjusting filename if needed
@@ -423,7 +425,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             r_ob->firsttime = true;
             notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
         }
-        
+
         r_ob->fade_predomain = fade_predomain_prev;
         
         r_ob->send_undo_redo_bang = send_undo_redo_bang_prev;
