@@ -38,7 +38,7 @@
 	<objarglist>
 		<objarg name="playkeys" optional="0" type="anything">
 			<digest>
-				parameters
+				Parameters
 			</digest>
 			<description>
 				The names of the parameters to retrieve.

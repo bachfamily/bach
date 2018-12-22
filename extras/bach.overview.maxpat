@@ -9,7 +9,7 @@
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 75.0, 179.0, 941.0, 639.0 ],
+		"rect" : [ 322.0, 116.0, 941.0, 639.0 ],
 		"bgcolor" : [ 0.941176, 0.941176, 0.941176, 1.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -63,7 +63,7 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 789.0, 9.0, 141.0, 19.0 ],
 					"style" : "",
-					"text" : "(build 1538930157)",
+					"text" : "(build 1545479444)",
 					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
 					"textjustification" : 2,
 					"varname" : "autohelp_top_digest[1]"
@@ -529,7 +529,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 114.0, 5868.0, 54.0, 37.0 ],
-									"presentation_rect" : [ 240.0, 5790.5, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Lllls"
 								}
@@ -545,7 +544,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 232.0, 5491.0, 455.0, 104.0 ],
-									"presentation_rect" : [ 130.0, 5491.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Yes, we decided to switch to using square brackets by default, but don't worry! ALL backward compatibility is preserved, and you can still go on using round parentheses if you liked them so much – and you can always display round parentheses via bach.textout.\nAlso, our internal llll parsing has been completely rewritten. We have improved some important points, and if you ever are annoyed by backticks, you should definitely read this"
 								}
@@ -561,7 +559,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 5510.5, 197.0, 65.0 ],
-									"presentation_rect" : [ 24.0, 5491.820312, 0.0, 0.0 ],
 									"style" : "",
 									"text" : "Lllls have square brackets!"
 								}
@@ -9501,13 +9498,20 @@
 				"name" : "bach.help.home.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
+				"type" : "TEXT",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "bach.help.introduction.04_new data types.02_pitches.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"patcherrelativepath" : "../help",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.introduction.05_bach and Lisp-based environments.01_bachlisp1.maxpat",
-				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
-				"patcherrelativepath" : "../help",
+				"name" : "bach.pitchpack.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
+				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
@@ -9652,6 +9656,26 @@
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.expr.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.portal.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.args.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.p2mc.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.mc2p.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.iter.mxo",
 				"type" : "iLaX"
 			}
@@ -9673,14 +9697,6 @@
 			}
 , 			{
 				"name" : "bach.reg.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.portal.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.args.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9713,10 +9729,6 @@
 			}
 , 			{
 				"name" : "bach.join.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.expr.mxo",
 				"type" : "iLaX"
 			}
 , 			{

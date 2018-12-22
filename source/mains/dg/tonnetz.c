@@ -997,7 +997,7 @@ int T_EXPORT main(void){
 	c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
 
 //	jbox_initclass(c, JBOX_COLOR | JBOX_FIXWIDTH | JBOX_FONTATTR);
-	jbox_initclass(c, JBOX_TEXTFIELD | JBOX_FONTATTR | JBOX_FIXWIDTH);	// include textfield and Fonts attributes
+	jbox_initclass(c, JBOX_TEXTFIELD | JBOX_FONTATTR);	// include textfield and Fonts attributes
 //	jbox_initclass(c, 0);
 	
 	class_addmethod(c, (method) tonnetz_paint,			"paint", A_CANT, 0);
@@ -2343,6 +2343,7 @@ t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv)
 	llllobj_jbox_setup((t_llllobj_jbox *) x, 6, "b4i44444");
 
 	jbox_ready(&x->j_box.l_box);
+    // bach_init_size((t_object *)x, 542, 316);
 
 	if (x) {
 		t_llll *llll_for_rebuild = llll_retrieve_from_dictionary(d, "whole_tonnetz_data");

@@ -1,195 +1,556 @@
 {
-	"Eval" : {
-		"Language" : {
-			"Basics" : {
-				"Simpleexpressions" : {
-					"filename" : [ "bach.help.eval.language.010_basics.010_simpleexpressions.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Simple expressions" ]
-				},
-				"Listfunctions" : {
-					"filename" : [ "bach.help.eval.language.010_basics.020_listfunctions.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "List functions" ]
-				},
-				"Llllliterals" : {
-					"filename" : [ "bach.help.eval.language.010_basics.030_llllliterals.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "llll literals" ]
-				},
-				"Implicitllllconstruction" : {
-					"filename" : [ "bach.help.eval.language.010_basics.040_implicitllllconstruction.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Implicit llll construction" ]
-				},
-				"Precedence" : {
-					"filename" : [ "bach.help.eval.language.010_basics.050_precedence.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Precedence" ]
-				},
-				"Unaryoperators" : {
-					"filename" : [ "bach.help.eval.language.010_basics.060_unaryoperators.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Unary operators" ]
-				},
-				"Retrievalofelements" : {
-					"filename" : [ "bach.help.eval.language.010_basics.070_retrievalofelements.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Retrieval of elements" ]
-				},
-				"Print" : {
-					"filename" : [ "bach.help.eval.language.010_basics.080_print.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Print" ]
-				},
-				"Examples" : {
-					"filename" : [ "bach.help.eval.language.010_basics.090_examples.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Examples" ]
-				}
-			},
-			"Conditionals" : {
-				"Ifthen" : {
-					"filename" : [ "bach.help.eval.language.020_conditionals.010_ifthen.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "If ... then" ]
-				},
-				"Ifthenelse" : {
-					"filename" : [ "bach.help.eval.language.020_conditionals.020_ifthenelse.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "If ... then ... else" ]
-				},
-				"Chainedifs" : {
-					"filename" : [ "bach.help.eval.language.020_conditionals.030_chainedifs.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Chained ifs" ]
-				},
-				"Conditions" : {
-					"filename" : [ "bach.help.eval.language.020_conditionals.040_conditions.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Conditions" ]
-				},
-				"Booleans" : {
-					"filename" : [ "bach.help.eval.language.020_conditionals.050_booleans.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Booleans" ]
-				},
-				"Conditionalbooleans" : {
-					"filename" : [ "bach.help.eval.language.020_conditionals.060_conditionalbooleans.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Conditional booleans" ]
-				}
-			},
-			"Sequence" : {
-				"filename" : [ "bach.help.eval.language.030_sequence.maxpat" ],
-				"objects" : [ "bach.eval" ],
+	"Evaluation language" : {
+		"Introduction" : {
+			"filename" : [ "bach.help.bell.000_introduction.maxpat" ],
+			"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+			"seealso" : [  ],
+			"tags" : [ "bell", "expression" ],
+			"title" : [ "Introduction" ]
+		},
+		"Basics" : {
+			"Simpleexpressions" : {
+				"filename" : [ "bach.help.bell.010_basics.010_simpleexpressions.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [  ],
-				"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-				"title" : [ "Sequence" ]
+				"tags" : [ "bell", "expression", "operator", "return", "value", "simple", "function", "sqrt", "pow", "input", "pseudovariable" ],
+				"title" : [ "Simple expressions" ]
 			},
-			"Variables" : {
-				"Localvariables" : {
-					"filename" : [ "bach.help.eval.language.040_variables.010_localvariables.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [  ],
-					"title" : [ "Local variables" ]
-				},
-				"Localvariablesdetails" : {
-					"filename" : [ "bach.help.eval.language.040_variables.020_localvariablesdetails.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Local variables: details" ]
-				},
-				"Localvariablesmoredetails" : {
-					"filename" : [ "bach.help.eval.language.040_variables.030_localvariablesmoredetails.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Local variables: more details" ]
-				},
-				"Localvariableslifecycle" : {
-					"filename" : [ "bach.help.eval.language.040_variables.040_localvariableslifecycle.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Lifecycle of local variables" ]
-				},
-				"Globalvariables" : {
-					"filename" : [ "bach.help.eval.language.040_variables.050_globalvariables.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Global variables" ]
-				},
-				"Globalvariablesreservedwords" : {
-					"filename" : [ "bach.help.eval.language.040_variables.060_globalvariablesreservedwords.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Global variables: reserved words" ]
-				},
-				"Queryingandresettingglobalvariables" : {
-					"filename" : [ "bach.help.eval.language.040_variables.070_queryingandresettingglobalvariables.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "Querying and resetting global variables" ]
-				}
+			"Listfunctions" : {
+				"filename" : [ "bach.help.bell.010_basics.020_listfunctions.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "simple+expression", "return+value", "input+pseudovariable" ],
+				"tags" : [ "bell", "llll", "function" ],
+				"title" : [ "List functions" ]
 			},
-			"Loops" : {
-				"Whileloops" : {
-					"filename" : [ "bach.help.eval.language.050_loops.010_whileloops.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "\"While\" loops" ]
+			"Llllliterals" : {
+				"filename" : [ "bach.help.bell.010_basics.030_llllliterals.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+function" ],
+				"tags" : [ "bell", "literal", "concatenation", "construction", "space", "whitespace", "symbol", "pitch", "flat" ],
+				"title" : [ "llll literals" ]
+			},
+			"Implicitllllconstruction" : {
+				"filename" : [ "bach.help.bell.010_basics.040_implicitllllconstruction.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "bell", "llll", "literal", "concatenation", "space", "whitespace" ],
+				"title" : [ "Implicit llll construction" ]
+			},
+			"Precedence" : {
+				"filename" : [ "bach.help.bell.010_basics.050_precedence.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "concatenation", "bell+llll", "literal" ],
+				"tags" : [ "bell", "operator", "precedence", "paren" ],
+				"title" : [ "Precedence" ]
+			},
+			"Unaryoperators" : {
+				"filename" : [ "bach.help.bell.010_basics.060_unaryoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "concatenation", "whitespace", "bell+llll" ],
+				"tags" : [ "bell", "unary", "operator" ],
+				"title" : [ "Unary operators" ]
+			},
+			"Retrievalofelements" : {
+				"filename" : [ "bach.help.bell.010_basics.070_retrievalofelements.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "concatenation", "precedence" ],
+				"tags" : [ "bell", "retrieval", "element", "colon", "nth", "lookup" ],
+				"title" : [ "Retrieval of elements" ]
+			},
+			"Print" : {
+				"filename" : [ "bach.help.bell.010_basics.080_print.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value" ],
+				"tags" : [ "bell", "print", "Max", "console" ],
+				"title" : [ "Print" ]
+			},
+			"Comments" : {
+				"filename" : [ "bach.help.bell.010_basics.090_comments.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value" ],
+				"tags" : [ "bell", "comment", "block", "end", "of", "line", "hash", "shebang" ],
+				"title" : [ "Comments" ]
+			},
+			"Examples" : {
+				"filename" : [ "bach.help.bell.010_basics.100_examples.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "message+addchord" ],
+				"tags" : [ "bell" ],
+				"title" : [ "Examples" ]
+			}
+		},
+		"Conditionals" : {
+			"Ifthen" : {
+				"filename" : [ "bach.help.bell.020_conditionals.010_ifthen.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value" ],
+				"tags" : [ "if", "then", "condition", "conditional" ],
+				"title" : [ "If ... then" ]
+			},
+			"Ifthenelse" : {
+				"filename" : [ "bach.help.bell.020_conditionals.020_ifthenelse.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value" ],
+				"tags" : [ "if", "then", "else", "condition", "conditional" ],
+				"title" : [ "If ... then ... else" ]
+			},
+			"Chainedifs" : {
+				"filename" : [ "bach.help.bell.020_conditionals.030_chainedifs.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value", "paren" ],
+				"tags" : [ "if", "then", "else", "condition", "conditional", "dangling" ],
+				"title" : [ "Chained ifs" ]
+			},
+			"Conditions" : {
+				"filename" : [ "bach.help.bell.020_conditionals.040_conditions.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "if+then", "if+then+else", "return+value" ],
+				"tags" : [ "condition", "conditional", "true", "false", "zero", "null", "boolean", "logical" ],
+				"title" : [ "Conditions" ]
+			},
+			"Booleans" : {
+				"filename" : [ "bach.help.bell.020_conditionals.050_booleans.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "if+then", "if+then+else" ],
+				"tags" : [ "condition", "conditional", "true", "false", "zero", "null", "boolean", "logical", "and", "or", "short-circuit", "operator" ],
+				"title" : [ "Booleans" ]
+			},
+			"Conditionalbooleans" : {
+				"filename" : [ "bach.help.bell.020_conditionals.060_conditionalbooleans.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "if+then", "if+then+else" ],
+				"tags" : [ "condition", "conditional", "true", "false", "zero", "null", "boolean", "logical", "and", "or", "short-circuit", "operator" ],
+				"title" : [ "Conditional booleans" ]
+			}
+		},
+		"Sequence" : {
+			"filename" : [ "bach.help.bell.030_sequence.maxpat" ],
+			"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+			"seealso" : [ "precedence", "return+value" ],
+			"tags" : [ "bell", "sequence", "semicolon" ],
+			"title" : [ "Sequence" ]
+		},
+		"Variables" : {
+			"Localvariables" : {
+				"filename" : [ "bach.help.bell.040_variables.010_localvariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value", "bell+sequence" ],
+				"tags" : [ "bell", "variables", "local", "assignment", "equal", "operator", "dollar" ],
+				"title" : [ "Local variables" ]
+			},
+			"Localvariablesdetails" : {
+				"filename" : [ "bach.help.bell.040_variables.020_localvariablesdetails.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value", "bell+sequence" ],
+				"tags" : [ "bell", "variables", "local", "assignment", "equal", "operator", "pi", "chain" ],
+				"title" : [ "Local variables: details" ]
+			},
+			"Localvariablesmoredetails" : {
+				"filename" : [ "bach.help.bell.040_variables.030_localvariablesmoredetails.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value", "bell+sequence" ],
+				"tags" : [ "bell", "variables", "local", "assignment", "equal", "operator", "chain" ],
+				"title" : [ "Local variables: more details" ]
+			},
+			"Localvariableslifecycle" : {
+				"filename" : [ "bach.help.bell.040_variables.040_localvariableslifecycle.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "return+value", "bell+sequence", "scope", "built+in+function" ],
+				"tags" : [ "bell", "variables", "local", "assignment", "equal", "operator", "lifecycle", "params", "persistence" ],
+				"title" : [ "Lifecycle of local variables" ]
+			},
+			"Globalvariables" : {
+				"filename" : [ "bach.help.bell.040_variables.050_globalvariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable", "equal" ],
+				"tags" : [ "bell", "variable", "global", "assignment", "persistence", "capitalized" ],
+				"title" : [ "Global variables" ]
+			},
+			"Globalvariableswithdifferentobjects" : {
+				"filename" : [ "bach.help.bell.040_variables.055_globalvariableswithdifferentobjects.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable", "equal" ],
+				"tags" : [ "bell", "variable", "global" ],
+				"title" : [ "Global variables with different objects" ]
+			},
+			"Globalvariablesreservedwords" : {
+				"filename" : [ "bach.help.bell.040_variables.060_globalvariablesreservedwords.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable" ],
+				"tags" : [ "bell", "variable", "global", "name", "reserved", "capitalized" ],
+				"title" : [ "Global variables: reserved words" ]
+			},
+			"Queryingandresettingglobalvariables" : {
+				"filename" : [ "bach.help.bell.040_variables.070_queryingandresettingglobalvariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "bell", "variable", "global", "assignment", "persistence", "query", "reset", "printglobals", "printglobalswithvalues", "clearglobals", "auto", "attribute" ],
+				"title" : [ "Querying and resetting global variables" ]
+			},
+			"Assigningoperators" : {
+				"filename" : [ "bach.help.bell.040_variables.080_assigningoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "auto+attribute" ],
+				"tags" : [ "bell", "variable", "assignment", "operator", "assigning" ],
+				"title" : [ "Assigning operators" ]
+			},
+			"Moreassigningoperators" : {
+				"filename" : [ "bach.help.bell.040_variables.090_moreassigningoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "concatenation" ],
+				"tags" : [ "bell", "variable", "assignment", "operator", "assigning" ],
+				"title" : [ "More assigning operators" ]
+			}
+		},
+		"Loops" : {
+			"Whileloops" : {
+				"filename" : [ "bach.help.bell.050_loops.010_whileloops.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "recursion", "for+loop" ],
+				"tags" : [ "bell", "loop", "while", "condition", "repeat", "body", "clause" ],
+				"title" : [ "\"While\" loops" ]
+			},
+			"Whileloopexamplesanddetails" : {
+				"filename" : [ "bach.help.bell.050_loops.020_whileloopexamplesanddetails.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "recursion", "sequence", "precedence", "lookup", "assigning+operator", "for+loop" ],
+				"tags" : [ "bell", "loop", "while", "condition", "repeat", "body", "nested", "sequence", "factorial", "fibonacci" ],
+				"title" : [ "\"While\" loop examples and details" ]
+			},
+			"Forloops" : {
+				"filename" : [ "bach.help.bell.050_loops.030_forloops.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "recursion", "while+loop" ],
+				"tags" : [ "bell", "loop", "for", "condition", "repeat", "body", "with", "in", "as" ],
+				"title" : [ "\"For\" loops" ]
+			},
+			"Forloopsaddressandparalleliteration" : {
+				"filename" : [ "bach.help.bell.050_loops.040_forloopsaddressandparalleliteration.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "recursion", "while+loop", "condition" ],
+				"tags" : [ "bell", "loop", "for", "repeat", "address", "parallel", "iteration" ],
+				"title" : [ "\"For\" loops: address and parallel iteration" ]
+			},
+			"Forloopsasclause" : {
+				"filename" : [ "bach.help.bell.050_loops.050_forloopsasclause.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "recursion", "while+loop" ],
+				"tags" : [ "bell", "loop", "for", "condition", "as", "clause" ],
+				"title" : [ "\"For\" loops: as clause" ]
+			},
+			"Forloopswithclause" : {
+				"filename" : [ "bach.help.bell.050_loops.060_forloopswithclause.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "recursion", "while+loop" ],
+				"tags" : [ "bell", "loop", "for", "condition", "with", "clause", "maxdepth" ],
+				"title" : [ "\"For\" loops: with clause" ]
+			},
+			"Forloopswithclauseattributes" : {
+				"filename" : [ "bach.help.bell.050_loops.070_forloopswithclauseattributes.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "recursion", "while+loop" ],
+				"tags" : [ "bell", "loop", "for", "condition", "with", "clause", "attributes", "maxdepth", "unwrap", "scalarmode", "recursionmode", "spikemode" ],
+				"title" : [ "\"For\" loops: \"with\" clause attributes" ]
+			}
+		},
+		"Functions" : {
+			"Functioncalls" : {
+				"filename" : [ "bach.help.bell.060_functions.010_functioncalls.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "eval+llll", "return+value" ],
+				"tags" : [ "bell", "function", "built", "in", "sqrt", "atan2", "space", "whitespace", "parens", "listable", "argument" ],
+				"title" : [ "Function calls" ]
+			},
+			"Namedargumentsanddefaults" : {
+				"filename" : [ "bach.help.bell.060_functions.020_namedargumentsanddefaults.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "bell", "function", "built", "in", "rot", "argument", "name", "named", "position", "at", "default" ],
+				"title" : [ "Named arguments and defaults" ]
+			},
+			"Userdefinedfunctions" : {
+				"filename" : [ "bach.help.bell.060_functions.030_userdefinedfunctions.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable" ],
+				"tags" : [ "bell", "function", "user", "defined", "name", "named", "position", "variable", "local" ],
+				"title" : [ "User-defined functions" ]
+			},
+			"Globalfunctionsandfunctionassignment" : {
+				"filename" : [ "bach.help.bell.060_functions.040_globalfunctionsandfunctionassignment.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "auto+attribute" ],
+				"tags" : [ "bell", "function", "user", "defined", "variable", "global", "assignment" ],
+				"title" : [ "Global functions and function assignment" ]
+			},
+			"Scopeoflocalvariables" : {
+				"filename" : [ "bach.help.bell.060_functions.050_scopeoflocalvariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation" ],
+				"title" : [ "Scope of local variables" ]
+			},
+			"Scopeoflocalvariablesexamples" : {
+				"filename" : [ "bach.help.bell.060_functions.060_scopeoflocalvariablesexamples.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "global+function" ],
+				"tags" : [ "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation" ],
+				"title" : [ "Scope of local variables: examples" ]
+			},
+			"Argumentsandscope" : {
+				"filename" : [ "bach.help.bell.060_functions.070_argumentsandscope.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation", "argument" ],
+				"title" : [ "Arguments and scope" ]
+			},
+			"Argumentnames" : {
+				"filename" : [ "bach.help.bell.060_functions.080_argumentnames.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "global+function" ],
+				"tags" : [ "bell", "function", "user", "argument", "variable", "local", "passing" ],
+				"title" : [ "Argument names" ]
+			},
+			"Functionfun" : {
+				"filename" : [ "bach.help.bell.060_functions.090_functionfun.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable", "lambda" ],
+				"tags" : [ "bell", "function", "literal", "user", "defined", "argument" ],
+				"title" : [ "Function fun" ]
+			},
+			"Dataflowstylefunctioncalls" : {
+				"filename" : [ "bach.help.bell.060_functions.100_dataflowstylefunctioncalls.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable", "assigning+operator" ],
+				"tags" : [ "bell", "function", "call", "calling", "dataflow", "style", "first", "argument", "passing", "assigning" ],
+				"title" : [ "Dataflow-style function calls" ]
+			},
+			"Lambdafunctions" : {
+				"filename" : [ "bach.help.bell.060_functions.110_lambdafunctions.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable", "built+in" ],
+				"tags" : [ "bell", "function", "user", "defined", "argument", "lambda", "anonymous", "finditems" ],
+				"title" : [ "Lambda functions" ]
+			},
+			"Passingparameterstolambdafunctions" : {
+				"filename" : [ "bach.help.bell.060_functions.120_passingparameterstolambdafunctions.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "scope", "scoping", "visibility", "default" ],
+				"tags" : [ "bell", "function", "user", "defined", "passing", "finditems", "lambda" ],
+				"title" : [ "Passing parameters to lambda functions" ]
+			},
+			"Passingbuiltinfunctionsaslambdas" : {
+				"filename" : [ "bach.help.bell.060_functions.130_passingbuiltinfunctionsaslambdas.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "scope", "scoping", "visibility", "default" ],
+				"tags" : [ "bell", "function", "user", "defined", "passing", "finditems", "lambda" ],
+				"title" : [ "Passing built-in functions as lambdas" ]
+			},
+			"Functionalformsofoperators" : {
+				"filename" : [ "bach.help.bell.060_functions.140_functionalformsofoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+lambda" ],
+				"tags" : [ "bell", "built", "in", "function", "operator", "functional", "form", "hash" ],
+				"title" : [ "Functional forms of operators" ]
+			},
+			"Recursion" : {
+				"filename" : [ "bach.help.bell.060_functions.150_recursion.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+loop", "scope" ],
+				"tags" : [ "bell", "function", "scope", "recursion", "recursive", "factorial" ],
+				"title" : [ "Recursion" ]
+			},
+			"Inputpseudovariables" : {
+				"filename" : [ "bach.help.bell.060_functions.160_inputpseudovariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable", "casting+input+pseudovariable" ],
+				"tags" : [ "bell", "function", "dollar", "input", "pseudovariable", "argument", "position" ],
+				"title" : [ "Input pseudovariables" ]
+			},
+			"Castinginputpseudovariables" : {
+				"filename" : [ "bach.help.bell.060_functions.170_castinginputpseudovariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "local+variable", "input+pseudovariable", "built+in+function" ],
+				"tags" : [ "bell", "function", "dollar", "casting", "input", "pseudovariable", "argument", "position" ],
+				"title" : [ "Casting input pseudovariables" ]
+			},
+			"Argsandargcount" : {
+				"filename" : [ "bach.help.bell.060_functions.180_argsandargcount.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "$l", "dollar", "$x1", "$x<n>" ],
+				"tags" : [ "bell", "function", "$args", "$argcount", "pseudo", "variable", "argument", "position" ],
+				"title" : [ "$args and $argcount" ]
+			},
+			"Variadicfunctions" : {
+				"filename" : [ "bach.help.bell.060_functions.190_variadicfunctions.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "$l", "dollar", "$x1", "$x<n>", "argument" ],
+				"tags" : [ "bell", "function", "variaric", "ellipsis" ],
+				"title" : [ "Variadic functions" ]
+			},
+			"Morevariadicstuff" : {
+				"filename" : [ "bach.help.bell.060_functions.200_morevariadicstuff.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "$l", "dollar", "$x1", "$x<n>", "argument", "$args", "$argcount" ],
+				"tags" : [ "bell", "function", "variaric", "ellipsis" ],
+				"title" : [ "More variadic stuff" ]
+			},
+			"Builtinfunctionsreference" : {
+				"Args" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.args.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+					"seealso" : [ "$argcount" ],
+					"tags" : [ "bell", "built", "in", "function", "$args" ],
+					"title" : [ "$args() function reference" ]
 				},
-				"Whileloopexamplesanddetails" : {
-					"filename" : [ "bach.help.eval.language.050_loops.020_whileloopexamplesanddetails.maxpat" ],
+				"Comb" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.comb.maxpat" ],
 					"objects" : [ "bach.eval" ],
 					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "\"While\" loop examples and details" ]
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "comb() function reference" ]
 				},
-				"Forloops" : {
-					"filename" : [ "bach.help.eval.language.050_loops.030_forloops.maxpat" ],
+				"Contains" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.contains.maxpat" ],
 					"objects" : [ "bach.eval" ],
 					"seealso" : [  ],
-					"tags" : [ "microtone", "tone", "division", "tonedivision" ],
-					"title" : [ "\"For\" loops" ]
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "contains() function reference" ]
+				},
+				"Flat" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.flat.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "flat() function reference" ]
+				},
+				"Insert" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.insert.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "insert() function reference" ]
+				},
+				"Left" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.left.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "left() function reference" ]
+				},
+				"Length" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.length.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+					"seealso" : [ "depth" ],
+					"tags" : [ "bell", "built", "in", "function", "length" ],
+					"title" : [ "length() function reference" ]
+				},
+				"Minmax" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.minmax.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "minmax() function reference" ]
+				},
+				"Outlet" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.outlet.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "outlet() function reference" ]
+				},
+				"Perm" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.perm.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "perm() function reference" ]
+				},
+				"Rev" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.rev.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "rev() function reference" ]
+				},
+				"Right" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.right.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "right() function reference" ]
+				},
+				"Rot" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.rot.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "rot() function reference" ]
+				},
+				"Scramble" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.scramble.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "scramble() function reference" ]
+				},
+				"Slice" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.slice.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "slice() function reference" ]
+				},
+				"Subs" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.subs.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "subs() function reference" ]
+				},
+				"Trans" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.trans.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "trans() function reference" ]
 				}
+			}
+		},
+		"Sourcecodefiles" : {
+			"filename" : [ "bach.help.bell.070_sourcecodefiles.maxpat" ],
+			"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+			"seealso" : [  ],
+			"tags" : [ "bell", "source", "code", "file", "read", "include" ],
+			"title" : [ "Source code files" ]
+		},
+		"Object specific features" : {
+			"Multipleoutlets" : {
+				"filename" : [ "bach.help.bell.080_object specific features.010_multipleoutlets.maxpat" ],
+				"objects" : [ "bach.eval" ],
+				"seealso" : [ "return+value" ],
+				"tags" : [ "bell", "multiple", "outlet", "extraoutlet" ],
+				"title" : [ "Multiple outlets" ]
+			},
+			"Onpseudovariables" : {
+				"filename" : [ "bach.help.bell.080_object specific features.020_onpseudovariables.maxpat" ],
+				"objects" : [ "bach.eval" ],
+				"seealso" : [ "return+value", "multiple+outlet" ],
+				"tags" : [ "bell", "multiple", "outlet", "o", "pseudovariable" ],
+				"title" : [ "$o<n> pseudovariables" ]
+			},
+			"Outputtingdataduringevaluation" : {
+				"filename" : [ "bach.help.bell.080_object specific features.030_outputtingdataduringevaluation.maxpat" ],
+				"objects" : [ "bach.eval" ],
+				"seealso" : [ "return+value", "multiple+outlet", "directin", "bell+outlet" ],
+				"tags" : [ "bell", "directout", "direct", "out", "outlet", "output", "lambda" ],
+				"title" : [ "Outputting data during evaluation" ]
+			},
+			"Receivingdataduringevaluation" : {
+				"filename" : [ "bach.help.bell.080_object specific features.040_receivingdataduringevaluation.maxpat" ],
+				"objects" : [ "bach.eval" ],
+				"seealso" : [ "return+value", "multiple+outlet", "directout" ],
+				"tags" : [ "bell", "direct", "inlet", "x", "pseudovariable", "directin", "lambda" ],
+				"title" : [ "Receiving data during evaluation" ]
 			}
 		}
 	},
@@ -215,12 +576,28 @@
 			"tags" : [ "introduction", "bach", "microtone", "microtonal", "support", "resolution", "meta", "meta-data", "data", "feature", "edit", "editing", "play", "variable", "rate" ],
 			"title" : [ "Notation features" ]
 		},
-		"Rationalandlllls" : {
-			"filename" : [ "bach.help.introduction.04_rationalandlllls.maxpat" ],
-			"objects" : [ "all" ],
-			"seealso" : [ "llll" ],
-			"tags" : [ "introduction", "bach", "rational", "llll", "lisp", "like", "linked", "list", "modules", "ratio" ],
-			"title" : [ "Rationals and Lisp-like linked lists" ]
+		"New data types" : {
+			"Rationals" : {
+				"filename" : [ "bach.help.introduction.04_new data types.01_rationals.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [ "data+type" ],
+				"tags" : [ "introduction", "bach", "data", "type", "rational", "ratio", "arithmetic", "unit" ],
+				"title" : [ "Rational numbers" ]
+			},
+			"Pitches" : {
+				"filename" : [ "bach.help.introduction.04_new data types.02_pitches.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [ "data+type", "pitch+syntax", "pitch+arithmetics" ],
+				"tags" : [ "introduction", "bach", "data", "type", "pitch", "build", "diatonic", "diatonism" ],
+				"title" : [ "Pitches and diatonism" ]
+			},
+			"Lllls" : {
+				"filename" : [ "bach.help.introduction.04_new data types.03_lllls.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [ "data+type", "llll" ],
+				"tags" : [ "introduction", "bach", "data", "type", "llll", "lisp", "like", "linked", "list", "modules" ],
+				"title" : [ "Lisp-like linked lists" ]
+			}
 		},
 		"bach and Lisp-based environments" : {
 			"bachlisp1" : {

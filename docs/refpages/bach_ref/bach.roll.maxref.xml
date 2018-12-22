@@ -5343,8 +5343,8 @@
 				• <b>sel [] [] [] [] -1</b>   <i>→ select every note in last voice</i><br />
 				• <b>sel note if cents == 6000</b>   <i>→ select all middle C's</i><br />
 				• <b>sel note if [cents % 1200] == 0</b>   <i>→ select all C's</i><br />
-				• <b>sel note if [cents &lt; 6000] &amp;&amp; [duration &lt; 1000]</b>   <i>→ select all notes &lt;1s below middle C</i><br />
-				• <b>sel marker if onset &gt; 5000</b>   <i>→ select all markers with onset &gt;5s</i><br />
+				• <b>sel note if [cents &lt; 6000] &amp;&amp; [duration &lt; 1000]oe</b>   <i>→ select all notes &lt;1s below middle C</i><br />
+				• <b>sel marker if onset &gt; 5000 </b>   <i>→ select all markers with onset &gt;5s</i><br />
 				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt; 100</i><br />
 				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
 				<br />

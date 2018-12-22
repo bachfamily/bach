@@ -31667,7 +31667,7 @@ double notename2midicents(long middleC_octave, long *last_used_octave, char *nam
 	
 	if (!err) {
 		while (cursor < len &&
-				(name[cursor] == '#' || name[cursor] == 'b' || name[cursor] == 'x' || name[cursor] == '+' 
+				(name[cursor] == '#' || name[cursor] == 'b' || name[cursor] == 'x' || name[cursor] == '+' || name[cursor] == 'q'
 					|| name[cursor] == '-' || name[cursor] == 'd' || name[cursor] == '^' || name[cursor] == 'v')) {
 			switch (name[cursor]) {
 				case '#':
