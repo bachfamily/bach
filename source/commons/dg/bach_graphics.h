@@ -1407,7 +1407,8 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
 
 
 
-
+void bach_init_size(t_object *ob, long init_width, long init_height);
+double bach_get_patching_height(t_object *ob);
 
 #endif
 
@@ -1416,6 +1417,7 @@ void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const cha
 void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft, char single_line, char use_ellipsis);
 char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen);
 #endif
+
 
 
 

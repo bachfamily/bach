@@ -394,13 +394,134 @@
 				"tags" : [ "bell", "function", "variaric", "ellipsis" ],
 				"title" : [ "More variadic stuff" ]
 			},
-			"Sourcecodefiles" : {
-				"filename" : [ "bach.help.bell.070_functions.010_sourcecodefiles.maxpat" ],
-				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [  ],
-				"tags" : [ "bell", "source", "code", "file", "read", "include" ],
-				"title" : [ "Source code files" ]
+			"Builtinfunctionsreference" : {
+				"Args" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.args.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+					"seealso" : [ "$argcount" ],
+					"tags" : [ "bell", "built", "in", "function", "$args" ],
+					"title" : [ "$args() function reference" ]
+				},
+				"Comb" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.comb.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "comb() function reference" ]
+				},
+				"Contains" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.contains.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "contains() function reference" ]
+				},
+				"Flat" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.flat.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "flat() function reference" ]
+				},
+				"Insert" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.insert.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "insert() function reference" ]
+				},
+				"Left" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.left.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "left() function reference" ]
+				},
+				"Length" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.length.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+					"seealso" : [ "depth" ],
+					"tags" : [ "bell", "built", "in", "function", "length" ],
+					"title" : [ "length() function reference" ]
+				},
+				"Minmax" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.minmax.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "minmax() function reference" ]
+				},
+				"Outlet" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.outlet.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "outlet() function reference" ]
+				},
+				"Perm" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.perm.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "perm() function reference" ]
+				},
+				"Rev" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.rev.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "rev() function reference" ]
+				},
+				"Right" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.right.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "right() function reference" ]
+				},
+				"Rot" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.rot.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "rot() function reference" ]
+				},
+				"Scramble" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.scramble.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "scramble() function reference" ]
+				},
+				"Slice" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.slice.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "slice() function reference" ]
+				},
+				"Subs" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.subs.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "subs() function reference" ]
+				},
+				"Trans" : {
+					"filename" : [ "bach.help.bell.070_functions.300_builtinfunctionsreference.trans.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [  ],
+					"tags" : [ "bell", "built", "in", "function", "outlet" ],
+					"title" : [ "trans() function reference" ]
+				}
 			}
+		},
+		"Sourcecodefiles" : {
+			"filename" : [ "bach.help.bell.070_sourcecodefiles.maxpat" ],
+			"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+			"seealso" : [  ],
+			"tags" : [ "bell", "source", "code", "file", "read", "include" ],
+			"title" : [ "Source code files" ]
 		},
 		"Object specific features" : {
 			"Multipleoutlets" : {
@@ -455,12 +576,28 @@
 			"tags" : [ "introduction", "bach", "microtone", "microtonal", "support", "resolution", "meta", "meta-data", "data", "feature", "edit", "editing", "play", "variable", "rate" ],
 			"title" : [ "Notation features" ]
 		},
-		"Rationalandlllls" : {
-			"filename" : [ "bach.help.introduction.04_rationalandlllls.maxpat" ],
-			"objects" : [ "all" ],
-			"seealso" : [ "llll" ],
-			"tags" : [ "introduction", "bach", "rational", "llll", "lisp", "like", "linked", "list", "modules", "ratio" ],
-			"title" : [ "Rationals and Lisp-like linked lists" ]
+		"New data types" : {
+			"Rationals" : {
+				"filename" : [ "bach.help.introduction.04_new data types.01_rationals.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [ "data+type" ],
+				"tags" : [ "introduction", "bach", "data", "type", "rational", "ratio", "arithmetic", "unit" ],
+				"title" : [ "Rational numbers" ]
+			},
+			"Pitches" : {
+				"filename" : [ "bach.help.introduction.04_new data types.02_pitches.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [ "data+type", "pitch+syntax", "pitch+arithmetics" ],
+				"tags" : [ "introduction", "bach", "data", "type", "pitch", "build", "diatonic", "diatonism" ],
+				"title" : [ "Pitches and diatonism" ]
+			},
+			"Lllls" : {
+				"filename" : [ "bach.help.introduction.04_new data types.03_lllls.maxpat" ],
+				"objects" : [ "all" ],
+				"seealso" : [ "data+type", "llll" ],
+				"tags" : [ "introduction", "bach", "data", "type", "llll", "lisp", "like", "linked", "list", "modules" ],
+				"title" : [ "Lisp-like linked lists" ]
+			}
 		},
 		"bach and Lisp-based environments" : {
 			"bachlisp1" : {

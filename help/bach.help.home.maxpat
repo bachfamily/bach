@@ -3483,7 +3483,6 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : " ",
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-5",
@@ -3795,7 +3794,6 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : " ",
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-33",

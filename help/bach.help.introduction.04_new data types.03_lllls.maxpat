@@ -2,44 +2,69 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 6,
-			"minor" : 1,
-			"revision" : 2,
-			"architecture" : "x86"
+			"major" : 7,
+			"minor" : 3,
+			"revision" : 4,
+			"architecture" : "x64",
+			"modernui" : 1
 		}
 ,
-		"rect" : [ 119.0, 44.0, 617.0, 539.0 ],
+		"rect" : [ 368.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
 		"default_fontface" : 0,
 		"default_fontname" : "Arial",
-		"gridonopen" : 0,
+		"gridonopen" : 1,
 		"gridsize" : [ 15.0, 15.0 ],
-		"gridsnaponopen" : 0,
+		"gridsnaponopen" : 1,
+		"objectsnaponopen" : 1,
 		"statusbarvisible" : 2,
 		"toolbarvisible" : 1,
+		"lefttoolbarpinned" : 0,
+		"toptoolbarpinned" : 0,
+		"righttoolbarpinned" : 0,
+		"bottomtoolbarpinned" : 0,
+		"toolbars_unpinned_last_save" : 0,
+		"tallnewobj" : 0,
 		"boxanimatetime" : 200,
-		"imprint" : 0,
 		"enablehscroll" : 1,
 		"enablevscroll" : 1,
 		"devicewidth" : 0.0,
 		"description" : "",
 		"digest" : "",
 		"tags" : "",
+		"style" : "",
+		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-2",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 186.0, 602.0, 65.0 ],
+					"style" : "",
+					"text" : "The nested list has been chosen for both similarity with the Lisp language, in a way to ease communication with the major existing CAC environment, and the need to establish a data structure powerful enough to represent the complexity of a musical score, but flexible enough to be a generic data container lending itself to arbitrary manipulations through a relatively small set of primitives.",
+					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"bgcolor" : [ 0.690196, 0.690196, 0.690196, 0.0 ],
 					"bubblepoint" : 0.45,
 					"bubbleside" : 0,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-4",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 358.0, 522.0, 21.0 ],
+					"style" : "",
 					"text" : "Tip: If you press Shift+B, an empty box containing the \"bach.\" word immediately appears!",
 					"textcolor" : [ 0.501961, 0.0, 0.0, 1.0 ]
 				}
@@ -50,13 +75,13 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-44",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 328.0, 430.0, 266.0, 40.0 ],
+					"style" : "",
 					"text" : "it is possible to perform matrix calculus only on matrix-structured lllls"
 				}
 
@@ -70,11 +95,13 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 513.0, 336.0, 61.0, 21.0 ],
+					"patching_rect" : [ 513.0, 323.0, 61.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"embed" : 0
+						"embed" : 0,
+						"versionnumber" : 80001
 					}
 ,
+					"style" : "",
 					"text" : "bach.reg"
 				}
 
@@ -88,7 +115,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 451.0, 406.0, 51.0, 21.0 ],
+					"patching_rect" : [ 451.0, 406.0, 51.0, 23.0 ],
+					"style" : "",
 					"text" : "bach.+"
 				}
 
@@ -102,7 +130,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 397.0, 406.0, 48.0, 21.0 ],
+					"patching_rect" : [ 397.0, 406.0, 48.0, 23.0 ],
+					"style" : "",
 					"text" : "bach.*"
 				}
 
@@ -116,7 +145,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
-					"patching_rect" : [ 255.5, 441.0, 69.0, 21.0 ],
+					"patching_rect" : [ 255.5, 441.0, 69.0, 23.0 ],
+					"style" : "",
 					"text" : "bach.rank"
 				}
 
@@ -130,7 +160,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 92.5, 441.0, 61.0, 21.0 ],
+					"patching_rect" : [ 92.5, 441.0, 61.0, 23.0 ],
+					"style" : "",
 					"text" : "bach.det"
 				}
 
@@ -144,7 +175,12 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 165.5, 441.0, 85.0, 21.0 ],
+					"patching_rect" : [ 165.5, 441.0, 85.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.mtimes"
 				}
 
@@ -155,13 +191,13 @@
 					"bubbleside" : 3,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-36",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 396.5, 313.0, 40.0 ],
+					"style" : "",
 					"text" : "it is possible to perform mathematical operations over lllls solely composed by numbers"
 				}
 
@@ -175,7 +211,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 322.5, 406.0, 69.0, 21.0 ],
+					"patching_rect" : [ 322.5, 406.0, 69.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.expr"
 				}
 
@@ -184,12 +225,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-34",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 375.0, 574.0, 21.0 ],
+					"style" : "",
 					"text" : "Some subsets of the library are applicable to lllls satisfying certain given conditions:",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 				}
@@ -204,7 +245,12 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 504.0, 284.0, 87.0, 21.0 ],
+					"patching_rect" : [ 504.0, 271.0, 87.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.join"
 				}
 
@@ -218,7 +264,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 430.0, 336.0, 69.0, 21.0 ],
+					"patching_rect" : [ 430.0, 323.0, 69.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.slice"
 				}
 
@@ -232,7 +283,12 @@
 					"numinlets" : 2,
 					"numoutlets" : 4,
 					"outlettype" : [ "", "", "", "" ],
-					"patching_rect" : [ 469.0, 310.0, 65.0, 21.0 ],
+					"patching_rect" : [ 469.0, 297.0, 65.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.sort"
 				}
 
@@ -246,7 +302,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 351.0, 336.0, 61.0, 21.0 ],
+					"patching_rect" : [ 351.0, 323.0, 61.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.rev"
 				}
 
@@ -260,7 +321,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 394.0, 310.0, 61.0, 21.0 ],
+					"patching_rect" : [ 394.0, 297.0, 61.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.rev"
 				}
 
@@ -273,8 +339,13 @@
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 3,
-					"outlettype" : [ "", "", "int" ],
-					"patching_rect" : [ 351.0, 284.0, 61.0, 21.0 ],
+					"outlettype" : [ "", "", "" ],
+					"patching_rect" : [ 351.0, 271.0, 61.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.iter"
 				}
 
@@ -288,7 +359,12 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 430.0, 284.0, 61.0, 21.0 ],
+					"patching_rect" : [ 430.0, 271.0, 61.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.nth"
 				}
 
@@ -303,44 +379,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 548.0, 121.0, 81.0, 20.0 ],
+					"patching_rect" : [ 355.0, 132.0, 81.0, 22.0 ],
+					"style" : "",
 					"text" : "loadmess set"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"bubblepoint" : 0.62,
-					"bubbleside" : 0,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"frgb" : 0.0,
-					"id" : "obj-24",
-					"linecount" : 7,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 221.0, 156.0, 381.0, 127.0 ],
-					"text" : "The nested list has been chosen for both similarity with the Lisp language, in a way to ease communication with the major existing CAC environment, and the need to establish a data structure powerful enough to represent the complexity of a musical score, but flexible enough to be a generic data container lending itself to arbitrary manipulations through a relatively small set of primitives."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"bubblepoint" : 0.29,
-					"bubbleside" : 0,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"frgb" : 0.0,
-					"id" : "obj-23",
-					"linecount" : 6,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 156.0, 206.0, 113.0 ],
-					"text" : "Rational numbers are extremely important in music computation, as they express traditional temporal units such as 1/2, 3/8 or 1/12 (that is, a triplet eight note) as well as harmonic ratios."
 				}
 
 			}
@@ -353,7 +394,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 499.0, 74.0, 81.0, 19.0 ],
+					"patching_rect" : [ 306.0, 85.0, 81.0, 23.0 ],
+					"style" : "",
 					"text" : "[john [paul]]"
 				}
 
@@ -364,30 +406,13 @@
 					"bubbleside" : 3,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-18",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 336.0, 74.0, 46.0, 25.0 ],
+					"patching_rect" : [ 143.0, 85.0, 46.0, 25.0 ],
+					"style" : "",
 					"text" : "lllls"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-17",
-					"maxclass" : "bach.ratnum",
-					"maximum" : "none",
-					"minimum" : "none",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"out" : "n",
-					"outlettype" : [ "", "bang" ],
-					"patching_rect" : [ 61.0, 136.0, 50.0, 20.0 ],
-					"text" : "0/1"
 				}
 
 			}
@@ -400,7 +425,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 415.0, 136.0, 91.0, 19.0 ]
+					"patching_rect" : [ 222.0, 147.0, 91.0, 23.0 ],
+					"style" : ""
 				}
 
 			}
@@ -413,7 +439,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 415.0, 106.0, 113.0, 21.0 ],
+					"patching_rect" : [ 222.0, 117.0, 113.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"style" : "",
 					"text" : "bach.flat 1 @out t"
 				}
 
@@ -427,64 +458,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 388.0, 74.0, 99.0, 19.0 ],
+					"patching_rect" : [ 195.0, 85.0, 99.0, 23.0 ],
+					"style" : "",
 					"text" : "[1 2 3] [[4 5] 6]"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-7",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 112.0, 74.0, 32.5, 19.0 ],
-					"text" : "5/4"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-6",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 61.0, 74.0, 44.0, 19.0 ],
-					"text" : "20/10"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-5",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 74.0, 37.0, 19.0 ],
-					"text" : "10/3"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 61.0, 106.0, 117.0, 21.0 ],
-					"text" : "bach.expr $r1+3/4"
 				}
 
 			}
@@ -494,30 +470,14 @@
 					"bubbleside" : 3,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-1",
 					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 284.0, 344.0, 69.0 ],
+					"patching_rect" : [ 13.0, 271.0, 344.0, 69.0 ],
+					"style" : "",
 					"text" : "The large majority of the modules of the bach library are tools for working upon lllls, performing basic operations such as retrieval of individual elements, iteration, reversal, sorting, splicing, merging and so on. "
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"bubblepoint" : 0.29,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"frgb" : 0.0,
-					"id" : "obj-3",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 159.0, 74.0, 124.0, 25.0 ],
-					"text" : "rational numbers"
 				}
 
 			}
@@ -525,13 +485,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
-					"frgb" : 0.0,
 					"id" : "obj-11",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 518.0, 585.0, 19.0 ],
-					"text" : "See Also: llll",
+					"style" : "",
+					"text" : "See Also: data+type, llll",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -541,12 +501,12 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
-					"frgb" : 0.0,
 					"id" : "obj-10",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 497.0, 585.0, 19.0 ],
+					"style" : "",
 					"text" : "Objects: all",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
@@ -558,13 +518,13 @@
 					"fontface" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 15.0,
-					"frgb" : 0.0,
 					"id" : "obj-13",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 282.0, 23.0 ],
-					"text" : "Rationals and Lisp-like linked lists",
+					"style" : "",
+					"text" : "Lisp-like linked lists",
 					"varname" : "title"
 				}
 
@@ -573,13 +533,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
-					"frgb" : 0.0,
 					"id" : "obj-12",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: introduction, bach, rational, llll, lisp, like, linked, list, modules, ratio",
+					"style" : "",
+					"text" : "Tags: introduction, bach, data, type, llll, lisp, like, linked, list, modules",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -589,14 +549,14 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"frgb" : 0.0,
 					"id" : "obj-76",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 574.0, 36.0 ],
-					"text" : "bach also provides Max with two new data types: rational numbers and a nested list structure called llll, an acronym for Lisp-like linked list. ",
+					"patching_rect" : [ 6.0, 32.0, 611.0, 36.0 ],
+					"style" : "",
+					"text" : "Importantly, bach provides max with a nested list structure called llll, an acronym for Lisp-like linked list. \n(To Lisp-like linked lists is dedicated an entire section of the bach Help Center.)",
 					"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 				}
 
@@ -604,18 +564,7 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-2", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-9", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-22", 0 ]
 				}
 
@@ -623,7 +572,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-15", 0 ],
-					"disabled" : 0,
 					"hidden" : 1,
 					"source" : [ "obj-25", 0 ]
 				}
@@ -631,36 +579,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-5", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-6", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-7", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-9", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-8", 0 ]
 				}
 
@@ -668,8 +587,6 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-15", 1 ],
-					"disabled" : 0,
-					"hidden" : 0,
 					"source" : [ "obj-9", 0 ]
 				}
 
@@ -677,42 +594,34 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "bach.det.maxpat",
-				"bootpath" : "/Applications/Max 6.1/packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.rank.maxpat",
-				"bootpath" : "/Applications/Max 6.1/packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.times.maxpat",
-				"bootpath" : "/Applications/Max 6.1/packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "bach.+.maxpat",
-				"bootpath" : "/Applications/Max 6.1/packages/bach/patchers",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.expr.mxo",
-				"type" : "iLaX"
-			}
-, 			{
 				"name" : "bach.flat.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.ratnum.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -740,6 +649,10 @@
 				"type" : "iLaX"
 			}
 , 			{
+				"name" : "bach.expr.mxo",
+				"type" : "iLaX"
+			}
+, 			{
 				"name" : "bach.mtimes.mxo",
 				"type" : "iLaX"
 			}
@@ -759,7 +672,8 @@
 				"name" : "bach.reg.mxo",
 				"type" : "iLaX"
 			}
- ]
+ ],
+		"autosave" : 0
 	}
 
 }

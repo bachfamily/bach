@@ -248,7 +248,7 @@ int T_EXPORT main(void){
 	c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
 
 //	jbox_initclass(c, JBOX_COLOR | JBOX_FIXWIDTH | JBOX_FONTATTR);
-	jbox_initclass(c, JBOX_TEXTFIELD | JBOX_FONTATTR | JBOX_FIXWIDTH);	// include textfield and Fonts attributes
+	jbox_initclass(c, JBOX_TEXTFIELD | JBOX_FONTATTR);	// include textfield and Fonts attributes
 //	jbox_initclass(c, 0);
 	
 	class_addmethod(c, (method) circle_paint,			"paint", A_CANT, 0);
@@ -844,9 +844,13 @@ t_circle* circle_new(t_symbol *s, long argc, t_atom *argv){
 	x->velocity_handling = 1;
 	x->is_velocity_dragging = -1;
 	x->mouseover_pt = -1;
+    
+    
+    // bach_init_size((t_object *)x, 120, 120);
 	
 	// retrieve saved attribute values
 	attr_dictionary_process(x, d);
+
 
 	textfield = jbox_get_textfield((t_object *) x); 
 	if (textfield) {
@@ -861,7 +865,7 @@ t_circle* circle_new(t_symbol *s, long argc, t_atom *argv){
 	systhread_mutex_new_debug(&x->c_mutex, 0);
 
 	jbox_ready(&x->j_box.l_box);
-
+    
     llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
 	if (x)
 		return x;
@@ -1059,6 +1063,7 @@ void circle_paint(t_circle *x, t_object *view)
             jtextlayout_draw(jtl, g);
             jtextlayout_destroy(jtl);
             bach_freeptr(number_txt);
+            number_txt = NULL;
 		}
 	}
     
@@ -1087,7 +1092,8 @@ void circle_paint(t_circle *x, t_object *view)
         jtextlayout_draw(jtl, g);
         jtextlayout_destroy(jtl);
         bach_freeptr(number_txt);
-    }
+        number_txt = NULL;
+   }
     
 	// circle for each point
 	for (i = 0; i < x->num_points; i++) {
