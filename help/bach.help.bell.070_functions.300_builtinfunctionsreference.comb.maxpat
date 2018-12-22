@@ -39,13 +39,25 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-14",
-					"maxclass" : "button",
-					"numinlets" : 1,
+					"id" : "obj-16",
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 9.0, 84.0, 24.0, 24.0 ]
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 73.0, 110.0, 48.0, 23.0 ],
+					"text" : "1 2 3 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 110.0, 48.0, 23.0 ],
+					"text" : "1 2 3 4"
 				}
 
 			}
@@ -55,25 +67,25 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 149.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 181.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "scramble(1 [2 3] 4 5 6 7) ",
+					"code" : "comb($x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 118.0, 258.0, 23.0 ],
+					"patching_rect" : [ 9.0, 150.0, 178.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval scramble(1 [2 3] 4 5 6 7) @out m"
+					"text" : "bach.eval comb($x1) @out m"
 				}
 
 			}
@@ -86,8 +98,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 414.0, 97.0, 131.0, 65.0 ],
-					"text" : "Arguments:\nllll\nmindepth (default: 1)\nmaxdepth (default: 1)",
+					"patching_rect" : [ 317.0, 129.0, 256.0, 65.0 ],
+					"text" : "Arguments:\nllll\nkstart (default: 0)\nkend (default: none, meaning the whole llll)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -101,8 +113,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 380.0, 36.0 ],
-					"text" : "The scramble() function shuffles randomly the elements of an llll, like the bach.scramble object",
+					"patching_rect" : [ 9.0, 39.0, 383.0, 36.0 ],
+					"text" : "The comb() function returns all the k-combinations of an llll for a range of k, like the bach.comb object.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -146,8 +158,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 219.0, 23.0 ],
-					"text" : "scramble() function reference",
+					"patching_rect" : [ 6.0, 8.0, 194.0, 23.0 ],
+					"text" : "comb() function reference",
 					"varname" : "title"
 				}
 
@@ -171,7 +183,14 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-14", 0 ]
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-2", 0 ]
 				}
 
 			}

@@ -137,7 +137,7 @@ void llll_post(t_llll *ll, t_int32 mindepth, t_int32 maxdepth, t_atom_long max_d
 						if (deepenough) {
 							snprintf_zero(postline, 256, "%s " LLLL_PUSH_CSTR " ", header);
 							llll_to_text_buf(sub_ll, &postline, strlen(postline), max_decimals, 0, 0, 0, fn);
-							snprintf_zero(postline, sysmem_ptrsize(postline), "%s )", postline);
+							snprintf_zero(postline, sysmem_ptrsize(postline), "%s " LLLL_POP_CSTR, postline);
 						}
 						this_elem = this_elem->l_next;
 					}

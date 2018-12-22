@@ -354,7 +354,7 @@ long codableobj_edsave(t_codableobj *x, char **ht, long size)
 
 void codableobj_appendtodictionary(t_codableobj *x, t_dictionary *d)
 {
-    if (x->c_embed) {
+    if (x->c_embed && x->c_text && *(x->c_text)) {
         dictionary_appendstring(d, gensym("code"), x->c_text);
     }
 }
