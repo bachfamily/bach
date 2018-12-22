@@ -118,7 +118,7 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
-		<attribute name="auto" get="1" set="1" type="int" size="1">
+		<attribute name="auto" get="1" set="1" type="atom" size="1">
 			<digest>
 				Automatically Run Code
 			</digest>
@@ -129,10 +129,11 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Automatically Run Code" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="directins" get="1" set="1" type="int" size="1">
+		<attribute name="directins" get="1" set="1" type="atom" size="1">
 			<digest>
 				Number of Direct Inlets
 			</digest>
@@ -143,10 +144,11 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of Direct Inlets" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="directouts" get="1" set="1" type="int" size="1">
+		<attribute name="directouts" get="1" set="1" type="atom" size="1">
 			<digest>
 				Number of Outlets
 			</digest>
@@ -157,10 +159,11 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of Outlets" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
-		<attribute name="embed" get="1" set="1" type="int" size="1">
+		<attribute name="embed" get="1" set="1" type="atom" size="1">
 			<digest>
 				Save Data With Patcher
 			</digest>
@@ -171,10 +174,26 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Save Data With Patcher" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
-		<attribute name="inlets" get="1" set="1" type="int" size="1">
+		<attribute name="extraoutlets" get="1" set="1" type="atom" size="1">
+			<digest>
+				Number of Extra Outlets
+			</digest>
+			<description>
+				Number of data outlets. <br />
+				This is a static attribute which can only be set by typing it in the object box.
+				<br /> <br />
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of Extra Outlets" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="inlets" get="1" set="1" type="atom" size="1">
 			<digest>
 				Number of Inlets
 			</digest>
@@ -185,6 +204,7 @@
 			</description>
 			<attributelist>
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of Inlets" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
@@ -216,20 +236,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
-				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
-			</attributelist>
-		</attribute>
-		<attribute name="outlets" get="1" set="1" type="int" size="1">
-			<digest>
-				Number of Outlets
-			</digest>
-			<description>
-				Number of data outlets. <br />
-				This is a static attribute which can only be set by typing it in the object box.
-				<br /> <br />
-			</description>
-			<attributelist>
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Number of Outlets" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
