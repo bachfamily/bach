@@ -426,7 +426,7 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
             object_method(x, gensym("bang"));
         if (x->c_filename)
             bach_freeptr(x->c_filename);
-        x->c_filename = bach_newptr(MAX_PATH_CHARS);
+        x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
         strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
         x->c_path = path;
     } else {
@@ -438,7 +438,7 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
             x->c_main = nullptr;
             if (x->c_filename)
                 bach_freeptr(x->c_filename);
-            x->c_filename = bach_newptr(MAX_PATH_CHARS);
+            x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
             strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
             x->c_path = path;
         } else {
