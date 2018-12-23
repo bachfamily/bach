@@ -1,5 +1,5 @@
 {
-	"Evaluation language" : {
+	"Evaluation language (bell)" : {
 		"Introduction" : {
 			"filename" : [ "bach.help.bell.000_introduction.maxpat" ],
 			"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
