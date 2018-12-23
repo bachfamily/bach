@@ -1407,9 +1407,6 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
 
 
 
-void bach_init_size(t_object *ob, long init_width, long init_height);
-double bach_get_patching_height(t_object *ob);
-
 #endif
 
 #ifdef BACH_JUCE

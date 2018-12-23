@@ -846,8 +846,6 @@ t_circle* circle_new(t_symbol *s, long argc, t_atom *argv){
     x->mouseover_pt = -1;
     
     
-    // bach_init_size((t_object *)x, 120, 120);
-    
     // retrieve saved attribute values
     attr_dictionary_process(x, d);
 

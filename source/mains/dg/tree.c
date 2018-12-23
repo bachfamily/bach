@@ -1944,7 +1944,6 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
     systhread_mutex_new_debug(&x->c_mutex, 0);
     
     jbox_ready(&x->j_box.l_box);
-    // bach_init_size((t_object *)x, 200, 120);
     
     if (x) {
         
