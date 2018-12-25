@@ -699,7 +699,6 @@ t_wordcloud* wordcloud_new(t_symbol *s, short argc, t_atom *argv)
 	llllobj_jbox_setup((t_llllobj_jbox *) x, 2, "a", NULL);
 	
 	jbox_ready(&x->j_box.l_box);
-    // bach_init_size((t_object *)x, 200, 300);
 	
 	if (x) {
 		t_llll *llll_for_rebuild = llll_retrieve_from_dictionary(d, "whole_wordcloud_data");

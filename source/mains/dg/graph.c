@@ -1060,7 +1060,6 @@ t_graph* graph_new(t_symbol *s, long argc, t_atom *argv){
 	systhread_mutex_new_debug(&x->c_mutex, 0);
 
 	jbox_ready(&x->j_box.l_box);
-    // bach_init_size((t_object *)x, 260, 260);
 
 	if (x) {
 		t_llll *llll_for_rebuild = llll_retrieve_from_dictionary(d, "whole_graph_data");

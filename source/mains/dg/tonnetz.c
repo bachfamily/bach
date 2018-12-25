@@ -2343,7 +2343,6 @@ t_tonnetz* tonnetz_new(t_symbol *s, long argc, t_atom *argv)
 	llllobj_jbox_setup((t_llllobj_jbox *) x, 6, "b4i44444");
 
 	jbox_ready(&x->j_box.l_box);
-    // bach_init_size((t_object *)x, 542, 316);
 
 	if (x) {
 		t_llll *llll_for_rebuild = llll_retrieve_from_dictionary(d, "whole_tonnetz_data");
