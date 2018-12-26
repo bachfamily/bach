@@ -368,7 +368,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: condition, conditional, true, false, zero, null, boolean, logical, and, or, short-circuit, operator",
+					"text" : "Tags: evaluation, language, script, scripting, code, condition, conditional, true, false, zero, null, boolean, logical, and, or, short-circuit, operator",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

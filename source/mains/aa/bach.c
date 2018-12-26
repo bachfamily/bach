@@ -1189,6 +1189,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["comb"] = new t_fnComb;
     (*bifTable)["cartesianprod"] = new t_fnCartesianprod;
     (*bifTable)["wrap"] = new t_fnWrap;
+    (*bifTable)["delace"] = new t_fnDelace;
     (*bifTable)["group"] = new t_fnGroup;
     (*bifTable)["thin"] = new t_fnThin;
     (*bifTable)["classify"] = new t_fnClassify;

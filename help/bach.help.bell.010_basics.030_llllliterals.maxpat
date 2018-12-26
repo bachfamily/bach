@@ -315,7 +315,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, literal, concatenation, construction, space, whitespace, symbol, pitch, flat",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, literal, concatenation, construction, space, whitespace, symbol, pitch, flat",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

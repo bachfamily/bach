@@ -376,7 +376,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: bell, variables, local, assignment, equal, operator, chain",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, variables, local, assignment, equal, operator, chain",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
