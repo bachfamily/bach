@@ -39,37 +39,42 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-8",
+					"id" : "obj-14",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 192.0, 103.5, 29.5, 23.0 ],
-					"text" : "nil"
+					"patching_rect" : [ 9.0, 254.0, 135.0, 23.0 ],
+					"text" : "6000 6400 6700 7200"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-4",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 149.0, 103.5, 29.5, 23.0 ],
-					"text" : "null"
+					"id" : "obj-15",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 358.0, 132.0, 23.0 ],
+					"text" : "print items @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-3",
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"code" : "finditems($x1, 0, ($item -> $item % 1200 == 0)) ",
+					"id" : "obj-16",
+					"linecount" : 3,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 84.0, 103.5, 51.0, 23.0 ],
-					"text" : "1 2 3 4"
+					"patching_rect" : [ 9.0, 289.0, 185.0, 52.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval finditems($x1\\, 0\\, ($item -> $item % 1200 == 0)) @out m"
 				}
 
 			}
@@ -80,8 +85,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 103.5, 51.0, 23.0 ],
-					"text" : "a [b [c]]"
+					"patching_rect" : [ 9.0, 122.0, 50.0, 23.0 ],
+					"text" : "1 2 3 1"
 				}
 
 			}
@@ -91,25 +96,25 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 174.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 192.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "depth($x1) ",
+					"code" : "finditems($x1, 1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 138.0, 179.0, 23.0 ],
+					"patching_rect" : [ 9.0, 157.0, 213.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval depth($x1) @out m"
+					"text" : "bach.eval finditems($x1\\, 1) @out m"
 				}
 
 			}
@@ -118,13 +123,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 2,
+					"linecount" : 17,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 414.0, 97.0, 75.0, 36.0 ],
-					"presentation_linecount" : 2,
-					"text" : "Arguments:\nllll",
+					"patching_rect" : [ 355.0, 126.0, 245.0, 253.0 ],
+					"text" : "Arguments:\nllll\nitems (default: null. The items argument is passed to the comparison function)\nfunction (default: null, standing for standard equality test)\nsize\nmindepth (default: 1)\nmaxdepth (default: -1)\nminidx (default: 1)\nmaxidx (default: -1)\nidxreject (default: 0)\ndepthreject (default: 0)\nmaxcount (default: 0)\nunwrap (default: 0)\ndepthpolicy (default: 0)\nrecursive (default: 0)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -134,13 +138,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 2,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 284.0, 36.0 ],
-					"presentation_linecount" : 2,
-					"text" : "The depth() function returns the depth of an llll, like the bach.depth object.",
+					"patching_rect" : [ 9.0, 39.0, 484.0, 50.0 ],
+					"text" : "The finditems() function retrieves items from an llll, like the bach.find object. The return value is an llll composed by the retrieved items.\nAn equality comparison function can be provided through the \"function\" argument.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -184,8 +187,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 253.0, 23.0 ],
-					"text" : "depth() function reference",
+					"patching_rect" : [ 6.0, 8.0, 220.0, 23.0 ],
+					"text" : "finditems() function reference",
 					"varname" : "title"
 				}
 
@@ -208,6 +211,20 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-14", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-15", 0 ],
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-2", 0 ]
 				}
@@ -215,29 +232,8 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-3", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-4", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-5", 0 ],
 					"source" : [ "obj-7", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-8", 0 ]
 				}
 
 			}

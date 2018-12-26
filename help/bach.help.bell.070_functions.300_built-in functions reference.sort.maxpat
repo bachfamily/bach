@@ -39,37 +39,41 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-8",
+					"id" : "obj-1",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 192.0, 103.5, 29.5, 23.0 ],
-					"text" : "nil"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-4",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 149.0, 103.5, 29.5, 23.0 ],
-					"text" : "null"
+					"patching_rect" : [ 9.0, 226.5, 59.0, 23.0 ],
+					"text" : "9 0 2 1 0"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-3",
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 297.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "sort($x1, ($a, $b -> $a % 8 <= $b % 8)) ",
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 84.0, 103.5, 51.0, 23.0 ],
-					"text" : "1 2 3 4"
+					"patching_rect" : [ 9.0, 261.0, 343.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval sort($x1\\, ($a\\, $b -> $a % 8 <= $b % 8)) @out m"
 				}
 
 			}
@@ -80,8 +84,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 103.5, 51.0, 23.0 ],
-					"text" : "a [b [c]]"
+					"patching_rect" : [ 9.0, 82.5, 59.0, 23.0 ],
+					"text" : "9 0 2 1 0"
 				}
 
 			}
@@ -91,25 +95,25 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 174.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 153.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "depth($x1) ",
+					"code" : "sort($x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 138.0, 179.0, 23.0 ],
+					"patching_rect" : [ 9.0, 117.0, 168.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval depth($x1) @out m"
+					"text" : "bach.eval sort($x1) @out m"
 				}
 
 			}
@@ -118,13 +122,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 2,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 414.0, 97.0, 75.0, 36.0 ],
-					"presentation_linecount" : 2,
-					"text" : "Arguments:\nllll",
+					"patching_rect" : [ 238.0, 90.0, 353.0, 50.0 ],
+					"text" : "Arguments:\nllll\nfunction (default: null, standing for a default sorting function)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -134,13 +137,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 284.0, 36.0 ],
-					"presentation_linecount" : 2,
-					"text" : "The depth() function returns the depth of an llll, like the bach.depth object.",
+					"patching_rect" : [ 9.0, 39.0, 326.0, 21.0 ],
+					"text" : "The sort() function sorts an llll, like the bach.sort object.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -184,8 +185,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 253.0, 23.0 ],
-					"text" : "depth() function reference",
+					"patching_rect" : [ 6.0, 8.0, 182.0, 23.0 ],
+					"text" : "sort() function reference",
 					"varname" : "title"
 				}
 
@@ -208,6 +209,13 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-2", 0 ]
 				}
@@ -215,14 +223,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-3", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
+					"destination" : [ "obj-3", 0 ],
 					"source" : [ "obj-4", 0 ]
 				}
 
@@ -231,13 +232,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-5", 0 ],
 					"source" : [ "obj-7", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-8", 0 ]
 				}
 
 			}
