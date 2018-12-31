@@ -55,25 +55,25 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 297.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 296.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "thin($x1, ($a, $b -> $a % 8 == $b % 8)) ",
+					"code" : "classify($x1, ($a, $b -> $a % 8 == $b % 8)) ",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 261.0, 343.0, 23.0 ],
+					"patching_rect" : [ 9.0, 261.0, 364.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval thin($x1\\, ($a\\, $b -> $a % 8 == $b % 8)) @out m"
+					"text" : "bach.eval classify($x1\\, ($a\\, $b -> $a % 8 == $b % 8)) @out m"
 				}
 
 			}
@@ -95,25 +95,25 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 153.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 168.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "thin($x1) ",
+					"code" : "classify($x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 117.0, 168.0, 23.0 ],
+					"patching_rect" : [ 9.0, 117.0, 189.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval thin($x1) @out m"
+					"text" : "bach.eval classify($x1) @out m"
 				}
 
 			}
@@ -142,7 +142,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 326.0, 36.0 ],
-					"text" : "The thin() function removes the duplicates from an llll, like the bach.thin object.",
+					"text" : "The classify() function arranges elements into classes, like the bach.classify object.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -186,8 +186,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 182.0, 23.0 ],
-					"text" : "thin() function reference",
+					"patching_rect" : [ 6.0, 8.0, 209.0, 23.0 ],
+					"text" : "classify() function reference",
 					"varname" : "title"
 				}
 

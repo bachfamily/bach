@@ -39,41 +39,66 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-1",
+					"id" : "obj-9",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 226.5, 59.0, 23.0 ],
-					"text" : "9 0 2 1 0"
+					"patching_rect" : [ 405.0, 261.5, 102.0, 23.0 ],
+					"text" : "6000 6900 7600"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-3",
+					"id" : "obj-14",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 261.5, 102.0, 23.0 ],
+					"text" : "6000 6400 6700"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-15",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 297.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 346.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "thin($x1, ($a, $b -> $a % 8 == $b % 8)) ",
-					"id" : "obj-4",
+					"code" : "intersection($x1, $x2, ($a, $b -> $a % 1200 == $b % 1200)) ",
+					"id" : "obj-16",
+					"linecount" : 2,
 					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 261.0, 343.0, 23.0 ],
+					"patching_rect" : [ 9.0, 296.0, 415.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval thin($x1\\, ($a\\, $b -> $a % 8 == $b % 8)) @out m"
+					"text" : "bach.eval intersection($x1\\, $x2\\, ($a\\, $b -> $a % 1200 == $b % 1200)) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 197.0, 82.5, 102.0, 23.0 ],
+					"text" : "6000 6900 7600"
 				}
 
 			}
@@ -84,8 +109,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 82.5, 59.0, 23.0 ],
-					"text" : "9 0 2 1 0"
+					"patching_rect" : [ 9.0, 82.5, 102.0, 23.0 ],
+					"text" : "6000 6400 6700"
 				}
 
 			}
@@ -95,25 +120,26 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 153.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 166.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "thin($x1) ",
+					"code" : "intersection($x1, $x2) ",
 					"id" : "obj-7",
+					"linecount" : 2,
 					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 117.0, 168.0, 23.0 ],
+					"patching_rect" : [ 9.0, 117.0, 207.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval thin($x1) @out m"
+					"text" : "bach.eval intersection($x1\\, $x2) @out m"
 				}
 
 			}
@@ -122,12 +148,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 3,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 206.0, 90.0, 392.0, 50.0 ],
-					"text" : "Arguments:\nllll\nfunction (default: null, standing for the default comparison function)",
+					"patching_rect" : [ 178.0, 170.0, 392.0, 65.0 ],
+					"text" : "Arguments:\nllll1\nllll2\nfunction (default: null, standing for the default comparison function)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -141,8 +167,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 326.0, 36.0 ],
-					"text" : "The thin() function removes the duplicates from an llll, like the bach.thin object.",
+					"patching_rect" : [ 9.0, 39.0, 364.0, 36.0 ],
+					"text" : "The intersection() function returns the intersection of two lllls, like the bach.intersection object",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -186,8 +212,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 182.0, 23.0 ],
-					"text" : "thin() function reference",
+					"patching_rect" : [ 6.0, 8.0, 239.0, 23.0 ],
+					"text" : "intersection() function reference",
 					"varname" : "title"
 				}
 
@@ -210,8 +236,15 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-1", 0 ]
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-14", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-15", 0 ],
+					"source" : [ "obj-16", 0 ]
 				}
 
 			}
@@ -224,15 +257,22 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-3", 0 ],
-					"source" : [ "obj-4", 0 ]
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-7", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
-					"source" : [ "obj-7", 0 ]
+					"destination" : [ "obj-7", 1 ],
+					"source" : [ "obj-8", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 1 ],
+					"source" : [ "obj-9", 0 ]
 				}
 
 			}

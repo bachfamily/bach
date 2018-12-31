@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 84.0, 81.0, 617.0, 539.0 ],
+		"rect" : [ 524.0, 224.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,81 +39,53 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-1",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 226.5, 59.0, 23.0 ],
-					"text" : "9 0 2 1 0"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-3",
+					"id" : "obj-20",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 297.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
+					"patching_rect" : [ 183.0, 253.0, 76.0, 23.0 ],
+					"text" : "print direct2"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "thin($x1, ($a, $b -> $a % 8 == $b % 8)) ",
-					"id" : "obj-4",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 261.0, 343.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval thin($x1\\, ($a\\, $b -> $a % 8 == $b % 8)) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 82.5, 59.0, 23.0 ],
-					"text" : "9 0 2 1 0"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-5",
+					"id" : "obj-19",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 153.0, 98.0, 23.0 ],
-					"text" : "print @popup 1"
+					"patching_rect" : [ 96.0, 253.0, 76.0, 23.0 ],
+					"text" : "print direct1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "thin($x1) ",
+					"id" : "obj-18",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 9.0, 146.0, 24.0, 24.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "for $a in 1 2 3 repeat directout(2 1, $a*10, $a) ",
 					"id" : "obj-7",
+					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 117.0, 168.0, 23.0 ],
+					"numoutlets" : 3,
+					"outlettype" : [ "", "", "" ],
+					"patching_rect" : [ 9.0, 191.0, 193.0, 52.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval thin($x1) @out m"
+					"text" : "bach.eval for $a in 1 2 3 repeat directout(2 1\\, $a*10\\, $a) @directouts 2 @out m"
 				}
 
 			}
@@ -126,8 +98,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 206.0, 90.0, 392.0, 50.0 ],
-					"text" : "Arguments:\nllll\nfunction (default: null, standing for the default comparison function)",
+					"patching_rect" : [ 339.0, 192.0, 137.0, 50.0 ],
+					"text" : "Arguments:\noutlets\n<...> (lllls to be output)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -137,12 +109,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 2,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 326.0, 36.0 ],
-					"text" : "The thin() function removes the duplicates from an llll, like the bach.thin object.",
+					"patching_rect" : [ 9.0, 39.0, 561.0, 94.0 ],
+					"text" : "The directout() function outputs data from one or more direct outlets. The data are output as the function is evaluated.\nThe return value of directout() is the last llll output.\nUnlike what happens with its corresponding pseudovariables $do<n>, providing code containing the directout() function does not create automatically the direct outlets. For this reason, it is generally necessary to set the @directouts object argument.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -186,8 +158,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 182.0, 23.0 ],
-					"text" : "thin() function reference",
+					"patching_rect" : [ 6.0, 8.0, 218.0, 23.0 ],
+					"text" : "directout() function reference",
 					"varname" : "title"
 				}
 
@@ -201,7 +173,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, outlet",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, outlet, directout, direct, out",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -210,29 +182,22 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-1", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-2", 0 ]
+					"source" : [ "obj-18", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-3", 0 ],
-					"source" : [ "obj-4", 0 ]
+					"destination" : [ "obj-19", 0 ],
+					"source" : [ "obj-7", 1 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-5", 0 ],
-					"source" : [ "obj-7", 0 ]
+					"destination" : [ "obj-20", 0 ],
+					"source" : [ "obj-7", 2 ]
 				}
 
 			}

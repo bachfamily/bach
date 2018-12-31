@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 137.0, 177.0, 617.0, 539.0 ],
+		"rect" : [ 84.0, 81.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,43 +39,12 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"bubble" : 1,
-					"bubblepoint" : 0.0,
-					"bubbleside" : 2,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-19",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 176.5, 273.5, 68.0, 40.0 ],
-					"text" : "Meet sort!"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-18",
-					"linecount" : 9,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 320.0, 263.5, 271.0, 141.0 ],
-					"text" : "A somewhat more complex example. Here, we \"outsource\" the lambda function of sort to the lambda loop.\nThe basic principle is the same: all the lambda function we pass to sort is outputting data to the direct outlets and subsequently retrieving other data from the lambda inlet, which constitute the actual return value of the lambda function."
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "int" ],
-					"patching_rect" : [ 145.5, 391.5, 55.0, 23.0 ],
+					"patching_rect" : [ 156.5, 261.5, 55.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -91,7 +60,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 231.5, 362.0, 84.0, 23.0 ],
+					"patching_rect" : [ 242.5, 232.0, 84.0, 23.0 ],
 					"text" : "bach.% 1200"
 				}
 
@@ -103,7 +72,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 282.0, 102.0, 23.0 ],
+					"patching_rect" : [ 17.0, 152.0, 102.0, 23.0 ],
 					"text" : "7600 4300 6000"
 				}
 
@@ -115,7 +84,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 145.5, 362.0, 84.0, 23.0 ],
+					"patching_rect" : [ 156.5, 232.0, 84.0, 23.0 ],
 					"text" : "bach.% 1200"
 				}
 
@@ -126,7 +95,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 362.0, 133.0, 23.0 ],
+					"patching_rect" : [ 17.0, 232.0, 133.0, 23.0 ],
 					"text" : "print result @popup 1"
 				}
 
@@ -140,7 +109,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 6.0, 315.0, 298.0, 38.0 ],
+					"patching_rect" : [ 17.0, 185.0, 298.0, 38.0 ],
+					"presentation_linecount" : 2,
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -151,37 +121,16 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-7",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 73.0, 113.0, 102.0, 23.0 ],
-					"text" : "7600 4300 6000"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-1",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 235.0, 153.5, 84.0, 23.0 ],
-					"text" : "bach.% 1200"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "number",
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-6",
+					"linecount" : 2,
+					"maxclass" : "comment",
 					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 113.0, 50.0, 23.0 ]
+					"numoutlets" : 0,
+					"patching_rect" : [ 477.0, 194.0, 75.0, 36.0 ],
+					"text" : "Arguments:\ninlet",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -190,57 +139,13 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 2,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 35.0, 594.0, 36.0 ],
-					"text" : "The directin function, and the corresponding pseudovariables $dx<1> ... $dx<n>, allow receiving data during the evaluation. Their typical use is for setting up lambda loops.",
+					"patching_rect" : [ 9.0, 39.0, 561.0, 79.0 ],
+					"text" : "The directin() function receives data during evaluation from one direct inlet. It is useful for setting up lambda loops.\nUnlike what happens with its corresponding pseudovariables $di<n>, providing code containing the directout() function does not create automatically the direct inlet. For this reason, it is generally necessary to set the @directins object argument.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-15",
-					"linecount" : 6,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 325.0, 116.0, 264.0, 98.0 ],
-					"text" : "Here, we set up an external lambda loop. At every iteration of the for loop, a value is output from the direct outlet, and subsequently a new value is read from the direct inlet. The direct inlet values are then concatenated to form the result."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-27",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 194.5, 133.0, 23.0 ],
-					"text" : "print result @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "for $x in $x1 repeat ($do1 = $x ; $res _= $dx1) ",
-					"id" : "obj-3",
-					"linecount" : 2,
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 146.0, 210.0, 38.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $x in $x1 repeat ($do1 = $x \\; $res _= $dx1) @out m"
 				}
 
 			}
@@ -253,7 +158,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: return+value, multiple+outlet, directout",
+					"text" : "See Also:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -283,8 +188,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 244.0, 23.0 ],
-					"text" : "Receiving data during evaluation",
+					"patching_rect" : [ 6.0, 8.0, 208.0, 23.0 ],
+					"text" : "directin() function reference",
 					"varname" : "title"
 				}
 
@@ -298,7 +203,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, direct, inlet, x, pseudovariable, directin, lambda",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, outlet, directin, direct, in",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -306,13 +211,6 @@
 			}
  ],
 		"lines" : [ 			{
-				"patchline" : 				{
-					"destination" : [ "obj-3", 1 ],
-					"source" : [ "obj-1", 0 ]
-				}
-
-			}
-, 			{
 				"patchline" : 				{
 					"destination" : [ "obj-16", 0 ],
 					"source" : [ "obj-14", 2 ]
@@ -343,29 +241,8 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-14", 1 ],
-					"midpoints" : [ 155.0, 422.0, 320.0, 422.0, 320.0, 300.0, 294.5, 300.0 ],
+					"midpoints" : [ 166.0, 292.0, 331.0, 292.0, 331.0, 170.0, 305.5, 170.0 ],
 					"source" : [ "obj-17", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-3", 0 ],
-					"source" : [ "obj-2", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-1", 0 ],
-					"source" : [ "obj-3", 1 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-27", 0 ],
-					"source" : [ "obj-3", 0 ]
 				}
 
 			}
@@ -380,13 +257,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-17", 0 ],
 					"source" : [ "obj-5", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-3", 0 ],
-					"source" : [ "obj-7", 0 ]
 				}
 
 			}
