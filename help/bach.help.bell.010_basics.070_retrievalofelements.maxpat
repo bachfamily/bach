@@ -48,7 +48,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 224.0, 402.0, 353.0, 54.0 ],
-					"presentation_linecount" : 16,
 					"text" : "The full syntax of bach.nth is supported: a sublist specifies a set of elements to be retrieved, and a sublist into it specifies a range."
 				}
 
@@ -374,7 +373,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: bell+llll, concatenation, precedence",
+					"text" : "See Also: bell+llll, concatenation, precedence, picking",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

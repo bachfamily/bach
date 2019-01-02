@@ -489,12 +489,14 @@ t_llll *llllobj_parse_wrap_retain_and_store(t_object *x, e_llllobj_obj_types typ
 t_llll *llllobj_parse_wrap_clone_and_store(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, long store, t_atom_long lvls);
 
 
-// a variant of lllobj_parse_and_store that is specific for dealing with element addresses (as in the address inlet of bach.nth)
+// a variant of llllobj_parse_and_store that is specific for dealing with element addresses (as in the address inlet of bach.nth)
 // only valid addresses will be accepted
 // accept_multiple tells if the multiple element syntax is refused (as in bach.swap) or accepted (as in bach.insert)
 // accept_range tells if the range syntax is refused (as in bach.insert) or accepted (as in bach.nth)
 // stores are counted from 0;
 t_max_err llllobj_parse_and_store_llll_address(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, long store_num, t_bool accept_multiple, t_bool accept_range);
+
+t_max_err llllobj_check_llll_address(t_object *x, t_llll *ll, t_bool accept_multiple, t_bool accept_range);
 
 
 // store an llll (also freeing the previously stored llll)

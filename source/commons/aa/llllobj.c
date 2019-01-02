@@ -2495,40 +2495,46 @@ t_max_err llllobj_pxjbox_rebuild_notify(t_llllobj_pxjbox *x, t_symbol *s, t_symb
 	return MAX_ERR_NONE;
 }
 
+t_max_err llllobj_check_llll_address(t_object *x, t_llll *ll, t_bool accept_multiple, t_bool accept_range)
+{
+	long depth;
+	if (ll->l_size == 0) {
+		object_error(x, "Address llll can't be null");
+		return MAX_ERR_GENERIC;
+	}
+	
+	depth = ll->l_depth;
+	if (depth == 1 || (accept_multiple && depth == 2) || (accept_range && depth == 3)) {
+		long contains;
+		contains = llll_contains(ll, 0, 0);
+		if (contains != H_NOTHING && (contains & ~(H_LONG | H_DOUBLE | H_LLLL))) {
+			object_error(x, "Bad address llll");
+			return MAX_ERR_GENERIC;
+		}
+	} else if (depth == 2) {
+		object_error(x, "Address doesn't support multiple element syntax");
+		return MAX_ERR_GENERIC;
+	} else if (depth == 3) {
+		object_error(x, "Address doesn't support range");
+		return MAX_ERR_GENERIC;
+	} else {
+		object_error(x, "Bad address llll");
+		return MAX_ERR_GENERIC;
+	}
+	return MAX_ERR_NONE;
+}
+
+
 t_max_err llllobj_parse_and_store_llll_address(t_object *x, e_llllobj_obj_types type, t_symbol *msg, long ac, t_atom *av, long store_num, t_bool accept_multiple, t_bool accept_range)
 {
-	long contains;
 	t_llll *in_llll = NULL;
-	t_atom_long depth;
 	
 	in_llll = llllobj_parse_llll((t_object *) x, type, msg, ac, av, LLLL_PARSE_CLONE);
 	if (!in_llll)
 		return MAX_ERR_GENERIC;
 	
-	if (in_llll->l_size == 0) {
-		object_error(x, "Address llll can't be null");
-		llll_free(in_llll);
-		return MAX_ERR_GENERIC;
-	}
-	
-	depth = in_llll->l_depth;
-	if (depth == 1 || (accept_multiple && depth == 2) || (accept_range && depth == 3)) {
-		contains = llll_contains(in_llll, 0, 0);
-		if (contains != H_NOTHING && (contains & ~(H_LONG | H_DOUBLE | H_LLLL))) {
-			object_error(x, "Bad address llll");
-			llll_free(in_llll);
-			return MAX_ERR_GENERIC;
-		}
-	} else if (depth == 2) {
-		object_error(x, "Doesn't support multiple element syntax");
-		llll_free(in_llll);
-		return MAX_ERR_GENERIC;
-	} else if (depth == 3) {
-		object_error(x, "Doesn't support range");
-		llll_free(in_llll);
-		return MAX_ERR_GENERIC;
-	} else {
-		object_error(x, "Bad address llll");
+
+	if (llllobj_check_llll_address(x, in_llll, accept_multiple, accept_range) != MAX_ERR_NONE) {
 		llll_free(in_llll);
 		return MAX_ERR_GENERIC;
 	}
