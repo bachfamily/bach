@@ -1705,6 +1705,9 @@ void bach_get_attr(t_bach_inspector_manager *man, void *obj, t_bach_attribute *a
 // preprocess > setattr > process
 void set_bach_attr_and_process_from_ac_av(t_bach_inspector_manager *man, void *obj, t_bach_attribute *attr, long ac, t_atom *av, char force_undo_step)
 {
+    if (!obj)
+        return;
+    
     t_notation_obj *r_ob = (man->bach_managing ? (t_notation_obj *)man->owner : NULL);
     if (r_ob)
         r_ob->also_changing_in_inspector_all_sync_tempi = false;
@@ -1714,7 +1717,7 @@ void set_bach_attr_and_process_from_ac_av(t_bach_inspector_manager *man, void *o
 	bach_set_attr(man, obj, attr, ac, av);
     if (r_ob)
         remove_all_free_undo_ticks(r_ob, true); // because while setting the attribute we might have also created some ticks... which we don't want! :-)
-            // daniele 2016/12/13: this seems to work fine, but I don't really remember why any longer ;-)
+            // daniele 2016/12/13: this seems to work fine, but I don't really remember why any longer
 	bach_postprocess_attr(man, obj, attr);
 }
 

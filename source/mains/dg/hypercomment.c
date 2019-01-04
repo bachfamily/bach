@@ -725,6 +725,7 @@ void hypercomment_jsave(t_hypercomment *x, t_dictionary *d)
 }
 
 // THIS FUNCTION IS NEVER CALLED!
+// dg: 03/01/2019: WHY?
 void hypercomment_mousedoubleclick(t_hypercomment *x, t_object *patcherview, t_pt pt, long modifiers) {
 	long		size = 0;
 	char		*text = NULL;

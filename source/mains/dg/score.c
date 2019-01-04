@@ -6322,15 +6322,16 @@ int T_EXPORT main(void){
     // @mattr articulations @type int @default 1 @digest If non-zero, articulations are exported from the articulations slot, if any
     // @mattr lyrics @type int @default 1 @digest If non-zero, lyrics are exported from the lyrics slot, if any
     // @mattr parenthesizedquartertones @type int @default 0 @digest If non-zero, exports quarter tones as parenthesized version of semitonal accidentals
+    // @mattr glissandi @type int @default 1 @digest If non-zero, glissandi are exported as slides
     // @example exportxml @caption export MusicXML file via dialog box
-    // @example exportxml myfile.xml [velocity 1] @caption also export velocity as MusicXML direction
-    // @example exportxml myfile.xml [directionslots 7] @caption also export content of slot 7 as MusicXML directions
-    // @example exportxml myfile.xml [directionslots 7 9] @caption also export content of slot 7 and 9 as MusicXML directions
-    // @example exportxml myfile.xml [directionslots [7 11]] @caption also export content of slots 7 through 11 as MusicXML directions
-    // @example exportxml myfile.xml [dynamics 0] @caption don't export dynamics
-    // @example exportxml myfile.xml [lyrics 0] [articulations 0] @caption don't export lyrics, nor articulations
-    // @example exportxml myfile.xml [noteheads 0] @caption don't export noteheads
-    // @example exportxml myfile.xml [parenthesizedquartertones 1] @caption also export quartertones as parenthesized versions of the standard accidentals right below them (only useful with Finale)
+    // @example exportxml myfile.xml @velocity 1 @caption also export velocity as MusicXML direction
+    // @example exportxml myfile.xml @directionslots 7 @caption also export content of slot 7 as MusicXML directions
+    // @example exportxml myfile.xml @directionslots 7 9 @caption also export content of slot 7 and 9 as MusicXML directions
+    // @example exportxml myfile.xml @directionslots [7 11] @caption also export content of slots 7 through 11 as MusicXML directions
+    // @example exportxml myfile.xml @dynamics 0 @caption don't export dynamics
+    // @example exportxml myfile.xml @lyrics 0 @articulations 0 @caption don't export lyrics, nor articulations
+    // @example exportxml myfile.xml @noteheads 0 @caption don't export noteheads
+    // @example exportxml myfile.xml @parenthesizedquartertones 1 @caption also export quartertones as parenthesized versions of the standard accidentals right below them (only useful with Finale)
     // @seealso write, writetxt, read, exportxml, exportom, exportpwgl, exportlilypond, exportlilypondpdf
     class_addmethod(c, (method) score_exportxml, "exportxml", A_GIMME, 0);
     

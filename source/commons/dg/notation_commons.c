@@ -33904,7 +33904,7 @@ t_marker *markername2marker(t_notation_obj *r_ob, t_llll *names){
 // get the FIRST notation item having as name a given name (or a set of given names)
 t_notation_item *names_to_single_notation_item(t_notation_obj *r_ob, t_llll *names){
 	t_notation_item *res = NULL;
-	t_llll *items = names_to_notation_items(r_ob, names);
+	t_llll *items = notationobj_names_to_notation_items(r_ob, names);
 	
 	if (items && items->l_head)
 		res = (t_notation_item *)hatom_getobj(&items->l_head->l_hatom);
@@ -36610,7 +36610,7 @@ char are_all_names_contained(t_llll *names, t_llll *container)
 long preselect_notation_items_by_name(t_notation_obj *r_ob, t_llll *names)
 {
 	t_llllelem *elem;
-	t_llll *items = names_to_notation_items(r_ob, names);
+	t_llll *items = notationobj_names_to_notation_items(r_ob, names);
 	for (elem = items->l_head; elem; elem = elem->l_next)
 		notation_item_add_to_preselection(r_ob, (t_notation_item *)hatom_getobj(&elem->l_hatom));
 	long num_found_elems = items->l_size;
@@ -36619,7 +36619,20 @@ long preselect_notation_items_by_name(t_notation_obj *r_ob, t_llll *names)
 }
 
 // Will be replaced eventually by a hashtable search
-t_llll *name_to_label_families_and_items(t_notation_obj *r_ob, t_hatom *name, t_llll **items)
+long notationobj_name_is_used(t_notation_obj *r_ob, t_hatom *name)
+{
+    t_llllelem *elem;
+    for (elem = r_ob->m_labels.families->l_head; elem; elem = elem->l_next) {
+        t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&elem->l_hatom);
+        if (is_name_contained(name, fam->label))
+            return 1;
+    }
+    return 0;
+}
+
+
+// Will be replaced eventually by a hashtable search
+t_llll *notationobj_name_to_label_families_and_items(t_notation_obj *r_ob, t_hatom *name, t_llll **items)
 {
 	t_llllelem *elem;
 	t_llll *out = llll_get();
@@ -36639,7 +36652,7 @@ t_llll *name_to_label_families_and_items(t_notation_obj *r_ob, t_hatom *name, t_
 // returns the number of found elements having as name all the names
 // Will be replaced eventually by a hashtable search
 // Returns an llll containing a list of H_OBJs (one for each notation item).
-t_llll *names_to_notation_items(t_notation_obj *r_ob, t_llll *names)
+t_llll *notationobj_names_to_notation_items(t_notation_obj *r_ob, t_llll *names)
 {
 	if (!names->l_head)
 		return llll_get();
@@ -36647,12 +36660,12 @@ t_llll *names_to_notation_items(t_notation_obj *r_ob, t_llll *names)
 	// first, we handle the first name
 	t_llll *items = NULL;
 	t_llllelem *names_el = names->l_head;
-	t_llll *families = name_to_label_families_and_items(r_ob, &names_el->l_hatom, &items);
+	t_llll *families = notationobj_name_to_label_families_and_items(r_ob, &names_el->l_hatom, &items);
 	
 	// then we sieve the family of items depending on other names
 	for (names_el = names->l_head->l_next; names_el; names_el = names_el->l_next) {
 		t_llll *this_items = NULL;
-		t_llll *this_families = name_to_label_families_and_items(r_ob, &names_el->l_hatom, &this_items);
+		t_llll *this_families = notationobj_name_to_label_families_and_items(r_ob, &names_el->l_hatom, &this_items);
 		llll_intersection(items, this_items);
 		llll_free(this_families);
 	}
@@ -36662,7 +36675,7 @@ t_llll *names_to_notation_items(t_notation_obj *r_ob, t_llll *names)
 }
 
 /*
-long names_to_notation_items(t_notation_obj *r_ob, t_llll *names, t_notation_item ***found_elems){
+long notationobj_names_to_notation_items(t_notation_obj *r_ob, t_llll *names, t_notation_item ***found_elems){
 	long num_found = 0;
 	t_marker *marker;
 	const long MAX_SELECTABLE_ITEMS = 100000; // very dirty way!!! TO DO: change it
@@ -41038,8 +41051,30 @@ void notation_obj_name(t_notation_obj *r_ob, t_symbol *s, long argc, t_atom *arg
 	t_llll *selectllll = llllobj_parse_llll((t_object *) r_ob, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
 	char incremental = find_long_arg_attr_key(selectllll, gensym("incremental"), 0, true);
 	char progeny = find_long_arg_attr_key(selectllll, gensym("progeny"), 0, true);
-	t_llll *names = get_names_from_llll(r_ob, selectllll);
-    change_selection_name(r_ob, names, NULL, incremental, false, progeny, s == _llllobj_sym_lambda);
+    char append = find_long_arg_attr_key(selectllll, gensym("append"), 0, true);
+    t_symbol *unique = find_symbol_arg_attr_key(selectllll, gensym("unique"), _llllobj_sym_none, true);
+    t_llll *names = get_names_from_llll(r_ob, selectllll);
+    if (unique == gensym("sym") || unique == gensym("symbol")) {
+        llll_clear(names);
+        llll_appendsym(names, symbol_unique());
+    } else if (unique == gensym("int") || unique == gensym("integer")) {
+        llll_clear(names);
+        t_hatom h;
+        long u = -1;
+        for (long i = 1; i < LONG_MAX; i++) {
+            hatom_setlong(&h, i);
+            if (!notationobj_name_is_used(r_ob, &h)) {
+                u = i;
+                break;
+            }
+        }
+        if (u > 0)
+            llll_appendlong(names, u);
+        else {
+            object_error((t_object *)r_ob, "Can't find unique integer name available.");
+        }
+    }
+    change_selection_name(r_ob, names, NULL, incremental, append, progeny, s == _llllobj_sym_lambda);
 	handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_NAMES);
 	llll_free(selectllll);
 	llll_free(names);
