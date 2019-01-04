@@ -885,10 +885,20 @@ long llll_sort_by_last(void *dummy, t_llllelem *a, t_llllelem *b);
 	@param	key		The key to be searched for
 	@param	default_value	The default value of the argument if the key was not found
 	@param  then_destroy_elem	If non-zero, the found llll containing the key is then destroyed
-    @remark         Deprecated: use find_long_arg_attr_key()
  	@return			The value the key has in the arguments of the message.
 */
 long find_long_arg_attr_key(t_llll *ll, t_symbol *key, long default_value, char then_destroy_elem);
+
+
+/**    Find the symbolic value of a key used as argument for a message. See find_long_arg_attr_key()
+    @ingroup        llll_utilities
+    @param    llll    The llll containing all message and attributes
+    @param    key        The key to be searched for
+    @param    default_value    The default value of the argument if the key was not found
+    @param  then_destroy_elem    If non-zero, the found llll containing the key is then destroyed
+    @return            The value the key has in the arguments of the message.
+    @seealso           find_long_arg_attr_key()
+ */t_symbol *find_symbol_arg_attr_key(t_llll *ll, t_symbol *key, t_symbol *default_value, char then_destroy_elem);
 
 
 /**	DEPRECATED! Find the double precision value of a key used as argument for a message.

@@ -18444,13 +18444,22 @@ char iterate_chordwise_changes_on_selection(t_notation_obj *r_ob, notation_obj_c
 // -----------------------------------
 // object names
 
+
+/** Tells if a name is used in the notation object
+    @ingroup    names
+    @param    r_ob        The notation object
+    @param    name        The given name
+    @return   1 if used, 0 otherwise
+*/
+long notationobj_name_is_used(t_notation_obj *r_ob, t_hatom *name);
+
 /** Find all notation items matching one or more given names.
 	@ingroup	names
 	@param	r_ob		The notation object
 	@param	names		The given names (as an llll)
 	@return	An llll containing as H_OBJs all the notation items matching all the names.
  */
-t_llll *names_to_notation_items(t_notation_obj *r_ob, t_llll *names);
+t_llll *notationobj_names_to_notation_items(t_notation_obj *r_ob, t_llll *names);
 
 
 /** Retrieve the "first" notation item matching certain name(s). 
@@ -18460,7 +18469,7 @@ t_llll *names_to_notation_items(t_notation_obj *r_ob, t_llll *names);
 	@return				The "first" notation item matching the name(s), or NULL if none.
 	@remark				The order of search should be straightforward voicewise, then measure-wise, then chord-wise, then note-wise, yet the user
 						should NOT really rely on it, and use this function only when a (random) item matching the name(s) is needed.
-						In order to retrieve all notation items matching certain names, use names_to_notation_items()
+						In order to retrieve all notation items matching certain names, use notationobj_names_to_notation_items()
  */
 t_notation_item *names_to_single_notation_item(t_notation_obj *r_ob, t_llll *names);
 

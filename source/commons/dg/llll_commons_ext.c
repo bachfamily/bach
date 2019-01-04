@@ -1249,6 +1249,42 @@ long find_long_arg_attr_key(t_llll *ll, t_symbol *key, long default_value, char 
     return res;
 }
 
+t_symbol *find_symbol_arg_attr_key(t_llll *ll, t_symbol *key, t_symbol *default_value, char then_destroy_elem)
+{
+    t_symbol *res = default_value;
+    t_llllelem *elem;
+    for (elem = ll->l_head; elem; elem = elem->l_next) {
+        if (hatom_gettype(&elem->l_hatom) == H_LLLL) {
+            t_llll *subll = hatom_getllll(&elem->l_hatom);
+            if (subll && subll->l_head && hatom_gettype(&subll->l_head->l_hatom) == H_SYM && hatom_getsym(&subll->l_head->l_hatom) == key) {
+                if (subll->l_head->l_next && hatom_gettype(&subll->l_head->l_next->l_hatom) == H_SYM) {
+                    res = hatom_getsym(&subll->l_head->l_next->l_hatom);
+                    if (then_destroy_elem)
+                        llll_destroyelem(elem);
+                    return res;
+                }
+            }
+        } else if (hatom_gettype(&elem->l_hatom) == H_SYM) {
+            t_symbol *s = hatom_getsym(&elem->l_hatom);
+            if (s && s->s_name && s->s_name[0] == '@' && gensym(s->s_name + 1) == key) {
+                if (elem->l_next && hatom_gettype(&elem->l_next->l_hatom) == H_SYM) {
+                    res = hatom_getsym(&elem->l_next->l_hatom);
+                    if (then_destroy_elem) {
+                        t_llllelem *nextelem = elem->l_next;
+                        llll_destroyelem(elem);
+                        llll_destroyelem(nextelem);
+                    }
+                    return res;
+                }
+            }
+        }
+    }
+    
+    return res;
+}
+
+
+
 
 double find_double_argument_key(t_llll *ll, t_symbol *key, double default_value, char then_destroy_elem)
 {

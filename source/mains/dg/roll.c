@@ -4813,7 +4813,9 @@ int T_EXPORT main(void){
 	// @marg 0 @name names @optional 0 @type llll
     // @mattr incremental @type int @default 0 @digest If non-zero, assigns incremental numbering to selected markers in addition to names
     // @mattr progeny @type int @default 0 @digest If non-zero, assigns names to both selected chords and all their notes
+    // @mattr append @type int @default 0 @digest If non-zero, appends name to existing ones
     // @example name George @caption name selected elements as 'George'
+    // @example name George @append 1 @caption add 'George' as name to selected elements
     // @example name [George Martin] [George Harrison] @caption assign complex llll name
     // @example name George @incremental 1 @caption also add unique incremental numbers to selected markers
     // @example name George @progeny 1 @caption if chords are selected also assign name to their notes

@@ -345,7 +345,7 @@ void bach_version(t_bach *x)
 {
     
 	post("--- bach: automated composer's helper ---");
-	post("© 2010-2017 - Andrea Agostini and Daniele Ghisi");
+	post("© 2010-2019 - Andrea Agostini and Daniele Ghisi");
     
     
 // Post version
