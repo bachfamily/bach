@@ -46,7 +46,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 17.0, 441.0, 199.0, 21.0 ],
-					"presentation_linecount" : 10,
 					"text" : "makepitch (degree, octave, alter)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -61,7 +60,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 17.0, 422.0, 111.0, 21.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Ternary functions:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -77,7 +75,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 220.0, 116.0, 164.0, 239.0 ],
-					"presentation_linecount" : 46,
 					"text" : "#>>\r#|\r#||\r#|||\rapprox (pitch, tonedivision)\ratan2\rbessel (x, order)\renharm\rfmod\rhypot\rmakepitchsc (steps, cents)\rmax\rmin\rmod\rpow (base, exponent)\rrandom",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -93,7 +90,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 173.0, 116.0, 33.0, 239.0 ],
-					"presentation_linecount" : 16,
 					"text" : "#-\r#!=\r#*\r#/\r#//\r#&\r#&&\r#^\r#^^\r#+\r#<\r#<<\r#<=\r#==\r#>\r#>=",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -108,7 +104,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 173.0, 91.0, 105.0, 21.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Binary functions:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -138,7 +133,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 80.0, 116.0, 47.0, 268.0 ],
-					"presentation_linecount" : 18,
 					"text" : "float\rfloor\rint\rlog\rlog10\rlog2\rnum\roctave\rpitch\rrat\rround\rsgn\rsin\rsinh\rsqrt\rtan\rtanh\rtrunc",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -154,7 +148,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 17.0, 116.0, 49.0, 282.0 ],
-					"presentation_linecount" : 19,
 					"text" : "#!\r#~\r#u-\rabs\racos\racosh\ralter\rasin\rasinh\ratan\ratanh\rceil\rcents\rcos\rcosh\rdegree\rden\rexp\rexp2",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
