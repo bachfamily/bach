@@ -3791,14 +3791,14 @@
 				Syntax: <b>exportxml <m>[&lt;symbol: filename&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
 				• <b>exportxml</b>   <i>→ export MusicXML file via dialog box</i><br />
-				• <b>exportxml myfile.xml [velocity 1]</b>   <i>→ also export velocity as MusicXML direction</i><br />
-				• <b>exportxml myfile.xml [directionslots 7]</b>   <i>→ also export content of slot 7 as MusicXML directions</i><br />
-				• <b>exportxml myfile.xml [directionslots 7 9]</b>   <i>→ also export content of slot 7 and 9 as MusicXML directions</i><br />
-				• <b>exportxml myfile.xml [directionslots [7 11]]</b>   <i>→ also export content of slots 7 through 11 as MusicXML directions</i><br />
-				• <b>exportxml myfile.xml [dynamics 0]</b>   <i>→ don't export dynamics</i><br />
-				• <b>exportxml myfile.xml [lyrics 0] [articulations 0]</b>   <i>→ don't export lyrics, nor articulations</i><br />
-				• <b>exportxml myfile.xml [noteheads 0]</b>   <i>→ don't export noteheads</i><br />
-				• <b>exportxml myfile.xml [parenthesizedquartertones 1]</b>   <i>→ also export quartertones as parenthesized versions of the standard accidentals right below them (only useful with Finale)</i><br />
+				• <b>exportxml myfile.xml @velocity 1</b>   <i>→ also export velocity as MusicXML direction</i><br />
+				• <b>exportxml myfile.xml @directionslots 7</b>   <i>→ also export content of slot 7 as MusicXML directions</i><br />
+				• <b>exportxml myfile.xml @directionslots 7 9</b>   <i>→ also export content of slot 7 and 9 as MusicXML directions</i><br />
+				• <b>exportxml myfile.xml @directionslots [7 11]</b>   <i>→ also export content of slots 7 through 11 as MusicXML directions</i><br />
+				• <b>exportxml myfile.xml @dynamics 0</b>   <i>→ don't export dynamics</i><br />
+				• <b>exportxml myfile.xml @lyrics 0 @articulations 0</b>   <i>→ don't export lyrics, nor articulations</i><br />
+				• <b>exportxml myfile.xml @noteheads 0</b>   <i>→ don't export noteheads</i><br />
+				• <b>exportxml myfile.xml @parenthesizedquartertones 1</b>   <i>→ also export quartertones as parenthesized versions of the standard accidentals right below them (only useful with Finale)</i><br />
 				<br />
 				Message attributes:<br />
 				<m>@velocity</m> (int, default: 0): If non-zero, notes velocity i s exported as MusicXML direction<br />
@@ -3808,6 +3808,7 @@
 				<m>@articulations</m> (int, default: 1): If non-zero, articulations are exported from the articulations slot, if any<br />
 				<m>@lyrics</m> (int, default: 1): If non-zero, lyrics are exported from the lyrics slot, if any<br />
 				<m>@parenthesizedquartertones</m> (int, default: 0): If non-zero, exports quarter tones as parenthesized version of semitonal accidentals<br />
+				<m>@glissandi</m> (int, default: 1): If non-zero, glissandi are exported as slides<br />
 				<br />
 				The <m>exportxml</m> message saves the content of the <o>bach.score</o> object in MusicXML format.
 				Such format is read by most of the currently available music engraving softwares.
@@ -7205,10 +7206,10 @@
 				• <b>sel note if tie == 3</b>   <i>→ select notes that both start and end a tie</i><br />
 				• <b>sel note if tie == 0</b>   <i>→ select notes with no ties</i><br />
 				• <b>sel note if [measure == 4] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select notes in measure 4 with velocity &gt; 100</i><br />
-				• <b>sel rest if symduration &lt;= 1/8</b>   <i>→ select all rests shorter than 1/8</i><br />
-				• <b>sel marker if onset &gt; 5000</b>   <i>→ select all markers with onset &gt;5s</i><br />
-				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
-				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
+				• <b>sel rest if symduration &lt;= 1/8u</b>   <i>→ select all rests shorter than 1/8</i><br />
+				• <b>sel marker if onset &gt; 5000e</b>   <i>→ select all markers with onset &gt;5s</i><br />
+				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]o </b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
+				• <b>sel tail if cents &gt; 6000n</b>   <i>→ select all tails above middle C</i><br />
 				<br />
 				The word <m>sel</m> add some notation items to the current selection. In the basic behavior,
 				the word must be followed by four elements, specifying: <br />

@@ -39,6 +39,18 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-3",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 201.0, 256.0, 62.0, 23.0 ],
+					"text" : "loadbang"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
@@ -109,19 +121,6 @@
 			}
 , 			{
 				"box" : 				{
-					"fontsize" : 8.627450741940315,
-					"id" : "obj-111",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 201.0, 258.7069091796875, 49.0, 18.0 ],
-					"text" : "loadbang"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-110",
 					"maxclass" : "number",
 					"numinlets" : 1,
@@ -139,8 +138,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 201.0, 286.0, 299.0, 23.0 ],
-					"text" : "(john yoko) (paul linda) (george pattie) (ringo moe)"
+					"patching_rect" : [ 201.0, 286.0, 293.0, 23.0 ],
+					"text" : "[john yoko] [paul linda] [george pattie] [ringo moe]"
 				}
 
 			}
@@ -194,8 +193,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 175.0, 295.0, 23.0 ],
-					"text" : "(john yoko) (paul linda) (george patty) (ringo moe)"
+					"patching_rect" : [ 18.0, 175.0, 293.0, 23.0 ],
+					"text" : "[john yoko] [paul linda] [george pattie] [ringo moe]"
 				}
 
 			}
@@ -477,7 +476,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-108", 0 ],
-					"source" : [ "obj-111", 0 ]
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}
