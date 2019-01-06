@@ -159,7 +159,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 184.0, 394.0, 123.0 ],
-					"presentation_linecount" : 8,
 					"text" : "The return value is encoded as a bit field, with the following values:\n1 - null\n2 - integer\n4 - rational\n8 - double\n16 - symbol\n32 - sublist\n256 - pitch",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -173,7 +172,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 309.0, 87.0, 45.0, 23.0 ],
-					"presentation_linecount" : 3,
 					"text" : "[1 2 3]"
 				}
 
@@ -198,7 +196,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 99.25, 87.0, 48.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "4/5 6.7"
 				}
 
@@ -211,7 +208,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 47.0, 87.0, 37.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "1 2/3"
 				}
 
@@ -325,7 +321,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"text" : "Objects: bach.eval",
+					"text" : "Objects: bach.eval, bach.diff, bach.intersection, bach.symdiff, bach.union, bach.classify",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -355,7 +351,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, outlet",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, contains, contents",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
