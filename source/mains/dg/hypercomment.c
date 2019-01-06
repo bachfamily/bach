@@ -725,7 +725,7 @@ void hypercomment_jsave(t_hypercomment *x, t_dictionary *d)
 }
 
 // THIS FUNCTION IS NEVER CALLED!
-void hypercomment_mousedoubleclick(t_hypercomment *x, t_object *patcherview, t_pt pt, long modifiers) {
+void hypercomment_mousedoubleclick(t_hypercomment *x, t_object *patcherview, t_pt pt, long modifiers) { /*
 	long		size = 0;
 	char		*text = NULL;
 	t_object	*textfield = jbox_get_textfield((t_object*)x);
@@ -735,7 +735,7 @@ void hypercomment_mousedoubleclick(t_hypercomment *x, t_object *patcherview, t_p
 		x->is_editing = 1;
 		textfield_set_textcolor(textfield, &x->j_dummy_transparent);// textcolor
 		object_method(patcherview, gensym("insertboxtext"), x, text);
-	}
+	} */
 }
 
 void hypercomment_mousemove(t_hypercomment *x, t_object *patcherview, t_pt pt, long modifiers) {

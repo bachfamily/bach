@@ -69,7 +69,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 118.0, 318.0, 38.0 ],
+					"patching_rect" : [ 9.0, 118.0, 322.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"versionnumber" : 80001
 					}
@@ -162,7 +162,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, outlet",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, cartesianprod, cartesian, product",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

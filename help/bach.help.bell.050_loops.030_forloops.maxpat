@@ -39,6 +39,63 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-14",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 348.0, 448.0, 99.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-9",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 467.0, 386.5, 109.0, 54.0 ],
+					"presentation_linecount" : 2,
+					"text" : "A typical case:\niterating over a range."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-8",
+					"maxclass" : "number",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 348.0, 350.0, 50.0, 23.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "for $i in arithmser(1, $x1) repeat print($i) ",
+					"id" : "obj-6",
+					"linecount" : 3,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 348.0, 386.5, 112.0, 52.0 ],
+					"saved_object_attributes" : 					{
+						"versionnumber" : 80001
+					}
+,
+					"text" : "bach.eval for $i in arithmser(1\\, $x1) repeat print($i)"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
@@ -47,7 +104,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 12.0, 219.0, 579.0, 123.0 ],
-					"text" : "where the lllls, attribute values, condition and body are expressions of any complexity.\n\nThe general idea is that the \"for\" loop roughly behave like bach.iter: given one or more lllls, their elements (optionally alongside the respective addresses) are iteratively assigned to the given variables, for each element or set of elements the loop body is evaluated, and the value of the \"for\" loop is the last value of the body. The optional \"with\" clause allows setting some attributes to control the details of the parallel iteration of multiple lllls, and the optional \"as\" clause allows setting a condition to be checked before every iteration, and causing the iteration to terminate if false.",
+					"text" : "where the lllls, attribute values, condition and body are expressions of any complexity.\n\nThe general idea is that the \"for\" loop roughly behaves like bach.iter: given one or more lllls, their elements (optionally alongside the respective addresses) are iteratively assigned to the given variables, for each element or set of elements the loop body is evaluated, and the value of the \"for\" loop is the last value of the body. The optional \"with\" clause allows setting some attributes to control the details of the parallel iteration of multiple lllls, and the optional \"as\" clause allows setting a condition to be checked before every iteration, and causing the iteration to terminate if false.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -84,11 +141,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
-					"linecount" : 2,
+					"linecount" : 6,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 165.0, 385.5, 384.0, 40.0 ],
+					"patching_rect" : [ 164.0, 357.0, 158.0, 98.0 ],
 					"text" : "The elements of the incoming llll are printed one by one in the Max console, and the last one is the result of the expression."
 				}
 
@@ -222,6 +279,20 @@
 				"patchline" : 				{
 					"destination" : [ "obj-17", 0 ],
 					"source" : [ "obj-20", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-14", 0 ],
+					"source" : [ "obj-6", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-6", 0 ],
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}

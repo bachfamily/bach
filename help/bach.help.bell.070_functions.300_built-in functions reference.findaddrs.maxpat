@@ -45,7 +45,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 254.0, 135.0, 23.0 ],
-					"presentation_linecount" : 4,
 					"text" : "6000 6400 6700 7200"
 				}
 
@@ -158,7 +157,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also:",
+					"text" : "See Also: find, finditems, lambda",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -203,7 +202,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, outlet",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, findaddrs, find, search, address",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

@@ -123,7 +123,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 414.0, 97.0, 75.0, 36.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Arguments:\nllll",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -139,7 +138,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 284.0, 36.0 ],
-					"presentation_linecount" : 2,
 					"text" : "The depth() function returns the depth of an llll, like the bach.depth object.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -154,7 +152,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also:",
+					"text" : "See Also: length, wrap, flat",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -199,7 +197,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, outlet",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, depth",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

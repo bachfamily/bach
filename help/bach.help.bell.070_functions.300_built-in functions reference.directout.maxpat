@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 524.0, 224.0, 617.0, 539.0 ],
+		"rect" : [ 84.0, 79.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -113,7 +113,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 561.0, 94.0 ],
+					"patching_rect" : [ 9.0, 39.0, 563.0, 94.0 ],
 					"text" : "The directout() function outputs data from one or more direct outlets. The data are output as the function is evaluated.\nThe return value of directout() is the last llll output.\nUnlike what happens with its corresponding pseudovariables $do<n>, providing code containing the directout() function does not create automatically the direct outlets. For this reason, it is generally necessary to set the @directouts object argument.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -128,7 +128,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also:",
+					"text" : "See Also: directin, inlet, inlet+pseudovariable",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

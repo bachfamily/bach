@@ -102,8 +102,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 456.0, 36.0 ],
-					"text" : "The wrap() function wraps an llll in parentheses, thus raising its overall depth, like the bach.wrap object. ",
+					"patching_rect" : [ 9.0, 39.0, 399.0, 36.0 ],
+					"text" : "The delace() function deinterlaces an llll into a given number of lllls, like the bach.delace object in mono mode.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -117,7 +117,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also:",
+					"text" : "See Also: trans, group",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -162,7 +162,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, outlet",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, delace, deinterlace, deinterleave",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
