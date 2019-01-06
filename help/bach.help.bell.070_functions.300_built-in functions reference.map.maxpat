@@ -256,7 +256,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"text" : "Objects: bach.eval",
+					"text" : "Objects: bach.eval, bach.diff, bach.intersection, bach.symdiff, bach.union, bach.classify",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
