@@ -7206,10 +7206,10 @@
 				• <b>sel note if tie == 3</b>   <i>→ select notes that both start and end a tie</i><br />
 				• <b>sel note if tie == 0</b>   <i>→ select notes with no ties</i><br />
 				• <b>sel note if [measure == 4] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select notes in measure 4 with velocity &gt; 100</i><br />
-				• <b>sel rest if symduration &lt;= 1/8u</b>   <i>→ select all rests shorter than 1/8</i><br />
-				• <b>sel marker if onset &gt; 5000e</b>   <i>→ select all markers with onset &gt;5s</i><br />
-				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]o </b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
-				• <b>sel tail if cents &gt; 6000n</b>   <i>→ select all tails above middle C</i><br />
+				• <b>sel rest if symduration &lt;= 1/8</b>   <i>→ select all rests shorter than 1/8</i><br />
+				• <b>sel marker if onset &gt; 5000</b>   <i>→ select all markers with onset &gt;5s</i><br />
+				• <b>sel breakpoint if [cents &gt; 7200] &amp;&amp; [velocity &gt; 100]</b>   <i>→ select all pitch breakpoints &gt;7200cents with velocity &gt;100</i><br />
+				• <b>sel tail if cents &gt; 6000</b>   <i>→ select all tails above middle C</i><br />
 				<br />
 				The word <m>sel</m> add some notation items to the current selection. In the basic behavior,
 				the word must be followed by four elements, specifying: <br />

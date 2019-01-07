@@ -212,7 +212,7 @@
 				"filename" : [ "bach.help.bell.040_variables.100_substitutionassignment.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "global+variable", "colon" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "assignment", "operator", "assigning", "substitution" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "assignment", "operator", "substitution" ],
 				"title" : [ "Substitution assignment" ]
 			}
 		},
@@ -411,9 +411,9 @@
 			"Built-in functions reference" : {
 				"Mathfunctions" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.00_mathfunctions.maxpat" ],
-					"objects" : [ "bach.eval" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "math", "mathematics", "functional", "form", "operator" ],
 					"title" : [ "Math functions reference" ]
 				},
 				"Args" : {
@@ -425,135 +425,135 @@
 				},
 				"Arithmser" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.arithmser.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "geomser", "primeser" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "arithmser", "arithmetic", "series" ],
 					"title" : [ "arithmser() function reference" ]
 				},
 				"Cartesianprod" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.cartesianprod.maxpat" ],
-					"objects" : [ "bach.eval" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "cartesianprod", "cartesian", "product" ],
 					"title" : [ "cartesianprod() function reference" ]
 				},
 				"Classify" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.classify.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "classify" ],
 					"title" : [ "classify() function reference" ]
 				},
 				"Comb" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.comb.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "perm", "permutation" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "comb", "combination" ],
 					"title" : [ "comb() function reference" ]
 				},
 				"Contains" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.contains.maxpat" ],
-					"objects" : [ "bach.eval" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "contains", "contents" ],
 					"title" : [ "contains() function reference" ]
 				},
 				"Delace" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.delace.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "trans", "group" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "delace", "deinterlace", "deinterleave" ],
 					"title" : [ "delace() function reference" ]
 				},
 				"Depth" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.depth.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "length", "wrap", "flat" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "depth" ],
 					"title" : [ "depth() function reference" ]
 				},
 				"Diff" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.diff.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "intersection", "union", "symdiff", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "diff", "set", "difference" ],
 					"title" : [ "diff() function reference" ]
 				},
 				"Directin" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.directin.maxpat" ],
 					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "directin", "direct", "in" ],
+					"seealso" : [ "directout", "outlet", "inlet+pseudovariable" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "inlet", "directin", "direct", "in" ],
 					"title" : [ "directin() function reference" ]
 				},
 				"Directout" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.directout.maxpat" ],
 					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
+					"seealso" : [ "directin", "inlet", "inlet+pseudovariable" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "directout", "direct", "out" ],
 					"title" : [ "directout() function reference" ]
 				},
 				"Find" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.find.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "finditems", "findaddrs", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "find", "search" ],
 					"title" : [ "find() function reference" ]
 				},
 				"Findaddrs" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.findaddrs.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "find", "finditems", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "findaddrs", "find", "search", "address" ],
 					"title" : [ "findaddrs() function reference" ]
 				},
 				"Finditems" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.finditems.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "find", "findaddrs", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "finditems", "find", "search", "item", "element" ],
 					"title" : [ "finditems() function reference" ]
 				},
 				"Flat" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.flat.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "depth" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "flat", "llll", "level" ],
 					"title" : [ "flat() function reference" ]
 				},
 				"Geomser" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.geomser.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "arithmser", "primeser" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "geomser", "geomethric", "series" ],
 					"title" : [ "geomser() function reference" ]
 				},
 				"Group" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.group.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "flat", "lace", "delace", "trans" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "group", "sublist", "modulo" ],
 					"title" : [ "group() function reference" ]
 				},
 				"Insert" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.insert.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "subs" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "insert", "address", "insertion" ],
 					"title" : [ "insert() function reference" ]
 				},
 				"Intersection" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.intersection.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "diff", "union", "symdiff", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet", "intersection", "set" ],
 					"title" : [ "intersection() function reference" ]
 				},
 				"Left" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.left.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "right", "slice" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "left", "slice", "llll" ],
 					"title" : [ "left() function reference" ]
 				},
 				"Length" : {
@@ -565,142 +565,142 @@
 				},
 				"Map" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.map.maxpat" ],
-					"objects" : [ "bach.eval" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [  ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
 					"title" : [ "map() function reference" ]
 				},
 				"Minmax" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.minmax.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "nth", "colon" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "minmax", "minimum", "maximum", "address" ],
 					"title" : [ "minmax() function reference" ]
 				},
 				"Nth" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.nth.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "subs", "insert", "colon", "pick" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "nth", "address", "permutation" ],
 					"title" : [ "nth() function reference" ]
 				},
 				"Outlet" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.outlet.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "outlet+pseudovariable", "inlet", "direct+outlet" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
 					"title" : [ "outlet() function reference" ]
 				},
 				"Perm" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.perm.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "comb", "scramble", "sort" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "perm", "permutation" ],
 					"title" : [ "perm() function reference" ]
 				},
 				"Primeser" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.primeser.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "arithmser", "geomser" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "primeser", "prime", "series" ],
 					"title" : [ "primeser() function reference" ]
 				},
 				"Print" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.print.maxpat" ],
-					"objects" : [ "bach.eval" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [  ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
 					"title" : [ "print() function reference" ]
 				},
 				"Reduce" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.reduce.maxpat" ],
-					"objects" : [ "bach.eval" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [  ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
 					"title" : [ "reduce() function reference" ]
 				},
 				"Rev" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.rev.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "rot", "scramble", "perm", "colon" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "rev", "reverse", "permutation", "llll" ],
 					"title" : [ "rev() function reference" ]
 				},
 				"Right" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.right.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "left", "slice" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "right", "slice", "llll" ],
 					"title" : [ "right() function reference" ]
 				},
 				"Rot" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.rot.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "scramble", "perm", "rev", "colon" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "rot", "rotate", "rotation", "llll", "permutation" ],
 					"title" : [ "rot() function reference" ]
 				},
 				"Scramble" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.scramble.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "rot", "perm", "rev", "colon" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "scramble", "random", "shuffle", "llll", "permutation" ],
 					"title" : [ "scramble() function reference" ]
 				},
 				"Slice" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.slice.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "left", "right" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "slice" ],
 					"title" : [ "slice() function reference" ]
 				},
 				"Sort" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.sort.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "lambda", "scramble" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "sort", "order", "ordering", "permutation" ],
 					"title" : [ "sort() function reference" ]
 				},
 				"Subs" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.subs.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "pick", "colon", "insert", "substitution+assignment", "nth" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "subs", "substitution", "address", "delete" ],
 					"title" : [ "subs() function reference" ]
 				},
 				"Symdiff" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.symdiff.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "diff", "intersection", "union", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "symdiff", "set", "symmetric", "difference" ],
 					"title" : [ "symdiff() function reference" ]
 				},
 				"Thin" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.thin.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "lambda", "subs" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "thin", "duplicate", "remove" ],
 					"title" : [ "thin() function reference" ]
 				},
 				"Trans" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.trans.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "delace", "group", "cartesianprod" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "trans", "matrix", "transposition" ],
 					"title" : [ "trans() function reference" ]
 				},
 				"Union" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.union.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "diff", "intersection", "symdiff", "lambda" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "union", "set" ],
 					"title" : [ "union() function reference" ]
 				},
 				"Wrap" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.wrap.maxpat" ],
-					"objects" : [ "bach.eval" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "flat", "pick" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "wrap", "depth", "level" ],
 					"title" : [ "wrap() function reference" ]
 				}
 			}
