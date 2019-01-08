@@ -2,14 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 4,
+			"major" : 8,
+			"minor" : 0,
+			"revision" : 2,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 108.0, 100.0, 929.0, 581.0 ],
+		"classnamespace" : "box",
+		"rect" : [ 118.0, 115.0, 929.0, 581.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -49,13 +50,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 929.0, 555.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -95,7 +97,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 372.0, 24.0, 181.0, 23.0 ],
-									"style" : "",
 									"text" : "loadmess bach.eval @defer 1"
 								}
 
@@ -127,8 +128,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 213.007996, 10.0, 91.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 213.007995999999991, 10.0, 91.0, 23.0 ],
 									"text" : "Help Center"
 								}
 
@@ -145,7 +145,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 201.025452, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 201.025452000000001, 57.567627000000002 ]
 								}
 
 							}
@@ -167,11 +167,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p \"Help Center\"",
 					"varname" : "basic_tab[5]"
 				}
@@ -192,7 +190,6 @@
 						"parameter_enable" : 0
 					}
 ,
-					"style" : "",
 					"text" : "js helpstarter.js bach.eval"
 				}
 
@@ -208,14 +205,15 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 108.0, 126.0, 929.0, 555.0 ],
+						"classnamespace" : "box",
+						"rect" : [ 118.0, 141.0, 929.0, 555.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -253,7 +251,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 469.0, 638.0, 50.0 ],
-									"style" : "",
 									"text" : "... user-defined variables and functions, and more. In fact, bach.eval implements a small but Turing-complete programming language, conceived to be as much compatible with the expr family as possible. \nPlease, refer to the \"Help Center\" tab to know everything about both the language and the object in itself."
 								}
 
@@ -266,7 +263,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 471.0, 388.0, 173.0, 36.0 ],
-									"style" : "",
 									"text" : "... loops (this one calculates Fibonacci sequences)..."
 								}
 
@@ -282,7 +278,6 @@
 										"versionnumber" : 80001
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -294,7 +289,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 329.0, 279.0, 355.0, 21.0 ],
-									"style" : "",
 									"text" : "... but it can evaluate functions upon whole lists, branching..."
 								}
 
@@ -307,7 +301,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 304.5, 249.0, 59.0, 23.0 ],
-									"style" : "",
 									"text" : "30 20 10"
 								}
 
@@ -320,7 +313,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 249.0, 48.0, 23.0 ],
-									"style" : "",
 									"text" : "1 2 3 4"
 								}
 
@@ -336,7 +328,6 @@
 										"versionnumber" : 80001
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -356,7 +347,6 @@
 										"versionnumber" : 80001
 									}
 ,
-									"style" : "",
 									"text" : "bach.eval if length($l1) > length($l2) then $l1 else $l2"
 								}
 
@@ -368,7 +358,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 178.0, 173.0, 479.0, 21.0 ],
-									"style" : "",
 									"text" : "At its most basic, bach.eval is an expression evaluator quite similar to bach.expr..."
 								}
 
@@ -381,7 +370,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 144.5, 144.0, 59.0, 23.0 ],
-									"style" : "",
 									"text" : "30 20 10"
 								}
 
@@ -394,7 +382,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 144.0, 37.0, 23.0 ],
-									"style" : "",
 									"text" : "1 2 3"
 								}
 
@@ -410,7 +397,6 @@
 										"versionnumber" : 80001
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -430,59 +416,49 @@
 										"versionnumber" : 80001
 									}
 ,
-									"style" : "",
 									"text" : "bach.eval $l1 + $l2"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"fontname" : "Menlo Regular",
-									"fontsize" : 12.0,
 									"id" : "obj-12",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 195.5, 355.083984, 34.0, 22.0 ],
-									"style" : "",
+									"patching_rect" : [ 195.5, 355.083983999999987, 34.0, 23.0 ],
 									"text" : "12"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"fontname" : "Menlo Regular",
-									"fontsize" : 12.0,
 									"id" : "obj-10",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 113.5, 355.083984, 39.0, 22.0 ],
-									"style" : "",
+									"patching_rect" : [ 113.5, 355.083983999999987, 39.0, 23.0 ],
 									"text" : "8"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"fontname" : "Menlo Regular",
-									"fontsize" : 12.0,
 									"id" : "obj-9",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 355.083984, 39.0, 22.0 ],
-									"style" : "",
+									"patching_rect" : [ 17.5, 355.083983999999987, 39.0, 23.0 ],
 									"text" : "5"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"code" : "$x := 1 1 ; while length($x) < $l1 repeat $x := $x ($x:-1 + $x:-2) ",
+									"code" : "$x = 1 1 ; while length($x) < $x1 repeat $x = $x ($x:-1 + $x:-2) ",
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-11",
@@ -492,11 +468,10 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 395.0, 436.0, 22.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
+										"versionnumber" : 80002
 									}
 ,
-									"style" : "",
-									"text" : "bach.eval $x := 1 1 \\; while length($x) < $l1 repeat $x := $x ($x:-1 + $x:-2) @out t"
+									"text" : "bach.eval $x = 1 1 \\; while length($x) < $x1 repeat $x = $x ($x:-1 + $x:-2) @out t"
 								}
 
 							}
@@ -513,7 +488,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 246.0, 310.0, 236.0, 55.0 ],
-									"style" : "",
 									"text" : "You can double-click on the object box to open the expression in a text editor"
 								}
 
@@ -614,11 +588,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p basic",
 					"varname" : "basic_tab"
 				}
@@ -636,7 +608,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 10.0, 183.128006, 57.599854 ]
+					"patching_rect" : [ 10.0, 10.0, 183.128005999999999, 57.599854000000001 ]
 				}
 
 			}
@@ -651,13 +623,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 2,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 929.0, 555.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -696,11 +669,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p ?",
 					"varname" : "q_tab"
 				}
@@ -734,7 +705,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.bell.050_loops.070_forloopswithclauseattributes.maxpat",
+				"name" : "bach.help.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
