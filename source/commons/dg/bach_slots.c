@@ -4201,6 +4201,8 @@ char convert_slot_type(t_notation_obj *r_ob, long slot_num, long old_slottype, l
 	// converting width (only major conversion: temporal/nontemporal...)
 	if ((new_slottype == k_SLOT_TYPE_FUNCTION || new_slottype == k_SLOT_TYPE_3DFUNCTION || new_slottype == k_SLOT_TYPE_SPAT || new_slottype == k_SLOT_TYPE_DYNFILTER) &&
 		(old_slottype != k_SLOT_TYPE_FUNCTION && old_slottype != k_SLOT_TYPE_3DFUNCTION && old_slottype != k_SLOT_TYPE_SPAT && old_slottype != k_SLOT_TYPE_DYNFILTER)) {
+        if (r_ob->slotinfo[slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_NONE)
+            r_ob->slotinfo[slot_num].slot_temporalmode = k_SLOT_TEMPORALMODE_RELATIVE;
 		r_ob->slotinfo[slot_num].slot_uwidth = -1; // temporal, automatically
 	} else if ((old_slottype == k_SLOT_TYPE_FUNCTION || old_slottype == k_SLOT_TYPE_3DFUNCTION || old_slottype == k_SLOT_TYPE_SPAT) &&
 			 (new_slottype != k_SLOT_TYPE_FUNCTION && new_slottype != k_SLOT_TYPE_3DFUNCTION && new_slottype != k_SLOT_TYPE_SPAT)) {

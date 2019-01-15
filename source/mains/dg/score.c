@@ -12093,7 +12093,10 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
 				while (curr_ch && !clicked_ptr) { // cycle on the chords
 					t_note *curr_nt = curr_ch->firstnote;
 					while (curr_nt && !clicked_ptr) { // cycle on the notes
-						if (is_in_tail_shape((t_notation_obj *)x,curr_nt,this_x,this_y)) {
+                        t_note *tnt = curr_nt;
+                        if (x->r_ob.dl_spans_ties > 0)
+                            tnt = note_get_last_in_tieseq(tnt);
+						if (is_in_tail_shape((t_notation_obj *)x,tnt,this_x,this_y)) {
 							clicked_ptr = curr_nt->lastbreakpoint;
 							clicked_obj = k_PITCH_BREAKPOINT;
 							need_set_selection_dragging_velocity = true; 
