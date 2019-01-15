@@ -2309,6 +2309,13 @@
 					"seealso" : [ "slot+function", "slot+3dfunction", "slot+spat", "slot+dynfilter", "domain", "temporal", "domain+message" ],
 					"tags" : [ "editing", "edit", "interface", "slot", "function", "3dfunction", "spat", "dynfilter", "zoom", "horizontal", "navigate", "wheel", "mouse", "mousewheel", "temporal" ],
 					"title" : [ "Horizontal zoom for slots" ]
+				},
+				"Copyslotinfo" : {
+					"filename" : [ "bach.help.notation.editing.40_slots.60_copyslotinfo.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "inspector" ],
+					"tags" : [ "editing", "edit", "interface", "slot", "slotinfo", "copy", "duplicate", "paste" ],
+					"title" : [ "Copy slotinfo" ]
 				}
 			},
 			"Lyrics" : {

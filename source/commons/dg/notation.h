@@ -8389,6 +8389,10 @@ t_llll* notation_item_get_partial_single_slot_values_as_llll(t_notation_obj *r_o
  */
 t_llll* get_slotinfo_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible);
 
+// TBD
+t_llll* get_single_slotinfo_as_llll(t_notation_obj *r_ob, long slotnum, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector);
+
+
 
 /**	Just like note_get_slots_values_as_llll() but it removes the gensym("slots") symbol.
 	The mode is by set as #k_CONSIDER_FOR_DUMPING.

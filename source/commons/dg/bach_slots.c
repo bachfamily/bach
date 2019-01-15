@@ -535,213 +535,216 @@ char slot_is_writable(t_notation_obj *r_ob, long slotnum)
 
 
 
-
+t_llll* get_single_slotinfo_as_llll(t_notation_obj *r_ob, long slotnum, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector)
+{
+    long j = slotnum;
+    t_llll* inner_llll = llll_get();
+    t_llll *name = llll_get();
+    t_llll *type = llll_get();
+    t_llll *key = llll_get();
+    
+    char key_char[2];
+    long slot_type = r_ob->slotinfo[j].slot_type;
+    
+    // number (1-based)
+    llll_appendlong(inner_llll, j + 1, 0, WHITENULL_llll);
+    
+    // name
+    llll_appendsym(name, _llllobj_sym_name, 0, WHITENULL_llll);
+    llll_appendsym(name, r_ob->slotinfo[j].slot_name, 0, WHITENULL_llll);
+    llll_appendllll(inner_llll, name, 0, WHITENULL_llll);
+    
+    // type
+    llll_appendsym(type, _llllobj_sym_type, 0, WHITENULL_llll);
+    llll_appendsym(type, slot_type_to_symbol((e_slot_types)r_ob->slotinfo[j].slot_type), 0, WHITENULL_llll);
+    llll_appendllll(inner_llll, type, 0, WHITENULL_llll);
+    
+    // key
+    key_char[0] = r_ob->slotinfo[j].slot_key;
+    key_char[1] = 0;
+    llll_appendsym(key, _llllobj_sym_key, 0, WHITENULL_llll);
+    if (r_ob->slotinfo[j].slot_key > 0)
+        llll_appendsym(key, gensym(key_char), 0, WHITENULL_llll);
+    else
+        llll_appendlong(key, 0, 0, WHITENULL_llll);
+    llll_appendllll(inner_llll, key, 0, WHITENULL_llll);
+    
+    if (explicitly_get_also_default_stuff ||
+        (slot_type != k_SLOT_TYPE_FILELIST && slot_type != k_SLOT_TYPE_TEXT && slot_type != k_SLOT_TYPE_LLLL && slot_type != k_SLOT_TYPE_NONE && slot_type != k_SLOT_TYPE_COLOR &&  slot_type != k_SLOT_TYPE_ARTICULATIONS && slot_type != k_SLOT_TYPE_NOTEHEAD && slot_type != k_SLOT_TYPE_DYNAMICS)) {
+        // range
+        t_llll *range = llll_get();
+        t_llll *slope = llll_get();
+        t_llll *rep = llll_get();
+        llll_appendsym(range, _llllobj_sym_range, 0, WHITENULL_llll);
+        llll_appenddouble(range, r_ob->slotinfo[j].slot_range[0], 0, WHITENULL_llll);
+        llll_appenddouble(range, r_ob->slotinfo[j].slot_range[1], 0, WHITENULL_llll);
+        llll_appendllll(inner_llll, range, 0, WHITENULL_llll);
+        
+        // slope
+        llll_appendsym(slope, _llllobj_sym_slope, 0, WHITENULL_llll);
+        llll_appenddouble(slope, r_ob->slotinfo[j].slot_range_par, 0, WHITENULL_llll);
+        llll_appendllll(inner_llll, slope, 0, WHITENULL_llll);
+        
+        // representation
+        llll_appendsym(rep, _llllobj_sym_representation, 0, WHITENULL_llll);
+        if (r_ob->slotinfo[j].slot_repr && r_ob->slotinfo[j].slot_repr->l_head) {
+            llll_appendhatom_clone(rep, &r_ob->slotinfo[j].slot_repr->l_head->l_hatom, 0, WHITENULL_llll);
+            if (r_ob->slotinfo[j].slot_repr->l_head->l_next)
+                llll_appendhatom_clone(rep, &r_ob->slotinfo[j].slot_repr->l_head->l_next->l_hatom, 0, WHITENULL_llll);
+        }
+        llll_appendllll(inner_llll, rep, 0, WHITENULL_llll);
+    }
+    
+    if (explicitly_get_also_default_stuff || (slot_type == k_SLOT_TYPE_FUNCTION)) {
+        t_llll *grid = llll_get();
+        llll_appendsym(grid, _sym_grid, 0, WHITENULL_llll);
+        if (r_ob->slotinfo[j].grid)
+            llll_chain_clone(grid, r_ob->slotinfo[j].grid);
+        llll_appendllll(inner_llll, grid, 0, WHITENULL_llll);
+    }
+    
+    if (explicitly_get_also_default_stuff || (slot_type == k_SLOT_TYPE_3DFUNCTION)) {
+        // zrange
+        t_llll *zrange = llll_get();
+        t_llll *zslope = llll_get();
+        llll_appendsym(zrange, _llllobj_sym_zrange, 0, WHITENULL_llll);
+        llll_appenddouble(zrange, r_ob->slotinfo[j].slot_zrange[0], 0, WHITENULL_llll);
+        llll_appenddouble(zrange, r_ob->slotinfo[j].slot_zrange[1], 0, WHITENULL_llll);
+        llll_appendllll(inner_llll, zrange, 0, WHITENULL_llll);
+        
+        // zslope
+        llll_appendsym(zslope, _llllobj_sym_zslope, 0, WHITENULL_llll);
+        llll_appenddouble(zslope, r_ob->slotinfo[j].slot_zrange_par, 0, WHITENULL_llll);
+        llll_appendllll(inner_llll, zslope, 0, WHITENULL_llll);
+    }
+    
+    if (explicitly_get_also_default_stuff || slot_type == k_SLOT_TYPE_FUNCTION || slot_type == k_SLOT_TYPE_3DFUNCTION) {
+        t_llll *ysnap = llll_get();
+        llll_appendsym(ysnap, _llllobj_sym_ysnap, 0, WHITENULL_llll);
+        if (r_ob->slotinfo[j].slot_ysnap)
+            llll_chain_clone(ysnap, r_ob->slotinfo[j].slot_ysnap);
+        llll_appendllll(inner_llll, ysnap, 0, WHITENULL_llll);
+    }
+    
+    if (explicitly_get_also_default_stuff || slot_type == k_SLOT_TYPE_3DFUNCTION) {
+        t_llll *zsnap = llll_get();
+        llll_appendsym(zsnap, _llllobj_sym_zsnap, 0, WHITENULL_llll);
+        if (r_ob->slotinfo[j].slot_zsnap)
+            llll_chain_clone(zsnap, r_ob->slotinfo[j].slot_zsnap);
+        llll_appendllll(inner_llll, zsnap, 0, WHITENULL_llll);
+    }
+    
+    if (explicitly_get_also_default_stuff || (slot_type == k_SLOT_TYPE_FUNCTION || slot_type == k_SLOT_TYPE_3DFUNCTION || slot_type == k_SLOT_TYPE_FILTER || slot_type == k_SLOT_TYPE_DYNFILTER)) {
+        t_llll *domain = llll_get();
+        t_llll *domainslope = llll_get();
+        
+        llll_appendsym(domain, _llllobj_sym_domain, 0, WHITENULL_llll);
+        llll_appenddouble(domain, r_ob->slotinfo[j].slot_domain[0], 0, WHITENULL_llll);
+        llll_appenddouble(domain, r_ob->slotinfo[j].slot_domain[1], 0, WHITENULL_llll);
+        
+        llll_appendsym(domainslope, _llllobj_sym_domainslope, 0, WHITENULL_llll);
+        llll_appenddouble(domainslope, r_ob->slotinfo[j].slot_domain_par, 0, WHITENULL_llll);
+        
+        llll_appendllll(inner_llll, domain, 0, WHITENULL_llll);
+        llll_appendllll(inner_llll, domainslope, 0, WHITENULL_llll);
+    }
+    
+    if (explicitly_get_also_default_stuff || !are_colors_equal(r_ob->slotinfo[j].slot_color, get_default_slotcolor(j), 0.01)) {
+        t_llll *color = llll_get();
+        llll_appendsym(color, _llllobj_sym_color, 0, WHITENULL_llll);
+        llll_appenddouble(color, r_ob->slotinfo[j].slot_color.red, 0, WHITENULL_llll);
+        llll_appenddouble(color, r_ob->slotinfo[j].slot_color.green, 0, WHITENULL_llll);
+        llll_appenddouble(color, r_ob->slotinfo[j].slot_color.blue, 0, WHITENULL_llll);
+        llll_appenddouble(color, r_ob->slotinfo[j].slot_color.alpha, 0, WHITENULL_llll);
+        llll_appendllll(inner_llll, color, 0, WHITENULL_llll);
+    }
+    
+    if (explicitly_get_also_default_stuff || slot_type == k_SLOT_TYPE_INT || slot_type == k_SLOT_TYPE_INTLIST || slot_type == k_SLOT_TYPE_FLOAT || slot_type == k_SLOT_TYPE_FLOATLIST ||
+        slot_type == k_SLOT_TYPE_TOGGLEMATRIX || slot_type == k_SLOT_TYPE_INTMATRIX || slot_type == k_SLOT_TYPE_FLOATMATRIX) {
+        t_llll *defaultllll = llll_get();
+        llll_appendsym(defaultllll, _llllobj_sym_default, 0, WHITENULL_llll);
+        llll_appenddouble(defaultllll, r_ob->slotinfo[j].slot_default, 0, WHITENULL_llll);
+        llll_appendllll(inner_llll, defaultllll, 0, WHITENULL_llll);
+    }
+    
+    t_llll *temporalmode = llll_get();
+    llll_appendsym(temporalmode, _llllobj_sym_temporalmode);
+    switch (r_ob->slotinfo[j].slot_temporalmode) {
+        case k_SLOT_TEMPORALMODE_NONE:
+            llll_appendsym(temporalmode, _llllobj_sym_none);
+            break;
+        case k_SLOT_TEMPORALMODE_RELATIVE:
+            llll_appendsym(temporalmode, _llllobj_sym_relative);
+            break;
+        case k_SLOT_TEMPORALMODE_MILLISECONDS:
+            llll_appendsym(temporalmode, _llllobj_sym_milliseconds);
+            break;
+        case k_SLOT_TEMPORALMODE_TIMEPOINTS:
+            llll_appendsym(temporalmode, _llllobj_sym_timepoints);
+            break;
+        default:
+            break;
+    }
+    llll_appendllll(inner_llll, temporalmode);
+    
+    t_llll *extend = llll_get();
+    llll_appendsym(extend, _llllobj_sym_extend);
+    llll_appendlong(extend, r_ob->slotinfo[j].extend_beyond_tails);
+    llll_appendllll(inner_llll, extend);
+    
+    
+    
+    t_llll *width = llll_get();
+    llll_appendsym(width, _llllobj_sym_width, 0, WHITENULL_llll);
+    if (r_ob->slotinfo[j].slot_uwidth < 0) {
+        if (r_ob->slotinfo[j].slot_uwidth == -2.)
+            llll_appendsym(width, _llllobj_sym_auto);
+        else if (r_ob->slotinfo[j].slot_uwidth == -3.)
+            llll_appendsym(width, _llllobj_sym_duration);
+        else
+            llll_appendsym(width, _llllobj_sym_temporal);
+    } else {
+        llll_appenddouble(width, r_ob->slotinfo[j].slot_uwidth, 0, WHITENULL_llll);
+    }
+    llll_appendllll(inner_llll, width, 0, WHITENULL_llll);
+    
+    
+    t_llll *height = llll_get();
+    llll_appendsym(height, _llllobj_sym_height, 0, WHITENULL_llll);
+    if (r_ob->slotinfo[j].slot_active_uheight < 0)
+        llll_appendsym(height, _llllobj_sym_auto, 0, WHITENULL_llll);
+    else
+        llll_appenddouble(height, r_ob->slotinfo[j].slot_active_uheight, 0, WHITENULL_llll);
+    llll_appendllll(inner_llll, height, 0, WHITENULL_llll);
+    
+    
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+        llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_singleslotfortiednotes, r_ob->slotinfo[j].slot_singleslotfortiednotes));
+    
+    llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_copywhensplit, r_ob->slotinfo[j].copy_when_split));
+    
+    llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_access, slot_access_type_to_symbol((e_slot_access_types)r_ob->slotinfo[j].access_type)));
+    
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+        llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_follownotehead, r_ob->slotinfo[j].trim_with_notehead));
+    
+    if (also_get_fields_saved_in_max_inspector) {
+        llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_background, r_ob->slotinfo[j].kept_in_background));
+        llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_popup, r_ob->slotinfo[j].appear_in_popup_menu));
+        llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_linkto, r_ob->slotinfo[j].linked_to));
+        llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_rightclick, r_ob->slotinfo[j].pops_up_by_right_click));
+    }
+    return inner_llll;
+}
+                                    
 t_llll* get_slotinfo_as_llll(t_notation_obj *r_ob, char explicitly_get_also_default_stuff, char also_get_fields_saved_in_max_inspector, char bw_compatible){
 	t_llll* out_llll = llll_get();
 	int j;
 
 	llll_appendsym(out_llll, _llllobj_sym_slotinfo, 0, WHITENULL_llll);
 	
-    for (j = 0; j < (bw_compatible ? 30 : CONST_MAX_SLOTS); j++) {
-		t_llll* inner_llll = llll_get();
-		t_llll *name = llll_get();
-		t_llll *type = llll_get();
-		t_llll *key = llll_get();
-		
-		char key_char[2];
-		long slot_type = r_ob->slotinfo[j].slot_type;
-
-		// number (1-based)
-		llll_appendlong(inner_llll, j + 1, 0, WHITENULL_llll);
-
-		// name
-		llll_appendsym(name, _llllobj_sym_name, 0, WHITENULL_llll);
-		llll_appendsym(name, r_ob->slotinfo[j].slot_name, 0, WHITENULL_llll);
-		llll_appendllll(inner_llll, name, 0, WHITENULL_llll);
-
-		// type
-		llll_appendsym(type, _llllobj_sym_type, 0, WHITENULL_llll);
-		llll_appendsym(type, slot_type_to_symbol((e_slot_types)r_ob->slotinfo[j].slot_type), 0, WHITENULL_llll);
-		llll_appendllll(inner_llll, type, 0, WHITENULL_llll);
-
-		// key
-		key_char[0] = r_ob->slotinfo[j].slot_key;
-		key_char[1] = 0;
-		llll_appendsym(key, _llllobj_sym_key, 0, WHITENULL_llll);
-		if (r_ob->slotinfo[j].slot_key > 0)
-			llll_appendsym(key, gensym(key_char), 0, WHITENULL_llll);
-		else 
-			llll_appendlong(key, 0, 0, WHITENULL_llll);
-		llll_appendllll(inner_llll, key, 0, WHITENULL_llll);
-		
-		if (explicitly_get_also_default_stuff ||
-			(slot_type != k_SLOT_TYPE_FILELIST && slot_type != k_SLOT_TYPE_TEXT && slot_type != k_SLOT_TYPE_LLLL && slot_type != k_SLOT_TYPE_NONE && slot_type != k_SLOT_TYPE_COLOR &&  slot_type != k_SLOT_TYPE_ARTICULATIONS && slot_type != k_SLOT_TYPE_NOTEHEAD && slot_type != k_SLOT_TYPE_DYNAMICS)) {
-			// range
-			t_llll *range = llll_get();
-			t_llll *slope = llll_get();
-			t_llll *rep = llll_get();
-			llll_appendsym(range, _llllobj_sym_range, 0, WHITENULL_llll);
-			llll_appenddouble(range, r_ob->slotinfo[j].slot_range[0], 0, WHITENULL_llll);
-			llll_appenddouble(range, r_ob->slotinfo[j].slot_range[1], 0, WHITENULL_llll);
-			llll_appendllll(inner_llll, range, 0, WHITENULL_llll);
-
-			// slope
-			llll_appendsym(slope, _llllobj_sym_slope, 0, WHITENULL_llll);
-			llll_appenddouble(slope, r_ob->slotinfo[j].slot_range_par, 0, WHITENULL_llll);
-			llll_appendllll(inner_llll, slope, 0, WHITENULL_llll);
-		
-			// representation
-			llll_appendsym(rep, _llllobj_sym_representation, 0, WHITENULL_llll);
-			if (r_ob->slotinfo[j].slot_repr && r_ob->slotinfo[j].slot_repr->l_head) {
-				llll_appendhatom_clone(rep, &r_ob->slotinfo[j].slot_repr->l_head->l_hatom, 0, WHITENULL_llll);
-				if (r_ob->slotinfo[j].slot_repr->l_head->l_next) 
-					llll_appendhatom_clone(rep, &r_ob->slotinfo[j].slot_repr->l_head->l_next->l_hatom, 0, WHITENULL_llll);
-			}
-			llll_appendllll(inner_llll, rep, 0, WHITENULL_llll);
-		}
-        
-        if (explicitly_get_also_default_stuff || (slot_type == k_SLOT_TYPE_FUNCTION)) {
-            t_llll *grid = llll_get();
-            llll_appendsym(grid, _sym_grid, 0, WHITENULL_llll);
-            if (r_ob->slotinfo[j].grid)
-                llll_chain_clone(grid, r_ob->slotinfo[j].grid);
-            llll_appendllll(inner_llll, grid, 0, WHITENULL_llll);
-        }
-
-		if (explicitly_get_also_default_stuff || (slot_type == k_SLOT_TYPE_3DFUNCTION)) {
-			// zrange
-			t_llll *zrange = llll_get();
-			t_llll *zslope = llll_get();
-			llll_appendsym(zrange, _llllobj_sym_zrange, 0, WHITENULL_llll);
-			llll_appenddouble(zrange, r_ob->slotinfo[j].slot_zrange[0], 0, WHITENULL_llll);
-			llll_appenddouble(zrange, r_ob->slotinfo[j].slot_zrange[1], 0, WHITENULL_llll);
-			llll_appendllll(inner_llll, zrange, 0, WHITENULL_llll);
-			
-			// zslope
-			llll_appendsym(zslope, _llllobj_sym_zslope, 0, WHITENULL_llll);
-			llll_appenddouble(zslope, r_ob->slotinfo[j].slot_zrange_par, 0, WHITENULL_llll);
-			llll_appendllll(inner_llll, zslope, 0, WHITENULL_llll);
-		}
-
-		if (explicitly_get_also_default_stuff || slot_type == k_SLOT_TYPE_FUNCTION || slot_type == k_SLOT_TYPE_3DFUNCTION) {
-			t_llll *ysnap = llll_get();
-			llll_appendsym(ysnap, _llllobj_sym_ysnap, 0, WHITENULL_llll);
-            if (r_ob->slotinfo[j].slot_ysnap)
-                llll_chain_clone(ysnap, r_ob->slotinfo[j].slot_ysnap);
-			llll_appendllll(inner_llll, ysnap, 0, WHITENULL_llll);
-		}
-
-		if (explicitly_get_also_default_stuff || slot_type == k_SLOT_TYPE_3DFUNCTION) {
-            t_llll *zsnap = llll_get();
-            llll_appendsym(zsnap, _llllobj_sym_zsnap, 0, WHITENULL_llll);
-            if (r_ob->slotinfo[j].slot_zsnap)
-                llll_chain_clone(zsnap, r_ob->slotinfo[j].slot_zsnap);
-            llll_appendllll(inner_llll, zsnap, 0, WHITENULL_llll);
-		}
-				
-		if (explicitly_get_also_default_stuff || (slot_type == k_SLOT_TYPE_FUNCTION || slot_type == k_SLOT_TYPE_3DFUNCTION || slot_type == k_SLOT_TYPE_FILTER || slot_type == k_SLOT_TYPE_DYNFILTER)) {
-			t_llll *domain = llll_get();
-			t_llll *domainslope = llll_get();
-			
-			llll_appendsym(domain, _llllobj_sym_domain, 0, WHITENULL_llll);
-			llll_appenddouble(domain, r_ob->slotinfo[j].slot_domain[0], 0, WHITENULL_llll);
-			llll_appenddouble(domain, r_ob->slotinfo[j].slot_domain[1], 0, WHITENULL_llll);
-
-			llll_appendsym(domainslope, _llllobj_sym_domainslope, 0, WHITENULL_llll);
-			llll_appenddouble(domainslope, r_ob->slotinfo[j].slot_domain_par, 0, WHITENULL_llll);
-			
-			llll_appendllll(inner_llll, domain, 0, WHITENULL_llll);
-			llll_appendllll(inner_llll, domainslope, 0, WHITENULL_llll);
-		}
-		
-		if (explicitly_get_also_default_stuff || !are_colors_equal(r_ob->slotinfo[j].slot_color, get_default_slotcolor(j), 0.01)) {
-			t_llll *color = llll_get();
-			llll_appendsym(color, _llllobj_sym_color, 0, WHITENULL_llll);
-			llll_appenddouble(color, r_ob->slotinfo[j].slot_color.red, 0, WHITENULL_llll);
-			llll_appenddouble(color, r_ob->slotinfo[j].slot_color.green, 0, WHITENULL_llll);
-			llll_appenddouble(color, r_ob->slotinfo[j].slot_color.blue, 0, WHITENULL_llll);
-			llll_appenddouble(color, r_ob->slotinfo[j].slot_color.alpha, 0, WHITENULL_llll);
-			llll_appendllll(inner_llll, color, 0, WHITENULL_llll);
-		}
-
-		if (explicitly_get_also_default_stuff || slot_type == k_SLOT_TYPE_INT || slot_type == k_SLOT_TYPE_INTLIST || slot_type == k_SLOT_TYPE_FLOAT || slot_type == k_SLOT_TYPE_FLOATLIST || 
-			slot_type == k_SLOT_TYPE_TOGGLEMATRIX || slot_type == k_SLOT_TYPE_INTMATRIX || slot_type == k_SLOT_TYPE_FLOATMATRIX) {
-			t_llll *defaultllll = llll_get();
-			llll_appendsym(defaultllll, _llllobj_sym_default, 0, WHITENULL_llll);
-			llll_appenddouble(defaultllll, r_ob->slotinfo[j].slot_default, 0, WHITENULL_llll);
-			llll_appendllll(inner_llll, defaultllll, 0, WHITENULL_llll);
-		}
-
-        t_llll *temporalmode = llll_get();
-        llll_appendsym(temporalmode, _llllobj_sym_temporalmode);
-        switch (r_ob->slotinfo[j].slot_temporalmode) {
-            case k_SLOT_TEMPORALMODE_NONE:
-                llll_appendsym(temporalmode, _llllobj_sym_none);
-                break;
-            case k_SLOT_TEMPORALMODE_RELATIVE:
-                llll_appendsym(temporalmode, _llllobj_sym_relative);
-                break;
-            case k_SLOT_TEMPORALMODE_MILLISECONDS:
-                llll_appendsym(temporalmode, _llllobj_sym_milliseconds);
-                break;
-            case k_SLOT_TEMPORALMODE_TIMEPOINTS:
-                llll_appendsym(temporalmode, _llllobj_sym_timepoints);
-                break;
-            default:
-                break;
-        }
-        llll_appendllll(inner_llll, temporalmode);
-
-        t_llll *extend = llll_get();
-        llll_appendsym(extend, _llllobj_sym_extend);
-        llll_appendlong(extend, r_ob->slotinfo[j].extend_beyond_tails);
-        llll_appendllll(inner_llll, extend);
-
-        
-
-		t_llll *width = llll_get();
-		llll_appendsym(width, _llllobj_sym_width, 0, WHITENULL_llll);
-        if (r_ob->slotinfo[j].slot_uwidth < 0) {
-            if (r_ob->slotinfo[j].slot_uwidth == -2.)
-                llll_appendsym(width, _llllobj_sym_auto);
-            else if (r_ob->slotinfo[j].slot_uwidth == -3.)
-                llll_appendsym(width, _llllobj_sym_duration);
-            else
-                llll_appendsym(width, _llllobj_sym_temporal);
-        } else {
-            llll_appenddouble(width, r_ob->slotinfo[j].slot_uwidth, 0, WHITENULL_llll);
-        }
-		llll_appendllll(inner_llll, width, 0, WHITENULL_llll);
-
-
-		t_llll *height = llll_get();
-		llll_appendsym(height, _llllobj_sym_height, 0, WHITENULL_llll);
-		if (r_ob->slotinfo[j].slot_active_uheight < 0)
-			llll_appendsym(height, _llllobj_sym_auto, 0, WHITENULL_llll);
-		else
-			llll_appenddouble(height, r_ob->slotinfo[j].slot_active_uheight, 0, WHITENULL_llll);
-		llll_appendllll(inner_llll, height, 0, WHITENULL_llll);
-
-		
-		if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-			llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_singleslotfortiednotes, r_ob->slotinfo[j].slot_singleslotfortiednotes));
-
-        llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_copywhensplit, r_ob->slotinfo[j].copy_when_split));
-
-        llll_appendllll(inner_llll, symbol_and_symbol_to_llll(_llllobj_sym_access, slot_access_type_to_symbol((e_slot_access_types)r_ob->slotinfo[j].access_type)));
-
-        if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-            llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_follownotehead, r_ob->slotinfo[j].trim_with_notehead));
-
-		if (also_get_fields_saved_in_max_inspector) {
-			llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_background, r_ob->slotinfo[j].kept_in_background));
-			llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_popup, r_ob->slotinfo[j].appear_in_popup_menu));
-			llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_linkto, r_ob->slotinfo[j].linked_to));
-			llll_appendllll(inner_llll, build_sym_long_llll(_llllobj_sym_rightclick, r_ob->slotinfo[j].pops_up_by_right_click));
-		}
-		
-		llll_appendllll(out_llll, inner_llll, 0, WHITENULL_llll);
-	}
+    for (j = 0; j < (bw_compatible ? 30 : CONST_MAX_SLOTS); j++)
+        llll_appendllll(out_llll, get_single_slotinfo_as_llll(r_ob, j, explicitly_get_also_default_stuff, also_get_fields_saved_in_max_inspector));
 	return out_llll;
 	
 }
