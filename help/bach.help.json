@@ -3253,6 +3253,13 @@
 					"tags" : [ "message", "operate", "on", "selection", "copy", "cut", "paste", "slot", "content" ],
 					"title" : [ "Cut, copy or paste slot content" ]
 				},
+				"Copypasteslotinfo" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.55_copypasteslotinfo.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+					"seealso" : [ "copy+slotinfo" ],
+					"tags" : [ "message", "operate", "on", "selection", "copy", "cut", "paste", "slotinfo", "duplicate", "info", "structure", "configuration", "slot" ],
+					"title" : [ "Copy and paste slotinfo" ]
+				},
 				"Cutcopypastedls" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.58_cutcopypastedls.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
@@ -3267,8 +3274,8 @@
 					"tags" : [ "message", "operate", "on", "selection", "merge", "delete", "clear", "grace", "note", "chord", "rest" ],
 					"title" : [ "Merge or delete grace chords" ]
 				},
-				"Changerole copy" : {
-					"filename" : [ "bach.help.notation.messages.30_operate on selection.65_changerole copy.maxpat" ],
+				"Changerol" : {
+					"filename" : [ "bach.help.notation.messages.30_operate on selection.65_changerol.maxpat" ],
 					"objects" : [ "bach.roll" ],
 					"seealso" : [ "marker+role", "marker+content" ],
 					"tags" : [ "message", "operate", "on", "selection", "change", "marker", "role", "content", "value" ],

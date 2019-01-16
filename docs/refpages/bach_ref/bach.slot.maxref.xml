@@ -433,9 +433,11 @@
 				• <b>copy slot 1</b>   <i>→ copy first slot</i><br />
 				• <b>copy slot active</b>   <i>→ copy currently open slot</i><br />
 				• <b>copy slot all</b>   <i>→ copy all slot</i><br />
+				• <b>copy slotinfo 3</b>   <i>→ copy structure of slot 3</i><br />
 				<br />
 				Copies into the global clipboard slot data.
-				A "slot" symbol is always expected as argument.
+				A "slot" or "slotinfo" symbol is always expected as argument. In the first case, slot data is copied, in the second case,
+				the structure of the slot (slotinfo) is copied. <br />
 				With no further arguments, the content of the open slot window is copied; if in addition to the "slot" symbol an integer
 				is given, such integer is the number of the slot whose content is copied; finally, this integer can
 				be substituted by the "all" symbol to copy the content of all slots.
@@ -1047,9 +1049,11 @@
 				• <b>paste slot 3</b>   <i>→ paste copied slot to slot 3</i><br />
 				• <b>paste slot ampenv</b>   <i>→ paste copied slot to "ampenv" slot</i><br />
 				• <b>paste slot active</b>   <i>→ paste copied slot to currently open slot</i><br />
+				• <b>paste slotinfo 4</b>   <i>→ paste slotinfo onto slot 4</i><br />
 				<br />
 				Pastes the content contained in the global clipboard, if the clipboard contains slot content. <br />
-				A "slot" symbol is always expected as argument.
+				A "slot" of "slotinfo" symbol is always expected as argument. In the first case, the content of a slot is pasted,
+				in the second case, the information about the structure of the slot is pasted.
 				The second integer argument sets the slot into which content has to be pasted.
 				This number can be replaced with the "active" symbol, and the
 				slot content will be applied to the open slot window.

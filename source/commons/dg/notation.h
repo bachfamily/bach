@@ -18276,6 +18276,9 @@ void resync_bach_inspector_with_selection(t_notation_obj *r_ob);
 void resync_selection_with_bach_inspector(t_notation_obj *r_ob);
 
 
+void slotinfo_copy(t_notation_obj *r_ob, long slotnum);
+void slotinfo_paste(t_notation_obj *r_ob, long slotnum);
+
 
 
 // -----------------------------------

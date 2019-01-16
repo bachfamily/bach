@@ -525,7 +525,7 @@ void get_bach_inspector_lastline_string(t_notation_obj *r_ob, t_bach_inspector_m
 	} else if (man->active_bach_inspector_obj_type == k_MARKER) {
 		snprintf_zero(lastline, 1000, "→ jump to next marker, ← jump to previous marker");
 	} else if (man->active_bach_inspector_obj_type == k_SLOTINFO) {
-		snprintf_zero(lastline, 1000, "→ next slotinfo, ← previous slotinfo, or use numbers/hotkeys, Cmd+C (mac) or Ctrl+C (win) to copy slotinfo, Cmd+V (mac) or Ctrl+V (win) to paste slotinfo");
+		snprintf_zero(lastline, 1000, "→ next slotinfo, ← previous slotinfo, or use numbers/hotkeys, Cmd+C (mac) or Ctrl+C (win) to copy slotinfo, Cmd+V (mac) or Ctrl+V (win) to paste slotinfo");
 	}
 }
 
@@ -2160,29 +2160,33 @@ void switch_bach_inspector_for_notation_item(t_notation_obj *r_ob, t_notation_it
 
 void slotinfo_copy(t_notation_obj *r_ob, long slotnum)
 {
-    lock_general_mutex(r_ob);
-    inspector_clipboard.type = k_SLOTINFO;
-    if (inspector_clipboard.gathered_syntax)
-        llll_free(inspector_clipboard.gathered_syntax);
-    inspector_clipboard.gathered_syntax = get_single_slotinfo_as_llll(r_ob, slotnum, true, true);
-    unlock_general_mutex(r_ob);
+    if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS) {
+        lock_general_mutex(r_ob);
+        inspector_clipboard.type = k_SLOTINFO;
+        if (inspector_clipboard.gathered_syntax)
+            llll_free(inspector_clipboard.gathered_syntax);
+        inspector_clipboard.gathered_syntax = get_single_slotinfo_as_llll(r_ob, slotnum, true, true);
+        unlock_general_mutex(r_ob);
+    }
 }
 
 void slotinfo_paste(t_notation_obj *r_ob, long slotnum)
 {
-    (r_ob->whole_obj_undo_tick_function)(r_ob);
-    lock_general_mutex(r_ob);
-    if (inspector_clipboard.gathered_syntax) {
-        t_llll *temp = llll_clone(inspector_clipboard.gathered_syntax);
-        if (temp && temp->l_head) {
-            hatom_change_to_long(&temp->l_head->l_hatom, slotnum+1);
-            llll_wrap_once(&temp);
-            set_slotinfo_from_llll(r_ob, temp);
+    if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS) {
+        (r_ob->whole_obj_undo_tick_function)(r_ob);
+        lock_general_mutex(r_ob);
+        if (inspector_clipboard.gathered_syntax) {
+            t_llll *temp = llll_clone(inspector_clipboard.gathered_syntax);
+            if (temp && temp->l_head) {
+                hatom_change_to_long(&temp->l_head->l_hatom, slotnum+1);
+                llll_wrap_once(&temp);
+                set_slotinfo_from_llll(r_ob, temp);
+            }
+            llll_free(temp);
         }
-        llll_free(temp);
+        unlock_general_mutex(r_ob);
+        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
     }
-    unlock_general_mutex(r_ob);
-    handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
 }
 
 long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager *man, t_object *patcherview, long keycode, long modifiers, long textcharacter){
