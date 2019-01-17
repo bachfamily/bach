@@ -2367,6 +2367,7 @@
 				• <b>copy slot active</b>   <i>→ copy currently open slot</i><br />
 				• <b>copy slot all</b>   <i>→ copy all slots</i><br />
 				• <b>copy durationline</b>   <i>→ copy the duration line</i><br />
+				• <b>copy slotinfo 3</b>   <i>→ copy structure of slot 3</i><br />
 				<br />
 				Copies into the global clipboard selected musical content or slot data.
 				If no argument is given, the current selected measures are copied.
@@ -2374,7 +2375,10 @@
 				If a "slot" symbol is given as argument,
 				the content of the open slot window (if any) is copied; if in addition to the "slot" symbol an integer
 				is given, such integer is the number of the slot whose content is copied (this will work even if no slot window is open);
-				finally, this integer can be substituted by the "all" symbol to copy the content of all slots.
+				finally, this integer can be substituted by the "all" symbol to copy the content of all slots. <br />
+				Exactly analogously, a "slotinfo" symbol can be used instead of "slot", and
+				the information about the structure of the slot (slotinfo) identified by the following argument (an integer, a slot name or the "active"
+				symbol) is copied.
 				<br />				See also:<m>cut</m>,<m>paste</m><br />
 			</description>
 		</method>
@@ -6287,6 +6291,7 @@
 				• <b>paste slot 3</b>   <i>→ paste copied slot to slot 3 of selection</i><br />
 				• <b>paste slot ampenv</b>   <i>→ paste copied slot to "ampenv" slot of selection</i><br />
 				• <b>paste slot active</b>   <i>→ paste copied slot to currently open slot</i><br />
+				• <b>paste slotinfo 4</b>   <i>→ paste slotinfo onto slot 4</i><br />
 				<br />
 				Message attributes:<br />
 				<m>@tempi</m> (int, default: 0): If non-zero, also pastes tempi for copied measures<br />
@@ -6303,7 +6308,10 @@
 				If the clipboard contains slot content, and the "slot" symbol is used as argument,
 				the slot content is applied to the selected notes. If an integer argument is given, and a single slot
 				was copied, the slot content is applied only to the specified slot number. This number can be replaced with the "active" symbol, and the
-				slot content will be applied to the open slot window.
+				slot content will be applied to the open slot window. <br />
+				Exactly analogously, a "slotinfo" symbol can be used instead of "slot", and if the clipboard contains slotinfo content, then
+				the information about the structure of the slot (slotinfo) is pasted on the specificed slot (also slot names and "active"
+				symbol are supported).
 				<br />				See also:<m>cut</m>,<m>copy</m><br />
 			</description>
 		</method>

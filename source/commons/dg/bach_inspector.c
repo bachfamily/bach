@@ -2,6 +2,8 @@
 
 static t_class	*s_bach_inspector_ui_class;
 
+t_clipboard inspector_clipboard = {k_NONE, k_NOTATION_OBJECT_ANY, NULL, NULL, 0.};
+
 /// Tools for dealing with bach specific attributes (appearing in the bach inspector)
 
 char *field2string(void *field, char type, long size, long max_decimals){
@@ -523,7 +525,7 @@ void get_bach_inspector_lastline_string(t_notation_obj *r_ob, t_bach_inspector_m
 	} else if (man->active_bach_inspector_obj_type == k_MARKER) {
 		snprintf_zero(lastline, 1000, "→ jump to next marker, ← jump to previous marker");
 	} else if (man->active_bach_inspector_obj_type == k_SLOTINFO) {
-		snprintf_zero(lastline, 1000, "→ next slotinfo, ← previous slotinfo, or use numbers/hotkeys");
+		snprintf_zero(lastline, 1000, "→ next slotinfo, ← previous slotinfo, or use numbers/hotkeys, Cmd+C (mac) or Ctrl+C (win) to copy slotinfo, Cmd+V (mac) or Ctrl+V (win) to paste slotinfo");
 	}
 }
 
@@ -2155,6 +2157,38 @@ void switch_bach_inspector_for_notation_item(t_notation_obj *r_ob, t_notation_it
 	switch_bach_inspector(r_ob, &r_ob->m_inspector, it, it->type);
 }
 
+
+void slotinfo_copy(t_notation_obj *r_ob, long slotnum)
+{
+    if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS) {
+        lock_general_mutex(r_ob);
+        inspector_clipboard.type = k_SLOTINFO;
+        if (inspector_clipboard.gathered_syntax)
+            llll_free(inspector_clipboard.gathered_syntax);
+        inspector_clipboard.gathered_syntax = get_single_slotinfo_as_llll(r_ob, slotnum, true, true);
+        unlock_general_mutex(r_ob);
+    }
+}
+
+void slotinfo_paste(t_notation_obj *r_ob, long slotnum)
+{
+    if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS) {
+        (r_ob->whole_obj_undo_tick_function)(r_ob);
+        lock_general_mutex(r_ob);
+        if (inspector_clipboard.gathered_syntax) {
+            t_llll *temp = llll_clone(inspector_clipboard.gathered_syntax);
+            if (temp && temp->l_head) {
+                hatom_change_to_long(&temp->l_head->l_hatom, slotnum+1);
+                llll_wrap_once(&temp);
+                set_slotinfo_from_llll(r_ob, temp);
+            }
+            llll_free(temp);
+        }
+        unlock_general_mutex(r_ob);
+        handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_SLOTINFO);
+    }
+}
+
 long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager *man, t_object *patcherview, long keycode, long modifiers, long textcharacter){
 	if (man->active_bach_inspector_item) {
 		void *item = man->active_bach_inspector_item;
@@ -2339,6 +2373,16 @@ long handle_key_in_bach_inspector(t_notation_obj *r_ob, t_bach_inspector_manager
             }
 			return 1;
 			
+        } else if (keycode == 'c' && modifiers & eCommandKey && r_ob) {
+            if (man->active_bach_inspector_obj_type == k_SLOTINFO)
+                slotinfo_copy(r_ob, ((t_slotinfo *)item)->slot_num);
+            return 1;
+            
+        } else if (keycode == 'v' && modifiers & eCommandKey && r_ob) {
+            if (man->active_bach_inspector_obj_type == k_SLOTINFO)
+                slotinfo_paste(r_ob, ((t_slotinfo *)item)->slot_num);
+            return 1;
+
 		} else if (r_ob && man->active_bach_inspector_obj_type == k_SLOTINFO && !(modifiers & eCommandKey)
 					&& !(modifiers & eAltKey) && !(modifiers & eControlKey)) {
 			if (keycode >= 48 &&  keycode <= 57) {

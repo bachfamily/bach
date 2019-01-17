@@ -11606,16 +11606,16 @@ double rest_get_nonfloating_yposition(t_notation_obj *r_ob, t_chord *rest, doubl
     long shift = get_clef_octave_shift(clef);
 	if (!chord_which_gives_the_position) {
 		double midicents;
-		// we choose the topmost staff!
+		// we choose the topmost staff, except when it's G15, and in this case we chose the G staff
 		switch (clef) {
 			case k_CLEF_FFGG: 
-				midicents = 9500; 
+                midicents = 7100; // was: 9500;
 				break;
 			case k_CLEF_FFG: 
 				midicents = 7100; 
 				break;
 			case k_CLEF_FGG: 
-				midicents = 9500; 
+                midicents = 7100; // was: 9500;
 				break;
 			case k_CLEF_FF: 
 				midicents = 5000; 

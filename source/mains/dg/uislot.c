@@ -488,7 +488,8 @@ int T_EXPORT main(void){
 	
 	// @method copy @digest Copy
 	// @description Copies into the global clipboard slot data.
-	// A "slot" symbol is always expected as argument.
+	// A "slot" or "slotinfo" symbol is always expected as argument. In the first case, slot data is copied, in the second case,
+    // the structure of the slot (slotinfo) is copied. <br />
 	// With no further arguments, the content of the open slot window is copied; if in addition to the "slot" symbol an integer
 	// is given, such integer is the number of the slot whose content is copied; finally, this integer can 
 	// be substituted by the "all" symbol to copy the content of all slots.
@@ -497,6 +498,7 @@ int T_EXPORT main(void){
     // @example copy slot 1 @caption copy first slot
     // @example copy slot active @caption copy currently open slot
     // @example copy slot all @caption copy all slot
+    // @example copy slotinfo 3 @caption copy structure of slot 3
     // @seealso cut, paste
 	class_addmethod(c, (method) uislot_copy, "copy", A_GIMME, 0);
 	
@@ -516,7 +518,8 @@ int T_EXPORT main(void){
 	
 	// @method paste @digest Paste
 	// @description Pastes the content contained in the global clipboard, if the clipboard contains slot content. <br />
-	// A "slot" symbol is always expected as argument.
+	// A "slot" of "slotinfo" symbol is always expected as argument. In the first case, the content of a slot is pasted,
+    // in the second case, the information about the structure of the slot is pasted.
 	// The second integer argument sets the slot into which content has to be pasted.
 	// This number can be replaced with the "active" symbol, and the 
 	// slot content will be applied to the open slot window.
@@ -527,6 +530,7 @@ int T_EXPORT main(void){
     // @example paste slot 3 @caption paste copied slot to slot 3
     // @example paste slot ampenv @caption paste copied slot to "ampenv" slot
     // @example paste slot active @caption paste copied slot to currently open slot
+    // @example paste slotinfo 4 @caption paste slotinfo onto slot 4
     // @seealso cut, copy
     //	class_addmethod(c, (method) uislot_paste, "paste", A_GIMME, 0); // THIS MUST BE COMMENTED!!!!!
                                                                         // Paste must be indeed handled inside the anything method,
@@ -2340,7 +2344,9 @@ void uislot_new_undo_redo(t_uislot *x, char what){
 
 void uislot_copy_or_cut(t_uislot *x, t_symbol *s, long argc, t_atom *argv, char cut){
 	t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
-	if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
+    if (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slotinfo)) {
+        slotinfo_copy((t_notation_obj *)x, llllelem_to_slotnum((t_notation_obj *)x, ll->l_head->l_next, true));
+    } else if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
         if (x->r_ob.active_slot_notationitem) {
             if (cut)
                 create_whole_uislot_undo_tick(x);
@@ -2364,7 +2370,9 @@ void uislot_cut(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
 void uislot_paste(t_uislot *x, t_symbol *s, long argc, t_atom *argv){
 	t_llll *ll = llllobj_parse_llll((t_object *)x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
 	
-	if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
+    if (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slotinfo)) {
+        slotinfo_paste((t_notation_obj *)x, llllelem_to_slotnum((t_notation_obj *)x, ll->l_head->l_next, true));
+    } else if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
         if (clipboard.type == k_SLOT) {
             create_whole_uislot_undo_tick(x);
 			notation_obj_paste_slot((t_notation_obj *) x, &clipboard, 

@@ -5991,12 +5991,15 @@ int T_EXPORT main(void){
 	
 	// @method copy @digest Copy
 	// @description Copies into the global clipboard selected musical content or slot data.
-	// If no argument is given, the current selection is copied.
-    // If a "durationline" symbol is given as argument, the duration line is copied.
+	// If no argument is given, the current selection is copied. <br />
+    // If a "durationline" symbol is given as argument, the duration line is copied. <br />
     // If a "slot" symbol is given as argument,
 	// the content of the open slot window (if any) is copied; if in addition to the "slot" symbol an integer
 	// is given, such integer is the number of the slot whose content is copied (this will work even if no slot window is open);
-    // finally, this integer can be substituted by the "all" symbol to copy the content of all slots.
+    // finally, this integer can be substituted by the "all" symbol to copy the content of all slots. <br />
+    // Exactly analogously, a "slotinfo" symbol can be used instead of "slot", and
+    // the information about the structure of the slot (slotinfo) identified by the following argument (an integer, a slot name or the "active"
+    // symbol) is copied.
 	// @marg 0 @name slot @optional 1 @type symbol
 	// @marg 1 @name slot_number @optional 1 @type int/symbol
     // @example copy @caption copy selection
@@ -6004,6 +6007,7 @@ int T_EXPORT main(void){
     // @example copy slot active @caption copy currently open slot
     // @example copy slot all @caption copy all slots
     // @example copy durationline @caption copy the duration line
+    // @example copy slotinfo 3 @caption copy structure of slot 3
     // @seealso cut, paste
 	class_addmethod(c, (method) roll_copy, "copy", A_GIMME, 0);
 
@@ -6035,7 +6039,10 @@ int T_EXPORT main(void){
 	// If the clipboard contains slot content, and the "slot" symbol is used as first argument,
     // the slot content is applied to the selected notes. If an integer argument is given, and a single slot
 	// was copied, the slot content is applied only to the specified slot number. This number can be replaced with the "active" symbol, and the 
-	// slot content will be applied to the open slot window.
+	// slot content will be applied to the open slot window. <br />
+    // Exactly analogously, a "slotinfo" symbol can be used instead of "slot", and if the clipboard contains slotinfo content, then
+    // the information about the structure of the slot (slotinfo) is pasted on the specificed slot (also slot names and "active"
+    // symbol are supported).
     // @marg 0 @name replace @optional 1 @type symbol
 	// @marg 1 @name position_or_slot @optional 1 @type number/symbol
 	// @marg 2 @name starting_voice_number @optional 1 @type int
@@ -6053,6 +6060,7 @@ int T_EXPORT main(void){
     // @example paste slot ampenv @caption paste copied slot to "ampenv" slot of selection
     // @example paste slot active @caption paste copied slot to currently open slot
     // @example paste durationline @caption paste copied duration line to selection
+    // @example paste slotinfo 4 @caption paste slotinfo onto slot 4
     // @seealso cut, copy
 //	class_addmethod(c, (method) roll_paste, "paste", A_GIMME, 0);   // THIS MUST BE COMMENTED!!!!!
                                                                     // Paste must be indeed handled inside the anything method,
@@ -18151,6 +18159,8 @@ void roll_copy_or_cut(t_roll *x, t_symbol *s, long argc, t_atom *argv, char cut)
     if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == gensym("durationline"))) {
         t_note *note = get_leftmost_selected_note((t_notation_obj *)x);
         notation_obj_copy_durationline((t_notation_obj *)x, &clipboard, note, cut);
+    } else if (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slotinfo)) {
+        slotinfo_copy((t_notation_obj *)x, llllelem_to_slotnum((t_notation_obj *)x, ll->l_head->l_next, true));
     } else if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
         long slotnum = ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_LONG ? hatom_getlong(&ll->l_head->l_next->l_hatom) - 1 : (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_SYM && hatom_getsym(&ll->l_head->l_next->l_hatom) == _sym_all ? -1 : x->r_ob.active_slot_num);
 		if (x->r_ob.active_slot_notationitem)
@@ -18181,6 +18191,8 @@ void roll_paste(t_roll *x, t_symbol *s, long argc, t_atom *argv)
 	if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == gensym("durationline"))) {
 		if (clipboard.type == k_DURATION_LINE)
             notation_obj_paste_durationline((t_notation_obj *) x, &clipboard);
+    } else if (ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slotinfo)) {
+        slotinfo_paste((t_notation_obj *)x, llllelem_to_slotnum((t_notation_obj *)x, ll->l_head->l_next, true));
     } else if (ll->l_size >= 1 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM && (hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slot || hatom_getsym(&ll->l_head->l_hatom) == _llllobj_sym_slots)) {
             if (clipboard.type == k_SLOT)
                 notation_obj_paste_slot((t_notation_obj *) x, &clipboard,
