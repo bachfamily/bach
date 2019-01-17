@@ -144,6 +144,12 @@ typedef struct _playkeys
     t_atom                  n_lyricsslot;
     t_atom                  n_noteheadslot;
     
+    char                    n_warn_pitchrequestedmidicentreceived;
+    char                    n_warn_fullpathrequestedbutnotpresent;
+    char                    n_warn_measurenumberneedsfullpath;
+    char                    n_warn_chordindexneedsfullpath;
+    char                    n_warn_noteindexneedsfullpath;
+    
     char                    n_must_iterate_on_output;
     
     t_bach_atomic_lock      n_process_lock;
@@ -171,6 +177,16 @@ long playkeys_func(t_hatom *key, t_llll *what);
 void playkeys_output(t_playkeys *x);
 
 t_class *playkeys_class;
+
+
+void reset_warnings(t_playkeys *x)
+{
+    x->n_warn_pitchrequestedmidicentreceived = true;
+    x->n_warn_fullpathrequestedbutnotpresent = true;
+    x->n_warn_measurenumberneedsfullpath = true;
+    x->n_warn_chordindexneedsfullpath = true;
+    x->n_warn_noteindexneedsfullpath = true;
+}
 
 
 long symbol_to_incoming(t_symbol *s)
@@ -819,10 +835,13 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
             incoming = k_PLAYKEYS_INCOMING_PLAY;
         } else if (router == _llllobj_sym_stop) {
             incoming = k_PLAYKEYS_INCOMING_STOP;
+            reset_warnings(x);
         } else if (router == _llllobj_sym_end) {
             incoming = k_PLAYKEYS_INCOMING_END;
+            reset_warnings(x);
         } else if (router == _llllobj_sym_pause) {
             incoming = k_PLAYKEYS_INCOMING_PAUSE;
+            reset_warnings(x);
         } else {
             char found = 0;
             for (t_llllelem *elem = x->n_note_commands->l_head; elem; elem = elem->l_next) {
@@ -979,8 +998,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         if (hatom_gettype(&target_el->l_hatom) == H_PITCH)
                                             llll_appendpitch(found, hatom_getpitch(&target_el->l_hatom));
                                         else {
-                                            object_warn((t_object *)x, "Pitch requested, but only MIDIcent received.");
-                                            object_warn((t_object *)x, "   You might want to set \"outputpitchesplayout\" on \"Always\" for your notation object.");
+                                            if (x->n_warn_pitchrequestedmidicentreceived) {
+                                                object_warn((t_object *)x, "Pitch requested, but only MIDIcent received.");
+                                                object_warn((t_object *)x, "   You might want to set \"outputpitchesplayout\" on \"Always\" for your notation object.");
+                                                x->n_warn_pitchrequestedmidicentreceived = false;
+                                            }
                                             llll_appendpitch(found, t_pitch::fromMC(hatom_getdouble(&target_el->l_hatom)));
                                         }
                                     }
@@ -1002,8 +1024,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         if (hatom_gettype(&target_el->l_hatom) == H_PITCH)
                                             llll_appendpitch(found, hatom_getpitch(&target_el->l_hatom));
                                         else {
-                                            object_warn((t_object *)x, "Pitch requested, but only MIDIcent received.");
-                                            object_warn((t_object *)x, "   You might want to set \"outputpitchesplayout\" on \"Always\" for your notation object.");
+                                            if (x->n_warn_pitchrequestedmidicentreceived) {
+                                                object_warn((t_object *)x, "Pitch requested, but only MIDIcent received.");
+                                                object_warn((t_object *)x, "   You might want to set \"outputpitchesplayout\" on \"Always\" for your notation object.");
+                                                x->n_warn_pitchrequestedmidicentreceived = false;
+                                            }
                                             llll_appendpitch(found, t_pitch::fromMC(hatom_getdouble(&target_el->l_hatom)));
                                         }
                                     }
@@ -1428,8 +1453,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                 found = llll_get();
                                 if ((target_el = llll_getindex(in_ll, 2, I_STANDARD))) {
                                     if (hatom_gettype(&target_el->l_hatom) != H_LLLL) { // playout full path
-                                        object_warn((t_object *)x, "Full path requested, but not present in the playout llll.");
-                                        object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object, or use the \"voice\" playkey to avoid this warning.");
+                                        if (x->n_warn_fullpathrequestedbutnotpresent) {
+                                            object_warn((t_object *)x, "Full path requested, but not present in the playout llll.");
+                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object, or use the \"voice\" playkey to avoid this warning.");
+                                            x->n_warn_fullpathrequestedbutnotpresent = false;
+                                        }
                                     }
                                     if (target_el)
                                         llll_appendhatom_clone(found, &target_el->l_hatom);
@@ -1464,8 +1492,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         }
                                     } else {
                                         target_el = NULL;
-                                        object_warn((t_object *)x, "In order to intercept the measure number, full path must be in playout syntax.");
-                                        object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                        if (x->n_warn_measurenumberneedsfullpath) {
+                                            object_warn((t_object *)x, "In order to intercept the measure number, full path must be in playout syntax.");
+                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                            x->n_warn_measurenumberneedsfullpath = false;
+                                        }
                                     }
                                 }
                                 break;
@@ -1499,8 +1530,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                             llll_appendhatom_clone(found, &target_el->l_hatom);
                                     } else {
                                         target_el = NULL;
-                                        object_warn((t_object *)x, "In order to intercept the chord index, full path must be in playout syntax.");
-                                        object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                        if (x->n_warn_chordindexneedsfullpath) {
+                                            object_warn((t_object *)x, "In order to intercept the chord index, full path must be in playout syntax.");
+                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                            x->n_warn_chordindexneedsfullpath = false;
+                                        }
                                     }
                                 }
                                 break;
@@ -1522,8 +1556,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         }
                                     } else {
                                         target_el = NULL;
-                                        object_warn((t_object *)x, "In order to intercept the chord index, full path must be in playout syntax.");
-                                        object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                        if (x->n_warn_chordindexneedsfullpath) {
+                                            object_warn((t_object *)x, "In order to intercept the chord index, full path must be in playout syntax.");
+                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                            x->n_warn_chordindexneedsfullpath = false;
+                                        }
                                     }
                                 }
                                 break;
@@ -1550,8 +1587,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                             llll_appendhatom_clone(found, &target_el->l_hatom);
                                     } else {
                                         target_el = NULL;
-                                        object_warn((t_object *)x, "In order to intercept the note index, full path must be in playout syntax.");
-                                        object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                        if (x->n_warn_noteindexneedsfullpath) {
+                                            object_warn((t_object *)x, "In order to intercept the note index, full path must be in playout syntax.");
+                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                            x->n_warn_noteindexneedsfullpath = false;
+                                        }
                                     }
                                 }
                                 break;
@@ -1573,8 +1613,11 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         }
                                     } else {
                                         target_el = NULL;
-                                        object_warn((t_object *)x, "In order to intercept the note index, full path must be in playout syntax.");
-                                        object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                        if (x->n_warn_noteindexneedsfullpath) {
+                                            object_warn((t_object *)x, "In order to intercept the note index, full path must be in playout syntax.");
+                                            object_warn((t_object *)x, "   You might want to turn \"playoutfullpath\" on for your notation object.");
+                                            x->n_warn_noteindexneedsfullpath = false;
+                                        }
                                     }
                                 }
                                 break;
@@ -2074,6 +2117,8 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         x->n_note_commands = llll_make();
         x->n_chord_commands = llll_make();
         x->n_rest_commands = llll_make();
+        
+        reset_warnings(x);
 
         x->n_notationitems_to_process = -1; // all of them
 

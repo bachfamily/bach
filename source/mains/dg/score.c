@@ -3612,7 +3612,7 @@ void score_play_offline(t_score *x, t_symbol *s, long argc, t_atom *argv)
 
 void score_play_preschedule(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
-    double start_ms = (argc > 0) ? atom_getfloat(argv) : 0;
+    double start_ms = (argc > 0) ? atom_getfloat(argv) : x->r_ob.play_head_start_ms;
     
     if (x->r_ob.playing) {
         object_warn((t_object *)x, "Can't play in preschedule mode: already playing");
@@ -3628,7 +3628,8 @@ void score_play_preschedule(t_score *x, t_symbol *s, long argc, t_atom *argv)
         }
         
         x->r_ob.playing = true; // we are still to play! :)
-        
+        x->r_ob.play_head_ms = start_ms;
+
         // Scheduling stuff
         x->r_ob.preschedule_cursor = x->r_ob.to_preschedule->l_head;
         for (t_llllelem *el = x->r_ob.to_preschedule->l_head; el; el = el->l_next) {
@@ -4212,6 +4213,9 @@ void score_task(t_score *x)
 
 			// next event is the end of the score
             double end_time = x->r_ob.play_head_ms;
+            if (x->r_ob.playing_scheduling_type == k_SCHEDULING_PRESCHEDULE)
+                end_time = x->r_ob.length_ms_till_last_note;
+
 			char need_repaint = (x->r_ob.playing_scheduling_type == k_SCHEDULING_STANDARD);
 			t_llll *end_llll;
 			set_everything_unplayed(x);

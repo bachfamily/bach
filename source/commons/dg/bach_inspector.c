@@ -1034,8 +1034,11 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
 			} else {
 				recompute_all_for_measure(r_ob, ((t_chord *)obj)->parent, false);
 			}
-		} else
+        } else {
 			((t_chord *)obj)->need_recompute_parameters = true;
+            recompute_total_length(r_ob);
+            update_hscrollbar(r_ob, 1);
+        }
 	} else if (attr->owner_type == k_NOTE) {
 		if (attr->name == _llllobj_sym_cents) {
             note_set_auto_enharmonicity((t_note *)obj);
@@ -1043,8 +1046,11 @@ void bach_default_postprocess(t_notation_obj *r_ob, void *obj, t_bach_attribute 
 		}
 		if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
 			recompute_all_for_measure(r_ob, ((t_note *)obj)->parent->parent, false);
-		else
+        else {
 			((t_note *)obj)->parent->need_recompute_parameters = true;
+            recompute_total_length(r_ob);
+            update_hscrollbar(r_ob, 1);
+        }
 	} else if (attr->owner_type == k_MEASURE) {
 		if (attr->name == _llllobj_sym_lockrhythmictree)
 			recompute_all_for_measure(r_ob, (t_measure *)obj, true);
