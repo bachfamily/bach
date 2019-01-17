@@ -6,7 +6,7 @@
 #define LLLL_PRIMES_TABLE_SIZE 4792        // how many primes do we have in our table?
 #define LLLL_STACK_SIZESTEP 64            // the dynamic allocation step used by llll_stack
 #define LLLL_BUF_SIZE_STEP 16384        // the dynamic allocation step for text buffers
-#define LLLL_IDX2PTR_SLOTS    1048576        // the number of slots for the llll_phonebook p_idx2ptr hash table (the hashing is just a modulo, so a power of 2 is fine)
+#define LLLL_IDX2PTR_SLOTS    1048576        // the number of slots for the llll_phonebook p_idx2ptr hash table (the hash function is just a modulo, so a power of 2 is fine)
 #define BACH_SHASHTABLE_SLOTS 1024
 #define    QUOTE_CHAR ('`')                // the special character for quoting
 #define LLLL_NATIVE_MSG    (_llllobj_sym_bach_llll)
