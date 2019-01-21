@@ -800,6 +800,8 @@ t_llll *score_readxml(t_score *x,
                 used_duration[i] = t_rational(0);
             }
 
+            t_rational current_timepoint = t_rational(0);
+            
 			t_llll *measureinfoll = llll_get();
 			mxml_node_t *attributesXML = mxmlFindElement(measureXML, measureXML, "attributes", NULL, NULL, MXML_DESCEND_FIRST);
 			// parse the attributes:
@@ -1086,8 +1088,19 @@ t_llll *score_readxml(t_score *x,
 				llll_free(tempill);
 				tempill = NULL;
 			}
-			
+
+            
+            
+            
+            
+            ///////////////////////////////
+            ///////////////////////////////
+            //
 			// chords and notes
+            //
+            ///////////////////////////////
+            ///////////////////////////////
+
             mxml_node_t *noteXML;
             mxml_node_t *nextnoteXML = NULL;
   
@@ -1103,10 +1116,25 @@ t_llll *score_readxml(t_score *x,
             
             long current_voice_in_part = 0;
 
+            mxml_node_t *backupXML = NULL;
 			for (noteXML = firstnoteXML; noteXML; noteXML = nextnoteXML) {
+                t_bool switch_to_new_voice = false;
                 t_bool go = true;
-                mxml_node_t *backupXML, *node;
                 mxml_node_t *nextnode = noteXML;
+                
+                if (backupXML) {
+                    mxml_node_t *durationXML = mxmlFindElement(backupXML, backupXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
+                    t_rational backupdur = t_rational(mxmlGetInteger(durationXML), divisions);
+                    current_timepoint -= backupdur;
+                    
+                    //t_rational getHere = used_duration[current_voice_in_part] - backupdur;
+                    if (current_timepoint < 0) {
+                        object_warn((t_object *) x, "<backup> tag wants to backup too far");
+                        current_timepoint = t_rational(0);
+                    }
+                    switch_to_new_voice = true;
+                }
+                
                 nextnoteXML = backupXML = NULL;
                 while (go) {
                     nextnode = mxmlWalkNext(nextnode, measureXML, MXML_NO_DESCEND);
@@ -1117,18 +1145,54 @@ t_llll *score_readxml(t_score *x,
                         if (nextname) {
                             if (!strcmp(nextname, "note")) {
                                 nextnoteXML = nextnode;
-                                go = 0;
+                                go = false;
                             } else if (!strcmp(nextname, "backup")) {
                                 nextnoteXML = mxmlFindElement(noteXML, measureXML, "note", NULL, NULL, MXML_NO_DESCEND);
                                 backupXML = nextnode;
-                                go = 0;
+                                go = false;
                             }
                         }
                     }
                 }
                 
+                mxml_node_t *voiceXML = mxmlFindElement(noteXML, noteXML, "voice", NULL, NULL, MXML_DESCEND_FIRST);
+
+                if (voiceXML) {
+                    int newvoice = mxmlGetInteger(voiceXML) - 1;
+                    if (newvoice != current_voice_in_part) {
+                        switch_to_new_voice = true;
+                        current_voice_in_part = newvoice;
+                    }
+                }
+                
+                while (current_voice_in_part < voices_for_this_xml_part) {
+                    if (used_duration[current_voice_in_part] > current_timepoint) {
+                        ++current_voice_in_part;
+                        switch_to_new_voice = true;
+                    } else
+                        break;
+                }
+                
+                while (current_voice_in_part >= voices_for_this_xml_part) {
+                    voicell[voices_for_this_xml_part + 1] = llll_clone(voicell[voices_for_this_xml_part]);
+                    measurell[voices_for_this_xml_part + 1] = llll_clone(measurell[voices_for_this_xml_part]);
+                    used_duration[voices_for_this_xml_part + 1] = t_rational(0);
+                    
+                    chord_parentll[voices_for_this_xml_part] = measurell[voices_for_this_xml_part];
+                    ++voices_for_this_xml_part;
+                }
+                
+                if (used_duration[current_voice_in_part] < current_timepoint) {
+                    t_rational restdur = - (current_timepoint - used_duration[current_voice_in_part]);
+                    chordll = llll_get();
+                    llll_appendrat(chordll, restdur);
+                    llll_appendlong(chordll, 0);
+                    llll_appendllll(chord_parentll[current_voice_in_part], chordll);
+                    used_duration[current_voice_in_part] = current_timepoint;
+                }
+                
                 // IMPORTING DYNAMICS
-                if (noteXML == firstnoteXML && (!nextnoteXML || backupXML)) { // just 1 note,
+                if (noteXML == firstnoteXML && (!nextnoteXML || switch_to_new_voice)) { // just 1 note,
                     // assuming that this is the right thing to do when we switch to another voice
                     xml_get_dynamics(measureXML->child, NULL, dynamics_text);
                     words = xml_get_words(measureXML->child, NULL, NULL);
@@ -1137,7 +1201,7 @@ t_llll *score_readxml(t_score *x,
                     xml_get_dynamics(measureXML->child, firstnoteXML, dynamics_text);
                     words = xml_get_words(measureXML->child, firstnoteXML, NULL);
                 }
-                else if (!nextnoteXML || backupXML) {
+                else if (!nextnoteXML || switch_to_new_voice) {
                     char temp_dynamics_text[CONST_DYNAMICS_TEXT_ALLOC_SIZE];
                     temp_dynamics_text[0] = 0;
                     xml_get_dynamics(noteXML->next, NULL, temp_dynamics_text);
@@ -1271,7 +1335,7 @@ t_llll *score_readxml(t_score *x,
 					}
                     
                     if (!grace)
-                        used_duration[current_voice_in_part] += duration;
+                        current_timepoint = used_duration[current_voice_in_part] += duration;
                     
 					if (restXML) {
 						duration.r_num *= -1;
@@ -1436,14 +1500,14 @@ t_llll *score_readxml(t_score *x,
                 
                 // if there is a chord and we're closing (even if temporarily) this voice,
                 // append to it its articulations and flags
-                if (chordll && (backupXML || !nextnoteXML)) {
+                if (chordll && (switch_to_new_voice || !nextnoteXML)) {
                     if (chordslotsll) {
                         llll_appendllll(chordll, chordslotsll);
                     }
                     llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
                     chordll = NULL;
                 }
-                
+/*
                 if (backupXML) {
                     
                     mxml_node_t *durationXML = mxmlFindElement(backupXML, backupXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
@@ -1479,7 +1543,7 @@ t_llll *score_readxml(t_score *x,
                     
                     current_voice_in_part = v;
                 }
-                
+                */
                 xml_get_dynamics(noteXML->next, nextnoteXML, dynamics_text);
                 words = xml_get_words(noteXML->next, nextnoteXML, NULL);
 			}
@@ -1508,14 +1572,13 @@ t_llll *score_readxml(t_score *x,
             
             llll_prependllll(measurell[0], measureinfoll, 0, WHITENULL_llll);
             llll_appendlong(measurell[0], 0, 0, WHITENULL_llll); // measure flags
-
-            for (long i = 1; i < voices_for_this_xml_part; i++) {
+            llll_appendllll(voicell[0], measurell[0]);
+            
+            for (long i = 1; i <= voices_for_this_xml_part; i++) {
                 llll_prependllll_clone(measurell[i], measureinfoll);
                 llll_appendlong(measurell[i], 0, 0, WHITENULL_llll); // measure flags
-            }
-
-            for (long i = 0; i < voices_for_this_xml_part; i++)
                 llll_appendllll(voicell[i], measurell[i]);
+            }
 
 			isfirstmeasure = 0;
 		}
@@ -1528,7 +1591,7 @@ t_llll *score_readxml(t_score *x,
         }
         
         llll_free(voicell[voices_for_this_xml_part]);
-        llll_appendlong(numpartsll, voices_for_this_xml_part + 1); // numparts has been added to scorell at the beginning
+        llll_appendlong(numpartsll, voices_for_this_xml_part); // numparts has been added to scorell at the beginning
 
         llll_free(words);
 	}
@@ -3010,6 +3073,7 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
 		!strcmp(name, "dynamics") ||
 		!strcmp(name, "tremolo") ||
 		!strcmp(name, "clef-octave-change") ||
+        !strcmp(name, "voice") ||
 		!strcmp(name, "offset"))
 		return MXML_INTEGER;
 	else if (!strcmp(name, "alter") ||
