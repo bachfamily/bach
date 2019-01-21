@@ -115,18 +115,20 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     long escape_flags = atom_getlong(av + 7);
     long backslash_flags = atom_getlong(av + 8);
     long negative_octaves = (general_flags & LLLL_T_NEGATIVE_OCTAVES) != 0;
+    long parens = (general_flags & LLLL_T_PARENS) != 0;
     char *indent;
 
     t_symbol *filename_sym = NULL;
     t_hatom indent_hatom;
     indent_hatom.h_type = H_NOTHING;
     
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiih",
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiih",
                                          _sym_filename, &filename_sym,
                                          gensym("maxdecimals"), &maxdecimals,
                                          gensym("wrap"), &wrap,
                                          gensym("maxdepth"), &maxdepth,
                                          gensym("negativeoctaves"), &negative_octaves,
+                                         gensym("parens"), &parens,
                                          gensym("indent"), &indent_hatom);
 
     if (arguments->l_size) {
@@ -136,9 +138,14 @@ t_max_err llll_dowritetxt(t_object *x, t_symbol *dummy, long ac, t_atom *av)
     }
     
     if (negative_octaves)
-        general_flags |= negative_octaves;
+        general_flags |= LLLL_T_NEGATIVE_OCTAVES;
     else
         general_flags &= ~LLLL_T_NEGATIVE_OCTAVES;
+
+    if (parens)
+        general_flags |= LLLL_T_PARENS;
+    else
+        general_flags &= ~LLLL_T_PARENS;
 
     
     if (indent_hatom.h_type == H_NOTHING) {

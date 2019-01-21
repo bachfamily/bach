@@ -57,6 +57,7 @@ typedef struct _write
     char                n_indent[WRITE_INDENT_MAX_SIZE];
     long                n_maxdepth;
     long                n_wrap;
+    long                n_parens;
     
     long                n_escape;
     long                n_negativeoctaves;
@@ -219,6 +220,16 @@ int T_EXPORT main()
     // The attribute has no effect when the file is saved in native format.
 
     
+    CLASS_ATTR_LONG(c, "parens",    0,    t_write, n_parens);
+    CLASS_ATTR_FILTER_CLIP(c, "parens", 0, 1);
+    CLASS_ATTR_LABEL(c, "parens", 0, "Use Parens");
+    CLASS_ATTR_STYLE(c, "parens", 0, "onoff");
+    // @description When set to 0 (default),
+    // list levels are marked by square brackets when written as text.
+    // When set to 1, they are marked by parens.
+    // This is especially useful when exporting data to Lisp programs. <br />
+    // @copy BACH_DOC_STATIC_ATTR
+    
 	class_register(CLASS_BOX, c);
 	write_class = c;
 	
@@ -330,6 +341,7 @@ void write_anything(t_write *x, t_symbol *msg, long ac, t_atom *av)
         llll_writenative((t_object *) x, path, to_write);
     } else if (writemsg == gensym("writetxt")) {
         long general_flags = x->n_negativeoctaves ? LLLL_T_NEGATIVE_OCTAVES : 0;
+        general_flags |= x->n_parens ? LLLL_T_PARENS : 0;
         long escape_flags = 0;
         long backslash_flags = 0;
 

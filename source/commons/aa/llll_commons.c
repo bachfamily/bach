@@ -7972,6 +7972,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
     t_bool just_closed_indented_sublist = false;
     char *new_buf, *pos = NULL;
     t_chkParser chkParser;
+    long parens = general_flags & LLLL_T_PARENS ? 1 : 0;
     
     if (*buf == NULL) {
         outsize = 2 * TEXT_BUF_SIZE_STEP + offset;
@@ -8155,12 +8156,12 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                     case H_OBJ:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
                             char txt[256];
-                            len = snprintf_zero(txt, 256, "[object:%p]", elem->l_hatom.h_w.w_obj);
+                            len = snprintf_zero(txt, 256, "<object:%p>", elem->l_hatom.h_w.w_obj);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
                             len = snprintf_zero(pos, 256, "%s ", txt);
                         } else {
-                            len = snprintf_zero(pos, 256, "[object:%p] ", elem->l_hatom.h_w.w_obj);
+                            len = snprintf_zero(pos, 256, "<object:%p> ", elem->l_hatom.h_w.w_obj);
                         }
                         count += len;
                         pos += len;
@@ -8170,12 +8171,12 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                     case H_FUNCTION:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
                             char txt[256];
-                            len = snprintf_zero(txt, 256, "[function:%p]", elem->l_hatom.h_w.w_func);
+                            len = snprintf_zero(txt, 256, "<function:%p>", elem->l_hatom.h_w.w_func);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
                             len = snprintf_zero(pos, 256, "%s ", txt);
                         } else {
-                            len = snprintf_zero(pos, 256, "[function:%p] ", elem->l_hatom.h_w.w_func);
+                            len = snprintf_zero(pos, 256, "<function:%p> ", elem->l_hatom.h_w.w_func);
                         }
                         count += len;
                         pos += len;
@@ -8193,7 +8194,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                             }
                             just_closed_indented_sublist = false;
                         }
-                        *pos++ = LLLL_PUSH_CHAR;
+                        *pos++ = LLLL_PUSH_ALL_CHARS[parens];
                         *pos++ = ' ';
                         //*pos = 0; // we don't really need this
                         count += 2;
@@ -8235,16 +8236,16 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
             if (indent_depth <= maxdepth || (maxdepth < 0 && subll->l_depth >= -maxdepth)) { // if we are within maxdepth
                 manage_wrap_and_indent(1, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                 --indent_depth;
-                *pos++ = LLLL_POP_CHAR;
+                *pos++ = LLLL_POP_ALL_CHARS[parens];
                 *pos++ = '\n';
                 just_closed_indented_sublist = true;
             } else {
-                *pos++ = LLLL_POP_CHAR;
+                *pos++ = LLLL_POP_ALL_CHARS[parens];
                 *pos++ = ' ';
                 //just_closed_indented_sublist = false;
             }
         } else {
-            *pos++ = LLLL_POP_CHAR;
+            *pos++ = LLLL_POP_ALL_CHARS[parens];
             *pos++ = ' ';
         }
         //*pos = 0; // we don't really need this
