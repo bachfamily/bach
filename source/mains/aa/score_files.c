@@ -61,6 +61,98 @@ long num_xml_accepted_dynamics = sizeof(xml_accepted_dynamics)/sizeof(xml_accept
 // import-export
 // **********************************************
 
+void score_xml_add_clefs(mxml_node_t *attributesxml, long clef, long *staves, long *splitpoints)
+{
+    // CLEFS
+    switch (clef) {
+        case k_CLEF_F:
+            bach_xml_add_clef(attributesxml, "F", 4, 0, NULL);
+            break;
+        case k_CLEF_G8va:
+            bach_xml_add_clef(attributesxml, "G", 2, 1, NULL);
+            break;
+        case k_CLEF_G15ma:
+            bach_xml_add_clef(attributesxml, "G", 2, 2, NULL);
+            break;
+        case k_CLEF_F8vb:
+            bach_xml_add_clef(attributesxml, "F", 4, -1, NULL);
+            break;
+        case k_CLEF_F15mb:
+            bach_xml_add_clef(attributesxml, "F", 4, -1, NULL);
+            break;
+        case k_CLEF_SOPRANO:
+            bach_xml_add_clef(attributesxml, "C", 5, 0, NULL);
+            break;
+        case k_CLEF_MEZZO:
+            bach_xml_add_clef(attributesxml, "C", 4, 0, NULL);
+            break;
+        case k_CLEF_ALTO:
+            bach_xml_add_clef(attributesxml, "C", 3, 0, NULL);
+            break;
+        case k_CLEF_TENOR:
+            bach_xml_add_clef(attributesxml, "C", 2, 0, NULL);
+            break;
+        case k_CLEF_BARYTONE:
+            bach_xml_add_clef(attributesxml, "C", 1, 0, NULL);
+            break;
+        case k_CLEF_FF:
+            *staves = 2;
+            splitpoints[0] = 4000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "1");
+            bach_xml_add_clef(attributesxml, "F", 4, -1, "2");
+            break;
+        case k_CLEF_FG:
+            *staves = 2;
+            splitpoints[0] = 6000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "2");
+            break;
+        case k_CLEF_GG:
+            *staves = 2;
+            splitpoints[0] = 7900;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
+            bach_xml_add_clef(attributesxml, "G", 2, 2, "1");
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
+            break;
+        case k_CLEF_FFG:
+            *staves = 3;
+            splitpoints[0] = 6000;
+            splitpoints[1] = 4000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 3);
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "2");
+            bach_xml_add_clef(attributesxml, "F", 4, -1, "3");
+            break;
+        case k_CLEF_FGG:
+            *staves = 3;
+            splitpoints[0] = 7900;
+            splitpoints[1] = 6000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 3);
+            bach_xml_add_clef(attributesxml, "G", 2, 1, "1");
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "3");
+            break;
+        case k_CLEF_FFGG:
+            *staves = 4;
+            splitpoints[0] = 7900;
+            splitpoints[1] = 6000;
+            splitpoints[2] = 4000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 4);
+            bach_xml_add_clef(attributesxml, "G", 2, 1, "1");
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "3");
+            bach_xml_add_clef(attributesxml, "F", 4, -1, "4");
+            break;
+        case k_CLEF_G:
+        default:
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
+            break;
+    }
+}
+
+
 void score_exportxml(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
 	t_atom av;
@@ -496,6 +588,11 @@ void xml_get_dynamics(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
                 if (mxmlFindElement(dynamicXML, dynamicXML, xml_accepted_dynamics[di], NULL, NULL, MXML_DESCEND_FIRST))
                     dynamics_text_cur += snprintf_zero(dynamics_text + dynamics_text_cur, CONST_DYNAMICS_TEXT_ALLOC_SIZE - dynamics_text_cur, "%s_", xml_accepted_dynamics[di]);
             }
+            if (*dynamics_text == 0) {
+                dynamics_text[0] = '?';
+                dynamics_text[1] = 0;
+            }
+                
             
         } else if ((wedgeXML = mxmlFindElement(tempXML, tempXML, "wedge", NULL, NULL, MXML_DESCEND))) {
             char hairpin = 0;
@@ -1228,6 +1325,8 @@ t_llll *score_readxml(t_score *x,
 					
                     if (steptxt) {
                         degree = toupper(*steptxt) - 'C';
+                        if (degree < 0)
+                            degree += 7;
                         CLAMP(degree, 0, 6);
                     }
 					t_llll *notell = llll_get();
@@ -1544,7 +1643,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 			t_slotinfo *this_slot_info = &x->r_ob.slotinfo[(*this_slotnum) - 1];
 			long slot_type = this_slot_info->slot_type;
 			if (slot_type == k_SLOT_TYPE_NONE) {
-				object_warn((t_object *) x, "Slot %ld does is of type none", *this_slotnum);
+				object_warn((t_object *) x, "Slot %ld is of type none", *this_slotnum);
 				llll_destroyelem(this_slotnum_elem);
 			} else /* if (slot_type != k_SLOT_INT || 
 					   slot_type != k_SLOT_FLOAT ||
@@ -1559,7 +1658,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 		}
 	}
 	
+    //////////////////
 	// prepare the dynamics slot
+    //////////////////
     char dynamics_slot_is_text = false;
 	if (dynamics_slot > 0) {
 		if (dynamics_slot > CONST_MAX_SLOTS) {
@@ -1581,7 +1682,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	}
 	dynamics_slot --;
 
+    //////////////////
     // checking articulations slot
+    //////////////////
     if (articulations_slot > 0) {
         if (articulations_slot > CONST_MAX_SLOTS) {
             object_warn((t_object *) x, "Slot %ld does not exist", articulations_slot);
@@ -1661,11 +1764,16 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	}
 	
     
-    //////////
+    //////////////////
+    //////////////////
     // here we export the body of the score
+    //////////////////
+    //////////////////
 
+    //////////////////
     // first, pass through all the score to calculate a value of the division attribute that is valid for every measure
-    // this is not too elegant, but makes things much simpler with voice ensembles
+    // this is not very elegant, but makes things much simpler with voice ensembles
+    //////////////////
     divisions = 16;
     for (voiceidx = 1, voice = x->firstvoice; voice && voiceidx <= numparts; voiceidx++, voice = voice->next) {
         for (measure = voice->firstmeasure; measure; measure = measure->next) {
@@ -1769,93 +1877,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 }
                 
                 if (measureidx == 1) {
-                    // CLEFS
-                    switch (clef) {
-                        case k_CLEF_F:
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, NULL);
-                            break;
-                        case k_CLEF_G8va:
-                            bach_xml_add_clef(attributesxml, "G", 2, 1, NULL);
-                            break;
-                        case k_CLEF_G15ma:
-                            bach_xml_add_clef(attributesxml, "G", 2, 2, NULL);
-                            break;
-                        case k_CLEF_F8vb:
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, NULL);
-                            break;
-                        case k_CLEF_F15mb:
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, NULL);
-                            break;
-                        case k_CLEF_SOPRANO:
-                            bach_xml_add_clef(attributesxml, "C", 5, 0, NULL);
-                            break;
-                        case k_CLEF_MEZZO:
-                            bach_xml_add_clef(attributesxml, "C", 4, 0, NULL);
-                            break;
-                        case k_CLEF_ALTO:
-                            bach_xml_add_clef(attributesxml, "C", 3, 0, NULL);
-                            break;
-                        case k_CLEF_TENOR:
-                            bach_xml_add_clef(attributesxml, "C", 2, 0, NULL);
-                            break;
-                        case k_CLEF_BARYTONE:
-                            bach_xml_add_clef(attributesxml, "C", 1, 0, NULL);
-                            break;
-                        case k_CLEF_FF:
-                            staves = 2;
-                            splitpoints[0] = 4000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "1");
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, "2");
-                            break;
-                        case k_CLEF_FG:
-                            staves = 2;
-                            splitpoints[0] = 6000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "2");
-                            break;
-                        case k_CLEF_GG:
-                            staves = 2;
-                            splitpoints[0] = 7900;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
-                            bach_xml_add_clef(attributesxml, "G", 2, 2, "1");
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
-                            break;
-                        case k_CLEF_FFG:
-                            staves = 3;
-                            splitpoints[0] = 6000;
-                            splitpoints[1] = 4000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 3);
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "2");
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, "3");
-                            break;
-                        case k_CLEF_FGG:
-                            staves = 3;
-                            splitpoints[0] = 7900;
-                            splitpoints[1] = 6000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 3);
-                            bach_xml_add_clef(attributesxml, "G", 2, 1, "1");
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "3");
-                            break;
-                        case k_CLEF_FFGG:
-                            staves = 4;
-                            splitpoints[0] = 7900;
-                            splitpoints[1] = 6000;
-                            splitpoints[2] = 4000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 4);
-                            bach_xml_add_clef(attributesxml, "G", 2, 1, "1");	
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "3");
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, "4");
-                            break;
-                        case k_CLEF_G:
-                        default:
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
-                            break;
-                    }
+                    score_xml_add_clefs(attributesxml, clef, &staves, splitpoints);
                 }
                 
                 // tempo
@@ -1967,9 +1989,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                                                                         //     of the same chord (first note having dynamics wins in
                                                                                         //     the dynamics display!)...
                                 !(note->tie_from && single)) {                          // ... unless the slot is marked as "single slot for tied notes"
-                                                                                        // and the note has a tie arriving to it
+                                                                                        // and the note has a tie arriving to it...
                                 
-                                // we need to export the dynamics
+                                // ...then we need to export the dynamics
 								char text[2048];
                                 
                                 // is there an hairpin that is currently "open"? e.g. did a previous dynamics end with < or > ?
@@ -2804,10 +2826,10 @@ void bach_xml_add_ornament(const t_articulations_typo_preferences *atp, mxml_nod
             bach_mxmlNewTextElement(notations, "accidental-mark", 0, id == k_ARTICULATION_TRILL_FLAT ? "flat" : "sharp");
             *ornaments = mxmlNewElement(notations, "ornaments");
             break;
-        case k_ARTICULATION_MORDENT_UP:
+        case k_ARTICULATION_MORDENT_DOWN:
             mxmlNewElement(*ornaments, "mordent");
             break;
-        case k_ARTICULATION_MORDENT_DOWN:
+        case k_ARTICULATION_MORDENT_UP:
             mxmlNewElement(*ornaments, "inverted-mordent");
             break;
         case k_ARTICULATION_DOUBLE_MORDENT:

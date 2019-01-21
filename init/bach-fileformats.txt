@@ -1,5 +1,6 @@
 max definekind llllfile @parent file @showextension 1;
 max definekind sdiffile @parent file @showextension 1;
 
+max fileformat .musicxml TEXT 0 "MusicXML file" xmlfile;
 max fileformat .llll LLLL 0 "LLLL file" llllfile;
 max fileformat .sdif SDIF 0 "SDIF file" sdiffile;
