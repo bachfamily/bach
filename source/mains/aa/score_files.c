@@ -762,9 +762,10 @@ t_llll *score_readxml(t_score *x,
 
 	// iterate on the parts
 	mxml_node_t *partXML;
+    long partnum = 1; // for debug
 	for (partXML = mxmlFindElement(score_partwiseXML, score_partwiseXML, "part", NULL, NULL, MXML_DESCEND_FIRST);
 		 partXML;
-		 partXML = mxmlFindElement(partXML, score_partwiseXML, "part", NULL, NULL, MXML_NO_DESCEND)) {
+		 partXML = mxmlFindElement(partXML, score_partwiseXML, "part", NULL, NULL, MXML_NO_DESCEND), partnum++) {
 	
         t_llll *voicell[CONST_MAX_VOICES];
         voicell[0] = llll_get();
@@ -1107,6 +1108,7 @@ t_llll *score_readxml(t_score *x,
             mxml_node_t *firstnoteXML = mxmlFindElement(measureXML, measureXML, "note", NULL, NULL, MXML_DESCEND_FIRST);
 			t_llll *chordll = NULL;
             t_llll *chord_parentll[CONST_MAX_VOICES];
+            
             for (long i = 0; i < voices_for_this_xml_part; i++)
                 chord_parentll[i] = measurell[i];
 //            chord_parentll[0] = measurell[0];
@@ -1117,6 +1119,10 @@ t_llll *score_readxml(t_score *x,
             long current_voice_in_part = 0;
 
             mxml_node_t *backupXML = NULL;
+            
+            t_pitch allpitches[10000];
+            long numpitches = 0;
+            
 			for (noteXML = firstnoteXML; noteXML; noteXML = nextnoteXML) {
                 t_bool switch_to_new_voice = false;
                 t_bool go = true;
@@ -1221,10 +1227,21 @@ t_llll *score_readxml(t_score *x,
                     words = xml_get_words(noteXML->next, NULL, words);
                 }
                 
+                
+                // if there is a chord and we're closing (even if temporarily) this voice,
+                // append to it its articulations and flags
+                if (chordll && switch_to_new_voice) {
+                    if (chordslotsll) {
+                        llll_appendllll(chordll, chordslotsll);
+                    }
+                    llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
+                    chordll = NULL;
+                }
+                
 				long isrest = 0;
 				mxml_node_t *chordXML = mxmlFindElement(noteXML, noteXML, "chord", NULL, NULL, MXML_DESCEND_FIRST);
 				if (chordXML && !chordll) {
-					object_warn((t_object *) x, "<chord> tag in the first note of the measure");
+					object_warn((t_object *) x, "<chord> tag with no preceding note");
 					chordXML = NULL;
 				}
 				
@@ -1292,7 +1309,7 @@ t_llll *score_readxml(t_score *x,
 					llll_appendllll(chord_parentll[current_voice_in_part], chordll, 0, WHITENULL_llll);
 					
 					mxml_node_t *restXML = mxmlFindElement(noteXML, noteXML, "rest", NULL, NULL, MXML_DESCEND_FIRST);
-					t_rational duration;
+					t_rational duration = t_rational(0);
 
 					mxml_node_t *typeXML = mxmlFindElement(noteXML, noteXML, "type", NULL, NULL, MXML_DESCEND_FIRST);
 					if (typeXML) {
@@ -1305,10 +1322,16 @@ t_llll *score_readxml(t_score *x,
 							dots++;
 						
 						duration = xml_name_and_dots_to_value(typetxt, dots);
-					} else if (!grace) {
+					}
+                    if ((!typeXML && !grace) || (restXML && duration == 1)) { // it could be the only note in the part
 						mxml_node_t *durationXML = mxmlFindElement(noteXML, noteXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
-						duration = genrat(mxmlGetInteger(durationXML), divisions);
-					} else { // if it's a grace note and there is no type
+                        if (durationXML)
+                            duration = genrat(mxmlGetInteger(durationXML), divisions);
+                        else if (duration == t_rational(0)) {
+                            object_warn((t_object *) x, "Note without duration");
+                            duration = genrat(1, 4); // use a dummy duration!
+                        }
+					} else if (!typeXML && grace) { // if it's a grace note and there is no type
 						duration = genrat(1, 8); // use a dummy duration!
 					}
 					
@@ -1356,11 +1379,16 @@ t_llll *score_readxml(t_score *x,
 						mxml_node_t *alterXML = mxmlFindElement(pitchXML, pitchXML, "alter", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *octaveXML = mxmlFindElement(pitchXML, pitchXML, "octave", NULL, NULL, MXML_DESCEND_FIRST);
 						steptxt = mxmlGetText(stepXML, NULL);
+                        degree = toupper(*steptxt) - 'C';
+                        if (degree < 0)
+                            degree += 7;
+                        CLAMP(degree, 0, 6);
 						alter = approx_double_with_rat_fixed_den(mxmlGetReal(alterXML) / 2., 8, 0, nullptr);
 						octave = mxmlGetInteger(octaveXML) + 1;
 						mxml_node_t *accidentalXML = mxmlFindElement(noteXML, noteXML, "accidental", NULL, NULL, MXML_DESCEND_FIRST);
-                        if (accidentalXML)
+                        if (accidentalXML) {
                             alter = xml_get_accidental(accidentalXML);
+                        }
                         short den = alter.den();
                         if (den > new_tonedivision)
                             new_tonedivision = den;
@@ -1370,8 +1398,28 @@ t_llll *score_readxml(t_score *x,
                                 alter += t_pitch::qrtrsharp;
                                 if (new_tonedivision < 4)
                                     new_tonedivision = 4;
+                            } else {
+                                for (long i = numpitches - 1; i >= 0; i--) {
+                                    if (allpitches[i].degree() == degree &&
+                                        allpitches[i].degree() == octave &&
+                                        ((!accidentalXML && alter == 0) ||
+                                         allpitches[i].alter() == alter - t_pitch::qrtrsharp))
+                                        alter = allpitches[i].alter();
+                                }
+                            }
+                        } else if (!accidentalXML && alter == 0) { // see if there is a previous note to get the alteration from
+                            for (long i = numpitches - 1; i >= 0; i--) {
+                                if (allpitches[i].degree() == degree &&
+                                    allpitches[i].octave() == octave) {
+                                    alter = allpitches[i].alter();
+                                    break;
+                                }
                             }
                         }
+                        
+                        
+                        
+                        
 					} else {
 						mxml_node_t *unpitchedXML = mxmlFindElement(noteXML, noteXML, "unpitched", NULL, NULL, MXML_DESCEND_FIRST);
 						if (unpitchedXML) {
@@ -1379,22 +1427,22 @@ t_llll *score_readxml(t_score *x,
 							if (display_stepXML) {
 								mxml_node_t *display_octaveXML = mxmlFindElement(unpitchedXML, unpitchedXML, "display-octave", NULL, NULL, MXML_DESCEND_FIRST);
 								steptxt = mxmlGetText(display_stepXML, NULL);
+                                degree = toupper(*steptxt) - 'C';
+                                if (degree < 0)
+                                    degree += 7;
+                                CLAMP(degree, 0, 6);
 								octave = mxmlGetInteger(display_octaveXML) + 1;
 							} else {
-								steptxt = "B";
+								degree = 6;
 								octave = 5;
 							}
 						}
 					}
-					
-                    if (steptxt) {
-                        degree = toupper(*steptxt) - 'C';
-                        if (degree < 0)
-                            degree += 7;
-                        CLAMP(degree, 0, 6);
-                    }
+
 					t_llll *notell = llll_get();
-                    llll_appendpitch(notell, t_pitch(degree, alter, octave));
+                    t_pitch pch = t_pitch(degree, alter, octave);
+                    allpitches[numpitches++] = pch;
+                    llll_appendpitch(notell, pch);
 					mxml_node_t *soundXML = mxmlFindElement(noteXML, noteXML, "sound", NULL, NULL, MXML_DESCEND_FIRST);
 					mxml_node_t *dynamicsXML = mxmlFindElement(soundXML, soundXML, "dynamics", NULL, NULL, MXML_DESCEND_FIRST);
 					if (dynamicsXML)
@@ -1497,16 +1545,7 @@ t_llll *score_readxml(t_score *x,
                         }
                     }
                 }
-                
-                // if there is a chord and we're closing (even if temporarily) this voice,
-                // append to it its articulations and flags
-                if (chordll && (switch_to_new_voice || !nextnoteXML)) {
-                    if (chordslotsll) {
-                        llll_appendllll(chordll, chordslotsll);
-                    }
-                    llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
-                    chordll = NULL;
-                }
+
 /*
                 if (backupXML) {
                     
@@ -1548,6 +1587,14 @@ t_llll *score_readxml(t_score *x,
                 words = xml_get_words(noteXML->next, nextnoteXML, NULL);
 			}
 			
+            if (chordll) {
+                if (chordslotsll) {
+                    llll_appendllll(chordll, chordslotsll);
+                }
+                llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
+                chordll = NULL;
+            }
+            
 			mxml_node_t *barlineXML = mxmlFindElement(measureXML, measureXML, "barline", "bar-style", NULL, MXML_NO_DESCEND);
 			if (barlineXML) {
 				const char *bar_styletxt = mxmlElementGetAttr(barlineXML, "bar-style");
