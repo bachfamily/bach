@@ -1061,13 +1061,17 @@ t_llll *score_readxml(t_score *x,
 					}
 				}
 				mxml_node_t *soundtempoXML = mxmlFindElement(directionXML, directionXML, "sound", "tempo", NULL, MXML_DESCEND_FIRST);
+                if (!soundtempoXML)
+                    soundtempoXML = mxmlFindElement(measureXML, measureXML, "sound", "tempo", NULL, MXML_DESCEND_FIRST);
 				if (soundtempoXML) {
 					t_llll *onetempoll = llll_get();
 					double bpm = strtod(mxmlElementGetAttr(soundtempoXML, "tempo"), NULL);
 					llll_appendrat(onetempoll, genrat(1, 4), 0, WHITENULL_llll);
 					llll_appenddouble(onetempoll, bpm, 0, WHITENULL_llll);
-					mxml_node_t *offsetXML = mxmlFindElement(directionXML, directionXML, "offset", NULL, NULL, MXML_DESCEND_FIRST);
+                    mxml_node_t *offsetXML = NULL;
                     t_rational offset;
+                    if (directionXML)
+                        offsetXML = mxmlFindElement(directionXML, directionXML, "offset", NULL, NULL, MXML_DESCEND_FIRST);
                     if (offsetXML) {
                         offset = genrat(mxmlGetInteger(offsetXML), divisions);
                     } else {
@@ -1596,26 +1600,29 @@ t_llll *score_readxml(t_score *x,
                 chordll = NULL;
             }
             
-			mxml_node_t *barlineXML = mxmlFindElement(measureXML, measureXML, "barline", "bar-style", NULL, MXML_NO_DESCEND);
+            mxml_node_t *barlineXML = mxmlFindElement(measureXML, measureXML, "barline", NULL, NULL, MXML_DESCEND_FIRST);
 			if (barlineXML) {
-				const char *bar_styletxt = mxmlElementGetAttr(barlineXML, "bar-style");
-				char barline[2];
-				barline[1] = 0;
-				if (!strcmp(bar_styletxt, "regular"))			*barline = k_BARLINE_NORMAL;
-				else if (!strcmp(bar_styletxt, "dashed"))		*barline = k_BARLINE_DASHED;
-				else if (!strcmp(bar_styletxt, "dotted"))		*barline = k_BARLINE_POINTS;
-				else if (!strcmp(bar_styletxt, "light-light"))	*barline = k_BARLINE_DOUBLE;
-				else if (!strcmp(bar_styletxt, "light-heavy"))	*barline = k_BARLINE_FINAL;
-				else if (!strcmp(bar_styletxt, "none"))			*barline = k_BARLINE_HIDDEN;
-				else if (!strcmp(bar_styletxt, "heavy"))		*barline = k_BARLINE_SOLID;
-				else *barline = 0;
-				t_llll *barlinell = llll_get();
-				llll_appendsym(barlinell, _llllobj_sym_barline, 0, WHITENULL_llll);
-				if (*barline)
-					llll_appendsym(barlinell, gensym(barline), 0, WHITENULL_llll);
-				else
-					llll_appendlong(barlinell, 0, 0, WHITENULL_llll);
-				llll_appendllll(measureinfoll, barlinell, 0, WHITENULL_llll);
+                mxml_node_t *barstyleXML = mxmlFindElement(barlineXML, barlineXML, "bar-style", NULL, NULL, MXML_DESCEND_FIRST);
+                if (barstyleXML) {
+                    const char *bar_styletxt = mxmlGetText(barstyleXML, NULL);
+                    char barline[2];
+                    barline[1] = 0;
+                    if (!strcmp(bar_styletxt, "regular"))			*barline = k_BARLINE_NORMAL;
+                    else if (!strcmp(bar_styletxt, "dashed"))		*barline = k_BARLINE_DASHED;
+                    else if (!strcmp(bar_styletxt, "dotted"))		*barline = k_BARLINE_POINTS;
+                    else if (!strcmp(bar_styletxt, "light-light"))	*barline = k_BARLINE_DOUBLE;
+                    else if (!strcmp(bar_styletxt, "light-heavy"))	*barline = k_BARLINE_FINAL;
+                    else if (!strcmp(bar_styletxt, "none"))			*barline = k_BARLINE_HIDDEN;
+                    else if (!strcmp(bar_styletxt, "heavy"))		*barline = k_BARLINE_SOLID;
+                    else *barline = 0;
+                    t_llll *barlinell = llll_get();
+                    llll_appendsym(barlinell, _llllobj_sym_barline, 0, WHITENULL_llll);
+                    if (*barline)
+                        llll_appendsym(barlinell, gensym(barline), 0, WHITENULL_llll);
+                    else
+                        llll_appendlong(barlinell, 0, 0, WHITENULL_llll);
+                    llll_appendllll(measureinfoll, barlinell, 0, WHITENULL_llll);
+                }
 			}
             
             llll_prependllll(measurell[0], measureinfoll, 0, WHITENULL_llll);
