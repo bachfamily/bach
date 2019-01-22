@@ -102,7 +102,7 @@
 			#undef dev_object_warn
 			#define dev_object_warn(...) object_warn(__VA_ARGS__)
 			#undef dev_llll_print
-			#define dev_llll_print(ll, cl, e, md, fn) llll_print(ll, cl, e, md, fn)
+			#define dev_llll_print(...) llll_print(__VA_ARGS__)
             #undef dev_llll_post
             #define dev_llll_post(ll, mindepth, maxdepth, max_decimals, client, fn) llll_post(ll, mindepth, maxdepth, max_decimals, (t_object *) client, fn)
 

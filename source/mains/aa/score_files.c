@@ -815,7 +815,7 @@ t_llll *score_readxml(t_score *x,
 					mxml_node_t *clefXML;
 					for (numclefs = 0, clefXML = mxmlFindElement(attributesXML, attributesXML, "clef", NULL, NULL, MXML_DESCEND_FIRST);
 						 clefXML && numclefs < 16;
-						 numclefs++, clefXML = mxmlFindElement(clefXML, attributesXML, "clef", NULL, NULL, MXML_DESCEND_FIRST)) {
+						 numclefs++, clefXML = mxmlFindElement(clefXML, attributesXML, "clef", NULL, NULL, MXML_NO_DESCEND)) {
 						mxml_node_t *signXML = mxmlFindElement(clefXML, clefXML, "sign", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *lineXML = mxmlFindElement(clefXML, clefXML, "line", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *clef_octave_changeXML = mxmlFindElement(clefXML, clefXML, "clef-octave-change", NULL, NULL, MXML_DESCEND_FIRST);
@@ -879,8 +879,9 @@ t_llll *score_readxml(t_score *x,
 							clef = k_CLEF_FF;
 					}
                     clefsym = clef_number_to_clef_symbol((t_notation_obj *) x, clef);
-					llll_appendsym(clefsll, clefsym, 0, WHITENULL_llll);
+					//llll_appendsym(clefsll, clefsym, 0, WHITENULL_llll);
 
+                    //dev_llll_print(clefsll);
 					// key signature
 					
 					mxml_node_t *keyXML = mxmlFindElement(attributesXML, attributesXML, "key", NULL, NULL, MXML_DESCEND_FIRST);
