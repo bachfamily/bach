@@ -175,8 +175,13 @@ void pv_dblclick(t_pv *x)
     bach_atomic_lock(&pvitem->p_lock);
     llll_to_text_buf_pretty(pvitem->p_ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
     bach_atomic_unlock(&pvitem->p_lock);
-    object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
-    object_attr_setsym(x->m_editor, gensym("title"), gensym("llll"));
+    void *rv = object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
+    if (rv) {
+        t_object *ed = x->m_editor;
+        x->m_editor = NULL;
+        object_free(ed);
+    } else
+        object_attr_setsym(x->m_editor, gensym("title"), gensym("llll"));
 }
 
 void pv_okclose(t_pv *x, char *s, short *result)
@@ -187,6 +192,8 @@ void pv_okclose(t_pv *x, char *s, short *result)
 void pv_edclose(t_pv *x, char **ht, long size)
 {
     // do something with the text
+    if (!x->m_editor) // which means that something was wrong
+        return;
     if (ht) {
         t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         if (ll) {

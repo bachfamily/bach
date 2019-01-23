@@ -165,8 +165,8 @@ int main(int argc, char **argv)
 
 t_chkParser::t_chkParser() : t_parser()
 {
-
-    setPtr(sizeof(struct yyguts_t));
+    size_t s = sizeof(struct yyguts_t);
+    setPtr(s);
     setBasePtr();
     reset();
 }
@@ -176,7 +176,8 @@ void t_chkParser::reset()
     t_parser::reset();
     /* By setting to 0xAA, we expose bugs in
      yy_init_globals. Leave at 0x00 for releases. */
-    memset(this,0x00,sizeof(struct yyguts_t));
+    size_t s = sizeof(struct yyguts_t);
+    memset(this,0x00,s);
     //yy_init_globals ((yyscan_t) this);
 }
 

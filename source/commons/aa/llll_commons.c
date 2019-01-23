@@ -8056,13 +8056,12 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                 switch(elem->l_hatom.h_type) {
                     case H_LONG:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                            char txt[256];
-                            len = snprintf_zero(txt, 256, ATOM_LONG_PRINTF_FMT, elem->l_hatom.h_w.w_long);
+                            len = snprintf_zero(temptxt, 256, ATOM_LONG_PRINTF_FMT, elem->l_hatom.h_w.w_long);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
-                            len = snprintf_zero(pos, 256, "%s ", txt);
+                            len = snprintf_zero(pos, 256, "%s ", temptxt);
                         } else {
-                            len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, ATOM_LONG_PRINTF_FMT " ", elem->l_hatom.h_w.w_long);
+                            len = snprintf_zero(pos, 256, ATOM_LONG_PRINTF_FMT " ", elem->l_hatom.h_w.w_long);
                         }
                         count += len;
                         pos += len;
@@ -8071,11 +8070,11 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                         break;
                     case H_DOUBLE:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                            char txt[256], *this_txt;
-                            len = snprintf_zero(txt, 256, "%.*f", max_decimals, elem->l_hatom.h_w.w_double);
+                            char *this_txt;
+                            len = snprintf_zero(temptxt, 256 + max_decimals, "%.*f", max_decimals, elem->l_hatom.h_w.w_double);
                             
                             // remove trailing zeros
-                            this_txt = txt + len;
+                            this_txt = temptxt + len;
                             while (*this_txt == '0') {
                                 this_txt--;
                                 len--;
@@ -8083,12 +8082,12 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                             *(this_txt + 1) = '0';
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
-                            len = snprintf_zero(pos, 256, "%s ", txt);
+                            len = snprintf_zero(pos, 257 + max_decimals, "%s ", temptxt);
                             count += len;
                             linesize += len;
                             pos += len;
                         } else {
-                            len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%.*f", max_decimals, elem->l_hatom.h_w.w_double);
+                            len = snprintf_zero(pos, 256 + max_decimals, "%.*f", max_decimals, elem->l_hatom.h_w.w_double);
                             count += len;
                             pos += len - 1;
                             linesize += len;
@@ -8107,11 +8106,11 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                         break;
                     case H_RAT:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                            char txt[256];
-                            len = snprintf_zero(txt, 256, ATOM_LONG_PRINTF_FMT "/" ATOM_LONG_PRINTF_FMT, elem->l_hatom.h_w.w_rat.r_num, elem->l_hatom.h_w.w_rat.r_den);
+
+                            len = snprintf_zero(temptxt, 256, ATOM_LONG_PRINTF_FMT "/" ATOM_LONG_PRINTF_FMT, elem->l_hatom.h_w.w_rat.r_num, elem->l_hatom.h_w.w_rat.r_den);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
-                            len = snprintf_zero(pos, 256, "%s ", txt);
+                            len = snprintf_zero(pos, 256, "%s ", temptxt);
                         } else {
                             len = snprintf_zero(pos, 256, ATOM_LONG_PRINTF_FMT "/" ATOM_LONG_PRINTF_FMT " ", elem->l_hatom.h_w.w_rat.r_num, elem->l_hatom.h_w.w_rat.r_den);
                         }
@@ -8122,13 +8121,12 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                         break;
                     case H_PITCH:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                            char txt[256];
-                            len = elem->l_hatom.h_w.w_pitch.toTextBuf(txt, 256, true, general_flags & LLLL_T_NEGATIVE_OCTAVES);
+                            len = elem->l_hatom.h_w.w_pitch.toTextBuf(temptxt, 256, true, general_flags & LLLL_T_NEGATIVE_OCTAVES);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
-                            len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s ", txt);
+                            len = snprintf_zero(pos, 256, "%s ", temptxt);
                         } else {
-                            len = elem->l_hatom.h_w.w_pitch.toTextBuf(pos, TEXT_BUF_SIZE_STEP - 2, true, general_flags & LLLL_T_NEGATIVE_OCTAVES, true);
+                            len = elem->l_hatom.h_w.w_pitch.toTextBuf(pos, 256, true, general_flags & LLLL_T_NEGATIVE_OCTAVES, true);
                         }
                         count += len;
                         pos += len;
@@ -8137,14 +8135,13 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                         break;
                     case H_SYM:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                            char txt[4100];
-                            len = prepare_string_for_text_buf(elem->l_hatom.h_w.w_sym, txt, escape_flags, backslash_flags, &chkParser);
+                            len = prepare_string_for_text_buf(elem->l_hatom.h_w.w_sym, temptxt, escape_flags, backslash_flags, &chkParser);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
  
                             // note that there is no trailing space here,
                             // as it is added by prepare_string_for_text_buf()
-                            len = snprintf_zero(pos, TEXT_BUF_SIZE_STEP - 2, "%s", txt);
+                            len = snprintf_zero(pos, 34000, "%s", temptxt);
                         } else {
                             len = prepare_string_for_text_buf(elem->l_hatom.h_w.w_sym, pos, escape_flags, backslash_flags, &chkParser);
                         }
@@ -8159,7 +8156,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                             len = snprintf_zero(txt, 256, "<object:%p>", elem->l_hatom.h_w.w_obj);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
-                            len = snprintf_zero(pos, 256, "%s ", txt);
+                            len = snprintf_zero(pos, 256, "%s ", temptxt);
                         } else {
                             len = snprintf_zero(pos, 256, "<object:%p> ", elem->l_hatom.h_w.w_obj);
                         }
@@ -8174,7 +8171,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                             len = snprintf_zero(txt, 256, "<function:%p>", elem->l_hatom.h_w.w_func);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
-                            len = snprintf_zero(pos, 256, "%s ", txt);
+                            len = snprintf_zero(pos, 256, "%s ", temptxt);
                         } else {
                             len = snprintf_zero(pos, 256, "<function:%p> ", elem->l_hatom.h_w.w_func);
                         }
@@ -8272,6 +8269,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
     count--;
     *(pos - 1) = 0;
     llll_stack_destroy(stack);
+    bach_freeptr(temptxt);
     return count;
 }
 
