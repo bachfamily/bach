@@ -91,6 +91,10 @@ t_max_err codableobj_buildAst(t_codableobj *x,
 
 void codableobj_okclose(t_codableobj *x, char *s, short *result)
 {
+    if (!x->c_editor) {
+        *result = 0;
+        return;
+    }
     char *newCode = NULL;
     char *oldCode = NULL;
     t_mainFunction *oldMain = x->c_main;
@@ -312,7 +316,13 @@ void codableobj_dblclick_helper(t_codableobj *x, t_symbol *title)
     else
         object_attr_setchar(x->c_editor, gensym("visible"), 1);
     
-    object_method(x->c_editor, _sym_settext, x->c_text, gensym("utf-8"));
+    void *rv = object_method(x->c_editor, _sym_settext, x->c_text, gensym("utf-8"));
+    if (rv) {
+        t_object *ed = x->c_editor;
+        x->c_editor = NULL;
+        object_free(ed);
+        return;
+    }
     if (x->c_filename)
         object_method(x->c_editor, gensym("filename"), x->c_filename, x->c_path);
     else
