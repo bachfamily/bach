@@ -589,7 +589,7 @@ void xml_get_dynamics(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
                     dynamics_text_cur += snprintf_zero(dynamics_text + dynamics_text_cur, CONST_DYNAMICS_TEXT_ALLOC_SIZE - dynamics_text_cur, "%s_", xml_accepted_dynamics[di]);
             }
             if (*dynamics_text == 0) {
-                dynamics_text[0] = '?';
+                dynamics_text[0] = '_';
                 dynamics_text[1] = 0;
             }
                 
@@ -690,6 +690,24 @@ t_shortRational xml_get_accidental(mxml_node_t *accXML)
     return alter;
 }
 
+class timedThing {
+public:
+    int type;
+    t_rational time;
+    double x;
+};
+
+class timedNote : public timedThing {
+public:
+    t_llll *notell;
+};
+
+class timedDynamics : public timedThing {
+public:
+    
+};
+
+
 t_llll *score_readxml(t_score *x,
                       t_filehandle fh,
                       long parenthesizedquartertones,
@@ -788,6 +806,9 @@ t_llll *score_readxml(t_score *x,
         dynamics_text[0] = 0;
         t_llll *words = NULL;
         t_symbol *clefsym, *keysym;
+        
+        t_rational global_position = t_rational(0);
+        t_llll *all_elements_ll = llll_get();
         
 		for (measureXML = mxmlFindElement(partXML, partXML, "measure", NULL, NULL, MXML_DESCEND_FIRST);
 			 measureXML;
@@ -1137,8 +1158,10 @@ t_llll *score_readxml(t_score *x,
                 const char *itemName = mxmlGetElement(itemXML);
                 if (!itemName)
                     continue;
+                
                 if (!strcmp(itemName, "forward")) {
                     isrest = true;
+                    
                 } else if (!strcmp(itemName, "backup")) {
                     mxml_node_t *durationXML = mxmlFindElement(itemXML, itemXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
                     t_rational backupdur = t_rational(mxmlGetInteger(durationXML), divisions);
@@ -1151,9 +1174,17 @@ t_llll *score_readxml(t_score *x,
                     }
                     switch_to_new_voice = true;
                     continue;
+                    
+                } else if (!strcmp(itemName, "direction")) {
+
+                    
+                    
+                    
+                    
                 } else if (strcmp(itemName, "note")) {
                     continue;
                 }
+                
                 if (!firstnoteXML)
                     firstnoteXML = itemXML;
             
