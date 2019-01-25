@@ -7974,6 +7974,8 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
     t_chkParser chkParser;
     long parens = general_flags & LLLL_T_PARENS ? 1 : 0;
     
+    char *temptxt = (char *) bach_newptr(34000);
+
     if (*buf == NULL) {
         outsize = 2 * TEXT_BUF_SIZE_STEP + offset;
         *buf = (char *) bach_newptr(outsize * sizeof (char));
@@ -8152,8 +8154,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                         break;
                     case H_OBJ:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                            char txt[256];
-                            len = snprintf_zero(txt, 256, "<object:%p>", elem->l_hatom.h_w.w_obj);
+                            len = snprintf_zero(temptxt, 256, "[object:%p]", elem->l_hatom.h_w.w_obj);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
                             len = snprintf_zero(pos, 256, "%s ", temptxt);
@@ -8167,8 +8168,7 @@ t_atom_long llll_to_text_buf_pretty(t_llll *ll,
                         break;
                     case H_FUNCTION:
                         if ((wrap > 0 || just_closed_indented_sublist) && pos > *buf + offset) {
-                            char txt[256];
-                            len = snprintf_zero(txt, 256, "<function:%p>", elem->l_hatom.h_w.w_func);
+                            len = snprintf_zero(temptxt, 256, "[function:%p]", elem->l_hatom.h_w.w_func);
                             manage_wrap_and_indent(len, &pos, &linesize, &count, indent_depth, wrap, indent, just_closed_indented_sublist);
                             just_closed_indented_sublist = false;
                             len = snprintf_zero(pos, 256, "%s ", temptxt);
