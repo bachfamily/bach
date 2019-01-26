@@ -415,7 +415,7 @@ double get_selection_leftmost_onset(t_roll *x);
 double get_selection_rightmost_onset(t_roll *x);
 long get_selection_topmost_voice(t_roll *x);
 
-char change_pitch_for_selection(t_roll *x, double delta, char mode, char allow_voice_change, char snap_pitch_to_grid);
+char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char allow_voice_change, char snap_pitch_to_grid);
 t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, char mode, char *old_chord_deleted, char allow_voice_change);
 void snap_pitch_to_grid_voice(t_roll *x, t_rollvoice *voice);
 
@@ -3046,7 +3046,7 @@ void roll_sel_change_cents(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 	if (lexpr)
 		lexpr_free(lexpr);
 
-	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION);
+	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
 }
 
 void roll_sel_change_pitch(t_roll *x, t_symbol *s, long argc, t_atom *argv){
@@ -3160,7 +3160,7 @@ void roll_sel_change_voice(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
 	move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
 
-	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_CENTS_FOR_SELECTION);
+	handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_CHANGE_PITCH_FOR_SELECTION);
 }
 
 
@@ -12520,7 +12520,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 				delta_mc =  yposition_to_mc((t_notation_obj *)x, x->r_ob.j_mousedrag_point_shift_ffk.y, (t_voice *)x->firstvoice, NULL) - yposition_to_mc((t_notation_obj *)x, prev_mousedrag_point.y, (t_voice *)x->firstvoice, NULL);
 				x->r_ob.dilation_rectangle.top_mc += delta_mc;
 				x->r_ob.dilation_rectangle.bottom_mc += delta_mc;
-				changed |= change_pitch_for_selection(x, delta_mc, 3, !((modifiers & eCommandKey) && (modifiers & eShiftKey)), false);
+				changed |= change_cents_delta_for_selection(x, delta_mc, 3, !((modifiers & eCommandKey) && (modifiers & eShiftKey)), false);
 			}
 		}
 		redraw = 1;
@@ -13178,7 +13178,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                     }
                     if (modifiers & eShiftKey && modifiers & eCommandKey && !x->r_ob.snap_pitch_to_grid_when_editing)
                         delta_mc *= CONST_FINER_FROM_KEYBOARD;
-                    changed = change_pitch_for_selection(x, delta_mc, 3, !((modifiers & eCommandKey) && (modifiers & eShiftKey)), false);
+                    changed = change_cents_delta_for_selection(x, delta_mc, 3, !((modifiers & eCommandKey) && (modifiers & eShiftKey)), false);
                     if (changed)
                         x->r_ob.changed_while_dragging = true;
                     x->r_ob.floatdragging_y = pt.y;
@@ -13226,12 +13226,16 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
 	long note_new_voice, note_old_system, note_new_system;
 	t_chord *newch = NULL; 
 	double prev_mc = note->midicents; // mc before change
-	
+    char octave_jump = false;
+    long num_octaves_jump = 0;
+
 	if (old_chord_deleted) 
 		*old_chord_deleted = false;
 
 	note_old_system = onset_to_system_index((t_notation_obj *) x, note->parent->onset);
 	if (mode == 0) { // snapped to grid
+        octave_jump = (((long)delta) % (6 * x->r_ob.tone_division) == 0);
+        if (octave_jump) num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
 		note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->voiceparent->v_ob.number, delta);
 	} else
 		note->midicents += delta;
@@ -13245,7 +13249,12 @@ t_chord *shift_note_allow_voice_change(t_roll *x, t_note *note, double delta, ch
         do_voices_belong_to_same_voiceensemble((t_notation_obj *) x, (t_voice *)nth_rollvoice(x, note_new_voice), (t_voice *)note->parent->voiceparent) || // if the two voices belong to the same ensemble
 		((note->midicents - prev_mc) * (note_new_voice - note->parent->voiceparent->v_ob.number + x->r_ob.num_voices * (note_new_system - note_old_system)) >= 0)) { // ...or if the voice movement is not in phase with the mc movement (e.g. i'm dragging upwards a very low note on a staff: i don't want it to go to the lower staff!)
         
-		note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+        if (octave_jump) {
+            note->pitch_original.p_octave += num_octaves_jump;
+            note->pitch_displayed.p_octave += num_octaves_jump;
+        } else {
+            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+        }
 		constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice); 
         update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, note->parent);
     
@@ -13369,7 +13378,7 @@ void clear_notes_flag_SHIFT(t_roll *x) {
 }
 
 
-char change_pitch_for_selection(t_roll *x, double delta, char mode, char allow_voice_change, char snap_pitch_to_grid){ 
+char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char allow_voice_change, char snap_pitch_to_grid){ 
 	char changed = 0;
 	t_notation_item *curr_it = x->r_ob.firstselecteditem;
 	
@@ -16391,21 +16400,19 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 	// mixed or notes/chord selection
 	switch (keycode) {
 		case JKEY_UPARROW:
-			// shift note up
+        case JKEY_DOWNARROW:
+			// shift note up/down
 			if (!(modifiers & (eCommandKey | eAltKey)) && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)) {
-				change_pitch_for_selection(x, (!(modifiers & eCommandKey) && (modifiers & eShiftKey)) ? 6 * x->r_ob.tone_division : 1, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
-				handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION); 
+                char dir = (keycode == JKEY_UPARROW ? 1 : -1);
+                if (!(modifiers & eCommandKey) && (modifiers & eShiftKey)) {
+                    change_cents_delta_for_selection(x, 6 * x->r_ob.tone_division * dir, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
+                } else {
+                    change_cents_delta_for_selection(x, dir, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
+                }
+                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, dir > 0 ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION);
 				return 1;
 			}
-			break;
-			
-		case JKEY_DOWNARROW:
-			// shift note down
-			if (!(modifiers & (eCommandKey | eAltKey)) && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)) {
-				change_pitch_for_selection(x, (!(modifiers & eCommandKey) && (modifiers & eShiftKey)) ? -6 * x->r_ob.tone_division : -1, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
-				handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION); 
-				return 1;
-			}
+            return 0;
 			break;
 			
 		case JKEY_LEFTARROW:
@@ -16428,6 +16435,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
 				return 1;
 				break;
 			}
+            return 0;
 			break;
 			
 		case JKEY_RIGHTARROW:

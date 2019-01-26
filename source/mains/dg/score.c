@@ -10703,11 +10703,15 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
 	double note_y_real;
 	long note_new_voice;
 	double prev_mc = note->midicents; // mc before change
+    char octave_jump = false;
+    long num_octaves_jump = 0;
 
 	if (old_chord_deleted) 
 		*old_chord_deleted = false;
 	
 	if (mode == 0) {
+        octave_jump = (((long)delta) % (6 * x->r_ob.tone_division) == 0);
+        if (octave_jump) num_octaves_jump = (((long)delta) / (6 * x->r_ob.tone_division));
 		note->midicents = get_next_step_depending_on_editing_ranges((t_notation_obj *)x, note->midicents, note->parent->parent->voiceparent->v_ob.number, delta);
 //		note->midicents += (delta * (200. / x->r_ob.tone_division));
 	} else
@@ -10723,8 +10727,13 @@ t_chord *shift_note_allow_voice_change(t_score *x, t_note *note, double delta, c
         do_voices_belong_to_same_voiceensemble((t_notation_obj *) x, (t_voice *)nth_scorevoice(x, note_new_voice), (t_voice *)note->parent->parent->voiceparent) || // if the two voices belong to the same ensemble
 		((note->midicents - prev_mc) * (note_new_voice - note->parent->parent->voiceparent->v_ob.number) >= 0)) { // ...or if the voice movement is not in phase with the mc movement (e.g. i'm dragging upwards a very low note on a staff: i don't want it to go to the lower staff!)
 		// we keep the same voice
-		note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
-		constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice); 
+        if (octave_jump) {
+            note->pitch_original.p_octave += num_octaves_jump;
+            note->pitch_displayed.p_octave += num_octaves_jump;
+        } else {
+            note_set_auto_enharmonicity(note); // automatic accidentals for retranscribing!
+        }
+		constraint_midicents_depending_on_editing_ranges((t_notation_obj *)x, &note->midicents, note_new_voice);
 	} else { // note is changing voice!
 		t_scorevoice *new_voice = nth_scorevoice(x, note_new_voice);
 //		post("voices: FROM %d TO %d", note->parent->voiceparent->v_ob.number, new_voice->v_ob.number);
@@ -15994,24 +16003,21 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 
 	// mixed or notes/chord selection
 	switch (keycode) {
-		case JKEY_UPARROW:
-			// shift note up
+		case JKEY_UPARROW: // shift note up/down
+        case JKEY_DOWNARROW:
 			if (!(modifiers & (eCommandKey | eAltKey)) && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)) {
-				change_pitch_for_selection(x, (!(modifiers & eCommandKey) && (modifiers & eShiftKey)) ? 6 * x->r_ob.tone_division : 1, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
-				handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION); 
+                char dir = (keycode == JKEY_UPARROW ? 1 : -1);
+                if (!(modifiers & eCommandKey) && (modifiers & eShiftKey)) {
+                    change_pitch_for_selection(x, 6 * x->r_ob.tone_division * dir, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
+                } else {
+                    change_pitch_for_selection(x, dir, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
+                }
+                handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, dir  > 0 ? k_UNDO_OP_SHIFT_PITCH_UP_FOR_SELECTION : k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION);
 				return 1;
 			}
 			return 0;
-			break;
-		case JKEY_DOWNARROW:
-			// shift note down
-			if (!(modifiers & (eCommandKey | eAltKey)) && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_PITCH)) {
-				change_pitch_for_selection(x, (!(modifiers & eCommandKey) && (modifiers & eShiftKey)) ? -6 * x->r_ob.tone_division : -1, 0, ((modifiers & eControlKey) && (modifiers & eShiftKey)), true);
-				handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_SHIFT_PITCH_DOWN_FOR_SELECTION); 
-				return 1;
-			}
-			return 0;
-			break;
+            break;
+            
         case JKEY_DELETE:
 		case JKEY_BACKSPACE:
 			// delete notes/chords in selection

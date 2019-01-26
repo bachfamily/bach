@@ -24855,7 +24855,7 @@ long get_bits_from_figure(t_rational figure){
 }
 
 void snap_pitch_to_grid_for_note(t_notation_obj *r_ob, t_note *note) {
-    note_set_auto_enharmonicity(note);
+    //    note_set_auto_enharmonicity(note); // dg: 2019/01/26, why did I put this? this should not be here
     note->midicents = note->pitch_displayed.toMC();
 }
 
