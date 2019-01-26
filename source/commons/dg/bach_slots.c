@@ -8036,7 +8036,6 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 					} else if (modifiers == eLeftButton) {
 						// edit note slot content in external text editor
 						
-						char titlename[512];
 						
 						unlock_general_mutex(r_ob);	
 						if (!r_ob->m_editor)
@@ -8049,12 +8048,20 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						llll_behead(ll);
                         llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 //						llll_to_text_buf(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
-						object_method(r_ob->m_editor, _sym_settext, buf, _sym_utf_8); 
-						r_ob->changed_while_dragging = true;
-						*changed = true;
+						void *rv = object_method(r_ob->m_editor, _sym_settext, buf, _sym_utf_8);  // non-0 if the text was too long
+                        if (rv) {
+                            t_object *ed = r_ob->m_editor;
+                            r_ob->m_editor = NULL;
+                            object_free(ed);
+                        } else {
+                            char titlename[512];
+                            snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
+                            object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
+                        }
+                        
+                        r_ob->changed_while_dragging = true;
+                        *changed = true;
                         llll_free(ll);
-						snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
-						object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
 						bach_freeptr(buf);
 						lock_general_mutex(r_ob);
 						return 1;
@@ -8181,12 +8188,18 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             strncpy(text, (const char *) get_activeitem_slot_firstitem(r_ob, s)->item, textlength);
                             text[textlength] = 0;
                             
-                            object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);
+                            void *rv = object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);  // non-0 if the text was too long
+                            if (rv) {
+                                t_object *ed = r_ob->m_editor;
+                                r_ob->m_editor = NULL;
+                                object_free(ed);
+                            } else {
+                                snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
+                                object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
+                            }
+
                             r_ob->changed_while_dragging = true;
                             *changed = true;
-                            
-                            snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
-                            object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
                             bach_freeptr(text);
                             lock_general_mutex(r_ob);
                         }
@@ -8217,14 +8230,20 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             this_llll = (t_llll *) get_activeitem_slot_firstitem(r_ob, s)->item;
                             if (this_llll) {
                                 textlength = llll_to_text_buf(this_llll, &text, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
-                                object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);
+                                
+                                void *rv = object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);  // non-0 if the text was too long
+                                if (rv) {
+                                    t_object *ed = r_ob->m_editor;
+                                    r_ob->m_editor = NULL;
+                                    object_free(ed);
+                                } else {
+                                    snprintf_zero(titlename, 512, "llll %s", r_ob->slotinfo[s].slot_name->s_name);
+                                    object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
+                                }
+
                                 r_ob->changed_while_dragging = true;
                                 *changed = true;
-                                
                                 llll_free(this_llll);
-
-                                snprintf_zero(titlename, 512, "llll %s", r_ob->slotinfo[s].slot_name->s_name);
-                                object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
                                 bach_freeptr(text);
                             }
                             lock_general_mutex(r_ob);	
@@ -8258,12 +8277,18 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             strncpy(text, sym->s_name, textlength + 1);
                             text[textlength] = 0;
                             
-                            object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);
+                            void *rv = object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);  // non-0 if the text was too long
+                            if (rv) {
+                                t_object *ed = r_ob->m_editor;
+                                r_ob->m_editor = NULL;
+                                object_free(ed);
+                            } else {
+                                snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
+                                object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
+                            }
+                            
                             r_ob->changed_while_dragging = true;
                             *changed = true;
-                            
-                            snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
-                            object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
                             bach_freeptr(text);
                             lock_general_mutex(r_ob);
                         }
