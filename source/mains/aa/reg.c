@@ -150,8 +150,13 @@ void reg_dblclick(t_reg *x)
     char *buf = NULL;
     t_llll *ll = llllobj_get_store_contents((t_object *)x, LLLL_OBJ_VANILLA, 0, 0);
     llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, BACH_DEFAULT_EDITOR_LLLL_WRAP, "\t", -1, LLLL_T_NULL, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
-    object_method(x->m_editor, _sym_settext, buf, gensym("utf-8"));
-    object_attr_setsym(x->m_editor, gensym("title"), gensym("llll"));
+    void *rv = object_method(x->m_editor, _sym_settext, buf, gensym("utf-8")); // non-0 if the text was too long
+    if (rv) {
+        t_object *ed = x->m_editor;
+        x->m_editor = NULL;
+        object_free(ed);
+    } else
+        object_attr_setsym(x->m_editor, gensym("title"), gensym("llll"));
     llll_release(ll);
 }
 
@@ -163,6 +168,8 @@ void reg_okclose(t_reg *x, char *s, short *result)
 void reg_edclose(t_reg *x, char **ht, long size)
 {
     // do something with the text
+    if (!x->m_editor) // which means that something was wrong
+        return;
     if (ht) {
         t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         if (ll) {
