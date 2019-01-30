@@ -690,22 +690,30 @@ t_shortRational xml_get_accidental(mxml_node_t *accXML)
     return alter;
 }
 
+
+
 class timedThing {
-public:
-    int type;
-    t_rational time;
-    double x;
-};
-
-class timedNote : public timedThing {
-public:
-    t_llll *notell;
-};
-
-class timedDynamics : public timedThing {
-public:
+private:
+    typedef enum _timedThingType {
+        note,
+        dynamics
+    } timedThingType;
     
+public:
+    timedThingType type;
+    t_rational timePos;
+    double xPosition;
+    t_llll *notell;
+    const char* dyn;
+    
+    timedThing(t_llll *notell, t_rational timePos, double xPosition) : type(note), timePos(timePos), xPosition(xPosition), notell(notell), dyn(nullptr) { }
+    
+    timedThing(const char* dyn, t_rational timePos, double xPosition) : type(dynamics), timePos(timePos), xPosition(xPosition), notell(nullptr), dyn(dyn) { }
+    
+    t_bool isNote() { return type == note; }
+    t_bool isDynamics() { return type == dynamics; }
 };
+
 
 
 t_llll *score_readxml(t_score *x,
