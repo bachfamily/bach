@@ -190,7 +190,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
 	t_llll *arguments = (t_llll *) atom_getobj(argv);
 	t_symbol *filename_sym = NULL;
-	t_filehandle fh;
+	t_filehandle fh = NULL;
 	t_fourcc outtype = 0;
 	t_fourcc file_types[] = {'TEXT', 'LLLL'};
 	t_llll *score_ll = NULL;
@@ -279,7 +279,8 @@ score_doread_error_dontclose:
 	llll_free(arguments);
 	return;
 score_doread_error_close:
-	sysfile_close(fh);
+    if (fh)
+        sysfile_close(fh);
 	llll_free(arguments);
 	return;
 }
