@@ -17,6 +17,9 @@
 #define LLLL_POP_CHAR (']')
 #define LLLL_PUSH_CSTR "["
 #define LLLL_POP_CSTR "]"
+#define LLLL_PUSH_ALL_CHARS "[("
+#define LLLL_POP_ALL_CHARS "])"
+
 
 #define TEXT_LIST_MAX_LENGTH        65536
 #define ATOM_LIST_LENGTH_STEP        (4096*64)
@@ -58,10 +61,11 @@ typedef enum _llll_deparse_flags {
 
 // flags for llll_to_text_buf
 typedef enum _llll_text_flags {
-    LLLL_T_NONE                                = 0x0000,
-    LLLL_T_NULL                                = 0x0001,    // null is returned if list is empty
-    LLLL_T_NEGATIVE_OCTAVES                 = 0x0002,   // negative octaves are used (i.e., pitches are always positive)
-    LLLL_T_ALL                              = 0x0003,
+    LLLL_T_NONE             = 0x0000,
+    LLLL_T_NULL             = 0x0001,   // null is returned if list is empty
+    LLLL_T_NEGATIVE_OCTAVES = 0x0002,   // negative octaves are used (i.e., pitches are always positive)
+    LLLL_T_PARENS           = 0X0004,   // parens instead of brackets for marking sublists
+    LLLL_T_ALL              = 0x0007,
 } e_llll_text_flags;
 
 
