@@ -61,6 +61,98 @@ long num_xml_accepted_dynamics = sizeof(xml_accepted_dynamics)/sizeof(xml_accept
 // import-export
 // **********************************************
 
+void score_xml_add_clefs(mxml_node_t *attributesxml, long clef, long *staves, long *splitpoints)
+{
+    // CLEFS
+    switch (clef) {
+        case k_CLEF_F:
+            bach_xml_add_clef(attributesxml, "F", 4, 0, NULL);
+            break;
+        case k_CLEF_G8va:
+            bach_xml_add_clef(attributesxml, "G", 2, 1, NULL);
+            break;
+        case k_CLEF_G15ma:
+            bach_xml_add_clef(attributesxml, "G", 2, 2, NULL);
+            break;
+        case k_CLEF_F8vb:
+            bach_xml_add_clef(attributesxml, "F", 4, -1, NULL);
+            break;
+        case k_CLEF_F15mb:
+            bach_xml_add_clef(attributesxml, "F", 4, -1, NULL);
+            break;
+        case k_CLEF_SOPRANO:
+            bach_xml_add_clef(attributesxml, "C", 5, 0, NULL);
+            break;
+        case k_CLEF_MEZZO:
+            bach_xml_add_clef(attributesxml, "C", 4, 0, NULL);
+            break;
+        case k_CLEF_ALTO:
+            bach_xml_add_clef(attributesxml, "C", 3, 0, NULL);
+            break;
+        case k_CLEF_TENOR:
+            bach_xml_add_clef(attributesxml, "C", 2, 0, NULL);
+            break;
+        case k_CLEF_BARYTONE:
+            bach_xml_add_clef(attributesxml, "C", 1, 0, NULL);
+            break;
+        case k_CLEF_FF:
+            *staves = 2;
+            splitpoints[0] = 4000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "1");
+            bach_xml_add_clef(attributesxml, "F", 4, -1, "2");
+            break;
+        case k_CLEF_FG:
+            *staves = 2;
+            splitpoints[0] = 6000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "2");
+            break;
+        case k_CLEF_GG:
+            *staves = 2;
+            splitpoints[0] = 7900;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
+            bach_xml_add_clef(attributesxml, "G", 2, 2, "1");
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
+            break;
+        case k_CLEF_FFG:
+            *staves = 3;
+            splitpoints[0] = 6000;
+            splitpoints[1] = 4000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 3);
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "2");
+            bach_xml_add_clef(attributesxml, "F", 4, -1, "3");
+            break;
+        case k_CLEF_FGG:
+            *staves = 3;
+            splitpoints[0] = 7900;
+            splitpoints[1] = 6000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 3);
+            bach_xml_add_clef(attributesxml, "G", 2, 1, "1");
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "3");
+            break;
+        case k_CLEF_FFGG:
+            *staves = 4;
+            splitpoints[0] = 7900;
+            splitpoints[1] = 6000;
+            splitpoints[2] = 4000;
+            bach_mxmlNewIntElement(attributesxml, "staves", 0, 4);
+            bach_xml_add_clef(attributesxml, "G", 2, 1, "1");
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
+            bach_xml_add_clef(attributesxml, "F", 4, 0, "3");
+            bach_xml_add_clef(attributesxml, "F", 4, -1, "4");
+            break;
+        case k_CLEF_G:
+        default:
+            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
+            break;
+    }
+}
+
+
 void score_exportxml(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
 	t_atom av;
@@ -98,7 +190,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
 {
 	t_llll *arguments = (t_llll *) atom_getobj(argv);
 	t_symbol *filename_sym = NULL;
-	t_filehandle fh;
+	t_filehandle fh = NULL;
 	t_fourcc outtype = 0;
 	t_fourcc file_types[] = {'TEXT', 'LLLL'};
 	t_llll *score_ll = NULL;
@@ -187,7 +279,8 @@ score_doread_error_dontclose:
 	llll_free(arguments);
 	return;
 score_doread_error_close:
-	sysfile_close(fh);
+    if (fh)
+        sysfile_close(fh);
 	llll_free(arguments);
 	return;
 }
@@ -496,6 +589,11 @@ void xml_get_dynamics(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
                 if (mxmlFindElement(dynamicXML, dynamicXML, xml_accepted_dynamics[di], NULL, NULL, MXML_DESCEND_FIRST))
                     dynamics_text_cur += snprintf_zero(dynamics_text + dynamics_text_cur, CONST_DYNAMICS_TEXT_ALLOC_SIZE - dynamics_text_cur, "%s_", xml_accepted_dynamics[di]);
             }
+            if (*dynamics_text == 0) {
+                dynamics_text[0] = '_';
+                dynamics_text[1] = 0;
+            }
+                
             
         } else if ((wedgeXML = mxmlFindElement(tempXML, tempXML, "wedge", NULL, NULL, MXML_DESCEND))) {
             char hairpin = 0;
@@ -593,6 +691,32 @@ t_shortRational xml_get_accidental(mxml_node_t *accXML)
     return alter;
 }
 
+
+
+class timedThing {
+private:
+    typedef enum _timedThingType {
+        note,
+        dynamics
+    } timedThingType;
+    
+public:
+    timedThingType type;
+    t_rational timePos;
+    double xPosition;
+    t_llll *notell;
+    const char* dyn;
+    
+    timedThing(t_llll *notell, t_rational timePos, double xPosition) : type(note), timePos(timePos), xPosition(xPosition), notell(notell), dyn(nullptr) { }
+    
+    timedThing(const char* dyn, t_rational timePos, double xPosition) : type(dynamics), timePos(timePos), xPosition(xPosition), notell(nullptr), dyn(dyn) { }
+    
+    t_bool isNote() { return type == note; }
+    t_bool isDynamics() { return type == dynamics; }
+};
+
+
+
 t_llll *score_readxml(t_score *x,
                       t_filehandle fh,
                       long parenthesizedquartertones,
@@ -665,9 +789,10 @@ t_llll *score_readxml(t_score *x,
 
 	// iterate on the parts
 	mxml_node_t *partXML;
+    long partnum = 1; // for debug
 	for (partXML = mxmlFindElement(score_partwiseXML, score_partwiseXML, "part", NULL, NULL, MXML_DESCEND_FIRST);
 		 partXML;
-		 partXML = mxmlFindElement(partXML, score_partwiseXML, "part", NULL, NULL, MXML_NO_DESCEND)) {
+		 partXML = mxmlFindElement(partXML, score_partwiseXML, "part", NULL, NULL, MXML_NO_DESCEND), partnum++) {
 	
         t_llll *voicell[CONST_MAX_VOICES];
         voicell[0] = llll_get();
@@ -691,6 +816,9 @@ t_llll *score_readxml(t_score *x,
         t_llll *words = NULL;
         t_symbol *clefsym, *keysym;
         
+        t_rational global_position = t_rational(0);
+        t_llll *all_elements_ll = llll_get();
+        
 		for (measureXML = mxmlFindElement(partXML, partXML, "measure", NULL, NULL, MXML_DESCEND_FIRST);
 			 measureXML;
 			 measureXML = mxmlFindElement(measureXML, partXML, "measure", NULL, NULL, MXML_NO_DESCEND), measure_number++) {
@@ -703,6 +831,8 @@ t_llll *score_readxml(t_score *x,
                 used_duration[i] = t_rational(0);
             }
 
+            t_rational current_timepoint = t_rational(0);
+            
 			t_llll *measureinfoll = llll_get();
 			mxml_node_t *attributesXML = mxmlFindElement(measureXML, measureXML, "attributes", NULL, NULL, MXML_DESCEND_FIRST);
 			// parse the attributes:
@@ -715,7 +845,7 @@ t_llll *score_readxml(t_score *x,
 					mxml_node_t *clefXML;
 					for (numclefs = 0, clefXML = mxmlFindElement(attributesXML, attributesXML, "clef", NULL, NULL, MXML_DESCEND_FIRST);
 						 clefXML && numclefs < 16;
-						 numclefs++, clefXML = mxmlFindElement(clefXML, attributesXML, "clef", NULL, NULL, MXML_DESCEND_FIRST)) {
+						 numclefs++, clefXML = mxmlFindElement(clefXML, attributesXML, "clef", NULL, NULL, MXML_NO_DESCEND)) {
 						mxml_node_t *signXML = mxmlFindElement(clefXML, clefXML, "sign", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *lineXML = mxmlFindElement(clefXML, clefXML, "line", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *clef_octave_changeXML = mxmlFindElement(clefXML, clefXML, "clef-octave-change", NULL, NULL, MXML_DESCEND_FIRST);
@@ -779,8 +909,9 @@ t_llll *score_readxml(t_score *x,
 							clef = k_CLEF_FF;
 					}
                     clefsym = clef_number_to_clef_symbol((t_notation_obj *) x, clef);
-					llll_appendsym(clefsll, clefsym, 0, WHITENULL_llll);
+					//llll_appendsym(clefsll, clefsym, 0, WHITENULL_llll);
 
+                    //dev_llll_print(clefsll);
 					// key signature
 					
 					mxml_node_t *keyXML = mxmlFindElement(attributesXML, attributesXML, "key", NULL, NULL, MXML_DESCEND_FIRST);
@@ -960,13 +1091,17 @@ t_llll *score_readxml(t_score *x,
 					}
 				}
 				mxml_node_t *soundtempoXML = mxmlFindElement(directionXML, directionXML, "sound", "tempo", NULL, MXML_DESCEND_FIRST);
+                if (!soundtempoXML)
+                    soundtempoXML = mxmlFindElement(measureXML, measureXML, "sound", "tempo", NULL, MXML_DESCEND_FIRST);
 				if (soundtempoXML) {
 					t_llll *onetempoll = llll_get();
 					double bpm = strtod(mxmlElementGetAttr(soundtempoXML, "tempo"), NULL);
 					llll_appendrat(onetempoll, genrat(1, 4), 0, WHITENULL_llll);
 					llll_appenddouble(onetempoll, bpm, 0, WHITENULL_llll);
-					mxml_node_t *offsetXML = mxmlFindElement(directionXML, directionXML, "offset", NULL, NULL, MXML_DESCEND_FIRST);
+                    mxml_node_t *offsetXML = NULL;
                     t_rational offset;
+                    if (directionXML)
+                        offsetXML = mxmlFindElement(directionXML, directionXML, "offset", NULL, NULL, MXML_DESCEND_FIRST);
                     if (offsetXML) {
                         offset = genrat(mxmlGetInteger(offsetXML), divisions);
                     } else {
@@ -989,14 +1124,25 @@ t_llll *score_readxml(t_score *x,
 				llll_free(tempill);
 				tempill = NULL;
 			}
-			
+
+            
+            
+            
+            
+            ///////////////////////////////
+            ///////////////////////////////
+            //
 			// chords and notes
-            mxml_node_t *noteXML;
+            //
+            ///////////////////////////////
+            ///////////////////////////////
+
             mxml_node_t *nextnoteXML = NULL;
   
-            mxml_node_t *firstnoteXML = mxmlFindElement(measureXML, measureXML, "note", NULL, NULL, MXML_DESCEND_FIRST);
+            mxml_node_t *firstnoteXML = NULL;
 			t_llll *chordll = NULL;
             t_llll *chord_parentll[CONST_MAX_VOICES];
+            
             for (long i = 0; i < voices_for_this_xml_part; i++)
                 chord_parentll[i] = measurell[i];
 //            chord_parentll[0] = measurell[0];
@@ -1006,44 +1152,103 @@ t_llll *score_readxml(t_score *x,
             
             long current_voice_in_part = 0;
 
-			for (noteXML = firstnoteXML; noteXML; noteXML = nextnoteXML) {
-                t_bool go = true;
-                mxml_node_t *backupXML, *node;
-                mxml_node_t *nextnode = noteXML;
-                nextnoteXML = backupXML = NULL;
-                while (go) {
-                    nextnode = mxmlWalkNext(nextnode, measureXML, MXML_NO_DESCEND);
-                    if (!nextnode)
-                        go = false;
-                    else {
-                        const char *nextname = mxmlGetElement(nextnode);
-                        if (nextname) {
-                            if (!strcmp(nextname, "note")) {
-                                nextnoteXML = nextnode;
-                                go = 0;
-                            } else if (!strcmp(nextname, "backup")) {
-                                nextnoteXML = mxmlFindElement(noteXML, measureXML, "note", NULL, NULL, MXML_NO_DESCEND);
-                                backupXML = nextnode;
-                                go = 0;
-                            }
-                        }
+            
+            t_pitch allpitches[10000];
+            long numpitches = 0;
+            
+            mxml_node_t *itemXML;
+            for (itemXML = mxmlGetFirstChild(measureXML);
+                 itemXML;
+                 itemXML = mxmlWalkNext(itemXML, measureXML, MXML_NO_DESCEND)) {
+            
+                t_bool switch_to_new_voice = false;
+                //mxml_node_t *nextnode = noteXML;
+                t_bool isrest = false;
+                const char *itemName = mxmlGetElement(itemXML);
+                if (!itemName)
+                    continue;
+                
+                if (!strcmp(itemName, "forward")) {
+                    isrest = true;
+                    
+                } else if (!strcmp(itemName, "backup")) {
+                    mxml_node_t *durationXML = mxmlFindElement(itemXML, itemXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
+                    t_rational backupdur = t_rational(mxmlGetInteger(durationXML), divisions);
+                    current_timepoint -= backupdur;
+                    
+                    //t_rational getHere = used_duration[current_voice_in_part] - backupdur;
+                    if (current_timepoint < 0) {
+                        object_warn((t_object *) x, "<backup> tag wants to backup too far");
+                        current_timepoint = t_rational(0);
+                    }
+                    switch_to_new_voice = true;
+                    continue;
+                    
+                } else if (!strcmp(itemName, "direction")) {
+
+                    
+                    
+                    
+                    
+                } else if (strcmp(itemName, "note")) {
+                    continue;
+                }
+                
+                if (!firstnoteXML)
+                    firstnoteXML = itemXML;
+            
+                nextnoteXML = mxmlFindElement(itemXML, measureXML, "note", NULL, NULL, MXML_NO_DESCEND);
+                
+                mxml_node_t *voiceXML = mxmlFindElement(itemXML, itemXML, "voice", NULL, NULL, MXML_DESCEND_FIRST);
+
+                if (voiceXML) {
+                    int newvoice = mxmlGetInteger(voiceXML) - 1;
+                    if (newvoice != current_voice_in_part) {
+                        switch_to_new_voice = true;
+                        current_voice_in_part = newvoice;
                     }
                 }
                 
+                while (current_voice_in_part < voices_for_this_xml_part) {
+                    if (used_duration[current_voice_in_part] > current_timepoint) {
+                        ++current_voice_in_part;
+                        switch_to_new_voice = true;
+                    } else
+                        break;
+                }
+                
+                while (current_voice_in_part >= voices_for_this_xml_part) {
+                    voicell[voices_for_this_xml_part + 1] = llll_clone(voicell[voices_for_this_xml_part]);
+                    measurell[voices_for_this_xml_part + 1] = llll_clone(measurell[voices_for_this_xml_part]);
+                    used_duration[voices_for_this_xml_part + 1] = t_rational(0);
+                    
+                    chord_parentll[voices_for_this_xml_part] = measurell[voices_for_this_xml_part];
+                    ++voices_for_this_xml_part;
+                }
+                
+                if (used_duration[current_voice_in_part] < current_timepoint) {
+                    t_rational restdur = - (current_timepoint - used_duration[current_voice_in_part]);
+                    chordll = llll_get();
+                    llll_appendrat(chordll, restdur);
+                    llll_appendlong(chordll, 0);
+                    llll_appendllll(chord_parentll[current_voice_in_part], chordll);
+                    used_duration[current_voice_in_part] = current_timepoint;
+                }
+                
                 // IMPORTING DYNAMICS
-                if (noteXML == firstnoteXML && (!nextnoteXML || backupXML)) { // just 1 note,
+                if (itemXML == firstnoteXML && (!nextnoteXML || switch_to_new_voice)) { // just 1 note,
                     // assuming that this is the right thing to do when we switch to another voice
                     xml_get_dynamics(measureXML->child, NULL, dynamics_text);
                     words = xml_get_words(measureXML->child, NULL, NULL);
                 }
-                else if (noteXML == firstnoteXML) {
+                else if (itemXML == firstnoteXML) {
                     xml_get_dynamics(measureXML->child, firstnoteXML, dynamics_text);
                     words = xml_get_words(measureXML->child, firstnoteXML, NULL);
                 }
-                else if (!nextnoteXML || backupXML) {
+                else if (!nextnoteXML || switch_to_new_voice) {
                     char temp_dynamics_text[CONST_DYNAMICS_TEXT_ALLOC_SIZE];
                     temp_dynamics_text[0] = 0;
-                    xml_get_dynamics(noteXML->next, NULL, temp_dynamics_text);
+                    xml_get_dynamics(itemXML->next, NULL, temp_dynamics_text);
                     if (temp_dynamics_text[0]) {
                         // merge dynamics
                         long len = strlen(dynamics_text);
@@ -1057,17 +1262,27 @@ t_llll *score_readxml(t_score *x,
                             snprintf_zero(dynamics_text + len, CONST_DYNAMICS_TEXT_ALLOC_SIZE - len, "%s", temp_dynamics_text);
                         }
                     }
-                    words = xml_get_words(noteXML->next, NULL, words);
+                    words = xml_get_words(itemXML->next, NULL, words);
                 }
                 
-				long isrest = 0;
-				mxml_node_t *chordXML = mxmlFindElement(noteXML, noteXML, "chord", NULL, NULL, MXML_DESCEND_FIRST);
+                
+                // if there is a chord and we're closing (even if temporarily) this voice,
+                // append to it its articulations and flags
+                if (chordll && switch_to_new_voice) {
+                    if (chordslotsll) {
+                        llll_appendllll(chordll, chordslotsll);
+                    }
+                    llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
+                    chordll = NULL;
+                }
+                
+				mxml_node_t *chordXML = mxmlFindElement(itemXML, itemXML, "chord", NULL, NULL, MXML_DESCEND_FIRST);
 				if (chordXML && !chordll) {
-					object_warn((t_object *) x, "<chord> tag in the first note of the measure");
+					object_warn((t_object *) x, "<chord> tag with no preceding note");
 					chordXML = NULL;
 				}
 				
-				mxml_node_t *notationsXML = mxmlFindElement(noteXML, noteXML, "notations", NULL, NULL, MXML_DESCEND_FIRST);
+				mxml_node_t *notationsXML = mxmlFindElement(itemXML, itemXML, "notations", NULL, NULL, MXML_DESCEND_FIRST);
 
 				if (!chordXML) {
 					if (chordll) { // if there was a previous chord, append its flags to it
@@ -1077,7 +1292,7 @@ t_llll *score_readxml(t_score *x,
                         }
 						llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
 					}
-					grace = mxmlFindElement(noteXML, noteXML, "grace", NULL, NULL, MXML_DESCEND_FIRST) != 0;
+					grace = mxmlFindElement(itemXML, itemXML, "grace", NULL, NULL, MXML_DESCEND_FIRST) != 0;
 					if (grace && !grace_group) { // that is, we're starting a new grace group
 						chordll = llll_get();
 						llll_appendllll(chord_parentll[current_voice_in_part], chordll, 0, WHITENULL_llll);
@@ -1100,9 +1315,9 @@ t_llll *score_readxml(t_score *x,
 
 					// level stuff
 					mxml_node_t *beamXML;
-					for (beamXML = mxmlFindElement(noteXML, noteXML, "beam", NULL, NULL, MXML_DESCEND_FIRST);
+					for (beamXML = mxmlFindElement(itemXML, itemXML, "beam", NULL, NULL, MXML_DESCEND_FIRST);
 						 beamXML;
-						 beamXML = mxmlFindElement(beamXML, noteXML, "beam", NULL, NULL, MXML_NO_DESCEND)) {
+						 beamXML = mxmlFindElement(beamXML, itemXML, "beam", NULL, NULL, MXML_NO_DESCEND)) {
 						const char *beamtxt = mxmlGetText(beamXML, NULL);
 						if (!strcmp(beamtxt, "begin")) {
 							chordll = llll_get();
@@ -1130,28 +1345,36 @@ t_llll *score_readxml(t_score *x,
 					chordll = llll_get();
 					llll_appendllll(chord_parentll[current_voice_in_part], chordll, 0, WHITENULL_llll);
 					
-					mxml_node_t *restXML = mxmlFindElement(noteXML, noteXML, "rest", NULL, NULL, MXML_DESCEND_FIRST);
-					t_rational duration;
+					mxml_node_t *restXML = mxmlFindElement(itemXML, itemXML, "rest", NULL, NULL, MXML_DESCEND_FIRST);
+                    if (restXML)
+                        isrest = true;
+					t_rational duration = t_rational(0);
 
-					mxml_node_t *typeXML = mxmlFindElement(noteXML, noteXML, "type", NULL, NULL, MXML_DESCEND_FIRST);
+					mxml_node_t *typeXML = mxmlFindElement(itemXML, itemXML, "type", NULL, NULL, MXML_DESCEND_FIRST);
 					if (typeXML) {
 						const char *typetxt = mxmlGetText(typeXML, NULL);
 						long dots = 0;
 						mxml_node_t *dotXML;
-						for (dotXML = mxmlFindElement(typeXML, noteXML, "dot", NULL, NULL, MXML_NO_DESCEND);
+						for (dotXML = mxmlFindElement(typeXML, itemXML, "dot", NULL, NULL, MXML_NO_DESCEND);
 							 dotXML;
-							 dotXML = mxmlFindElement(dotXML, noteXML, "dot", NULL, NULL, MXML_NO_DESCEND))
+							 dotXML = mxmlFindElement(dotXML, itemXML, "dot", NULL, NULL, MXML_NO_DESCEND))
 							dots++;
 						
 						duration = xml_name_and_dots_to_value(typetxt, dots);
-					} else if (!grace) {
-						mxml_node_t *durationXML = mxmlFindElement(noteXML, noteXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
-						duration = genrat(mxmlGetInteger(durationXML), divisions);
-					} else { // if it's a grace note and there is no type
+					}
+                    if ((!typeXML && !grace) || (restXML && duration == 1)) { // it could be the only note in the part
+						mxml_node_t *durationXML = mxmlFindElement(itemXML, itemXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
+                        if (durationXML)
+                            duration = genrat(mxmlGetInteger(durationXML), divisions);
+                        else if (duration == t_rational(0)) {
+                            object_warn((t_object *) x, "Note without duration");
+                            duration = genrat(1, 4); // use a dummy duration!
+                        }
+					} else if (!typeXML && grace) { // if it's a grace note and there is no type
 						duration = genrat(1, 8); // use a dummy duration!
 					}
 					
-					mxml_node_t *time_modificationXML = mxmlFindElement(noteXML, noteXML, "time-modification", NULL, NULL, MXML_DESCEND_FIRST);
+					mxml_node_t *time_modificationXML = mxmlFindElement(itemXML, itemXML, "time-modification", NULL, NULL, MXML_DESCEND_FIRST);
 					if (time_modificationXML) {
 						mxml_node_t *actual_notesXML = mxmlFindElement(time_modificationXML, time_modificationXML, "actual-notes", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *normal_notesXML = mxmlFindElement(time_modificationXML, time_modificationXML, "normal-notes", NULL, NULL, MXML_DESCEND_FIRST);
@@ -1162,9 +1385,9 @@ t_llll *score_readxml(t_score *x,
 							const char *normal_typetxt = mxmlGetText(normal_typeXML, NULL);
 							long normal_dots = 0;
 							mxml_node_t *normal_dotXML;
-							for (normal_dotXML = mxmlFindElement(normal_typeXML, noteXML, "normal-dot", NULL, NULL, MXML_NO_DESCEND);
+							for (normal_dotXML = mxmlFindElement(normal_typeXML, itemXML, "normal-dot", NULL, NULL, MXML_NO_DESCEND);
 								 normal_dotXML;
-								 normal_dotXML = mxmlFindElement(normal_dotXML, noteXML, "normal-dot", NULL, NULL, MXML_NO_DESCEND))
+								 normal_dotXML = mxmlFindElement(normal_dotXML, itemXML, "normal-dot", NULL, NULL, MXML_NO_DESCEND))
 								normal_dots++;
 							
 							duration = xml_name_and_dots_to_value(normal_typetxt, normal_dots);
@@ -1174,17 +1397,16 @@ t_llll *score_readxml(t_score *x,
 					}
                     
                     if (!grace)
-                        used_duration[current_voice_in_part] += duration;
+                        current_timepoint = used_duration[current_voice_in_part] += duration;
                     
-					if (restXML) {
+					if (isrest) { // which can be either because it is an actual rest, or beacuse of <forward>
 						duration.r_num *= -1;
-						isrest = 1;
 					}
 					llll_appendrat(chordll, duration, 0, WHITENULL_llll);
 				}
 				
 				if (!isrest) {
-					mxml_node_t *pitchXML = mxmlFindElement(noteXML, noteXML, "pitch", NULL, NULL, MXML_DESCEND_FIRST);
+					mxml_node_t *pitchXML = mxmlFindElement(itemXML, itemXML, "pitch", NULL, NULL, MXML_DESCEND_FIRST);
 					const char *steptxt = NULL;
 					long octave = 0;
                     short degree = 0;
@@ -1195,11 +1417,16 @@ t_llll *score_readxml(t_score *x,
 						mxml_node_t *alterXML = mxmlFindElement(pitchXML, pitchXML, "alter", NULL, NULL, MXML_DESCEND_FIRST);
 						mxml_node_t *octaveXML = mxmlFindElement(pitchXML, pitchXML, "octave", NULL, NULL, MXML_DESCEND_FIRST);
 						steptxt = mxmlGetText(stepXML, NULL);
+                        degree = toupper(*steptxt) - 'C';
+                        if (degree < 0)
+                            degree += 7;
+                        CLAMP(degree, 0, 6);
 						alter = approx_double_with_rat_fixed_den(mxmlGetReal(alterXML) / 2., 8, 0, nullptr);
 						octave = mxmlGetInteger(octaveXML) + 1;
-						mxml_node_t *accidentalXML = mxmlFindElement(noteXML, noteXML, "accidental", NULL, NULL, MXML_DESCEND_FIRST);
-                        if (accidentalXML)
+						mxml_node_t *accidentalXML = mxmlFindElement(itemXML, itemXML, "accidental", NULL, NULL, MXML_DESCEND_FIRST);
+                        if (accidentalXML) {
                             alter = xml_get_accidental(accidentalXML);
+                        }
                         short den = alter.den();
                         if (den > new_tonedivision)
                             new_tonedivision = den;
@@ -1209,35 +1436,57 @@ t_llll *score_readxml(t_score *x,
                                 alter += t_pitch::qrtrsharp;
                                 if (new_tonedivision < 4)
                                     new_tonedivision = 4;
+                            } else {
+                                for (long i = numpitches - 1; i >= 0; i--) {
+                                    if (allpitches[i].degree() == degree &&
+                                        allpitches[i].degree() == octave &&
+                                        ((!accidentalXML && alter == 0) ||
+                                         allpitches[i].alter() == alter - t_pitch::qrtrsharp))
+                                        alter = allpitches[i].alter();
+                                }
+                            }
+                        } else if (!accidentalXML && alter == 0) { // see if there is a previous note to get the alteration from
+                            for (long i = numpitches - 1; i >= 0; i--) {
+                                if (allpitches[i].degree() == degree &&
+                                    allpitches[i].octave() == octave) {
+                                    alter = allpitches[i].alter();
+                                    break;
+                                }
                             }
                         }
+                        
+                        
+                        
+                        
 					} else {
-						mxml_node_t *unpitchedXML = mxmlFindElement(noteXML, noteXML, "unpitched", NULL, NULL, MXML_DESCEND_FIRST);
+						mxml_node_t *unpitchedXML = mxmlFindElement(itemXML, itemXML, "unpitched", NULL, NULL, MXML_DESCEND_FIRST);
 						if (unpitchedXML) {
 							mxml_node_t *display_stepXML = mxmlFindElement(unpitchedXML, unpitchedXML, "display-step", NULL, NULL, MXML_DESCEND_FIRST);
 							if (display_stepXML) {
 								mxml_node_t *display_octaveXML = mxmlFindElement(unpitchedXML, unpitchedXML, "display-octave", NULL, NULL, MXML_DESCEND_FIRST);
 								steptxt = mxmlGetText(display_stepXML, NULL);
+                                degree = toupper(*steptxt) - 'C';
+                                if (degree < 0)
+                                    degree += 7;
+                                CLAMP(degree, 0, 6);
 								octave = mxmlGetInteger(display_octaveXML) + 1;
 							} else {
-								steptxt = "B";
+								degree = 6;
 								octave = 5;
 							}
 						}
 					}
-					
-                    if (steptxt) {
-                        degree = toupper(*steptxt) - 'C';
-                        CLAMP(degree, 0, 6);
-                    }
+
 					t_llll *notell = llll_get();
-                    llll_appendpitch(notell, t_pitch(degree, alter, octave));
-					mxml_node_t *soundXML = mxmlFindElement(noteXML, noteXML, "sound", NULL, NULL, MXML_DESCEND_FIRST);
+                    t_pitch pch = t_pitch(degree, alter, octave);
+                    allpitches[numpitches++] = pch;
+                    llll_appendpitch(notell, pch);
+					mxml_node_t *soundXML = mxmlFindElement(itemXML, itemXML, "sound", NULL, NULL, MXML_DESCEND_FIRST);
 					mxml_node_t *dynamicsXML = mxmlFindElement(soundXML, soundXML, "dynamics", NULL, NULL, MXML_DESCEND_FIRST);
 					if (dynamicsXML)
 						velocity = mxmlGetInteger(dynamicsXML) / 100. * 90.;					
 					llll_appendlong(notell, velocity, 0, WHITENULL_llll);
-					if (mxmlFindElement(noteXML, noteXML, "tie", "type", "start", MXML_DESCEND_FIRST))
+					if (mxmlFindElement(itemXML, itemXML, "tie", "type", "start", MXML_DESCEND_FIRST))
 						llll_appendlong(notell, 1, 0, WHITENULL_llll);
 					else
 						llll_appendlong(notell, 0, 0, WHITENULL_llll);
@@ -1246,7 +1495,7 @@ t_llll *score_readxml(t_score *x,
                     llll_appendsym(slotsll, gensym("slots"));
                     
                     if (noteheadslot > 0) {
-                        mxml_node_t *noteheadXML = mxmlFindElement(noteXML, noteXML, "notehead", NULL, NULL, MXML_DESCEND_FIRST);
+                        mxml_node_t *noteheadXML = mxmlFindElement(itemXML, itemXML, "notehead", NULL, NULL, MXML_DESCEND_FIRST);
                         if (noteheadXML) {
                             const char *notehead_txt = mxmlGetText(noteheadXML, NULL);
                             if (notehead_txt) {
@@ -1258,11 +1507,11 @@ t_llll *score_readxml(t_score *x,
                                 else if (!strcmp(notehead_txt, "cross"))
                                     noteheadID = k_NOTEHEAD_PLUS;
                                 else if (!strcmp(notehead_txt, "normal")) {
-                                    xmlwrite_notehead_manage_filled(noteXML, noteheadXML, k_NOTEHEAD_BLACK_NOTE, k_NOTEHEAD_WHITE_NOTE, k_NOTEHEAD_DEFAULT);
+                                    xmlwrite_notehead_manage_filled(itemXML, noteheadXML, k_NOTEHEAD_BLACK_NOTE, k_NOTEHEAD_WHITE_NOTE, k_NOTEHEAD_DEFAULT);
                                 } else if (!strcmp(notehead_txt, "square")) {
-                                    xmlwrite_notehead_manage_filled(noteXML, noteheadXML, k_NOTEHEAD_BLACK_SQUARE, k_NOTEHEAD_WHITE_SQUARE, k_NOTEHEAD_SQUARE);
+                                    xmlwrite_notehead_manage_filled(itemXML, noteheadXML, k_NOTEHEAD_BLACK_SQUARE, k_NOTEHEAD_WHITE_SQUARE, k_NOTEHEAD_SQUARE);
                                 } else if (!strcmp(notehead_txt, "triangle")) {
-                                    xmlwrite_notehead_manage_filled(noteXML, noteheadXML, k_NOTEHEAD_BLACK_TRIANGLE, k_NOTEHEAD_WHITE_TRIANGLE, k_NOTEHEAD_TRIANGLE);
+                                    xmlwrite_notehead_manage_filled(itemXML, noteheadXML, k_NOTEHEAD_BLACK_TRIANGLE, k_NOTEHEAD_WHITE_TRIANGLE, k_NOTEHEAD_TRIANGLE);
                                 }
                                 if (noteheadID > 0) {
                                     t_llll *noteheadll = llll_get();
@@ -1294,7 +1543,7 @@ t_llll *score_readxml(t_score *x,
                     }
                     
                     if (lyricsslot > 0) {
-                        mxml_node_t *lyricXML = mxmlFindElement(noteXML, noteXML, "lyric", NULL, NULL, MXML_DESCEND_FIRST);
+                        mxml_node_t *lyricXML = mxmlFindElement(itemXML, itemXML, "lyric", NULL, NULL, MXML_DESCEND_FIRST);
                         if (lyricXML) {
                             t_llll *lyricsll = llll_get();
                             mxml_node_t *textXML = mxmlFindElement(lyricXML, lyricXML, "text", NULL, NULL, MXML_DESCEND_FIRST);
@@ -1334,89 +1583,52 @@ t_llll *score_readxml(t_score *x,
                         }
                     }
                 }
-                
-                // if there is a chord and we're closing (even if temporarily) this voice,
-                // append to it its articulations and flags
-                if (chordll && (backupXML || !nextnoteXML)) {
-                    if (chordslotsll) {
-                        llll_appendllll(chordll, chordslotsll);
-                    }
-                    llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
-                    chordll = NULL;
-                }
-                
-                if (backupXML) {
-                    
-                    mxml_node_t *durationXML = mxmlFindElement(backupXML, backupXML, "duration", NULL, NULL, MXML_DESCEND_FIRST);
-                    t_rational backupdur = t_rational(mxmlGetInteger(durationXML), divisions);
-                    t_rational getHere = used_duration[current_voice_in_part] - backupdur;
-                    if (getHere < 0) {
-                        object_warn((t_object *) x, "<backup> tag wants to backup too far");
-                        getHere = t_rational(0);
-                    }
-                    long v;
-                    for (v = 0; v <= voices_for_this_xml_part; v++) {
-                        if (used_duration[v] <= getHere)
-                            break;
-                    }
-                    
-                    if (v == voices_for_this_xml_part) {
-                        voicell[v + 1] = llll_clone(voicell[v]);
-                        measurell[v + 1] = llll_clone(measurell[v]);
-                        used_duration[v + 1] = t_rational(0);
-                        
-                        chord_parentll[v] = measurell[v];
-                        ++voices_for_this_xml_part;
-                    }
-                    
-                    if (used_duration[v] < getHere) {
-                        t_rational restdur = - (getHere - used_duration[v]);
-                        chordll = llll_get();
-                        llll_appendrat(chordll, restdur);
-                        llll_appendlong(chordll, 0);
-                        llll_appendllll(chord_parentll[v], chordll);
-                        used_duration[v] = getHere;
-                    }
-                    
-                    current_voice_in_part = v;
-                }
-                
-                xml_get_dynamics(noteXML->next, nextnoteXML, dynamics_text);
-                words = xml_get_words(noteXML->next, nextnoteXML, NULL);
+                xml_get_dynamics(itemXML->next, nextnoteXML, dynamics_text);
+                words = xml_get_words(itemXML->next, nextnoteXML, NULL);
 			}
 			
-			mxml_node_t *barlineXML = mxmlFindElement(measureXML, measureXML, "barline", "bar-style", NULL, MXML_NO_DESCEND);
+            if (chordll) {
+                if (chordslotsll) {
+                    llll_appendllll(chordll, chordslotsll);
+                }
+                llll_appendlong(chordll, 0, 0, WHITENULL_llll); // chord flags
+                chordll = NULL;
+            }
+            
+            mxml_node_t *barlineXML = mxmlFindElement(measureXML, measureXML, "barline", NULL, NULL, MXML_DESCEND_FIRST);
 			if (barlineXML) {
-				const char *bar_styletxt = mxmlElementGetAttr(barlineXML, "bar-style");
-				char barline[2];
-				barline[1] = 0;
-				if (!strcmp(bar_styletxt, "regular"))			*barline = k_BARLINE_NORMAL;
-				else if (!strcmp(bar_styletxt, "dashed"))		*barline = k_BARLINE_DASHED;
-				else if (!strcmp(bar_styletxt, "dotted"))		*barline = k_BARLINE_POINTS;
-				else if (!strcmp(bar_styletxt, "light-light"))	*barline = k_BARLINE_DOUBLE;
-				else if (!strcmp(bar_styletxt, "light-heavy"))	*barline = k_BARLINE_FINAL;
-				else if (!strcmp(bar_styletxt, "none"))			*barline = k_BARLINE_HIDDEN;
-				else if (!strcmp(bar_styletxt, "heavy"))		*barline = k_BARLINE_SOLID;
-				else *barline = 0;
-				t_llll *barlinell = llll_get();
-				llll_appendsym(barlinell, _llllobj_sym_barline, 0, WHITENULL_llll);
-				if (*barline)
-					llll_appendsym(barlinell, gensym(barline), 0, WHITENULL_llll);
-				else
-					llll_appendlong(barlinell, 0, 0, WHITENULL_llll);
-				llll_appendllll(measureinfoll, barlinell, 0, WHITENULL_llll);
+                mxml_node_t *barstyleXML = mxmlFindElement(barlineXML, barlineXML, "bar-style", NULL, NULL, MXML_DESCEND_FIRST);
+                if (barstyleXML) {
+                    const char *bar_styletxt = mxmlGetText(barstyleXML, NULL);
+                    char barline[2];
+                    barline[1] = 0;
+                    if (!strcmp(bar_styletxt, "regular"))			*barline = k_BARLINE_NORMAL;
+                    else if (!strcmp(bar_styletxt, "dashed"))		*barline = k_BARLINE_DASHED;
+                    else if (!strcmp(bar_styletxt, "dotted"))		*barline = k_BARLINE_POINTS;
+                    else if (!strcmp(bar_styletxt, "light-light"))	*barline = k_BARLINE_DOUBLE;
+                    else if (!strcmp(bar_styletxt, "light-heavy"))	*barline = k_BARLINE_FINAL;
+                    else if (!strcmp(bar_styletxt, "none"))			*barline = k_BARLINE_HIDDEN;
+                    else if (!strcmp(bar_styletxt, "heavy"))		*barline = k_BARLINE_SOLID;
+                    else *barline = 0;
+                    t_llll *barlinell = llll_get();
+                    llll_appendsym(barlinell, _llllobj_sym_barline, 0, WHITENULL_llll);
+                    if (*barline)
+                        llll_appendsym(barlinell, gensym(barline), 0, WHITENULL_llll);
+                    else
+                        llll_appendlong(barlinell, 0, 0, WHITENULL_llll);
+                    llll_appendllll(measureinfoll, barlinell, 0, WHITENULL_llll);
+                }
 			}
             
             llll_prependllll(measurell[0], measureinfoll, 0, WHITENULL_llll);
             llll_appendlong(measurell[0], 0, 0, WHITENULL_llll); // measure flags
-
-            for (long i = 1; i < voices_for_this_xml_part; i++) {
+            llll_appendllll(voicell[0], measurell[0]);
+            
+            for (long i = 1; i <= voices_for_this_xml_part; i++) {
                 llll_prependllll_clone(measurell[i], measureinfoll);
                 llll_appendlong(measurell[i], 0, 0, WHITENULL_llll); // measure flags
-            }
-
-            for (long i = 0; i < voices_for_this_xml_part; i++)
                 llll_appendllll(voicell[i], measurell[i]);
+            }
 
 			isfirstmeasure = 0;
 		}
@@ -1429,7 +1641,7 @@ t_llll *score_readxml(t_score *x,
         }
         
         llll_free(voicell[voices_for_this_xml_part]);
-        llll_appendlong(numpartsll, voices_for_this_xml_part + 1); // numparts has been added to scorell at the beginning
+        llll_appendlong(numpartsll, voices_for_this_xml_part); // numparts has been added to scorell at the beginning
 
         llll_free(words);
 	}
@@ -1544,7 +1756,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 			t_slotinfo *this_slot_info = &x->r_ob.slotinfo[(*this_slotnum) - 1];
 			long slot_type = this_slot_info->slot_type;
 			if (slot_type == k_SLOT_TYPE_NONE) {
-				object_warn((t_object *) x, "Slot %ld does is of type none", *this_slotnum);
+				object_warn((t_object *) x, "Slot %ld is of type none", *this_slotnum);
 				llll_destroyelem(this_slotnum_elem);
 			} else /* if (slot_type != k_SLOT_INT || 
 					   slot_type != k_SLOT_FLOAT ||
@@ -1559,7 +1771,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 		}
 	}
 	
+    //////////////////
 	// prepare the dynamics slot
+    //////////////////
     char dynamics_slot_is_text = false;
 	if (dynamics_slot > 0) {
 		if (dynamics_slot > CONST_MAX_SLOTS) {
@@ -1581,7 +1795,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	}
 	dynamics_slot --;
 
+    //////////////////
     // checking articulations slot
+    //////////////////
     if (articulations_slot > 0) {
         if (articulations_slot > CONST_MAX_SLOTS) {
             object_warn((t_object *) x, "Slot %ld does not exist", articulations_slot);
@@ -1661,11 +1877,16 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 	}
 	
     
-    //////////
+    //////////////////
+    //////////////////
     // here we export the body of the score
+    //////////////////
+    //////////////////
 
+    //////////////////
     // first, pass through all the score to calculate a value of the division attribute that is valid for every measure
-    // this is not too elegant, but makes things much simpler with voice ensembles
+    // this is not very elegant, but makes things much simpler with voice ensembles
+    //////////////////
     divisions = 16;
     for (voiceidx = 1, voice = x->firstvoice; voice && voiceidx <= numparts; voiceidx++, voice = voice->next) {
         for (measure = voice->firstmeasure; measure; measure = measure->next) {
@@ -1769,93 +1990,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 }
                 
                 if (measureidx == 1) {
-                    // CLEFS
-                    switch (clef) {
-                        case k_CLEF_F:
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, NULL);
-                            break;
-                        case k_CLEF_G8va:
-                            bach_xml_add_clef(attributesxml, "G", 2, 1, NULL);
-                            break;
-                        case k_CLEF_G15ma:
-                            bach_xml_add_clef(attributesxml, "G", 2, 2, NULL);
-                            break;
-                        case k_CLEF_F8vb:
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, NULL);
-                            break;
-                        case k_CLEF_F15mb:
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, NULL);
-                            break;
-                        case k_CLEF_SOPRANO:
-                            bach_xml_add_clef(attributesxml, "C", 5, 0, NULL);
-                            break;
-                        case k_CLEF_MEZZO:
-                            bach_xml_add_clef(attributesxml, "C", 4, 0, NULL);
-                            break;
-                        case k_CLEF_ALTO:
-                            bach_xml_add_clef(attributesxml, "C", 3, 0, NULL);
-                            break;
-                        case k_CLEF_TENOR:
-                            bach_xml_add_clef(attributesxml, "C", 2, 0, NULL);
-                            break;
-                        case k_CLEF_BARYTONE:
-                            bach_xml_add_clef(attributesxml, "C", 1, 0, NULL);
-                            break;
-                        case k_CLEF_FF:
-                            staves = 2;
-                            splitpoints[0] = 4000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "1");
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, "2");
-                            break;
-                        case k_CLEF_FG:
-                            staves = 2;
-                            splitpoints[0] = 6000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "2");
-                            break;
-                        case k_CLEF_GG:
-                            staves = 2;
-                            splitpoints[0] = 7900;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 2);
-                            bach_xml_add_clef(attributesxml, "G", 2, 2, "1");
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
-                            break;
-                        case k_CLEF_FFG:
-                            staves = 3;
-                            splitpoints[0] = 6000;
-                            splitpoints[1] = 4000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 3);
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "2");
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, "3");
-                            break;
-                        case k_CLEF_FGG:
-                            staves = 3;
-                            splitpoints[0] = 7900;
-                            splitpoints[1] = 6000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 3);
-                            bach_xml_add_clef(attributesxml, "G", 2, 1, "1");
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "3");
-                            break;
-                        case k_CLEF_FFGG:
-                            staves = 4;
-                            splitpoints[0] = 7900;
-                            splitpoints[1] = 6000;
-                            splitpoints[2] = 4000;
-                            bach_mxmlNewIntElement(attributesxml, "staves", 0, 4);
-                            bach_xml_add_clef(attributesxml, "G", 2, 1, "1");	
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "2");
-                            bach_xml_add_clef(attributesxml, "F", 4, 0, "3");
-                            bach_xml_add_clef(attributesxml, "F", 4, -1, "4");
-                            break;
-                        case k_CLEF_G:
-                        default:
-                            bach_xml_add_clef(attributesxml, "G", 2, 0, "1");
-                            break;
-                    }
+                    score_xml_add_clefs(attributesxml, clef, &staves, splitpoints);
                 }
                 
                 // tempo
@@ -1967,9 +2102,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                                                                         //     of the same chord (first note having dynamics wins in
                                                                                         //     the dynamics display!)...
                                 !(note->tie_from && single)) {                          // ... unless the slot is marked as "single slot for tied notes"
-                                                                                        // and the note has a tie arriving to it
+                                                                                        // and the note has a tie arriving to it...
                                 
-                                // we need to export the dynamics
+                                // ...then we need to export the dynamics
 								char text[2048];
                                 
                                 // is there an hairpin that is currently "open"? e.g. did a previous dynamics end with < or > ?
@@ -2804,10 +2939,10 @@ void bach_xml_add_ornament(const t_articulations_typo_preferences *atp, mxml_nod
             bach_mxmlNewTextElement(notations, "accidental-mark", 0, id == k_ARTICULATION_TRILL_FLAT ? "flat" : "sharp");
             *ornaments = mxmlNewElement(notations, "ornaments");
             break;
-        case k_ARTICULATION_MORDENT_UP:
+        case k_ARTICULATION_MORDENT_DOWN:
             mxmlNewElement(*ornaments, "mordent");
             break;
-        case k_ARTICULATION_MORDENT_DOWN:
+        case k_ARTICULATION_MORDENT_UP:
             mxmlNewElement(*ornaments, "inverted-mordent");
             break;
         case k_ARTICULATION_DOUBLE_MORDENT:
@@ -2988,6 +3123,7 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
 		!strcmp(name, "dynamics") ||
 		!strcmp(name, "tremolo") ||
 		!strcmp(name, "clef-octave-change") ||
+        !strcmp(name, "voice") ||
 		!strcmp(name, "offset"))
 		return MXML_INTEGER;
 	else if (!strcmp(name, "alter") ||

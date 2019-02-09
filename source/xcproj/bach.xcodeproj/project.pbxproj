@@ -249,7 +249,7 @@
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
 		1EB4D4821610CB740041ABFB /* roll_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4801610CB740041ABFB /* roll_files.h */; };
 		1EB4D4A11610CCB20041ABFB /* score_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D49F1610CCB20041ABFB /* score_files.h */; };
-		1EB4D4A21610CCB20041ABFB /* score_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D4A01610CCB20041ABFB /* score_files.c */; };
+		1EB4D4A21610CCB20041ABFB /* score_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D4A01610CCB20041ABFB /* score_files.cpp */; };
 		1EC5F4731BDFC21600669257 /* bach_graphics.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EC5F4711BDFC21600669257 /* bach_graphics.h */; };
 		1EC5F4741BDFC21600669257 /* bach_graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EC5F4721BDFC21600669257 /* bach_graphics.c */; };
 		1ED42DB51F8A9D17008EC1D9 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
@@ -2859,7 +2859,7 @@
 		1EB4D4831610CB930041ABFB /* notation_files.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_files.h; sourceTree = "<group>"; };
 		1EB4D4841610CB930041ABFB /* notation_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_files.c; sourceTree = "<group>"; };
 		1EB4D49F1610CCB20041ABFB /* score_files.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = score_files.h; sourceTree = "<group>"; };
-		1EB4D4A01610CCB20041ABFB /* score_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = score_files.c; sourceTree = "<group>"; };
+		1EB4D4A01610CCB20041ABFB /* score_files.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = score_files.cpp; sourceTree = "<group>"; };
 		1EB99F3F15164BE900B02E03 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		1EB99F4015164BE900B02E03 /* mxml-attr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-attr.c"; sourceTree = "<group>"; };
 		1EB99F4115164BE900B02E03 /* mxml-entity.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-entity.c"; sourceTree = "<group>"; };
@@ -5571,7 +5571,7 @@
 				1EB4D47F1610CB740041ABFB /* roll_files.c */,
 				1EB4D4801610CB740041ABFB /* roll_files.h */,
 				91D7C8E01233A82A00D767D4 /* rot.c */,
-				1EB4D4A01610CCB20041ABFB /* score_files.c */,
+				1EB4D4A01610CCB20041ABFB /* score_files.cpp */,
 				1EB4D49F1610CCB20041ABFB /* score_files.h */,
 				91715D49123FBF700052DC28 /* scramble.c */,
 				91D31A9B148BFC77003323D7 /* shelf.c */,
@@ -12331,7 +12331,7 @@
 			files = (
 				917BD551126F63C800A6DAFC /* score.c in Sources */,
 				9134EB9613A1FC9300427397 /* score_api.c in Sources */,
-				1EB4D4A21610CCB20041ABFB /* score_files.c in Sources */,
+				1EB4D4A21610CCB20041ABFB /* score_files.cpp in Sources */,
 				1E53253E20FB7296001C4EAF /* bach_jit.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -14754,7 +14754,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PRODUCT_VERSION = 0.8.0.2;
+				PRODUCT_VERSION = 0.8.0.3;
 				SDKROOT = macosx;
 			};
 			name = Development;
@@ -14768,7 +14768,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PRODUCT_VERSION = 0.8.0.2;
+				PRODUCT_VERSION = 0.8.0.3;
 				SDKROOT = macosx;
 			};
 			name = Deployment;

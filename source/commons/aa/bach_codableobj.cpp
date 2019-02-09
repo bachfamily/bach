@@ -78,14 +78,15 @@ t_max_err codableobj_buildAst(t_codableobj *x,
     if (!x->c_text || !(*x->c_text))
         return 0;
     t_max_err err = MAX_ERR_NONE;
-    if (x->c_main)
-        (x->c_main)->decrease();
     t_mainFunction *newMain = codableobj_parse_buffer(x, codeac, dataInlets, dataOutlets, directInlets, directOutlets);
-    if (newMain)
+    if (newMain) {
+        if (x->c_main)
+            x->c_main->decrease();
         x->c_main = newMain;
-    else
+    } else {
         err = MAX_ERR_GENERIC;
-    return err;
+        object_error((t_object *) x, "Ignoring bad code in the editor");
+    } return err;
 }
 
 
@@ -317,7 +318,7 @@ void codableobj_dblclick_helper(t_codableobj *x, t_symbol *title)
         object_attr_setchar(x->c_editor, gensym("visible"), 1);
     
     void *rv = object_method(x->c_editor, _sym_settext, x->c_text, gensym("utf-8"));
-    if (rv) {
+    if (rv && x->c_text) {
         t_object *ed = x->c_editor;
         x->c_editor = NULL;
         object_free(ed);
