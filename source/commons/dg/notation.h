@@ -7588,6 +7588,15 @@ double notation_item_get_cents(t_notation_obj *r_ob, t_notation_item *it);
  */
 t_pitch notation_item_get_pitch(t_notation_obj *r_ob, t_notation_item *it);
 
+/** Obtain the pitch or cents of a given notation item (or 0 if none).
+    If the pitch is user defined, then it is put inside the <poc> variable, otherwise cents are put there.
+    @ingroup        notation
+    @param    r_ob    The notation object
+    @param    it        The notation item
+    @param    poc       Pointer that will be filled with the pitch or cents of the notation item.
+ */
+void notation_item_get_poc(t_notation_obj *r_ob, t_notation_item *it, t_hatom *poc);
+
 
 /** Obtain the rational symbolic onset of a given notation item (or zero if none).
 	@ingroup		notation
@@ -18866,18 +18875,21 @@ void change_double(t_notation_obj *r_ob, double *number, t_lexpr *lexpr, t_lllle
 void change_rational(t_notation_obj *r_ob, t_rational *number, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
 
-/**	Change the value of a pitch according to a given lexpr or to a given llllelem indication. Possibilities are the same as the change_long() function.
+/**	Change the value of a pitch according to a given lexpr or to a given llllelem indication. Possibilities are the same as the change_long() function. IMPORTANT: according to the result of the expression, either the <pitch> or the <cents> are changed. In the first case, 0 is
+    returned, while in the second case 1 is returned.
 	If the lexpr is non-NULL, such lexpr is used and the modify element is ignored. If lexpr is NULL, the #modify element is used.
  
 	@param	r_ob			The notation object
-	@param number			Pointer to the number to be modified
+	@param pitch			Pointer to the pitch to be modified
+    @param cents            Pointer to the midicents to be modified
 	@param lexpr			The lexpr to modify the number (lexpr will accept also standard substitutions of a notation item parameters, set by #lexpr_argument)
 	@param modify			A #t_llllelem containing eithing the new number (as #H_DOUBLE, #H_LONG or #H_RAT) or the instruction to modify the number (as #H_LLLL, see change_long() for all possibilities)
 	@param lexpr_argument	The notation item whose elements parameter have to be used in lexpr
+    @return                 0 if result was a pitch (put inside <pitch>), 1 if result was a number (put inside <cents>)
 	@see					change_long()
 	@ingroup				math
  */
-void change_pitch(t_notation_obj *r_ob, t_pitch *pitch, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
+long change_pitch(t_notation_obj *r_ob, t_pitch *pitch, double *cents, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);
 
 
 void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument);

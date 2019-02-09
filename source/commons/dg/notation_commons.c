@@ -12,8 +12,8 @@
 
 // GLOBAL VARIABLE
 
-const char *notation_obj_lexpr_subs[] = {"onset", "cents", "duration", "velocity", "symduration", "symonset", "tail", "symtail", "voice", "measure", "tie", "noteindex", "chordindex", "index", "grace", "pitch", "part", "voiceensemble"};
-const long notation_obj_lexpr_subs_count = 18;
+const char *notation_obj_lexpr_subs[] = {"onset", "cents", "duration", "velocity", "symduration", "symonset", "tail", "symtail", "voice", "measure", "tie", "noteindex", "chordindex", "index", "grace", "pitch", "part", "voiceensemble", "poc"};
+const long notation_obj_lexpr_subs_count = 19;
 
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, voicenames_as_llll, notation_obj_getattr_voicenames)
@@ -5665,7 +5665,11 @@ t_pitch pitch_fromMC(long tone_division, char accidentals_preferences, double mc
 
 t_lexpr *notation_obj_lexpr_new(short ac, t_atom *av)
 {
-	return lexpr_new(ac, av, notation_obj_lexpr_subs_count, notation_obj_lexpr_subs, NULL);
+	t_lexpr *le = lexpr_new(ac, av, notation_obj_lexpr_subs_count, notation_obj_lexpr_subs, NULL);
+    if (!le) {
+        error("Expression contains errors.");
+    }
+    return le;
 }
 
 
@@ -21258,14 +21262,11 @@ char measure_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_measu
 void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *note, char also_remove_previous_ties){
 	long i;
 
-//    notation_obj_check_force(r_ob, false);
 	if (notation_item_is_selected(r_ob, (t_notation_item *)note))
 		notation_item_delete_from_selection(r_ob, (t_notation_item *)note);
 
 	if (notation_item_is_preselected(r_ob, (t_notation_item *)note))
 		notation_item_delete_from_preselection(r_ob, (t_notation_item *)note);
-
-//    notation_obj_check_force(r_ob, false);
 
     if (r_ob->lambda_selected_item_ID == note->r_it.ID)
 		r_ob->lambda_selected_item_ID = 0;
@@ -21282,13 +21283,10 @@ void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *no
 	if (r_ob->m_inspector.active_bach_inspector_obj_type == k_NOTE && (t_note *)r_ob->m_inspector.active_bach_inspector_item == note)
 		close_bach_inspector(r_ob, &r_ob->m_inspector);
 
-//    notation_obj_check_force(r_ob, false);
 
-	check_undo_notation_items_under_tick_dependencies(r_ob, (t_notation_item *)note);
-//    notation_obj_check_force(r_ob, false);
+    check_undo_notation_items_under_tick_dependencies(r_ob, (t_notation_item *)note);
 
 	if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-//        notation_obj_check_force(r_ob, false); // DOESN'T CRASH
         if (note->tie_to) {
             if (note->tie_to != (t_note *) WHITENULL)
                 note->tie_to->tie_from = NULL;
@@ -21301,7 +21299,6 @@ void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *no
                 }
             }
         }
-//        notation_obj_check_force(r_ob, false); // CRASHES HERE!!!!
         
         if (note->tie_from) {
             if (note->tie_from != (t_note *) WHITENULL)
@@ -28848,6 +28845,9 @@ t_chord *chord_get_next(t_chord *chord)
 	if (chord->next)
 		return chord->next;
 	
+    if (!chord->parent) // special case, only happens for chords created a bit "on the fly" and not inserted in measures
+        return NULL;
+    
 	meas = chord->parent->next; 
 	while (meas) {
 		if (meas->firstchord)
@@ -29636,6 +29636,7 @@ t_hatom *lexpr_eval_for_notation_item(t_notation_obj *r_ob, t_notation_item *it,
     hatom_setpitch(vars+15, notation_item_get_pitch(r_ob, it));
     hatom_setlong(vars+16, notation_item_get_partnumber(r_ob, it) + 1);
     hatom_setlong(vars+17, notation_item_get_voiceensemble(r_ob, it) + 1);
+    notation_item_get_poc(r_ob, it, vars+18);
 	return lexpr_eval(lexpr, vars);
 }
 
@@ -29779,16 +29780,30 @@ void change_long(t_notation_obj *r_ob, long *number, t_lexpr *lexpr, t_llllelem 
 	}
 }
 
-void change_pitch(t_notation_obj *r_ob, t_pitch *pitch, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument) {
+// returns 0 if pitch as filled or 1 if cents was filled
+long change_pitch(t_notation_obj *r_ob, t_pitch *pitch, double *cents, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument) {
     // we modify a pitch via a llllelem (which could be a float itself or a list)
     // if modify is a list it can be of the type (new_value +) or (new_value *)
+    long ret = 0;
     if (lexpr) {
         t_hatom *res = lexpr_eval_for_notation_item(r_ob, (t_notation_item *)lexpr_argument, lexpr);
-        *pitch = hatom_getpitch(res, r_ob->tone_division, r_ob->accidentals_preferences);
+        if (hatom_gettype(res) == H_PITCH) {
+            *pitch = hatom_getpitch(res, r_ob->tone_division, r_ob->accidentals_preferences);
+        } else {
+            *cents = hatom_getdouble(res);
+            ret = 1;
+        }
         bach_freeptr(res);
     } else if (modify) {
-        change_pitch_from_llllelem(r_ob, pitch, modify);
+        t_llll *thisllll;
+        if (hatom_gettype(&modify->l_hatom) == H_PITCH || (hatom_gettype(&modify->l_hatom) == H_LLLL && (thisllll = hatom_getllll(&modify->l_hatom))->l_size > 0 && hatom_gettype(&thisllll->l_head->l_hatom) == H_PITCH)) {
+            change_pitch_from_llllelem(r_ob, pitch, modify);
+        } else {
+            change_double_from_llllelem(cents, modify, false);
+            ret = 1;
+        }
     }
+    return ret;
 }
 
 void change_poc(t_notation_obj *r_ob, t_hatom *poc, t_lexpr *lexpr, t_llllelem *modify, void *lexpr_argument) {
@@ -33129,9 +33144,15 @@ char change_note_pitch_from_lexpr_or_llll(t_notation_obj *r_ob, t_note *note, t_
     char changed = 0;
     if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)note)) && (lexpr || (new_pitch && new_pitch->l_head))) {
         t_pitch pitch = note_get_pitch(r_ob, note);
+        double cents = note->midicents;
         create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)note, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-        change_pitch(r_ob, &pitch, lexpr, new_pitch ? new_pitch->l_head : NULL, (t_notation_item *)note);
-        note_set_user_enharmonicity(note, pitch);
+        if (change_pitch(r_ob, &pitch, &cents, lexpr, new_pitch ? new_pitch->l_head : NULL, (t_notation_item *)note)) {
+            note->midicents = cents;
+            note_set_auto_enharmonicity(note);
+            note_compute_approximation(r_ob, note);
+        } else {
+            note_set_user_enharmonicity(note, pitch);
+        }
         changed = 1;
     }
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
@@ -33151,9 +33172,15 @@ char change_chord_pitch_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *chord,
     for (nt=chord->firstnote; nt; nt = nt->next) {
         if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)nt)) && (lexpr || thiselem)) {
             t_pitch pitch = note_get_pitch(r_ob, nt);
+            double cents = nt->midicents;
             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)chord, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-            change_pitch(r_ob, &pitch, lexpr, thiselem, (t_notation_item *)nt);
-            note_set_user_enharmonicity(nt, pitch);
+            if (change_pitch(r_ob, &pitch, &cents, lexpr, thiselem, (t_notation_item *)nt)) {
+                nt->midicents = cents;
+                note_set_auto_enharmonicity(nt);
+                note_compute_approximation(r_ob, nt);
+            } else {
+                note_set_user_enharmonicity(nt, pitch);
+            }
             if (thiselem && thiselem->l_next)
                 thiselem = thiselem->l_next;
             changed = 1;
@@ -35982,6 +36009,39 @@ t_pitch notation_item_get_pitch(t_notation_obj *r_ob, t_notation_item *it)
         case k_LOOP_END: return t_pitch::NaP;
         case k_LOOP_REGION: return t_pitch::NaP;
         default: return t_pitch::NaP;
+    }
+}
+
+void notation_item_get_poc(t_notation_obj *r_ob, t_notation_item *it, t_hatom *poc)
+{
+    switch (it->type) {
+        case k_NOTE:
+            note_get_poc(r_ob, (t_note *)it, poc);
+            return;
+        case k_CHORD:
+            if (((t_chord *)it)->firstnote)
+                note_get_poc(r_ob, ((t_chord *)it)->firstnote, poc);
+            else
+                hatom_setdouble(poc, 0);
+            return;
+        case k_PITCH_BREAKPOINT:
+            hatom_setdouble(poc, ((t_bpt *)it)->owner->midicents + ((t_bpt *)it)->delta_mc);
+            return;
+        case k_DURATION_LINE:
+            note_get_poc(r_ob, ((t_duration_line *)it)->owner, poc);
+            return;
+        case k_LYRICS:
+        case k_DYNAMICS:
+        case k_MEASURE:
+        case k_TEMPO:
+        case k_VOICE:
+        case k_MARKER:
+        case k_LOOP_START:
+        case k_LOOP_END:
+        case k_LOOP_REGION:
+        default:
+            hatom_setdouble(poc, 0);
+            return;
     }
 }
 

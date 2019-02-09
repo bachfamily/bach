@@ -1773,8 +1773,14 @@ void score_sel_change_pitch(t_score *x, t_symbol *s, long argc, t_atom *argv)
                         if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt) && thiselem) {
                             create_simple_selected_notation_item_undo_tick((t_notation_obj *)x, curr_it, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
                             t_pitch pitch = note_get_pitch((t_notation_obj *)x, nt);
-                            change_pitch((t_notation_obj *)x, &pitch, lexpr, thiselem, (t_notation_item *)nt);
-                            note_set_user_enharmonicity(nt, pitch);
+                            double cents = nt->midicents;
+                            if (change_pitch((t_notation_obj *)x, &pitch, &cents, lexpr, thiselem, (t_notation_item *)nt)){
+                                nt->midicents = cents;
+                                note_set_auto_enharmonicity(nt);
+                                note_compute_approximation((t_notation_obj *)x, nt);
+                            } else {
+                                note_set_user_enharmonicity(nt, pitch);
+                            }
                             if (thiselem && thiselem->l_next)
                                 thiselem = thiselem->l_next;
                             changed = 1;

@@ -3022,9 +3022,9 @@ void roll_sel_change_cents(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 	
 	if (argc <= 0) return;
 
-	if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("="))
-		lexpr = notation_obj_lexpr_new(argc - 1, argv + 1);
-	else
+    if (atom_gettype(argv) == A_SYM && atom_getsym(argv) == gensym("=")) {
+        lexpr = notation_obj_lexpr_new(argc - 1, argv + 1);
+    } else
 		new_cents = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
 
 	lock_general_mutex((t_notation_obj *)x);

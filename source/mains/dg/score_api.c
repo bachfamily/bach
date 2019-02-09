@@ -11556,6 +11556,7 @@ void score_swap_voices(t_score *x, t_scorevoice *v1, t_scorevoice *v2)
 		auto_set_rectangle_size((t_notation_obj *) x);
 	else
 		calculate_voice_offsets((t_notation_obj *) x);
+    recompute_all_and_redraw(x);
 	notationobj_invalidate_notation_static_layer_and_redraw((t_notation_obj *) x);
 	
 }
