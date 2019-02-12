@@ -85,8 +85,9 @@ t_max_err codableobj_buildAst(t_codableobj *x,
         x->c_main = newMain;
     } else {
         err = MAX_ERR_GENERIC;
-        object_error((t_object *) x, "Ignoring bad code in the editor");
-    } return err;
+        //object_error((t_object *) x, "Ignoring bad code in the editor");
+    }
+    return err;
 }
 
 
@@ -150,6 +151,7 @@ void codableobj_okclose(t_codableobj *x, char *s, short *result)
                         *result = 0;
                     else
                         *result = 3;
+                    object_error((t_object *) x, "Ignoring bad code in the editor");
                     break;
                 case 3: // revert
                     x->c_text = oldCode;
@@ -548,7 +550,9 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
                 *(x->c_text + codeLen) = 0;
             }
             long dummy;
-            codableobj_buildAst(x, &dummy, dataInlets, dataOutlets, directInlets, directOutlets);
+            if (codableobj_buildAst(x, &dummy, dataInlets, dataOutlets, directInlets, directOutlets) != MAX_ERR_NONE) {
+                object_error((t_object *) x, "Ignoring bad code in the editor");
+            }
         }
     }
 }
