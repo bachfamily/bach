@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -113,12 +113,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"linecount" : 6,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 205.0, 580.0, 94.0 ],
-					"text" : "The name of a local variable, after the dollar sign, must start with a letter or an underscore, and the following characters can be letters, underscores or numbers.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$x<n>, $l<N>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, $dx<N>, where <N> is any non-negative integer.",
+					"patching_rect" : [ 14.0, 205.0, 580.0, 108.0 ],
+					"text" : "The name of a local variable, after the dollar sign, must start with a letter, optionally followed by one or more letters, underscores or numbers, and end with a letter or number.\nThus, examples of legal names are $a, $me, $a1_b2_c3.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$x<n>, $l<N>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, $dx<N>, where <N> is any non-negative integer.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
