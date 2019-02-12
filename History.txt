@@ -27,6 +27,7 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 			if you did NOT want this, simply set @applyslope to 0.
 		The attribute @notificationsformessages is now called @notifymessages. 
 			Backwards compatibility SHOULD be preserved, but verify your patches.
+		The "interp" and "sample" message now only output a single slot value for temporal slots.
 
 - bach.score	@dlspansties is now 1 by default
 

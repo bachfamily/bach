@@ -1714,12 +1714,13 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
         
         llll_free(ll);
     }
+    unlock_general_mutex(r_ob);
 
     
     // 3. deleting unnecessary dynamics
     notationobj_check_dynamics(r_ob, slot_num, true, delete_unnecessary, true, delete_unnecessary, selection_only, false);
 
-
+    lock_general_mutex(r_ob);
     check_slot_linkage_recomputations_for_everything(r_ob, slot_num);
     unlock_general_mutex(r_ob);
 

@@ -27911,6 +27911,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 	
     t_slot *slot = notation_item_get_slot(r_ob, nitem, slotnum);
     double rangeslope = r_ob->slotinfo[slotnum].slot_range_par;
+    char is_relative = (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE);
 
     if (!slot)
         return inner4_llll;
@@ -27919,12 +27920,12 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 		case k_SLOT_TYPE_FUNCTION: { 
 			t_slotitem *temp_item = slot->firstitem;
 			double new_x_pos = 0.;
-			if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING)
-				&& !only_get_selected_items && slot_is_temporal(r_ob, j)) { // adding partial tempitems if function is temporal!
+			if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) && !only_get_selected_items && slot_is_temporal(r_ob, j)) {
+                // adding partial tempitems if function is temporal!
                 
                 double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
                 
-                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) < hot_point))
+                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? notation_item_get_duration_ms(r_ob, nitem) : 1) < hot_point))
                     temp_item = temp_item->next;
                 if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) != hot_point)) {
                     double this_x = ((t_pts *)temp_item->item)->x; double prev_x = ((t_pts *)temp_item->prev->item)->x;
@@ -27944,11 +27945,15 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                     else
                         new_y_pos = this_y + prev_y - rescale_with_slope(prev_y - new_y_pos, 0, prev_y - this_y, this_y, prev_y, this_slope);
                     
-                    inner5_llll = llll_get();
-                    llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // relative x position
-                    llll_appenddouble(inner5_llll, new_y_pos, 0, WHITENULL_llll); // y position
-                    llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // first
-                    llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
+                    if (mode == k_CONSIDER_FOR_SAMPLING) {
+                        llll_appenddouble(inner4_llll, new_y_pos, 0, WHITENULL_llll); // y position only
+                    } else {
+                        inner5_llll = llll_get();
+                        llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // relative x position
+                        llll_appenddouble(inner5_llll, new_y_pos, 0, WHITENULL_llll); // y position
+                        llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); //
+                        llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
+                    }
                 }
 			}
 			if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {
@@ -27977,7 +27982,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 			if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING)
 				&& !only_get_selected_items && slot_is_temporal(r_ob, j)) { // adding partial tempitems if function is temporal!
 				double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-				while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts3d *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) < hot_point))
+				while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts3d *)temp_item->item)->x * (is_relative ? notation_item_get_duration_ms(r_ob, nitem) : 1) < hot_point))
 					temp_item = temp_item->next;
 				if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts3d *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) != hot_point)) {
 					double this_x = ((t_pts3d *)temp_item->item)->x; 
@@ -28008,12 +28013,17 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 					else
 						new_z_pos = this_z + prev_z - rescale_with_slope(prev_z - new_z_pos, 0, prev_z - this_z, this_z, prev_z, this_slope);
 					
-					inner5_llll = llll_get();
-					llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // relative x position
-					llll_appenddouble(inner5_llll, new_y_pos, 0, WHITENULL_llll); // y position
-					llll_appenddouble(inner5_llll, new_z_pos, 0, WHITENULL_llll); // z position
-					llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // first
-					llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
+                    if (mode == k_CONSIDER_FOR_SAMPLING) {
+                        llll_appenddouble(inner4_llll, new_y_pos, 0, WHITENULL_llll); // y position
+                        llll_appenddouble(inner4_llll, new_z_pos, 0, WHITENULL_llll); // z position
+                    } else {
+                        inner5_llll = llll_get();
+                        llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // relative x position
+                        llll_appenddouble(inner5_llll, new_y_pos, 0, WHITENULL_llll); // y position
+                        llll_appenddouble(inner5_llll, new_z_pos, 0, WHITENULL_llll); // z position
+                        llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // first
+                        llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
+                    }
 				}
 			}
 			if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {
@@ -28043,7 +28053,7 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
             double new_t_pos = 0.;
 			if ((mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) && !only_get_selected_items) { // adding partial tempitems
 				double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-				while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_spatpt *)temp_item->item)->t * notation_item_get_duration_ms(r_ob, nitem) < hot_point))
+				while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_spatpt *)temp_item->item)->t * (is_relative ? notation_item_get_duration_ms(r_ob, nitem) : 1) < hot_point))
 					temp_item = temp_item->next;
 				if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_spatpt *)temp_item->item)->t * notation_item_get_duration_ms(r_ob, nitem) != hot_point)) {
 					double this_t = ((t_spatpt *)temp_item->item)->t; double prev_t = ((t_spatpt *)temp_item->prev->item)->t;
@@ -28056,11 +28066,16 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
 					new_r = prev_r + t_ratio * (this_r - prev_a);
 					new_a = prev_a + t_ratio * (this_a - prev_r);
 					
-					inner5_llll = llll_get();
-					llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // t
-					llll_appenddouble(inner5_llll, new_r, 0, WHITENULL_llll); //radius
-					llll_appenddouble(inner5_llll, new_a, 0, WHITENULL_llll); // angle
-					llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
+                    if (mode == k_CONSIDER_FOR_SAMPLING) {
+                        llll_appenddouble(inner4_llll, new_r, 0, WHITENULL_llll); //radius
+                        llll_appenddouble(inner4_llll, new_a, 0, WHITENULL_llll); // angle
+                    } else {
+                        inner5_llll = llll_get();
+                        llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); // t
+                        llll_appenddouble(inner5_llll, new_r, 0, WHITENULL_llll); //radius
+                        llll_appenddouble(inner5_llll, new_a, 0, WHITENULL_llll); // angle
+                        llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
+                    }
 				}
 			}
 			if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {

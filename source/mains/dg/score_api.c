@@ -5210,7 +5210,7 @@ void check_if_need_to_splatter_level_when_turning_note_to_rest(t_score *x, t_cho
 }
 
 
-char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics, char delete_dynamics, t_llll *slots_to_transfer_to_next_note_in_chord_1based, char transfer_slots_even_if_empty, char transfer_slots_even_to_rests)
+char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics, char delete_dynamics, t_llll *slots_to_transfer_to_next_note_in_chord_1based, char transfer_slots_even_if_empty, char transfer_slots_even_to_rests, char also_clear_selection)
 { 
 	//delete chords/notes within the selected region: actually, it turns them into rests
 	t_notation_item *curr_it, *next_item = NULL;
@@ -5312,8 +5312,10 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
             changed |= delete_chord_dynamics((t_notation_obj *) x, (t_chord *) dy->owner);
 		}
 		curr_it = next_item;
-	}
-	clear_selection((t_notation_obj *) x);
+    }
+    
+    if (also_clear_selection)
+        clear_selection((t_notation_obj *) x);
 	unlock_general_mutex((t_notation_obj *)x);	
 
 	check_correct_scheduling((t_notation_obj *)x, true);

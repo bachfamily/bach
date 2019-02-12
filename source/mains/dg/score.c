@@ -1064,7 +1064,7 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
 	t_notation_item *lambda_it = x->r_ob.lambda_selected_item_ID > 0 ? (t_notation_item *) shashtable_retrieve(x->r_ob.IDtable, x->r_ob.lambda_selected_item_ID) : NULL;
 	
 	// this must be here at the beginning, because it changes the selected items!
-	turn_selection_into_rests(x, true, true, true, transfer_slots, even_if_empty, even_to_rests);
+	turn_selection_into_rests(x, true, true, true, transfer_slots, even_if_empty, even_to_rests, false);
 
 	lock_general_mutex((t_notation_obj *)x);
 
@@ -1082,6 +1082,8 @@ void score_sel_delete(t_score *x, t_symbol *s, long argc, t_atom *argv)
 		
 		score_sel_delete_item(x, curr_it, &need_check_scheduling, transfer_slots, even_if_empty, even_to_rests);
 	}
+    
+    clear_selection((t_notation_obj *)x);
 	
     if (transfer_slots)
         llll_free(transfer_slots);
@@ -15152,6 +15154,8 @@ void score_paste_measures(t_score *x, long at_this_measure_1based, long from_thi
     
     for (long i = 0; i < how_many_times; i++)
         insert_measures_from_message(x, from_this_voice_1based, x->r_ob.num_voices, at_this_measure_1based, ll, true);
+    
+    perform_analysis_and_change(x, NULL, NULL, k_BEAMING_CALCULATION_DO);
     
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_PASTE_MEASURES);
     llll_free(ll);

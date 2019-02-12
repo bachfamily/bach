@@ -228,7 +228,7 @@ char voiceensemble_delete_measure(t_score *x, t_measure *measure, t_chord *updat
 void turn_measure_into_single_rest(t_score *x, t_measure *measure);
 void voiceensemble_turn_measure_into_single_rest(t_score *x, t_measure *measure);
 void measure_delete_all_chords(t_score *x, t_measure *measure);
-char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics, char delete_dynamics, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false, char transfer_slots_even_to_rests = false);
+char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics, char delete_dynamics, t_llll *slots_to_transfer_to_next_note_in_chord_1based = NULL, char transfer_slots_even_if_empty = false, char transfer_slots_even_to_rests = false, char also_clear_selection = true);
 long score_oksize(t_score *x, t_rect *newrect);
 long get_global_num_notes(t_score *x);
 long get_global_num_notes_voice(t_scorevoice *voice);
