@@ -13443,8 +13443,8 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
             } else if (tuttipoint_aligned)
                 ref_tpt = after_this_measure ? after_this_measure->tuttipoint_reference : NULL;
             
-            long num_measures = allow_multiple_measures_per_voice && elem ? (elem_type == H_LLLL ? hatom_getllll(&elem->l_hatom)->l_size : hatom_getlong(&elem->l_hatom)) : 1;
-            t_llllelem *meas_elem = allow_multiple_measures_per_voice && elem ? (elem_type == H_LLLL ? hatom_getllll(&elem->l_hatom)->l_head : NULL) : elem;
+            long num_measures = (allow_multiple_measures_per_voice && elem) ? (elem_type == H_LLLL ? hatom_getllll(&elem->l_hatom)->l_size : hatom_getlong(&elem->l_hatom)) : 1;
+            t_llllelem *meas_elem = (allow_multiple_measures_per_voice && elem) ? (elem_type == H_LLLL ? hatom_getllll(&elem->l_hatom)->l_head : NULL) : elem;
             for (i = 0; i < num_measures; i++) {
                 t_measure *new_meas = build_measure((t_notation_obj *)x, NULL);
                 meas[this_voice - 1] = new_meas;
@@ -15142,12 +15142,14 @@ void score_paste_measures(t_score *x, long at_this_measure_1based, long from_thi
     
     t_llll *ll = llll_clone(clipboard.gathered_syntax);
     
+//    dev_llll_print(ll, NULL, 0, 4, NULL);
+
     if (ignore_copied_voice_offset && ll) {
         t_llllelem *voice_llelem = ll->l_head;
         t_llll *voice_ll = hatom_gettype(&voice_llelem->l_hatom) == H_LLLL ? hatom_getllll(&voice_llelem->l_hatom) : NULL;
         while (voice_ll && !voice_ll->l_head) {
-            llll_behead(ll);
             voice_llelem = voice_llelem->l_next;
+            llll_behead(ll);
             voice_ll = hatom_gettype(&voice_llelem->l_hatom) == H_LLLL ? hatom_getllll(&voice_llelem->l_hatom) : NULL;
         }
     }
