@@ -109,7 +109,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "GoodFunnel = ($l, $x, $y, $res -> for $x $y in $l repeat $res _= [$x $y]) ",
+					"code" : "GoodFunnel = ($l, $x, $y, $res -> for $x $y in $l do $res _= [$x $y]) ",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
 					"linecount" : 2,
@@ -122,7 +122,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval GoodFunnel = ($l\\, $x\\, $y\\, $res -> for $x $y in $l repeat $res _= [$x $y]) @auto 1"
+					"text" : "bach.eval GoodFunnel = ($l\\, $x\\, $y\\, $res -> for $x $y in $l do $res _= [$x $y]) @auto 1"
 				}
 
 			}
@@ -215,7 +215,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "BadFunnel = ($l -> for $x $y in $l repeat $res _= [$x $y]) ",
+					"code" : "BadFunnel = ($l -> for $x $y in $l do $res _= [$x $y]) ",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"linecount" : 2,
@@ -228,7 +228,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval BadFunnel = ($l -> for $x $y in $l repeat $res _= [$x $y]) @auto 1"
+					"text" : "bach.eval BadFunnel = ($l -> for $x $y in $l do $res _= [$x $y]) @auto 1"
 				}
 
 			}

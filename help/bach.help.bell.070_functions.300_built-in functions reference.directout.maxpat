@@ -73,7 +73,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $a in 1 2 3 repeat directout(2 1, $a*10, $a) ",
+					"code" : "for $a in 1 2 3 do directout(2 1, $a*10, $a) ",
 					"id" : "obj-7",
 					"linecount" : 3,
 					"maxclass" : "newobj",
@@ -85,7 +85,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $a in 1 2 3 repeat directout(2 1\\, $a*10\\, $a) @directouts 2 @out m"
+					"text" : "bach.eval for $a in 1 2 3 do directout(2 1\\, $a*10\\, $a) @directouts 2 @out m"
 				}
 
 			}

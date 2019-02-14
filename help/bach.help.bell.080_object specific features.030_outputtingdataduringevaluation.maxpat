@@ -100,7 +100,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $y in $x1 with @maxdepth -1 repeat ($do2 = $y ; $do1 = $x) ",
+					"code" : "for $x $y in $x1 with @maxdepth -1 do ($do2 = $y ; $do1 = $x) ",
 					"id" : "obj-24",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -112,7 +112,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x $y in $x1 with @maxdepth -1 repeat ($do2 = $y \\; $do1 = $x) @out m"
+					"text" : "bach.eval for $x $y in $x1 with @maxdepth -1 do ($do2 = $y \\; $do1 = $x) @out m"
 				}
 
 			}
@@ -179,7 +179,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $y in $x1 with @maxdepth -1 repeat directout(2 1, $y, $x) ",
+					"code" : "for $x $y in $x1 with @maxdepth -1 do directout(2 1, $y, $x) ",
 					"id" : "obj-9",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -261,7 +261,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x in arithmser(1, $x1) repeat directout(1, $x) ",
+					"code" : "for $x in arithmser(1, $x1) do directout(1, $x) ",
 					"id" : "obj-3",
 					"linecount" : 2,
 					"maxclass" : "newobj",

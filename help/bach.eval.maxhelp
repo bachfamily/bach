@@ -458,7 +458,7 @@
                             }
 ,                             {
                                 "box" :                                 {
-                                    "code" : "$x = 1 1 ; while length($x) < $x1 repeat $x = $x ($x:-1 + $x:-2) ",
+                                    "code" : "$x = 1 1 ; while length($x) < $x1 do $x = $x ($x:-1 + $x:-2) ",
                                     "fontname" : "Arial",
                                     "fontsize" : 12.0,
                                     "id" : "obj-11",
@@ -471,7 +471,7 @@
                                         "versionnumber" : 80002
                                     }
 ,
-                                    "text" : "bach.eval $x = 1 1 \\; while length($x) < $x1 repeat $x = $x ($x:-1 + $x:-2) @out t"
+                                    "text" : "bach.eval $x = 1 1 \\; while length($x) < $x1 do $x = $x ($x:-1 + $x:-2) @out t"
                                 }
 
                             }

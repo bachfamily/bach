@@ -48,7 +48,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 222.0, 330.5, 320.0, 83.0 ],
-					"text" : "Another way to do the same thing. Here $sum is updated in the \"repeat\" clause, thus requiring a little more stuff inside the loop, but avoiding the need for subtracting $x after the loop has ended. \nIt is just a matter of taste..."
+					"text" : "Another way to do the same thing. Here $sum is updated in the \"do\" clause, thus requiring a little more stuff inside the loop, but avoiding the need for subtracting $x after the loop has ended. \nIt is just a matter of taste..."
 				}
 
 			}
@@ -105,7 +105,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$sum = 0 ; [for $x in $x1 as $sum + $x <= 100 repeat ($sum += $x ; $res _= $x)] $sum ",
+					"code" : "$sum = 0 ; [for $x in $x1 as $sum + $x <= 100 do ($sum += $x ; $res _= $x)] $sum ",
 					"id" : "obj-7",
 					"linecount" : 4,
 					"maxclass" : "newobj",
@@ -117,7 +117,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $sum = 0 \\; [for $x in $x1 as $sum + $x <= 100 repeat ($sum += $x \\; $res _= $x)] $sum @out m"
+					"text" : "bach.eval $sum = 0 \\; [for $x in $x1 as $sum + $x <= 100 do ($sum += $x \\; $res _= $x)] $sum @out m"
 				}
 
 			}
@@ -205,7 +205,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$sum = 0 ; [for $x in $x1 as ($sum += print($x)) <= 100 repeat $res _= $x] $sum - $x ",
+					"code" : "$sum = 0 ; [for $x in $x1 as ($sum += print($x)) <= 100 do $res _= $x] $sum - $x ",
 					"id" : "obj-23",
 					"linecount" : 3,
 					"maxclass" : "newobj",
@@ -217,7 +217,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $sum = 0 \\; [for $x in $x1 as ($sum += print($x)) <= 100 repeat $res _= $x] $sum - $x @out m"
+					"text" : "bach.eval $sum = 0 \\; [for $x in $x1 as ($sum += print($x)) <= 100 do $res _= $x] $sum - $x @out m"
 				}
 
 			}

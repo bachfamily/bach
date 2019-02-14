@@ -77,7 +77,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) ",
+					"code" : "for $x $addr in $x1 with @maxdepth 1 @unwrap 1 do print($x [$addr]) ",
 					"id" : "obj-6",
 					"linecount" : 3,
 					"maxclass" : "newobj",
@@ -89,7 +89,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1 @unwrap 1 repeat print($x [$addr]) @out m"
+					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1 @unwrap 1 do print($x [$addr]) @out m"
 				}
 
 			}
@@ -162,7 +162,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1, @unwrap 1 repeat print($x [$addr]) ",
+					"code" : "for $x $addr in $x1 with @maxdepth 1, @unwrap 1 do print($x [$addr]) ",
 					"id" : "obj-17",
 					"linecount" : 3,
 					"maxclass" : "newobj",
@@ -174,7 +174,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1\\, @unwrap 1 repeat print($x [$addr]) @out m"
+					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1\\, @unwrap 1 do print($x [$addr]) @out m"
 				}
 
 			}

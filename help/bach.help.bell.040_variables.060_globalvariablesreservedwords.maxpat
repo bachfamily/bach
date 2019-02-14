@@ -138,7 +138,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 31.0, 95.0, 69.0, 166.0 ],
-					"text" : "as\relse\rfor\rif\rin\rnil\rnull\rpi\rrepeat\rthen\rwhile",
+					"text" : "as\relse\rfor\rif\rin\rnil\rnull\rpi\rdo\rthen\rwhile",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

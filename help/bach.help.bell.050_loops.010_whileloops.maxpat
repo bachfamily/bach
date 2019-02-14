@@ -61,7 +61,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 21.0, 101.0, 250.0, 21.0 ],
-					"text" : "while <condition> repeat <body>"
+					"text" : "while <condition> do <body>"
 				}
 
 			}
@@ -129,7 +129,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$i = 0 ; while $i < $x1 repeat print($i += 1) ",
+					"code" : "$i = 0 ; while $i < $x1 do print($i += 1) ",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -141,7 +141,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $i = 0 \\; while $i < $x1 repeat print($i += 1) @out m"
+					"text" : "bach.eval $i = 0 \\; while $i < $x1 do print($i += 1) @out m"
 				}
 
 			}
@@ -213,7 +213,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, while, condition, repeat, body, clause",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, while, condition, do, body, clause",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

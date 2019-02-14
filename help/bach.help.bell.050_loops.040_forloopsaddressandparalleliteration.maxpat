@@ -89,7 +89,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $xaddr in $x1, $y $yaddr in $x2 repeat $res _= $x * $xaddr + $y * $yaddr ",
+					"code" : "for $x $xaddr in $x1, $y $yaddr in $x2 do $res _= $x * $xaddr + $y * $yaddr ",
 					"id" : "obj-23",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -101,7 +101,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x $xaddr in $x1\\, $y $yaddr in $x2 repeat $res _= $x * $xaddr + $y * $yaddr @out m"
+					"text" : "bach.eval for $x $xaddr in $x1\\, $y $yaddr in $x2 do $res _= $x * $xaddr + $y * $yaddr @out m"
 				}
 
 			}
@@ -157,7 +157,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x in $x1, $y in $x2 repeat $res _= $x + $y ",
+					"code" : "for $x in $x1, $y in $x2 do $res _= $x + $y ",
 					"id" : "obj-5",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -169,7 +169,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x in $x1\\, $y in $x2 repeat $res _= $x + $y @out m"
+					"text" : "bach.eval for $x in $x1\\, $y in $x2 do $res _= $x + $y @out m"
 				}
 
 			}
@@ -196,7 +196,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 267.5, 44.0, 316.0, 98.0 ],
-					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address.\nThe return value of the for loop is the value taken by the \"repeat\" clause at the end of the last iteration."
+					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address.\nThe return value of the for loop is the value taken by the \"do\" clause at the end of the last iteration."
 				}
 
 			}
@@ -213,7 +213,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $data $address in $x1 repeat $res _= $data + $address ",
+					"code" : "for $data $address in $x1 do $res _= $data + $address ",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -225,7 +225,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $data $address in $x1 repeat $res _= $data + $address @out m"
+					"text" : "bach.eval for $data $address in $x1 do $res _= $data + $address @out m"
 				}
 
 			}
@@ -283,7 +283,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, for, repeat, address, parallel, iteration",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, for, do, address, parallel, iteration",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

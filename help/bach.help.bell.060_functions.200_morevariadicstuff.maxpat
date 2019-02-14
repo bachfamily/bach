@@ -162,7 +162,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "Greet = $greeting, <...>, $x -> for $x in arithmser(2, $argcount) repeat print($greeting $args($x)) ",
+					"code" : "Greet = $greeting, <...>, $x -> for $x in arithmser(2, $argcount) do print($greeting $args($x)) ",
 					"id" : "obj-6",
 					"linecount" : 3,
 					"maxclass" : "newobj",
@@ -174,7 +174,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval Greet = $greeting\\, <...>\\, $x -> for $x in arithmser(2\\, $argcount) repeat print($greeting $args($x)) @auto 1"
+					"text" : "bach.eval Greet = $greeting\\, <...>\\, $x -> for $x in arithmser(2\\, $argcount) do print($greeting $args($x)) @auto 1"
 				}
 
 			}

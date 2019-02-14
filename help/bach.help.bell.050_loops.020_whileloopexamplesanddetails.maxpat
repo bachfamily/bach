@@ -101,7 +101,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x = 1 ; \r\nwhile $x <= $x1 repeat (\r\n\t$row = null ; \r\n\t$y = 1 ; \r\n\twhile $y <= $x1 repeat (\r\n\t\t$row _= $x * $y ; \r\n\t\t$y += 1) ; \r\n\t$res = $res [$row] ; \r\n\t$x += 1\r\n\t) ; \r\n$res ",
+					"code" : "$x = 1 ; \r\nwhile $x <= $x1 do (\r\n\t$row = null ; \r\n\t$y = 1 ; \r\n\twhile $y <= $x1 do (\r\n\t\t$row _= $x * $y ; \r\n\t\t$y += 1) ; \r\n\t$res = $res [$row] ; \r\n\t$x += 1\r\n\t) ; \r\n$res ",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"maxclass" : "newobj",
@@ -169,7 +169,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fibo = 1 1 ; while length($fibo) < $x1 repeat $fibo _= $fibo:-1 + $fibo:-2 ",
+					"code" : "$fibo = 1 1 ; while length($fibo) < $x1 do $fibo _= $fibo:-1 + $fibo:-2 ",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
 					"linecount" : 2,
@@ -182,7 +182,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $fibo = 1 1 \\; while length($fibo) < $x1 repeat $fibo _= $fibo:-1 + $fibo:-2 @out m"
+					"text" : "bach.eval $fibo = 1 1 \\; while length($fibo) < $x1 do $fibo _= $fibo:-1 + $fibo:-2 @out m"
 				}
 
 			}
@@ -238,7 +238,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$i = $fact = 1 ; while print($i) < $x1 repeat $fact *= $i += 1 ",
+					"code" : "$i = $fact = 1 ; while print($i) < $x1 do $fact *= $i += 1 ",
 					"id" : "obj-4",
 					"linecount" : 3,
 					"maxclass" : "newobj",
@@ -250,7 +250,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval $i = $fact = 1 \\; while print($i) < $x1 repeat $fact *= $i += 1 @out m"
+					"text" : "bach.eval $i = $fact = 1 \\; while print($i) < $x1 do $fact *= $i += 1 @out m"
 				}
 
 			}
@@ -308,7 +308,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, while, condition, repeat, body, nested, sequence, factorial, fibonacci",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, while, condition, do, body, nested, sequence, factorial, fibonacci",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

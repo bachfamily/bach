@@ -228,7 +228,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x in $x1 repeat ($do1 = $x ; $res _= $dx1) ",
+					"code" : "for $x in $x1 do ($do1 = $x ; $res _= $dx1) ",
 					"id" : "obj-3",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -240,7 +240,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $x in $x1 repeat ($do1 = $x \\; $res _= $dx1) @out m"
+					"text" : "bach.eval for $x in $x1 do ($do1 = $x \\; $res _= $dx1) @out m"
 				}
 
 			}

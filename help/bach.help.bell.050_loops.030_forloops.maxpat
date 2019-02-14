@@ -78,7 +78,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $i in arithmser(1, $x1) repeat print($i) ",
+					"code" : "for $i in arithmser(1, $x1) do print($i) ",
 					"id" : "obj-6",
 					"linecount" : 3,
 					"maxclass" : "newobj",
@@ -90,7 +90,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $i in arithmser(1\\, $x1) repeat print($i)"
+					"text" : "bach.eval for $i in arithmser(1\\, $x1) do print($i)"
 				}
 
 			}
@@ -119,7 +119,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 18.0, 87.0, 461.0, 124.0 ],
-					"text" : "for <index variable 1> [address variable 1] in <llll 1>\n    [, <index variable 2> [address variable 2] in <llll 2>\n     [...] ]\n    [with @<attribute name 1> <attribute value 1> \n          [[,] @<attribute name 2> <attribute value 2>] \n          [...] ]\n    [as <condition>]\nrepeat <body>"
+					"text" : "for <index variable 1> [address variable 1] in <llll 1>\n    [, <index variable 2> [address variable 2] in <llll 2>\n     [...] ]\n    [with @<attribute name 1> <attribute value 1> \n          [[,] @<attribute name 2> <attribute value 2>] \n          [...] ]\n    [as <condition>]\ndo <body>"
 				}
 
 			}
@@ -163,7 +163,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $i in $x1 repeat print($i) ",
+					"code" : "for $i in $x1 do print($i) ",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -175,7 +175,7 @@
 						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval for $i in $x1 repeat print($i) @out m"
+					"text" : "bach.eval for $i in $x1 do print($i) @out m"
 				}
 
 			}
@@ -247,7 +247,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, for, condition, repeat, body, with, in, as",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, for, condition, do, body, with, in, as",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
