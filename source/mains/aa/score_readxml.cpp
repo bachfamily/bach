@@ -8,6 +8,7 @@
 #include "score_files.h"
 #include "mxml.h"
 #include <set>
+#include <string>
 
 #define CONST_DYNAMICS_TEXT_ALLOC_SIZE 2048
 
@@ -32,23 +33,24 @@ public:
     t_rational timePos;
     double relativeX;
     bool operator<(const timedThing &b) const;
+    virtual ~timedThing() { }
 };
 
 class timedChord : public timedThing {
 public:
-    t_llll *notell;
-    timedChord(int voice, t_llll *notell, t_rational timePos) : timedThing(voice, timePos), notell(notell) { }
+    t_llll *chordll;
+    timedChord(int voice, t_llll *chordll, t_rational timePos) : timedThing(voice, timePos), chordll(chordll) { }
 };
 
 class timedDynamics : public timedThing {
 public:
-    const char* dyn;
+    std::string dyn;
     timedDynamics(const char* dyn, t_rational timePos, double relativeX) : timedThing(-1, timePos), dyn(dyn) { }
 };
 
 class timedWords : public timedThing {
 public:
-    const char* words;
+    std::string words;
     timedWords(const char* words, t_rational timePos, double relativeX) : timedThing(-1, timePos), words(words) { }
 };
 
@@ -71,79 +73,89 @@ public:
     }
 };
 
-using timedThingPtrSet = std::set<timedThing *>;
 
+class timedThingContainer {
+    using timedThingPtrSet = std::set<timedThing *>;
 
-
-
-void xml_get_timedThings(mxml_node_t *directionXML, timedThingPtrSet &ttps)
-{
-    char *dynamics_text = (char *) bach_newptrclear(CONST_DYNAMICS_TEXT_ALLOC_SIZE);
-    long dynamics_text_cur = 0;
-    dynamics_text[0] = 0;
+public:
+    timedThingPtrSet stuff;
     
-    for (mxml_node_t *typeXML = mxmlFindElement(directionXML, directionXML, "direction-type", NULL, NULL, MXML_DESCEND_FIRST);
-         typeXML;
-         typeXML = mxmlFindElement(typeXML, typeXML, "direction-type", NULL, NULL, MXML_NO_DESCEND)) {
+    timedThingContainer() = default;
+    
+    virtual ~timedThingContainer() {
+        for (auto i : stuff) delete i;
+    }
+    
+    void insertChord(t_llll *chord, t_rational pos, int voice) {
+        timedChord *c = new timedChord(voice, chord, pos);
+        stuff.insert(c);
+    }
+    
+    void insertDirectionFromXML(mxml_node_t *directionXML, t_rational global_position, long divisions) {
         
-        for (mxml_node_t *itemXML = mxmlGetFirstChild(typeXML);
-             itemXML;
-             itemXML = mxmlWalkNext(itemXML, typeXML, MXML_NO_DESCEND)) {
-            const char *itemName = mxmlGetElement(itemXML);
-            if (!itemName)
-                continue;
+        t_rational position;
+        mxml_node_t *offsetXML = mxmlFindElement(directionXML, directionXML, "offset", NULL, NULL, MXML_DESCEND_FIRST);
+        if (offsetXML) {
+            position = global_position + t_rational(mxmlGetInteger(offsetXML), divisions);
+        } else {
+            position = global_position;
+        }
+        
+        for (mxml_node_t *typeXML = mxmlFindElement(directionXML, directionXML, "direction-type", NULL, NULL, MXML_DESCEND_FIRST);
+             typeXML;
+             typeXML = mxmlFindElement(typeXML, typeXML, "direction-type", NULL, NULL, MXML_NO_DESCEND)) {
             
-            
-            if (!strcmp(itemName, "dynamics")) {
+            for (mxml_node_t *itemXML = mxmlGetFirstChild(typeXML);
+                 itemXML;
+                 itemXML = mxmlWalkNext(itemXML, typeXML, MXML_NO_DESCEND)) {
+                const char *itemName = mxmlGetElement(itemXML);
+                if (!itemName)
+                    continue;
                 
-                for (long di = 0; di < num_xml_accepted_dynamics; di++) {
-                    if (mxmlFindElement(itemXML, itemXML, xml_accepted_dynamics[di], NULL, NULL, MXML_DESCEND_FIRST))
-                        dynamics_text_cur += snprintf_zero(dynamics_text + dynamics_text_cur, CONST_DYNAMICS_TEXT_ALLOC_SIZE - dynamics_text_cur, "%s_", xml_accepted_dynamics[di]);
-                }
-                if (*dynamics_text == 0) {
-                    dynamics_text[0] = '_';
-                    dynamics_text[1] = 0;
-                }
-            } else if (!strcmp(itemName, "wedge")) {
-                char hairpin = 0;
-                const char *wedgetypetxt = mxmlElementGetAttr(itemXML, "type");
-                if (!strcmp(wedgetypetxt, "crescendo"))
-                    hairpin = 1;
-                else if (!strcmp(wedgetypetxt, "diminuendo"))
-                    hairpin = -1;
-                if (hairpin) {
-                    if (dynamics_text_cur > 0 && dynamics_text_cur <= CONST_DYNAMICS_TEXT_ALLOC_SIZE && dynamics_text[dynamics_text_cur - 1] == '_') {
-                        dynamics_text[dynamics_text_cur - 1] = 0;
-                        dynamics_text_cur--;
+                if (!strcmp(itemName, "dynamics")) {
+                    
+                    for (long di = 0; di < num_xml_accepted_dynamics; di++) {
+                        if (mxmlFindElement(itemXML, itemXML, xml_accepted_dynamics[di], NULL, NULL, MXML_DESCEND_FIRST)) {
+                            timedDynamics *theTimedDynamics = new timedDynamics(xml_accepted_dynamics[di], position, 0);
+                            
+                            stuff.insert(theTimedDynamics);
+                        }
                     }
-                    if (dynamics_text_cur < CONST_DYNAMICS_TEXT_ALLOC_SIZE)
-                        dynamics_text[dynamics_text_cur++] = (hairpin > 0 ? '<' : '>');
-                } else { // it's the end of a hairpin
-                    if (dynamics_text_cur > 0 && dynamics_text_cur <= CONST_DYNAMICS_TEXT_ALLOC_SIZE && dynamics_text[dynamics_text_cur - 1] == '_') {
-                        dynamics_text[dynamics_text_cur - 1] = 0;
-                        dynamics_text_cur--;
+                } else if (!strcmp(itemName, "wedge")) {
+                    char hairpin = 0;
+                    const char *wedgetypetxt = mxmlElementGetAttr(itemXML, "type");
+                    if (!strcmp(wedgetypetxt, "crescendo"))
+                        hairpin = 1;
+                    else if (!strcmp(wedgetypetxt, "diminuendo"))
+                        hairpin = -1;
+                    const char *dynamics_text;
+                    switch (hairpin) {
+                        case 1:
+                            dynamics_text = "<";
+                            break;
+                        case -1:
+                            dynamics_text = ">";
+                            break;
+                        default:
+                            dynamics_text = "|";
+                            break;
                     }
-                    if (dynamics_text_cur < CONST_DYNAMICS_TEXT_ALLOC_SIZE) {
-                        dynamics_text[dynamics_text_cur++] = '|';
+                    
+                    
+                    timedDynamics *theTimedDynamics = new timedDynamics(dynamics_text, position, 0);
+                    
+                    stuff.insert(theTimedDynamics);
+                } else if (!strcmp(itemName, "words")) {
+                    const char *itemContents = mxmlGetOpaque(itemXML);
+                    if (itemContents && *itemContents) {
+                        timedWords *theTimedWords = new timedWords(itemContents, position, 0);
+                        stuff.insert(theTimedWords);
                     }
                 }
             }
-            
         }
     }
-    
-    if (dynamics_text_cur > 0) {
-        if (dynamics_text_cur <= CONST_DYNAMICS_TEXT_ALLOC_SIZE && dynamics_text[dynamics_text_cur - 1] == '_') {
-            dynamics_text[dynamics_text_cur - 1] = 0;
-            dynamics_text_cur--;
-        }
-    } else {
-        bach_freeptr(dynamics_text);
-        dynamics_text = nullptr;
-    }
-    
-    return dynamics_text;
-}
+};
 
 
 
@@ -767,7 +779,7 @@ t_llll *score_readxml(t_score *x,
         t_symbol *clefsym, *keysym;
         
         t_rational global_position = t_rational(0);
-        timedThingPtrSet theTimedThingPtrSet;
+        timedThingContainer theTimedThingContainer;
         
         for (measureXML = mxmlFindElement(partXML, partXML, "measure", NULL, NULL, MXML_DESCEND_FIRST);
              measureXML;
@@ -885,19 +897,7 @@ t_llll *score_readxml(t_score *x,
                     continue;
                     
                 } else if (!strcmp(itemName, "direction")) {
-                    const char *dyntxt = xml_get_dynamics(itemXML);
-                    if (dyntxt) {
-                        t_rational offset;
-                        mxml_node_t *offsetXML = mxmlFindElement(itemXML, itemXML, "offset", NULL, NULL, MXML_DESCEND_FIRST);
-                        if (offsetXML) {
-                            offset = t_rational(mxmlGetInteger(offsetXML), divisions);
-                        } else {
-                            offset = t_rational(0);
-                        }
-                        
-                        timedDynamics *theTimedDynamics = new timedDynamics(dyntxt, global_position + offset);
-                        theTimedThingPtrSet.insert(theTimedDynamics);
-                    }
+                    theTimedThingContainer.insertDirectionFromXML(itemXML, global_position, divisions);
                 } else if (strcmp(itemName, "note")) {
                     continue;
                 }
@@ -941,34 +941,6 @@ t_llll *score_readxml(t_score *x,
                     llll_appendlong(chordll, 0);
                     llll_appendllll(chord_parentll[current_voice_in_part], chordll);
                     used_duration[current_voice_in_part] = current_timepoint;
-                }
-                
-                // IMPORTING DYNAMICS
-                if (itemXML == firstnoteXML && (!nextnoteXML || switch_to_new_voice)) { // just 1 note,
-                                                                                        // assuming that this is the right thing to do when we switch to another voice
-                    xml_get_dynamics(measureXML->child, NULL, dynamics_text);
-                    words = xml_get_words(measureXML->child, NULL, NULL);
-                } else if (itemXML == firstnoteXML) {
-                    xml_get_dynamics(measureXML->child, firstnoteXML, dynamics_text);
-                    words = xml_get_words(measureXML->child, firstnoteXML, NULL);
-                } else if (!nextnoteXML || switch_to_new_voice) {
-                    char temp_dynamics_text[CONST_DYNAMICS_TEXT_ALLOC_SIZE];
-                    temp_dynamics_text[0] = 0;
-                    xml_get_dynamics(itemXML->next, NULL, temp_dynamics_text);
-                    if (temp_dynamics_text[0]) {
-                        // merge dynamics
-                        long len = strlen(dynamics_text);
-                        if (len == 0)
-                            snprintf_zero(dynamics_text, CONST_DYNAMICS_TEXT_ALLOC_SIZE, "%s", temp_dynamics_text);
-                        else {
-                            if (dynamics_text[len-1] == '_') {
-                                dynamics_text[len-1] = 0;
-                                len--;
-                            }
-                            snprintf_zero(dynamics_text + len, CONST_DYNAMICS_TEXT_ALLOC_SIZE - len, "%s", temp_dynamics_text);
-                        }
-                    }
-                    words = xml_get_words(itemXML->next, NULL, words);
                 }
                 
                 
@@ -1102,9 +1074,7 @@ t_llll *score_readxml(t_score *x,
                         duration = rat_long_div(duration, actual_notes);
                     }
                     
-                    timedChord *theTimedChord = new timedChord(current_voice_in_part, chordll, global_position);
-                    theTimedThingPtrSet.insert(theTimedChord);
-                    
+                    theTimedThingContainer.insertChord(chordll, global_position, current_voice_in_part);
                     
                     if (!grace) {
                         current_timepoint = used_duration[current_voice_in_part] += duration;
@@ -1299,8 +1269,7 @@ t_llll *score_readxml(t_score *x,
                         }
                     }
                 }
-                xml_get_dynamics(itemXML->next, nextnoteXML, dynamics_text);
-                words = xml_get_words(itemXML->next, nextnoteXML, NULL);
+
             }
             
             if (chordll) {
