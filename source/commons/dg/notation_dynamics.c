@@ -188,7 +188,7 @@ void paint_dynamics_from_symbol(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             // Painting the open hairpin that ends with this chord
             char is_dynamic_zero = false;
             if (h < 0 && w < 0) {
-                if (dyntext[0] && (dyntext[0][0] == '0' || dyntext[0][0] == 'o' || dyntext[0][0] == 'O') && dyntext[0][1] == 0) {
+                if (dyntext[0] && (dyntext[0][0] == 'o') && dyntext[0][1] == 0) {
                     w = h = ZEROCIRCLE_RADIUS * 2.; // "0" circle
                     is_dynamic_zero = true;
                 } else if (dyntext[0])
@@ -216,7 +216,7 @@ void paint_dynamics_from_symbol(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
             xpos = center_x + (num_dynamics <= 1 ? 0 : i * (duration_x/(num_dynamics - 1)));
             
             if (r_ob->show_dynamics || boxed) {
-                if (dyntext[i] && (dyntext[i][0] == '0' || dyntext[i][0] == 'o' || dyntext[i][0] == 'O') && dyntext[i][1] == 0) {
+                if (dyntext[i] && (dyntext[i][0] == 'o') && dyntext[i][1] == 0) {
                     if (!dont_paint)
                         paint_circle_stroken(g, *color, xpos, ypos, ZEROCIRCLE_RADIUS, 1);
                     is_dynamic_zero = true;
@@ -339,11 +339,11 @@ void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char 
                     break;
             }
             c+=2;
-        } else if (*c == ' '){
+/*        } else if (*c == ' '){
             buf[cur++] = ' ';
-            c++;
-        } else if (*c == '0') {
-            buf[cur++] = '0';
+            c++; */
+        } else if (*c == 'o') {
+            buf[cur++] = 'o';
             c++;
         } else
             c++;
@@ -447,21 +447,16 @@ long parse_string_to_dynamics_once(t_notation_obj *r_ob, char *buf, char *dynami
                     c++;
                 break;
                 
-            case '0':
             case 'o':
-            case 'O':
-                if (strncasecmp(c, "0", 1) == 0 || strncasecmp(c, "o", 1) == 0 || strncasecmp(c, "O", 1) == 0) {
-                    dynamics[cur++] = '0';
-                    c++;
-                } else
-                    c++;
+                dynamics[cur++] = 'o';
+                c++;
                 break;
 
-            case ' ':
+/*            case ' ':
                 dynamics[cur++] = ' ';
                 c++;
                 break;
-                
+  */
             case '<':
                 if (*(c+1) == 0) {
                     res = 1;
@@ -566,17 +561,16 @@ long dynamic_marking_cmp(char *mark1, char *mark2)
             return 1;
             break;
 
-        case '0':
-        case ' ':
-        case 'n':
-            if (mark2[0] == '0' || mark2[0] == 'n' || mark2[0] == ' ')
+        case 'o':
+//        case ' ':
+            if (mark2[0] == 'o') // || mark2[0] == ' ')
                 return 0;
             else
                 return 1;
             break;
 
         case 'p':
-            if (mark2[0] == '0' || mark2[0] == 'n')
+            if (mark2[0] == 'o')
                 return -1;
             else if (mark2[0] == 'p') {
                 // count number of p's
@@ -595,7 +589,7 @@ long dynamic_marking_cmp(char *mark1, char *mark2)
             break;
         
         case 'm':
-            if (mark2[0] == '0' || mark2[0] == 'n' || mark2[0] == 'p')
+            if (mark2[0] == 'o' || mark2[0] == 'p')
                 return -1;
             else if (mark2[0] == 'm') {
                 // count number of p's
@@ -610,7 +604,7 @@ long dynamic_marking_cmp(char *mark1, char *mark2)
             break;
             
         case 'f':
-            if (mark2[0] == '0' || mark2[0] == 'n' || mark2[0] == 'p' || mark2[0] == 'm')
+            if (mark2[0] == 'o' || mark2[0] == 'p' || mark2[0] == 'm')
                 return -1;
             else if (mark2[0] == 'f') {
                 // count number of f's
@@ -629,7 +623,7 @@ long dynamic_marking_cmp(char *mark1, char *mark2)
             break;
             
         case 's':
-            if (mark2[0] == '0' || mark2[0] == 'n' || mark2[0] == 'p' || mark2[0] == 'm' || mark2[0] == 'f')
+            if (mark2[0] == 'o' || mark2[0] == 'p' || mark2[0] == 'm' || mark2[0] == 'f')
                 return -1;
             else if (mark2[0] == 's') {
                 // count number of f's after the s
@@ -710,7 +704,7 @@ void remove_first_dynamic_from_deparsed_dynamic(char *dyn_buf)
     char *c = temp;
     while (*c && *c != '_') {
         if (!*(c+1) || *(c+1) == '_') {
-            *c = ' ';
+            *c = '|';
             break;
         }
         c++;
