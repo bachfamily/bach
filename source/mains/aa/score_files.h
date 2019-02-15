@@ -33,6 +33,15 @@ void score_exportmidi(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_exportlilypond(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_exportlilypond_pdf(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
+t_llll *score_readxml(t_score *x,
+                      t_filehandle fh,
+                      long parenthesizedquartertones,
+                      long lyricsslot,
+                      long noteheadslot,
+                      long articulationsslot,
+                      long dynamicsslot,
+                      long directionsslot);
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE
 #endif
