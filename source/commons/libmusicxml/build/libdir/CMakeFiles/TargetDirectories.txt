@@ -1,0 +1,17 @@
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xmltranspose.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xmlread.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xmlclone.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/musicxml2.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/countnotes.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xml2midi.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xml2guido.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xmlfactory.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/readunrolled.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/install.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/RandomMusic.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xmlversion.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xmliter.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/xml2ly.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/partsummary.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/ALL_BUILD.dir
+/Users/andreaagostini/Documents/Max 7/Packages/bach/source/commons/libmusicxml/build/libdir/CMakeFiles/ZERO_CHECK.dir
