@@ -2532,10 +2532,10 @@ typedef enum _dynamics_hairpin
 
 typedef struct _dynamics_mark
 {
-    char text_typographic[CONST_MAX_NUM_DYNAMICS_CHARS];    ///< The typographic text of the dynamics sign to be displayed
-                                                            ///< Unlike the text_deparsed fields  this contains the unicode data to
-                                                            ///  display the dynamics in November for bach, not a readable deparsing
-    char text_deparsed[CONST_MAX_NUM_DYNAMICS_CHARS];       ///< The typographic text of the dynamics sign readable in plain text
+    t_symbol *text_typographic;    ///< The typographic text of the dynamics sign to be displayed
+                                   ///< Unlike the text_deparsed fields  this contains the unicode data to
+                                   ///  display the dynamics in November for bach, not a readable deparsing
+    t_symbol *text_deparsed;       ///< The typographic text of the dynamics sign readable in plain text
 
     long                    snap_to_breakpoint; ///< If non-zero, it is the index of breakpoint to which it should be snapped.
     double                  relative_position;  ///< If #snap_to_breakpoint is 0, this sets the relative position of the dynamic sign
@@ -2561,7 +2561,7 @@ typedef struct _dynamics
 {
     t_notation_item		r_it;		///< Notation item, containing common stuff for all notation items.
     
-    struct _chord		*owner;		///< The chord owning the piece of lyrics
+    t_notation_item		*owner_item;		///< The notation item owning the piece of dynamics
     
     // dynamics structures
     t_symbol            *text_deparsed;         ///< The deparsed text of the whole dynamics, such as "mp<ff>o"
@@ -2569,7 +2569,6 @@ typedef struct _dynamics
     t_dynamics_mark     *lastmark;             ///< The last native representation of dynamics as a double-linked list of dynamics signs
     long                num_marks;              ///< Number of dynamics "nodes" (e.g. in the "mp<ff>o" case: 3)
 
-    char            open_hairpin;               ///< Dynamics ends with an open hairpin
     char            extend;                     ///< Extend flag: if this is 1, the final hairpin extends till the end of the chord,
                                                 ///< if this is 2, it stretches till next dynamic marking.
 
@@ -7188,10 +7187,10 @@ t_lyrics *build_lyrics(t_chord *owner);
 
 /**	Build a piece of dynamics (allocate the memory for #t_dynamics and fills it with default values).
 	@ingroup		notation
-	@param owner	The chord owning the piece of dynamics.
+	@param owner	The notation item owning the piece of dynamics.
 	@return			The allocated #t_dynamics structure
  */
-t_dynamics *build_dynamics(t_chord *owner);
+t_dynamics *build_dynamics(t_notation_item *owner);
 
 /**	Insert a note in a chord, by setting the note in the right position in the notes linked list.
 	Indeed, notes in a chord are sorted by increasing midicents
@@ -10227,23 +10226,6 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                     double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, double font_size, double y_position,
                     double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window);
 
-// DYNAMICS
-t_dynamics_mark *build_dynamics_mark();
-t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_chord *owner, t_llll *ll);
-t_dynamics *dynamics_clone(t_dynamics *dyn, t_chord *newowner);
-
-
-// DEPRECATED
-void paint_dynamics_from_symbol(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                                double center_x, double duration_x, t_symbol *text, t_jfont *jf_dynamics, double font_size, double y_position,
-                                double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint,
-                                char boxed);
-
-long chord_parse_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, t_slotitem **slotitem_containing_dynamics);
-
-// OLD:
-//long chord_parse_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char dyn_text[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, t_slotitem **slotitem_containing_dynamics = NULL);
-//long chord_parse_dynamics_easy(t_notation_obj *r_ob, t_chord *ch, long slot_num, char *dyn_text, long *hairpin);
 
 
 
@@ -19015,20 +18997,38 @@ t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt)
 t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol *s, t_symbol *msg, void *sender, void *data);
 t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_object *view);
 
-// dynamics
+// DYNAMICS
+t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_llll *ll);
+t_symbol *dynamics_to_symbol(t_notation_obj *r_ob, t_dynamics *dyn);
+long dynamics_to_textbuf(t_notation_obj *r_ob, t_dynamics *dyn, char **buf);
+t_dynamics *dynamics_from_textbuf(t_notation_obj *r_ob, t_notation_item *owner, char *buf);
+t_llll *dynamics_to_llll_detailed(t_notation_obj *r_ob, t_dynamics *dyn);
+t_llll *dynamics_to_llll_plain(t_notation_obj *r_ob, t_dynamics *dyn);
+
+void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char *buf);
+void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, long *start_energy, long *end_energy);
+t_symbol *dynamics_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf, long *lasthairpin);
+
+t_dynamics_mark *build_dynamics_mark();
+t_dynamics *dynamics_clone(t_dynamics *dyn, t_notation_item *newowner);
+long dynamics_get_ending_hairpin(t_dynamics *dyn);
+char dynamics_extend_till_next_chord(t_dynamics *dyn);
+
+
+// DEPRECATED
+void paint_dynamics_from_symbol(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
+                                double center_x, double duration_x, t_symbol *text, t_jfont *jf_dynamics, double font_size, double y_position,
+                                double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint,
+                                char boxed);
+
 void dynamics_free_marks(t_dynamics *dyn);
-void parse_string_to_dynamics(t_notation_obj *r_ob, char *buf, t_dynamics *dyn);
-// OBSOLETE:
-// void parse_string_to_dynamics_ext(t_notation_obj *r_ob, char *buf, char dynamics[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, char *complete_deparsed_string, long complete_deparsed_string_alloc);
+
 long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_inconsistent, char check_unnecessary, char fix_inconsistent, char fix_unnecessary, char selection_only, char verbose);
 long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_to_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode);
 long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh);
 long dynamic_mark_cmp_fromtext(char *mark1, char *mark2);
 long dynamic_mark_end_start_cmp(t_dynamics_mark *s1, t_dynamics_mark *s2);
-t_symbol *dynamics_to_symbol(t_notation_obj *r_ob, t_dynamics *dyn);
-long dynamics_to_textbuf(t_notation_obj *r_ob, t_dynamics *dyn, char **buf);
 
-void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char *buf);
 
 
 // autospell

@@ -3751,9 +3751,11 @@ void start_editing_textslot(t_notation_obj *r_ob, t_object *patcherview, t_notat
 	if (r_ob->active_slot_notationitem && get_activeitem_slot_firstitem(r_ob, slot_num) && get_activeitem_slot_firstitem(r_ob, slot_num)->item) {
 		if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_TEXT)
 			object_method(patcherview, _sym_insertboxtext, r_ob, (char *)notation_item_get_slot_firstitem(r_ob, nitem, slot_num)->item);
-        else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS)
-            object_method(patcherview, _sym_insertboxtext, r_ob, ((t_symbol *)notation_item_get_slot_firstitem(r_ob, nitem, slot_num)->item)->s_name);
-		else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_LLLL) {
+        else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS) {
+            t_dynamics *dyn = (t_dynamics *)notation_item_get_slot_firstitem(r_ob, nitem, slot_num)->item;
+            if (dyn)
+                object_method(patcherview, _sym_insertboxtext, r_ob, dyn->text_deparsed ? dyn->text_deparsed->s_name : "");
+        } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_LLLL) {
 			char *buf = NULL;
 //            llll_to_text_buf_pretty((t_llll *)notation_item_get_slot_firstitem(r_ob, nitem, slot_num)->item, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, 0, NULL);
 			llll_to_text_buf((t_llll *)notation_item_get_slot_firstitem(r_ob, nitem, slot_num)->item, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);

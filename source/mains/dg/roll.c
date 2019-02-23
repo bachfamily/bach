@@ -9794,7 +9794,7 @@ t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unu
 	this_ch = (t_chord *)bach_newptrclear(sizeof(t_chord));
 	notation_item_init(&this_ch->r_it, k_CHORD);
 	this_ch->lyrics = build_lyrics(this_ch);
-    this_ch->dynamics = build_dynamics(this_ch);
+    this_ch->dynamics = NULL;
 
 	this_ch->just_added_from_separate_parameters = false;
 	this_ch->onset = onset;
@@ -9881,7 +9881,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 			
 			notation_item_init(&this_ch->r_it, k_CHORD);
 			this_ch->lyrics = build_lyrics(this_ch);
-            this_ch->dynamics = build_dynamics(this_ch);
+            this_ch->dynamics = NULL;
 
 			this_ch->imposed_direction = 0;
 			this_ch->just_added_from_separate_parameters = false;
@@ -11130,7 +11130,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             // check if there's an hairpin ending on this chord
             for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
                 if (chord_has_dynamics(temp)) {
-                    *curr_hairpin_type = (temp->dynamics->open_hairpin ? temp->dynamics->lastmark->hairpin_to_next : 0);
+                    *curr_hairpin_type = (temp->dynamics->lastmark ? temp->dynamics->lastmark->hairpin_to_next : 0);
                     *curr_hairpin_start_x = onset_to_xposition((t_notation_obj *) x, temp->onset, NULL);
                     break;
                 }
@@ -15846,8 +15846,8 @@ char delete_selected_lyrics_and_dynamics(t_roll *x, char delete_lyrics, char del
             
         } else if (curr_it->type == k_DYNAMICS && delete_dynamics) {
             t_dynamics *dy = (t_dynamics *)curr_it;
-            create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)dy->owner, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-            changed |= delete_chord_dynamics((t_notation_obj *) x, (t_chord *) dy->owner);
+            create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, dy->owner_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            changed |= delete_chord_dynamics((t_notation_obj *) x, notation_item_get_parent_chord((t_notation_obj *) x, dy->owner_item));
         }
         curr_it = next_item;
     }
@@ -16570,7 +16570,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                 if (!ch) {
                     t_dynamics *dy = dynamics_get_first_selected((t_notation_obj *) x);
                     if (dy)
-                        ch = dy->owner;
+                        ch = notation_item_get_parent_chord((t_notation_obj *) x, dy->owner_item);
                 }
                 if (ch && x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0)
                     start_editing_dynamics((t_notation_obj *) x, patcherview, ch);

@@ -1,32 +1,45 @@
 /**
-	notation_dynamicsommons.c - function handling dynamics
-
-	by Daniele Ghisi
-*/
+ notation_dynamic.c - functions handling dynamics
+ 
+ by Daniele Ghisi
+ */
 
 #include "bach.h"
 #include "notation.h" // header with all the structures for the notation objects
 
 
+long dynamics_get_ending_hairpin(t_dynamics *dyn)
+{
+    return dyn->lastmark ? dyn->lastmark->hairpin_to_next : k_DYNAMICS_HAIRPIN_NONE;
+}
 
-t_dynamics *dynamics_clone(t_dynamics *dyn, t_chord *newowner)
+char dynamics_extend_till_next_chord(t_dynamics *dyn)
+{
+    long lasthairpin = dynamics_get_ending_hairpin(dyn);
+    if (dyn->firstmark && (lasthairpin != k_DYNAMICS_HAIRPIN_NONE)) {
+        return true; // meaning: till next chord!
+    } else if (dyn->firstmark) {
+        return false; // meaning: till the end of the chord
+    } else
+        return false;
+}
+
+t_dynamics *dynamics_clone(t_dynamics *dyn, t_notation_item *newowner)
 {
     t_dynamics *newdyn = build_dynamics(newowner);
     
     newdyn->dynamics_left_uext = dyn->dynamics_left_uext;
     newdyn->dynamics_right_uext = dyn->dynamics_right_uext;
     newdyn->dynamics_right_uext_first = dyn->dynamics_right_uext_first;
-    newdyn->extend = dyn->extend;
     newdyn->text_deparsed = dyn->text_deparsed;
     
     newdyn->num_marks = dyn->num_marks;
-    newdyn->open_hairpin = dyn->open_hairpin;
     
     t_dynamics_mark *lastput = NULL;
     for (t_dynamics_mark *temp = dyn->firstmark; temp; temp = temp->next) {
         t_dynamics_mark *newtemp = build_dynamics_mark();
         *newtemp = *temp;
-
+        
         newtemp->prev = lastput;
         if (!lastput)
             newdyn->firstmark = newtemp;
@@ -40,10 +53,24 @@ t_dynamics *dynamics_clone(t_dynamics *dyn, t_chord *newowner)
 }
 
 
+void dynamics_mark_append(t_dynamics *dyn, t_dynamics_mark *mk)
+{
+    if (dyn->lastmark) {
+        dyn->lastmark->next = mk;
+        mk->prev = dyn->lastmark;
+        mk->next = NULL;
+        dyn->lastmark = mk;
+    } else {
+        dyn->firstmark = dyn->lastmark = mk;
+        mk->prev = mk->next = NULL;
+    }
+    dyn->num_marks++;
+}
+
 void dynamics_mark_delete(t_dynamics *dyn, t_dynamics_mark *mk)
 {
     t_dynamics_mark *tofree = mk;
-
+    
     if (mk == dyn->firstmark && mk == dyn->lastmark) {
         dyn->firstmark = dyn->lastmark = NULL;
     } else if (mk == dyn->firstmark) {
@@ -96,83 +123,153 @@ t_chord *dynamics_get_first(t_notation_obj *r_ob, t_voice *voice, long slot_num,
     return dynamics_get_next(r_ob, voice, slot_num, NULL, onset);
 }
 
-
-t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_chord *owner, t_llll *ll)
+long hairpin_symbol_to_value(t_symbol *hairpin)
 {
-    t_dynamics *dyn = build_dynamics(owner);
-    char *buf = NULL;
-    llll_to_text_buf(ll, &buf);
-    parse_string_to_dynamics(r_ob, buf, dyn);
-    bach_freeptr(buf);
+    if (hairpin == gensym("<"))
+        return k_DYNAMICS_HAIRPIN_CRESC;
+    if (hairpin == gensym("<<"))
+        return k_DYNAMICS_HAIRPIN_CRESCEXP;
+    if (hairpin == gensym(">"))
+        return k_DYNAMICS_HAIRPIN_DIM;
+    if (hairpin == gensym(">>"))
+        return k_DYNAMICS_HAIRPIN_DIMEXP;
+    return k_DYNAMICS_HAIRPIN_NONE;
+}
+
+t_symbol *hairpin_value_to_symbol(long hairpin)
+{
+    switch (hairpin) {
+        case k_DYNAMICS_HAIRPIN_CRESCEXP:
+            return gensym("<<");
+            break;
+            
+        case k_DYNAMICS_HAIRPIN_CRESC:
+            return gensym("<");
+            break;
+
+        case k_DYNAMICS_HAIRPIN_DIMEXP:
+            return gensym(">>");
+            break;
+
+        case k_DYNAMICS_HAIRPIN_DIM:
+            return gensym(">");
+            break;
+
+        case k_DYNAMICS_HAIRPIN_NONE:
+        default:
+            return gensym("_");
+            break;
+    }
+}
+
+t_llll *dynamics_to_llll_detailed(t_notation_obj *r_ob, t_dynamics *dyn)
+{
+    t_llll *res = llll_get();
+    for (t_dynamics_mark *mark = dyn->firstmark; mark; mark = mark->next) {
+        t_llll *markll = llll_get();
+        if (mark->snap_to_breakpoint > 0) {
+            t_llll *posll = llll_get();
+            llll_appendlong(posll, mark->snap_to_breakpoint);
+            t_note *nt = dyn->owner_item->type == k_NOTE ? (t_note *)dyn->owner_item : (dyn->owner_item->type == k_CHORD ? ((t_chord *)dyn->owner_item)->firstnote : NULL);
+            if (nt) {
+                t_bpt *bpt = nth_breakpoint(nt, mark->snap_to_breakpoint);
+                llll_appenddouble(posll, bpt ? bpt->rel_x_pos : 0.);
+            } else
+                llll_appenddouble(posll, 0.);
+            llll_appendllll(markll, posll);
+        } else {
+            llll_appenddouble(markll, mark->relative_position);
+        }
+        llll_appendsym(markll, mark->text_deparsed);
+        llll_appendsym(markll, hairpin_value_to_symbol(mark->hairpin_to_next));
+        llll_appendllll(res, markll);
+    }
+    return res;
+}
+
+t_llll *dynamics_to_llll_plain(t_notation_obj *r_ob, t_dynamics *dyn)
+{
+    t_llll *res = llll_get();
+    for (t_dynamics_mark *mark = dyn->firstmark; mark; mark = mark->next) {
+/*        t_llll *markll = llll_get();
+        if (mark->snap_to_breakpoint > 0) {
+            t_llll *posll = llll_get();
+            llll_appendlong(posll, mark->snap_to_breakpoint);
+            t_note *nt = dyn->owner_item->type == k_NOTE ? (t_note *)dyn->owner_item : (dyn->owner_item->type == k_CHORD ? ((t_chord *)dyn->owner_item)->firstnote : NULL);
+            if (nt) {
+                t_bpt *bpt = nth_breakpoint(nt, mark->snap_to_breakpoint);
+                llll_appenddouble(posll, bpt ? bpt->rel_x_pos : 0.);
+            } else
+                llll_appenddouble(posll, 0.);
+            llll_appendllll(markll, posll);
+        } else {
+            llll_appenddouble(markll, mark->relative_position);
+        } */
+        
+        // TO DO: handle shifts
+        llll_appendsym(res, mark->text_deparsed);
+        
+        if (mark != dyn->lastmark || mark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE)
+            llll_appendsym(res, hairpin_value_to_symbol(mark->hairpin_to_next));
+    }
+    return res;
+}
+
+
+t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_llll *ll)
+{
+    t_dynamics *dyn = NULL;
+    if (ll->l_depth > 1) {
+        // it's a sequence of  [[#breakpointdiattachment relativeposition] dynamicmark hairpintype]...
+        dyn = build_dynamics(owner);
+        long i = 0, num_marks = ll->l_size;
+        for (t_llllelem *el = ll->l_head; el; el = el->l_next, i++) {
+            if (hatom_gettype(&el->l_hatom) == H_LLLL) {
+                t_llll *subll = hatom_getllll(&el->l_hatom);
+                
+                long snaptobreakpoint = 0;
+                double relativeposition = 0.;
+                if (subll->l_size >= 1) {
+                    if (hatom_gettype(&subll->l_head->l_hatom) == H_LLLL) {
+                        t_llll *point = hatom_getllll(&subll->l_head->l_hatom);
+                        if (point && point->l_head) {
+                            snaptobreakpoint = hatom_getlong(&point->l_head->l_hatom);
+                        } else {
+                            relativeposition = (num_marks == 1 ? 0 : ((double)i)/(num_marks - 1));
+                        }
+                    } else {
+                        relativeposition = hatom_getdouble(&subll->l_head->l_hatom);
+                    }
+                }
+                t_symbol *mark_sym = subll->l_size >= 2 ? hatom_getsym(&subll->l_head->l_next->l_hatom) : NULL;
+                long hairpintype = subll->l_size >= 3 ? (hatom_gettype(&subll->l_head->l_next->l_next->l_hatom) == H_SYM ? hairpin_symbol_to_value(hatom_getsym(&subll->l_head->l_next->l_next->l_hatom)) : hatom_getlong(&subll->l_head->l_next->l_next->l_hatom)) : k_DYNAMICS_HAIRPIN_NONE;
+                
+                if (mark_sym) {
+                    t_dynamics_mark *mark = build_dynamics_mark();
+                    dynamics_parse_string_to_energy(r_ob, mark_sym->s_name, &mark->start_energy, &mark->end_energy);
+                    mark->text_typographic = dynamics_parse_string_to_typographic_text(r_ob, mark_sym->s_name, NULL);
+                    mark->text_deparsed = mark_sym;
+                    mark->hairpin_to_next = hairpintype;
+                    mark->snap_to_breakpoint = snaptobreakpoint;
+                    mark->relative_position = relativeposition;
+                    dynamics_mark_append(dyn, mark);
+                }
+            }
+        }
+        
+        char *buf = NULL;
+        dynamics_to_textbuf(r_ob, dyn, &buf);
+        dyn->text_deparsed = gensym(buf);
+        bach_freeptr(buf);
+    } else {
+        char *buf = NULL;
+        llll_to_text_buf(ll, &buf);
+        dyn = dynamics_from_textbuf(r_ob, owner, buf);
+        bach_freeptr(buf);
+    }
     return dyn;
 }
 
-
-long chord_parse_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, t_slotitem **slotitem_containing_dynamics)
-{
-    t_slotitem *slotitem = NULL;
-    
-    if (!ch->firstnote && r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-        slotitem = notation_item_get_slot_firstitem(r_ob, (t_notation_item *)ch, slot_num);
-    else {
-        for (t_note *temp = ch->firstnote; temp; temp = temp->next) {
-            if ((slotitem = notation_item_get_slot_firstitem(r_ob, (t_notation_item *)temp, slot_num))) {
-                break;
-            }
-        }
-    }
-    
-    if (slotitem_containing_dynamics)
-        *slotitem_containing_dynamics = slotitem;
-    
-    if (slotitem && (t_symbol *)slotitem->item) {
-        parse_string_to_dynamics(r_ob, ((t_symbol *)slotitem->item)->s_name, ch->dynamics);
-        return 1;
-    }
-    
-    return 0;
-}
-
-/*
-long chord_parse_dynamics_easy(t_notation_obj *r_ob, t_chord *ch, long slot_num, char *dyn_text, long *hairpin)
-{
-    t_slotitem *slotitem = NULL;
-    
-    if (!ch->firstnote && r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-        slotitem = notation_item_get_slot_firstitem(r_ob, (t_notation_item *)ch, slot_num);
-    else {
-        for (t_note *temp = ch->firstnote; temp; temp = temp->next) {
-            if ((slotitem = notation_item_get_slot_firstitem(r_ob, (t_notation_item *)temp, slot_num))) {
-                break;
-            }
-        }
-    }
-    
-    if (dyn_text)
-        dyn_text[0] = 0;
-    
-    if (hairpin)
-        *hairpin = 0;
-    
-    if (slotitem && (t_symbol *)slotitem->item) {
-        char all_dynamics_text[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
-        long hairpins[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
-        long num_dynamics = 0;
-        char open_hairpin = false;
-        
-        parse_string_to_dynamics_ext(r_ob, ((t_symbol *)slotitem->item)->s_name, all_dynamics_text, hairpins, &num_dynamics, &open_hairpin, NULL, 0);
-        if (num_dynamics) {
-            if (dyn_text)
-                snprintf_zero(dyn_text, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", all_dynamics_text[0]);
-            if (hairpin && open_hairpin)
-                *hairpin = hairpins[0];
-        }
-        return 1;
-    }
-    
-    return 0;
-}
-*/
 
 void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                               double center_x, double duration_x, long slot, t_jfont *jf_dynamics, double font_size, double y_position,
@@ -180,21 +277,15 @@ void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *col
 {
     t_slotitem *firstitem = notation_item_get_slot_firstitem(r_ob, item, slot);
     if (firstitem && (t_symbol *)firstitem->item){
-        t_symbol *sym = (t_symbol *)firstitem->item;
-        
-        if (sym && sym->s_name) {
-            t_dynamics *dyn = build_dynamics(NULL);
-            parse_string_to_dynamics(r_ob, sym->s_name, dyn);
-            
+        t_dynamics *dyn = (t_dynamics *)firstitem->item;
+        if (dyn && dyn->firstmark)
             paint_dynamics(r_ob, g, color, item, center_x, duration_x, dyn, jf_dynamics, font_size, y_position, curr_hairpin_start_x, curr_hairpin_type, NULL, NULL, boxed);
-            free_dynamics(r_ob, dyn);
-        }
     }
 }
 
 char dynamics_mark_is_zero(t_dynamics_mark *dynsign)
 {
-    if (strcmp(dynsign->text_typographic, "o") == 0)
+    if (dynsign->text_typographic && strcmp(dynsign->text_typographic->s_name, "o") == 0)
         return true;
     return false;
 }
@@ -202,8 +293,8 @@ char dynamics_mark_is_zero(t_dynamics_mark *dynsign)
 
 // use item == NULL to only finish an hairpin
 void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                                double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, double font_size, double y_position,
-                                double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window)
+                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, double font_size, double y_position,
+                    double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window)
 {
     char boxed = inside_slot_window;
     double xpos = center_x, ypos = y_position;
@@ -237,7 +328,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
     if (dyn){
         if (!boxed && dyn->lastmark) {
             double w_temp, h_temp;
-            jfont_text_measure(jf_dynamics, dyn->lastmark->text_typographic, &w_temp, &h_temp);
+            jfont_text_measure(jf_dynamics, dyn->lastmark->text_typographic->s_name, &w_temp, &h_temp);
             if (duration_x - w_temp/2. > 0)
                 duration_x -= w_temp/2.;
         }
@@ -252,7 +343,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                     w = h = ZEROCIRCLE_RADIUS * 2.; // "0" circle
                     is_dynamic_zero = true;
                 } else if (dyn->firstmark) {
-                    jfont_text_measure(jf_dynamics, dyn->firstmark->text_typographic, &w, &h);
+                    jfont_text_measure(jf_dynamics, dyn->firstmark->text_typographic->s_name, &w, &h);
                 } else {
                     w = h = 0;
                 }
@@ -282,20 +373,20 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                     if (!dont_paint)
                         paint_circle_stroken(g, *color, xpos, ypos, ZEROCIRCLE_RADIUS, 1);
                     is_dynamic_zero = true;
-                } else if (boxed && (!dynsign->prev || (!dyn->open_hairpin && !dynsign->next))) {
+                } else if (boxed && (!dynsign->prev || (!dynamics_get_ending_hairpin(dyn) && !dynsign->next))) {
                     align = (dynsign== dyn->firstmark ? -1 : 1);
                     if (!dont_paint)
-                        write_text(g, jf_dynamics, *color, dynsign->text_typographic, center_x, ypos + y_adj_for_dynamics, duration_x, ypos + 300, (dynsign == dyn->firstmark ? JGRAPHICS_TEXT_JUSTIFICATION_LEFT : JGRAPHICS_TEXT_JUSTIFICATION_RIGHT) | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
+                        write_text(g, jf_dynamics, *color, dynsign->text_typographic->s_name, center_x, ypos + y_adj_for_dynamics, duration_x, ypos + 300, (dynsign == dyn->firstmark ? JGRAPHICS_TEXT_JUSTIFICATION_LEFT : JGRAPHICS_TEXT_JUSTIFICATION_RIGHT) | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
                 } else {
                     if (!dont_paint)
-                        write_text(g, jf_dynamics, *color, dynsign->text_typographic, xpos - 200, ypos + y_adj_for_dynamics, 400, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
+                        write_text(g, jf_dynamics, *color, dynsign->text_typographic->s_name, xpos - 200, ypos + y_adj_for_dynamics, 400, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
                 }
             }
             
             if (is_dynamic_zero)
                 w = h = ZEROCIRCLE_RADIUS * 2.;
             else
-                jfont_text_measure(jf_dynamics, dynsign->text_typographic, &w, &h);
+                jfont_text_measure(jf_dynamics, dynsign->text_typographic->s_name, &w, &h);
             
             // painting hairpin?
             if ((r_ob->show_hairpins || boxed) && !dont_paint && dynsign->prev && dynsign->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < xpos - (align == 0 ? w/2. : w) - (is_dynamic_zero ? 0. : HAIRPIN_PAD))
@@ -310,7 +401,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
             }
         }
         
-        if (boxed && dyn->open_hairpin && !dont_paint && dyn->lastmark && dyn->lastmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < center_x + duration_x - HAIRPIN_PAD) {
+        if (boxed && !dont_paint && dyn->lastmark && dyn->lastmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < center_x + duration_x - HAIRPIN_PAD) {
             paint_hairpin(g, *color, dyn->lastmark->hairpin_to_next, prev_end_xpos, center_x + duration_x - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1);
         }
     }
@@ -378,9 +469,9 @@ void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char 
                     break;
             }
             c+=2;
-/*        } else if (*c == ' '){
-            buf[cur++] = ' ';
-            c++; */
+            /*        } else if (*c == ' '){
+             buf[cur++] = ' ';
+             c++; */
         } else if (*c == 'o') {
             buf[cur++] = 'o';
             c++;
@@ -434,7 +525,7 @@ void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, long *star
                 else if (!strcmp(buf, "mf"))
                     se = ee = 101;
                 break;
-
+                
             case 'p':
                 for (long i = 1; i < strlen(buf); i++)
                     if (buf[i] != 'p')
@@ -463,7 +554,7 @@ void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, long *star
                     }
                 se = ee = 101 + CLAMP(strlen(buf), 0, 100);
                 break;
-
+                
             case 's':
             {
                 long len = buf[strlen(buf) - 1] == 'z' ? strlen(buf) - 1: strlen(buf);
@@ -488,7 +579,7 @@ void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, long *star
                 se = ee = 200 + CLAMP(len, 0, 100);
             }
                 break;
-
+                
             default:
                 break;
         }
@@ -501,13 +592,16 @@ end:
 
 // returns 1 if has crescendo, -1 if it has diminuendo, 0 otherwise
 // buf is assumed to be 0-terminated
-long dynamics_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf, char *dynamics)
+t_symbol *dynamics_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf, long *lasthairpin)
 {
+    char dynamics[CONST_MAX_NUM_DYNAMICS_CHARS];
     long res = k_DYNAMICS_HAIRPIN_NONE;
     
     if (!buf) {
         dynamics[0] = 0;
-        return k_DYNAMICS_HAIRPIN_NONE;
+        if (lasthairpin)
+            *lasthairpin = k_DYNAMICS_HAIRPIN_NONE;
+        return gensym(dynamics);
     }
     
     char *c = buf;
@@ -576,7 +670,7 @@ long dynamics_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf, 
                 } else
                     c++;
                 break;
-
+                
             case 's':
                 if (strncasecmp(c, "sffz", 4) == 0) {
                     dynamics[cur++] = 195;
@@ -598,12 +692,12 @@ long dynamics_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf, 
                 dynamics[cur++] = 'o';
                 c++;
                 break;
-
-/*            case ' ':
-                dynamics[cur++] = ' ';
-                c++;
-                break;
-  */
+                
+                /*            case ' ':
+                 dynamics[cur++] = ' ';
+                 c++;
+                 break;
+                 */
             case '<':
                 if (*(c+1) == 0) {
                     res = k_DYNAMICS_HAIRPIN_CRESC;
@@ -632,7 +726,11 @@ long dynamics_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf, 
         }
     }
     dynamics[cur] = 0;
-    return res;
+    
+    if (lasthairpin)
+        *lasthairpin = res;
+    
+    return gensym(dynamics);
 }
 
 void dynamics_free_marks(t_dynamics *dyn)
@@ -653,14 +751,15 @@ t_dynamics_mark *build_dynamics_mark()
     ds->hairpin_to_next = k_DYNAMICS_HAIRPIN_NONE;
     ds->relative_position = 0;
     ds->snap_to_breakpoint = 0;
-    ds->text_typographic[0] = 0;
-    ds->text_deparsed[0] = 0;
+    ds->text_typographic = NULL;
+    ds->text_deparsed = NULL;
     ds->prev = ds->next = NULL;
+    return ds;
 }
 
-void parse_string_to_dynamics(t_notation_obj *r_ob, char *buf, t_dynamics *dyn)
+t_dynamics *dynamics_from_textbuf(t_notation_obj *r_ob, t_notation_item *owner, char *buf)
 {
-    dynamics_free_marks(dyn); // from scratch
+    t_dynamics *dyn = build_dynamics(owner);
     
     char complete_deparsed_string[8192];
     long complete_deparsed_string_alloc = 8192;
@@ -686,25 +785,24 @@ void parse_string_to_dynamics(t_notation_obj *r_ob, char *buf, t_dynamics *dyn)
             temp[MAX(0, MIN(CONST_MAX_NUM_DYNAMICS_CHARS - 1, d-c))] = 0;
             
             // creating new sign
-            t_dynamics_mark *thissign = build_dynamics_mark();
+            t_dynamics_mark *thismark = build_dynamics_mark();
             if (!dyn->firstmark)
-                dyn->firstmark = thissign;
+                dyn->firstmark = thismark;
             
-            dynamics_parse_string_to_energy(r_ob, temp, &thissign->start_energy, &thissign->end_energy);
-            snprintf(thissign->text_deparsed, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", temp);
-            thissign->hairpin_to_next = dynamics_parse_string_to_typographic_text(r_ob, temp, thissign->text_typographic);
-            dyn->open_hairpin = (thissign->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE);
+            dynamics_parse_string_to_energy(r_ob, temp, &thismark->start_energy, &thismark->end_energy);
+            thismark->text_deparsed = gensym(temp);
+            thismark->text_typographic = dynamics_parse_string_to_typographic_text(r_ob, temp, &thismark->hairpin_to_next);
             dyn->num_marks++;
             
             // TO DO: "thissign->text_typographic"??? shouldn't it be text_deparsed?
-            snprintf_zero(complete_deparsed_string + cur, complete_deparsed_string_alloc - cur, "%s%s", thissign->text_deparsed, dyn->open_hairpin == k_DYNAMICS_HAIRPIN_DIMEXP ? ">>" : dyn->open_hairpin == k_DYNAMICS_HAIRPIN_DIM ? ">" : dyn->open_hairpin == k_DYNAMICS_HAIRPIN_CRESC ? "<" : dyn->open_hairpin == k_DYNAMICS_HAIRPIN_CRESCEXP ? "<<" : "_");
+            snprintf_zero(complete_deparsed_string + cur, complete_deparsed_string_alloc - cur, "%s%s", thismark->text_deparsed, thismark->hairpin_to_next == k_DYNAMICS_HAIRPIN_DIMEXP ? ">>" : thismark->hairpin_to_next == k_DYNAMICS_HAIRPIN_DIM ? ">" : thismark->hairpin_to_next == k_DYNAMICS_HAIRPIN_CRESC ? "<" : thismark->hairpin_to_next == k_DYNAMICS_HAIRPIN_CRESCEXP ? "<<" : "_");
             
             c = d;
             if (dyn->lastmark) {
-                dyn->lastmark->next = thissign;
-                thissign->prev = dyn->lastmark;
+                dyn->lastmark->next = thismark;
+                thismark->prev = dyn->lastmark;
             }
-            dyn->lastmark = thissign;
+            dyn->lastmark = thismark;
         }
         
         complete_deparsed_string[complete_deparsed_string_alloc-1] = 0;
@@ -714,64 +812,10 @@ void parse_string_to_dynamics(t_notation_obj *r_ob, char *buf, t_dynamics *dyn)
     }
     
     dyn->text_deparsed = gensym(complete_deparsed_string);
+    return dyn;
 }
 
-/*
- // OBSOLETE
-void parse_string_to_dynamics_ext(t_notation_obj *r_ob, char *buf, char dynamics[][CONST_MAX_NUM_DYNAMICS_CHARS], long *hairpins, long *num_dynamics, char *open_hairpin, char *complete_deparsed_string, long complete_deparsed_string_alloc)
-{
-    if (!buf || !buf[0]) {
-        if (num_dynamics)
-            *num_dynamics = 0;
-        if (complete_deparsed_string)
-            complete_deparsed_string[0] = 0;
-        return;
-    }
-    
-    char *c = buf, *d;
-    long cur = 0;
-    long this_num_dynamics = 0;
-    char temp[CONST_MAX_NUM_DYNAMICS_CHARS];
-    while (*c)
-    {
-        d = c;
-        while (*d != 0 && *d != '<' && *d != '>' && *d != '_')
-            d++;
-        while (*d == '<' || *d == '>' || *d == '_')
-            d++;
-        
-        sysmem_copyptr(c, temp, MIN(CONST_MAX_NUM_DYNAMICS_CHARS * sizeof(char), d-c));
-        temp[MAX(0, MIN(CONST_MAX_NUM_DYNAMICS_CHARS - 1, d-c))] = 0;
 
-        char this_dynamics[CONST_MAX_NUM_DYNAMICS_CHARS];
-        long this_hairpin = dynamics_parse_string_to_typographic_text(r_ob, temp, this_dynamics);
-        if (hairpins)
-            hairpins[this_num_dynamics] = this_hairpin;
-        if (open_hairpin)
-            *open_hairpin = (this_hairpin != 0);
-        if (dynamics)
-            sysmem_copyptr(this_dynamics, dynamics[this_num_dynamics], CONST_MAX_NUM_DYNAMICS_CHARS * sizeof(char));
-        this_num_dynamics++;
-        
-        if (complete_deparsed_string)
-            snprintf_zero(complete_deparsed_string + cur, complete_deparsed_string_alloc - cur, "%s%s", this_dynamics, this_hairpin == -2 ? ">>" : this_hairpin == -1 ? ">" : this_hairpin == 1 ? "<" : this_hairpin == 2 ? "<<" : " ");
-        
-        if (this_num_dynamics >= CONST_MAX_NUM_DYNAMICS_PER_CHORD)
-            break;
-        
-        c = d;
-    }
-    
-    if (num_dynamics)
-        *num_dynamics = this_num_dynamics;
-    
-    if (complete_deparsed_string) {
-        complete_deparsed_string[complete_deparsed_string_alloc-1] = 0;
-        if (complete_deparsed_string[strlen(complete_deparsed_string)-1] == ' ')
-            complete_deparsed_string[strlen(complete_deparsed_string)-1] = 0;
-    }
-}
-*/
 
 long dynamic_mark_cmp_fromtext(char *mark1, char *mark2)
 {
@@ -788,15 +832,15 @@ long dynamic_mark_cmp_fromtext(char *mark1, char *mark2)
         case 0:
             return 1;
             break;
-
+            
         case 'o':
-//        case ' ':
+            //        case ' ':
             if (mark2[0] == 'o') // || mark2[0] == ' ')
                 return 0;
             else
                 return 1;
             break;
-
+            
         case 'p':
             if (mark2[0] == 'o')
                 return -1;
@@ -815,7 +859,7 @@ long dynamic_mark_cmp_fromtext(char *mark1, char *mark2)
             } else
                 return 1;
             break;
-        
+            
         case 'm':
             if (mark2[0] == 'o' || mark2[0] == 'p')
                 return -1;
@@ -868,7 +912,7 @@ long dynamic_mark_cmp_fromtext(char *mark1, char *mark2)
             } else
                 return 1;
             break;
-        
+            
         default:
             return 0;
             break;
@@ -954,16 +998,15 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
     t_slotitem *last_slotitem = NULL;
     t_chord *last_chord = NULL;
     t_dynamics_mark *lastmark = NULL;
-
+    
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         last_slotitem = NULL;
         last_chord = NULL;
         last_hairpin = 0;
-
+        
         
         for (t_chord *ch = chord_get_first(r_ob, voice); ch; ) {
             long num_dynamics = 0;
-            char open_hairpin = false;
             char something_fixed = false;
             t_slotitem *slotitem = NULL;
             
@@ -1018,7 +1061,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 
                 // checking unnecessary dynamics
                 if (check_unnecessary) {
-                    if (!last_hairpin && lastmark && strcmp(dyn->firstmark->text_typographic, lastmark->text_typographic) == 0 && dyn->firstmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE) {
+                    if (!last_hairpin && lastmark && dyn->firstmark->text_typographic == lastmark->text_typographic && dyn->firstmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE) {
                         if (verbose) {
                             check_dynamics_get_path(r_ob, ch, path, 1024, num_dynamics > 1 ? 1 : 0);
                             object_warn((t_object *)r_ob, "Unnecessary dynamic marking found: '%s' %s", lastmark->text_deparsed, path);
@@ -1031,7 +1074,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                     }
                     
                     for (t_dynamics_mark *mark = dyn->firstmark->next; mark; mark = mark->next) {
-                        if (strcmp(mark->prev->text_typographic, mark->text_typographic) == 0 && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && mark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE) {
+                        if (mark->prev->text_typographic == mark->text_typographic && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && mark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE) {
                             if (verbose) {
                                 check_dynamics_get_path(r_ob, ch, path, 1024, num_dynamics > 1 ? i : 0);
                                 object_warn((t_object *)r_ob, "Unnecessary dynamic marking found: '%s' %s", mark->text_deparsed, path);
@@ -1065,22 +1108,22 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 }
                 
                 if (num_dynamics > 0) {
-                    last_hairpin = dyn->open_hairpin ? dyn->lastmark->hairpin_to_next : 0;
+                    last_hairpin = dyn->lastmark ? dyn->lastmark->hairpin_to_next : k_DYNAMICS_HAIRPIN_NONE;
                     lastmark = dyn->lastmark;
                 }
             }
             
             
             if (slotitem && something_fixed) {
-/*                // building complete string
-                char buf[CONST_MAX_NUM_DYNAMICS_PER_CHORD * CONST_MAX_NUM_DYNAMICS_CHARS];
-                reassemble_dynamics_buf(r_ob, num_dynamics, dyn_text_dep, hairpins, buf, CONST_MAX_NUM_DYNAMICS_PER_CHORD * CONST_MAX_NUM_DYNAMICS_CHARS);
-                create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
-                if (num_dynamics <= 0) {
-                    slotitem_delete(r_ob, slot_num, slotitem);
-                    slotitem = NULL;
-                } else
-                    slotitem->item = gensym(buf); */
+                /*                // building complete string
+                 char buf[CONST_MAX_NUM_DYNAMICS_PER_CHORD * CONST_MAX_NUM_DYNAMICS_CHARS];
+                 reassemble_dynamics_buf(r_ob, num_dynamics, dyn_text_dep, hairpins, buf, CONST_MAX_NUM_DYNAMICS_PER_CHORD * CONST_MAX_NUM_DYNAMICS_CHARS);
+                 create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
+                 if (num_dynamics <= 0) {
+                 slotitem_delete(r_ob, slot_num, slotitem);
+                 slotitem = NULL;
+                 } else
+                 slotitem->item = gensym(buf); */
                 
                 dyn->text_deparsed = dynamics_to_symbol(r_ob, dyn);
             }
@@ -1101,7 +1144,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
     }
     
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_FIX_DYNAMICS);
-
+    
     return 0;
 }
 
@@ -1194,37 +1237,37 @@ void parse_composed_dynamics(t_symbol *dyn, t_symbol **firstdyn, t_symbol **last
 }
 
 /*
-char dynamics_to_velocity_simple(t_symbol *dyn, double *vel)
-{
-    if (!dyn)
-        return 1;
-    
-    // If not found, go with defaults
-    if (dyn == gensym("pppppp")) { *vel = 1; return 0; }
-    if (dyn == gensym("ppppp")) { *vel = 5; return 0; }
-    if (dyn == gensym("pppp")) { *vel = 10; return 0; }
-    if (dyn == gensym("ppp")) { *vel = 20; return 0; }
-    if (dyn == gensym("pp")) { *vel = 35; return 0; }
-    if (dyn == gensym("p")) { *vel = 49; return 0; }
-    if (dyn == gensym("mp")) { *vel = 64; return 0; }
-    if (dyn == gensym("mf")) { *vel = 80; return 0; }
-    if (dyn == gensym("f")) { *vel = 96; return 0; }
-    if (dyn == gensym("ff")) { *vel = 110; return 0; }
-    if (dyn == gensym("fff")) { *vel = 118; return 0; }
-    if (dyn == gensym("ffff")) { *vel = 124; return 0; }
-    if (dyn == gensym("fffff")) { *vel = 126; return 0; }
-    if (dyn == gensym("ffffff")) { *vel = 127; return 0; }
-    if (dyn == gensym("n") || dyn == gensym("o") || dyn == gensym("O") || dyn == gensym("0")) { *vel = 0; return 0; }
-    
-    if (dyn == gensym("sfz")) { *vel = 115; return 0; }
-    if (dyn == gensym("sffz")) { *vel = 127; return 0; }
-    if (dyn == gensym("fz")) { *vel = 115; return 0; }
-    if (dyn == gensym("ffz")) { *vel = 127; return 0; }
-    if (dyn == gensym("sf")) { *vel = 115; return 0; }
-    
-    return 1;
-}
-*/
+ char dynamics_to_velocity_simple(t_symbol *dyn, double *vel)
+ {
+ if (!dyn)
+ return 1;
+ 
+ // If not found, go with defaults
+ if (dyn == gensym("pppppp")) { *vel = 1; return 0; }
+ if (dyn == gensym("ppppp")) { *vel = 5; return 0; }
+ if (dyn == gensym("pppp")) { *vel = 10; return 0; }
+ if (dyn == gensym("ppp")) { *vel = 20; return 0; }
+ if (dyn == gensym("pp")) { *vel = 35; return 0; }
+ if (dyn == gensym("p")) { *vel = 49; return 0; }
+ if (dyn == gensym("mp")) { *vel = 64; return 0; }
+ if (dyn == gensym("mf")) { *vel = 80; return 0; }
+ if (dyn == gensym("f")) { *vel = 96; return 0; }
+ if (dyn == gensym("ff")) { *vel = 110; return 0; }
+ if (dyn == gensym("fff")) { *vel = 118; return 0; }
+ if (dyn == gensym("ffff")) { *vel = 124; return 0; }
+ if (dyn == gensym("fffff")) { *vel = 126; return 0; }
+ if (dyn == gensym("ffffff")) { *vel = 127; return 0; }
+ if (dyn == gensym("n") || dyn == gensym("o") || dyn == gensym("O") || dyn == gensym("0")) { *vel = 0; return 0; }
+ 
+ if (dyn == gensym("sfz")) { *vel = 115; return 0; }
+ if (dyn == gensym("sffz")) { *vel = 127; return 0; }
+ if (dyn == gensym("fz")) { *vel = 115; return 0; }
+ if (dyn == gensym("ffz")) { *vel = 127; return 0; }
+ if (dyn == gensym("sf")) { *vel = 115; return 0; }
+ 
+ return 1;
+ }
+ */
 
 // 1-based index of the dynamics inside the dynamics spectrum of half width <dynamics_spectrum_halfwidth>
 long dynamics_to_spectrum_index(t_symbol *dyn, long dynamics_spectrum_halfwidth)
@@ -1244,7 +1287,7 @@ long dynamics_to_spectrum_index(t_symbol *dyn, long dynamics_spectrum_halfwidth)
         if (!strcmp(buf, dyn->s_name))
             return dynamics_spectrum_halfwidth - i;
     }
-
+    
     for (long i = 1; i < dynamics_spectrum_halfwidth && i < 127; i++) {
         long j = 0;
         for (; j < i; j++) buf[j] = 'f';
@@ -1384,7 +1427,7 @@ char dynamics_to_velocity_builtin(t_symbol *dyn, double *vel, t_dynamics_params 
         if (!dynamics_to_velocity_from_spectrum_index(index, vel, params, true))
             return 0;
     }
- 
+    
     return 1;
 }
 
@@ -1444,7 +1487,7 @@ char dynamics_to_velocity_once(t_notation_obj *r_ob, t_symbol *dyn, double *vel,
 // returns 0 if OK, 1 otherwise
 char dynamics_to_velocity(t_notation_obj *r_ob, t_symbol *dyn, double *vel, t_llll *dyn_vel_associations, t_dynamics_params *params, char usage_alignment)
 {
-
+    
     if (!dynamics_to_velocity_once(r_ob, dyn, vel, dyn_vel_associations, params, usage_alignment)) {
         CLIP_ASSIGN(*vel, CONST_MIN_VELOCITY, CONST_MAX_VELOCITY);
         return 0;
@@ -1531,10 +1574,10 @@ char is_dynamics_local(t_notation_obj *r_ob, t_llll *dyn_vel_associations, t_sym
             if (hatom_gettype(&el->l_hatom) == H_LLLL) {
                 t_llll *ll = hatom_getllll(&el->l_hatom);
                 if (ll && ll->l_size >= 2 && hatom_gettype(&ll->l_head->l_hatom) == H_SYM &&
-                     (((usage_alignment <= 0 || ll->l_size == 2) && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_SYM)||
-                      ((usage_alignment > 0 && ll->l_size >= 3) && hatom_gettype(&ll->l_head->l_next->l_next->l_hatom) == H_SYM))) {
-                         return true;
-                     }
+                    (((usage_alignment <= 0 || ll->l_size == 2) && hatom_gettype(&ll->l_head->l_next->l_hatom) == H_SYM)||
+                     ((usage_alignment > 0 && ll->l_size >= 3) && hatom_gettype(&ll->l_head->l_next->l_next->l_hatom) == H_SYM))) {
+                        return true;
+                    }
             }
         }
     }
@@ -1544,7 +1587,7 @@ char is_dynamics_local(t_notation_obj *r_ob, t_llll *dyn_vel_associations, t_sym
     if (dyn == gensym("sf")) return true;
     if (dyn == gensym("sff")) return true;
     if (dyn == gensym("fz")) return true;
-
+    
     // re parsing composed dyn, such as "ffpppp"
     t_symbol *firstdyn = NULL, *lastdyn = NULL, *stdfirstdyn = NULL, *stdlastdyn = NULL;
     parse_composed_dynamics(dyn, &firstdyn, &lastdyn, &stdfirstdyn, &stdlastdyn, params);
@@ -1565,7 +1608,7 @@ char is_dynamics_local(t_notation_obj *r_ob, t_llll *dyn_vel_associations, t_sym
 t_symbol *chord_get_first_dynamic_marking_as_symbol(t_notation_obj *r_ob, t_chord *ch, long slot_num)
 {
     if (ch->dynamics && ch->dynamics->firstmark)
-        return gensym(ch->dynamics->firstmark->text_deparsed);
+        return ch->dynamics->firstmark->text_deparsed;
     return NULL;
 }
 
@@ -1620,7 +1663,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                             }
                         }
                         
-
+                        
                         for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
                             if (!bpt->prev || (num_left_dyns == 1 && last_hairpin == 0))
                                 bpt->velocity = velocity;
@@ -1673,7 +1716,7 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
                 }
             } else
                 object_warn((t_object *)r_ob, "Could not find velocity assignment for dynamics '%s'. Skipping all chord markings.", left_dyns[0]->s_name);
-
+            
             
             
         } else if (right_dyn && last_hairpin) {
@@ -1734,16 +1777,16 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
     params.dynamics_spectrum_halfwidth = dynamics_spectrum_halfwidth;
     dynamics_compute_b(&params);
     
-
+    
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         t_chord *curr_dyn_chord = NULL, *next_dyn_chord = NULL;
         double curr_dyn_onset = -1, next_dyn_onset = -1;
         
         next_dyn_chord = dynamics_get_next(r_ob, voice, slot_num, next_dyn_chord, &next_dyn_onset);
-
+        
         for (t_chord *ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
             if (ch == next_dyn_chord) {
-//                if (next_num_dynamics > 0 && !is_dynamics_local(r_ob, dyn_vel_associations, next_dyn_sym[next_num_dynamics-1], 1)) {
+                //                if (next_num_dynamics > 0 && !is_dynamics_local(r_ob, dyn_vel_associations, next_dyn_sym[next_num_dynamics-1], 1)) {
                 prev_last_dyn_sym = curr_num_dynamics > 0 ? curr_dyn_sym[curr_num_dynamics-1] : NULL;
                 curr_dyn_chord = next_dyn_chord;
                 curr_dyn_onset = next_dyn_onset;
@@ -1757,8 +1800,8 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
                     // which means that the initial dynamics of the crescendo/diminuendo must be the last used one (if any)
                     curr_dyn_sym[0] = prev_last_dyn_sym;
                 }
-                    
-//                }
+                
+                //                }
             }
             
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
@@ -1899,7 +1942,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
             long hairpin = (ch_slope > 0 ? 1 : (ch_slope < 0 ? -1 : 0));
             t_chord *next_ch = (elem->l_next ? (t_chord *)(hatom_getllll(&elem->l_next->l_hatom)->l_thing.w_obj) : NULL);
             
-//            post("Chord No. %ld, slope: %.2f, hairpin: %ld, next chord No. %ld", notation_item_get_index_for_lexpr(r_ob, (t_notation_item *)ch), ch_slope, hairpin, next_ch ? notation_item_get_index_for_lexpr(r_ob, (t_notation_item *)next_ch) : -1);
+            //            post("Chord No. %ld, slope: %.2f, hairpin: %ld, next chord No. %ld", notation_item_get_index_for_lexpr(r_ob, (t_notation_item *)ch), ch_slope, hairpin, next_ch ? notation_item_get_index_for_lexpr(r_ob, (t_notation_item *)next_ch) : -1);
             
             // no hairpin between consecutive chords!
             if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
@@ -1917,8 +1960,8 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
             } else if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL && ch->next == next_ch)
                 hairpin = 0;
             
-//            post("– Chord No. %ld, slope: %.2f, hairpin: %ld", notation_item_get_index_for_lexpr(r_ob, (t_notation_item *)ch), ch_slope, hairpin);
-
+            //            post("– Chord No. %ld, slope: %.2f, hairpin: %ld", notation_item_get_index_for_lexpr(r_ob, (t_notation_item *)ch), ch_slope, hairpin);
+            
             assign_chord_dynamics_from_velocities(r_ob, ch, slot_num, dyn_vel_associations, &params, true, hairpin);
         }
         
@@ -1928,18 +1971,18 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
         llll_free(ll);
     }
     unlock_general_mutex(r_ob);
-
+    
     
     // 3. deleting unnecessary dynamics
     notationobj_check_dynamics(r_ob, slot_num, true, delete_unnecessary, true, delete_unnecessary, selection_only, false);
-
+    
     lock_general_mutex(r_ob);
     check_slot_linkage_recomputations_for_everything(r_ob, slot_num);
     unlock_general_mutex(r_ob);
-
+    
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     handle_change_if_there_are_free_undo_ticks(r_ob, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ASSIGN_DYNAMICS);
-
+    
     return 0;
 }
 
@@ -1964,7 +2007,7 @@ t_notation_item *notation_item_get_bearing_dynamics(t_notation_obj *r_ob, t_nota
             
             return NULL;
             break;
-
+            
         case k_NOTE:
             return notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)((t_note *)nitem)->parent, dynamics_slot_num);
             break;
@@ -1996,3 +2039,4 @@ t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notati
             break;
     }
 }
+

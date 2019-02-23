@@ -16091,7 +16091,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                 if (!ch) {
                     t_dynamics *dy = dynamics_get_first_selected((t_notation_obj *) x);
                     if (dy)
-                        ch = dy->owner;
+                        ch = notation_item_get_parent_chord((t_notation_obj *) x, dy->owner_item);
                 }
                 if (ch && x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0)
                     start_editing_dynamics((t_notation_obj *) x, patcherview, ch);

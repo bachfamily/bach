@@ -2142,8 +2142,11 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     // dyn_text: array of C-strings with the codepoints of "p", "ff", "p", "pppp" for November for bach
                                     // hairpins: array of 1, -2, -1, 0
                                     // open_hairpin: false
-                                    chord_parse_dynamics((t_notation_obj *)x, chord, dynamics_slot, NULL);
-       
+
+                                    // dg: NOW chord_parse_dynamics is DEPRECATED: MUST BE CHANGED!
+                                    // WAS: chord_parse_dynamics((t_notation_obj *)x, chord, dynamics_slot, NULL);
+                                    // SOMETHING MUST BE CHANGED HERE
+                                    
                                     // obtaining the rational duration of the entire sequence of possibly tied chords
                                     t_rational dur_with_ties = note_get_tieseq_symduration(note);
                                     

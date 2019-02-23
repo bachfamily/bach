@@ -4875,7 +4875,7 @@ void build_default_data_for_dynamics_slot(t_notation_obj *r_ob, t_notation_item 
     slot->firstitem = build_slotitem(r_ob, slot);
     slot->firstitem->next = NULL;
     slot->firstitem->prev = NULL;
-    slot->firstitem->item = build_dynamics(notation_item_get_parent_chord(r_ob, nitem));
+    slot->firstitem->item = build_dynamics(nitem);
 #ifdef BACH_SLOTS_HAVE_LASTITEM
     slot->lastitem = slot->firstitem;
 #endif
@@ -5366,7 +5366,7 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                     t_llll *cloned_ll = llll_clone(this_slot);
                                     t_slotitem *thisitem = build_slotitem(r_ob, slot);
                                     llll_behead(cloned_ll);
-                                    t_dynamics *dyn = dynamics_from_llll(r_ob, notation_item_get_parent_chord(r_ob, nitem), cloned_ll);
+                                    t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, cloned_ll);
                                     thisitem->item = dyn;
                                     slotitem_append(thisitem);
                                     llll_free(cloned_ll);
@@ -6090,7 +6090,7 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                     {
                         if (values_as_llll->l_head) {
                             t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
-                            t_dynamics *dyn = dynamics_from_llll(r_ob, notation_item_get_parent_chord(r_ob, nitem), values_as_llll);
+                            t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, values_as_llll);
                             thisitem->item = dyn;
                             slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
                         }
@@ -6277,7 +6277,7 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         if (values_as_llll->l_head) {
                             if (sl_item->item)
                                 free_dynamics(r_ob, ((t_dynamics *)sl_item->item));
-                            t_dynamics *dyn = dynamics_from_llll(r_ob, notation_item_get_parent_chord(r_ob, nitem), values_as_llll);
+                            t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, values_as_llll);
                             sl_item->item = dyn;
                         }
                         break;

@@ -4124,7 +4124,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
 	this_ch = (t_chord *)bach_newptrclear(sizeof(t_chord));
 	notation_item_init(&this_ch->r_it, k_CHORD);
 	this_ch->lyrics = build_lyrics(this_ch);
-    this_ch->dynamics = build_dynamics(this_ch);
+    this_ch->dynamics = NULL;
 
 	this_ch->onset = 0; // will be set later by calculate_all_chords_remaining_onsets
 	this_ch->just_added_from_separate_parameters = false;
@@ -4202,7 +4202,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 			this_ch = (t_chord *)bach_newptrclear(sizeof(t_chord));
 			notation_item_init(&this_ch->r_it, k_CHORD);
 			this_ch->lyrics = build_lyrics(this_ch);
-            this_ch->dynamics = build_dynamics(this_ch);
+            this_ch->dynamics = NULL;
 
 			this_ch->just_added_from_separate_parameters = false;
 			this_ch->voiceparent = NULL;
@@ -5308,8 +5308,8 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
             
         } else if (curr_it->type == k_DYNAMICS && delete_dynamics) {
             t_dynamics *dy = (t_dynamics *)curr_it;
-            create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)dy->owner, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-            changed |= delete_chord_dynamics((t_notation_obj *) x, (t_chord *) dy->owner);
+            create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, dy->owner_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+            changed |= delete_chord_dynamics((t_notation_obj *) x, notation_item_get_parent_chord((t_notation_obj *) x, dy->owner_item));
 		}
 		curr_it = next_item;
     }
@@ -9157,7 +9157,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     // check if there's an hairpin ending on this chord
                     for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
                         if (chord_has_dynamics(temp)) {
-                            curr_hairpin_type = (temp->dynamics->open_hairpin ? temp->dynamics->lastmark->hairpin_to_next : 0);
+                            curr_hairpin_type = (temp->dynamics->lastmark ? temp->dynamics->lastmark->hairpin_to_next : 0);
                             curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
                             break;
                         }
