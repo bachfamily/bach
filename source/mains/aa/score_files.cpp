@@ -1785,8 +1785,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 			if (slot_type == k_SLOT_TYPE_NONE) {
 				object_warn((t_object *) x, "Slot %ld is of type none", dynamics_slot);
 				dynamics_slot = 0;
-			} else if (slot_type != k_SLOT_TYPE_TEXT && slot_type != k_SLOT_TYPE_DYNAMICS) {
-				object_warn((t_object *) x, "Requested dynamics slot is not of type dynamics or text", dynamics_slot);
+			} else if (slot_type != k_SLOT_TYPE_DYNAMICS) {
+				object_warn((t_object *) x, "Requested dynamics slot %ld is not of type dynamics", dynamics_slot);
 				dynamics_slot = 0;
 			}
             if (slot_type == k_SLOT_TYPE_TEXT)
@@ -2142,7 +2142,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                     // dyn_text: array of C-strings with the codepoints of "p", "ff", "p", "pppp" for November for bach
                                     // hairpins: array of 1, -2, -1, 0
                                     // open_hairpin: false
-                                    chord_parse_dynamics((t_notation_obj *)x, chord, dynamics_slot, dyn_text, hairpins, &num_dynamics, &open_hairpin, NULL);
+                                    chord_parse_dynamics((t_notation_obj *)x, chord, dynamics_slot, NULL);
        
                                     // obtaining the rational duration of the entire sequence of possibly tied chords
                                     t_rational dur_with_ties = note_get_tieseq_symduration(note);

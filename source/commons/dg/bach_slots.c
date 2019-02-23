@@ -2208,11 +2208,11 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
             
             // this doesn't work properly, due to some issues in the max api the text does not stay confined in the rectangle
             if (r_ob->is_editing_type != k_DYNAMICS_IN_SLOT) {
+                t_dynamics *dyn = (get_activeitem_slot_firstitem(r_ob, s) ? (t_dynamics *)get_activeitem_slot_firstitem(r_ob, s)->item : NULL);
                 double text_pad = 5 * zoom_y;
                 double curr_hairpin_start_x = 0;
                 long curr_hairpin_type = 0;
-                paint_dynamics_from_slot(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad , s, jf_slot_dynamics, 18 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, true);
-
+                paint_dynamics(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad, dyn, jf_slot_dynamics, 18 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, NULL, NULL, true);
             }
         }
             break;
@@ -2815,9 +2815,9 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
                 {
                     char dyntext[1024];
                     double width, height;
-                    if (slot->firstitem && slot->firstitem->item && (t_symbol *)slot->firstitem->item) {
-                        t_symbol *sym = (t_symbol *)slot->firstitem->item;
-                        parse_string_to_dynamics_ext(r_ob, sym->s_name, NULL, NULL, NULL, NULL, dyntext, 1024);
+                    t_dynamics *dyn = (slot->firstitem && slot->firstitem->item ? (t_dynamics *)slot->firstitem->item : NULL);
+                    if (dyn) {
+                        snprintf_zero(dyntext, 1024, "%s", dyn->text_deparsed->s_name);
                     } else {
                         dyntext[0] = 0;
                     }
@@ -4471,8 +4471,10 @@ void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item){
 	}
 	
 	if (item->item) {
-        if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_NOTEHEAD || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS) {
+        if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_NOTEHEAD) {
             // nothing to do, it's a symbol
+        } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS) {
+            free_dynamics(r_ob, (t_dynamics *) item->item);
         } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_LLLL || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_INTMATRIX ||
 			r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_FLOATMATRIX || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_TOGGLEMATRIX)
 			llll_free((t_llll *) item->item);
@@ -4873,7 +4875,7 @@ void build_default_data_for_dynamics_slot(t_notation_obj *r_ob, t_notation_item 
     slot->firstitem = build_slotitem(r_ob, slot);
     slot->firstitem->next = NULL;
     slot->firstitem->prev = NULL;
-    slot->firstitem->item = _llllobj_sym_empty_symbol;
+    slot->firstitem->item = build_dynamics(notation_item_get_parent_chord(r_ob, nitem));
 #ifdef BACH_SLOTS_HAVE_LASTITEM
     slot->lastitem = slot->firstitem;
 #endif
@@ -5349,7 +5351,6 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                     break;
                                 }
                                 case k_SLOT_TYPE_NOTEHEAD:
-                                case k_SLOT_TYPE_DYNAMICS:
                                 {
                                     t_llllelem *subelem;
                                     for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
@@ -5358,6 +5359,17 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                         thisitem->item = s;
                                         slotitem_append(thisitem);
                                     }
+                                    break;
+                                }
+                                case k_SLOT_TYPE_DYNAMICS:
+                                {
+                                    t_llll *cloned_ll = llll_clone(this_slot);
+                                    t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                    llll_behead(cloned_ll);
+                                    t_dynamics *dyn = dynamics_from_llll(r_ob, notation_item_get_parent_chord(r_ob, nitem), cloned_ll);
+                                    thisitem->item = dyn;
+                                    slotitem_append(thisitem);
+                                    llll_free(cloned_ll);
                                     break;
                                 }
                                 case k_SLOT_TYPE_FLOATLIST:
@@ -6074,8 +6086,18 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         break;
                     }
                         
-                    case k_SLOT_TYPE_NOTEHEAD:
                     case k_SLOT_TYPE_DYNAMICS:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
+                            t_dynamics *dyn = dynamics_from_llll(r_ob, notation_item_get_parent_chord(r_ob, nitem), values_as_llll);
+                            thisitem->item = dyn;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                        }
+                        break;
+                    }
+                        
+                    case k_SLOT_TYPE_NOTEHEAD:
                     {
                         if (values_as_llll->l_head) {
                             t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
@@ -6087,6 +6109,7 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         }
                         break;
                     }
+
                         
                     case k_SLOT_TYPE_FLOAT: case k_SLOT_TYPE_FLOATLIST:
                     {
@@ -6242,7 +6265,6 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         break;
                         
                     case k_SLOT_TYPE_NOTEHEAD:
-                    case k_SLOT_TYPE_DYNAMICS:
                         if (values_as_llll->l_head) {
                             if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM)
                                 sl_item->item = hatom_getsym(&values_as_llll->l_head->l_hatom);
@@ -6251,6 +6273,15 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         }
                         break;
                         
+                    case k_SLOT_TYPE_DYNAMICS:
+                        if (values_as_llll->l_head) {
+                            if (sl_item->item)
+                                free_dynamics(r_ob, ((t_dynamics *)sl_item->item));
+                            t_dynamics *dyn = dynamics_from_llll(r_ob, notation_item_get_parent_chord(r_ob, nitem), values_as_llll);
+                            sl_item->item = dyn;
+                        }
+                        break;
+
                     case k_SLOT_TYPE_FUNCTION:
                     {
                         if (values_as_llll->l_head) {
@@ -8266,17 +8297,16 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             start_editing_textslot(r_ob, patcherview, r_ob->active_slot_notationitem, r_ob->active_slot_num, slot_text_textcolor);
                         } else {
                             // let's edit the text
+                            char text[4096];
                             unlock_general_mutex(r_ob);
-                            t_symbol *sym = (t_symbol *) get_activeitem_slot_firstitem(r_ob, s)->item;
+                            t_dynamics *dyn = (t_dynamics *) get_activeitem_slot_firstitem(r_ob, s)->item;
                             if (!r_ob->m_editor)
                                 r_ob->m_editor = (t_object *) object_new(CLASS_NOBOX, _sym_jed, (t_object *)r_ob, 0);
                             else
                                 object_attr_setchar(r_ob->m_editor, _sym_visible, 1);
-                            textlength = strlen(sym->s_name);
-                            text = (char *) bach_newptr(textlength + 4);
-                            strncpy(text, sym->s_name, textlength + 1);
-                            text[textlength] = 0;
-                            
+
+                            snprintf_zero(text, 4096, "%s", dyn->text_deparsed);
+
                             void *rv = object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);  // non-0 if the text was too long
                             if (rv) {
                                 t_object *ed = r_ob->m_editor;
@@ -8289,7 +8319,6 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             
                             r_ob->changed_while_dragging = true;
                             *changed = true;
-                            bach_freeptr(text);
                             lock_general_mutex(r_ob);
                         }
                     }

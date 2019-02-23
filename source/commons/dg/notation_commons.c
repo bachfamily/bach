@@ -10181,8 +10181,15 @@ void clone_slots_for_notation_item(t_notation_obj *r_ob, t_notation_item *from, 
                     }
                         break;
                     case k_SLOT_TYPE_NOTEHEAD:
+                    {
+                        newitem->item = (t_symbol *)temp->item;
+                    }
+                        break;
                     case k_SLOT_TYPE_DYNAMICS:
-                        newitem->item = temp->item;
+                    {
+                        t_dynamics *newdyn = dynamics_clone((t_dynamics *)temp->item, notation_item_get_parent_chord(r_ob, to));
+                        newitem->item = newdyn;
+                    }
                         break;
                     case  k_SLOT_TYPE_ARTICULATIONS:
                     {
@@ -10510,8 +10517,11 @@ t_tempo* clone_tempo(t_notation_obj *r_ob, t_tempo *tempo){
 t_dynamics *build_dynamics(t_chord *owner)
 {
     t_dynamics *dy = (t_dynamics *)bach_newptrclear(sizeof(t_dynamics));
-    dy->text = NULL;
+    dy->text_deparsed = NULL;
     dy->owner = owner;
+    dy->firstmark = dy->lastmark = NULL;
+    dy->extend = dy->open_hairpin = 0;
+    dy->dynamics_left_uext = dy->dynamics_right_uext = dy->dynamics_right_uext_first = 0;
     notation_item_init(&dy->r_it, k_DYNAMICS);
     return dy;
 }
@@ -23753,6 +23763,7 @@ void assign_chord_lyrics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_lyric
 char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
 {
     t_note *note;
+    char res = chord_has_dynamics(chord);
     
     if (notation_item_is_selected(r_ob, (t_notation_item *)chord->dynamics))
         notation_item_delete_from_selection(r_ob, (t_notation_item *)chord->dynamics);
@@ -23766,8 +23777,9 @@ char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
     }
     
     if (chord->dynamics) {
-        chord->dynamics->dynamics_right_uext = chord->dynamics->dynamics_left_uext = 0;
-        chord->dynamics->text = NULL;
+        chord->dynamics->dynamics_right_uext = chord->dynamics->dynamics_left_uext = chord->dynamics->dynamics_right_uext_first = 0;
+        chord->dynamics->text_deparsed = NULL;
+        dynamics_free_marks(chord->dynamics);
         chord->dynamics->extend = 0;
     }
     
@@ -23776,52 +23788,44 @@ char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
     else
         recompute_all_for_measure(r_ob, chord->parent, false);
     
-    return (chord->dynamics && chord->dynamics->text ? 1 : 0);
+    return res;
 }
 
 // assigns the chord lyrics starting from the slot content
 void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom)
 {
-    
+    const double MIN_UWIDTH_BETWEEN_DYNAMICS = 10;
+
     if (!chord->dynamics)
         return;	// should NEVER happen
     
-    chord->dynamics->text = NULL;
-    chord->dynamics->dynamics_right_uext = chord->dynamics->dynamics_left_uext = 0;
-    chord->dynamics->extend = 0;
+    chord->dynamics = NULL;
     
     long slotnum = r_ob->link_dynamics_to_slot - 1;
     if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS && r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_DYNAMICS){
 
         t_notation_item *item = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, slotnum);
         t_slotitem *firstitem = notation_item_get_slot_firstitem(r_ob, item, slotnum);
-        if (firstitem && (t_symbol *)firstitem->item){
-            t_symbol *sym = (t_symbol *)firstitem->item;
-            char dyntext[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
-            long hairpins[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
-            long num_dynamics = 0;
-            char open_hairpin = false;
-            const double MIN_UWIDTH_BETWEEN_DYNAMICS = 10;
-            parse_string_to_dynamics_ext(r_ob, sym->s_name, dyntext, hairpins, &num_dynamics, &open_hairpin, NULL, 0);
+        if (firstitem && firstitem->item){
+            t_dynamics *dyn = (t_dynamics *)firstitem->item;
+            chord->dynamics = dyn;
             
             double w = 0, h = 0;
-            if (num_dynamics > 0) {
-                jfont_text_measure(jf_dynamics_nozoom, dyntext[0], &w, &h);
+            if (dyn->firstmark) {
+                jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic, &w, &h);
                 chord->dynamics->dynamics_left_uext = w/2.;
                 chord->dynamics->dynamics_right_uext = w/2.;
-                for (long i = 1; i < num_dynamics; i++) {
-                    jfont_text_measure(jf_dynamics_nozoom, dyntext[i], &w, &h);
+                for (t_dynamics_mark *dynsign = dyn->firstmark->next; dynsign; dynsign = dynsign->next) {
+                    jfont_text_measure(jf_dynamics_nozoom, dynsign->text_typographic, &w, &h);
                     chord->dynamics->dynamics_right_uext += MIN_UWIDTH_BETWEEN_DYNAMICS + w;
                 }
             }
             
-            if (num_dynamics >= 1 && (open_hairpin && hairpins[num_dynamics - 1])) {
+            if (dyn->firstmark && (dyn->open_hairpin && dyn->lastmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE)) {
                 chord->dynamics->extend = 2; // meaning: till next chord!
-            } else if (num_dynamics > 1) {
+            } else if (dyn->firstmark) {
                 chord->dynamics->extend = 1; // meaning: till the end of the chord
             }
-
-            chord->dynamics->text = sym;
         }
     }
 }
@@ -24760,7 +24764,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
 		}
         
         // changing the extensions w.r. to the dynamics
-        if (r_ob->dynamics_affect_spacing && chord->dynamics && chord->dynamics->text){
+        if (r_ob->dynamics_affect_spacing && chord_has_dynamics(chord)){
             double this_left_uextension = chord->dynamics->dynamics_left_uext;
             double this_right_uextension = chord->dynamics->dynamics_right_uext;
             if (chord->left_uextension < this_left_uextension) {
@@ -25066,6 +25070,7 @@ void free_lyrics(t_notation_obj *r_ob, t_lyrics *ly)
 
 void free_dynamics(t_notation_obj *r_ob, t_dynamics *dy)
 {
+    dynamics_free_marks(dy);
     bach_freeptr(dy);
 }
 
@@ -25660,7 +25665,7 @@ char is_in_chord_lyrics_shape(t_notation_obj *r_ob, t_chord *chord, long point_x
 
 char is_in_chord_dynamics_shape(t_notation_obj *r_ob, t_chord *chord, long point_x, long point_y)
 {
-    if (chord && chord->dynamics && chord->dynamics->text) {
+    if (chord && chord_has_dynamics(chord)) {
         double alignment_x = chord_get_alignment_x(r_ob, chord);
 //        t_notation_item *nitem = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, r_ob->link_dynamics_to_slot - 1);
         double left_ext = chord->dynamics->dynamics_left_uext * r_ob->zoom_y;
@@ -28919,7 +28924,7 @@ t_chord *chord_get_next_with_dynamics(t_notation_obj *r_ob, t_chord *chord, long
     if (s >= 0 && s < CONST_MAX_SLOTS) {
         for (t_chord *temp = include_this_chord ? chord : chord_get_next(chord); temp; ) {
             t_chord *next_temp = chord_get_next(temp);
-            if (chord_parse_dynamics_easy(r_ob, temp, s, NULL, curr_hairpin_type)) {
+            if (chord_has_dynamics(temp)) {
                 return temp;
             } else if (return_last_one_in_any_case && !next_temp) {
                 return temp;
@@ -39551,7 +39556,8 @@ void handle_change_selection(t_notation_obj *r_ob) {
 }
 
 
-char chord_has_a_tie_to(t_chord *ch){
+char chord_has_a_tie_to(t_chord *ch)
+{
 	t_note *nt;
 	for (nt = ch->firstnote; nt; nt = nt->next)
 		if (nt->tie_to)
@@ -39559,7 +39565,8 @@ char chord_has_a_tie_to(t_chord *ch){
 	return 0;
 }
 
-char chord_has_a_tie_from(t_chord *ch){
+char chord_has_a_tie_from(t_chord *ch)
+{
 	t_note *nt;
 	for (nt = ch->firstnote; nt; nt = nt->next)
 		if (nt->tie_from)
@@ -39567,6 +39574,14 @@ char chord_has_a_tie_from(t_chord *ch){
 	return 0;
 }
 
+
+
+char chord_has_dynamics(t_chord *ch)
+{
+    if (ch && ch->dynamics && ch->dynamics->firstmark)
+        return 1;
+    return 0;
+}
 
 
 

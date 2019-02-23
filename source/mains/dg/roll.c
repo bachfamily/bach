@@ -11129,7 +11129,8 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
         if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
             // check if there's an hairpin ending on this chord
             for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
-                if (chord_parse_dynamics_easy((t_notation_obj *)x, temp, s, NULL, curr_hairpin_type)) {
+                if (chord_has_dynamics(temp)) {
+                    *curr_hairpin_type = (temp->dynamics->open_hairpin ? temp->dynamics->lastmark->hairpin_to_next : 0);
                     *curr_hairpin_start_x = onset_to_xposition((t_notation_obj *) x, temp->onset, NULL);
                     break;
                 }
@@ -11346,7 +11347,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     }
     
     if (x->r_ob.show_dynamics || x->r_ob.show_hairpins){
-        if (curr_ch->dynamics && curr_ch->dynamics->text) {
+        if (curr_ch->dynamics) {
             t_notation_item *nitem = (t_notation_item *)curr_ch;
             char is_item_locked = notation_item_is_globally_locked((t_notation_obj *)x, nitem);
             char is_item_muted = notation_item_is_globally_muted((t_notation_obj *)x, nitem);
@@ -11359,7 +11360,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             
             double end_pos = onset_to_xposition((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
             
-            paint_dynamics_from_symbol((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, curr_ch->dynamics->text, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
+            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, curr_ch->dynamics, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
         }
     }
     
@@ -11469,7 +11470,7 @@ void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf
             double curr_hairpin_end_x = rect.width * 2;
             if (lastch)
                 curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
-            paint_dynamics_from_symbol((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
+            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
         }
     }
 }
@@ -15329,7 +15330,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
             t_chord *chord;
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
                 for (chord = voice->firstchord; chord; chord = chord->next){
-                    if (chord->dynamics && chord->dynamics->text && is_in_chord_dynamics_shape((t_notation_obj *) x, chord, pt.x, pt.y)) {
+                    if (chord_has_dynamics(chord) && is_in_chord_dynamics_shape((t_notation_obj *) x, chord, pt.x, pt.y)) {
                         unlock_general_mutex((t_notation_obj *)x);
                         if (is_editable((t_notation_obj *)x, k_DYNAMICS, k_MODIFICATION_GENERIC))
                             start_editing_dynamics((t_notation_obj *) x, patcherview, chord);

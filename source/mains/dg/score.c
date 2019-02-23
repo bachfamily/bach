@@ -14336,7 +14336,7 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
                 for (meas = voice->firstmeasure; meas; meas = meas->next) {
                     for (chord = meas->firstchord; chord; chord = chord->next){
-                        if (chord->dynamics && chord->dynamics->text && is_in_chord_dynamics_shape((t_notation_obj *) x, chord, pt.x, pt.y)) {
+                        if (chord_has_dynamics(chord) && is_in_chord_dynamics_shape((t_notation_obj *) x, chord, pt.x, pt.y)) {
                             unlock_general_mutex((t_notation_obj *)x);
                             if (is_editable((t_notation_obj *)x, k_LYRICS, k_MODIFICATION_GENERIC))
                                 start_editing_dynamics((t_notation_obj *) x, patcherview, chord);

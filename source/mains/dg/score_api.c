@@ -6636,7 +6636,7 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
 						}
 
                         
-                        if (x->r_ob.show_dynamics && chords_to_align[i]->dynamics && chords_to_align[i]->dynamics->text) {
+                        if (x->r_ob.show_dynamics && chord_has_dynamics(chords_to_align[i])) {
                             double this_left = -chords_to_align[i]->dynamics->dynamics_left_uext; // TO DO: meno?
                             double this_right = chords_to_align[i]->dynamics->dynamics_right_uext;
                             
@@ -9156,7 +9156,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
                     // check if there's an hairpin ending on this chord
                     for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
-                        if (chord_parse_dynamics_easy((t_notation_obj *)x, temp, s, NULL, &curr_hairpin_type)) {
+                        if (chord_has_dynamics(temp)) {
+                            curr_hairpin_type = (temp->dynamics->open_hairpin ? temp->dynamics->lastmark->hairpin_to_next : 0);
                             curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
                             break;
                         }
@@ -9813,7 +9814,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 }
                 
                 if (x->r_ob.show_dynamics || x->r_ob.show_hairpins){
-                    if (curr_ch->dynamics && curr_ch->dynamics->text) {
+                    if (chord_has_dynamics(curr_ch)) {
                         t_notation_item *nitem = (t_notation_item *)curr_ch;
                         char is_item_locked = notation_item_is_globally_locked((t_notation_obj *)x, nitem);
                         char is_item_muted = notation_item_is_globally_muted((t_notation_obj *)x, nitem);
@@ -9842,7 +9843,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             end_pos -= deltauxpixels_to_deltaxpixels((t_notation_obj *)x, next_chord->dynamics->dynamics_left_uext);
                         
                         double dynamics_duration_x = (dynamics_span_ties ? end_pos : orig_end_pos) - chord_alignment_x;
-                        paint_dynamics_from_symbol((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, dynamics_duration_x, curr_ch->dynamics->text, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);
+                        paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, dynamics_duration_x, curr_ch->dynamics, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);
                     }
                 }
 
@@ -10305,7 +10306,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             double curr_hairpin_end_x = rect.width * 2;
             if (lastch)
                 curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
-            paint_dynamics_from_symbol((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &old_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);
+            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &old_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);
         }
     }
 
