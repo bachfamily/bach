@@ -1160,13 +1160,16 @@ void remove_first_dynamic_from_deparsed_dynamic(char *dyn_buf)
     snprintf_zero(dyn_buf, CONST_MAX_NUM_DYNAMICS_CHARS * CONST_MAX_NUM_DYNAMICS_PER_CHORD, "%s", c);
 }
 
-t_dynamics *chord_get_dynamics(t_chord *ch)
+t_dynamics *chord_get_dynamics(t_chord *ch, t_slotitem **slotitem)
 {
     t_slot *slot = ch->dynamics_slot;
-    if (slot && slot->firstitem && slot->firstitem->item)
+    if (slot && slot->firstitem && slot->firstitem->item) {
+        if (slotitem) *slotitem = slot->firstitem;
         return (t_dynamics *)slot->firstitem->item;
-    else
+    } else {
+        if (slotitem) *slotitem = NULL;
         return NULL;
+    }
     
 }
 
@@ -1176,6 +1179,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
     long i;
     long last_hairpin = 0;
     t_slotitem *last_slotitem = NULL;
+    t_dynamics *last_dyn = NULL;
     t_chord *last_chord = NULL;
     t_dynamics_mark *lastmark = NULL;
     
@@ -1194,7 +1198,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 continue;
             }
             
-            t_dynamics *dyn = chord_get_dynamics(ch);
+            t_dynamics *dyn = chord_get_dynamics(ch, &slotitem);
             
             if (dyn && dyn->firstmark){
                 long num_marks = dyn->num_marks;
@@ -1208,32 +1212,25 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                             object_warn((t_object *)r_ob, "Inconsistent %s found from '%s' to '%s' %s", last_hairpin > 0 ? "crescendo" : "diminuendo", lastmark->text_deparsed->s_name, dyn->firstmark->text_deparsed->s_name, path);
                         }
                         
-                        if (fix_inconsistent && last_slotitem) {
-                            last_hairpin = labs(last_hairpin) * cmp; // correcting the previous hairpin
-                            
-                            char buf[CONST_MAX_NUM_DYNAMICS_PER_CHORD * CONST_MAX_NUM_DYNAMICS_CHARS];
-                            snprintf(buf, CONST_MAX_NUM_DYNAMICS_PER_CHORD * CONST_MAX_NUM_DYNAMICS_CHARS, "%s", ((t_symbol *)last_slotitem->item)->s_name);
-                            long cur = strlen(buf) - 1;
-                            while (cur >= 0) {
-                                if (buf[cur] == '>' || buf[cur] == '<' || buf[cur] == '_')
-                                    buf[cur] = (last_hairpin < 0 ? '>' : last_hairpin > 0 ? '<' : 0);
-                                else
-                                    break;
-                                cur--;
-                            }
+                        if (fix_inconsistent && last_dyn && last_dyn->lastmark) {
                             create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)last_chord, k_UNDO_MODIFICATION_CHANGE);
-                            last_slotitem->item = gensym(buf);
-                            
+                            last_dyn->lastmark->hairpin_to_next = labs(last_hairpin) * cmp; // correcting the previous hairpin
+                            last_dyn->text_deparsed = dynamics_to_symbol(r_ob, last_dyn);
+
                             // ... but if the corrected last_hairpin == 0, the dynamics on last_chord might have become unnecessary.
-                            if (!last_hairpin) {
-                                last_slotitem = NULL;
-                                ch = dynamics_get_prev(r_ob, voice, slot_num, last_chord, NULL, NULL, NULL, NULL, NULL);
-                                if (!ch)
-                                    ch = last_chord;
-                                last_chord = NULL;
-                                lastmark = NULL;
-                                last_hairpin = 0;
-                                continue;
+                            if (check_unnecessary && fix_unnecessary) {
+                                if (last_dyn->lastmark->hairpin_to_next == k_DYNAMICS_HAIRPIN_NONE) {
+                                    // Let's rewind the mechanism of a step, to check whether it is unnecessary
+                                    last_slotitem = NULL;
+                                    last_dyn = NULL;
+                                    ch = dynamics_get_prev(r_ob, voice, slot_num, last_chord, NULL, NULL, NULL, NULL, NULL);
+                                    if (!ch)
+                                        ch = last_chord;
+                                    last_chord = NULL;
+                                    lastmark = NULL;
+                                    last_hairpin = k_DYNAMICS_HAIRPIN_NONE;
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -1241,7 +1238,9 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 
                 // checking unnecessary dynamics
                 if (check_unnecessary) {
-                    if (!last_hairpin && lastmark && dyn->firstmark->text_typographic == lastmark->text_typographic && dyn->firstmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE) {
+                    
+                    char then_continue = false;
+                    while (!last_hairpin && lastmark && dyn->firstmark && dyn->firstmark->text_typographic == lastmark->text_typographic && dyn->firstmark->hairpin_to_next == k_DYNAMICS_HAIRPIN_NONE) {
                         if (verbose) {
                             check_dynamics_get_path(r_ob, ch, path, 1024, num_marks > 1 ? 1 : 0);
                             object_warn((t_object *)r_ob, "Unnecessary dynamic marking found: '%s' %s", lastmark->text_deparsed->s_name, path);
@@ -1250,8 +1249,18 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                             something_fixed = true;
                             create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
                             dynamics_mark_delete(dyn, dyn->firstmark);
+                            if (!dyn->firstmark) {
+                                delete_chord_dynamics(r_ob, ch);
+                                then_continue = true;
+                            }
+                        } else {
+                            break;
                         }
                     }
+                    
+                    if (then_continue)
+                        continue;
+                    
                     
                     i = 0;
                     for (t_dynamics_mark *mark = dyn->firstmark->next; mark; mark = mark->next, i++) {
@@ -1314,6 +1323,9 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 last_slotitem = slotitem;
                 last_chord = ch;
             }
+            
+            if (dyn)
+                last_dyn = dyn;
             
             ch = chord_get_next(ch);
         }

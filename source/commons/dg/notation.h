@@ -19040,7 +19040,7 @@ t_dynamics_mark *build_dynamics_mark();
 t_dynamics *dynamics_clone(t_dynamics *dyn, t_notation_item *newowner);
 long dynamics_get_ending_hairpin(t_dynamics *dyn);
 char dynamics_extend_till_next_chord(t_dynamics *dyn);
-t_dynamics *chord_get_dynamics(t_chord *ch);
+t_dynamics *chord_get_dynamics(t_chord *ch, t_slotitem **slotitem = NULL);
 
 
 // DEPRECATED
