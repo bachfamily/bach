@@ -2169,7 +2169,7 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
         // The default is -20.
         
 		CLASS_ATTR_CHAR(c,"lyricsalignment",0, t_notation_obj, lyrics_alignment);
-		CLASS_ATTR_STYLE_LABEL(c,"lyricsalignment",0,"enum","Lyrics Alignment");
+		CLASS_ATTR_STYLE_LABEL(c,"lyricsalignment",0,"enumindex","Lyrics Alignment");
 		CLASS_ATTR_ENUMINDEX(c,"lyricsalignment", 0, "Auto Left Center Right");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lyricsalignment", 0, "0");
 		CLASS_ATTR_ACCESSORS(c, "lyricsalignment", (method)NULL, (method)notation_obj_setattr_lyrics_alignment);
@@ -2177,7 +2177,35 @@ void notation_class_add_settings_attributes(t_class *c, char obj_type){
 		// @description Sets how the lyrics syllables must be aligned with respect to the chord to which they refer.
 		// Possibilities are: "Auto", "Left", "Center", "Right". Currently "Auto" completely coincides with "Center",
 		// but it might be improved in a future version.
-        
+
+        CLASS_ATTR_CHAR(c,"dynamicsoutputmode",0, t_notation_obj, dynamics_output_mode);
+        CLASS_ATTR_STYLE_LABEL(c,"dynamicsoutputmode",0,"enumindex","Dynamics Output Mode");
+        CLASS_ATTR_ENUMINDEX(c,"dynamicsoutputmode", 0, "Plain Structured Full");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsoutputmode", 0, "2");
+        // @description Sets the way in which information in slots of type dynamics is output (N.B.: this does not affect the
+        // behavior at input, since in this case all syntaxes are supported):
+        // 0 = Plain: dynamics are output as a plain list. Manual positioning are obtained by
+        // having dynamic markings preceded by a
+        // floating point number (the relative positioning, between 0 and 1); breakpoint attachments are signaled with symbols bearing the
+        // breakpoint index preceded by '@' (e.g. "@3"). This is the most humanly readable option; <br />
+        // 1 = Structured: syntax is an llll containing the information structured in an llll; each dynamic marking is represented by
+        // an llll, whose form depends on the attachment mode. If the marking attachment is "auto", then the form is
+        // <b>[auto <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>; if the marking attachment is "manual", then the form is
+        // <b>[<m>relative_position</m> <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>; if the marking attachment is "breakpoint", then
+        // the form is
+        // <b>[[breakpoint <m>breakpoint_index</m>] <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>.
+        // This option is useful when you prefer to handle lllls, but, differently from the following one, it only bears
+        // the minimum amount of information to assign the dynamics correctly (e.g.: no need for a relative position if we are attaching
+        // the dynamic to a breakpoint); <br />
+        // 2 = Full (default): syntax is an llll containing, but always output all the information,
+        // as a sequence of dynamic markings each represented
+        // by an llll in the form
+        // <b>[[<m>attachment_mode</m> <m>breakpoint_attachment</m> <m>relative_position</m>] <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>.
+        // If a dynamic marking is set to be attached to a breakpoint ("breakpoint" attachment mode),
+        // both the breakpoint number and the relative position of the breakpoint are correctly output.
+        // If the attachment mode is "manual" or "auto", then <m>breakpoint_attachment</m> is meaningless (and left to 0),
+        // but in both cases the <m>relative_position</m> is correct.
+
 	}
 	
 	CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -2718,7 +2746,7 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
 		// @description Toggles the constant display of the playhead line (even while not playing). 
 		
 		CLASS_ATTR_CHAR(c,"showledgerlines",0, t_notation_obj, show_ledger_lines);
-		CLASS_ATTR_STYLE_LABEL(c,"showledgerlines",0,"enum","Show Ledger Lines");
+		CLASS_ATTR_STYLE_LABEL(c,"showledgerlines",0,"enumindex","Show Ledger Lines");
 		CLASS_ATTR_FILTER_CLIP(c, "showledgerlines", 0, 2);
 		CLASS_ATTR_ENUMINDEX(c,"showledgerlines", 0, "Never Standard Always Refer To Main Staves");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showledgerlines", 0, "1");
@@ -3744,7 +3772,7 @@ void start_editing_textslot(t_notation_obj *r_ob, t_object *patcherview, t_notat
 	jbox_set_fontname((t_object *) r_ob, _llllobj_sym_Courier);
     
     if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS)
-        jbox_set_fontsize((t_object *) r_ob, round(12.5 * zoom_y));
+        jbox_set_fontsize((t_object *) r_ob, round(11. * zoom_y));
     else
         jbox_set_fontsize((t_object *) r_ob, round(7.2 * zoom_y));
     
@@ -4578,19 +4606,20 @@ void start_editing_dynamics(t_notation_obj *r_ob, t_object *patcherview, t_chord
     textfield_set_textmargins(textfield, left, top, 0, 0);
     textfield_set_textcolor(textfield, &r_ob->j_dynamics_rgba);
     
-    jbox_set_fontname((t_object *) r_ob, gensym("Courier"));
-    jbox_set_fontsize((t_object *) r_ob, 12.5 * 1.25 * r_ob->zoom_y);
+    jbox_set_fontname((t_object *) r_ob, _llllobj_sym_Courier);
+    jbox_set_fontsize((t_object *) r_ob, 11 * 1.25 * r_ob->zoom_y);
     
     if (r_ob->is_editing_slot_number >= 0 && r_ob->is_editing_slot_number < CONST_MAX_SLOTS) {
-        t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, r_ob->is_editing_slot_number), k_CONSIDER_FOR_DUMPING, r_ob->is_editing_slot_number, false);
-        char *buf = NULL;
-        llll_behead(ll);
-        llll_to_text_buf(ll, &buf, 0, 6, LLLL_T_NONE, LLLL_TE_NONE, LLLL_TB_NONE, NULL);
-        
-        object_method(patcherview, gensym("insertboxtext"), r_ob, buf);
-        
-        bach_freeptr(buf);
-        llll_free(ll);
+        t_notation_item *it = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, r_ob->is_editing_slot_number);
+        t_slotitem *slit = it ? nth_slotitem(r_ob, it, r_ob->is_editing_slot_number, 0) : NULL;
+        if (slit && r_ob->slotinfo[r_ob->is_editing_slot_number].slot_type == k_SLOT_TYPE_DYNAMICS) {
+            t_dynamics *dyn = (t_dynamics *)slit->item;
+            object_method(patcherview, gensym("insertboxtext"), r_ob, dyn->text_deparsed ? dyn->text_deparsed->s_name : "");
+        } else {
+            if (chord && chord->firstnote) {
+                object_method(patcherview, gensym("insertboxtext"), r_ob, "");
+            }
+        }
     }
     
     notationobj_invalidate_notation_static_layer_and_redraw(r_ob);

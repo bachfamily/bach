@@ -9794,7 +9794,7 @@ t_chord* addchord_from_notes(t_roll *x, long voicenumber, double onset, long unu
 	this_ch = (t_chord *)bach_newptrclear(sizeof(t_chord));
 	notation_item_init(&this_ch->r_it, k_CHORD);
 	this_ch->lyrics = build_lyrics(this_ch);
-    this_ch->dynamics = NULL;
+    this_ch->dynamics_slot = NULL;
 
 	this_ch->just_added_from_separate_parameters = false;
 	this_ch->onset = onset;
@@ -9881,7 +9881,7 @@ t_chord* addchord_from_values(t_roll *x, long voicenumber, long num_notes, doubl
 			
 			notation_item_init(&this_ch->r_it, k_CHORD);
 			this_ch->lyrics = build_lyrics(this_ch);
-            this_ch->dynamics = NULL;
+            this_ch->dynamics_slot = NULL;
 
 			this_ch->imposed_direction = 0;
 			this_ch->just_added_from_separate_parameters = false;
@@ -11130,9 +11130,12 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             // check if there's an hairpin ending on this chord
             for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
                 if (chord_has_dynamics(temp)) {
-                    *curr_hairpin_type = (temp->dynamics->lastmark ? temp->dynamics->lastmark->hairpin_to_next : 0);
-                    *curr_hairpin_start_x = onset_to_xposition((t_notation_obj *) x, temp->onset, NULL);
-                    break;
+                    t_dynamics *dyn = chord_get_dynamics(temp);
+                    if (dyn) {
+                        *curr_hairpin_type = (dyn->lastmark ? dyn->lastmark->hairpin_to_next : 0);
+                        *curr_hairpin_start_x = onset_to_xposition((t_notation_obj *) x, temp->onset, NULL);
+                        break;
+                    }
                 }
             }
         }
@@ -11347,20 +11350,21 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     }
     
     if (x->r_ob.show_dynamics || x->r_ob.show_hairpins){
-        if (curr_ch->dynamics) {
+        t_dynamics *dyn = chord_get_dynamics(curr_ch);
+        if (dyn) {
             t_notation_item *nitem = (t_notation_item *)curr_ch;
             char is_item_locked = notation_item_is_globally_locked((t_notation_obj *)x, nitem);
             char is_item_muted = notation_item_is_globally_muted((t_notation_obj *)x, nitem);
             char is_item_solo = notation_item_is_globally_solo((t_notation_obj *)x, nitem);
             char is_item_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, nitem) && curr_ch->played) : false;
-            char is_dynamics_selected = notation_item_is_selected((t_notation_obj *) x, nitem) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->dynamics);
+            char is_dynamics_selected = notation_item_is_selected((t_notation_obj *) x, nitem) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)dyn);
             
             t_jrgba dynamicscolor = get_dynamics_color((t_notation_obj *) x, curr_ch, is_dynamics_selected, is_item_played, is_item_locked, is_item_muted, is_item_solo, is_chord_linear_edited);
             double chord_alignment_x = chord_get_alignment_x((t_notation_obj *)x, curr_ch);
             
             double end_pos = onset_to_xposition((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
             
-            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, curr_ch->dynamics, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
+            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, dyn, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
         }
     }
     
@@ -13951,7 +13955,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                 // dynamics
                 if (!clicked_ptr && x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.show_dynamics) {
                     if (is_in_chord_dynamics_shape((t_notation_obj *) x, curr_ch, this_x, this_y)){
-                        clicked_ptr = curr_ch->dynamics;
+                        clicked_ptr = chord_get_dynamics(curr_ch);
                         clicked_obj = k_DYNAMICS;
                         break;
                     }
@@ -15458,8 +15462,7 @@ void roll_enter(t_roll *x)	// enter is triggerd at "endeditbox time"
         t_notation_item *nitem = notation_item_get_to_which_dynamics_should_be_assigned((t_notation_obj *)x, (t_notation_item *)x->r_ob.is_editing_chord);
         if (nitem) {
             if (strlen(text) > 0) {
-                t_llll *new_text_as_llll = llll_get();
-                llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
+                t_llll *new_text_as_llll = llll_from_text_buf(text);
                 lock_general_mutex((t_notation_obj *)x);
                 create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
                 notation_item_change_slotitem((t_notation_obj *) x, nitem, x->r_ob.link_dynamics_to_slot - 1, 1, new_text_as_llll);

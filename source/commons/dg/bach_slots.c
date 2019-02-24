@@ -4474,6 +4474,7 @@ void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item){
         if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_NOTEHEAD) {
             // nothing to do, it's a symbol
         } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS) {
+            dynamics_check_dependencies_before_deleting_it(r_ob, (t_dynamics *) item->item);
             free_dynamics(r_ob, (t_dynamics *) item->item);
         } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_LLLL || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_INTMATRIX ||
 			r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_FLOATMATRIX || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_TOGGLEMATRIX)
@@ -6275,8 +6276,10 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         
                     case k_SLOT_TYPE_DYNAMICS:
                         if (values_as_llll->l_head) {
-                            if (sl_item->item)
-                                free_dynamics(r_ob, ((t_dynamics *)sl_item->item));
+                            if (sl_item->item) {
+                                dynamics_check_dependencies_before_deleting_it(r_ob, (t_dynamics *)sl_item->item);
+                                free_dynamics(r_ob, (t_dynamics *)sl_item->item);
+                            }
                             t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, values_as_llll);
                             sl_item->item = dyn;
                         }
@@ -8077,7 +8080,12 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_DUMPING, r_ob->active_slot_num, false);
 						char *buf = NULL;
 						llll_behead(ll);
-                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
+                        
+                        long maxdepth = -1;
+                        if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS)
+                            maxdepth = 2;
+                        
+                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", maxdepth, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 //						llll_to_text_buf(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
 						void *rv = object_method(r_ob->m_editor, _sym_settext, buf, _sym_utf_8);  // non-0 if the text was too long
                         if (rv) {
@@ -8285,8 +8293,6 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                     case k_SLOT_TYPE_DYNAMICS:
                     {
                         char titlename[512];
-                        long textlength;
-                        char *text;
                         if (!get_activeitem_slot_firstitem(r_ob, s) ||
                             !get_activeitem_slot_firstitem(r_ob, s)->item) { // there's no data yet. we just set a default value
                             build_default_data_for_dynamics_slot(r_ob, r_ob->active_slot_notationitem, s);

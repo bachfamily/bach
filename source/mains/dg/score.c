@@ -6747,7 +6747,7 @@ int T_EXPORT main(void){
 	// @description Sets a global offset for the measure numbering (0 is the default, meaning: first measure start with 1).
 
 	CLASS_ATTR_CHAR(c,"lyricsaffectspacing", 0, t_notation_obj, lyrics_affect_spacing);
-	CLASS_ATTR_STYLE_LABEL(c,"lyricsaffectspacing", 0, "enum", "Lyrics Affect Spacing");
+	CLASS_ATTR_STYLE_LABEL(c,"lyricsaffectspacing", 0, "enumindex", "Lyrics Affect Spacing");
 	CLASS_ATTR_ENUMINDEX(c,"lyricsaffectspacing", 0, "Never Only Inside Measures Also Measure Width When Overlapping Also Measure Width Always");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"lyricsaffectspacing", 0, "2");
 	CLASS_ATTR_ACCESSORS(c, "lyricsaffectspacing", (method)NULL, (method)score_setattr_lyricsaffectspacing);
@@ -6759,7 +6759,7 @@ int T_EXPORT main(void){
 	
     
     CLASS_ATTR_CHAR(c,"dynamicsaffectspacing", 0, t_notation_obj, dynamics_affect_spacing);
-    CLASS_ATTR_STYLE_LABEL(c,"dynamicsaffectspacing", 0, "enum", "Dynamics Affect Spacing");
+    CLASS_ATTR_STYLE_LABEL(c,"dynamicsaffectspacing", 0, "enumindex", "Dynamics Affect Spacing");
     CLASS_ATTR_ENUMINDEX(c,"dynamicsaffectspacing", 0, "Never Only Inside Measures Also Measure Width When Overlapping Also Measure Width Always");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsaffectspacing", 0, "2");
     CLASS_ATTR_ACCESSORS(c, "dynamicsaffectspacing", (method)NULL, (method)score_setattr_dynamicsaffectspacing);
@@ -6813,7 +6813,7 @@ int T_EXPORT main(void){
 	CLASS_STICKY_ATTR(c,"category",0,"Rhythm");
 
 	CLASS_ATTR_CHAR(c,"treehandling",0, t_notation_obj, tree_handling);
-	CLASS_ATTR_STYLE_LABEL(c,"treehandling",0,"enum","Rhythmic Trees Handling");
+	CLASS_ATTR_STYLE_LABEL(c,"treehandling",0,"enumindex","Rhythmic Trees Handling");
 	CLASS_ATTR_ENUMINDEX(c,"treehandling", 0, "Take For Granted Refine Only Graphically Refine Process Ignore");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"treehandling",0,"3");
 	CLASS_ATTR_ACCESSORS(c, "treehandling", (method)NULL, (method)score_setattr_treehandling);
@@ -6830,7 +6830,7 @@ int T_EXPORT main(void){
 	// it automatically, from scratch.
 
 	CLASS_ATTR_CHAR(c,"leveltobeam",0, t_notation_obj, tree_to_beaming_correspondence);
-	CLASS_ATTR_STYLE_LABEL(c,"leveltobeam",0,"enum","Tree Levels To Beams Conversion");
+	CLASS_ATTR_STYLE_LABEL(c,"leveltobeam",0,"enumindex","Tree Levels To Beams Conversion");
 	CLASS_ATTR_ENUMINDEX(c,"leveltobeam", 0, "Break Beams Around Levels Break Beams Around Tuplets Levels Can Share Beams");
 	CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"leveltobeam",0,"0");
 	CLASS_ATTR_ACCESSORS(c, "leveltobeam", (method)NULL, (method)score_setattr_leveltobeam);
@@ -12319,7 +12319,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     // dynamics
                     if (!clicked_ptr && x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.show_dynamics) {
                         if (is_in_chord_dynamics_shape((t_notation_obj *) x, curr_ch, this_x, this_y)){
-                            clicked_ptr = curr_ch->dynamics;
+                            clicked_ptr = chord_get_dynamics(curr_ch);
                             clicked_obj = k_DYNAMICS;
                             break;
                         }

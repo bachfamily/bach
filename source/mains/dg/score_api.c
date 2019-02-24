@@ -4124,7 +4124,7 @@ t_chord* addchord_in_measure_from_notes(t_score *x, t_measure *measure, t_chord 
 	this_ch = (t_chord *)bach_newptrclear(sizeof(t_chord));
 	notation_item_init(&this_ch->r_it, k_CHORD);
 	this_ch->lyrics = build_lyrics(this_ch);
-    this_ch->dynamics = NULL;
+    this_ch->dynamics_slot = NULL;
 
 	this_ch->onset = 0; // will be set later by calculate_all_chords_remaining_onsets
 	this_ch->just_added_from_separate_parameters = false;
@@ -4202,7 +4202,7 @@ t_chord* addchord_in_measure_from_values(t_score *x, t_measure *measure, t_chord
 			this_ch = (t_chord *)bach_newptrclear(sizeof(t_chord));
 			notation_item_init(&this_ch->r_it, k_CHORD);
 			this_ch->lyrics = build_lyrics(this_ch);
-            this_ch->dynamics = NULL;
+            this_ch->dynamics_slot = NULL;
 
 			this_ch->just_added_from_separate_parameters = false;
 			this_ch->voiceparent = NULL;
@@ -6637,15 +6637,18 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
 
                         
                         if (x->r_ob.show_dynamics && chord_has_dynamics(chords_to_align[i])) {
-                            double this_left = -chords_to_align[i]->dynamics->dynamics_left_uext; // TO DO: meno?
-                            double this_right = chords_to_align[i]->dynamics->dynamics_right_uext;
-                            
-                            left_uext_due_to_dynamics[i] = chords_to_align[i]->dynamics_portion_of_left_uextension; //portion_of_rightlim_due_to_lyrics[voice_number];
-                            
-                            if (this_left < min_dynamics_left)
-                                min_dynamics_left = this_left;
-                            if (this_right > max_dynamics_right)
-                                max_dynamics_right = this_right;
+                            t_dynamics *dyn = chord_get_dynamics(chords_to_align[i]);
+                            if (dyn) {
+                                double this_left = -dyn->dynamics_left_uext; // TO DO: meno?
+                                double this_right = dyn->dynamics_right_uext;
+                                
+                                left_uext_due_to_dynamics[i] = chords_to_align[i]->dynamics_portion_of_left_uextension; //portion_of_rightlim_due_to_lyrics[voice_number];
+                                
+                                if (this_left < min_dynamics_left)
+                                    min_dynamics_left = this_left;
+                                if (this_right > max_dynamics_right)
+                                    max_dynamics_right = this_right;
+                            }
                         }
                         // in such a way, the alignment point results at the middle of the notehead
 					}
@@ -9157,9 +9160,12 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     // check if there's an hairpin ending on this chord
                     for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
                         if (chord_has_dynamics(temp)) {
-                            curr_hairpin_type = (temp->dynamics->lastmark ? temp->dynamics->lastmark->hairpin_to_next : 0);
-                            curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
-                            break;
+                            t_dynamics *dyn = chord_get_dynamics(temp);
+                            if (dyn) {
+                                curr_hairpin_type = (dyn->lastmark ? dyn->lastmark->hairpin_to_next : 0);
+                                curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
+                                break;
+                            }
                         }
                     }
                 }
@@ -9815,12 +9821,13 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 
                 if (x->r_ob.show_dynamics || x->r_ob.show_hairpins){
                     if (chord_has_dynamics(curr_ch)) {
+                        t_dynamics *dyn = chord_get_dynamics(curr_ch);
                         t_notation_item *nitem = (t_notation_item *)curr_ch;
                         char is_item_locked = notation_item_is_globally_locked((t_notation_obj *)x, nitem);
                         char is_item_muted = notation_item_is_globally_muted((t_notation_obj *)x, nitem);
                         char is_item_solo = notation_item_is_globally_solo((t_notation_obj *)x, nitem);
                         char is_item_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, nitem) && curr_ch->played) : false;
-                        char is_dynamics_selected = notation_item_is_selected((t_notation_obj *) x, nitem) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->dynamics);
+                        char is_dynamics_selected = notation_item_is_selected((t_notation_obj *) x, nitem) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)dyn);
                         
                         t_jrgba dynamicscolor = get_dynamics_color((t_notation_obj *) x, curr_ch, is_dynamics_selected, is_item_played, is_item_locked, is_item_muted, is_item_solo, is_chord_linear_edited);
                         double chord_alignment_x = chord_get_alignment_x((t_notation_obj *)x, curr_ch);
@@ -9839,11 +9846,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             }
                         }
                         
-                        if (next_chord && next_chord->dynamics)
-                            end_pos -= deltauxpixels_to_deltaxpixels((t_notation_obj *)x, next_chord->dynamics->dynamics_left_uext);
+                        if (next_chord && chord_get_dynamics(next_chord))
+                            end_pos -= deltauxpixels_to_deltaxpixels((t_notation_obj *)x, chord_get_dynamics(next_chord)->dynamics_left_uext);
                         
                         double dynamics_duration_x = (dynamics_span_ties ? end_pos : orig_end_pos) - chord_alignment_x;
-                        paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, dynamics_duration_x, curr_ch->dynamics, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);
+                        paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, dynamics_duration_x, dyn, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);
                     }
                 }
 
@@ -10303,7 +10310,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         if (s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
             long old_hairpin_type = curr_hairpin_type;
             t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, curr_ch, &curr_hairpin_type, false, true);
-            double curr_hairpin_end_x = rect.width * 2;
+            double curr_hairpin_end_x = ms_to_xposition((t_notation_obj *)x, x->r_ob.length_ms_till_last_note); // rect.width * 2;
             if (lastch)
                 curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
             paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &old_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false);

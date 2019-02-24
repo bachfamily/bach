@@ -310,7 +310,7 @@
 #define CONST_SLOT_TEXT_DEFAULT_UWIDTH 100				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_TEXT, #k_SLOT_TYPE_LLLL
 #define CONST_SLOT_ARTICULATIONS_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_ARTICULATIONS
 #define CONST_SLOT_NOTEHEAD_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_NOTEHEAD
-#define CONST_SLOT_DYNAMICS_DEFAULT_UWIDTH 70				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_DYNAMICS
+#define CONST_SLOT_DYNAMICS_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_DYNAMICS
 #define CONST_SLOT_FUNCTION_DEFAULT_UWIDTH 110				///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FUNCTION (when static)
 #define CONST_SLOT_FILELIST_DEFAULT_UWIDTH 150			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_FILELIST
 #define CONST_SLOT_MATRIX_DEFAULT_UWIDTH 150			///< Unscaled default width (in pixels) of the slot window for slots of type #k_SLOT_TYPE_TOGGLEMATRIX, #k_SLOT_TYPE_INTMATRIX, #k_SLOT_TYPE_FLOATMATRIX
@@ -2528,6 +2528,17 @@ typedef enum _dynamics_hairpin
 } e_dynamics_hairpin;
 
 
+/** List of possible positioning of dynamics marking
+ @ingroup    dynamics
+ */
+typedef enum _dynamics_mark_positioning
+{
+    k_DYNAMICS_POSITIONING_AUTO = 0,       ///< Automatic placement
+    k_DYNAMICS_POSITIONING_MANUAL = 1,       ///< Manually adjust
+    k_DYNAMICS_POSITIONING_SNAPTOBPT = 2,      ///< Snap to a breakpoint
+} e_dynamics_mark_positioning;
+
+
 
 
 typedef struct _dynamics_mark
@@ -2537,12 +2548,14 @@ typedef struct _dynamics_mark
                                    ///  display the dynamics in November for bach, not a readable deparsing
     t_symbol *text_deparsed;       ///< The typographic text of the dynamics sign readable in plain text
 
+    char                    positioning_mode;   ///< One of the #e_dynamics_mark_positioning
     long                    snap_to_breakpoint; ///< If non-zero, it is the index of breakpoint to which it should be snapped.
     double                  relative_position;  ///< If #snap_to_breakpoint is 0, this sets the relative position of the dynamic sign
+
     long                    hairpin_to_next;    ///< Hairpin going to the next sign
     
-    long                    start_energy;       
-    long                    end_energy;
+    short                   start_energy;
+    short                   end_energy;
 
     struct _dynamics_mark   *next;
     struct _dynamics_mark   *prev;
@@ -2723,7 +2736,7 @@ typedef struct _chord
 	t_articulation	*articulation;			///< (DEPRECATED) The array containing the articulations for the note (#num_articulations elements are allocated, NULL if none).
     
 	struct _lyrics      *lyrics;				///< The chord piece of lyrics (it is always allocated).
-    struct _dynamics	*dynamics;				///< The chord piece of dynamics (it is always allocated).
+    t_slot              *dynamics_slot;  		///< Pointer to the slot containing the dynamics
 
     // grace?
     char			is_grace_chord;				///< Is the chord a grace chord?
@@ -4136,6 +4149,7 @@ typedef struct _notation_obj
     char		show_hairpins;                 ///< Flag telling if we want to show the dynamic crescendo/diminuendo hairpins
     double		dynamics_font_size;             ///< Font size for the dynamics (for zoom_y = 1)
     double		dynamics_uy_pos;				///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
+    char        dynamics_output_mode;            ///< Output mode for the dynamics: 0 = plain textual form; 1 = detailed; 2 = verbose
     
 	// lyrics
 	double		lyrics_font_size;					///< Font size for the lyrics (for zoom_y = 1)
@@ -7548,6 +7562,14 @@ char tempo_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_tempo *
  */
 void marker_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_marker *marker);
 
+
+/**    Check and erase all the dependencies for a dynamics (supposedly because we want to delete the dynamics right after).
+    @ingroup            notation
+    @param    r_ob        The notation object
+    @param    dyn        The dynamics whose dependencies must be erased.
+    @see    chord_check_dependencies_before_deleting_it()
+ */
+void dynamics_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_dynamics *dyn);
 
 /**	Properly delete a chord from a measure (and clean all fields referencing it).
 	@ingroup				notation
@@ -19002,17 +19024,23 @@ t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_l
 t_symbol *dynamics_to_symbol(t_notation_obj *r_ob, t_dynamics *dyn);
 long dynamics_to_textbuf(t_notation_obj *r_ob, t_dynamics *dyn, char **buf);
 t_dynamics *dynamics_from_textbuf(t_notation_obj *r_ob, t_notation_item *owner, char *buf);
+t_llll *dynamics_to_llll_full(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll_detailed(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll_plain(t_notation_obj *r_ob, t_dynamics *dyn);
+t_llll *dynamics_to_llll(t_notation_obj *r_ob, t_dynamics *dyn, e_data_considering_types mode);
+
+t_symbol *positioning_mode_value_to_symbol(char val);
+char positioning_mode_symbol_to_value(t_symbol *s);
 
 void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char *buf);
-void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, long *start_energy, long *end_energy);
-t_symbol *dynamics_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf, long *lasthairpin);
+void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, short *start_energy, short *end_energy);
+t_symbol *dynamics_mark_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf);
 
 t_dynamics_mark *build_dynamics_mark();
 t_dynamics *dynamics_clone(t_dynamics *dyn, t_notation_item *newowner);
 long dynamics_get_ending_hairpin(t_dynamics *dyn);
 char dynamics_extend_till_next_chord(t_dynamics *dyn);
+t_dynamics *chord_get_dynamics(t_chord *ch);
 
 
 // DEPRECATED
