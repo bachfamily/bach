@@ -377,7 +377,6 @@ t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_l
 {
     t_dynamics *dyn = NULL;
     if (ll->l_depth > 1) {
-        // it's a sequence of  [[#breakpointdiattachment relativeposition] dynamicmark hairpintype]...
         dyn = build_dynamics(owner);
         long i = 0, num_marks = ll->l_size;
         long last_snapped_breakpoint = 0;
@@ -465,10 +464,10 @@ t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_l
                         t_symbol *mark_sym = hatom_getsym(&subll->l_head->l_next->l_hatom);
                         if (mark_sym) {
                             dynamics_parse_string_to_energy(r_ob, mark_sym->s_name, &mark->start_energy, &mark->end_energy);
-                            mark->is_roman[i] = (mark->start_energy < 0 || mark->end_energy < 0);
+                            mark->is_roman[0] = (mark->start_energy < 0 || mark->end_energy < 0);
                             mark->text_deparsed[0] = mark_sym;
-                            if (mark->is_roman[i])
-                                mark->text_typographic[i] = mark->text_deparsed[i];
+                            if (mark->is_roman[0])
+                                mark->text_typographic[0] = mark->text_deparsed[0];
                             else
                                 mark->text_typographic[0] = dynamics_mark_parse_string_to_typographic_text(r_ob, mark_sym->s_name);
                         } else {
