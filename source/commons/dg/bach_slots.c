@@ -1384,7 +1384,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
  	t_jrgba lightoff_color, slot_color, slot_bordercolor, slot_bordercolor2, slot_backgroundcolor, slot_backgroundcolor_orig, slot_textcolor = CONST_SLOT_TEXTCOLOR;
 	t_jrgba slot_namecolor = CONST_SLOT_NAME_COLOR_CLEAR, slot_numbers_linecolor = CONST_SLOT_TEXTCOLOR, slot_text_textcolor = CONST_SLOT_TEXT_TEXTCOLOR;
 	double slot_window_active_x1, slot_window_active_x2, slot_window_active_y1, slot_window_active_y2, slot_window_active_width, slot_window_active_height;
-	t_jfont *jf_slot_name, *jf_slot_values, *jf_slot_text, *jf_slot_file, *jf_slot_file_bold, *jf_slot_file_italic, *jf_slot_smallvalues, *jf_slot_function_point_labels, *jf_slot_dynamics, *jf_slot_function_grid_labels = NULL;
+	t_jfont *jf_slot_name, *jf_slot_values, *jf_slot_text, *jf_slot_file, *jf_slot_file_bold, *jf_slot_file_italic, *jf_slot_smallvalues, *jf_slot_function_point_labels, *jf_slot_dynamics, *jf_slot_dynamics_roman, *jf_slot_function_grid_labels = NULL;
 	int s = slot_number, slot_window_height, y_file_step, y_numberlist_step;
 	double slotname_right_limit = 0;
 	double left_pos, usable_width;
@@ -1410,6 +1410,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
     jf_slot_file_italic = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(7.0 * zoom_y));
     jf_slot_function_point_labels = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(5 * zoom_y));
     jf_slot_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(18 * zoom_y));
+    jf_slot_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(9 * zoom_y));
     if (has_x_labels || has_y_labels)
         jf_slot_function_grid_labels = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(5 * zoom_y));
     
@@ -2212,7 +2213,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
                 double text_pad = 5 * zoom_y;
                 double curr_hairpin_start_x = 0;
                 long curr_hairpin_type = 0;
-                paint_dynamics(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad, dyn, jf_slot_dynamics, 18 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, NULL, NULL, true);
+                paint_dynamics(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad, dyn, jf_slot_dynamics, jf_slot_dynamics_roman, 18 * zoom_y, 9 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, NULL, NULL, true);
             }
         }
             break;
@@ -2321,6 +2322,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 	jfont_destroy_debug(jf_slot_file_italic);
 	jfont_destroy_debug(jf_slot_function_point_labels);
     jfont_destroy_debug(jf_slot_dynamics);
+    jfont_destroy_debug(jf_slot_dynamics_roman);
     if (jf_slot_function_grid_labels)
         jfont_destroy_debug(jf_slot_function_grid_labels);
 }
@@ -8077,7 +8079,7 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						else
 							object_attr_setchar(r_ob->m_editor, _sym_visible, 1);
 
-						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_DUMPING, r_ob->active_slot_num, false);
+						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_SLOT_LLLL_EDITOR, r_ob->active_slot_num, false);
 						char *buf = NULL;
 						llll_behead(ll);
                         

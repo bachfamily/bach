@@ -416,7 +416,7 @@ t_llll *chord_get_as_llll_for_sending(t_notation_obj *r_ob, t_chord *chord, e_da
 			
 			t_note *note;
 			for (note = chord->firstnote; note; note = note->next) { 
-				if ((should_element_be_played(r_ob, (t_notation_item *)note)) && (r_ob->play_tied_elements_separately || !note->tie_from || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_DUMPING || mode == k_CONSIDER_FOR_EVALUATION)) {
+				if ((should_element_be_played(r_ob, (t_notation_item *)note)) && (r_ob->play_tied_elements_separately || !note->tie_from || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_DUMPING || mode == k_CONSIDER_FOR_SLOT_LLLL_EDITOR || mode == k_CONSIDER_FOR_EVALUATION)) {
 					
                     if (mode == k_CONSIDER_FOR_EVALUATION && !should_play_tied_notes_separately(r_ob, chord) && note->tie_from && note->tie_from != WHITENULL && notation_item_is_globally_selected(r_ob, (t_notation_item *)note->tie_from)) {
                         // nothing to do
@@ -2997,6 +2997,13 @@ void notation_class_add_font_attributes(t_class *c, char obj_type){
         // @exclude bach.slot
         // @description Sets the font size of dynamics (rescaled according to the <m>vzoom</m>).
 
+        CLASS_ATTR_DOUBLE(c,"dynamicsexprfontsize",0, t_notation_obj, dynamics_roman_font_size);
+        CLASS_ATTR_STYLE_LABEL(c,"dynamicsexprfontsize",0,"text","Dynamics Expressions Font Size");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"dynamicsexprfontsize", 0, "12");
+        CLASS_ATTR_ACCESSORS(c, "dynamicsexprfontsize", (method)NULL, (method)notation_obj_setattr_dynamics_roman_font_size);
+        // @exclude bach.slot
+        // @description Sets the font size of dynamic-like textual expressions (rescaled according to the <m>vzoom</m>).
+
 		CLASS_ATTR_DOUBLE(c,"legendfontsize",0, t_notation_obj, legend_font_size);
 		CLASS_ATTR_STYLE_LABEL(c,"legendfontsize",0,"text","Legend Font Size");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"legendfontsize", 0, "13");
@@ -3568,6 +3575,15 @@ t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object
     return MAX_ERR_NONE;
 }
 
+t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
+    if (ac && is_atom_number(av))
+        r_ob->dynamics_roman_font_size = atom_getfloat(av);
+    
+    implicitely_recalculate_all(r_ob, false);
+    
+    notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    return MAX_ERR_NONE;
+}
 
 t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av){
     if (ac && is_atom_number(av))

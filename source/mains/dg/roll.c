@@ -101,7 +101,7 @@ void roll_paint(t_roll *x, t_object *view);
 void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect);
 void roll_paint_to_jitter_matrix(t_roll *x, t_symbol *matrix_name);
 
-void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *voice, t_chord *curr_ch, t_rect rect, long system_index, char *first_painted_chord, long *curr_hairpin_type, double *curr_hairpin_start_x, t_jfont *jf, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_small_dynamics, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_dynamics, t_jfont *jf_ann, t_jfont *jf_lyrics, long clef, double octave_stem_length, char part_direction, double staff_top_y, double staff_bottom_y, char *last_annotation_text, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos, double *annotation_line_y_pos, char *lyrics_dashed_going_on, double *left_dashed_x, double predomain_width);
+void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *voice, t_chord *curr_ch, t_rect rect, long system_index, char *first_painted_chord, long *curr_hairpin_type, double *curr_hairpin_start_x, t_jfont *jf, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_small_dynamics, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, t_jfont *jf_ann, t_jfont *jf_lyrics, long clef, double octave_stem_length, char part_direction, double staff_top_y, double staff_bottom_y, char *last_annotation_text, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos, double *annotation_line_y_pos, char *lyrics_dashed_going_on, double *left_dashed_x, double predomain_width);
 
 void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect);
 
@@ -9478,13 +9478,14 @@ void process_chord_parameters_calculation_NOW(t_roll *x){
 	t_rollvoice *voice;
     t_jfont *jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
     t_jfont *jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
+    t_jfont *jf_dynamics_roman_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
 
 	for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
 		t_chord *curr_ch;
 		for (curr_ch = voice->firstchord; curr_ch; curr_ch = curr_ch->next){
 			if (curr_ch->need_recompute_parameters) {
 				assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
-                assign_chord_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom);
+                assign_chord_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom, jf_dynamics_roman_nozoom);
 				calculate_chord_parameters((t_notation_obj *) x, curr_ch, get_voice_clef((t_notation_obj *)x, (t_voice *)voice), true);
 				curr_ch->need_recompute_parameters = false;
 			}
@@ -9492,6 +9493,7 @@ void process_chord_parameters_calculation_NOW(t_roll *x){
 	}
 	jfont_destroy_debug(jf_lyrics_nozoom);
     jfont_destroy_debug(jf_dynamics_nozoom);
+    jfont_destroy_debug(jf_dynamics_roman_nozoom);
 }
 
 
@@ -11106,7 +11108,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
 }
 
 
-void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *voice, t_chord *curr_ch, t_rect rect, long system_index, char *first_painted_chord, long *curr_hairpin_type, double *curr_hairpin_start_x, t_jfont *jf, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_small_dynamics, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_dynamics, t_jfont *jf_ann, t_jfont *jf_lyrics, long clef, double octave_stem_length, char part_direction, double staff_top_y, double staff_bottom_y, char *last_annotation_text, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos, double *annotation_line_y_pos, char *lyrics_dashed_going_on, double *left_dashed_x, double predomain_width)
+void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *voice, t_chord *curr_ch, t_rect rect, long system_index, char *first_painted_chord, long *curr_hairpin_type, double *curr_hairpin_start_x, t_jfont *jf, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_small_dynamics, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, t_jfont *jf_ann, t_jfont *jf_lyrics, long clef, double octave_stem_length, char part_direction, double staff_top_y, double staff_bottom_y, char *last_annotation_text, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos, double *annotation_line_y_pos, char *lyrics_dashed_going_on, double *left_dashed_x, double predomain_width)
 {
     double chord_alignment_x, stem_x;
     char is_chord_selected, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited;
@@ -11164,7 +11166,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     // do we have to recalculate chord parameters?
     if (curr_ch->need_recompute_parameters) { // we have to recalculate chord parameters
         assign_chord_lyrics((t_notation_obj *) x, curr_ch, jf_lyrics_nozoom);
-        assign_chord_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom);
+        assign_chord_dynamics((t_notation_obj *) x, curr_ch, jf_dynamics_nozoom, jf_dynamics_roman_nozoom);
         calculate_chord_parameters((t_notation_obj *) x, curr_ch, clef, true);
         curr_ch->need_recompute_parameters = false;
     }
@@ -11364,7 +11366,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             
             double end_pos = onset_to_xposition((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
             
-            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, dyn, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
+            paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, dyn, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
         }
     }
     
@@ -11464,7 +11466,7 @@ void roll_paint_linear_editing_stuff(t_roll *x, t_jgraphics *g, t_rollvoice *voi
 }
 
 
-void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf_dynamics, double staff_bottom_y, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *curr_hairpin_start_x, t_chord *last_drawn_chord)
+void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double staff_bottom_y, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dontpaint, double *curr_hairpin_start_x, t_chord *last_drawn_chord)
 {
     if (curr_hairpin_type && *curr_hairpin_type && x->r_ob.show_hairpins){
         long s = x->r_ob.link_dynamics_to_slot - 1;
@@ -11474,7 +11476,7 @@ void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf
             double curr_hairpin_end_x = rect.width * 2;
             if (lastch)
                 curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
-            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
+            paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false);
         }
     }
 }
@@ -11506,7 +11508,7 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
     t_jgraphics *g = view ? jbox_start_layer((t_object *)x, view, gensym("static_layer1"), rect.width, rect.height) : force_graphic_context;
 
 	if (g) {
-		t_jfont *jf_text_small, *jf_text_smallbold, *jf_lyrics, *jf_lyrics_nozoom, *jf_ann, *jf_dynamics, *jf_small_dynamics, *jf_dynamics_nozoom;
+		t_jfont *jf_text_small, *jf_text_smallbold, *jf_lyrics, *jf_lyrics_nozoom, *jf_ann, *jf_dynamics, *jf_dynamics_roman, *jf_small_dynamics, *jf_dynamics_nozoom, *jf_dynamics_roman_nozoom;
 		t_rollvoice *voice;
 		double system_jump = x->r_ob.system_jump;
 		double octave_stem_length = 7 * x->r_ob.step_y;
@@ -11523,9 +11525,11 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 		jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
         jf_ann = jfont_create_debug(x->r_ob.annotations_font ? x->r_ob.annotations_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.annotation_font_size * x->r_ob.zoom_y);
         jf_small_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
-        jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
-        jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.dynamics_font_size);
-			
+        jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
+        jf_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y);
+        jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
+        jf_dynamics_roman_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
+
         
 		lock_general_mutex((t_notation_obj *)x);
 		for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // cycle on the voices
@@ -11594,12 +11598,12 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                 } else if (position == k_CHORDPOSITIONINSCREEN_ENDS_BEFORE_DOMAIN) {
                     // nothing to paint
                 } else {
-                    roll_paint_chord(x, view, g, voice, curr_ch, rect, system_index, &first_painted_chord, &curr_hairpin_type, &curr_hairpin_start_x, jf, jf_lyrics_nozoom, jf_dynamics_nozoom, jf_text_small, jf_text_smallbold, jf_small_dynamics, jf_acc, jf_text_fractions, jf_acc_bogus, jf_dynamics, jf_ann, jf_lyrics, clef, octave_stem_length, part_direction, staff_top_y, staff_bottom_y, last_annotation_text, &prev_hairpin_color, &prev_hairpin_dontpaint, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos, &lyrics_dashed_going_on, &left_dashed_x, predomain_width);
+                    roll_paint_chord(x, view, g, voice, curr_ch, rect, system_index, &first_painted_chord, &curr_hairpin_type, &curr_hairpin_start_x, jf, jf_lyrics_nozoom, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, jf_text_small, jf_text_smallbold, jf_small_dynamics, jf_acc, jf_text_fractions, jf_acc_bogus, jf_dynamics, jf_dynamics_roman, jf_ann, jf_lyrics, clef, octave_stem_length, part_direction, staff_top_y, staff_bottom_y, last_annotation_text, &prev_hairpin_color, &prev_hairpin_dontpaint, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos, &lyrics_dashed_going_on, &left_dashed_x, predomain_width);
                 }
 			}
             
             
-            roll_paint_last_hairpin(x, g, rect, jf_dynamics, staff_bottom_y, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, &curr_hairpin_start_x, curr_ch);
+            roll_paint_last_hairpin(x, g, rect, jf_dynamics, jf_dynamics_roman, staff_bottom_y, &curr_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, &curr_hairpin_start_x, curr_ch);
             
             roll_paint_last_dashed_lines(x, g, jf_lyrics, staff_bottom_y, lyrics_dashed_going_on, left_dashed_x);
 
@@ -11622,7 +11626,9 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
 		jfont_destroy_debug(jf_lyrics);
         jfont_destroy_debug(jf_ann);
         jfont_destroy_debug(jf_dynamics);
+        jfont_destroy_debug(jf_dynamics_roman);
         jfont_destroy_debug(jf_dynamics_nozoom);
+        jfont_destroy_debug(jf_dynamics_roman_nozoom);
         jfont_destroy_debug(jf_small_dynamics);
         
         if (view)
@@ -11651,7 +11657,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
     double annotation_line_y_pos[CONST_MAX_VOICES];
     char last_annotation_text[CONST_MAX_VOICES][BACH_MAX_LAST_ANNOTATION_TEXT_CHARS];
 
-    t_jfont *jf_text_small = NULL, *jf_text_smallbold = NULL, *jf_lyrics = NULL, *jf_lyrics_nozoom = NULL, *jf_ann = NULL, *jf_dynamics = NULL, *jf_small_dynamics = NULL, *jf_dynamics_nozoom = NULL;
+    t_jfont *jf_text_small = NULL, *jf_text_smallbold = NULL, *jf_lyrics = NULL, *jf_lyrics_nozoom = NULL, *jf_ann = NULL, *jf_dynamics = NULL, *jf_dynamics_roman = NULL, *jf_small_dynamics = NULL, *jf_dynamics_nozoom = NULL, *jf_dynamics_roman_nozoom = NULL;
     t_marker *restart_from_this_marker = NULL;
     double octave_stem_length = 7 * x->r_ob.step_y;
     double predomain_width = get_predomain_width_pixels((t_notation_obj *)x);
@@ -11692,9 +11698,11 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             if (!jf_lyrics_nozoom) jf_lyrics_nozoom = jfont_create_debug(x->r_ob.lyrics_font ? x->r_ob.lyrics_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.lyrics_font_size);
             if (!jf_ann) jf_ann = jfont_create_debug(x->r_ob.annotations_font ? x->r_ob.annotations_font->s_name : "Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.annotation_font_size * x->r_ob.zoom_y);
             if (!jf_small_dynamics) jf_small_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y * (x->r_ob.bgslot_zoom/100.));
-            if (!jf_dynamics) jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
-            if (!jf_dynamics_nozoom) jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, x->r_ob.dynamics_font_size);
-            
+            if (!jf_dynamics) jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size * x->r_ob.zoom_y);
+            if (!jf_dynamics_roman) jf_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y);
+            if (!jf_dynamics_nozoom) jf_dynamics_nozoom = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_font_size);
+            if (!jf_dynamics_roman_nozoom) jf_dynamics_nozoom = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, x->r_ob.dynamics_roman_font_size);
+
             
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // cycle on the voices
                 t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
@@ -11751,7 +11759,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                     } else if ((position == k_CHORDPOSITIONINSCREEN_STARTS_AFTER_DOMAIN) || (position == k_CHORDPOSITIONINSCREEN_STARTS_INSIDE_DOMAIN)) {
                         break; // won't paint things INSIDE the domain! We'll do that later, after the left portion repainting
                     } else {
-                        roll_paint_chord(x, view, g, voice, voice_cur[vn], rect, system_index, &(first_painted_chord[vn]), &(curr_hairpin_type[vn]), &(curr_hairpin_start_x[vn]), jf, jf_lyrics_nozoom, jf_dynamics_nozoom, jf_text_small, jf_text_smallbold, jf_small_dynamics, jf_acc, jf_text_fractions, jf_acc_bogus, jf_dynamics, jf_ann, jf_lyrics, clef, octave_stem_length, part_direction, staff_top_y, staff_bottom_y, last_annotation_text[vn], &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(annotation_sequence_start_x_pos[vn]), &(annotation_sequence_end_x_pos[vn]), &(annotation_line_y_pos[vn]), &(lyrics_dashed_going_on[vn]), &(left_dashed_x[vn]), predomain_width);
+                        roll_paint_chord(x, view, g, voice, voice_cur[vn], rect, system_index, &(first_painted_chord[vn]), &(curr_hairpin_type[vn]), &(curr_hairpin_start_x[vn]), jf, jf_lyrics_nozoom, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, jf_text_small, jf_text_smallbold, jf_small_dynamics, jf_acc, jf_text_fractions, jf_acc_bogus, jf_dynamics, jf_dynamics_roman, jf_ann, jf_lyrics, clef, octave_stem_length, part_direction, staff_top_y, staff_bottom_y, last_annotation_text[vn], &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(annotation_sequence_start_x_pos[vn]), &(annotation_sequence_end_x_pos[vn]), &(annotation_line_y_pos[vn]), &(lyrics_dashed_going_on[vn]), &(left_dashed_x[vn]), predomain_width);
                     }
                 }
                 
@@ -11862,14 +11870,14 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                     e_chord_position_in_screen position = chord_get_screen_position_for_painting(x, voice_cur[vn]);
                     
                     if (position == k_CHORDPOSITIONINSCREEN_STARTS_INSIDE_DOMAIN) {
-                        roll_paint_chord(x, view, g, voice, voice_cur[vn], rect, system_index, &(first_painted_chord[vn]), &(curr_hairpin_type[vn]), &(curr_hairpin_start_x[vn]), jf, jf_lyrics_nozoom, jf_dynamics_nozoom, jf_text_small, jf_text_smallbold, jf_small_dynamics, jf_acc, jf_text_fractions, jf_acc_bogus, jf_dynamics, jf_ann, jf_lyrics, clef, octave_stem_length, part_direction, staff_top_y, staff_bottom_y, last_annotation_text[vn], &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(annotation_sequence_start_x_pos[vn]), &(annotation_sequence_end_x_pos[vn]), &(annotation_line_y_pos[vn]), &(lyrics_dashed_going_on[vn]), &(left_dashed_x[vn]), predomain_width);
+                        roll_paint_chord(x, view, g, voice, voice_cur[vn], rect, system_index, &(first_painted_chord[vn]), &(curr_hairpin_type[vn]), &(curr_hairpin_start_x[vn]), jf, jf_lyrics_nozoom, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, jf_text_small, jf_text_smallbold, jf_small_dynamics, jf_acc, jf_text_fractions, jf_acc_bogus, jf_dynamics, jf_dynamics_roman, jf_ann, jf_lyrics, clef, octave_stem_length, part_direction, staff_top_y, staff_bottom_y, last_annotation_text[vn], &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(annotation_sequence_start_x_pos[vn]), &(annotation_sequence_end_x_pos[vn]), &(annotation_line_y_pos[vn]), &(lyrics_dashed_going_on[vn]), &(left_dashed_x[vn]), predomain_width);
                     } else {
                         break; // must start after the end of the domain (we are only painting the REMAINING chords, the ones that should NOT be faded,
                                 // since they start AFTER the domain
                     }
                 }
 
-                roll_paint_last_hairpin(x, g, rect, jf_dynamics, staff_bottom_y, &(curr_hairpin_type[vn]), &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(curr_hairpin_start_x[vn]), voice_cur[vn]);
+                roll_paint_last_hairpin(x, g, rect, jf_dynamics, jf_dynamics_roman, staff_bottom_y, &(curr_hairpin_type[vn]), &(prev_hairpin_color[vn]), &(prev_hairpin_dontpaint[vn]), &(curr_hairpin_start_x[vn]), voice_cur[vn]);
                 
                 roll_paint_last_dashed_lines(x, g, jf_lyrics, staff_bottom_y, lyrics_dashed_going_on[vn], left_dashed_x[vn]);
                 
@@ -11962,6 +11970,7 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
     if (jf_ann) jfont_destroy_debug(jf_ann);
     if (jf_dynamics) jfont_destroy_debug(jf_dynamics);
     if (jf_dynamics_nozoom) jfont_destroy_debug(jf_dynamics_nozoom);
+    if (jf_dynamics_roman_nozoom) jfont_destroy_debug(jf_dynamics_roman_nozoom);
     if (jf_small_dynamics) jfont_destroy_debug(jf_small_dynamics);
     
 }

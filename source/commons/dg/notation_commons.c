@@ -23804,9 +23804,8 @@ char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
 }
 
 // assigns the chord dynamics starting from the slot content
-void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom)
+void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom)
 {
-    const double MIN_UWIDTH_BETWEEN_DYNAMICS = 10;
 
     chord->dynamics_slot = NULL;
     
@@ -23819,14 +23818,20 @@ void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dyn
             t_dynamics *dyn = (t_dynamics *)firstitem->item;
             chord->dynamics_slot = notation_item_get_slot(r_ob, item, slotnum);
             
-            double w = 0, h = 0;
-            if (dyn->firstmark) {
-                jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic->s_name, &w, &h);
-                dyn->dynamics_left_uext = w/2.;
-                dyn->dynamics_right_uext = w/2.;
+            double w = 0, h = 0, firstw = 0, firsth = 0;
+            if (dyn->firstmark && dyn->firstmark->num_words > 0) {
+                dynamics_mark_measure(dyn->firstmark, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
+                if (dyn->firstmark->is_roman[0]) {
+                    dyn->dynamics_left_uext = CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                    dyn->dynamics_right_uext = w - dyn->dynamics_left_uext;
+                } else {
+                    jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic[0]->s_name, &firstw, &firsth);
+                    dyn->dynamics_left_uext = firstw/2.;
+                    dyn->dynamics_right_uext = firstw/2. + (w - firstw);
+                }
                 for (t_dynamics_mark *dynsign = dyn->firstmark->next; dynsign; dynsign = dynsign->next) {
-                    jfont_text_measure(jf_dynamics_nozoom, dynsign->text_typographic->s_name, &w, &h);
-                    dyn->dynamics_right_uext += MIN_UWIDTH_BETWEEN_DYNAMICS + w;
+                    dynamics_mark_measure(dynsign, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
+                    dyn->dynamics_right_uext += CONST_MIN_UWIDTH_BETWEEN_DYNAMICS + w;
                 }
             }
         }
@@ -29494,7 +29499,7 @@ t_llll* get_scorechord_values_as_llll(t_notation_obj *r_ob, t_chord *chord, e_da
 	while (temp_note) { // append notes lllls
 		if (mode == k_CONSIDER_ALL_NOTES || mode == k_CONSIDER_FOR_SAVING || mode == k_CONSIDER_FOR_EXPORT_OM || mode == k_CONSIDER_FOR_EXPORT_PWGL || mode == k_CONSIDER_FOR_UNDO || mode == k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING ||
 			mode == k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE || mode == k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END
-			|| mode == k_CONSIDER_FOR_DUMPING || mode == k_CONSIDER_FOR_EVALUATION || !notation_item_is_globally_muted(r_ob, (t_notation_item *)temp_note)) 
+			|| mode == k_CONSIDER_FOR_DUMPING || mode == k_CONSIDER_FOR_SLOT_LLLL_EDITOR || mode == k_CONSIDER_FOR_EVALUATION || !notation_item_is_globally_muted(r_ob, (t_notation_item *)temp_note)) 
 			llll_appendllll(out_llll, get_scorenote_values_as_llll(r_ob, temp_note, mode), 0, WHITENULL_llll);	
 		temp_note = temp_note->next;
 	}

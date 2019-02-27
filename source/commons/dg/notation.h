@@ -530,6 +530,11 @@
  */
 #define CONST_MAX_NUM_DYNAMICS_PER_CHORD 64                 ///< Max number of dynamics for a chord (used in sequence)
 #define CONST_MAX_NUM_DYNAMICS_CHARS 64                     ///< Max number of character per dynamics
+#define CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS 2          ///< Space between words inside the same dynamics mark
+#define CONST_MIN_UWIDTH_BETWEEN_DYNAMICS 10
+#define CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD 4           ///< Small left nudge for first roman word inside a dynamic mark
+                                                             ///< Roman words are left-aligned when at the beginning of a note (differently from
+                                                             ///< standard dynamics. A small compensation is however needed for better visualization
 
 #define CONST_DEFAULT_DYNAMICS_TO_VELOCITY_EXPONENT 0.8             ///< Exponent for dynamics2velocities conversions
 #define CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH 5                     ///< Default dynamics spectrum width for conversions (i.e. from "pppp" to "ffff")
@@ -1597,6 +1602,7 @@ typedef enum _data_considering_types
                                                                 ///< mechanisms were spotted, rendering impossible to open new patches with old versions of bach.
     k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE = 16,		///< Verbosely output the partial note
     k_CONSIDER_FOR_SLOT_VALUES_ONLY = 17,                       ///< Only dump slot values and not slot names (only for single slot dump)
+    k_CONSIDER_FOR_SLOT_LLLL_EDITOR = 18,                       ///< The retrieved llll will be displayed in a slot textual editor
 } e_data_considering_types;
 
 
@@ -2531,31 +2537,34 @@ typedef enum _dynamics_hairpin
 /** List of possible positioning of dynamics marking
  @ingroup    dynamics
  */
-typedef enum _dynamics_mark_positioning
+typedef enum _dynamics_mark_attachment
 {
-    k_DYNAMICS_POSITIONING_AUTO = 0,       ///< Automatic placement
-    k_DYNAMICS_POSITIONING_MANUAL = 1,       ///< Manually adjust
-    k_DYNAMICS_POSITIONING_SNAPTOBPT = 2,      ///< Snap to a breakpoint
-} e_dynamics_mark_positioning;
+    k_DYNAMICS_MARK_ATTACHMENT_AUTO = 0,            ///< Automatic placement
+    k_DYNAMICS_MARK_ATTACHMENT_MANUAL = 1,          ///< Manually adjust
+    k_DYNAMICS_MARK_ATTACHMENT_SNAPTOBPT = 2,       ///< Snap to a breakpoint
+} e_dynamics_mark_attachment;
 
 
 
 
 typedef struct _dynamics_mark
 {
-    t_symbol *text_typographic;    ///< The typographic text of the dynamics sign to be displayed
+    long     num_words;             ///< Number of words in the mark
+    char     *is_roman;             ///< For each word:  1 if the word is textual, 0 if it's a dynamics
+    t_symbol **text_typographic;    ///< For each word: The typographic text of the dynamics sign to be displayed
                                    ///< Unlike the text_deparsed fields  this contains the unicode data to
                                    ///  display the dynamics in November for bach, not a readable deparsing
-    t_symbol *text_deparsed;       ///< The typographic text of the dynamics sign readable in plain text
+    t_symbol **text_deparsed;       ///< For each word: The typographic text of the dynamics sign readable in plain text
 
-    char                    positioning_mode;   ///< One of the #e_dynamics_mark_positioning
+    char                    dynamics_mark_attachment;   ///< One of the #e_dynamics_mark_attachment
     long                    snap_to_breakpoint; ///< If non-zero, it is the index of breakpoint to which it should be snapped.
     double                  relative_position;  ///< If #snap_to_breakpoint is 0, this sets the relative position of the dynamic sign
 
     long                    hairpin_to_next;    ///< Hairpin going to the next sign
-    
-    short                   start_energy;
-    short                   end_energy;
+
+    short                   start_energy;   ///< "Energy value" (an internal number to order dynamics) at the beginning of dynamic mark
+    short                   end_energy;     ///< "Energy value" (an internal number to order dynamics) at the end of dynamic mark
+                                            ///< This can differ in case of dynamics such as "fp" et similia
 
     struct _dynamics_mark   *next;
     struct _dynamics_mark   *prev;
@@ -4146,10 +4155,11 @@ typedef struct _notation_obj
     
     // dynamics
     char		show_dynamics;                  ///< Flag telling if we want to show the dynamics
-    char		show_hairpins;                 ///< Flag telling if we want to show the dynamic crescendo/diminuendo hairpins
+    char		show_hairpins;                  ///< Flag telling if we want to show the dynamic crescendo/diminuendo hairpins
     double		dynamics_font_size;             ///< Font size for the dynamics (for zoom_y = 1)
+    double      dynamics_roman_font_size;       ///< Font size for the textual dynamics-like expressions (for zoom_y = 1)
     double		dynamics_uy_pos;				///< Unscaled y shift (in pixels) of the lyrics with respect to the staff bottom
-    char        dynamics_output_mode;            ///< Output mode for the dynamics: 0 = plain textual form; 1 = detailed; 2 = verbose
+    char        dynamics_output_mode;           ///< Output mode for the dynamics: 0 = plain textual form; 1 = detailed; 2 = verbose
     
 	// lyrics
 	double		lyrics_font_size;					///< Font size for the lyrics (for zoom_y = 1)
@@ -9553,7 +9563,7 @@ double get_lyrics_word_extension_y_pos(t_notation_obj *r_ob, double staff_bottom
 
 
 // TBD
-void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom);
+void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom);
 char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord);
 void set_textfield_info_to_dynamics_slot(t_notation_obj *r_ob, char *text);
 
@@ -10242,11 +10252,9 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
                                 double *annotation_line_y_pos);
 
 void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                              double center_x, double duration_x, long slot, t_jfont *jf_dynamics, double font_size, double staff_bottom_y,
-                              double *curr_hairpin_start_x, long *curr_hairpin_type, char boxed);
+                              double center_x, double duration_x, long slot, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double staff_bottom_y, double *curr_hairpin_start_x, long *curr_hairpin_type, char boxed);
 void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, double font_size, double y_position,
-                    double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window);
+                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window);
 
 
 
@@ -17316,6 +17324,7 @@ t_max_err notation_obj_setattr_rulermode(t_notation_obj *r_ob, t_object *attr, l
 t_max_err notation_obj_setattr_stafflines(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_lyrics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_dynamics_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
+t_max_err notation_obj_setattr_dynamics_roman_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_annotation_font_size(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_lyrics_alignment(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
 t_max_err notation_obj_setattr_linklyricstoslot(t_notation_obj *r_ob, t_object *attr, long ac, t_atom *av);
@@ -19029,25 +19038,22 @@ t_llll *dynamics_to_llll_detailed(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll_plain(t_notation_obj *r_ob, t_dynamics *dyn);
 t_llll *dynamics_to_llll(t_notation_obj *r_ob, t_dynamics *dyn, e_data_considering_types mode);
 
-t_symbol *positioning_mode_value_to_symbol(char val);
-char positioning_mode_symbol_to_value(t_symbol *s);
+void dynamics_mark_measure(t_dynamics_mark *mark, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom, double *w, double *h);
+void dynamics_mark_to_textbuf(t_dynamics_mark *mark, char *buf, long buf_size);
+
+t_symbol *dynamics_mark_attachment_value_to_symbol(char val);
+char dynamics_mark_attachment_symbol_to_value(t_symbol *s);
 
 void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char *buf);
 void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, short *start_energy, short *end_energy);
 t_symbol *dynamics_mark_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf);
 
-t_dynamics_mark *build_dynamics_mark();
+t_dynamics_mark *build_dynamics_mark(long num_words);
 t_dynamics *dynamics_clone(t_dynamics *dyn, t_notation_item *newowner);
 long dynamics_get_ending_hairpin(t_dynamics *dyn);
 char dynamics_extend_till_next_chord(t_dynamics *dyn);
 t_dynamics *chord_get_dynamics(t_chord *ch, t_slotitem **slotitem = NULL);
 
-
-// DEPRECATED
-void paint_dynamics_from_symbol(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                                double center_x, double duration_x, t_symbol *text, t_jfont *jf_dynamics, double font_size, double y_position,
-                                double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint,
-                                char boxed);
 
 void dynamics_free_marks(t_dynamics *dyn);
 
