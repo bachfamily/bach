@@ -590,7 +590,7 @@ void xml_get_dynamics(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
                     dynamics_text_cur += snprintf_zero(dynamics_text + dynamics_text_cur, CONST_DYNAMICS_TEXT_ALLOC_SIZE - dynamics_text_cur, "%s_", xml_accepted_dynamics[di]);
             }
             if (*dynamics_text == 0) {
-                dynamics_text[0] = '_';
+                dynamics_text[0] = '=';
                 dynamics_text[1] = 0;
             }
                 
@@ -603,7 +603,7 @@ void xml_get_dynamics(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
             else if (!strcmp(wedgetypetxt, "diminuendo"))
                 hairpin = -1;
             if (hairpin){
-                if (dynamics_text_cur > 0 && dynamics_text_cur <= CONST_DYNAMICS_TEXT_ALLOC_SIZE && dynamics_text[dynamics_text_cur - 1] == '_') {
+                if (dynamics_text_cur > 0 && dynamics_text_cur <= CONST_DYNAMICS_TEXT_ALLOC_SIZE && dynamics_text[dynamics_text_cur - 1] == '=') {
                     dynamics_text[dynamics_text_cur - 1] = 0;
                     dynamics_text_cur--;
                 }
@@ -614,7 +614,7 @@ void xml_get_dynamics(mxml_node_t *from_this_node, mxml_node_t *stop_at_this_nod
         tempXML = tempXML->next;
     }
     
-    if (dynamics_text_cur > 0 && dynamics_text_cur <= CONST_DYNAMICS_TEXT_ALLOC_SIZE && dynamics_text[dynamics_text_cur - 1] == '_') {
+    if (dynamics_text_cur > 0 && dynamics_text_cur <= CONST_DYNAMICS_TEXT_ALLOC_SIZE && dynamics_text[dynamics_text_cur - 1] == '=') {
         dynamics_text[dynamics_text_cur - 1] = 0;
         dynamics_text_cur--;
     }
@@ -1255,7 +1255,7 @@ t_llll *score_readxml(t_score *x,
                         if (len == 0)
                             snprintf_zero(dynamics_text, CONST_DYNAMICS_TEXT_ALLOC_SIZE, "%s", temp_dynamics_text);
                         else {
-                            if (dynamics_text[len-1] == '_') {
+                            if (dynamics_text[len-1] == '=') {
                                 dynamics_text[len-1] = 0;
                                 len--;
                             }

@@ -2526,11 +2526,14 @@ typedef struct _lyrics
  */
 typedef enum _dynamics_hairpin
 {
-    k_DYNAMICS_HAIRPIN_NONE = 0,       ///< Just space between dynamics
-    k_DYNAMICS_HAIRPIN_DIM = -1,       ///< Diminuendo
-    k_DYNAMICS_HAIRPIN_CRESC = 1,      ///< Crescendo
-    k_DYNAMICS_HAIRPIN_DIMEXP = -2,    ///< Exponential diminuendo
-    k_DYNAMICS_HAIRPIN_CRESCEXP = 2,   ///< Exponential crescendo
+    k_DYNAMICS_HAIRPIN_NONE = 0,        ///< Just space between dynamics
+    k_DYNAMICS_HAIRPIN_DIM = -1,        ///< Diminuendo
+    k_DYNAMICS_HAIRPIN_CRESC = 1,       ///< Crescendo
+    k_DYNAMICS_HAIRPIN_DIMEXP = -2,     ///< Exponential diminuendo
+    k_DYNAMICS_HAIRPIN_CRESCEXP = 2,    ///< Exponential crescendo
+    k_DYNAMICS_HAIRPIN_DIMDASHED = -3,  ///< Diminuendo with dashes
+    k_DYNAMICS_HAIRPIN_CRESCDASHED = 3, ///< Crescendo with dashes
+    k_DYNAMICS_HAIRPIN_DASHED = 4,      ///< Generic dashed line between dynamics
 } e_dynamics_hairpin;
 
 
@@ -2560,7 +2563,7 @@ typedef struct _dynamics_mark
     long                    snap_to_breakpoint; ///< If non-zero, it is the index of breakpoint to which it should be snapped.
     double                  relative_position;  ///< If #snap_to_breakpoint is 0, this sets the relative position of the dynamic sign
 
-    long                    hairpin_to_next;    ///< Hairpin going to the next sign
+    long                    hairpin_to_next;    ///< Hairpin going to the next sign, one of the e_dynamics_hairpin
 
     short                   start_energy;   ///< "Energy value" (an internal number to order dynamics) at the beginning of dynamic mark
     short                   end_energy;     ///< "Energy value" (an internal number to order dynamics) at the end of dynamic mark

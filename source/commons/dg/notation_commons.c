@@ -1941,10 +1941,13 @@ void reset_articulation_position_for_chord(t_notation_obj *r_ob, t_chord *ch)
         long s = r_ob->link_articulations_to_slot - 1;
         if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_ARTICULATIONS) {
             t_slotitem *item;
-            for (nt = ch->firstnote; nt; nt = nt->next){
+            for (nt = ch->firstnote; nt; nt = nt->next) {
                 for (item = nt->slot[s].firstitem; item; item = item->next)
                     ((t_articulation *)item->item)->need_recompute_position = true;
             }
+            item = notation_item_get_slot_firstitem(r_ob, (t_notation_item *)ch, s);
+            if (item)
+                ((t_articulation *)item->item)->need_recompute_position = true;
         }
     }
 }
@@ -1982,6 +1985,14 @@ void reset_all_articulations_positions(t_notation_obj *r_ob)
         for (chord = chord_get_first(r_ob, voice); chord; chord = chord_get_next(chord)) {
             for (i = 0; i < chord->num_articulations; i++)
                 chord->articulation[i].need_recompute_position = true;
+            if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot <= CONST_MAX_SLOTS) {
+                long s = r_ob->link_articulations_to_slot - 1;
+                if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_ARTICULATIONS) {
+                    t_slotitem *it = notation_item_get_slot_firstitem(r_ob, (t_notation_item *)chord, s);
+                    if (it)
+                        ((t_articulation *)it->item)->need_recompute_position = true;
+                }
+            }
             for (note = chord->firstnote; note; note = note->next) {
                 for (i = 0; i < note->num_articulations; i++)
                     note->articulation[i].need_recompute_position = true;
