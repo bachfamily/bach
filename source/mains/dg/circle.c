@@ -1083,7 +1083,8 @@ void circle_paint(t_circle *x, t_object *view)
         jgraphics_stroke(g);
     }
 
-    if (number_txt) {
+    /*
+    if (number_txt) { // what dos this do??? number_txt is always NULL here...
         t_jtextlayout *jtl = jtextlayout_create();
         jtextlayout_set(jtl, number_txt, jf_text, number_center_x - width/2., number_center_y - height/2., width, height, JGRAPHICS_TEXT_JUSTIFICATION_CENTERED, JGRAPHICS_TEXTLAYOUT_NOWRAP);
         jtextlayout_settextcolor(jtl, &j_textcolor_r);
@@ -1092,6 +1093,7 @@ void circle_paint(t_circle *x, t_object *view)
         bach_freeptr(number_txt);
         number_txt = NULL;
    }
+     */
     
     // circle for each point
     for (i = 0; i < x->num_points; i++) {
@@ -1145,6 +1147,7 @@ void circle_paint(t_circle *x, t_object *view)
             jtextlayout_draw(jtl, g);
             jtextlayout_destroy(jtl);
             bach_freeptr(number_txt);
+            number_txt = NULL;
         }
     }
     

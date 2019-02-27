@@ -114,6 +114,7 @@ void note_appendpitch_to_llll_for_gathered_syntax_or_playout(t_notation_obj *r_o
         case k_CONSIDER_FOR_SAVING_WITH_BW_COMPATIBILITY:
         case k_CONSIDER_ALL_NOTES:
         case k_CONSIDER_FOR_DUMPING:
+        case k_CONSIDER_FOR_SLOT_LLLL_EDITOR:
         case k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING:
         case k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE:
         case k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END:

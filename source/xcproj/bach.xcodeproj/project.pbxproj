@@ -14762,7 +14762,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PRODUCT_VERSION = 0.8.0.2;
+				PRODUCT_VERSION = 0.8.0.3;
 				SDKROOT = macosx;
 			};
 			name = Development;
@@ -14776,7 +14776,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bachproject.$(TARGET_NAME)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PRODUCT_VERSION = 0.8.0.2;
+				PRODUCT_VERSION = 0.8.0.3;
 				SDKROOT = macosx;
 			};
 			name = Deployment;

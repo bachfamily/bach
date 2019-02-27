@@ -1384,7 +1384,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
  	t_jrgba lightoff_color, slot_color, slot_bordercolor, slot_bordercolor2, slot_backgroundcolor, slot_backgroundcolor_orig, slot_textcolor = CONST_SLOT_TEXTCOLOR;
 	t_jrgba slot_namecolor = CONST_SLOT_NAME_COLOR_CLEAR, slot_numbers_linecolor = CONST_SLOT_TEXTCOLOR, slot_text_textcolor = CONST_SLOT_TEXT_TEXTCOLOR;
 	double slot_window_active_x1, slot_window_active_x2, slot_window_active_y1, slot_window_active_y2, slot_window_active_width, slot_window_active_height;
-	t_jfont *jf_slot_name, *jf_slot_values, *jf_slot_text, *jf_slot_file, *jf_slot_file_bold, *jf_slot_file_italic, *jf_slot_smallvalues, *jf_slot_function_point_labels, *jf_slot_dynamics, *jf_slot_function_grid_labels = NULL;
+	t_jfont *jf_slot_name, *jf_slot_values, *jf_slot_text, *jf_slot_file, *jf_slot_file_bold, *jf_slot_file_italic, *jf_slot_smallvalues, *jf_slot_function_point_labels, *jf_slot_dynamics, *jf_slot_dynamics_roman, *jf_slot_function_grid_labels = NULL;
 	int s = slot_number, slot_window_height, y_file_step, y_numberlist_step;
 	double slotname_right_limit = 0;
 	double left_pos, usable_width;
@@ -1410,6 +1410,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
     jf_slot_file_italic = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(7.0 * zoom_y));
     jf_slot_function_point_labels = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(5 * zoom_y));
     jf_slot_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(18 * zoom_y));
+    jf_slot_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(9 * zoom_y));
     if (has_x_labels || has_y_labels)
         jf_slot_function_grid_labels = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(5 * zoom_y));
     
@@ -2208,11 +2209,11 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
             
             // this doesn't work properly, due to some issues in the max api the text does not stay confined in the rectangle
             if (r_ob->is_editing_type != k_DYNAMICS_IN_SLOT) {
+                t_dynamics *dyn = (get_activeitem_slot_firstitem(r_ob, s) ? (t_dynamics *)get_activeitem_slot_firstitem(r_ob, s)->item : NULL);
                 double text_pad = 5 * zoom_y;
                 double curr_hairpin_start_x = 0;
                 long curr_hairpin_type = 0;
-                paint_dynamics_from_slot(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad , s, jf_slot_dynamics, 18 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, true);
-
+                paint_dynamics(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad, dyn, jf_slot_dynamics, jf_slot_dynamics_roman, 18 * zoom_y, 9 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, NULL, NULL, true);
             }
         }
             break;
@@ -2321,6 +2322,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 	jfont_destroy_debug(jf_slot_file_italic);
 	jfont_destroy_debug(jf_slot_function_point_labels);
     jfont_destroy_debug(jf_slot_dynamics);
+    jfont_destroy_debug(jf_slot_dynamics_roman);
     if (jf_slot_function_grid_labels)
         jfont_destroy_debug(jf_slot_function_grid_labels);
 }
@@ -2815,9 +2817,9 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
                 {
                     char dyntext[1024];
                     double width, height;
-                    if (slot->firstitem && slot->firstitem->item && (t_symbol *)slot->firstitem->item) {
-                        t_symbol *sym = (t_symbol *)slot->firstitem->item;
-                        parse_string_to_dynamics_ext(r_ob, sym->s_name, NULL, NULL, NULL, NULL, dyntext, 1024);
+                    t_dynamics *dyn = (slot->firstitem && slot->firstitem->item ? (t_dynamics *)slot->firstitem->item : NULL);
+                    if (dyn) {
+                        snprintf_zero(dyntext, 1024, "%s", dyn->text_deparsed->s_name);
                     } else {
                         dyntext[0] = 0;
                     }
@@ -4471,8 +4473,11 @@ void slotitem_delete(t_notation_obj *r_ob, long slot_num, t_slotitem *item){
 	}
 	
 	if (item->item) {
-        if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_NOTEHEAD || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS) {
+        if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_NOTEHEAD) {
             // nothing to do, it's a symbol
+        } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_DYNAMICS) {
+            dynamics_check_dependencies_before_deleting_it(r_ob, (t_dynamics *) item->item);
+            free_dynamics(r_ob, (t_dynamics *) item->item);
         } else if (r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_LLLL || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_INTMATRIX ||
 			r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_FLOATMATRIX || r_ob->slotinfo[slot_num].slot_type == k_SLOT_TYPE_TOGGLEMATRIX)
 			llll_free((t_llll *) item->item);
@@ -4873,7 +4878,7 @@ void build_default_data_for_dynamics_slot(t_notation_obj *r_ob, t_notation_item 
     slot->firstitem = build_slotitem(r_ob, slot);
     slot->firstitem->next = NULL;
     slot->firstitem->prev = NULL;
-    slot->firstitem->item = _llllobj_sym_empty_symbol;
+    slot->firstitem->item = build_dynamics(nitem);
 #ifdef BACH_SLOTS_HAVE_LASTITEM
     slot->lastitem = slot->firstitem;
 #endif
@@ -5349,7 +5354,6 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                     break;
                                 }
                                 case k_SLOT_TYPE_NOTEHEAD:
-                                case k_SLOT_TYPE_DYNAMICS:
                                 {
                                     t_llllelem *subelem;
                                     for (subelem = this_slot->l_head->l_next; subelem; subelem = subelem->l_next) { // elem iterates on the slot
@@ -5358,6 +5362,17 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
                                         thisitem->item = s;
                                         slotitem_append(thisitem);
                                     }
+                                    break;
+                                }
+                                case k_SLOT_TYPE_DYNAMICS:
+                                {
+                                    t_llll *cloned_ll = llll_clone(this_slot);
+                                    t_slotitem *thisitem = build_slotitem(r_ob, slot);
+                                    llll_behead(cloned_ll);
+                                    t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, cloned_ll);
+                                    thisitem->item = dyn;
+                                    slotitem_append(thisitem);
+                                    llll_free(cloned_ll);
                                     break;
                                 }
                                 case k_SLOT_TYPE_FLOATLIST:
@@ -6074,8 +6089,18 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         break;
                     }
                         
-                    case k_SLOT_TYPE_NOTEHEAD:
                     case k_SLOT_TYPE_DYNAMICS:
+                    {
+                        if (values_as_llll->l_head) {
+                            t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
+                            t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, values_as_llll);
+                            thisitem->item = dyn;
+                            slotitem_insert_extended(r_ob, slotnum, thisitem, mode, position - 1);
+                        }
+                        break;
+                    }
+                        
+                    case k_SLOT_TYPE_NOTEHEAD:
                     {
                         if (values_as_llll->l_head) {
                             t_slotitem *thisitem = build_default_slotitem(r_ob, slot, slotnum);
@@ -6087,6 +6112,7 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         }
                         break;
                     }
+
                         
                     case k_SLOT_TYPE_FLOAT: case k_SLOT_TYPE_FLOATLIST:
                     {
@@ -6242,7 +6268,6 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         break;
                         
                     case k_SLOT_TYPE_NOTEHEAD:
-                    case k_SLOT_TYPE_DYNAMICS:
                         if (values_as_llll->l_head) {
                             if (hatom_gettype(&values_as_llll->l_head->l_hatom) == H_SYM)
                                 sl_item->item = hatom_getsym(&values_as_llll->l_head->l_hatom);
@@ -6251,6 +6276,17 @@ void notation_item_change_slotitem(t_notation_obj *r_ob, t_notation_item *nitem,
                         }
                         break;
                         
+                    case k_SLOT_TYPE_DYNAMICS:
+                        if (values_as_llll->l_head) {
+                            if (sl_item->item) {
+                                dynamics_check_dependencies_before_deleting_it(r_ob, (t_dynamics *)sl_item->item);
+                                free_dynamics(r_ob, (t_dynamics *)sl_item->item);
+                            }
+                            t_dynamics *dyn = dynamics_from_llll(r_ob, nitem, values_as_llll);
+                            sl_item->item = dyn;
+                        }
+                        break;
+
                     case k_SLOT_TYPE_FUNCTION:
                     {
                         if (values_as_llll->l_head) {
@@ -8036,7 +8072,6 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 					} else if (modifiers == eLeftButton) {
 						// edit note slot content in external text editor
 						
-						char titlename[512];
 						
 						unlock_general_mutex(r_ob);	
 						if (!r_ob->m_editor)
@@ -8044,17 +8079,30 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
 						else
 							object_attr_setchar(r_ob->m_editor, _sym_visible, 1);
 
-						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_DUMPING, r_ob->active_slot_num, false);
+						t_llll *ll = notation_item_get_single_slot_values_as_llll(r_ob, r_ob->active_slot_notationitem, k_CONSIDER_FOR_SLOT_LLLL_EDITOR, r_ob->active_slot_num, false);
 						char *buf = NULL;
 						llll_behead(ll);
-                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", -1, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
+                        
+                        long maxdepth = -1;
+                        if (r_ob->slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS)
+                            maxdepth = 2;
+                        
+                        llll_to_text_buf_pretty(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, "\t", maxdepth, LLLL_T_NONE, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
 //						llll_to_text_buf(ll, &buf, 0, BACH_DEFAULT_MAXDECIMALS, 0, NULL);
-						object_method(r_ob->m_editor, _sym_settext, buf, _sym_utf_8); 
-						r_ob->changed_while_dragging = true;
-						*changed = true;
+						void *rv = object_method(r_ob->m_editor, _sym_settext, buf, _sym_utf_8);  // non-0 if the text was too long
+                        if (rv) {
+                            t_object *ed = r_ob->m_editor;
+                            r_ob->m_editor = NULL;
+                            object_free(ed);
+                        } else {
+                            char titlename[512];
+                            snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
+                            object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
+                        }
+                        
+                        r_ob->changed_while_dragging = true;
+                        *changed = true;
                         llll_free(ll);
-						snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
-						object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
 						bach_freeptr(buf);
 						lock_general_mutex(r_ob);
 						return 1;
@@ -8181,12 +8229,18 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             strncpy(text, (const char *) get_activeitem_slot_firstitem(r_ob, s)->item, textlength);
                             text[textlength] = 0;
                             
-                            object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);
+                            void *rv = object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);  // non-0 if the text was too long
+                            if (rv) {
+                                t_object *ed = r_ob->m_editor;
+                                r_ob->m_editor = NULL;
+                                object_free(ed);
+                            } else {
+                                snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
+                                object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
+                            }
+
                             r_ob->changed_while_dragging = true;
                             *changed = true;
-                            
-                            snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
-                            object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
                             bach_freeptr(text);
                             lock_general_mutex(r_ob);
                         }
@@ -8217,14 +8271,20 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             this_llll = (t_llll *) get_activeitem_slot_firstitem(r_ob, s)->item;
                             if (this_llll) {
                                 textlength = llll_to_text_buf(this_llll, &text, 0, BACH_DEFAULT_MAXDECIMALS, 0, LLLL_TE_SMART, LLLL_TB_SMART, NULL);
-                                object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);
+                                
+                                void *rv = object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);  // non-0 if the text was too long
+                                if (rv) {
+                                    t_object *ed = r_ob->m_editor;
+                                    r_ob->m_editor = NULL;
+                                    object_free(ed);
+                                } else {
+                                    snprintf_zero(titlename, 512, "llll %s", r_ob->slotinfo[s].slot_name->s_name);
+                                    object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
+                                }
+
                                 r_ob->changed_while_dragging = true;
                                 *changed = true;
-                                
                                 llll_free(this_llll);
-
-                                snprintf_zero(titlename, 512, "llll %s", r_ob->slotinfo[s].slot_name->s_name);
-                                object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
                                 bach_freeptr(text);
                             }
                             lock_general_mutex(r_ob);	
@@ -8235,8 +8295,6 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                     case k_SLOT_TYPE_DYNAMICS:
                     {
                         char titlename[512];
-                        long textlength;
-                        char *text;
                         if (!get_activeitem_slot_firstitem(r_ob, s) ||
                             !get_activeitem_slot_firstitem(r_ob, s)->item) { // there's no data yet. we just set a default value
                             build_default_data_for_dynamics_slot(r_ob, r_ob->active_slot_notationitem, s);
@@ -8247,24 +8305,28 @@ char slot_handle_mousedoubleclick(t_notation_obj *r_ob, t_object *patcherview, t
                             start_editing_textslot(r_ob, patcherview, r_ob->active_slot_notationitem, r_ob->active_slot_num, slot_text_textcolor);
                         } else {
                             // let's edit the text
+                            char text[4096];
                             unlock_general_mutex(r_ob);
-                            t_symbol *sym = (t_symbol *) get_activeitem_slot_firstitem(r_ob, s)->item;
+                            t_dynamics *dyn = (t_dynamics *) get_activeitem_slot_firstitem(r_ob, s)->item;
                             if (!r_ob->m_editor)
                                 r_ob->m_editor = (t_object *) object_new(CLASS_NOBOX, _sym_jed, (t_object *)r_ob, 0);
                             else
                                 object_attr_setchar(r_ob->m_editor, _sym_visible, 1);
-                            textlength = strlen(sym->s_name);
-                            text = (char *) bach_newptr(textlength + 4);
-                            strncpy(text, sym->s_name, textlength + 1);
-                            text[textlength] = 0;
+
+                            snprintf_zero(text, 4096, "%s", dyn->text_deparsed);
+
+                            void *rv = object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);  // non-0 if the text was too long
+                            if (rv) {
+                                t_object *ed = r_ob->m_editor;
+                                r_ob->m_editor = NULL;
+                                object_free(ed);
+                            } else {
+                                snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
+                                object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
+                            }
                             
-                            object_method(r_ob->m_editor, _sym_settext, text, _sym_utf_8);
                             r_ob->changed_while_dragging = true;
                             *changed = true;
-                            
-                            snprintf_zero(titlename, 450, "Editor for %s", r_ob->slotinfo[s].slot_name->s_name);
-                            object_attr_setsym(r_ob->m_editor, _sym_title, gensym(titlename));
-                            bach_freeptr(text);
                             lock_general_mutex(r_ob);
                         }
                     }
