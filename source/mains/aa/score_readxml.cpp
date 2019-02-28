@@ -298,9 +298,8 @@ private:
             score* theScore = owner->owner->owner->owner;
             
             
-            {
+            if (long directionsSlot = theScore->directionsSlot; directionsSlot > 0) {
                 // directions, the easy one
-                long directionsSlot = theScore->directionsSlot;
                 t_llll *directionsll = llll_get();
                 for (auto w : directionSlotContents) {
                     const char* txt = w->txt.c_str();
@@ -315,9 +314,8 @@ private:
                 }
             }
             
-            {
+            if (long dynamicsSlot = theScore->dynamicsSlot; dynamicsSlot > 0) {
                 // dynamics, the tough one
-                long dynamicsSlot = theScore->dynamicsSlot;
                 t_llll *dynamicsll = llll_get();
                 
                 dynamicsllData* data = &owner->owner->lastDynamicsData;
@@ -763,7 +761,15 @@ private:
         chord* prevChord;
         dynamicsllData lastDynamicsData;
         
-        voice(part *owner) : owner(owner), num(0), currentMeasure(nullptr) { }
+        voice(part *owner) :
+            owner(owner),
+            num(0),
+            clef(nullptr),
+            key(nullptr),
+            currentMeasure(nullptr),
+            currentChord(nullptr),
+            prevChord(nullptr)
+        { }
         
         voice(const voice* obj, const bool dummy) :
             owner(obj->owner),
@@ -986,8 +992,7 @@ private:
             }
             note *n = new note{c, pitch, velocity, tie};
             c->addNote(n);
-            if (tie)
-                c->tied = true;
+            c->tied |= tie;
             return n;
         }
         
@@ -1034,7 +1039,7 @@ private:
             theTimedThings.sort();
             
             std::vector<chord*> lastChords(getNumVoices(), nullptr);
-            std::vector<chord*> lastChordsAndRests;
+            std::vector<chord*> lastChordsAndRests(getNumVoices(), nullptr);
             std::vector<dynamics*> lastDynamic(getNumVoices(), nullptr);
             
             for (auto thing : theTimedThings.chordBased.stuff) {
@@ -1133,6 +1138,7 @@ private:
             if (!c)
                 return false;
             if (c->notes.size() > 0) {
+                c->rest = false;
                 std::sort(c->notes.begin(), c->notes.end(), note::cmp);
                 currentVoice->adjustTies();
             } else {
@@ -1262,8 +1268,8 @@ public:
     long directionsSlot;
     
     void addPart() {
-        part *p = new part(this, parts.size());
-        parts.push_back(p);
+        currentPart = new part(this, parts.size());
+        parts.push_back(currentPart);
     }
     
     int addVoice() { return currentPart->addVoice(); }
@@ -1558,16 +1564,10 @@ bool score::timedThing<score::part>::cmp(const score::timedThing<score::part>* a
 score::chord::chord(voice *owner, bool grace) :
     timedThing<voice>(owner, owner->owner->globalPosition),
     levelChild(owner->currentMeasure->currentLevel),
-    grace(grace)
-{
-    tied = false;
-    for (auto n : notes) {
-        if (n->tied) {
-            tied = true;
-            break;
-        }
-    }
-}
+    grace(grace),
+    tied(false),
+    rest(false)
+{ }
 
 score::chord::chord(voice *owner, t_rational dur, bool grace) : chord(owner, grace) {
     duration = dur;
@@ -2243,9 +2243,9 @@ t_llll *score_readxml(t_score *x,
             ///////////////////////////////
             ///////////////////////////////
             
-            mxml_node_t *nextnoteXML = NULL;
+            //// mxml_node_t *nextnoteXML = NULL;
             
-            mxml_node_t *firstnoteXML = NULL;
+            //// mxml_node_t *firstnoteXML = NULL;
             //// t_llll *chordll = NULL;
             //// t_llll *chord_parentll[CONST_MAX_VOICES];
             
@@ -2274,7 +2274,7 @@ t_llll *score_readxml(t_score *x,
                 if (!itemName)
                     continue;
                 
-                
+                // should we consider sound -> tempo as well?
                 if (!strcmp(itemName, "forward")) {
                     
                     isrest = true;
@@ -2308,10 +2308,10 @@ t_llll *score_readxml(t_score *x,
                     continue;
                 }
                 
-                if (!firstnoteXML)
-                    firstnoteXML = itemXML;
+                //// if (!firstnoteXML)
+                ////     firstnoteXML = itemXML;
                 
-                nextnoteXML = mxmlFindElement(itemXML, measureXML, "note", NULL, NULL, MXML_NO_DESCEND);
+                //// nextnoteXML = mxmlFindElement(itemXML, measureXML, "note", NULL, NULL, MXML_NO_DESCEND);
                 
                 //// bool switchedToNewVoice =
                 theScore.updateCurrentVoice(itemXML);
