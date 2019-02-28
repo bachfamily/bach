@@ -1349,6 +1349,44 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="dynamicsoutputmode" get="1" set="1" type="int" size="1">
+			<digest>
+				Dynamics Output Mode
+			</digest>
+			<description>
+				Sets the way in which information in slots of type dynamics is output (N.B.: this does not affect the
+				behavior at input, since in this case all syntaxes are supported):
+				0 = Plain: dynamics are output as a plain list. Manual positioning are obtained by
+				having dynamic markings preceded by a
+				floating point number (the relative positioning, between 0 and 1); breakpoint attachments are signaled with symbols bearing the
+				breakpoint index preceded by '@' (e.g. "@3"). This is the most humanly readable option; <br />
+				1 = Structured: syntax is an llll containing the information structured in an llll; each dynamic marking is represented by
+				an llll, whose form depends on the attachment mode. If the marking attachment is "auto", then the form is
+				<b>[auto <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>; if the marking attachment is "manual", then the form is
+				<b>[<m>relative_position</m> <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>; if the marking attachment is "breakpoint", then
+				the form is
+				<b>[[breakpoint <m>breakpoint_index</m>] <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>.
+				This option is useful when you prefer to handle lllls, but, differently from the following one, it only bears
+				the minimum amount of information to assign the dynamics correctly (e.g.: no need for a relative position if we are attaching
+				the dynamic to a breakpoint); <br />
+				2 = Full (default): syntax is an llll containing, but always output all the information,
+				as a sequence of dynamic markings each represented
+				by an llll in the form
+				<b>[[<m>attachment_mode</m> <m>breakpoint_attachment</m> <m>relative_position</m>] <m>dynamic_marking</m> <m>hairpin_to_next</m>]</b>.
+				If a dynamic marking is set to be attached to a breakpoint ("breakpoint" attachment mode),
+				both the breakpoint number and the relative position of the breakpoint are correctly output.
+				If the attachment mode is "manual" or "auto", then <m>breakpoint_attachment</m> is meaningless (and left to 0),
+				but in both cases the <m>relative_position</m> is correct.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Settings" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="2" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Dynamics Output Mode" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="enumindex" />
+			</attributelist>
+		</attribute>
 		<attribute name="embed" get="1" set="1" type="int" size="1">
 			<digest>
 				Save Data With Patcher

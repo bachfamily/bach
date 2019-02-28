@@ -566,8 +566,8 @@
 				"Map" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.map.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"seealso" : [ "lambda", "reduce" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "map" ],
 					"title" : [ "map() function reference" ]
 				},
 				"Minmax" : {
@@ -615,8 +615,8 @@
 				"Reduce" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.reduce.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [  ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "outlet" ],
+					"seealso" : [ "lambda", "map" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "reduce" ],
 					"title" : [ "reduce() function reference" ]
 				},
 				"Rev" : {
@@ -665,7 +665,7 @@
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.subs.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [ "pick", "colon", "insert", "substitution+assignment", "nth" ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "subs", "substitution", "address", "delete" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "subs", "substitution", "address", "delete", "replace" ],
 					"title" : [ "subs() function reference" ]
 				},
 				"Symdiff" : {
@@ -1657,15 +1657,50 @@
 				"tags" : [ "dynamic", "define", "assign", "linkdynamicstoslot", "marking", "piano", "forte", "p", "pp", "ppp", "f", "ff", "fff", "sforzato", "fortissimo", "pianissimo", "crescendo", "decrescendo", "hairpin", "sign" ],
 				"title" : [ "Defining dynamics" ]
 			},
-			"Syntax" : {
-				"filename" : [ "bach.help.notation.dynamics.02_syntax.maxpat" ],
-				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "slot+edit", "slot+interface", "addslot", "eraseslot", "checkdynamics" ],
-				"tags" : [ "dynamic", "define", "assign", "syntax", "marking", "piano", "forte", "p", "pp", "ppp", "f", "ff", "fff", "sforzato", "fortissimo", "pianissimo", "crescendo", "decrescendo", "hairpin", "sign", "exponential", "dimminuendo", "next" ],
-				"title" : [ "Dynamics syntax" ]
+			"Syntaxes" : {
+				"filename" : [ "bach.help.notation.dynamics.02_syntaxes.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "dynamics+example", "hairpin+syntax" ],
+				"tags" : [ "dynamic", "define", "assign", "dynamics", "plain", "llll", "syntax", "structured", "complete", "full" ],
+				"title" : [ "Syntax for dynamics" ]
 			},
-			"Advanced" : {
-				"filename" : [ "bach.help.notation.dynamics.10_advanced.maxpat" ],
+			"Breakpoints" : {
+				"filename" : [ "bach.help.notation.dynamics.03_breakpoints.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "dynamics+syntax", "breakpoint" ],
+				"tags" : [ "dynamic", "define", "attach", "dynamics", "plain", "llll", "syntax", "structured", "full", "breakpoints" ],
+				"title" : [ "Attaching dynamics to breakpoints" ]
+			},
+			"Outputsyntax" : {
+				"filename" : [ "bach.help.notation.dynamics.04_outputsyntax.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "dynamics+syntax" ],
+				"tags" : [ "dynamic", "syntax", "output", "plain", "structured", "full", "retrieve" ],
+				"title" : [ "Output syntax" ]
+			},
+			"Symbols" : {
+				"filename" : [ "bach.help.notation.dynamics.05_symbols.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "dynamics+appearance" ],
+				"tags" : [ "dynamic", "hairpin", "crescendo", "diminuendo", "exponential", "dashed", "line", "syntax", "symbol", "dynamics", "forte", "piano", "fortissimo", "pianissimo", "zero", "niente", "dal", "al", "roman", "italics" ],
+				"title" : [ "Hairpins and dynamics symbols" ]
+			},
+			"Basicplainsyntax" : {
+				"filename" : [ "bach.help.notation.dynamics.07_basicplainsyntax.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "slot+edit", "slot+interface", "addslot", "eraseslot", "checkdynamics" ],
+				"tags" : [ "dynamic", "define", "assign", "plain", "syntax", "marking", "piano", "forte", "p", "pp", "ppp", "f", "ff", "fff", "sforzato", "fortissimo", "pianissimo", "crescendo", "decrescendo", "hairpin", "sign", "exponential", "dimminuendo", "next", "zero", "niente", "alniente", "dalniente" ],
+				"title" : [ "Plain dynamics syntax" ]
+			},
+			"Moreplainsyntax" : {
+				"filename" : [ "bach.help.notation.dynamics.08_moreplainsyntax.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "dynamics+syntax" ],
+				"tags" : [ "dynamic", "define", "assign", "plain", "syntax", "marking", "spaces", "underscore", "dashed", "line", "roman", "italic", "expression" ],
+				"title" : [ "Plain dynamics syntax" ]
+			},
+			"Checkfix" : {
+				"filename" : [ "bach.help.notation.dynamics.15_checkfix.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "selection+message", "sel" ],
 				"tags" : [ "dynamic", "hairpin", "check", "checkdynamics", "post", "warn", "wraning", "inconsistent", "marking", "unnecessary", "fix", "correct", "selection", "operate", "message", "upon", "on" ],
@@ -3328,7 +3363,7 @@
 				"filename" : [ "bach.help.notation.messages.31_symbolvariables.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [ "conditional+selection" ],
-				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace", "part", "voiceensemble", "pitch", "ensemble" ],
+				"tags" : [ "message", "selection", "select", "conditional", "symbolic", "expression", "variable", "equation", "onset", "duration", "cents", "velocity", "tail", "voice", "index", "symonset", "symduration", "symtail", "measure", "tie", "noteindex", "chordindex", "grace", "part", "voiceensemble", "pitch", "ensemble", "poc", "pitchorcents" ],
 				"title" : [ "Symbolic variables for expressions" ]
 			},
 			"Respell pitches automatically" : {
@@ -4398,7 +4433,7 @@
 			},
 			"Imagesview_score" : {
 				"filename" : [ "bach.help.notation.save and load.62_imagesview_score.maxpat" ],
-				"objects" : [ "bach.roll", "bach.score" ],
+				"objects" : [ "bach.score" ],
 				"seealso" : [ "export+image" ],
 				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "view", "pixelpersystem", "mspersystem", "line", "raw", "multiline", "scroll", "page" ],
 				"title" : [ "Image export views for bach.score" ]

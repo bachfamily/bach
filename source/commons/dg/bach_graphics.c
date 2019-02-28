@@ -579,10 +579,10 @@ void paint_rectangle_rounded(t_jgraphics* g, t_jrgba border_color, t_jrgba fill_
 }
 
 // -1 = dim, 1 = cresc
-void paint_hairpin(t_jgraphics* g, t_jrgba color, long cresc_or_dim, double xstart, double xend, double middley, double semiaperture, double width)
+void paint_hairpin(t_jgraphics* g, t_jrgba color, long hairpin_type, double xstart, double xend, double middley, double semiaperture, double width, double dash_length)
 {
-    if (cresc_or_dim > 0) {
-        if (cresc_or_dim == 1 || xend <= xstart) { // linear
+    if (hairpin_type == k_DYNAMICS_HAIRPIN_CRESC || hairpin_type == k_DYNAMICS_HAIRPIN_CRESCEXP) {
+        if (hairpin_type == k_DYNAMICS_HAIRPIN_CRESC || xend <= xstart) { // linear
             paint_line(g, color, xstart, middley, xend, middley + semiaperture, width);
             paint_line(g, color, xstart, middley, xend, middley - semiaperture, width);
         } else { // exponential
@@ -601,8 +601,8 @@ void paint_hairpin(t_jgraphics* g, t_jrgba color, long cresc_or_dim, double xsta
             paint_bezier_curve(g, color, cropped_xend, middley - cropped_semiaperture, cpx, cpy1, cpx, cpy1, xend, middley - 1.4 * semiaperture, width);
             paint_bezier_curve(g, color, cropped_xend, middley + cropped_semiaperture, cpx, cpy2, cpx, cpy2, xend, middley + 1.4 * semiaperture, width);
         }
-    } else if (cresc_or_dim < 0) {
-        if (cresc_or_dim == -1 || xend <= xstart) { // linear
+    } else if (hairpin_type == k_DYNAMICS_HAIRPIN_DIM || hairpin_type == k_DYNAMICS_HAIRPIN_DIMEXP) {
+        if (hairpin_type == k_DYNAMICS_HAIRPIN_DIM || xend <= xstart) { // linear
             paint_line(g, color, xend, middley, xstart, middley + semiaperture, width);
             paint_line(g, color, xend, middley, xstart, middley - semiaperture, width);
         } else { // exponential
@@ -622,6 +622,8 @@ void paint_hairpin(t_jgraphics* g, t_jrgba color, long cresc_or_dim, double xsta
             paint_bezier_curve(g, color, cropped_xstart, middley + cropped_semiaperture, cpx, cpy2, cpx, cpy2, xstart, middley + 1.4 * semiaperture, width);
             
         }
+    } else if (hairpin_type == k_DYNAMICS_HAIRPIN_DASHED || hairpin_type == k_DYNAMICS_HAIRPIN_CRESCDASHED || hairpin_type == k_DYNAMICS_HAIRPIN_DIMDASHED) {
+        paint_dashed_line(g, color, xstart, middley + semiaperture, xend, middley + semiaperture, width, dash_length);
     }
 }
 

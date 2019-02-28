@@ -143,6 +143,12 @@ long hairpin_symbol_to_value(t_symbol *hairpin)
         return k_DYNAMICS_HAIRPIN_DIM;
     if (hairpin == gensym(">>"))
         return k_DYNAMICS_HAIRPIN_DIMEXP;
+    if (hairpin == gensym("_<_"))
+        return k_DYNAMICS_HAIRPIN_CRESCDASHED;
+    if (hairpin == gensym("_>_"))
+        return k_DYNAMICS_HAIRPIN_DIMDASHED;
+    if (hairpin == gensym("_") || hairpin == gensym("___"))
+        return k_DYNAMICS_HAIRPIN_DASHED;
     return k_DYNAMICS_HAIRPIN_NONE;
 }
 
@@ -156,9 +162,15 @@ long hairpin_textbuf_to_value(t_notation_obj *r_ob, char *buf)
         return k_DYNAMICS_HAIRPIN_DIM;
     if (strcmp(buf, ">>") == 0)
         return k_DYNAMICS_HAIRPIN_DIMEXP;
-    if (strcmp(buf, "_") == 0 || strcmp(buf, "") == 0)
+    if (strcmp(buf, "=") == 0 || strcmp(buf, " ") == 0 || strcmp(buf, "") == 0)
         return k_DYNAMICS_HAIRPIN_NONE;
-    
+    if (strcmp(buf, "_<_") == 0)
+        return k_DYNAMICS_HAIRPIN_CRESCDASHED;
+    if (strcmp(buf, "_>_") == 0)
+        return k_DYNAMICS_HAIRPIN_DIMDASHED;
+    if (strcmp(buf, "_") == 0 || strcmp(buf, "___") == 0)
+        return k_DYNAMICS_HAIRPIN_DASHED;
+
     object_warn((t_object *)r_ob, "Unsupported hairpin: '%s'", buf);
     return k_DYNAMICS_HAIRPIN_NONE;
 }
@@ -182,9 +194,21 @@ t_symbol *hairpin_value_to_symbol(long hairpin)
             return gensym(">");
             break;
 
+        case k_DYNAMICS_HAIRPIN_CRESCDASHED:
+            return gensym("_<_");
+            break;
+
+        case k_DYNAMICS_HAIRPIN_DIMDASHED:
+            return gensym("_>_");
+            break;
+            
+        case k_DYNAMICS_HAIRPIN_DASHED:
+            return gensym("_");
+            break;
+
         case k_DYNAMICS_HAIRPIN_NONE:
         default:
-            return gensym("_");
+            return gensym("=");
             break;
     }
 }
@@ -429,59 +453,62 @@ t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_l
                 
                 long hairpintype = subll->l_size >= 3 ? (hatom_gettype(&subll->l_head->l_next->l_next->l_hatom) == H_SYM ? hairpin_symbol_to_value(hatom_getsym(&subll->l_head->l_next->l_next->l_hatom)) : hatom_getlong(&subll->l_head->l_next->l_next->l_hatom)) : k_DYNAMICS_HAIRPIN_NONE;
                 
-                if (num_words > 0) { // TO DO: remove this?
-                    t_dynamics_mark *mark = build_dynamics_mark(num_words);
-                    
-                    if (subll->l_size >= 2 && hatom_gettype(&subll->l_head->l_next->l_hatom) == H_LLLL) {
-                        mark->start_energy = -1;
-                        mark->end_energy = -1;
-                        short this_start_energy, this_end_energy;
-                        long i = 0;
-                        for (t_llllelem *el = hatom_getllll(&subll->l_head->l_next->l_hatom)->l_head; el && i < num_words; el = el->l_next, i++) {
-                            t_symbol *this_symbol = hatom_getsym(&el->l_hatom);
-                            if (this_symbol) {
-                                dynamics_parse_string_to_energy(r_ob, this_symbol->s_name, &this_start_energy, &this_end_energy);
-                                mark->is_roman[i] = (this_start_energy < 0 || this_end_energy < 0);
-                                if (mark->start_energy < 0)
-                                    mark->start_energy = this_start_energy;
-                                if (this_end_energy >= 0)
-                                    mark->end_energy = this_end_energy;
-                                mark->text_deparsed[i] = hatom_getsym(&el->l_hatom);
-                                if (mark->is_roman[i]) {
-                                    mark->text_typographic[i] = mark->text_deparsed[i];
-                                } else {
-                                    if (mark->text_deparsed)
-                                        mark->text_typographic[i] = dynamics_mark_parse_string_to_typographic_text(r_ob, mark->text_deparsed[i]->s_name);
-                                    else
-                                        mark->text_typographic[i] = _llllobj_sym_empty_symbol;
-                                }
+                t_dynamics_mark *mark = build_dynamics_mark(num_words);
+                
+                if (subll->l_size >= 2 && hatom_gettype(&subll->l_head->l_next->l_hatom) == H_LLLL) {
+                    mark->start_energy = -1;
+                    mark->end_energy = -1;
+                    short this_start_energy, this_end_energy;
+                    long i = 0;
+                    for (t_llllelem *el = hatom_getllll(&subll->l_head->l_next->l_hatom)->l_head; el && i < num_words; el = el->l_next, i++) {
+                        t_symbol *this_symbol = hatom_getsym(&el->l_hatom);
+                        if (this_symbol) {
+                            dynamics_parse_string_to_energy(r_ob, this_symbol->s_name, &this_start_energy, &this_end_energy);
+                            mark->is_roman[i] = (this_start_energy < 0 || this_end_energy < 0);
+                            if (mark->start_energy < 0)
+                                mark->start_energy = this_start_energy;
+                            if (this_end_energy >= 0)
+                                mark->end_energy = this_end_energy;
+                            mark->text_deparsed[i] = hatom_getsym(&el->l_hatom);
+                            if (mark->is_roman[i]) {
+                                mark->text_typographic[i] = mark->text_deparsed[i];
                             } else {
-                                mark->text_deparsed[i] = _llllobj_sym_empty_symbol;
-                                mark->text_typographic[i] = _llllobj_sym_empty_symbol;
+                                if (mark->text_deparsed)
+                                    mark->text_typographic[i] = dynamics_mark_parse_string_to_typographic_text(r_ob, mark->text_deparsed[i]->s_name);
+                                else
+                                    mark->text_typographic[i] = _llllobj_sym_empty_symbol;
                             }
-                        }
-                    } else if (subll->l_size >= 2) {
-                        t_symbol *mark_sym = hatom_getsym(&subll->l_head->l_next->l_hatom);
-                        if (mark_sym) {
-                            dynamics_parse_string_to_energy(r_ob, mark_sym->s_name, &mark->start_energy, &mark->end_energy);
-                            mark->is_roman[0] = (mark->start_energy < 0 || mark->end_energy < 0);
-                            mark->text_deparsed[0] = mark_sym;
-                            if (mark->is_roman[0])
-                                mark->text_typographic[0] = mark->text_deparsed[0];
-                            else
-                                mark->text_typographic[0] = dynamics_mark_parse_string_to_typographic_text(r_ob, mark_sym->s_name);
                         } else {
-                            mark->text_deparsed[0] = _llllobj_sym_empty_symbol;
-                            mark->text_typographic[0] = _llllobj_sym_empty_symbol;
+                            mark->text_deparsed[i] = _llllobj_sym_empty_symbol;
+                            mark->text_typographic[i] = _llllobj_sym_empty_symbol;
                         }
                     }
-                    
-                    mark->hairpin_to_next = hairpintype;
-                    mark->snap_to_breakpoint = snaptobreakpoint;
-                    mark->relative_position = relativeposition;
-                    mark->dynamics_mark_attachment = dynamics_mark_attachment;
-                    dynamics_mark_append(dyn, mark);
+                } else if (subll->l_size >= 2) {
+                    t_symbol *mark_sym = hatom_getsym(&subll->l_head->l_next->l_hatom);
+                    if (mark_sym) {
+                        dynamics_parse_string_to_energy(r_ob, mark_sym->s_name, &mark->start_energy, &mark->end_energy);
+                        mark->is_roman[0] = (mark->start_energy < 0 || mark->end_energy < 0);
+                        mark->text_deparsed[0] = mark_sym;
+                        if (mark->is_roman[0])
+                            mark->text_typographic[0] = mark->text_deparsed[0];
+                        else
+                            mark->text_typographic[0] = dynamics_mark_parse_string_to_typographic_text(r_ob, mark_sym->s_name);
+                    } else {
+                        mark->text_deparsed[0] = _llllobj_sym_empty_symbol;
+                        mark->text_typographic[0] = _llllobj_sym_empty_symbol;
+                    }
                 }
+                
+                mark->hairpin_to_next = hairpintype;
+                mark->snap_to_breakpoint = snaptobreakpoint;
+                mark->relative_position = relativeposition;
+                mark->dynamics_mark_attachment = dynamics_mark_attachment;
+                
+                // special case in which the mark is simply a pipe sign: in this case it's a placeholder for an empty dynamics
+                if (mark->num_words == 1 && mark->text_deparsed[0] == gensym("|"))
+                    mark->num_words = 0;
+                
+                dynamics_mark_append(dyn, mark);
             }
         }
         
@@ -521,7 +548,9 @@ char dynamics_mark_is_zero(t_dynamics_mark *dynsign)
 
 // use item == NULL to only finish an hairpin
 void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window)
+                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman,
+                    double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x,
+                    long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window)
 {
     char boxed = inside_slot_window;
     double xpos = center_x, ypos = y_position;
@@ -530,6 +559,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
     const double HAIRPIN_PAD = 0.11 * font_size;
     const double HAIRPIN_SEMIAPERTURE =  0.175 * font_size;
     const double ZEROCIRCLE_RADIUS = 0.1 * font_size;
+    const double DASH_LENGTH = 3 * r_ob->zoom_y;
     t_chord *curr_ch = item ? notation_item_get_parent_chord(r_ob, item) : NULL;
     char dont_paint = (curr_ch && r_ob->is_editing_type == k_DYNAMICS && r_ob->is_editing_chord == curr_ch);
     
@@ -540,7 +570,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                 h = w = 0;
             //                jfont_text_measure(jf_dynamics, dyntext, &w, &h);
             if (!(prev_hairpin_dont_paint && *prev_hairpin_dont_paint) && xpos - w/2. - HAIRPIN_PAD > *curr_hairpin_start_x)
-                paint_hairpin(g, prev_hairpin_color ? *prev_hairpin_color : r_ob->j_dynamics_rgba, *curr_hairpin_type, *curr_hairpin_start_x, xpos - w/2. - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1);
+                paint_hairpin(g, prev_hairpin_color ? *prev_hairpin_color : r_ob->j_dynamics_rgba, *curr_hairpin_type, *curr_hairpin_start_x, xpos - w/2. - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH);
             *curr_hairpin_type = 0;
         }
         
@@ -583,8 +613,26 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                     w = h = 0;
                 }
             }
-            if (!(prev_hairpin_dont_paint && *prev_hairpin_dont_paint) && xpos - w/2. - HAIRPIN_PAD > *curr_hairpin_start_x)
-                paint_hairpin(g, prev_hairpin_color ? *prev_hairpin_color : r_ob->j_dynamics_rgba, *curr_hairpin_type, *curr_hairpin_start_x, xpos - w/2. - (is_dynamic_zero ? 0 : HAIRPIN_PAD), ypos, HAIRPIN_SEMIAPERTURE, 1);
+            double endhairpinpos = xpos;
+            if (dyn->firstmark && dyn->firstmark->num_words > 0) {
+                if (dyn->firstmark->is_roman[0])
+                    endhairpinpos -= CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                else {
+                    if (dynamics_mark_is_zero(dyn->firstmark))
+                        endhairpinpos -= ZEROCIRCLE_RADIUS;
+                    else {
+                        double temp_w, temp_h;
+                        jfont_text_measure(jf_dynamics, dyn->firstmark->text_typographic[0]->s_name, &temp_w, &temp_h);
+                        endhairpinpos -= temp_w/2.;
+                    }
+                }
+                    
+                if (!dynamics_mark_is_zero(dyn->firstmark))
+                    endhairpinpos -= HAIRPIN_PAD;
+            }
+            if (!(prev_hairpin_dont_paint && *prev_hairpin_dont_paint) && endhairpinpos > *curr_hairpin_start_x) {
+                paint_hairpin(g, prev_hairpin_color ? *prev_hairpin_color : r_ob->j_dynamics_rgba, *curr_hairpin_type, *curr_hairpin_start_x, endhairpinpos - (is_dynamic_zero ? 0 : HAIRPIN_PAD), ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH);
+            }
             *curr_hairpin_type = 0;
         }
         
@@ -595,9 +643,8 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
         
         double prev_end_xpos = 0;
         double y_adj_for_dynamics = - 0.93 * font_size;
-        double y_adj_for_romans = y_adj_for_dynamics + (font_size - roman_font_size) + 0.2 * font_size;
+        double y_adj_for_romans = y_adj_for_dynamics + (font_size - roman_font_size) + 0.18 * font_size;
         for (t_dynamics_mark *mark = dyn->firstmark; mark; mark = mark->next) {
-            char align = 0;
             char is_dynamic_zero = false;
             
             if (mark->snap_to_breakpoint) {
@@ -611,14 +658,16 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
             
             if (boxed) xpos += dyn->dynamics_left_uext * r_ob->zoom_y;
             
-            long cur = xpos;
+            long cur = xpos, end_previous_hairpin_here = xpos;
             if (r_ob->show_dynamics || boxed) {
                 if (dynamics_mark_is_zero(mark)) {
                     if (!dont_paint)
                         paint_circle_stroken(g, *color, xpos, ypos, ZEROCIRCLE_RADIUS, 1);
                     is_dynamic_zero = true;
                     cur += ZEROCIRCLE_RADIUS;
+                    end_previous_hairpin_here -= ZEROCIRCLE_RADIUS;
                 } else {
+                    end_previous_hairpin_here -= HAIRPIN_PAD;
                     if (!dont_paint) {
                         for (long i = 0; i < mark->num_words; i++) {
                             double thisw = 0, thish = 0;
@@ -628,15 +677,19 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                             if (i == 0) {
                                 if (mark->is_roman[i]) {
                                     write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y, this_ypos, 600, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_LEFT | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
-                                    cur += thisw - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y + CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS * r_ob->zoom_y;
+                                    cur += thisw - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                                    end_previous_hairpin_here -= CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
                                 } else {
                                     write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur - 200, this_ypos, 400, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
-                                    cur += thisw/2 + CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS * r_ob->zoom_y;
+                                    cur += thisw/2;
+                                    end_previous_hairpin_here -= thisw/2;
                                 }
                             } else {
                                 write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur, this_ypos, 600, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_LEFT | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
-                                cur += thisw + CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS * r_ob->zoom_y;
+                                cur += thisw;
                             }
+                            if (i != mark->num_words - 1)
+                                cur += CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS * r_ob->zoom_y;
                         }
                     }
                 }
@@ -644,14 +697,12 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
             
             if (is_dynamic_zero)
                 w = h = ZEROCIRCLE_RADIUS * 2.;
-            else {
+            else
                 dynamics_mark_measure(mark, jf_dynamics, jf_dynamics_roman, &w, &h);
-//                jfont_text_measure(jf_dynamics, mark->text_typographic->s_name, &w, &h);
-            }
             
             // painting hairpin?
-            if ((r_ob->show_hairpins || boxed) && !dont_paint && mark->prev && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < xpos - (align == 0 ? w/2. : w) - (is_dynamic_zero ? 0. : HAIRPIN_PAD))
-                paint_hairpin(g, *color, mark->prev->hairpin_to_next, prev_end_xpos, xpos - (align == 0 ? w/2. : w) - (is_dynamic_zero ? 0. : HAIRPIN_PAD), ypos, HAIRPIN_SEMIAPERTURE, 1);
+            if ((r_ob->show_hairpins || boxed) && !dont_paint && mark->prev && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < end_previous_hairpin_here)
+                paint_hairpin(g, *color, mark->prev->hairpin_to_next, prev_end_xpos, end_previous_hairpin_here, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH);
             
             prev_end_xpos = cur + (is_dynamic_zero ? 0. : HAIRPIN_PAD);
             
@@ -663,7 +714,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
         }
         
         if (boxed && !dont_paint && dyn->lastmark && dyn->lastmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < center_x + duration_x - HAIRPIN_PAD) {
-            paint_hairpin(g, *color, dyn->lastmark->hairpin_to_next, prev_end_xpos, center_x + duration_x - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1);
+            paint_hairpin(g, *color, dyn->lastmark->hairpin_to_next, prev_end_xpos, center_x + duration_x - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH);
         }
     }
 }
@@ -999,9 +1050,9 @@ t_dynamics_mark *build_dynamics_mark(long num_words)
     ds->hairpin_to_next = k_DYNAMICS_HAIRPIN_NONE;
     ds->relative_position = 0;
     ds->snap_to_breakpoint = 0;
-    ds->is_roman = (char *)bach_newptr(num_words * sizeof(char));
-    ds->text_typographic = (t_symbol **)bach_newptr(num_words * sizeof(t_symbol *));
-    ds->text_deparsed = (t_symbol **)bach_newptr(num_words * sizeof(t_symbol *));
+    ds->is_roman = (char *)bach_newptr(MAX(num_words, 1) * sizeof(char));
+    ds->text_typographic = (t_symbol **)bach_newptr(MAX(num_words, 1) * sizeof(t_symbol *));
+    ds->text_deparsed = (t_symbol **)bach_newptr(MAX(num_words, 1) * sizeof(t_symbol *));
     for (long i = 0; i < num_words; i++) {
         ds->is_roman[i] = 0;
         ds->text_typographic[i] = NULL;
@@ -1037,13 +1088,13 @@ t_dynamics *dynamics_from_textbuf(t_notation_obj *r_ob, t_notation_item *owner, 
             while (*c == ' ')
                 c++;
             d = c;
-            while (*d != 0 && *d != '<' && *d != '>' && *d != '_') // mark
+            while (*d != 0 && *d != '<' && *d != '>' && *d != '_' && *d != '=') // mark
                 d++;
             e = d;
             while (d > a && *(d-1) == ' ')
                 d--;
             f = e;
-            while (*f == '<' || *f == '>' || *f == '_') // hairpin
+            while (*f == '<' || *f == '>' || *f == '_' || *f == '=') // hairpin
                 f++;
             
             sysmem_copyptr(a, position, MIN(CONST_MAX_NUM_DYNAMICS_CHARS * sizeof(char), b-a));
@@ -1083,6 +1134,10 @@ t_dynamics *dynamics_from_textbuf(t_notation_obj *r_ob, t_notation_item *owner, 
                         thismark->text_typographic[i] = _llllobj_sym_empty_symbol;
                 }
             }
+            
+            // special case in which the mark is simply a pipe sign: in this case it's a placeholder for an empty dynamics
+            if (thismark->num_words == 1 && thismark->text_deparsed[0] == gensym("|"))
+                thismark->num_words = 0;
             
             if (position[0] == '@') {
                 // breakpoint attachment
@@ -1292,24 +1347,6 @@ void reassemble_dynamics_buf(t_notation_obj *r_ob, long num_dynamics, char dynam
     out_buf[cur] = 0;
 }
 
-void remove_first_dynamic_from_deparsed_dynamic(char *dyn_buf)
-{
-    char temp[CONST_MAX_NUM_DYNAMICS_CHARS * CONST_MAX_NUM_DYNAMICS_PER_CHORD];
-    
-    snprintf_zero(temp, CONST_MAX_NUM_DYNAMICS_CHARS * CONST_MAX_NUM_DYNAMICS_PER_CHORD, "%s", dyn_buf);
-    
-    char *c = temp;
-    while (*c && *c != '_') {
-        if (!*(c+1) || *(c+1) == '_') {
-            *c = '|';
-            break;
-        }
-        c++;
-    }
-    
-    snprintf_zero(dyn_buf, CONST_MAX_NUM_DYNAMICS_CHARS * CONST_MAX_NUM_DYNAMICS_PER_CHORD, "%s", c);
-}
-
 t_dynamics *chord_get_dynamics(t_chord *ch, t_slotitem **slotitem)
 {
     t_slot *slot = ch->dynamics_slot;
@@ -1331,6 +1368,27 @@ void dynamics_mark_to_textbuf(t_dynamics_mark *mark, char *buf, long buf_size)
     }
 }
 
+// -1 = dim, 1 = cresc, 0 = none
+char is_hairpin_crescordim(long hairpin)
+{
+    switch (hairpin) {
+        case k_DYNAMICS_HAIRPIN_DIM:
+        case k_DYNAMICS_HAIRPIN_DIMEXP:
+        case k_DYNAMICS_HAIRPIN_DIMDASHED:
+            return -1;
+            break;
+            
+        case k_DYNAMICS_HAIRPIN_CRESC:
+        case k_DYNAMICS_HAIRPIN_CRESCEXP:
+        case k_DYNAMICS_HAIRPIN_CRESCDASHED:
+            return 1;
+            break;
+
+        default:
+            return 0;
+            break;
+    }
+}
 
 long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_inconsistent, char check_unnecessary, char fix_inconsistent, char fix_unnecessary, char selection_only, char verbose)
 {
@@ -1361,7 +1419,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 long num_marks = dyn->num_marks;
 
                 // checking dangling hairpin
-                if (check_inconsistent && last_hairpin) {
+                if (check_inconsistent && is_hairpin_crescordim(last_hairpin) != 0) {
                     long cmp = dynamic_mark_end_start_cmp(lastmark, dyn->firstmark);
                     if (last_hairpin * cmp <= 0) {
                         if (verbose) {
@@ -1398,7 +1456,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                 if (check_unnecessary) {
                     
                     char then_continue = false;
-                    while (!last_hairpin && lastmark && dyn->firstmark && dyn->firstmark->text_typographic == lastmark->text_typographic && dyn->firstmark->hairpin_to_next == k_DYNAMICS_HAIRPIN_NONE) {
+                    while (!last_hairpin && lastmark && dyn->firstmark && dyn->firstmark->num_words == 1 && lastmark->num_words == 1 && dyn->firstmark->text_typographic[0] == lastmark->text_typographic[0] && dyn->firstmark->hairpin_to_next == k_DYNAMICS_HAIRPIN_NONE) {
                         if (verbose) {
                             check_dynamics_get_path(r_ob, ch, path, 1024, num_marks > 1 ? 1 : 0);
                             dynamics_mark_to_textbuf(lastmark, temp_mark_text, 1024);
@@ -1423,7 +1481,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                     
                     i = 0;
                     for (t_dynamics_mark *mark = dyn->firstmark->next; mark; mark = mark->next, i++) {
-                        if (mark->prev->text_typographic == mark->text_typographic && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && mark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE) {
+                        if (mark->prev->num_words == 1 && mark->num_words == 1 && mark->prev->text_typographic[0] == mark->text_typographic[0] && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && mark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE) {
                             if (verbose) {
                                 check_dynamics_get_path(r_ob, ch, path, 1024, num_marks > 1 ? i : 0);
                                 dynamics_mark_to_textbuf(lastmark, temp_mark_text, 1024);
