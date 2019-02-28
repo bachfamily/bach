@@ -2568,6 +2568,11 @@ typedef struct _dynamics_mark
     short                   start_energy;   ///< "Energy value" (an internal number to order dynamics) at the beginning of dynamic mark
     short                   end_energy;     ///< "Energy value" (an internal number to order dynamics) at the end of dynamic mark
                                             ///< This can differ in case of dynamics such as "fp" et similia
+                                            ///< Energy are assigned as follows:
+                                            ///< energy < 0 ----> cannot be computed
+                                            ///< energy == 0 ----> o
+                                            ///< ...ppp, pp, p, mp, mf, f, ff, fff ----> ..., 97, 98, 99, 100, 101, 102, 103, 104,...
+                                            ///< sf(z), sff(z), sfff(z), .... ----> 200, 201, 202, ...
 
     struct _dynamics_mark   *next;
     struct _dynamics_mark   *prev;
