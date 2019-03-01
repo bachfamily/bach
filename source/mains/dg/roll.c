@@ -15471,7 +15471,7 @@ void roll_enter(t_roll *x)	// enter is triggerd at "endeditbox time"
         t_notation_item *nitem = notation_item_get_to_which_dynamics_should_be_assigned((t_notation_obj *)x, (t_notation_item *)x->r_ob.is_editing_chord);
         if (nitem) {
             if (strlen(text) > 0) {
-                t_llll *new_text_as_llll = llll_from_text_buf(text);
+                t_llll *new_text_as_llll = llll_from_text_buf(text, false, LLLL_I_SMALLPARENS | LLLL_I_BIGPARENS);
                 lock_general_mutex((t_notation_obj *)x);
                 create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.is_editing_chord, k_UNDO_MODIFICATION_CHANGE);
                 notation_item_change_slotitem((t_notation_obj *) x, nitem, x->r_ob.link_dynamics_to_slot - 1, 1, new_text_as_llll);

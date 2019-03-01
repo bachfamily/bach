@@ -913,10 +913,16 @@ void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, short *sta
             case 's':
             {
                 long len = buf[strlen(buf) - 1] == 'z' ? strlen(buf) - 1: strlen(buf);
+                char there_is_z = true;
                 if (len < 2 || buf[1] != 'f')
                     goto end;
                 for (long i = 2; i < len; i++)
                     if (buf[i] != 'f') {
+                        if (buf[i] == 'z') {
+                            there_is_z = true;
+                            i++;
+                        }
+                        
                         if (!strcmp(buf+i, "mp")) {
                             se = 200 + CLAMP(i, 0, 100);
                             ee = 100;
@@ -930,6 +936,13 @@ void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, short *sta
                             }
                             se = 200 + CLAMP(i, 0, 100);
                             ee = 100 - CLAMP(len - i, 0, 100);
+                        } else if (there_is_z && buf[i] == 'f') {
+                            for (long j = i+1; j < len; j++) {
+                                if (buf[j] != 'f')
+                                    goto end;
+                            }
+                            se = 200 + CLAMP(i, 0, 100);
+                            ee = 101 + CLAMP(len - i, 0, 100);
                         }
                         goto end;
                     }
@@ -1138,7 +1151,7 @@ t_dynamics *dynamics_from_textbuf(t_notation_obj *r_ob, t_notation_item *owner, 
             sysmem_copyptr(c, mark, MIN(CONST_MAX_NUM_DYNAMICS_CHARS * sizeof(char), d-c));
             mark[MAX(0, MIN(CONST_MAX_NUM_DYNAMICS_CHARS - 1, d-c))] = 0;
             
-            t_llll *mark_as_llll = llll_from_text_buf(mark);
+            t_llll *mark_as_llll = llll_from_text_buf(mark, false, LLLL_I_SMALLPARENS | LLLL_I_BIGPARENS);
             
             // creating new sign
             long num_words = mark_as_llll->l_size;
@@ -1585,126 +1598,6 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
 }
 
 
-
-
-t_symbol *dynamics_get_longest(char c, t_dynamics_params *params)
-{
-    long D = params->dynamics_spectrum_halfwidth;
-    char buf[129];
-    long i;
-    for (i = 0; i < 128 && i < D - 1; i++)
-        buf[i] = c;
-    buf[i] = 0;
-    return gensym(buf);
-}
-
-
-// parse "mpfffpppp" -> "mp" and "pppp"
-void parse_composed_dynamics(t_symbol *dyn, t_symbol **firstdyn, t_symbol **lastdyn, t_symbol **std_firstdyn, t_symbol **std_lastdyn, t_dynamics_params *params)
-{
-    char buf[CONST_MAX_NUM_DYNAMICS_CHARS];
-    long len = strlen(dyn->s_name);
-    long D = params->dynamics_spectrum_halfwidth;
-    
-    if (!strncmp(dyn->s_name, "mp", 2)) {
-        *firstdyn = *std_firstdyn = gensym("mp");
-    } else if (!strncmp(dyn->s_name, "mf", 2)) {
-        *firstdyn = *std_firstdyn = gensym("mf");
-    } else if (!strncmp(dyn->s_name, "sf", 2)) {
-        snprintf_zero(buf, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", dyn->s_name);
-        char *cur = buf + 2;
-        char entered = false;
-        while (*cur == 'f') {
-            cur++;
-            entered = true;
-        }
-        if (*cur == 'z') {
-            *std_firstdyn = entered ? gensym("sffz") : gensym("sfz");
-            cur++;
-        } else {
-            *std_firstdyn = entered ? gensym("sff") : gensym("sf");
-        }
-        *cur = 0;
-        *firstdyn = gensym(buf);
-    } else if (!strncmp(dyn->s_name, "n", 1)) {
-        *firstdyn = *std_firstdyn = gensym("n");
-    } else if (!strncmp(dyn->s_name, "0", 1)) {
-        *firstdyn = *std_firstdyn = gensym("0");
-    } else if (!strncmp(dyn->s_name, "p", 1)) {
-        snprintf_zero(buf, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", dyn->s_name);
-        char *cur = buf + 1;
-        while (*cur == 'p') cur++;
-        *cur = 0;
-        *firstdyn = gensym(buf);
-        *std_firstdyn = (strlen(buf) <= D - 1) ? *firstdyn : dynamics_get_longest('p', params);
-    } else if (!strncmp(dyn->s_name, "f", 1)) {
-        snprintf_zero(buf, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", dyn->s_name);
-        char *cur = buf + 1;
-        while (*cur == 'f') cur++;
-        *cur = 0;
-        *firstdyn = gensym(buf);
-        *std_firstdyn = (strlen(buf) <= D - 1) ? *firstdyn : dynamics_get_longest('f', params);
-    }
-    
-    if (!strncmp(dyn->s_name + len - 2, "mp", 2)) {
-        *lastdyn = *std_lastdyn = gensym("mp");
-    } else if (!strncmp(dyn->s_name + len - 2, "mf", 2)) {
-        *lastdyn = *std_lastdyn = gensym("mf");
-    } else if (!strncmp(dyn->s_name + len - 1, "n", 1)) {
-        *lastdyn = *std_lastdyn = gensym("n");
-    } else if (!strncmp(dyn->s_name + len - 1, "0", 1)) {
-        *lastdyn = *std_lastdyn = gensym("0");
-    } else if (!strncmp(dyn->s_name + len - 1, "p", 1)) {
-        snprintf_zero(buf, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", dyn->s_name);
-        char *cur = buf  + len - 2;
-        while (*cur == 'p') cur--;
-        *lastdyn = gensym(++cur);
-        *std_lastdyn = (strlen(buf) <= D - 1) ? *firstdyn : dynamics_get_longest('p', params);
-    } else if (!strncmp(dyn->s_name, "f", 1)) {
-        snprintf_zero(buf, CONST_MAX_NUM_DYNAMICS_CHARS, "%s", dyn->s_name);
-        char *cur = buf  + len - 2;
-        while (*cur == 'f') cur--;
-        *lastdyn = gensym(++cur);
-        *std_lastdyn = (strlen(buf) <= D - 1) ? *firstdyn : dynamics_get_longest('f', params);
-    } else {
-        *lastdyn = *firstdyn;
-        *std_lastdyn = *std_firstdyn;
-    }
-}
-
-/*
- char dynamics_to_velocity_simple(t_symbol *dyn, double *vel)
- {
- if (!dyn)
- return 1;
- 
- // If not found, go with defaults
- if (dyn == gensym("pppppp")) { *vel = 1; return 0; }
- if (dyn == gensym("ppppp")) { *vel = 5; return 0; }
- if (dyn == gensym("pppp")) { *vel = 10; return 0; }
- if (dyn == gensym("ppp")) { *vel = 20; return 0; }
- if (dyn == gensym("pp")) { *vel = 35; return 0; }
- if (dyn == gensym("p")) { *vel = 49; return 0; }
- if (dyn == gensym("mp")) { *vel = 64; return 0; }
- if (dyn == gensym("mf")) { *vel = 80; return 0; }
- if (dyn == gensym("f")) { *vel = 96; return 0; }
- if (dyn == gensym("ff")) { *vel = 110; return 0; }
- if (dyn == gensym("fff")) { *vel = 118; return 0; }
- if (dyn == gensym("ffff")) { *vel = 124; return 0; }
- if (dyn == gensym("fffff")) { *vel = 126; return 0; }
- if (dyn == gensym("ffffff")) { *vel = 127; return 0; }
- if (dyn == gensym("n") || dyn == gensym("o") || dyn == gensym("O") || dyn == gensym("0")) { *vel = 0; return 0; }
- 
- if (dyn == gensym("sfz")) { *vel = 115; return 0; }
- if (dyn == gensym("sffz")) { *vel = 127; return 0; }
- if (dyn == gensym("fz")) { *vel = 115; return 0; }
- if (dyn == gensym("ffz")) { *vel = 127; return 0; }
- if (dyn == gensym("sf")) { *vel = 115; return 0; }
- 
- return 1;
- }
- */
-
 // 1-based index of the dynamics inside the dynamics spectrum of half width <dynamics_spectrum_halfwidth>
 long dynamics_symbol_to_spectrum_index(t_symbol *dyn, long dynamics_spectrum_halfwidth)
 {
@@ -2024,18 +1917,6 @@ char is_dynamics_local(t_notation_obj *r_ob, t_llll *dyn_vel_associations, t_sym
     if (dyn == gensym("sff")) return true;
     if (dyn == gensym("fz")) return true;
     
-    // re parsing composed dyn, such as "ffpppp"
-    t_symbol *firstdyn = NULL, *lastdyn = NULL, *stdfirstdyn = NULL, *stdlastdyn = NULL;
-    parse_composed_dynamics(dyn, &firstdyn, &lastdyn, &stdfirstdyn, &stdlastdyn, params);
-    
-    dyn = (usage_alignment <= 0 ? stdfirstdyn : stdlastdyn);
-    
-    if (dyn == gensym("sfz")) return true;
-    if (dyn == gensym("sffz")) return true;
-    if (dyn == gensym("sf")) return true;
-    if (dyn == gensym("sff")) return true;
-    if (dyn == gensym("fz")) return true;
-    
     return false;
 }
 
@@ -2067,7 +1948,6 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
     double left_velocity = 0, right_velocity = 0;
     const double DYNAMICS_TO_VELOCITY_EXP_SLOPE = 0.6;
     
-//    if (num_left_dyns > 0) {
     if (left_dyn && left_dyn->firstmark) {
         double ch_onset = notation_item_get_onset_ms(r_ob, (t_notation_item *)ch);
         
@@ -2247,15 +2127,8 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
 
 long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode)
 {
-    t_symbol *curr_dyn_sym[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
-    t_symbol *next_dyn_sym[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
-    t_symbol *prev_last_dyn_sym = NULL;
-    long curr_hairpins[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
-    long next_hairpins[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
-
     t_dynamics *curr_dyn = NULL;
     t_dynamics *next_dyn = NULL;
-    t_dynamics_mark *curr_dyn_mark = NULL;
     t_dynamics_mark *prev_dyn_mark = NULL;
 
     
@@ -2278,24 +2151,15 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
         
         for (t_chord *ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch)) {
             if (ch == next_dyn_chord) {
-//                prev_last_dyn_sym = curr_num_dynamics > 0 ? curr_dyn_sym[curr_num_dynamics-1] : NULL;
                 prev_dyn_mark = curr_dyn ? curr_dyn->lastmark : NULL;
                 curr_dyn_chord = next_dyn_chord;
                 curr_dyn_onset = next_dyn_onset;
                 curr_num_dynamics = next_num_dynamics;
                 curr_open_hairpin = next_open_hairpin;
                 curr_dyn = next_dyn;
-//                bach_copyptr(next_hairpins, curr_hairpins, CONST_MAX_NUM_DYNAMICS_PER_CHORD * sizeof(long));
-//                bach_copyptr(next_dyn_sym, curr_dyn_sym, CONST_MAX_NUM_DYNAMICS_PER_CHORD * sizeof(t_symbol *));
                 next_dyn_chord = dynamics_get_next(r_ob, voice, slot_num, next_dyn_chord, &next_dyn_onset);
                 if (next_dyn_chord)
                     next_dyn = chord_get_dynamics(next_dyn_chord);
-                curr_dyn_mark = curr_dyn ? curr_dyn->firstmark : NULL;
-                if (curr_dyn->firstmark && dynamics_mark_is_placeholder(curr_dyn->firstmark) && prev_dyn_mark && !dynamics_mark_is_placeholder(prev_dyn_mark)) {
-                    // this deals with the case of no initial dynamics in a chord-assigned marking, e.g. just "<" or "<ff>p",
-                    // which means that the initial dynamics of the crescendo/diminuendo must be the last used one (if any)
-                    curr_dyn_mark = prev_dyn_mark;
-                }
             }
             
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
