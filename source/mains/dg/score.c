@@ -12654,7 +12654,7 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                     
 					x->r_ob.is_linear_editing = true;
 					
-					if (is_measure_empty(x->r_ob.notation_cursor.measure)) {
+					if (is_measure_empty((t_notation_obj *)x, x->r_ob.notation_cursor.measure)) {
 						measure_delete_all_chords(x, x->r_ob.notation_cursor.measure);
 						x->r_ob.notation_cursor.chord = NULL;					
 					}
@@ -15340,7 +15340,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 						}
 					}
 					
-					if (jump_to_prev_meas && is_measure_empty(x->r_ob.notation_cursor.measure)) {
+					if (jump_to_prev_meas && is_measure_empty((t_notation_obj *)x, x->r_ob.notation_cursor.measure)) {
 						measure_delete_all_chords(x, x->r_ob.notation_cursor.measure);
 						x->r_ob.notation_cursor.chord = NULL;
 					}
@@ -15413,7 +15413,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
 						}
 					}
 					
-					if (jump_to_next_meas && is_measure_empty(x->r_ob.notation_cursor.measure) && x->r_ob.notation_cursor.measure->firstchord) {
+					if (jump_to_next_meas && is_measure_empty((t_notation_obj *)x, x->r_ob.notation_cursor.measure) && x->r_ob.notation_cursor.measure->firstchord) {
 						if (!new_meas)
 							create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.measure, k_UNDO_MODIFICATION_CHANGE);
 						measure_delete_all_chords(x, x->r_ob.notation_cursor.measure);
@@ -15437,7 +15437,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                     llll_appendobj(x->r_ob.notation_cursor.touched_measures, x->r_ob.notation_cursor.measure);
 								x->r_ob.notation_cursor.chord = x->r_ob.notation_cursor.measure->firstchord;
 							}
-							if (is_measure_empty(x->r_ob.notation_cursor.measure) && x->r_ob.notation_cursor.measure->firstchord) {
+							if (is_measure_empty((t_notation_obj *)x, x->r_ob.notation_cursor.measure) && x->r_ob.notation_cursor.measure->firstchord) {
 								create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.measure, k_UNDO_MODIFICATION_CHANGE);
 								measure_delete_all_chords(x, x->r_ob.notation_cursor.measure);
 								x->r_ob.notation_cursor.chord = NULL;
@@ -15465,7 +15465,7 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                                     llll_appendobj(x->r_ob.notation_cursor.touched_measures, x->r_ob.notation_cursor.measure);
 								x->r_ob.notation_cursor.chord = x->r_ob.notation_cursor.measure->firstchord;
 							}
-							if (is_measure_empty(x->r_ob.notation_cursor.measure) && x->r_ob.notation_cursor.measure->firstchord) {
+							if (is_measure_empty((t_notation_obj *)x, x->r_ob.notation_cursor.measure) && x->r_ob.notation_cursor.measure->firstchord) {
 								create_simple_notation_item_undo_tick((t_notation_obj *) x, (t_notation_item *)x->r_ob.notation_cursor.measure, k_UNDO_MODIFICATION_CHANGE);
 								measure_delete_all_chords(x, x->r_ob.notation_cursor.measure);
 								x->r_ob.notation_cursor.chord = NULL;

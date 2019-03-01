@@ -8364,16 +8364,19 @@ void compute_utf_timesignature(t_notation_obj *r_ob, t_timesignature *ts){
 char is_measure_single_whole_rest(t_notation_obj *r_ob, t_measure *measure){
     if (!r_ob->whole_rests_in_empty_measures || r_ob->is_linear_editing)
         return false;
-	return is_measure_empty(measure) && (measure->num_chords <= 1);
+	return is_measure_empty(r_ob, measure, false) && (measure->num_chords <= 1);
 }
 
 // tells if a measure has all rests
-char is_measure_empty(t_measure *measure){
+char is_measure_empty(t_notation_obj *r_ob, t_measure *measure, char account_for_slots)
+{
 	t_chord *chord = measure->firstchord;
 	while (chord) {
 		if (chord->r_sym_duration.r_num >= 0)
-			return false;
-		chord = chord->next;
+            return false;
+        if (account_for_slots && notation_item_has_slot_content(r_ob, (t_notation_item *)chord))
+            return false;
+        chord = chord->next;
 	}
 	return true;
 }
@@ -21293,6 +21296,9 @@ void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *no
 	if (r_ob->j_mousedown_ptr == note)
 		set_mousedown(r_ob, NULL, k_NONE);
 
+    if ((t_notation_item *)note == r_ob->active_slot_notationitem)
+        r_ob->active_slot_notationitem = NULL;
+
     if (r_ob->j_last_mousedown_ptr == note) {
         r_ob->j_last_mousedown_ptr = NULL;
         r_ob->j_last_mousedown_obj_type = k_NONE;
@@ -21427,7 +21433,10 @@ char chord_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_chord *
 
 	if (chord == r_ob->notation_cursor.chord) 
 		r_ob->notation_cursor.chord = chord->next;
-		
+    
+    if ((t_notation_item *)chord == r_ob->active_slot_notationitem)
+        r_ob->active_slot_notationitem = NULL;
+    
 	if ((r_ob->m_inspector.active_bach_inspector_obj_type == k_CHORD && (t_chord *)r_ob->m_inspector.active_bach_inspector_item == chord) ||
 		(r_ob->m_inspector.active_bach_inspector_obj_type == k_NOTE && ((t_note *)r_ob->m_inspector.active_bach_inspector_item)->parent == chord))
 		close_bach_inspector(r_ob, &r_ob->m_inspector);

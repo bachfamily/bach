@@ -13435,10 +13435,12 @@ long get_num_tied_from_notes(t_chord *chord);
 
 /**	Tell if a measure has no non-rest-chords (is empty).
 	@ingroup		notation
+    @param r_ob     The notation object
 	@param	measure	The measure
+    @param account_for_slots    If non-zero, the measure is NOT empty if some of the rests have non-empty slots
 	@return			1 if the measure is empty, 0 otherwise.
  */
-char is_measure_empty(t_measure *measure);
+char is_measure_empty(t_notation_obj *r_ob, t_measure *measure, char account_for_slots = true);
 
 
 /**	Tell if a measure is composed by a single centered whole-note rest (or is completely empty: no rests at all).

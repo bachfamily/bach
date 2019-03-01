@@ -1515,7 +1515,7 @@ void set_measure_cents_values_from_llll(t_score *x, t_llll* measure_midicents, t
 	t_rational measure_dur;
 	long chord_num = 0;
 	
-	if (is_measure_empty(measure)) 
+	if (is_measure_empty((t_notation_obj *)x, measure))
 		measure_delete_all_chords(x, measure);
 	
 	onset = long2rat(0); 
@@ -2013,7 +2013,7 @@ void set_measure_velocities_values_from_llll(t_score *x, t_llll* measure_velocit
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
 	t_chord *chord;
-	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
+	if (is_measure_empty((t_notation_obj *)x, measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = measure_velocities->l_size;
 	chord = measure->firstchord;
@@ -2136,7 +2136,7 @@ void set_measure_ties_values_from_llll(t_score *x, t_llll* measure_ties, t_measu
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
 	t_chord *chord;
-	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
+	if (is_measure_empty((t_notation_obj *)x, measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = measure_ties->l_size; chord_num = 0;
 	chord = measure->firstchord;
@@ -2362,7 +2362,7 @@ void set_measure_graphic_values_from_llll(t_score *x, t_llll* graphic, t_measure
 	long num_chords, chord_num = 0;
 	t_rational onset, measure_dur;
 	t_chord *chord;
-	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
+	if (is_measure_empty((t_notation_obj *)x, measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	num_chords = graphic->l_size; chord_num = 0;
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	chord = measure->firstchord; // For instance: graphic = (((6000 1/4) (7000 1/8)) (7000 -1/4))
@@ -2509,7 +2509,7 @@ void set_measure_breakpoints_values_from_llll(t_score *x, t_llll* breakpoints, t
 	t_llllelem *elem; t_chord *chord = measure->firstchord; // For instance: breakpoints = (  ((0 0 0) (1 1 1))   (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1))) )
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
-	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
+	if (is_measure_empty((t_notation_obj *)x, measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = breakpoints->l_size; chord_num = 0;
 	
@@ -2633,7 +2633,7 @@ void set_measure_articulations_values_from_llll(t_score *x, t_llll* articulation
 	t_llllelem *elem; t_chord *chord = measure->firstchord; // For instance: breakpoints = (  ((0 0 0) (1 1 1))   (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1))) )
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
-	if (is_measure_empty(measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
+	if (is_measure_empty((t_notation_obj *)x, measure) && (!x->durations_given)) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = articulations->l_size; chord_num = 0;
 	
@@ -2721,7 +2721,7 @@ void set_measure_slots_values_from_llll(t_score *x, t_llll* slots, t_measure *me
 	t_llllelem *elem; t_chord *chord = measure->firstchord; // For instance: slots = (  ((0 0 0) (1 1 1))   (((0 0 0) (1 1 1)) ((0 0 0) (0.5 20 0.) (1 1 1))) )
 	t_rational onset, measure_dur;
 	long num_chords, chord_num = 0;
-	if (is_measure_empty(measure) && !x->durations_given) measure_delete_all_chords(x, measure);
+	if (is_measure_empty((t_notation_obj *)x, measure) && !x->durations_given) measure_delete_all_chords(x, measure);
 	onset = long2rat(0); measure_dur = measure_get_sym_duration(measure);
 	num_chords = slots->l_size;
 	
@@ -8124,10 +8124,10 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
 			long i;
 			for (i = 0; i < x->r_ob.num_voices; i++)
 				for (this_meas = tmp_pt->measure[i]; (tmp_pt->next && this_meas != tmp_pt->next->measure[i]) || (!tmp_pt->next && this_meas); this_meas = this_meas->next) {
-					if (is_measure_empty(this_meas) && x->r_ob.notation_cursor.measure != this_meas &&
+					if (is_measure_empty((t_notation_obj *)x, this_meas) && x->r_ob.notation_cursor.measure != this_meas &&
 						rat_rat_cmp(measure_get_content_sym_duration(this_meas), measure_get_sym_duration(this_meas)) == 0 &&
 						!this_meas->lock_rhythmic_tree &&
-						x->r_ob.tree_handling != k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED) { // was: != 0: WHY?!?!?!?!
+						x->r_ob.tree_handling != k_RHYTHMIC_TREE_HANDLING_TAKE_FOR_GRANTED) {
 						verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
 						turn_measure_into_single_rest(x, this_meas);
 						verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
@@ -10722,6 +10722,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                 }
                     break;
                 default:
+                    dev_post("error: item type is %d", x->r_ob.active_slot_notationitem->type);
                     break;
             }
 			
