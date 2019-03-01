@@ -23690,13 +23690,17 @@ void set_textfield_info_to_lyrics_slot(t_notation_obj *r_ob, char *text)
 
 void set_textfield_info_to_dynamics_slot(t_notation_obj *r_ob, char *text)
 {
-    t_llll *new_text_as_llll = llll_get();
-    if (text && strlen(text) > 0)
-        llll_appendsym(new_text_as_llll, text ? gensym(text) : gensym(""), 0, WHITENULL_llll);
-    lock_general_mutex(r_ob);
     t_notation_item *nitem = notation_item_get_to_which_dynamics_should_be_assigned(r_ob, (t_notation_item *)r_ob->is_editing_chord);
-    notation_item_change_slotitem(r_ob, nitem, r_ob->link_dynamics_to_slot - 1, 1, new_text_as_llll);
-    llll_free(new_text_as_llll);
+    if (text && strlen(text) > 0) {
+        t_llll *new_text_as_llll = llll_get();
+        llll_appendsym(new_text_as_llll, text ? gensym(text) : gensym(""), 0, WHITENULL_llll);
+        lock_general_mutex(r_ob);
+        notation_item_change_slotitem(r_ob, nitem, r_ob->link_dynamics_to_slot - 1, 1, new_text_as_llll);
+        llll_free(new_text_as_llll);
+    } else {
+        lock_general_mutex(r_ob);
+        notation_item_clear_slot(r_ob, nitem, r_ob->link_dynamics_to_slot - 1);
+    }
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
         r_ob->is_editing_chord->need_recompute_parameters = true;
     else
@@ -23829,20 +23833,22 @@ void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dyn
             t_dynamics *dyn = (t_dynamics *)firstitem->item;
             chord->dynamics_slot = notation_item_get_slot(r_ob, item, slotnum);
             
-            double w = 0, h = 0, firstw = 0, firsth = 0;
-            if (dyn->firstmark && dyn->firstmark->num_words > 0) {
-                dynamics_mark_measure(dyn->firstmark, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
-                if (dyn->firstmark->is_roman[0]) {
-                    dyn->dynamics_left_uext = CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
-                    dyn->dynamics_right_uext = w - dyn->dynamics_left_uext;
-                } else {
-                    jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic[0]->s_name, &firstw, &firsth);
-                    dyn->dynamics_left_uext = firstw/2.;
-                    dyn->dynamics_right_uext = firstw/2. + (w - firstw);
-                }
-                for (t_dynamics_mark *dynsign = dyn->firstmark->next; dynsign; dynsign = dynsign->next) {
-                    dynamics_mark_measure(dynsign, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
-                    dyn->dynamics_right_uext += CONST_MIN_UWIDTH_BETWEEN_DYNAMICS + w;
+            if (jf_dynamics_nozoom && jf_dynamics_roman_nozoom) {
+                double w = 0, h = 0, firstw = 0, firsth = 0;
+                if (dyn->firstmark && dyn->firstmark->num_words > 0) {
+                    dynamics_mark_measure(dyn->firstmark, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
+                    if (dyn->firstmark->is_roman[0]) {
+                        dyn->dynamics_left_uext = CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                        dyn->dynamics_right_uext = w - dyn->dynamics_left_uext;
+                    } else {
+                        jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic[0]->s_name, &firstw, &firsth);
+                        dyn->dynamics_left_uext = firstw/2.;
+                        dyn->dynamics_right_uext = firstw/2. + (w - firstw);
+                    }
+                    for (t_dynamics_mark *dynsign = dyn->firstmark->next; dynsign; dynsign = dynsign->next) {
+                        dynamics_mark_measure(dynsign, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
+                        dyn->dynamics_right_uext += CONST_MIN_UWIDTH_BETWEEN_DYNAMICS + w;
+                    }
                 }
             }
         }
