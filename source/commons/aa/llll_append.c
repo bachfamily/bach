@@ -11,7 +11,7 @@
 
 // check the depth of a list taking into account a newly-added sub-llll (son)
 // it updates all the depths of the super-lists of son, if needed
-// you only need to call it if you add an H_LLLL llllelem not using the provided functions
+// you only need to call it if you add an H_LLLL llllelem without using the provided functions
 void llll_upgrade_depth(t_llll *son)
 {
     t_atom_long rise, abyss;

@@ -46,15 +46,18 @@ private:
     class timedThing {
     protected:
     public:
-        timedThing(OwnerType* v, t_rational timePos, double relativeX = 0) : owner(v), timePos(timePos), relativeX(relativeX), offset(0) {
-            if (timePos == t_rational(0) && relativeX < 0)
-                relativeX = 0;
-        };
+
         OwnerType* owner;
         t_rational timePos; // absolute
         t_rational offset; // relative to the reference item
 
         double relativeX;
+        
+        timedThing(OwnerType* v, t_rational timePos, double relativeX = 0) : owner(v), timePos(timePos), offset(0), relativeX(relativeX) {
+            if (timePos == t_rational(0) && relativeX < 0)
+                relativeX = 0;
+        };
+        
         virtual ~timedThing() { }
         
         static bool cmp(const timedThing* a, const timedThing* b);
@@ -79,16 +82,18 @@ private:
             
             timedThingVector() = default;
             
-            virtual ~timedThingVector() {
-                for (auto i : stuff)
-                    delete i;
-            }
+            virtual ~timedThingVector() { }
             
             void sort() {
                 std::stable_sort(stuff.begin(), stuff.end(), timedThing<OwnerType>::cmp);
             }
             
             void insert(timedThing<OwnerType> *t) { stuff.push_back(t); }
+            
+            void deleteContents() {
+                for (auto i : stuff)
+                    delete i;
+            }
 
         };
         
@@ -101,7 +106,7 @@ private:
             minfoBased.sort();
         }
         
-        void insertDirectionFromXML(mxml_node_t *directionXML, t_rational global_position, long divisions, part* partOwner = nullptr);
+        void insertDirectionFromXML(mxml_node_t *directionXML, t_rational global_position, long divisions, long* velocity, part* partOwner = nullptr);
         
         void insert(timedThing<voice> *t) { chordBased.insert(t); }
         void insert(timedThing<part> *t) { minfoBased.insert(t); }
@@ -149,6 +154,7 @@ private:
     public:
         std::string dyn;
         enum types { standard, wedge, wedgeEnd } type;
+        
         dynamics(const char * dyn, types type, t_rational timePos, double relativeX = 0) : slotTimedThing(timePos, relativeX), dyn(dyn), type(type) { }
         
     };
@@ -178,15 +184,14 @@ private:
     //////////////////////////
     
     class levelChild {
-    protected:
-        levelChild() : parent(nullptr) { }
-        levelChild(level *parent) : parent(parent) { }
-        
     public:
         level *parent;
         virtual ~levelChild() { }
         virtual t_llll* getllll() = 0;
-        
+    
+    protected:
+        levelChild() : parent(nullptr) { }
+        levelChild(level *parent) : parent(parent) { }
     };
     
     class chord;
@@ -234,6 +239,13 @@ private:
         t_rational timePos;
         t_llll *value;
         t_llllelem *wedge;
+        
+        dynamicsllData() :
+            dyn(nullptr),
+            timePos(t_rational(-1, 1)),
+            value(nullptr),
+            wedge(nullptr)
+        { }
     };
     
     //////////////////////////
@@ -317,7 +329,58 @@ private:
             if (long dynamicsSlot = theScore->dynamicsSlot; dynamicsSlot > 0) {
                 // dynamics, the tough one
                 t_llll *dynamicsll = llll_get();
+                t_llll *dyn = nullptr;
+                t_llll *value = nullptr;
+                t_llllelem *wedge = nullptr;
+                t_rational timePos = {-1, 1};
                 
+                for (auto d : dynamicsSlotContents) {
+                    //t_rational offset = d->offset;
+                    //t_rational timePos = d->timePos;
+                    t_symbol* sym = gensym(d->dyn.c_str());
+                    
+                    switch(d->type) {
+                            
+                        case dynamics::types::standard :
+                        case dynamics::types::wedgeEnd : {
+                            if (d->timePos != timePos) {
+                                dyn = llll_get();
+                                llll_appenddouble(dyn, d->offset);
+                                value = llll_get();
+                                llll_appendsym(value, sym);
+                                llll_appendllll(dyn, value);
+                                wedge = llll_appendsym(dyn, gensym("="));
+                                llll_appendllll(dynamicsll, dyn);
+                                timePos = d->timePos;
+                            } else {
+                                if (hatom_getsym(&value->l_tail->l_hatom) == gensym("|")) {
+                                    hatom_change_to_sym(&value->l_tail->l_hatom, sym);
+                                } else {
+                                    llll_appendsym(value, sym);
+                                }
+                            }
+                            break;
+                        }
+                            
+                        case dynamics::types::wedge : {
+                            if (d->timePos != timePos) {
+                                dyn = llll_get();
+                                llll_appenddouble(dyn, d->offset);
+                                value = llll_get();
+                                llll_appendllll(dyn, value);
+                                wedge = llll_appendsym(dyn, sym);
+                                llll_appendllll(dynamicsll, dyn);
+                                timePos = d->timePos;
+                            } else {
+                                hatom_change_to_sym(&wedge->l_hatom, sym);
+                            }
+                            break;
+                        }
+                    }
+                }
+                
+
+#ifdef xyxyxyxy
                 dynamicsllData* data = &owner->owner->lastDynamicsData;
                 
                 for (auto d : dynamicsSlotContents) {
@@ -366,6 +429,9 @@ private:
                     }
                     llll_appendllll(dynamicsll, data->dyn);
                 }
+
+#endif // xyxyxyxy
+                
                 if (dynamicsll->l_size > 0) {
                     llll_prependlong(dynamicsll, dynamicsSlot);
                     llll_appendllll(slotsll, dynamicsll);
@@ -485,7 +551,8 @@ private:
         
         virtual ~level() {
             for (auto c : children)
-                delete c;
+                if (typeid(c) == typeid(level))
+                    delete c; // chords are deleted by timedThingContainer
         }
     };
 
@@ -542,9 +609,12 @@ private:
         std::vector<int> num;
         int den;
         bool valid;
+        
+        
         void addNumElem(int e) {
             num.push_back(e);
         }
+        
         t_rational getDuration() {
             int durNum = std::accumulate(num.begin(), num.end(), 0);
             return t_rational(durNum, den);
@@ -564,7 +634,7 @@ private:
             } else {
                 t_llll *numll = llll_get();
                 for (int n : num) {
-                    llll_appendlong(ll, n);
+                    llll_appendlong(numll, n);
                 }
                 llll_appendllll(ll, numll);
             }
@@ -667,17 +737,21 @@ private:
             fullDuration = timeSig.getDuration();
         }
         
+        // the llll ownership is kept.
         t_llll *getllll() {
             if (!ll) {
-                t_llll *ll = llll_get();
+                ll = llll_get();
                 llll_appendllll(ll, timeSig.getllll());
                 t_llll *tempill = llll_get();
                 for (auto t : tempi) {
                     llll_appendllll(tempill, t->getllll());
                 }
-                llll_appendllll(ll, tempill);
+                if (tempill->l_size > 0)
+                    llll_appendllll(ll, tempill);
+                else
+                    llll_free(tempill);
             }
-            return llll_clone(ll);
+            return ll;
         }
         
         ~measureinfo() {
@@ -713,6 +787,7 @@ private:
         
         void addChord(chord *c) {
             currentLevel->addChord(c);
+            usedDuration += c->duration;
         }
 
         chord* finalize(t_score *x) {
@@ -733,11 +808,14 @@ private:
         
         t_llll *getllll() {
             t_llll *ll = llll_get();
-            llll_appendllll(ll, info->getllll());
+            llll_appendllll(ll, llll_clone(info->getllll()));
             llll_chain(ll, firstLevel.getllll());
             return ll;
         }
         
+        virtual ~measure() {
+            
+        }
     };
     
     
@@ -778,8 +856,7 @@ private:
             key(obj->key),
             name(obj->name),
             currentChord(nullptr),
-            prevChord(nullptr),
-            lastDynamicsData{nullptr, {-1, 1}, nullptr, nullptr}
+            prevChord(nullptr)
         {
             for (auto m : obj->measures) {
                 
@@ -808,7 +885,10 @@ private:
         }
         
         void setChordDuration(t_rational dur) {
-            currentChord->duration = dur;
+            if (!currentChord->grace) {
+                currentChord->duration = dur;
+                currentMeasure->usedDuration += dur;
+            }
         }
         
         void adjustTies() {
@@ -897,6 +977,18 @@ private:
         
         std::vector<t_llll*> infolls;
         
+        part(score* owner, int n) : owner(owner)
+        {
+            voice* v = new voice(this);
+            voices.push_back(v);
+            number = n;
+            currentVoice = v;
+            currentVoiceNum = 0;
+            globalPosition = t_rational(0);
+            positionInMeasure = t_rational(0);
+            hasMeasureInfo = true;
+        }
+        
         int addVoice() {
             int n = getNumVoices();
             voices[n] = new voice(voices[n-1], true);
@@ -921,19 +1013,20 @@ private:
         void setKey(const char *key) { setClef(gensym(key)); }
         
         
-        void insertDirectionFromXML(mxml_node_t *directionXML, long divisions) {
-            theTimedThings.insertDirectionFromXML(directionXML, globalPosition, divisions);
+        void insertDirectionFromXML(mxml_node_t *directionXML, long divisions, long* velocity) {
+            theTimedThings.insertDirectionFromXML(directionXML, globalPosition, divisions, velocity);
         }
         
         
         measureinfo* createNewMeasure() {
             measureinfo* prev = measureinfos.size() > 0 ? measureinfos.back() : nullptr;
-            measureinfos.push_back(new measureinfo(this, globalPosition, prev));
-            measureinfo* mi = measureinfos.back();
+            measureinfo* curr = new measureinfo(this, globalPosition, prev);
+            measureinfos.push_back(curr);
+            theTimedThings.insert(curr);
             for (auto v : voices) {
-                v->addMeasure(mi);
+                v->addMeasure(curr);
             }
-            return mi;
+            return curr;
         }
         
         void finalizeMeasure(t_score *x) {
@@ -950,19 +1043,6 @@ private:
         void setTimeSignature(mxml_node_t* attributesXML, t_score *x) {
             measureinfos.back()->setTimeSignature(attributesXML, x);
         }
-
-        
-        part(score* owner, int n) : owner(owner)
-        {
-            voice* v1 = new voice(this);
-            voices.push_back(v1);
-            number = n;
-            currentVoice = voices.back();
-            currentVoiceNum = 0;
-            globalPosition = t_rational(0);
-            positionInMeasure = t_rational(0);
-            hasMeasureInfo = true;
-        }
         
         void backup(t_rational r, t_score *x) {
             globalPosition -= r;
@@ -978,6 +1058,10 @@ private:
         
         void addChord(t_rational dur, bool grace = false) {
             currentVoice->addChord(new chord{currentVoice, dur, grace});
+            if (!grace) {
+                globalPosition += dur;
+                positionInMeasure += dur;
+            }
         }
         
         void addChord(bool grace = false) {
@@ -1020,6 +1104,8 @@ private:
         
         void setChordDuration(t_rational dur) {
             currentVoice->setChordDuration(dur);
+            globalPosition += dur;
+            positionInMeasure += dur;
         }
         
         void setChordSlot(t_llll* slotll) {
@@ -1124,7 +1210,7 @@ private:
                     if (measureinfo* mi = dynamic_cast<measureinfo*>(thing)) {
                         lastInfo = mi;
                     } else if (tempo* t = dynamic_cast<tempo*>(thing)) {
-                        t->refMinfo = mi;
+                        t->refMinfo = lastInfo;
                         t->setOffset();
                         lastInfo->tempi.push_back(t);
                     }
@@ -1147,12 +1233,6 @@ private:
             }
             
             theTimedThings.insert(c);
-            
-            if (!c->grace) {
-                globalPosition += c->duration;
-                positionInMeasure += c->duration;
-                currentVoice->currentMeasure->usedDuration += c->duration;
-            }
             
             currentVoice->prevChord = currentVoice->currentChord;
             currentVoice->currentChord = nullptr;
@@ -1222,15 +1302,8 @@ private:
         t_llll *getBodyllll() {
             t_llll *ll = llll_get();
             
-            if (hasMeasureInfo) {
-                for (auto mi : measureinfos) {
-                    infolls.push_back(mi->getllll());
-                }
-            }
-            
             for (auto v : voices) {
-                t_llll *voicell = llll_get();
-                llll_chain(voicell, v->getllll());
+                llll_appendllll(ll, v->getllll());
             }
             
             
@@ -1238,9 +1311,9 @@ private:
         }
         
         virtual ~part() {
+            theTimedThings.chordBased.deleteContents();
             if (hasMeasureInfo)
-                for (auto ll : infolls)
-                    llll_free(ll);
+                theTimedThings.minfoBased.deleteContents();
         }
     };
 
@@ -1266,6 +1339,15 @@ public:
     
     long dynamicsSlot;
     long directionsSlot;
+    
+    score(t_score *obj,
+          long dynamicsSlot,
+          long directionsSlot) :
+        currentPart(nullptr),
+        obj(obj),
+        dynamicsSlot(dynamicsSlot),
+        directionsSlot(directionsSlot)
+    { }
     
     void addPart() {
         currentPart = new part(this, parts.size());
@@ -1308,8 +1390,8 @@ public:
         currentPart->setTimeSignature(attributesXML, obj);
     }
     
-    void insertDirectionFromXML(mxml_node_t *directionXML, long divisions) {
-        currentPart->insertDirectionFromXML(directionXML, divisions);
+    void insertDirectionFromXML(mxml_node_t *directionXML, long divisions, long* velocity) {
+        currentPart->insertDirectionFromXML(directionXML, divisions, velocity);
     }
 
     bool finalizeChord() {
@@ -1344,23 +1426,16 @@ public:
         for (auto p : parts) {
             llll_chain(keysll, p->getKeysllll());
         }
-        llll_appendllll(scorell, clefsll);
+        llll_appendllll(scorell, keysll);
 
         for (auto p : parts) {
             llll_chain(scorell, p->getBodyllll());
         }
         
+        llll_post(scorell);
         return scorell;
     }
-    
-    score(t_score *obj,
-          long dynamicsSlot,
-          long directionsSlot) :
-        currentPart(nullptr),
-        obj(obj),
-        dynamicsSlot(dynamicsSlot),
-        directionsSlot(directionsSlot)
-    { }
+
         
     virtual ~score() {
         for (auto p : parts)
@@ -1370,7 +1445,7 @@ public:
 };
 
 
-void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXML, t_rational global_position, long divisions, part* partOwner) {
+void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXML, t_rational global_position, long divisions, long* velocity, part* partOwner) {
     
     t_rational position;
     tempo* foundTempo = nullptr;
@@ -1382,8 +1457,8 @@ void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXM
     }
     
     /*for (mxml_node_t *typeXML = mxmlFindElement(directionXML, directionXML, "direction-type", NULL, NULL, MXML_DESCEND_FIRST);
-         typeXML;
-         typeXML = mxmlFindElement(typeXML, typeXML, "direction-type", NULL, NULL, MXML_NO_DESCEND))*/
+     typeXML;
+     typeXML = mxmlFindElement(typeXML, typeXML, "direction-type", NULL, NULL, MXML_NO_DESCEND))*/
     
     
     for (mxml_node_t *typeXML = mxmlGetFirstChild(directionXML);
@@ -1411,7 +1486,6 @@ void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXM
                             insert(dyn);
                         }
                     }
-                    
                 } else if (!strcmp(itemName, "wedge")) {
                     char hairpin = 0;
                     const char *wedgetypetxt = mxmlElementGetAttr(itemXML, "type");
@@ -1485,17 +1559,15 @@ void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXM
                     }
                 }
             }
-            
         } else if (!strcmp(typeName, "sound") && !foundTempo) {
-            const char* tempotxt = mxmlElementGetAttr(typeXML, "tempo");
-            if (!tempotxt)
-                continue;
-            double bpm = strtod(tempotxt, NULL);
-            foundTempo = new tempo(partOwner, position, 0, {1, 4}, bpm);
-            insert(foundTempo);
+            if (const char* tempotxt = mxmlElementGetAttr(typeXML, "tempo"); tempotxt) {
+                double bpm = strtod(tempotxt, NULL);
+                foundTempo = new tempo(partOwner, position, 0, {1, 4}, bpm);
+                insert(foundTempo);
+            } else if (const char* velocitytxt = mxmlElementGetAttr(typeXML, "dynamics"); velocitytxt) {
+                *velocity = strtod(velocitytxt, NULL) / 100. * 90.;
+            }
         }
-        
-
     }
 }
 
@@ -1565,6 +1637,7 @@ score::chord::chord(voice *owner, bool grace) :
     timedThing<voice>(owner, owner->owner->globalPosition),
     levelChild(owner->currentMeasure->currentLevel),
     grace(grace),
+    currentNote(nullptr),
     tied(false),
     rest(false)
 { }
@@ -1576,7 +1649,7 @@ score::chord::chord(voice *owner, t_rational dur, bool grace) : chord(owner, gra
 void score::slotTimedThing::setOffset() {
     t_rational dur = refNote->tieEnd->prevDuration + refNote->tieEnd->owner->duration;
     t_rational start = refNote->tieStart->owner->timePos;
-    offset = dur / (timePos - start);
+    offset = (timePos - start) / dur;
 }
 
 
@@ -2302,7 +2375,8 @@ t_llll *score_readxml(t_score *x,
                     // here we also need to deal with tempi,
                     // so this part must be refactored
                     
-                    theScore.insertDirectionFromXML(itemXML, divisions);
+                    theScore.insertDirectionFromXML(itemXML, divisions, &velocity);
+                    continue;
                 
                 } else if (strcmp(itemName, "note")) {
                     continue;
@@ -2539,10 +2613,7 @@ t_llll *score_readxml(t_score *x,
                     t_pitch pch = t_pitch(degree, alter, octave);
                     allpitches[numpitches++] = pch;
                     //// llll_appendpitch(notell, pch);
-                    mxml_node_t *soundXML = mxmlFindElement(itemXML, itemXML, "sound", NULL, NULL, MXML_DESCEND_FIRST);
-                    mxml_node_t *dynamicsXML = mxmlFindElement(soundXML, soundXML, "dynamics", NULL, NULL, MXML_DESCEND_FIRST);
-                    if (dynamicsXML)
-                        velocity = mxmlGetInteger(dynamicsXML) / 100. * 90.;
+                
                     //// llll_appendlong(notell, velocity, 0, WHITENULL_llll);
                     //// if (mxmlFindElement(itemXML, itemXML, "tie", "type", "start", MXML_DESCEND_FIRST))
                         //// llll_appendlong(notell, 1, 0, WHITENULL_llll);
