@@ -1257,7 +1257,7 @@ t_max_err score_dowritelilypond(t_score *x, t_symbol *s, long ac, t_atom *av)
 				sysfile_write(f, &count, ts_buf);
 			}
 
-			if (is_measure_empty(measure)) {
+			if (is_measure_empty((t_notation_obj *)x, measure)) {
 				char empty_measure_buf[30];
 				
 				// writing tempi
