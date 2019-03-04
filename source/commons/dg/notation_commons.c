@@ -27843,6 +27843,9 @@ t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e
 	t_llll* out_llll = llll_get();
 	llll_appendsym(out_llll, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
 	
+    if (new_start_velocity)
+        *new_start_velocity = note->velocity;
+    
 	if (new_start_midicents) 
 		*new_start_midicents = note->midicents;
 	
@@ -28542,7 +28545,6 @@ t_llll* get_uislotnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data
 
 
 
-// if mode == 2, it's a partial-note playing, otherwise, normal values
 t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode){
 	double new_mc = 0., new_vel = 0;
 	t_llll* out_llll = llll_get();
@@ -28557,9 +28559,9 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
 		llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->curr_sampling_ms, 0, WHITENULL_llll); // duration
 	else 
 		llll_appenddouble(out_llll, note->duration, 0, WHITENULL_llll); // duration
-	llll_appendlong(out_llll, note->velocity, 0, WHITENULL_llll); // velocity
+	
+    llll_appendlong(out_llll, note->velocity, 0, WHITENULL_llll); // velocity
 
-    
 	if (should_output_note_graphics(r_ob, note, mode))
 		llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
 	
