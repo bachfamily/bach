@@ -1423,7 +1423,7 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
 				is_bpt_selected = (notation_item_is_selected(r_ob, (t_notation_item *)temp) ^ notation_item_is_preselected(r_ob, (t_notation_item *)temp));
 				if (is_bpt_selected && selected_breakpoint) 
 					*selected_breakpoint = temp; 
-				bptcolor = get_tail_color(r_ob, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, r_ob->breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
+				bptcolor = tail_get_color(r_ob, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, r_ob->breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
 					
 				if (r_ob->breakpoints_have_noteheads) {
 					paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift);
@@ -5808,64 +5808,64 @@ void change_color_depending_on_part(t_notation_obj *r_ob, t_jrgba *color, t_voic
 }
 
 
-t_jrgba change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba color, char selected, char play, char locked, char muted, char solo, char linear_edited)
+void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, char play, char locked, char muted, char solo, char linear_edited)
 {
-	t_jrgba outcolor;
 	if (play) {
-		outcolor.red = r_ob->j_play_rgba.red; 
-		outcolor.blue = r_ob->j_play_rgba.blue; 
-		outcolor.green = r_ob->j_play_rgba.green; 
-		outcolor.alpha = r_ob->j_play_rgba.alpha;
+		color->red = r_ob->j_play_rgba.red;
+		color->blue = r_ob->j_play_rgba.blue;
+		color->green = r_ob->j_play_rgba.green;
+		color->alpha = r_ob->j_play_rgba.alpha;
 	} else {
 		char sel = selected ? k_SHOW_WHEN_SELECTED : k_SHOW_WHEN_NOT_SELECTED; 
 		if (linear_edited) {
-			outcolor = r_ob->j_linear_edit_rgba;
+			*color = r_ob->j_linear_edit_rgba;
 		} else if (locked && (r_ob->show_lock_color_when & sel) && muted && (r_ob->show_mute_color_when & sel) && solo && (r_ob->show_solo_color_when & sel)) {
-			outcolor.red = (r_ob->j_locked_rgba.red + r_ob->j_muted_rgba.red + r_ob->j_solo_rgba.red)/3.; 
-			outcolor.blue = (r_ob->j_locked_rgba.blue + r_ob->j_muted_rgba.blue + r_ob->j_solo_rgba.blue)/3.; 
-			outcolor.green = (r_ob->j_locked_rgba.green + r_ob->j_muted_rgba.green + r_ob->j_solo_rgba.green)/3.; 
-			outcolor.alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_muted_rgba.alpha + r_ob->j_solo_rgba.alpha)/3.;
+			color->red = (r_ob->j_locked_rgba.red + r_ob->j_muted_rgba.red + r_ob->j_solo_rgba.red)/3.;
+			color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_muted_rgba.blue + r_ob->j_solo_rgba.blue)/3.;
+			color->green = (r_ob->j_locked_rgba.green + r_ob->j_muted_rgba.green + r_ob->j_solo_rgba.green)/3.;
+			color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_muted_rgba.alpha + r_ob->j_solo_rgba.alpha)/3.;
 		} else if (locked && (r_ob->show_lock_color_when & sel) && muted && (r_ob->show_mute_color_when & sel)) {
-			outcolor.red = (r_ob->j_locked_rgba.red + r_ob->j_muted_rgba.red)/2.; 
-			outcolor.blue = (r_ob->j_locked_rgba.blue + r_ob->j_muted_rgba.blue)/2.; 
-			outcolor.green = (r_ob->j_locked_rgba.green + r_ob->j_muted_rgba.green)/2.; 
-			outcolor.alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_muted_rgba.alpha)/2.;
+			color->red = (r_ob->j_locked_rgba.red + r_ob->j_muted_rgba.red)/2.;
+			color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_muted_rgba.blue)/2.;
+			color->green = (r_ob->j_locked_rgba.green + r_ob->j_muted_rgba.green)/2.;
+			color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_muted_rgba.alpha)/2.;
 		} else if (locked && (r_ob->show_lock_color_when & sel) && solo && (r_ob->show_solo_color_when & sel)) {
-			outcolor.red = (r_ob->j_locked_rgba.red + r_ob->j_solo_rgba.red)/2.; 
-			outcolor.blue = (r_ob->j_locked_rgba.blue + r_ob->j_solo_rgba.blue)/2.; 
-			outcolor.green = (r_ob->j_locked_rgba.green + r_ob->j_solo_rgba.green)/2.; 
-			outcolor.alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_solo_rgba.alpha)/2.;
+			color->red = (r_ob->j_locked_rgba.red + r_ob->j_solo_rgba.red)/2.;
+			color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_solo_rgba.blue)/2.;
+			color->green = (r_ob->j_locked_rgba.green + r_ob->j_solo_rgba.green)/2.;
+			color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_solo_rgba.alpha)/2.;
 		} else if (solo && (r_ob->show_solo_color_when & sel) && muted && (r_ob->show_mute_color_when & sel)) {
-			outcolor.red = (r_ob->j_solo_rgba.red + r_ob->j_muted_rgba.red)/2.; 
-			outcolor.blue = (r_ob->j_solo_rgba.blue + r_ob->j_muted_rgba.blue)/2.; 
-			outcolor.green = (r_ob->j_solo_rgba.green + r_ob->j_muted_rgba.green)/2.; 
-			outcolor.alpha = (r_ob->j_solo_rgba.alpha + r_ob->j_muted_rgba.alpha)/2.;
+			color->red = (r_ob->j_solo_rgba.red + r_ob->j_muted_rgba.red)/2.;
+			color->blue = (r_ob->j_solo_rgba.blue + r_ob->j_muted_rgba.blue)/2.;
+			color->green = (r_ob->j_solo_rgba.green + r_ob->j_muted_rgba.green)/2.;
+			color->alpha = (r_ob->j_solo_rgba.alpha + r_ob->j_muted_rgba.alpha)/2.;
 		} else if (locked && (r_ob->show_lock_color_when & sel)) {
-			outcolor.red = r_ob->j_locked_rgba.red; 
-			outcolor.blue = r_ob->j_locked_rgba.blue; 
-			outcolor.green = r_ob->j_locked_rgba.green; 
-			outcolor.alpha = r_ob->j_locked_rgba.alpha;
+			color->red = r_ob->j_locked_rgba.red;
+			color->blue = r_ob->j_locked_rgba.blue;
+			color->green = r_ob->j_locked_rgba.green;
+			color->alpha = r_ob->j_locked_rgba.alpha;
 		} else if (muted && (r_ob->show_mute_color_when & sel)) {
-			outcolor.red = r_ob->j_muted_rgba.red; 
-			outcolor.blue = r_ob->j_muted_rgba.blue; 
-			outcolor.green = r_ob->j_muted_rgba.green; 
-			outcolor.alpha = r_ob->j_muted_rgba.alpha;
+			color->red = r_ob->j_muted_rgba.red;
+			color->blue = r_ob->j_muted_rgba.blue;
+			color->green = r_ob->j_muted_rgba.green;
+			color->alpha = r_ob->j_muted_rgba.alpha;
 		} else if (solo && (r_ob->show_solo_color_when & sel)) {
-			outcolor.red = r_ob->j_solo_rgba.red; 
-			outcolor.blue = r_ob->j_solo_rgba.blue; 
-			outcolor.green = r_ob->j_solo_rgba.green; 
-			outcolor.alpha = r_ob->j_solo_rgba.alpha;
+			color->red = r_ob->j_solo_rgba.red;
+			color->blue = r_ob->j_solo_rgba.blue;
+			color->green = r_ob->j_solo_rgba.green;
+			color->alpha = r_ob->j_solo_rgba.alpha;
 		} else {
-			outcolor.red = selected ? r_ob->j_selection_rgba.red : color.red; 
-			outcolor.blue = selected ? r_ob->j_selection_rgba.blue : color.blue; 
-			outcolor.green = selected ? r_ob->j_selection_rgba.green : color.green; 
-			outcolor.alpha = selected ? r_ob->j_selection_rgba.alpha : color.alpha;
+            if (selected) {
+                color->red = r_ob->j_selection_rgba.red;
+                color->blue = r_ob->j_selection_rgba.blue;
+                color->green = r_ob->j_selection_rgba.green;
+                color->alpha = r_ob->j_selection_rgba.alpha;
+            }
 		}
 	}
-	return outcolor;
 }
 
-t_jrgba change_color_depending_on_group(t_notation_obj *r_ob, t_jrgba color, void* element, char type)
+void change_color_depending_on_group(t_notation_obj *r_ob, t_jrgba *color, void* element, char type)
 {
 	if (r_ob->show_groups >= 2) {
 		t_chord *ch = NULL;
@@ -5875,62 +5875,66 @@ t_jrgba change_color_depending_on_group(t_notation_obj *r_ob, t_jrgba color, voi
 			ch = ((t_note *) element)->parent;
 		
 		if (ch && ch->r_it.group && ch->r_it.group->ID > 0)
-			return long_to_color(ch->r_it.group->ID);
+			*color = long_to_color(ch->r_it.group->ID);
 	}
-	
-	return color;
 }
 
 
 t_jrgba measure_get_color(t_notation_obj *r_ob, char is_measure_selected, char is_measure_locked, char is_measure_muted, char is_measure_solo, char is_measure_linear_edited)
 {
-	t_jrgba measurecolor = change_color_depending_on_playlockmute(r_ob, r_ob->j_note_rgba, is_measure_selected, false, is_measure_locked, is_measure_muted, is_measure_solo, is_measure_linear_edited);
+    t_jrgba measurecolor = r_ob->j_note_rgba;
+    change_color_depending_on_playlockmute(r_ob, &measurecolor, is_measure_selected, false, is_measure_locked, is_measure_muted, is_measure_solo, is_measure_linear_edited);
 
 	return measurecolor;
 }	
 
 t_jrgba get_mainstaff_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
 {
-	t_jrgba staffcolor = change_color_depending_on_playlockmute(r_ob, r_ob->j_mainstaves_rgba, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
+    t_jrgba staffcolor = r_ob->j_mainstaves_rgba;
+    change_color_depending_on_playlockmute(r_ob, &staffcolor, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
 	return staffcolor;
 }	
 
 t_jrgba get_keysig_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
 {
-    t_jrgba keysigcolor = change_color_depending_on_playlockmute(r_ob, r_ob->j_keysig_rgba, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
+    t_jrgba keysigcolor = r_ob->j_keysig_rgba;
+    change_color_depending_on_playlockmute(r_ob, &keysigcolor, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
     return keysigcolor;
 }	
 
-t_jrgba get_clef_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
+t_jrgba clef_get_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
 {
-	t_jrgba staffcolor = change_color_depending_on_playlockmute(r_ob, r_ob->j_clef_rgba, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
+    t_jrgba staffcolor = r_ob->j_clef_rgba;
+    change_color_depending_on_playlockmute(r_ob, &staffcolor, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
 	return staffcolor;
 }	
 
 t_jrgba get_auxclef_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
 {
-    t_jrgba staffcolor = change_color_depending_on_playlockmute(r_ob, r_ob->j_auxiliaryclef_rgba, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
-    return staffcolor;
+    t_jrgba auxclefcolor = r_ob->j_auxiliaryclef_rgba;
+    change_color_depending_on_playlockmute(r_ob, &auxclefcolor, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
+    return auxclefcolor;
 }
 
 t_jrgba get_auxstaff_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
 {
-	t_jrgba staffcolor = change_color_depending_on_playlockmute(r_ob, r_ob->j_auxiliarystaves_rgba, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
+    t_jrgba staffcolor = r_ob->j_auxiliarystaves_rgba;
+    change_color_depending_on_playlockmute(r_ob, &staffcolor, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
 	return staffcolor;
 }	
 
-t_jrgba floatlist_slot_to_color(t_slot slot)
+t_jrgba floatlist_slot_to_color(t_slot *slot)
 {
 	t_jrgba out_color;
 	double r = 0., g = 0., b = 0., a = 1.;
-	if (slot.firstitem){
-		r = *((double *) slot.firstitem->item);
-		if (slot.firstitem->next){
-			g = *((double *) slot.firstitem->next->item);
-			if (slot.firstitem->next->next){
-				b = *((double *) slot.firstitem->next->next->item);
-				if (slot.firstitem->next->next->next) 
-					a = *((double *) slot.firstitem->next->next->next->item);
+	if (slot->firstitem){
+		r = *((double *) slot->firstitem->item);
+		if (slot->firstitem->next){
+			g = *((double *) slot->firstitem->next->item);
+			if (slot->firstitem->next->next){
+				b = *((double *) slot->firstitem->next->next->item);
+				if (slot->firstitem->next->next->next)
+					a = *((double *) slot->firstitem->next->next->next->item);
 			}
 		}
 	}
@@ -5949,10 +5953,12 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
 	
     change_color_depending_on_part(r_ob, &notecolor, notation_item_get_voice(r_ob, (t_notation_item *)note));
 
-	notecolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, notecolor, note, k_NOTE), is_note_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
-	
-	if (note && !is_note_played && !is_note_selected)
-        change_notecolor_depending_on_slot_linkage(r_ob, &notecolor, note);
+    change_color_depending_on_group(r_ob, &notecolor, note, k_NOTE);
+    
+    if (note && !is_note_played && !is_note_selected)
+        note_change_color_depending_on_slot_linkage(r_ob, &notecolor, note);
+
+    change_color_depending_on_playlockmute(r_ob, &notecolor, is_note_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
 	
 	if (!note) 
 		return notecolor; // it is a rest
@@ -5963,21 +5969,23 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
 }
 
 
-t_jrgba get_durationline_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba dlcolor = r_ob->j_note_rgba;
     
     change_color_depending_on_part(r_ob, &dlcolor, notation_item_get_voice(r_ob, (t_notation_item *)note));
     
-    dlcolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, dlcolor, note, k_NOTE), is_note_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
+    change_color_depending_on_group(r_ob, &dlcolor, note, k_NOTE);
     
     if (note && !is_note_played && !is_note_selected) {
-        change_notecolor_depending_on_slot_linkage(r_ob, &dlcolor, note);
-        change_durationlinecolor_depending_on_slot_linkage(r_ob, &dlcolor, note);
+        note_change_color_depending_on_slot_linkage(r_ob, &dlcolor, note);
+        durationline_change_color_depending_on_slot_linkage(r_ob, &dlcolor, note);
     }
     
+    change_color_depending_on_playlockmute(r_ob, &dlcolor, is_note_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
+    
     if (!note)
-    return dlcolor; // it is a rest
+        return dlcolor; // it is a rest
     
     apply_velocity_handling(r_ob, &dlcolor, velocity, is_note_selected, is_note_played);
     
@@ -5986,16 +5994,18 @@ t_jrgba get_durationline_color(t_notation_obj *r_ob, t_note* note, char is_note_
 
 
 
-t_jrgba get_accidental_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
     t_jrgba accidentalcolor = r_ob->j_accidentals_rgba;
     
     change_color_depending_on_part(r_ob, &accidentalcolor, notation_item_get_voice(r_ob, (t_notation_item *)note));
 
-    accidentalcolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, accidentalcolor, note, k_NOTE), is_note_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
+    change_color_depending_on_group(r_ob, &accidentalcolor, note, k_NOTE);
     
     if (note && !is_note_played && !is_note_selected)
-        change_notecolor_depending_on_slot_linkage(r_ob, &accidentalcolor, note);
+        note_change_color_depending_on_slot_linkage(r_ob, &accidentalcolor, note);
+    
+    change_color_depending_on_playlockmute(r_ob, &accidentalcolor, is_note_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
     
     if (!note)
         return accidentalcolor; // it is a rest
@@ -6006,36 +6016,40 @@ t_jrgba get_accidental_color(t_notation_obj *r_ob, t_note* note, char is_note_se
 }
 
 
-t_jrgba get_tail_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
+t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity)
 {
 	t_jrgba tailcolor = r_ob->j_note_rgba;
 	
     change_color_depending_on_part(r_ob, &tailcolor, notation_item_get_voice(r_ob, (t_notation_item *)note));
     
-	tailcolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, tailcolor, note, k_NOTE), is_tail_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
-
+    change_color_depending_on_group(r_ob, &tailcolor, note, k_NOTE);
+    
     if (note && !is_note_played && !is_tail_selected) {
-        change_notecolor_depending_on_slot_linkage(r_ob, &tailcolor, note);
-        change_durationlinecolor_depending_on_slot_linkage(r_ob, &tailcolor, note);
+        note_change_color_depending_on_slot_linkage(r_ob, &tailcolor, note);
+        durationline_change_color_depending_on_slot_linkage(r_ob, &tailcolor, note);
     }
     
+	change_color_depending_on_playlockmute(r_ob, &tailcolor, is_tail_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
+
     apply_velocity_handling(r_ob, &tailcolor, velocity, is_tail_selected, is_note_played);
 	
 	return tailcolor;
 }
 
 
-t_jrgba get_stem_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
 	t_jrgba stemcolor = r_ob->j_stem_rgba;
 
     change_color_depending_on_part(r_ob, &stemcolor, notation_item_get_voice(r_ob, (t_notation_item *)chord));
 
-	stemcolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, stemcolor, chord, k_CHORD), is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
-	
-	if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
-        change_notecolor_depending_on_slot_linkage(r_ob, &stemcolor, chord->firstnote, false);
+    change_color_depending_on_group(r_ob, &stemcolor, chord, k_CHORD);
     
+    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
+        note_change_color_depending_on_slot_linkage(r_ob, &stemcolor, chord->firstnote);
+    
+	change_color_depending_on_playlockmute(r_ob, &stemcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+	
     if (chord->firstnote)
         apply_velocity_handling(r_ob, &stemcolor, chord_get_max_velocity(r_ob, chord), is_chord_selected, is_chord_played);
     
@@ -6044,27 +6058,18 @@ t_jrgba get_stem_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 
 
 
-t_jrgba get_flag_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba flagcolor = r_ob->j_flag_rgba;
 
     change_color_depending_on_part(r_ob, &flagcolor, notation_item_get_voice(r_ob, (t_notation_item *)chord));
 
-    flagcolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, flagcolor, chord, k_CHORD), is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+    change_color_depending_on_group(r_ob, &flagcolor, chord, k_CHORD);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
-        t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                flagcolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                flagcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                flagcolor = floatlist_slot_to_color(note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                flagcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
-        }
-    }
+    change_color_depending_on_playlockmute(r_ob, &flagcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+    
+    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
+        note_change_color_depending_on_slot_linkage(r_ob, &flagcolor, chord->firstnote);
     
     if (chord->firstnote)
         apply_velocity_handling(r_ob, &flagcolor, chord_get_max_velocity(r_ob, chord), is_chord_selected, is_chord_played);
@@ -6079,14 +6084,19 @@ t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     
     change_color_depending_on_part(r_ob, &restcolor, notation_item_get_voice(r_ob, (t_notation_item *)chord));
 
-    restcolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, restcolor, chord, k_CHORD), is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+    change_color_depending_on_group(r_ob, &restcolor, chord, k_CHORD);
+    
+    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
+        notation_item_change_color_depending_on_slot_linkage(r_ob, &restcolor, (t_notation_item *)chord);
+    
+    change_color_depending_on_playlockmute(r_ob, &restcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
     return restcolor;
 }
 
 
 
-t_jrgba get_beam_color(t_notation_obj *r_ob, t_voice *voice)
+t_jrgba beam_get_color(t_notation_obj *r_ob, t_voice *voice)
 {
     if (r_ob->show_part_colors && voice->part_index > 0)
         return r_ob->part_colors[voice->part_index % CONST_NUM_PART_COLORS];
@@ -6094,7 +6104,7 @@ t_jrgba get_beam_color(t_notation_obj *r_ob, t_voice *voice)
     return r_ob->j_beam_rgba;
 }
 
-t_jrgba get_tuplet_color(t_notation_obj *r_ob, t_voice *voice)
+t_jrgba tuplet_get_color(t_notation_obj *r_ob, t_voice *voice)
 {
     if (r_ob->show_part_colors && voice->part_index > 0)
         return r_ob->part_colors[voice->part_index % CONST_NUM_PART_COLORS];
@@ -6103,13 +6113,15 @@ t_jrgba get_tuplet_color(t_notation_obj *r_ob, t_voice *voice)
 }
 
 
-t_jrgba get_articulation_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba articulationcolor = r_ob->j_articulations_rgba;
 
     change_color_depending_on_part(r_ob, &articulationcolor, notation_item_get_voice(r_ob, (t_notation_item *)chord));
 
-    articulationcolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, articulationcolor, chord, k_CHORD), is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+    change_color_depending_on_group(r_ob, &articulationcolor, chord, k_CHORD);
+    
+    change_color_depending_on_playlockmute(r_ob, &articulationcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
     if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
@@ -6119,7 +6131,7 @@ t_jrgba get_articulation_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
                 articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                articulationcolor = floatlist_slot_to_color(note->slot[r_ob->link_notecolor_to_slot-1]);
+                articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
                 articulationcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
         }
@@ -6132,13 +6144,15 @@ t_jrgba get_articulation_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
 }
 
 
-t_jrgba get_annotation_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba annotationcolor = r_ob->j_annotation_rgba;
     
     change_color_depending_on_part(r_ob, &annotationcolor, notation_item_get_voice(r_ob, (t_notation_item *)chord));
 
-    annotationcolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, annotationcolor, chord, k_CHORD), is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+    change_color_depending_on_group(r_ob, &annotationcolor, chord, k_CHORD);
+    
+    change_color_depending_on_playlockmute(r_ob, &annotationcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
     if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
@@ -6148,7 +6162,7 @@ t_jrgba get_annotation_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
                 annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                annotationcolor = floatlist_slot_to_color(note->slot[r_ob->link_notecolor_to_slot-1]);
+                annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
                 annotationcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
         }
@@ -6161,7 +6175,7 @@ t_jrgba get_annotation_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
 }
 
 
-t_jrgba get_dynamics_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
+t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited)
 {
     t_jrgba dynamicscolor = r_ob->j_dynamics_rgba;
     
@@ -6170,7 +6184,9 @@ t_jrgba get_dynamics_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_s
     
     change_color_depending_on_part(r_ob, &dynamicscolor, notation_item_get_voice(r_ob, (t_notation_item *)chord));
     
-    dynamicscolor = change_color_depending_on_playlockmute(r_ob, change_color_depending_on_group(r_ob, dynamicscolor, chord, k_CHORD), is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+    change_color_depending_on_group(r_ob, &dynamicscolor, chord, k_CHORD);
+    
+    change_color_depending_on_playlockmute(r_ob, &dynamicscolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
     if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
@@ -6180,7 +6196,7 @@ t_jrgba get_dynamics_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_s
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
                 dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                dynamicscolor = floatlist_slot_to_color(note->slot[r_ob->link_notecolor_to_slot-1]);
+                dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
             else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
                 dynamicscolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
         }
@@ -29928,30 +29944,43 @@ void apply_velocity_handling(t_notation_obj *r_ob, t_jrgba *color, double veloci
 }
 
 
-void change_notecolor_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note, char use_ties)
-{
 
+
+void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_notation_item *nitem)
+{
     if (r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS) {
         long slotnum = r_ob->link_notecolor_to_slot - 1;
-        t_note *note_to_consider = note;
-        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && r_ob->slotinfo[slotnum].slot_singleslotfortiednotes)
-            note_to_consider = note_get_first_in_tieseq(note_to_consider);
-        if (note_to_consider) {
-            if (note_to_consider->slot[slotnum].firstitem && note_to_consider->slot[slotnum].firstitem->item) {
+        t_slot *slot = notation_item_get_slot(r_ob, nitem, slotnum);
+        if (slot) {
+            if (slot->firstitem && slot->firstitem->item) {
                 if ((r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INTLIST))
-                    *color = long_to_color(*((long *)note_to_consider->slot[slotnum].firstitem->item));
+                    *color = long_to_color(*((long *)slot->firstitem->item));
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
-                    *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[slotnum].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
+                    *color = double_to_color(*((double *)slot->firstitem->item), r_ob->slotinfo[slotnum].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
-                    *color = floatlist_slot_to_color(note_to_consider->slot[slotnum]);
+                    *color = floatlist_slot_to_color(slot);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
-                    *color = *((t_jrgba *)note_to_consider->slot[slotnum].firstitem->item);
+                    *color = *((t_jrgba *)slot->firstitem->item);
             }
         }
     }
 }
 
-void change_durationlinecolor_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note, char use_ties)
+
+void note_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note)
+{
+    if (r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS) {
+        t_note *note_to_consider = note;
+        long slotnum = r_ob->link_notecolor_to_slot - 1;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && r_ob->slotinfo[slotnum].slot_singleslotfortiednotes)
+            note_to_consider = note_get_first_in_tieseq(note_to_consider);
+        if (note_to_consider)
+            notation_item_change_color_depending_on_slot_linkage(r_ob, color, (t_notation_item *)note_to_consider);
+    }
+}
+    
+
+void durationline_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note)
 {
     
     if (r_ob->link_dlcolor_to_slot > 0 && r_ob->link_dlcolor_to_slot <= CONST_MAX_SLOTS) {
@@ -29966,7 +29995,7 @@ void change_durationlinecolor_depending_on_slot_linkage(t_notation_obj *r_ob, t_
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
                 *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
-                *color = floatlist_slot_to_color(note_to_consider->slot[slotnum]);
+                *color = floatlist_slot_to_color(&note_to_consider->slot[slotnum]);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
                 *color = *((t_jrgba *)note_to_consider->slot[slotnum].firstitem->item);
             }

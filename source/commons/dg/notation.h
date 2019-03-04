@@ -6471,16 +6471,15 @@ double rest_get_bottom_extension_in_steps(t_notation_obj *r_ob, t_rational r_sym
 	So the element might assume the selection color, play color, locked color, muted color, solo color or a combination of these. Or the speedy edit color.
 	@ingroup			notation_colors
 	@param r_ob			The notation object
-	@param color		The given color
+	@param color		The color to be changed
 	@param selected		Is element selected?
 	@param play			Is element played?
 	@param locked		Is element locked?
 	@param muted		Is element muted?
 	@param solo			Is element solo?
 	@param linear_edited	Is element being speedy-edited? (for [bach.score] only)
-	@return				Resulting color
  */
-t_jrgba change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba color, char selected, char play, char locked, char muted, char solo, char linear_edited);
+void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, char play, char locked, char muted, char solo, char linear_edited);
 
 
 /**	Obtain the color of a notehead
@@ -6514,7 +6513,7 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
 	@return							Resulting color for the line
 	@remark							This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba get_durationline_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba durationline_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**	Obtain the color of a accidental
@@ -6531,7 +6530,7 @@ t_jrgba get_durationline_color(t_notation_obj *r_ob, t_note* note, char is_note_
 	@return							Resulting color for the accidental
 	@remark							This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba get_accidental_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba accidental_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**	Obtain the color of the note tail
@@ -6548,7 +6547,7 @@ t_jrgba get_accidental_color(t_notation_obj *r_ob, t_note* note, char is_note_se
 	@return							Resulting color for the note tail
 	@remark							This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba get_tail_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
+t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, char is_note_linear_edited, double velocity);
 
 
 /**	Obtain the color of a chord stem
@@ -6564,7 +6563,7 @@ t_jrgba get_tail_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
 	@return							Resulting color for the chord stem
 	@remark							This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba get_stem_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**	Obtain the color of a chord flag
@@ -6580,7 +6579,7 @@ t_jrgba get_stem_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 	@return							Resulting color for the chord flag
 	@remark							This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba get_flag_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba flag_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**	Obtain the color of a rest
@@ -6611,7 +6610,7 @@ t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 	@return							Resulting color for the articulation
 	@remark							This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba get_articulation_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**	Obtain the color of a textual annotation
@@ -6627,7 +6626,7 @@ t_jrgba get_articulation_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
 	@return							Resulting color for the text annotation
 	@remark							This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba get_annotation_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**	Obtain the color of a dynamic marking
@@ -6643,7 +6642,7 @@ t_jrgba get_annotation_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
 	@return							Resulting color for the dynamic
 	@remark							This is based on change_color_depending_on_playlockmute()
  */
-t_jrgba get_dynamics_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
+t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selected, char is_chord_played, char is_chord_locked, char is_chord_muted, char is_chord_solo, char is_chord_linear_edited);
 
 
 /**	Get the color of beams.
@@ -6652,7 +6651,7 @@ t_jrgba get_dynamics_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_s
     @param voice                    The voice
 	@return							Color for the beams
  */
-t_jrgba get_beam_color(t_notation_obj *r_ob, t_voice *voice);
+t_jrgba beam_get_color(t_notation_obj *r_ob, t_voice *voice);
 
 
 /**	Get the color of tuplet elements.
@@ -6661,7 +6660,7 @@ t_jrgba get_beam_color(t_notation_obj *r_ob, t_voice *voice);
     @param voice                    The voice
 	@return							Color for tuplet elements
  */
-t_jrgba get_tuplet_color(t_notation_obj *r_ob, t_voice *voice);
+t_jrgba tuplet_get_color(t_notation_obj *r_ob, t_voice *voice);
 
 
 /**	Obtain the color of a measure
@@ -6701,7 +6700,7 @@ t_jrgba get_mainstaff_color(t_notation_obj *r_ob, char is_voice_selected, char i
 	@return						Resulting color for the clefs of the voice
 	@remark						This is a convenience wrapper for change_color_depending_on_playlockmute()
  */
-t_jrgba get_clef_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo);
+t_jrgba clef_get_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo);
 
 
 /**    Obtain the color of the auxiliary clefs of a voice
@@ -6788,9 +6787,17 @@ void apply_velocity_handling(t_notation_obj *r_ob, t_jrgba *color, double veloci
     @param  r_ob        The notation object
     @param	color       Pointer to the color
     @param	note        The note containing the slots
-    @param  use_ties    Possibly go back to the first tied note, if a singleslotfortiednotes is on.
  */
-void change_notecolor_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note, char use_ties = 1);
+void note_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note);
+
+
+/**    Changes a notation item color depending on a color slot linkage
+    @ingroup            colors
+    @param   r_ob        The notation object
+    @param    color       Pointer to the color
+    @param    nitem        The notation item containing the slots
+ */
+void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_notation_item *nitem);
 
 
 
@@ -6799,9 +6806,8 @@ void change_notecolor_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *c
     @param  r_ob        The notation object
     @param	color       Pointer to the color
     @param	note        The note containing the slots
-    @param  use_ties    Possibly go back to the first tied note, if a singleslotfortiednotes is on.
  */
-void change_durationlinecolor_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note, char use_ties = 1);
+void durationline_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note);
 
 
 
