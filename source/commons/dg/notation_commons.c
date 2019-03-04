@@ -522,8 +522,11 @@ void write_voicename(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double y
 }
 
 
-void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color)
+void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color, t_jrgba auxcolor)
 {
+    if (!r_ob->show_clefs)
+        return;
+    
 //#ifdef BACH_MAX
 	char Gclefchar[5]; 
 	char Fclefchar[5]; 
@@ -561,19 +564,32 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
 	double clef_uy_shift = r_ob->notation_typo_preferences.clef_uy_shift;
     long octave_shift = get_clef_octave_shift(clef);
 
+    t_jfont *jf_littleclefnumber = NULL;
+    const char *octave_text = NULL;
+
 	if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_GG) ||  (clef == k_CLEF_G))
 		write_text_simple_account_for_insets(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift) * step_y);
 	if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_FF) ||  (clef == k_CLEF_F))
 		write_text_simple_account_for_insets(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift) * step_y);
     
-    t_jfont *jf_littleclefnumber = NULL;
-    const char *octave_text = NULL;
     
-    if (octave_shift != 0) {
+    if (octave_shift != 0 || (r_ob->show_aux_clefs && (clef == k_CLEF_FFGG || clef == k_CLEF_FGG || clef == k_CLEF_FFG || clef == k_CLEF_GG || clef == k_CLEF_FF))) {
         jf_littleclefnumber = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, CONST_CLEF_OCTAVE_NUMBER_BASE_PT * zoom_y);
         octave_text = get_clef_octave_shift_for_clef_text(clef);
     }
+    
 
+    if (r_ob->show_aux_clefs && jf_littleclefnumber) {
+        if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_GG)) {
+            write_text_simple_account_for_insets(r_ob, g, jf, auxcolor, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + 2 * 7 + clef_uy_shift) * step_y);
+            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_G_CLEF_OCTAVE_NUMBER_UX_SHIFT_ABOVE - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 + 2 * 7 - CONST_G_CLEF_OCTAVE_NUMBER_UY_SHIFT_ABOVE) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+        }
+        if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FF)) {
+            write_text_simple_account_for_insets(r_ob, g, jf, auxcolor, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 - 2 * 7 + clef_uy_shift) * step_y);
+            write_text(g, jf_littleclefnumber, auxcolor, "15", r_ob->j_inset_x + clef_ux_shift + (voice_names_uwidth + CONST_F_CLEF_OCTAVE_NUMBER_UX_SHIFT_BELOW - 100) * zoom_y,  r_ob->j_inset_y + middleC_y - (15.8 - 2 * 7 - CONST_F_CLEF_OCTAVE_NUMBER_UY_SHIFT_BELOW) * r_ob->step_y, 200 * zoom_y, 200 * zoom_y, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_TOP, true, false);
+        }
+    }
+    
     switch (clef) {
         case k_CLEF_G15ma:
         case k_CLEF_G8va:
@@ -5890,6 +5906,12 @@ t_jrgba get_clef_color(t_notation_obj *r_ob, char is_voice_selected, char is_voi
 	t_jrgba staffcolor = change_color_depending_on_playlockmute(r_ob, r_ob->j_clef_rgba, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
 	return staffcolor;
 }	
+
+t_jrgba get_auxclef_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
+{
+    t_jrgba staffcolor = change_color_depending_on_playlockmute(r_ob, r_ob->j_auxiliaryclef_rgba, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
+    return staffcolor;
+}
 
 t_jrgba get_auxstaff_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
 {

@@ -3939,10 +3939,16 @@ typedef struct _notation_obj
 	
 	char		show_label_families;	///< Do we want to graphically distinguish the label families, i.e. the groups of notation items sharing the same names?
 	
+    // clefs
+    char            show_clefs;                     ///< Toggles the display of clefs
+    char            show_aux_clefs;   ///< Toggles the display of G15ma/F15mb clefs in clef-combinations such as FFGG, FGG, FFG, etc.
 	t_symbol		**clefs_as_symlist;				///< List of clefs as symbols (one for each voice).
 													///< Functions clef_symbol_to_clef_number() and clef_number_to_clef_symbol() operate conversions 
 													///< between symbols (such as "G", "F"...) and numbers (such as #k_CLEF_G, #k_CLEF_F...)
 													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+    
+    
+    
 	t_llll			*voicenames_as_llll;			///< Voicenames represented in llll form (one llllelem for each voice)
 	char			*hidevoices_as_charlist;		///< List of 0's and 1's (one for each voice), depending if the voice is hidden (1) or not (0)
 													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
@@ -4414,6 +4420,7 @@ typedef struct _notation_obj
 	t_jrgba		j_auxiliarystaves_rgba;			///< Color of the auxiliary staves (e.g. the external staves in #k_CLEF_FFGG clef configuration)
     t_jrgba		j_tempi_rgba;                   ///< Color of the tempi
 	t_jrgba		j_clef_rgba;					///< Color of the clefs
+    t_jrgba     j_auxiliaryclef_rgba;           ///< Color of the auxiliary clefs
     t_jrgba		j_keysig_rgba;					///< Color of the key signature
 	t_jrgba		j_note_rgba;					///< Color of the notes
     t_jrgba		j_accidentals_rgba;				///< Color of the accidentals
@@ -6695,6 +6702,19 @@ t_jrgba get_mainstaff_color(t_notation_obj *r_ob, char is_voice_selected, char i
 	@remark						This is a convenience wrapper for change_color_depending_on_playlockmute()
  */
 t_jrgba get_clef_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo);
+
+
+/**    Obtain the color of the auxiliary clefs of a voice
+    @ingroup                    notation_colors
+    @param r_ob                 The notation object
+    @param is_voice_selected    Is voice selected?
+    @param is_voice_locked      Is voice locked?
+    @param is_voice_muted       Is voice muted?
+    @param is_voice_solo        Is voice solo?
+    @return                     Resulting color for the auxiliary clefs of the voice
+    @remark                     This is a convenience wrapper for change_color_depending_on_playlockmute()
+ */
+t_jrgba get_auxclef_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo);
 
 
 /**	Obtain the color of the key signature of a voice
@@ -9856,9 +9876,10 @@ void paint_tie(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, d
 	@param	jf			The font to write the clef
 	@param	middleC_y	The y of the middle C (of the voice inside the system to which the clef is referred)
 	@param	clef		The clef or clef combination as one of the #e_clefs
-	@param	color		The color of the clef
- */ 
-void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color);
+	@param	color		The color of the main clefs
+    @param  auxcolor    The color of the auxiliary clefs
+ */
+void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color, t_jrgba auxcolor);
 
 
 /**	Paint the accollatura for a clef combination (if the <clef> is a simple clef, it does nothing)

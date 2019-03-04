@@ -1843,6 +1843,12 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Sets the color of clefs in RGBA format. 
 
+        CLASS_ATTR_RGBA(c,"auxclefcolor", 0, t_notation_obj, j_auxiliaryclef_rgba);
+        CLASS_ATTR_STYLE_LABEL(c, "auxclefcolor",0,"rgba","Auxiliary Clef Color");
+        CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"auxclefcolor",0,"0. 0. 0. 1.");
+        // @exclude bach.slot
+        // @description Sets the color of 15ma/15vb clefs used inside clef combinations such as <b>FFGG</b>, <b>FGG</b>, <b>FFG</b>, etc..
+
 		CLASS_ATTR_RGBA(c,"scrollbarcolor", 0, t_notation_obj, j_scrollbar_rgba);
 		CLASS_ATTR_STYLE_LABEL(c, "scrollbarcolor",0,"rgba","Scrollbar Color");
 		CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"scrollbarcolor",0,"0.3 0.3 0.3 1.");
@@ -2733,6 +2739,19 @@ void notation_class_add_showhide_attributes(t_class *c, char obj_type){
 		// @exclude bach.slot
 		// @description Toggles the display of voice names.
 		
+        CLASS_ATTR_CHAR(c,"showclefs",0, t_notation_obj, show_clefs);
+        CLASS_ATTR_STYLE_LABEL(c,"showclefs",0,"onoff","Show Clefs");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showclefs",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the display of clefs.
+
+        CLASS_ATTR_CHAR(c,"showauxclefs",0, t_notation_obj, show_aux_clefs);
+        CLASS_ATTR_STYLE_LABEL(c,"showauxclefs",0,"onoff","Show Auxiliary Clefs In Combinations");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showauxclefs",0,"1");
+        // @exclude bach.slot
+        // @description Toggles the display of 15ma and/or 15vb clefs in voices with <m>clefs</m> combinations
+        // such as <b>FFGG</b>, <b>FGG</b>, <b>FFG</b>, etc.
+
 		CLASS_ATTR_CHAR(c,"showmarkers",0, t_notation_obj, show_markers);
 		CLASS_ATTR_STYLE_LABEL(c,"showmarkers",0,"onoff","Show Markers");
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"showmarkers",0,"1");
