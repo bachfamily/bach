@@ -174,6 +174,7 @@ void reg_edclose(t_reg *x, char **ht, long size)
         t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         if (ll) {
             llllobj_store_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);
+            llll_retain(ll);
             llllobj_gunload_llll((t_object *) x, LLLL_OBJ_VANILLA, ll, 0);
         } else
             object_error((t_object *)x, "Can't modify llll: it is wrongly formatted.");

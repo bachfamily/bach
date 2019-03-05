@@ -137,7 +137,7 @@ private:
         note* refNote;
         slotTimedThing(t_rational timePos, double relativeX = 0) : timedThing(nullptr, timePos, relativeX), refNote(nullptr) { }
         
-        void setOffset();
+        void setOffset(bool singleSlotForTiedNotes = true);
         
     };
     
@@ -486,7 +486,7 @@ private:
                 delete n;
         }
         
-        note* findNoteForSlots() {
+        note* findNoteForSlots(bool singleSlotForTiedNotes = true) {
             note* chosen = nullptr;
             for (note* n : notes) {
                 if (!n->tiedFrom) {
@@ -495,7 +495,7 @@ private:
                 } else if (!chosen || chosen->prevDuration < n->prevDuration)
                     chosen = n;
             }
-            return chosen;
+            return chosen && singleSlotForTiedNotes ? chosen->tieStart : chosen;
         }
         
         t_llll* getllll() {
@@ -532,13 +532,13 @@ private:
         using levelChild::levelChild;
         
         level* addChildLevel() {
-            children.push_back(new level(this));
-            return dynamic_cast<level *>(children.back());
+            level* l = new level(this);
+            children.push_back(l);
+            return l;
         }
         
-        chord* addChord(chord* c) {
+        void addChord(chord* c) {
             children.push_back(c);
-            return dynamic_cast<chord *>(children.back());
         }
         
         t_llll* getllll() {
@@ -772,18 +772,26 @@ private:
     public:
         //const voice *owner;
         //int divisions;
-        measureinfo *info;
+        int number;
         level firstLevel;
         level* currentLevel;
         t_rational usedDuration;
         voice *owner;
         
-        measure(measureinfo* info, voice* owner) :
-            info(info),
+        measure(measure* prev, voice* owner) :
             currentLevel(&firstLevel),
             usedDuration(t_rational(0)),
             owner(owner)
-        { }
+        {
+            if (prev)
+                number = prev->number + 1;
+            else
+                number = 0;
+        }
+        
+        measureinfo* getMeasureInfo() {
+            return owner->owner->measureinfos[number];
+        }
         
         void addChord(chord *c) {
             currentLevel->addChord(c);
@@ -792,7 +800,7 @@ private:
 
         chord* finalize(t_score *x) {
             chord* r = nullptr;
-            t_rational fullDur = info->fullDuration;
+            t_rational fullDur = getMeasureInfo()->fullDuration;
             if (usedDuration < fullDur) {
                 r = new chord(owner, fullDur - usedDuration, false);
                 addChord(r);
@@ -808,7 +816,7 @@ private:
         
         t_llll *getllll() {
             t_llll *ll = llll_get();
-            llll_appendllll(ll, llll_clone(info->getllll()));
+            llll_appendllll(ll, llll_clone(getMeasureInfo()->getllll()));
             llll_chain(ll, firstLevel.getllll());
             return ll;
         }
@@ -858,16 +866,16 @@ private:
             currentChord(nullptr),
             prevChord(nullptr)
         {
+            currentMeasure = nullptr;
             for (auto m : obj->measures) {
-                
-                measures.push_back(new measure(m->info, this));
+                currentMeasure = new measure(currentMeasure, this);
+                measures.push_back(currentMeasure);
             }
-            currentMeasure = measures.back();
         }
         
         void addMeasure(measureinfo *info) {
-            measures.push_back(new measure(info, this));
-            currentMeasure = measures.back();
+            currentMeasure = new measure(currentMeasure, this);
+            measures.push_back(currentMeasure);
         }
         
         chord* finalizeMeasure(t_score *x) {
@@ -991,7 +999,7 @@ private:
         
         int addVoice() {
             int n = getNumVoices();
-            voices[n] = new voice(voices[n-1], true);
+            voices.push_back(new voice(voices[n-1], true));
             return n;
         }
         
@@ -1026,6 +1034,7 @@ private:
             for (auto v : voices) {
                 v->addMeasure(curr);
             }
+            positionInMeasure = t_rational{0};
             return curr;
         }
         
@@ -1113,11 +1122,11 @@ private:
         }
         
         void setBarline(t_llll* barlinell) {
-            currentVoice->currentMeasure->info->barline = barlinell;
+            currentVoice->currentMeasure->getMeasureInfo()->barline = barlinell;
         }
         
         void setTimeSignature(timeSignature& timeSig) {
-            currentVoice->currentMeasure->info->timeSig = timeSig;
+            currentVoice->currentMeasure->getMeasureInfo()->timeSig = timeSig;
         }
         
         void finalize() {
@@ -1139,6 +1148,8 @@ private:
                     note* found = nullptr;
                     
                     for (chord* lc : lastChordsAndRests) {
+                        if (!lc)
+                            continue;
                         note* candidate = lc->findNoteForSlots();
                         if (!found || candidate->prevDuration < found->prevDuration) {
                             found = candidate;
@@ -1156,14 +1167,19 @@ private:
                     if (d->type == dynamics::types::wedgeEnd) {
                         for (auto d : lastDynamic) {
                             if (d && d->type == dynamics::types::wedge) {
-                                found = d->refNote;
-                                break;
+                                int v = d->owner->num;
+                                if (lastChords[v]) {
+                                    found = lastChords[v]->findNoteForSlots();
+                                    break;
+                                }
                             }
                         }
                     }
                     
                     if (!found) {
                         for (chord* lc : lastChords) {
+                            if (!lc)
+                                continue;
                             note* candidate = lc->findNoteForSlots();
                             if (!found || candidate->prevDuration < found->prevDuration) {
                                 found = candidate;
@@ -1177,6 +1193,7 @@ private:
                         d->refNote = found;
                         d->setOffset();
                         found->dynamicsSlotContents.push_back(d);
+                        lastDynamic[v] = d;
                     }
                 }
             }
@@ -1201,6 +1218,7 @@ private:
                 
                 if (!hasMeasureInfo) {
                     theTimedThings.minfoBased.stuff.clear();
+                    measureinfos = owner->parts[number - 1]->measureinfos;
                 }
             }
             
@@ -1636,6 +1654,7 @@ bool score::timedThing<score::part>::cmp(const score::timedThing<score::part>* a
 score::chord::chord(voice *owner, bool grace) :
     timedThing<voice>(owner, owner->owner->globalPosition),
     levelChild(owner->currentMeasure->currentLevel),
+    duration(t_rational{0, 1}),
     grace(grace),
     currentNote(nullptr),
     tied(false),
@@ -1646,9 +1665,16 @@ score::chord::chord(voice *owner, t_rational dur, bool grace) : chord(owner, gra
     duration = dur;
 }
 
-void score::slotTimedThing::setOffset() {
-    t_rational dur = refNote->tieEnd->prevDuration + refNote->tieEnd->owner->duration;
-    t_rational start = refNote->tieStart->owner->timePos;
+void score::slotTimedThing::setOffset(bool singleSlotForTiedNotes) {
+    t_rational dur;
+    t_rational start;
+    if (singleSlotForTiedNotes) {
+        dur = refNote->tieEnd->prevDuration + refNote->tieEnd->owner->duration;
+        start = refNote->tieStart->owner->timePos;
+    } else {
+        dur = refNote->owner->duration;
+        start = refNote->owner->timePos;
+    }
     offset = (timePos - start) / dur;
 }
 
