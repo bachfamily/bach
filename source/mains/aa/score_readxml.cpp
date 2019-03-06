@@ -226,6 +226,7 @@ private:
                     t_llll* slotll = llll_get();
                     llll_appendlong(slotll, n+1);
                     llll_chain(slotll, llll_clone(slots[n]));
+                    llll_appendllll(ll, slotll);
                 }
             }
             llll_prependsym(ll, _llllobj_sym_slots);
@@ -811,7 +812,8 @@ private:
         }
         
         level* pushLevel() {
-            return currentLevel->addChildLevel();
+            currentLevel = currentLevel->addChildLevel();
+            return currentLevel;
         }
         
         t_llll *getllll() {
@@ -1104,7 +1106,7 @@ private:
         bool climbSafe() {
             level *current = currentVoice->currentMeasure->currentLevel;
             if (current->parent) {
-                current = current->parent;
+                currentVoice->currentMeasure->currentLevel = current->parent;
                 return true;
             } else {
                 return false;
@@ -1451,7 +1453,7 @@ public:
             llll_chain(scorell, p->getBodyllll());
         }
         
-        llll_post(scorell);
+        dev_llll_send(scorell, "xmldebug");
         return scorell;
     }
 
