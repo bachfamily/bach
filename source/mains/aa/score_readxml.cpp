@@ -1434,17 +1434,18 @@ public:
         
         t_llll *clefsll = llll_get();
         llll_appendsym(clefsll, _llllobj_sym_clefs);
-        for (auto p : parts) {
-            llll_chain(clefsll, p->getClefsllll());
-        }
-        llll_appendllll(scorell, clefsll);
-        
         t_llll *keysll = llll_get();
         llll_appendsym(keysll, _llllobj_sym_keys);
+        t_llll *numpartsll = llll_get();
+        llll_appendsym(numpartsll, _llllobj_sym_numparts);
         for (auto p : parts) {
+            llll_chain(clefsll, p->getClefsllll());
             llll_chain(keysll, p->getKeysllll());
+            llll_appendlong(numpartsll, p->getNumVoices());
         }
+        llll_appendllll(scorell, clefsll);
         llll_appendllll(scorell, keysll);
+        llll_appendllll(scorell, numpartsll);
 
         for (auto p : parts) {
             llll_chain(scorell, p->getBodyllll());
