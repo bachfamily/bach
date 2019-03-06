@@ -599,3 +599,17 @@ void llll_posthatom(t_hatom *hatom)
 	}
 	postatom(newatom_ptr);
 }
+
+
+void dev_llll_send(t_llll *x, const char* receiver)
+{
+#ifdef CONFIGURATION_Development
+    t_symbol *s = gensym(receiver);
+    if (!s->s_thing)
+        return;
+    t_object *o = s->s_thing;
+    t_atom a;
+    atom_setlong(&a, x->l_phonenumber);
+    object_method_typed(o, LLLL_NATIVE_MSG, 1, &a, NULL);
+#endif
+}
