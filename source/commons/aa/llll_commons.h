@@ -1290,6 +1290,8 @@ t_bool llll_istrue(const t_llll *ll);
 t_llll *get_num_ll(const t_atom_long n);
 t_atom_long llll_getlong(t_llll *ll, t_atom_long def = 0);
 
+void dev_llll_send(t_llll *x, const char* receiver);
+
 
 
 
