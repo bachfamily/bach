@@ -8967,11 +8967,11 @@ char do_dynamics_span_ties(t_score *x)
     
 void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphics *g, t_rect rect, double end_x_to_repaint_no_inset, double last_staff_bottom, t_jfont *jf, t_jfont *jf_acc, t_jfont *jf_text_fractions, t_jfont *jf_acc_bogus, t_jfont *jf_ts, t_jfont *jf_tempi, t_jfont *jf_text, t_jfont *jf_text_small, t_jfont *jf_text_smallbold, t_jfont *jf_text_markers, t_jfont *jf_tempi_italic, t_jfont *jf_tempi_figure, t_jfont *jf_measure_num, t_jfont *jf_tuplets, t_jfont *jf_lyrics, t_jfont *jf_lyrics_nozoom, t_jfont *jf_ann, t_jfont *jf_small_dynamics, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, t_pt *force_xy_position, t_llll *repaint_these_measure_nums)
 {
-    t_jfont *jf_grace = NULL;
-    t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-    t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-    t_jrgba beamcolor = get_beam_color((t_notation_obj *)x, (t_voice *)voice);
-    t_jrgba tupletcolor = get_tuplet_color((t_notation_obj *)x, (t_voice *)voice);
+	t_jfont *jf_grace = NULL;
+	t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
+	t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
+    t_jrgba beamcolor = beam_get_color((t_notation_obj *)x, (t_voice *)voice);
+    t_jrgba tupletcolor = tuplet_get_color((t_notation_obj *)x, (t_voice *)voice);
 
     t_measure *curr_meas;
     t_chord *curr_ch;
@@ -9126,7 +9126,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             
         } else {
             if (measure_locked || measure_muted || measure_solo || measure_linear_edited) {
-                t_jrgba bgmeascolor = change_alpha(change_color_depending_on_playlockmute((t_notation_obj *) x, get_grey(1.), false, false, measure_locked, measure_muted, measure_solo, measure_linear_edited), 0.2);
+                t_jrgba bgmeascolor = get_grey(1.);
+                change_color_depending_on_playlockmute((t_notation_obj *) x, &bgmeascolor, false, false, measure_locked, measure_muted, measure_solo, measure_linear_edited);
+                bgmeascolor = change_alpha(bgmeascolor, 0.2);
                 if (bgmeascolor.red != 1 || bgmeascolor.blue != 1 || bgmeascolor.green != 1 || bgmeascolor.alpha != 1) {
                     double sel_x1 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, tuttipoint_ux + curr_meas->start_barline_offset_ux));
                     double sel_x2 = round_to_semiinteger(unscaled_xposition_to_xposition((t_notation_obj *)x, tuttipoint_ux + curr_meas->start_barline_offset_ux + curr_meas->width_ux));
@@ -9275,35 +9277,35 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         curr_ch->beam_y = staff_top + curr_ch->stemtip_stafftop_uy * x->r_ob.zoom_y;
                     }
 
-                    // decide stem & noteflag basic positions
-                    stemcolor = get_stem_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
-                    flagcolor = get_flag_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
-                    curr_ch->stem_x = stem_x;
-                    
-                    if ((curr_ch->beams_depth == 0) && rat_rat_cmp(curr_ch->figure, RAT_1OVER8) <= 0) {
-                        // if we don't have to beam the chord and if the duration needs flags
-                        char i;
-                        char howmanyflags;
-                        double firstshift_y, secondshift_y, nextstep_y; 
-                        double flag_x;
-                        long outlen;
-                        char firsttailcharacter[5], followingtailcharacter[5];
-                        char *followingtailcharacter_utf;
-                        double this_flag_x;
+					// decide stem & noteflag basic positions
+					stemcolor = stem_get_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+                    flagcolor = flag_get_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+					curr_ch->stem_x = stem_x;
+					
+					if ((curr_ch->beams_depth == 0) && rat_rat_cmp(curr_ch->figure, RAT_1OVER8) <= 0) {
+						// if we don't have to beam the chord and if the duration needs flags
+						char i;
+						char howmanyflags;
+						double firstshift_y, secondshift_y, nextstep_y; 
+						double flag_x;
+						long outlen;
+						char firsttailcharacter[5], followingtailcharacter[5];
+						char *followingtailcharacter_utf;
+						double this_flag_x;
 
-                        double tip_y = staff_top + curr_ch->stemtip_stafftop_uy * x->r_ob.zoom_y; // for some reason sometimes curr_ch->stemtip_stafftop_uy is wrong (0)!
-                        
-//                        dev_post("Chord %p: tip: %.2f, need_rec ? %d", curr_ch, curr_ch->stemtip_stafftop_uy, (long)curr_ch->need_recompute_parameters);
-                        
-                        // draw stem if needed
-                        if (x->r_ob.show_stems > 0 && rat_rat_cmp(curr_ch->figure, RAT_1OVER2) <= 0) {
-                            if (curr_ch->direction == 1) // stem upwards
-                                paint_line(g, stemcolor, stem_x, first_note_y_real, stem_x, tip_y, CONST_STEM_WIDTH);
-                            else if (curr_ch->direction == -1) // stem downwards
-                                paint_line(g, stemcolor, stem_x, last_note_y_real, stem_x, tip_y, CONST_STEM_WIDTH);
-                        }
-                        
-                        // draw noteflag
+						double tip_y = staff_top + curr_ch->stemtip_stafftop_uy * x->r_ob.zoom_y; // for some reason sometimes curr_ch->stemtip_stafftop_uy is wrong (0)!
+						
+//						dev_post("Chord %p: tip: %.2f, need_rec ? %d", curr_ch, curr_ch->stemtip_stafftop_uy, (long)curr_ch->need_recompute_parameters);
+						
+						// draw stem if needed
+						if (x->r_ob.show_stems > 0 && rat_rat_cmp(curr_ch->figure, RAT_1OVER2) <= 0) {
+							if (curr_ch->direction == 1) // stem upwards
+								paint_line(g, stemcolor, stem_x, first_note_y_real, stem_x, tip_y, CONST_STEM_WIDTH);
+							else if (curr_ch->direction == -1) // stem downwards
+								paint_line(g, stemcolor, stem_x, last_note_y_real, stem_x, tip_y, CONST_STEM_WIDTH);
+						}
+						
+						// draw noteflag
                         if (x->r_ob.show_flags) {
                             howmanyflags = perfect_log2(rat_rat_div(RAT_1OVER8, curr_ch->figure).r_num) + 1;
                             
@@ -9416,46 +9418,46 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 note_end_pos = unscaled_xposition_to_xposition((t_notation_obj *)x, last_tie->parent->parent->tuttipoint_reference->offset_ux + last_tie->parent->stem_offset_ux + last_tie->parent->duration_ux);
                         }
                         
-                        
-                        // handle play
-                        if (x->r_ob.playing && x->r_ob.highlight_played_notes) {
-                            if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE)
-                                is_note_played = is_chord_played;
-                            else {
-                                if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) {
-                                    t_note *lasttiednote_forplay = x->r_ob.play_tied_elements_separately ? curr_nt : note_get_last_in_tieseq(curr_nt);
-                                    if (x->r_ob.play_head_ms < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms)
-                                        is_note_played = true;
-                                }
-                            }
-                        }
-                        
-                        
-                        // handle lock
-                        is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                        is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                        is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
-                        
-                        // get colors
-                        notecolor = note_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
-                        durationlinecolor = get_durationline_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
-                        accidentalcolor = get_accidental_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
-                        tailcolor = get_tail_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected || is_tail_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? curr_nt->lastbreakpoint->velocity : curr_nt->velocity);
-                        
-                        // particular case: note is end of a slur that is being drawn
-                        if (x->r_ob.j_mouse_is_down &&    ((x->r_ob.j_mousedown_obj_type == k_SLUR_START_POINT && ((t_slur *) x->r_ob.j_mousedown_ptr)->start_note == curr_nt) || 
-                                                         (x->r_ob.j_mousedown_obj_type == k_SLUR_END_POINT && ((t_slur *) x->r_ob.j_mousedown_ptr)->end_note == curr_nt)))
-                            notecolor = color_interp(notecolor, build_jrgba(1., 0.7, 0.7, 1.), 0.5); 
-                        
-                        notehead_uwidth = curr_nt->notehead_uwidth;
-                        chord_first_notehead_uwidth = notehead_uwidth;
-                        
-                        // finding y positions
-                        note_y = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1);
-                        note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
-                        curr_nt->center.y = note_y_real;
-                        
-                        // finding x positions
+						
+						// handle play
+						if (x->r_ob.playing && x->r_ob.highlight_played_notes) {
+							if (x->r_ob.play_mode == k_PLAYMODE_CHORDWISE)
+								is_note_played = is_chord_played;
+							else {
+								if (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) {
+									t_note *lasttiednote_forplay = x->r_ob.play_tied_elements_separately ? curr_nt : note_get_last_in_tieseq(curr_nt);
+									if (x->r_ob.play_head_ms < lasttiednote_forplay->parent->onset + lasttiednote_forplay->parent->duration_ms)
+										is_note_played = true;
+								}
+							}
+						}
+						
+						
+						// handle lock
+						is_note_locked = notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt);
+						is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
+						is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
+						
+						// get colors
+						notecolor = note_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
+                        durationlinecolor = durationline_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
+                        accidentalcolor = accidental_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, curr_nt->velocity);
+						tailcolor = tail_get_color((t_notation_obj *) x, curr_nt, !note_unselected && (is_chord_selected || is_note_selected || is_durationline_selected || is_tail_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? curr_nt->lastbreakpoint->velocity : curr_nt->velocity);
+						
+						// particular case: note is end of a slur that is being drawn
+						if (x->r_ob.j_mouse_is_down &&	((x->r_ob.j_mousedown_obj_type == k_SLUR_START_POINT && ((t_slur *) x->r_ob.j_mousedown_ptr)->start_note == curr_nt) || 
+														 (x->r_ob.j_mousedown_obj_type == k_SLUR_END_POINT && ((t_slur *) x->r_ob.j_mousedown_ptr)->end_note == curr_nt)))
+							notecolor = color_interp(notecolor, build_jrgba(1., 0.7, 0.7, 1.), 0.5); 
+						
+						notehead_uwidth = curr_nt->notehead_uwidth;
+						chord_first_notehead_uwidth = notehead_uwidth;
+						
+						// finding y positions
+						note_y = mc_to_yposition_in_scale_for_notes((t_notation_obj *) x,curr_nt, (t_voice *) voice, 1);
+						note_y_real = mc_to_yposition_in_scale((t_notation_obj *) x, note_get_screen_midicents(curr_nt), (t_voice *) voice);
+						curr_nt->center.y = note_y_real;
+						
+						// finding x positions
                         double shift = (get_notehead_ux_shift((t_notation_obj *) x, curr_nt) + curr_nt->notecenter_stem_delta_ux) * x->r_ob.zoom_y;
                         note_x_real = stem_x + shift;
                         curr_nt->center.x = note_x_real;
@@ -9545,7 +9547,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                         is_bpt_selected = (notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)temp) ^ notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)temp));
                                         if (is_bpt_selected)
                                             selected_breakpoint = temp;
-                                        bptcolor = get_tail_color((t_notation_obj *) x, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
+                                        bptcolor = tail_get_color((t_notation_obj *) x, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited, x->r_ob.breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
                                         if (x->r_ob.breakpoints_have_noteheads) {
                                             paint_default_small_notehead_with_accidentals((t_notation_obj *) x, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, 0);
                                         } else {
@@ -9661,7 +9663,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             // OLD-WAY: note-attached articulations.
                             for (i = 0; i < curr_nt->num_articulations; i++) {
                                 char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)(&(curr_nt->articulation[i])));
-                                t_jrgba articulationcolor = get_articulation_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
+                                t_jrgba articulationcolor = articulation_get_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                                 paint_articulation((t_notation_obj *) x, g, &articulationcolor, &curr_nt->articulation[i], (t_notation_item *)curr_nt, curr_ch->direction, stem_x, note_x_real, note_y_real, notehead_uwidth, end_pos, part_direction);
                             }
                             
@@ -9679,7 +9681,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                             art_end_pos = unscaled_xposition_to_xposition((t_notation_obj *)x, last_tie->parent->parent->tuttipoint_reference->offset_ux + last_tie->parent->stem_offset_ux + last_tie->parent->duration_ux);
                                         }
                                         char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)art);
-                                        t_jrgba articulationcolor = get_articulation_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
+                                        t_jrgba articulationcolor = articulation_get_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                                         paint_articulation((t_notation_obj *) x, g, &articulationcolor, art, (t_notation_item *)curr_nt, curr_ch->direction, stem_x, note_x_real, note_y_real, notehead_uwidth, art_end_pos, part_direction);
                                     }
                                 }
@@ -9693,14 +9695,14 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 } else if (x->r_ob.show_rests > 0) { // it is a rest (sorry... "pause" is used sometimes instead of rest... italian-to-english poorly made translation...)
                     
                     char just_this_rest_in_the_measure = false; // tells if the measure is made up by a single rest
-                    double pause_x, pause_real_y, pause_y, dot_x_offset, dot_y_offset;
-                    unicodeChar pause_unicode_char;
-                    char pausechars[15]; 
-                    long pausechars_len; 
-                    char *pausechars_utf;
-                    char j, num_dots; 
-                    
-                    stemcolor = get_stem_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+					double pause_x, pause_real_y, pause_y, dot_x_offset, dot_y_offset;
+					unicodeChar pause_unicode_char;
+					char pausechars[15]; 
+					long pausechars_len; 
+					char *pausechars_utf;
+					char j, num_dots; 
+					
+                    stemcolor = stem_get_color((t_notation_obj *) x, curr_ch, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
 
                     if (curr_ch->parent->num_chords == 1 && x->r_ob.notation_cursor.measure != curr_ch->parent)
                         just_this_rest_in_the_measure = true;
@@ -9797,7 +9799,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                                 art_end_pos = unscaled_xposition_to_xposition((t_notation_obj *)x, lastrest->parent->tuttipoint_reference->offset_ux + lastrest->stem_offset_ux + lastrest->duration_ux);
                                         }
                                         char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)art);
-                                        t_jrgba articulationcolor = get_articulation_color((t_notation_obj *) x, curr_ch, is_articulation_selected, x->r_ob.play_rests ? is_chord_played : false, is_chord_locked, x->r_ob.play_rests ? is_chord_muted : false, x->r_ob.play_rests ? is_chord_solo : false, is_chord_linear_edited);
+                                        t_jrgba articulationcolor = articulation_get_color((t_notation_obj *) x, curr_ch, is_articulation_selected, x->r_ob.play_rests ? is_chord_played : false, is_chord_locked, x->r_ob.play_rests ? is_chord_muted : false, x->r_ob.play_rests ? is_chord_solo : false, is_chord_linear_edited);
                                         paint_articulation((t_notation_obj *) x, g, &articulationcolor, art, (t_notation_item *)curr_ch, is_in_voiceensemble ? (voice->v_ob.part_index % 2 == 0 ? -1 : 1) : -1, stem_x, chord_alignment_point_x, pause_real_y, rest_uwidth, art_end_pos, part_direction);
                                     }
                                 }
@@ -9820,7 +9822,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 char is_note_muted = notation_item_is_globally_muted((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
-                                t_jrgba annotationcolor = get_annotation_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
+                                t_jrgba annotationcolor = annotation_get_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                                 double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
                                 paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top, last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
                             }
@@ -9838,7 +9840,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         char is_item_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, nitem) && curr_ch->played) : false;
                         char is_dynamics_selected = notation_item_is_selected((t_notation_obj *) x, nitem) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)dyn);
                         
-                        t_jrgba dynamicscolor = get_dynamics_color((t_notation_obj *) x, curr_ch, is_dynamics_selected, is_item_played, is_item_locked, is_item_muted, is_item_solo, is_chord_linear_edited);
+                        t_jrgba dynamicscolor = dynamics_get_color((t_notation_obj *) x, curr_ch, is_dynamics_selected, is_item_played, is_item_locked, is_item_muted, is_item_solo, is_chord_linear_edited);
                         double chord_alignment_x = chord_get_alignment_x((t_notation_obj *)x, curr_ch);
                         
                         double end_pos = chord_alignment_x + deltauxpixels_to_deltaxpixels((t_notation_obj *)x, curr_ch->duration_ux);
@@ -9874,85 +9876,86 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 
                 
                 // OLD WAY:
-                // need to put chord-attached articulations ?
-                if (x->r_ob.show_articulations){
-                    for (i = 0; i < curr_ch->num_articulations; i++) {
-                        char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)(&(curr_ch->articulation[i])));
-                        t_jrgba articulationcolor = get_articulation_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+				// need to put chord-attached articulations ?
+				if (x->r_ob.show_articulations){
+					for (i = 0; i < curr_ch->num_articulations; i++) {
+						char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)(&(curr_ch->articulation[i])));
+						t_jrgba articulationcolor = articulation_get_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
                         paint_articulation((t_notation_obj *) x, g, &articulationcolor, &curr_ch->articulation[i], (t_notation_item *)curr_ch,
-                                           curr_ch->r_sym_duration.r_num >= 0 ? curr_ch->direction : 0, stem_x,
-                                           (curr_ch->r_sym_duration.r_num >= 0) ? (curr_ch->direction >= 0 ? stem_x - chord_first_notehead_uwidth * x->r_ob.zoom_y /2. : stem_x + chord_first_notehead_uwidth * x->r_ob.zoom_y /2.) : stem_x,
-                                           (curr_ch->r_sym_duration.r_num >= 0) ? (curr_ch->direction >= 0 ? curr_ch->firstnote_y_real : curr_ch->lastnote_y_real) : curr_ch->firstnote_y_real,
-                                           chord_first_notehead_uwidth * x->r_ob.zoom_y, end_pos, part_direction);
-                    }
-                }
-                
-                // lyrics word extensions?
-                if (x->r_ob.show_lyrics && x->r_ob.show_lyrics_word_extensions) {
-                    if (lyrics_word_extension_going_on && !lyrics_dashed_going_on &&
-                        (curr_ch->r_sym_duration.r_num < 0 || (curr_ch->lyrics && curr_ch->lyrics->label && strlen(curr_ch->lyrics->label) > 0)) &&
-                        curr_ch != chord_get_next(lyrics_word_extensions_start_chord)) {
-                        t_chord *prevch = chord_get_prev(curr_ch);
-                        if (prevch) {
-                            double line_y = get_lyrics_word_extension_y_pos((t_notation_obj *) x, staff_bottom);
-                            double x1 = unscaled_xposition_to_xposition((t_notation_obj *) x, left_word_extension_ux);
-                            double x2 = prevch->stem_x;
-                            paint_line(g, x->r_ob.j_lyrics_rgba, x1, line_y, x2, line_y, 0.7);
-                            lyrics_word_extension_going_on = false;
-                        }
-                    } else if (lyrics_word_extension_going_on && curr_ch->r_sym_duration.r_num < 0)
-                        lyrics_word_extension_going_on = false;
-                }
-                
-                // lyrics?
-                if (curr_ch->lyrics && curr_ch->lyrics->label && strlen(curr_ch->lyrics->label) > 0 && x->r_ob.show_lyrics) {
-                    double pos_y = staff_bottom - x->r_ob.lyrics_uy_pos * x->r_ob.zoom_y;
-                    double lyrics_end_ux;
-                    if (!(x->r_ob.is_editing_type == k_LYRICS && x->r_ob.is_editing_chord == curr_ch)){
-                        double pos_x = curr_ch->stem_x + (curr_ch->direction == 1 ? -0.5 : 0.5) * chord_get_mainside_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_ch) + curr_ch->lyrics->lyrics_ux_shift * x->r_ob.zoom_y;
-                        char is_lyrics_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->lyrics);
-                        t_jrgba lyrics_color = change_color_depending_on_playlockmute((t_notation_obj *) x, x->r_ob.j_lyrics_rgba, is_lyrics_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
-                        write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, lyrics_color, curr_ch->lyrics->label, pos_x, pos_y);
-                    }
-                    
-                    if (lyrics_dashed_going_on) {
-                        double this_left_ux = chord_get_alignment_ux((t_notation_obj *) x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift;
-                        long num_dash_needed = MAX(0, round((this_left_ux - left_dashed_ux) * CONST_NUM_DASH_PER_UX * x->r_ob.zoom_x / x->r_ob.zoom_y)); 
-                        
-                        if (num_dash_needed == 0 && (this_left_ux - left_dashed_ux) > CONST_UX_MINIMUM_SPACE_FOR_DASH * 1.25)
-                            num_dash_needed = 1;
-                        
-                        if (num_dash_needed == 1) {
-                            double ux_module = (this_left_ux - left_dashed_ux - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
-                            write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_module), pos_y);
-                        } else if (num_dash_needed > 1) {
-                            double ux_module = (this_left_ux - left_dashed_ux)/num_dash_needed;
-                            for (i = 0; i < num_dash_needed; i++){
-                                double this_x = unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_module/2. + i * ux_module);
-                                write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
-                            }
-                        }
-                    }
-                    
-                    lyrics_dashed_going_on = curr_ch->lyrics->lyrics_dashed_extension;
-                    lyrics_end_ux = chord_get_alignment_ux((t_notation_obj *) x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift + curr_ch->lyrics->lyrics_uwidth;
-                    if (lyrics_dashed_going_on)
-                        left_dashed_ux = lyrics_end_ux;
-                    
-                    if (x->r_ob.show_lyrics_word_extensions) {
-                        lyrics_word_extensions_start_chord = curr_ch;
-                        lyrics_word_extension_going_on = true;
-                        left_word_extension_ux = lyrics_end_ux + 1;
-                    }
-                }
-            }
-            
-            if (is_grace_chord)
-                jfont_destroy_debug(jf_grace);
-        }
-        
-        
-        // BEAMS AND TUPLETS
+										   curr_ch->r_sym_duration.r_num >= 0 ? curr_ch->direction : 0, stem_x,
+										   (curr_ch->r_sym_duration.r_num >= 0) ? (curr_ch->direction >= 0 ? stem_x - chord_first_notehead_uwidth * x->r_ob.zoom_y /2. : stem_x + chord_first_notehead_uwidth * x->r_ob.zoom_y /2.) : stem_x,
+										   (curr_ch->r_sym_duration.r_num >= 0) ? (curr_ch->direction >= 0 ? curr_ch->firstnote_y_real : curr_ch->lastnote_y_real) : curr_ch->firstnote_y_real,
+										   chord_first_notehead_uwidth * x->r_ob.zoom_y, end_pos, part_direction);
+					}
+				}
+				
+				// lyrics word extensions?
+				if (x->r_ob.show_lyrics && x->r_ob.show_lyrics_word_extensions) {
+					if (lyrics_word_extension_going_on && !lyrics_dashed_going_on &&
+						(curr_ch->r_sym_duration.r_num < 0 || (curr_ch->lyrics && curr_ch->lyrics->label && strlen(curr_ch->lyrics->label) > 0)) &&
+						curr_ch != chord_get_next(lyrics_word_extensions_start_chord)) {
+						t_chord *prevch = chord_get_prev(curr_ch);
+						if (prevch) {
+							double line_y = get_lyrics_word_extension_y_pos((t_notation_obj *) x, staff_bottom);
+							double x1 = unscaled_xposition_to_xposition((t_notation_obj *) x, left_word_extension_ux);
+							double x2 = prevch->stem_x;
+							paint_line(g, x->r_ob.j_lyrics_rgba, x1, line_y, x2, line_y, 0.7);
+							lyrics_word_extension_going_on = false;
+						}
+					} else if (lyrics_word_extension_going_on && curr_ch->r_sym_duration.r_num < 0)
+						lyrics_word_extension_going_on = false;
+				}
+				
+				// lyrics?
+				if (curr_ch->lyrics && curr_ch->lyrics->label && strlen(curr_ch->lyrics->label) > 0 && x->r_ob.show_lyrics) {
+					double pos_y = staff_bottom - x->r_ob.lyrics_uy_pos * x->r_ob.zoom_y;
+					double lyrics_end_ux;
+					if (!(x->r_ob.is_editing_type == k_LYRICS && x->r_ob.is_editing_chord == curr_ch)){
+						double pos_x = curr_ch->stem_x + (curr_ch->direction == 1 ? -0.5 : 0.5) * chord_get_mainside_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_ch) + curr_ch->lyrics->lyrics_ux_shift * x->r_ob.zoom_y;
+						char is_lyrics_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch) || notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)curr_ch->lyrics);
+                        t_jrgba lyrics_color = x->r_ob.j_lyrics_rgba;
+                        change_color_depending_on_playlockmute((t_notation_obj *) x, &lyrics_color, is_lyrics_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+						write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, lyrics_color, curr_ch->lyrics->label, pos_x, pos_y);
+					}
+					
+					if (lyrics_dashed_going_on) {
+						double this_left_ux = chord_get_alignment_ux((t_notation_obj *) x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift;
+						long num_dash_needed = MAX(0, round((this_left_ux - left_dashed_ux) * CONST_NUM_DASH_PER_UX * x->r_ob.zoom_x / x->r_ob.zoom_y)); 
+						
+						if (num_dash_needed == 0 && (this_left_ux - left_dashed_ux) > CONST_UX_MINIMUM_SPACE_FOR_DASH * 1.25)
+							num_dash_needed = 1;
+						
+						if (num_dash_needed == 1) {
+							double ux_module = (this_left_ux - left_dashed_ux - CONST_UX_MINIMUM_SPACE_FOR_DASH)/2;
+							write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_module), pos_y);
+						} else if (num_dash_needed > 1) {
+							double ux_module = (this_left_ux - left_dashed_ux)/num_dash_needed;
+							for (i = 0; i < num_dash_needed; i++){
+								double this_x = unscaled_xposition_to_xposition((t_notation_obj *) x, left_dashed_ux + ux_module/2. + i * ux_module);
+								write_text_account_for_vinset((t_notation_obj *) x, g, jf_lyrics, x->r_ob.j_lyrics_rgba, "-", this_x, pos_y);
+							}
+						}
+					}
+					
+					lyrics_dashed_going_on = curr_ch->lyrics->lyrics_dashed_extension;
+					lyrics_end_ux = chord_get_alignment_ux((t_notation_obj *) x, curr_ch) + curr_ch->lyrics->lyrics_ux_shift + curr_ch->lyrics->lyrics_uwidth;
+					if (lyrics_dashed_going_on)
+						left_dashed_ux = lyrics_end_ux;
+					
+					if (x->r_ob.show_lyrics_word_extensions) {
+						lyrics_word_extensions_start_chord = curr_ch;
+						lyrics_word_extension_going_on = true;
+						left_word_extension_ux = lyrics_end_ux + 1;
+					}
+				}
+			}
+			
+			if (is_grace_chord)
+				jfont_destroy_debug(jf_grace);
+		}
+		
+		
+		// BEAMS AND TUPLETS
         if (x->r_ob.show_beams) {
             t_beam *beam;
             for (beam = curr_meas->firstbeam; beam; beam = beam->next){
@@ -10567,8 +10570,9 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
             long clef = get_voice_clef((t_notation_obj *)x, (t_voice *)voice);
             t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
             t_jrgba keysigcolor = get_keysig_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-            t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-            t_jrgba clefcolor = get_clef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
+			t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
+			t_jrgba clefcolor = clef_get_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
+            t_jrgba auxclefcolor = get_auxclef_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
             double staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, true);
             double staff_bottom_y = get_staff_bottom_y((t_notation_obj *) x, (t_voice *) voice, true);
 
@@ -10584,7 +10588,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
             
             // paint clefs
             for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)
-                paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor);
+				paint_clef((t_notation_obj *)x, g, jf, voice->v_ob.middleC_y + k * system_jump, clef, clefcolor, auxclefcolor);
 
             // paint key signature
             for (k=x->r_ob.first_shown_system; k <= x->r_ob.last_shown_system; k++)

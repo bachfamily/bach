@@ -1169,6 +1169,13 @@
 				"tags" : [ "appearance", "stem", "display", "better", "enhance", "enhancement", "enhancedstems", "neat", "neater", "clear", "alignment", "align" ],
 				"title" : [ "Stem enhancement" ]
 			},
+			"Clefs" : {
+				"filename" : [ "bach.help.notation.appearance.09_clefs.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "clef" ],
+				"tags" : [ "appearance", "clef", "auxclef", "auxiliary", "clefcolor", "auxclefcolor", "showclefs", "showauxclefs" ],
+				"title" : [ "Clefs appearance" ]
+			},
 			"Showhidescoreelements" : {
 				"filename" : [ "bach.help.notation.appearance.10_showhidescoreelements.maxpat" ],
 				"objects" : [ "bach.score", "bach.roll" ],

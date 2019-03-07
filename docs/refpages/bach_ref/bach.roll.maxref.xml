@@ -6567,6 +6567,20 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="auxclefcolor" get="1" set="1" type="rgba" size="1">
+			<digest>
+				Auxiliary Clef Color
+			</digest>
+			<description>
+				Sets the color of 15ma/15vb clefs used inside clef combinations such as <b>FFGG</b>, <b>FGG</b>, <b>FFG</b>, etc..
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0. 0. 0. 1." />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Auxiliary Clef Color" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="rgba" />
+			</attributelist>
+		</attribute>
 		<attribute name="auxstaffcolor" get="1" set="1" type="rgba" size="1">
 			<digest>
 				Auxiliary Staff Color
@@ -8919,6 +8933,23 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="showauxclefs" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Auxiliary Clefs In Combinations
+			</digest>
+			<description>
+				Toggles the display of 15ma and/or 15vb clefs in voices with <m>clefs</m> combinations
+				such as <b>FFGG</b>, <b>FGG</b>, <b>FFG</b>, etc.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Auxiliary Clefs In Combinations" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
 		<attribute name="showborder" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Border
@@ -8930,6 +8961,22 @@
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Appearance" />
 				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Border" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
+			</attributelist>
+		</attribute>
+		<attribute name="showclefs" get="1" set="1" type="int" size="1">
+			<digest>
+				Show Clefs
+			</digest>
+			<description>
+				Toggles the display of clefs.
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Show" />
+				<attribute name="default" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Show Clefs" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
