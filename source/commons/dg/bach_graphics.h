@@ -965,7 +965,7 @@ void paint_arrow(t_jgraphics* g, t_jrgba color, double x1, double y1, double x2,
 
 
 
-void paint_hairpin(t_jgraphics* g, t_jrgba color, long cresc_or_dim, double xstart, double xend, double middley, double semiaperture, double width);
+void paint_hairpin(t_jgraphics* g, t_jrgba color, long cresc_or_dim, double xstart, double xend, double middley, double semiaperture, double width, double dash_lenght);
 void paint_polygon(t_jgraphics* g, t_jrgba *border_color, t_jrgba *inner_color, double linewidth, t_polygon *poly);
 void paint_beziercs(t_jgraphics* g, t_jrgba *border_color, t_jrgba *inner_color, double linewidth, t_beziercs *bezier);
 

@@ -381,7 +381,7 @@ t_llll *llll_parse(long ac, t_atom *av, long ignore = 0);
 
 
 // create a new llll from a c string (txt)
-// if the string is or can be longer than about 2048 chars (there's some tolerance anyway),
+// if the string is or can be longer than about 32k chars (there's some tolerance anyway),
 // big must be set to true. This, on the other hand, will make the operation significantly slower.
 // for ignore, se #e_llll_parse_ignore
 t_llll *llll_from_text_buf(const char *txt, t_bool big = false, long ignore = 0); // creates a new llll from a list contained in a string
@@ -1289,6 +1289,8 @@ void llll_remove_lllls_from_lthing(t_llll *ll);
 t_bool llll_istrue(const t_llll *ll);
 t_llll *get_num_ll(const t_atom_long n);
 t_atom_long llll_getlong(t_llll *ll, t_atom_long def = 0);
+
+void dev_llll_send(t_llll *x, const char* receiver);
 
 
 
