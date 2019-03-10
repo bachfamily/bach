@@ -3291,8 +3291,8 @@ void repaint_left_background_part(t_notation_obj *r_ob, t_jgraphics* g, t_rect g
     t_jrgba leftbgcolor = r_ob->j_background_rgba;
 //    if (r_ob->repaint_left_background_part_with_full_alpha)
 //        leftbgcolor.alpha = 1;
-    paint_filledrectangle(g, leftbgcolor, 0., 0, fade_left_x_pixel, graphic_rect.height);
-    jgraphics_image_surface_draw(g, r_ob->clef_gradient_surface, build_rect(0, 0, CONST_X_LEFT_START_FADE_NUM_STEPS, 10), build_rect(fade_left_x_pixel, 0 - pad, fade_right_x_pixel - fade_left_x_pixel, graphic_rect.height + 2 * pad));
+	paint_filledrectangle(g, leftbgcolor, 0., 0, fade_left_x_pixel+0.5, graphic_rect.height);
+	jgraphics_image_surface_draw(g, r_ob->clef_gradient_surface, build_rect(0, 0, CONST_X_LEFT_START_FADE_NUM_STEPS, 10), build_rect(fade_left_x_pixel, 0 - pad, fade_right_x_pixel - fade_left_x_pixel, graphic_rect.height + 2 * pad));
 }
 
 // v_alignment: 1 = top, -1 = bottom
@@ -3430,6 +3430,7 @@ long ms_delta_to_biggest_zoom_factor(t_notation_obj *r_ob, double ms_delta){
 
 void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect){
     if (r_ob->ruler > 0 || r_ob->show_grid) {
+        double actwidth = graphic_rect.width - r_ob->j_inset_x - r_ob->postdomain_width + 1; // +1 is a little pad to account for equality
         double pixel_delta = 0; 
         double ms_delta = r_ob->grid_step_ms;
         double ms_delta_sub = r_ob->grid_step_ms;
@@ -3492,7 +3493,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         double prev_pix = -10000000;
         long count = 0;
         long ms_limit = MAX(1000000, r_ob->length_ms);
-        for (pix = start_x, i = tick_offset, ms = start_ms; pix < graphic_rect.width && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
+        for (pix = start_x, i = tick_offset, ms = start_ms; pix <= actwidth && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
             
             if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
                 pix = onset_to_xposition(r_ob, ms, NULL);
@@ -3530,7 +3531,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         if (r_ob->ruler_mode == 1){
             label_step = 1;
         } else {
-            number_of_labels = round(graphic_rect.width/(100 * r_ob->zoom_y));
+            number_of_labels = round(actwidth/(100 * r_ob->zoom_y));
             number_of_divisions_in_window = round((r_ob->screen_ms_end - r_ob->screen_ms_start)/r_ob->grid_step_ms);
             label_step = floor(((double) number_of_divisions_in_window) / number_of_labels);
             if (label_step <= 0) 
@@ -3540,7 +3541,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         if (r_ob->show_ruler_labels) {
             double prev_pix = -10000000;
             long count = 0;
-            for (ms = start_ms, pix = start_x, i = tick_offset, div = 0; pix < graphic_rect.width && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
+            for (ms = start_ms, pix = start_x, i = tick_offset, div = 0; pix <= actwidth && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
 
                 if (!r_ob->fade_predomain && ms + CONST_EPSILON_DOUBLE_EQ < r_ob->screen_ms_start)
                     continue;
@@ -5719,8 +5720,8 @@ void update_domain(t_notation_obj *r_ob) {
 
     if (object_type == k_NOTATION_OBJECT_ROLL) {
 
-        r_ob->domain_ux = (r_ob->inner_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_SCORE_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (1 * r_ob->zoom_x * r_ob->zoom_y);
-
+        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (1 * r_ob->zoom_x * r_ob->zoom_y);
+ 
 //        dev_post("domain_ux: %.2f", r_ob->domain_ux);
         
         if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
@@ -5731,12 +5732,12 @@ void update_domain(t_notation_obj *r_ob) {
 //            dev_post("startms: %.2f, endms: %.2f, domain: %.2f", r_ob->screen_ms_start, r_ob->screen_ms_end, r_ob->domain);
         } else {
             // Standard routine
-            r_ob->domain = (r_ob->inner_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (CONST_X_SCALING * r_ob->zoom_x * r_ob->zoom_y);
+            r_ob->domain = r_ob->domain_ux / CONST_X_SCALING;
             r_ob->screen_ms_end = r_ob->screen_ms_start + r_ob->domain;
             
         }
     } else if (object_type == k_NOTATION_OBJECT_SCORE) {
-        r_ob->domain_ux = (r_ob->inner_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_SCORE_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
+        r_ob->domain_ux = (r_ob->inner_width - r_ob->postdomain_width + r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_SCORE_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) / (CONST_X_SCALING_SCORE * r_ob->zoom_x * r_ob->zoom_y);
         r_ob->screen_ux_end = r_ob->screen_ux_start + r_ob->domain_ux;
     }
 }
@@ -23844,9 +23845,9 @@ char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
     char res = chord_has_dynamics(chord);
     t_dynamics *dyn = chord_get_dynamics(chord);
     
-    if (notation_item_is_selected(r_ob, (t_notation_item *)dyn))
+    if (dyn && notation_item_is_selected(r_ob, (t_notation_item *)dyn))
         notation_item_delete_from_selection(r_ob, (t_notation_item *)dyn);
-
+    
     
     if (chord->firstnote) {
         for (note = chord->firstnote; note; note = note->next)
@@ -35515,9 +35516,11 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->num_prevent_editing_elems = 0;
     r_ob->allow_linear_edit = true;
 
-    r_ob->rebuild_function = rebuild;
-    r_ob->whole_obj_undo_tick_function = whole_undo_tick;
-    r_ob->force_notation_item_inscreen = force_notation_item_inscreen;
+    r_ob->onset_in_domain = 0;
+    
+	r_ob->rebuild_function = rebuild;
+	r_ob->whole_obj_undo_tick_function = whole_undo_tick;
+	r_ob->force_notation_item_inscreen = force_notation_item_inscreen;
     r_ob->undo_redo_function = undo_redo_fn;
     r_ob->paint_ext_function = paint_extended;
     
@@ -35603,6 +35606,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->last_used_octave = 5; 
     r_ob->head_vertical_additional_uspace = 0.;
     r_ob->key_signature_uwidth = 0.;
+    r_ob->postdomain_width = 0.;
     r_ob->there_are_voice_names = false;
     r_ob->voice_names_uwidth = 0.;
     r_ob->lambda_selected_item_ID = 0;
@@ -37410,7 +37414,8 @@ void calculate_voice_offsets(t_notation_obj *r_ob)
 }
 
 void calculate_ms_on_a_line(t_notation_obj *r_ob) {
-    r_ob->ms_on_a_line = (((r_ob->width - CONST_RIGHT_UPAD - get_max_vscrollbar_width_or_inset_x(r_ob)) / r_ob->zoom_y)  - 
+    // TODO: CONST_RIGHT_UPAD is equivalent to r_ob->postdomain_width. Harmonize them.
+    r_ob->ms_on_a_line = (((r_ob->width - CONST_RIGHT_UPAD - get_max_vscrollbar_width_or_inset_x(r_ob)) / r_ob->zoom_y)  -
                           (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth)) / (CONST_X_SCALING * r_ob->zoom_x);
 }
 

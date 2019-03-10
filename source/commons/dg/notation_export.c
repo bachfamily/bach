@@ -117,14 +117,14 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     t_llll *arguments = (t_llll *) atom_getobj(av);
     char ok = true;
     t_symbol *view = gensym("line");
-    long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1;
+    long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1, onsetindomain = 0;
     t_symbol *filename_sym = NULL, *type_sym = NULL;
     double mspersystem = r_ob->domain, uxperline = r_ob->domain_ux;
     t_llll *tuttipoint_system_layout = NULL;
-    double new_inner_width = 0;
+    double new_inner_width = 0, postdomain_uwidth = -1;
     long systemvshift_pixels = 0;
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssiddiii",
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssiddiiiid",
                                          _sym_filename, &filename_sym,
                                          _sym_type, &type_sym,
                                          gensym("view"), &view,         // can be one of the following: "raw", "line", "multiline", "scroll"
@@ -133,7 +133,9 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                                          gensym("pixelpersystem"), &uxperline,
                                          gensym("systemvshift"), &systemvshift_pixels,
                                          gensym("fitmeasures"), &fitmeasures,
-                                         gensym("fadedomain"), &fadepredomain
+                                         gensym("fadedomain"), &fadepredomain,
+                                         gensym("onsetindomain"), &onsetindomain,
+                                         gensym("postdomainpad"), &postdomain_uwidth
                                          );
     
     if (view != gensym("raw") && view != gensym("line") && view != gensym("multiline") && view != gensym("scroll")) {
@@ -145,7 +147,10 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
 
     if (fadepredomain < 0)
         fadepredomain = (view == gensym("raw") ? r_ob->fade_predomain : 0);
-    
+
+    if (postdomain_uwidth < 0)
+        postdomain_uwidth = (view == gensym("raw") ? 0 : 10); // defaults for postdomain pad
+
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
         if (filename_sym)
@@ -217,9 +222,13 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         double length_ux_prev = r_ob->length_ux;
         double screen_ms_start_prev = r_ob->screen_ms_start;
         long fade_predomain_prev = r_ob->fade_predomain;
+        long onsetindomain_prev = r_ob->onset_in_domain;
+        double postdomain_prev = r_ob->postdomain_width;
         char send_undo_redo_bang_prev = r_ob->send_undo_redo_bang;
 
         r_ob->fade_predomain = fadepredomain;
+        r_ob->postdomain_width = postdomain_uwidth * r_ob->zoom_y;
+        r_ob->onset_in_domain = onsetindomain;
         
         if (must_cleanup) {
             close_slot_window(r_ob);
@@ -237,8 +246,9 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                 }
             } else if (view == gensym("scroll") || view == gensym("page") || view == gensym("multiline")) {
                 if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-                    if (mspersystem != r_ob->domain)
-                        r_ob->inner_width = deltaonset_to_deltaxpixels(r_ob, mspersystem) + get_predomain_width_pixels(r_ob);
+                    if (mspersystem != r_ob->domain) {
+                        r_ob->inner_width = r_ob->postdomain_width + mspersystem * (CONST_X_SCALING * r_ob->zoom_x * r_ob->zoom_y) - (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y);
+                    }
                     r_ob->inner_height = notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y;
                     num_shots = ceil(length_ms_prev / mspersystem);
                     r_ob->length_ms = num_shots * mspersystem;
@@ -266,6 +276,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
             
             redraw_hscrollbar(r_ob, 1);
             redraw_vscrollbar(r_ob, 1);
+            
             calculate_ms_on_a_line(r_ob);
             recalculate_num_systems(r_ob);
             r_ob->system_jump = get_system_jump(r_ob);
@@ -427,6 +438,8 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         }
 
         r_ob->fade_predomain = fade_predomain_prev;
+        r_ob->postdomain_width = postdomain_prev;
+        r_ob->onset_in_domain = onsetindomain_prev;
         
         r_ob->send_undo_redo_bang = send_undo_redo_bang_prev;
 

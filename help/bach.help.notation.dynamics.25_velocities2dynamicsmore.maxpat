@@ -50,19 +50,18 @@
                     "patching_rect" : [ 249.0, 256.5, 186.0, 40.0 ],
                     "text" : "Use a steeper exponent for the mapping curve"
                 }
-
-            }
-,             {
-                "box" :                 {
-                    "fontsize" : 13.0,
-                    "id" : "obj-8",
-                    "maxclass" : "message",
-                    "numinlets" : 2,
-                    "numoutlets" : 1,
-                    "outlettype" : [ "" ],
-                    "patching_rect" : [ 62.0, 265.0, 181.0, 23.0 ],
-                    "text" : "velocities2dynamics [exp 0.5]"
-                }
+			}
+, 			{
+				"box" : 				{
+					"fontsize" : 13.0,
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 62.0, 265.0, 184.0, 23.0 ],
+					"text" : "velocities2dynamics @exp 0.5"
+				}
 
             }
 ,             {
@@ -77,19 +76,18 @@
                     "patching_rect" : [ 257.0, 234.0, 155.0, 25.0 ],
                     "text" : "Use \"pppppp\" to \"ffffff\""
                 }
-
-            }
-,             {
-                "box" :                 {
-                    "fontsize" : 13.0,
-                    "id" : "obj-7",
-                    "maxclass" : "message",
-                    "numinlets" : 2,
-                    "numoutlets" : 1,
-                    "outlettype" : [ "" ],
-                    "patching_rect" : [ 49.0, 234.0, 206.0, 23.0 ],
-                    "text" : "velocities2dynamics [maxchars 6]"
-                }
+			}
+, 			{
+				"box" : 				{
+					"fontsize" : 13.0,
+					"id" : "obj-7",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 49.0, 234.0, 208.0, 23.0 ],
+					"text" : "velocities2dynamics @maxchars 6"
+				}
 
             }
 ,             {
@@ -104,7 +102,6 @@
                     "patching_rect" : [ 244.0, 202.0, 140.0, 25.0 ],
                     "text" : "Only use \"pp\" to \"ff\""
                 }
-
             }
 ,             {
                 "box" :                 {
@@ -118,33 +115,31 @@
                     "patching_rect" : [ 221.0, 168.0, 185.0, 25.0 ],
                     "text" : "Use \"pppp\" to \"ffff\" (default)"
                 }
+			}
+, 			{
+				"box" : 				{
+					"fontsize" : 13.0,
+					"id" : "obj-3",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 36.0, 202.0, 208.0, 23.0 ],
+					"text" : "velocities2dynamics @maxchars 2"
+				}
 
-            }
-,             {
-                "box" :                 {
-                    "fontsize" : 13.0,
-                    "id" : "obj-3",
-                    "maxclass" : "message",
-                    "numinlets" : 2,
-                    "numoutlets" : 1,
-                    "outlettype" : [ "" ],
-                    "patching_rect" : [ 36.0, 202.0, 206.0, 23.0 ],
-                    "text" : "velocities2dynamics [maxchars 2]"
-                }
-
-            }
-,             {
-                "box" :                 {
-                    "fontsize" : 13.0,
-                    "id" : "obj-9",
-                    "maxclass" : "message",
-                    "numinlets" : 2,
-                    "numoutlets" : 1,
-                    "outlettype" : [ "" ],
-                    "patching_rect" : [ 10.0, 168.0, 206.0, 23.0 ],
-                    "text" : "velocities2dynamics [maxchars 4]"
-                }
-
+			}
+, 			{
+				"box" : 				{
+					"fontsize" : 13.0,
+					"id" : "obj-9",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 10.0, 168.0, 208.0, 23.0 ],
+					"text" : "velocities2dynamics @maxchars 4"
+				}
             }
 ,             {
                 "box" :                 {

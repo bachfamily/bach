@@ -4250,29 +4250,30 @@ typedef struct _notation_obj
                                     ///< Beware: operations like inscreenpos etc. might change this length, in order to appropriately show more portion of score.
     char        highlight_domain;   ///< If toggled, highlights the domain portion of the notation item (useful to align other Max UI objects on top of it).
     char        fade_predomain;     ///< Fade a small left portion of score, before the domain start, with an alpha gradient
-    
-    // horizontal scrolling
-    char        show_hscrollbar;        ///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
-    char        need_hscrollbar;        ///< Flag telling if we need (1) or not (0) the horizontal scrollbar
-    double        hscrollbar_pos;            ///< Relative position (0. to 1.) of the horizontal scrollbar (0 = completely at left, 1 = completely at right)
-    double        hscrollbar_x;            ///< Pixel position of the leftmost point of the horizontal scrollbar.
-                                        ///< This can range from <inset_x> to <j_inset_x> + <inner_width> - <hscrollbar_width>.
-    double        hscrollbar_width;        ///< Width (in pixels) of the horizontal scrollbar
-    
-    
-    // vertical scrolling
-    char        show_vscrollbar;        ///< Flag telling if we want to show the vertical scrollbar (in case it is needed)
-    char        need_vscrollbar;        ///< Flag telling if we need (1) or not (0) the vertical scrollbar
-    double        vscrollbar_pos;            ///< Relative position (0. to 1.) of the vertical scrollbar (0 = completely at top, 1 = completely at bottom)
-    double        vscrollbar_y;            ///< Pixel position of the topmost point of the vertical scrollbar
-    double        vscrollbar_pixnudge;    ///< Nudge (in pixels) of which we have to shift the whole content up or down
-    double        vscrollbar_height;        ///< Height (in pixels) of the vertical scrollbar
+    char        onset_in_domain;      ///< Only paint notes whose onset is inside the domain
+
+	// horizontal scrolling
+	char		show_hscrollbar;		///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
+	char		need_hscrollbar;		///< Flag telling if we need (1) or not (0) the horizontal scrollbar
+	double		hscrollbar_pos;			///< Relative position (0. to 1.) of the horizontal scrollbar (0 = completely at left, 1 = completely at right)
+	double		hscrollbar_x;			///< Pixel position of the leftmost point of the horizontal scrollbar.
+										///< This can range from <inset_x> to <j_inset_x> + <inner_width> - <hscrollbar_width>.
+	double		hscrollbar_width;		///< Width (in pixels) of the horizontal scrollbar
+	
+	
+	// vertical scrolling
+	char		show_vscrollbar;		///< Flag telling if we want to show the vertical scrollbar (in case it is needed)
+	char		need_vscrollbar;		///< Flag telling if we need (1) or not (0) the vertical scrollbar
+	double		vscrollbar_pos;			///< Relative position (0. to 1.) of the vertical scrollbar (0 = completely at top, 1 = completely at bottom)
+	double		vscrollbar_y;			///< Pixel position of the topmost point of the vertical scrollbar
+	double		vscrollbar_pixnudge;	///< Nudge (in pixels) of which we have to shift the whole content up or down
+	double		vscrollbar_height;		///< Height (in pixels) of the vertical scrollbar
 
 
-    // some general common attributes
-    char        show_durations;                ///< Flag telling if we want to show the duration-lines for the notes
-    char        show_tails;                    ///< Flag telling if we want to display the note tails at the end of each notes (only works if #show_durations is set)
-    double        durations_line_width;        ///< Width of the duration line in pixels
+	// some general common attributes
+	char		show_durations;				///< Flag telling if we want to show the duration-lines for the notes
+	char		show_tails;					///< Flag telling if we want to display the note tails at the end of each notes (only works if #show_durations is set)
+	double		durations_line_width;		///< Width of the duration line in pixels
     char        dl_spans_ties;              ///< Duration line spans a sequence of tied notes?
     char        velocity_handling;            ///< Parameter handling the way we display the velocity on screen. This must be one of #e_velocity_handling 
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
@@ -4461,6 +4462,8 @@ typedef struct _notation_obj
 	double		height;					///< Height of the UI notation object in pixels
 	double		inner_width;			///< Usable width (in pixels) of the object (ignoring insets); this correspond to the object width - 2 * <j_inset_x>
 	double		inner_height;			///< Usable height (in pixel) of the object (ignoring insets); this correspond to the object height - 2 * <j_inset_y>
+    double      postdomain_width;       ///< Width of a portion of score that pads the end of the domain without being inside it.
+                                        ///< Currently only used in image export.
 
 	double		horizontal_zoom;		///< User modifiable horizontal zoom, 100 = default zoom. This is the value set and get via the "zoom" attribute.
 	t_atom		vertical_zoom;			///< User modifiable value for the vertical zoom, 100 = default zoom, "auto" = automatic zoom .
@@ -10289,7 +10292,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
 void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                               double center_x, double duration_x, long slot, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double staff_bottom_y, double *curr_hairpin_start_x, long *curr_hairpin_type, char boxed);
 void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window);
+                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window, double min_hairpin_start_x);
 
 
 
