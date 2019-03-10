@@ -4250,7 +4250,8 @@ typedef struct _notation_obj
                                     ///< Beware: operations like inscreenpos etc. might change this length, in order to appropriately show more portion of score.
     char        highlight_domain;   ///< If toggled, highlights the domain portion of the notation item (useful to align other Max UI objects on top of it).
     char        fade_predomain;     ///< Fade a small left portion of score, before the domain start, with an alpha gradient
-    
+    char        onset_in_domain;      ///< Only paint notes whose onset is inside the domain
+
 	// horizontal scrolling
 	char		show_hscrollbar;		///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
 	char		need_hscrollbar;		///< Flag telling if we need (1) or not (0) the horizontal scrollbar
@@ -10289,7 +10290,7 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
 void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                               double center_x, double duration_x, long slot, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double staff_bottom_y, double *curr_hairpin_start_x, long *curr_hairpin_type, char boxed);
 void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window);
+                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window, double min_hairpin_start_x);
 
 
 

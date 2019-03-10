@@ -117,14 +117,14 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     t_llll *arguments = (t_llll *) atom_getobj(av);
     char ok = true;
     t_symbol *view = gensym("line");
-    long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1;
+    long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1, onsetindomain = 0;
     t_symbol *filename_sym = NULL, *type_sym = NULL;
     double mspersystem = r_ob->domain, uxperline = r_ob->domain_ux;
     t_llll *tuttipoint_system_layout = NULL;
     double new_inner_width = 0;
     long systemvshift_pixels = 0;
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssiddiii",
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssiddiiii",
                                          _sym_filename, &filename_sym,
                                          _sym_type, &type_sym,
                                          gensym("view"), &view,         // can be one of the following: "raw", "line", "multiline", "scroll"
@@ -133,7 +133,8 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                                          gensym("pixelpersystem"), &uxperline,
                                          gensym("systemvshift"), &systemvshift_pixels,
                                          gensym("fitmeasures"), &fitmeasures,
-                                         gensym("fadedomain"), &fadepredomain
+                                         gensym("fadedomain"), &fadepredomain,
+                                         gensym("onsetindomain"), &onsetindomain
                                          );
     
     if (view != gensym("raw") && view != gensym("line") && view != gensym("multiline") && view != gensym("scroll")) {
@@ -217,9 +218,11 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         double length_ux_prev = r_ob->length_ux;
         double screen_ms_start_prev = r_ob->screen_ms_start;
         long fade_predomain_prev = r_ob->fade_predomain;
+        long onsetindomain_prev = r_ob->onset_in_domain;
         char send_undo_redo_bang_prev = r_ob->send_undo_redo_bang;
 
         r_ob->fade_predomain = fadepredomain;
+        r_ob->onset_in_domain = onsetindomain;
         
         if (must_cleanup) {
             close_slot_window(r_ob);
@@ -427,6 +430,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         }
 
         r_ob->fade_predomain = fade_predomain_prev;
+        r_ob->onset_in_domain = onsetindomain_prev;
         
         r_ob->send_undo_redo_bang = send_undo_redo_bang_prev;
 

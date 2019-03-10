@@ -3291,7 +3291,7 @@ void repaint_left_background_part(t_notation_obj *r_ob, t_jgraphics* g, t_rect g
     t_jrgba leftbgcolor = r_ob->j_background_rgba;
 //    if (r_ob->repaint_left_background_part_with_full_alpha)
 //        leftbgcolor.alpha = 1;
-	paint_filledrectangle(g, leftbgcolor, 0., 0, fade_left_x_pixel, graphic_rect.height);
+	paint_filledrectangle(g, leftbgcolor, 0., 0, fade_left_x_pixel+0.5, graphic_rect.height);
 	jgraphics_image_surface_draw(g, r_ob->clef_gradient_surface, build_rect(0, 0, CONST_X_LEFT_START_FADE_NUM_STEPS, 10), build_rect(fade_left_x_pixel, 0 - pad, fade_right_x_pixel - fade_left_x_pixel, graphic_rect.height + 2 * pad));
 }
 
@@ -23844,9 +23844,9 @@ char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
     char res = chord_has_dynamics(chord);
     t_dynamics *dyn = chord_get_dynamics(chord);
     
-    if (notation_item_is_selected(r_ob, (t_notation_item *)dyn))
+    if (dyn && notation_item_is_selected(r_ob, (t_notation_item *)dyn))
         notation_item_delete_from_selection(r_ob, (t_notation_item *)dyn);
-
+    
     
     if (chord->firstnote) {
         for (note = chord->firstnote; note; note = note->next)
@@ -35515,6 +35515,8 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
 	r_ob->num_prevent_editing_elems = 0;
 	r_ob->allow_linear_edit = true;
 
+    r_ob->onset_in_domain = 0;
+    
 	r_ob->rebuild_function = rebuild;
 	r_ob->whole_obj_undo_tick_function = whole_undo_tick;
 	r_ob->force_notation_item_inscreen = force_notation_item_inscreen;

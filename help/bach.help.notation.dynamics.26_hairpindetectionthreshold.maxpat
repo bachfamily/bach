@@ -88,8 +88,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 51.0, 159.5, 200.0, 23.0 ],
-					"text" : "velocities2dynamics [ thresh $1 ]"
+					"patching_rect" : [ 51.0, 159.5, 195.0, 23.0 ],
+					"text" : "velocities2dynamics @thresh $1"
 				}
 
 			}
@@ -116,8 +116,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 79.0, 214.5, 287.0, 23.0 ],
-					"text" : "velocities2dynamics [thresh 0] [unnecessary 0]"
+					"patching_rect" : [ 79.0, 214.5, 289.0, 23.0 ],
+					"text" : "velocities2dynamics @thresh 0 @unnecessary 0"
 				}
 
 			}
