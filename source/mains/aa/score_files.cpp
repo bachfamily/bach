@@ -218,46 +218,6 @@ void score_exportlilypond_pdf(t_score *x, t_symbol *s, long argc, t_atom *argv)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // av:
 // long: format
 
