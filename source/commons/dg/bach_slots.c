@@ -221,7 +221,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 
 	
 	for (i = 10; i < CONST_MAX_SLOTS; i++){
-        if (i >= 19 && i <= 22) continue;
+        if (i >= 19 && i <= 23) continue;
         
 		char temp[20];
 		snprintf_zero(temp, 20, "slot %d", i+1);
@@ -274,7 +274,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
 
     
     // Special linked slots
-    i = 19;
+    i = BACH_DEFAULT_SLOT_DYNAMICS - 1;
     r_ob->slotinfo[i].slot_name = gensym("dynamics");
     if (reinitialize)
         change_slot_type(r_ob, i, _llllobj_sym_dynamics);
@@ -299,7 +299,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     
     
     
-    i = 20;
+    i = BACH_DEFAULT_SLOT_LYRICS - 1;
     r_ob->slotinfo[i].slot_name = gensym("lyrics");
     if (reinitialize)
         change_slot_type(r_ob, i, _llllobj_sym_text);
@@ -320,7 +320,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].linked_to = k_SLOT_LINKAGE_LYRICS;
 
     
-    i = 21;
+    i = BACH_DEFAULT_SLOT_ARTICULATIONS - 1;
     r_ob->slotinfo[i].slot_name = gensym("articulations");
     if (reinitialize)
         change_slot_type(r_ob, i, _llllobj_sym_articulations);
@@ -341,7 +341,7 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].linked_to = k_SLOT_LINKAGE_ARTICULATIONS;
 
     
-    i = 22;
+    i = BACH_DEFAULT_SLOT_NOTEHEADS - 1;
     r_ob->slotinfo[i].slot_name = gensym("notehead");
     if (reinitialize)
         change_slot_type(r_ob, i, _llllobj_sym_notehead);
@@ -360,6 +360,27 @@ void initialize_slots(t_notation_obj *r_ob, char reinitialize)
     r_ob->slotinfo[i].slot_default = 0.;
     r_ob->slotinfo[i].copy_when_split = true;
     r_ob->slotinfo[i].linked_to = k_SLOT_LINKAGE_NOTEHEAD;
+
+    
+    i = BACH_DEFAULT_SLOT_ANNOTATIONS - 1;
+    r_ob->slotinfo[i].slot_name = gensym("annotation");
+    if (reinitialize)
+        change_slot_type(r_ob, i, _llllobj_sym_text);
+    else
+        r_ob->slotinfo[i].slot_type = k_SLOT_TYPE_TEXT;
+    r_ob->slotinfo[i].slot_range_par = 0.; // idle, ignored
+    r_ob->slotinfo[i].slot_key = 't';
+    r_ob->slotinfo[i].slot_range[0] = 0.; // idle, ignored
+    r_ob->slotinfo[i].slot_range[1] = 1.; // idle, ignored
+    r_ob->slotinfo[i].slot_repr = r_ob->slotinfo[i].slot_ysnap = NULL; // idle, ignored
+    r_ob->slotinfo[i].slot_num_cols = r_ob->slotinfo[i].slot_num_rows = 0; // idle, ignored
+    r_ob->slotinfo[i].slot_has_enum_rows = r_ob->slotinfo[i].slot_has_enum_cols = false; // idle, ignored
+    r_ob->slotinfo[i].slot_temporalmode = k_SLOT_TEMPORALMODE_NONE;
+    r_ob->slotinfo[i].slot_uwidth = CONST_SLOT_TEXT_DEFAULT_UWIDTH;
+    r_ob->slotinfo[i].slot_active_uheight = -1;
+    r_ob->slotinfo[i].slot_default = 0.;
+    r_ob->slotinfo[i].copy_when_split = true;
+    r_ob->slotinfo[i].linked_to = k_SLOT_LINKAGE_ANNOTATION;
 
 
     if (r_ob->obj_type == k_NOTATION_OBJECT_SLOT)

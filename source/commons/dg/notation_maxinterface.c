@@ -1603,10 +1603,11 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
         // @description Sets the slot number of the slot (of type "articulations") whose content is linked with the articulations display.
         // 0 means: none.
 
+        sprintf(tempstr, "%d", BACH_DEFAULT_SLOT_ANNOTATIONS);
         CLASS_ATTR_LONG(c,"linkannotationtoslot",0, t_notation_obj, link_annotation_to_slot);
         CLASS_ATTR_STYLE_LABEL(c,"linkannotationtoslot",0,"text","Link Text Annotation To Slot");
         CLASS_ATTR_FILTER_CLIP(c, "linkannotationtoslot", 0, CONST_MAX_SLOTS);
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linkannotationtoslot",0,"0");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linkannotationtoslot",0,tempstr);
         CLASS_ATTR_ACCESSORS(c, "linkannotationtoslot", (method)NULL, (method)notation_obj_setattr_linkannotationtoslot);
         // @exclude bach.slot
         // @description Sets the slot number of the slot whose content is to be displayed as annotation over the staff.
