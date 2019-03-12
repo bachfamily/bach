@@ -579,19 +579,19 @@ void paint_rectangle_rounded(t_jgraphics* g, t_jrgba border_color, t_jrgba fill_
 }
 
 // -1 = dim, 1 = cresc
-void paint_hairpin(t_jgraphics* g, t_jrgba color, long hairpin_type, double xstart, double xend, double middley, double semiaperture, double width, double dash_length)
+void paint_hairpin(t_jgraphics* g, t_jrgba color, long hairpin_type, double xstart, double xend, double middley, double semiaperture, double width, double dash_length, double start_aperture_normalized)
 {
     if (hairpin_type == k_DYNAMICS_HAIRPIN_CRESC || hairpin_type == k_DYNAMICS_HAIRPIN_CRESCEXP) {
         if (hairpin_type == k_DYNAMICS_HAIRPIN_CRESC || xend <= xstart) { // linear
-            paint_line(g, color, xstart, middley, xend, middley + semiaperture, width);
-            paint_line(g, color, xstart, middley, xend, middley - semiaperture, width);
+            paint_line(g, color, xstart, middley + start_aperture_normalized * semiaperture, xend, middley + semiaperture, width);
+            paint_line(g, color, xstart, middley - start_aperture_normalized * semiaperture, xend, middley - semiaperture, width);
         } else { // exponential
             double cropped_semiaperture = semiaperture * 0.6;
             double cropped_xend = MAX(xend - 1.5 * semiaperture, 0.5 * (xstart + xend));
             double cpx, cpy1, cpy2, temp; // bezier control point
             
-            paint_line(g, color, xstart, middley, cropped_xend, middley + cropped_semiaperture, width);
-            paint_line(g, color, xstart, middley, cropped_xend, middley - cropped_semiaperture, width);
+            paint_line(g, color, xstart, middley + start_aperture_normalized * semiaperture * 0.6, cropped_xend, middley + cropped_semiaperture, width);
+            paint_line(g, color, xstart, middley - start_aperture_normalized * semiaperture * 0.6, cropped_xend, middley - cropped_semiaperture, width);
             
             cpx = (cropped_xend + xend)/2.;
             temp = (cpx - xstart) * (cropped_semiaperture / (cropped_xend - xstart));
@@ -603,10 +603,10 @@ void paint_hairpin(t_jgraphics* g, t_jrgba color, long hairpin_type, double xsta
         }
     } else if (hairpin_type == k_DYNAMICS_HAIRPIN_DIM || hairpin_type == k_DYNAMICS_HAIRPIN_DIMEXP) {
         if (hairpin_type == k_DYNAMICS_HAIRPIN_DIM || xend <= xstart) { // linear
-            paint_line(g, color, xend, middley, xstart, middley + semiaperture, width);
-            paint_line(g, color, xend, middley, xstart, middley - semiaperture, width);
+            paint_line(g, color, xend, middley, xstart, middley + semiaperture * (1 - start_aperture_normalized), width);
+            paint_line(g, color, xend, middley, xstart, middley - semiaperture * (1 - start_aperture_normalized), width);
         } else { // exponential
-            double cropped_semiaperture = semiaperture * 0.6;
+            double cropped_semiaperture = semiaperture * 0.6 * (1-start_aperture_normalized);
             double cropped_xstart = MIN(xstart + 1.5 * semiaperture, 0.5 * (xstart + xend));
             double cpx, cpy1, cpy2, temp; // bezier control point
             
