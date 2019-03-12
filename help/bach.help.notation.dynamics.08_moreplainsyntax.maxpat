@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 177.0, 79.0, 617.0, 539.0 ],
+		"rect" : [ 488.0, 89.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -297,7 +297,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 299.0, 23.0 ],
-					"text" : "Plain dynamics syntax",
+					"text" : "More plain dynamics syntax",
 					"varname" : "title"
 				}
 

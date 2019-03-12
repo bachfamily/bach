@@ -77,7 +77,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 353.0, 266.0, 238.0, 21.0 ],
+					"patching_rect" : [ 347.0, 273.0, 238.0, 21.0 ],
 					"sendto" : "bach.help.filtertags",
 					"text" : "(= \"zero\" dynamics: dal niente/al niente)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
@@ -88,12 +88,12 @@
 				"box" : 				{
 					"fontsize" : 13.0,
 					"id" : "obj-22",
-					"linecount" : 4,
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 149.5, 222.0, 387.0, 65.0 ],
-					"text" : "..., ppppp, pppp, ppp, pp, p, mp, mf, f, ff, fff, ffff, fffff, ...\nsfz, sf, sffz\n...sfppppp, sfpppp, sfppp, sfpp, sfp, sfmp, sfmf\no",
+					"patching_rect" : [ 149.5, 214.0, 387.0, 79.0 ],
+					"text" : "..., ppppp, pppp, ppp, pp, p, mp, mf, f, ff, fff, ffff, fffff, ...\nsfz, sf, sffz\n...sfppppp, sfpppp, sfppp, sfpp, sfp, sfmp, sfmf\n...sfzppppp, sfzpppp, sfzppp, sfzpp, sfzp, sfzmp, sfzmf\no",
 					"textjustification" : 1
 				}
 
