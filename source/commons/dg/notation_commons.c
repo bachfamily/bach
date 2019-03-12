@@ -567,10 +567,10 @@ void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middle
     t_jfont *jf_littleclefnumber = NULL;
     const char *octave_text = NULL;
 
-	if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_GG) ||  (clef == k_CLEF_G))
-		write_text_simple_account_for_insets(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift) * step_y);
-	if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_FF) ||  (clef == k_CLEF_F))
-		write_text_simple_account_for_insets(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift) * step_y);
+    if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_GG) ||  (clef == k_CLEF_G))
+        write_text_simple_account_for_insets(r_ob, g, jf, color, Gclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (15.8 + clef_uy_shift) * step_y);
+    if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_FF) ||  (clef == k_CLEF_F))
+        write_text_simple_account_for_insets(r_ob, g, jf, color, Fclefchar, 1 + clef_ux_shift + voice_names_uwidth * zoom_y, middleC_y - (7.6 + clef_uy_shift) * step_y);
     
     
     if (octave_shift != 0 || (r_ob->show_aux_clefs && (clef == k_CLEF_FFGG || clef == k_CLEF_FGG || clef == k_CLEF_FFG || clef == k_CLEF_GG || clef == k_CLEF_FF))) {
@@ -1419,38 +1419,38 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
                 
                 bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
                 
-				prev_bpt_x = bpt_x; prev_bpt_y = bpt_y;
-				is_bpt_selected = (notation_item_is_selected(r_ob, (t_notation_item *)temp) ^ notation_item_is_preselected(r_ob, (t_notation_item *)temp));
-				if (is_bpt_selected && selected_breakpoint) 
-					*selected_breakpoint = temp; 
-				bptcolor = tail_get_color(r_ob, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, r_ob->breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
-					
-				if (r_ob->breakpoints_have_noteheads) {
-					paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift);
-				} else { 
-					paint_rhomboid(g, r_ob->j_background_rgba, bptcolor, bpt_x, bpt_y, CONST_BPT_UHEIGHT * 0.3 * r_ob->zoom_y, CONST_BPT_UHEIGHT * 0.5 * r_ob->zoom_y, 0.9);
-				}
-			} else { //it's a tail
-				if (r_ob->breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
-					paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift);
-				} else { 
-					if (r_ob->show_tails) {
-						double bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
-						paint_line(g, tailcolor, end_pos, bpt_y - 2. * r_ob->zoom_y, end_pos, bpt_y + 2. * r_ob->zoom_y, CONST_NOTETAIL_UWIDTH * r_ob->zoom_y);
-					}
-				}
-			}
-			temp = temp->next;
-		}
-		
-		if (selected_breakpoint && notation_item_is_selected(r_ob, (t_notation_item *)curr_nt->lastbreakpoint) ^ notation_item_is_preselected(r_ob, (t_notation_item *)curr_nt->lastbreakpoint))
-			*selected_breakpoint = curr_nt->lastbreakpoint;
+                prev_bpt_x = bpt_x; prev_bpt_y = bpt_y;
+                is_bpt_selected = (notation_item_is_selected(r_ob, (t_notation_item *)temp) ^ notation_item_is_preselected(r_ob, (t_notation_item *)temp));
+                if (is_bpt_selected && selected_breakpoint) 
+                    *selected_breakpoint = temp; 
+                bptcolor = tail_get_color(r_ob, curr_nt, (is_chord_selected || is_note_selected || is_durationline_selected || is_bpt_selected), is_note_played, is_note_locked, is_note_muted, is_note_solo, false, r_ob->breakpoints_have_velocity ? temp->velocity : curr_nt->velocity);
+                    
+                if (r_ob->breakpoints_have_noteheads) {
+                    paint_default_small_notehead_with_accidentals(r_ob, view, g, bptcolor, temp->delta_mc + curr_nt->midicents, bpt_x, curr_nt, system_shift);
+                } else { 
+                    paint_rhomboid(g, r_ob->j_background_rgba, bptcolor, bpt_x, bpt_y, CONST_BPT_UHEIGHT * 0.3 * r_ob->zoom_y, CONST_BPT_UHEIGHT * 0.5 * r_ob->zoom_y, 0.9);
+                }
+            } else { //it's a tail
+                if (r_ob->breakpoints_have_noteheads && (!temp->prev || temp->delta_mc != temp->prev->delta_mc)) {
+                    paint_default_small_notehead_with_accidentals(r_ob, view, g, tailcolor, temp->delta_mc + curr_nt->midicents, end_pos, curr_nt, system_shift);
+                } else { 
+                    if (r_ob->show_tails) {
+                        double bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
+                        paint_line(g, tailcolor, end_pos, bpt_y - 2. * r_ob->zoom_y, end_pos, bpt_y + 2. * r_ob->zoom_y, CONST_NOTETAIL_UWIDTH * r_ob->zoom_y);
+                    }
+                }
+            }
+            temp = temp->next;
+        }
+        
+        if (selected_breakpoint && notation_item_is_selected(r_ob, (t_notation_item *)curr_nt->lastbreakpoint) ^ notation_item_is_preselected(r_ob, (t_notation_item *)curr_nt->lastbreakpoint))
+            *selected_breakpoint = curr_nt->lastbreakpoint;
 
-	} else if (r_ob->show_durations){
-		double line_y = system_shift + mc_to_yposition(r_ob, note_get_screen_midicents(curr_nt), (t_voice *) voice);
-		paint_line(g, notecolor, start_x, line_y, end_pos, line_y, r_ob->durations_line_width * r_ob->zoom_y);
-		paint_line(g, tailcolor, end_pos, line_y - 2. * r_ob->zoom_y, end_pos, line_y + 2. * r_ob->zoom_y, r_ob->durations_line_width * r_ob->zoom_y);
-	}
+    } else if (r_ob->show_durations){
+        double line_y = system_shift + mc_to_yposition(r_ob, note_get_screen_midicents(curr_nt), (t_voice *) voice);
+        paint_line(g, notecolor, start_x, line_y, end_pos, line_y, r_ob->durations_line_width * r_ob->zoom_y);
+        paint_line(g, tailcolor, end_pos, line_y - 2. * r_ob->zoom_y, end_pos, line_y + 2. * r_ob->zoom_y, r_ob->durations_line_width * r_ob->zoom_y);
+    }
 }
 
 void initialize_or_resize_surface(t_jsurface **surface, long width, long height)
@@ -3291,8 +3291,8 @@ void repaint_left_background_part(t_notation_obj *r_ob, t_jgraphics* g, t_rect g
     t_jrgba leftbgcolor = r_ob->j_background_rgba;
 //    if (r_ob->repaint_left_background_part_with_full_alpha)
 //        leftbgcolor.alpha = 1;
-	paint_filledrectangle(g, leftbgcolor, 0., 0, fade_left_x_pixel+0.5, graphic_rect.height);
-	jgraphics_image_surface_draw(g, r_ob->clef_gradient_surface, build_rect(0, 0, CONST_X_LEFT_START_FADE_NUM_STEPS, 10), build_rect(fade_left_x_pixel, 0 - pad, fade_right_x_pixel - fade_left_x_pixel, graphic_rect.height + 2 * pad));
+    paint_filledrectangle(g, leftbgcolor, 0., 0, fade_left_x_pixel+0.5, graphic_rect.height);
+    jgraphics_image_surface_draw(g, r_ob->clef_gradient_surface, build_rect(0, 0, CONST_X_LEFT_START_FADE_NUM_STEPS, 10), build_rect(fade_left_x_pixel, 0 - pad, fade_right_x_pixel - fade_left_x_pixel, graphic_rect.height + 2 * pad));
 }
 
 // v_alignment: 1 = top, -1 = bottom
@@ -5811,73 +5811,73 @@ void change_color_depending_on_part(t_notation_obj *r_ob, t_jrgba *color, t_voic
 
 void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, char play, char locked, char muted, char solo, char linear_edited)
 {
-	if (play) {
-		color->red = r_ob->j_play_rgba.red;
-		color->blue = r_ob->j_play_rgba.blue;
-		color->green = r_ob->j_play_rgba.green;
-		color->alpha = r_ob->j_play_rgba.alpha;
-	} else {
-		char sel = selected ? k_SHOW_WHEN_SELECTED : k_SHOW_WHEN_NOT_SELECTED; 
-		if (linear_edited) {
-			*color = r_ob->j_linear_edit_rgba;
-		} else if (locked && (r_ob->show_lock_color_when & sel) && muted && (r_ob->show_mute_color_when & sel) && solo && (r_ob->show_solo_color_when & sel)) {
-			color->red = (r_ob->j_locked_rgba.red + r_ob->j_muted_rgba.red + r_ob->j_solo_rgba.red)/3.;
-			color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_muted_rgba.blue + r_ob->j_solo_rgba.blue)/3.;
-			color->green = (r_ob->j_locked_rgba.green + r_ob->j_muted_rgba.green + r_ob->j_solo_rgba.green)/3.;
-			color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_muted_rgba.alpha + r_ob->j_solo_rgba.alpha)/3.;
-		} else if (locked && (r_ob->show_lock_color_when & sel) && muted && (r_ob->show_mute_color_when & sel)) {
-			color->red = (r_ob->j_locked_rgba.red + r_ob->j_muted_rgba.red)/2.;
-			color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_muted_rgba.blue)/2.;
-			color->green = (r_ob->j_locked_rgba.green + r_ob->j_muted_rgba.green)/2.;
-			color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_muted_rgba.alpha)/2.;
-		} else if (locked && (r_ob->show_lock_color_when & sel) && solo && (r_ob->show_solo_color_when & sel)) {
-			color->red = (r_ob->j_locked_rgba.red + r_ob->j_solo_rgba.red)/2.;
-			color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_solo_rgba.blue)/2.;
-			color->green = (r_ob->j_locked_rgba.green + r_ob->j_solo_rgba.green)/2.;
-			color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_solo_rgba.alpha)/2.;
-		} else if (solo && (r_ob->show_solo_color_when & sel) && muted && (r_ob->show_mute_color_when & sel)) {
-			color->red = (r_ob->j_solo_rgba.red + r_ob->j_muted_rgba.red)/2.;
-			color->blue = (r_ob->j_solo_rgba.blue + r_ob->j_muted_rgba.blue)/2.;
-			color->green = (r_ob->j_solo_rgba.green + r_ob->j_muted_rgba.green)/2.;
-			color->alpha = (r_ob->j_solo_rgba.alpha + r_ob->j_muted_rgba.alpha)/2.;
-		} else if (locked && (r_ob->show_lock_color_when & sel)) {
-			color->red = r_ob->j_locked_rgba.red;
-			color->blue = r_ob->j_locked_rgba.blue;
-			color->green = r_ob->j_locked_rgba.green;
-			color->alpha = r_ob->j_locked_rgba.alpha;
-		} else if (muted && (r_ob->show_mute_color_when & sel)) {
-			color->red = r_ob->j_muted_rgba.red;
-			color->blue = r_ob->j_muted_rgba.blue;
-			color->green = r_ob->j_muted_rgba.green;
-			color->alpha = r_ob->j_muted_rgba.alpha;
-		} else if (solo && (r_ob->show_solo_color_when & sel)) {
-			color->red = r_ob->j_solo_rgba.red;
-			color->blue = r_ob->j_solo_rgba.blue;
-			color->green = r_ob->j_solo_rgba.green;
-			color->alpha = r_ob->j_solo_rgba.alpha;
-		} else {
+    if (play) {
+        color->red = r_ob->j_play_rgba.red;
+        color->blue = r_ob->j_play_rgba.blue;
+        color->green = r_ob->j_play_rgba.green;
+        color->alpha = r_ob->j_play_rgba.alpha;
+    } else {
+        char sel = selected ? k_SHOW_WHEN_SELECTED : k_SHOW_WHEN_NOT_SELECTED; 
+        if (linear_edited) {
+            *color = r_ob->j_linear_edit_rgba;
+        } else if (locked && (r_ob->show_lock_color_when & sel) && muted && (r_ob->show_mute_color_when & sel) && solo && (r_ob->show_solo_color_when & sel)) {
+            color->red = (r_ob->j_locked_rgba.red + r_ob->j_muted_rgba.red + r_ob->j_solo_rgba.red)/3.;
+            color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_muted_rgba.blue + r_ob->j_solo_rgba.blue)/3.;
+            color->green = (r_ob->j_locked_rgba.green + r_ob->j_muted_rgba.green + r_ob->j_solo_rgba.green)/3.;
+            color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_muted_rgba.alpha + r_ob->j_solo_rgba.alpha)/3.;
+        } else if (locked && (r_ob->show_lock_color_when & sel) && muted && (r_ob->show_mute_color_when & sel)) {
+            color->red = (r_ob->j_locked_rgba.red + r_ob->j_muted_rgba.red)/2.;
+            color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_muted_rgba.blue)/2.;
+            color->green = (r_ob->j_locked_rgba.green + r_ob->j_muted_rgba.green)/2.;
+            color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_muted_rgba.alpha)/2.;
+        } else if (locked && (r_ob->show_lock_color_when & sel) && solo && (r_ob->show_solo_color_when & sel)) {
+            color->red = (r_ob->j_locked_rgba.red + r_ob->j_solo_rgba.red)/2.;
+            color->blue = (r_ob->j_locked_rgba.blue + r_ob->j_solo_rgba.blue)/2.;
+            color->green = (r_ob->j_locked_rgba.green + r_ob->j_solo_rgba.green)/2.;
+            color->alpha = (r_ob->j_locked_rgba.alpha + r_ob->j_solo_rgba.alpha)/2.;
+        } else if (solo && (r_ob->show_solo_color_when & sel) && muted && (r_ob->show_mute_color_when & sel)) {
+            color->red = (r_ob->j_solo_rgba.red + r_ob->j_muted_rgba.red)/2.;
+            color->blue = (r_ob->j_solo_rgba.blue + r_ob->j_muted_rgba.blue)/2.;
+            color->green = (r_ob->j_solo_rgba.green + r_ob->j_muted_rgba.green)/2.;
+            color->alpha = (r_ob->j_solo_rgba.alpha + r_ob->j_muted_rgba.alpha)/2.;
+        } else if (locked && (r_ob->show_lock_color_when & sel)) {
+            color->red = r_ob->j_locked_rgba.red;
+            color->blue = r_ob->j_locked_rgba.blue;
+            color->green = r_ob->j_locked_rgba.green;
+            color->alpha = r_ob->j_locked_rgba.alpha;
+        } else if (muted && (r_ob->show_mute_color_when & sel)) {
+            color->red = r_ob->j_muted_rgba.red;
+            color->blue = r_ob->j_muted_rgba.blue;
+            color->green = r_ob->j_muted_rgba.green;
+            color->alpha = r_ob->j_muted_rgba.alpha;
+        } else if (solo && (r_ob->show_solo_color_when & sel)) {
+            color->red = r_ob->j_solo_rgba.red;
+            color->blue = r_ob->j_solo_rgba.blue;
+            color->green = r_ob->j_solo_rgba.green;
+            color->alpha = r_ob->j_solo_rgba.alpha;
+        } else {
             if (selected) {
                 color->red = r_ob->j_selection_rgba.red;
                 color->blue = r_ob->j_selection_rgba.blue;
                 color->green = r_ob->j_selection_rgba.green;
                 color->alpha = r_ob->j_selection_rgba.alpha;
             }
-		}
-	}
+        }
+    }
 }
 
 void change_color_depending_on_group(t_notation_obj *r_ob, t_jrgba *color, void* element, char type)
 {
-	if (r_ob->show_groups >= 2) {
-		t_chord *ch = NULL;
-		if (type == k_CHORD)
-			ch = (t_chord *) element;
-		else if (type == k_NOTE)
-			ch = ((t_note *) element)->parent;
-		
-		if (ch && ch->r_it.group && ch->r_it.group->ID > 0)
-			*color = long_to_color(ch->r_it.group->ID);
-	}
+    if (r_ob->show_groups >= 2) {
+        t_chord *ch = NULL;
+        if (type == k_CHORD)
+            ch = (t_chord *) element;
+        else if (type == k_NOTE)
+            ch = ((t_note *) element)->parent;
+        
+        if (ch && ch->r_it.group && ch->r_it.group->ID > 0)
+            *color = long_to_color(ch->r_it.group->ID);
+    }
 }
 
 
@@ -5893,8 +5893,8 @@ t_jrgba get_mainstaff_color(t_notation_obj *r_ob, char is_voice_selected, char i
 {
     t_jrgba staffcolor = r_ob->j_mainstaves_rgba;
     change_color_depending_on_playlockmute(r_ob, &staffcolor, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
-	return staffcolor;
-}	
+    return staffcolor;
+}    
 
 t_jrgba get_keysig_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
 {
@@ -5907,8 +5907,8 @@ t_jrgba clef_get_color(t_notation_obj *r_ob, char is_voice_selected, char is_voi
 {
     t_jrgba staffcolor = r_ob->j_clef_rgba;
     change_color_depending_on_playlockmute(r_ob, &staffcolor, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
-	return staffcolor;
-}	
+    return staffcolor;
+}    
 
 t_jrgba get_auxclef_color(t_notation_obj *r_ob, char is_voice_selected, char is_voice_locked, char is_voice_muted, char is_voice_solo)
 {
@@ -5921,29 +5921,29 @@ t_jrgba get_auxstaff_color(t_notation_obj *r_ob, char is_voice_selected, char is
 {
     t_jrgba staffcolor = r_ob->j_auxiliarystaves_rgba;
     change_color_depending_on_playlockmute(r_ob, &staffcolor, is_voice_selected, false, is_voice_locked, is_voice_muted, is_voice_solo, false);
-	return staffcolor;
-}	
+    return staffcolor;
+}    
 
 t_jrgba floatlist_slot_to_color(t_slot *slot)
 {
-	t_jrgba out_color;
-	double r = 0., g = 0., b = 0., a = 1.;
-	if (slot->firstitem){
-		r = *((double *) slot->firstitem->item);
-		if (slot->firstitem->next){
-			g = *((double *) slot->firstitem->next->item);
-			if (slot->firstitem->next->next){
-				b = *((double *) slot->firstitem->next->next->item);
-				if (slot->firstitem->next->next->next)
-					a = *((double *) slot->firstitem->next->next->next->item);
-			}
-		}
-	}
-	out_color.red = r;
-	out_color.green = g;
-	out_color.blue = b;
-	out_color.alpha = a; 
-	return out_color;
+    t_jrgba out_color;
+    double r = 0., g = 0., b = 0., a = 1.;
+    if (slot->firstitem){
+        r = *((double *) slot->firstitem->item);
+        if (slot->firstitem->next){
+            g = *((double *) slot->firstitem->next->item);
+            if (slot->firstitem->next->next){
+                b = *((double *) slot->firstitem->next->next->item);
+                if (slot->firstitem->next->next->next)
+                    a = *((double *) slot->firstitem->next->next->next->item);
+            }
+        }
+    }
+    out_color.red = r;
+    out_color.green = g;
+    out_color.blue = b;
+    out_color.alpha = a; 
+    return out_color;
 }
 
 
@@ -5960,10 +5960,10 @@ t_jrgba note_get_color(t_notation_obj *r_ob, t_note* note, char is_note_selected
         note_change_color_depending_on_slot_linkage(r_ob, &notecolor, note);
 
     change_color_depending_on_playlockmute(r_ob, &notecolor, is_note_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
-	
-	if (!note) 
-		return notecolor; // it is a rest
-	
+    
+    if (!note) 
+        return notecolor; // it is a rest
+    
     apply_velocity_handling(r_ob, &notecolor, velocity, is_note_selected, is_note_played);
     
     return notecolor;
@@ -6030,7 +6030,7 @@ t_jrgba tail_get_color(t_notation_obj *r_ob, t_note* note, char is_tail_selected
         durationline_change_color_depending_on_slot_linkage(r_ob, &tailcolor, note);
     }
     
-	change_color_depending_on_playlockmute(r_ob, &tailcolor, is_tail_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
+    change_color_depending_on_playlockmute(r_ob, &tailcolor, is_tail_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_note_linear_edited);
 
     apply_velocity_handling(r_ob, &tailcolor, velocity, is_tail_selected, is_note_played);
     
@@ -6049,8 +6049,8 @@ t_jrgba stem_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
     if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
         note_change_color_depending_on_slot_linkage(r_ob, &stemcolor, chord->firstnote);
     
-	change_color_depending_on_playlockmute(r_ob, &stemcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
-	
+    change_color_depending_on_playlockmute(r_ob, &stemcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
+    
     if (chord->firstnote)
         apply_velocity_handling(r_ob, &stemcolor, chord_get_max_velocity(r_ob, chord), is_chord_selected, is_chord_played);
     
@@ -27876,64 +27876,64 @@ t_llll* note_get_partial_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note 
 t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_considering_types mode, 
                                            double *new_start_midicents, double *new_start_velocity){
 // if mode == 2 it is a partialnote, and new_start_midicents is filled
-	t_bpt *temp;
-	double start_x_pos = 0., start_y_pos = 0., start_vel;
-	// breakpoints
-	t_llll* out_llll = llll_get();
-	llll_appendsym(out_llll, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
-	
+    t_bpt *temp;
+    double start_x_pos = 0., start_y_pos = 0., start_vel;
+    // breakpoints
+    t_llll* out_llll = llll_get();
+    llll_appendsym(out_llll, _llllobj_sym_breakpoints, 0, WHITENULL_llll);
+    
     if (new_start_velocity)
         *new_start_velocity = note->velocity;
     
-	if (new_start_midicents) 
-		*new_start_midicents = note->midicents;
-	
-	temp = note->firstbreakpoint;
-	if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) { // partial notes!
-		double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-		while (temp && note->parent->onset + temp->rel_x_pos * note->duration < hot_point)
-			temp = temp->next;
-		if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * note->duration != hot_point)) {
-			double rel_x_pos_ratio;
-			t_llll *inner2_llll;
-			start_x_pos = (hot_point - note->parent->onset) / note->duration;
-			rel_x_pos_ratio = (start_x_pos - temp->prev->rel_x_pos) /(temp->rel_x_pos - temp->prev->rel_x_pos);
-			start_y_pos = temp->prev->delta_mc + rel_x_pos_ratio * (temp->delta_mc - temp->prev->delta_mc);
-			if (temp->delta_mc >= temp->prev->delta_mc)
-				start_y_pos = rescale_with_slope(start_y_pos, temp->prev->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->delta_mc, temp->slope);
-			else
-				start_y_pos = temp->delta_mc + temp->prev->delta_mc - rescale_with_slope(temp->prev->delta_mc - start_y_pos, 0, temp->prev->delta_mc - temp->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->slope);
-			
-			inner2_llll = llll_get();
-			if (new_start_midicents) 
-				*new_start_midicents = note->midicents + start_y_pos; // resetting start midicents
-			llll_appenddouble(inner2_llll, 0., 0, WHITENULL_llll); // new relative x position: 0.
-			llll_appenddouble(inner2_llll, 0., 0, WHITENULL_llll); // y position: 0.
-			llll_appenddouble(inner2_llll, 0., 0, WHITENULL_llll); // first point: slope = 0.
-			if (r_ob->breakpoints_have_velocity) {
-				start_vel = temp->prev->velocity + rel_x_pos_ratio * (temp->velocity - temp->prev->velocity);
-				if (new_start_velocity) 
-					*new_start_velocity = start_vel; // resetting start velocity
-				llll_appendlong(inner2_llll, round(start_vel), 0, WHITENULL_llll); // velocity
-			}
-			llll_appendllll(out_llll, inner2_llll, 0, WHITENULL_llll);
-		}
-	}
-	while (temp) {
-		t_llll* inner2_llll = llll_get();
-		
-		llll_appenddouble(inner2_llll, (temp->rel_x_pos - start_x_pos)/(1-start_x_pos), 0, WHITENULL_llll); // relative x position
-		llll_appenddouble(inner2_llll, temp->delta_mc - start_y_pos, 0, WHITENULL_llll); // y position
-		llll_appenddouble(inner2_llll, temp->slope, 0, WHITENULL_llll); // slope
-		if (r_ob->breakpoints_have_velocity)
-			llll_appendlong(inner2_llll, temp->velocity, 0, WHITENULL_llll); // velocity
-		
-		llll_appendllll(out_llll, inner2_llll, 0, WHITENULL_llll);
-		
-		temp = temp->next;
-	}
-	
-	return out_llll;
+    if (new_start_midicents) 
+        *new_start_midicents = note->midicents;
+    
+    temp = note->firstbreakpoint;
+    if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) { // partial notes!
+        double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
+        while (temp && note->parent->onset + temp->rel_x_pos * note->duration < hot_point)
+            temp = temp->next;
+        if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * note->duration != hot_point)) {
+            double rel_x_pos_ratio;
+            t_llll *inner2_llll;
+            start_x_pos = (hot_point - note->parent->onset) / note->duration;
+            rel_x_pos_ratio = (start_x_pos - temp->prev->rel_x_pos) /(temp->rel_x_pos - temp->prev->rel_x_pos);
+            start_y_pos = temp->prev->delta_mc + rel_x_pos_ratio * (temp->delta_mc - temp->prev->delta_mc);
+            if (temp->delta_mc >= temp->prev->delta_mc)
+                start_y_pos = rescale_with_slope(start_y_pos, temp->prev->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->delta_mc, temp->slope);
+            else
+                start_y_pos = temp->delta_mc + temp->prev->delta_mc - rescale_with_slope(temp->prev->delta_mc - start_y_pos, 0, temp->prev->delta_mc - temp->delta_mc, temp->delta_mc, temp->prev->delta_mc, temp->slope);
+            
+            inner2_llll = llll_get();
+            if (new_start_midicents) 
+                *new_start_midicents = note->midicents + start_y_pos; // resetting start midicents
+            llll_appenddouble(inner2_llll, 0., 0, WHITENULL_llll); // new relative x position: 0.
+            llll_appenddouble(inner2_llll, 0., 0, WHITENULL_llll); // y position: 0.
+            llll_appenddouble(inner2_llll, 0., 0, WHITENULL_llll); // first point: slope = 0.
+            if (r_ob->breakpoints_have_velocity) {
+                start_vel = temp->prev->velocity + rel_x_pos_ratio * (temp->velocity - temp->prev->velocity);
+                if (new_start_velocity) 
+                    *new_start_velocity = start_vel; // resetting start velocity
+                llll_appendlong(inner2_llll, round(start_vel), 0, WHITENULL_llll); // velocity
+            }
+            llll_appendllll(out_llll, inner2_llll, 0, WHITENULL_llll);
+        }
+    }
+    while (temp) {
+        t_llll* inner2_llll = llll_get();
+        
+        llll_appenddouble(inner2_llll, (temp->rel_x_pos - start_x_pos)/(1-start_x_pos), 0, WHITENULL_llll); // relative x position
+        llll_appenddouble(inner2_llll, temp->delta_mc - start_y_pos, 0, WHITENULL_llll); // y position
+        llll_appenddouble(inner2_llll, temp->slope, 0, WHITENULL_llll); // slope
+        if (r_ob->breakpoints_have_velocity)
+            llll_appendlong(inner2_llll, temp->velocity, 0, WHITENULL_llll); // velocity
+        
+        llll_appendllll(out_llll, inner2_llll, 0, WHITENULL_llll);
+        
+        temp = temp->next;
+    }
+    
+    return out_llll;
 }
 
 t_llll* note_get_articulation_values_as_llll(t_notation_obj *r_ob, t_note *note){
@@ -28592,41 +28592,41 @@ t_llll* get_rollnote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_c
     // pitch or midicents
     note_appendpitch_to_llll_for_gathered_syntax_or_playout(r_ob, out_llll, note, mode);
     
-	if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)
-		llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->play_head_start_ms, 0, WHITENULL_llll); // duration
-	else if (mode == k_CONSIDER_FOR_SAMPLING) 
-		llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->curr_sampling_ms, 0, WHITENULL_llll); // duration
-	else 
-		llll_appenddouble(out_llll, note->duration, 0, WHITENULL_llll); // duration
-	
+    if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE)
+        llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->play_head_start_ms, 0, WHITENULL_llll); // duration
+    else if (mode == k_CONSIDER_FOR_SAMPLING) 
+        llll_appenddouble(out_llll, (note->parent->onset + note->duration) - r_ob->curr_sampling_ms, 0, WHITENULL_llll); // duration
+    else 
+        llll_appenddouble(out_llll, note->duration, 0, WHITENULL_llll); // duration
+    
     llll_appendlong(out_llll, note->velocity, 0, WHITENULL_llll); // velocity
 
-	if (should_output_note_graphics(r_ob, note, mode))
-		llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
-	
-	// see if we need breakpoint extras
-	if (note_breakpoints_are_nontrivial(r_ob, note)) {
-		llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
-		if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
-			hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
-			hatom_setlong(&out_llll->l_head->l_next->l_next->l_hatom, round(new_vel));
-			if (mode == k_CONSIDER_FOR_SAMPLING)
-				llll_betail(out_llll); // don't need breakpoints
-		}
-	}
-		
-	// see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
-	if (notation_item_has_slot_content(r_ob, (t_notation_item *)note))
-		llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false), 0, WHITENULL_llll);	
+    if (should_output_note_graphics(r_ob, note, mode))
+        llll_appendllll(out_llll, note_get_graphic_values_as_llll(r_ob, note), 0, WHITENULL_llll);
+    
+    // see if we need breakpoint extras
+    if (note_breakpoints_are_nontrivial(r_ob, note)) {
+        llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
+        if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
+            hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
+            hatom_setlong(&out_llll->l_head->l_next->l_next->l_hatom, round(new_vel));
+            if (mode == k_CONSIDER_FOR_SAMPLING)
+                llll_betail(out_llll); // don't need breakpoints
+        }
+    }
+        
+    // see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
+    if (notation_item_has_slot_content(r_ob, (t_notation_item *)note))
+        llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false), 0, WHITENULL_llll);    
 
-	// see if we need articulations
-	if (note->num_articulations > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)
-		llll_appendllll(out_llll, note_get_articulation_values_as_llll(r_ob, note), 0, WHITENULL_llll);	
+    // see if we need articulations
+    if (note->num_articulations > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)
+        llll_appendllll(out_llll, note_get_articulation_values_as_llll(r_ob, note), 0, WHITENULL_llll);    
 
-	if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)) 
-		llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)note, true), 0, WHITENULL_llll);
+    if (mode == k_CONSIDER_FOR_UNDO || (note->r_it.names->l_size > 0 && mode != k_CONSIDER_FOR_EXPORT_OM && mode != k_CONSIDER_FOR_EXPORT_PWGL)) 
+        llll_appendllll(out_llll, get_names_as_llll((t_notation_item *)note, true), 0, WHITENULL_llll);
 
-	if (mode == k_CONSIDER_FOR_SAMPLING)
+    if (mode == k_CONSIDER_FOR_SAMPLING)
         llll_append_notationitem_global_flag(r_ob, out_llll, (t_notation_item *)note);
     else
         llll_append_notationitem_flag(r_ob, out_llll, (t_notation_item *)note);
@@ -35518,9 +35518,9 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
 
     r_ob->onset_in_domain = 0;
     
-	r_ob->rebuild_function = rebuild;
-	r_ob->whole_obj_undo_tick_function = whole_undo_tick;
-	r_ob->force_notation_item_inscreen = force_notation_item_inscreen;
+    r_ob->rebuild_function = rebuild;
+    r_ob->whole_obj_undo_tick_function = whole_undo_tick;
+    r_ob->force_notation_item_inscreen = force_notation_item_inscreen;
     r_ob->undo_redo_function = undo_redo_fn;
     r_ob->paint_ext_function = paint_extended;
     

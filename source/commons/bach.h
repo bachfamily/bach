@@ -81,10 +81,10 @@
 		
 		#ifdef CONFIGURATION_Development
 			//#define BACH_SHOW_POOL_USAGE
-//			#define BACH_CHECK_LLLLS
-//			#define BACH_PEDANTICALLY_CHECK_LLLLS
-//			#define BACH_CHECK_PHONENUMBERS
-//			#define BACH_USE_MAGIC_NUMBER
+			//#define BACH_CHECK_LLLLS
+			//#define BACH_PEDANTICALLY_CHECK_LLLLS
+			//#define BACH_CHECK_PHONENUMBERS
+			//#define BACH_USE_MAGIC_NUMBER
 
 			//#define BACH_TRACK_MEMORY_ALLOCATION
 			//#define BACH_SAVE_STACK_WITH_MEMORY_LOGS // useless if BACH_TRACK_MEMORY_ALLOCATION is undefined, and anyway only works on a Mac

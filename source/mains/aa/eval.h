@@ -1,13 +1,13 @@
 //
-//  code.h
+//  eval.h
 //  bach
 //
 //  Created by Andrea Agostini on 30/03/18.
 //
 //
 
-#ifndef code_h
-#define code_h
+#ifndef eval_h
+#define eval_h
 
 #include <unordered_map>
 #include "llllobj.h"

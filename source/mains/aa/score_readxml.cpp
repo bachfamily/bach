@@ -155,6 +155,8 @@ private:
         std::string dyn;
         enum types { standard, wedge, wedgeEnd } type;
         
+        dynamics(std::string dyn, types type, t_rational timePos, double relativeX = 0) : slotTimedThing(timePos, relativeX), dyn(dyn), type(type) { }
+        
         dynamics(const char * dyn, types type, t_rational timePos, double relativeX = 0) : slotTimedThing(timePos, relativeX), dyn(dyn), type(type) { }
         
     };
@@ -379,59 +381,6 @@ private:
                         }
                     }
                 }
-                
-
-#ifdef xyxyxyxy
-                dynamicsllData* data = &owner->owner->lastDynamicsData;
-                
-                for (auto d : dynamicsSlotContents) {
-                    t_rational offset = d->offset;
-                    t_rational timePos = d->timePos;
-                    t_symbol* sym = gensym(d->dyn.c_str());
-
-                    switch(d->type) {
-                            
-                        case dynamics::types::standard :
-                        case dynamics::types::wedgeEnd : {
-                            if (timePos != data->timePos) {
-                                data->dyn = llll_get();
-                                llll_appenddouble(data->dyn, offset);
-                                data->value = llll_get();
-                                if (data->value->l_size > 0 &&
-                                    hatom_getsym(&data->value->l_tail->l_hatom) == gensym("|")) {
-                                    hatom_change_to_sym(&data->value->l_tail->l_hatom, sym);
-                                } else {
-                                    llll_appendsym(data->value, sym);
-                                }
-                                llll_appendllll(data->dyn, data->value);
-                                data->wedge = llll_appendsym(data->dyn, gensym("="));
-                                data->timePos = timePos;
-                                llll_appendllll(dynamicsll, data->dyn);
-                            } else {
-                                llll_appendsym(data->value, sym);
-                            }
-                            break;
-                        }
-                            
-                        case dynamics::types::wedge : {
-                            if (timePos != data->timePos) {
-                                data->dyn = llll_get();
-                                llll_appenddouble(data->dyn, offset);
-                                data->value = llll_get();
-                                llll_appendllll(data->dyn, data->value);
-                                data->wedge = llll_appendsym(data->dyn, sym);
-                                data->timePos = timePos;
-                                llll_appendllll(dynamicsll, data->dyn);
-                            } else {
-                                hatom_change_to_sym(&data->wedge->l_hatom, sym);
-                            }
-                            break;
-                        }
-                    }
-                    llll_appendllll(dynamicsll, data->dyn);
-                }
-
-#endif // xyxyxyxy
                 
                 if (dynamicsll->l_size > 0) {
                     llll_prependlong(dynamicsll, dynamicsSlot);
@@ -1131,7 +1080,7 @@ private:
             currentVoice->currentMeasure->getMeasureInfo()->timeSig = timeSig;
         }
         
-        void finalize() {
+        void finalize(bool singleDyns, bool singleDirs) {
 
             theTimedThings.sort();
             
@@ -1152,15 +1101,16 @@ private:
                     for (chord* lc : lastChordsAndRests) {
                         if (!lc)
                             continue;
-                        note* candidate = lc->findNoteForSlots();
-                        if (!found || candidate->prevDuration < found->prevDuration) {
+                        note* candidate = lc->findNoteForSlots(singleDirs);
+                        if (!found ||
+                            (!singleDirs && candidate->tieStart->owner->timePos > found->tieStart->owner->timePos)) {
                             found = candidate;
                         }
                     }
                     int v = found->owner->owner->num;
                     w->owner = voices[v];
                     w->refNote = found;
-                    w->setOffset();
+                    w->setOffset(singleDirs);
                     found->directionSlotContents.push_back(w);
                     
                 } else if (dynamics *d = dynamic_cast<dynamics*>(thing)) {
@@ -1171,7 +1121,7 @@ private:
                             if (d && d->type == dynamics::types::wedge) {
                                 int v = d->owner->num;
                                 if (lastChords[v]) {
-                                    found = lastChords[v]->findNoteForSlots();
+                                    found = lastChords[v]->findNoteForSlots(singleDyns);
                                     break;
                                 }
                             }
@@ -1183,7 +1133,8 @@ private:
                             if (!lc)
                                 continue;
                             note* candidate = lc->findNoteForSlots();
-                            if (!found || candidate->prevDuration < found->prevDuration) {
+                            if (!found ||
+                                (!singleDyns && candidate->tieStart->owner->timePos > found->tieStart->owner->timePos)) {
                                 found = candidate;
                             }
                         }
@@ -1193,7 +1144,7 @@ private:
                         int v = found->owner->owner->num;
                         d->owner = voices[v];
                         d->refNote = found;
-                        d->setOffset();
+                        d->setOffset(singleDyns);
                         found->dynamicsSlotContents.push_back(d);
                         lastDynamic[v] = d;
                     }
@@ -1358,7 +1309,9 @@ private:
 public:
     
     long dynamicsSlot;
+    bool singleDyns;
     long directionsSlot;
+    bool singleDirs;
     
     score(t_score *obj,
           long dynamicsSlot,
@@ -1367,7 +1320,19 @@ public:
         obj(obj),
         dynamicsSlot(dynamicsSlot),
         directionsSlot(directionsSlot)
-    { }
+    {
+        if (dynamicsSlot)
+            singleDyns = obj->r_ob.slotinfo[dynamicsSlot - 1].slot_singleslotfortiednotes;
+        else
+            singleDyns = false;
+        
+        if (directionsSlot)
+            singleDirs = obj->r_ob.slotinfo[directionsSlot - 1].slot_singleslotfortiednotes;
+        else
+            singleDirs = false;
+        
+        
+    }
     
     void addPart() {
         currentPart = new part(this, parts.size());
@@ -1419,7 +1384,7 @@ public:
     }
     
     void finalizePart() {
-        currentPart->finalize();
+        currentPart->finalize(singleDyns, singleDirs);
     }
     
     bool isThereAnOpenChord() {
@@ -1471,16 +1436,15 @@ void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXM
     t_rational position;
     tempo* foundTempo = nullptr;
     mxml_node_t *offsetXML = mxmlFindElement(directionXML, directionXML, "offset", NULL, NULL, MXML_DESCEND_FIRST);
+
+    std::vector<timedThing<voice>*> found;
+    bool foundDynamics = false;
+    
     if (offsetXML) {
         position = global_position + t_rational(mxmlGetInteger(offsetXML), divisions);
     } else {
         position = global_position;
     }
-    
-    /*for (mxml_node_t *typeXML = mxmlFindElement(directionXML, directionXML, "direction-type", NULL, NULL, MXML_DESCEND_FIRST);
-     typeXML;
-     typeXML = mxmlFindElement(typeXML, typeXML, "direction-type", NULL, NULL, MXML_NO_DESCEND))*/
-    
     
     for (mxml_node_t *typeXML = mxmlGetFirstChild(directionXML);
          typeXML;
@@ -1500,13 +1464,14 @@ void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXM
                 
                 dynamics::types type = dynamics::types::standard;
                 
-                if (!strcmp(itemName, "dynamics")) {
-                    for (long di = 0; di < num_xml_accepted_dynamics; di++) {
-                        if (mxmlFindElement(itemXML, itemXML, xml_accepted_dynamics[di], NULL, NULL, MXML_DESCEND_FIRST)) {
-                            dynamics *dyn = new dynamics(xml_accepted_dynamics[di], type, position, 0);
-                            insert(dyn);
-                        }
+                if (!strcmp(itemName, "dynamics") && itemXML->child) {
+                    const char *itemContents = mxmlGetElement(itemXML->child);
+                    if (itemContents && *itemContents) {
+                        dynamics *dyn = new dynamics(itemContents, type, position, 0);
+                        found.push_back(dyn);
+                        foundDynamics = true;
                     }
+                    
                 } else if (!strcmp(itemName, "wedge")) {
                     char hairpin = 0;
                     const char *wedgetypetxt = mxmlElementGetAttr(itemXML, "type");
@@ -1533,13 +1498,14 @@ void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXM
                     
                     dynamics *dyn = new dynamics(dynamics_text, type, position, 0);
                     
-                    insert(dyn);
+                    found.push_back(dyn);
+                    foundDynamics = true;
                     
                 } else if (!strcmp(itemName, "words")) {
                     const char *itemContents = mxmlGetOpaque(itemXML);
                     if (itemContents && *itemContents) {
                         words *w = new words(itemContents, position, 0);
-                        insert(w);
+                        found.push_back(w);
                     }
                 } else if (!strcmp(itemName, "metronome")) {
                     
@@ -1587,6 +1553,22 @@ void score::timedThingContainer::insertDirectionFromXML(mxml_node_t *directionXM
                 insert(foundTempo);
             } else if (const char* velocitytxt = mxmlElementGetAttr(typeXML, "dynamics"); velocitytxt) {
                 *velocity = strtod(velocitytxt, NULL) / 100. * 90.;
+            }
+        }
+    }
+    
+    if (!foundDynamics) {
+        for (auto f : found) {
+            insert(f);
+        }
+    } else {
+        for (auto f : found) {
+            if (dynamics* d = dynamic_cast<dynamics*>(f)) {
+                insert(d);
+            } else if (words *w = dynamic_cast<words*>(f)) {
+                d = new dynamics(w->txt, dynamics::types::standard, position, 0);
+                insert(d);
+                delete f;
             }
         }
     }

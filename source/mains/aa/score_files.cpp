@@ -82,20 +82,21 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
     long noteheadslot = x->r_ob.link_notehead_to_slot;
     long articulationsslot = x->r_ob.link_articulations_to_slot;
     long dynamicsslot = x->r_ob.link_dynamics_to_slot;
-    long import_lyrics = 1, import_noteheads = 1, import_articulations = 1, import_dynamics = 1, directionsslot = 0;
+    long directionsslot = x->r_ob.link_annotation_to_slot;
+    long import_lyrics = 1, import_noteheads = 1, import_articulations = 1, import_dynamics = 1, import_directions = 1;
 
-    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiiiii",
-                   gensym("filename"), &filename_sym,
-                   gensym("parenthesizedquartertones"), &parenthesizedquartertones,
-                   gensym("importlyrics"), &lyricsslot,
-                   gensym("importnoteheads"), &noteheadslot,
-                   gensym("importarticulations"), &articulationsslot,
-                   gensym("lyrics"), &import_lyrics,
-                   gensym("noteheads"), &import_noteheads,
-                   gensym("articulations"), &import_articulations,
-                   gensym("dynamics"), &import_dynamics,
-                   gensym("directionsslot"), &directionsslot
-                   );
+    llll_parseargs_and_attrs_destructive((t_object *) x, arguments, "siiiiiiiiii",
+                                         gensym("filename"), &filename_sym,
+                                         gensym("parenthesizedquartertones"), &parenthesizedquartertones,
+                                         gensym("importlyrics"), &lyricsslot,
+                                         gensym("importnoteheads"), &noteheadslot,
+                                         gensym("importarticulations"), &articulationsslot,
+                                         gensym("lyrics"), &import_lyrics,
+                                         gensym("noteheads"), &import_noteheads,
+                                         gensym("articulations"), &import_articulations,
+                                         gensym("dynamics"), &import_dynamics,
+                                         gensym("annotations"), &import_directions,
+                                         gensym("directionsslot"), &directionsslot);
     
     if (!import_lyrics)
         lyricsslot = 0;
@@ -105,6 +106,8 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
         articulationsslot = 0;
     if (!import_dynamics)
         dynamicsslot = 0;
+    if (!import_directions)
+        directionsslot = 0;
 
     if (arguments->l_size >= 1 && hatom_gettype(&arguments->l_head->l_hatom) == H_SYM) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -216,46 +219,6 @@ void score_exportlilypond_pdf(t_score *x, t_symbol *s, long argc, t_atom *argv)
     atom_setobj(&av, arguments);
     defer(x, (method) score_dowritelilypond_pdf, s, 1, &av);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // av:
