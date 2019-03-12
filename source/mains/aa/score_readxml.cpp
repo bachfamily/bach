@@ -1080,7 +1080,7 @@ private:
             currentVoice->currentMeasure->getMeasureInfo()->timeSig = timeSig;
         }
         
-        void finalize() {
+        void finalize(bool singleDyns, bool singleDirs) {
 
             theTimedThings.sort();
             
@@ -1101,15 +1101,16 @@ private:
                     for (chord* lc : lastChordsAndRests) {
                         if (!lc)
                             continue;
-                        note* candidate = lc->findNoteForSlots();
-                        if (!found || candidate->tieStart->owner->timePos > found->tieStart->owner->timePos) {
+                        note* candidate = lc->findNoteForSlots(singleDirs);
+                        if (!found ||
+                            (!singleDirs && candidate->tieStart->owner->timePos > found->tieStart->owner->timePos)) {
                             found = candidate;
                         }
                     }
                     int v = found->owner->owner->num;
                     w->owner = voices[v];
                     w->refNote = found;
-                    w->setOffset();
+                    w->setOffset(singleDirs);
                     found->directionSlotContents.push_back(w);
                     
                 } else if (dynamics *d = dynamic_cast<dynamics*>(thing)) {
@@ -1120,7 +1121,7 @@ private:
                             if (d && d->type == dynamics::types::wedge) {
                                 int v = d->owner->num;
                                 if (lastChords[v]) {
-                                    found = lastChords[v]->findNoteForSlots();
+                                    found = lastChords[v]->findNoteForSlots(singleDyns);
                                     break;
                                 }
                             }
@@ -1132,7 +1133,8 @@ private:
                             if (!lc)
                                 continue;
                             note* candidate = lc->findNoteForSlots();
-                            if (!found || candidate->tieStart->owner->timePos > found->tieStart->owner->timePos) {
+                            if (!found ||
+                                (!singleDyns && candidate->tieStart->owner->timePos > found->tieStart->owner->timePos)) {
                                 found = candidate;
                             }
                         }
@@ -1142,7 +1144,7 @@ private:
                         int v = found->owner->owner->num;
                         d->owner = voices[v];
                         d->refNote = found;
-                        d->setOffset();
+                        d->setOffset(singleDyns);
                         found->dynamicsSlotContents.push_back(d);
                         lastDynamic[v] = d;
                     }
@@ -1307,7 +1309,9 @@ private:
 public:
     
     long dynamicsSlot;
+    bool singleDyns;
     long directionsSlot;
+    bool singleDirs;
     
     score(t_score *obj,
           long dynamicsSlot,
@@ -1316,7 +1320,19 @@ public:
         obj(obj),
         dynamicsSlot(dynamicsSlot),
         directionsSlot(directionsSlot)
-    { }
+    {
+        if (dynamicsSlot)
+            singleDyns = obj->r_ob.slotinfo[dynamicsSlot - 1].slot_singleslotfortiednotes;
+        else
+            singleDyns = false;
+        
+        if (directionsSlot)
+            singleDirs = obj->r_ob.slotinfo[directionsSlot - 1].slot_singleslotfortiednotes;
+        else
+            singleDirs = false;
+        
+        
+    }
     
     void addPart() {
         currentPart = new part(this, parts.size());
@@ -1368,7 +1384,7 @@ public:
     }
     
     void finalizePart() {
-        currentPart->finalize();
+        currentPart->finalize(singleDyns, singleDirs);
     }
     
     bool isThereAnOpenChord() {
