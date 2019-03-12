@@ -1,5 +1,5 @@
 //
-//  bach_utilities.cpp
+//  bach_codableobj.cpp
 //  lib_bach
 //
 //  Created by Andrea Agostini on 19/07/2018.
@@ -19,20 +19,29 @@ long bach_atoms2text(long ac, t_atom *av, char **buf)
 {
     long textsize = 0;
     atom_gettext(ac, av, &textsize, buf, OBEX_UTIL_ATOM_GETTEXT_NUM_HI_RES);
-    *buf = sysmem_resizeptr(*buf, textsize + 1);
-    (*buf)[textsize - 1] = ' ';
-    (*buf)[textsize] = 0;
-    
-    for (char *c = *buf; *c; c++) {
-        if (*c == '\\' &&
-            (*(c+1) == ',' || *(c+1) == ';' || *(c+1) == '$')) {
-            for (char *d = c; *d; d++)
-                *d = *(d + 1);
-            textsize--;
+    if (textsize > 0) {
+        *buf = sysmem_resizeptr(*buf, textsize + 1);
+        
+        (*buf)[textsize - 1] = ' ';
+        (*buf)[textsize] = 0;
+        
+        for (char *c = *buf; *c; c++) {
+            if (*c == '\\' &&
+                (*(c+1) == ',' || *(c+1) == ';' || *(c+1) == '$')) {
+                for (char *d = c; *d; d++)
+                    *d = *(d + 1);
+                textsize--;
+            }
         }
+        
+        return textsize + 1;
+        
+    } else {
+        *buf = sysmem_newptr(1);
+        **buf = 0;
+        return 1;
     }
 
-    return textsize + 1;
 }
 
 
@@ -513,7 +522,7 @@ long codableobj_getCodeFromAtomsWithSeparators(t_codableobj *x, long ac, t_atom 
     bach_atomic_lock(&x->c_lock);
     x->c_text = buf;
     bach_atomic_unlock(&x->c_lock);
-    return textsize + 1;
+    return textsize;
 }
 
 long codableobj_getCodeFromAtoms(t_codableobj *x, long ac, t_atom *av)
