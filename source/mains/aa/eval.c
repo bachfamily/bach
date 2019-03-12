@@ -294,7 +294,8 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         
         long codeac = -1;
 
-        if (ac) {
+        if (ac &&
+            (atom_gettype(av) != A_SYM || *atom_getsym(av)->s_name != '@')) {
             // we build the ast from the text with the atom separators,
             // as this allows us to figure out where the object attributes begin
             codableobj_getCodeFromAtomsWithSeparators((t_codableobj *) x, ac, av);
