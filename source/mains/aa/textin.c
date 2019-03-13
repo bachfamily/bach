@@ -112,8 +112,8 @@ int T_EXPORT main()
     
      CLASS_ATTR_SYM(c, "ignore",	0,	t_textin, n_ignore_sym);
      CLASS_ATTR_LABEL(c, "ignore", 0, "Ignore Categories");
-     CLASS_ATTR_BASIC(c, "ignore", 0);
-     CLASS_ATTR_ACCESSORS(c, "ignore", (method)NULL, (method)llllobj_dummy_setter)
+     //CLASS_ATTR_BASIC(c, "ignore", 0);
+     // CLASS_ATTR_ACCESSORS(c, "ignore", (method)NULL, (method)llllobj_dummy_setter)
      // @description The <m>ignore</m> attribute allows preventing certain categories
      // of elements from being interpreted according to the usual bach syntax.
      // Categories are expressed by letters, according to the following table:<br />
@@ -249,6 +249,8 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
             *this_outlets = '4';
         *this_outlets = 0;
         llllobj_obj_setup((t_llllobj_object *) x, 0, outlets);
+        
+        x->n_ignore_sym = gensym("");
         
         for (i = true_ac ; i < ac - 1; i++) {
             t_symbol *symattr = atom_getsym(av + i);

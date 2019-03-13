@@ -3933,36 +3933,36 @@ typedef struct _notation_obj
     char        show_part_colors;       ///< Display different voice parts as different colors
     long        active_part;            ///< 1-based number of the active part
     
-	t_group		*firstgroup;			///< Pointer to the first group
-	t_group		*lastgroup;				///< Pointer to the last group
-	long		num_groups;				///< Number of groups 
-	char		show_groups;			///< Do we want to graphically show the links between elements of the same group? 
-	
-	char		show_label_families;	///< Do we want to graphically distinguish the label families, i.e. the groups of notation items sharing the same names?
-	
+    t_group        *firstgroup;            ///< Pointer to the first group
+    t_group        *lastgroup;                ///< Pointer to the last group
+    long        num_groups;                ///< Number of groups 
+    char        show_groups;            ///< Do we want to graphically show the links between elements of the same group? 
+    
+    char        show_label_families;    ///< Do we want to graphically distinguish the label families, i.e. the groups of notation items sharing the same names?
+    
     // clefs
     char            show_clefs;                     ///< Toggles the display of clefs
     char            show_aux_clefs;   ///< Toggles the display of G15ma/F15mb clefs in clef-combinations such as FFGG, FGG, FFG, etc.
-	t_symbol		**clefs_as_symlist;				///< List of clefs as symbols (one for each voice).
-													///< Functions clef_symbol_to_clef_number() and clef_number_to_clef_symbol() operate conversions 
-													///< between symbols (such as "G", "F"...) and numbers (such as #k_CLEF_G, #k_CLEF_F...)
-													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+    t_symbol        **clefs_as_symlist;                ///< List of clefs as symbols (one for each voice).
+                                                    ///< Functions clef_symbol_to_clef_number() and clef_number_to_clef_symbol() operate conversions 
+                                                    ///< between symbols (such as "G", "F"...) and numbers (such as #k_CLEF_G, #k_CLEF_F...)
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
     
     
     
-	t_llll			*voicenames_as_llll;			///< Voicenames represented in llll form (one llllelem for each voice)
-	char			*hidevoices_as_charlist;		///< List of 0's and 1's (one for each voice), depending if the voice is hidden (1) or not (0)
-													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
-	double			*voiceuspacing_as_floatlist;	///< List of unscaled distances (in pixel) between voices. First element is the space before 
-													///< first voice, last element is the space after last voice (and thus these values are #num_voices + 1
-													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
-													///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in notation_obj_init() and freed by notation_obj_free()
-	t_symbol		**keys_as_symlist;				///< List of key signatures as symbols (one symbol for each voice). 'M' = major, 'm' = minor, so "C#M" is C# major, and so on. 
-													///< Latin and anglosaxon syntax accepted. Functions parse_sym_to_key_and_mode() and notename2midicents()
-													///< operate parsing and conversions
-													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
-	long			*midichannels_as_longlist;		///< List of midichannels (one for each voice). 
-													///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+    t_llll            *voicenames_as_llll;            ///< Voicenames represented in llll form (one llllelem for each voice)
+    char            *hidevoices_as_charlist;        ///< List of 0's and 1's (one for each voice), depending if the voice is hidden (1) or not (0)
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+    double            *voiceuspacing_as_floatlist;    ///< List of unscaled distances (in pixel) between voices. First element is the space before 
+                                                    ///< first voice, last element is the space after last voice (and thus these values are #num_voices + 1
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+                                                    ///< It is an array with #CONST_MAX_VOICES + 1 elements allocated in notation_obj_init() and freed by notation_obj_free()
+    t_symbol        **keys_as_symlist;                ///< List of key signatures as symbols (one symbol for each voice). 'M' = major, 'm' = minor, so "C#M" is C# major, and so on. 
+                                                    ///< Latin and anglosaxon syntax accepted. Functions parse_sym_to_key_and_mode() and notename2midicents()
+                                                    ///< operate parsing and conversions
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
+    long            *midichannels_as_longlist;        ///< List of midichannels (one for each voice). 
+                                                    ///< It is an array with #CONST_MAX_VOICES elements allocated in notation_obj_init() and freed by notation_obj_free()
 
     // tuttipoints, for bach.score
     t_tuttipoint    *firsttuttipoint;               ///< First tuttipoint
@@ -4253,28 +4253,28 @@ typedef struct _notation_obj
     char        fade_predomain;     ///< Fade a small left portion of score, before the domain start, with an alpha gradient
     char        onset_in_domain;      ///< Only paint notes whose onset is inside the domain
 
-	// horizontal scrolling
-	char		show_hscrollbar;		///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
-	char		need_hscrollbar;		///< Flag telling if we need (1) or not (0) the horizontal scrollbar
-	double		hscrollbar_pos;			///< Relative position (0. to 1.) of the horizontal scrollbar (0 = completely at left, 1 = completely at right)
-	double		hscrollbar_x;			///< Pixel position of the leftmost point of the horizontal scrollbar.
-										///< This can range from <inset_x> to <j_inset_x> + <inner_width> - <hscrollbar_width>.
-	double		hscrollbar_width;		///< Width (in pixels) of the horizontal scrollbar
-	
-	
-	// vertical scrolling
-	char		show_vscrollbar;		///< Flag telling if we want to show the vertical scrollbar (in case it is needed)
-	char		need_vscrollbar;		///< Flag telling if we need (1) or not (0) the vertical scrollbar
-	double		vscrollbar_pos;			///< Relative position (0. to 1.) of the vertical scrollbar (0 = completely at top, 1 = completely at bottom)
-	double		vscrollbar_y;			///< Pixel position of the topmost point of the vertical scrollbar
-	double		vscrollbar_pixnudge;	///< Nudge (in pixels) of which we have to shift the whole content up or down
-	double		vscrollbar_height;		///< Height (in pixels) of the vertical scrollbar
+    // horizontal scrolling
+    char        show_hscrollbar;        ///< Flag telling if we want to show the horizontal scrollbar (in case it is needed)
+    char        need_hscrollbar;        ///< Flag telling if we need (1) or not (0) the horizontal scrollbar
+    double        hscrollbar_pos;            ///< Relative position (0. to 1.) of the horizontal scrollbar (0 = completely at left, 1 = completely at right)
+    double        hscrollbar_x;            ///< Pixel position of the leftmost point of the horizontal scrollbar.
+                                        ///< This can range from <inset_x> to <j_inset_x> + <inner_width> - <hscrollbar_width>.
+    double        hscrollbar_width;        ///< Width (in pixels) of the horizontal scrollbar
+    
+    
+    // vertical scrolling
+    char        show_vscrollbar;        ///< Flag telling if we want to show the vertical scrollbar (in case it is needed)
+    char        need_vscrollbar;        ///< Flag telling if we need (1) or not (0) the vertical scrollbar
+    double        vscrollbar_pos;            ///< Relative position (0. to 1.) of the vertical scrollbar (0 = completely at top, 1 = completely at bottom)
+    double        vscrollbar_y;            ///< Pixel position of the topmost point of the vertical scrollbar
+    double        vscrollbar_pixnudge;    ///< Nudge (in pixels) of which we have to shift the whole content up or down
+    double        vscrollbar_height;        ///< Height (in pixels) of the vertical scrollbar
 
 
-	// some general common attributes
-	char		show_durations;				///< Flag telling if we want to show the duration-lines for the notes
-	char		show_tails;					///< Flag telling if we want to display the note tails at the end of each notes (only works if #show_durations is set)
-	double		durations_line_width;		///< Width of the duration line in pixels
+    // some general common attributes
+    char        show_durations;                ///< Flag telling if we want to show the duration-lines for the notes
+    char        show_tails;                    ///< Flag telling if we want to display the note tails at the end of each notes (only works if #show_durations is set)
+    double        durations_line_width;        ///< Width of the duration line in pixels
     char        dl_spans_ties;              ///< Duration line spans a sequence of tied notes?
     char        velocity_handling;            ///< Parameter handling the way we display the velocity on screen. This must be one of #e_velocity_handling 
     long        tone_division;                ///< Microtonal subdivision, in n-th of tone: 2 = semitone, 4 = quartertone, 17 = 17th of a tone, and so on
@@ -4414,90 +4414,90 @@ typedef struct _notation_obj
     t_accidentals_typo_preferences        accidentals_typo_preferences;    ///< Font-related typographical preferences for the accidentals
     t_articulations_typo_preferences    articulations_typo_preferences;    ///< Font-related typographical preferences for the articulations
     t_noteheads_typo_preferences        noteheads_typo_preferences;     ///< Font-related typographical preferences for the noteheads
-	
-	// colors
-	t_jrgba		j_background_rgba;				///< Color of the background
-	t_jrgba		j_border_rgba;					///< Color of the border
-	t_jrgba		j_mainstaves_rgba;				///< Color of the main staves (and of the time signatures, tempi, ledger lines)
-	t_jrgba		j_auxiliarystaves_rgba;			///< Color of the auxiliary staves (e.g. the external staves in #k_CLEF_FFGG clef configuration)
-    t_jrgba		j_tempi_rgba;                   ///< Color of the tempi
-	t_jrgba		j_clef_rgba;					///< Color of the clefs
+    
+    // colors
+    t_jrgba        j_background_rgba;                ///< Color of the background
+    t_jrgba        j_border_rgba;                    ///< Color of the border
+    t_jrgba        j_mainstaves_rgba;                ///< Color of the main staves (and of the time signatures, tempi, ledger lines)
+    t_jrgba        j_auxiliarystaves_rgba;            ///< Color of the auxiliary staves (e.g. the external staves in #k_CLEF_FFGG clef configuration)
+    t_jrgba        j_tempi_rgba;                   ///< Color of the tempi
+    t_jrgba        j_clef_rgba;                    ///< Color of the clefs
     t_jrgba     j_auxiliaryclef_rgba;           ///< Color of the auxiliary clefs
-    t_jrgba		j_keysig_rgba;					///< Color of the key signature
-	t_jrgba		j_note_rgba;					///< Color of the notes
-    t_jrgba		j_accidentals_rgba;				///< Color of the accidentals
-    t_jrgba		j_rest_rgba;                    ///< Color of the rests
-    t_jrgba		j_stem_rgba;					///< Color of the stems
-    t_jrgba		j_flag_rgba;					///< Color of the flags
-    t_jrgba		j_beam_rgba;					///< Color of the beams
-    t_jrgba		j_tuplet_rgba;					///< Color of the tuplets
-    t_jrgba		j_articulations_rgba;			///< Color of the articulations
-    t_jrgba		j_annotation_rgba;              ///< Color of the annotations
-    t_jrgba		j_dynamics_rgba;                ///< Color of the dynamics
-	t_jrgba		j_selection_rgba;				///< Color related to selection (selected items...)
-	t_jrgba		j_legend_rgba;					///< Color of the bottom-down legend
-	t_jrgba		j_selectedlegend_rgba;			///< Color of the top legend (when an element is selected)
-	t_jrgba		j_scrollbar_rgba;				///< Color of the scrollbar
-	t_jrgba		j_play_rgba;					///< Color related to play (playbar, played notes...)
-	t_jrgba		j_locked_rgba;					///< Color related to locking (locked notes, measures, voices...)
-	t_jrgba		j_muted_rgba;					///< Color related to muting (muted notes, measures, voices...)
-	t_jrgba		j_solo_rgba;					///< Color related to soloing (solo notes, measures, voices...)
-	t_jrgba		j_marker_rgba;					///< Color of the markers attached to millisecond position
-	t_jrgba		j_marker_attached_to_tp_rgba;	///< Color of the markers attached to timepoint position (for [bach.score])
-	t_jrgba		j_marker_special;				///< Color of the "special" markers containing meta-information such as midi meta-information
-	t_jrgba		j_main_grid_rgba;				///< Color of the main grid
-	t_jrgba		j_subdivision_grid_rgba;		///< Color of the secondary grid (subdivision grid)	
-	t_jrgba		j_ruler_rgba;					///< Color of the ruler
-	t_jrgba		j_lyrics_rgba;					///< Color of the lyrics
-	t_jrgba		j_linear_edit_rgba;				///< Color related to the speedy edit (for [bach.score])
-	t_jrgba		j_loop_rgba;					///< Color related to loop region
+    t_jrgba        j_keysig_rgba;                    ///< Color of the key signature
+    t_jrgba        j_note_rgba;                    ///< Color of the notes
+    t_jrgba        j_accidentals_rgba;                ///< Color of the accidentals
+    t_jrgba        j_rest_rgba;                    ///< Color of the rests
+    t_jrgba        j_stem_rgba;                    ///< Color of the stems
+    t_jrgba        j_flag_rgba;                    ///< Color of the flags
+    t_jrgba        j_beam_rgba;                    ///< Color of the beams
+    t_jrgba        j_tuplet_rgba;                    ///< Color of the tuplets
+    t_jrgba        j_articulations_rgba;            ///< Color of the articulations
+    t_jrgba        j_annotation_rgba;              ///< Color of the annotations
+    t_jrgba        j_dynamics_rgba;                ///< Color of the dynamics
+    t_jrgba        j_selection_rgba;                ///< Color related to selection (selected items...)
+    t_jrgba        j_legend_rgba;                    ///< Color of the bottom-down legend
+    t_jrgba        j_selectedlegend_rgba;            ///< Color of the top legend (when an element is selected)
+    t_jrgba        j_scrollbar_rgba;                ///< Color of the scrollbar
+    t_jrgba        j_play_rgba;                    ///< Color related to play (playbar, played notes...)
+    t_jrgba        j_locked_rgba;                    ///< Color related to locking (locked notes, measures, voices...)
+    t_jrgba        j_muted_rgba;                    ///< Color related to muting (muted notes, measures, voices...)
+    t_jrgba        j_solo_rgba;                    ///< Color related to soloing (solo notes, measures, voices...)
+    t_jrgba        j_marker_rgba;                    ///< Color of the markers attached to millisecond position
+    t_jrgba        j_marker_attached_to_tp_rgba;    ///< Color of the markers attached to timepoint position (for [bach.score])
+    t_jrgba        j_marker_special;                ///< Color of the "special" markers containing meta-information such as midi meta-information
+    t_jrgba        j_main_grid_rgba;                ///< Color of the main grid
+    t_jrgba        j_subdivision_grid_rgba;        ///< Color of the secondary grid (subdivision grid)    
+    t_jrgba        j_ruler_rgba;                    ///< Color of the ruler
+    t_jrgba        j_lyrics_rgba;                    ///< Color of the lyrics
+    t_jrgba        j_linear_edit_rgba;                ///< Color related to the speedy edit (for [bach.score])
+    t_jrgba        j_loop_rgba;                    ///< Color related to loop region
 
-	// graphical values
-	double		corner_roundness;		///< Roundness of the corners
-	long		j_inset_x;				///< Horizontal pad (in pixels) between the object border and the beginning of the staves (with the clefs). 
-										///< The same pad will be at the end of the object, after the end of the staves, till the final border
-	double		j_inset_y;				///< Vertical pad (in pixels) at the top of the object. This is NOT user-set: it is constantly 0.5 
-										///< (in order to have non-antialiased staff lines for <zoom_y> = 1).
-										///< Users don't need to change this, rather they can act on the #voiceuspacing_as_floatlist attribute.
-	double		width;					///< Width of the UI notation object in pixels
-	double		height;					///< Height of the UI notation object in pixels
-	double		inner_width;			///< Usable width (in pixels) of the object (ignoring insets); this correspond to the object width - 2 * <j_inset_x>
-	double		inner_height;			///< Usable height (in pixel) of the object (ignoring insets); this correspond to the object height - 2 * <j_inset_y>
+    // graphical values
+    double        corner_roundness;        ///< Roundness of the corners
+    long        j_inset_x;                ///< Horizontal pad (in pixels) between the object border and the beginning of the staves (with the clefs). 
+                                        ///< The same pad will be at the end of the object, after the end of the staves, till the final border
+    double        j_inset_y;                ///< Vertical pad (in pixels) at the top of the object. This is NOT user-set: it is constantly 0.5 
+                                        ///< (in order to have non-antialiased staff lines for <zoom_y> = 1).
+                                        ///< Users don't need to change this, rather they can act on the #voiceuspacing_as_floatlist attribute.
+    double        width;                    ///< Width of the UI notation object in pixels
+    double        height;                    ///< Height of the UI notation object in pixels
+    double        inner_width;            ///< Usable width (in pixels) of the object (ignoring insets); this correspond to the object width - 2 * <j_inset_x>
+    double        inner_height;            ///< Usable height (in pixel) of the object (ignoring insets); this correspond to the object height - 2 * <j_inset_y>
     double      postdomain_width;       ///< Width of a portion of score that pads the end of the domain without being inside it.
                                         ///< Currently only used in image export.
 
-	double		horizontal_zoom;		///< User modifiable horizontal zoom, 100 = default zoom. This is the value set and get via the "zoom" attribute.
-	t_atom		vertical_zoom;			///< User modifiable value for the vertical zoom, 100 = default zoom, "auto" = automatic zoom .
-										///< I.e.: vertical zoom is automatically set depending on the height of the object; this is the default.
-	char		link_vzoom_to_height;	///< Flag telling if the <vertical_zoom> is "auto" (and thus the <v_zoom> is linked to the object's height) 
-	double		zoom_x;					///< Internal horizontal zoom factor, corresponding to <horizontal_zoom>/100 (so 1. = default zoom)
-	double		zoom_y;					///< Internal vertical zoom factor, corresponding to <vertical_zoom>/100 if <vertical_zoom> is a number (so 1. = default zoom)
-	double		step_y;					///< Diatonic graphical step size: vertical distance (in pixels) between two consecutive notes on the diatonic scale (e.g. between C3 and D3). 
-										///< More precisely, this is HALF of the distance between two staff lines. This is a commonly used quantity, its value of 
-										///< course depend on the vertical zoom factor <zoom_y>. When <zoom_y> = 1, <step_y> = #CONST_STEP_UY pixels (which means that staff lines
-										///< are 2 * #CONST_STEP_UY pixels apart), thus <step_y> = #CONST_STEP_UY * <zoom_y> pixels.
+    double        horizontal_zoom;        ///< User modifiable horizontal zoom, 100 = default zoom. This is the value set and get via the "zoom" attribute.
+    t_atom        vertical_zoom;            ///< User modifiable value for the vertical zoom, 100 = default zoom, "auto" = automatic zoom .
+                                        ///< I.e.: vertical zoom is automatically set depending on the height of the object; this is the default.
+    char        link_vzoom_to_height;    ///< Flag telling if the <vertical_zoom> is "auto" (and thus the <v_zoom> is linked to the object's height) 
+    double        zoom_x;                    ///< Internal horizontal zoom factor, corresponding to <horizontal_zoom>/100 (so 1. = default zoom)
+    double        zoom_y;                    ///< Internal vertical zoom factor, corresponding to <vertical_zoom>/100 if <vertical_zoom> is a number (so 1. = default zoom)
+    double        step_y;                    ///< Diatonic graphical step size: vertical distance (in pixels) between two consecutive notes on the diatonic scale (e.g. between C3 and D3). 
+                                        ///< More precisely, this is HALF of the distance between two staff lines. This is a commonly used quantity, its value of 
+                                        ///< course depend on the vertical zoom factor <zoom_y>. When <zoom_y> = 1, <step_y> = #CONST_STEP_UY pixels (which means that staff lines
+                                        ///< are 2 * #CONST_STEP_UY pixels apart), thus <step_y> = #CONST_STEP_UY * <zoom_y> pixels.
 
-	char		force_non_antialiased_staff_lines;	///< Flag telling if we want to force the zoom to be such that only values which yields non-antialiased 
-													///< staff lines are allowed. By default it is so: the user-set (or auto) zoom is approximated so that  
-													///< staff lines fall vertically on a single pixel
-	double		zoom_y_with_antialias;				///< Internal vertical zoom factor, ignoring the #force_non_antialiased_staff_lines request.
-													///< If #force_non_antialiased_staff_lines = 1, then the #zoom_y value is not the value the user have entered. We keep
-													///< track of that value by storing it here.
-	
-	long		middleC_octave;						///< Octave of the middle C. By default this is 4 (anglosaxon, so middle C = C4)
-	char		note_names_style;					///< Style for the note names, one of the #e_note_names_styles: either #k_NOTE_NAMES_LATIN or #k_NOTE_NAMES_ANGLOSAXON.
-													///< REMARK: this is only for the display and the output; when you send a note name in input, the objects understand both
-													///< the anglosaxon and the latin syntaxes.
-	char		show_note_names;					///< Flags telling if we want to show the note names in the upper legend when a note is selected
-	long		last_used_octave;					///< Internal, private use: it keeps track of the last used octave while entering notes with notenames, so that when a user
-													///< enters "C3 D E", the object understands that D and E are always at the 3rd octave. 
-	double		additional_ux_start_pad;			///< Unscaled width of an additional starting pad, to shift the beginning of the staff farther or nearer with respect to the clefs 
-	char		show_ledger_lines;					///< Flags telling if we want to show the ledger lines: 
-													///< 0 = Never show ledger lines; 1 = Show them in the standard way (default) ; 2 = Always refer ledger lines to the main staves, 
-													///< which means that if there's a note in a auxiliary staff, we'll show ledger lines between the auxiliary and the main staff 
-	double		head_vertical_additional_uspace;	///< Unscaled additional vertical space at the top of the object. 
-													///< This value is retreived and synchronized with the first element of #voiceuspacing_as_floatlist. 
-	double		key_signature_uwidth;				///< Unscaled width (in pixels) of the space needed to paint the key signature after the clefs
+    char        force_non_antialiased_staff_lines;    ///< Flag telling if we want to force the zoom to be such that only values which yields non-antialiased 
+                                                    ///< staff lines are allowed. By default it is so: the user-set (or auto) zoom is approximated so that  
+                                                    ///< staff lines fall vertically on a single pixel
+    double        zoom_y_with_antialias;                ///< Internal vertical zoom factor, ignoring the #force_non_antialiased_staff_lines request.
+                                                    ///< If #force_non_antialiased_staff_lines = 1, then the #zoom_y value is not the value the user have entered. We keep
+                                                    ///< track of that value by storing it here.
+    
+    long        middleC_octave;                        ///< Octave of the middle C. By default this is 4 (anglosaxon, so middle C = C4)
+    char        note_names_style;                    ///< Style for the note names, one of the #e_note_names_styles: either #k_NOTE_NAMES_LATIN or #k_NOTE_NAMES_ANGLOSAXON.
+                                                    ///< REMARK: this is only for the display and the output; when you send a note name in input, the objects understand both
+                                                    ///< the anglosaxon and the latin syntaxes.
+    char        show_note_names;                    ///< Flags telling if we want to show the note names in the upper legend when a note is selected
+    long        last_used_octave;                    ///< Internal, private use: it keeps track of the last used octave while entering notes with notenames, so that when a user
+                                                    ///< enters "C3 D E", the object understands that D and E are always at the 3rd octave. 
+    double        additional_ux_start_pad;            ///< Unscaled width of an additional starting pad, to shift the beginning of the staff farther or nearer with respect to the clefs 
+    char        show_ledger_lines;                    ///< Flags telling if we want to show the ledger lines: 
+                                                    ///< 0 = Never show ledger lines; 1 = Show them in the standard way (default) ; 2 = Always refer ledger lines to the main staves, 
+                                                    ///< which means that if there's a note in a auxiliary staff, we'll show ledger lines between the auxiliary and the main staff 
+    double        head_vertical_additional_uspace;    ///< Unscaled additional vertical space at the top of the object. 
+                                                    ///< This value is retreived and synchronized with the first element of #voiceuspacing_as_floatlist. 
+    double        key_signature_uwidth;                ///< Unscaled width (in pixels) of the space needed to paint the key signature after the clefs
     char        smart_markername_placement;         ///< Toggles smart multi-line marker names placement
     
     // page view fields (THESE ARE STILL UNSUPPORTED)
@@ -6471,17 +6471,17 @@ double rest_get_bottom_extension_in_steps(t_notation_obj *r_ob, t_rational r_sym
 // NOTATION COLORS
 // -----------------------------------
 
-/**	Change a given color depending if the element is selected, played, locked, muted, solo or speedy-edited.
-	So the element might assume the selection color, play color, locked color, muted color, solo color or a combination of these. Or the speedy edit color.
-	@ingroup			notation_colors
-	@param r_ob			The notation object
-	@param color		The color to be changed
-	@param selected		Is element selected?
-	@param play			Is element played?
-	@param locked		Is element locked?
-	@param muted		Is element muted?
-	@param solo			Is element solo?
-	@param linear_edited	Is element being speedy-edited? (for [bach.score] only)
+/**    Change a given color depending if the element is selected, played, locked, muted, solo or speedy-edited.
+    So the element might assume the selection color, play color, locked color, muted color, solo color or a combination of these. Or the speedy edit color.
+    @ingroup            notation_colors
+    @param r_ob            The notation object
+    @param color        The color to be changed
+    @param selected        Is element selected?
+    @param play            Is element played?
+    @param locked        Is element locked?
+    @param muted        Is element muted?
+    @param solo            Is element solo?
+    @param linear_edited    Is element being speedy-edited? (for [bach.score] only)
  */
 void change_color_depending_on_playlockmute(t_notation_obj *r_ob, t_jrgba *color, char selected, char play, char locked, char muted, char solo, char linear_edited);
 
@@ -6789,8 +6789,8 @@ void apply_velocity_handling(t_notation_obj *r_ob, t_jrgba *color, double veloci
 /**    Changes a note color depending on a color slot linkage
     @ingroup            colors
     @param  r_ob        The notation object
-    @param	color       Pointer to the color
-    @param	note        The note containing the slots
+    @param    color       Pointer to the color
+    @param    note        The note containing the slots
  */
 void note_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note);
 
@@ -6808,8 +6808,8 @@ void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, 
 /**    Changes a duration line color depending on a color slot linkage
     @ingroup            colors
     @param  r_ob        The notation object
-    @param	color       Pointer to the color
-    @param	note        The note containing the slots
+    @param    color       Pointer to the color
+    @param    note        The note containing the slots
  */
 void durationline_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note);
 
@@ -9879,14 +9879,14 @@ void notationobj_redraw(t_notation_obj *r_ob);
 void paint_tie(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba color, double x1, double y1, double x2, double y2, char direction);
 
 
-/**	Paint a clef (actually writes it as a text box)	
-	@ingroup			notation_paint
-	@param	r_ob		The notation object
-	@param	g			The graphic context
-	@param	jf			The font to write the clef
-	@param	middleC_y	The y of the middle C (of the voice inside the system to which the clef is referred)
-	@param	clef		The clef or clef combination as one of the #e_clefs
-	@param	color		The color of the main clefs
+/**    Paint a clef (actually writes it as a text box)    
+    @ingroup            notation_paint
+    @param    r_ob        The notation object
+    @param    g            The graphic context
+    @param    jf            The font to write the clef
+    @param    middleC_y    The y of the middle C (of the voice inside the system to which the clef is referred)
+    @param    clef        The clef or clef combination as one of the #e_clefs
+    @param    color        The color of the main clefs
     @param  auxcolor    The color of the auxiliary clefs
  */
 void paint_clef(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf, double middleC_y, long clef, t_jrgba color, t_jrgba auxcolor);
