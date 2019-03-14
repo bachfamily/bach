@@ -146,7 +146,7 @@ int T_EXPORT main()
     append_class = c;
     
     dev_post("bach.append compiled %s %s", __DATE__, __TIME__);
-    object_warn(NULL, "bach.append is deprecated. Please replace me with bach.join!");
+    object_warn(NULL, "bach.append is deprecated. Please replace me with bach.join---or did you mean bach.postpend?");
 
     return 0;
 }
