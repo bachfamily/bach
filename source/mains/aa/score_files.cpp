@@ -6,6 +6,7 @@
 */
 
 #include "score_files.h"
+#include "pwd.h"
 #ifdef WIN_VERSION
 #include <Shellapi.h>
 #include <process.h>
@@ -70,8 +71,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_fourcc outtype = 0;
     t_fourcc file_types[] = {'TEXT', 'LLLL'};
     t_llll *score_ll = NULL;
-    char testbuf[11];
-    t_ptr_size count = 11;
+    t_ptr_size size;
     e_undo_operations undo_op = k_UNDO_OP_UNKNOWN;
     short path;
     char filename[2048];
@@ -130,19 +130,96 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
     } else {
         if (bach_readfile((t_object *) x, filename, path, &fh) != MAX_ERR_NONE)
             goto score_doread_error_dontclose;
+        sysfile_geteof(fh, &size);
+        char* buffer = (char *) bach_newptr(size + 2);
+        buffer[0] = 0;
+        
         // let's try to guess if it's xml
-        sysfile_read(fh, &count, testbuf);
-        sysfile_setpos(fh, SYSFILE_FROMSTART, 0);
-        if ((count > 5 && !memcmp(testbuf, "<?xml", 5)) || // plain text
-            (count > 8 && !memcmp(testbuf, "\xef\xbb\xbf<?xml", 8)) || // utf-8
-            (count > 10 && (!memcmp(testbuf, "\xff\xfe\x3c\x00\x3f\x00\x78\x00\x6d\x00", 10) || // utf-16 little-endian
-                            !memcmp(testbuf, "\xfe\xff\x00\x3c\x00\x3f\x00\x78\x6d\x00", 10)))) { // utf-16 big-endian
-            score_ll = score_readxml(x, fh, parenthesizedquartertones, lyricsslot, noteheadslot, articulationsslot, dynamicsslot, directionsslot);
+        sysfile_read(fh, &size, buffer);
+        if (size > 4 && !memcmp(buffer, "PK\x03\x04", 4)) {
+
+#ifdef MAC_VERSION
+            sysfile_close(fh);
+            bach_freeptr(buffer);
+            //system("mkdir -p \"$HOME/Library/Application Support/bach/cache\"");
+            passwd* pw = getpwuid(getuid());
+            std::string home = pw->pw_dir;
+            std::string dq = "\"";
+            std::string cache = home + "/Library/Application Support/bach/cache";
+            std::string decompressed = cache + "/decompressed";
+            std::string tempmxl = cache + "/tempmxl.mxl";
+            
+            std::string rm2 = "rm -rf " + dq + decompressed + dq;
+            system(rm2.c_str());
+            
+            std::string mkdir = "mkdir -p " + dq + decompressed + dq;
+            system(mkdir.c_str());
+            
+            std::string rm1 = "rm -f " + dq + tempmxl + dq;
+            system(rm1.c_str());
+
+
+            char abspath[4096];
+            path_toabsolutesystempath(path, filename, abspath);
+            
+            std::string cp = "cp " + dq + abspath + dq + " " + dq + tempmxl + dq;
+            system(cp.c_str());
+            
+            std::string unzip = "unzip " + dq + tempmxl + dq + " -d " + dq + decompressed + dq;
+            system(unzip.c_str());
+
+            std::string container = decompressed + "/META-INF/container.xml";
+            
+            filename_sym = gensym(container.c_str());
+            
+            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+                object_error((t_object *) x, "Can't open file");
+                goto score_doread_error_dontclose;
+            }
+            
+            if (*filename == 0)
+                goto score_doread_error_dontclose;
+            
+            if (bach_readfile((t_object *) x, filename, path, &fh) != MAX_ERR_NONE)
+                goto score_doread_error_dontclose;
+            sysfile_geteof(fh, &size);
+            buffer = (char *) bach_newptr(size + 2);
+            buffer[0] = 0;
+            sysfile_read(fh, &size, buffer);
+            sysfile_close(fh);
+            std::string rootfilepath = decompressed + "/" + xml_mxl_find_rootfile(buffer);
+            bach_freeptr(buffer);
+            
+            filename_sym = gensym(rootfilepath.c_str());
+            if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+                object_error((t_object *) x, "Can't open file");
+                goto score_doread_error_dontclose;
+            }
+            
+            if (*filename == 0)
+                goto score_doread_error_dontclose;
+            
+            if (bach_readfile((t_object *) x, filename, path, &fh) != MAX_ERR_NONE)
+                goto score_doread_error_dontclose;
+            sysfile_geteof(fh, &size);
+            buffer = (char *) bach_newptr(size + 2);
+            buffer[0] = 0;
+            sysfile_read(fh, &size, buffer);
+            sysfile_close(fh);
+#endif
+            
+        }
+        
+        if ((size > 5 && !memcmp(buffer, "<?xml", 5)) || // plain text
+            (size > 8 && !memcmp(buffer, "\xef\xbb\xbf<?xml", 8)) || // utf-8
+            (size > 10 && (!memcmp(buffer, "\xff\xfe\x3c\x00\x3f\x00\x78\x00\x6d\x00", 10) || // utf-16 little-endian
+                            !memcmp(buffer, "\xfe\xff\x00\x3c\x00\x3f\x00\x78\x6d\x00", 10)))) { // utf-16 big-endian
+            score_ll = score_readxmlbuffer(x, buffer, parenthesizedquartertones, lyricsslot, noteheadslot, articulationsslot, dynamicsslot, directionsslot);
             undo_op = k_UNDO_OP_IMPORT_XML_SCORE;
         } else {
-            score_ll = llll_readfile((t_object *) x, fh);
-
+            score_ll = llll_readbuffer((t_object *) x, 0, buffer, size);
         }
+        bach_freeptr(buffer);
     }
     if (score_ll) {
         set_score_from_llll_from_read(x, score_ll);
@@ -151,15 +228,10 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER, undo_op);
     } else {
         object_error((t_object *) x, "File doesn't contain a score");
-        goto score_doread_error_close;
+        goto score_doread_error_dontclose;
     }
     
 score_doread_error_dontclose:
-    llll_free(arguments);
-    return;
-score_doread_error_close:
-    if (fh)
-        sysfile_close(fh);
     llll_free(arguments);
     return;
 }

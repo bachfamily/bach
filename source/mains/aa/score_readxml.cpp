@@ -2164,47 +2164,19 @@ t_llll *xml_get_barline(mxml_node_t *measureXML)
     return nullptr;
 }
 
-t_llll *score_readxml(t_score *x,
-                      t_filehandle fh,
-                      long parenthesizedquartertones,
-                      long lyricsslot,
-                      long noteheadslot,
-                      long articulationsslot,
-                      long dynamicsslot,
-                      long directionsslot)
+
+
+t_llll *score_readxmlbuffer(t_score *x,
+                            char* buffer,
+                            long parenthesizedquartertones,
+                            long lyricsslot,
+                            long noteheadslot,
+                            long articulationsslot,
+                            long dynamicsslot,
+                            long directionsslot)
 {
-    t_ptr_size size;
-    unsigned char *buffer;
     long new_tonedivision = 2;
-    //// t_llll *maintempo_ll = NULL;
-    
-    // allocate memory block that is the size of the file
-    sysfile_geteof(fh, &size);
-    buffer = (unsigned char *) sysmem_newptr(size + 2);
-    if (!buffer) {
-        object_error((t_object *) x, "File too long");
-        return NULL;
-    }
-    buffer[0] = 0;
-    // read in the file
-    sysfile_read(fh, &size, buffer);
-    sysfile_close(fh);
-    *(buffer + size) = 0;
-    *(buffer + size + 1) = 0;
-    /*
-     if (*buffer >= 0xfe) {
-     long convlen = 0;
-     char *convbuf = charset_unicodetoutf8((unsigned short *) buffer, 0, &convlen);
-     sysmem_freeptr(buffer);
-     if (!convbuf) {
-     object_error((t_object *) x, "bad file");
-     return NULL;
-     }
-     buffer = (unsigned char *) convbuf;
-     }
-     */
     mxml_node_t *scoreXML = mxmlLoadString(NULL, (char *) buffer, xml_load_cb);
-    sysmem_freeptr(buffer);
     
     mxml_node_t *score_partwiseXML = mxmlFindElement(scoreXML, scoreXML, "score-partwise", NULL, NULL, MXML_DESCEND_FIRST);
     if (!score_partwiseXML) {
@@ -2854,7 +2826,13 @@ mxml_type_t xml_load_cb(mxml_node_t *node)
 
 
 
-
+const char *xml_mxl_find_rootfile(char *buffer)
+{
+    mxml_node_t *containerXML = mxmlLoadString(NULL, (char *) buffer, xml_load_cb);
+    mxml_node_t *rootfileXML = mxmlFindElement(containerXML, containerXML, "rootfile", NULL, NULL, MXML_DESCEND);
+    const char *filename = mxmlElementGetAttr(rootfileXML, "full-path");
+    return filename;
+}
 
 
 

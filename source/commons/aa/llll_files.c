@@ -282,6 +282,19 @@ void llll_doread(t_object *x, t_symbol *s, long ac, t_atom *av)
     (outfn)(x, ll);
 }
 
+t_llll *llll_readbuffer(t_object *x, long ignore, char* buffer, t_ptr_size size)
+{
+    t_llll *ll = NULL;
+    if (strncmp(buffer, "\nbach", 5)) { // it's text format
+        *(buffer + size) = ' ';
+        *(buffer + size + 1) = 0;
+        ll = llll_from_text_buf(buffer, size > MAX_SYM_LENGTH, ignore);
+    } else { // it's in old native format
+        ll = llll_from_native_buf(buffer, size);
+    }
+    return ll;
+}
+
 
 t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore)
 {
@@ -298,13 +311,8 @@ t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore)
     sysfile_read(fh, &size, buffer);
     sysfile_close(fh);
 
-    if (strncmp(buffer, "\nbach", 5)) { // it's text format
-        *(buffer + size) = ' ';
-        *(buffer + size + 1) = 0;
-        ll = llll_from_text_buf(buffer, size > MAX_SYM_LENGTH, ignore);
-    } else { // it's in old native format
-        ll = llll_from_native_buf(buffer, size);
-    }
+    ll = llll_readbuffer(x, ignore, buffer, size);
+    
     bach_freeptr(buffer);
     return ll;
 }

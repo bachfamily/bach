@@ -33,14 +33,17 @@ void score_exportmidi(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_exportlilypond(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_exportlilypond_pdf(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
-t_llll *score_readxml(t_score *x,
-                      t_filehandle fh,
-                      long parenthesizedquartertones,
-                      long lyricsslot,
-                      long noteheadslot,
-                      long articulationsslot,
-                      long dynamicsslot,
-                      long directionsslot);
+t_llll *score_readxmlbuffer(t_score *x,
+                            char* buffer,
+                            long getuidparenthesizedquartertones,
+                            long lyricsslot,
+                            long noteheadslot,
+                            long articulationsslot,
+                            long dynamicsslot,
+                            long directionsslot);
+
+const char *xml_mxl_find_rootfile(char *buffer);
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 END_CHECK_LINKAGE

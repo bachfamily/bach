@@ -44,6 +44,7 @@ void llll_writenative(t_object *x, t_symbol *s, t_llll *ll);
 // the ll is not destroyed thereafter - outfn owns it
 void llll_read(t_object *x, t_symbol *s, read_fn outfn, long ignore = 0);
 
+t_llll *llll_readbuffer(t_object *x, long ignore, char* buffer, t_ptr_size size);
 t_llll *llll_readfile(t_object *x, t_filehandle fh, long ignore = 0);
 
 t_max_err bach_write_binary_file(t_symbol *filename_sym, const char *default_filename, t_fourcc filetype, t_ptr_size *count, const void *buffer);
