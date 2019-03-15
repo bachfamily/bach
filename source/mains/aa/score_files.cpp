@@ -149,14 +149,14 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
             std::string decompressed = cache + "/decompressed";
             std::string tempmxl = cache + "/tempmxl.mxl";
             
-            std::string rm2 = "rm -rf " + dq + decompressed + dq;
-            system(rm2.c_str());
+            std::string rmDecompressed = "rm -rf " + dq + decompressed + dq;
+            system(rmDecompressed.c_str());
             
             std::string mkdir = "mkdir -p " + dq + decompressed + dq;
             system(mkdir.c_str());
             
-            std::string rm1 = "rm -f " + dq + tempmxl + dq;
-            system(rm1.c_str());
+            std::string rmTempxml = "rm -f " + dq + tempmxl + dq;
+            system(rmTempxml.c_str());
 
 
             char abspath[4096];
@@ -201,11 +201,15 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
             
             if (bach_readfile((t_object *) x, filename, path, &fh) != MAX_ERR_NONE)
                 goto score_doread_error_dontclose;
+            
             sysfile_geteof(fh, &size);
             buffer = (char *) bach_newptr(size + 2);
             buffer[0] = 0;
             sysfile_read(fh, &size, buffer);
             sysfile_close(fh);
+            system(rmDecompressed.c_str());
+            system(rmTempxml.c_str());
+
 #endif
             
         }
