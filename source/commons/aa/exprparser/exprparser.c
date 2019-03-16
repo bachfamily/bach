@@ -546,8 +546,8 @@ static void yynoreturn yy_fatal_error ( const char* msg , yyscan_t yyscanner );
 	yyg->yy_hold_char = *yy_cp; \
 	*yy_cp = '\0'; \
 	yyg->yy_c_buf_p = yy_cp;
-#define YY_NUM_RULES 93
-#define YY_END_OF_BUFFER 94
+#define YY_NUM_RULES 92
+#define YY_END_OF_BUFFER 93
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -557,30 +557,30 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[218] =
     {   0,
-        0,    0,    0,    0,   94,   92,   91,   91,   12,   92,
-       25,    7,    1,    2,   23,   92,    3,   31,   92,   26,
-       32,   17,   92,   20,   90,   90,    9,   90,   90,   90,
-       90,   90,   90,   90,   90,   90,   90,   90,   90,   90,
-       90,   90,   42,    5,   11,   28,   30,   13,    0,    8,
-       24,   29,   34,   27,   34,    0,   32,    0,   39,   18,
-       19,   15,   22,   21,    0,    0,   35,   90,   90,   10,
-       90,   90,   90,   90,   90,   90,   90,   90,   90,   90,
-       90,   90,   90,   90,   90,   90,   90,   90,   90,   90,
-       90,   90,   43,   90,   90,   90,   90,   90,   90,   90,
+        0,    0,    0,    0,   93,   91,   90,   90,   12,   91,
+       25,    7,    1,    2,   23,   91,    3,   31,   91,   26,
+       32,   17,   91,   20,   89,   89,    9,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   41,    5,   11,   28,   30,   13,    0,    8,
+       24,   29,   33,   27,   33,    0,   32,    0,   38,   18,
+       19,   15,   22,   21,    0,    0,   34,   89,   89,   10,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   89,   89,   89,   89,   89,   89,   89,   89,
+       89,   89,   42,   89,   89,   89,   89,   89,   89,   89,
 
-       90,    6,   14,    4,    0,   41,    0,   33,    0,   34,
-       16,    0,   35,   36,    0,   54,   90,   90,   90,   90,
-       90,   90,   90,   90,   44,   90,   53,   90,   47,   90,
-       90,   90,   50,   48,   90,   58,   57,   56,   52,   90,
-       90,   49,   90,   51,   90,   55,   45,   90,   46,   90,
-        0,   34,   40,    0,   59,   90,   90,   60,   61,   90,
-       68,   90,   62,   90,   90,   65,   90,   90,   69,   90,
-        0,   66,   90,   90,   90,   90,   90,   63,   67,   64,
-       90,    0,   37,   71,   85,   90,   72,   70,   73,   90,
-       86,   90,   90,   79,   76,   75,   74,   90,   90,   82,
+       89,    6,   14,    4,    0,   40,    0,    0,    0,   33,
+       16,    0,   34,   35,    0,   53,   89,   89,   89,   89,
+       89,   89,   89,   89,   43,   89,   52,   89,   46,   89,
+       89,   89,   49,   47,   89,   57,   56,   55,   51,   89,
+       89,   48,   89,   50,   89,   54,   44,   89,   45,   89,
+        0,   33,   39,    0,   58,   89,   89,   59,   60,   89,
+       67,   89,   61,   89,   89,   64,   89,   89,   68,   89,
+        0,   65,   89,   89,   89,   89,   89,   62,   66,   63,
+       89,    0,   36,   70,   84,   89,   71,   69,   72,   89,
+       85,   89,   89,   78,   75,   74,   73,   89,   89,   81,
 
-       90,   77,   78,    0,    0,   88,   81,   83,   89,   90,
-       84,   80,   38,   90,   90,   87,    0
+       89,   76,   77,    0,    0,   87,   80,   82,   88,   89,
+       83,   79,   37,   89,   89,   86,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -1443,51 +1443,40 @@ YY_RULE_SETUP
 case 33:
 YY_RULE_SETUP
 {
-    char *textend;
-    long num = strtol(yytext, &textend, 10);
-    long den = strtol(textend + 1, NULL, 10);
-    parserpost(" lex: URAT %ld / %ld\n", num, den);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_RATIONAL(epd->lexeme, t_rational(num, den));
-}
-	YY_BREAK
-case 34:
-YY_RULE_SETUP
-{
     parserpost(" lex: BACH_DOUBLE %lf\n", atof(yytext));
     BEGIN BINARY;
     return lexpr_append_lexeme_FLOAT(epd->lexeme, atof(yytext));
 }
 	YY_BREAK
-case 35:
+case 34:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccInt(yytext));
 }
 	YY_BREAK
-case 36:
+case 35:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameIntAcc(yytext));
 }
 	YY_BREAK
-case 37:
+case 36:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntIntT(yytext));
 }
 	YY_BREAK
-case 38:
+case 37:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_parser::eatPitchAsNameAccIntRatT(yytext));
 }
 	YY_BREAK
-case 39:
+case 38:
 YY_RULE_SETUP
 {
     t_shortRational alter = t_shortRational(atoi(yytext), 1);
@@ -1495,7 +1484,7 @@ YY_RULE_SETUP
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, alter, 0));
 }
 	YY_BREAK
-case 40:
+case 39:
 YY_RULE_SETUP
 {
     char *textend;
@@ -1503,230 +1492,230 @@ YY_RULE_SETUP
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(t_parser::eatRational(yytext)), 0));
 }
 	YY_BREAK
-case 41:
+case 40:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_shortRational(atof(yytext)), 0));
 }
 	YY_BREAK
-case 42:
+case 41:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_PITCH(epd->lexeme, t_pitch(0, t_pitch::dblsharp, 0));
 }
 	YY_BREAK
-case 43:
+case 42:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FLOAT(epd->lexeme, M_PI); }
 	YY_BREAK
-case 44:
+case 43:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cos, "cos"); }
 	YY_BREAK
-case 45:
+case 44:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sin, "sin"); }
 	YY_BREAK
-case 46:
+case 45:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tan, "tan"); }
 	YY_BREAK
-case 47:
+case 46:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp, "exp"); }
 	YY_BREAK
-case 48:
+case 47:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log, "log"); }
 	YY_BREAK
-case 49:
+case 48:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_op_pow, "pow"); }
 	YY_BREAK
-case 50:
+case 49:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_int, "int"); }
 	YY_BREAK
-case 51:
+case 50:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_rat, "rat"); }
 	YY_BREAK
-case 52:
+case 51:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_num, "num"); }
 	YY_BREAK
-case 53:
+case 52:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_den, "den"); }
 	YY_BREAK
-case 54:
+case 53:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_abs, "abs"); }
 	YY_BREAK
-case 55:
+case 54:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_sgn, "sgn"); }
 	YY_BREAK
-case 56:
+case 55:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_mod, "mod"); }
 	YY_BREAK
-case 57:
+case 56:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_min, "min"); }
 	YY_BREAK
-case 58:
+case 57:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_max, "max"); }
 	YY_BREAK
-case 59:
+case 58:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acos, "acos"); }
 	YY_BREAK
-case 60:
+case 59:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asin, "asin"); }
 	YY_BREAK
-case 61:
+case 60:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atan, "atan"); }
 	YY_BREAK
-case 62:
+case 61:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, cosh, "cosh"); }
 	YY_BREAK
-case 63:
+case 62:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sinh, "sinh"); }
 	YY_BREAK
-case 64:
+case 63:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, tanh, "tanh"); }
 	YY_BREAK
-case 65:
+case 64:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, exp2, "exp2"); }
 	YY_BREAK
-case 66:
+case 65:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log2, "log2"); }
 	YY_BREAK
-case 67:
+case 66:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, sqrt, "sqrt"); }
 	YY_BREAK
-case 68:
+case 67:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, ceil, "ceil"); }
 	YY_BREAK
-case 69:
+case 68:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, fmod, "fmod"); }
 	YY_BREAK
-case 70:
+case 69:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, atan2, "atan2"); }
 	YY_BREAK
-case 71:
+case 70:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, acosh, "acosh"); }
 	YY_BREAK
-case 72:
+case 71:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, asinh, "asinh"); }
 	YY_BREAK
-case 73:
+case 72:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, atanh, "atanh"); }
 	YY_BREAK
-case 74:
+case 73:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, log10, "log10"); }
 	YY_BREAK
-case 75:
+case 74:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_DOUBLE(epd->lexeme, hypot, "hypot"); }
 	YY_BREAK
-case 76:
+case 75:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, floor, "floor"); }
 	YY_BREAK
-case 77:
+case 76:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, round, "round"); }
 	YY_BREAK
-case 78:
+case 77:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_DOUBLE(epd->lexeme, trunc, "trunc"); }
 	YY_BREAK
-case 79:
+case 78:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_float, "float"); }
 	YY_BREAK
-case 80:
+case 79:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL_dontfold(epd->lexeme, hatom_fn_random, "random"); }
 	YY_BREAK
-case 81:
+case 80:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_jn, "bessel"); }
 	YY_BREAK
-case 82:
+case 81:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_pitch, "pitch"); }
 	YY_BREAK
-case 83:
+case 82:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_degree, "degree"); }
 	YY_BREAK
-case 84:
+case 83:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_octave, "octave"); }
 	YY_BREAK
-case 85:
+case 84:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_alter, "alter"); }
 	YY_BREAK
-case 86:
+case 85:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_unary_ALL(epd->lexeme, hatom_fn_cents, "cents"); }
 	YY_BREAK
-case 87:
+case 86:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_ternary_ALL(epd->lexeme, hatom_fn_makepitch, "makepitch"); }
 	YY_BREAK
-case 88:
+case 87:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_approx, "approx"); }
 	YY_BREAK
-case 89:
+case 88:
 YY_RULE_SETUP
 { BEGIN BINARY; return lexpr_append_lexeme_FUNC_binary_ALL(epd->lexeme, hatom_fn_enharm, "enharm"); }
 	YY_BREAK
-case 90:
+case 89:
 YY_RULE_SETUP
 {
     BEGIN BINARY;
     return lexpr_append_lexeme_VAR_substitution(epd->lexeme, yytext, epd->subs_count, epd->substitutions, epd->numvars, epd->offending);
 }
 	YY_BREAK
-case 91:
-/* rule 91 can match eol */
+case 90:
+/* rule 90 can match eol */
 YY_RULE_SETUP
 {
     parserpost(" lex: whitespace\n");
 }
 	YY_BREAK
-case 92:
+case 91:
 YY_RULE_SETUP
 {
     parserpost(" lex: unrecognized character %s", yytext);
     return E_BAD_EXPR;
 }
 	YY_BREAK
-case 93:
+case 92:
 YY_RULE_SETUP
 YY_FATAL_ERROR( "flex scanner jammed" );
 	YY_BREAK

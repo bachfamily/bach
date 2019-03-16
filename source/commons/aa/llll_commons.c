@@ -6811,6 +6811,10 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         t_atom_long count;
         step = hatom_getrational(&step_hatom);
         
+        if (step.r_den == 0) {
+            step = {0, 1};
+        }
+        
         if (hatom_type_is_number(start_type)) {
             start = hatom_getrational(&start_hatom);
             if (maxcount == 1) {

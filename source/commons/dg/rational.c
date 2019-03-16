@@ -316,6 +316,10 @@ t_rational rat_long_sum(t_rational rat1, t_atom_long num)
 
 t_rational rat_long_div(t_rational rat, t_atom_long num) 
 {
+    if (num == 0) {
+        error("Rational division by 0 detected");
+        return {0, 1};
+    }
 	long_long_reduce(&rat.r_num, &num);
 	rat.r_den *= num;
 	return rat;
@@ -784,7 +788,11 @@ t_rational rat_inv(t_rational rat) {
 	t_rational outrat;
 	outrat.r_num = rat.r_den;
 	outrat.r_den = rat.r_num;
-	if (outrat.r_den < 0) {
+    if (outrat.r_den == 0) {
+        error("Rational division by zero detected");
+        outrat.r_num = 0;
+        outrat.r_den = 1;
+    } else if (outrat.r_den < 0) {
 		outrat.r_num *= -1;
 		outrat.r_den *= -1;
 	}
