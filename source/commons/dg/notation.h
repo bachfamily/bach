@@ -2561,7 +2561,8 @@ typedef struct _dynamics_mark
     t_symbol **text_deparsed;       ///< For each word: The typographic text of the dynamics sign readable in plain text
 
     char                    dynamics_mark_attachment;   ///< One of the #e_dynamics_mark_attachment
-    long                    snap_to_breakpoint; ///< If non-zero, it is the index of breakpoint to which it should be snapped.
+    long                    snap_to_breakpoint; ///< If non-zero, it is the index of breakpoint to which it should be snapped
+                                                ///  (1 being the first actual breakpoint, not the notehead).
     double                  relative_position;  ///< If #snap_to_breakpoint is 0, this sets the relative position of the dynamic sign
 
     long                    hairpin_to_next;    ///< Hairpin going to the next sign, one of the e_dynamics_hairpin
@@ -6330,7 +6331,7 @@ double get_notehead_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_no
 // TBD
 void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
 long get_notehead_specs_from_rdur(t_notation_obj *r_ob, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
-long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
+long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift, char avoid_returning_default);
 
 
 /**    Get the default width for a portion of score. This function is used inside tuttipoint_calculate_spacing() in order to determine the
@@ -11286,10 +11287,20 @@ void decide_dragging_direction(t_notation_obj *r_ob, t_pt pt);
 /**    Obtain the first chord appearing in the selection linked list
     @ingroup            selection
     @param    r_ob        The notation object
-    @return                The first chord in the selectino linked list
+    @return                The first chord in the selection linked list
     @remark                Beware: this might not coincide with the first chord in temporal order!
  */
 t_chord *chord_get_first_selected(t_notation_obj *r_ob);
+
+
+/**    Obtain the first note appearing in the selection linked list
+    @ingroup            selection
+    @param    r_ob        The notation object
+    @return                The first note in the selection linked list
+    @remark                Beware: this might not coincide with the first chord in temporal order!
+ */
+t_note *note_get_first_selected(t_notation_obj *r_ob);
+
 
 // TBD
 t_dynamics *dynamics_get_first_selected(t_notation_obj *r_ob);
