@@ -1035,7 +1035,10 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
     
     if (clef == k_CLEF_PERCUSSION)
         return;
-        
+    
+    // shifts
+    long shift = get_clef_octave_shift(clef) * 1200;
+    
     if (key > 0) { // # 5ths-circle
         mapsto[0] = 3;
         mapsto[1] = 0;
@@ -1066,6 +1069,12 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
         clef_mcs[5] = 6900;
         clef_mcs[6] = 7100;
         paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
+        
+        if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_GG)) {
+            for (long i = 0; i < 7; i++)
+                clef_mcs[i] += 2400;
+            paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
+        }
     }
     
     if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_FF) ||  (clef == k_CLEF_F)) { // F clef
@@ -1077,10 +1086,14 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
         clef_mcs[5] = 4500;
         clef_mcs[6] = 4700;
         paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
+        
+        if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FF)) {
+            for (long i = 0; i < 7; i++)
+                clef_mcs[i] -= 2400;
+            paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
+        }
     }
     
-    // shifts
-    long shift = get_clef_octave_shift(clef) * 1200;
     
     // single clefs
     switch (clef) {
