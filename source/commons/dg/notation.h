@@ -11287,10 +11287,20 @@ void decide_dragging_direction(t_notation_obj *r_ob, t_pt pt);
 /**    Obtain the first chord appearing in the selection linked list
     @ingroup            selection
     @param    r_ob        The notation object
-    @return                The first chord in the selectino linked list
+    @return                The first chord in the selection linked list
     @remark                Beware: this might not coincide with the first chord in temporal order!
  */
 t_chord *chord_get_first_selected(t_notation_obj *r_ob);
+
+
+/**    Obtain the first note appearing in the selection linked list
+    @ingroup            selection
+    @param    r_ob        The notation object
+    @return                The first note in the selection linked list
+    @remark                Beware: this might not coincide with the first chord in temporal order!
+ */
+t_note *note_get_first_selected(t_notation_obj *r_ob);
+
 
 // TBD
 t_dynamics *dynamics_get_first_selected(t_notation_obj *r_ob);

@@ -11711,7 +11711,6 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next) { // cycle on the voices
                 t_jrgba mainstaffcolor = get_mainstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
                 t_jrgba auxstaffcolor = get_auxstaff_color((t_notation_obj *) x, voice->v_ob.r_it.selected, voice->v_ob.locked, voice->v_ob.muted, voice->v_ob.solo);
-                t_chord *curr_ch;
                 double staff_bottom_y, staff_top_y;
                 long k;
                 long vn = voice->v_ob.number;
@@ -16587,6 +16586,11 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                     t_dynamics *dy = dynamics_get_first_selected((t_notation_obj *) x);
                     if (dy)
                         ch = notation_item_get_parent_chord((t_notation_obj *) x, dy->owner_item);
+                }
+                if (!ch) {
+                    t_note *nt = note_get_first_selected((t_notation_obj *) x);
+                    if (nt)
+                        ch = nt->parent;
                 }
                 if (ch && x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0)
                     start_editing_dynamics((t_notation_obj *) x, patcherview, ch);

@@ -13928,6 +13928,9 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (are_all_selecteditems_tied_to_chord((t_notation_obj *) x, (t_chord *)x->r_ob.check_selection_restraint_for_item)) {
                     clear_selection((t_notation_obj *) x);
                     notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item);
+                } else if (((t_chord *)x->r_ob.check_selection_restraint_for_item)->num_notes == 1 && are_all_selecteditems_tied_to_note((t_notation_obj *) x, ((t_chord *)x->r_ob.check_selection_restraint_for_item)->firstnote)) {
+                        clear_selection((t_notation_obj *) x);
+                        notation_item_add_to_selection((t_notation_obj *) x, x->r_ob.check_selection_restraint_for_item);
                 }
             } else if (x->r_ob.check_selection_restraint_for_item->type == k_NOTE) {
                 if (are_all_selecteditems_tied_to_note((t_notation_obj *) x, (t_note *)x->r_ob.check_selection_restraint_for_item)) {
@@ -16092,6 +16095,11 @@ long score_key(t_score *x, t_object *patcherview, long keycode, long modifiers, 
                     t_dynamics *dy = dynamics_get_first_selected((t_notation_obj *) x);
                     if (dy)
                         ch = notation_item_get_parent_chord((t_notation_obj *) x, dy->owner_item);
+                }
+                if (!ch) {
+                    t_note *nt = note_get_first_selected((t_notation_obj *) x);
+                    if (nt)
+                        ch = nt->parent;
                 }
                 if (ch && x->r_ob.show_dynamics && x->r_ob.link_dynamics_to_slot > 0)
                     start_editing_dynamics((t_notation_obj *) x, patcherview, ch);

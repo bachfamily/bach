@@ -26263,9 +26263,16 @@ long are_all_selecteditems_tied_to_note(t_notation_obj *r_ob, t_note *nt)
         for (t_notation_item *it = r_ob->firstselecteditem; it; it = it->next_selected) {
             char found = 0;
             for (t_note *temp = first; temp && temp != WHITENULL; temp = temp->tie_to) {
-                if ((t_notation_item *)temp == it) { // found!
-                    found = 1;
-                    break;
+                if (it->type == k_NOTE) {
+                    if ((t_notation_item *)temp == it) { // found!
+                        found = 1;
+                        break;
+                    }
+                } else if (it->type == k_CHORD && ((t_chord *)it)->num_notes == 1) {
+                    if (temp == ((t_chord *)it)->firstnote) { // found!
+                        found = 1;
+                        break;
+                    }
                 }
                 if (temp == last)
                     break;
@@ -26534,6 +26541,17 @@ void move_preselecteditems_to_selection(t_notation_obj *r_ob, e_selection_modes 
 
     // clear the preselection linkedlist
     clear_preselection(r_ob);
+}
+
+
+t_note *note_get_first_selected(t_notation_obj *r_ob)
+{
+    t_notation_item *selit = r_ob->firstselecteditem;
+    for (selit = r_ob->firstselecteditem; selit; selit = selit->next_selected) {
+        if (selit->type == k_NOTE)
+            return (t_note *)selit;
+    }
+    return NULL;
 }
 
 
@@ -42228,7 +42246,9 @@ long infer_most_appropriate_clef_for_voice(t_notation_obj *r_ob, t_voice *voice,
     
     if (ll->l_size > 0)
         res = infer_most_appropriate_clef(r_ob, ll, cutoff_threshold, allowed_clefs);
-    
+    else if (allowed_clefs && allowed_clefs->l_head)
+        res = hatom_getlong(&allowed_clefs->l_head->l_hatom);
+
     llll_free(ll);
     
     return res;
