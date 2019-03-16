@@ -7107,7 +7107,7 @@ char slot_handle_mousewheel(t_notation_obj *r_ob, t_object *view, t_pt pt, long 
 			return 1;
 		
         } else if (can_slot_be_hmoved(r_ob, s)) { // move
-			double delta_x = x_inc * CONST_X_MOUSEWHEEL_FACTOR;
+            double delta_x = (abs(y_inc) > abs(x_inc) ? y_inc : x_inc) * CONST_X_MOUSEWHEEL_FACTOR;
 			if (modifiers & eShiftKey && modifiers & eCommandKey) 
 				delta_x *= CONST_FINER_FROM_KEYBOARD;
 			r_ob->slot_window_zoomed_start = (r_ob->slot_window_zoomed_start * r_ob->slot_window_active.width - delta_x)/r_ob->slot_window_active.width;

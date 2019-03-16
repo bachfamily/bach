@@ -310,8 +310,6 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
                     x->n_ignore = LLLL_I_ALL ^ x->n_ignore;
                 }
                 
-                object_attr_setdisabled((t_object *)x, gensym("ignore"), true);
-                
             } else if (!strcmp(attrname, "out")) {
                 llllobj_obj_setout((t_llllobj_object *) x, NULL, 1, av + i);
 
@@ -324,6 +322,8 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
     } else
         error(BACH_CANT_INSTANTIATE);
     
+    object_attr_setdisabled((t_object *)x, gensym("ignore"), true);
+
     llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
     
     if (x && err == MAX_ERR_NONE)

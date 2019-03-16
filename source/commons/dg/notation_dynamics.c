@@ -605,8 +605,15 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
             if (h < 0 && w < 0)
                 h = w = 0;
             //                jfont_text_measure(jf_dynamics, dyntext, &w, &h);
+            double starthairpinpos_fix = *curr_hairpin_start_x;
+            double start_hairpin_aperture_rel = 0.;
+            if (min_hairpin_start_x > 0 && starthairpinpos_fix < min_hairpin_start_x) {
+                starthairpinpos_fix = min_hairpin_start_x;
+                start_hairpin_aperture_rel = (starthairpinpos_fix - *curr_hairpin_start_x)/ (xpos - *curr_hairpin_start_x);
+            }
+
             if (!(prev_hairpin_dont_paint && *prev_hairpin_dont_paint) && xpos - w/2. - HAIRPIN_PAD > *curr_hairpin_start_x)
-                paint_hairpin(g, prev_hairpin_color ? *prev_hairpin_color : r_ob->j_dynamics_rgba, *curr_hairpin_type, *curr_hairpin_start_x, xpos - w/2. - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH);
+                paint_hairpin(g, prev_hairpin_color ? *prev_hairpin_color : r_ob->j_dynamics_rgba, *curr_hairpin_type, starthairpinpos_fix, xpos - w/2. - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, start_hairpin_aperture_rel);
             *curr_hairpin_type = 0;
         }
         
@@ -668,10 +675,13 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
             }
             double endhairpinpos_fix = endhairpinpos - (is_dynamic_zero ? 0 : HAIRPIN_PAD);
             double starthairpinpos_fix = *curr_hairpin_start_x;
-            if (min_hairpin_start_x > 0 && starthairpinpos_fix < min_hairpin_start_x)
+            double start_hairpin_aperture_rel = 0.;
+            if (min_hairpin_start_x > 0 && starthairpinpos_fix < min_hairpin_start_x) {
                 starthairpinpos_fix = min_hairpin_start_x;
+                start_hairpin_aperture_rel = (starthairpinpos_fix - *curr_hairpin_start_x)/ (xpos - *curr_hairpin_start_x);
+            }
             if (!(prev_hairpin_dont_paint && *prev_hairpin_dont_paint) && endhairpinpos_fix > starthairpinpos_fix) {
-                paint_hairpin(g, prev_hairpin_color ? *prev_hairpin_color : r_ob->j_dynamics_rgba, *curr_hairpin_type, starthairpinpos_fix, endhairpinpos_fix, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH);
+                paint_hairpin(g, prev_hairpin_color ? *prev_hairpin_color : r_ob->j_dynamics_rgba, *curr_hairpin_type, starthairpinpos_fix, endhairpinpos_fix, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, start_hairpin_aperture_rel);
             }
             *curr_hairpin_type = 0;
         }
@@ -742,7 +752,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
             
             // painting hairpin?
             if ((r_ob->show_hairpins || boxed) && !dont_paint && mark->prev && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < end_previous_hairpin_here)
-                paint_hairpin(g, *color, mark->prev->hairpin_to_next, prev_end_xpos, end_previous_hairpin_here, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH);
+                paint_hairpin(g, *color, mark->prev->hairpin_to_next, prev_end_xpos, end_previous_hairpin_here, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, 0);
             
             prev_end_xpos = cur + (is_dynamic_zero ? 0. : HAIRPIN_PAD);
             
@@ -754,7 +764,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
         }
         
         if (boxed && !dont_paint && dyn->lastmark && dyn->lastmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < center_x + duration_x - HAIRPIN_PAD) {
-            paint_hairpin(g, *color, dyn->lastmark->hairpin_to_next, prev_end_xpos, center_x + duration_x - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH);
+            paint_hairpin(g, *color, dyn->lastmark->hairpin_to_next, prev_end_xpos, center_x + duration_x - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, 0);
         }
     }
 }
@@ -1449,12 +1459,13 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
     char path[1024];
     char temp_mark_text[1024], temp_mark_text2[1024];
     long i;
-    long last_hairpin = 0;
-    t_dynamics *last_dyn = NULL;
-    t_chord *last_chord = NULL;
-    t_dynamics_mark *lastmark = NULL;
     
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        long last_hairpin = 0;
+        t_dynamics *last_dyn = NULL;
+        t_chord *last_chord = NULL;
+        t_dynamics_mark *lastmark = NULL;
+
         last_chord = NULL;
         last_hairpin = 0;
         
@@ -2142,14 +2153,6 @@ void chord_assign_velocities_from_dynamics(t_notation_obj *r_ob, t_chord *ch, t_
 
 long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode)
 {
-    t_dynamics *curr_dyn = NULL;
-    t_dynamics *next_dyn = NULL;
-    t_dynamics_mark *prev_dyn_mark = NULL;
-
-    
-    long curr_num_dynamics = 0, next_num_dynamics = 0;
-    char curr_open_hairpin = 0, next_open_hairpin = 0;
-    
     t_dynamics_params params;
     params.a = a_exp;
     params.dynamics_spectrum_halfwidth = dynamics_spectrum_halfwidth;
@@ -2157,6 +2160,13 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
     
     
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
+        t_dynamics *curr_dyn = NULL;
+        t_dynamics *next_dyn = NULL;
+        t_dynamics_mark *prev_dyn_mark = NULL;
+        
+        long curr_num_dynamics = 0, next_num_dynamics = 0;
+        char curr_open_hairpin = 0, next_open_hairpin = 0;
+
         t_chord *curr_dyn_chord = NULL, *next_dyn_chord = NULL;
         double curr_dyn_onset = -1, next_dyn_onset = -1;
         
