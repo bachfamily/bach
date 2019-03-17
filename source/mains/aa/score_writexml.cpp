@@ -528,6 +528,23 @@ bool is_xml_dynamic(t_symbol* sym) {
     return false;
 }
 
+bool xml_open_hairpin(mxml_node_t* directionxml, const char* type)
+{
+    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
+    mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
+    mxmlElementSetAttr(wedgexml, "relative-x", "10");
+    mxmlElementSetAttr(wedgexml, "type", type);
+    return true;
+}
+
+bool xml_close_hairpin(mxml_node_t* directionxml)
+{
+    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
+    mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
+    mxmlElementSetAttr(wedgexml, "relative-x", "-10");
+    mxmlElementSetAttr(wedgexml, "type", "stop");
+    return false;
+}
 
 t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
 {
@@ -585,7 +602,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     
     whitespace_cb(NULL, -1);
     mxmlSetWrapMargin(1000);
-    long numparts = x->r_ob.num_voices;
+    long numvoices = x->r_ob.num_voices;
     
     mxml_node_t *scorexml = mxmlNewXML("1.0");
     mxmlNewElement(scorexml, "!DOCTYPE score-partwise PUBLIC \"-//Recordare//DTD MusicXML 3.0 Partwise//EN\"\n\"http://www.musicxml.org/dtds/partwise.dtd\" ");
@@ -605,7 +622,10 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     bach_mxmlNewTextElement(encodingxml, "software", 0, bachversiontxt);
     bach_mxmlNewTextElement(encodingxml, "encoding-date", 0, datetxt);
     
-    
+    mxml_node_t *defaults = mxmlNewElement(scorepartwisexml, "defaults");
+    mxml_node_t *wordfont = mxmlNewElement(defaults, "word-font");
+    mxmlElementSetAttr(wordfont, "font-family", "Times New Roman");
+    mxmlElementSetAttr(wordfont, "font-size", "11");
     
     mxml_node_t *partlistxml = mxmlNewElement(scorepartwisexml, "part-list");
     
@@ -692,22 +712,23 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     articulations_slot --;
     
     t_llll *numparts_llll = get_numparts_as_llll((t_notation_obj *) x);
-    t_llllelem *numparts_elem = numparts_llll->l_head;
-    long voices_left_in_voiceensemble ;
+    t_llllelem *numparts_elem = numparts_llll->l_head; // first elem is "numparts"
+    long voices_left_in_voiceensemble;
     t_llllelem *this_voice_ensemble_measure;
     t_bool new_voice_ensemble = true;
     
-    long voiceidx;
     partidx = 1;
-    
-    for (voiceidx = 1, voice = x->firstvoice; voice && voiceidx <= numparts; voiceidx++, voice = voice->next) {
+    long voiceidx;
+    for (voice = x->firstvoice, voiceidx = 1;
+         voice && voiceidx <= numvoices;
+         voice = voice->next, voiceidx++) {
         char id[32];
         char *nametxt = NULL;
         long textsize = 0;
         
         if (new_voice_ensemble) {
-            
             numparts_elem = numparts_elem->l_next;
+
             voices_left_in_voiceensemble = hatom_getlong(&numparts_elem->l_hatom);
             
             mxml_node_t *partxml = mxmlNewElement(partlistxml, "score-part");
@@ -742,11 +763,12 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             bach_freeptr(names);
         }
         
-        if (voices_left_in_voiceensemble == 1) {
+        --voices_left_in_voiceensemble;
+        
+        if (voices_left_in_voiceensemble == 0) {
             partidx++;
             new_voice_ensemble = true;
         } else {
-            --voices_left_in_voiceensemble;
             new_voice_ensemble = false;
         }
     }
@@ -763,7 +785,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     // this is not very elegant, but makes things much simpler with voice ensembles
     //////////////////
     divisions = 16;
-    for (voiceidx = 1, voice = x->firstvoice; voice && voiceidx <= numparts; voiceidx++, voice = voice->next) {
+    for (voiceidx = 1, voice = x->firstvoice;
+         voice && voiceidx <= numvoices;
+         voiceidx++, voice = voice->next) {
         for (measure = voice->firstmeasure; measure; measure = measure->next) {
             for (chord = measure->firstchord; chord; chord = chord->next) {
                 divisions = lcm(divisions, chord->r_sym_duration.r_den);
@@ -777,7 +801,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     new_voice_ensemble = true;
     
     partidx = 1;
-    for (voiceidx = 1, voice = x->firstvoice; voice && voiceidx <= numparts; voiceidx++, voice = voice->next) {
+    for (voiceidx = 1, voice = x->firstvoice; voice && voiceidx <= numvoices; voiceidx++, voice = voice->next) {
         t_timesignature *ts = NULL;
         long clef;
         mxml_node_t *partxml;
@@ -799,11 +823,13 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
         
         bool currently_open_hairpin = false;
         bool currently_ongoing_lyrics_syllable = false;
-        
-        for (measureidx = 1, measure = voice->firstmeasure; measure; measureidx++, measure = measure->next) {
-            mxml_node_t *measurexml;
+        mxml_node_t *measurexml;
+
+        for (measureidx = 1, measure = voice->firstmeasure, this_voice_ensemble_measure = voice_ensemble_measures->l_head;
+             measure;
+             measureidx++, measure = measure->next, this_voice_ensemble_measure = this_voice_ensemble_measure->l_next) {
             
-            if (new_voice_ensemble || !this_voice_ensemble_measure->l_next) {
+            if (new_voice_ensemble || !this_voice_ensemble_measure) {
                 measurexml = mxmlNewElement(partxml, "measure");
                 if (voices_left_in_voiceensemble > 1)
                     this_voice_ensemble_measure = llll_appendobj(voice_ensemble_measures, measurexml);
@@ -903,10 +929,6 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 }
                 
             } else {
-                if (measureidx == 1)
-                    this_voice_ensemble_measure = voice_ensemble_measures->l_head;
-                else
-                    this_voice_ensemble_measure = this_voice_ensemble_measure->l_next;
                 measurexml = (mxml_node_t *) hatom_getobj(&this_voice_ensemble_measure->l_hatom);
                 t_rational dur = measure_get_sym_duration(measure);
                 t_atom_long backup = dur * divisions;
@@ -916,14 +938,13 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             
             // chords
             for (chord = measure->firstchord; chord; chord = chord->next) {
-                char durtxt[16];
-                char dynamics_txt[16];
-                t_rational dur = chord->r_sym_duration;
+                
                 // dynamics
                 if (chord_has_dynamics(chord)) {
                     mxml_node_t *directionxml = NULL;
                     t_dynamics *dyn = chord_get_dynamics(chord);
                     if (dyn) {
+                        t_rational dyndur = dynamics_get_symduration((t_notation_obj *) x, dyn);
                         double last_offset = -1.;
                         for (t_dynamics_mark* mark = dyn->firstmark;
                              mark;
@@ -947,32 +968,34 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                             }
                             
                             if (currently_open_hairpin) {
-                                mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
-                                mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
-                                mxmlElementSetAttr(wedgexml, "type", "stop");
-                                currently_open_hairpin = false;
+                                currently_open_hairpin = xml_close_hairpin(directionxml);
                             }
                             
                             long nw = mark->num_words;
                             for (int i = 0; i < nw; i++) {
                                 if (currently_open_hairpin) {
-                                    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
-                                    mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
-                                    mxmlElementSetAttr(wedgexml, "type", "stop");
-                                    currently_open_hairpin = false;
+                                    currently_open_hairpin = xml_close_hairpin(directionxml);
                                 }
                                 t_symbol *sym = mark->text_deparsed[i];
                                 if (is_xml_dynamic(sym)) {
                                     mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
                                     mxml_node_t *dynamicsxml = mxmlNewElement(direction_typexml, "dynamics");
                                     mxmlNewElement(dynamicsxml, sym->s_name);
-                                } else if (sym != gensym("|") && sym != gensym("_")) {
+                                } else if (sym != gensym("|") && sym != gensym("=")) {
                                     mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
                                     if (!mark->is_roman) {
                                         mxml_node_t *dynamicsxml = mxmlNewElement(direction_typexml, "dynamics");
                                         bach_mxmlNewTextElement(dynamicsxml, "other-dynamics", 0, sym->s_name);
                                     } else {
-                                        bach_mxmlNewTextElement(direction_typexml, "words", 0, sym->s_name);
+                                        mxml_node_t *wordsxml;
+                                        if (i > 0) { // if it's not the first mark of this group
+                                            char wordstxt[2048];
+                                            snprintf_zero(wordstxt, 2048, " %s", sym->s_name);
+                                            wordsxml = bach_mxmlNewTextElement(direction_typexml, "words", 0, wordstxt);
+                                        } else {
+                                            wordsxml = bach_mxmlNewTextElement(direction_typexml, "words", 0, sym->s_name);
+                                        }
+                                        mxmlElementSetAttr(wordsxml, "font-style", "italic");
                                     }
                                 }
                             }
@@ -981,26 +1004,20 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                                 case k_DYNAMICS_HAIRPIN_DIM:
                                 case k_DYNAMICS_HAIRPIN_DIMEXP:
                                 case k_DYNAMICS_HAIRPIN_DIMDASHED: {
-                                    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
-                                    mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
-                                    mxmlElementSetAttr(wedgexml, "type", "diminuendo");
-                                    currently_open_hairpin = true;
+                                    currently_open_hairpin = xml_open_hairpin(directionxml, "diminuendo");
                                     break;
                                 }
                                 case k_DYNAMICS_HAIRPIN_CRESC:
                                 case k_DYNAMICS_HAIRPIN_CRESCEXP:
                                 case k_DYNAMICS_HAIRPIN_CRESCDASHED: {
-                                    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
-                                    mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
-                                    mxmlElementSetAttr(wedgexml, "type", "crescendo");
-                                    currently_open_hairpin = true;
+                                    currently_open_hairpin = xml_open_hairpin(directionxml, "crescendo");
                                     break;
                                 }
                             }
                             
                             if (new_offset != last_offset) {
                                 
-                                long xmloffset = round((dur * divisions).num() * new_offset);
+                                long xmloffset = round((dyndur * divisions).num() * new_offset);
                                 if (xmloffset != 0) {
                                     bach_mxmlNewIntElement(directionxml, "offset", 0, xmloffset);
                                 }
@@ -1023,7 +1040,9 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 t_llll *open_gliss_chord = export_glissandi ? llll_get() : NULL;
                 char at_least_a_gliss_has_ended = false;
                 xml_value_to_name(chord->figure.r_den, chordtype);
-                
+                t_rational dur = chord->r_sym_duration;
+                char durtxt[16];
+
                 if (dur.r_num < 0) {
                     dur.r_num *= -1;
                     is_rest = 1;
@@ -1543,21 +1562,28 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 }
             }
             
+            if (measure->next == NULL && currently_open_hairpin) {
+                mxml_node_t* directionxml = mxmlNewElement(measurexml, "direction");
+                currently_open_hairpin = xml_close_hairpin(directionxml);
+            }
+            
             if (voices_left_in_voiceensemble == 1) {
                 char barline = measure->end_barline->barline_type;
+                if (barline == 0)
+                    barline = k_BARLINE_AUTOMATIC;
                 if (measure->next == NULL && barline == k_BARLINE_AUTOMATIC)
                     barline = k_BARLINE_FINAL;
                 if (barline != k_BARLINE_AUTOMATIC) {
                     const char *type = "regular";
                     mxml_node_t *barlinexml = mxmlNewElement(measurexml, "barline");
                     switch (barline) {
-                        case k_BARLINE_NORMAL:    type = "regular";        break;
-                        case k_BARLINE_DASHED:    type = "dashed";        break;
-                        case k_BARLINE_POINTS:    type = "dotted";        break;
-                        case k_BARLINE_DOUBLE:    type = "light-light";    break;
-                        case k_BARLINE_FINAL:    type = "light-heavy";    break;
-                        case k_BARLINE_HIDDEN:    type = "none";            break;
-                        case k_BARLINE_SOLID:    type = "heavy";            break;
+                        case k_BARLINE_NORMAL:  type = "regular";        break;
+                        case k_BARLINE_DASHED:  type = "dashed";        break;
+                        case k_BARLINE_POINTS:  type = "dotted";        break;
+                        case k_BARLINE_DOUBLE:  type = "light-light";    break;
+                        case k_BARLINE_FINAL:   type = "light-heavy";    break;
+                        case k_BARLINE_HIDDEN:  type = "none";            break;
+                        case k_BARLINE_SOLID:   type = "heavy";            break;
                     }
                     bach_mxmlNewTextElement(barlinexml, "bar-style", 0, type);
                 }
