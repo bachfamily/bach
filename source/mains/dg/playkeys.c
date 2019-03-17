@@ -83,6 +83,7 @@ enum playkeys_properties
     k_PLAYKEYS_NOTEHEAD,
     k_PLAYKEYS_ARTICULATIONS,
     k_PLAYKEYS_LYRICS,
+    k_PLAYKEYS_ANNOTATION,
     k_PLAYKEYS_ROUTER,
     k_PLAYKEYS_PLAYOFFSET, // due to partial playing
     k_PLAYKEYS_ROLE,
@@ -143,6 +144,7 @@ typedef struct _playkeys
     t_atom                  n_articulationsslot;
     t_atom                  n_lyricsslot;
     t_atom                  n_noteheadslot;
+    t_atom                  n_annotationslot;
     
     char                    n_warn_pitchrequestedmidicentreceived;
     char                    n_warn_fullpathrequestedbutnotpresent;
@@ -373,6 +375,8 @@ long symbol_to_property(t_symbol *s)
         return k_PLAYKEYS_NOTEHEAD;
     if (s == _llllobj_sym_articulations)
         return k_PLAYKEYS_ARTICULATIONS;
+    if (s == _llllobj_sym_annotation)
+        return k_PLAYKEYS_ANNOTATION;
     if (s == gensym("router"))
         return k_PLAYKEYS_ROUTER;
     if (s == gensym("playoffset"))
@@ -418,6 +422,7 @@ t_symbol *property_to_symbol(long property)
         case k_PLAYKEYS_LYRICS: return _llllobj_sym_lyrics;
         case k_PLAYKEYS_NOTEHEAD: return _llllobj_sym_notehead;
         case k_PLAYKEYS_ARTICULATIONS: return _llllobj_sym_articulations;
+        case k_PLAYKEYS_ANNOTATION: return _llllobj_sym_annotation;
         case k_PLAYKEYS_ROUTER: return gensym("router");
         case k_PLAYKEYS_PLAYOFFSET: return gensym("playoffset");
         default: return _llllobj_sym_none;
@@ -526,8 +531,12 @@ int T_EXPORT main()
     // @description Sets the number of the slot containing articulations (0 if none).
 
     CLASS_ATTR_ATOM(c, "noteheadslot",		0,	t_playkeys, n_noteheadslot);
-    CLASS_ATTR_STYLE_LABEL(c, "noteheadslot", 0, "text", "Noteheads Slot Number");
+    CLASS_ATTR_STYLE_LABEL(c, "noteheadslot", 0, "text", "Notehead Slot Number");
     // @description Sets the number of the slot containing noteheads (0 if none).
+
+    CLASS_ATTR_ATOM(c, "annotationslot",        0,    t_playkeys, n_annotationslot);
+    CLASS_ATTR_STYLE_LABEL(c, "annotationslot", 0, "text", "Annotation Slot Number");
+    // @description Sets the number of the slot containing textual annotations (0 if none).
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
@@ -1859,6 +1868,7 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                     case k_PLAYKEYS_DYNAMICS:
                     case k_PLAYKEYS_ARTICULATIONS:
                     case k_PLAYKEYS_NOTEHEAD:
+                    case k_PLAYKEYS_ANNOTATION:
                     case k_PLAYKEYS_SLOT:
                     {
                         switch (incoming) {
@@ -1893,6 +1903,8 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                             hatom_setatom(&spec, &x->n_articulationsslot);
                                         if (this_key->property == k_PLAYKEYS_NOTEHEAD)
                                             hatom_setatom(&spec, &x->n_noteheadslot);
+                                        if (this_key->property == k_PLAYKEYS_ANNOTATION)
+                                            hatom_setatom(&spec, &x->n_annotationslot);
                                         if (spec.h_type == H_LONG) {
                                             if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec))))
                                                 llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
@@ -1935,6 +1947,8 @@ void playkeys_anything(t_playkeys *x, t_symbol *msg, long ac, t_atom *av)
                                         hatom_setatom(&spec, &x->n_articulationsslot);
                                     if (this_key->property == k_PLAYKEYS_NOTEHEAD)
                                         hatom_setatom(&spec, &x->n_noteheadslot);
+                                    if (this_key->property == k_PLAYKEYS_ANNOTATION)
+                                        hatom_setatom(&spec, &x->n_annotationslot);
                                     if (spec.h_type == H_LONG) {
                                         if ((target_el = root_find_el_with_long_router(slotsll, hatom_getlong(&spec))))
                                             llll_appendllll(found, llll_behead(llll_clone(hatom_getllll(&target_el->l_hatom))));
@@ -2138,6 +2152,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         atom_setlong(&x->n_lyricsslot, BACH_DEFAULT_SLOT_LYRICS);
         atom_setlong(&x->n_articulationsslot, BACH_DEFAULT_SLOT_ARTICULATIONS);
         atom_setlong(&x->n_noteheadslot, BACH_DEFAULT_SLOT_NOTEHEADS);
+        atom_setlong(&x->n_annotationslot, BACH_DEFAULT_SLOT_ANNOTATIONS);
         x->n_must_iterate_on_output = false;
         
         attr_args_process(x, ac, av);
@@ -2201,10 +2216,21 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
                                 this_keys->property = k_PLAYKEYS_SLOT;
                                 this_keys->allowed_command_router = allowed_command_router;
                                 this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems : get_default_allowed_notationitems_for_property(this_keys->property);
-                                if (hatom_gettype(&tempel->l_hatom) == H_SYM)
-                                    hatom_setsym(&this_keys->specification, hatom_getsym(&tempel->l_hatom));
-                                else
+                                
+                                if (hatom_gettype(&tempel->l_hatom) == H_SYM) {
+                                    t_symbol *ts = hatom_getsym(&tempel->l_hatom);
+                                    hatom_setsym(&this_keys->specification, ts);
+                                    
+                                    long prop = symbol_to_property(ts);
+                                    if (prop == k_PLAYKEYS_ANNOTATION || prop == k_PLAYKEYS_NOTEHEAD || prop == k_PLAYKEYS_ARTICULATIONS || prop == k_PLAYKEYS_DYNAMICS || k_PLAYKEYS_LYRICS) {
+                                        this_keys->property = prop;
+                                        this_keys->specification.h_type = H_NULL;
+                                        this_keys->allowed_notationitems = curr_allowed_notationitems >= 0 ? curr_allowed_notationitems :get_default_allowed_notationitems_for_property(this_keys->property);
+                                    }
+
+                                } else
                                     hatom_setlong(&this_keys->specification, hatom_getlong(&tempel->l_hatom));
+                                
                                 *this_outlets++ = '4';
                                 i++;
                                 this_keys++;
