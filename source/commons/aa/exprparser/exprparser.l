@@ -285,14 +285,6 @@ ACCIDENTAL ([#bxdq\^v]+)
     return lexpr_append_lexeme_LONG(epd->lexeme, atol(yytext));
 }
 
-{URAT} {
-    char *textend;
-    long num = strtol(yytext, &textend, 10);
-    long den = strtol(textend + 1, NULL, 10);
-    parserpost(" lex: URAT %ld / %ld\n", num, den);
-    BEGIN BINARY;
-    return lexpr_append_lexeme_RATIONAL(epd->lexeme, t_rational(num, den));
-}
 
 {UFLOAT} {
     parserpost(" lex: BACH_DOUBLE %lf\n", atof(yytext));

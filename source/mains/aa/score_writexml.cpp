@@ -231,88 +231,6 @@ void score_exportxml(t_score *x, t_symbol *s, long argc, t_atom *argv)
 }
 
 
-
-void xmlwrite_open_hairpin(mxml_node_t *measureXML, char hairpin, char *currently_open_hairpin, long offset)
-{
-    mxml_node_t *hairpin_directionxml = NULL;
-    mxml_node_t *hairpin_direction_typexml = NULL;
-    mxml_node_t *wedge_xml = NULL;
-    hairpin_directionxml = mxmlNewElement(measureXML, "direction");
-    hairpin_direction_typexml = mxmlNewElement(hairpin_directionxml, "direction-type");
-    wedge_xml = mxmlNewElement(hairpin_direction_typexml, "wedge");
-    mxmlElementSetAttr(hairpin_directionxml, "placement", "below");
-    mxmlElementSetAttr(wedge_xml, "type", hairpin > 0 ? "crescendo" : "diminuendo");
-    if (currently_open_hairpin)
-        *currently_open_hairpin = hairpin;
-    
-    if (offset)
-        bach_mxmlNewIntElement(hairpin_directionxml, "offset", 0, offset);
-}
-
-
-void xmlwrite_close_hairpin(mxml_node_t *measureXML, char *currently_open_hairpin, long offset)
-{
-    mxml_node_t *hairpin_directionxml = NULL;
-    mxml_node_t *hairpin_direction_typexml = NULL;
-    mxml_node_t *wedge_xml = NULL;
-    hairpin_directionxml = mxmlNewElement(measureXML, "direction");
-    hairpin_direction_typexml = mxmlNewElement(hairpin_directionxml, "direction-type");
-    wedge_xml = mxmlNewElement(hairpin_direction_typexml, "wedge");
-    mxmlElementSetAttr(hairpin_directionxml, "placement", "below");
-    mxmlElementSetAttr(wedge_xml, "type", "stop");
-    if (currently_open_hairpin)
-        *currently_open_hairpin = 0;
-    
-    if (offset)
-        bach_mxmlNewIntElement(hairpin_directionxml, "offset", 0, offset);
-}
-
-void xmlwrite_add_dynamics(mxml_node_t *measureXML, char *text, long offset)
-{
-    mxml_node_t *directionxml = mxmlNewElement(measureXML, "direction");
-    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
-    mxml_node_t *dynamics_xml = mxmlNewElement(direction_typexml, "dynamics");
-    mxmlElementSetAttr(directionxml, "placement", "below");
-    
-    if (!strcmp(text, "p") ||
-        !strcmp(text, "pp") ||
-        !strcmp(text, "ppp") ||
-        !strcmp(text, "pppp") ||
-        !strcmp(text, "ppppp") ||
-        !strcmp(text, "pppppp") ||
-        !strcmp(text, "f") ||
-        !strcmp(text, "ff") ||
-        !strcmp(text, "fff") ||
-        !strcmp(text, "ffff") ||
-        !strcmp(text, "fffff") ||
-        !strcmp(text, "ffffff") ||
-        !strcmp(text, "mp") ||
-        !strcmp(text, "mf") ||
-        !strcmp(text, "sf") ||
-        !strcmp(text, "sfp") ||
-        !strcmp(text, "sfpp") ||
-        !strcmp(text, "fp") ||
-        !strcmp(text, "rf") ||
-        !strcmp(text, "rfz") ||
-        !strcmp(text, "sfz") ||
-        !strcmp(text, "sffz") ||
-        !strcmp(text, "fz")) {
-        mxmlElementSetAttr(directionxml, "placement", "below");
-        mxmlNewElement(dynamics_xml, text);
-    } else
-        bach_mxmlNewTextElement(dynamics_xml, "other-dynamics", 0, text);
-    
-    if (offset)
-        bach_mxmlNewIntElement(directionxml, "offset", 0, offset);
-}
-
-
-
-
-
-
-
-
 mxml_node_t *bach_mxmlNewTextElement(mxml_node_t *parent, const char *name, int whitespace, const char *string)
 {
     mxml_node_t *node = mxmlNewElement(parent, name);
@@ -598,7 +516,17 @@ const char *bach_xml_acc2name(t_rational acc, long *mc_alter)
     return acc_name;
 }
 
-
+bool is_xml_dynamic(t_symbol* sym) {
+    static const char *supported[] = {
+        "p", "pp", "ppp", "pppp", "ppppp", "pppppp", "f", "ff", "fff", "ffff", "fffff", "ffffff", "mp", "mf", "sf", "sfp", "sfpp", "fp", "rf", "rfz", "sfz", "sffz", "fz"
+    };
+    static constexpr char n = sizeof(supported) / sizeof(supported[0]);
+    for (int i = 0; i < n; i++) {
+        if (gensym(supported[i]) == sym)
+            return true;
+    }
+    return false;
+}
 
 
 t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
@@ -869,8 +797,8 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
         long staves = 1;
         long splitpoints[3];
         
-        char currently_open_hairpin = 0;
-        char currently_ongoing_lyrics_syllable = 0;
+        bool currently_open_hairpin = false;
+        bool currently_ongoing_lyrics_syllable = false;
         
         for (measureidx = 1, measure = voice->firstmeasure; measure; measureidx++, measure = measure->next) {
             mxml_node_t *measurexml;
@@ -989,7 +917,102 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
             // chords
             for (chord = measure->firstchord; chord; chord = chord->next) {
                 char durtxt[16];
+                char dynamics_txt[16];
                 t_rational dur = chord->r_sym_duration;
+                // dynamics
+                if (chord_has_dynamics(chord)) {
+                    mxml_node_t *directionxml = NULL;
+                    t_dynamics *dyn = chord_get_dynamics(chord);
+                    if (dyn) {
+                        double last_offset = -1.;
+                        for (t_dynamics_mark* mark = dyn->firstmark;
+                             mark;
+                             mark = mark->next) {
+                            double new_offset;
+                            switch (mark->dynamics_mark_attachment) {
+                                case k_DYNAMICS_MARK_ATTACHMENT_SNAPTOBPT: {
+                                    t_bpt *bpt = dynamics_mark_get_breakpoint(dyn, mark);
+                                    new_offset = bpt->rel_x_pos;
+                                    break;
+                                }
+                                default: {
+                                    new_offset = mark->relative_position;
+                                    break;
+                                }
+                            }
+                            
+                            if (new_offset != last_offset) {
+                                directionxml = mxmlNewElement(measurexml, "direction");
+                                mxmlElementSetAttr(directionxml, "placement", "below");
+                            }
+                            
+                            if (currently_open_hairpin) {
+                                mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
+                                mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
+                                mxmlElementSetAttr(wedgexml, "type", "stop");
+                                currently_open_hairpin = false;
+                            }
+                            
+                            long nw = mark->num_words;
+                            for (int i = 0; i < nw; i++) {
+                                if (currently_open_hairpin) {
+                                    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
+                                    mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
+                                    mxmlElementSetAttr(wedgexml, "type", "stop");
+                                    currently_open_hairpin = false;
+                                }
+                                t_symbol *sym = mark->text_deparsed[i];
+                                if (is_xml_dynamic(sym)) {
+                                    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
+                                    mxml_node_t *dynamicsxml = mxmlNewElement(direction_typexml, "dynamics");
+                                    mxmlNewElement(dynamicsxml, sym->s_name);
+                                } else if (sym != gensym("|") && sym != gensym("_")) {
+                                    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
+                                    if (!mark->is_roman) {
+                                        mxml_node_t *dynamicsxml = mxmlNewElement(direction_typexml, "dynamics");
+                                        bach_mxmlNewTextElement(dynamicsxml, "other-dynamics", 0, sym->s_name);
+                                    } else {
+                                        bach_mxmlNewTextElement(direction_typexml, "words", 0, sym->s_name);
+                                    }
+                                }
+                            }
+                            
+                            switch (mark->hairpin_to_next) {
+                                case k_DYNAMICS_HAIRPIN_DIM:
+                                case k_DYNAMICS_HAIRPIN_DIMEXP:
+                                case k_DYNAMICS_HAIRPIN_DIMDASHED: {
+                                    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
+                                    mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
+                                    mxmlElementSetAttr(wedgexml, "type", "diminuendo");
+                                    currently_open_hairpin = true;
+                                    break;
+                                }
+                                case k_DYNAMICS_HAIRPIN_CRESC:
+                                case k_DYNAMICS_HAIRPIN_CRESCEXP:
+                                case k_DYNAMICS_HAIRPIN_CRESCDASHED: {
+                                    mxml_node_t *direction_typexml = mxmlNewElement(directionxml, "direction-type");
+                                    mxml_node_t *wedgexml = mxmlNewElement(direction_typexml, "wedge");
+                                    mxmlElementSetAttr(wedgexml, "type", "crescendo");
+                                    currently_open_hairpin = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (new_offset != last_offset) {
+                                
+                                long xmloffset = round((dur * divisions).num() * new_offset);
+                                if (xmloffset != 0) {
+                                    bach_mxmlNewIntElement(directionxml, "offset", 0, xmloffset);
+                                }
+                                last_offset = new_offset;
+                                
+                            }
+                            
+                        }
+                        
+                    }
+                }
+
                 long is_rest, is_grace;
                 t_xml_chord_beam_info beam_info;
                 t_xml_chord_tuplet_info tuplet_info[CONST_MAX_XML_NESTED_TUPLETS];
@@ -997,7 +1020,6 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 long num_dots = chord->num_dots;
                 char chordtype[16], normal_type[16];
                 t_rational screen_accidental;
-                char we_have_already_exported_dynamics_for_this_chord = false;
                 t_llll *open_gliss_chord = export_glissandi ? llll_get() : NULL;
                 char at_least_a_gliss_has_ended = false;
                 xml_value_to_name(chord->figure.r_den, chordtype);
@@ -1022,101 +1044,16 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                 // cycle on notes
                 for (isfirstnote = 1, note = chord->firstnote; isfirstnote || note; isfirstnote = 0, note = note ? note->next : NULL) {
                     
-                    // dynamics and slots
+                    // velocity and slots
                     if (note) {
-                        char dynamics_txt[16];
-                        mxml_node_t *directionxml = NULL;
-                        mxml_node_t *direction_typexml = NULL;
-                        mxml_node_t *dynamics_xml = NULL;
+                        
                         if (export_velocities) {
                             mxml_node_t *soundxml = NULL;
-                            directionxml = mxmlNewElement(measurexml, "direction");
-                            direction_typexml = mxmlNewElement(directionxml, "direction-type");
-                            dynamics_xml = mxmlNewElement(direction_typexml, "dynamics");
+                            mxml_node_t *directionxml = mxmlNewElement(measurexml, "direction");
                             soundxml = mxmlNewElement(directionxml, "sound");
+                            char dynamics_txt[16];
                             snprintf_zero(dynamics_txt, 16, "%lf", (double) (note->velocity * 100. / 90.));
                             mxmlElementSetAttr(soundxml, "dynamics", dynamics_txt);
-                        }
-                        
-                        
-                        /// EXPORT FOR DYNAMICS
-                        if (dynamics_slot >= 0) { // *if* we export the dynamics
-                            t_slot *slot = &note->slot[dynamics_slot];
-                            t_bool single = x->r_ob.slotinfo[dynamics_slot].slot_singleslotfortiednotes;
-                            
-                            if (slot->firstitem && slot->firstitem->item &&             // if there are dynamics...
-                                !we_have_already_exported_dynamics_for_this_chord &&    // ... and we haven't already exported dynamcis from another note
-                                //     of the same chord (first note having dynamics wins in
-                                //     the dynamics display!)...
-                                !(note->tie_from && single)) {                          // ... unless the slot is marked as "single slot for tied notes"
-                                                                                        // and the note has a tie arriving to it...
-                                
-                                // ...then we need to export the dynamics
-                                char text[2048];
-                                
-                                // is there an hairpin that is currently "open"? e.g. did a previous dynamics end with < or > ?
-                                // then the hairpin has to end on the current note
-                                if (currently_open_hairpin)
-                                    xmlwrite_close_hairpin(measurexml, &currently_open_hairpin, 0);
-                                
-                                if (dynamics_slot_is_text) {
-                                    
-                                    // if the dynamics slot is of TEXT type, we just copy the dynamics
-                                    strncpy_zero(text, (char *) slot->firstitem->item, 2048);
-                                    strip_final_ws(text);
-                                    xmlwrite_add_dynamics(measurexml, text, 0);
-                                    
-                                } else {
-                                    
-                                    // otherwise, the slot is surely of type dynamics (or it would have been nullified previously, with an error).
-                                    char dyn_text[CONST_MAX_NUM_DYNAMICS_PER_CHORD][CONST_MAX_NUM_DYNAMICS_CHARS];
-                                    char dyn_text_dep[CONST_MAX_NUM_DYNAMICS_CHARS];
-                                    long hairpins[CONST_MAX_NUM_DYNAMICS_PER_CHORD];
-                                    long num_dynamics = 0;
-                                    char open_hairpin = 0;
-                                    
-                                    // we fill all the information about dynamics for the current chord
-                                    // this fills:
-                                    // - num_dynamics: with the number of dynamics found for the chord (a chord might have more than one dynamic attached,
-                                    // e.g. when a note has something like "p<ff>>p>pppp")
-                                    // - dyn_text: with the all dynamics, as string – but beware: with the glyphs used by the notation fonts in bach!
-                                    //   this is not a human readable form!
-                                    // - hairpins: with an array of hairpins (one for each dynamics of the chord), that can be 0 (no hairpin),
-                                    //   1 (crescendo), 2 (exponential crescendo), -1 (diminuendo), -2 (exponential diminuendo).
-                                    // - open_hairpin: 1 only if there's an open hairpin (e.g. "p<ff>>p<"), false otherwise
-                                    // For instance, a chord having one note with a dynamics slot containing "p<ff>>p>pppp", will be parsed as
-                                    // num_dynamics: 4
-                                    // dyn_text: array of C-strings with the codepoints of "p", "ff", "p", "pppp" for November for bach
-                                    // hairpins: array of 1, -2, -1, 0
-                                    // open_hairpin: false
-                                    
-                                    // WAS: chord_parse_dynamics((t_notation_obj *)x, chord, dynamics_slot, dyn_text, hairpins, &num_dynamics, &open_hairpin, NULL);
-                                    
-                                    // obtaining the rational duration of the entire sequence of possibly tied chords
-                                    t_rational dur_with_ties = note_get_tieseq_symduration(note);
-                                    
-                                    // for each dynamics, we need to deparse into human readable form and put it as dynamics marking
-                                    for (long di = 0; di < num_dynamics; di++) {
-                                        // each piece of dynamics has an offset. E.g. if a note has "p<ff>>p>0", this is assumed as if "p"
-                                        // was at the beginning, "ff" was after 1/3 of its duration, "p" again after 2/3 of its duration and 0 at the end.
-                                        long offset = 0;
-                                        if (num_dynamics > 1)
-                                            offset = round(((double)di * (dur_with_ties.r_num * divisions / dur_with_ties.r_den))/(num_dynamics - 1));
-                                        
-                                        // This deparses dyn_text to a human-readable string representing the dynamics (such as "mp", "sfz", etc.)
-                                        deparse_dynamics_to_string_once((t_notation_obj *)x, dyn_text[di], dyn_text_dep);
-                                        if (currently_open_hairpin)
-                                            xmlwrite_close_hairpin(measurexml, &currently_open_hairpin, offset);
-                                        xmlwrite_add_dynamics(measurexml, dyn_text_dep, offset);
-                                        if (hairpins[di])
-                                            xmlwrite_open_hairpin(measurexml, hairpins[di], &currently_open_hairpin, offset);
-                                    }
-                                }
-                                
-                                // we won't export dynamics for this chord any longer, even if other notes of the same chord should have dynamics.
-                                we_have_already_exported_dynamics_for_this_chord = true;
-                                
-                            }
                         }
                         
                         for (this_slotnum_elem = export_slots->l_head; this_slotnum_elem; this_slotnum_elem = this_slotnum_elem->l_next) {
@@ -1625,9 +1562,6 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     bach_mxmlNewTextElement(barlinexml, "bar-style", 0, type);
                 }
             }
-            if (!measure->next && currently_open_hairpin)
-                xmlwrite_close_hairpin(measurexml, &currently_open_hairpin, 0);
-            
         }
         
         if (voices_left_in_voiceensemble == 1) {

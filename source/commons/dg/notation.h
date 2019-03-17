@@ -19117,6 +19117,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
 long dynamic_mark_cmp_fromtext(char *mark1, char *mark2);
 long dynamic_mark_end_start_cmp(t_dynamics_mark *s1, t_dynamics_mark *s2);
 
+t_bpt *dynamics_mark_get_breakpoint(t_dynamics *dyn, t_dynamics_mark *mark);
 
 
 // autospell
