@@ -2045,7 +2045,7 @@ void set_measure_measureinfo(t_score *x, t_measure *measure, t_llll *measureinfo
             if ((measureinfo->l_size >= 2) && (hatom_gettype(&measureinfo->l_head->l_next->l_hatom) == H_LLLL)) {
                 tempollll = hatom_getllll(&measureinfo->l_head->l_next->l_hatom);
                 if ((measureinfo->l_size >= 3) && (hatom_gettype(&measureinfo->l_head->l_next->l_next->l_hatom) == H_SYM)) { // measure barline
-                    measurebarline = hatom_getlong(&measureinfo->l_head->l_next->l_next->l_hatom);
+                    measurebarline = hatom_getsym(&measureinfo->l_head->l_next->l_next->l_hatom)->s_name[0];
                 }
             }
         }
@@ -9539,7 +9539,7 @@ void overtype_voice(t_score *x, t_scorevoice *voice, t_timepoint *from_here, t_t
         }
         
         t_llll *ts = long_couple_to_llll(num > 0 ? num : 1, den);
-        measure_set_ts_and_tempo_from_llll((t_notation_obj *) x, fakemeas, ts, NULL, 0, NULL, false);
+        measure_set_ts_and_tempo_from_llll((t_notation_obj *) x, fakemeas, ts, NULL, k_BARLINE_AUTOMATIC, NULL, false);
         
         if (num > 0)
             check_measure_autocompletion(x, fakemeas); // we now count on autocompletion to trim stuff properly

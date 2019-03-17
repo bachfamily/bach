@@ -4692,9 +4692,10 @@ char parse_open_timepoint_syntax(t_notation_obj *r_ob, t_llll *arguments, double
 
 
 void get_left_and_right_barline_ux_tolerances(t_notation_obj *r_ob, t_measure *measure, double *left, double *right){
-    char left_barline_type = measure ? (measure->prev ? measure->prev->end_barline->barline_type : 0) : k_BARLINE_FINAL;
-    
-    *left = get_barline_ux_width(r_ob, left_barline_type) + CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE;
+    if (measure)
+        *left = measure->prev ? measure_get_barline_ux_width(r_ob, measure->prev) + CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE : 0;
+    else
+        *left = get_barline_ux_width(r_ob, k_BARLINE_FINAL) + CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE;
     *right = CONST_BARLINE_WIDTH_SELECTION_UTOLERANCE;
 }
 
@@ -9956,7 +9957,7 @@ t_measure *build_measure(t_notation_obj *r_ob, t_llll *time_signature){
     
     // if time_signature lll is correct, we put that time signature
     if (time_signature) 
-        measure_set_ts_and_tempo_from_llll(r_ob, outmeas, time_signature, NULL, 0, NULL, false);
+        measure_set_ts_and_tempo_from_llll(r_ob, outmeas, time_signature, NULL, k_BARLINE_AUTOMATIC, NULL, false);
     
     if (time_signature) 
         compute_utf_timesignature(r_ob, &outmeas->timesignature);
@@ -30923,18 +30924,10 @@ void recalculate_voicenames_width(t_notation_obj *r_ob) {
     }
 }
 
-double get_end_barline_ux_width(t_notation_obj *r_ob, t_measure *measure){
-    char barline_type = measure->end_barline->barline_type;
 
-    if (barline_type == 0 && !measure->next)
-        barline_type = k_BARLINE_FINAL;
-    else 
-        barline_type = k_BARLINE_NORMAL;
-    
-    return get_barline_ux_width(r_ob, barline_type);
-}
-
-double get_barline_ux_width(t_notation_obj *r_ob, char barline_type){
+// won't accept "automatic"
+double get_barline_ux_width(t_notation_obj *r_ob, char barline_type)
+{
     switch (barline_type) {
         case k_BARLINE_NORMAL:
         case k_BARLINE_DASHED:
@@ -30951,6 +30944,17 @@ double get_barline_ux_width(t_notation_obj *r_ob, char barline_type){
     }
     return 0;
 }
+
+double measure_get_barline_ux_width(t_notation_obj *r_ob, t_measure *meas)
+{
+    char barline_type = meas->end_barline->barline_type;
+    
+    if (barline_type == 0 || barline_type == k_BARLINE_AUTOMATIC)
+        barline_type = meas->next ? k_BARLINE_NORMAL : k_BARLINE_FINAL;
+    
+    return get_barline_ux_width(r_ob, barline_type);
+}
+
 
 // only used by roll
 void recompute_total_length(t_notation_obj *r_ob){

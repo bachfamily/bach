@@ -286,7 +286,7 @@ double get_last_tpt_barline_width(t_score *x, t_tuttipoint *tpt){
             last_tpt_measure = nth_scorevoice(x, i)->lastmeasure;
 
         if (last_tpt_measure) {
-            double this_width = get_end_barline_ux_width((t_notation_obj *) x, last_tpt_measure);
+            double this_width = measure_get_barline_ux_width((t_notation_obj *) x, last_tpt_measure);
             if (width < this_width)
                 width = this_width;
         }
@@ -1206,7 +1206,7 @@ void clear_measure(t_score *x, t_measure *measure, char also_reset_all_attribute
     measure->rhythmic_tree = llll_get();
     
     if (also_reset_all_attributes) {
-        measure->end_barline->barline_type = 0;
+        measure->end_barline->barline_type = k_BARLINE_AUTOMATIC;
         measure->local_spacing_width_multiplier = 1;
         measure->is_spacing_fixed = 0;
         measure->show_measure_number = 1;
@@ -1236,7 +1236,7 @@ void set_all_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, long num_
             if (hatom_gettype(&firstelem->l_hatom) == H_LLLL) { 
                 t_llll *ts = hatom_getllll(&firstelem->l_hatom);
                 t_llll *tempi = ((measureinfo->l_size >= 2) && (hatom_gettype(&firstelem->l_next->l_hatom) == H_LLLL)) ? hatom_getllll(&firstelem->l_next->l_hatom) : NULL;
-                char measure_barline = (measureinfo->l_size >= 3) ? hatom_getlong(&firstelem->l_next->l_hatom) : 0;
+                char measure_barline = (measureinfo->l_size >= 3 && hatom_gettype(&firstelem->l_next->l_next->l_hatom) == H_SYM) ? hatom_getsym(&firstelem->l_next->l_next->l_hatom)->s_name[0] : k_BARLINE_AUTOMATIC;
                 while (tmp_voice && (tmp_voice->v_ob.number < x->r_ob.num_voices)) {
                     t_measure *meas;
                     if (tempi && (tempi->l_size > 0) && !x->must_append_measures) 
@@ -1449,7 +1449,7 @@ void set_voice_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, t_score
     t_llllelem *elem; 
     t_measure *measure = (!x->must_append_measures) ? voice->firstmeasure : NULL; // if must_append_measures is true, we append measures
     t_llll *ts = NULL; t_llll *tempi = NULL;
-    long valid_for_n_measures = 1; char barline = 0;
+    long valid_for_n_measures = 1; char barline = k_BARLINE_AUTOMATIC;
     for (elem = measureinfo->l_head; elem; elem = elem->l_next) { // cycle on the measures. the syntax is ((TS)) or ((TS) (TEMPO)) or (validfor#meas (TS) (TEMPO) barline)
         if (hatom_gettype(&elem->l_hatom) == H_LLLL) { // it has to be a llll
             t_llll *thismeas = hatom_getllll(&elem->l_hatom);
@@ -1459,14 +1459,12 @@ void set_voice_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, t_score
                     valid_for_n_measures= hatom_getlong(&thismeas->l_head->l_hatom);
                     ts = (thismeas->l_size >= 2) ? hatom_getllll(&thismeas->l_head->l_next->l_hatom) : NULL;
                     tempi = (thismeas->l_size >= 3) ? hatom_getllll(&thismeas->l_head->l_next->l_next->l_hatom) : NULL;
-                    barline = ((thismeas->l_size >= 4) && (hatom_gettype(&thismeas->l_head->l_next->l_next->l_next->l_hatom) == H_SYM)) ? 
-                    hatom_getsym(&thismeas->l_head->l_next->l_next->l_next->l_hatom)->s_name[0] : 0;
+                    barline = ((thismeas->l_size >= 4) && (hatom_gettype(&thismeas->l_head->l_next->l_next->l_next->l_hatom) == H_SYM)) ? hatom_getsym(&thismeas->l_head->l_next->l_next->l_next->l_hatom)->s_name[0] : k_BARLINE_AUTOMATIC;
                 } else {
                     valid_for_n_measures = 1;
                     ts = (thismeas->l_size >= 1) ? hatom_getllll(&thismeas->l_head->l_hatom) : NULL;
                     tempi = (thismeas->l_size >= 2) ? hatom_getllll(&thismeas->l_head->l_next->l_hatom) : NULL;
-                    barline = ((thismeas->l_size >= 3) && (hatom_gettype(&thismeas->l_head->l_next->l_next->l_hatom) == H_SYM)) ? 
-                    hatom_getsym(&thismeas->l_head->l_next->l_next->l_hatom)->s_name[0] : 0;
+                    barline = ((thismeas->l_size >= 3) && (hatom_gettype(&thismeas->l_head->l_next->l_next->l_hatom) == H_SYM)) ? hatom_getsym(&thismeas->l_head->l_next->l_next->l_hatom)->s_name[0] : k_BARLINE_AUTOMATIC;
                 }
                 
                 if (valid_for_n_measures < 0) { // to the end!
@@ -2931,7 +2929,7 @@ void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll,
         t_llllelem *elem;
         t_llll* tsllll = NULL; 
         t_llll* tempollll = NULL; 
-        char measurebarline = 0;
+        char measurebarline = k_BARLINE_AUTOMATIC;
         t_symbol *sym;
         
         // are there specification for the ts/tempo?
@@ -2944,7 +2942,7 @@ void set_measure_from_llll(t_score *x, t_measure *measure, t_llll *measelemllll,
                 if ((elemllll->l_size >= 2) && (hatom_gettype(&elemllll->l_head->l_next->l_hatom) == H_LLLL)) {
                     tempollll = hatom_getllll(&elemllll->l_head->l_next->l_hatom);
                     if ((elemllll->l_size >= 3) && (hatom_gettype(&elemllll->l_head->l_next->l_next->l_hatom) == H_SYM)) { // measure barline
-                        measurebarline = hatom_getlong(&elemllll->l_head->l_next->l_next->l_hatom);
+                        measurebarline = hatom_getsym(&elemllll->l_head->l_next->l_next->l_hatom)->s_name[0];
                     }
                 }
             }
@@ -8500,7 +8498,7 @@ t_llll* get_voice_measuresinfo_values_as_llll(t_scorevoice *voice)
         t_llll* ts_tempo_llll = llll_get();
         llll_appendllll(ts_tempo_llll, get_timesignature_as_llll(&temp_meas->timesignature), 0, WHITENULL_llll);
         llll_appendllll(ts_tempo_llll, measure_get_tempi_as_llll(temp_meas), 0, WHITENULL_llll);
-        if (temp_meas->end_barline->barline_type > 0)
+        if (temp_meas->end_barline->barline_type > 0 && temp_meas->end_barline->barline_type != k_BARLINE_AUTOMATIC)
             llll_appendlong(ts_tempo_llll, temp_meas->end_barline->barline_type, 0, WHITENULL_llll);
         llll_appendllll(out_llll, ts_tempo_llll, 0, WHITENULL_llll);    
         

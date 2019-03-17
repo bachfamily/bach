@@ -5940,6 +5940,7 @@ long get_bits_from_figure(t_rational figure);
 // -----------------------------------
 
 /**    Obtain the unscaled width of a barline in pixels.
+    Won't accept "automatic" as barline mode (use measure_get_barline_ux_width() instead)
     @ingroup        notation_graphics
     @param r_ob        The notation object
     @param barline    Barline type (one of the #e_barline_modifier)
@@ -5948,14 +5949,14 @@ long get_bits_from_figure(t_rational figure);
 double get_barline_ux_width(t_notation_obj *r_ob, char barline);
 
 
-/**    Obtain the unscaled width of a the barline at the end of a measure.
+/**    Obtain the unscaled width of a measure barline in pixels.
     @ingroup        notation_graphics
     @param r_ob        The notation object
     @param measure    The measure
-    @return            The unscaled width of the measure ending barline
-    @remark            It is a simple wrapper of get_barline_ux_width()
+    @return            The unscaled width of the barline
  */
-double get_end_barline_ux_width(t_notation_obj *r_ob, t_measure *measure);
+double measure_get_barline_ux_width(t_notation_obj *r_ob, t_measure *meas);
+
 
 
 /**    If the <force_non_antialiased_staff_lines> field of the notation object is non-zero, it changes the <zoom_y> field

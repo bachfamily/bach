@@ -2122,7 +2122,7 @@
     // • <m>Cmd+Shift+L</m> (mac) or <m>Ctrl+Shift+L</m> (win): Start editing lyrics for the leftmost selected chord, or for the selected lyrics <br />
     // • <m>Cmd+Shift+D</m> (mac) or <m>Ctrl+Shift+D</m> (win): Start editing dynamics for the leftmost selected chord, or for the selected dynamics <br />
     // • <m>Tab</m> while editing: Move to next chord's lyrics/dynamics <br />
-    // • <m>Shift+Tab</m> while editing: Move to previous chord's lyrics&dynamics <br />
+    // • <m>Shift+Tab</m> while editing: Move to previous chord's lyrics/dynamics <br />
     // • <m>-</m>: For lyrics: end a syllable with "-" in order to create a dashed line reaching the next piece of lyrics <br />
     // • <m>Esc</m>: End editing <br />
     // • <m>↑</m>: When dynamics are selected: raise dynamic markings by one step. <br />
