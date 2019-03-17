@@ -14438,16 +14438,21 @@ void score_enter(t_score *x)    // enter is triggerd at "endeditbox time"
         unlock_general_mutex((t_notation_obj *)x);
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);
     } else if (x->r_ob.is_editing_type == k_DYNAMICS_IN_SLOT) {
-        t_llll *new_text_as_llll = llll_get();
-        llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
-        lock_general_mutex((t_notation_obj *)x);
-        create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
-        notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, new_text_as_llll);
-        llll_free(new_text_as_llll);
-        if (x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.link_dynamics_to_slot - 1 == x->r_ob.active_slot_num) {
-            t_chord *ch = notation_item_get_parent_chord((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
-            if (ch)
-                ch->need_recompute_parameters = true;
+        if (strlen(text) > 0) {
+            t_llll *new_text_as_llll = llll_get();
+            llll_appendsym(new_text_as_llll, gensym(text), 0, WHITENULL_llll);
+            lock_general_mutex((t_notation_obj *)x);
+            create_simple_notation_item_undo_tick((t_notation_obj *) x, get_activeitem_undo_item((t_notation_obj *) x), k_UNDO_MODIFICATION_CHANGE);
+            notation_item_change_slotitem((t_notation_obj *) x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num, 1, new_text_as_llll);
+            llll_free(new_text_as_llll);
+            if (x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.link_dynamics_to_slot - 1 == x->r_ob.active_slot_num) {
+                t_chord *ch = notation_item_get_parent_chord((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
+                if (ch)
+                    ch->need_recompute_parameters = true;
+            }
+        } else {
+            lock_general_mutex((t_notation_obj *)x);
+            notation_item_clear_slot((t_notation_obj *)x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num);
         }
         unlock_general_mutex((t_notation_obj *)x);
         handle_change((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_SLOT);

@@ -5308,8 +5308,7 @@ char turn_selection_into_rests(t_score *x, char delete_notes, char delete_lyrics
             
         } else if (curr_it->type == k_DYNAMICS && delete_dynamics) {
             t_dynamics *dy = (t_dynamics *)curr_it;
-            create_simple_selected_notation_item_undo_tick((t_notation_obj *) x, dy->owner_item, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
-            changed |= delete_chord_dynamics((t_notation_obj *) x, notation_item_get_parent_chord((t_notation_obj *) x, dy->owner_item));
+            changed |= chord_delete_dynamics((t_notation_obj *) x, notation_item_get_parent_chord((t_notation_obj *) x, dy->owner_item), true);
         }
         curr_it = next_item;
     }
@@ -8055,7 +8054,7 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                     
                     // we assign the lyrics to each chord (if needed)
                     assign_chord_lyrics((t_notation_obj *) x, tmp_chord, jf_lyrics_nozoom_ok);
-                    assign_chord_dynamics((t_notation_obj *) x, tmp_chord, jf_dynamics_nozoom_ok, jf_dynamics_roman_nozoom_ok);
+                    chord_assign_dynamics((t_notation_obj *) x, tmp_chord, jf_dynamics_nozoom_ok, jf_dynamics_roman_nozoom_ok);
 
                     // we recalculate the chord parameters
                     calculate_chord_parameters((t_notation_obj *) x, tmp_chord, get_voice_clef((t_notation_obj *)x, (t_voice *)tmp_voice), true);

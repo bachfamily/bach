@@ -23763,7 +23763,7 @@ void set_textfield_info_to_dynamics_slot(t_notation_obj *r_ob, char *text)
         llll_free(new_text_as_llll);
     } else {
         lock_general_mutex(r_ob);
-        notation_item_clear_slot(r_ob, nitem, r_ob->link_dynamics_to_slot - 1);
+        chord_delete_dynamics(r_ob, r_ob->is_editing_chord, true);
     }
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
         r_ob->is_editing_chord->need_recompute_parameters = true;
@@ -23855,21 +23855,32 @@ void assign_chord_lyrics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_lyric
 }
 
 
-char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
+char chord_delete_dynamics(t_notation_obj *r_ob, t_chord *chord, char add_undo_tick)
 {
     t_note *note;
     char res = chord_has_dynamics(chord);
+    long slot_num = r_ob->link_dynamics_to_slot - 1;
     t_dynamics *dyn = chord_get_dynamics(chord);
+    char undo_tick_added = false;
     
     if (dyn && notation_item_is_selected(r_ob, (t_notation_item *)dyn))
         notation_item_delete_from_selection(r_ob, (t_notation_item *)dyn);
-    
+
     
     if (chord->firstnote) {
-        for (note = chord->firstnote; note; note = note->next)
-            note_clear_slot(r_ob, note, r_ob->link_dynamics_to_slot - 1);
+        for (note = chord->firstnote; note; note = note->next) {
+            if (notation_item_get_slot_firstitem(r_ob, (t_notation_item *)note, slot_num)) {
+                if (add_undo_tick && !undo_tick_added) {
+                    undo_tick_added = true;
+                    create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)chord, k_UNDO_MODIFICATION_CHANGE);
+                }
+            }
+            note_clear_slot(r_ob, note, slot_num);
+        }
     } else {
-        notation_item_clear_slot(r_ob, (t_notation_item *)chord, r_ob->link_dynamics_to_slot - 1);
+        if (add_undo_tick)
+            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)chord, k_UNDO_MODIFICATION_CHANGE);
+        notation_item_clear_slot(r_ob, (t_notation_item *)chord, slot_num);
     }
     
     chord->dynamics_slot = NULL;
@@ -23883,7 +23894,7 @@ char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
 }
 
 // assigns the chord dynamics starting from the slot content
-void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom)
+void chord_assign_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom)
 {
 
     chord->dynamics_slot = NULL;
