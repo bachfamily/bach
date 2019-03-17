@@ -124,12 +124,12 @@ typedef struct _playkeys_key
 
 typedef struct _playkeys
 {
-    struct llllobj_object	n_ob;
+    struct llllobj_object    n_ob;
     
     t_playkeys_key          *n_keys;
     
     long                    n_flattenfornotes;
-    long					n_nullmode;
+    long                    n_nullmode;
     long                    n_use_default_breakpoints;
     long                    n_breakpoints_have_velocity;
     
@@ -156,7 +156,7 @@ typedef struct _playkeys
     
     t_bach_atomic_lock      n_process_lock;
     
-    t_llll					*n_empty;
+    t_llll                    *n_empty;
 } t_playkeys;
 
 
@@ -455,24 +455,24 @@ int T_EXPORT main()
     // and regardless of their positions in the original llll.
     // In case of multiple possible matches, the first matching llll that is found is output.
     // If no match is found for any key, a bang is output from the rightmost outlet.
-    class_addmethod(c, (method)playkeys_anything,	"anything",		A_GIMME,	0);
-    class_addmethod(c, (method)playkeys_int,		"int",			A_LONG,		0);
-    class_addmethod(c, (method)playkeys_float,		"float",		A_FLOAT,	0);
-    class_addmethod(c, (method)playkeys_anything,	"list",			A_GIMME,	0);
+    class_addmethod(c, (method)playkeys_anything,    "anything",        A_GIMME,    0);
+    class_addmethod(c, (method)playkeys_int,        "int",            A_LONG,        0);
+    class_addmethod(c, (method)playkeys_float,        "float",        A_FLOAT,    0);
+    class_addmethod(c, (method)playkeys_anything,    "list",            A_GIMME,    0);
     
     // @method bang @digest Perform last operation
     // @description The playkeys are searched for in the most recently received llll.
-    class_addmethod(c, (method)playkeys_bang,		"bang",			0);
+    class_addmethod(c, (method)playkeys_bang,        "bang",            0);
     
-    class_addmethod(c, (method)playkeys_assist,		"assist",		A_CANT,		0);
-    class_addmethod(c, (method)playkeys_inletinfo,	"inletinfo",	A_CANT,		0);
+    class_addmethod(c, (method)playkeys_assist,        "assist",        A_CANT,        0);
+    class_addmethod(c, (method)playkeys_inletinfo,    "inletinfo",    A_CANT,        0);
     
     
     CLASS_STICKY_ATTR(c,"category",0,"Settings");
 
     CLASS_ATTR_LLLL(c, "routers", 0, t_playkeys, n_process, playkeys_getattr_process, playkeys_setattr_process);
     CLASS_ATTR_LABEL(c, "routers", 0, "Routers To Accept");
-    CLASS_ATTR_STYLE(c, "routers",		0, "text");
+    CLASS_ATTR_STYLE(c, "routers",        0, "text");
     CLASS_ATTR_BASIC(c, "routers", 0);
     // @description List of router symbols which will be accepted. Leave empty to process all possible routers.
     // E.g. <b>note tempo</b> will only accept "note"- and "tempo"-routed playout lllls. <br />
@@ -485,16 +485,16 @@ int T_EXPORT main()
 
     
     
-    CLASS_ATTR_LONG(c, "wrapmode",		0,	t_playkeys, n_flattenfornotes);
-    CLASS_ATTR_LABEL(c, "wrapmode",		0, "Only Wrap Chords llll Data");
-    CLASS_ATTR_STYLE(c, "wrapmode",		0, "onoff");
+    CLASS_ATTR_LONG(c, "wrapmode",        0,    t_playkeys, n_flattenfornotes);
+    CLASS_ATTR_LABEL(c, "wrapmode",        0, "Only Wrap Chords llll Data");
+    CLASS_ATTR_STYLE(c, "wrapmode",        0, "onoff");
     CLASS_ATTR_BASIC(c, "wrapmode", 0);
     // @description When set to 1, it only wraps llll parameters if the playout input is a chord.
 
     
-    CLASS_ATTR_LONG(c, "nullmode",		0,	t_playkeys, n_nullmode);
-    CLASS_ATTR_LABEL(c, "nullmode",		0, "Output null");
-    CLASS_ATTR_STYLE(c, "nullmode",		0, "enumindex");
+    CLASS_ATTR_LONG(c, "nullmode",        0,    t_playkeys, n_nullmode);
+    CLASS_ATTR_LABEL(c, "nullmode",        0, "Output null");
+    CLASS_ATTR_STYLE(c, "nullmode",        0, "enumindex");
     CLASS_ATTR_ENUMINDEX(c,"nullmode", 0, "Never For Empty Keys For Unmatched Keys");
     CLASS_ATTR_BASIC(c, "nullmode", 0);
     // @description Handles when <b>null</b> is output from a given key outlet.
@@ -502,15 +502,15 @@ int T_EXPORT main()
     // such as velocity for markers, etc.).
 
     
-    CLASS_ATTR_LONG(c, "defaultbreakpoints",		0,	t_playkeys, n_use_default_breakpoints);
-    CLASS_ATTR_LABEL(c, "defaultbreakpoints",		0, "Use Default Breakpoints");
-    CLASS_ATTR_STYLE(c, "defaultbreakpoints",		0, "onoff");
+    CLASS_ATTR_LONG(c, "defaultbreakpoints",        0,    t_playkeys, n_use_default_breakpoints);
+    CLASS_ATTR_LABEL(c, "defaultbreakpoints",        0, "Use Default Breakpoints");
+    CLASS_ATTR_STYLE(c, "defaultbreakpoints",        0, "onoff");
     // @description When set to 1, uses default breakpoints for notes without glissandi.
 
     
-    CLASS_ATTR_LONG(c, "breakpointshavevelocity",		0,	t_playkeys, n_breakpoints_have_velocity);
-    CLASS_ATTR_LABEL(c, "breakpointshavevelocity",		0, "Breakpoints Have Velocity");
-    CLASS_ATTR_STYLE(c, "breakpointshavevelocity",		0, "onoff");
+    CLASS_ATTR_LONG(c, "breakpointshavevelocity",        0,    t_playkeys, n_breakpoints_have_velocity);
+    CLASS_ATTR_LABEL(c, "breakpointshavevelocity",        0, "Breakpoints Have Velocity");
+    CLASS_ATTR_STYLE(c, "breakpointshavevelocity",        0, "onoff");
     // @description Toggles the ability, for pitch breakpoints, to have their own independent velocity.
     
     CLASS_STICKY_ATTR_CLEAR(c, "category");
@@ -518,19 +518,19 @@ int T_EXPORT main()
     
     CLASS_STICKY_ATTR(c,"category",0,"Slots");
 
-    CLASS_ATTR_ATOM(c, "dynamicsslot",		0,	t_playkeys, n_dynamicsslot);
+    CLASS_ATTR_ATOM(c, "dynamicsslot",        0,    t_playkeys, n_dynamicsslot);
     CLASS_ATTR_STYLE_LABEL(c, "dynamicsslot", 0, "text", "Dynamics Slot Number");
     // @description Sets the number of the slot containing dynamics (0 if none).
 
-    CLASS_ATTR_ATOM(c, "lyricsslot",		0,	t_playkeys, n_lyricsslot);
+    CLASS_ATTR_ATOM(c, "lyricsslot",        0,    t_playkeys, n_lyricsslot);
     CLASS_ATTR_STYLE_LABEL(c, "lyricsslot", 0, "text", "Lyrics Slot Number");
     // @description Sets the number of the slot containing lyrics (0 if none).
 
-    CLASS_ATTR_ATOM(c, "articulationsslot",		0,	t_playkeys, n_articulationsslot);
+    CLASS_ATTR_ATOM(c, "articulationsslot",        0,    t_playkeys, n_articulationsslot);
     CLASS_ATTR_STYLE_LABEL(c, "articulationsslot", 0, "text", "Articulations Slot Number");
     // @description Sets the number of the slot containing articulations (0 if none).
 
-    CLASS_ATTR_ATOM(c, "noteheadslot",		0,	t_playkeys, n_noteheadslot);
+    CLASS_ATTR_ATOM(c, "noteheadslot",        0,    t_playkeys, n_noteheadslot);
     CLASS_ATTR_STYLE_LABEL(c, "noteheadslot", 0, "text", "Notehead Slot Number");
     // @description Sets the number of the slot containing noteheads (0 if none).
 
@@ -2043,7 +2043,7 @@ long playkeys_func(t_hatom *key, t_llll *what)
 void playkeys_assist(t_playkeys *x, void *b, long m, long a, char *s)
 {
     if (m == ASSIST_INLET) {
-        if (a == 0)	sprintf(s, "llll from playout"); // @out 0 @type llll @digest llll from playout
+        if (a == 0)    sprintf(s, "llll from playout"); // @out 0 @type llll @digest llll from playout
                                                      // @description The llll coming from <o>bach.roll</o>'s or <o>bach.score</o>'s
                                                      // playout, containing note information in playout syntax
     } else {
