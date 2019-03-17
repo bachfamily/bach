@@ -2451,6 +2451,10 @@ t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notati
 {
     if (!nitem)
         return NULL;
+
+    t_notation_item *n = notation_item_get_bearing_dynamics(r_ob, nitem, r_ob->link_dynamics_to_slot - 1);
+    if (n)
+        return n;
     
     switch (nitem->type) {
         case k_CHORD:
