@@ -39865,13 +39865,13 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
         // destroying "duplicate” ticks of k_WHOLE_NOTATION_OBJECT undo lists: if we had a undo tick step of the gloabl object, no need for other ones
         // moreover: they might even cause issues with IDs...
         t_llllelem *elem;
-        for (elem = r_ob->undo_llll->l_head; elem; elem = elem->l_next) {
+        for (elem = r_ob->undo_llll->l_tail; elem; elem = elem->l_prev) {
             if (hatom_gettype(&elem->l_hatom) == H_OBJ) {
                 t_undo_redo_information *info = (t_undo_redo_information *)hatom_getobj(&elem->l_hatom);
                 if (info->n_it_type == k_WHOLE_NOTATION_OBJECT) {
-                    t_llllelem *elem2, *next_elem2;
-                    for (elem2 = elem->l_next; elem2; elem2 = next_elem2) {
-                        next_elem2 = elem2->l_next;
+                    t_llllelem *elem2, *prev_elem2;
+                    for (elem2 = elem->l_prev; elem2; elem2 = prev_elem2) {
+                        prev_elem2 = elem2->l_prev;
                         if (hatom_gettype(&elem2->l_hatom) == H_OBJ) {
                             free_undo_redo_information((t_undo_redo_information *)hatom_getobj(&elem2->l_hatom));
                             llll_destroyelem(elem2);
