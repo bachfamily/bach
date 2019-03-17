@@ -128,6 +128,35 @@ t_chord *dynamics_get_prev(t_notation_obj *r_ob, t_voice *voice, long slot_num, 
     
 }
 
+// only meaningful in bach.score
+t_rational dynamics_get_symduration(t_notation_obj *r_ob, t_dynamics *dyn)
+{
+    if (r_ob->obj_type != k_NOTATION_OBJECT_SCORE || !dyn)
+        return long2rat(0);
+    
+    t_notation_item *owner = dynamics_get_owner(r_ob, dyn);
+    
+    if (owner->type == k_CHORD)
+        return rat_abs(((t_chord *)owner)->r_sym_duration);
+    
+    if (owner->type == k_NOTE) {
+        t_note *first = note_get_first_in_tieseq((t_note *)owner);
+        t_note *last = note_get_last_in_tieseq((t_note *)owner);
+        t_rational res = long2rat(0);
+        for (t_note *temp = first; temp; temp = temp->tie_to) {
+            if (temp != WHITENULL)
+                res = res + rat_abs(temp->parent->r_sym_duration);
+            
+            if (temp == last)
+                break;
+        }
+        return res;
+    }
+
+    return long2rat(0);
+}
+
+
 t_chord *dynamics_get_first(t_notation_obj *r_ob, t_voice *voice, long slot_num, double *onset)
 {
     return dynamics_get_next(r_ob, voice, slot_num, NULL, onset);
@@ -322,8 +351,12 @@ t_llll *dynamics_to_llll_plain(t_notation_obj *r_ob, t_dynamics *dyn)
             llll_appendsym(res, gensym(temp));
         }
         
-        for (long i = 0; i < mark->num_words; i++)
-            llll_appendsym(res, mark->text_deparsed[i]);
+        if (mark->num_words == 0) {
+            llll_appendsym(res, gensym("|"));
+        } else {
+            for (long i = 0; i < mark->num_words; i++)
+                llll_appendsym(res, mark->text_deparsed[i]);
+        }
         
         if (mark != dyn->lastmark || mark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE)
             llll_appendsym(res, hairpin_value_to_symbol(mark->hairpin_to_next));
@@ -1532,7 +1565,7 @@ long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_
                             create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
                             dynamics_mark_delete(dyn, dyn->firstmark);
                             if (!dyn->firstmark) {
-                                delete_chord_dynamics(r_ob, ch);
+                                chord_delete_dynamics(r_ob, ch, false);
                                 then_continue = true;
                             }
                         } else {
@@ -2212,7 +2245,8 @@ t_llll *dynamic_mark_to_slots_ll(long slot_num, t_symbol *dyn)
     return ll;
 }
 
-void erase_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char add_undo_tick)
+/*
+void dynamics_erase_for_chord(t_notation_obj *r_ob, t_chord *ch, long slot_num, char add_undo_tick)
 {
     char undo_tick_added = false;
     
@@ -2233,12 +2267,15 @@ void erase_chord_dynamics(t_notation_obj *r_ob, t_chord *ch, long slot_num, char
             notation_item_clear_slot(r_ob, (t_notation_item *)nt, slot_num);
         }
     }
+    
+    ch->dynamics_slot = NULL;
 }
+ */
 
-t_symbol *assign_chord_dynamics_from_velocities(t_notation_obj *r_ob, t_chord *ch, long slot_num, t_llll *dyn_vel_associations, t_dynamics_params *params, char add_undo_tick, long ending_hairpin)
+t_symbol *chord_assign_dynamics_from_velocities(t_notation_obj *r_ob, t_chord *ch, long slot_num, t_llll *dyn_vel_associations, t_dynamics_params *params, char add_undo_tick, long ending_hairpin)
 {
     if (!ch->firstnote) {
-        erase_chord_dynamics(r_ob, ch, slot_num, add_undo_tick);
+        chord_delete_dynamics(r_ob, ch, add_undo_tick);
         return NULL;
     }
     
@@ -2246,7 +2283,7 @@ t_symbol *assign_chord_dynamics_from_velocities(t_notation_obj *r_ob, t_chord *c
         create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_UNDO_MODIFICATION_CHANGE);
     
     // Erasing existing dynamics
-    erase_chord_dynamics(r_ob, ch, slot_num, false);
+    chord_delete_dynamics(r_ob, ch, false);
     
     
     // Computing mean velocity
@@ -2305,7 +2342,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
             if (selection_only && !notation_item_is_globally_selected(r_ob, (t_notation_item *)ch))
                 continue;
             
-            erase_chord_dynamics(r_ob, ch, slot_num, true);
+            chord_delete_dynamics(r_ob, ch, true);
             
             if (ch->firstnote) {
                 t_llll *sub_ll = double_triplet_to_llll(notation_item_get_onset_ms(r_ob, (t_notation_item *)ch), chord_get_average_velocity(ch), 0.);
@@ -2350,7 +2387,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
             
             //            post("– Chord No. %ld, slope: %.2f, hairpin: %ld", notation_item_get_index_for_lexpr(r_ob, (t_notation_item *)ch), ch_slope, hairpin);
             
-            assign_chord_dynamics_from_velocities(r_ob, ch, slot_num, dyn_vel_associations, &params, true, hairpin);
+            chord_assign_dynamics_from_velocities(r_ob, ch, slot_num, dyn_vel_associations, &params, true, hairpin);
         }
         
         if (must_free_pivot_chords_ll)
@@ -2361,7 +2398,7 @@ long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll
     
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
         for (t_chord *ch = chord_get_first(r_ob, voice); ch; ch = chord_get_next(ch))
-            assign_chord_dynamics(r_ob, ch, NULL, NULL);
+            chord_assign_dynamics(r_ob, ch, NULL, NULL);
     unlock_general_mutex(r_ob);
     
     
@@ -2414,6 +2451,10 @@ t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notati
 {
     if (!nitem)
         return NULL;
+
+    t_notation_item *n = notation_item_get_bearing_dynamics(r_ob, nitem, r_ob->link_dynamics_to_slot - 1);
+    if (n)
+        return n;
     
     switch (nitem->type) {
         case k_CHORD:
@@ -2431,4 +2472,10 @@ t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notati
             break;
     }
 }
+
+t_notation_item *dynamics_get_owner(t_notation_obj *r_ob, t_dynamics *dyn)
+{
+    return dyn->owner_item;
+}
+
 

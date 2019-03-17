@@ -1035,7 +1035,10 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
     
     if (clef == k_CLEF_PERCUSSION)
         return;
-        
+    
+    // shifts
+    long shift = get_clef_octave_shift(clef) * 1200;
+    
     if (key > 0) { // # 5ths-circle
         mapsto[0] = 3;
         mapsto[1] = 0;
@@ -1066,6 +1069,12 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
         clef_mcs[5] = 6900;
         clef_mcs[6] = 7100;
         paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
+        
+        if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_GG)) {
+            for (long i = 0; i < 7; i++)
+                clef_mcs[i] += 2400;
+            paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
+        }
     }
     
     if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FG) || (clef == k_CLEF_FF) ||  (clef == k_CLEF_F)) { // F clef
@@ -1077,10 +1086,14 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
         clef_mcs[5] = 4500;
         clef_mcs[6] = 4700;
         paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
+        
+        if ((clef == k_CLEF_FFGG) || (clef == k_CLEF_FFG) || (clef == k_CLEF_FF)) {
+            for (long i = 0; i < 7; i++)
+                clef_mcs[i] -= 2400;
+            paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
+        }
     }
     
-    // shifts
-    long shift = get_clef_octave_shift(clef) * 1200;
     
     // single clefs
     switch (clef) {
@@ -23750,7 +23763,7 @@ void set_textfield_info_to_dynamics_slot(t_notation_obj *r_ob, char *text)
         llll_free(new_text_as_llll);
     } else {
         lock_general_mutex(r_ob);
-        notation_item_clear_slot(r_ob, nitem, r_ob->link_dynamics_to_slot - 1);
+        chord_delete_dynamics(r_ob, r_ob->is_editing_chord, true);
     }
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
         r_ob->is_editing_chord->need_recompute_parameters = true;
@@ -23842,21 +23855,32 @@ void assign_chord_lyrics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_lyric
 }
 
 
-char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
+char chord_delete_dynamics(t_notation_obj *r_ob, t_chord *chord, char add_undo_tick)
 {
     t_note *note;
     char res = chord_has_dynamics(chord);
+    long slot_num = r_ob->link_dynamics_to_slot - 1;
     t_dynamics *dyn = chord_get_dynamics(chord);
+    char undo_tick_added = false;
     
     if (dyn && notation_item_is_selected(r_ob, (t_notation_item *)dyn))
         notation_item_delete_from_selection(r_ob, (t_notation_item *)dyn);
-    
+
     
     if (chord->firstnote) {
-        for (note = chord->firstnote; note; note = note->next)
-            note_clear_slot(r_ob, note, r_ob->link_dynamics_to_slot - 1);
+        for (note = chord->firstnote; note; note = note->next) {
+            if (notation_item_get_slot_firstitem(r_ob, (t_notation_item *)note, slot_num)) {
+                if (add_undo_tick && !undo_tick_added) {
+                    undo_tick_added = true;
+                    create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)chord, k_UNDO_MODIFICATION_CHANGE);
+                }
+            }
+            note_clear_slot(r_ob, note, slot_num);
+        }
     } else {
-        notation_item_clear_slot(r_ob, (t_notation_item *)chord, r_ob->link_dynamics_to_slot - 1);
+        if (add_undo_tick)
+            create_simple_notation_item_undo_tick(r_ob, (t_notation_item *)chord, k_UNDO_MODIFICATION_CHANGE);
+        notation_item_clear_slot(r_ob, (t_notation_item *)chord, slot_num);
     }
     
     chord->dynamics_slot = NULL;
@@ -23870,7 +23894,7 @@ char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord)
 }
 
 // assigns the chord dynamics starting from the slot content
-void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom)
+void chord_assign_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom)
 {
 
     chord->dynamics_slot = NULL;
@@ -39841,13 +39865,13 @@ void handle_change(t_notation_obj *r_ob, int change_actions, e_undo_operations u
         // destroying "duplicate” ticks of k_WHOLE_NOTATION_OBJECT undo lists: if we had a undo tick step of the gloabl object, no need for other ones
         // moreover: they might even cause issues with IDs...
         t_llllelem *elem;
-        for (elem = r_ob->undo_llll->l_head; elem; elem = elem->l_next) {
+        for (elem = r_ob->undo_llll->l_tail; elem; elem = elem->l_prev) {
             if (hatom_gettype(&elem->l_hatom) == H_OBJ) {
                 t_undo_redo_information *info = (t_undo_redo_information *)hatom_getobj(&elem->l_hatom);
                 if (info->n_it_type == k_WHOLE_NOTATION_OBJECT) {
-                    t_llllelem *elem2, *next_elem2;
-                    for (elem2 = elem->l_next; elem2; elem2 = next_elem2) {
-                        next_elem2 = elem2->l_next;
+                    t_llllelem *elem2, *prev_elem2;
+                    for (elem2 = elem->l_prev; elem2; elem2 = prev_elem2) {
+                        prev_elem2 = elem2->l_prev;
                         if (hatom_gettype(&elem2->l_hatom) == H_OBJ) {
                             free_undo_redo_information((t_undo_redo_information *)hatom_getobj(&elem2->l_hatom));
                             llll_destroyelem(elem2);

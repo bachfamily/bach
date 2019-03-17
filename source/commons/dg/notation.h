@@ -2586,7 +2586,7 @@ typedef struct _dynamics_mark
     This means that the user decides that a text slot will be used to contain lyrics. Once bach knows it, the dynamics
     are classicaly displayed below the chords, and always kept up to date with the slot content (dynamics may change
     via mouse&keyboard interface, and slot content as well!).
-    The updating function to assign dynamics from slots is assign_chord_dynamics()
+    The updating function to assign dynamics from slots is chord_assign_dynamics()
     @ingroup    dynamics
  */
 typedef struct _dynamics
@@ -2656,7 +2656,7 @@ typedef struct _chord
     // flags
     char        is_score_chord;                    ///< Flag telling if the chord is a [bach.score] chord (1) or a [bach.roll] chord (0)
     char        imposed_direction;                ///< Internal flag, private use, to impose a direction to the chord stem (then calculate_chord_parameters() will set the direction flag), as before 1 = stem up, -1 = stem down.
-    char        need_recompute_parameters;        ///< Flag telling if we need to recompute the chord parameters. If yes, as soon as needed, some functions are run: assign_chord_lyrics(), assign_chord_dynamics() and calculate_chord_parameters(),
+    char        need_recompute_parameters;        ///< Flag telling if we need to recompute the chord parameters. If yes, as soon as needed, some functions are run: assign_chord_lyrics(), chord_assign_dynamics() and calculate_chord_parameters(),
                                                 ///< which sets the chord lyrics from the slot content (if any) andall the chord parameters such as direction, left_uextension, right_uextension... 
     char        need_recalculate_onset;            ///< Internal flag, privat use, telling if we need to recalculate the onset of the chord. Only used by score, where the
     
@@ -8486,6 +8486,8 @@ t_llll* note_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_note *note, 
 // TBD
 t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char mode, long slotnum, char only_get_selected_items);
 
+t_notation_item *dynamics_get_owner(t_notation_obj *r_ob, t_dynamics *dyn);
+
 t_notation_item *notation_item_get_bearing_dynamics(t_notation_obj *r_ob, t_notation_item *nitem, long dynamics_slot_num);
 t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notation_obj *r_ob, t_notation_item *nitem);
 
@@ -9602,8 +9604,8 @@ double get_lyrics_word_extension_y_pos(t_notation_obj *r_ob, double staff_bottom
 
 
 // TBD
-void assign_chord_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom);
-char delete_chord_dynamics(t_notation_obj *r_ob, t_chord *chord);
+void chord_assign_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom);
+char chord_delete_dynamics(t_notation_obj *r_ob, t_chord *chord, char add_undo_tick);
 void set_textfield_info_to_dynamics_slot(t_notation_obj *r_ob, char *text);
 
 
@@ -19105,7 +19107,7 @@ t_dynamics *dynamics_clone(t_dynamics *dyn, t_notation_item *newowner);
 long dynamics_get_ending_hairpin(t_dynamics *dyn);
 char dynamics_extend_till_next_chord(t_dynamics *dyn);
 t_dynamics *chord_get_dynamics(t_chord *ch, t_slotitem **slotitem = NULL);
-
+t_rational dynamics_get_symduration(t_notation_obj *r_ob, t_dynamics *dyn);
 
 void dynamics_free_marks(t_dynamics *dyn);
 
