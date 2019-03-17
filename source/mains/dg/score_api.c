@@ -6638,8 +6638,8 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
                         if (x->r_ob.show_dynamics && chord_has_dynamics(chords_to_align[i])) {
                             t_dynamics *dyn = chord_get_dynamics(chords_to_align[i]);
                             if (dyn) {
-                                double this_left = -dyn->dynamics_left_uext; // TO DO: meno?
-                                double this_right = dyn->dynamics_right_uext;
+                                double this_left = -dynamics_get_left_extension_from_chord_stem((t_notation_obj *)x, dyn); // TO DO: meno?
+                                double this_right = dyn->dynamics_min_uwidth + this_left;
                                 
                                 left_uext_due_to_dynamics[i] = chords_to_align[i]->dynamics_portion_of_left_uextension; //portion_of_rightlim_due_to_lyrics[voice_number];
                                 
@@ -7606,13 +7606,13 @@ void tuttipoint_calculate_spacing(t_score *x, t_tuttipoint *tpt)
     for (i = 0; i < x->r_ob.num_voices; i++) // cycle on the voices
         for (this_meas = tpt->measure[i]; ((tpt->next && this_meas != tpt->next->measure[i]) || (!tpt->next && this_meas)); this_meas = this_meas->next) // cycle on the measures within the tuttipoin
             for (chord = this_meas->firstchord; chord; chord = chord->next) {
-                t_note *nt; long j;
                 if (chord->next)
                     chord->duration_ux = chord->next->stem_offset_ux - chord->stem_offset_ux - CONST_SAFETY_USEPARATION_TAIL_NEXT_OBJ * x->r_ob.zoom_x * x->r_ob.zoom_y;
                 else
                     chord->duration_ux = this_meas->start_barline_offset_ux + this_meas->width_ux - chord->stem_offset_ux - CONST_SAFETY_USEPARATION_TAIL_NEXT_OBJ * x->r_ob.zoom_x * x->r_ob.zoom_y;
                 
 #ifdef BACH_SUPPORT_SLURS
+                long j; t_note *nt;
                 for (nt = chord->firstnote; nt; nt = nt->next) { // and setting flag to recompute slur position
                     for (j = 0; j < nt->num_slurs_to; j++)
                         nt->slur_to[j]->need_recompute_position = true;
@@ -9496,7 +9496,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 // first: draw all the lines
                                 while (temp) {
                                     // draw line
-                                    double bpt_x = (temp->rel_x_pos < 1.) ? stem_x + (note_end_pos - stem_x) * temp->rel_x_pos : note_end_pos;
+                                    double bpt_x = (temp->rel_x_pos < 1.) ? chord_alignment_point_x + (note_end_pos - chord_alignment_point_x) * temp->rel_x_pos : note_end_pos;
                                     double bpt_y;
                                     
                                     if (temp->rel_x_pos >= 1. && (x->r_ob.breakpoints_have_noteheads)) {
@@ -9537,7 +9537,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 while (temp) {
                                     if (temp->rel_x_pos < 1.) {
                                         // draw line
-                                        double bpt_x = stem_x + (note_end_pos - stem_x) * temp->rel_x_pos;
+                                        double bpt_x = chord_alignment_point_x + (note_end_pos - chord_alignment_point_x) * temp->rel_x_pos;
                                         double bpt_y = mc_to_ypos((t_notation_obj *) x, mc_or_screen_mc + round(temp->delta_mc), (t_voice *) voice);
                                         char is_bpt_selected;
                                         t_jrgba bptcolor;

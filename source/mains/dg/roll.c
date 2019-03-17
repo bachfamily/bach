@@ -12745,7 +12745,20 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         // depends on selection
         x->r_ob.j_selection_hasbeendragged = 1;
         
-        if (x->r_ob.j_mousedown_obj_type == k_DURATION_LINE && modifiers == eControlKey) { // slope change
+        if (x->r_ob.j_mousedown_obj_type == k_DYNAMICS && modifiers == eControlKey) { // change dynamics
+            if (!is_editable((t_notation_obj *)x, k_DYNAMICS, k_MODIFICATION_GENERIC)) return;
+            double delta = (x->r_ob.floatdragging_y - pt.y)/(CONST_DYNAMICS_DRAG_UCHANGE * x->r_ob.zoom_y);
+            long delta_energy = (long)delta;
+            double err = delta - delta_energy;
+            
+            if (delta_energy != 0)
+                dynamics_change_sel_energy_delta((t_notation_obj *)x, delta_energy, true);
+            
+            x->r_ob.floatdragging_y -= delta_energy * (CONST_DYNAMICS_DRAG_UCHANGE * x->r_ob.zoom_y);
+            if (changed)
+                x->r_ob.changed_while_dragging = true;
+
+        } else if (x->r_ob.j_mousedown_obj_type == k_DURATION_LINE && modifiers == eControlKey) { // slope change
                 double delta_slope = (x->r_ob.floatdragging_y - pt.y)/(CONST_SLOPE_DRAG_UCHANGE * x->r_ob.zoom_y);
                 if (!is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_GENERIC)) return;
                 if (modifiers & eShiftKey && modifiers & eCommandKey)
@@ -12915,8 +12928,6 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                 char stretch = ((modifiers & eCommandKey) > 0);
                 t_marker *prev_marker = NULL;
                 double prev_marker_ms = 0;
-                
-                double mousedown_ms = unscaled_xposition_to_ms((t_notation_obj *)x, mousedown_ux, 0);
                 
                 for (mk = x->r_ob.firstmarker; mk; mk = mk->next) {
                     if (stretch && mk->position_ms < mousedown_marker_ms && mk != (t_marker *)x->r_ob.j_mousedown_ptr)
@@ -13966,8 +13977,9 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
 
                 // dynamics
                 if (!clicked_ptr && x->r_ob.link_dynamics_to_slot > 0 && x->r_ob.show_dynamics) {
-                    if (is_in_chord_dynamics_shape((t_notation_obj *) x, curr_ch, this_x, this_y)){
-                        clicked_ptr = chord_get_dynamics(curr_ch);
+                    t_dynamics *dyn = chord_get_dynamics(curr_ch);
+                    if (dyn && is_in_dynamics_shape((t_notation_obj *) x, dyn, this_x, this_y)) {
+                        clicked_ptr = dyn;
                         clicked_obj = k_DYNAMICS;
                         break;
                     }
@@ -15346,7 +15358,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
             t_chord *chord;
             for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
                 for (chord = voice->firstchord; chord; chord = chord->next){
-                    if (chord_has_dynamics(chord) && is_in_chord_dynamics_shape((t_notation_obj *) x, chord, pt.x, pt.y)) {
+                    if (chord_has_dynamics(chord) && is_in_dynamics_shape((t_notation_obj *) x, chord_get_dynamics(chord), pt.x, pt.y)) {
                         unlock_general_mutex((t_notation_obj *)x);
                         if (is_editable((t_notation_obj *)x, k_DYNAMICS, k_MODIFICATION_GENERIC))
                             start_editing_dynamics((t_notation_obj *) x, patcherview, chord);
@@ -16351,7 +16363,15 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                     return 1;
                 }
         }
-    } 
+    }
+    
+    if (x->r_ob.selection_type == k_DYNAMICS) {
+        if (keycode == JKEY_UPARROW || keycode == JKEY_DOWNARROW) {
+            dynamics_change_sel_energy_delta((t_notation_obj *)x, keycode == JKEY_UPARROW ? 1 : -1, true);
+            handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_DYNAMICS);
+            return 1;
+        }
+    }
     
     if (x->r_ob.selection_type == k_PITCH_BREAKPOINT) { // only bpts selected!
         char there_are_all_tails = only_tails_are_selected((t_notation_obj *) x); // all note tails?

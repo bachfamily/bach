@@ -94,6 +94,20 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="annotationslot" get="1" set="1" type="atom" size="1">
+			<digest>
+				Annotation Slot Number
+			</digest>
+			<description>
+				Sets the number of the slot containing textual annotations (0 if none).
+			</description>
+			<attributelist>
+				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Annotation Slot Number" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="articulationsslot" get="1" set="1" type="atom" size="1">
 			<digest>
 				Articulations Slot Number
@@ -166,14 +180,14 @@
 		</attribute>
 		<attribute name="noteheadslot" get="1" set="1" type="atom" size="1">
 			<digest>
-				Noteheads Slot Number
+				Notehead Slot Number
 			</digest>
 			<description>
 				Sets the number of the slot containing noteheads (0 if none).
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
-				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Noteheads Slot Number" />
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Notehead Slot Number" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>

@@ -890,14 +890,15 @@
 				• <m>Cmd+Shift+G</m> (mac) or <m>Ctrl+Shift+G</m> (win): Add a rhythmic tree level around the selected content <br />
 				• <m>Cmd+Shift+F</m> (mac) or <m>Ctrl+Shift+F</m> (win): Fix levels of selection as "original" levels <br />
 				<br />
-				Lyrics: <br />
 				Lyrics and dynamics: <br />
 				• <m>Cmd+Shift+L</m> (mac) or <m>Ctrl+Shift+L</m> (win): Start editing lyrics for the leftmost selected chord, or for the selected lyrics <br />
 				• <m>Cmd+Shift+D</m> (mac) or <m>Ctrl+Shift+D</m> (win): Start editing dynamics for the leftmost selected chord, or for the selected dynamics <br />
-				• <m>Tab</m> while editing: Move to next chord's lyrics <br />
-				• <m>Shift+Tab</m> while editing: Move to previous chord's lyrics <br />
+				• <m>Tab</m> while editing: Move to next chord's lyrics/dynamics <br />
+				• <m>Shift+Tab</m> while editing: Move to previous chord's lyrics&dynamics <br />
 				• <m>-</m>: For lyrics: end a syllable with "-" in order to create a dashed line reaching the next piece of lyrics <br />
 				• <m>Esc</m>: End editing <br />
+				• <m>↑</m>: When dynamics are selected: raise dynamic markings by one step. <br />
+				• <m>↓</m>: When dynamics are selected: lower dynamic markings by one step. <br />
 				<br />
 				Articulations: <br />
 				• <m>Backspace</m>: Delete selected articulations <br />
@@ -967,6 +968,7 @@
 				• <m>click+drag</m> on a note tail: Change the pitch of the note tail (dragging up/down provided that the <m>allowglissandi</m> attribute is set to 1).
 				Possible pitch breakpoint positions are rescaled <br />
 				   ↪ Add the <m>Alt</m> key to keep the existing absolute pitch breakpoint positions <br />
+				• <m>Ctrl+click+drag</m> on a notehead or on dynamic mark: change velocity or dynamic mark <br />
 				• <m>doubleclick</m> on voice names, marker names or lyrics: Edit names directly <br />
 				• <m>doubleclick</m> on selected items: Selection off-line play (as the <m>V</m> key), but only if <m>dblclicksendsvalues</m> is set to 1 <br />
 				• <m>Shift+click+drag</m> on a clef (at the beginning of the staff): Move voice vertically (along with all the next ones), i.e.: modify vertical space before clicked voice <br />
@@ -10010,7 +10012,6 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Link Text Annotation To Slot" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />

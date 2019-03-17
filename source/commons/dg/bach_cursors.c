@@ -21,6 +21,7 @@ void load_cursors(t_bach_resources *resources, void *moduleRef)
 	resources->s_cursor_rotate = jgraphics_image_surface_create_from_resource(moduleRef, "cursor_rotate");
 	resources->s_cursor_changecolor = jgraphics_image_surface_create_from_resource(moduleRef, "cursor_changecolor");
 	resources->s_cursor_changevelocity = jgraphics_image_surface_create_from_resource(moduleRef, "cursor_changevelocity");
+    resources->s_cursor_changedynamics = jgraphics_image_surface_create_from_resource(moduleRef, "cursor_changedynamics");
 	resources->s_cursor_delete = jgraphics_image_surface_create_from_resource(moduleRef, "cursor_delete");
 	resources->s_cursor_addpoint = jgraphics_image_surface_create_from_resource(moduleRef, "cursor_addpoint");
 	resources->s_cursor_deletepoint = jgraphics_image_surface_create_from_resource(moduleRef, "cursor_deletepoint");
@@ -82,6 +83,8 @@ void free_cursors(t_bach_resources *resources)
 		jgraphics_surface_destroy(resources->s_cursor_duplicatepoint);
 	if (resources->s_cursor_changevelocity)
 		jgraphics_surface_destroy(resources->s_cursor_changevelocity);
+    if (resources->s_cursor_changedynamics)
+        jgraphics_surface_destroy(resources->s_cursor_changedynamics);
 	if (resources->s_cursor_eraser)
 		jgraphics_surface_destroy(resources->s_cursor_eraser);
 	if (resources->s_cursor_pencil)
@@ -122,9 +125,14 @@ void bach_set_cursor(t_object *x, int *cursor, t_object *patcherview, e_bach_mou
 				
 			case BACH_CURSOR_CHANGE_VELOCITY:
 				if (resources && resources->s_cursor_changevelocity)
-					jmouse_setcursor_surface(patcherview, x, resources->s_cursor_changevelocity, 11, 11); 
+					jmouse_setcursor_surface(patcherview, x, resources->s_cursor_changevelocity, 11, 17); 
 				break;
 				
+            case BACH_CURSOR_CHANGE_DYNAMICS:
+                if (resources && resources->s_cursor_changedynamics)
+                    jmouse_setcursor_surface(patcherview, x, resources->s_cursor_changedynamics, 11, 11);
+                break;
+                
 			case BACH_CURSOR_ROTATION:
 				if (resources && resources->s_cursor_rotate)
 					jmouse_setcursor_surface(patcherview, x, resources->s_cursor_rotate, 8, 8); 

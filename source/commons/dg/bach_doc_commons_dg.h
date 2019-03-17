@@ -1679,6 +1679,7 @@
 	//    ↪ Add the <m>Shift</m> key to change either the note duration or the note tail pitch <br />
 	//    ↪ Add the <m>Shift+Cmd</m> keys (mac) or <m>Shift+Ctrl</m> keys (win) to fine edit the position <br />
 	//    ↪ Add the <m>Shift+Ctrl</m> key to trim the tail, i.e. to keep the existing absolute pitch breakpoint positions. <br />
+    // • <m>Ctrl+click+drag</m> on a notehead or on dynamic mark: change velocity or dynamic mark <br />
 	// • <m>doubleclick</m> on voice names, marker names or lyrics: Edit names directly <br />
 	// • <m>doubleclick</m> on selected items: Selection off-line play (as the <m>V</m> key), but only if <m>dblclicksendsvalues</m> is set to 1 <br />
 	// • <m>Shift+click+drag</m> on a clef (at the beginning of the staff): Move voice vertically (along with all the next ones), i.e.: modify vertical space before clicked voice <br />
@@ -1845,11 +1846,13 @@
 	// Lyrics and dynamics: <br />
 	// • <m>Cmd+Shift+L</m> (mac) or <m>Ctrl+Shift+L</m> (win): Start editing lyrics for the leftmost selected chord, or for the selected lyrics <br />
     // • <m>Cmd+Shift+D</m> (mac) or <m>Ctrl+Shift+D</m> (win): Start editing dynamics for the leftmost selected chord, or for the selected dynamics <br />
-	// • <m>Tab</m> while editing: Move to next chord's lyrics <br />
-	// • <m>Shift+Tab</m> while editing: Move to previous chord's lyrics <br />
+	// • <m>Tab</m> while editing: Move to next chord's lyrics/dynamics <br />
+	// • <m>Shift+Tab</m> while editing: Move to previous chord's lyrics/dynamics <br />
 	// • <m>-</m>: For lyrics: end a syllable with "-" in order to create a dashed line reaching the next piece of lyrics <br />
 	// • <m>Esc</m>: End editing <br />
-	// 
+    // • <m>↑</m>: When dynamics are selected: raise dynamic markings by one step. <br />
+    // • <m>↓</m>: When dynamics are selected: lower dynamic markings by one step. <br />
+	//
 	// <br />
 	// For slots: <br />
 	// @copy BACH_DOC_SLOT_EDIT_KEYBOARD_COMMANDS
@@ -1898,6 +1901,7 @@
 	// • <m>click+drag</m> on a note tail: Change the pitch of the note tail (dragging up/down provided that the <m>allowglissandi</m> attribute is set to 1). 
 	// Possible pitch breakpoint positions are rescaled <br /> 
 	//    ↪ Add the <m>Alt</m> key to keep the existing absolute pitch breakpoint positions <br />
+    // • <m>Ctrl+click+drag</m> on a notehead or on dynamic mark: change velocity or dynamic mark <br />
 	// • <m>doubleclick</m> on voice names, marker names or lyrics: Edit names directly <br />
 	// • <m>doubleclick</m> on selected items: Selection off-line play (as the <m>V</m> key), but only if <m>dblclicksendsvalues</m> is set to 1 <br />
 	// • <m>Shift+click+drag</m> on a clef (at the beginning of the staff): Move voice vertically (along with all the next ones), i.e.: modify vertical space before clicked voice <br />
@@ -2114,14 +2118,15 @@
 	// • <m>Cmd+Shift+F</m> (mac) or <m>Ctrl+Shift+F</m> (win): Fix levels of selection as "original" levels <br />
 	//
 	// <br />
-	// Lyrics: <br />
     // Lyrics and dynamics: <br />
     // • <m>Cmd+Shift+L</m> (mac) or <m>Ctrl+Shift+L</m> (win): Start editing lyrics for the leftmost selected chord, or for the selected lyrics <br />
     // • <m>Cmd+Shift+D</m> (mac) or <m>Ctrl+Shift+D</m> (win): Start editing dynamics for the leftmost selected chord, or for the selected dynamics <br />
-    // • <m>Tab</m> while editing: Move to next chord's lyrics <br />
-    // • <m>Shift+Tab</m> while editing: Move to previous chord's lyrics <br />
+    // • <m>Tab</m> while editing: Move to next chord's lyrics/dynamics <br />
+    // • <m>Shift+Tab</m> while editing: Move to previous chord's lyrics&dynamics <br />
     // • <m>-</m>: For lyrics: end a syllable with "-" in order to create a dashed line reaching the next piece of lyrics <br />
     // • <m>Esc</m>: End editing <br />
+    // • <m>↑</m>: When dynamics are selected: raise dynamic markings by one step. <br />
+    // • <m>↓</m>: When dynamics are selected: lower dynamic markings by one step. <br />
 	//
 	// <br />
 	// Articulations: <br />

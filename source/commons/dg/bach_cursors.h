@@ -31,6 +31,7 @@ typedef enum _bach_mouse_cursors {
 	BACH_CURSOR_RESIZE_BOTTOMRIGHTCORNER,		///< Bottom-right corner arrows
 	BACH_CURSOR_CHANGE_COLOR,					///< Color changer cursor
 	BACH_CURSOR_CHANGE_VELOCITY,				///< Velocity changer cursor
+    BACH_CURSOR_CHANGE_DYNAMICS,                ///< Dynamics changer cursor
 	BACH_CURSOR_MOVE,							///< Move element cursor
 	BACH_CURSOR_SCALE,							///< Scale element cursor
 	BACH_CURSOR_DELETE,							///< Delete element cursor
@@ -68,6 +69,7 @@ typedef struct _bach_cursor_resources
 	t_jsurface *s_cursor_deletepoint;
 	t_jsurface *s_cursor_duplicatepoint;
 	t_jsurface *s_cursor_changevelocity;
+    t_jsurface *s_cursor_changedynamics;
 	t_jsurface *s_cursor_pencil;
 	t_jsurface *s_cursor_eraser;
 	t_jsurface *s_cursor_glue;

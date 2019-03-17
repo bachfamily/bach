@@ -5748,6 +5748,15 @@ void notationobj_handle_change_cursors_on_mousemove(t_notation_obj *r_ob, t_obje
                 else
                     bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_DEFAULT);
                 break;
+                
+            case k_DYNAMICS:
+                if (modifiers == eControlKey && is_editable(r_ob, k_DYNAMICS, k_MODIFICATION_GENERIC))
+                    bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_CHANGE_DYNAMICS);
+                else
+                    bach_set_cursor((t_object *)r_ob, &r_ob->j_mouse_cursor, patcherview, BACH_CURSOR_DEFAULT);
+                break;
+                
+
 
             case k_NONE:
 

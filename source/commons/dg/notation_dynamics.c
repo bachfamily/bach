@@ -30,7 +30,8 @@ t_dynamics *dynamics_clone(t_dynamics *dyn, t_notation_item *newowner)
     
     newdyn->dynamics_left_uext = dyn->dynamics_left_uext;
     newdyn->dynamics_right_uext = dyn->dynamics_right_uext;
-    newdyn->dynamics_right_uext_first = dyn->dynamics_right_uext_first;
+    newdyn->dynamics_min_uwidth = dyn->dynamics_min_uwidth;
+    
     newdyn->text_deparsed = dyn->text_deparsed;
     
     newdyn->num_marks = dyn->num_marks;
@@ -128,6 +129,17 @@ t_chord *dynamics_get_prev(t_notation_obj *r_ob, t_voice *voice, long slot_num, 
     
 }
 
+
+
+char dynamics_span_ties(t_notation_obj *r_ob)
+{
+    long s = r_ob->link_dynamics_to_slot - 1;
+    if (s >= 0 && s < CONST_MAX_SLOTS)
+        return r_ob->slotinfo[s].slot_singleslotfortiednotes;
+    return true;
+}
+
+
 // only meaningful in bach.score
 t_rational dynamics_get_symduration(t_notation_obj *r_ob, t_dynamics *dyn)
 {
@@ -140,21 +152,133 @@ t_rational dynamics_get_symduration(t_notation_obj *r_ob, t_dynamics *dyn)
         return rat_abs(((t_chord *)owner)->r_sym_duration);
     
     if (owner->type == k_NOTE) {
-        t_note *first = note_get_first_in_tieseq((t_note *)owner);
-        t_note *last = note_get_last_in_tieseq((t_note *)owner);
-        t_rational res = long2rat(0);
-        for (t_note *temp = first; temp; temp = temp->tie_to) {
-            if (temp != WHITENULL)
-                res = res + rat_abs(temp->parent->r_sym_duration);
-            
-            if (temp == last)
-                break;
+        if (dynamics_span_ties(r_ob)) {
+            t_note *first = note_get_first_in_tieseq((t_note *)owner);
+            t_note *last = note_get_last_in_tieseq((t_note *)owner);
+            t_rational res = long2rat(0);
+            for (t_note *temp = first; temp; temp = temp->tie_to) {
+                if (temp != WHITENULL)
+                    res = res + rat_abs(temp->parent->r_sym_duration);
+                
+                if (temp == last)
+                    break;
+            }
+            return res;
+        } else {
+            if (((t_note *)owner)->parent)
+                return rat_abs(((t_note *)owner)->parent->r_sym_duration);
         }
-        return res;
     }
 
     return long2rat(0);
 }
+
+// obtain the horizontal duration in pixel of the dynamics region of effect.
+// this may not correspond to the graphical position of dynamics (see dynamics_get_rect() instead)
+double dynamics_get_spanning_width(t_notation_obj *r_ob, t_dynamics *dyn)
+{
+    if (!dyn)
+        return 0;
+    
+    t_notation_item *owner = dynamics_get_owner(r_ob, dyn);
+    
+    if (owner->type == k_CHORD) { // gotta be bach.score
+        return deltauxpixels_to_deltaxpixels(r_ob, ((t_chord *)owner)->duration_ux);
+    } else if (owner->type == k_NOTE){
+        t_note *nt = ((t_note *)owner);
+        return note_get_spanning_width(r_ob, nt);
+/*        if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+            return deltaonset_to_deltaxpixels(r_ob, nt->duration);
+        } else {
+            if (dynamics_span_ties(r_ob)) {
+                t_note *first = note_get_first_in_tieseq(nt);
+                t_note *last = note_get_last_in_tieseq(nt);
+                return chord_get_alignment_x(r_ob, last->parent) - chord_get_alignment_x(r_ob, first->parent) + deltauxpixels_to_deltaxpixels(r_ob, last->parent->duration_ux);
+            } else if (nt->parent) {
+                return deltauxpixels_to_deltaxpixels(r_ob, nt->parent->duration_ux);
+            }
+        } */
+        
+    }
+    return 0;
+}
+
+
+void dynamics_get_rect(t_notation_obj *r_ob, t_dynamics *dyn, t_rect *enclosure)
+{
+    
+    if (!dyn) {
+        enclosure->x = enclosure->y = enclosure->width = enclosure->height = 0;
+        return;
+    }
+    
+    t_notation_item *owner = dynamics_get_owner(r_ob, dyn);
+    
+    t_chord *ch = notation_item_get_parent_chord(r_ob, owner);
+
+    if (!ch) {
+        enclosure->x = enclosure->y = enclosure->width = enclosure->height = 0;
+        return;
+    }
+    
+    // left
+    double x1 = 0, x2 = 0, y1 = 0, y2 = 0, spanningwidth = dynamics_get_spanning_width(r_ob, dyn);
+    double chal = chord_get_alignment_x(r_ob, ch);
+    
+    x1 = chal;
+    if (dyn->firstmark)
+        x1 += dynamics_mark_get_relative_position(dyn, dyn->firstmark) * spanningwidth;
+    x1 -= dyn->dynamics_left_uext * r_ob->zoom_y;
+   
+    // right
+    
+    if (dynamics_extend_till_next_chord(dyn)) {
+        t_chord *ch_wk = ch;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && dynamics_span_ties(r_ob) && owner->type == k_NOTE) {
+            t_note *last = note_get_last_in_tieseq((t_note *)owner);
+            ch_wk = last && last->parent ? last->parent : ch;
+        }
+        t_chord *nextchwdyn = chord_get_next_with_dynamics(r_ob, ch_wk, NULL, false, false);
+        if (nextchwdyn) {
+            x2 = chord_get_alignment_x(r_ob, nextchwdyn);
+            t_dynamics *nextdyn = chord_get_dynamics(nextchwdyn);
+            if (nextdyn) {
+                if (nextdyn->firstmark)
+                    x2 += dynamics_mark_get_hshift(r_ob, nextdyn, nextdyn->firstmark);
+                x2 -= nextdyn->dynamics_left_uext * r_ob->zoom_y;
+            }
+        } else {
+            if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
+                x2 = onset_to_xposition(r_ob, r_ob->screen_ms_end, NULL);
+            else
+                x2 = ms_to_xposition(r_ob, r_ob->length_ms_till_last_note);
+        }
+    } else {
+        if (dyn->lastmark) {
+            x2 = chal + dynamics_mark_get_relative_position(dyn, dyn->lastmark) * spanningwidth + dyn->dynamics_right_uext * r_ob->zoom_y;
+            if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && x2 > chal + spanningwidth) { // last marking is right aligned in bach.score
+                x1 = chal + spanningwidth - (x2 - x1);
+                x2 = chal + spanningwidth;
+            }
+        } else
+            x2 = x1 + dyn->dynamics_right_uext * r_ob->zoom_y;
+    }
+    
+    
+    // top and bottom
+    double bottom_staff_y = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) ch->voiceparent : (t_voice *) ch->parent->voiceparent), false);
+    double middle_y = bottom_staff_y - r_ob->dynamics_uy_pos * r_ob->zoom_y;
+    double semiheight = 0.2 * r_ob->dynamics_font_size * r_ob->zoom_y;
+    y1 = middle_y - semiheight;
+    y2 = middle_y + semiheight;
+    
+    // finally
+    enclosure->x = x1;
+    enclosure->y = y1;
+    enclosure->width = x2 - x1;
+    enclosure->height = y2 - y1;
+}
+
 
 
 t_chord *dynamics_get_first(t_notation_obj *r_ob, t_voice *voice, long slot_num, double *onset)
@@ -496,7 +620,7 @@ t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_l
                     for (t_llllelem *el = hatom_getllll(&subll->l_head->l_next->l_hatom)->l_head; el && i < num_words; el = el->l_next, i++) {
                         t_symbol *this_symbol = hatom_getsym(&el->l_hatom);
                         if (this_symbol) {
-                            dynamics_parse_string_to_energy(r_ob, this_symbol->s_name, &this_start_energy, &this_end_energy);
+                            dynamics_string_to_energy(r_ob, this_symbol->s_name, &this_start_energy, &this_end_energy);
                             mark->is_roman[i] = (this_start_energy < 0 || this_end_energy < 0);
                             if (mark->start_energy < 0)
                                 mark->start_energy = this_start_energy;
@@ -506,7 +630,7 @@ t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_l
                             if (mark->is_roman[i]) {
                                 mark->text_typographic[i] = mark->text_deparsed[i];
                             } else {
-                                if (mark->text_deparsed)
+                                if (mark->text_deparsed[i])
                                     mark->text_typographic[i] = dynamics_mark_parse_string_to_typographic_text(r_ob, mark->text_deparsed[i]->s_name);
                                 else
                                     mark->text_typographic[i] = _llllobj_sym_empty_symbol;
@@ -519,7 +643,7 @@ t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_l
                 } else if (subll->l_size >= 2) {
                     t_symbol *mark_sym = hatom_getsym(&subll->l_head->l_next->l_hatom);
                     if (mark_sym) {
-                        dynamics_parse_string_to_energy(r_ob, mark_sym->s_name, &mark->start_energy, &mark->end_energy);
+                        dynamics_string_to_energy(r_ob, mark_sym->s_name, &mark->start_energy, &mark->end_energy);
                         mark->is_roman[0] = (mark->start_energy < 0 || mark->end_energy < 0);
                         mark->text_deparsed[0] = mark_sym;
                         if (mark->is_roman[0])
@@ -614,9 +738,51 @@ char dynamics_has_internal_relativeposition(t_dynamics *dyn)
     return false;
 }
 
+double dynamics_mark_get_relative_position(t_dynamics *dyn, t_dynamics_mark *mark)
+{
+    if (mark->snap_to_breakpoint) {
+        t_bpt *bpt = dynamics_mark_get_breakpoint(dyn, mark);
+        if (bpt)
+            return bpt->rel_x_pos;
+        else
+            return 0;
+    } else
+        return mark->relative_position;
+}
+
+
+double dynamics_mark_get_hshift(t_notation_obj *r_ob, t_dynamics *dyn, t_dynamics_mark *mark)
+{
+    double spanningwidth = dynamics_get_spanning_width(r_ob, dyn);
+    return dynamics_mark_get_relative_position(dyn, mark) * spanningwidth;
+}
+
+
+
+double dynamics_get_left_extension_from_chord_alignment_point(t_notation_obj *r_ob, t_dynamics *dyn)
+{
+//    if (dyn->firstmark) {
+//        double first_mark_shift = dynamics_mark_get_hshift(r_ob, dyn, dyn->firstmark);
+//        return MAX(0, dyn->dynamics_left_uext - first_mark_shift);
+//    }
+    if (dyn->firstmark && dynamics_mark_get_relative_position(dyn, dyn->firstmark) == 0) {
+        return dyn->dynamics_left_uext;
+    }
+    return 0;
+}
+
+double dynamics_get_left_extension_from_chord_stem(t_notation_obj *r_ob, t_dynamics *dyn)
+{
+    if (dyn->firstmark && dynamics_mark_get_relative_position(dyn, dyn->firstmark) == 0) {
+        t_chord *ch = notation_item_get_parent_chord(r_ob, dyn->owner_item);
+        return dyn->dynamics_left_uext + get_stem_x_from_alignment_point_x(r_ob, ch, 0);
+    }
+    return 0;
+}
 // use item == NULL to only finish an hairpin
+// slot_window_width is only used when inside_slot_window is true
 void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman,
+                    double center_x, double slot_window_width, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman,
                     double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x,
                     long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window,
                     double min_hairpin_start_x)
@@ -632,6 +798,18 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
     t_chord *curr_ch = item ? notation_item_get_parent_chord(r_ob, item) : NULL;
     char dont_paint = (curr_ch && r_ob->is_editing_type == k_DYNAMICS && r_ob->is_editing_chord == curr_ch);
     
+    // FOR DEBUG:
+/*    t_rect temp;
+    dynamics_get_rect(r_ob, dyn, &temp);
+    paint_strokenrectangle_fast(g, build_jrgba(1, 0, 0, 0.4), temp.x, temp.y, temp.width, temp.height, 1);
+ */
+    
+    double duration_x = 0;
+    if (boxed)
+        duration_x = slot_window_width;
+    else
+        duration_x = dynamics_get_spanning_width(r_ob, dyn);
+
     if (!item) {
         // only finish the hairpin
         if ((r_ob->show_hairpins || boxed) && curr_hairpin_type && *curr_hairpin_type && curr_hairpin_start_x) {
@@ -689,7 +867,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                     w = h = 0;
                 }
             }
-            double endhairpinpos = xpos + (dyn->firstmark ? dyn->firstmark->relative_position * duration_x : 0);
+            double endhairpinpos = xpos + dynamics_mark_get_relative_position(dyn, dyn->firstmark) * duration_x;
             if (dyn->firstmark && dyn->firstmark->num_words > 0) {
                 if (dyn->firstmark->is_roman[0])
                     endhairpinpos -= CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
@@ -730,18 +908,14 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
         for (t_dynamics_mark *mark = dyn->firstmark; mark; mark = mark->next) {
             char is_dynamic_zero = false;
             
-            if (mark->snap_to_breakpoint) {
-                t_bpt *bpt = dynamics_mark_get_breakpoint(dyn, mark);
-                if (bpt)
-                    xpos = center_x + bpt->rel_x_pos * duration_x;
-                else
-                    xpos = center_x;
-            } else
-                xpos = center_x + mark->relative_position * duration_x;
+            xpos = center_x + dynamics_mark_get_relative_position(dyn, mark) * duration_x;
             
             if (boxed) xpos += dyn->dynamics_left_uext * r_ob->zoom_y;
             
-            long cur = xpos, end_previous_hairpin_here = xpos;
+            if (!boxed && (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && xpos + dyn->dynamics_right_uext > center_x + duration_x))
+                xpos = center_x + duration_x - dyn->dynamics_right_uext;
+            
+            double cur = xpos, end_previous_hairpin_here = xpos;
             if (r_ob->show_dynamics || boxed) {
                 if (dynamics_mark_is_zero(mark)) {
                     if (!dont_paint)
@@ -896,6 +1070,53 @@ t_symbol *dynamics_to_symbol(t_notation_obj *r_ob, t_dynamics *dyn)
     return res;
 }
 
+// buf size must be at least 256
+void dynamics_energy_to_string_once(t_notation_obj *r_ob, long energy, char *buf, long buf_size)
+{
+    long tmp = 0;
+    if (energy < 0) {
+        buf[0] = 0;
+    } else if (energy == 0) {
+        snprintf_zero(buf, buf_size, "o");
+    } else if (energy < 100) {
+        for (long i = energy; i <= 99; i++)
+            buf[tmp++] = 'p';
+        buf[tmp] = 0;
+    } else if (energy == 100) {
+        snprintf_zero(buf, buf_size, "mp");
+    } else if (energy == 101) {
+        snprintf_zero(buf, buf_size, "mf");
+    } else if (energy < 200) {
+        for (long i = 102; i <= energy; i++)
+            buf[tmp++] = 'f';
+        buf[tmp] = 0;
+    } else if (energy < 300) {
+        buf[tmp++] = 's';
+        for (long i = 200; i <= energy; i++)
+            buf[tmp++] = 'f';
+        buf[tmp++] = 'z';
+        buf[tmp++] = 0;
+    } else {
+        buf[0] = 0;
+    }
+}
+
+
+t_symbol *dynamics_energy_to_symbol(t_notation_obj *r_ob, long start_energy, long end_energy)
+{
+    if (start_energy == end_energy) {
+        char buf[1024];
+        dynamics_energy_to_string_once(r_ob, start_energy, buf, 1024);
+        return gensym(buf);
+    } else {
+        char buf1[1024], buf2[1024], tot[2048];
+        dynamics_energy_to_string_once(r_ob, start_energy, buf1, 1024);
+        dynamics_energy_to_string_once(r_ob, start_energy, buf2, 1024);
+        snprintf_zero(tot, 2048, "%s%s", buf1, buf2);
+        return gensym(tot);
+    }
+}
+
 // the energy of a marking is defined as follow:
 // undefinable = -1
 // o = 0
@@ -909,7 +1130,7 @@ t_symbol *dynamics_to_symbol(t_notation_obj *r_ob, t_dynamics *dyn)
 // sf/sfz = 201
 // sff/sffz = 202
 //...
-void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, short *start_energy, short *end_energy)
+void dynamics_string_to_energy(t_notation_obj *r_ob, char *buf, short *start_energy, short *end_energy)
 {
     long se = -1, ee = -1;
     if (buf) {
@@ -1215,7 +1436,7 @@ t_dynamics *dynamics_from_textbuf(t_notation_obj *r_ob, t_notation_item *owner, 
                 thismark->text_deparsed[i] = hatom_getsym(&el->l_hatom);
                 if (!thismark->text_deparsed[i])
                     thismark->text_deparsed[i] = _llllobj_sym_empty_symbol;
-                dynamics_parse_string_to_energy(r_ob, thismark->text_deparsed[i]->s_name, &this_start_energy, &this_end_energy);
+                dynamics_string_to_energy(r_ob, thismark->text_deparsed[i]->s_name, &this_start_energy, &this_end_energy);
                 thismark->is_roman[i] = (this_start_energy < 0 || this_end_energy < 0);
                 if (thismark->start_energy < 0)
                     thismark->start_energy = this_start_energy;
@@ -2476,6 +2697,67 @@ t_notation_item *notation_item_get_to_which_dynamics_should_be_assigned(t_notati
 t_notation_item *dynamics_get_owner(t_notation_obj *r_ob, t_dynamics *dyn)
 {
     return dyn->owner_item;
+}
+
+
+
+
+
+double dynamics_change_sel_energy_delta(t_notation_obj *r_ob, long delta_energy, char only_for_standard_range)
+{
+    t_notation_item *curr_it = r_ob->firstselecteditem;
+    char changed = 0;
+    lock_general_mutex(r_ob);
+    while (curr_it) { // cycle on the selected items
+        if (curr_it->type == k_DYNAMICS) {
+            t_dynamics *dyn = (t_dynamics *)curr_it;
+            t_chord *ch = notation_item_get_parent_chord(r_ob, dyn->owner_item);
+            
+            for (t_dynamics_mark *mark = dyn->firstmark; mark; mark = mark->next) {
+                for (long i = 0; i < mark->num_words; i++) {
+                    if (!mark->is_roman[i]) {
+                        if (mark->start_energy == mark->end_energy && mark->start_energy == 0) {
+                            // nothing to do: marking is "o"
+                        } else if (mark->start_energy < 0 || mark->end_energy < 0) {
+                            // nothing to do: marking is nonstandard (should not happen, if mark->is_roman[i] is false)
+                        } else if (only_for_standard_range && (mark->start_energy >= 200 || mark->end_energy >= 200)) {
+                            // nothing to do, we only want to change the standard range
+                        } else {
+                            if (ch && !(ch->r_it.flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))
+                                create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)ch, k_CHORD, k_UNDO_MODIFICATION_CHANGE);
+                            
+                            changed = 1;
+                            
+                            mark->text_deparsed[i] = dynamics_energy_to_symbol(r_ob, mark->start_energy + delta_energy, mark->end_energy + delta_energy);
+                            mark->start_energy += delta_energy;
+                            mark->end_energy += delta_energy;
+
+                            if (mark->text_deparsed[i])
+                                mark->text_typographic[i] = dynamics_mark_parse_string_to_typographic_text(r_ob, mark->text_deparsed[i]->s_name);
+                            else
+                                mark->text_typographic[i] = _llllobj_sym_empty_symbol;
+                        }
+                    }
+                }
+            }
+            
+            if (changed) {
+                dyn->text_deparsed = dynamics_to_symbol(r_ob, dyn);
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+                    recompute_all_for_measure(r_ob, ch->parent, false);
+                else
+                    ch->need_recompute_parameters = true;
+            }
+            
+        }
+        curr_it = curr_it->next_selected;
+    }
+    unlock_general_mutex(r_ob);
+
+    if (changed)
+        notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
+    
+    return changed;
 }
 
 

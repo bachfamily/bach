@@ -577,10 +577,12 @@
 				Lyrics and dynamics: <br />
 				• <m>Cmd+Shift+L</m> (mac) or <m>Ctrl+Shift+L</m> (win): Start editing lyrics for the leftmost selected chord, or for the selected lyrics <br />
 				• <m>Cmd+Shift+D</m> (mac) or <m>Ctrl+Shift+D</m> (win): Start editing dynamics for the leftmost selected chord, or for the selected dynamics <br />
-				• <m>Tab</m> while editing: Move to next chord's lyrics <br />
-				• <m>Shift+Tab</m> while editing: Move to previous chord's lyrics <br />
+				• <m>Tab</m> while editing: Move to next chord's lyrics/dynamics <br />
+				• <m>Shift+Tab</m> while editing: Move to previous chord's lyrics/dynamics <br />
 				• <m>-</m>: For lyrics: end a syllable with "-" in order to create a dashed line reaching the next piece of lyrics <br />
 				• <m>Esc</m>: End editing <br />
+				• <m>↑</m>: When dynamics are selected: raise dynamic markings by one step. <br />
+				• <m>↓</m>: When dynamics are selected: lower dynamic markings by one step. <br />
 				<br />
 				For slots: <br />
 				• <m>1</m>, <m>2</m>, <m>3</m>, <m>4</m>, <m>5</m>, <m>6</m>, <m>7</m>, <m>8</m>, <m>9</m>, <m>0</m>: Open
@@ -655,6 +657,7 @@
 				   ↪ Add the <m>Shift</m> key to change either the note duration or the note tail pitch <br />
 				   ↪ Add the <m>Shift+Cmd</m> keys (mac) or <m>Shift+Ctrl</m> keys (win) to fine edit the position <br />
 				   ↪ Add the <m>Shift+Ctrl</m> key to trim the tail, i.e. to keep the existing absolute pitch breakpoint positions. <br />
+				• <m>Ctrl+click+drag</m> on a notehead or on dynamic mark: change velocity or dynamic mark <br />
 				• <m>doubleclick</m> on voice names, marker names or lyrics: Edit names directly <br />
 				• <m>doubleclick</m> on selected items: Selection off-line play (as the <m>V</m> key), but only if <m>dblclicksendsvalues</m> is set to 1 <br />
 				• <m>Shift+click+drag</m> on a clef (at the beginning of the staff): Move voice vertically (along with all the next ones), i.e.: modify vertical space before clicked voice <br />
@@ -1177,7 +1180,7 @@
 				If more than one name need to be associated to the marker, the symbol can be replaced by a list of symbols,
 				for instance <b>addmarker 1000 [foo fee]</b>. If no names need to be associated to the marker, leave <b>[]</b> as
 				name llll. The millisecond position can be replaced by the "cursor" symbol or by the "end" symbol (end of score). <br />
-				If the marker has a role (see below), this should be stated as symbol as third argument.	The choice is among the
+				If the marker has a role (see below), this should be stated as symbol as third argument.    The choice is among the
 				following symbols: "none" (default: no role), "timesig" (time signature), "tempo", "barline" and "division".
 				If the specified role requires a content, this should be indicated as fourth argument. For instance
 				<b>addmarker 0 [not important] timesig [4 4]</b> adds a marker at the beginning of the <o>bach.roll</o>, having a
@@ -2753,6 +2756,8 @@
 				<m>@dpi</m> (int, default: 72): Dots per inch<br />
 				<m>@systemvshift</m> (int, default: 0): Separation between systems in pixels<br />
 				<m>@fadedomain</m> (int, default: none): Fade the left part of the domain near the clefs<br />
+				<m>@onsetindomain</m> (int, default: 0): Only paint notes whose onset is inside domain<br />
+				<m>@postdomainpad</m> (float, default: none): Right pad for domain in pixels<br />
 				<br />
 				The <m>exportimage</m> message exports the content of the <o>bach.roll</o> as a single image or an image series.
 				The file name (as symbol) can be given as optional first argument. If no such symbol is given, a dialog box will pop up
@@ -7457,7 +7462,6 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Slots" />
-				<attribute name="default" get="1" set="1" type="int" size="1" value="0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Link Text Annotation To Slot" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />

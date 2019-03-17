@@ -1321,6 +1321,46 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
     jfont_destroy_debug(jf_text_fractions);
 }
 
+double note_get_spanning_width(t_notation_obj *r_ob, t_note *nt)
+{
+    if (!nt) return 0;
+    
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        if (nt->parent && nt->parent->parent && nt->parent->parent->tuttipoint_reference) {
+            double al_x = chord_get_alignment_x(r_ob, nt->parent);
+            double end_pos = unscaled_xposition_to_xposition(r_ob, nt->parent->parent->tuttipoint_reference->offset_ux + nt->parent->stem_offset_ux + nt->parent->duration_ux);
+            if (r_ob->dl_spans_ties) {
+                t_note *last_tie = note_get_last_in_tieseq(nt);
+                if (last_tie && last_tie != nt)
+                    end_pos = unscaled_xposition_to_xposition(r_ob, last_tie->parent->parent->tuttipoint_reference->offset_ux + last_tie->parent->stem_offset_ux + last_tie->parent->duration_ux);
+            }
+            return end_pos - al_x;
+        }
+    } else {
+        return deltaonset_to_deltaxpixels(r_ob, nt->duration);
+    }
+    return 0;
+}
+
+// use breakpoint_get_pt()
+/*
+double breakpoint_get_x(t_notation_obj *r_ob, t_bpt *bpt)
+{
+    if (!bpt) return 0;
+    
+    t_note *nt = bpt->owner;
+    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
+        if (nt->parent && nt->parent->parent && nt->parent->parent->tuttipoint_reference) {
+            double al_x = chord_get_alignment_x(r_ob, nt->parent);
+            return al_x + note_get_spanning_width(r_ob, nt) * bpt->rel_x_pos;
+        }
+    } else {
+        return onset_to_xposition(r_ob, nt->parent->onset + bpt->rel_x_pos * nt->duration, NULL);
+    }
+    return 0;
+}
+*/
+
 void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t_jrgba notecolor, t_jrgba tailcolor, t_note *curr_nt, double end_pos, double system_shift, double system_jump, char note_unselected, char is_chord_selected, char is_note_selected, char is_durationline_selected, char is_note_played, char is_note_locked, char is_note_muted, char is_note_solo, t_bpt **selected_breakpoint){
     
     t_voice *voice = r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *)curr_nt->parent->voiceparent : (t_voice *)curr_nt->parent->parent->voiceparent;
@@ -4007,6 +4047,7 @@ long yposition_to_systemnumber(t_notation_obj *r_ob, double yposition){
     }
 }
 
+// for roll
 double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system)
 {
     long this_system;
@@ -10586,7 +10627,7 @@ t_dynamics *build_dynamics(t_notation_item *owner)
     dy->text_deparsed = NULL;
     dy->owner_item = owner;
     dy->firstmark = dy->lastmark = NULL;
-    dy->dynamics_left_uext = dy->dynamics_right_uext = dy->dynamics_right_uext_first = 0;
+    dy->dynamics_left_uext = dy->dynamics_right_uext = dy->dynamics_min_uwidth = 0;
     notation_item_init(&dy->r_it, k_DYNAMICS);
     return dy;
 }
@@ -23910,19 +23951,40 @@ void chord_assign_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dyn
             
             if (jf_dynamics_nozoom && jf_dynamics_roman_nozoom) {
                 double w = 0, h = 0, firstw = 0, firsth = 0;
-                if (dyn->firstmark && dyn->firstmark->num_words > 0) {
-                    dynamics_mark_measure(dyn->firstmark, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
-                    if (dyn->firstmark->is_roman[0]) {
-                        dyn->dynamics_left_uext = CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
-                        dyn->dynamics_right_uext = w - dyn->dynamics_left_uext;
+                if (dyn->firstmark) {
+                    if (dyn->firstmark->num_words > 0) {
+                        dynamics_mark_measure(dyn->firstmark, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
+                        if (dyn->firstmark->is_roman[0]) {
+                            dyn->dynamics_left_uext = CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                            dyn->dynamics_min_uwidth = w;
+                            dyn->dynamics_right_uext = w - dyn->dynamics_left_uext;
+                        } else {
+                            jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic[0]->s_name, &firstw, &firsth);
+                            dyn->dynamics_left_uext = firstw/2.;
+                            dyn->dynamics_min_uwidth = w;
+                            dyn->dynamics_right_uext = firstw/2. + (w - firstw);
+                        }
                     } else {
-                        jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic[0]->s_name, &firstw, &firsth);
-                        dyn->dynamics_left_uext = firstw/2.;
-                        dyn->dynamics_right_uext = firstw/2. + (w - firstw);
+                        dyn->dynamics_left_uext = 0;
+                        dyn->dynamics_min_uwidth = 0;
+                        dyn->dynamics_right_uext = 0;
                     }
+                    
                     for (t_dynamics_mark *dynsign = dyn->firstmark->next; dynsign; dynsign = dynsign->next) {
                         dynamics_mark_measure(dynsign, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
-                        dyn->dynamics_right_uext += CONST_MIN_UWIDTH_BETWEEN_DYNAMICS + w;
+                        dyn->dynamics_min_uwidth += CONST_MIN_UWIDTH_BETWEEN_DYNAMICS + w;
+                        if (!dynsign->next) {
+                            if (dynsign->num_words > 0) {
+                                if (dynsign->is_roman[0]) {
+                                    dyn->dynamics_right_uext = w - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                                } else {
+                                    jfont_text_measure(jf_dynamics_nozoom, dynsign->text_typographic[0]->s_name, &firstw, &firsth);
+                                    dyn->dynamics_right_uext = w - firstw/2.;
+                                }
+                            } else {
+                                dyn->dynamics_right_uext = 0;
+                            }
+                        }
                     }
                 }
             }
@@ -24867,8 +24929,8 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
         if (r_ob->dynamics_affect_spacing && chord_has_dynamics(chord)){
             t_dynamics *dyn = chord_get_dynamics(chord);
             if (dyn) {
-                double this_left_uextension = dyn->dynamics_left_uext;
-                double this_right_uextension = dyn->dynamics_right_uext;
+                double this_left_uextension = dynamics_get_left_extension_from_chord_stem(r_ob, dyn);
+                double this_right_uextension = dyn->dynamics_min_uwidth - this_left_uextension;
                 if (chord->left_uextension < this_left_uextension) {
                     chord->dynamics_portion_of_left_uextension = this_left_uextension - chord->left_uextension;
                     chord->left_uextension = this_left_uextension;
@@ -25535,7 +25597,7 @@ int is_in_articulation_shape(t_notation_obj *r_ob, t_articulation *art, long poi
 }
 
 
-void get_breakpoint_pt(t_notation_obj *r_ob, t_bpt *bpt, double *bpt_x_pix, double *bpt_y_pix, double *start_pos_x, double *end_pos_x)
+void breakpoint_get_pt(t_notation_obj *r_ob, t_bpt *bpt, double *bpt_x_pix, double *bpt_y_pix, double *start_pos_x, double *end_pos_x)
 {
     double start_pos = 0, end_pos = 0;
     long system_num = 0;
@@ -25552,7 +25614,7 @@ void get_breakpoint_pt(t_notation_obj *r_ob, t_bpt *bpt, double *bpt_x_pix, doub
         if (start_pos_x)
             start_pos = *start_pos_x;
         else
-            start_pos = unscaled_xposition_to_xposition(r_ob, chord->parent->tuttipoint_reference->offset_ux + chord->stem_offset_ux);
+            start_pos = chord_get_alignment_x(r_ob, chord);
         if (end_pos_x)
             end_pos = *end_pos_x;
         else {
@@ -25607,7 +25669,7 @@ int is_in_durationline_shape(t_notation_obj *r_ob, t_note *note, long point_x, l
     double line_tol = ((r_ob->durations_line_width * r_ob->zoom_y) / 2.);
     while (temp) {
         double bpt_x, bpt_y;
-        get_breakpoint_pt(r_ob, temp, &bpt_x, &bpt_y, &start_pos, &end_pos);
+        breakpoint_get_pt(r_ob, temp, &bpt_x, &bpt_y, &start_pos, &end_pos);
         if (is_pt_in_curve_shape(point_x, point_y, prev_bpt_x, prev_bpt_y, bpt_x, bpt_y, temp->slope, line_tol * CONST_CLICK_BEZIER_TOLLERATION_FACTOR))
             return 1;
         
@@ -25622,7 +25684,7 @@ int is_in_durationline_shape(t_notation_obj *r_ob, t_note *note, long point_x, l
 int is_in_breakpoint_shape(t_notation_obj *r_ob, t_bpt *breakpoint, long point_x, long point_y)
 {
     double bpt_x, bpt_y;
-    get_breakpoint_pt(r_ob, breakpoint, &bpt_x, &bpt_y, NULL, NULL);
+    breakpoint_get_pt(r_ob, breakpoint, &bpt_x, &bpt_y, NULL, NULL);
 
     if ((fabs(point_x - bpt_x) <= CONST_BPT_UHEIGHT * 0.3 * r_ob->zoom_y) && (fabs(point_y - bpt_y) <= CONST_BPT_UHEIGHT * 0.5 * r_ob->zoom_y))
         return 1;
@@ -25768,49 +25830,12 @@ char is_in_chord_lyrics_shape(t_notation_obj *r_ob, t_chord *chord, long point_x
     return 0;
 }
 
-char is_in_chord_dynamics_shape(t_notation_obj *r_ob, t_chord *chord, long point_x, long point_y)
+char is_in_dynamics_shape(t_notation_obj *r_ob, t_dynamics *dyn, long point_x, long point_y)
 {
-    if (chord && chord_has_dynamics(chord)) {
-        t_dynamics *dyn = chord_get_dynamics(chord);
-        if (dyn) {
-            double alignment_x = chord_get_alignment_x(r_ob, chord);
-            //        t_notation_item *nitem = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, r_ob->link_dynamics_to_slot - 1);
-            double left_ext = dyn->dynamics_left_uext * r_ob->zoom_y;
-            double right_ext = dyn->dynamics_right_uext * r_ob->zoom_y;
-            double bottom_staff_y = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), false);
-            double middle_y = bottom_staff_y - r_ob->dynamics_uy_pos * r_ob->zoom_y;
-            double semiheight = 0.2 * r_ob->dynamics_font_size * r_ob->zoom_y;
-            
-            if (!dynamics_extend_till_next_chord(dyn)) { // only till the chord end!
-                if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-                    right_ext = onset_to_xposition(r_ob, chord->onset + chord_get_max_duration(r_ob, chord), NULL) - alignment_x;
-                } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-                    if (chord->next)
-                        right_ext = chord_get_alignment_x(r_ob, chord->next) - alignment_x - (chord_get_dynamics(chord->next) ? (chord_get_dynamics(chord->next))->dynamics_left_uext * r_ob->zoom_y : 0);
-                    else {
-                        t_measure *meas = chord->parent;
-                        right_ext = unscaled_xposition_to_xposition(r_ob, meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux) - alignment_x;
-                    }
-                }
-                
-            } else { // till next chord
-                t_chord *nextchord = chord_get_next(chord);
-                if (nextchord)
-                    right_ext = chord_get_alignment_x(r_ob, nextchord) - alignment_x - (chord_get_dynamics(nextchord) ? (chord_get_dynamics(nextchord))->dynamics_left_uext * r_ob->zoom_y : 0);
-                else
-                    right_ext = DBL_MAX;
-            }
-            
-            if (point_x > alignment_x - left_ext && point_x < alignment_x + right_ext &&
-                point_y > middle_y - semiheight && point_y < middle_y + semiheight)
-                return 1;
-        }
-    }
-    
-    return 0;
+    t_rect enclosure;
+    dynamics_get_rect(r_ob, dyn, &enclosure);
+    return is_pt_in_rectangle(build_pt(point_x, point_y), enclosure);
 }
-
-
 
 long clef_symbol_to_clef_number(t_notation_obj *r_ob, t_symbol *clef){
     if (clef == _llllobj_sym_FFGG)
@@ -43918,8 +43943,9 @@ void notationobj_pixel_to_element(t_notation_obj *r_ob, t_pt pix, void **clicked
 
             // dynamics?
             if (r_ob->link_dynamics_to_slot > 0 && r_ob->show_dynamics) {
-                if (is_in_chord_dynamics_shape(r_ob, curr_ch, this_x, this_y)){
-                    *clicked_elem_ptr = chord_get_dynamics(curr_ch);
+                t_dynamics *dyn = chord_get_dynamics(curr_ch);
+                if (dyn && is_in_dynamics_shape(r_ob, dyn, this_x, this_y)){
+                    *clicked_elem_ptr = dyn;
                     *clicked_elem_type = k_DYNAMICS;
                     return;
                 }

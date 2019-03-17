@@ -407,6 +407,7 @@
                                                         ///< At <zoom_y> = 1, dragging #CONST_TEMPO_DRAG_UCHANGE pixels upward changes the tempo of 1 bpm.
 #define CONST_SLOPE_DRAG_UCHANGE 60.                    ///< Multiplicative constant that handle how fast the slope of the breakpoint and function segments change while dragging.
                                                         ///< At <zoom_y> = 1, dragging #CONST_SLOPE_DRAG_UCHANGE pixels upward changes the slope of 1 unit.
+#define CONST_DYNAMICS_DRAG_UCHANGE 6.                    ///< Multiplicative constant that handle how fast the dynamics change while dragging
 #define CONST_ANGLE_DRAG_UCHANGE 30.                    ///< Multiplicative constant that handle how fast the angle of spatpoints changes while dragging.
                                                         ///< At <zoom_y> = 1, dragging #CONST_ANGLE_DRAG_UCHANGE pixels upward changes the angle of 1 radiant.
 #define CONST_ALPHA_DRAG_UCHANGE 200.                    ///< Multiplicative constant that handle how fast the alpha value changes while dragging inside a slot window of a #k_SLOT_TYPE_COLOR slot, or the color palette inside the bach inspector.
@@ -2564,6 +2565,7 @@ typedef struct _dynamics_mark
     long                    snap_to_breakpoint; ///< If non-zero, it is the index of breakpoint to which it should be snapped
                                                 ///  (1 being the first actual breakpoint, not the notehead).
     double                  relative_position;  ///< If #snap_to_breakpoint is 0, this sets the relative position of the dynamic sign
+                                                ///< If you want the actual relative position in all #snap_to_breakpoint cases, then use dynamics_mark_get_relative_position()
 
     long                    hairpin_to_next;    ///< Hairpin going to the next sign, one of the e_dynamics_hairpin
 
@@ -2605,9 +2607,9 @@ typedef struct _dynamics
                                                 ///< if this is 2, it stretches till next dynamic marking.
 
     // typographic fields
-    double            dynamics_left_uext;                ///< Unscaled left extension (in pixels) of the dynamics, from the chord alignment point
-    double            dynamics_right_uext_first;        ///< Unscaled right extension (in pixels) of the first dynamics, from the chord alignment point
-    double            dynamics_right_uext;            ///< Unscaled right extension (in pixels) of the dynamics, from the chord alignment point
+    double            dynamics_left_uext;       ///< Unscaled left extension (in pixels) of the dynamics, from the center of the first dynamic mark
+    double            dynamics_right_uext;      ///< Unscaled right extension (in pixels) of the dynamics, from the center of the last dynamic mark
+    double            dynamics_min_uwidth;      ///< Minimum unscaled extension (in pixels) of the dynamics
 } t_dynamics;
 
 
@@ -9696,15 +9698,15 @@ int is_in_rest_shape(t_notation_obj *r_ob, t_chord *restchord, long point_x, lon
 char is_in_chord_lyrics_shape(t_notation_obj *r_ob, t_chord *chord, long point_x, long point_y);
 
 
-/**    Tell if a point is inside a given dynamics for a chord.
+/**    Tell if a point is inside a given dynamics.
     @ingroup            notation_graphic
     @param     r_ob        The notation object
-    @param    note        The chord
+    @param    dyn        The dynamics
     @param    point_x        The x coordinate of the point (pixel)
     @param    point_y        The y coordinate of the point (pixel)
     @return                1 if the point is over the dynamics, 0 otherwise.
  */
-char is_in_chord_dynamics_shape(t_notation_obj *r_ob, t_chord *chord, long point_x, long point_y);
+char is_in_dynamics_shape(t_notation_obj *r_ob, t_dynamics *dyn, long point_x, long point_y);
 
 
 /**    Tell if a point is inside a given note tail.
@@ -10871,6 +10873,8 @@ void append_note_breakpoints_formatted_for_pwgl(t_notation_obj *r_ob, t_llll *th
     @return                The absolute onset of the breakpoint in milliseconds.
 */
 double breakpoint_get_absolute_onset(t_bpt *bpt);
+
+double note_get_spanning_width(t_notation_obj *r_ob, t_note *nt);
 
 
 /** Obtain a part of duration line, as breakpoints llll.
@@ -19099,8 +19103,10 @@ t_symbol *dynamics_mark_attachment_value_to_symbol(char val);
 char dynamics_mark_attachment_symbol_to_value(t_symbol *s);
 
 void deparse_dynamics_to_string_once(t_notation_obj *r_ob, char *dynamics, char *buf);
-void dynamics_parse_string_to_energy(t_notation_obj *r_ob, char *buf, short *start_energy, short *end_energy);
+void dynamics_string_to_energy(t_notation_obj *r_ob, char *buf, short *start_energy, short *end_energy);
+t_symbol *dynamics_energy_to_symbol(t_notation_obj *r_ob, long start_energy, long end_energy);
 t_symbol *dynamics_mark_parse_string_to_typographic_text(t_notation_obj *r_ob, char *buf);
+double dynamics_change_sel_energy_delta(t_notation_obj *r_ob, long delta_energy, char only_for_standard_range);
 
 t_dynamics_mark *build_dynamics_mark(long num_words);
 t_dynamics *dynamics_clone(t_dynamics *dyn, t_notation_item *newowner);
@@ -19108,6 +19114,9 @@ long dynamics_get_ending_hairpin(t_dynamics *dyn);
 char dynamics_extend_till_next_chord(t_dynamics *dyn);
 t_dynamics *chord_get_dynamics(t_chord *ch, t_slotitem **slotitem = NULL);
 t_rational dynamics_get_symduration(t_notation_obj *r_ob, t_dynamics *dyn);
+double dynamics_mark_get_relative_position(t_dynamics *dyn, t_dynamics_mark *mark);
+double dynamics_mark_get_hshift(t_notation_obj *r_ob, t_dynamics *dyn, t_dynamics_mark *mark);
+
 
 void dynamics_free_marks(t_dynamics *dyn);
 
@@ -19119,6 +19128,11 @@ long dynamic_mark_end_start_cmp(t_dynamics_mark *s1, t_dynamics_mark *s2);
 
 t_bpt *dynamics_mark_get_breakpoint(t_dynamics *dyn, t_dynamics_mark *mark);
 
+char dynamics_span_ties(t_notation_obj *r_ob);
+double dynamics_get_spanning_width(t_notation_obj *r_ob, t_dynamics *dyn);
+void dynamics_get_rect(t_notation_obj *r_ob, t_dynamics *dyn, t_rect *enclosure);
+double dynamics_get_left_extension_from_chord_alignment_point(t_notation_obj *r_ob, t_dynamics *dyn);
+double dynamics_get_left_extension_from_chord_stem(t_notation_obj *r_ob, t_dynamics *dyn);
 
 // autospell
 void notationobj_autospell_parseargs(t_notation_obj *r_ob, t_llll *args);

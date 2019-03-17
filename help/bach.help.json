@@ -221,28 +221,28 @@
 				"filename" : [ "bach.help.bell.050_loops.010_whileloops.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "recursion", "for+loop" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "while", "condition", "repeat", "body", "clause" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "while", "condition", "do", "body", "clause" ],
 				"title" : [ "\"While\" loops" ]
 			},
 			"Whileloopexamplesanddetails" : {
 				"filename" : [ "bach.help.bell.050_loops.020_whileloopexamplesanddetails.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "recursion", "sequence", "precedence", "lookup", "assigning+operator", "for+loop" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "while", "condition", "repeat", "body", "nested", "sequence", "factorial", "fibonacci" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "while", "condition", "do", "body", "nested", "sequence", "factorial", "fibonacci" ],
 				"title" : [ "\"While\" loop examples and details" ]
 			},
 			"Forloops" : {
 				"filename" : [ "bach.help.bell.050_loops.030_forloops.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "recursion", "while+loop" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "for", "condition", "repeat", "body", "with", "in", "as" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "for", "condition", "do", "body", "with", "in", "as" ],
 				"title" : [ "\"For\" loops" ]
 			},
 			"Forloopsaddressandparalleliteration" : {
 				"filename" : [ "bach.help.bell.050_loops.040_forloopsaddressandparalleliteration.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "recursion", "while+loop", "condition" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "for", "repeat", "address", "parallel", "iteration" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "for", "do", "address", "parallel", "iteration" ],
 				"title" : [ "\"For\" loops: address and parallel iteration" ]
 			},
 			"Forloopsasclause" : {
@@ -552,7 +552,7 @@
 				"Left" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.left.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
-					"seealso" : [ "right", "slice" ],
+					"seealso" : [ "left", "slice" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "left", "slice", "llll" ],
 					"title" : [ "left() function reference" ]
 				},
@@ -1704,7 +1704,7 @@
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "dynamics+syntax" ],
 				"tags" : [ "dynamic", "define", "assign", "plain", "syntax", "marking", "spaces", "underscore", "dashed", "line", "roman", "italic", "expression" ],
-				"title" : [ "Plain dynamics syntax" ]
+				"title" : [ "More plain dynamics syntax" ]
 			},
 			"Checkfix" : {
 				"filename" : [ "bach.help.notation.dynamics.15_checkfix.maxpat" ],
@@ -2380,6 +2380,13 @@
 				"seealso" : [ "slot+linkage", "slot+linkage+dynamics", "dynamics" ],
 				"tags" : [ "editing", "edit", "interface", "dynamics" ],
 				"title" : [ "Editing dynamics" ]
+			},
+			"Dynamicsmore" : {
+				"filename" : [ "bach.help.notation.editing.48_dynamicsmore.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score" ],
+				"seealso" : [ "slot+linkage", "slot+linkage+dynamics", "dynamics" ],
+				"tags" : [ "editing", "edit", "interface", "dynamics", "modify", "shift", "increase", "decrease", "forte", "piano" ],
+				"title" : [ "Modifying dynamics via interface" ]
 			},
 			"Ignoreclick" : {
 				"filename" : [ "bach.help.notation.editing.50_ignoreclick.maxpat" ],
@@ -3257,14 +3264,14 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.40_lambda1.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "dumpselection", "message+change" ],
-					"tags" : [ "message", "operate", "on", "selection", "lambda", "cycle", "selection" ],
+					"tags" : [ "message", "operate", "on", "selection", "lambda", "cycle", "selection", "interaction", "modify", "modification" ],
 					"title" : [ "Lambda interaction" ]
 				},
 				"Lambda2" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.41_lambda2.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "dumpselection", "message+change" ],
-					"tags" : [ "message", "operate", "on", "selection", "lambda", "operation" ],
+					"tags" : [ "message", "operate", "on", "selection", "lambda", "operation", "interaction", "modify", "modification" ],
 					"title" : [ "Lambda operations" ]
 				},
 				"Lambdaexample" : {
@@ -4455,8 +4462,8 @@
 			"Images_fadedomain" : {
 				"filename" : [ "bach.help.notation.save and load.64_images_fadedomain.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
-				"seealso" : [ "export+image", "export+image+view", "fadedomain" ],
-				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "fade", "domain", "fadedomain", "appearance", "exporteed", "image", "systemvshift", "shift", "system", "separation", "vertical" ],
+				"seealso" : [ "export+image", "export+image+view", "fadedomain", "showduration" ],
+				"tags" : [ "data", "export", "image", "png", "picture", "save", "exportimage", "fade", "domain", "fadedomain", "appearance", "exported", "image", "systemvshift", "shift", "system", "separation", "vertical", "onsetindomain", "onset", "in" ],
 				"title" : [ "Exported image appearance" ]
 			}
 		},
@@ -4722,8 +4729,8 @@
 				"tags" : [ "slot", "slotinfo", "example" ],
 				"title" : [ "Slotinfo examples" ]
 			},
-			"Openingaslot copy" : {
-				"filename" : [ "bach.help.notation.slots.06_openingaslot copy.maxpat" ],
+			"Openingaslot" : {
+				"filename" : [ "bach.help.notation.slots.06_openingaslot.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
 				"seealso" : [ "clearselection", "sel+chord", "selection", "slot+hotkeys" ],
 				"tags" : [ "slot", "window", "open", "openslotwin" ],
@@ -5095,7 +5102,7 @@
 					"filename" : [ "bach.help.notation.slots.30_slot linkage.30_annotation.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "slot+linkage", "slotinfo+inspector" ],
-					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "accidental", "linkannotationtoslot", "commentary", "text", "expression", "annotationfontsize", "font" ],
+					"tags" : [ "slot", "link", "linkage", "appearance", "display", "write", "text", "size", "annotation", "accidental", "linkannotationtoslot", "commentary", "text", "expression", "annotationfontsize", "font", "text", "comment" ],
 					"title" : [ "Setting up annotations" ]
 				},
 				"Annotationmore" : {
