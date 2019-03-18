@@ -6,7 +6,9 @@
 */
 
 #include "score_files.h"
+#ifdef MAC_VERSION
 #include "pwd.h"
+#endif
 #ifdef WIN_VERSION
 #include <Shellapi.h>
 #include <process.h>
