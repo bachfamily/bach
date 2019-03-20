@@ -493,10 +493,11 @@ void codableobj_dowrite(t_codableobj *x, t_symbol *s)
 {
     t_fourcc filetype = 'BELL', outtype;
     //short numtypes = 1;
-    char filename[512];
+    char filename[MAX_FILENAME_CHARS];
     short path;
     if (s == gensym("")) {      // if no argument supplied, ask for file
-        if (saveasdialog_extended("untitled.bell", &path, &outtype, &filetype, 1))     // non-zero: user cancelled
+        strncpy_zero(filename, "untitled.bell", MAX_FILENAME_CHARS);
+        if (saveasdialog_extended(filename, &path, &outtype, &filetype, 1))     // non-zero: user cancelled
             return;
     } else {
         strcpy(filename, s->s_name);

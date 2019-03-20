@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 921.0, 553.0 ],
+						"rect" : [ 100.0, 126.0, 921.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -87,6 +87,18 @@
 						"subpatcher_template" : "",
 						"showontab" : 1,
 						"boxes" : [ 							{
+								"box" : 								{
+									"id" : "obj-1",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 425.0, 90.0, 36.0, 23.0 ],
+									"text" : "write"
+								}
+
+							}
+, 							{
 								"box" : 								{
 									"bubble" : 1,
 									"bubblepoint" : 0.1,
@@ -231,7 +243,6 @@
 							}
 , 							{
 								"box" : 								{
-									"code" : "($x1 * 2 ",
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-3",
@@ -239,12 +250,12 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 13.5, 125.0, 60.0, 22.0 ],
+									"patching_rect" : [ 13.5, 125.0, 122.0, 22.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80005
 									}
 ,
-									"text" : "bach.eval"
+									"text" : "bach.eval @embed 0"
 								}
 
 							}
@@ -266,6 +277,13 @@
 							}
  ],
 						"lines" : [ 							{
+								"patchline" : 								{
+									"destination" : [ "obj-3", 0 ],
+									"source" : [ "obj-1", 0 ]
+								}
+
+							}
+, 							{
 								"patchline" : 								{
 									"destination" : [ "obj-20", 0 ],
 									"source" : [ "obj-18", 0 ]
@@ -736,7 +754,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 921.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 921.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1383,7 +1401,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.bell.070_sourcecodefiles.maxpat",
+				"name" : "bach.help.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
