@@ -552,7 +552,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     long partidx, measureidx;
     long divisions, midicents = 0;
     long isfirstnote;
-    t_fourcc filetype = 'TEXT', outtype;
+    t_fourcc filetype = 'MXML', outtype;
     char measurenum[256];
     char *stafftxt;
     t_symbol *filename_sym = NULL;
@@ -825,9 +825,15 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
         bool currently_ongoing_lyrics_syllable = false;
         mxml_node_t *measurexml;
 
-        for (measureidx = 1, measure = voice->firstmeasure, this_voice_ensemble_measure = voice_ensemble_measures->l_head;
+        for (measureidx = 1,
+             measure = voice->firstmeasure,
+             this_voice_ensemble_measure = voice_ensemble_measures->l_head;
+             
              measure;
-             measureidx++, measure = measure->next, this_voice_ensemble_measure = this_voice_ensemble_measure->l_next) {
+             
+             measureidx++,
+             measure = measure->next,
+             this_voice_ensemble_measure = this_voice_ensemble_measure ? this_voice_ensemble_measure->l_next : NULL) {
             
             if (new_voice_ensemble || !this_voice_ensemble_measure) {
                 measurexml = mxmlNewElement(partxml, "measure");
@@ -1608,7 +1614,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
     
     t_filehandle fh;
     //bach_fix_filename_extension(&filename_sym, "xml");
-    switch (bach_openfile_write(filename_sym, "Untitled.xml", &fh, &filetype, 1, &outtype, NULL, NULL)) {
+    switch (bach_openfile_write(filename_sym, "Untitled.musicxml", &fh, &filetype, 1, &outtype, NULL, NULL)) {
         case FILE_ERR_NONE:
             break;
         case FILE_ERR_CANCELED:

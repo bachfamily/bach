@@ -384,20 +384,27 @@ void codableobj_appendtodictionary(t_codableobj *x, t_dictionary *d)
 
 void codableobj_read(t_codableobj *x, t_symbol *s)
 {
+    x->c_forceread = false;
+    defer(x, (method) codableobj_doread, s, 0, NULL);
+}
+
+void codableobj_forceread(t_codableobj *x, t_symbol *s)
+{
+    x->c_forceread = true;
     defer(x, (method) codableobj_doread, s, 0, NULL);
 }
 
 void codableobj_doread(t_codableobj *x, t_symbol *s)
 {
-    t_fourcc filetype = 'TEXT', outtype;
+    t_fourcc filetype[2] = {'TEXT', 'BELL'}, outtype;
     char filename[MAX_PATH_CHARS];
     short path;
     if (s == gensym("")) {      // if no argument supplied, ask for file
-        if (open_dialog(filename, &path, &outtype, &filetype, 1))       // non-zero: user cancelled
+        if (open_dialog(filename, &path, &outtype, filetype, 2))       // non-zero: user cancelled
             return;
     } else {
         strcpy(filename, s->s_name);    // must copy symbol before calling locatefile_extended
-        if (locatefile_extended(filename, &path, &outtype, &filetype, 1)) { // non-zero: not found
+        if (locatefile_extended(filename, &path, &outtype, filetype, 2)) { // non-zero: not found
             object_error((t_object *) x, "%s: not found", s->s_name);
             return;
         }
@@ -452,7 +459,7 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
         strncpy_zero(x->c_filename, filename, MAX_PATH_CHARS);
         x->c_path = path;
     } else {
-        if (s == gensym("forceread")) {
+        if (x->c_forceread) {
             x->c_text = newCode;
             sysmem_freeptr(oldCode);
             if (oldMain)
@@ -484,12 +491,12 @@ void codableobj_write(t_codableobj *x, t_symbol *s)
 
 void codableobj_dowrite(t_codableobj *x, t_symbol *s)
 {
-    t_fourcc filetype = 'TEXT', outtype;
+    t_fourcc filetype = 'BELL', outtype;
     //short numtypes = 1;
     char filename[512];
     short path;
     if (s == gensym("")) {      // if no argument supplied, ask for file
-        if (saveasdialog_extended(filename, &path, &outtype, &filetype, 1))     // non-zero: user cancelled
+        if (saveasdialog_extended("untitled.bell", &path, &outtype, &filetype, 1))     // non-zero: user cancelled
             return;
     } else {
         strcpy(filename, s->s_name);
@@ -504,7 +511,7 @@ void codableobj_writefile(t_codableobj *x, char *filename, short path)
 {
     long err;
     t_filehandle fh;
-    err = path_createsysfile(filename, path, 'TEXT', &fh);
+    err = path_createsysfile(filename, path, 'BELL', &fh);
     if (err)
         return;
     t_handle h = sysmem_newhandle(0);
@@ -606,9 +613,23 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
 
 void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
 {
-    class_addmethod(c, (method)codableobj_read,   "forceread",            A_DEFSYM,    0);
+
+    // @method forceread @digest Read code from file
+    // @description
+    // Load a file containing bell code into the object,
+    // keeping it even if it is invalid.
+    class_addmethod(c, (method)codableobj_forceread,   "forceread",            A_DEFSYM,    0);
+
+    // @method read @digest Read code from file
+    // @description
+    // Load a file containing bell code into the object,
+    // but ignore it if the code is invalid.
     class_addmethod(c, (method)codableobj_read,   "read",            A_DEFSYM,    0);
     
+    // @method write @digest Read code from file
+    // @description
+    // Load a file containing bell code into the object,
+    // but ignore it if the code is invalid.
     class_addmethod(c, (method)codableobj_write, "write", A_DEFSYM, 0);
     
     class_addmethod(c, (method)codableobj_appendtodictionary,    "appendtodictionary", A_CANT, 0);

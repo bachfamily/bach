@@ -71,7 +71,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
     t_symbol *filename_sym = NULL;
     t_filehandle fh = NULL;
     t_fourcc outtype = 0;
-    t_fourcc file_types[] = {'TEXT', 'LLLL'};
+    t_fourcc file_types[] = {'TEXT', 'LLLL', 'MXML', 'CXML'};
     t_llll *score_ll = NULL;
     t_ptr_size size;
     e_undo_operations undo_op = k_UNDO_OP_UNKNOWN;
@@ -117,7 +117,7 @@ void score_doread(t_score *x, t_symbol *s, long argc, t_atom *argv)
     }
     
 
-    if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 2, &outtype, filename) != MAX_ERR_NONE) {
+    if (bach_openfile_for_read((t_object *) x, filename_sym, &path, file_types, 4, &outtype, filename) != MAX_ERR_NONE) {
         object_error((t_object *) x, "Can't open file");
         goto score_doread_error_dontclose;
     }

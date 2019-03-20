@@ -39,6 +39,7 @@ typedef struct _codableobj
     t_llll *c_paramsll;
     t_bach_atomic_lock c_lock;
     t_atom_long c_maxtime;
+    bool c_forceread;
 } t_codableobj;
 
 
@@ -75,6 +76,7 @@ long codableobj_edsave(t_codableobj *x, char **ht, long size);
 void codableobj_appendtodictionary(t_codableobj *x, t_dictionary *d);
 
 void codableobj_read(t_codableobj *x, t_symbol *s);
+void codableobj_forceread(t_codableobj *x, t_symbol *s);
 
 void codableobj_write(t_codableobj *x, t_symbol *s);
 
