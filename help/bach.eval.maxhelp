@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 107.0, 196.0, 921.0, 579.0 ],
+		"rect" : [ 100.0, 100.0, 921.0, 579.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 107.0, 222.0, 921.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 921.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -382,7 +382,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 646.0, 239.0, 204.0, 69.0 ],
-									"presentation_linecount" : 4,
 									"text" : "The extraoutlets, directins and directouts attributes are only useful in advanced scenarios described in the help center."
 								}
 
@@ -430,8 +429,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 610.0, 64.0, 240.0, 112.0 ],
-									"presentation_linecount" : 6,
+									"patching_rect" : [ 610.0, 64.0, 244.0, 112.0 ],
 									"text" : "The inlets attribute allows creating an arbitrary number of inlets, exceeding the ones declared in the object-box code.\nThis is useful if you plan to load other programs from disk, or set them with the \"expr\" message."
 								}
 
@@ -465,7 +463,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 216.0, 359.0, 206.0, 98.0 ],
-									"presentation_linecount" : 4,
 									"text" : "The params attribute allows setting the values of local variables.\n(What on earth is a local variable? Check out the help center to know more!)"
 								}
 
@@ -493,7 +490,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 204.0, 208.0, 218.0, 69.0 ],
-									"presentation_linecount" : 3,
 									"text" : "If the embed attribute is set to 1 (which is the default), the code contained in the text editor is saved with the patcher."
 								}
 
@@ -740,7 +736,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 921.0, 553.0 ],
+						"rect" : [ 100.0, 126.0, 921.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1387,7 +1383,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.bell.040_variables.040_localvariableslifecycle.maxpat",
+				"name" : "bach.help.bell.070_sourcecodefiles.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
@@ -1476,14 +1472,6 @@
 			}
 , 			{
 				"name" : "bach.print.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.textout.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.pack.mxo",
 				"type" : "iLaX"
 			}
 , 			{
