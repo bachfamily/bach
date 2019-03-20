@@ -614,22 +614,13 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
 void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
 {
 
-    // @method forceread @digest Read code from file
-    // @description
-    // Load a file containing bell code into the object,
-    // keeping it even if it is invalid.
+    // @copy BACH_DOC_CODABLEOBJ_FORCEREAD
     class_addmethod(c, (method)codableobj_forceread,   "forceread",            A_DEFSYM,    0);
 
-    // @method read @digest Read code from file
-    // @description
-    // Load a file containing bell code into the object,
-    // but ignore it if the code is invalid.
+    // @copy BACH_DOC_CODABLEOBJ_READ
     class_addmethod(c, (method)codableobj_read,   "read",            A_DEFSYM,    0);
     
-    // @method write @digest Read code from file
-    // @description
-    // Load a file containing bell code into the object,
-    // but ignore it if the code is invalid.
+    // @copy BACH_DOC_CODABLEOBJ_WRITE
     class_addmethod(c, (method)codableobj_write, "write", A_DEFSYM, 0);
     
     class_addmethod(c, (method)codableobj_appendtodictionary,    "appendtodictionary", A_CANT, 0);
