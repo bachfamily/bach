@@ -4,13 +4,13 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 84.0, 81.0, 617.0, 539.0 ],
+		"rect" : [ 94.0, 175.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -38,6 +38,37 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"hidden" : 1,
+					"id" : "obj-1",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 378.0, 440.0, 128.0, 23.0 ],
+					"text" : "bach.help.searchtag"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-17",
+					"linecount" : 2,
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 378.0, 396.0, 157.0, 36.0 ],
+					"text" : "For more information see #eval+depth+attribute.",
+					"textcolor" : [ 0.501960784313725, 0.501960784313725, 0.501960784313725, 1.0 ]
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-8",
 					"maxclass" : "newobj",
@@ -177,12 +208,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-6",
-					"linecount" : 17,
+					"linecount" : 18,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 355.0, 126.0, 245.0, 253.0 ],
-					"text" : "Arguments:\nllll\nitems (default: null. The items argument is passed to the comparison function)\nfunction (default: null, standing for standard equality test)\nsize\nmindepth (default: 1)\nmaxdepth (default: -1)\nminidx (default: 1)\nmaxidx (default: -1)\nidxreject (default: 0)\ndepthreject (default: 0)\nmaxcount (default: 0)\nunwrap (default: 0)\ndepthpolicy (default: 0)\nrecursive (default: 0)",
+					"patching_rect" : [ 355.0, 126.0, 245.0, 268.0 ],
+					"text" : "Arguments:\nllll\nitems (default: null. The items argument is passed to the comparison function)\nfunction (default: null, standing for standard equality test)\nsize\ndepth\nminidx (default: 1)\nmaxidx (default: -1)\nidxreject (default: 0)\ndepthreject (default: 0)\nmaxcount (default: 0)\nunwrap (default: 0)\ndepthpolicy (default: 0)\nrecursive (default: 0)\nmindepth (default: 1)\nmaxdepth (default: -1)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -279,6 +310,14 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-1", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-17", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-2", 0 ]
 				}
@@ -321,11 +360,22 @@
 			}
  ],
 		"dependency_cache" : [ 			{
+				"name" : "bach.help.searchtag.maxpat",
+				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "bach.eval.mxo",
 				"type" : "iLaX"
 			}
 , 			{
 				"name" : "bach.pick.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.hypercomment.mxo",
 				"type" : "iLaX"
 			}
  ],
