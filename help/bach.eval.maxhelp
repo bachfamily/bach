@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 100.0, 100.0, 921.0, 579.0 ],
+		"rect" : [ 107.0, 196.0, 921.0, 579.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 921.0, 553.0 ],
+						"rect" : [ 107.0, 222.0, 921.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -88,13 +88,29 @@
 						"showontab" : 1,
 						"boxes" : [ 							{
 								"box" : 								{
-									"id" : "obj-1",
+									"bubble" : 1,
+									"bubblepoint" : 0.1,
+									"bubbleside" : 0,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-15",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 31.0, 149.0, 177.0, 40.0 ],
+									"text" : "Double-click to see the code!"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-9",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 430.0, 90.0, 36.0, 23.0 ],
-									"text" : "write"
+									"patching_rect" : [ 121.0, 249.0, 78.0, 23.0 ],
+									"text" : "expr $x1 * 3"
 								}
 
 							}
@@ -162,51 +178,12 @@
 							}
 , 							{
 								"box" : 								{
-									"id" : "obj-22",
-									"linecount" : 2,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 438.0, 388.0, 173.0, 36.0 ],
-									"text" : "... loops (this one calculates Fibonacci sequences)..."
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-21",
-									"maxclass" : "newobj",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 17.5, 433.0, 66.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
-									}
-,
-									"text" : "bach.print"
-								}
-
-							}
-, 							{
-								"box" : 								{
 									"id" : "obj-14",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 316.0, 279.0, 355.0, 21.0 ],
-									"text" : "... but it can evaluate functions upon whole lists, branching..."
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-16",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 288.5, 249.0, 59.0, 23.0 ],
-									"text" : "30 20 10"
+									"patching_rect" : [ 209.0, 249.0, 313.0, 21.0 ],
+									"text" : "You can change the code through the expr message."
 								}
 
 							}
@@ -217,8 +194,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 249.0, 48.0, 23.0 ],
-									"text" : "1 2 3 4"
+									"patching_rect" : [ 17.5, 249.0, 29.5, 23.0 ],
+									"text" : "2"
 								}
 
 							}
@@ -228,46 +205,27 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 17.5, 310.0, 66.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
-									}
-,
-									"text" : "bach.print"
+									"patching_rect" : [ 17.5, 310.0, 98.0, 23.0 ],
+									"text" : "print @popup 1"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"code" : "if length($l1) > length($l2) then $l1 else $l2 ",
+									"code" : "$x1 * 3 ",
 									"fontname" : "Arial",
 									"fontsize" : 12.0,
 									"id" : "obj-20",
 									"maxclass" : "newobj",
-									"numinlets" : 2,
+									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 279.0, 290.0, 22.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
-									}
-,
-									"text" : "bach.eval if length($l1) > length($l2) then $l1 else $l2"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-4",
-									"maxclass" : "newobj",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 13.5, 158.0, 95.0, 23.0 ],
+									"patching_rect" : [ 17.5, 279.0, 148.0, 22.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80005
 									}
 ,
-									"text" : "bach.print auto"
+									"text" : "bach.eval $x1 + 3 @out m"
 								}
 
 							}
@@ -292,78 +250,6 @@
 							}
 , 							{
 								"box" : 								{
-									"id" : "obj-12",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 195.5, 355.083983999999987, 34.0, 23.0 ],
-									"text" : "12"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-10",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 113.5, 355.083983999999987, 39.0, 23.0 ],
-									"text" : "8"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-9",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 355.083983999999987, 39.0, 23.0 ],
-									"text" : "5"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"code" : "$x = 1 1 ; while length($x) < $x1 do $x = $x ($x:-1 + $x:-2) ",
-									"fontname" : "Arial",
-									"fontsize" : 12.0,
-									"id" : "obj-11",
-									"maxclass" : "newobj",
-									"numinlets" : 1,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 395.0, 410.0, 22.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80002
-									}
-,
-									"text" : "bach.eval $x = 1 1 \\; while length($x) < $x1 do $x = $x ($x:-1 + $x:-2) @out t"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"bubble" : 1,
-									"bubblepoint" : 0.1,
-									"bubbleside" : 0,
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-15",
-									"linecount" : 2,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 246.0, 310.0, 236.0, 55.0 ],
-									"text" : "You can double-click on the object box to open the expression in a text editor"
-								}
-
-							}
-, 							{
-								"box" : 								{
 									"border" : 0,
 									"filename" : "helpname.js",
 									"id" : "obj-2",
@@ -381,41 +267,6 @@
  ],
 						"lines" : [ 							{
 								"patchline" : 								{
-									"destination" : [ "obj-3", 0 ],
-									"source" : [ "obj-1", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-11", 0 ],
-									"source" : [ "obj-10", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-21", 0 ],
-									"source" : [ "obj-11", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-11", 0 ],
-									"source" : [ "obj-12", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-20", 1 ],
-									"source" : [ "obj-16", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
 									"destination" : [ "obj-20", 0 ],
 									"source" : [ "obj-18", 0 ]
 								}
@@ -425,13 +276,6 @@
 								"patchline" : 								{
 									"destination" : [ "obj-19", 0 ],
 									"source" : [ "obj-20", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-4", 0 ],
-									"source" : [ "obj-3", 0 ]
 								}
 
 							}
@@ -458,7 +302,7 @@
 							}
 , 							{
 								"patchline" : 								{
-									"destination" : [ "obj-11", 0 ],
+									"destination" : [ "obj-20", 0 ],
 									"source" : [ "obj-9", 0 ]
 								}
 
@@ -532,13 +376,140 @@
 									"bubble" : 1,
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
-									"id" : "obj-1",
-									"linecount" : 2,
+									"id" : "obj-16",
+									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 149.0, 67.0, 236.0, 40.0 ],
-									"text" : "The auto attribute causes the code to be executed at object creation"
+									"patching_rect" : [ 646.0, 239.0, 204.0, 69.0 ],
+									"presentation_linecount" : 4,
+									"text" : "The extraoutlets, directins and directouts attributes are only useful in advanced scenarios described in the help center."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-15",
+									"linecount" : 2,
+									"maxclass" : "newobj",
+									"numinlets" : 2,
+									"numoutlets" : 2,
+									"outlettype" : [ "", "" ],
+									"patching_rect" : [ 481.0, 281.0, 159.0, 38.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80005
+									}
+,
+									"text" : "bach.eval @directins 1 @directouts 1"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-14",
+									"maxclass" : "newobj",
+									"numinlets" : 1,
+									"numoutlets" : 2,
+									"outlettype" : [ "", "" ],
+									"patching_rect" : [ 481.0, 242.5, 159.0, 23.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80005
+									}
+,
+									"text" : "bach.eval @extraoutlets 1"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-13",
+									"linecount" : 7,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 610.0, 64.0, 240.0, 112.0 ],
+									"presentation_linecount" : 6,
+									"text" : "The inlets attribute allows creating an arbitrary number of inlets, exceeding the ones declared in the object-box code.\nThis is useful if you plan to load other programs from disk, or set them with the \"expr\" message."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"code" : "$x1 + 1 ",
+									"id" : "obj-12",
+									"linecount" : 2,
+									"maxclass" : "newobj",
+									"numinlets" : 3,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 481.0, 101.0, 122.0, 38.0 ],
+									"saved_object_attributes" : 									{
+										"versionnumber" : 80005
+									}
+,
+									"text" : "bach.eval $x1 + 1 @inlets 3"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-10",
+									"linecount" : 6,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 216.0, 359.0, 206.0, 98.0 ],
+									"presentation_linecount" : 4,
+									"text" : "The params attribute allows setting the values of local variables.\n(What on earth is a local variable? Check out the help center to know more!)"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"id" : "obj-7",
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 105.0, 334.0, 160.0, 23.0 ],
+									"text" : "params [$add 10] [$mul 3]"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-5",
+									"linecount" : 4,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 204.0, 208.0, 218.0, 69.0 ],
+									"presentation_linecount" : 3,
+									"text" : "If the embed attribute is set to 1 (which is the default), the code contained in the text editor is saved with the patcher."
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontname" : "Arial",
+									"fontsize" : 13.0,
+									"id" : "obj-1",
+									"linecount" : 5,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 164.0, 71.0, 251.0, 83.0 ],
+									"text" : "The auto attribute causes the code to be executed as soon as it is received (that is, when the object is created, or when the text editor is closed, or when a file is loaded)."
 								}
 
 							}
@@ -558,51 +529,12 @@
 							}
 , 							{
 								"box" : 								{
-									"id" : "obj-22",
-									"linecount" : 2,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 438.0, 388.0, 173.0, 36.0 ],
-									"text" : "... loops (this one calculates Fibonacci sequences)..."
-								}
-
-							}
-, 							{
-								"box" : 								{
 									"id" : "obj-21",
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 17.5, 433.0, 66.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
-									}
-,
-									"text" : "bach.print"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-14",
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 316.0, 279.0, 355.0, 21.0 ],
-									"text" : "... but it can evaluate functions upon whole lists, branching..."
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-16",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 288.5, 249.0, 59.0, 23.0 ],
-									"text" : "30 20 10"
+									"patching_rect" : [ 17.5, 429.0, 98.0, 23.0 ],
+									"text" : "print @popup 1"
 								}
 
 							}
@@ -613,7 +545,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 249.0, 48.0, 23.0 ],
+									"patching_rect" : [ 17.5, 201.0, 48.0, 23.0 ],
 									"text" : "1 2 3 4"
 								}
 
@@ -624,31 +556,27 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 17.5, 310.0, 66.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
-									}
-,
-									"text" : "bach.print"
+									"patching_rect" : [ 17.5, 262.0, 98.0, 23.0 ],
+									"text" : "print @popup 1"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"code" : "if length($l1) > length($l2) then $l1 else $l2 ",
+									"code" : "$x1 + 1 ",
 									"fontname" : "Arial",
-									"fontsize" : 12.0,
+									"fontsize" : 13.0,
 									"id" : "obj-20",
 									"maxclass" : "newobj",
-									"numinlets" : 2,
+									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 279.0, 290.0, 22.0 ],
+									"patching_rect" : [ 17.5, 231.0, 181.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80001
+										"versionnumber" : 80005
 									}
 ,
-									"text" : "bach.eval if length($l1) > length($l2) then $l1 else $l2"
+									"text" : "bach.eval @embed 1 @out m"
 								}
 
 							}
@@ -658,7 +586,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 17.5, 115.0, 95.0, 23.0 ],
+									"patching_rect" : [ 17.5, 133.0, 95.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80005
 									}
@@ -671,13 +599,12 @@
 								"box" : 								{
 									"code" : "`hi ",
 									"fontname" : "Arial",
-									"fontsize" : 12.0,
 									"id" : "obj-3",
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 83.0, 125.0, 22.0 ],
+									"patching_rect" : [ 17.5, 101.0, 135.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 80005
 									}
@@ -688,73 +615,33 @@
 							}
 , 							{
 								"box" : 								{
-									"id" : "obj-12",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 195.5, 355.083983999999987, 34.0, 23.0 ],
-									"text" : "12"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-10",
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 113.5, 355.083983999999987, 39.0, 23.0 ],
-									"text" : "8"
-								}
-
-							}
-, 							{
-								"box" : 								{
 									"id" : "obj-9",
 									"maxclass" : "message",
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 355.083983999999987, 39.0, 23.0 ],
+									"patching_rect" : [ 17.5, 332.083983999999987, 39.0, 23.0 ],
 									"text" : "5"
 								}
 
 							}
 , 							{
 								"box" : 								{
-									"code" : "$x = 1 1 ; while length($x) < $x1 do $x = $x ($x:-1 + $x:-2) ",
+									"code" : "$x1 * $mul + $add ",
 									"fontname" : "Arial",
-									"fontsize" : 12.0,
+									"fontsize" : 13.0,
 									"id" : "obj-11",
+									"linecount" : 3,
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 17.5, 395.0, 410.0, 22.0 ],
+									"patching_rect" : [ 17.5, 372.0, 181.0, 52.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80002
+										"versionnumber" : 80005
 									}
 ,
-									"text" : "bach.eval $x = 1 1 \\; while length($x) < $x1 do $x = $x ($x:-1 + $x:-2) @out t"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"bubble" : 1,
-									"bubblepoint" : 0.1,
-									"bubbleside" : 0,
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-15",
-									"linecount" : 2,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 246.0, 310.0, 236.0, 55.0 ],
-									"text" : "You can double-click on the object box to open the expression in a text editor"
+									"text" : "bach.eval $x1 * $mul + $add @params [$add 5] [$mul 2] @out m"
 								}
 
 							}
@@ -777,29 +664,8 @@
  ],
 						"lines" : [ 							{
 								"patchline" : 								{
-									"destination" : [ "obj-11", 0 ],
-									"source" : [ "obj-10", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
 									"destination" : [ "obj-21", 0 ],
 									"source" : [ "obj-11", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-11", 0 ],
-									"source" : [ "obj-12", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-20", 1 ],
-									"source" : [ "obj-16", 0 ]
 								}
 
 							}
@@ -821,6 +687,13 @@
 								"patchline" : 								{
 									"destination" : [ "obj-4", 0 ],
 									"source" : [ "obj-3", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-11", 0 ],
+									"source" : [ "obj-7", 0 ]
 								}
 
 							}
@@ -1514,7 +1387,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.welcome.maxpat",
+				"name" : "bach.help.bell.040_variables.040_localvariableslifecycle.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
@@ -1603,6 +1476,14 @@
 			}
 , 			{
 				"name" : "bach.print.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.textout.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.pack.mxo",
 				"type" : "iLaX"
 			}
 , 			{
