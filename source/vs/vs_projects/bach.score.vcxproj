@@ -136,6 +136,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).mxe</OutputFile>
@@ -176,6 +177,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).mxe64</OutputFile>
@@ -221,6 +223,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).mxe</OutputFile>
@@ -268,6 +271,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(ProjectName).mxe64</OutputFile>
@@ -293,6 +297,8 @@
     <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\commonsyms.c" />
     <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\dllmain_win.c" />
     <ClCompile Include="..\..\mains\aa\score_files.cpp" />
+    <ClCompile Include="..\..\mains\aa\score_readxml.cpp" />
+    <ClCompile Include="..\..\mains\aa\score_writexml.cpp" />
     <ClCompile Include="..\..\mains\dg\score.c" />
     <ClCompile Include="..\..\mains\dg\score_api.c" />
   </ItemGroup>
