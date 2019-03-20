@@ -126,6 +126,11 @@ void ext_main(void *moduleRef)
 {
 	t_class *c;
 	
+    if (gensym("bach")->s_thing) {
+        error("Can't instantiate bach");
+        return;
+    }
+    
 	common_symbols_init();
 	
 	if (llllobj_common_symbols_init() != MAX_ERR_NONE) {
@@ -560,7 +565,7 @@ long parse_version_string(char *str, long *major, long *minor, long *revision, l
 t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 {
     if (bach || gensym("bach")->s_thing) {
-        object_error_obtrusive(nullptr, "Restart Max to use the bach library");
+        object_error_obtrusive(nullptr, "Can't instantiate bach. You might want to restart Max.");
         bach = nullptr;
         gensym("bach")->s_thing = nullptr;
 		return NULL;
