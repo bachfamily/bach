@@ -84,7 +84,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -229,7 +230,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -719,7 +721,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -1425,7 +1428,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -1670,7 +1674,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -1957,7 +1962,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -2928,7 +2934,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -3491,7 +3498,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -4560,7 +4568,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -4802,7 +4811,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -5050,7 +5060,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -5711,7 +5722,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -6706,7 +6718,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -7005,7 +7018,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -7543,7 +7557,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -7641,7 +7656,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -11193,7 +11209,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -11514,7 +11531,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -13638,7 +13656,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -13768,7 +13787,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically
@@ -14246,7 +14266,8 @@
 				width factor is changed. <br />
 				- <b>barline</b>: assigns a specific ending barline to a given measure. It expects a specific letter, representing the barline type. This letter
 				can be one of the following ones: 'a' = automatic barline (defaul), 'n' = normal barline, 'd' = dashed barline, 'p' = dotted barline (p = "points"),
-				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline. <br />.
+				't' = double barline (t = "two"), 's' = solid barline, 'f' = final barline, 'h' = hidden barline, 'k' = tick,
+				'i' = intervoice barline only (barline is only between voice staves, not over staves). <br />.
 				- <b>shownumber</b>: deals with measure numbers. If an "off" symbol is given as value, it means that the measure number of the current measure will
 				not be displayed. If a specific number is given, it will be assigned as a forced measure number to be displayed, for instance <b>[shownumber -4]</b> will
 				show -4 as measure number (also see the attribute <m>measurenumberoffset</m>). If an "auto" symbol is given, it will show the measure's automatically

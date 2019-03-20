@@ -280,11 +280,11 @@ void verbose_print(t_score *x);
 t_scorevoice* nth_scorevoice(t_score *x, long n);
 
 //t_llll* get_voice_extras_values_as_llll(t_score *x, t_scorevoice *voice);
-void send_all_values_as_llll(t_score *x, long send_what_for_header);
+void send_all_values_as_llll(t_score *x, long send_what_for_header, t_symbol *gatheredsyntax_router);
 void send_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_meas, long end_meas, t_llll *what_to_dump);
 t_llll* get_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_meas, long end_meas, t_llll *what_to_dump);
 t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_meas, long end_meas, char tree, char also_get_level_information);
-void send_score_values_as_llll(t_score *x, long send_what);
+void send_score_values_as_llll(t_score *x, long send_what, t_symbol *router);
 void send_measuresinfo_values_as_llll(t_score *x);
 void send_cents_values_as_llll(t_score *x, char tree, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 void send_durations_values_as_llll(t_score *x, char tree);
@@ -8602,33 +8602,35 @@ void score_domain(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
 
 void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
-    t_llll *headers;
-    if ((argc == 1) && (atom_gettype(argv) == A_SYM)) {
-        t_symbol *sym = atom_getsym(argv);
+    t_symbol *router = NULL;
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    llll_parseargs_and_attrs_destructive((t_object *)x, args, "s", gensym("router"), &router);
+    if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == A_SYM) {
+        t_symbol *sym = hatom_getsym(&args->l_head->l_hatom);
         if ((sym == _llllobj_sym_measures) || (sym == _llllobj_sym_measure) || (sym == _llllobj_sym_measureinfo)) {
             send_measuresinfo_values_as_llll(x);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_cents) || (sym == _llllobj_sym_cent)) {
             send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_NEVER);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
             send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_ALWAYS);
-            return;
+            goto end;
         } else if (sym == _llllobj_sym_poc) {
             send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
             send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_velocities) || (sym == _llllobj_sym_velocity)) {
             send_velocities_values_as_llll(x, x->r_ob.output_trees == 2);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_ties) || (sym == _llllobj_sym_tie)) {
             send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_extras) || (sym == _llllobj_sym_extra)) {
             send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
-            return;
+            goto end;
         } else if (sym == _llllobj_sym_separate) {
             send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
             send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
@@ -8636,19 +8638,19 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
             send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
             send_cents_values_as_llll(x, x->r_ob.output_trees == 2);
             send_measuresinfo_values_as_llll(x);
-            return;
+            goto end;
         } else if (sym == _llllobj_sym_score) {
-            send_score_values_as_llll(x, -1);
-            return;
+            send_score_values_as_llll(x, k_HEADER_ALL, router);
+            goto end;
         }
-    } else if (argc == 0) {
-        send_all_values_as_llll(x, -1); // dump all
-        return;
+    } else if (args->l_size == 0) {
+        send_all_values_as_llll(x, k_HEADER_ALL, router); // dump all separate outlets and full gathered syntax
+        goto end;
     }
     
-    headers = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
-    send_score_values_as_llll(x, header_objects_to_long(headers));
-    llll_free(headers);
+    send_score_values_as_llll(x, header_objects_to_long(args), router);
+end:
+    llll_free(args);
 }
 
 void score2roll(t_score *x, char markmeasures, char marktimesig, char marktempi, char markdivisions)
@@ -13576,13 +13578,14 @@ void send_subscore_values_as_llll(t_score *x, t_llll* whichvoices, long start_me
 }
 
 
-void send_score_values_as_llll(t_score *x, long send_what){
-    t_llll* out_llll = get_score_values_as_llll(x, k_CONSIDER_FOR_SAVING, send_what, x->r_ob.output_trees, x->r_ob.output_and_save_level_types, true, false);
+void send_score_values_as_llll(t_score *x, long send_what, t_symbol *router)
+{
+    t_llll* out_llll = get_score_values_as_llll(x, k_CONSIDER_FOR_SAVING, send_what, x->r_ob.output_trees, x->r_ob.output_and_save_level_types, true, false, router);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
     llll_free(out_llll);
 }
 
-void send_all_values_as_llll(t_score *x, long send_what_for_header) 
+void send_all_values_as_llll(t_score *x, long send_what_for_header, t_symbol *gatheredsyntax_router)
 {
     send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
     send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
@@ -13590,7 +13593,7 @@ void send_all_values_as_llll(t_score *x, long send_what_for_header)
     send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
     send_cents_values_as_llll(x, x->r_ob.output_trees == 2 );
     send_measuresinfo_values_as_llll(x);
-    send_score_values_as_llll(x, send_what_for_header);
+    send_score_values_as_llll(x, send_what_for_header, gatheredsyntax_router);
 }
 
 
@@ -16365,7 +16368,7 @@ void evaluate_selection(t_score *x, long modifiers, char alsosortselectionbyonse
 
     // detect the selection type
     if ((modifiers & eShiftKey) && (modifiers & eAltKey)) { // send all values
-        send_all_values_as_llll(x, -1); // dump all
+        send_all_values_as_llll(x, k_HEADER_ALL, NULL); // dump all
     } else if (modifiers & eShiftKey) { // send this chord values
         if ((x->r_ob.num_selecteditems == 1) && (x->r_ob.firstselecteditem->type == k_NOTE)) 
             send_chord_as_llll((t_notation_obj *) x, ((t_note *)x->r_ob.firstselecteditem)->parent, 7, k_CONSIDER_FOR_DUMPING, -1, forced_routers);

@@ -6139,13 +6139,14 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt, do
     t_chord *chord = NULL;
     t_measure *this_meas = NULL, *last_done_meas = NULL;
     long i;
+    double XSCALE_FACTOR = CONST_X_SCALING;
     
     for (i = 0; i < x->r_ob.num_voices; i++) // cycle on the voices
         for (this_meas = tpt->measure[i]; (tpt->next && this_meas != tpt->next->measure[i]) || (!tpt->next && this_meas); this_meas = this_meas->next) { // cycle on the measures within the tuttipoin
             t_tempo *tempo;
             
-            this_meas->start_barline_offset_ux = 1000 * rat2double(this_meas->r_tuttipoint_onset_sec) * x->r_ob.spacing_width * CONST_X_SCALING * wf;
-            this_meas->width_ux = 1000 * rat2double(this_meas->r_total_duration_sec) * x->r_ob.spacing_width * CONST_X_SCALING * wf;
+            this_meas->start_barline_offset_ux = 1000 * rat2double(this_meas->r_tuttipoint_onset_sec) * x->r_ob.spacing_width * XSCALE_FACTOR * wf;
+            this_meas->width_ux = 1000 * rat2double(this_meas->r_total_duration_sec) * x->r_ob.spacing_width * XSCALE_FACTOR * wf;
             if (this_meas->start_barline_offset_ux + this_meas->width_ux > temp)
                 temp = this_meas->start_barline_offset_ux + this_meas->width_ux;
             
@@ -6154,10 +6155,10 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt, do
                 this_meas->timesignature_uwidth = ts_get_uwidth((t_notation_obj *) x, &this_meas->timesignature);
             
             for (tempo = this_meas->firsttempo; tempo; tempo = tempo->next)
-                tempo->tuttipoint_offset_ux = tempo->tuttipoint_onset_ms *  x->r_ob.spacing_width * CONST_X_SCALING * wf;
+                tempo->tuttipoint_offset_ux = tempo->tuttipoint_onset_ms *  x->r_ob.spacing_width * XSCALE_FACTOR * wf;
             
             for (chord = this_meas->firstchord; chord; chord = chord->next) {
-                double alignment_point = chord->tuttipoint_onset_ms *  x->r_ob.spacing_width * CONST_X_SCALING * wf;
+                double alignment_point = chord->tuttipoint_onset_ms *  x->r_ob.spacing_width * XSCALE_FACTOR * wf;
                 chord->alignment_ux = alignment_point;
                 if (x->r_ob.align_chords_with_what == k_CHORD_ALIGN_WITH_STEMS)
                     chord->stem_offset_ux = alignment_point;
@@ -7911,7 +7912,7 @@ void correct_measure_spacing_for_voiceensembles(t_score *x, t_measure *measure)
     }
 }
     
-void correct_tuttipoint_spacing_for_voiceensembles(t_score *x, t_tuttipoint *tpt)
+void tuttipoint_correct_spacing_for_voiceensembles(t_score *x, t_tuttipoint *tpt)
 {
     t_voice *voice;
     for (voice = x->r_ob.firstvoice; voice && voice->number < x->r_ob.num_voices; voice = voice_get_next((t_notation_obj *)x, voice)) {
@@ -8132,12 +8133,13 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
                 }
             
             tuttipoint_calculate_spacing(x, tmp_pt);
-            correct_tuttipoint_spacing_for_voiceensembles(x, tmp_pt);
+            tuttipoint_correct_spacing_for_voiceensembles(x, tmp_pt);
             tmp_pt->need_recompute_spacing = k_SPACING_DONT_RECALCULATE;
             
         } else if (tmp_pt->need_recompute_spacing == k_SPACING_REFINE_ONLY) {
+            // These three lines are completely unused
             tuttipoint_refine_spacing(x, tmp_pt);
-            correct_tuttipoint_spacing_for_voiceensembles(x, tmp_pt);
+            tuttipoint_correct_spacing_for_voiceensembles(x, tmp_pt);
             tmp_pt->need_recompute_spacing = k_SPACING_DONT_RECALCULATE;
         }
     
@@ -8277,7 +8279,7 @@ void check_tempi(t_score *x)
 }
 
 // getwhat is one of the e_data_considering_types
-t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff) // char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels)
+t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router) // char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels)
 {
     // get all the information concerning the score and put it in a llll
     
@@ -8316,7 +8318,7 @@ t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, 
     t_llll* out_llll = llll_get();
     t_scorevoice *voice;
     
-    llll_appendsym(out_llll, _llllobj_sym_score, 0, WHITENULL_llll); // "score" message
+    llll_appendsym(out_llll, router ? router : _llllobj_sym_score, 0, WHITENULL_llll); // "score" message
     
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
@@ -10160,6 +10162,19 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     case k_BARLINE_SOLID:
                         paint_line(g, barline_color, end_barline_x, staff_top, end_barline_x, end_barline_y, 3. * x->r_ob.zoom_y);
                         break;
+                    case k_BARLINE_TICK:
+                        paint_line(g, barline_color, end_barline_x, staff_top - 3.5 * x->r_ob.zoom_y, end_barline_x, staff_top + 3.5 * x->r_ob.zoom_y, 1.);
+                        break;
+                    case k_BARLINE_INTERVOICES:
+                    {
+                        for (t_voice *v = x->r_ob.firstvoice; v && v->number < x->r_ob.num_voices - 1; v = voice_get_next((t_notation_obj *)x, v)) {
+                            t_voice *vn = voice_get_next((t_notation_obj *)x, v);
+                            double v_bottom = get_staff_bottom_y((t_notation_obj *)x, v, false);
+                            double vn_top = get_staff_top_y((t_notation_obj *)x, vn, false);
+                            paint_line(g, barline_color, end_barline_x, v_bottom, end_barline_x, vn_top, 1.);
+                        }
+                    }
+                        break;
                     case k_BARLINE_HIDDEN:
                         break;
                     case k_BARLINE_DOUBLE:
@@ -10186,7 +10201,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     double measurenum_width, measurenum_height;
                     snprintf_zero(measurenum_txt, 8, "%ld", curr_meas->next->force_measure_number ? curr_meas->next->forced_measure_number : curr_meas->measure_number + 2 + x->r_ob.measure_number_offset);
                     jfont_text_measure(jf_measure_num, measurenum_txt, &measurenum_width, &measurenum_height);
-                    measure_numbers_top_y = staff_top - measurenum_height - CONST_MEASURE_NUMBER_STAFF_USEPARATION * x->r_ob.zoom_y;
+                    measure_numbers_top_y = staff_top - measurenum_height - CONST_MEASURE_NUMBER_STAFF_USEPARATION * x->r_ob.zoom_y - (curr_meas->end_barline->barline_type == k_BARLINE_TICK ? 2 * x->r_ob.zoom_y : 0);
                     write_text_account_for_vinset((t_notation_obj *) x, g, jf_measure_num, x->r_ob.j_mainstaves_rgba, measurenum_txt, end_barline_x - measurenum_width/2., measure_numbers_top_y);
                 }
             }
@@ -11059,7 +11074,7 @@ void score_declare_bach_attributes(t_score *x){
     DECLARE_BACH_ATTR(man, -1,  _llllobj_sym_lockrhythmictree, (char *)"Lock Rhythmic Tree", k_MEASURE, t_measure, lock_rhythmic_tree, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ONOFF, 0, 0);
     x->r_ob.m_inspector.attr_manager->miniature[k_MEASURE] = (bach_inspector_miniature_fn)bach_measure_miniature_fn;
 
-    t_symbol *barlinetype[8];
+    t_symbol *barlinetype[10];
     barlinetype[0] = gensym("Automatic");
     barlinetype[1] = gensym("Normal");
     barlinetype[2] = gensym("Dashed");
@@ -11068,6 +11083,8 @@ void score_declare_bach_attributes(t_score *x){
     barlinetype[5] = gensym("Final");
     barlinetype[6] = gensym("Hidden");
     barlinetype[7] = gensym("Solid");
+    barlinetype[8] = gensym("Tick");
+    barlinetype[9] = gensym("Intervoices");
     DECLARE_BACH_ATTR(man, -1, _llllobj_sym_barline, (char *)"Ending Barline Type", k_MEASURE, t_measure, end_barline_dummy, k_BACH_ATTR_CHAR, 1, k_BACH_ATTR_DISPLAY_ENUMINDEX, 0, 0);
     bach_attribute_add_enumindex(get_bach_attribute(man, k_MEASURE, _llllobj_sym_barline), 8, barlinetype);
 

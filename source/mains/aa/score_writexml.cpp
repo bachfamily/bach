@@ -1583,13 +1583,14 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                     const char *type = "regular";
                     mxml_node_t *barlinexml = mxmlNewElement(measurexml, "barline");
                     switch (barline) {
-                        case k_BARLINE_NORMAL:  type = "regular";        break;
-                        case k_BARLINE_DASHED:  type = "dashed";        break;
-                        case k_BARLINE_POINTS:  type = "dotted";        break;
-                        case k_BARLINE_DOUBLE:  type = "light-light";    break;
-                        case k_BARLINE_FINAL:   type = "light-heavy";    break;
-                        case k_BARLINE_HIDDEN:  type = "none";            break;
-                        case k_BARLINE_SOLID:   type = "heavy";            break;
+                        case k_BARLINE_NORMAL:    type = "regular";        break;
+                        case k_BARLINE_DASHED:    type = "dashed";        break;
+                        case k_BARLINE_POINTS:    type = "dotted";        break;
+                        case k_BARLINE_DOUBLE:    type = "light-light";    break;
+                        case k_BARLINE_FINAL:    type = "light-heavy";    break;
+                        case k_BARLINE_HIDDEN:    type = "none";            break;
+                        case k_BARLINE_SOLID:    type = "heavy";            break;
+                        case k_BARLINE_TICK:    type = "tick";            break;
                     }
                     bach_mxmlNewTextElement(barlinexml, "bar-style", 0, type);
                 }

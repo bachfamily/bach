@@ -4133,8 +4133,7 @@ double unscaled_xposition_to_xposition(t_notation_obj *r_ob, double unscaled_x_p
     double const_left_start = ((r_ob->spacing_type == k_SPACING_PROPORTIONAL || r_ob->obj_type == k_NOTATION_OBJECT_ROLL) ? CONST_ROLL_UX_LEFT_START : CONST_SCORE_UX_LEFT_START);
     double const_x_scaling = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 1. : CONST_X_SCALING_SCORE);
 
-    return r_ob->j_inset_x + (const_left_start + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y +
-                const_x_scaling * (unscaled_x_pos - r_ob->screen_ux_start) * r_ob->zoom_x * r_ob->zoom_y;
+    return r_ob->j_inset_x + (const_left_start + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y + const_x_scaling * (unscaled_x_pos - r_ob->screen_ux_start) * r_ob->zoom_x * r_ob->zoom_y;
 }
 
 double xposition_to_unscaled_xposition(t_notation_obj *r_ob, double x_position){
@@ -16024,8 +16023,13 @@ void get_rhythm_drawable_one_step(t_notation_obj *r_ob, t_llll *box, char only_c
         if (hatom_gettype(&boxelem->l_hatom) == H_OBJ) { // it is a chord
             t_chord *this_chord = (t_chord *) hatom_getobj(&boxelem->l_hatom);
             
-            if (this_chord->parent && is_measure_single_whole_rest(r_ob, this_chord->parent) && rat_rat_cmp(this_chord->r_sym_duration, rat_opp(box_length)) == 0)
+            if (this_chord->parent && is_measure_single_whole_rest(r_ob, this_chord->parent) && rat_rat_cmp(this_chord->r_sym_duration, rat_opp(box_length)) == 0) {
+                if (r_ob->whole_rests_in_empty_measures)
+                    this_chord->figure = long2rat(1);
+                else
+                    this_chord->figure = rat_abs(this_chord->r_sym_duration);
                 break; // full measure rest, nothing to do
+            }
         
             long rhythm_elem_display_sign;
             t_rational rhythm_elem_display, rhythm_elem_display_abs;    // will be the overall displayed duration. For instance a dotted tuplet quaver will have this as 3/16, and so on.
@@ -30932,6 +30936,8 @@ double get_barline_ux_width(t_notation_obj *r_ob, char barline_type)
         case k_BARLINE_NORMAL:
         case k_BARLINE_DASHED:
         case k_BARLINE_POINTS:
+        case k_BARLINE_TICK:
+        case k_BARLINE_INTERVOICES:
             return 1;
         case k_BARLINE_HIDDEN:
             return 0;

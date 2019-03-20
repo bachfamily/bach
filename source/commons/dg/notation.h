@@ -198,7 +198,7 @@
 #define CONST_X_SCALING 0.1                                        ///< Multiplicative factor to fix a default x-axis time-pixel relationship (relationship which will be affected by <zoom_x> and <zoom_y> also)  
                                                                 ///< At <zoom_x> = <zoom_y> = 1, Δpixels = CONST_X_SCALING * Δtime. Only used by [bach.roll]
 #define CONST_X_SCALING_SCORE 1                                    ///< (Private, never change) Multiplicative factor to respace horizontaly elements in [bach.score] (leave it to 1; change <zoom_x>, instead)  
-#define CONST_UX_KEYSIGNATURE_START 20.                            ///< Unscaled x position corresponding to the beginning of the keysignature, after the clefs
+#define CONST_UX_KEYSIGNATURE_START 22.                            ///< Unscaled x position corresponding to the beginning of the keysignature, after the clefs
 #define CONST_ROLL_UX_LEFT_START 34.                            ///< Unscaled x position corresponding to the beginning of the screen window. Only used by [bach.roll].
                                                                 ///< When there's no scrollbar, and for <zoom_x> = <zoom_y> = 1, it is the x position for the point having onset = 0 ms
 #define CONST_SCORE_UX_LEFT_START 24                            ///< Unscaled x position corresponding to the beginning of the screen window, only used by [bach.score].
@@ -1087,14 +1087,16 @@ typedef enum _show_label_families_type {
     @ingroup    notation
  */
 typedef enum _barline_modifier {
-    k_BARLINE_AUTOMATIC = 'a',    ///< Automatic barline (normal barline when the measure is NOT final, final barline when the measure is final)
+    k_BARLINE_AUTOMATIC = 'a',     ///< Automatic barline (normal barline when the measure is NOT final, final barline when the measure is final)
     k_BARLINE_NORMAL = 'n',        ///< Normal barline
     k_BARLINE_DASHED = 'd',        ///< Dashed barline
     k_BARLINE_POINTS = 'p',        ///< Pointed barline
     k_BARLINE_DOUBLE = 't',        ///< Double barline
-    k_BARLINE_FINAL = 'f',        ///< Final barline (a thin and a thick one in sequence)
+    k_BARLINE_FINAL = 'f',         ///< Final barline (a thin and a thick one in sequence)
     k_BARLINE_HIDDEN = 'h',        ///< Hidden barline
-    k_BARLINE_SOLID = 's'        ///< Solid barline (thicker than the normal one)
+    k_BARLINE_SOLID = 's',         ///< Solid barline (thicker than the normal one)
+    k_BARLINE_TICK = 'k',          ///< Tick
+    k_BARLINE_INTERVOICES = 'i'    ///< Intervoice barline only
 } e_barline_modifier;
 
 
@@ -4870,7 +4872,7 @@ typedef struct _notation_obj
     
     // jitter painting stuff
     t_symbol            *jit_destination_matrix; ///< If non-NULL, also mirrors the painting of the canvas on the selected jitter Matrix.
-    char                pagelike_barlines;        ///< If non-null, the barlines and measure numbers (in bach.score) are drawn as if they were on a page
+    char                pagelike_barlines;       ///< If non-null, the barlines and measure numbers (in bach.score) are drawn as if they were on a page
     
     // mira/miraweb: stuff designed to work with mira.multitouch
     char mt_finger_state[10];                   ///< State of each finger

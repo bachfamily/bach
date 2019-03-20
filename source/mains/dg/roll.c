@@ -367,11 +367,11 @@ t_llll* get_voice_pixel_values_as_llll(t_roll *x, t_rollvoice *voice);
 t_llll *get_selection_gathered_syntax(t_roll *x);
 
 //t_llll* get_voice_extras_values_as_llll(t_roll *x, t_rollvoice *voice);
-void send_all_values_as_llll(t_roll *x, e_header_elems send_what);
+void send_all_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *gatheredsyntax_router);
 void send_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type);
 t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms, double end_ms, t_llll *what_to_dump, char subroll_type);
 t_llll* get_subvoice_values_as_llll(t_roll *x, t_rollvoice *voice, double start_ms, double end_ms, char subroll_type);
-void send_roll_values_as_llll(t_roll *x, e_header_elems send_what);
+void send_roll_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *router);
 void send_onsets_values_as_llll(t_roll *x);
 void send_cents_values_as_llll(t_roll *x, e_output_pitches pitch_output_mode = k_OUTPUT_PITCHES_DEFAULT);
 void send_durations_values_as_llll(t_roll *x);
@@ -7471,61 +7471,64 @@ void roll_setdomain(t_roll *x, t_symbol *s, long argc, t_atom *argv){ // TODO
     }*/
 }
 
-void send_all_values_as_llll(t_roll *x, e_header_elems send_what) 
+void send_all_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *gatheredsyntax_router)
 {
         send_extras_values_as_llll(x);
         send_velocities_values_as_llll(x);
         send_durations_values_as_llll(x);
         send_cents_values_as_llll(x);
         send_onsets_values_as_llll(x);
-        send_roll_values_as_llll(x, send_what);
+        send_roll_values_as_llll(x, send_what, gatheredsyntax_router);
 }
 
 void roll_dump(t_roll *x, t_symbol *s, long argc, t_atom *argv){
-    t_llll *headers;
-    if (argc == 1 && (atom_gettype(argv) == A_SYM)) {
-        t_symbol *sym = atom_getsym(argv);
-        if ((sym == _llllobj_sym_onsets) || (sym == _llllobj_sym_onset)) {  
+    t_symbol *router = NULL;
+    t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
+    llll_parseargs_and_attrs_destructive((t_object *)x, args, "s", gensym("router"), &router);
+    if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == A_SYM) {
+        t_symbol *sym = hatom_getsym(&args->l_head->l_hatom);
+        if ((sym == _llllobj_sym_onsets) || (sym == _llllobj_sym_onset)) {
             send_onsets_values_as_llll(x);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_cents) || (sym == _llllobj_sym_cent)) {
             send_cents_values_as_llll(x, k_OUTPUT_PITCHES_NEVER);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
             send_cents_values_as_llll(x, k_OUTPUT_PITCHES_ALWAYS);
-            return;
+            goto end;
         } else if (sym == _llllobj_sym_poc) {
             send_cents_values_as_llll(x, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
             send_durations_values_as_llll(x);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_velocities) || (sym == _llllobj_sym_velocity)) {
             send_velocities_values_as_llll(x);
-            return;
+            goto end;
         } else if ((sym == _llllobj_sym_extras) || (sym == _llllobj_sym_extra)) {
             send_extras_values_as_llll(x);
-            return;
+            goto end;
         } else if (sym == _llllobj_sym_separate) {
             send_extras_values_as_llll(x);
             send_velocities_values_as_llll(x);
             send_durations_values_as_llll(x);
             send_cents_values_as_llll(x);
             send_onsets_values_as_llll(x);
-            return;
+            goto end;
         } else if (sym == _llllobj_sym_roll) {
-            send_roll_values_as_llll(x, k_HEADER_ALL); // dump full gathered syntax
-            return;
+            send_roll_values_as_llll(x, k_HEADER_ALL, router); // dump full gathered syntax
+            goto end;
         }
-    } else if (argc == 0) {
-        send_all_values_as_llll(x, k_HEADER_ALL); // dump all separate outlets and full gathered syntax
-        return;
+    } else if (args->l_size == 0) {
+        send_all_values_as_llll(x, k_HEADER_ALL, router); // dump all separate outlets and full gathered syntax
+        goto end;
     }
 
     // otherwise, can have arguments:
-    headers = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
-    send_roll_values_as_llll(x, header_objects_to_long(headers));
-    if (headers) llll_free(headers);
+    send_roll_values_as_llll(x, header_objects_to_long(args), router);
+    
+end:
+    llll_free(args);
 }
 
 void clear_all(t_roll *x) {
@@ -14506,9 +14509,9 @@ void send_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_ms
     llll_free(out_llll);
 }
 
-void send_roll_values_as_llll(t_roll *x, e_header_elems send_what)
+void send_roll_values_as_llll(t_roll *x, e_header_elems send_what, t_symbol *router)
 {
-    t_llll* out_llll = get_roll_values_as_llll(x, k_CONSIDER_ALL_NOTES, send_what, true, false);
+    t_llll* out_llll = get_roll_values_as_llll(x, k_CONSIDER_ALL_NOTES, send_what, true, false, router);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, out_llll);
     llll_free(out_llll);
 }
@@ -14658,7 +14661,7 @@ t_llll* get_subroll_values_as_llll(t_roll *x, t_llll* whichvoices, double start_
 
 // dump_what is a combination of e_header_elems
 // for_what is typically either k_CONSIDER_ALL_NOTES, k_CONSIDER_FOR_SAVING (which should act exactly the same) or k_CONSIDER_FOR_UNDO (only for undo cases, which will also save the ID of elements)
-t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what, char also_lock_general_mutex, char explicitly_get_also_default_stuff) { //char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels){
+t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_header_elems dump_what, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router) { //char get_clefs, char get_keys, char get_markers, char get_slotinfo, char get_commands, char get_midichannels){
 
 // get all the information concerning the roll and put it in a llll
 
@@ -14694,7 +14697,7 @@ t_llll* get_roll_values_as_llll(t_roll *x, e_data_considering_types for_what, e_
     t_llll* out_llll = llll_get();
     t_rollvoice *voice;
     
-    llll_appendsym(out_llll, _llllobj_sym_roll, 0, WHITENULL_llll); // "roll" message
+    llll_appendsym(out_llll, router ? router : _llllobj_sym_roll, 0, WHITENULL_llll); // "roll" message
     
     if (also_lock_general_mutex)
         lock_general_mutex((t_notation_obj *)x);    
@@ -16879,7 +16882,7 @@ void evaluate_selection(t_roll *x, long modifiers, char alsosortselectionbyonset
     
     // detect the selection type
     if ((modifiers & eShiftKey) && (modifiers & eAltKey)) { // send all values
-        send_all_values_as_llll(x, k_HEADER_ALL); // dump all
+        send_all_values_as_llll(x, k_HEADER_ALL, NULL); // dump all
     } else if (modifiers & eShiftKey) { // send chord values
         if (x->r_ob.num_selecteditems == 1 && x->r_ob.firstselecteditem->type == k_NOTE)
             send_chord_as_llll((t_notation_obj *) x, ((t_note *)x->r_ob.firstselecteditem)->parent, 6, k_CONSIDER_FOR_EVALUATION, -1, forced_routers);
