@@ -167,7 +167,7 @@ void scoreapi_getdomainpixels(t_score *x, double *start, double *end);
 t_max_err scoreapi_getpixelpos(t_score *x, t_llll *open_timepoint_syntax, double *pos);
 double scoreapi_getlength(t_score *x);
 double scoreapi_get_end_ux(t_score *x);
-void send_all_values_as_llll(t_score *x, long send_what_for_header);
+void send_all_values_as_llll(t_score *x, long send_what_for_header, t_symbol *gatheredsyntax_router);
 void clear_voice(t_score *x, t_scorevoice *voice);
 void clear_measure(t_score *x, t_measure *measure, char also_reset_all_attributes, char also_clear_ties_from, char also_clear_tempi); 
 void set_all_tstempo_values_from_llll(t_score *x, t_llll* measureinfo, long num_introduced_voices);
@@ -285,7 +285,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
 
 void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont *jf_dynamics_nozoom, t_jfont *jf_dynamics_roman_nozoom, long beaming_calculation_flags);
 void check_tempi(t_score *x);
-t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff);
+t_llll* get_score_values_as_llll(t_score *x, e_data_considering_types for_what, long get_what, char tree, char also_get_level_information, char also_lock_general_mutex, char explicitly_get_also_default_stuff, t_symbol *router = NULL);
 t_llll* get_subvoice_values_as_llll(t_score *x, t_scorevoice *voice, long start_meas, long end_meas, char tree, char also_get_level_information);
 t_llll* get_scorevoice_values_as_llll(t_score *x, t_scorevoice *voice, e_data_considering_types for_what, char tree, char also_get_level_information);
 t_llll* get_all_measuresinfo_values_as_llll(t_score *x);

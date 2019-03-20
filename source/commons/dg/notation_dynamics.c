@@ -867,7 +867,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                     w = h = 0;
                 }
             }
-            double endhairpinpos = xpos + dynamics_mark_get_relative_position(dyn, dyn->firstmark) * duration_x;
+            double endhairpinpos = xpos + (dyn->firstmark ? dynamics_mark_get_relative_position(dyn, dyn->firstmark) : 0) * duration_x;
             if (dyn->firstmark && dyn->firstmark->num_words > 0) {
                 if (dyn->firstmark->is_roman[0])
                     endhairpinpos -= CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;

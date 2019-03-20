@@ -2150,6 +2150,7 @@ t_llll *xml_get_barline(mxml_node_t *measureXML)
             else if (!strcmp(bar_styletxt, "light-heavy"))    *barline = k_BARLINE_FINAL;
             else if (!strcmp(bar_styletxt, "none"))            *barline = k_BARLINE_HIDDEN;
             else if (!strcmp(bar_styletxt, "heavy"))        *barline = k_BARLINE_SOLID;
+            else if (!strcmp(bar_styletxt, "tick"))        *barline = k_BARLINE_TICK;
             else *barline = 0;
             t_llll *barlinell = llll_get();
             llll_appendsym(barlinell, _llllobj_sym_barline, 0, WHITENULL_llll);

@@ -1356,6 +1356,12 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 					case 7:
 						barline_type_as_char = k_BARLINE_SOLID;
 						break;
+                    case 8:
+                        barline_type_as_char = k_BARLINE_TICK;
+                        break;
+                    case 9:
+                        barline_type_as_char = k_BARLINE_INTERVOICES;
+                        break;
 					default:
 						barline_type_as_char = k_BARLINE_AUTOMATIC;
 						break;
@@ -1644,6 +1650,12 @@ void bach_default_get_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 				case k_BARLINE_SOLID:
 					idx = 7;
 					break;
+                case k_BARLINE_TICK:
+                    idx = 8;
+                    break;
+                case k_BARLINE_INTERVOICES:
+                    idx = 9;
+                    break;
 				default:
 					idx = 0;
 					break;

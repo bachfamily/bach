@@ -734,7 +734,9 @@ void build_popup_barline_menu(t_notation_obj *r_ob, t_measure *measure)
 	jpopupmenu_additem(r_ob->popup_barline, 1205, "Final (f)", NULL, measure->end_barline->barline_type == k_BARLINE_FINAL, 0, NULL);
 	jpopupmenu_additem(r_ob->popup_barline, 1206, "Hidden (h)", NULL, measure->end_barline->barline_type == k_BARLINE_HIDDEN, 0, NULL);
 	jpopupmenu_additem(r_ob->popup_barline, 1207, "Solid (s)", NULL, measure->end_barline->barline_type == k_BARLINE_SOLID, 0, NULL);
-	
+    jpopupmenu_additem(r_ob->popup_barline, 1208, "Tick (k)", NULL, measure->end_barline->barline_type == k_BARLINE_TICK, 0, NULL);
+    jpopupmenu_additem(r_ob->popup_barline, 1209, "Intervoices (i)", NULL, measure->end_barline->barline_type == k_BARLINE_INTERVOICES, 0, NULL);
+
 	jpopupmenu_setfont(r_ob->popup_barline, r_ob->popup_main_font);
 }
 
@@ -4115,6 +4117,12 @@ long handle_barline_popup(t_notation_obj *r_ob, t_measure *measure, long modifie
 		case 1207:
 			new_barline = k_BARLINE_SOLID;
 			break;
+        case 1208:
+            new_barline = k_BARLINE_TICK;
+            break;
+        case 1209:
+            new_barline = k_BARLINE_INTERVOICES;
+            break;
 	}
 	
 	if (new_barline >= 0) {

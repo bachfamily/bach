@@ -1558,6 +1558,7 @@ t_max_err score_dowritexml(const t_score *x, t_symbol *s, long ac, t_atom *av)
                         case k_BARLINE_FINAL:    type = "light-heavy";    break;
                         case k_BARLINE_HIDDEN:    type = "none";            break;
                         case k_BARLINE_SOLID:    type = "heavy";            break;
+                        case k_BARLINE_TICK:    type = "tick";            break;
                     }
                     bach_mxmlNewTextElement(barlinexml, "bar-style", 0, type);
                 }
