@@ -702,6 +702,13 @@
 					"seealso" : [ "flat", "pick" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "wrap", "depth", "level" ],
 					"title" : [ "wrap() function reference" ]
+				},
+				"~~_thedepthattributes" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.~~_thedepthattributes.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
+					"seealso" : [ "named+argument", "position+argument" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "depth", "level", "mindepth", "maxdepth", "minlevel", "maxlevel" ],
+					"title" : [ "The depth / level arguments" ]
 				}
 			}
 		},
