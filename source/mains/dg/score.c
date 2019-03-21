@@ -8605,7 +8605,7 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
     t_symbol *router = NULL;
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_CLONE);
     llll_parseargs_and_attrs_destructive((t_object *)x, args, "s", gensym("router"), &router);
-    if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == A_SYM) {
+    if (args && args->l_size == 1 && hatom_gettype(&args->l_head->l_hatom) == H_SYM) {
         t_symbol *sym = hatom_getsym(&args->l_head->l_hatom);
         if ((sym == _llllobj_sym_measures) || (sym == _llllobj_sym_measure) || (sym == _llllobj_sym_measureinfo)) {
             send_measuresinfo_values_as_llll(x);
