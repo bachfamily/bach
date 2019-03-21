@@ -183,3 +183,22 @@
 // - <b>wrap</b> (default: 0, i.e. no wrapping): the maximum number of characters to be placed on each line.<br />
 // - <b>filename</b> (default: not set): the name of the file to be written.
 // If set, this specification overrides the file name set as the first message argument.
+
+#define BACH_DOC_CODABLEOBJ_FORCEREAD
+// @method forceread @digest Read code from file
+// @description
+// Load a file containing bell code into the object,
+// keeping it even if it is invalid.
+
+#define BACH_DOC_CODABLEOBJ_READ
+// @method read @digest Read code from file
+// @description
+// Load a file containing bell code into the object,
+// but ignore it if the code is invalid.
+
+#define BACH_DOC_CODABLEOBJ_WRITE
+// @method write @digest Read code from file
+// @description
+// Load a file containing bell code into the object,
+// but ignore it if the code is invalid.
+

@@ -316,6 +316,8 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
                 object_free_debug(x);
                 return nullptr;
             }
+        } else {
+            codeac = 0;
         }
         
         if (dataInlets < 1)

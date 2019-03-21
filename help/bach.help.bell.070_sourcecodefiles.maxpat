@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -45,7 +45,7 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "", "bang", "int" ],
 					"patching_rect" : [ 344.5, 413.0, 117.0, 23.0 ],
-					"text" : "text halfFun.txt"
+					"text" : "text halfFun.bell"
 				}
 
 			}
@@ -56,8 +56,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "bang", "int" ],
-					"patching_rect" : [ 344.5, 388.0, 117.0, 23.0 ],
-					"text" : "text doubleFun.txt"
+					"patching_rect" : [ 344.5, 388.0, 118.0, 23.0 ],
+					"text" : "text doubleFun.bell"
 				}
 
 			}
@@ -113,24 +113,13 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-14",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 187.0, 100.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-8",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 129.0, 95.0, 23.0 ],
-					"text" : "read double.txt"
+					"patching_rect" : [ 6.0, 129.0, 101.0, 23.0 ],
+					"text" : "read double.bell"
 				}
 
 			}
@@ -161,26 +150,25 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 245.0, 252.0, 346.0, 156.0 ],
+					"patching_rect" : [ 245.0, 252.0, 348.0, 156.0 ],
 					"text" : "The \"include\" directive gets virtually replaced by the contents of the file in parens. By \"virtually\" we mean that, if you double-click the editor, you will still see the \"include\" directive, but the code works as if, at its place, there were the content of the specified file.\nNotice that, strictly speaking, the semicolons are not there to separate the include directives, but their contents one from another.\nDouble-click the text objects to see the contents of the included files:"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "include(doubleFun.txt) ; include(halfFun.txt) ; $doubleFun($x1) $halfFun($x1) ",
 					"id" : "obj-1",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 311.0, 230.0, 52.0 ],
+					"patching_rect" : [ 6.0, 311.0, 238.0, 52.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval include(doubleFun.txt) \\; include(halfFun.txt) \\; $doubleFun($x1) $halfFun($x1) @out m"
+					"text" : "bach.eval include(doubleFun.bell) \\; include(halfFun.bell) \\; $doubleFun($x1) $halfFun($x1) @out m @embed 0"
 				}
 
 			}
@@ -278,13 +266,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
 					"source" : [ "obj-22", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-14", 0 ],
-					"source" : [ "obj-3", 0 ]
 				}
 
 			}

@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -48,7 +48,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 291.0, 376.5, 300.0, 69.0 ],
+					"patching_rect" : [ 291.0, 376.5, 304.0, 69.0 ],
 					"text" : "Another way to directly output data at runtime is through the pseudovariables $do<1> ... $do<n>. Just like $o<n>, these don't generally require setting explicitly the directouts attribute."
 				}
 
@@ -150,7 +150,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 319.0, 217.5, 272.0, 112.0 ],
+					"patching_rect" : [ 319.0, 217.5, 275.0, 112.0 ],
 					"text" : "Just as with the outlet function, you can send out values to multiple outlets at once. Unlike what happens with \"outlet\", the data are output in the order you pass them to the function; thus, if you want them to be output from right to left, you have to pass them in reverse order, so to speak."
 				}
 
@@ -188,10 +188,10 @@
 					"outlettype" : [ "", "", "" ],
 					"patching_rect" : [ 6.0, 269.0, 304.0, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval for $x $y in $x1 with @maxdepth -1 repeat directout(2 1\\, $y\\, $x) @directouts 2 @out m"
+					"text" : "bach.eval for $x $y in $x1 with @maxdepth -1 do directout(2 1\\, $y\\, $x) @directouts 2 @out m"
 				}
 
 			}
@@ -232,7 +232,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 268.5, 100.5, 280.5, 83.0 ],
+					"patching_rect" : [ 246.5, 100.5, 280.5, 83.0 ],
 					"text" : "The data are sent out the direct outlet as soon as the directout function is evaluated.\nNotice that the number of direct outlets (the ones outputting data during evaluation) is set through the directouts object attribute."
 				}
 
@@ -243,7 +243,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 245.0, 185.5, 133.0, 23.0 ],
+					"patching_rect" : [ 222.0, 185.5, 133.0, 23.0 ],
 					"text" : "print direct @popup 1"
 				}
 
@@ -268,12 +268,12 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 6.0, 123.0, 258.0, 38.0 ],
+					"patching_rect" : [ 6.0, 123.0, 235.0, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval for $x in arithmser(1\\, $x1) repeat directout(1\\, $x) @directouts 1 @out m"
+					"text" : "bach.eval for $x in arithmser(1\\, $x1) do directout(1\\, $x) @directouts 1 @out m"
 				}
 
 			}
