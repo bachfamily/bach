@@ -2018,6 +2018,13 @@
 				"tags" : [ "editing", "edit", "interface", "marker", "interface", "shift", "offset", "snap", "drag", "snapping", "chord", "note", "tail", "magnetic" ],
 				"title" : [ "Snapping markers to chords" ]
 			},
+			"B_markersinterfacespace" : {
+				"filename" : [ "bach.help.notation.editing.28b_markersinterfacespace.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ "marker+interface" ],
+				"tags" : [ "editing", "edit", "interface", "marker", "stretch", "move", "space", "insert", "compress", "add", "silence" ],
+				"title" : [ "Using markers to stretch or move elements" ]
+			},
 			"Fine_editing" : {
 				"filename" : [ "bach.help.notation.editing.29_fine_editing.maxpat" ],
 				"objects" : [ "bach.roll" ],
@@ -2471,6 +2478,13 @@
 				"seealso" : [ "velocity", "marker+name", "slot+syntax" ],
 				"tags" : [ "editing", "edit", "interface", "default", "note", "velocity", "slot", "content", "marker", "name", "defaultvelocity", "defaultmarkername", "defaultnoteslots" ],
 				"title" : [ "Default editing parameters" ]
+			},
+			"Shortcuts" : {
+				"filename" : [ "bach.help.notation.editing.99_shortcuts.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "editing" ],
+				"tags" : [ "editing", "edit", "interface", "shortcut", "mouse", "keyboard" ],
+				"title" : [ "Keyboard and mouse shortcuts" ]
 			}
 		},
 		"Markers" : {

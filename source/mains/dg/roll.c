@@ -12974,14 +12974,18 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                                     nt->duration *= stretch_factor;
                                                 else
                                                     nt->duration = (mousedown_marker_ms - chord->onset) * stretch_factor + (note_tail - mousedown_marker_ms);
+                                                // TO DO: shift breakpoints
                                             }
                                         }
                                         chord->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
                                     } else { // chord onset won't change, note duration will
                                         for (t_note *nt = chord->firstnote; nt; nt = nt->next) {
                                             double note_tail = notation_item_get_tail_ms((t_notation_obj *)x, (t_notation_item *)nt);
-                                            if (note_tail > prev_marker_ms)
+                                            if (note_tail > mousedown_marker_ms)
+                                                nt->duration = (prev_marker_ms - chord->onset) + (mousedown_marker_ms - prev_marker_ms)  * stretch_factor + (note_tail - mousedown_marker_ms);
+                                            else if (note_tail > prev_marker_ms)
                                                 nt->duration = (prev_marker_ms - chord->onset) + (note_tail - prev_marker_ms) * stretch_factor;
+                                            // TO DO: shift breakpoints
                                         }
                                         chord->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
                                     }
