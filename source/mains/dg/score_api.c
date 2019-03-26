@@ -9595,7 +9595,14 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         if (x->r_ob.show_dots) {
                             long multiplier = (is_in_voiceensemble && voice->v_ob.part_index % 2 == 1 ? 1 : -1);
                             dot_x_offset = (CONST_CHORD_DOT_USEPARATION * grace_ratio + MAX(0, curr_ch->right_uextension - curr_ch->lyrics_portion_of_right_uextension - curr_ch->dynamics_portion_of_right_uextension)) * x->r_ob.zoom_y ;
-                            dot_y_offset = (curr_ch->is_grace_chord ? 9 : 1) * x->r_ob.zoom_y + (scaleposition % 2 == 0 ? multiplier * x->r_ob.step_y : 0);
+                            dot_y_offset = (curr_ch->is_grace_chord ? 9 : 1) * x->r_ob.zoom_y;
+                            if (is_clef_multistaff((t_notation_obj *)x, clef) || clef == k_CLEF_PERCUSSION || clef == k_CLEF_NONE) {
+                                if (scaleposition % 2 == 0)
+                                    dot_y_offset += multiplier * x->r_ob.step_y;
+                            } else {
+                                if ((scaleposition + clef) % 2 == 0)
+                                    dot_y_offset += multiplier * x->r_ob.step_y;
+                            }
                             for (j=0; j<curr_ch->num_dots; j++) {
                                 unicodeChar dot_char = x->r_ob.notation_typo_preferences.dot_unicode_character;
                                 char dot_txt[5];
@@ -10933,6 +10940,10 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
                 continue;
 
             double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
+            
+            if (pix < 0)
+                continue;
+
             if (i % num_subdivisions == 0) { // main division
                 if (x->r_ob.show_grid)
                     paint_line(g, x->r_ob.j_main_grid_rgba, pix, 0, pix, bottom_y, 1.);
