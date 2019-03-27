@@ -10149,7 +10149,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             }
             barline_color = barline_selected ? x->r_ob.j_selection_rgba : x->r_ob.j_mainstaves_rgba;
             
-            double THRESH_PAGELIKE_BARLINES_END = 3, THRESH_PAGELIKE_BARLINES_START = 3;
+            double THRESH_PAGELIKE_BARLINES_END = 2.5 * x->r_ob.zoom_y, THRESH_PAGELIKE_BARLINES_START = 2.5 * x->r_ob.zoom_y;
 
             if (x->r_ob.pagelike_barlines && fabs(end_barline_x - domain_end_pixel) < THRESH_PAGELIKE_BARLINES_END) {
                 end_barline_x = round_to_semiinteger(domain_end_pixel) - 1;
@@ -10918,7 +10918,8 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
         long i, div, number_of_labels, number_of_divisions_in_window, label_step;
         double bottom_y = (x->r_ob.need_hscrollbar && x->r_ob.show_hscrollbar) ? graphic_rect.height - (CONST_XSCROLLBAR_UHEIGHT + CONST_XSCROLLBAR_WHITE_UPAD_UPON + 2) * x->r_ob.zoom_y : graphic_rect.height;
         double right_cur = -1000;
-        
+        double domain_start_x = unscaled_xposition_to_xposition((t_notation_obj *)x, x->r_ob.screen_ux_start);
+
         if (num_subdivisions <= 0) 
             num_subdivisions = 1;
         
@@ -10941,7 +10942,7 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
 
             double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
             
-            if (pix < 0)
+            if (pix < 0 || pix < domain_start_x)
                 continue;
 
             if (i % num_subdivisions == 0) { // main division
@@ -10974,6 +10975,10 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
                     continue;
                 
                 double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
+                
+                if (pix < 0 || pix < domain_start_x)
+                    continue;
+
                 if (pix > right_cur + x->r_ob.ruler_labels_font_size * 3 * x->r_ob.zoom_y) {
                     if (x->r_ob.ruler == 1 || x->r_ob.ruler == 3) { // ruler above
                         if ((div + 1) % label_step == 0)

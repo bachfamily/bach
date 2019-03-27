@@ -144,6 +144,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     }
     
     must_cleanup = (view != gensym("raw"));
+    r_ob->exporting_image = must_cleanup;
 
     if (fadepredomain < 0)
         fadepredomain = (view == gensym("raw") ? r_ob->fade_predomain : 0);
@@ -453,6 +454,8 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     if (arguments)
         llll_free(arguments);
     
+    r_ob->exporting_image = 0;
+
     return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
 }
 

@@ -4470,6 +4470,7 @@ typedef struct _notation_obj
     double        inner_height;            ///< Usable height (in pixel) of the object (ignoring insets); this correspond to the object height - 2 * <j_inset_y>
     double      postdomain_width;       ///< Width of a portion of score that pads the end of the domain without being inside it.
                                         ///< Currently only used in image export.
+    char          exporting_image;         ///< 1 only while exporting images
 
     double        horizontal_zoom;        ///< User modifiable horizontal zoom, 100 = default zoom. This is the value set and get via the "zoom" attribute.
     t_atom        vertical_zoom;            ///< User modifiable value for the vertical zoom, 100 = default zoom, "auto" = automatic zoom .
