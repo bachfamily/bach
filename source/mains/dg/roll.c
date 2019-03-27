@@ -12963,7 +12963,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                 if (chord_tail > prev_marker_ms) {
                                     create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)chord, k_UNDO_MODIFICATION_CHANGE_CHECK_ORDER);
                                     if (chord->onset > prev_marker_ms) {
-                                        chord->onset = prev_marker_ms + (chord->onset - prev_marker_ms) * stretch_factor;
+                                        double new_onset = prev_marker_ms + (chord->onset - prev_marker_ms) * stretch_factor;
                                         if (chord_tail <= mousedown_marker_ms) { // easy case, chord completely within boundaries
                                             for (t_note *nt = chord->firstnote; nt; nt = nt->next)
                                                 nt->duration *= stretch_factor;
@@ -12972,20 +12972,27 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                                 double note_tail = notation_item_get_tail_ms((t_notation_obj *)x, (t_notation_item *)nt);
                                                 if (note_tail <= mousedown_marker_ms)
                                                     nt->duration *= stretch_factor;
-                                                else
+                                                else {
+                                                    double orig_nt_duration = nt->duration;
                                                     nt->duration = (mousedown_marker_ms - chord->onset) * stretch_factor + (note_tail - mousedown_marker_ms);
-                                                // TO DO: shift breakpoints
+//                                                    dev_post("stretch_factor: %.2f, mousedown_marker_ms: %.1f, note_tail. %.1f, old_duration: %.2f, new_duration: %.2f, r: %.2f", stretch_factor, mousedown_marker_ms, note_tail, orig_nt_duration, nt->duration, (mousedown_marker_ms - chord->onset)/nt->duration);
+                                                    note_stretch_portion_of_duration_line_and_temporal_slots((t_notation_obj *)x, nt, 0., (mousedown_marker_ms - chord->onset)/nt->duration, stretch_factor, -1, orig_nt_duration, nt->duration);
+                                                }
                                             }
                                         }
+                                        chord->onset = new_onset;
                                         chord->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
                                     } else { // chord onset won't change, note duration will
                                         for (t_note *nt = chord->firstnote; nt; nt = nt->next) {
                                             double note_tail = notation_item_get_tail_ms((t_notation_obj *)x, (t_notation_item *)nt);
-                                            if (note_tail > mousedown_marker_ms)
+                                            double orig_nt_duration = nt->duration;
+                                            if (note_tail > mousedown_marker_ms) {
                                                 nt->duration = (prev_marker_ms - chord->onset) + (mousedown_marker_ms - prev_marker_ms)  * stretch_factor + (note_tail - mousedown_marker_ms);
-                                            else if (note_tail > prev_marker_ms)
+                                                note_stretch_portion_of_duration_line_and_temporal_slots((t_notation_obj *)x, nt, (prev_marker_ms - chord->onset)/nt->duration, (mousedown_marker_ms - chord->onset)/nt->duration, stretch_factor, 0, orig_nt_duration, nt->duration);
+                                            } else if (note_tail > prev_marker_ms) {
                                                 nt->duration = (prev_marker_ms - chord->onset) + (note_tail - prev_marker_ms) * stretch_factor;
-                                            // TO DO: shift breakpoints
+                                                note_stretch_portion_of_duration_line_and_temporal_slots((t_notation_obj *)x, nt, (prev_marker_ms - chord->onset)/nt->duration, 1., stretch_factor, -1, orig_nt_duration, nt->duration);
+                                            }
                                         }
                                         chord->r_it.flags |= k_FLAG_TO_BE_SNAPPED;
                                     }

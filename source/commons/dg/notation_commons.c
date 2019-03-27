@@ -26013,14 +26013,16 @@ char delete_breakpoint(t_notation_obj *r_ob, t_bpt *breakpoint){
 // delete the breakpoint *breakpoint from the note *note
     
     breakpoint_check_dependencies_before_deleting_it(r_ob, breakpoint);
-    if (breakpoint && breakpoint->owner && breakpoint->rel_x_pos > 0. && breakpoint->rel_x_pos < 1.) {
+//    if (breakpoint && breakpoint->owner && breakpoint->rel_x_pos > 0. && breakpoint->rel_x_pos < 1.) {
+    if (breakpoint && breakpoint->owner && breakpoint->prev && breakpoint->next) {
         t_bpt *temp = breakpoint;
         breakpoint->owner->num_breakpoints--;
         breakpoint->prev->next = breakpoint->next;
         breakpoint->next->prev = breakpoint->prev;
         bach_freeptr(temp);
         return 1;
-    } else if (breakpoint && breakpoint->owner && breakpoint->rel_x_pos == 1) {
+//    } else if (breakpoint && breakpoint->owner && breakpoint->rel_x_pos == 1) {
+    } else if (breakpoint && breakpoint->owner && breakpoint->prev) {
         breakpoint->delta_mc = 0.;
         breakpoint->slope = 0.;
         return 1;
@@ -44256,4 +44258,112 @@ t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt)
     return NULL;
 }
 
+
+double slot_item_get_temporal_x(t_notation_obj *r_ob, long slot_num, t_slotitem *it, char normalize_to_01)
+{
+    if (!it || !it->item)
+        return 0;
+    
+    double val = 0;
+    switch (r_ob->slotinfo[slot_num].slot_type) {
+        case k_SLOT_TYPE_FUNCTION:
+            val = ((t_pts *)it->item)->x;
+            break;
+        case k_SLOT_TYPE_3DFUNCTION:
+            val =  ((t_pts3d *)it->item)->x;
+            break;
+        case k_SLOT_TYPE_SPAT:
+            val = ((t_spatpt *)it->item)->t;
+            break;
+        case k_SLOT_TYPE_DYNFILTER:
+            val = ((t_biquad *)it->item)->t;
+            break;
+        default:
+            val = 0;
+    }
+    
+    if (normalize_to_01) {
+        return (val - r_ob->slotinfo[slot_num].slot_domain[0])/(r_ob->slotinfo[slot_num].slot_domain[1] - r_ob->slotinfo[slot_num].slot_domain[0]);
+    } else {
+        return val;
+    }
+}
+
+
+void slot_item_set_temporal_x(t_notation_obj *r_ob, long slot_num, t_slotitem *it, double value, char from_01_normalized_range)
+{
+    if (!it || !it->item)
+        return;
+    
+    if (from_01_normalized_range) {
+        value = (value * (r_ob->slotinfo[slot_num].slot_domain[1] - r_ob->slotinfo[slot_num].slot_domain[0])) + r_ob->slotinfo[slot_num].slot_domain[0];
+    }
+    
+    switch (r_ob->slotinfo[slot_num].slot_type) {
+        case k_SLOT_TYPE_FUNCTION:
+            ((t_pts *)it->item)->x = value;
+            break;
+            
+        case k_SLOT_TYPE_3DFUNCTION:
+            ((t_pts3d *)it->item)->x = value;
+            break;
+            
+        case k_SLOT_TYPE_SPAT:
+            ((t_spatpt *)it->item)->t = value;
+            break;
+            
+        case k_SLOT_TYPE_DYNFILTER:
+            ((t_biquad *)it->item)->t = value;
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_ob, t_note *nt, double from_rel_pos, double to_rel_pos, double stretch_factor, char direction, double old_note_duration, double new_note_duration)
+{
+    double ratio = old_note_duration / new_note_duration;
+    for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
+        if (bpt->prev && bpt->next) {
+            double rel_pos = bpt->rel_x_pos;
+            if (rel_pos > from_rel_pos && rel_pos < to_rel_pos) {
+                if (direction <= 0) { // keep from_rel_pos as pivot
+                    bpt->rel_x_pos = (from_rel_pos + (rel_pos - from_rel_pos) * stretch_factor) * ratio;
+                } else if (direction > 0) {
+                    bpt->rel_x_pos = 1. - (to_rel_pos + (to_rel_pos - rel_pos) * stretch_factor) * ratio;
+                }
+                bpt->rel_x_pos = CLAMP(bpt->rel_x_pos, 0., 1.);
+            } else if (rel_pos >= to_rel_pos && direction == 0) {
+                // "shift"
+                bpt->rel_x_pos = (from_rel_pos + (to_rel_pos - from_rel_pos) * stretch_factor + (rel_pos - to_rel_pos)) * ratio;
+                bpt->rel_x_pos = CLAMP(bpt->rel_x_pos, 0., 1.);
+            }
+        }
+    }
+    
+    for (long i = 0; i < CONST_MAX_SLOTS; i++) {
+        if (slot_is_temporal(r_ob, i)) {
+            for (t_slotitem *it = notation_item_get_slot_firstitem(r_ob, (t_notation_item *)nt, i); it; it = it->next) {
+                double rel_pos = slot_item_get_temporal_x(r_ob, i, it, true);
+                double new_pos = rel_pos;
+                if (rel_pos > from_rel_pos && rel_pos < to_rel_pos) {
+                    if (direction < 0) { // keep from_rel_pos as pivot
+                        new_pos = (from_rel_pos + (rel_pos - from_rel_pos) * stretch_factor) * ratio;
+                    } else if (direction > 0) {
+                        new_pos =  1. - (to_rel_pos + (to_rel_pos - rel_pos) * stretch_factor) * ratio;
+                    }
+                    new_pos = CLAMP(new_pos, 0., 1.);
+                    slot_item_set_temporal_x(r_ob, i, it, new_pos, true);
+                } else if (rel_pos >= to_rel_pos && direction == 0) {
+                    // "shift"
+                    new_pos = (from_rel_pos + (to_rel_pos - from_rel_pos) * stretch_factor + (rel_pos - to_rel_pos)) * ratio;
+                    new_pos = CLAMP(new_pos, 0., 1.);
+                    slot_item_set_temporal_x(r_ob, i, it, new_pos, true);
+                }
+            }
+        }
+    }
+}
 

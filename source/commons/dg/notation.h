@@ -81,7 +81,7 @@
         //#define BACH_QUANTIZE_DEBUG                    ///< Debug the quantize task
         //#define BACH_SPACING_DEBUG                    ///< Debug the spacing task (and display alignment points)
         //#define BACH_PAINT_IDS                        ///< Paint the IDs for all elements having one
-        //#define BACH_UNDO_DEBUG                        ///< Debug the undo task
+        #define BACH_UNDO_DEBUG                        ///< Debug the undo task
         //#define BACH_ARTICULATION_POSITION_DEBUG      ///< Debug for articulation position
         //#define BACH_CHECK_NOTATION_ITEMS               ///< Debug for notation items
 
@@ -19086,6 +19086,7 @@ void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char
 char is_in_linear_edit_mode(t_notation_obj *r_ob);
 void markers_check_update_name_uwidth(t_notation_obj *r_ob);
 t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt);
+void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_ob, t_note *nt, double from_rel_pos, double to_rel_pos, double stretch_factor, char direction, double old_note_duration, double new_note_duration);
 
 t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol *s, t_symbol *msg, void *sender, void *data);
 t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_object *view);
