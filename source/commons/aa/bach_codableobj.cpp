@@ -673,7 +673,7 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
         CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
         CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
         CLASS_ATTR_SAVE(c, "embed", 0);
-        CLASS_ATTR_BASIC(c, "embed", 0);
+        //CLASS_ATTR_BASIC(c, "embed", 0);
         
         CLASS_ATTR_CHAR_VARSIZE(c, "lambda", 0, t_codableobj, c_text, c_dummysize, 32767);
         CLASS_ATTR_LABEL(c, "lambda", 0, "Expression For Lambda Function");
