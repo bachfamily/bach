@@ -33,7 +33,7 @@
  expression, evaluate, variable, number, calculate, compute
 
  @seealso
- bach.+, bach.-, bach.*, bach./, bach.%, expr, vexpr
+ bach.+, bach.-, bach.*, bach./, bach.%, bach.eval, expr, vexpr
  
  @owner
  Andrea Agostini
