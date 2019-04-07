@@ -6731,13 +6731,59 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
     long start_type = hatom_gettype(&start_hatom);
     long end_type = hatom_gettype(&end_hatom);
     long step_type = hatom_gettype(&step_hatom);
+    long start_is_num = hatom_type_is_number(start_type);
+    long end_is_num = hatom_type_is_number(end_type);
+    long step_is_num = hatom_type_is_number(step_type);
+    
+    
+    if (start_is_num && end_is_num && (!step_is_num && maxcount <= 0)) {
+        if (hatom_getdouble(&start_hatom) < hatom_getdouble(&end_hatom))
+            hatom_setlong(&step_hatom, 1);
+        else
+            hatom_setlong(&step_hatom, -1);
+        step_is_num = true;
+        maxcount = LONG_MAX;
+    }
+    
+    if (start_is_num + end_is_num + step_is_num + (maxcount > 0) < 3) {
+        return llll_get();
+    }
+    
     t_llll *outll = llll_get();
     t_bool maxcount_decides = false;
     
     if (start_type == H_DOUBLE || end_type == H_DOUBLE || step_type == H_DOUBLE) {
         double start, end, step, v;
         t_atom_long count;
-        step = hatom_getdouble(&step_hatom);
+        //step = hatom_getdouble(&step_hatom);
+
+        if (start_is_num) {
+            start = hatom_getdouble(&start_hatom);
+            if (end_is_num) {
+                end = hatom_getdouble(&end_hatom);
+                if (step_is_num) {
+                    step = hatom_getdouble(&step_hatom);
+                    if (step == 0) {
+                        step = (end - start) / (maxcount - 1);
+                        object_warn((t_object *) culprit, "Step is 0, setting to %lf", step);
+                    }
+                } else {
+                    step = (end - start) / (maxcount - 1);
+                }
+            } else {
+                step = hatom_getdouble(&step_hatom);
+                if (step == 0)
+                    return outll;
+                end = step > 0 ? DBL_MAX : -DBL_MAX;
+            }
+            
+            
+        } else {
+            end = hatom_getdouble(&end_hatom);
+            step = hatom_getdouble(&step_hatom);
+            start = end - step * (maxcount - 1);
+        }
+        
         
         if (hatom_type_is_number(start_type)) {
             start = hatom_getdouble(&start_hatom);
@@ -6745,16 +6791,17 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
                 end = start;
                 step = 1;
             }
-        } else {
-            if (!(hatom_type_is_number(end_type))) {
+        } else { // if start is none
+            if (!(hatom_type_is_number(end_type))) { // if end is none
                 return outll;
-            } else if (maxcount == 1) {
+            } else if (maxcount == 1) { // start is none, end is number, maxcount = 1
                 start = end = hatom_getdouble(&end_hatom);
                 step = 1;
-            } else if (step == 0 || maxcount <= 0) {
+            } else if (!hatom_type_is_number(step_type) || maxcount <= 0) { // start is none, end is number, either step and maxcount, or both, are none
                 return outll;
-            } else {
+            } else { // start is none, end, step and maxcount are numbers
                 end = hatom_getdouble(&end_hatom);
+                step = hatom_getdouble(&step_hatom);
                 start = end - step * (maxcount - 1);
             }
         }
@@ -6764,7 +6811,7 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         } else if (maxcount == 1) {
             end = start;
         } else {
-            if (step == 0 || maxcount <= 0)
+            if (!hatom_type_is_number(step_type) || maxcount <= 0)
                 return outll;
             else
                 end = step > 0 ? DBL_MAX : -DBL_MAX;
@@ -6806,7 +6853,9 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         pedantic_llll_check(outll);
         return outll;
         
-    } else if (start_type == H_RAT || end_type == H_RAT || step_type == H_RAT) {
+    } else if ((start_type == H_RAT || start_type == H_LONG) ||
+               (end_type == H_RAT || end_type == H_LONG) ||
+               (step_type == H_RAT || step_type == H_LONG)) {
         t_rational start, end, step, v;
         t_atom_long count;
         step = hatom_getrational(&step_hatom);
@@ -6864,63 +6913,6 @@ t_llll *llll_arithmser(t_hatom start_hatom, t_hatom end_hatom, t_hatom step_hato
         } else {
             for (v = start, count = 0; rat_rat_cmp(v, end) >= 0 && count < maxcount; v = rat_rat_sum(v, step), count++)
                 llll_appendrat(outll, v, 0, WHITENULL_llll);
-        }
-        pedantic_llll_check(outll);
-        return outll;
-        
-    } else if (start_type == H_LONG || end_type == H_LONG || step_type == H_LONG) {
-        t_atom_long start, end, step, v;
-        t_atom_long count;
-        step = hatom_getlong(&step_hatom);
-
-        if (hatom_type_is_number(start_type)) {
-            start = hatom_getlong(&start_hatom);
-            if (maxcount == 1) {
-                end = start;
-                step = 1;
-            }
-        } else {
-            if (!(hatom_type_is_number(end_type))) {
-                return outll;
-            } else if (maxcount == 1) {
-                start = end = hatom_getlong(&end_hatom);
-                step = 1;
-            } else if (step == 0 || maxcount <= 0) {
-                return outll;
-            } else {
-                end = hatom_getlong(&end_hatom);
-                start = end - step * (maxcount - 1);
-            }
-        }
-        if (hatom_type_is_number(end_type)) {
-            end = hatom_getlong(&end_hatom);
-        } else {
-            if (step == 0 || maxcount <= 0)
-                return outll;
-            end = step > 0 ? ATOM_LONG_MAX : ATOM_LONG_MIN;
-        }
-        if (step == 0) {
-            if (maxcount <= 0) {
-                step = start <= end ? 1 : -1;
-                maxcount = ATOM_LONG_MAX;
-                if (hatom_type_is_number(step_type))
-                    object_warn((t_object *) culprit, "Step is 0, setting to %ld", step);
-            } else {
-                step = (end - start) / (maxcount - 1);
-                if (step == 0)
-                    step = start <= end ? 1 : -1;
-                else if (hatom_type_is_number(step_type))
-                    object_warn((t_object *) culprit, "Step is 0, setting to %ld", step);
-            }
-        } else if (maxcount <= 0)
-            maxcount = ATOM_LONG_MAX;
-        
-        if (step > 0) {
-            for (v = start, count = 0; v <= end && count < maxcount; v += step, count++)
-                llll_appendlong(outll, v, 0, WHITENULL_llll);
-        } else {
-            for (v = start, count = 0; v >= end && count < maxcount; v += step, count++)
-                llll_appendlong(outll, v, 0, WHITENULL_llll);
         }
         pedantic_llll_check(outll);
         return outll;
@@ -7070,8 +7062,7 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
         pedantic_llll_check(outll);
         return outll;
         
-    } else if (start_type == H_RAT || end_type == H_RAT || factor_type == H_RAT ||
-               start_type == H_PITCH || end_type == H_PITCH || factor_type == H_PITCH) {
+    } else {
         t_rational start, end, factor, v;
         t_atom_long count;
         
@@ -7126,54 +7117,6 @@ t_llll *llll_geomser(t_object *x, t_hatom start_hatom, t_hatom end_hatom, t_hato
             t_rational end_abs = rat_abs(end);
             for (v = start, count = 0; rat_rat_cmp(rat_abs(v), end_abs) >= 0 && count < maxcount; v = rat_rat_prod(v, factor), count++)
                 llll_appendrat(outll, v, 0, WHITENULL_llll);
-        }
-        pedantic_llll_check(outll);
-        return outll;
-        
-    } else {
-        t_atom_long start, end, factor, v;
-        t_atom_long count;
-        
-        start = hatom_getlong(&start_hatom);
-        if (start == 0) {
-            object_error(x, "Start can't be 0");
-            *err = 1;
-            return outll;
-        }
-        
-        factor = hatom_getlong(&factor_hatom);
-        if ((factor == 1 || factor == -1) && maxcount <= 0) {
-            object_error(x, "Factor can't be " ATOM_LONG_PRINTF_FMT " if the maximum number of elements is not set", factor);
-            *err = 1;
-            return outll;
-        }
-        
-        if (maxcount <= 0)
-            maxcount = LONG_MAX;        
-        if (hatom_type_is_number(end_type)) {
-            end = hatom_getlong(&end_hatom);
-        } else {
-            if (factor == 0) {
-                object_error(x, "Insufficient data");
-                *err = 1;
-                return outll;
-            }
-            end = start > 0 || factor < 0 ? LONG_MAX : LONG_MIN;
-        }
-        if (factor == 0) {
-            factor = start <= end ? 2 : -2;
-        }
-        
-        if (start > 0 && factor > 1) {
-            for (v = start, count = 0; v <= end && count < maxcount; v *= factor, count++)
-                llll_appendlong(outll, v, 0, WHITENULL_llll);
-        } else if (start < 0 && factor > 1) {
-            for (v = start, count = 0; v >= end && count < maxcount; v *= factor, count++)
-                llll_appendlong(outll, v, 0, WHITENULL_llll);
-        } else {
-            t_atom_long end_abs = alabs(end);
-            for (v = start, count = 0; alabs(v) <= end_abs && count < maxcount; v *= factor, count++)
-                llll_appendlong(outll, v, 0, WHITENULL_llll);
         }
         pedantic_llll_check(outll);
         return outll;
