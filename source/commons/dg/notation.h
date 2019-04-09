@@ -4809,7 +4809,7 @@ typedef struct _notation_obj
     char        show_rhythmic_tree;                    ///< Graphically paints the beaming tree for each measure
     char        output_trees;                        ///< Output beaming trees while dumping?
     char        write_trees;                        ///< Include tree information while saving via "write" or "writetxt"
-    char        output_full_duration_tree;            ///< Flag telling if we want to output the full duration tree while dumping. This only make sense if #output_trees == 1, and if 1, this means that
+    char        output_full_duration_tree;            ///< Flag telling if we want to output the full duration tree while dumping. This only make sense if #output_trees >= 2, and if 1, this means that
                                                     ///< in addition to all the levels, also the ties information is output as "t" if a chord is all tied
     char        show_rhythmic_tree_locks;            ///< Flag telling if we want to show the rhythmic tree locks (appearing when the rhythmic tree has been locked, fixed)
     char        output_and_save_level_types;        ///< Also output or save the level type information for each level, consisting in a list of (leveltype <num>), where <num> is a generic combination of #e_rhythm_level_types.

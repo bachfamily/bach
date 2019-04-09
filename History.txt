@@ -29,7 +29,9 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 			Backwards compatibility SHOULD be preserved, but verify your patches.
 		The "interp" and "sample" message now only output a single slot value for temporal slots.
 
-- bach.score	@dlspansties is now 1 by default
+- bach.score	@outputtrees has changed: now the value 2 outputs trees from the first outlet AND from the duration outlet.
+			To output trees from ALL outlets please use the new attribute value 3 (correct this in your older patches)
+		@dlspansties is now 1 by default
 
 - bach.partition
 		Now when partitions of 0 are requested a "null" list is output.

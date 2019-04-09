@@ -622,7 +622,7 @@ void scoreapi_set_autoretranscribe(t_score *x, long l)
 
 void scoreapi_set_outputtrees(t_score *x, long l)
 {
-    x->r_ob.output_trees = CLAMP(l, 0, 2);
+    x->r_ob.output_trees = CLAMP(l, 0, 3);
     object_attr_setdisabled((t_object *)x, gensym("outputtiesindurationtree"), x->r_ob.output_trees < 2);
 }
 

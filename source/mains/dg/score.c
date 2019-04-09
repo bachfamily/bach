@@ -6871,14 +6871,16 @@ int T_EXPORT main(void){
     
     CLASS_ATTR_CHAR(c,"outputtrees",0, t_notation_obj, output_trees);
     CLASS_ATTR_STYLE_LABEL(c,"outputtrees",0,"enumindex","Output Rhythmic Trees Upon Dump");
-    CLASS_ATTR_ENUMINDEX(c,"outputtrees", 0, "Never First Outlet Only All Outlets");
+    CLASS_ATTR_ENUMINDEX(c,"outputtrees", 0, "Never First Outlet Only First Outlet And Durations Outlet All Outlets");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"outputtrees",0,"1");
     CLASS_ATTR_ACCESSORS(c, "outputtrees", (method)NULL, (method)score_setattr_outputtrees);
     // @description Sets the way in which rhythmic trees are output: <br />
-    // - Never: rhythmic trees are never output from any of the outlets. <br />
-    // - First Outlet Only (default): rhythmic trees are only output from the first outlet of <o>bach.score</o> (the one 
+    // - Never (0): rhythmic trees are never output from any of the outlets. <br />
+    // - First Outlet Only (1, default): rhythmic trees are only output from the first outlet of <o>bach.score</o> (the one
     // with the score gathered syntax), but never from any of the other outlets. <br />
-    // - All Outlets: rhythmic trees are output from the first outlet and also from all the separate parameter outlets. <br />
+    // - First Outlet And Durations outlet (2): rhythmic trees are output from the first outlet of <o>bach.score</o> (the one
+    // with the score gathered syntax) and from the durations outlet, but never from any of the other outlets. <br />
+    // - All Outlets (3): rhythmic trees are output from the first outlet and also from all the separate parameter outlets. <br />
     // Outputting rhythmic trees means essentially that the given llll containing the data (e.g. durations or velocities) is reshaped 
     // according to the shape of the rhythmic tree. Also see the <m>outputtiesindurationtree</m> attribute.
 
@@ -6886,7 +6888,8 @@ int T_EXPORT main(void){
     CLASS_ATTR_STYLE_LABEL(c,"outputtiesindurationtree",0,"onoff","Output Ties In Duration Tree");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"outputtiesindurationtree",0,"1");
     // @description Toggles the ability to output a symbol "t" to identify ties in the tree of durations.
-    // This attribute is active only if <m>outputtrees</m> is set to "All Outlets": in this case the duration outlet will
+    // This attribute is active only if <m>outputtrees</m> is set to "First Outlet And Durations Outlet" or "All Outlets":
+    // in this case the duration outlet will
     // output durations structured as the rhythmic tree. If this attribute is set to 1, after each note which starts a tie,
     // a "t" symbol will be put, identifying such tie. For instance: 
     // <b>[ [ [ 1/8 t [ 1/24 1/24 1/24 ] ] [ [ [ -1/16 1/64 t ] [ 1/64 1/64 1/64 t ] ] [ 1/16 1/16 ] ] -1/2 ] ]</b>.
@@ -8611,32 +8614,32 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
             send_measuresinfo_values_as_llll(x);
             goto end;
         } else if ((sym == _llllobj_sym_cents) || (sym == _llllobj_sym_cent)) {
-            send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_NEVER);
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 3, k_OUTPUT_PITCHES_NEVER);
             goto end;
         } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
-            send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_ALWAYS);
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 3, k_OUTPUT_PITCHES_ALWAYS);
             goto end;
         } else if (sym == _llllobj_sym_poc) {
-            send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 3, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
             goto end;
         } else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
-            send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
+            send_durations_values_as_llll(x, x->r_ob.output_trees >= 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
             goto end;
         } else if ((sym == _llllobj_sym_velocities) || (sym == _llllobj_sym_velocity)) {
-            send_velocities_values_as_llll(x, x->r_ob.output_trees == 2);
+            send_velocities_values_as_llll(x, x->r_ob.output_trees == 3);
             goto end;
         } else if ((sym == _llllobj_sym_ties) || (sym == _llllobj_sym_tie)) {
-            send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
+            send_ties_values_as_llll(x, x->r_ob.output_trees == 3);
             goto end;
         } else if ((sym == _llllobj_sym_extras) || (sym == _llllobj_sym_extra)) {
-            send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
+            send_extras_values_as_llll(x, x->r_ob.output_trees == 3);
             goto end;
         } else if (sym == _llllobj_sym_separate) {
-            send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
-            send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
-            send_velocities_values_as_llll(x, x->r_ob.output_trees == 2);
-            send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
-            send_cents_values_as_llll(x, x->r_ob.output_trees == 2);
+            send_extras_values_as_llll(x, x->r_ob.output_trees == 3);
+            send_ties_values_as_llll(x, x->r_ob.output_trees == 3);
+            send_velocities_values_as_llll(x, x->r_ob.output_trees == 3);
+            send_durations_values_as_llll(x, x->r_ob.output_trees >= 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 3);
             send_measuresinfo_values_as_llll(x);
             goto end;
         } else if (sym == _llllobj_sym_score) {
@@ -13587,11 +13590,11 @@ void send_score_values_as_llll(t_score *x, long send_what, t_symbol *router)
 
 void send_all_values_as_llll(t_score *x, long send_what_for_header, t_symbol *gatheredsyntax_router)
 {
-    send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
-    send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
-    send_velocities_values_as_llll(x, x->r_ob.output_trees == 2);
-    send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
-    send_cents_values_as_llll(x, x->r_ob.output_trees == 2 );
+    send_extras_values_as_llll(x, x->r_ob.output_trees == 3);
+    send_ties_values_as_llll(x, x->r_ob.output_trees == 3);
+    send_velocities_values_as_llll(x, x->r_ob.output_trees == 3);
+    send_durations_values_as_llll(x, x->r_ob.output_trees >= 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
+    send_cents_values_as_llll(x, x->r_ob.output_trees == 3 );
     send_measuresinfo_values_as_llll(x);
     send_score_values_as_llll(x, send_what_for_header, gatheredsyntax_router);
 }
