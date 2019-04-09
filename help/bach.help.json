@@ -5489,7 +5489,7 @@
 				"filename" : [ "bach.help.notation.syntax.25_rhythmictreesoutput.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "rhythmic+tree+level", "rhythm+level+type", "write", "writetxt", "writetrees" ],
-				"tags" : [ "syntax", "hierarchy", "hierarchical", "rhythmic", "tree", "level", "beam", "tuplet", "separate", "gathered", "outputtrees", "output", "save", "type", "saveleveltypes" ],
+				"tags" : [ "syntax", "hierarchy", "hierarchical", "rhythmic", "tree", "level", "beam", "tuplet", "separate", "gathered", "outputtrees", "output", "save", "type", "saveleveltypes", "duration" ],
 				"title" : [ "Outputting rhythmic tree levels" ]
 			},
 			"Tiesinrhythmictree" : {
