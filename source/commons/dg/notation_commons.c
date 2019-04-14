@@ -34621,6 +34621,13 @@ void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode)
     move_preselecteditems_to_selection(r_ob, mode, false, false);
 }
 
+void select_all_voices(t_notation_obj *r_ob, e_selection_modes mode)
+{
+    t_voice *voice;
+    for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
+        notation_item_add_to_preselection(r_ob, (t_notation_item *)voice);
+    move_preselecteditems_to_selection(r_ob, mode, false, false);
+}
 
 void select_all_notes(t_notation_obj *r_ob, e_selection_modes mode)
 {

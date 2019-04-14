@@ -17528,6 +17528,15 @@ t_marker *markername2marker(t_notation_obj *r_ob, t_llll *names);
 void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode);
 
 
+/** Select all the voices
+    @ingroup        voices
+    @ingroup        selection
+    @param    r_ob    The notation object
+    @param mode      The selection mode (one of the #e_selection_modes)
+ */
+void select_all_voices(t_notation_obj *r_ob, e_selection_modes mode);
+
+
 /** Select all the chords
     @ingroup        selection
     @param    r_ob    The notation object

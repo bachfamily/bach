@@ -1468,6 +1468,22 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
                 unlock_general_mutex((t_notation_obj *)x);
                 
+            // (un)sel(ect) voice
+            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_voice && selectllll->l_head->l_next) {
+                
+                lock_general_mutex((t_notation_obj *)x);
+                for (t_llllelem *elem = selectllll->l_head->l_next; elem; elem = elem->l_next) {
+                    long voicenum = hatom_getlong(&elem->l_hatom);
+                    if (voicenum < 0)
+                        voicenum = x->r_ob.num_voices + voicenum + 1;
+                    voicenum -= 1;
+                    if (voicenum >= 0 && voicenum < x->r_ob.num_voices) {
+                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)nth_voice((t_notation_obj *)x, voicenum));
+                    }
+                }
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                unlock_general_mutex((t_notation_obj *)x);
+                
             // (un)sel(ect) breakpoints/tail if
             } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_breakpoint || hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_tail) && selectllll->l_head->l_next &&
                        hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
@@ -1547,11 +1563,15 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
                 select_all_markers((t_notation_obj *) x, mode);
 
+            // (un)sel(ect) all voices
+            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_voices) {
+                select_all_voices((t_notation_obj *)x, mode);
+
             // (un)sel(ect) notes
             } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_notes)) {
                 select_all_notes((t_notation_obj *) x, mode);
                 
-            // (un)sel(ect) all all chords
+            // (un)sel(ect) all chords
             } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_chords)) {
                 select_all_chords((t_notation_obj *) x, mode);
 
@@ -5411,7 +5431,9 @@ int T_EXPORT main(void){
     // - If the word <m>sel</m> is followed by the symbol <b>all</b>, all notes, chords and markers are selected. <br />
     // - If the word <m>sel</m> is followed by a category plural symbol, all the corresponding elements are selected.
     // Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>rests</b>,
-    // <b>measures</b>, <b>breakpoints</b>, <b>tails</b>. <br />
+    // <b>measures</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>. <br />
+    // - If the word <m>sel</m> is followed by the symbol <b>voice</b> followed by one or more integers, the corresponding voices are selected
+    // (negative numbers count from the last voice). <br />
     // - If the word <m>sel</m> is followed by the symbol <b>measure</b> followed by one or two integers (representing an address), a certain measure is selected.
     // The full syntax for the integers is: <m>voice_number</m> <m>measure_number</m>. If just one integer is given, the voice number is considered
     // to be by default 1. 

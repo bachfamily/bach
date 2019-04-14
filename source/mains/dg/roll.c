@@ -1858,7 +1858,7 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
             move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
             unlock_general_mutex((t_notation_obj *)x);
             
-        // (un)sel(ect) markers
+        // (un)sel(ect) all markers
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
             select_all_markers((t_notation_obj *)x, mode);
 
@@ -1870,9 +1870,13 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_breakpoints) {
             select_all_breakpoints((t_notation_obj *)x, mode, false);
 
-            // (un)sel(ect) all tails
+        // (un)sel(ect) all tails
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_tails) {
             select_all_breakpoints((t_notation_obj *)x, mode, true);
+
+        // (un)sel(ect) all voices
+        } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_voices) {
+            select_all_voices((t_notation_obj *)x, mode);
 
         // (un)sel(ect) all
         } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _sym_all) {
@@ -1921,6 +1925,22 @@ void roll_select(t_roll *x, t_symbol *s, long argc, t_atom *argv)
                     if (hatom_gettype(&elem->l_hatom) == H_LLLL)
                         if ((to_select = note_get_from_path_as_llllelem_range((t_notation_obj *)x, hatom_getllll(&elem->l_hatom)->l_head)))
                             notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)to_select);
+            }
+            move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+            unlock_general_mutex((t_notation_obj *)x);
+
+        // (un)sel(ect) voice
+        } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_voice && selectllll->l_head->l_next) {
+            
+            lock_general_mutex((t_notation_obj *)x);
+            for (t_llllelem *elem = selectllll->l_head->l_next; elem; elem = elem->l_next) {
+                long voicenum = hatom_getlong(&elem->l_hatom);
+                if (voicenum < 0)
+                    voicenum = x->r_ob.num_voices + voicenum + 1;
+                voicenum -= 1;
+                if (voicenum >= 0 && voicenum < x->r_ob.num_voices) {
+                    notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)nth_voice((t_notation_obj *)x, voicenum));
+                }
             }
             move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
             unlock_general_mutex((t_notation_obj *)x);
@@ -4689,8 +4709,9 @@ int T_EXPORT main(void){
     // Other selection modes are possible: <br />
     // - If the word <m>sel</m> is followed by the symbol <b>all</b>, all notes, chords and markers are selected. <br />
     // - If the word <m>sel</m> is followed by a category plural symbol, all the corresponding elements are selected.
-    // Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>breakpoints</b>, <b>tails</b>. <br />
-    // - If the word <m>sel</m> is followed by the symbol <b>markers</b>, all markers are selected. <br />
+    // Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>. <br />
+    // - If the word <m>sel</m> is followed by the symbol <b>voice</b> followed by one or more integers, the corresponding voices are selected
+    // (negative numbers count from the last voice). <br />
     // - If the word <m>sel</m> is followed by the symbol <b>chord</b> followed by one or two integers (representing an address), a certain chord is selected.
     // The full syntax for the integers is: <m>voice_number</m> <m>chord_index</m>. If just an element is given, the voice number is considered
     // to be by default 1. The chord index is the index of chords, sorted by onset. 
@@ -4727,6 +4748,8 @@ int T_EXPORT main(void){
     // @example sel marker 5 @caption select 5th marker
     // @example sel marker -2 @caption select one-but-last marker
     // @example sel marker [1] [-2] [5] @caption select multiple markers
+    // @example sel voice 2 @caption select 2nd voice
+    // @example sel note if voice == 2 @caption select 2nd voice
     // @example sel chords [1 3] [2 2] [-2 5] @caption select multiple chord
     // @example sel notes [1 3 2] [1 3 3] [2 4 5] @caption select multiple notes
     // @example sel John @caption select all items named 'John'
