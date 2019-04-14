@@ -2864,11 +2864,18 @@
 					"tags" : [ "message", "selection", "marker", "index", "position", "single", "path", "number", "sel", "unsel", "select" ],
 					"title" : [ "Selecting single markers" ]
 				},
+				"Selectingsinglevoices" : {
+					"filename" : [ "bach.help.notation.messages.20_selection.24_selectingsinglevoices.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "sel", "unsel", "select" ],
+					"tags" : [ "message", "selection", "voice", "index", "position", "number", "single", "sel", "unsel", "select" ],
+					"title" : [ "Selecting single voices" ]
+				},
 				"Selectingmultipleitems" : {
 					"filename" : [ "bach.help.notation.messages.20_selection.25_selectingmultipleitems.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel+note", "sel+chord", "sel+measure", "sel+marker" ],
-					"tags" : [ "message", "selection", "measure", "index", "position", "multiple", "path", "number", "sel", "unsel", "select", "marker" ],
+					"tags" : [ "message", "selection", "measure", "index", "position", "multiple", "path", "number", "sel", "unsel", "select", "marker", "voice" ],
 					"title" : [ "Selecting multiple items" ]
 				},
 				"Selectingmeasureranges" : {
@@ -5892,7 +5899,7 @@
 					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone", "accidental" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone", "accidental", "middle" ],
 					"title" : [ "Pitch syntax" ]
 				},
 				"Intervals" : {
