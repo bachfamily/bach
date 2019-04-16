@@ -16503,10 +16503,10 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                 }
                 return 1;
                 break;
-            } else if (!(modifiers & eCommandKey) && is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_ONSET)){
+            } else if (!(modifiers & eCommandKey)){
                 // shift chord leftwards
                 double delta_ms = x->r_ob.snap_onset_to_grid_when_editing && (x->r_ob.ruler > 0 || x->r_ob.show_grid) ? -x->r_ob.current_grid_subdivision_ms * (modifiers & eShiftKey ? x->r_ob.current_num_grid_subdivisions : 1) : (round(((modifiers & eShiftKey) ? -CONST_FASTER_FROM_KEYBOARD : -1.) * CONST_ONSET_SHIFT_FROM_KEYBOARD / x->r_ob.zoom_x));
-                change_selection_onset(x, &delta_ms); 
+                change_selection_onset(x, &delta_ms);
                 handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_CHANGE_ONSET_FOR_SELECTION); 
                 return 1;
                 break;
@@ -16991,6 +16991,10 @@ char change_selection_onset(t_roll *x, double *delta_ms)
     for (i=0; i<CONST_MAX_VOICES; i++) 
         gotta_check_chords_order[i]=false;
     
+    char process_chords = is_editable((t_notation_obj *)x, k_NOTE_OR_CHORD, k_MODIFICATION_ONSET);
+    char process_markers = is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_ONSET);
+    char process_breakpoints = is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_MODIFICATION_ONSET);
+
     lock_general_mutex((t_notation_obj *)x);
 
     // First of all: we detect if we should actually change anything: 0ms is indeed a barrier, and if we are dragging leftwards stuff which
@@ -17019,7 +17023,7 @@ char change_selection_onset(t_roll *x, double *delta_ms)
         
         // cycle on selected items for modification
         for (curr_it = x->r_ob.firstselecteditem; curr_it; curr_it = curr_it->next_selected) {
-            if (curr_it->type == k_NOTE) { // it is a note
+            if (curr_it->type == k_NOTE && process_chords) { // it is a note
                 t_chord *ch = ((t_note *)curr_it)->parent;
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch) && !(ch->r_it.flags & k_FLAG_MODIFIED)) {
                     
@@ -17034,7 +17038,7 @@ char change_selection_onset(t_roll *x, double *delta_ms)
                     ch->r_it.flags = (e_bach_internal_notation_flags) (ch->r_it.flags | k_FLAG_MODIFIED);
                     update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, ch);
                 }
-            } else if (curr_it->type == k_CHORD) {
+            } else if (curr_it->type == k_CHORD && process_chords) {
                 t_chord *ch = ((t_chord *)curr_it);
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)ch) && !(ch->r_it.flags & k_FLAG_MODIFIED)) {
                     
@@ -17049,7 +17053,7 @@ char change_selection_onset(t_roll *x, double *delta_ms)
                     changed = 1;
                     update_all_accidentals_for_chord_if_needed((t_notation_obj *)x, ch);
                 }
-            } else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
+            } else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next && process_breakpoints) { // it is a note tail
                 t_note *nt = ((t_bpt *)curr_it)->owner;
                 if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)nt) && !(nt->r_it.flags & k_FLAG_MODIFIED)) {
                     
@@ -17063,7 +17067,7 @@ char change_selection_onset(t_roll *x, double *delta_ms)
                     changed = 1;
                     nt->parent->r_it.flags = (e_bach_internal_notation_flags) (nt->parent->r_it.flags | k_FLAG_MODIFIED);
                 }        
-            } else if (curr_it->type == k_MARKER) {
+            } else if (curr_it->type == k_MARKER && process_markers) {
                 t_marker *marker = ((t_marker *)curr_it);
                 
                 if (!(x->r_ob.header_undo_flags & k_HEADER_MARKERS)) {
