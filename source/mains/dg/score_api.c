@@ -10423,8 +10423,11 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
         for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
             compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
 
-        if (x->r_ob.num_voices > 0)
-            last_staff_bottom = get_staff_bottom_y((t_notation_obj *) x, voice_get_last_visible((t_notation_obj *)x), false);
+        if (x->r_ob.num_voices > 0) {
+            t_voice *last_visible_voice = voice_get_last_visible((t_notation_obj *)x);
+            if (last_visible_voice)
+                last_staff_bottom = get_staff_bottom_y((t_notation_obj *) x, last_visible_voice, false);
+        }
         
 #ifdef BACH_SPACING_DEBUG
         t_tuttipoint *tmptp;

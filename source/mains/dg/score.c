@@ -12712,8 +12712,10 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         t_scorevoice *voice = nth_scorevoice(x, voicenum);
         char instaff = false, between_staff_and_next = false;
         
-        if (voicenum < 0)
-            object_warn((t_object *)x, "Warning: trying to edit a non-existing part. Check the ""activepart"" attribute.");
+        if (voicenum < 0) {
+            if (voice_get_first_visible((t_notation_obj *)x))
+                object_warn((t_object *)x, "Warning: trying to edit a non-existing part. Check the ""activepart"" attribute.");
+        }
         
         if ((voicenum >= 0) && ((instaff = is_y_within_voice_staff((t_notation_obj *) x, this_y, (t_voice *)voice)) ||
             (x->r_ob.draw_barlines_across_staves && (between_staff_and_next = is_y_between_this_staff_and_the_next_or_prev((t_notation_obj *) x, this_y, (t_voice *)voice))))) {
