@@ -37102,6 +37102,11 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
     
     for (itel = fam->items->l_head; itel; itel = itel->l_next) {
         t_notation_item *it = (t_notation_item *)hatom_getobj(&itel->l_hatom);
+        t_notation_item *voice = notation_item_get_ancestor_of_at_least_a_certain_type(r_ob, it, k_VOICE);
+        
+        if (voice && ((t_voice *)voice)->hidden)
+            continue;
+        
         switch (it->type) {
             case k_NOTE:
                 llll_appendllll(points_in, pt_to_llll(note_to_family_contour_pt(r_ob, (t_note *)it, &leftmost_in_ux, &rightmost_in_ux, &topmost_voice, &bottommost_voice), false), 0, WHITENULL_llll);
