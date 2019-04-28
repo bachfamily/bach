@@ -3484,6 +3484,16 @@ void polygon_prune_vertex_inplace(t_polygon *poly, long prune_idx)
     poly->num_vertices--;
 }
 
+void polygon_insert_vertex_inplace(t_polygon *poly, long index, t_pt vert)
+{
+    poly->num_vertices++;
+    poly->vertices = (t_pt *)bach_resizeptr(poly->vertices, poly->num_vertices*sizeof(t_pt));
+    for (long i = poly->num_vertices-1; i > index; i--) {
+        poly->vertices[i] = poly->vertices[i-1];
+    }
+    poly->vertices[index] = vert;
+}
+
 
 t_polygon *polygon_prune_vertex(t_polygon *poly, long prune_idx)
 {
@@ -3747,11 +3757,16 @@ t_beziercs *refine_poly_to_bezier_preserving_inclusion_of_pts(t_polygon *poly, l
 }
 
 
-double get_min_segment_distance(t_pt seg_start, t_pt seg_end, long num_pts_out, t_pt *pts_out)
+double get_min_segment_distance(t_pt seg_start, t_pt seg_end, long num_pts_out, t_pt *pts_out, long *min_idx)
 {
     double min_dist = DBL_MAX;
-    for (long j = 0; j < num_pts_out; j++)
-        min_dist = MIN(min_dist, pt_segment_distance(pts_out[j], seg_start, seg_end));
+    for (long j = 0; j < num_pts_out; j++) {
+        double this_dist = pt_segment_distance(pts_out[j], seg_start, seg_end);
+        if (this_dist < min_dist) {
+            min_dist = this_dist;
+            if (min_idx) *min_idx = j;
+        }
+    }
     return min_dist;
 }
 
@@ -3871,17 +3886,19 @@ void paint_polygon_debug_new(t_polygon *p, t_jgraphics *g, long iteration)
 
 
 
-t_beziercs *get_venn_enclosure_new(long num_pts_in, t_pt *pts_in, long num_pts_out, t_pt *pts_out, t_jgraphics *g)
+t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, t_pt *pts_out, t_jgraphics *g)
 {
+    const double EXTRUDE_AMOUNT = 10;
+    
     // Refining polygon to bezier curve
     t_pt *pts = NULL; // Building array of juxtaposed points [pts_in pts_out]
     long num_pts = pts_juxtapose(num_pts_in, pts_in, num_pts_out, pts_out, &pts);
 
     // 1) find the base path across points
-    const double safe_dist = 20;
+    const double safe_dist = 2 * EXTRUDE_AMOUNT;
     long *path_ids = (long *)bach_newptr(num_pts_in*sizeof(long));
     long done[num_pts_in];
-    
+
     for (long i = 0; i < num_pts_in; i++)
         done[i] = false;
     
@@ -3894,7 +3911,7 @@ t_beziercs *get_venn_enclosure_new(long num_pts_in, t_pt *pts_in, long num_pts_o
             if (done[j])
                 continue;
             double dist = pt_pt_distance(pts_in[i-1], pts_in[j]);
-            double min_dist = get_min_segment_distance(pts_in[i-1], pts_in[j], num_pts_out, pts_out);
+            double min_dist = get_min_segment_distance(pts_in[i-1], pts_in[j], num_pts_out, pts_out, NULL);
             double this_weight = dist / MIN(1, min_dist / safe_dist);
             if (best_j < 0 || this_weight < best_weight) {
                 best_weight = this_weight;
@@ -3909,19 +3926,83 @@ t_beziercs *get_venn_enclosure_new(long num_pts_in, t_pt *pts_in, long num_pts_o
         done[best_j] = true;
     }
     
-    // 2) build initial degenerate polygon from the found path
-    t_pt *new_pts = (t_pt *)bach_newptr((2*num_pts_in - 2)*sizeof(t_pt));
-    long num_new_pts = (2*num_pts_in - 2);
-    for (long i = 0; i < num_pts_in; i++)
-        new_pts[i] = pts_in[path_ids[i]];
-    for (long i = num_pts_in; i < num_new_pts; i++)
-        new_pts[i] = pts_in[path_ids[2*num_pts_in - i - 2]];
+    t_pt *pts_in_modif = (t_pt *)bach_newptr(2 * num_pts_in * sizeof(t_pt));
+    long count = 0, num_pts_in_modif = 0;
+    
+    // 2) verify if points are essentially collinear with some pts_out, in which case add a "fake" point
+    for (long i = 0; i < num_pts_in-1 && count < 2 * num_pts_in; i++) {
+        long j = positive_mod(i+1, num_pts_in);
+        long minidx = -1;
+        t_pt pt_i = pts_in[path_ids[i]];
+        t_pt pt_j = pts_in[path_ids[j]];
+        double d = get_min_segment_distance(pt_i, pt_j, num_pts_out, pts_out, &minidx);
+        double thresh = EXTRUDE_AMOUNT;
 
+        pts_in_modif[count++] = pt_i;
+        
+        while (d < thresh) {
+            t_pt addedpt = pt_pt_sum(pts_out[minidx], get_perp_vect_ccw(pt_pt_diff(pt_j, pt_i), thresh));
+            d = MIN(get_min_segment_distance(pt_i, addedpt, num_pts_out, pts_out, NULL), get_min_segment_distance(addedpt, pt_j, num_pts_out, pts_out, NULL));
+            if (d < thresh) {
+                pts_in_modif[count++] = addedpt;
+                break;
+            } else {
+                thresh *= 0.6;
+            }
+        }
+    }
+    pts_in_modif[count++] = pts_in[path_ids[num_pts_in-1]];
+    num_pts_in_modif = count;
+
+    
+    // try to resolve crossings, if any
+    t_pt inters;
+    t_pt *pts_in_modif2 = (t_pt *)bach_newptr(num_pts_in_modif*sizeof(t_pt));
+    t_pt *temp_pts = (t_pt *)bach_newptr(num_pts_in_modif*sizeof(t_pt));
+    long MAX_RESOLVECROSSING_TRIES = 10;
+    long crossing_resolved = 0;
+    for (long i = 0; i < num_pts_in_modif; i++)
+        pts_in_modif2[i] = pts_in_modif[i];
+    while (crossing_resolved < MAX_RESOLVECROSSING_TRIES) {
+        char changed = false;
+        for (long i = 0; i + 3 < num_pts_in; i++) {
+            t_pt i1 = pts_in_modif2[i];
+            t_pt i2 = pts_in_modif2[i+1];
+            for (long j = i+2; j + 1 < num_pts_in; j++) {
+                t_pt j1 = pts_in_modif2[j];
+                t_pt j2 = pts_in_modif2[j+1];
+                
+                if (segment_segment_intersection(i1, i2, j1, j2, &inters)) {
+                    // resolve crossing
+                    changed = true;
+                    for (long t = 0; t < num_pts_in; t++)
+                        temp_pts[t] = pts_in_modif2[t];
+                    for (long t = i+1; t <= i + (j-i); t++)
+                        pts_in_modif2[t] = temp_pts[j + (i+1 - t)];
+                }
+            }
+        }
+        if (!changed)
+            break;
+        else
+            crossing_resolved++;
+    }
+    
+    
+    // 3) build initial degenerate polygon from the found path
+    t_pt *new_pts = (t_pt *)bach_newptr((2*num_pts_in_modif - 2)*sizeof(t_pt));
+    long num_new_pts = (2*num_pts_in_modif - 2);
+    for (long i = 0; i < num_pts_in_modif; i++)
+        new_pts[i] = pts_in_modif[i];
+    for (long i = num_pts_in_modif; i < num_new_pts; i++)
+        new_pts[i] = pts_in_modif[2*num_pts_in_modif - i - 2];
+    
     t_polygon *p = polygon_build(num_new_pts, new_pts);
     
-//    paint_polygon_debug_new(p, g, 1);
+    if (g) paint_polygon_debug_new(p, g, 1);
 
-    // 3) try to create triangulations to extend the path
+    
+    // 4) try to create triangulations to extend the path to a true polygon
     long num_pruned = 0;
     while (true) {
         long i = 0;
@@ -3936,7 +4017,7 @@ t_beziercs *get_venn_enclosure_new(long num_pts_in, t_pt *pts_in, long num_pts_o
                 pruned = true;
                 num_pruned++;
                 polygon_prune_vertex_inplace(p, i);
-//                paint_polygon_debug_new(p, g, num_pruned+1);
+//                if (g) paint_polygon_debug_new(p, g, num_pruned+1);
             }
             i++;
         }
@@ -3944,16 +4025,17 @@ t_beziercs *get_venn_enclosure_new(long num_pts_in, t_pt *pts_in, long num_pts_o
             break;
     }
     
-    // 4) extrude polygon
-    const double EXTRUDE_AMOUNT = 10;
+    // 5) extrude polygon
     t_polygon *q = polygon_extrude(p, EXTRUDE_AMOUNT, num_pts_out, pts_out);
     
-//    paint_polygon_debug_new(q, g, 0);
+//    if (g) paint_polygon_debug_new(q, g, 0);
 
+    // 6) convert to bezier closed spline
     t_beziercs *beziercs = refine_poly_to_bezier_preserving_inclusion_of_pts(q, num_pts, pts, 0.5, 0.8, 0.5, NULL);
     
-    //    if (g) paint_beziercs(g, &blue, NULL, 1, beziercs);
-    
+    bach_freeptr(pts_in_modif2);
+    bach_freeptr(temp_pts);
+    bach_freeptr(pts_in_modif);
     bach_freeptr(path_ids);
     bach_freeptr(new_pts);
     bach_freeptr(pts);

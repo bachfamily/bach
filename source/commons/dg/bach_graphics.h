@@ -171,9 +171,6 @@ void beziercs_free(t_beziercs *p);
 void paint_beziercs(t_jgraphics* g, t_jrgba *border_color, t_jrgba *inner_color, double linewidth, t_beziercs *bezier);
 t_beziercs *polygon_to_bezier_closed_spline(t_polygon *poly);
 t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, t_pt *pts_out, t_jgraphics *g);
-t_beziercs *get_venn_enclosure_new(long num_pts_in, t_pt *pts_in, long num_pts_out, t_pt *pts_out, t_jgraphics *g);
-void polygon_offset_smart_inplace(t_polygon **poly, double amount, long unwanted_pts_size, t_pt *unwanted_pts,
-                                  char mode, t_polygon *container, char algo_intersect, long wanted_pts_size, t_pt *wanted_pts, t_jgraphics *g);
 
 
 // MATH UTILITIES FOR PAINTING

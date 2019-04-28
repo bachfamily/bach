@@ -878,6 +878,26 @@ long llll_to_double_array(t_llll *ll, double **array)
 	return length;
 }
 
+// returns the length
+long llll_to_long_array(t_llll *ll, long **array)
+{
+    long length = ll->l_size;
+    t_llllelem *elem;
+    long i;
+    
+    if (length == 0) {
+        *array = NULL;
+        return 0;
+    } else
+        *array = (long *)bach_newptr(length * sizeof(long));
+    
+    for (elem = ll->l_head, i = 0; i < length && elem; i++, elem = elem->l_next)
+        (*array)[i] = hatom_getlong(&elem->l_hatom);
+    
+    return length;
+}
+
+
 t_llll *rat_array_to_llll(t_rational *array, long length) {
 	t_llll *out = llll_get();
 	long i;

@@ -37235,8 +37235,7 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
         
         // applying function
         beziercs_free(fam->contour);
-//        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, g);
-        fam->contour = get_venn_enclosure_new(points_in->l_size, pts_in, points_out->l_size, pts_out, g);
+        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, g);
 
         bach_freeptr(pts_out);
     }
