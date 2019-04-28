@@ -245,7 +245,6 @@
 		1E784F9820274BC400F11D75 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		1E784FA220274C1200F11D75 /* recurser.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E784FA120274C1200F11D75 /* recurser.c */; };
 		1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A1D4420FCEB020051B9E8 /* notation_export.c */; };
-		1EA9401B1BDFEBDB00EFCABC /* gpc.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EA940191BDFEBDB00EFCABC /* gpc.h */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
 		1EB4D4821610CB740041ABFB /* roll_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4801610CB740041ABFB /* roll_files.h */; };
@@ -264,7 +263,6 @@
 		1ED51E341F73F5EA0021C2D5 /* p2mc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ED51E301F73F5EA0021C2D5 /* p2mc.c */; };
 		91000B511D33DA0C0081ECC0 /* libgecodesearch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 91000B501D33DA0C0081ECC0 /* libgecodesearch.a */; };
 		91000B531D33EB940081ECC0 /* gecko.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91000B521D33EB940081ECC0 /* gecko.cpp */; };
-		910400B21C147F5C0072277C /* gpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EA940181BDFEBDB00EFCABC /* gpc.c */; };
 		91040DA51FB1ABCD009E91CD /* bach_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91040DA31FB1ABCD009E91CD /* bach_parser.hpp */; };
 		91071DB12100DB5900452762 /* bach_codableobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91071DAF2100DB5900452762 /* bach_codableobj.cpp */; };
 		91071DB22100DB5900452762 /* bach_codableobj.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91071DB02100DB5900452762 /* bach_codableobj.hpp */; };
@@ -2855,8 +2853,6 @@
 		1E784FA120274C1200F11D75 /* recurser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recurser.c; sourceTree = "<group>"; };
 		1E7A1D4420FCEB020051B9E8 /* notation_export.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_export.c; sourceTree = "<group>"; };
 		1E9026EE150FC5380005B502 /* bach_doc_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_doc_groups.h; sourceTree = "<group>"; };
-		1EA940181BDFEBDB00EFCABC /* gpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gpc.c; sourceTree = "<group>"; };
-		1EA940191BDFEBDB00EFCABC /* gpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gpc.h; sourceTree = "<group>"; };
 		1EB4D4681610C9740041ABFB /* roll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll.h; sourceTree = "<group>"; };
 		1EB4D47F1610CB740041ABFB /* roll_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = roll_files.c; sourceTree = "<group>"; };
 		1EB4D4801610CB740041ABFB /* roll_files.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll_files.h; sourceTree = "<group>"; };
@@ -5079,16 +5075,6 @@
 			path = tools;
 			sourceTree = "<group>";
 		};
-		1EA940171BDFEBC800EFCABC /* gpc */ = {
-			isa = PBXGroup;
-			children = (
-				1EA940181BDFEBDB00EFCABC /* gpc.c */,
-				1EA940191BDFEBDB00EFCABC /* gpc.h */,
-			);
-			name = gpc;
-			path = "gpc232-release";
-			sourceTree = "<group>";
-		};
 		1EB99F3E15164BE900B02E03 /* mxml */ = {
 			isa = PBXGroup;
 			children = (
@@ -5880,7 +5866,6 @@
 				1E3B57CA15ACECA900B32D1F /* kiss_fft */,
 				1EB99F3E15164BE900B02E03 /* mxml */,
 				91DB2E991BBE8D0C003DCC81 /* nn */,
-				1EA940171BDFEBC800EFCABC /* gpc */,
 				1E9026EE150FC5380005B502 /* bach_doc_groups.h */,
 				91EE71CB13A3C9EB00BBE47C /* bach.h */,
 			);
@@ -6427,7 +6412,6 @@
 				91812AB41611B32500473F86 /* collector.h in Headers */,
 				91B420D5165E84AB00410C2C /* bach_threads.h in Headers */,
 				91165B051694FB7A00019F77 /* score_api.h in Headers */,
-				1EA9401B1BDFEBDB00EFCABC /* gpc.h in Headers */,
 				91B62BBA1F4FEBE200B9FC63 /* llll_hatom_change.h in Headers */,
 				91AF1C5017BCFA7E0071A497 /* bach_128bit.h in Headers */,
 				91DB2EAD1BBF1CCB003DCC81 /* spectral.h in Headers */,
@@ -12476,7 +12460,6 @@
 				91C6047318C0D9F50027BB79 /* SdifTimePosition.c in Sources */,
 				91FDDC3B1FBE2D4C0040D803 /* bach_chkparser.c in Sources */,
 				91FE0ED1190AAB57007B6BED /* llll_comparisons.c in Sources */,
-				910400B21C147F5C0072277C /* gpc.c in Sources */,
 				1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

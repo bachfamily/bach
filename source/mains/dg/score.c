@@ -7629,6 +7629,8 @@ t_max_err score_setattr_vzoom(t_score *x, t_object *attr, long ac, t_atom *av){
             x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *)x);
             redraw_vscrollbar((t_notation_obj *) x, 1);
         }
+        
+        set_all_label_families_update_contour((t_notation_obj *)x);
     }
     return MAX_ERR_NONE;
 }

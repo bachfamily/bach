@@ -47,9 +47,6 @@
     #define USE_NEW_UNDO_SYSTEM                            true    ///< Use the new undo system? Should be always true, we kept it only to be sure that we can always revert to previous way
     #define PLAY_REDRAWS_AT_NOTES_END                    true    ///< Do the play method redraws the static layer at each note end?
     #define    USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS    false    ///< Use bitmaps for standard noteheads – instead than glyphs
-    #define    USE_GPC_LIBRARY                                true    ///< Also use GPC library for graphic clipping
-                                                                ///  This is ONLY used for drawing label families in VENN mode. If one disables it, the label families will be simple convex hulls
-
     #define BACH_NOTES_HAVE_ID                        ///< Do notes have IDs as well? Should always be defined, except for weird debug purposes
     #define BACH_MARKERS_HAVE_ID                    ///< Do markers have IDs as well? Should always be defined, except for weird debug purposes
 //    #define BACH_OUTPUT_SYMBOLIC_FLAGS              ///< Are notation item flags to be output as symbols, instead of integers?
@@ -2729,7 +2726,14 @@ typedef struct _chord
     // painting parameters only used by [bach.score]:
     double            beam_y;                                ///< y pixel of the point of the main flag or beam
     double            alignment_ux;                        ///< Offset (in pixels) of the chord alignment point with respect to the tuttipoint start point
-    double            stem_offset_ux;                        ///< Unscaled horizontal offset (in pixels) of the stem with respect to the tuttipoint start point
+    double            stem_offset_ux;                        ///< Unscaled horizontal offset (in pixels) of the stem with
+            // respect to the tuttipoint start point;
+            //beware TODO: this is ***dirty***, since we are using ux/uwidth/uheight to represent quantities that will have to be
+            // multiplied by zoomx AND zoomy, whereas sometimes (as in notehead_uwidth) it only has to be multiplied by zoomy and NOT zoomx
+            // (wouldn't make sense). This should be fixed. In particular, stem_offset_ux has a true ux component (alignment_ux) + a delta
+            // which only needs to be multiplied by zoomy, hence it's dirt
+            // TO DO: name some of them uux, and ux the others.
+    
     double            duration_ux;                        ///< Unscaled horizontal extension (in pixels) of the duration line of the chord (unscaled "chord graphical duration")
     long            float_steps;                        ///< Only used for floating rests: number of vertical "steps" that the rest is shifted up or down.
                                                         ///< Positive values shift up, negative values shift down.
@@ -18972,6 +18976,7 @@ void add_label_families_data_for_notation_item(t_notation_obj *r_ob, t_notation_
 
 
 void verbose_post_label_families(t_notation_obj *r_ob);
+double note_get_center_ux(t_notation_obj *r_ob, t_note *nt);
 
 
 

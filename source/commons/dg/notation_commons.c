@@ -1675,11 +1675,13 @@ void paint_measure_label_families(t_notation_obj *r_ob, t_object *view, t_jgraph
 
 double label_family_contour_ux_to_x(t_notation_obj *r_ob, double ux)
 {
-    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-        return r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (ux - r_ob->screen_ms_start * CONST_X_SCALING) * r_ob->zoom_x) + r_ob->j_inset_x;
-    else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-        return unscaled_xposition_to_xposition(r_ob, ux);
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        return ux + r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad - r_ob->screen_ms_start * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
+//        return r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (ux - r_ob->screen_ms_start * CONST_X_SCALING) * r_ob->zoom_x) + r_ob->j_inset_x;
+    } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+        return unscaled_xposition_to_xposition(r_ob, ux/(r_ob->zoom_x * r_ob->zoom_y));
     return 0;
+    
 }
 
 t_beziercs *label_family_contour_apply_zoom(t_notation_obj *r_ob, t_beziercs *contour)
@@ -1692,13 +1694,13 @@ t_beziercs *label_family_contour_apply_zoom(t_notation_obj *r_ob, t_beziercs *co
     
     for (i = 0; i < num_segments; i++) {
         // modifying ux coordinate to x
-        pts[i].x = label_family_contour_ux_to_x(r_ob, contour->vertices[i].x);
+        pts[i].x = unscaled_xposition_to_xposition(r_ob, contour->vertices[i].x);
         pts[i].y = contour->vertices[i].y;
         
-        cp1[i].x = label_family_contour_ux_to_x(r_ob, contour->ctrl_pt_1[i].x);
+        cp1[i].x = unscaled_xposition_to_xposition(r_ob, contour->ctrl_pt_1[i].x);
         cp1[i].y = contour->ctrl_pt_1[i].y;
         
-        cp2[i].x = label_family_contour_ux_to_x(r_ob, contour->ctrl_pt_2[i].x);
+        cp2[i].x = unscaled_xposition_to_xposition(r_ob, contour->ctrl_pt_2[i].x);
         cp2[i].y = contour->ctrl_pt_2[i].y;
     }
     
@@ -1718,8 +1720,9 @@ void paint_venn_label_families(t_notation_obj *r_ob, t_object *view, t_jgraphics
         t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&famelem->l_hatom);
         
         // updating, if needed
-        if (fam->need_update_contour) {
-            if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_VENN) 
+//        dev_post("restore this!!!");
+        if (fam->need_update_contour) { // TO DO: restore!!!!
+            if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_VENN)
                 update_label_family_contour(r_ob, fam, g);
             fam->need_update_contour = false;
         }
@@ -4128,7 +4131,7 @@ double deltaonset_to_deltaxpixels(t_notation_obj *r_ob, double deltaonset){
 }
 
 
-// mostly for score, but also used by bach.roll
+// mostly for bach.score, but also used by bach.roll
 double unscaled_xposition_to_xposition(t_notation_obj *r_ob, double unscaled_x_pos){
     double const_left_start = ((r_ob->spacing_type == k_SPACING_PROPORTIONAL || r_ob->obj_type == k_NOTATION_OBJECT_ROLL) ? CONST_ROLL_UX_LEFT_START : CONST_SCORE_UX_LEFT_START);
     double const_x_scaling = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 1. : CONST_X_SCALING_SCORE);
@@ -31241,6 +31244,8 @@ void change_zoom(t_notation_obj *r_ob, double new_zoom_0_to_100){
 
     r_ob->horizontal_zoom = new_zoom_0_to_100;
     r_ob->zoom_x = r_ob->horizontal_zoom / 100.;
+    
+    set_all_label_families_update_contour(r_ob);
 }
 
 
@@ -37028,24 +37033,30 @@ void free_label_family(t_bach_label_family *fam)
 }
 
 
+double note_get_center_ux(t_notation_obj *r_ob, t_note *nt)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        double al_ux = chord_get_alignment_ux(r_ob, nt->parent);
+        double stem_x = get_stem_x_from_alignment_point_x(r_ob, nt->parent, al_ux * r_ob->zoom_x * r_ob->zoom_y);
+        double note_x = stem_x + nt->notecenter_stem_delta_ux * r_ob->zoom_y;
+        return note_x / (r_ob->zoom_x * r_ob->zoom_y);
+    } else {
+        double al_ux = chord_get_alignment_ux(r_ob, nt->parent);
+        double delta_ux_stem = (nt->parent->stem_offset_ux + nt->parent->parent->tuttipoint_reference->offset_ux) - al_ux;
+        return al_ux + (delta_ux_stem + nt->notecenter_stem_delta_ux)/r_ob->zoom_x;
+    }
+    return 0;
+}
+
+
+
 t_pt note_to_family_contour_pt(t_notation_obj *r_ob, t_note *nt, double *leftmost_in, double *rightmost_in, long *topmost_voice, long *bottommost_voice)
 {
     t_pt center = build_pt(0, 0);
-    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-        double center_ux = nt->parent->onset * CONST_X_SCALING; // + nt->notecenter_stem_delta_ux; // can't do this: it's actually not multiplied by the zoom!!!
-        double center_y = mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), (t_voice *) nt->parent->voiceparent);
-        center = build_pt(center_ux, center_y);
-    } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        double center_ux = nt->parent->stem_offset_ux + nt->parent->parent->tuttipoint_reference->offset_ux;// + nt->notecenter_stem_delta_ux;
-        double center_y = mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), (t_voice *) nt->parent->parent->voiceparent);
-        center = build_pt(center_ux, center_y);    
-    }
     
-    // randomize points *slightly*
-/*    const double random_range = 1.;
-    center.x += random_double_in_range(-random_range, random_range);
-    center.y += random_double_in_range(-random_range, random_range);
-*/    
+    center = build_pt(note_get_center_ux(r_ob, nt),
+                      mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), chord_get_voice(r_ob, nt->parent)));
+ 
     if (leftmost_in && (center.x < *leftmost_in || *leftmost_in == -100000))
         *leftmost_in = center.x;
     if (rightmost_in && (center.x > *rightmost_in || *rightmost_in == -100000))
@@ -37065,9 +37076,9 @@ t_pt rest_to_family_contour_pt(t_notation_obj *r_ob, t_chord *ch, double *leftmo
 {
     t_pt center = build_pt(0, 0);
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        double center_ux = ch->stem_offset_ux + ch->parent->tuttipoint_reference->offset_ux;
+        double center_x = ch->stem_offset_ux + ch->parent->tuttipoint_reference->offset_ux;
         double center_y = rest_get_nonfloating_yposition(r_ob, ch, NULL, NULL) - ch->float_steps * r_ob->step_y;
-        center = build_pt(center_ux, center_y);    
+        center = build_pt(center_x, center_y);
     }
     
     if (leftmost_in && (center.x < *leftmost_in || *leftmost_in == -100000))
@@ -37083,7 +37094,7 @@ t_pt rest_to_family_contour_pt(t_notation_obj *r_ob, t_chord *ch, double *leftmo
     return center;
 }
 
-// view and g are for DEBUG ONLY
+// g is for DEBUG ONLY
 void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam, t_jgraphics* g)
 {
     if (!fam->items->l_head) {
@@ -37189,8 +37200,8 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
                 for (meas = voice->firstmeasure; meas; meas = meas->next) {
                     
                     if (notation_item_is_in_label_family((t_notation_item *)meas, fam)) continue;
-                    if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux < leftmost_in_ux - PAD_UX) continue;
-                    if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux > rightmost_in_ux + PAD_UX) break;
+                    if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux < leftmost_in_ux - PAD_UX) continue;
+                    if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux > rightmost_in_ux + PAD_UX) break;
                     
                     for (chord = meas->firstchord; chord; chord = chord->next) {
                         if (notation_item_is_in_label_family((t_notation_item *)chord, fam)) continue;
@@ -37214,9 +37225,18 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
         for (t_llllelem *elem = points_out->l_head; elem && i < (long)points_out->l_size; elem = elem->l_next, i++) 
             pts_out[i] = llll_to_pt(hatom_getllll(&elem->l_hatom));
         
+        // debug
+/*        if (g) {
+            for (long i = 0; i < points_in->l_size; i++)
+                paint_circle(g, build_jrgba(1, 0, 0, 1), build_jrgba(1, 0, 0, 1), unscaled_xposition_to_xposition(r_ob, pts_in[i].x), pts_in[i].y, 1, 1);
+            for (long i = 0; i < points_out->l_size; i++)
+                paint_circle(g, build_jrgba(0, 0, 1, 1), build_jrgba(0, 0, 1, 1), unscaled_xposition_to_xposition(r_ob, pts_out[i].x), pts_out[i].y, 1, 1);
+        } */
+        
         // applying function
         beziercs_free(fam->contour);
-        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, NULL); //g);
+//        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, g);
+        fam->contour = get_venn_enclosure_new(points_in->l_size, pts_in, points_out->l_size, pts_out, g);
 
         bach_freeptr(pts_out);
     }
@@ -37238,12 +37258,14 @@ void update_all_label_families_contour(t_notation_obj *r_ob)
 
 void set_all_label_families_update_contour(t_notation_obj *r_ob)
 {
-    t_bach_label_manager *man = &r_ob->m_labels;
-    t_llllelem *elem;
-    for (elem = man->families->l_head; elem; elem = elem->l_next) {
-        t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&elem->l_hatom);
-        fam->need_update_contour = true;
-    }    
+    if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_VENN) {
+        t_bach_label_manager *man = &r_ob->m_labels;
+        t_llllelem *elem;
+        for (elem = man->families->l_head; elem; elem = elem->l_next) {
+            t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&elem->l_hatom);
+            fam->need_update_contour = true;
+        }
+    }
 }
 
 void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob)

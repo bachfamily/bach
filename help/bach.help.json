@@ -3166,8 +3166,8 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.10_equationchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+if", "relative+parameter+change", "symbolic+variable", "adaptts" ],
-					"tags" : [ "message", "operate", "on", "selection", "equation", "change", "onset", "duration", "tail", "cents", "velocity", "voice", "measure", "modify", "parameter", "symduration" ],
-					"title" : [ "Assigning values via equations" ]
+					"tags" : [ "message", "operate", "on", "selection", "equation", "change", "onset", "duration", "tail", "cents", "velocity", "voice", "measure", "modify", "parameter", "symduration", "expression" ],
+					"title" : [ "Assigning values via expressions" ]
 				},
 				"Inplace" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.11_inplace.maxpat" ],

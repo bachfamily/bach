@@ -9,9 +9,9 @@
 #include "bach.h"
 #include "notation.h"
  
-#ifdef USE_GPC_LIBRARY
-#include "gpc.h"
-#endif
+//#ifdef USE_GPC_LIBRARY
+//#include "gpc.h"
+//#endif
 
 
 
@@ -1937,7 +1937,30 @@ char is_pt_in_triangle(double ptx, double pty, double x1, double y1, double x2, 
         else
             return is_pt_in_segment(ptx, pty, x1, y1, x2, y2);
     }
-} 
+}
+
+char is_any_pt_in_triangle(t_pt t1, t_pt t2, t_pt t3, long num_pts, t_pt *pts)
+{
+    long i;
+    for (i = 0; i < num_pts; i++) {
+        if (is_pt_in_triangle(pts[i].x, pts[i].y, t1.x, t1.y, t2.x, t2.y, t3.x, t3.y))
+            return true;
+    }
+    return false;
+}
+
+char is_any_pt_in_triangle_exclude_vertices(t_pt t1, t_pt t2, t_pt t3, long num_pts, t_pt *pts)
+{
+    long i;
+    for (i = 0; i < num_pts; i++) {
+        if (!pt_pt_cmp(pts[i], t1) || !pt_pt_cmp(pts[i], t2) || !pt_pt_cmp(pts[i], t3))
+            continue;
+        if (is_pt_in_triangle(pts[i].x, pts[i].y, t1.x, t1.y, t2.x, t2.y, t3.x, t3.y))
+            return true;
+    }
+    return false;
+}
+
 
 char is_pt_in_quadrilater(double ptx, double pty, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
     if (is_pt_in_triangle(ptx, pty, x1, y1, x2, y2, x3, y3) || is_pt_in_triangle(ptx, pty, x1, y1, x3, y3, x4, y4))
@@ -1946,6 +1969,15 @@ char is_pt_in_quadrilater(double ptx, double pty, double x1, double y1, double x
         return false;
 }
 
+
+char is_any_pt_in_quadrilater(t_pt q1, t_pt q2, t_pt q3, t_pt q4, long num_pts, t_pt *pts)
+{
+    long i;
+    for (i = 0; i < num_pts; i++)
+        if (is_pt_in_quadrilater(pts[i].x, pts[i].y, q1.x, q1.y, q2.x, q2.y, q3.x, q3.y, q4.x, q4.y))
+            return true;
+    return false;
+}
 
 
 
@@ -1970,6 +2002,12 @@ double pt_pt_dot(t_pt p, t_pt q)
 {
     return p.x * q.x + p.y * q.y;
 }
+
+double pt_pt_cross(t_pt p, t_pt q)
+{
+    return p.x * q.y - p.y * q.x;
+}
+
 
 double pt_segment_distance(t_pt pt, t_pt v, t_pt w) 
 {
@@ -2317,6 +2355,11 @@ t_polygon *polygon_build(long num_points, t_pt *points)
     return out;
 }
 
+t_polygon *polygon_clone(t_polygon *p)
+{
+    return polygon_build(p->num_vertices, p->vertices);
+}
+
 void polygon_free(t_polygon *p)
 {
     if (p)
@@ -2605,7 +2648,7 @@ t_polygon *get_bounding_box(long num_points, t_pt *points, t_pt pad)
 }    
 
 
-
+/*
 #ifdef USE_GPC_LIBRARY
 
 //// GPC to bach conversions
@@ -2613,12 +2656,6 @@ void gpcpolygon_free(gpc_polygon *p)
 {
     gpc_free_polygon(p);
     bach_freeptr(p);
-/*    int c;
-    for (c= 0; c < p->num_contours; c++)
-        bach_freeptr(p->contour[c].vertex);
-    bach_freeptr(p->hole);
-    bach_freeptr(p->contour);
-    p->num_contours= 0; */
 }
 
 
@@ -2626,13 +2663,6 @@ gpc_polygon *bach_polygon_to_gpcpolygon(t_polygon *poly)
 {
     gpc_polygon *gpcpoly = (gpc_polygon *)bach_newptrclear(sizeof(gpc_polygon)); // "void" polygon
 
-    /* gpc_vertex v[] = { {0.0, 0.0}, {10.0, 0.}, {10.0, 10.10}, {0.0, 10.0} };
-    gpc_vertex_list vl = {
-        4, v
-    };
-    
-    shp = getNewShape(number_of_vertices); */
-    
 //    gpc_polygon *gpcpoly = bach_newptrclear(sizeof(gpcpoly));
     if (poly->num_vertices > 0) {
         gpc_vertex_list *verts = (gpc_vertex_list *)malloc(sizeof(gpc_vertex_list));
@@ -2689,7 +2719,7 @@ t_polygon *polygon_op(gpc_op op, t_polygon *poly1, t_polygon *poly2, long *num_c
 }
 
 #endif
-
+*/
 
 void pts_polygon_dist(t_polygon *poly, long num_pts, t_pt *pts, double *dist)
 {
@@ -2712,6 +2742,17 @@ void are_pts_in_polygon(t_polygon *poly, long num_pts, t_pt *pts, char *res)
     for (i = 0; i < num_pts; i++)
         res[i] = is_pt_in_polygon(pts[i], poly);
 }
+
+char is_any_pt_in_polygon(t_polygon *poly, long num_pts, t_pt *pts)
+{
+    long i;
+    for (i = 0; i < num_pts; i++)
+        if (is_pt_in_polygon(pts[i], poly))
+            return true;
+    return false;
+}
+
+
 
 void are_pts_in_polygon_up_to_thresh(t_polygon *poly, long num_pts, t_pt *pts, char *res, double threshold)
 {
@@ -2965,171 +3006,6 @@ t_polygon *polygon_shrink_smart(t_polygon *poly, double amount, long wanted_pts_
 }
 
 
-t_polygon *polygon_offset_smart(t_polygon *poly, double amount, long unwanted_pts_size, t_pt *unwanted_pts, 
-                                 char mode, t_polygon *container, 
-                                 char algo_intersect, long wanted_pts_size, t_pt *wanted_pts, t_jgraphics *g) // last two must be only given if algo_intersect is true
-{
-    long n = poly->num_vertices;
-    double amount_used = amount;
-    t_polygon *poly_extr = polygon_build(0, NULL);
-
-    t_polygon *temp0 = NULL;
-    t_polygon *container_extr = container && algo_intersect ? polygon_shrink_smart(container, amount_used, wanted_pts_size, wanted_pts) : NULL;
-
-    if (g && container_extr) {
-        t_jrgba violet = build_jrgba(1, 0, 1, 1);
-        paint_polygon(g, &violet, NULL, 1., container_extr);
-    }
-    
-#ifdef USE_GPC_LIBRARY
-    if (mode == 1) 
-        temp0 = polygon_op(GPC_DIFF, poly, container, NULL);
-    else if (mode == 2)
-        temp0 = polygon_op(GPC_INT, poly, container, NULL);
-#endif
-    
-    
-    
-    char *unwanted_inpoly_before = (char *)bach_newptr(unwanted_pts_size * sizeof(char));
-    char *unwanted_inpoly_after = (char *)bach_newptr(unwanted_pts_size * sizeof(char));
-
-    t_pt c = polygon_get_barycenter(poly);
-    
-    while (amount_used > 0.0001) { 
-        
-        polygon_free(poly_extr);
-
-        are_pts_in_polygon(poly, unwanted_pts_size, unwanted_pts, unwanted_inpoly_before);
-
-        // find expansion factor
-        double factor = offset_amount_to_expansion_factor(poly, amount_used);
-        
-        
-        // actually expand
-        if (n == 1) {
-            // build square around single point
-            t_pt pts[4];
-            pts[0] = pt_pt_sum(poly->vertices[0], build_pt(-amount_used, -amount_used));
-            pts[1] = pt_pt_sum(poly->vertices[0], build_pt(-amount_used, amount_used));
-            pts[2] = pt_pt_sum(poly->vertices[0], build_pt(amount_used, amount_used));
-            pts[3] = pt_pt_sum(poly->vertices[0], build_pt(amount_used, -amount_used));
-            poly_extr = polygon_build(4, pts);
-            
-        } else if (n == 2) {
-            // offset segment to rectangle
-            t_pt pta = pt_pt_sum(c, pt_number_prod(pt_pt_diff(poly->vertices[0], c), factor));
-            t_pt ptb = pt_pt_sum(c, pt_number_prod(pt_pt_diff(poly->vertices[1], c), factor));
-            t_pt p = pt_pt_diff(ptb, pta);
-            t_pt v = build_pt(-p.y, p.x);
-            v = pt_number_prod(v, amount_used/pt_norm(v));
-            
-            t_pt pts[4];
-            pts[0] = pt_pt_diff(pta, v);
-            pts[1] = pt_pt_sum(pta, v);
-            pts[2] = pt_pt_sum(ptb, v);
-            pts[3] = pt_pt_diff(ptb, v);
-            poly_extr = polygon_build(4, pts);
-        } else {
-            // it depends: if points are ALMOST collinear, we'd love to offset to rectangle, as in n == 2.
-            // take leftmost point, take rightmost point
-            t_pt pt1, pt2; // poly.vertices[2] poly.vertices[1]
-            pts_approximate_with_segment(poly->num_vertices, poly->vertices, &pt1, &pt2);
-            double max_dist = pts_get_max_distance_from_line(poly->num_vertices, poly->vertices, pt1, pt2);
-            
-            if (max_dist < amount_used * 0.8) { // was: / 2.) {
-                // points are almost collinear: let's offset to a rectangle
-                t_pt pta = pt_pt_sum(c, pt_number_prod(pt_pt_diff(pt1, c), factor));
-                t_pt ptb = pt_pt_sum(c, pt_number_prod(pt_pt_diff(pt2, c), factor));
-                t_pt p = pt_pt_diff(ptb, pta);
-                t_pt v = build_pt(-p.y, p.x);
-                v = pt_number_prod(v, amount_used/pt_norm(v));
-                
-                t_pt pts[4];
-                pts[0] = pt_pt_diff(pta, v);
-                pts[1] = pt_pt_sum(pta, v);
-                pts[2] = pt_pt_sum(ptb, v);
-                pts[3] = pt_pt_diff(ptb, v);
-                poly_extr = polygon_build(4, pts);
-            } else {
-                long i; 
-                poly_extr = polygon_build(poly->num_vertices, poly->vertices); // cloning polygon
-                for (i = 0; i < n; i++) 
-                    poly_extr->vertices[i] = pt_pt_sum(c, pt_number_prod(pt_pt_diff(poly->vertices[i], c), factor));
-            }
-        }
-        
-        
-        are_pts_in_polygon(poly_extr, unwanted_pts_size, unwanted_pts, unwanted_inpoly_after);
-
-        if (are_char_arrays_equal(unwanted_pts_size, unwanted_inpoly_before, unwanted_inpoly_after)) {
-
-#ifdef USE_GPC_LIBRARY
-            t_polygon *temp = NULL; // polygon_build(0, NULL);
-            
-            if (!algo_intersect) {
-                // standard algorithm
-                if (mode == 1) // extrusion must stay INSIDE container. Let's see if this is NOT the case
-                    temp = polygon_op(GPC_DIFF, poly_extr, container, NULL);
-                else if (mode == 2) // extrusion must stay OUTSIDE container. Let's see if this is NOT the case
-                    temp = polygon_op(GPC_INT, poly_extr, container, NULL);
-                else
-                    temp = polygon_build(0, NULL);
-                
-                long temp_num_vertices = temp->num_vertices;
-                polygon_free(temp);
-                
-                if (temp_num_vertices == 0 || temp0->num_vertices != 0) {
-                    
-                    // ok, we are done, we haven't added any unwanted point in our enclosure shape
-                    break;
-                } 
-                
-            } else {
-                // intersection algorithm : CURRENTLY NOT WORKING, one should make sure that 
-                // container_extr hasn't lost any red points...
-                if (mode == 1) {
-                    temp = polygon_op(GPC_INT, poly_extr, container_extr, NULL);
-                } else if (mode == 2) {
-                    temp = polygon_op(GPC_DIFF, poly_extr, container_extr, NULL);
-                } else
-                    temp = polygon_build(0, NULL);
-
-                // TO DO: we would need to verify that temp has no holes!
-
-                // we assume that temp_has_no holes
-                polygon_free(poly_extr);
-                poly_extr = temp;
-                
-                // ok, we are done, we haven't added any unwanted point in our enclosure shape
-                break; 
-            }
-#else
-            break;
-#endif
-        }
-        
-        
-        // else:
-        amount_used *= 0.8;
-    }
-    
-    polygon_free(temp0);
-    bach_freeptr(unwanted_inpoly_before);
-    bach_freeptr(unwanted_inpoly_after);
-    polygon_free(container_extr);
-
-    return poly_extr;
-}
-
-void polygon_offset_smart_inplace(t_polygon **poly, double amount, long unwanted_pts_size, t_pt *unwanted_pts, 
-                                   char mode, t_polygon *container, char algo_intersect, long wanted_pts_size, t_pt *wanted_pts, t_jgraphics *g)
-{
-    t_polygon *out = polygon_offset_smart(*poly, amount, unwanted_pts_size, unwanted_pts, mode, container, algo_intersect, wanted_pts_size, wanted_pts, g);
-    polygon_free(*poly);
-    *poly = out;
-}
-
-
 
 char are_all_chars_zero(long num_chars, char *ar)
 {
@@ -3202,7 +3078,7 @@ double polygon_get_upper_bound_for_diameter(t_polygon *poly)
 
 // Returns 1 if the lines intersect, otherwise 0. In addition, if the lines 
 // intersect the intersection point may be stored in the floats i_x and i_y.
-char get_line_intersection(double p0_x, double p0_y, double p1_x, double p1_y, 
+char get_segment_intersection(double p0_x, double p0_y, double p1_x, double p1_y,
                            double p2_x, double p2_y, double p3_x, double p3_y, double *i_x, double *i_y)
 {
     double s1_x, s1_y, s2_x, s2_y;
@@ -3226,17 +3102,52 @@ char get_line_intersection(double p0_x, double p0_y, double p1_x, double p1_y,
     return 0; // No collision
 }
 
-char line_line_intersection(t_pt line1_start, t_pt line1_end, t_pt line2_start, t_pt line2_end, t_pt *res)
+// Returns 1 if the lines intersect, otherwise 0. In addition, if the lines
+// intersect the intersection point may be stored in the floats i_x and i_y.
+char get_line_intersection(double p0_x, double p0_y, double p1_x, double p1_y,
+                              double p2_x, double p2_y, double p3_x, double p3_y, double *i_x, double *i_y, double parallelism_thresh)
 {
-    return get_line_intersection(line1_start.x, line1_start.y, line1_end.x, line1_end.y, 
+    double s1_x, s1_y, s2_x, s2_y;
+    s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
+    s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
+    
+    double s, t;
+    double den = (-s2_x * s1_y + s1_x * s2_y);
+    s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / den;
+    t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / den;
+
+    if (fabs(den) <= parallelism_thresh)
+        return 0;
+    else
+    {
+        // Collision detected
+        if (i_x != NULL)
+            *i_x = p0_x + (t * s1_x);
+        if (i_y != NULL)
+            *i_y = p0_y + (t * s1_y);
+        return 1;
+    }
+}
+
+
+char segment_segment_intersection(t_pt line1_start, t_pt line1_end, t_pt line2_start, t_pt line2_end, t_pt *res)
+{
+    return get_segment_intersection(line1_start.x, line1_start.y, line1_end.x, line1_end.y,
                                  line2_start.x, line2_start.y, line2_end.x, line2_end.y, &(res->x), &(res->y));
+}
+
+
+char line_line_intersection(t_pt line1_start, t_pt line1_end, t_pt line2_start, t_pt line2_end, t_pt *res, double parallelism_thresh)
+{
+    return get_line_intersection(line1_start.x, line1_start.y, line1_end.x, line1_end.y,
+                                 line2_start.x, line2_start.y, line2_end.x, line2_end.y, &(res->x), &(res->y), parallelism_thresh);
 }
 
 
 
 
 // find all intersections between polygon and line
-long polygon_line_intersection(t_polygon *poly, t_pt line_start, t_pt line_end, t_pt **res, long **idx)
+long polygon_segment_intersection(t_polygon *poly, t_pt line_start, t_pt line_end, t_pt **res, long **idx)
 {
     long n = poly->num_vertices;
     if (n <= 2) {
@@ -3249,7 +3160,7 @@ long polygon_line_intersection(t_polygon *poly, t_pt line_start, t_pt line_end, 
     *idx = (long *)bach_newptr(n * sizeof(long));
     
     for (i = 0; i < n; i++) {
-        if (line_line_intersection(line_start, line_end, poly->vertices[i], poly->vertices[(i+1)%n], &((*res)[count]))) 
+        if (segment_segment_intersection(line_start, line_end, poly->vertices[i], poly->vertices[(i+1)%n], &((*res)[count])))
             (*idx)[count++] = i;
     }
     
@@ -3264,7 +3175,7 @@ char polygon_line_nearest_intersection(t_polygon *poly, t_pt line_start, t_pt li
 {
     long *allidx = NULL; 
     t_pt *allres = NULL;
-    long num_intersections = polygon_line_intersection(poly, line_start, line_end, &allres, &allidx);
+    long num_intersections = polygon_segment_intersection(poly, line_start, line_end, &allres, &allidx);
     
     if (num_intersections > 0) {
         // finding nearest to c
@@ -3550,11 +3461,27 @@ long extract_pts_having_given_corresponding_value(long num_pts, t_pt *pts, char 
 }
 
 
+// only works for roll at zoomx = zoomy = 1., and at the beginning of the score
 void paint_points_debug(long num_pts, t_pt *pts, t_jrgba *color, t_jgraphics *g)
 {
     long i;
-    for (i = 0; i < num_pts; i++)
-        paint_circle(g, *color, *color, pts[i].x, pts[i].y, 2, 1);
+    for (i = 0; i < num_pts; i++) {
+//        double x = (pts[i].x + CONST_ROLL_UX_LEFT_START + 7); // for roll
+        double x =  pts[i].x * CONST_X_SCALING_SCORE + 7 + CONST_SCORE_UX_LEFT_START;
+
+        
+        paint_circle(g, *color, *color, x, pts[i].y, 2, 1);
+    }
+}
+
+
+void polygon_prune_vertex_inplace(t_polygon *poly, long prune_idx)
+{
+    long n = poly->num_vertices;
+    long j;
+    for (j = prune_idx; j < n-1; j++)
+        poly->vertices[j] = poly->vertices[j+1];
+    poly->num_vertices--;
 }
 
 
@@ -3723,49 +3650,6 @@ void smooth_preserving_inclusion_of_pts(t_polygon *poly, long num_pts, t_pt *pts
 }
 
 
-void add_space_around_points_inplace(t_polygon **poly, long num_pts, t_pt *pts, double thresh)
-{
-#ifdef USE_GPC_LIBRARY
-    long i;
-    t_pt *temp_pts = (t_pt *)bach_newptr((num_pts - 1) * sizeof(t_pt));
-    for (i = 0; i < num_pts; i++) {
-        double this_dist = pt_polygon_distance(pts[i], *poly);
-        if (fabs(this_dist) < thresh) {
-            double this_thresh = thresh;
-            
-            long j, count = 0;
-            for (j = 0; j < num_pts && count < num_pts - 1; j++) {
-                if (j == i) continue;
-                temp_pts[count++] = pts[j];
-            }
-            
-            while (this_thresh > 0.001) {
-                long num_contours = 1;
-                t_polygon *singleton = polygon_build(1, &pts[i]);
-                t_polygon *square = polygon_offset_smart(singleton, this_thresh, num_pts - 1, temp_pts, 0, NULL, false, 0, NULL, NULL);
-                t_polygon *result = polygon_op(this_dist > 0 ? GPC_DIFF : GPC_UNION, *poly, square, &num_contours);
-                
-                if (num_contours == 1) {
-                    polygon_free(*poly);
-                    *poly = result;
-                    polygon_free(singleton);
-                    polygon_free(square);
-                    break;
-                } else {
-                    polygon_free(result);
-                    this_thresh /= 2.;
-                }
-
-                polygon_free(singleton);
-                polygon_free(square);
-            }
-            
-        }
-    }
-    bach_freeptr(temp_pts);
-#endif
-}
-
 
 
 t_polygon *pts_to_triangle(t_pt pt1, t_pt pt2, t_pt pt3)
@@ -3863,146 +3747,218 @@ t_beziercs *refine_poly_to_bezier_preserving_inclusion_of_pts(t_polygon *poly, l
 }
 
 
-
-// g is only for debug purposes
-t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, t_pt *pts_out, t_jgraphics *g)
+double get_min_segment_distance(t_pt seg_start, t_pt seg_end, long num_pts_out, t_pt *pts_out)
 {
-    t_pt *pts = NULL; // Building array of juxtaposed points [pts_in pts_out] 
-    long num_pts = pts_juxtapose(num_pts_in, pts_in, num_pts_out, pts_out, &pts);
+    double min_dist = DBL_MAX;
+    for (long j = 0; j < num_pts_out; j++)
+        min_dist = MIN(min_dist, pt_segment_distance(pts_out[j], seg_start, seg_end));
+    return min_dist;
+}
 
-    
-    t_jrgba red = build_jrgba(1, 0, 0, 0.5);
-//    t_jrgba green = build_jrgba(0, 1, 0, 0.5);
-    t_jrgba blue = build_jrgba(0, 0, 1, 0.5);
-    t_jrgba azure = build_jrgba(0, 1, 1, 0.5);
-    
-    const double start_offset_amount = 14.778289; // weird number, just needs to be non integer
-    const double offset_decay = 0.75;
-    const long VENN_ENCLOSURE_MAX_LOOPS = 10;
-    
-    const char USE_INTERSECTION_ALGO = false;
-    
-    double offset_amount = start_offset_amount;
-    
-    // Painting ins and outs for debug
-    if (g) paint_points_debug(num_pts_in, pts_in, &blue, g);
-    if (g) paint_points_debug(num_pts_out, pts_out, &red, g);
-    
-    t_polygon *poly = get_convex_hull(num_pts_in, pts_in);
-    if (num_pts_in == 1) { // special case
-        polygon_offset_smart_inplace(&poly, offset_amount, num_pts_out, pts_out, 2, poly, false, 0, NULL, g);
-    } else 
-        polygon_offset_smart_inplace(&poly, offset_amount, 0, NULL, 0, NULL, false, 0, NULL, g);
-    
-    if (g) paint_polygon(g, &red, NULL, 1., poly); // debug
-    
-    
-    
-#ifdef USE_GPC_LIBRARY
+t_pt get_perp_vect_ccw(t_pt vec, double size)
+{
+    t_pt perp;
+    perp.x = vec.y;
+    perp.y = -vec.x;
+    perp = pt_number_prod(perp, size / pt_norm(vec));
+    return perp;
+}
 
-    char *unwanted_inpoly = (char *)bach_newptr(num_pts_out * sizeof(char));
-    char *wanted_inpoly = (char *)bach_newptr(num_pts_in * sizeof(char));
-    long num_times = 0;
-    for (; num_times < VENN_ENCLOSURE_MAX_LOOPS; num_times++) {
-    
-        offset_amount *= offset_decay;
-        
-        ///// STEP 1: REMOVE UNWANTED POINTS FROM POLY
-        
-        are_pts_in_polygon(poly, num_pts_out, pts_out, unwanted_inpoly);
+t_pt get_norm_vector(t_pt vec, double norm)
+{
+    return pt_number_prod(vec, norm / pt_norm(vec));
+}
 
-        // if all unwanted points are outside the polygon
-        if (are_all_chars_zero(num_pts_out, unwanted_inpoly))
-            break; // we are done!
-        
-        // else, we extract only the array of unwanted points still inside the polygon
-        t_pt *pts_subout = NULL;
-        long num_pts_subout = extract_pts_having_given_corresponding_value(num_pts_out, pts_out, unwanted_inpoly, 1, &pts_subout);
-        
-        // we compute the convex hull of such pts_subout...
-        t_polygon *poly_to_remove = get_convex_hull(num_pts_subout, pts_subout);
 
-//        if (g) paint_polygon(g, &blue, NULL, 1., poly_to_remove); // debug
+t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, t_pt *pts_out)
+{
+    double amount = ideal_amount;
+    long num_pts = p->num_vertices;
+    long count = 0;
+    t_pt *newpts = (t_pt *) bach_newptr(2 * num_pts * sizeof(t_pt));
+    for (long i = 0; i < num_pts; i++) {
+        // substituting point i
+        long h = positive_mod(i-1, num_pts);
+        long j = positive_mod(i+1, num_pts);
         
-        //... and we offset it, but paying attention not to include the pts_in
-        polygon_offset_smart_inplace(&poly_to_remove, offset_amount, num_pts_in, pts_in, 1, poly, USE_INTERSECTION_ALGO, num_pts_subout, pts_subout, g);
-        bach_freeptr(pts_subout);
-        
-        // N.B.:
-        // But actually what we might do is to clusterize pts_subout into local classes, and remove them one by one.
-        // This would make the algorithm more fitting to wide curves.
-
-//        if (g) paint_polygon(g, &green, NULL, 2., poly_to_remove); // debug
-
-        // now we really need to remove <poly_to_remove> from <poly>
-        polygon_combine_inplace(&poly, poly_to_remove, 0, num_pts_in, pts_in, num_pts_out, pts_out, NULL);
-        polygon_free(poly_to_remove);
-
-//        remove_vertices_preserving_inclusion_of_pts(poly, num_pts, pts, 5, g);
-//        smooth_preserving_inclusion_of_pts(poly, num_pts, pts, 5, g);
-
-//        if (g) paint_polygon(g, &blue, NULL, 3., poly); // debug
-        
-        break;
-        
-        ///// STEP 2: RE-INSERT WANTED ELEMENTS IN POLY
-        are_pts_in_polygon(poly, num_pts_in, pts_in, wanted_inpoly);
-        
-        // if all wanted points are inside the polygon
-        if (are_all_chars_one(num_pts_in, wanted_inpoly))
-            break; // we are done!
-        
-        // else: we extract only the array of wanted points still inside the poly_to_remove
-        t_pt *pts_subin = NULL;
-        long num_pts_subin = extract_pts_having_given_corresponding_value(num_pts_in, pts_in, wanted_inpoly, 0, &pts_subin);
-        
-        // we compute the convex hull of such pts_subin, and we offset it, but paying attention not to include the pts_out
-        t_polygon *poly_to_reinsert = get_convex_hull(num_pts_subin, pts_subin);
-        polygon_offset_smart_inplace(&poly_to_reinsert, offset_amount, num_pts_out, pts_out, 2, poly, USE_INTERSECTION_ALGO, num_pts_subin, pts_subin, g);
-        bach_freeptr(pts_subin);
-
-        polygon_combine_inplace(&poly, poly_to_reinsert, 1, num_pts_in, pts_in, num_pts_out, pts_out, NULL);
-        polygon_free(poly_to_reinsert);
-
-        
+        while (true) {
+            
+            t_pt perp1 = get_perp_vect_ccw(pt_pt_diff(p->vertices[i], p->vertices[h]), amount);
+            t_pt h_ext1 = pt_pt_sum(p->vertices[h], perp1);
+            t_pt i_ext1 = pt_pt_sum(p->vertices[i], perp1);
+            
+            t_pt perp2 = get_perp_vect_ccw(pt_pt_diff(p->vertices[j], p->vertices[i]), amount);
+            t_pt i_ext2 = pt_pt_sum(p->vertices[i], perp2);
+            t_pt j_ext2 = pt_pt_sum(p->vertices[j], perp2);
+            
+            t_pt new_pt;
+            if (line_line_intersection(h_ext1, i_ext1, i_ext2, j_ext2, &new_pt, 0.01)) {
+                if (pt_pt_distance(new_pt, p->vertices[i]) > 2 * amount &&
+                    pt_pt_cross(pt_pt_diff(i_ext2, new_pt), pt_pt_diff(new_pt, i_ext1)) < 0) {
+                    // intersection goes too far: adding two points instead of one
+                    t_pt new_pt1 = pt_pt_sum(i_ext1, get_norm_vector(pt_pt_diff(new_pt, i_ext1), amount));
+                    t_pt new_pt2 = pt_pt_sum(i_ext2, get_norm_vector(pt_pt_diff(new_pt, i_ext2), amount));
+                    if (is_any_pt_in_quadrilater(h_ext1, i_ext1, p->vertices[i], p->vertices[h], num_pts_out, pts_out) ||
+                        is_any_pt_in_quadrilater(i_ext1, new_pt1, new_pt2, i_ext2, num_pts_out, pts_out) ||
+                        is_any_pt_in_triangle(i_ext1, i_ext2, p->vertices[i], num_pts_out, pts_out) ||
+                        is_any_pt_in_quadrilater(i_ext2, j_ext2, p->vertices[j], p->vertices[i], num_pts_out, pts_out)) {
+                        amount = amount * 0.6;
+                    } else {
+                        newpts[count++] = new_pt1;
+                        newpts[count++] = new_pt2;
+                        break; // all right
+                    }
+                }
+                if (is_any_pt_in_quadrilater(h_ext1, i_ext1, p->vertices[i], p->vertices[h], num_pts_out, pts_out) ||
+                    is_any_pt_in_quadrilater(i_ext1, new_pt, i_ext2, p->vertices[i], num_pts_out, pts_out) ||
+                    is_any_pt_in_quadrilater(i_ext2, j_ext2, p->vertices[j], p->vertices[i], num_pts_out, pts_out)) {
+                    amount = amount * 0.6;
+                } else {
+                    newpts[count++] = new_pt;
+                    break; // all right
+                }
+            } else {
+                if (pt_pt_dot(pt_pt_diff(j_ext2, i_ext2), pt_pt_diff(i_ext1, h_ext1)) <= 0) {
+                    // two segments were parallel and face opposite direction (most likely overlapping)
+                    t_pt v = get_norm_vector(pt_pt_diff(p->vertices[i], p->vertices[h]), amount);
+                    t_pt new_pt1 = pt_pt_sum(i_ext1, v);
+                    t_pt new_pt2 = pt_pt_sum(i_ext2, v);
+                    if (is_any_pt_in_quadrilater(h_ext1, i_ext1, p->vertices[i], p->vertices[h], num_pts_out, pts_out) ||
+                        is_any_pt_in_quadrilater(i_ext1, new_pt1, new_pt2, i_ext2, num_pts_out, pts_out) ||
+                        is_any_pt_in_quadrilater(i_ext2, j_ext2, p->vertices[j], p->vertices[i], num_pts_out, pts_out)) {
+                        amount = amount * 0.6;
+                    } else {
+                        newpts[count++] = new_pt1;
+                        newpts[count++] = new_pt2;
+                        break; // all right
+                    }
+                } else {
+                    new_pt = i_ext2;
+                    if (is_any_pt_in_quadrilater(h_ext1, i_ext1, p->vertices[i], p->vertices[h], num_pts_out, pts_out) ||
+                        is_any_pt_in_quadrilater(i_ext2, j_ext2, p->vertices[j], p->vertices[i], num_pts_out, pts_out)) {
+                        amount = amount * 0.6;
+                    } else {
+                        newpts[count++] = new_pt;
+                        break; // all right
+                    }
+                }
+            }
+            
+            if (amount < 0.001) {
+                dev_post("Cannot extrude segment");
+                newpts[count++] = p->vertices[i];
+                break;
+            }
+        }
     }
     
+    t_polygon *q = polygon_build(count, newpts);
+    bach_freeptr(newpts);
     
-    if (num_pts_in > 1) { // if num_pts_in == 1 we probably won't do this. It'd end up being worse than it was...
-        
-        if (g) paint_polygon_debug(g, &azure, NULL, 1, poly, false);
-        
-        add_space_around_points_inplace(&poly, num_pts, pts, start_offset_amount / 2.);
-        
-        if (g) paint_polygon_debug(g, &blue, NULL, 2, poly, true);
-        
-        remove_vertices_preserving_inclusion_of_pts(poly, num_pts, pts, start_offset_amount / 2., g);
+    return q;
+}
 
-//        if (g) paint_polygon_debug(g, &red, NULL, 2, poly, true);
+void paint_polygon_debug_new(t_polygon *p, t_jgraphics *g, long iteration)
+{
+    t_polygon *q = polygon_clone(p);
+    for (long i = 0; i < q->num_vertices; i++)
+        q->vertices[i].x = 7 + (CONST_ROLL_UX_LEFT_START) + (p->vertices[i].x);
 
-//        remove_vertices_preserving_inclusion_of_pts(poly, num_pts, pts, start_offset_amount / 2., g);
-
-        smooth_preserving_inclusion_of_pts(poly, num_pts, pts, 5, g);
-        
-//        if (g) paint_polygon_debug(g, &green, NULL, 1, poly, false); 
-    }
-        
-    
-    bach_freeptr(unwanted_inpoly);
-    bach_freeptr(wanted_inpoly);
-    
-#endif
-
-    // finally we convert the polygon into a closed bezier spline
-    t_beziercs *beziercs = refine_poly_to_bezier_preserving_inclusion_of_pts(poly, num_pts, pts, 0.5, 0.8, 0.5, NULL);
-
-//    if (g) paint_beziercs(g, &blue, NULL, 1, beziercs);
-    
-    bach_freeptr(pts);
-    polygon_free(poly);
-    
-    return beziercs;
+    t_jrgba c = long_to_color(iteration);
+    paint_polygon(g, &c, NULL, 1, q);
+    polygon_free(q);
 }
 
 
 
+t_beziercs *get_venn_enclosure_new(long num_pts_in, t_pt *pts_in, long num_pts_out, t_pt *pts_out, t_jgraphics *g)
+{
+    // Refining polygon to bezier curve
+    t_pt *pts = NULL; // Building array of juxtaposed points [pts_in pts_out]
+    long num_pts = pts_juxtapose(num_pts_in, pts_in, num_pts_out, pts_out, &pts);
+
+    // 1) find the base path across points
+    const double safe_dist = 20;
+    long *path_ids = (long *)bach_newptr(num_pts_in*sizeof(long));
+    long done[num_pts_in];
+    
+    for (long i = 0; i < num_pts_in; i++)
+        done[i] = false;
+    
+    path_ids[0] = 0;
+    done[0] = true;
+    for (long i = 1; i < num_pts_in; i++) {
+        long best_j = -1;
+        double best_weight = DBL_MAX;
+        for (long j = 0; j < num_pts_in; j++) {
+            if (done[j])
+                continue;
+            double dist = pt_pt_distance(pts_in[i-1], pts_in[j]);
+            double min_dist = get_min_segment_distance(pts_in[i-1], pts_in[j], num_pts_out, pts_out);
+            double this_weight = dist / MIN(1, min_dist / safe_dist);
+            if (best_j < 0 || this_weight < best_weight) {
+                best_weight = this_weight;
+                best_j = j;
+            }
+        }
+        
+        if (best_j < 0)
+            break;
+        
+        path_ids[i] = best_j;
+        done[best_j] = true;
+    }
+    
+    // 2) build initial degenerate polygon from the found path
+    t_pt *new_pts = (t_pt *)bach_newptr((2*num_pts_in - 2)*sizeof(t_pt));
+    long num_new_pts = (2*num_pts_in - 2);
+    for (long i = 0; i < num_pts_in; i++)
+        new_pts[i] = pts_in[path_ids[i]];
+    for (long i = num_pts_in; i < num_new_pts; i++)
+        new_pts[i] = pts_in[path_ids[2*num_pts_in - i - 2]];
+
+    t_polygon *p = polygon_build(num_new_pts, new_pts);
+    
+//    paint_polygon_debug_new(p, g, 1);
+
+    // 3) try to create triangulations to extend the path
+    long num_pruned = 0;
+    while (true) {
+        long i = 0;
+        char pruned = false;
+        while (i < p->num_vertices) {
+            long h = positive_mod(i-1, p->num_vertices);
+            long j = positive_mod(i+1, p->num_vertices);
+            
+            // should we prune i?
+            if (!is_any_pt_in_triangle_exclude_vertices(p->vertices[h], p->vertices[i], p->vertices[j], num_pts, pts) &&
+                pt_pt_cross(pt_pt_diff(p->vertices[i], p->vertices[h]), pt_pt_diff(p->vertices[j], p->vertices[i])) < 0) {
+                pruned = true;
+                num_pruned++;
+                polygon_prune_vertex_inplace(p, i);
+//                paint_polygon_debug_new(p, g, num_pruned+1);
+            }
+            i++;
+        }
+        if (!pruned)
+            break;
+    }
+    
+    // 4) extrude polygon
+    const double EXTRUDE_AMOUNT = 10;
+    t_polygon *q = polygon_extrude(p, EXTRUDE_AMOUNT, num_pts_out, pts_out);
+    
+//    paint_polygon_debug_new(q, g, 0);
+
+    t_beziercs *beziercs = refine_poly_to_bezier_preserving_inclusion_of_pts(q, num_pts, pts, 0.5, 0.8, 0.5, NULL);
+    
+    //    if (g) paint_beziercs(g, &blue, NULL, 1, beziercs);
+    
+    bach_freeptr(path_ids);
+    bach_freeptr(new_pts);
+    bach_freeptr(pts);
+    polygon_free(p);
+    polygon_free(q);
+
+    return beziercs;
+}

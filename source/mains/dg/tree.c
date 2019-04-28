@@ -1140,7 +1140,11 @@ void tree_clear(t_tree *x){
 }
 
 void tree_dump(t_tree *x){
-    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, x->tree_as_llll);
+    if (x->tree_as_llll) {
+        t_llll *cloned = llll_clone(x->tree_as_llll);
+        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 0, cloned);
+        llll_free(cloned);
+    }
 }
 
 void tree_bang(t_tree *x){
