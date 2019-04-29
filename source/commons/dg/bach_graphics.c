@@ -3964,7 +3964,7 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
     for (long i = 0; i < num_pts_in_modif; i++)
         pts_in_modif2[i] = pts_in_modif[i];
     while (crossing_resolved < MAX_RESOLVECROSSING_TRIES) {
-        char changed = false;
+        char changed = false, break_twice = false;
         for (long i = 0; i + 3 < num_pts_in; i++) {
             t_pt i1 = pts_in_modif2[i];
             t_pt i2 = pts_in_modif2[i+1];
@@ -3979,8 +3979,12 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
                         temp_pts[t] = pts_in_modif2[t];
                     for (long t = i+1; t <= i + (j-i); t++)
                         pts_in_modif2[t] = temp_pts[j + (i+1 - t)];
+                    break_twice = true;
+                    break;
                 }
             }
+            if (break_twice)
+                break;
         }
         if (!changed)
             break;
