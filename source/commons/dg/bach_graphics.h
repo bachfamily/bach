@@ -139,6 +139,7 @@ t_polygon *polygon_build(long num_points, t_pt *points);
 
 
 t_pt polygon_get_barycenter(t_polygon *poly);
+char polygon_get_orientation(t_polygon *poly);
 
 
 /**    Determine if a point lies inside a generic polygon

@@ -2378,6 +2378,21 @@ t_pt polygon_get_barycenter(t_polygon *poly)
     return barycenter;
 }
 
+char polygon_get_orientation(t_polygon *poly)
+{
+    double sum = 0;
+    long n = poly->num_vertices;
+    for (long t = 0; t < poly->num_vertices; t++)
+        sum += (poly->vertices[(t+1)%n].x - poly->vertices[t%n].x) * (poly->vertices[(t+1)%n].y + poly->vertices[t%n].y);
+    
+    if (sum > 0)
+        return 1;
+    else if (sum < 0)
+        return -1;
+    else
+        return 0;
+}
+
 
 char is_pt_in_polygon(t_pt pt, t_polygon *poly) 
 {
@@ -3806,6 +3821,15 @@ t_pt get_perp_vect_ccw(t_pt vec, double size)
     return perp;
 }
 
+t_pt get_perp_vect_cw(t_pt vec, double size)
+{
+    t_pt perp;
+    perp.x = -vec.y;
+    perp.y = vec.x;
+    perp = pt_number_prod(perp, size / pt_norm(vec));
+    return perp;
+}
+
 t_pt get_norm_vector(t_pt vec, double norm)
 {
     return pt_number_prod(vec, norm / pt_norm(vec));
@@ -3982,8 +4006,17 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
 
         pts_in_modif[count++] = pt_i;
         
-        while (d < thresh) {
-            t_pt addedpt = pt_pt_sum(pts_out[minidx], get_perp_vect_ccw(pt_pt_diff(pt_j, pt_i), thresh));
+        t_pt inters;
+        char has_inters = line_line_intersection(pt_i, pt_j, pts_out[minidx], pt_pt_sum(pts_out[minidx], get_perp_vect_cw(pt_pt_diff(pt_j, pt_i), EXTRUDE_AMOUNT)), &inters, 0);
+        char ratio_is_ok = true;
+        if (has_inters) {
+            double dist_ratio = (pt_pt_distance(inters, pt_i) / (pt_pt_distance(pt_j, pt_i)));
+            if (dist_ratio < 0.05 || dist_ratio > 0.95)
+                ratio_is_ok = false;
+        }
+        
+        while (d < thresh && has_inters && ratio_is_ok) {
+            t_pt addedpt = pt_pt_sum(pts_out[minidx], get_perp_vect_cw(pt_pt_diff(pt_j, pt_i), thresh));
             d = MIN(get_min_segment_distance(pt_i, addedpt, num_pts_out, pts_out, NULL), get_min_segment_distance(addedpt, pt_j, num_pts_out, pts_out, NULL));
             if (d < thresh) {
                 pts_in_modif[count++] = addedpt;
@@ -4045,7 +4078,7 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
     
     t_polygon *p = polygon_build(num_new_pts, new_pts);
     
-    if (g) paint_polygon_debug_new(p, g, 1, false);
+//    if (g) paint_polygon_debug_new(p, g, 1, false);
 
     
     // 4) try to prune points to extend the path to a true polygon
@@ -4087,6 +4120,9 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
                 // check if the pruned segment would intersect with the other ones
                 char would_new_segment_intersect_existing_segments = false;
                 for (long t = k+2; t%n != h && (t+1)% n != h; t++) {
+                    if (!pt_pt_cmp(p->vertices[t%n], p->vertices[h]) || !pt_pt_cmp(p->vertices[t%n], p->vertices[(k+1)%n]) ||
+                        !pt_pt_cmp(p->vertices[(t+1)%n], p->vertices[h]) || !pt_pt_cmp(p->vertices[(t+1)%n], p->vertices[(k+1)%n]))
+                        continue;
                     if (segment_segment_intersection(p->vertices[h], p->vertices[(k+1)%n], p->vertices[t%n], p->vertices[(t+1)%n], &dummy)) {
                         would_new_segment_intersect_existing_segments = true;
                         break;
@@ -4094,44 +4130,59 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
                 }
                 
                 for (long t = i-1; t <= k+1; t++)
-                    temp_pts2[t-(i-1)] = p->vertices[t%n];
+                    temp_pts2[t-(i-1)] = p->vertices[positive_mod(t, n)];
                 t_polygon *pr_p = polygon_build(prpn, temp_pts2); // pruned polygon
                 
                 // would the pruned polygon intersect itself?
                 char would_pruned_polygon_intersect_itself = false;
                 for (long t = 0; t < prpn - 1; t++) {
+                    char break_twice = false;
                     for (long u = t+2; u < prpn; u++) {
                         if ((u+1) % prpn == t % prpn)
                             continue;
-                        if (segment_segment_intersection(pr_p->vertices[t%n], pr_p->vertices[(t+1)%n], pr_p->vertices[u%n], pr_p->vertices[(u+1)%n], &dummy)) {
+                        if (segment_segment_intersection(pr_p->vertices[t%prpn], pr_p->vertices[(t+1)%prpn], pr_p->vertices[u%prpn], pr_p->vertices[(u+1)%prpn], &dummy)) {
                             would_pruned_polygon_intersect_itself = true;
+                            break_twice = true;
                             break;
                         }
                     }
+                    if (break_twice)
+                        break;
+                }
+                
+                // is the pruned polygon degenerate?
+                char is_pruned_polygon_degenerate = false;
+                for (long t = 0; t < prpn; t++) {
+                    char break_twice = false;
+                    for (long u = t+1; u < prpn; u++) {
+                        if (!pt_pt_cmp(pr_p->vertices[t], pr_p->vertices[u])) {
+                            is_pruned_polygon_degenerate = true;
+                            break_twice = true;
+                            break;
+                        }
+                    }
+                    if (break_twice)
+                        break;
                 }
                 
                 // would the pruned polygon have the right orientation?
-                char is_pruned_polygon_ccw = false;
-                double sum = 0;
-                for (long t = 0; t < prpn; t++)
-                    sum += (pr_p->vertices[(t+1)%prpn].x - pr_p->vertices[t%prpn].x) * (pr_p->vertices[(t+1)%prpn].y + pr_p->vertices[t%prpn].y);
-                if (sum > 0)
-                    is_pruned_polygon_ccw = true;
+                char is_pruned_polygon_ccw = (polygon_get_orientation(pr_p) > 0);
                 
-                // check if is any of the pruned vertices NOT in polygon?
-                // TO DO
+/*                // checking if is any of the pruned vertices NOT in polygon?
+                // SHOULD NOT BE NEEDED!
+  */
                 
                 // should we prune i?
                 if (!would_new_segment_intersect_existing_segments &&
                     !would_pruned_polygon_intersect_itself &&
+                    !is_pruned_polygon_degenerate &&
                     is_pruned_polygon_ccw &&
-                    !is_any_pt_not_in_polygon(pr_p, num_pts_in, pts_in) &&
                     !is_any_pt_in_polygon_exclude_vertices(pr_p, num_pts, pts)) {
                     pruned = true;
                     num_pruned++;
                     for (long t = i; t <= k; t++)
                         polygon_prune_vertex_inplace(p, i);
-                    if (g) paint_polygon_debug_new(p, g, num_pruned+1, false);
+//                    if (g) paint_polygon_debug_new(p, g, num_pruned+1, false);
                 }
                 
                 polygon_free(pr_p);
