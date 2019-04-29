@@ -2439,6 +2439,25 @@ char is_pt_in_polygon(t_pt pt, t_polygon *poly)
 }
 
 
+char is_any_pt_in_polygon_exclude_vertices(t_polygon *poly, long num_pts, t_pt *pts)
+{
+    long i;
+    for (i = 0; i < num_pts; i++) {
+        char must_continue = false;
+        for (long j = 0; j < poly->num_vertices; j++)
+            if (!pt_pt_cmp(pts[i], poly->vertices[j])) {
+                must_continue = true;
+                break;
+            }
+        if (must_continue)
+            continue;
+        if (is_pt_in_polygon(pts[i], poly))
+            return true;
+    }
+    return false;
+}
+
+
 ///////// BEZIER CLOSED CURVE STUFF
 
 
@@ -2752,6 +2771,14 @@ char is_any_pt_in_polygon(t_polygon *poly, long num_pts, t_pt *pts)
     return false;
 }
 
+char is_any_pt_not_in_polygon(t_polygon *poly, long num_pts, t_pt *pts)
+{
+    long i;
+    for (i = 0; i < num_pts; i++)
+        if (!is_pt_in_polygon(pts[i], poly))
+            return true;
+    return false;
+}
 
 
 void are_pts_in_polygon_up_to_thresh(t_polygon *poly, long num_pts, t_pt *pts, char *res, double threshold)
@@ -3787,7 +3814,6 @@ t_pt get_norm_vector(t_pt vec, double norm)
 
 t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, t_pt *pts_out)
 {
-    double amount = ideal_amount;
     long num_pts = p->num_vertices;
     long count = 0;
     t_pt *newpts = (t_pt *) bach_newptr(2 * num_pts * sizeof(t_pt));
@@ -3795,6 +3821,8 @@ t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, 
         // substituting point i
         long h = positive_mod(i-1, num_pts);
         long j = positive_mod(i+1, num_pts);
+        
+        double amount = ideal_amount;
         
         while (true) {
             
@@ -3817,6 +3845,7 @@ t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, 
                         is_any_pt_in_quadrilater(i_ext1, new_pt1, new_pt2, i_ext2, num_pts_out, pts_out) ||
                         is_any_pt_in_triangle(i_ext1, i_ext2, p->vertices[i], num_pts_out, pts_out) ||
                         is_any_pt_in_quadrilater(i_ext2, j_ext2, p->vertices[j], p->vertices[i], num_pts_out, pts_out)) {
+                        // trying to remove point
                         amount = amount * 0.6;
                     } else {
                         newpts[count++] = new_pt1;
@@ -3873,15 +3902,28 @@ t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, 
     return q;
 }
 
-void paint_polygon_debug_new(t_polygon *p, t_jgraphics *g, long iteration)
+void paint_polygon_debug_new(t_polygon *p, t_jgraphics *g, long iteration, char paint_labels)
 {
     t_polygon *q = polygon_clone(p);
-    for (long i = 0; i < q->num_vertices; i++)
+    t_jrgba grey = get_grey(0.5);
+    t_jfont *jf = jfont_create_debug("Times", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, 7);
+    for (long i = 0; i < q->num_vertices; i++) {
         q->vertices[i].x = 7 + (CONST_ROLL_UX_LEFT_START) + (p->vertices[i].x);
+        
+        if (paint_labels) {
+            t_pt t = pt_pt_sum(q->vertices[i], get_perp_vect_ccw(pt_pt_diff(q->vertices[i], q->vertices[(i+1) % q->num_vertices]), 10));
+            char text[200];
+            sprintf(text, "%ld", i);
+            paint_circle_filled(g, grey, q->vertices[i].x, q->vertices[i].y, 1);
+            write_text_simple(g, jf, grey, text, t.x, t.y, 200, 200);
+        }
+    }
 
+    
     t_jrgba c = long_to_color(iteration);
     paint_polygon(g, &c, NULL, 1, q);
     polygon_free(q);
+    jfont_destroy_debug(jf);
 }
 
 
@@ -3965,17 +4007,17 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
         pts_in_modif2[i] = pts_in_modif[i];
     while (crossing_resolved < MAX_RESOLVECROSSING_TRIES) {
         char changed = false, break_twice = false;
-        for (long i = 0; i + 3 < num_pts_in; i++) {
+        for (long i = 0; i + 3 < num_pts_in_modif; i++) {
             t_pt i1 = pts_in_modif2[i];
             t_pt i2 = pts_in_modif2[i+1];
-            for (long j = i+2; j + 1 < num_pts_in; j++) {
+            for (long j = i+2; j + 1 < num_pts_in_modif; j++) {
                 t_pt j1 = pts_in_modif2[j];
                 t_pt j2 = pts_in_modif2[j+1];
                 
                 if (segment_segment_intersection(i1, i2, j1, j2, &inters)) {
                     // resolve crossing
                     changed = true;
-                    for (long t = 0; t < num_pts_in; t++)
+                    for (long t = 0; t < num_pts_in_modif; t++)
                         temp_pts[t] = pts_in_modif2[t];
                     for (long t = i+1; t <= i + (j-i); t++)
                         pts_in_modif2[t] = temp_pts[j + (i+1 - t)];
@@ -3997,46 +4039,117 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
     t_pt *new_pts = (t_pt *)bach_newptr((2*num_pts_in_modif - 2)*sizeof(t_pt));
     long num_new_pts = (2*num_pts_in_modif - 2);
     for (long i = 0; i < num_pts_in_modif; i++)
-        new_pts[i] = pts_in_modif[i];
+        new_pts[i] = pts_in_modif2[i];
     for (long i = num_pts_in_modif; i < num_new_pts; i++)
-        new_pts[i] = pts_in_modif[2*num_pts_in_modif - i - 2];
+        new_pts[i] = pts_in_modif2[2*num_pts_in_modif - i - 2];
     
     t_polygon *p = polygon_build(num_new_pts, new_pts);
     
-    if (g) paint_polygon_debug_new(p, g, 1);
+    if (g) paint_polygon_debug_new(p, g, 1, false);
 
     
-    // 4) try to create triangulations to extend the path to a true polygon
+    // 4) try to prune points to extend the path to a true polygon
     long num_pruned = 0;
-    while (true) {
-        long i = 0;
+    t_pt dummy;
+    t_pt *temp_pts2 = (t_pt *)bach_newptr(p->num_vertices *sizeof(t_pt));
+    while (p->num_vertices >= 3) {
         char pruned = false;
-        while (i < p->num_vertices) {
-            long h = positive_mod(i-1, p->num_vertices);
-            long j = positive_mod(i+1, p->num_vertices);
+        long n = p->num_vertices;
+        for (long i = 0; i < n; i++) {
+            long h = positive_mod(i-1, n);
             
-            // should we prune i?
-            if (!is_any_pt_in_triangle_exclude_vertices(p->vertices[h], p->vertices[i], p->vertices[j], num_pts, pts) &&
-                pt_pt_cross(pt_pt_diff(p->vertices[i], p->vertices[h]), pt_pt_diff(p->vertices[j], p->vertices[i])) < 0) {
-                pruned = true;
-                num_pruned++;
-                polygon_prune_vertex_inplace(p, i);
-//                if (g) paint_polygon_debug_new(p, g, num_pruned+1);
+            /*
+             // ALGORITHM FOR PRUNING JUST TRIANGLES
+             // check if the pruned segment would intersect with the other ones
+             char would_intersect = false;
+             for (long t = 0; t < p->num_vertices; t++) {
+             if (t == h || t == i)
+             continue;
+             if (segment_segment_intersection(p->vertices[h], p->vertices[j], p->vertices[t], p->vertices[t+1], &dummy)) {
+             would_intersect = true;
+             break;
+             }
+             }
+             // should we prune i?
+             if (!would_intersect &&
+             !is_any_pt_in_triangle_exclude_vertices(p->vertices[h], p->vertices[i], p->vertices[j], num_pts, pts) &&
+             pt_pt_cross(pt_pt_diff(p->vertices[i], p->vertices[h]), pt_pt_diff(p->vertices[j], p->vertices[i])) < 0) {
+             pruned = true;
+             num_pruned++;
+             polygon_prune_vertex_inplace(p, i);
+             if (g) paint_polygon_debug_new(p, g, num_pruned+1, false);
+             */
+            
+            for (long k = i + n - 4; k >= i; k--) {
+                // trying to prune from i to k included
+                long prpn = k - i + 3; // pruned poly size
+                
+                // check if the pruned segment would intersect with the other ones
+                char would_new_segment_intersect_existing_segments = false;
+                for (long t = k+2; t%n != h && (t+1)% n != h; t++) {
+                    if (segment_segment_intersection(p->vertices[h], p->vertices[(k+1)%n], p->vertices[t%n], p->vertices[(t+1)%n], &dummy)) {
+                        would_new_segment_intersect_existing_segments = true;
+                        break;
+                    }
+                }
+                
+                for (long t = i-1; t <= k+1; t++)
+                    temp_pts2[t-(i-1)] = p->vertices[t%n];
+                t_polygon *pr_p = polygon_build(prpn, temp_pts2); // pruned polygon
+                
+                // would the pruned polygon intersect itself?
+                char would_pruned_polygon_intersect_itself = false;
+                for (long t = 0; t < prpn - 1; t++) {
+                    for (long u = t+2; u < prpn; u++) {
+                        if ((u+1) % prpn == t % prpn)
+                            continue;
+                        if (segment_segment_intersection(pr_p->vertices[t%n], pr_p->vertices[(t+1)%n], pr_p->vertices[u%n], pr_p->vertices[(u+1)%n], &dummy)) {
+                            would_pruned_polygon_intersect_itself = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // would the pruned polygon have the right orientation?
+                char is_pruned_polygon_ccw = false;
+                double sum = 0;
+                for (long t = 0; t < prpn; t++)
+                    sum += (pr_p->vertices[(t+1)%prpn].x - pr_p->vertices[t%prpn].x) * (pr_p->vertices[(t+1)%prpn].y + pr_p->vertices[t%prpn].y);
+                if (sum > 0)
+                    is_pruned_polygon_ccw = true;
+                
+                // check if is any of the pruned vertices NOT in polygon?
+                // TO DO
+                
+                // should we prune i?
+                if (!would_new_segment_intersect_existing_segments &&
+                    !would_pruned_polygon_intersect_itself &&
+                    is_pruned_polygon_ccw &&
+                    !is_any_pt_not_in_polygon(pr_p, num_pts_in, pts_in) &&
+                    !is_any_pt_in_polygon_exclude_vertices(pr_p, num_pts, pts)) {
+                    pruned = true;
+                    num_pruned++;
+                    for (long t = i; t <= k; t++)
+                        polygon_prune_vertex_inplace(p, i);
+                    if (g) paint_polygon_debug_new(p, g, num_pruned+1, false);
+                }
+                
+                polygon_free(pr_p);
             }
-            i++;
         }
         if (!pruned)
             break;
     }
-    
+
+//    if (g) paint_polygon_debug_new(p, g, 0, true);
+
     // 5) extrude polygon
     t_polygon *q = polygon_extrude(p, EXTRUDE_AMOUNT, num_pts_out, pts_out);
     
-//    if (g) paint_polygon_debug_new(q, g, 0);
-
     // 6) convert to bezier closed spline
     t_beziercs *beziercs = refine_poly_to_bezier_preserving_inclusion_of_pts(q, num_pts, pts, 0.5, 0.8, 0.5, NULL);
     
+    bach_freeptr(temp_pts2);
     bach_freeptr(pts_in_modif2);
     bach_freeptr(temp_pts);
     bach_freeptr(pts_in_modif);

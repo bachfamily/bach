@@ -6165,7 +6165,7 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt, do
                 else if (x->r_ob.align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
                     chord->stem_offset_ux = alignment_point + chord->direction * chord_get_mainside_notehead_uwidth((t_notation_obj *)x, chord->r_sym_duration, chord)/2.;
                 else if (x->r_ob.align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END)
-                    chord->stem_offset_ux = alignment_point - x->r_ob.zoom_y * get_notehead_uwidth((t_notation_obj *)x, chord->r_sym_duration, chord->firstnote, true);
+                    chord->stem_offset_ux = alignment_point - x->r_ob.zoom_y * notehead_get_uwidth((t_notation_obj *)x, chord->r_sym_duration, chord->firstnote, true);
             }
             
             last_done_meas = this_meas;
@@ -7864,7 +7864,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                         long n_steps = midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_screen_midicents(n));
 
                         if (n_steps == note_steps + 1 || n_steps == note_steps || n_steps == note_steps - 1) {
-                            shift = MAX(shift, get_notehead_uwidth((t_notation_obj *)x, c->r_sym_duration, n, true));
+                            shift = MAX(shift, notehead_get_uwidth((t_notation_obj *)x, c->r_sym_duration, n, true));
                         }
                         
                         acc_shift_for_note = shift;
@@ -9354,7 +9354,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 int j = (howmanyflags >= 2) ? (i > 0 ? 4 : 2) : 0;
                                 
                                 if ((curr_ch->direction == 1) && (x->r_ob.notation_typo_preferences.flag_noteheadaligned[j] == 1))
-                                    this_flag_x = flag_x - round(get_notehead_uwidth((t_notation_obj *)x, curr_ch->figure, NULL, false) * x->r_ob.zoom_y) + 1.45;
+                                    this_flag_x = flag_x - round(notehead_get_uwidth((t_notation_obj *)x, curr_ch->figure, NULL, false) * x->r_ob.zoom_y) + 1.45;
                                 else 
                                     this_flag_x = flag_x; 
                                 
@@ -9829,7 +9829,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
                                 t_jrgba annotationcolor = annotation_get_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
-                                double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
+                                double left_corner_x = curr_nt->center.x - notehead_get_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
                                 paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top, last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
                             }
                         }
@@ -10024,9 +10024,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             double xm1, ym1, xm2, ym2; // middle points for line
                             
                             if (beam->direction == -1 && beam->beam_start_chord->direction == 1)
-                                x1 -= get_notehead_uwidth((t_notation_obj *) x, beam->beam_start_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
+                                x1 -= notehead_get_uwidth((t_notation_obj *) x, beam->beam_start_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
                             if (beam->direction == 1 && beam->beam_end_chord->direction == -1)
-                                x2 += get_notehead_uwidth((t_notation_obj *) x, beam->beam_end_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
+                                x2 += notehead_get_uwidth((t_notation_obj *) x, beam->beam_end_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
                             
                             xm1 = x1t - 1 * x->r_ob.zoom_y;
                             ym1 = rescale(xm1, x1, x2, y1, y2);
@@ -10282,7 +10282,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     x->r_ob.j_selection_rgba : x->r_ob.j_tempi_rgba;
                     
                     // tempo figure.
-                    line_x = tempibox_x1 + get_notehead_uwidth((t_notation_obj *) x, curr_tempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
+                    line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, curr_tempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
                     line_y = tempibox_y1 + 5 * x->r_ob.zoom_y;
                     // if it's the veryfirst tempo (the one that is meant to go over the clef) we paint it trasparently, since we'll repaint it later on.
                     // however we need the "width" variable to be properly filled.
@@ -10646,7 +10646,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         double tempibox_x1 = x->r_ob.j_inset_x + 1 + x->r_ob.notation_typo_preferences.clef_ux_shift + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y; // we put the tempo over the clef
                         double tempibox_y1 = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, false) + (-x->r_ob.tempi_uy_pos + thistempo->uy_offset) * x->r_ob.zoom_y;
                         // tempo figure.
-                        double line_x = tempibox_x1 + get_notehead_uwidth((t_notation_obj *) x, thistempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
+                        double line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, thistempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
                         double line_y = tempibox_y1 + 5 * x->r_ob.zoom_y;
                         double tempo_text_width = 0., tempo_text_height = 0., text_x = 0.;
                         double width;

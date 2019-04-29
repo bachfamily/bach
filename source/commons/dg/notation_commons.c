@@ -1308,7 +1308,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
         paint_line(g, r_ob->j_mainstaves_rgba, notehead_center_x - CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 
                    notehead_center_x + CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 1.);
     
-    notehead_left_x = notehead_center_x - get_notehead_uwidth(r_ob, RAT_1OVER4, NULL, false) * small_note_ratio / 2;
+    notehead_left_x = notehead_center_x - notehead_get_uwidth(r_ob, RAT_1OVER4, NULL, false) * small_note_ratio / 2;
     
     // notehead and accidentals
     paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7), system_shift, small_note_ratio);
@@ -20207,9 +20207,9 @@ void build_measure_tuplet_beams_for_level(t_notation_obj *r_ob, t_llll *box, t_j
                         beam->tuplet_graphical_unit = prop->tupletinfo.tuplet_graphical_unit;
                     
                     if (tuplet_direction == -1 && start_ch->direction == 1)
-                        first_ux_pos -= get_notehead_uwidth(r_ob, start_ch->r_sym_duration, NULL, false);
+                        first_ux_pos -= notehead_get_uwidth(r_ob, start_ch->r_sym_duration, NULL, false);
                     if (tuplet_direction == 1 && end_ch->direction == -1)
-                        end_ux_pos += get_notehead_uwidth(r_ob, end_ch->r_sym_duration, NULL, false);
+                        end_ux_pos += notehead_get_uwidth(r_ob, end_ch->r_sym_duration, NULL, false);
                     
                     // force slope? in case the bracket is over a portion of beaming
                     if (prop->tupletinfo.is_over_beam){
@@ -20249,9 +20249,9 @@ void build_measure_tuplet_beams_for_level(t_notation_obj *r_ob, t_llll *box, t_j
                         beam->tuplet_text1_delta_ux = - uwidth/2.;
                     }
                     if (tuplet_direction == -1 && start_ch->direction == 1)
-                        beam->tuplet_text1_delta_ux -= get_notehead_uwidth(r_ob, start_ch->r_sym_duration, NULL, false)/2.;
+                        beam->tuplet_text1_delta_ux -= notehead_get_uwidth(r_ob, start_ch->r_sym_duration, NULL, false)/2.;
                     if (tuplet_direction == 1 && end_ch->direction == -1)
-                        beam->tuplet_text1_delta_ux += get_notehead_uwidth(r_ob, end_ch->r_sym_duration, NULL, false)/2.;
+                        beam->tuplet_text1_delta_ux += notehead_get_uwidth(r_ob, end_ch->r_sym_duration, NULL, false)/2.;
                     
                     append_beam(measure, beam);
 
@@ -23103,7 +23103,7 @@ double chord_get_right_notehead_uwidth(t_notation_obj *r_ob, t_chord *chord){
 double chord_get_mainside_notehead_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_chord *chord)
 {
     if (!chord)
-        return get_notehead_uwidth(r_ob, r_sym_duration, NULL, false);
+        return notehead_get_uwidth(r_ob, r_sym_duration, NULL, false);
     if (chord->direction == 1)
         return chord_get_left_notehead_uwidth(r_ob, chord);
     else
@@ -23131,7 +23131,7 @@ double get_principal_notehead_uwidth(t_notation_obj *r_ob, t_chord *chord)
 {
     t_note *nt = get_principal_note(r_ob, chord);
     if (nt)
-        return get_notehead_uwidth(r_ob, chord->r_sym_duration, nt, true);
+        return notehead_get_uwidth(r_ob, chord->r_sym_duration, nt, true);
     return rest_get_uwidth(r_ob, chord->r_sym_duration);
 }
 
@@ -23176,7 +23176,7 @@ long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeCha
         return get_notehead_specs_from_rdur(r_ob, RAT_1OVER4, character, uwidth, ux_shift, uy_shift, small_ux_shift, small_uy_shift, duration_line_start_ux_shift);
     
     // else:
-    if (uwidth) *uwidth = get_notehead_uwidth(r_ob, ch->r_sym_duration, note, true); // this also accounts for the old way of defining custom noteheads
+    if (uwidth) *uwidth = notehead_get_uwidth(r_ob, ch->r_sym_duration, note, true); // this also accounts for the old way of defining custom noteheads
     
     long res = get_notehead_specs_from_rdur(r_ob, ch->is_score_chord ? ch->figure : ch->r_sym_duration, character, NULL, ux_shift, uy_shift, small_ux_shift, small_uy_shift, duration_line_start_ux_shift);
 
@@ -23186,7 +23186,7 @@ long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeCha
 
 
 // note is only needed if custom notehead is provided; otherwise r_sym_duration suffice
-double get_notehead_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords)
+double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords)
 {
     double grace_ratio = account_for_grace_chords && note && note->parent && note->parent->is_score_chord && note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
     
@@ -24113,7 +24113,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             
             notehead_ux_shift[i] = get_notehead_ux_shift(r_ob, curr_nt);
             
-            noteheads_uwidths[i] = curr_nt->notehead_resize * get_notehead_uwidth(r_ob, chord->is_score_chord ? chord->figure : RAT_1OVER4, curr_nt, false);
+            noteheads_uwidths[i] = curr_nt->notehead_resize * notehead_get_uwidth(r_ob, chord->is_score_chord ? chord->figure : RAT_1OVER4, curr_nt, false);
             curr_nt->notehead_uwidth = noteheads_uwidths[i];
             curr_nt->notehead_ID = get_notehead_specs_from_note(r_ob, curr_nt, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false);
             
@@ -37052,9 +37052,7 @@ double note_get_center_ux(t_notation_obj *r_ob, t_note *nt)
 
 t_pt note_to_family_contour_pt(t_notation_obj *r_ob, t_note *nt, double *leftmost_in, double *rightmost_in, long *topmost_voice, long *bottommost_voice)
 {
-    t_pt center = build_pt(0, 0);
-    
-    center = build_pt(note_get_center_ux(r_ob, nt),
+    t_pt center = build_pt(note_get_center_ux(r_ob, nt),
                       mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), chord_get_voice(r_ob, nt->parent)));
  
     if (leftmost_in && (center.x < *leftmost_in || *leftmost_in == -100000))
@@ -37071,6 +37069,31 @@ t_pt note_to_family_contour_pt(t_notation_obj *r_ob, t_note *nt, double *leftmos
     
     return center;
 }
+
+t_llll *note_to_family_contour_pts(t_notation_obj *r_ob, t_note *nt)
+{
+    t_pt center = build_pt(note_get_center_ux(r_ob, nt),
+                      mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), chord_get_voice(r_ob, nt->parent)));
+
+    t_pt left = center, right = center, top = center, bottom = center;
+
+    double nhuw = (notehead_get_uwidth(r_ob, nt->parent->r_sym_duration, nt, true)/r_ob->zoom_x) * 0.8;
+    double nhuh = r_ob->step_y / (r_ob->zoom_y * r_ob->zoom_x);
+    left.x -= nhuw;
+    right.x += nhuw;
+    top.x -= nhuh;
+    bottom.x += nhuh;
+    
+    t_llll *ll = llll_get();
+    llll_appendllll(ll, pt_to_llll(center, false));
+    llll_appendllll(ll, pt_to_llll(left, false));
+    llll_appendllll(ll, pt_to_llll(right, false));
+    llll_appendllll(ll, pt_to_llll(top, false));
+    llll_appendllll(ll, pt_to_llll(bottom, false));
+
+    return ll;
+}
+
 
 t_pt rest_to_family_contour_pt(t_notation_obj *r_ob, t_chord *ch, double *leftmost_in, double *rightmost_in, long *topmost_voice, long *bottommost_voice)
 {
@@ -37169,7 +37192,7 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
         polygon_free(boundingbox);
     } else {
         double PAD_UX = 40;
-        
+        const char USE_MULTIPOINTS = false;
         // retrieving pts_out
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
             t_rollvoice *voice; t_chord *chord; t_note *note;
@@ -37186,7 +37209,10 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
                     
                     for (note = chord->firstnote; note; note = note->next) {
                         if (notation_item_is_in_label_family((t_notation_item *)note, fam)) continue;
-                        llll_appendllll(points_out, pt_to_llll(note_to_family_contour_pt(r_ob, note, NULL, NULL, NULL, NULL), false), 0, WHITENULL_llll);
+                        if (USE_MULTIPOINTS)
+                            llll_chain(points_out, note_to_family_contour_pts(r_ob, note));
+                        else
+                            llll_appendllll(points_out, pt_to_llll(note_to_family_contour_pt(r_ob, note, NULL, NULL, NULL, NULL), false));
                     }
                 }
             }
@@ -37206,11 +37232,17 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
                     for (chord = meas->firstchord; chord; chord = chord->next) {
                         if (notation_item_is_in_label_family((t_notation_item *)chord, fam)) continue;
                         if (!chord->firstnote) {
-                            llll_appendllll(points_out, pt_to_llll(rest_to_family_contour_pt(r_ob, chord, NULL, NULL, NULL, NULL), false), 0, WHITENULL_llll);
+                            if (USE_MULTIPOINTS)
+                                llll_chain(points_out, note_to_family_contour_pts(r_ob, note));
+                            else
+                                llll_appendllll(points_out, pt_to_llll(rest_to_family_contour_pt(r_ob, chord, NULL, NULL, NULL, NULL), false));
                         } else {
                             for (note = chord->firstnote; note; note = note->next) {
                                 if (notation_item_is_in_label_family((t_notation_item *)note, fam)) continue;
-                                llll_appendllll(points_out, pt_to_llll(note_to_family_contour_pt(r_ob, note, NULL, NULL, NULL, NULL), false), 0, WHITENULL_llll);
+                                if (USE_MULTIPOINTS)
+                                    llll_chain(points_out, note_to_family_contour_pts(r_ob, note));
+                                else
+                                    llll_appendllll(points_out, pt_to_llll(note_to_family_contour_pt(r_ob, note, NULL, NULL, NULL, NULL), false));
                             }
                         }
                     }

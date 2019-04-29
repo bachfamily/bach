@@ -6336,7 +6336,7 @@ unicodeChar get_notehead_unicode_character(t_notation_obj *r_ob, t_rational dura
     @param account_for_grace_chords Also account for reduction factor due to grace chords
     @return                    The unscaled width of the notehead
  */
-double get_notehead_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords);
+double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords);
 
 // TBD
 void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
@@ -6427,7 +6427,7 @@ double get_principal_notehead_uwidth(t_notation_obj *r_ob, t_chord *chord);
     where a single note would be put by default, so it's the left one (in case the stem is up) or the right one (in case the stem is down).
     If a chord reference is given, this takes into account precisely the chord notes (if the chord is a thick cluster, this is 
     in general different than the unscaled with of a single notehead). If a chord reference is not given, the input symbolic duration
-    is taken into account, and the output will simply correspond to the get_notehead_uwidth() function.
+    is taken into account, and the output will simply correspond to the notehead_get_uwidth() function.
     @ingroup                typographical
     @param    r_ob            The notation object
     @param    r_sym_duration    The symbolic duration (accounted for only if no chord reference is given)
