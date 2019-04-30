@@ -2393,6 +2393,20 @@ char polygon_get_orientation(t_polygon *poly)
         return 0;
 }
 
+char triangle_get_orientation(t_pt t1, t_pt t2, t_pt t3)
+{
+    double sum = 0;
+    sum += (t2.x - t1.x) * (t2.y + t1.y);
+    sum += (t3.x - t2.x) * (t3.y + t2.y);
+    sum += (t1.x - t3.x) * (t1.y + t3.y);
+
+    if (sum > 0)
+        return 1;
+    else if (sum < 0)
+        return -1;
+    else
+        return 0;
+}
 
 char is_pt_in_polygon(t_pt pt, t_polygon *poly) 
 {
@@ -3835,9 +3849,57 @@ t_pt get_norm_vector(t_pt vec, double norm)
     return pt_number_prod(vec, norm / pt_norm(vec));
 }
 
-
-t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, t_pt *pts_out)
+long polygon_get_extruded_point_rough(t_polygon *p, long h, long i, long j, double amount, t_pt *pt, t_pt *hh_ext1, t_pt *ii_ext1, t_pt *ii_ext2, t_pt *jj_ext2)
 {
+    t_pt perp1 = get_perp_vect_ccw(pt_pt_diff(p->vertices[i], p->vertices[h]), amount);
+    t_pt h_ext1 = pt_pt_sum(p->vertices[h], perp1);
+    t_pt i_ext1 = pt_pt_sum(p->vertices[i], perp1);
+    
+    t_pt perp2 = get_perp_vect_ccw(pt_pt_diff(p->vertices[j], p->vertices[i]), amount);
+    t_pt i_ext2 = pt_pt_sum(p->vertices[i], perp2);
+    t_pt j_ext2 = pt_pt_sum(p->vertices[j], perp2);
+    
+    if (hh_ext1) *hh_ext1 = h_ext1;
+    if (ii_ext1) *ii_ext1 = i_ext1;
+    if (ii_ext2) *ii_ext2 = i_ext2;
+    if (jj_ext2) *jj_ext2 = j_ext2;
+    
+    return line_line_intersection(h_ext1, i_ext1, i_ext2, j_ext2, pt, 0.01);
+}
+
+t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, double safety_factor, long num_pts_out, t_pt *pts_out)
+{
+    if (p->num_vertices == 1) {
+        // special case
+        t_pt new_pts[4];
+        double amount = ideal_amount;
+        long count;
+        while (true) {
+            for (long i = 0; i < 4; i++)
+                new_pts[i] = p->vertices[0];
+            new_pts[0].x -= amount; new_pts[0].y -= amount;
+            new_pts[1].x += amount; new_pts[1].y -= amount;
+            new_pts[2].x += amount; new_pts[2].y += amount;
+            new_pts[3].x -= amount; new_pts[3].y += amount;
+            count = 4;
+            
+            if (is_any_pt_in_quadrilater(new_pts[0], new_pts[1], new_pts[2], new_pts[3], num_pts_out, pts_out)) {
+                amount *= 0.6;
+            } else {
+                break;
+            }
+            
+            if (amount < 0.001) {
+                //                dev_post("Cannot extrude point");
+                new_pts[0] = p->vertices[0];
+                count = 0;
+                break;
+            }
+        }
+        t_polygon *q = polygon_build(count, new_pts);
+        return q;
+    }
+    
     long num_pts = p->num_vertices;
     long count = 0;
     t_pt *newpts = (t_pt *) bach_newptr(2 * num_pts * sizeof(t_pt));
@@ -3846,20 +3908,13 @@ t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, 
         long h = positive_mod(i-1, num_pts);
         long j = positive_mod(i+1, num_pts);
         
-        double amount = ideal_amount;
+        double amount_factor = safety_factor; // if this is 3 we aim at thrice, to check for out_pts to stay out of that; then we'll extrude by a third of this
+        double amount = ideal_amount * amount_factor;
         
         while (true) {
+            t_pt h_ext1, i_ext1, i_ext2, j_ext2, new_pt;
             
-            t_pt perp1 = get_perp_vect_ccw(pt_pt_diff(p->vertices[i], p->vertices[h]), amount);
-            t_pt h_ext1 = pt_pt_sum(p->vertices[h], perp1);
-            t_pt i_ext1 = pt_pt_sum(p->vertices[i], perp1);
-            
-            t_pt perp2 = get_perp_vect_ccw(pt_pt_diff(p->vertices[j], p->vertices[i]), amount);
-            t_pt i_ext2 = pt_pt_sum(p->vertices[i], perp2);
-            t_pt j_ext2 = pt_pt_sum(p->vertices[j], perp2);
-            
-            t_pt new_pt;
-            if (line_line_intersection(h_ext1, i_ext1, i_ext2, j_ext2, &new_pt, 0.01)) {
+            if (polygon_get_extruded_point_rough(p, h, i, j, amount, &new_pt, &h_ext1, &i_ext1, &i_ext2, &j_ext2)) {
                 if (pt_pt_distance(new_pt, p->vertices[i]) > 2 * amount &&
                     pt_pt_cross(pt_pt_diff(i_ext2, new_pt), pt_pt_diff(new_pt, i_ext1)) < 0) {
                     // intersection goes too far: adding two points instead of one
@@ -3872,8 +3927,8 @@ t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, 
                         // trying to remove point
                         amount = amount * 0.6;
                     } else {
-                        newpts[count++] = new_pt1;
-                        newpts[count++] = new_pt2;
+                        newpts[count++] = pt_pt_sum(i_ext1, get_norm_vector(pt_pt_diff(new_pt, i_ext1), amount / amount_factor));
+                        newpts[count++] = pt_pt_sum(i_ext2, get_norm_vector(pt_pt_diff(new_pt, i_ext2), amount / amount_factor));
                         break; // all right
                     }
                 }
@@ -3882,6 +3937,7 @@ t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, 
                     is_any_pt_in_quadrilater(i_ext2, j_ext2, p->vertices[j], p->vertices[i], num_pts_out, pts_out)) {
                     amount = amount * 0.6;
                 } else {
+                    polygon_get_extruded_point_rough(p, h, i, j, amount/amount_factor, &new_pt, NULL, NULL, NULL, NULL);
                     newpts[count++] = new_pt;
                     break; // all right
                 }
@@ -3896,16 +3952,17 @@ t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, 
                         is_any_pt_in_quadrilater(i_ext2, j_ext2, p->vertices[j], p->vertices[i], num_pts_out, pts_out)) {
                         amount = amount * 0.6;
                     } else {
-                        newpts[count++] = new_pt1;
-                        newpts[count++] = new_pt2;
+                        newpts[count++] = pt_pt_sum(i_ext1, get_norm_vector(pt_pt_diff(p->vertices[i], p->vertices[h]), amount/amount_factor));
+                        newpts[count++] = pt_pt_sum(i_ext2, get_norm_vector(pt_pt_diff(p->vertices[i], p->vertices[h]), amount/amount_factor));
                         break; // all right
                     }
                 } else {
-                    new_pt = i_ext2;
                     if (is_any_pt_in_quadrilater(h_ext1, i_ext1, p->vertices[i], p->vertices[h], num_pts_out, pts_out) ||
                         is_any_pt_in_quadrilater(i_ext2, j_ext2, p->vertices[j], p->vertices[i], num_pts_out, pts_out)) {
                         amount = amount * 0.6;
                     } else {
+//                        new_pt = i_ext2;
+                        polygon_get_extruded_point_rough(p, h, i, j, amount/amount_factor, NULL, NULL, NULL, &new_pt, NULL);
                         newpts[count++] = new_pt;
                         break; // all right
                     }
@@ -3913,7 +3970,7 @@ t_polygon *polygon_extrude(t_polygon *p, double ideal_amount, long num_pts_out, 
             }
             
             if (amount < 0.001) {
-                dev_post("Cannot extrude segment");
+//                dev_post("Cannot extrude segment");
                 newpts[count++] = p->vertices[i];
                 break;
             }
@@ -4003,16 +4060,19 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
         t_pt pt_j = pts_in[path_ids[j]];
         double d = get_min_segment_distance(pt_i, pt_j, num_pts_out, pts_out, &minidx);
         double thresh = EXTRUDE_AMOUNT;
+        char has_inters = false;
+        char ratio_is_ok = true;
 
         pts_in_modif[count++] = pt_i;
         
-        t_pt inters;
-        char has_inters = line_line_intersection(pt_i, pt_j, pts_out[minidx], pt_pt_sum(pts_out[minidx], get_perp_vect_cw(pt_pt_diff(pt_j, pt_i), EXTRUDE_AMOUNT)), &inters, 0);
-        char ratio_is_ok = true;
-        if (has_inters) {
-            double dist_ratio = (pt_pt_distance(inters, pt_i) / (pt_pt_distance(pt_j, pt_i)));
-            if (dist_ratio < 0.05 || dist_ratio > 0.95)
-                ratio_is_ok = false;
+        if (minidx >= 0) {
+            t_pt inters;
+            has_inters = line_line_intersection(pt_i, pt_j, pts_out[minidx], pt_pt_sum(pts_out[minidx], get_perp_vect_cw(pt_pt_diff(pt_j, pt_i), EXTRUDE_AMOUNT)), &inters, 0);
+            if (has_inters) {
+                double dist_ratio = (pt_pt_distance(inters, pt_i) / (pt_pt_distance(pt_j, pt_i)));
+                if (dist_ratio < 0.05 || dist_ratio > 0.95)
+                    ratio_is_ok = false;
+            }
         }
         
         while (d < thresh && has_inters && ratio_is_ok) {
@@ -4069,12 +4129,20 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
     
     
     // 3) build initial degenerate polygon from the found path
-    t_pt *new_pts = (t_pt *)bach_newptr((2*num_pts_in_modif - 2)*sizeof(t_pt));
+    t_pt *new_pts;
     long num_new_pts = (2*num_pts_in_modif - 2);
-    for (long i = 0; i < num_pts_in_modif; i++)
-        new_pts[i] = pts_in_modif2[i];
-    for (long i = num_pts_in_modif; i < num_new_pts; i++)
-        new_pts[i] = pts_in_modif2[2*num_pts_in_modif - i - 2];
+    if (num_pts_in_modif == 1) {
+        new_pts = (t_pt *)bach_newptr(1*sizeof(t_pt));
+        new_pts[0] = pts_in_modif2[0];
+        num_new_pts = 1;
+    } else {
+        new_pts = (t_pt *)bach_newptr((2*num_pts_in_modif - 2)*sizeof(t_pt));
+        num_new_pts = (2*num_pts_in_modif - 2);
+        for (long i = 0; i < num_pts_in_modif; i++)
+            new_pts[i] = pts_in_modif2[i];
+        for (long i = num_pts_in_modif; i < num_new_pts; i++)
+            new_pts[i] = pts_in_modif2[2*num_pts_in_modif - i - 2];
+    }
     
     t_polygon *p = polygon_build(num_new_pts, new_pts);
     
@@ -4192,12 +4260,114 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
             break;
     }
 
-//    if (g) paint_polygon_debug_new(p, g, 0, true);
+    if (g) paint_polygon_debug_new(p, g, 1, true);
 
-    // 5) extrude polygon
-    t_polygon *q = polygon_extrude(p, EXTRUDE_AMOUNT, num_pts_out, pts_out);
-    
-    // 6) convert to bezier closed spline
+    // 5) make a knee of the segments where out points lie too near them
+    double thresh_knee = EXTRUDE_AMOUNT;
+    if (p->num_vertices >= 3) {
+        for (long i = 0; i < p->num_vertices; i++) {
+            // check if edge i, i+1 lies near an pts_out
+            long n = p->num_vertices;
+            long minidx;
+            t_pt pi = p->vertices[i%n];
+            t_pt pj = p->vertices[(i+1)%n];
+            double mindist = get_min_segment_distance(pi, pj, num_pts_out, pts_out, &minidx);
+            
+            if (mindist < thresh_knee) {
+                t_pt inters;
+                t_pt perp = get_perp_vect_cw(pt_pt_diff(pi, pj), EXTRUDE_AMOUNT);
+                char has_inters = line_line_intersection(pi, pj, pts_out[minidx], pt_pt_sum(pts_out[minidx], perp), &inters, 0);
+                if (has_inters) {
+                    double dist_ratio = (pt_pt_distance(inters, pi) / pt_pt_distance(pj, pi));
+                    if (dist_ratio >= 0.05 && dist_ratio <= 0.95) {
+                        double amount = EXTRUDE_AMOUNT;
+                        while (true) {
+                            t_pt base_pt = pt_pt_sum(pi, pt_number_prod(pt_pt_diff(pj, pi), dist_ratio));
+                            t_pt new_pt = pt_pt_sum(base_pt, get_perp_vect_ccw(pt_pt_diff(pi, pj), amount));
+                            
+                            char good = true;
+                            for (long i = 0; i < num_pts; i++)
+                                if (!pt_pt_cmp(new_pt, pts[i])) {
+                                    good = false;
+                                    break;
+                                }
+
+                            if (good) {
+                                for (long t = 0; t < p->num_vertices; t++) {
+                                    if (!pt_pt_cmp(pi, pts[(t+1)%n]) && !pt_pt_cmp(pj, pts[t%n])) {
+                                        good = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (good) {
+                                t_pt dummy;
+                                for (long t = 0; t < p->num_vertices; t++) {
+                                    if (t == i || (t+1)%n == i || t == (i+1)%n || (t+1)%n == (i+1)%n)
+                                        continue;
+                                    if (segment_segment_intersection(pi, new_pt, p->vertices[t], p->vertices[(t+1)%n], &dummy)) {
+                                        good = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (good) {
+                                t_pt dummy;
+                                for (long t = 0; t < p->num_vertices; t++) {
+                                    if (t == i)
+                                        continue;
+                                    if (segment_segment_intersection(base_pt, new_pt, p->vertices[t], p->vertices[(t+1)%n], &dummy)) {
+                                        good = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (good) {
+                                for (long t = 0; t < p->num_vertices; t++) {
+                                    if (t == i)
+                                        continue;
+                                    if (pt_segment_distance(new_pt, p->vertices[t], p->vertices[(t+1)%n]) < amount) {
+                                        good = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            if (good && is_any_pt_in_triangle_exclude_vertices(pi, new_pt, pj, num_pts, pts))
+                                good = false;
+                            
+                            if (good && MIN(get_min_segment_distance(pi, new_pt, num_pts_out, pts_out, &minidx), get_min_segment_distance(new_pt, pj, num_pts_out, pts_out, &minidx)) <= mindist)
+                                good = false;
+                            
+                            if (good) {
+                                polygon_insert_vertex_inplace(p, i+1, new_pt);
+                                i++;
+                                break;
+                            } else {
+                                amount = amount * 0.6;
+                            }
+                            
+                            if (amount < 1) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+//    if (g) paint_polygon_debug_new(p, g, 10, true);
+
+    // 6) extrude polygon
+    t_polygon *q = polygon_extrude(p, EXTRUDE_AMOUNT, 2., num_pts_out, pts_out);
+
+//    if (g) paint_polygon_debug_new(q, g, 11, true);
+
+    // 7) convert to bezier closed spline
     t_beziercs *beziercs = refine_poly_to_bezier_preserving_inclusion_of_pts(q, num_pts, pts, 0.5, 0.8, 0.5, NULL);
     
     bach_freeptr(temp_pts2);
