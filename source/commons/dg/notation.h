@@ -7630,6 +7630,15 @@ void marker_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_marker
  */
 void dynamics_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_dynamics *dyn);
 
+/**    Check and erase all the dependencies for a pitch breakpoint (supposedly because we want to delete the breakpoint right after).
+    @ingroup            notation
+    @param    r_ob        The notation object
+    @param    bpt        The pitch breakpoint whose dependencies must be erased.
+    @see    chord_check_dependencies_before_deleting_it()
+ */
+void breakpoint_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_bpt *bpt);
+
+
 /**    Properly delete a chord from a measure (and clean all fields referencing it).
     @ingroup                notation
     @param    r_ob            The notation object
@@ -11095,6 +11104,8 @@ void clear_preselection(t_notation_obj *r_ob);
  */ 
 void clear_selection(t_notation_obj *r_ob);
 
+// private
+void test_selection(t_notation_obj *r_ob);
 
 /**    Obtain the common type of the selected items. For instance, if all selected items are #k_MEASURE, it returns #k_MEASURE;
     if all elements are either breakpoints or notetails, it returns #k_PITCH_BREAKPOINT_OR_DURATION_TAIL. If types do not

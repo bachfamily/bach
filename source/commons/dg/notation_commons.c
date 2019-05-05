@@ -21391,6 +21391,9 @@ void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *no
     if (notation_item_is_preselected(r_ob, (t_notation_item *)note))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)note);
 
+    for (t_bpt *bpt = note->firstbreakpoint ? note->firstbreakpoint->next : NULL; bpt; bpt = bpt->next)
+        breakpoint_check_dependencies_before_deleting_it(r_ob, bpt);
+    
     if (r_ob->lambda_selected_item_ID == note->r_it.ID)
         r_ob->lambda_selected_item_ID = 0;
     
@@ -26048,6 +26051,23 @@ char move_breakpoint(t_notation_obj *r_ob, t_bpt *breakpoint, double delta_rel_x
         return 1;
     }
     return 0;
+}
+
+
+// selection
+void test_selection(t_notation_obj *r_ob)
+{
+#ifdef CONFIGURATION_Development
+    // clear all the "selection"-linkedlist
+    for (t_notation_item *temp = r_ob->firstselecteditem; temp; temp = temp->next_selected) {
+        for (t_notation_item *temp2 = temp->next_selected; temp2; temp2 = temp2->next_selected) {
+            if (temp == temp2) {
+                char foo;
+                foo = 7; // error
+            }
+        }
+    }
+#endif
 }
 
 
@@ -37267,7 +37287,12 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
         
         // applying function
         beziercs_free(fam->contour);
-        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, g);
+
+#ifdef CONFIGURATION_Development
+        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, NULL);
+#else
+        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, NULL);
+#endif
 
         bach_freeptr(pts_out);
     }

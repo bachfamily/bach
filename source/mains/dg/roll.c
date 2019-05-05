@@ -12331,7 +12331,7 @@ void roll_paint(t_roll *x, t_object *view)
     jbox_get_rect_for_view(&x->r_ob.j_box.l_box.b_ob, view, &rect);
     
     roll_paint_ext(x, view, g, rect);
-    
+
     if (x->r_ob.jit_destination_matrix && strlen(x->r_ob.jit_destination_matrix->s_name) > 0)
         roll_paint_to_jitter_matrix(x, x->r_ob.jit_destination_matrix);
     
@@ -13617,7 +13617,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
     evnum_incr();
 
     llll_format_modifiers(&modifiers, NULL);
-    
+
     x->r_ob.ux_click_marker_diff = 0;
     x->r_ob.j_mouse_is_down = false;
     x->r_ob.j_isdragging = false;
@@ -13985,13 +13985,16 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                             if (is_editable((t_notation_obj *)x, curr_nt->parent->num_notes == 1 ? k_CHORD : k_NOTE, k_DELETION)) {
                                 t_rollvoice *voice = curr_nt->parent->voiceparent;
                                 clicked_ptr = NULL;
+                                
                                 create_simple_notation_item_undo_tick((t_notation_obj *)x, (t_notation_item *)curr_nt->parent, curr_nt->parent->num_notes == 1 ? k_UNDO_MODIFICATION_ADD : k_UNDO_MODIFICATION_CHANGE);
                                 note_delete((t_notation_obj *)x, curr_nt, true);
                                 update_all_accidentals_for_voice_if_needed((t_notation_obj *)x, (t_voice *)voice);
                                 x->r_ob.item_changed_at_mousedown = 1;
+                                
                             }
                             unlock_general_mutex((t_notation_obj *)x);    
                             handle_change_if_there_are_free_undo_ticks((t_notation_obj *)x, k_CHANGED_STANDARD_UNDO_MARKER_AND_BANG, k_UNDO_OP_DELETE_NOTE);
+                            
                             return;
                         } else if ((t_note *)clicked_ptr != curr_nt) {
                             clicked_ptr = curr_nt;
@@ -14460,7 +14463,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         }
                     
     } else if (x->r_ob.j_mousedown_obj_type != k_SCROLLBAR && x->r_ob.j_mousedown_obj_type != k_VSCROLLBAR) {
-        if (is_editable((t_notation_obj *)x, k_SELECTION, k_SINGLE_SELECTION) || is_editable((t_notation_obj *)x, k_SELECTION, k_MULTIPLE_SELECTION)) 
+        if (is_editable((t_notation_obj *)x, k_SELECTION, k_SINGLE_SELECTION) || is_editable((t_notation_obj *)x, k_SELECTION, k_MULTIPLE_SELECTION))
             if (!(modifiers & eShiftKey))
                 clear_selection((t_notation_obj *) x);
     }
@@ -15077,8 +15080,8 @@ void snap_onset_tail_pitch_to_grid_for_selection_if_needed(t_roll *x)
 
 void roll_mouseup(t_roll *x, t_object *patcherview, t_pt pt, long modifiers) {
     char there_are_free_undo_ticks;
-
-    lock_general_mutex((t_notation_obj *)x);    
+    
+    lock_general_mutex((t_notation_obj *)x);
     handle_mouseup_in_bach_inspector((t_notation_obj *) x, &x->r_ob.m_inspector, patcherview, pt);
     slot_handle_mouseup((t_notation_obj *)x, patcherview, pt, modifiers);
     unlock_general_mutex((t_notation_obj *)x);    
