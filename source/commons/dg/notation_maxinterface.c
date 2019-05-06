@@ -4358,8 +4358,9 @@ long handle_background_popup(t_notation_obj *r_ob, long modifiers, e_element_typ
     } else if (chosenelem == 1020 || chosenelem == 1021) {
         double ms = xposition_to_ms(r_ob, r_ob->j_mousedown_point.x, 1);
         clear_selection(r_ob);
-        preselect_notes_in_region(r_ob, chosenelem == 1021 ? 0 : ms, chosenelem == 1021 ? ms : r_ob->length_ms_till_last_note + 100, -100000, 100000, 0, r_ob->num_voices, true, true);
-        preselect_markers_in_region(r_ob, chosenelem == 1021 ? 0 : ms, chosenelem == 1021 ? ms : r_ob->length_ms_till_last_note + 100);
+        preselect_notes_in_region(r_ob, chosenelem == 1021 ? 0 : ms, chosenelem == 1021 ? ms : r_ob->length_ms_till_last_note + 100, -100000, 100000, 0, r_ob->num_voices, r_ob->show_durations, r_ob->show_durations);
+        if (r_ob->show_markers)
+            preselect_markers_in_region(r_ob, chosenelem == 1021 ? 0 : ms, chosenelem == 1021 ? ms : r_ob->length_ms_till_last_note + 100);
         move_preselecteditems_to_selection(r_ob, k_SELECTION_MODE_FORCE_SELECT, false, false);
         notationobj_invalidate_notation_static_layer_and_redraw(r_ob);
     } else {

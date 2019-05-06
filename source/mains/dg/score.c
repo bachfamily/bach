@@ -105,7 +105,6 @@ void score_ceilmeasures(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_subscore(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_collapse(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_merge(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_overtype(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_snap_pitch_to_grid(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 t_llll* get_score_values_as_llll_for_pwgl(t_score *x);
