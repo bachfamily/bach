@@ -1473,7 +1473,7 @@ void autospell_dg_delete_container_ranges(t_notation_obj *r_ob, t_llll *range, t
 // if voice is NULL, all voices are considered
 void notationobj_autospell_dg_do(t_notation_obj *r_ob, t_autospell_params *par, t_voice *voice)
 {
-    
+    char cant_respell_not_even_single_notes = false;
     lock_general_mutex(r_ob);
     
     t_llll *k_subsets_tree = autospell_dg_get_tree(r_ob, par, voice);
@@ -1482,12 +1482,22 @@ void notationobj_autospell_dg_do(t_notation_obj *r_ob, t_autospell_params *par, 
     llll_flatten(scanned, 1, 0);
     llll_rev(scanned, 1, 1);
     
+//    dev_llll_print(scanned);
+    
     for (t_llllelem *el = scanned->l_head; el; el = el->l_next) {
         t_llllelem *this_el = (t_llllelem *)hatom_getobj(&el->l_hatom);
-        if (hatom_gettype(&this_el->l_hatom) == H_LLLL) {
-            t_llll *range = llll_clone(hatom_getllll(&this_el->l_hatom));
+        char type = hatom_gettype(&this_el->l_hatom);
+        t_llll *range = NULL;
+        
+        if (type == H_LLLL) {
+            range = llll_clone(hatom_getllll(&this_el->l_hatom));
             llll_flatten(range, -1, 0);
+        } else if (type == H_OBJ) {
+            range = llll_get();
+            llll_appendobj(range, hatom_getobj(&this_el->l_hatom));
+        }
 
+        if (range) {
             if (par->verbose) {
                 char buf[1024];
                 notes_llll_to_text_buf(r_ob, range, buf, 1024);
@@ -1497,11 +1507,17 @@ void notationobj_autospell_dg_do(t_notation_obj *r_ob, t_autospell_params *par, 
             // Harmonizing all the notes inside range
             if (autospell_dg_respell_notes_multitest(r_ob, par, range)) {
                 // deleting all other scanned items that contain this one
-                autospell_dg_delete_container_ranges(r_ob, range, el);
+                if (type == H_LLLL)
+                    autospell_dg_delete_container_ranges(r_ob, range, el);
+                else
+                    cant_respell_not_even_single_notes = true;
             }
             llll_free(range);
         }
     }
+    
+    if (cant_respell_not_even_single_notes)
+        object_warn((t_object *)r_ob, "Warning: some notes could not be respelled properly due to the too tight respelling conditions");
     
     llll_free(k_subsets_tree);
     llll_free(scanned);
