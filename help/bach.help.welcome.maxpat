@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -155,7 +155,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 225.0, 5.0, 245.0, 40.0 ],
+					"patching_rect" : [ 210.0, 5.0, 245.0, 40.0 ],
 					"text" : "Tutorials are a very good way to start!"
 				}
 
