@@ -2618,6 +2618,8 @@ typedef struct _dynamics_params
     long    dynamics_spectrum_halfwidth;
     double  a;
     double  b;
+    t_symbol    *maxdyn;
+    t_symbol    *mindyn;
 } t_dynamics_params;
 
 
@@ -19152,7 +19154,7 @@ void dynamics_free_marks(t_dynamics *dyn);
 
 long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_inconsistent, char check_unnecessary, char fix_inconsistent, char fix_unnecessary, char selection_only, char verbose);
 long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_to_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode);
-long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh);
+long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh, t_symbol *mindyn, t_symbol *maxdyn);
 long dynamic_mark_cmp_fromtext(char *mark1, char *mark2);
 long dynamic_mark_end_start_cmp(t_dynamics_mark *s1, t_dynamics_mark *s2);
 

@@ -2052,8 +2052,11 @@ char velocity_to_dynamics_builtin(double vel, t_symbol **dyn, t_dynamics_params 
     if (vel < 0 || vel > CONST_MAX_VELOCITY)
         return 1;
     
-    if (vel == 0) { *dyn = gensym("0"); return 0; }
-    if (vel == 127) { *dyn = gensym("sffz"); return 0; }
+    if (vel <= 1 && params->mindyn && params->mindyn != _llllobj_sym_none && strlen(params->mindyn->s_name) > 0) { *dyn = params->mindyn; return 0; }
+    // typically gensym("o");
+    
+    if (vel == 127 && params->maxdyn && params->maxdyn != _llllobj_sym_none && strlen(params->maxdyn->s_name) > 0) { *dyn = params->maxdyn; return 0; }
+    // typically gensym("sffz");
     
     long index = -1;
     
@@ -2411,7 +2414,8 @@ long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll
     params.a = a_exp;
     params.dynamics_spectrum_halfwidth = dynamics_spectrum_halfwidth;
     dynamics_compute_b(&params);
-    
+    params.maxdyn = _llllobj_sym_empty_symbol;
+    params.mindyn = _llllobj_sym_empty_symbol;
     
     for (t_voice *voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice)) {
         t_dynamics *curr_dyn = NULL;
@@ -2544,12 +2548,14 @@ double chord_get_average_velocity(t_chord *ch)
         return avg_vel / count;
 }
 
-long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh)
+long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh, t_symbol *mindyn, t_symbol *maxdyn)
 {
     t_dynamics_params params;
     params.a = a_exp;
     params.dynamics_spectrum_halfwidth = dynamics_spectrum_halfwidth;
     dynamics_compute_b(&params);
+    params.maxdyn = maxdyn;
+    params.mindyn = mindyn;
     
     lock_general_mutex(r_ob);
     
