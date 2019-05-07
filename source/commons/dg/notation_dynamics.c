@@ -249,7 +249,7 @@ void dynamics_get_rect(t_notation_obj *r_ob, t_dynamics *dyn, t_rect *enclosure)
             }
         } else {
             if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-                x2 = onset_to_xposition(r_ob, r_ob->screen_ms_end, NULL);
+                x2 = onset_to_xposition_roll(r_ob, r_ob->screen_ms_end, NULL);
             else
                 x2 = ms_to_xposition(r_ob, r_ob->length_ms_till_last_note);
         }

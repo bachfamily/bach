@@ -4597,7 +4597,7 @@ void start_editing_lyrics(t_notation_obj *r_ob, t_object *patcherview, t_chord *
 	r_ob->is_editing_slot_number = r_ob->link_lyrics_to_slot - 1;
 
 	top = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), false) - r_ob->lyrics_uy_pos * r_ob->zoom_y;
-	left = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition(r_ob, chord->onset, NULL) : unscaled_xposition_to_xposition(r_ob, chord_get_alignment_ux(r_ob, chord))) 
+	left = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, chord->onset, NULL) : unscaled_xposition_to_xposition(r_ob, chord_get_alignment_ux(r_ob, chord))) 
 				+ chord->lyrics->lyrics_ux_shift * r_ob->zoom_y;
 	if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
 		left += (chord->direction == 1 ? -0.5 : 0.5) * get_principal_notehead_uwidth(r_ob, chord) * r_ob->zoom_y;

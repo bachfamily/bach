@@ -351,6 +351,8 @@ void bach_version(t_bach *x)
     
 	post("--- bach: automated composer's helper ---");
 	post("© 2010-2019 - Andrea Agostini and Daniele Ghisi");
+    post("The bach project is maintained thanks to our generous supporters on Patreon.");
+    post("Please consider supporting us on www.patreon.com/bachproject for the price of a coffee.");
     
     
 // Post version

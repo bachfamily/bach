@@ -7125,11 +7125,11 @@ void roll_inletinfo(t_roll *x, void *b, long a, char *t)
 void roll_adjustadditionalstartpad(t_roll *x){
     t_rollvoice *vc; t_chord *ch;
     double this_pad = 0;
-    double this_stem_0 = onset_to_xposition((t_notation_obj *) x, 0, NULL);
+    double this_stem_0 = onset_to_xposition_roll((t_notation_obj *) x, 0, NULL);
     for (vc = x->firstvoice; vc && vc->v_ob.number < x->r_ob.num_voices; vc = vc->next)
         if (!vc->v_ob.hidden){
             for (ch = vc->firstchord; ch; ch = ch->next){
-                double this_stem_x = onset_to_xposition((t_notation_obj *) x, ch->onset, NULL);
+                double this_stem_x = onset_to_xposition_roll((t_notation_obj *) x, ch->onset, NULL);
                 double this_left_pos = this_stem_x - ch->left_uextension - this_stem_0;
                 if (this_left_pos < this_pad) 
                     this_pad = this_left_pos; 
@@ -7248,11 +7248,11 @@ void roll_getdomainpixels(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     llll_appendsym(outlist, gensym("domainpixels"), 0, WHITENULL_llll);
     if (label)
         llll_appendsym(outlist, label, 0, WHITENULL_llll);
-    llll_appenddouble(outlist, onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL), 0, WHITENULL_llll);
+    llll_appenddouble(outlist, onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL), 0, WHITENULL_llll);
     if (x->r_ob.view == k_VIEW_SCROLL)
-        llll_appenddouble(outlist, onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL), 0, WHITENULL_llll);
+        llll_appenddouble(outlist, onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL), 0, WHITENULL_llll);
     else
-        llll_appenddouble(outlist, onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start + x->r_ob.ms_on_a_line, NULL), 0, WHITENULL_llll);
+        llll_appenddouble(outlist, onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start + x->r_ob.ms_on_a_line, NULL), 0, WHITENULL_llll);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, outlist);
     llll_free(outlist);
 }
@@ -7273,7 +7273,7 @@ void roll_getpixelpos(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     llll_appendsym(outlist, gensym("pixelpos"), 0, WHITENULL_llll);
     if (label)
         llll_appendsym(outlist, label, 0, WHITENULL_llll);
-    llll_appenddouble(outlist, onset_to_xposition((t_notation_obj *) x, ms, NULL), 0, WHITENULL_llll);
+    llll_appenddouble(outlist, onset_to_xposition_roll((t_notation_obj *) x, ms, NULL), 0, WHITENULL_llll);
 
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, outlist);
     llll_free(outlist);
@@ -7297,7 +7297,7 @@ void roll_timetopixel(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     llll_appendsym(outlist, _llllobj_sym_pixel, 0, WHITENULL_llll);
     if (label)
         llll_appendsym(outlist, label, 0, WHITENULL_llll);
-    llll_appenddouble(outlist, onset_to_xposition((t_notation_obj *) x, ms, NULL), 0, WHITENULL_llll);
+    llll_appenddouble(outlist, onset_to_xposition_roll((t_notation_obj *) x, ms, NULL), 0, WHITENULL_llll);
     
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 6, outlist);
     llll_free(outlist);
@@ -10741,7 +10741,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
     x->r_ob.inner_width = -1;
     x->r_ob.inner_height = -1;
     x->r_ob.length_ms = 2000;
-    x->r_ob.length_ux = 200; // xposition_to_unscaled_xposition((t_notation_obj *)x, onset_to_xposition((t_notation_obj *)x, x->r_ob.length_ms, NULL));
+    x->r_ob.length_ux = 200; // xposition_to_unscaled_xposition((t_notation_obj *)x, onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.length_ms, NULL));
 
     x->r_ob.first_shown_system = 0;
     x->r_ob.last_shown_system = 0;
@@ -11050,7 +11050,7 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
             char is_marker_preselected = notation_item_is_preselected((t_notation_obj *) x, (t_notation_item *)marker);
             get_names_as_text(marker->r_it.names, buf, 1000);
             if (marker_onset >= x->r_ob.screen_ms_start - 200 / x->r_ob.zoom_x && marker_onset < x->r_ob.screen_ms_end) {
-                this_marker_x = onset_to_xposition((t_notation_obj *)x, marker_onset, NULL);
+                this_marker_x = onset_to_xposition_roll((t_notation_obj *)x, marker_onset, NULL);
                 marker->name_painted_direction = (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end ? -1 : 1);
                 
                 if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
@@ -11058,7 +11058,7 @@ void roll_paint_markers(t_roll *x, t_jgraphics *g, t_rect rect)
                     if (marker->prev->name_line > 0) {
                         for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
                             if (tempmk->name_line == 0) {
-                                if (onset_to_xposition((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
                                     marker->name_line = 0;
                                 break;
                             }
@@ -11105,7 +11105,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
                         *restart_from_this_marker = marker;
                     break;
                 }
-                this_marker_x = onset_to_xposition((t_notation_obj *)x, marker_onset, NULL);
+                this_marker_x = onset_to_xposition_roll((t_notation_obj *)x, marker_onset, NULL);
                 marker->name_painted_direction = (marker_onset + deltaxpixels_to_deltaonset((t_notation_obj *)x, marker->name_uwidth) > x->r_ob.screen_ms_end ? -1 : 1);
                 
                 if (x->r_ob.smart_markername_placement && marker->prev && prev_marker_x + prev_marker_width + 2 * x->r_ob.step_y > this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y) {
@@ -11113,7 +11113,7 @@ void roll_paint_markers_twopass(t_roll *x, t_jgraphics *g, t_rect rect, t_marker
                     if (marker->prev->name_line > 0) {
                         for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
                             if (tempmk->name_line == 0) {
-                                if (onset_to_xposition((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
                                     marker->name_line = 0;
                                 break;
                             }
@@ -11165,7 +11165,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
                     t_dynamics *dyn = chord_get_dynamics(temp);
                     if (dyn) {
                         *curr_hairpin_type = (dyn->lastmark ? dyn->lastmark->hairpin_to_next : 0);
-                        *curr_hairpin_start_x = onset_to_xposition((t_notation_obj *) x, temp->onset, NULL);
+                        *curr_hairpin_start_x = onset_to_xposition_roll((t_notation_obj *) x, temp->onset, NULL);
                         break;
                     }
                 }
@@ -11178,12 +11178,12 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
     
     // finding stem position
     if (x->r_ob.view == k_VIEW_SCROLL) {
-        chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, NULL);
+        chord_alignment_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset, NULL);
     } else if (x->r_ob.view == k_VIEW_PAPYRUS) {
-        chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, &system_index);
+        chord_alignment_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset, &system_index);
         system_shift = system_jump * system_index;
     } else {
-        chord_alignment_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, NULL);
+        chord_alignment_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset, NULL);
     }
     
 #ifdef BACH_PAINT_IDS
@@ -11248,7 +11248,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             int num_ledger_lines; int i;
             long scaleposition;
             double notehead_uwidth;
-            double end_pos = onset_to_xposition((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
+            double end_pos = onset_to_xposition_roll((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
             t_bpt *selected_breakpoint = NULL;
             
             if (is_chord_selected && is_note_preselected)
@@ -11354,7 +11354,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
                         char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
                         char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
                         char is_articulation_selected = notation_item_is_selected((t_notation_obj *) x, (t_notation_item *)art);
-                        double end_pos = onset_to_xposition((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
+                        double end_pos = onset_to_xposition_roll((t_notation_obj *) x,curr_ch->onset+curr_nt->duration, NULL);
                         t_jrgba articulationcolor = articulation_get_color((t_notation_obj *) x, curr_ch, is_articulation_selected, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
                         paint_articulation((t_notation_obj *) x, g, &articulationcolor, art, (t_notation_item *)curr_nt, curr_ch->direction, stem_x, curr_nt->center.x, curr_nt->center.y, curr_nt->notehead_uwidth, end_pos, part_direction);
                     }
@@ -11394,7 +11394,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
             t_jrgba dynamicscolor = dynamics_get_color((t_notation_obj *) x, curr_ch, is_dynamics_selected, is_item_played, is_item_locked, is_item_muted, is_item_solo, is_chord_linear_edited);
             double chord_alignment_x = chord_get_alignment_x((t_notation_obj *)x, curr_ch);
             
-            double end_pos = onset_to_xposition((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
+            double end_pos = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset + chord_get_max_duration((t_notation_obj *)x, curr_ch), NULL);
             
             paint_dynamics((t_notation_obj *)x, g, &dynamicscolor, nitem, chord_alignment_x, end_pos - chord_alignment_x, dyn, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, curr_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false, x->r_ob.fade_predomain ? 0 : predomain_width);
         }
@@ -11419,7 +11419,7 @@ void roll_paint_chord(t_roll *x, t_object *view, t_jgraphics *g, t_rollvoice *vo
                 t_chord *tmpch = (t_chord *) tmp;
                 if (tmpch->onset <= curr_ch->onset) {
                     double tmp_staff_top_y = (tmpch->voiceparent == curr_ch->voiceparent ? staff_top_y : get_staff_top_y((t_notation_obj *) x, (t_voice *)tmpch->voiceparent, false));
-                    paint_dashed_line(g, stemcolor, onset_to_xposition((t_notation_obj *) x, tmpch->onset, NULL), tmp_staff_top_y + (x->r_ob.show_stems > 0 ? tmpch->stemtip_stafftop_uy : (tmpch->direction == -1 ? tmpch->bottommostnote_stafftop_uy : tmpch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y,
+                    paint_dashed_line(g, stemcolor, onset_to_xposition_roll((t_notation_obj *) x, tmpch->onset, NULL), tmp_staff_top_y + (x->r_ob.show_stems > 0 ? tmpch->stemtip_stafftop_uy : (tmpch->direction == -1 ? tmpch->bottommostnote_stafftop_uy : tmpch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y,
                                       stem_x, staff_top_y + (x->r_ob.show_stems > 0 ? curr_ch->stemtip_stafftop_uy : (curr_ch->direction == -1 ? curr_ch->bottommostnote_stafftop_uy : curr_ch->topmostnote_stafftop_uy)) * x->r_ob.zoom_y, 0.5, 2);
                 }
             }
@@ -11476,7 +11476,7 @@ void roll_paint_linear_editing_stuff(t_roll *x, t_jgraphics *g, t_rollvoice *voi
 {
     if (x->r_ob.notation_cursor.voice == (t_voice *)voice) {
         double yy, ypos = voice->v_ob.middleC_y - x->r_ob.notation_cursor.step * x->r_ob.step_y;
-        double xpos = onset_to_xposition((t_notation_obj *) x, x->r_ob.notation_cursor.onset, NULL);
+        double xpos = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.notation_cursor.onset, NULL);
         paint_line(g, x->r_ob.j_linear_edit_rgba, xpos, staff_top_y, xpos, staff_bottom_y, 2);
         
         // ledger lines?
@@ -11506,7 +11506,7 @@ void roll_paint_last_hairpin(t_roll *x, t_jgraphics *g, t_rect rect, t_jfont *jf
             t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, last_drawn_chord, curr_hairpin_type, false, true);
             double curr_hairpin_end_x = rect.width * 2;
             if (lastch)
-                curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
+                curr_hairpin_end_x = onset_to_xposition_roll((t_notation_obj *)x, lastch->onset, NULL);
             paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom_y - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, curr_hairpin_start_x, &old_hairpin_type, prev_hairpin_color, prev_hairpin_dontpaint, false, x->r_ob.fade_predomain ? 0 : predomain_width);
         }
     }
@@ -11598,8 +11598,8 @@ void paint_static_stuff1(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
             staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, false);
             
             if (voice_linear_edited) {
-                double x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
-                double x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL);
+                double x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
+                double x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL);
                 paint_rectangle(g, get_grey(1.), change_alpha(x->r_ob.j_linear_edit_rgba, 0.2), x1, staff_top_y, x2 - x1, staff_bottom_y - staff_top_y, 0.);
             }
             
@@ -11759,8 +11759,8 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                 staff_top_y = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, false);
                 
                 if (voice_linear_edited) {
-                    double x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
-                    double x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL);
+                    double x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
+                    double x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL);
                     paint_rectangle(g, get_grey(1.), change_alpha(x->r_ob.j_linear_edit_rgba, 0.2), x1, staff_top_y, x2 - x1, staff_bottom_y - staff_top_y, 0.);
                 }
                 
@@ -11947,8 +11947,8 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                     x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
                     x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
                     
-                    x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
-                    x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
+                    x->r_ob.slot_window_x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                    x->r_ob.slot_window_x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
                     
                 } else if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { // auto
                     double max_x = slot_get_max_x((t_notation_obj *)x, notation_item_get_slot((t_notation_obj *)x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num), x->r_ob.active_slot_num);
@@ -11961,18 +11961,18 @@ void paint_static_stuff_wo_fadedomain(t_roll *x, t_jgraphics *main_g, t_object *
                         x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + rescale(MAX(1., max_x), x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[0], x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[1], 0, notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem));
                     }
                     
-                    x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
-                    x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
+                    x->r_ob.slot_window_x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                    x->r_ob.slot_window_x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
                     
                 } else {
                     if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
                         x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
                         x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth;
-                        x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
-                        x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1);
+                        x->r_ob.slot_window_x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                        x->r_ob.slot_window_x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1);
                     } else {
                         x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
-                        x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                        x->r_ob.slot_window_x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
                         x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
                         x->r_ob.slot_window_ms2 = xposition_to_onset((t_notation_obj *) x, x->r_ob.slot_window_x2, system1);
                     }
@@ -12022,8 +12022,8 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
         double end_x_to_repaint = (22 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
         double fadestart = (15 + x->r_ob.key_signature_uwidth + x->r_ob.voice_names_uwidth + x->r_ob.additional_ux_start_pad) * x->r_ob.zoom_y - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y + x->r_ob.j_inset_x;
 
-/*        double old_fadestart_no_inset = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_FADE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
-        double old_end_x_to_repaint_no_inset = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_DELETE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
+/*        double old_fadestart_no_inset = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_FADE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
+        double old_end_x_to_repaint_no_inset = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start - CONST_X_LEFT_START_DELETE_MS / x->r_ob.zoom_x, NULL) - x->r_ob.additional_ux_start_pad * x->r_ob.zoom_y;
 
         paint_dashed_line(g, build_jrgba(1, 0, 0, 1), old_end_x_to_repaint_no_inset, 0, old_end_x_to_repaint_no_inset, 1000, 1, 5);
         paint_dashed_line(g, build_jrgba(0, 1, 0, 1), old_fadestart_no_inset, 0, old_fadestart_no_inset, 1000, 1, 5);
@@ -12124,8 +12124,8 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                 x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
                 x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
                 
-                x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
-                x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
+                x->r_ob.slot_window_x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                x->r_ob.slot_window_x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
                 
             } else if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth == -2. && slot_is_temporal((t_notation_obj *)x, x->r_ob.active_slot_num)) { // auto
                 double max_x = slot_get_max_x((t_notation_obj *)x, notation_item_get_slot((t_notation_obj *)x, x->r_ob.active_slot_notationitem, x->r_ob.active_slot_num), x->r_ob.active_slot_num);
@@ -12138,18 +12138,18 @@ void paint_static_stuff2(t_roll *x, t_object *view, t_rect rect, t_jfont *jf, t_
                     x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + rescale(MAX(1., max_x), x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[0], x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_domain[1], 0, notation_item_get_duration_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem));
                 }
                 
-                x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
-                x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
+                x->r_ob.slot_window_x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                x->r_ob.slot_window_x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1); // we want it on the same system
 
             } else {
                 if (x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
                     x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
                     x->r_ob.slot_window_ms2 = x->r_ob.slot_window_ms1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth;
-                    x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
-                    x->r_ob.slot_window_x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1);
+                    x->r_ob.slot_window_x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                    x->r_ob.slot_window_x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms2, &system1);
                 } else {
                     x->r_ob.slot_window_ms1 = notation_item_get_onset_ms((t_notation_obj *)x, x->r_ob.active_slot_notationitem);
-                    x->r_ob.slot_window_x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
+                    x->r_ob.slot_window_x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.slot_window_ms1, &system1);
                     x->r_ob.slot_window_x2 = x->r_ob.slot_window_x1 + x->r_ob.slotinfo[x->r_ob.active_slot_num].slot_uwidth * x->r_ob.zoom_y * (x->r_ob.slot_window_zoom / 100.);
                     x->r_ob.slot_window_ms2 = xposition_to_onset((t_notation_obj *) x, x->r_ob.slot_window_x2, system1);
                 }
@@ -12235,8 +12235,8 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
         notationobj_build_notation_item_surfaces((t_notation_obj *)x, view, rect);
     
     if (x->r_ob.highlight_domain) {
-        double x1 = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
-        double x2 = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL);
+        double x1 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL);
+        double x2 = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL);
         paint_rectangle(g, change_alpha(x->r_ob.j_selection_rgba, 0.1), change_alpha(x->r_ob.j_selection_rgba, 0.1), x1, 0, x2-x1, rect.height, 0);
     }
     
@@ -12266,8 +12266,8 @@ void roll_paint_ext(t_roll *x, t_object *view, t_jgraphics *g, t_rect rect)
     // paint loop region?
     if (x->r_ob.show_loop_region) {
         double playhead_y1, playhead_y2;
-        double x1 = onset_to_xposition((t_notation_obj *)x, x->r_ob.loop_region.start.position_ms, NULL);
-        double x2 = onset_to_xposition((t_notation_obj *)x, x->r_ob.loop_region.end.position_ms, NULL);
+        double x1 = onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.loop_region.start.position_ms, NULL);
+        double x2 = onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.loop_region.end.position_ms, NULL);
         get_playhead_ypos((t_notation_obj *)x, rect, &playhead_y1, &playhead_y2);
         paint_loop_region((t_notation_obj *) x, g, rect, x->r_ob.j_loop_rgba, x1, x2, playhead_y1, playhead_y2, 1.);
     }
@@ -12430,13 +12430,13 @@ double force_inscreen_ms_to_boundary_and_set_mouse_position(t_roll *x, double ms
         return out;
 
     if (!only_if_pt_is_outside_active_screen || 
-        (pt.x > onset_to_xposition((t_notation_obj *)x, x->r_ob.screen_ms_end, NULL) || 
-            (pt.x < onset_to_xposition((t_notation_obj *)x, x->r_ob.screen_ms_start, NULL) && x->r_ob.screen_ms_start > 0))) {
+        (pt.x > onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.screen_ms_end, NULL) || 
+            (pt.x < onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.screen_ms_start, NULL) && x->r_ob.screen_ms_start > 0))) {
         char force_inscreen = force_inscreen_ms_to_boundary(x, ms, false, true, true, true);
         if (force_inscreen == 1)
-            jmouse_setposition_box(patcherview, (t_object *) x, out = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL), pt.y);
+            jmouse_setposition_box(patcherview, (t_object *) x, out = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_end, NULL), pt.y);
         else if (force_inscreen == -1)
-            jmouse_setposition_box(patcherview, (t_object *) x, out = onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL), pt.y);
+            jmouse_setposition_box(patcherview, (t_object *) x, out = onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start, NULL), pt.y);
     }
 
     return out;
@@ -12759,7 +12759,7 @@ void roll_mousedrag(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
         unlock_general_mutex((t_notation_obj *)x);
         
         if (is_editable((t_notation_obj *)x, k_SCROLLBAR, k_ELEMENT_ACTIONS_NONE)) {
-            double screen_end_x = onset_to_xposition((t_notation_obj *)x, x->r_ob.screen_ms_end, NULL);
+            double screen_end_x = onset_to_xposition_roll((t_notation_obj *)x, x->r_ob.screen_ms_end, NULL);
             force_inscreen_ms_to_boundary_and_set_mouse_position(x, pt.x > screen_end_x ? x->r_ob.j_selected_region_ms2 : x->r_ob.j_selected_region_ms1, patcherview, pt, true);
         }
         
@@ -13577,7 +13577,7 @@ char change_cents_delta_for_selection(t_roll *x, double delta, char mode, char a
 
 // returns 1 if the point (point_x, point_y) is on the markername
 int is_in_markername_shape(t_roll *x, long point_x, long point_y, t_marker *marker){
-    double marker_x = onset_to_xposition((t_notation_obj *) x, marker->position_ms, NULL);
+    double marker_x = onset_to_xposition_roll((t_notation_obj *) x, marker->position_ms, NULL);
     double marker_namewidth = marker->name_uwidth * x->r_ob.zoom_y;
     double marker_name_y_start = x->r_ob.j_inset_y + 10 * x->r_ob.zoom_y + notationobj_get_marker_voffset((t_notation_obj *)x, marker);
     double marker_nameheight = x->r_ob.markers_font_size * x->r_ob.zoom_y;
@@ -14162,8 +14162,8 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                         } else if ((modifiers == eAltKey) && (x->r_ob.allow_glissandi) && !notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)curr_nt)) {
                             // add a breakpoint!
                             if (is_editable((t_notation_obj *)x, k_PITCH_BREAKPOINT, k_CREATION)) {
-                                double start_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset, NULL);
-                                double end_x = onset_to_xposition((t_notation_obj *) x, curr_ch->onset + curr_nt->duration, NULL);
+                                double start_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset, NULL);
+                                double end_x = onset_to_xposition_roll((t_notation_obj *) x, curr_ch->onset + curr_nt->duration, NULL);
                                 double rel_x_pos = (end_x > start_x) ? (this_x-start_x)/(end_x-start_x) : -1.;
                                 double y_pos = 0; //yposition_to_mc(x, this_y) - curr_nt->midicents;
                                 t_bpt *this_bpt;
@@ -14901,10 +14901,10 @@ t_llll* get_voice_pixel_values_as_llll(t_roll *x, t_rollvoice *voice){
         t_llll *notes_y_pixel_pos = llll_get();
         t_llll *accidentals_x_pixel_pos = llll_get();
         long system = -1;
-        double this_chord_pixel_start = onset_to_xposition((t_notation_obj *) x, temp_chord->onset, &system);
+        double this_chord_pixel_start = onset_to_xposition_roll((t_notation_obj *) x, temp_chord->onset, &system);
         llll_appenddouble(chord_llll, this_chord_pixel_start, 0, WHITENULL_llll); // pixel start
         for (temp_note = temp_chord->firstnote; temp_note; temp_note = temp_note->next) { // pixel duration
-            llll_appenddouble(notes_pixel_durations_llll, onset_to_xposition((t_notation_obj *) x, temp_chord->onset + temp_note->duration, &system) - this_chord_pixel_start, 0, WHITENULL_llll);    
+            llll_appenddouble(notes_pixel_durations_llll, onset_to_xposition_roll((t_notation_obj *) x, temp_chord->onset + temp_note->duration, &system) - this_chord_pixel_start, 0, WHITENULL_llll);    
             llll_appenddouble(notes_y_pixel_pos, mc_to_yposition((t_notation_obj *) x, note_get_screen_midicents(temp_note), (t_voice *) voice), 0, WHITENULL_llll);
             if (note_get_screen_accidental(temp_note).r_num != 0)
                 llll_appenddouble(accidentals_x_pixel_pos, this_chord_pixel_start + temp_note->accidental_stem_delta_ux * x->r_ob.zoom_y + 
@@ -15372,7 +15372,7 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
                 if (is_in_markername_shape(x, pt.x, pt.y, marker)){
                     unlock_general_mutex((t_notation_obj *)x);    
                     if (is_editable((t_notation_obj *)x, k_MARKER, k_MODIFICATION_NAME))
-                        start_editing_markername((t_notation_obj *) x, patcherview, marker, onset_to_xposition((t_notation_obj *)x, marker->position_ms, NULL) + 3 * x->r_ob.zoom_y);
+                        start_editing_markername((t_notation_obj *) x, patcherview, marker, onset_to_xposition_roll((t_notation_obj *)x, marker->position_ms, NULL) + 3 * x->r_ob.zoom_y);
                     return;
                 }
             }
@@ -16956,7 +16956,7 @@ char move_selection_breakpoint(t_roll *x, double delta_x_pos, double delta_y_pos
         if (curr_it->type == k_PITCH_BREAKPOINT && ((t_bpt *)curr_it)->next && !tail_only) { // it is a breakpoint : let's move it
             t_note *note = ((t_bpt *)curr_it)->owner;
             if (!notation_item_is_globally_locked((t_notation_obj *)x, (t_notation_item *)note)) {
-                double note_length = onset_to_xposition((t_notation_obj *) x, note->parent->onset + note->duration, NULL) - onset_to_xposition((t_notation_obj *) x, note->parent->onset, NULL);
+                double note_length = onset_to_xposition_roll((t_notation_obj *) x, note->parent->onset + note->duration, NULL) - onset_to_xposition_roll((t_notation_obj *) x, note->parent->onset, NULL);
                 double delta_rel_x_pos = delta_x_pos / note_length;
                 
                 if (!(note->parent->r_it.flags & k_FLAG_MODIF_UNDO_WITH_OR_WO_CHECK_ORDER))

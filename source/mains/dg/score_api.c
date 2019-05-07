@@ -8987,7 +8987,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     char lyrics_dashed_going_on = 0, lyrics_word_extension_going_on = 0;
     t_chord *lyrics_word_extensions_start_chord = NULL;
     double left_dashed_ux = 0., left_word_extension_ux = 0.;
-    t_chord *last_drawn_chord = NULL;
     double measure_numbers_top_y = 0;
     t_voice *first_visible_voice = voice_get_first_visible((t_notation_obj *)x);
     char is_in_voiceensemble = (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1);
@@ -9012,7 +9011,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     
     double curr_hairpin_start_x = -100;
     long curr_hairpin_type = 0;
-    char first_painted_chord = true;
+    t_chord *first_painted_chord = NULL;
+    t_chord *last_painted_chord = NULL;
     t_jrgba prev_hairpin_color = x->r_ob.j_dynamics_rgba;
     char prev_hairpin_dontpaint = false;
 
@@ -9163,25 +9163,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             char is_grace_chord = curr_ch->is_grace_chord;
             double grace_ratio = is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
             
-            
-            if (first_painted_chord) {
-                long s = x->r_ob.link_dynamics_to_slot - 1;
-                if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
-                    // check if there's an hairpin ending on this chord
-                    for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
-                        if (chord_has_dynamics(temp)) {
-                            t_dynamics *dyn = chord_get_dynamics(temp);
-                            if (dyn) {
-                                curr_hairpin_type = (dyn->lastmark ? dyn->lastmark->hairpin_to_next : 0);
-                                curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
-                                break;
-                            }
-                        }
-                    }
-                }
-                first_painted_chord = false;
-            }
-            
 //            paint_line(g, build_jrgba(1, 0, 0, 0.5), chord_alignment_point_x, 0., chord_alignment_point_x, rect.height, 1);
             
             // handling selection
@@ -9223,9 +9204,25 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 double chord_first_notehead_uwidth = 0;
                 long i;
                 
+                if (!first_painted_chord) {
+                    long s = x->r_ob.link_dynamics_to_slot - 1;
+                    if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
+                        // check if there's an hairpin ending on this chord
+                        for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
+                            if (chord_has_dynamics(temp)) {
+                                t_dynamics *dyn = chord_get_dynamics(temp);
+                                if (dyn) {
+                                    curr_hairpin_type = (dyn->lastmark ? dyn->lastmark->hairpin_to_next : 0);
+                                    curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    first_painted_chord = curr_ch;
+                }
                 
-                
-                last_drawn_chord = curr_ch;
+                last_painted_chord = curr_ch;
                 
 #ifdef BACH_PAINT_IDS
                 char text[140];
@@ -10328,7 +10325,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     
     // word extension left to draw?
     if (x->r_ob.show_lyrics && x->r_ob.show_lyrics_word_extensions) {
-        if (lyrics_word_extension_going_on && last_drawn_chord != lyrics_word_extensions_start_chord && last_drawn_chord != chord_get_next(lyrics_word_extensions_start_chord)) {
+        if (lyrics_word_extension_going_on && last_painted_chord != lyrics_word_extensions_start_chord && last_painted_chord != chord_get_next(lyrics_word_extensions_start_chord)) {
             double line_y = get_lyrics_word_extension_y_pos((t_notation_obj *) x, staff_bottom);
             double x1 = unscaled_xposition_to_xposition((t_notation_obj *) x, left_word_extension_ux);
             double x2 = x->r_ob.j_inset_x + x->r_ob.inner_width;
@@ -10344,10 +10341,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         long s = x->r_ob.link_dynamics_to_slot - 1;
         if (s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
             long old_hairpin_type = curr_hairpin_type;
-            t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, curr_ch, &curr_hairpin_type, false, true);
+            t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, last_painted_chord, &curr_hairpin_type, false, true);
             double curr_hairpin_end_x = ms_to_xposition((t_notation_obj *)x, x->r_ob.length_ms_till_last_note); // rect.width * 2;
             if (lastch)
-                curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
+                curr_hairpin_end_x = ms_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
+//            curr_hairpin_end_x = onset_to_xposition_roll((t_notation_obj *)x, lastch->onset, NULL);
             paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &old_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false, 0);
         }
     }
@@ -10502,7 +10500,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         if (marker->prev->name_line > 0) {
                             for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
                                 if (tempmk->name_line == 0) {
-                                    if (onset_to_xposition((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
                                         marker->name_line = 0;
                                     break;
                                 }

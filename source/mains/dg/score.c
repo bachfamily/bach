@@ -8160,7 +8160,7 @@ void score_getdomainpixels(t_score *x, t_symbol *s, long argc, t_atom *argv)
 //    if (x->r_ob.view == k_VIEW_SCROLL)
         llll_appenddouble(outlist, end, 0, WHITENULL_llll);
 //    else
-//        llll_appenddouble(outlist, onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start + x->r_ob.ux_on_a_line, NULL), 0, WHITENULL_llll);
+//        llll_appenddouble(outlist, onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start + x->r_ob.ux_on_a_line, NULL), 0, WHITENULL_llll);
 
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, outlist);
     llll_free(outlist);

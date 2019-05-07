@@ -4996,7 +4996,7 @@ BEGIN_CHECK_LINKAGE
                         If you want to get the conversion for the first system (or if you just have one system, like in #k_VIEW_SCROLL), you can leave it NULL.
     @return                The x position in pixels
  */
-double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system); 
+double onset_to_xposition_roll(t_notation_obj *r_ob, double onset, long *system); 
 
 
 /**    Convert a x position in pixels into an onset in milliseconds (only usable by [bach.roll]) 
@@ -5221,7 +5221,7 @@ long scaleposition_to_midicents(long scaleposition);
     @param r_ob                The notation object
     @param onset            The onset in milliseconds
     @return                    The unscaled x position in pixels
-    @see                    onset_to_xposition()
+    @see                    onset_to_xposition_roll()
  */
 double onset_to_unscaled_xposition(t_notation_obj *r_ob, double onset);
 
@@ -5246,7 +5246,7 @@ double unscaled_xposition_to_xposition(t_notation_obj *r_ob, double unscaled_x_p
 double xposition_to_unscaled_xposition(t_notation_obj *r_ob, double x_position);
 
 
-/**    Convert a millisecond position into an horizontal pixel position (for [bach.roll], this is equivalent to calling onset_to_xposition()).
+/**    Convert a millisecond position into an horizontal pixel position (for [bach.roll], this is equivalent to calling onset_to_xposition_roll()).
     @ingroup                conversions
     @param r_ob                The notation object
     @param ms               The millisecond position
@@ -12558,7 +12558,7 @@ t_notation_item *get_rightmost_selected_notation_item(t_notation_obj *r_ob);
     @param    r_ob        The notation object
     @param    chord        The chord
     @return                The unscaled horizontal pixel of the chord's alignment point 
-    @remark                This only works in bach.score. In bach.roll, you can easily get this the horizontal pixel by using onset_to_xposition().
+    @remark                This only works in bach.score. In bach.roll, you can easily get this the horizontal pixel by using onset_to_xposition_roll().
                         Also in bach roll, alignment depends whether stems are shown (in which case stems are the alignment reference) or not 
                         (in which case notehead center is the alignment reference).
  */
