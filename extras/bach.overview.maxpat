@@ -138,8 +138,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 985.0, 209.0, 307.0, 35.0 ],
-					"text" : ";\rmax launchbrowser http://www.patreon.com/bachproject"
+					"patching_rect" : [ 985.0, 233.0, 373.0, 35.0 ],
+					"text" : ";\rmax launchbrowser https://www.patreon.com/bePatron?u=19939828"
 				}
 
 			}
@@ -342,7 +342,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1044.0, 274.0, 259.0, 35.0 ],
+					"patching_rect" : [ 985.0, 313.0, 259.0, 35.0 ],
 					"text" : ";\rmax launchbrowser http://www.bachproject.net"
 				}
 
@@ -614,7 +614,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 2.0, 4223.0, 738.0, 38.0 ],
-									"presentation_linecount" : 4,
 									"text" : "On our Patreon channel we regularly publish video tutorials. A few are free, and cover some basic techniques. \nMore comprehensive tutorials are accessible to Patreon supporters from 4$/month, on top of many other benefits.",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
@@ -666,7 +665,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 1191.0, 4457.003994478941422, 307.0, 35.0 ],
-									"presentation_linecount" : 2,
 									"text" : ";\rmax launchbrowser http://www.patreon.com/bachproject"
 								}
 
@@ -681,7 +679,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 198.5, 6147.0, 364.0, 42.0 ],
-									"presentation_linecount" : 3,
 									"text" : "If you consider bach valuable, and you can afford it, please consider supporting us by becoming a patron"
 								}
 
@@ -774,7 +771,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 16.0, 6006.0, 835.0, 116.0 ],
-									"presentation_linecount" : 10,
 									"text" : "Developing and maintaining bach is a lot of work. \n\nWe have decided to keep bach free and to embrace a business model based on Patreon: how much do you consider bach is valuable for you? If the answer is 0$, or if you cannot afford to pay any price, that's totally fine - we completely understand. \nBut if you can afford to pay us as little as a cup of coffee per month, that would really help. \n\nIn addition to keeping bach accessible for everybody, you'll also have exclusive access to prereleases, video tutorials, and more.",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
@@ -7344,7 +7340,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 7.0, 2640.0, 922.0, 341.0 ],
+									"patching_rect" : [ 7.0, 2640.0, 925.0, 341.0 ],
 									"text" : "bach is an experimental project. It is very likely to contain minor and major bugs, and you are likely to find out that some basic feature is missing, or very uncomfortable to exploit.\n\nIf you use bach, you might find really useful to join the forum of our website                                   . In this community you can discuss topics concerning the bach environment and report bugs. This is the most appropriate context for all these things, since all users can benefit from everyone's experiences. Still, if you want to contact us privately, you can do it at                                             .\n\nThe ideal bug report should contain:\n- the sequence of operation after which the bug has happened - have you been able to reproduce the bug by repeating the same sequence?\n- the exact nature of the bug: what would have been the expected behaviour, and what you have obtained instead.\n- if there has been a crash, a copy of the contents of the crash report window - don't send it to Apple, it's our problem, not theirs.\n- if possible, a copy of the patch in which the bug has happened.\n- if possible, the exact input data that have caused the bug.\n\nPatreon supporters can submit feature requests: that this doesn't necessarily mean that all the features will be implemented. It can be technically impossible, it could require major changes to the overall architecture of the work, it could disrupt another functionality, it could be obtained by patching with some workaround, it could be to difficult for us to implement or we could simply not like it. But be assured that even the craziest feature request will be seriously considered and reflected upon!\n\nGeneral commentaries about the work are also welcome - especially if positive ;) - we need your advice to know in which direction the development should be pushed.\n\nThank you for your feedback!",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
