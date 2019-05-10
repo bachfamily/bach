@@ -47,9 +47,6 @@
     #define USE_NEW_UNDO_SYSTEM                            true    ///< Use the new undo system? Should be always true, we kept it only to be sure that we can always revert to previous way
     #define PLAY_REDRAWS_AT_NOTES_END                    true    ///< Do the play method redraws the static layer at each note end?
     #define    USE_BITMAPS_FOR_STANDARD_QUARTERNOTEHEADS    false    ///< Use bitmaps for standard noteheads – instead than glyphs
-    #define    USE_GPC_LIBRARY                                true    ///< Also use GPC library for graphic clipping
-                                                                ///  This is ONLY used for drawing label families in VENN mode. If one disables it, the label families will be simple convex hulls
-
     #define BACH_NOTES_HAVE_ID                        ///< Do notes have IDs as well? Should always be defined, except for weird debug purposes
     #define BACH_MARKERS_HAVE_ID                    ///< Do markers have IDs as well? Should always be defined, except for weird debug purposes
 //    #define BACH_OUTPUT_SYMBOLIC_FLAGS              ///< Are notation item flags to be output as symbols, instead of integers?
@@ -2621,6 +2618,8 @@ typedef struct _dynamics_params
     long    dynamics_spectrum_halfwidth;
     double  a;
     double  b;
+    t_symbol    *maxdyn;
+    t_symbol    *mindyn;
 } t_dynamics_params;
 
 
@@ -2729,7 +2728,14 @@ typedef struct _chord
     // painting parameters only used by [bach.score]:
     double            beam_y;                                ///< y pixel of the point of the main flag or beam
     double            alignment_ux;                        ///< Offset (in pixels) of the chord alignment point with respect to the tuttipoint start point
-    double            stem_offset_ux;                        ///< Unscaled horizontal offset (in pixels) of the stem with respect to the tuttipoint start point
+    double            stem_offset_ux;                        ///< Unscaled horizontal offset (in pixels) of the stem with
+            // respect to the tuttipoint start point;
+            //beware TODO: this is ***dirty***, since we are using ux/uwidth/uheight to represent quantities that will have to be
+            // multiplied by zoomx AND zoomy, whereas sometimes (as in notehead_uwidth) it only has to be multiplied by zoomy and NOT zoomx
+            // (wouldn't make sense). This should be fixed. In particular, stem_offset_ux has a true ux component (alignment_ux) + a delta
+            // which only needs to be multiplied by zoomy, hence it's dirt
+            // TO DO: name some of them uux, and ux the others.
+    
     double            duration_ux;                        ///< Unscaled horizontal extension (in pixels) of the duration line of the chord (unscaled "chord graphical duration")
     long            float_steps;                        ///< Only used for floating rests: number of vertical "steps" that the rest is shifted up or down.
                                                         ///< Positive values shift up, negative values shift down.
@@ -4470,6 +4476,7 @@ typedef struct _notation_obj
     double        inner_height;            ///< Usable height (in pixel) of the object (ignoring insets); this correspond to the object height - 2 * <j_inset_y>
     double      postdomain_width;       ///< Width of a portion of score that pads the end of the domain without being inside it.
                                         ///< Currently only used in image export.
+    char          exporting_image;         ///< 1 only while exporting images
 
     double        horizontal_zoom;        ///< User modifiable horizontal zoom, 100 = default zoom. This is the value set and get via the "zoom" attribute.
     t_atom        vertical_zoom;            ///< User modifiable value for the vertical zoom, 100 = default zoom, "auto" = automatic zoom .
@@ -4808,7 +4815,7 @@ typedef struct _notation_obj
     char        show_rhythmic_tree;                    ///< Graphically paints the beaming tree for each measure
     char        output_trees;                        ///< Output beaming trees while dumping?
     char        write_trees;                        ///< Include tree information while saving via "write" or "writetxt"
-    char        output_full_duration_tree;            ///< Flag telling if we want to output the full duration tree while dumping. This only make sense if #output_trees == 1, and if 1, this means that
+    char        output_full_duration_tree;            ///< Flag telling if we want to output the full duration tree while dumping. This only make sense if #output_trees >= 2, and if 1, this means that
                                                     ///< in addition to all the levels, also the ties information is output as "t" if a chord is all tied
     char        show_rhythmic_tree_locks;            ///< Flag telling if we want to show the rhythmic tree locks (appearing when the rhythmic tree has been locked, fixed)
     char        output_and_save_level_types;        ///< Also output or save the level type information for each level, consisting in a list of (leveltype <num>), where <num> is a generic combination of #e_rhythm_level_types.
@@ -4991,7 +4998,7 @@ BEGIN_CHECK_LINKAGE
                         If you want to get the conversion for the first system (or if you just have one system, like in #k_VIEW_SCROLL), you can leave it NULL.
     @return                The x position in pixels
  */
-double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system); 
+double onset_to_xposition_roll(t_notation_obj *r_ob, double onset, long *system); 
 
 
 /**    Convert a x position in pixels into an onset in milliseconds (only usable by [bach.roll]) 
@@ -5216,7 +5223,7 @@ long scaleposition_to_midicents(long scaleposition);
     @param r_ob                The notation object
     @param onset            The onset in milliseconds
     @return                    The unscaled x position in pixels
-    @see                    onset_to_xposition()
+    @see                    onset_to_xposition_roll()
  */
 double onset_to_unscaled_xposition(t_notation_obj *r_ob, double onset);
 
@@ -5241,7 +5248,7 @@ double unscaled_xposition_to_xposition(t_notation_obj *r_ob, double unscaled_x_p
 double xposition_to_unscaled_xposition(t_notation_obj *r_ob, double x_position);
 
 
-/**    Convert a millisecond position into an horizontal pixel position (for [bach.roll], this is equivalent to calling onset_to_xposition()).
+/**    Convert a millisecond position into an horizontal pixel position (for [bach.roll], this is equivalent to calling onset_to_xposition_roll()).
     @ingroup                conversions
     @param r_ob                The notation object
     @param ms               The millisecond position
@@ -6331,7 +6338,7 @@ unicodeChar get_notehead_unicode_character(t_notation_obj *r_ob, t_rational dura
     @param account_for_grace_chords Also account for reduction factor due to grace chords
     @return                    The unscaled width of the notehead
  */
-double get_notehead_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords);
+double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords);
 
 // TBD
 void get_notehead_specs(t_notation_obj *r_ob, long notehead_ID, t_rational rdur, unicodeChar *character, double *uwidth, double *ux_shift, double *uy_shift, double *small_ux_shift, double *small_uy_shift, double *duration_line_start_ux_shift);
@@ -6422,7 +6429,7 @@ double get_principal_notehead_uwidth(t_notation_obj *r_ob, t_chord *chord);
     where a single note would be put by default, so it's the left one (in case the stem is up) or the right one (in case the stem is down).
     If a chord reference is given, this takes into account precisely the chord notes (if the chord is a thick cluster, this is 
     in general different than the unscaled with of a single notehead). If a chord reference is not given, the input symbolic duration
-    is taken into account, and the output will simply correspond to the get_notehead_uwidth() function.
+    is taken into account, and the output will simply correspond to the notehead_get_uwidth() function.
     @ingroup                typographical
     @param    r_ob            The notation object
     @param    r_sym_duration    The symbolic duration (accounted for only if no chord reference is given)
@@ -7624,6 +7631,15 @@ void marker_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_marker
     @see    chord_check_dependencies_before_deleting_it()
  */
 void dynamics_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_dynamics *dyn);
+
+/**    Check and erase all the dependencies for a pitch breakpoint (supposedly because we want to delete the breakpoint right after).
+    @ingroup            notation
+    @param    r_ob        The notation object
+    @param    bpt        The pitch breakpoint whose dependencies must be erased.
+    @see    chord_check_dependencies_before_deleting_it()
+ */
+void breakpoint_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_bpt *bpt);
+
 
 /**    Properly delete a chord from a measure (and clean all fields referencing it).
     @ingroup                notation
@@ -11090,6 +11106,8 @@ void clear_preselection(t_notation_obj *r_ob);
  */ 
 void clear_selection(t_notation_obj *r_ob);
 
+// private
+void test_selection(t_notation_obj *r_ob);
 
 /**    Obtain the common type of the selected items. For instance, if all selected items are #k_MEASURE, it returns #k_MEASURE;
     if all elements are either breakpoints or notetails, it returns #k_PITCH_BREAKPOINT_OR_DURATION_TAIL. If types do not
@@ -12542,7 +12560,7 @@ t_notation_item *get_rightmost_selected_notation_item(t_notation_obj *r_ob);
     @param    r_ob        The notation object
     @param    chord        The chord
     @return                The unscaled horizontal pixel of the chord's alignment point 
-    @remark                This only works in bach.score. In bach.roll, you can easily get this the horizontal pixel by using onset_to_xposition().
+    @remark                This only works in bach.score. In bach.roll, you can easily get this the horizontal pixel by using onset_to_xposition_roll().
                         Also in bach roll, alignment depends whether stems are shown (in which case stems are the alignment reference) or not 
                         (in which case notehead center is the alignment reference).
  */
@@ -17527,6 +17545,15 @@ t_marker *markername2marker(t_notation_obj *r_ob, t_llll *names);
 void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode);
 
 
+/** Select all the voices
+    @ingroup        voices
+    @ingroup        selection
+    @param    r_ob    The notation object
+    @param mode      The selection mode (one of the #e_selection_modes)
+ */
+void select_all_voices(t_notation_obj *r_ob, e_selection_modes mode);
+
+
 /** Select all the chords
     @ingroup        selection
     @param    r_ob    The notation object
@@ -18962,6 +18989,7 @@ void add_label_families_data_for_notation_item(t_notation_obj *r_ob, t_notation_
 
 
 void verbose_post_label_families(t_notation_obj *r_ob);
+double note_get_center_ux(t_notation_obj *r_ob, t_note *nt);
 
 
 
@@ -19085,6 +19113,7 @@ void move_linear_edit_cursor_depending_on_edit_ranges(t_notation_obj *r_ob, char
 char is_in_linear_edit_mode(t_notation_obj *r_ob);
 void markers_check_update_name_uwidth(t_notation_obj *r_ob);
 t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt);
+void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_ob, t_note *nt, double from_rel_pos, double to_rel_pos, double stretch_factor, char direction, double old_note_duration, double new_note_duration);
 
 t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol *s, t_symbol *msg, void *sender, void *data);
 t_atom_long notationobj_acceptsdrag(t_notation_obj *r_ob, t_object *drag, t_object *view);
@@ -19125,7 +19154,7 @@ void dynamics_free_marks(t_dynamics *dyn);
 
 long notationobj_check_dynamics(t_notation_obj *r_ob, long slot_num, char check_inconsistent, char check_unnecessary, char fix_inconsistent, char fix_unnecessary, char selection_only, char verbose);
 long notationobj_dynamics2velocities(t_notation_obj *r_ob, long slot_num, t_llll *dyn_to_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char bptmode);
-long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh);
+long notationobj_velocities2dynamics(t_notation_obj *r_ob, long slot_num, t_llll *dyn_vel_associations, char selection_only, long dynamics_spectrum_halfwidth, double a_exp, char delete_unnecessary, double approx_thresh, t_symbol *mindyn, t_symbol *maxdyn);
 long dynamic_mark_cmp_fromtext(char *mark1, char *mark2);
 long dynamic_mark_end_start_cmp(t_dynamics_mark *s1, t_dynamics_mark *s2);
 

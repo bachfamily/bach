@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -62,18 +62,18 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "left(1 [2 3] 4 [5 [6 [7]]], $x1) ",
+					"code" : "right(1 [2 3] 4 [5 [6 [7]]], $x1) ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 118.0, 272.0, 23.0 ],
+					"patching_rect" : [ 9.0, 118.0, 280.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval left(1 [2 3] 4 [5 [6 [7]]]\\, $x1) @out m"
+					"text" : "bach.eval right(1 [2 3] 4 [5 [6 [7]]]\\, $x1) @out m"
 				}
 
 			}
@@ -100,8 +100,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 394.0, 21.0 ],
-					"text" : "The left() function returns the right part of an llll relative to an index.",
+					"patching_rect" : [ 9.0, 39.0, 402.0, 21.0 ],
+					"text" : "The right() function returns the right part of an llll relative to an index.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

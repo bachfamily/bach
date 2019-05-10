@@ -1333,11 +1333,11 @@
 	// possibly containing an llll for each rhythmic level (see below), containing a rational value for each chord.
 	// For instance: <b>[[1/4 1/4 [[1/8 1/16] [1/32 1/32]] -1/4] [1/12 1/12 1/12 -3/4]] [[-1] [1/4 -3/4]]</b>. 
 	// The symbol "t" is also accepted in input to tie a duration to the following one, e.g. <b>[[1/4 t 1/16 -3/16 -2/4]]</b>. 
-	// If the <m>outputtrees</m> algorithm is set to output trees in all outlets, and if the <m>outputtiesindurationtree</m> is set to 1, 
+	// If the <m>outputtrees</m> algorithm is set to output trees from the durations outlet, and if the <m>outputtiesindurationtree</m> is set to 1, 
 	// such "t" symbols are also always output in the durations separate syntax. 
 	// Grace chords are defined either by setting a rational duration of 0 (converted into 1/8 grace chords) or by setting
 	// a rhythmic level starting with a "g" symbol, which will thus contain all grace elements, e.g. <b>[[1/4 [g 1/8 1/16 1/16] 1/4 1/4 0 1/4]]</b>.
-	// If the <m>outputtrees</m> algorithm is set to output trees in all outlets, grace chords are output, in the durations gathered syntax, 
+	// If the <m>outputtrees</m> algorithm is set to output trees from the durations outlet, grace chords are output, in the durations gathered syntax, 
 	// with the grace levels syntax, otherwise they are output as chords with 0 duration. <br />
 	// Cents, velocities, ties and extras are all assigned notewise in <o>bach.score</o> (they propriety of notes, rather than chords).
 	// The separate syntax for any of such parameters will be thus structured as: an llll for each voice, containing an llll for each chord,

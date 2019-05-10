@@ -1217,14 +1217,14 @@ void paint_playhead(t_notation_obj *r_ob, t_jgraphics* g, t_rect rect)
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
             play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_ux);
         else
-            play_head_pos = onset_to_xposition(r_ob, r_ob->play_head_ms, NULL);
+            play_head_pos = onset_to_xposition_roll(r_ob, r_ob->play_head_ms, NULL);
 
         paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * r_ob->zoom_y);
     } else if (r_ob->show_playhead) {
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
             play_head_pos = unscaled_xposition_to_xposition(r_ob, r_ob->play_head_start_ux);
         else
-            play_head_pos = onset_to_xposition(r_ob, r_ob->play_head_start_ms, NULL);
+            play_head_pos = onset_to_xposition_roll(r_ob, r_ob->play_head_start_ms, NULL);
 
         get_playhead_ypos(r_ob, rect, &playhead_y1, &playhead_y2);
         paint_playhead_line(g, r_ob->j_play_rgba, play_head_pos, playhead_y1, playhead_y2, 1., 3 * r_ob->zoom_y);
@@ -1308,7 +1308,7 @@ void paint_default_small_notehead_with_accidentals(t_notation_obj *r_ob, t_objec
         paint_line(g, r_ob->j_mainstaves_rgba, notehead_center_x - CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 
                    notehead_center_x + CONST_LEDGER_LINES_HALF_UWIDTH * small_note_ratio * r_ob->zoom_y, ledger_lines_y[i], 1.);
     
-    notehead_left_x = notehead_center_x - get_notehead_uwidth(r_ob, RAT_1OVER4, NULL, false) * small_note_ratio / 2;
+    notehead_left_x = notehead_center_x - notehead_get_uwidth(r_ob, RAT_1OVER4, NULL, false) * small_note_ratio / 2;
     
     // notehead and accidentals
     paint_notehead(r_ob, view, g, jf_smallnote, &color, foo, notehead_center_x, mc_to_yposition_in_scale_for_notes(r_ob, foo, voice, 0.7), system_shift, small_note_ratio);
@@ -1355,7 +1355,7 @@ double breakpoint_get_x(t_notation_obj *r_ob, t_bpt *bpt)
             return al_x + note_get_spanning_width(r_ob, nt) * bpt->rel_x_pos;
         }
     } else {
-        return onset_to_xposition(r_ob, nt->parent->onset + bpt->rel_x_pos * nt->duration, NULL);
+        return onset_to_xposition_roll(r_ob, nt->parent->onset + bpt->rel_x_pos * nt->duration, NULL);
     }
     return 0;
 }
@@ -1416,7 +1416,7 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
             }
             
             // draw main line/curve
-            bpt_x = onset_to_xposition(r_ob, curr_nt->parent->onset+temp->rel_x_pos * curr_nt->duration, &curr_system);
+            bpt_x = onset_to_xposition_roll(r_ob, curr_nt->parent->onset+temp->rel_x_pos * curr_nt->duration, &curr_system);
             if (temp->rel_x_pos >= 1. && (r_ob->breakpoints_have_noteheads)) {
                 if (!temp->prev || temp->delta_mc != temp->prev->delta_mc)
                     bpt_y = system_shift + curr_rupture_point * system_jump + mc_to_ypos(r_ob, curr_nt->midicents + round(temp->delta_mc), (t_voice *) voice);
@@ -1465,7 +1465,7 @@ void paint_duration_line(t_notation_obj *r_ob, t_object *view, t_jgraphics* g, t
             }
             
             if (temp->rel_x_pos < 1.) {
-                double bpt_x = onset_to_xposition(r_ob, curr_nt->parent->onset+temp->rel_x_pos * curr_nt->duration, &curr_system);
+                double bpt_x = onset_to_xposition_roll(r_ob, curr_nt->parent->onset+temp->rel_x_pos * curr_nt->duration, &curr_system);
                 double bpt_y = 0;
                 char is_bpt_selected;
                 t_jrgba bptcolor;
@@ -1675,11 +1675,13 @@ void paint_measure_label_families(t_notation_obj *r_ob, t_object *view, t_jgraph
 
 double label_family_contour_ux_to_x(t_notation_obj *r_ob, double ux)
 {
-    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-        return r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (ux - r_ob->screen_ms_start * CONST_X_SCALING) * r_ob->zoom_x) + r_ob->j_inset_x;
-    else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
-        return unscaled_xposition_to_xposition(r_ob, ux);
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        return ux + r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad - r_ob->screen_ms_start * CONST_X_SCALING * r_ob->zoom_x) + r_ob->j_inset_x;
+//        return r_ob->zoom_y * (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad + (ux - r_ob->screen_ms_start * CONST_X_SCALING) * r_ob->zoom_x) + r_ob->j_inset_x;
+    } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
+        return unscaled_xposition_to_xposition(r_ob, ux/(r_ob->zoom_x * r_ob->zoom_y));
     return 0;
+    
 }
 
 t_beziercs *label_family_contour_apply_zoom(t_notation_obj *r_ob, t_beziercs *contour)
@@ -1692,13 +1694,13 @@ t_beziercs *label_family_contour_apply_zoom(t_notation_obj *r_ob, t_beziercs *co
     
     for (i = 0; i < num_segments; i++) {
         // modifying ux coordinate to x
-        pts[i].x = label_family_contour_ux_to_x(r_ob, contour->vertices[i].x);
+        pts[i].x = unscaled_xposition_to_xposition(r_ob, contour->vertices[i].x);
         pts[i].y = contour->vertices[i].y;
         
-        cp1[i].x = label_family_contour_ux_to_x(r_ob, contour->ctrl_pt_1[i].x);
+        cp1[i].x = unscaled_xposition_to_xposition(r_ob, contour->ctrl_pt_1[i].x);
         cp1[i].y = contour->ctrl_pt_1[i].y;
         
-        cp2[i].x = label_family_contour_ux_to_x(r_ob, contour->ctrl_pt_2[i].x);
+        cp2[i].x = unscaled_xposition_to_xposition(r_ob, contour->ctrl_pt_2[i].x);
         cp2[i].y = contour->ctrl_pt_2[i].y;
     }
     
@@ -1718,8 +1720,9 @@ void paint_venn_label_families(t_notation_obj *r_ob, t_object *view, t_jgraphics
         t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&famelem->l_hatom);
         
         // updating, if needed
-        if (fam->need_update_contour) {
-            if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_VENN) 
+//        dev_post("restore this!!!");
+        if (fam->need_update_contour) { // TO DO: restore!!!!
+            if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_VENN)
                 update_label_family_contour(r_ob, fam, g);
             fam->need_update_contour = false;
         }
@@ -3488,7 +3491,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         double ms_delta = r_ob->grid_step_ms;
         double ms_delta_sub = r_ob->grid_step_ms;
         double start_ms = r_ob->grid_step_ms * (round(r_ob->screen_ms_start / r_ob->grid_step_ms) - 1);
-        double start_x = onset_to_xposition(r_ob, start_ms, NULL);
+        double start_x = onset_to_xposition_roll(r_ob, start_ms, NULL);
         double pix; 
         long i; 
         double ms;
@@ -3504,7 +3507,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         if (num_subdivisions <= 0) 
             num_subdivisions = 1;
         
-        pixel_delta = (onset_to_xposition(r_ob, ms_delta, NULL) - onset_to_xposition(r_ob, 0, NULL));
+        pixel_delta = (onset_to_xposition_roll(r_ob, ms_delta, NULL) - onset_to_xposition_roll(r_ob, 0, NULL));
         
         if (pixel_delta < 0)
             return;
@@ -3523,7 +3526,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
             pix_delta_forsubdivisions = pixel_delta / num_subdivisions;
             
             start_ms = floor(start_ms/ms_delta) * ms_delta;
-            start_x = onset_to_xposition(r_ob, start_ms, NULL);
+            start_x = onset_to_xposition_roll(r_ob, start_ms, NULL);
             
             tick_offset = start_ms/ms_delta - floor(start_ms/ms_delta);
 
@@ -3549,7 +3552,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
         for (pix = start_x, i = tick_offset, ms = start_ms; pix <= actwidth && ms < ms_limit; pix += pix_delta_forsubdivisions, ms += ms_delta_sub, i++){
             
             if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
-                pix = onset_to_xposition(r_ob, ms, NULL);
+                pix = onset_to_xposition_roll(r_ob, ms, NULL);
                 if (prev_pix == pix) count++; else count = 0;
                 if (count > 100) break;
                 if (pix != pix) { pix = prev_pix; continue; } // NaN
@@ -3600,7 +3603,7 @@ void paint_ruler_and_grid_for_roll(t_notation_obj *r_ob, t_jgraphics* g, t_rect 
                     continue;
                 
                 if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
-                    pix = onset_to_xposition(r_ob, ms, NULL);
+                    pix = onset_to_xposition_roll(r_ob, ms, NULL);
                     if (prev_pix == pix) count++; else count = 0;
                     if (count > 100) break;
                     if (pix != pix) { pix = prev_pix; continue; } // NaN
@@ -3808,8 +3811,8 @@ void paint_selection_rectangle(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba bor
 
 e_element_types pt_to_dilation_rectangle_obj(t_notation_obj *r_ob, t_pt pt)
 {
-    double x1 = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition(r_ob, r_ob->dilation_rectangle.left_ms, NULL) : unscaled_xposition_to_xposition(r_ob, r_ob->dilation_rectangle.left_ux));
-    double x2 = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition(r_ob, r_ob->dilation_rectangle.right_ms, NULL) : unscaled_xposition_to_xposition(r_ob, r_ob->dilation_rectangle.right_ux));
+    double x1 = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, r_ob->dilation_rectangle.left_ms, NULL) : unscaled_xposition_to_xposition(r_ob, r_ob->dilation_rectangle.left_ux));
+    double x2 = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, r_ob->dilation_rectangle.right_ms, NULL) : unscaled_xposition_to_xposition(r_ob, r_ob->dilation_rectangle.right_ux));
     double y1 = mc_to_yposition(r_ob, r_ob->dilation_rectangle.top_mc, r_ob->dilation_rectangle.top_voice);
     double y2 = mc_to_yposition(r_ob, r_ob->dilation_rectangle.bottom_mc, r_ob->dilation_rectangle.bottom_voice);
     double half_side = CONST_DILATION_RECTANGLE_SQUARES_USIDE * r_ob->zoom_y / 2.;
@@ -3851,8 +3854,8 @@ void paint_dilation_rectangle(t_notation_obj *r_ob, t_jgraphics* g){
     t_jrgba white = build_jrgba(1, 1, 1, 0.3);
     t_jrgba innercolor = build_jrgba(0.93, 0.93, 0.84, 0.3);
     double half_side = CONST_DILATION_RECTANGLE_SQUARES_USIDE * r_ob->zoom_y / 2.;
-    double x1 = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition(r_ob, r_ob->dilation_rectangle.left_ms, NULL) : unscaled_xposition_to_xposition(r_ob, r_ob->dilation_rectangle.left_ux));
-    double x2 = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition(r_ob, r_ob->dilation_rectangle.right_ms, NULL) : unscaled_xposition_to_xposition(r_ob, r_ob->dilation_rectangle.right_ux));
+    double x1 = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, r_ob->dilation_rectangle.left_ms, NULL) : unscaled_xposition_to_xposition(r_ob, r_ob->dilation_rectangle.left_ux));
+    double x2 = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, r_ob->dilation_rectangle.right_ms, NULL) : unscaled_xposition_to_xposition(r_ob, r_ob->dilation_rectangle.right_ux));
     double y1 = mc_to_yposition(r_ob, r_ob->dilation_rectangle.top_mc, r_ob->dilation_rectangle.top_voice);
     double y2 = mc_to_yposition(r_ob, r_ob->dilation_rectangle.bottom_mc, r_ob->dilation_rectangle.bottom_voice);
     paint_rectangle(g, black, innercolor, x1, y1, x2-x1, y2-y1, 0.5);
@@ -4047,8 +4050,8 @@ long yposition_to_systemnumber(t_notation_obj *r_ob, double yposition){
     }
 }
 
-// for roll
-double onset_to_xposition(t_notation_obj *r_ob, double onset, long *system)
+// for roll only!
+double onset_to_xposition_roll(t_notation_obj *r_ob, double onset, long *system)
 {
     long this_system;
     double res = 0;
@@ -4092,7 +4095,7 @@ double get_domain_width_pixels(t_notation_obj *r_ob)
 double get_predomain_width_pixels(t_notation_obj *r_ob)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL)
-        return onset_to_xposition(r_ob, r_ob->screen_ms_start, NULL);
+        return onset_to_xposition_roll(r_ob, r_ob->screen_ms_start, NULL);
     else
         return unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start);
 }
@@ -4128,7 +4131,7 @@ double deltaonset_to_deltaxpixels(t_notation_obj *r_ob, double deltaonset){
 }
 
 
-// mostly for score, but also used by bach.roll
+// mostly for bach.score, but also used by bach.roll
 double unscaled_xposition_to_xposition(t_notation_obj *r_ob, double unscaled_x_pos){
     double const_left_start = ((r_ob->spacing_type == k_SPACING_PROPORTIONAL || r_ob->obj_type == k_NOTATION_OBJECT_ROLL) ? CONST_ROLL_UX_LEFT_START : CONST_SCORE_UX_LEFT_START);
     double const_x_scaling = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? 1. : CONST_X_SCALING_SCORE);
@@ -4156,9 +4159,9 @@ double deltaxpixels_to_deltauxpixels(t_notation_obj *r_ob, double deltaxpixels){
 double onset_to_unscaled_xposition(t_notation_obj *r_ob, double onset)
 {
     if (r_ob->lambda_spacing != k_CUSTOMSPACING_NONE) {
-        return xposition_to_unscaled_xposition(r_ob, onset_to_xposition(r_ob, onset, NULL));
+        return xposition_to_unscaled_xposition(r_ob, onset_to_xposition_roll(r_ob, onset, NULL));
     } else {
-        // THIS BOTTOM LINE IS EQUIVALENT TO xposition_to_unscaled_xposition(r_ob, onset_to_xposition(r_ob, onset, NULL))
+        // THIS BOTTOM LINE IS EQUIVALENT TO xposition_to_unscaled_xposition(r_ob, onset_to_xposition_roll(r_ob, onset, NULL))
         // but of course way faster ;)
         return r_ob->screen_ux_start + ((onset - r_ob->screen_ms_start) * CONST_X_SCALING);
     }
@@ -4168,7 +4171,7 @@ double onset_to_unscaled_xposition(t_notation_obj *r_ob, double onset)
 double ms_to_xposition(t_notation_obj *r_ob, double ms, char mode)
 {
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-        return onset_to_xposition(r_ob, ms, NULL);
+        return onset_to_xposition_roll(r_ob, ms, NULL);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         return unscaled_xposition_to_xposition(r_ob, ms_to_unscaled_xposition(r_ob, ms, mode));
     } else
@@ -20204,9 +20207,9 @@ void build_measure_tuplet_beams_for_level(t_notation_obj *r_ob, t_llll *box, t_j
                         beam->tuplet_graphical_unit = prop->tupletinfo.tuplet_graphical_unit;
                     
                     if (tuplet_direction == -1 && start_ch->direction == 1)
-                        first_ux_pos -= get_notehead_uwidth(r_ob, start_ch->r_sym_duration, NULL, false);
+                        first_ux_pos -= notehead_get_uwidth(r_ob, start_ch->r_sym_duration, NULL, false);
                     if (tuplet_direction == 1 && end_ch->direction == -1)
-                        end_ux_pos += get_notehead_uwidth(r_ob, end_ch->r_sym_duration, NULL, false);
+                        end_ux_pos += notehead_get_uwidth(r_ob, end_ch->r_sym_duration, NULL, false);
                     
                     // force slope? in case the bracket is over a portion of beaming
                     if (prop->tupletinfo.is_over_beam){
@@ -20246,9 +20249,9 @@ void build_measure_tuplet_beams_for_level(t_notation_obj *r_ob, t_llll *box, t_j
                         beam->tuplet_text1_delta_ux = - uwidth/2.;
                     }
                     if (tuplet_direction == -1 && start_ch->direction == 1)
-                        beam->tuplet_text1_delta_ux -= get_notehead_uwidth(r_ob, start_ch->r_sym_duration, NULL, false)/2.;
+                        beam->tuplet_text1_delta_ux -= notehead_get_uwidth(r_ob, start_ch->r_sym_duration, NULL, false)/2.;
                     if (tuplet_direction == 1 && end_ch->direction == -1)
-                        beam->tuplet_text1_delta_ux += get_notehead_uwidth(r_ob, end_ch->r_sym_duration, NULL, false)/2.;
+                        beam->tuplet_text1_delta_ux += notehead_get_uwidth(r_ob, end_ch->r_sym_duration, NULL, false)/2.;
                     
                     append_beam(measure, beam);
 
@@ -20497,7 +20500,7 @@ double chord_get_alignment_x(t_notation_obj *r_ob, t_chord *chord)
             break;
             
         case k_NOTATION_OBJECT_ROLL:
-            return onset_to_xposition(r_ob, chord->onset, NULL);
+            return onset_to_xposition_roll(r_ob, chord->onset, NULL);
             break;
             
         default:
@@ -20556,7 +20559,7 @@ double get_tail_alignment_x(t_notation_obj *r_ob, t_note *note)
                 return 0;
             }
             
-            return onset_to_xposition(r_ob, chord->onset + chord_get_max_duration(r_ob, chord), NULL);
+            return onset_to_xposition_roll(r_ob, chord->onset + chord_get_max_duration(r_ob, chord), NULL);
         }
             break;
             
@@ -21388,6 +21391,9 @@ void note_check_dependencies_before_deleting_it(t_notation_obj *r_ob, t_note *no
     if (notation_item_is_preselected(r_ob, (t_notation_item *)note))
         notation_item_delete_from_preselection(r_ob, (t_notation_item *)note);
 
+    for (t_bpt *bpt = note->firstbreakpoint ? note->firstbreakpoint->next : NULL; bpt; bpt = bpt->next)
+        breakpoint_check_dependencies_before_deleting_it(r_ob, bpt);
+    
     if (r_ob->lambda_selected_item_ID == note->r_it.ID)
         r_ob->lambda_selected_item_ID = 0;
     
@@ -23100,7 +23106,7 @@ double chord_get_right_notehead_uwidth(t_notation_obj *r_ob, t_chord *chord){
 double chord_get_mainside_notehead_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_chord *chord)
 {
     if (!chord)
-        return get_notehead_uwidth(r_ob, r_sym_duration, NULL, false);
+        return notehead_get_uwidth(r_ob, r_sym_duration, NULL, false);
     if (chord->direction == 1)
         return chord_get_left_notehead_uwidth(r_ob, chord);
     else
@@ -23128,7 +23134,7 @@ double get_principal_notehead_uwidth(t_notation_obj *r_ob, t_chord *chord)
 {
     t_note *nt = get_principal_note(r_ob, chord);
     if (nt)
-        return get_notehead_uwidth(r_ob, chord->r_sym_duration, nt, true);
+        return notehead_get_uwidth(r_ob, chord->r_sym_duration, nt, true);
     return rest_get_uwidth(r_ob, chord->r_sym_duration);
 }
 
@@ -23173,7 +23179,7 @@ long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeCha
         return get_notehead_specs_from_rdur(r_ob, RAT_1OVER4, character, uwidth, ux_shift, uy_shift, small_ux_shift, small_uy_shift, duration_line_start_ux_shift);
     
     // else:
-    if (uwidth) *uwidth = get_notehead_uwidth(r_ob, ch->r_sym_duration, note, true); // this also accounts for the old way of defining custom noteheads
+    if (uwidth) *uwidth = notehead_get_uwidth(r_ob, ch->r_sym_duration, note, true); // this also accounts for the old way of defining custom noteheads
     
     long res = get_notehead_specs_from_rdur(r_ob, ch->is_score_chord ? ch->figure : ch->r_sym_duration, character, NULL, ux_shift, uy_shift, small_ux_shift, small_uy_shift, duration_line_start_ux_shift);
 
@@ -23183,7 +23189,7 @@ long get_notehead_specs_from_note(t_notation_obj *r_ob, t_note *note, unicodeCha
 
 
 // note is only needed if custom notehead is provided; otherwise r_sym_duration suffice
-double get_notehead_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords)
+double notehead_get_uwidth(t_notation_obj *r_ob, t_rational r_sym_duration, t_note *note, char account_for_grace_chords)
 {
     double grace_ratio = account_for_grace_chords && note && note->parent && note->parent->is_score_chord && note->parent->is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
     
@@ -24110,7 +24116,7 @@ void calculate_chord_parameters(t_notation_obj *r_ob, t_chord *chord, int clef, 
             
             notehead_ux_shift[i] = get_notehead_ux_shift(r_ob, curr_nt);
             
-            noteheads_uwidths[i] = curr_nt->notehead_resize * get_notehead_uwidth(r_ob, chord->is_score_chord ? chord->figure : RAT_1OVER4, curr_nt, false);
+            noteheads_uwidths[i] = curr_nt->notehead_resize * notehead_get_uwidth(r_ob, chord->is_score_chord ? chord->figure : RAT_1OVER4, curr_nt, false);
             curr_nt->notehead_uwidth = noteheads_uwidths[i];
             curr_nt->notehead_ID = get_notehead_specs_from_note(r_ob, curr_nt, NULL, NULL, NULL, NULL, NULL, NULL, NULL, false);
             
@@ -25540,7 +25546,7 @@ int is_in_note_shape(t_notation_obj *r_ob, t_note *note, long point_x, long poin
         note_y = mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), (t_voice *)note->parent->parent->voiceparent);
     } else {
         system_num = -1;  // for auto calculation
-        note_x = note->notecenter_stem_delta_ux * r_ob->zoom_y + get_stem_x_from_alignment_point_x(r_ob, note->parent, onset_to_xposition(r_ob,note->parent->onset, &system_num));
+        note_x = note->notecenter_stem_delta_ux * r_ob->zoom_y + get_stem_x_from_alignment_point_x(r_ob, note->parent, onset_to_xposition_roll(r_ob,note->parent->onset, &system_num));
         note_y = r_ob->system_jump * system_num + mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(note), (t_voice *)note->parent->voiceparent);
     }
     
@@ -25573,7 +25579,7 @@ int is_in_tail_shape(t_notation_obj *r_ob, t_note *note, long point_x, long poin
     t_chord *chord = note->parent;
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         system_num = -1;  // for auto calculation
-        tail_x = onset_to_xposition(r_ob, chord->onset + note->duration, &system_num);
+        tail_x = onset_to_xposition_roll(r_ob, chord->onset + note->duration, &system_num);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
         tail_x = unscaled_xposition_to_xposition(r_ob, chord->parent->tuttipoint_reference->offset_ux + chord->stem_offset_ux + chord->duration_ux);
     
@@ -25614,7 +25620,7 @@ void breakpoint_get_pt(t_notation_obj *r_ob, t_bpt *bpt, double *bpt_x_pix, doub
         if (start_pos_x)
             start_pos = *start_pos_x;
         else
-            start_pos = onset_to_xposition(r_ob, chord->onset, NULL);
+            start_pos = onset_to_xposition_roll(r_ob, chord->onset, NULL);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         if (start_pos_x)
             start_pos = *start_pos_x;
@@ -25633,7 +25639,7 @@ void breakpoint_get_pt(t_notation_obj *r_ob, t_bpt *bpt, double *bpt_x_pix, doub
 
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         system_num = -1;
-        bpt_x = onset_to_xposition(r_ob, chord->onset + bpt->rel_x_pos * note->duration, &system_num);
+        bpt_x = onset_to_xposition_roll(r_ob, chord->onset + bpt->rel_x_pos * note->duration, &system_num);
     } else
         bpt_x = start_pos + (end_pos - start_pos) * bpt->rel_x_pos;
     
@@ -25656,7 +25662,7 @@ int is_in_durationline_shape(t_notation_obj *r_ob, t_note *note, long point_x, l
     double start_pos = -100000, end_pos = -100000;
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
         system_num = -1; // for auto calculation
-        start_pos = onset_to_xposition(r_ob,chord->onset, &system_num);
+        start_pos = onset_to_xposition_roll(r_ob,chord->onset, &system_num);
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         t_note *last_tied;
         start_pos = unscaled_xposition_to_xposition(r_ob, chord->parent->tuttipoint_reference->offset_ux + chord->stem_offset_ux);
@@ -25666,7 +25672,7 @@ int is_in_durationline_shape(t_notation_obj *r_ob, t_note *note, long point_x, l
             end_pos = unscaled_xposition_to_xposition(r_ob, chord->parent->tuttipoint_reference->offset_ux + chord->stem_offset_ux + chord->duration_ux);
     }
     
-    //    double end_pos = onset_to_xposition((t_notation_obj *) x,chord->onset+note->duration, &system_num); // same system, can't handle the different systems now...
+    //    double end_pos = onset_to_xposition_roll((t_notation_obj *) x,chord->onset+note->duration, &system_num); // same system, can't handle the different systems now...
     
     t_bpt *temp = note->firstbreakpoint->next;
     double prev_bpt_x = start_pos;
@@ -25712,7 +25718,7 @@ int is_in_marker_shape(t_notation_obj *r_ob, t_marker *marker, long point_x, lon
         } else
             marker_x = ms_to_xposition(r_ob, marker->position_ms, 1);
     } else {
-        marker_x = onset_to_xposition(r_ob, marker->position_ms, NULL);
+        marker_x = onset_to_xposition_roll(r_ob, marker->position_ms, NULL);
     }
     
     if (fabs(point_x - marker_x) < 2 + 2 * r_ob->zoom_y && point_y < r_ob->height - (CONST_XSCROLLBAR_UHEIGHT + 2) * r_ob->zoom_y)
@@ -25763,7 +25769,7 @@ int is_in_markername_shape(t_notation_obj *r_ob, t_marker *marker, long point_x,
         marker_name_y_start = r_ob->j_inset_y + 10 * r_ob->zoom_y + notationobj_get_marker_voffset(r_ob, marker);
         marker_nameheight = r_ob->markers_font_size * r_ob->zoom_y;
     } else {
-        marker_x = onset_to_xposition(r_ob, marker->position_ms, NULL);
+        marker_x = onset_to_xposition_roll(r_ob, marker->position_ms, NULL);
         marker_namewidth = marker->name_uwidth * r_ob->zoom_y;
         marker_name_y_start = r_ob->j_inset_y + 10 * r_ob->zoom_y + notationobj_get_marker_voffset(r_ob, marker);
         marker_nameheight = r_ob->markers_font_size * r_ob->zoom_y;
@@ -25818,7 +25824,7 @@ int is_in_vscrollbar_shape(t_notation_obj *r_ob, long point_x, long point_y){
 char is_in_chord_lyrics_shape(t_notation_obj *r_ob, t_chord *chord, long point_x, long point_y)
 {
     if (chord && chord->lyrics && chord->lyrics->label) {
-        double left_x = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition(r_ob, chord->onset, NULL) : unscaled_xposition_to_xposition(r_ob, chord_get_alignment_ux(r_ob, chord)))
+        double left_x = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? onset_to_xposition_roll(r_ob, chord->onset, NULL) : unscaled_xposition_to_xposition(r_ob, chord_get_alignment_ux(r_ob, chord)))
                          + chord->lyrics->lyrics_ux_shift * r_ob->zoom_y;
         double width = chord->lyrics->lyrics_uwidth * r_ob->zoom_y;
         double bottom_staff_y = get_staff_bottom_y(r_ob, (r_ob->obj_type == k_NOTATION_OBJECT_ROLL ? (t_voice *) chord->voiceparent : (t_voice *) chord->parent->voiceparent), false);
@@ -25942,7 +25948,7 @@ char is_in_clef_shape(t_notation_obj *r_ob, long point_x, long point_y, t_voice 
     long topy = get_staff_top_y(r_ob, voice, true);
     long bottomy = get_staff_bottom_y(r_ob, voice, true);
     long end_x_to_repaint_no_inset = (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) ?
-        onset_to_xposition(r_ob, r_ob->screen_ms_start - CONST_X_LEFT_START_DELETE_MS / r_ob->zoom_x, NULL) :
+        onset_to_xposition_roll(r_ob, r_ob->screen_ms_start - CONST_X_LEFT_START_DELETE_MS / r_ob->zoom_x, NULL) :
     unscaled_xposition_to_xposition(r_ob, r_ob->screen_ux_start - (r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? CONST_X_LEFT_START_DELETE_UX_SCORE : CONST_X_LEFT_START_DELETE_UX_ROLL));
     if ((point_x > 1 + r_ob->notation_typo_preferences.clef_ux_shift + r_ob->voice_names_uwidth * r_ob->zoom_y + r_ob->j_inset_x) && 
         (point_x < end_x_to_repaint_no_inset) &&
@@ -26013,14 +26019,16 @@ char delete_breakpoint(t_notation_obj *r_ob, t_bpt *breakpoint){
 // delete the breakpoint *breakpoint from the note *note
     
     breakpoint_check_dependencies_before_deleting_it(r_ob, breakpoint);
-    if (breakpoint && breakpoint->owner && breakpoint->rel_x_pos > 0. && breakpoint->rel_x_pos < 1.) {
+//    if (breakpoint && breakpoint->owner && breakpoint->rel_x_pos > 0. && breakpoint->rel_x_pos < 1.) {
+    if (breakpoint && breakpoint->owner && breakpoint->prev && breakpoint->next) {
         t_bpt *temp = breakpoint;
         breakpoint->owner->num_breakpoints--;
         breakpoint->prev->next = breakpoint->next;
         breakpoint->next->prev = breakpoint->prev;
         bach_freeptr(temp);
         return 1;
-    } else if (breakpoint && breakpoint->owner && breakpoint->rel_x_pos == 1) {
+//    } else if (breakpoint && breakpoint->owner && breakpoint->rel_x_pos == 1) {
+    } else if (breakpoint && breakpoint->owner && breakpoint->prev) {
         breakpoint->delta_mc = 0.;
         breakpoint->slope = 0.;
         return 1;
@@ -26043,6 +26051,23 @@ char move_breakpoint(t_notation_obj *r_ob, t_bpt *breakpoint, double delta_rel_x
         return 1;
     }
     return 0;
+}
+
+
+// selection
+void test_selection(t_notation_obj *r_ob)
+{
+#ifdef CONFIGURATION_Development
+    // clear all the "selection"-linkedlist
+    for (t_notation_item *temp = r_ob->firstselecteditem; temp; temp = temp->next_selected) {
+        for (t_notation_item *temp2 = temp->next_selected; temp2; temp2 = temp2->next_selected) {
+            if (temp == temp2) {
+                char foo;
+                foo = 7; // error
+            }
+        }
+    }
+#endif
 }
 
 
@@ -31239,6 +31264,8 @@ void change_zoom(t_notation_obj *r_ob, double new_zoom_0_to_100){
 
     r_ob->horizontal_zoom = new_zoom_0_to_100;
     r_ob->zoom_x = r_ob->horizontal_zoom / 100.;
+    
+    set_all_label_families_update_contour(r_ob);
 }
 
 
@@ -33544,9 +33571,12 @@ char change_chord_symduration_from_lexpr_or_llll(t_notation_obj *r_ob, t_chord *
         t_llllelem *thiselem = (new_symduration) ? new_symduration->l_head : NULL;
         if ((!notation_item_is_globally_locked(r_ob, (t_notation_item *)chord)) && chord->parent && (lexpr || thiselem)) {
             create_simple_selected_notation_item_undo_tick(r_ob, (t_notation_item *)chord->parent, k_MEASURE, k_UNDO_MODIFICATION_CHANGE);
+            t_rational old_sym_dur = chord->r_sym_duration;
             change_rational(r_ob, &chord->r_sym_duration, lexpr, thiselem, (t_notation_item *)chord);
             if (chord->r_sym_duration <= 0)
                 toggle_grace_for_chord(r_ob, chord, 1);
+            if (old_sym_dur.r_num < 0)
+                chord->r_sym_duration = rat_long_prod(rat_abs(chord->r_sym_duration), -1);
             changed = 1;
             
             if (autoadapt_ts) {
@@ -34619,6 +34649,13 @@ void select_all_markers(t_notation_obj *r_ob, e_selection_modes mode)
     move_preselecteditems_to_selection(r_ob, mode, false, false);
 }
 
+void select_all_voices(t_notation_obj *r_ob, e_selection_modes mode)
+{
+    t_voice *voice;
+    for (voice = r_ob->firstvoice; voice && voice->number < r_ob->num_voices; voice = voice_get_next(r_ob, voice))
+        notation_item_add_to_preselection(r_ob, (t_notation_item *)voice);
+    move_preselecteditems_to_selection(r_ob, mode, false, false);
+}
 
 void select_all_notes(t_notation_obj *r_ob, e_selection_modes mode)
 {
@@ -37019,24 +37056,28 @@ void free_label_family(t_bach_label_family *fam)
 }
 
 
+double note_get_center_ux(t_notation_obj *r_ob, t_note *nt)
+{
+    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
+        double al_ux = chord_get_alignment_ux(r_ob, nt->parent);
+        double stem_x = get_stem_x_from_alignment_point_x(r_ob, nt->parent, al_ux * r_ob->zoom_x * r_ob->zoom_y);
+        double note_x = stem_x + nt->notecenter_stem_delta_ux * r_ob->zoom_y;
+        return note_x / (r_ob->zoom_x * r_ob->zoom_y);
+    } else {
+        double al_ux = chord_get_alignment_ux(r_ob, nt->parent);
+        double delta_ux_stem = (nt->parent->stem_offset_ux + nt->parent->parent->tuttipoint_reference->offset_ux) - al_ux;
+        return al_ux + (delta_ux_stem + nt->notecenter_stem_delta_ux)/r_ob->zoom_x;
+    }
+    return 0;
+}
+
+
+
 t_pt note_to_family_contour_pt(t_notation_obj *r_ob, t_note *nt, double *leftmost_in, double *rightmost_in, long *topmost_voice, long *bottommost_voice)
 {
-    t_pt center = build_pt(0, 0);
-    if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-        double center_ux = nt->parent->onset * CONST_X_SCALING; // + nt->notecenter_stem_delta_ux; // can't do this: it's actually not multiplied by the zoom!!!
-        double center_y = mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), (t_voice *) nt->parent->voiceparent);
-        center = build_pt(center_ux, center_y);
-    } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        double center_ux = nt->parent->stem_offset_ux + nt->parent->parent->tuttipoint_reference->offset_ux;// + nt->notecenter_stem_delta_ux;
-        double center_y = mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), (t_voice *) nt->parent->parent->voiceparent);
-        center = build_pt(center_ux, center_y);    
-    }
-    
-    // randomize points *slightly*
-/*    const double random_range = 1.;
-    center.x += random_double_in_range(-random_range, random_range);
-    center.y += random_double_in_range(-random_range, random_range);
-*/    
+    t_pt center = build_pt(note_get_center_ux(r_ob, nt),
+                      mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), chord_get_voice(r_ob, nt->parent)));
+ 
     if (leftmost_in && (center.x < *leftmost_in || *leftmost_in == -100000))
         *leftmost_in = center.x;
     if (rightmost_in && (center.x > *rightmost_in || *rightmost_in == -100000))
@@ -37052,13 +37093,38 @@ t_pt note_to_family_contour_pt(t_notation_obj *r_ob, t_note *nt, double *leftmos
     return center;
 }
 
+t_llll *note_to_family_contour_pts(t_notation_obj *r_ob, t_note *nt)
+{
+    t_pt center = build_pt(note_get_center_ux(r_ob, nt),
+                      mc_to_yposition_in_scale(r_ob, note_get_screen_midicents(nt), chord_get_voice(r_ob, nt->parent)));
+
+    t_pt left = center, right = center, top = center, bottom = center;
+
+    double nhuw = (notehead_get_uwidth(r_ob, nt->parent->r_sym_duration, nt, true)/r_ob->zoom_x) * 0.8;
+    double nhuh = r_ob->step_y / (r_ob->zoom_y * r_ob->zoom_x);
+    left.x -= nhuw;
+    right.x += nhuw;
+    top.x -= nhuh;
+    bottom.x += nhuh;
+    
+    t_llll *ll = llll_get();
+    llll_appendllll(ll, pt_to_llll(center, false));
+    llll_appendllll(ll, pt_to_llll(left, false));
+    llll_appendllll(ll, pt_to_llll(right, false));
+    llll_appendllll(ll, pt_to_llll(top, false));
+    llll_appendllll(ll, pt_to_llll(bottom, false));
+
+    return ll;
+}
+
+
 t_pt rest_to_family_contour_pt(t_notation_obj *r_ob, t_chord *ch, double *leftmost_in, double *rightmost_in, long *topmost_voice, long *bottommost_voice)
 {
     t_pt center = build_pt(0, 0);
     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-        double center_ux = ch->stem_offset_ux + ch->parent->tuttipoint_reference->offset_ux;
+        double center_x = ch->stem_offset_ux + ch->parent->tuttipoint_reference->offset_ux;
         double center_y = rest_get_nonfloating_yposition(r_ob, ch, NULL, NULL) - ch->float_steps * r_ob->step_y;
-        center = build_pt(center_ux, center_y);    
+        center = build_pt(center_x, center_y);
     }
     
     if (leftmost_in && (center.x < *leftmost_in || *leftmost_in == -100000))
@@ -37074,7 +37140,7 @@ t_pt rest_to_family_contour_pt(t_notation_obj *r_ob, t_chord *ch, double *leftmo
     return center;
 }
 
-// view and g are for DEBUG ONLY
+// g is for DEBUG ONLY
 void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam, t_jgraphics* g)
 {
     if (!fam->items->l_head) {
@@ -37093,6 +37159,11 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
     
     for (itel = fam->items->l_head; itel; itel = itel->l_next) {
         t_notation_item *it = (t_notation_item *)hatom_getobj(&itel->l_hatom);
+        t_notation_item *voice = notation_item_get_ancestor_of_at_least_a_certain_type(r_ob, it, k_VOICE);
+        
+        if (voice && ((t_voice *)voice)->hidden)
+            continue;
+        
         switch (it->type) {
             case k_NOTE:
                 llll_appendllll(points_in, pt_to_llll(note_to_family_contour_pt(r_ob, (t_note *)it, &leftmost_in_ux, &rightmost_in_ux, &topmost_voice, &bottommost_voice), false), 0, WHITENULL_llll);
@@ -37144,7 +37215,7 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
         polygon_free(boundingbox);
     } else {
         double PAD_UX = 40;
-        
+        const char USE_MULTIPOINTS = false;
         // retrieving pts_out
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
             t_rollvoice *voice; t_chord *chord; t_note *note;
@@ -37161,7 +37232,10 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
                     
                     for (note = chord->firstnote; note; note = note->next) {
                         if (notation_item_is_in_label_family((t_notation_item *)note, fam)) continue;
-                        llll_appendllll(points_out, pt_to_llll(note_to_family_contour_pt(r_ob, note, NULL, NULL, NULL, NULL), false), 0, WHITENULL_llll);
+                        if (USE_MULTIPOINTS)
+                            llll_chain(points_out, note_to_family_contour_pts(r_ob, note));
+                        else
+                            llll_appendllll(points_out, pt_to_llll(note_to_family_contour_pt(r_ob, note, NULL, NULL, NULL, NULL), false));
                     }
                 }
             }
@@ -37175,17 +37249,23 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
                 for (meas = voice->firstmeasure; meas; meas = meas->next) {
                     
                     if (notation_item_is_in_label_family((t_notation_item *)meas, fam)) continue;
-                    if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux < leftmost_in_ux - PAD_UX) continue;
-                    if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux > rightmost_in_ux + PAD_UX) break;
+                    if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux < leftmost_in_ux - PAD_UX) continue;
+                    if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux > rightmost_in_ux + PAD_UX) break;
                     
                     for (chord = meas->firstchord; chord; chord = chord->next) {
                         if (notation_item_is_in_label_family((t_notation_item *)chord, fam)) continue;
                         if (!chord->firstnote) {
-                            llll_appendllll(points_out, pt_to_llll(rest_to_family_contour_pt(r_ob, chord, NULL, NULL, NULL, NULL), false), 0, WHITENULL_llll);
+                            if (USE_MULTIPOINTS)
+                                llll_chain(points_out, note_to_family_contour_pts(r_ob, note));
+                            else
+                                llll_appendllll(points_out, pt_to_llll(rest_to_family_contour_pt(r_ob, chord, NULL, NULL, NULL, NULL), false));
                         } else {
                             for (note = chord->firstnote; note; note = note->next) {
                                 if (notation_item_is_in_label_family((t_notation_item *)note, fam)) continue;
-                                llll_appendllll(points_out, pt_to_llll(note_to_family_contour_pt(r_ob, note, NULL, NULL, NULL, NULL), false), 0, WHITENULL_llll);
+                                if (USE_MULTIPOINTS)
+                                    llll_chain(points_out, note_to_family_contour_pts(r_ob, note));
+                                else
+                                    llll_appendllll(points_out, pt_to_llll(note_to_family_contour_pt(r_ob, note, NULL, NULL, NULL, NULL), false));
                             }
                         }
                     }
@@ -37200,9 +37280,22 @@ void update_label_family_contour(t_notation_obj *r_ob, t_bach_label_family *fam,
         for (t_llllelem *elem = points_out->l_head; elem && i < (long)points_out->l_size; elem = elem->l_next, i++) 
             pts_out[i] = llll_to_pt(hatom_getllll(&elem->l_hatom));
         
+        // debug
+/*        if (g) {
+            for (long i = 0; i < points_in->l_size; i++)
+                paint_circle(g, build_jrgba(1, 0, 0, 1), build_jrgba(1, 0, 0, 1), unscaled_xposition_to_xposition(r_ob, pts_in[i].x), pts_in[i].y, 1, 1);
+            for (long i = 0; i < points_out->l_size; i++)
+                paint_circle(g, build_jrgba(0, 0, 1, 1), build_jrgba(0, 0, 1, 1), unscaled_xposition_to_xposition(r_ob, pts_out[i].x), pts_out[i].y, 1, 1);
+        } */
+        
         // applying function
         beziercs_free(fam->contour);
-        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, NULL); //g);
+
+#ifdef CONFIGURATION_Development
+        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, NULL);
+#else
+        fam->contour = get_venn_enclosure(points_in->l_size, pts_in, points_out->l_size, pts_out, NULL);
+#endif
 
         bach_freeptr(pts_out);
     }
@@ -37224,12 +37317,14 @@ void update_all_label_families_contour(t_notation_obj *r_ob)
 
 void set_all_label_families_update_contour(t_notation_obj *r_ob)
 {
-    t_bach_label_manager *man = &r_ob->m_labels;
-    t_llllelem *elem;
-    for (elem = man->families->l_head; elem; elem = elem->l_next) {
-        t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&elem->l_hatom);
-        fam->need_update_contour = true;
-    }    
+    if (r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_BOUNDINGBOX || r_ob->show_label_families == k_SHOW_LABEL_FAMILIES_VENN) {
+        t_bach_label_manager *man = &r_ob->m_labels;
+        t_llllelem *elem;
+        for (elem = man->families->l_head; elem; elem = elem->l_next) {
+            t_bach_label_family *fam = (t_bach_label_family *)hatom_getobj(&elem->l_hatom);
+            fam->need_update_contour = true;
+        }
+    }
 }
 
 void set_label_families_update_contour_flag_from_undo_ticks(t_notation_obj *r_ob)
@@ -44256,4 +44351,112 @@ t_measure *tuttipoint_get_first_measure(t_notation_obj *r_ob, t_tuttipoint *tpt)
     return NULL;
 }
 
+
+double slot_item_get_temporal_x(t_notation_obj *r_ob, long slot_num, t_slotitem *it, char normalize_to_01)
+{
+    if (!it || !it->item)
+        return 0;
+    
+    double val = 0;
+    switch (r_ob->slotinfo[slot_num].slot_type) {
+        case k_SLOT_TYPE_FUNCTION:
+            val = ((t_pts *)it->item)->x;
+            break;
+        case k_SLOT_TYPE_3DFUNCTION:
+            val =  ((t_pts3d *)it->item)->x;
+            break;
+        case k_SLOT_TYPE_SPAT:
+            val = ((t_spatpt *)it->item)->t;
+            break;
+        case k_SLOT_TYPE_DYNFILTER:
+            val = ((t_biquad *)it->item)->t;
+            break;
+        default:
+            val = 0;
+    }
+    
+    if (normalize_to_01) {
+        return (val - r_ob->slotinfo[slot_num].slot_domain[0])/(r_ob->slotinfo[slot_num].slot_domain[1] - r_ob->slotinfo[slot_num].slot_domain[0]);
+    } else {
+        return val;
+    }
+}
+
+
+void slot_item_set_temporal_x(t_notation_obj *r_ob, long slot_num, t_slotitem *it, double value, char from_01_normalized_range)
+{
+    if (!it || !it->item)
+        return;
+    
+    if (from_01_normalized_range) {
+        value = (value * (r_ob->slotinfo[slot_num].slot_domain[1] - r_ob->slotinfo[slot_num].slot_domain[0])) + r_ob->slotinfo[slot_num].slot_domain[0];
+    }
+    
+    switch (r_ob->slotinfo[slot_num].slot_type) {
+        case k_SLOT_TYPE_FUNCTION:
+            ((t_pts *)it->item)->x = value;
+            break;
+            
+        case k_SLOT_TYPE_3DFUNCTION:
+            ((t_pts3d *)it->item)->x = value;
+            break;
+            
+        case k_SLOT_TYPE_SPAT:
+            ((t_spatpt *)it->item)->t = value;
+            break;
+            
+        case k_SLOT_TYPE_DYNFILTER:
+            ((t_biquad *)it->item)->t = value;
+            break;
+            
+        default:
+            break;
+    }
+}
+
+
+void note_stretch_portion_of_duration_line_and_temporal_slots(t_notation_obj *r_ob, t_note *nt, double from_rel_pos, double to_rel_pos, double stretch_factor, char direction, double old_note_duration, double new_note_duration)
+{
+    double ratio = old_note_duration / new_note_duration;
+    for (t_bpt *bpt = nt->firstbreakpoint; bpt; bpt = bpt->next) {
+        if (bpt->prev && bpt->next) {
+            double rel_pos = bpt->rel_x_pos;
+            if (rel_pos > from_rel_pos && rel_pos < to_rel_pos) {
+                if (direction <= 0) { // keep from_rel_pos as pivot
+                    bpt->rel_x_pos = (from_rel_pos + (rel_pos - from_rel_pos) * stretch_factor) * ratio;
+                } else if (direction > 0) {
+                    bpt->rel_x_pos = 1. - (to_rel_pos + (to_rel_pos - rel_pos) * stretch_factor) * ratio;
+                }
+                bpt->rel_x_pos = CLAMP(bpt->rel_x_pos, 0., 1.);
+            } else if (rel_pos >= to_rel_pos && direction == 0) {
+                // "shift"
+                bpt->rel_x_pos = (from_rel_pos + (to_rel_pos - from_rel_pos) * stretch_factor + (rel_pos - to_rel_pos)) * ratio;
+                bpt->rel_x_pos = CLAMP(bpt->rel_x_pos, 0., 1.);
+            }
+        }
+    }
+    
+    for (long i = 0; i < CONST_MAX_SLOTS; i++) {
+        if (slot_is_temporal(r_ob, i)) {
+            for (t_slotitem *it = notation_item_get_slot_firstitem(r_ob, (t_notation_item *)nt, i); it; it = it->next) {
+                double rel_pos = slot_item_get_temporal_x(r_ob, i, it, true);
+                double new_pos = rel_pos;
+                if (rel_pos > from_rel_pos && rel_pos < to_rel_pos) {
+                    if (direction < 0) { // keep from_rel_pos as pivot
+                        new_pos = (from_rel_pos + (rel_pos - from_rel_pos) * stretch_factor) * ratio;
+                    } else if (direction > 0) {
+                        new_pos =  1. - (to_rel_pos + (to_rel_pos - rel_pos) * stretch_factor) * ratio;
+                    }
+                    new_pos = CLAMP(new_pos, 0., 1.);
+                    slot_item_set_temporal_x(r_ob, i, it, new_pos, true);
+                } else if (rel_pos >= to_rel_pos && direction == 0) {
+                    // "shift"
+                    new_pos = (from_rel_pos + (to_rel_pos - from_rel_pos) * stretch_factor + (rel_pos - to_rel_pos)) * ratio;
+                    new_pos = CLAMP(new_pos, 0., 1.);
+                    slot_item_set_temporal_x(r_ob, i, it, new_pos, true);
+                }
+            }
+        }
+    }
+}
 

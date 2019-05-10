@@ -105,7 +105,6 @@ void score_ceilmeasures(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_subscore(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_collapse(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_merge(t_score *x, t_symbol *s, long argc, t_atom *argv);
-void score_overtype(t_score *x, t_symbol *s, long argc, t_atom *argv);
 void score_snap_pitch_to_grid(t_score *x, t_symbol *s, long argc, t_atom *argv);
 
 t_llll* get_score_values_as_llll_for_pwgl(t_score *x);
@@ -1468,6 +1467,22 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
                 move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
                 unlock_general_mutex((t_notation_obj *)x);
                 
+            // (un)sel(ect) voice
+            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_voice && selectllll->l_head->l_next) {
+                
+                lock_general_mutex((t_notation_obj *)x);
+                for (t_llllelem *elem = selectllll->l_head->l_next; elem; elem = elem->l_next) {
+                    long voicenum = hatom_getlong(&elem->l_hatom);
+                    if (voicenum < 0)
+                        voicenum = x->r_ob.num_voices + voicenum + 1;
+                    voicenum -= 1;
+                    if (voicenum >= 0 && voicenum < x->r_ob.num_voices) {
+                        notation_item_add_to_preselection((t_notation_obj *)x, (t_notation_item *)nth_voice((t_notation_obj *)x, voicenum));
+                    }
+                }
+                move_preselecteditems_to_selection((t_notation_obj *) x, mode, false, false);
+                unlock_general_mutex((t_notation_obj *)x);
+                
             // (un)sel(ect) breakpoints/tail if
             } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_breakpoint || hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_tail) && selectllll->l_head->l_next &&
                        hatom_gettype(&selectllll->l_head->l_next->l_hatom) == H_SYM &&
@@ -1547,11 +1562,15 @@ void score_select(t_score *x, t_symbol *s, long argc, t_atom *argv)
             } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_markers) {
                 select_all_markers((t_notation_obj *) x, mode);
 
+            // (un)sel(ect) all voices
+            } else if (head_type == H_SYM && hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_voices) {
+                select_all_voices((t_notation_obj *)x, mode);
+
             // (un)sel(ect) notes
             } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_notes)) {
                 select_all_notes((t_notation_obj *) x, mode);
                 
-            // (un)sel(ect) all all chords
+            // (un)sel(ect) all chords
             } else if (head_type == H_SYM && (hatom_getsym(&selectllll->l_head->l_hatom) == _llllobj_sym_chords)) {
                 select_all_chords((t_notation_obj *) x, mode);
 
@@ -5411,7 +5430,9 @@ int T_EXPORT main(void){
     // - If the word <m>sel</m> is followed by the symbol <b>all</b>, all notes, chords and markers are selected. <br />
     // - If the word <m>sel</m> is followed by a category plural symbol, all the corresponding elements are selected.
     // Category plural symbols are: <b>markers</b>, <b>notes</b>, <b>chords</b>, <b>rests</b>,
-    // <b>measures</b>, <b>breakpoints</b>, <b>tails</b>. <br />
+    // <b>measures</b>, <b>breakpoints</b>, <b>tails</b>, <b>voices</b>. <br />
+    // - If the word <m>sel</m> is followed by the symbol <b>voice</b> followed by one or more integers, the corresponding voices are selected
+    // (negative numbers count from the last voice). <br />
     // - If the word <m>sel</m> is followed by the symbol <b>measure</b> followed by one or two integers (representing an address), a certain measure is selected.
     // The full syntax for the integers is: <m>voice_number</m> <m>measure_number</m>. If just one integer is given, the voice number is considered
     // to be by default 1. 
@@ -6568,8 +6589,11 @@ int T_EXPORT main(void){
     // <b>[mapping [<m>dynamics1</m> <m>velocity1</m>] [<m>dynamics2</m> <m>velocity2</m>]...]</b>.
     // Differently from <m>dynamics2velocities</m>, if you define a mapping, you need to define the velocity association for each of the dynamic marking
     // you want to use. <br />
-    // An "unnecessary" attribute toggles whether unnecessary dynamic markings should by default be dropped (default is 1: yes, use 0 to turn this of). <br />
-    // Finally, a "thresh" attribute sets a threshold for hairpin detection (default is 1., 0. meaning: no hairpin detection).
+    // An "unnecessary" attribute toggles whether unnecessary dynamic markings should
+    // by default be dropped (default is 1: yes, use 0 to turn this of). <br />
+    // A "thresh" attribute sets a threshold for hairpin detection (default is 1., 0. meaning: no hairpin detection). <br />
+    // Two attributes, "mindyn" and "maxdyn", allow setting special symbols to be assigned to velocities <= 1 and >= 127 respectively.
+    // If "none" is provided (default), there will be no special symbol for these cases.
     // @marg 0 @name selection @optional 1 @type symbol
     // @marg 1 @name slot_number @optional 1 @type int
     // @mattr maxchars @type int @default 4 @digest Width of the dynamics spectrum
@@ -6577,6 +6601,8 @@ int T_EXPORT main(void){
     // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>[<m>dynamics</m> <m>velocity</m>]</b> pairs
     // @mattr unnecessary @type int @default 1 @digest If non-zero, drops unnecessary dynamic markings
     // @mattr thresh @type float @default 1. @digest Hairpin detection threshold
+    // @mattr mindyn @type symbol @default "" @digest Dynamic marking for velocities <= 1 (or none if empty symbol)
+    // @mattr maxdyn @type symbol @default "" @digest Dynamic marking for velocities >= 127 (or none if empty symbol)
     // @seealso dynamics2velocities, checkdynamics, fixdynamics
     // @example velocities2dynamics @caption convert velocities to dynamics throughout the whole score
     // @example velocities2dynamics selection @caption same thing, for selected items only
@@ -6871,14 +6897,16 @@ int T_EXPORT main(void){
     
     CLASS_ATTR_CHAR(c,"outputtrees",0, t_notation_obj, output_trees);
     CLASS_ATTR_STYLE_LABEL(c,"outputtrees",0,"enumindex","Output Rhythmic Trees Upon Dump");
-    CLASS_ATTR_ENUMINDEX(c,"outputtrees", 0, "Never First Outlet Only All Outlets");
+    CLASS_ATTR_ENUMINDEX(c,"outputtrees", 0, "Never First Outlet Only First Outlet And Durations Outlet All Outlets");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"outputtrees",0,"1");
     CLASS_ATTR_ACCESSORS(c, "outputtrees", (method)NULL, (method)score_setattr_outputtrees);
     // @description Sets the way in which rhythmic trees are output: <br />
-    // - Never: rhythmic trees are never output from any of the outlets. <br />
-    // - First Outlet Only (default): rhythmic trees are only output from the first outlet of <o>bach.score</o> (the one 
+    // - Never (0): rhythmic trees are never output from any of the outlets. <br />
+    // - First Outlet Only (1, default): rhythmic trees are only output from the first outlet of <o>bach.score</o> (the one
     // with the score gathered syntax), but never from any of the other outlets. <br />
-    // - All Outlets: rhythmic trees are output from the first outlet and also from all the separate parameter outlets. <br />
+    // - First Outlet And Durations outlet (2): rhythmic trees are output from the first outlet of <o>bach.score</o> (the one
+    // with the score gathered syntax) and from the durations outlet, but never from any of the other outlets. <br />
+    // - All Outlets (3): rhythmic trees are output from the first outlet and also from all the separate parameter outlets. <br />
     // Outputting rhythmic trees means essentially that the given llll containing the data (e.g. durations or velocities) is reshaped 
     // according to the shape of the rhythmic tree. Also see the <m>outputtiesindurationtree</m> attribute.
 
@@ -6886,7 +6914,8 @@ int T_EXPORT main(void){
     CLASS_ATTR_STYLE_LABEL(c,"outputtiesindurationtree",0,"onoff","Output Ties In Duration Tree");
     CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"outputtiesindurationtree",0,"1");
     // @description Toggles the ability to output a symbol "t" to identify ties in the tree of durations.
-    // This attribute is active only if <m>outputtrees</m> is set to "All Outlets": in this case the duration outlet will
+    // This attribute is active only if <m>outputtrees</m> is set to "First Outlet And Durations Outlet" or "All Outlets":
+    // in this case the duration outlet will
     // output durations structured as the rhythmic tree. If this attribute is set to 1, after each note which starts a tie,
     // a "t" symbol will be put, identifying such tie. For instance: 
     // <b>[ [ [ 1/8 t [ 1/24 1/24 1/24 ] ] [ [ [ -1/16 1/64 t ] [ 1/64 1/64 1/64 t ] ] [ 1/16 1/16 ] ] -1/2 ] ]</b>.
@@ -7604,6 +7633,8 @@ t_max_err score_setattr_vzoom(t_score *x, t_object *attr, long ac, t_atom *av){
             x->r_ob.needed_uheight = notationobj_get_supposed_standard_uheight((t_notation_obj *)x);
             redraw_vscrollbar((t_notation_obj *) x, 1);
         }
+        
+        set_all_label_families_update_contour((t_notation_obj *)x);
     }
     return MAX_ERR_NONE;
 }
@@ -8134,7 +8165,7 @@ void score_getdomainpixels(t_score *x, t_symbol *s, long argc, t_atom *argv)
 //    if (x->r_ob.view == k_VIEW_SCROLL)
         llll_appenddouble(outlist, end, 0, WHITENULL_llll);
 //    else
-//        llll_appenddouble(outlist, onset_to_xposition((t_notation_obj *) x, x->r_ob.screen_ms_start + x->r_ob.ux_on_a_line, NULL), 0, WHITENULL_llll);
+//        llll_appenddouble(outlist, onset_to_xposition_roll((t_notation_obj *) x, x->r_ob.screen_ms_start + x->r_ob.ux_on_a_line, NULL), 0, WHITENULL_llll);
 
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_UI, 7, outlist);
     llll_free(outlist);
@@ -8611,32 +8642,32 @@ void score_dump(t_score *x, t_symbol *s, long argc, t_atom *argv){
             send_measuresinfo_values_as_llll(x);
             goto end;
         } else if ((sym == _llllobj_sym_cents) || (sym == _llllobj_sym_cent)) {
-            send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_NEVER);
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 3, k_OUTPUT_PITCHES_NEVER);
             goto end;
         } else if ((sym == _llllobj_sym_pitches) || (sym == _llllobj_sym_pitch)) {
-            send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_ALWAYS);
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 3, k_OUTPUT_PITCHES_ALWAYS);
             goto end;
         } else if (sym == _llllobj_sym_poc) {
-            send_cents_values_as_llll(x, x->r_ob.output_trees == 2, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 3, k_OUTPUT_PITCHES_WHEN_USER_DEFINED);
             goto end;
         } else if ((sym == _llllobj_sym_durations) || (sym == _llllobj_sym_duration)) {
-            send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
+            send_durations_values_as_llll(x, x->r_ob.output_trees >= 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
             goto end;
         } else if ((sym == _llllobj_sym_velocities) || (sym == _llllobj_sym_velocity)) {
-            send_velocities_values_as_llll(x, x->r_ob.output_trees == 2);
+            send_velocities_values_as_llll(x, x->r_ob.output_trees == 3);
             goto end;
         } else if ((sym == _llllobj_sym_ties) || (sym == _llllobj_sym_tie)) {
-            send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
+            send_ties_values_as_llll(x, x->r_ob.output_trees == 3);
             goto end;
         } else if ((sym == _llllobj_sym_extras) || (sym == _llllobj_sym_extra)) {
-            send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
+            send_extras_values_as_llll(x, x->r_ob.output_trees == 3);
             goto end;
         } else if (sym == _llllobj_sym_separate) {
-            send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
-            send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
-            send_velocities_values_as_llll(x, x->r_ob.output_trees == 2);
-            send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
-            send_cents_values_as_llll(x, x->r_ob.output_trees == 2);
+            send_extras_values_as_llll(x, x->r_ob.output_trees == 3);
+            send_ties_values_as_llll(x, x->r_ob.output_trees == 3);
+            send_velocities_values_as_llll(x, x->r_ob.output_trees == 3);
+            send_durations_values_as_llll(x, x->r_ob.output_trees >= 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
+            send_cents_values_as_llll(x, x->r_ob.output_trees == 3);
             send_measuresinfo_values_as_llll(x);
             goto end;
         } else if (sym == _llllobj_sym_score) {
@@ -9096,6 +9127,7 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                         long slot_num = x->r_ob.link_dynamics_to_slot - 1, delete_unnecessary = true;
                         double a_exp = CONST_DEFAULT_DYNAMICS_TO_VELOCITY_EXPONENT, approx_thresh = CONST_DEFAULT_VELOCITIES_TO_DYNAMICS_HAIRPIN_THRESH;
                         long maxchars = CONST_DEFAULT_DYNAMICS_SPECTRUM_WIDTH - 1;
+                        t_symbol *mindyn = _llllobj_sym_none, *maxdyn = _llllobj_sym_none;
                         if (inputlist->l_head && hatom_getsym(&inputlist->l_head->l_hatom) == _llllobj_sym_selection) {
                             selection_only = true;
                             llll_behead(inputlist);
@@ -9104,9 +9136,9 @@ void score_anything(t_score *x, t_symbol *s, long argc, t_atom *argv){
                             slot_num = hatom_getlong(&inputlist->l_head->l_hatom) - 1;
                             llll_behead(inputlist);
                         }
-                        llll_parseargs_and_attrs((t_object *)x, inputlist, "lidid", gensym("mapping"), &mapping_ll, gensym("maxchars"), &maxchars, gensym("exp"), &a_exp, gensym("unnecessary"), &delete_unnecessary, _llllobj_sym_thresh, &approx_thresh);
+                        llll_parseargs_and_attrs((t_object *)x, inputlist, "lididss", gensym("mapping"), &mapping_ll, gensym("maxchars"), &maxchars, gensym("exp"), &a_exp, gensym("unnecessary"), &delete_unnecessary, _llllobj_sym_thresh, &approx_thresh, gensym("mindyn"), &mindyn, gensym("maxdyn"), &maxdyn);
                         if (slot_num >= 0 && slot_num < CONST_MAX_SLOTS)
-                            notationobj_velocities2dynamics((t_notation_obj *)x, slot_num, mapping_ll, selection_only, MAX(0, maxchars + 1), a_exp, delete_unnecessary, approx_thresh);
+                            notationobj_velocities2dynamics((t_notation_obj *)x, slot_num, mapping_ll, selection_only, MAX(0, maxchars + 1), a_exp, delete_unnecessary, approx_thresh, mindyn, maxdyn);
                         llll_free(mapping_ll);
                         
                     } else if (router == gensym("clearbreakpoints")) {
@@ -12687,8 +12719,10 @@ void score_mousedown(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
         t_scorevoice *voice = nth_scorevoice(x, voicenum);
         char instaff = false, between_staff_and_next = false;
         
-        if (voicenum < 0)
-            object_warn((t_object *)x, "Warning: trying to edit a non-existing part. Check the ""activepart"" attribute.");
+        if (voicenum < 0) {
+            if (voice_get_first_visible((t_notation_obj *)x))
+                object_warn((t_object *)x, "Warning: trying to edit a non-existing part. Check the ""activepart"" attribute.");
+        }
         
         if ((voicenum >= 0) && ((instaff = is_y_within_voice_staff((t_notation_obj *) x, this_y, (t_voice *)voice)) ||
             (x->r_ob.draw_barlines_across_staves && (between_staff_and_next = is_y_between_this_staff_and_the_next_or_prev((t_notation_obj *) x, this_y, (t_voice *)voice))))) {
@@ -13587,11 +13621,11 @@ void send_score_values_as_llll(t_score *x, long send_what, t_symbol *router)
 
 void send_all_values_as_llll(t_score *x, long send_what_for_header, t_symbol *gatheredsyntax_router)
 {
-    send_extras_values_as_llll(x, x->r_ob.output_trees == 2);
-    send_ties_values_as_llll(x, x->r_ob.output_trees == 2);
-    send_velocities_values_as_llll(x, x->r_ob.output_trees == 2);
-    send_durations_values_as_llll(x, x->r_ob.output_trees == 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
-    send_cents_values_as_llll(x, x->r_ob.output_trees == 2 );
+    send_extras_values_as_llll(x, x->r_ob.output_trees == 3);
+    send_ties_values_as_llll(x, x->r_ob.output_trees == 3);
+    send_velocities_values_as_llll(x, x->r_ob.output_trees == 3);
+    send_durations_values_as_llll(x, x->r_ob.output_trees >= 2 ? (x->r_ob.output_full_duration_tree ? 2 : 1) : 0);
+    send_cents_values_as_llll(x, x->r_ob.output_trees == 3 );
     send_measuresinfo_values_as_llll(x);
     send_score_values_as_llll(x, send_what_for_header, gatheredsyntax_router);
 }

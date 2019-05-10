@@ -4,13 +4,13 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 151.0, 79.0, 941.0, 639.0 ],
+		"rect" : [ 66.0, 79.0, 945.0, 639.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -39,6 +39,130 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 25.788923812050054,
+					"hyperlinkcolor" : [ 0.341176470588235, 0.450980392156863, 0.16078431372549, 0.0 ],
+					"id" : "obj-32",
+					"linkend" : [ ":,;()[]{}" ],
+					"linkstart" : [ " " ],
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 761.0, 17.0, 162.0, 35.0 ],
+					"text" : "                     "
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"autofit" : 1,
+					"data" : [ 5753, "png", "IBkSG0fBZn....PCIgDQRA..AHK...fYHX....fqqRQj....DLmPIQEBHf.B7g.YHB..V.SRDEDU3wY6cmGkUTcmG.+6sp58ZPV5lktAYoYeeuQj8EUTAlfhQLBYvnwbFmnmIS1lwjSzIS7Ldlw3jSRNmLIyjMSF2ih3NhJBBJRDYqoaZPnk8kdCZfdA5tp5dm+3Ac20qp2V2ush46mygywtdUcq68Y8peUcu25WIt3CtREHhHh7ozxzU.hHhnNBFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMiLcEneasVnfvyO6HSOOjShFp0v.hQNVnOghfnu8GhbyChtkKvkZDxyeNnNS0PVVwPV5t.ZngNdCfHhnLpLdfrFsA.Td9YJn.hPPNWtlt.ia81f9bWHDcpyt+7tzUn2qB.F5HAl1rgRZC4d1ILe8+BPkmp8V8IhHJCKiGHKYPadKDAts6FhqoKw81Hzzg9jmFzlXQvdKa.Vq94.LaNEVKIhHJUveGHyv.Fq7a.iYN+1cQHzzgwbuYHFzvg4+yOC3b0lDqfDQDkp4emrGZ5HvC8vcnfXskdgCA47CdbfdzyjR4QDQT5guMPlwJtOnO5wmTKSQt8.A9l+S.AyIoVtDQDk53K6ZQsoOGXLmaJkT15CbvPc22KrdleWJo7upkgAP2yCht1c.kMTUUAPSMkbJacCfbyMTYqqCU80Abgyk7Jehxlwi+iI+Wfr.AQfaeEozcg9LlOr235f5DGKkteZKsaZIPezSH1qnRB04NKj0TEP0UB49KA3hWz60s64h.2y2rcWmr1z6BUo6NxqfP.sYs.nOkoCsQLFHBDvYU870BYUUB6suEH2xFAjxDZ+qMy4A8hlQnxNr6RVIkPdrCC6R1IjaXsw9G0w36BqM9NPU1dhZQHlXQvXt2bD+by+xSATS0w89LVh42+wIwDlBLl2s39Crsg4e3WBXY0g2GIRaUU+EfrxSCT4of7vGLtGW5DscHF3ffwskbNWg0ZeEnNb4IV6rtyAYMUCTcEPcpS.0ISrymjVN921Fl+4eMvkhv4P.fXhSEFycgN2rsuEH+zONtaKoZ9t.YZ23hfHuT63XIDBXbGeUX9qdhT59osz5+.g93lTBucpFpGlu+aA4FWm6YcYffsqx7JrKYGQ3Ai..8NeD3deHnOrQEwsWjaOfdt8.5iXzPcSKAM+ZuHT69yh8Nt24i.q5uG5ibrQtr0zf9fGFzG7vfZ1K.M+z+VnNPYQtLiw2EpK1.rhQfLiYL+nVFV4zYmeekJ+9OAXbCKNhcCu03mLT6d6c7cR6rspLMg8FeGXstWOpmLEnczN5R25Pe+6n7+n2Oz+QG3+mZW5tf0q97Pc5SF8ULMe7uZQ2NrdsWLx6qdkuqsUcru.I1kklZ46Fir.IoI2QrnM5I.jWORK6qNBQW5JBtrUf.Ov2MssO0l0BPN+nmHpAwBmnfqE47.eWncKKM5k8bWHx4Q9oQ8GwtJ6dlOB9seDXb22W6d7M0G2j.zzixJX.sj7XxlVjWOfVT9tzX5yKMVYbSDH.LtkaC47X+bfdmejWwr71Q7Pe7SAAejm.ZW2rh35jIN9W+FVLPuhx289.9p.Yhqs+PTv0ld1WBAzl3TSK6qjA8wMInsvuTJe+nMi4gfq5A79gNOND31taHFyD8tru9Yifq79gHmNEwsWo79dTDBALl+s.iuxWqcUuDctKPL7nb2kCajs61blj1zlMDZQ9m4ZiaR.cI9e9KSUDcKWD39+VQ7hI7KsiXQnoi.q7q64riNSc7uHP.DXYqLg2trI9ptVTL1jS2DDuzG6jfbyqOstOaK6idHX9a9ostfb5DDEzOXbKK0yqXyXVyGMu92Jlkayu9KB0wNbLWOUEgkwS5TmPfk48XNXev8A6suUnNzA.fBhALHDXw2gqK7PnogfeiuEZ5w9d.0UWaJ6Ni.e4+VuK6R1Ir1xFg5HkCzzkfXPCC5SXJP+FWBDBmY9E8Yt.XukMFZ7LRP5SrHXEgtmwUWqnTt12wq182+sC5SetNKypqDh76SK+svH.zJZlP9Qoliya94+CPc3Cd4cl.nG8B5ibrPed2hqwTUevCG1KbIP9duoqxo8zNT0VCr1v63Y8ReBE4X6uRYZWxN8tgTcUQrMB.z7u+WBY466J0FH5d2gneEBiEsLncsCvw5J5bWfwxVIr9S+5VWXF93e8oNCXsg01t9cS1.eUfLsd06z6Nrmo48W3rsbdx95pCpZpFle9dA9gONz6egNVcQAWantVn4nOvupidHn1eoIb0wXIeYH5ddtVt0GsdX8h+Y.Uq8Zt5jGGMsysg.eyuGzC6NvDWSWf1DlJjexG1ZY+kVt2k86+lg5+91bknpCTFrNPYPd3xQf68AgHPvVKag.Fq39g4S7nNpOdQVwIgVe6eK+s9DJBVq9Y8bc0F+Tb72pJNIDgcBp3U686+DkX.EB89MPGKy7utYD3FWLDcoqsrL8oO2TVfLUMUA0IOdqK3DGCVkrKXWxtPvu8i39DwiZbtBj0taGUVArV8y3Y8RzydC8vBjIO0wi35GKpK1nieqpp6BPcxSfl26tQNO5S5Zb80GxvQamZJYhi+Cmwx+Zv7+7GmPaS1B+UWKla58gUVKacLxrsfZu6x0hEZZ.cJxcKQGRA8A52vhbWU1eov5EdJu+QiYyv7Y+8P0zkb8Q5SnnV+i9zOnu.2yFM68UBrd0WvwOhaK4N+TXttW2cYOvACsYufH2VtLUENGzcQ98EnO8y8J1q7cbU0plaBpyVSLK+LsvuKF..09KExC57tN0G5H.B6j5oZpCTFjGbetVt1.GhqkkM2NhoFaD1E6wDbpWE.jykGOqLzw+t1tgLbnccyLg2trA9p.YorSRGI4jEOlHdzO5pFa.3BmOkr6zF0DfP28Mva89wnqLq8LP5wcenMxwzx3gnMkqGBOFaDKO5hovI276CkG2ApdQyHlaq8wOJTgMS4zlXQtVOsv5Ra4A1WzmXHYCDZPOrIUf5BmGpiTNrK18rTT+5mS5pl0Z8opS6ZYht1Mm+N2GzNhEU806ZYBg.nKcC.Yti+kUbRnpy44KBrrU.XDHBaQ1KeUfL04Sy4AwKbtz69Kd0ydA8o49Gr1a98RY6Rs95dR1nNSUPsunOk0A.r2y1C0O+q60PyO0uBM8u8vnoG9AAj1..dNdepZpDpOON59sFpG16ZatquCajgdHsiZEyFxxJ1whz8XB9nO9I6byJcWgFumrXhQOdHx0YOJXW7mAnTPVxNgx14ybkw0O6zY0C..hd3tq6UmuVfK05cv6GZGwh1.FjqkorsAN2YAPl63ekoILCaLDE8LencSKN162rL9pwHKcmPeko6.mgQqacGZssaUxoSPqu8C5yXdtlAc1G5.w0UvA.XbiKFpob8QekZnNX8FubK+onutGOHYbNYDjacyPt0MGwOWqedT1UVQbU1..xpbuth.ACMkhqz8U82V16YmNt5UsgLBftzUfFt7UQaD.ZiZbN2eksanO4oE20uv0d99OQoOcOtPmcd4S30XiPt+Rg93ZM.sH+9BwPFQqSLiTLQ+GHzFk6SfKOwQc72Y6siXQL9I64reVdzC0RBBHic7ul.xM8dPcyK0waNj.25sil9jODntKD20gLMeUfLYB9jw2QoN4Qi8JkBIxuuH389fQccTMTenWCMu8Zh6WCM5gMwE7rbOS0NNQpVecO1QIswI5xcwhyxtZOVwHHBqqnqcCpXDHSVVwPIksL0tEZZPabSFxsEJqEHBKqJHq3jNydGsCsmu+SH4jiq.sp5qCp1LlR167ScD...PeFyAVI6..F5s1UUBAPO6IzF43Qf+l6DBO5BK611MzYSsiXPehEAY98MzeH.zxMOHJbntpaWg06+Fs9GYri+E.W5Rv7cdUD7NWUqKsScFFK8tf0y+Gi+5PFl+JP1dKFJaKOGqlTA6cuizx9oiPdhi54UjkTYD.hdzK266ymD550bxABc2iOPhT1pyEg0Mdd+zUecPd3C53g6VehE0RfL8wG13is2NdJiJUSaxSyUJMxt3s6HEgI2yNfx11w285EMSX8ROSnYKaRRNOzOHtWW6Cc.H2v5Z4uylZGwhwBbOQnhDqstInJ9xmaISe7O.je36A0buIGOpL5y5Ff8FeWnN8Ih65QljuZLxvktnmSbfTA0EaH5o7krD5iZbH3pd.D3gerT2L1xxz0jh..PKAdQlFQMa54C4YhT1hH8fvFmIUU6837BVzF6jBknVAbcE01IgbeXpltGY4B6c8oNWPC0CYXGeK5RWgX7o2mUyqPU24g4e5W6X1u5GaGQixxDVevaCqmsMIj7rfi+gsEZNrG6.glFLV9phvFj8wWcGY..Vq60i3sqmLYt90lVuhNuXexi5LK7ekGnzwOYnOi46HSGn2+AA728cf4+wOJhSW2qv58dCHOUzuRKUSNCbIqpBnWnyoFsHYjVaTRfFq2U2qHRjmguHstMTm2KOLx8rSf63q159tScFhgOZnNa0NtJUUSWBpx+73udEAsmu+iadjJmTM2DTUWIPX2Usc46G5iwYhp1X5yClEm95IBkkIr235f05dMmI+ZeV6HVTW3bnom7eA3rmIrOHye7O.fpzcC6x1CzGaqOym5iYhvZLwQhLOKfuKPl5K9bXW71g9jttT29370B4Gr1TV4G2ZpI2Y.hidHXs6OCxSbLD7qbuN9H8ALHXO0Y.412ZTKV68WZB+.4pp5z.gEHC8tf3aiKnOPqvgB4Q9BfZbmgDjmoFnG93Dj.AI073GxJkJ9GCuJOkqLEg9XFOjgkMGj6uzjxE2zd99OdocctSkShf4fN8X+h3a6G+jC0kTM1PRo9Xehi.zPaJKkBpKTanIyPUmFxCcPfZOiqsKaqcDKM+luTK+VUT3PQvkdWN9bQ2yChdU.TgGHCYAG+eYlu7SCsG8m5nqNMV5cA6sk8jk6iDeWfL..yU+LPaXiJzybRRlRoPyuveLlYGiLM4GuAntyU4p+00F7viYfr1CuFzX89WHrF3fg53GIpaqwzmGLV7cDpbp+BPd3xg8QJGxO7cAt3Eg5.60UPRsALHf9zWfXM6szz87hZjm3nQ90aiGrKYGv3FWRK+snvgBs1j0H.7KcqXG64nRXD.ZScFP9QePRo9XslmucEzNaqcDKpCWdKsSUYk.4zlkirFC.fwxVomYNirgi+A.PkmB1a98fwMz5zuWevCOzcAmkyeMFYWwYpFM+69EtdFRRFLeiWBp8Dg7sV1DKyP+KLIkt6yCxSbDOWtdLxl8PSCZsYplK5Z2g9DJBAl2M2Re3auW2OKZBg.FwQRPV65lomSDEUBNoLrC6+mqU3PfXvCywxjkkcGHSz+Bck1xZO7JSZjN46aGJIrV6q5Zw5CY3PLA2yX0rgi+uBq29UB8h6rMhmGt5LMe4cjA.nJe+v7o9uPf66gbjqw5Hr9f2Fx20cJeIajXXizyrjs5LQO4l1do1yNg8wOBzG3fcrb8oLcHm29hXxUVeQKy0UlB.Xu0M0xrOS84k5p+4ABchH6cssH+Bur2Ef.Kc4tqq0eAXs92NNZUsYaJ+yg5hMBQmuF.DJePp2lAb29jGCn1ylPkY5lW2EippSCYLd+WoMwo5HmGpOzQBydWfmcCb5vUCsC4N9qPtj6v8ckc6q.lktam4Nwrfi+aQiMBy27kQvUd+srHulUkYa7sAx..j6Zan4ZpBAevuOD449pRhWJKSX9B+wn9P6lMQLxwhf2yC34mIOdJ5YeSof0K+zP+64rqQDZZH3JteXcs8G1exlB8VvUJAxMOXrjurq2rrgJJEr15lbrLyW5OAsG8Ic7rEILBffOz+LLekmCxOYisNKrzzgXTiCA+5OTnW+6gw7UegDerQj1vtrhgwT8NWy4UtsLqhPC5SycVsn4077PsmnOoGB78+Wc8tkS+5mCrW6ZRpUw3xUKsiKeWYAu++Am0m9MPXOsY2xi2wUjwO9uMje7Ff87VXR4thSW70Ax..TG+HnoG+GBia81f9BVjqWMDwhcwaGlu1KBTYG+UlQxl1.FDB7C+2acA5ZPqW4Gw2KVpyWKjkF6S3ly+3OJt1+Va6if0e9+t0xu78C6c+YdlUKLl+sBi4eqgx6aMcIH5VtQrbMei+BP386dUUB60+VvXQ2giEKzzQv65qA0ctJHO0wAZ5RPafC10yWzUXe3xgLrfjwK4d1APDBjYWZwdt71i162+QiXziyUpbR0zkfZekDys0dmepq..FSOyD.3pk1APjuqr.Kc4noc7WcNwgxBN9uEJYnKZ867ncrxIMxeNFYgqwFf0q9Bnoex2EVuyZB0MPQg570BqO9CPSO4OFl+1edVYPLfPyRK8BGbq+q+EF4fXJEZ9o+sslZkRQLe4+WXejH+NKRDLmnFDyZKa.x28M79ydmWG161iLENt7q18ALHnOrQEweDKO8If4S+ahRsO5BkkOrcsb0Ea3xum0xd4U2wI26tiqr8hziuyCkpmFdRotkHtZoc.fHNVYhdU.zlyM5Z4Y5i+aK0AJKh0krQ996HygZOKrdyUC7lqFl8r2Pzm9AQt4AzstCboKB04NKvYOSnt+5pHppqDM+JOabk.e6vp8rv7m8Sf8hVVnWblwY+mqrLg8lWOrVyyE4UxrYX969EvdZyBA9J2mi20TQsrkRXu92BVu0pAr5.S.nFZ.xu3fPeDi1whk6qDGYShrN4jCzmr6b2nWISVOU6Yf8Q9BnG1jaQe5yEVoyWzhWszNZiHdWYKdYnostImyN5L8w+gwbMOGzF2jS3d4JS3pq.Ys0YqApyVCh9iFr+jpg5grpJBM.3G9fPtkOL89vaKkPt10flKcWvX42CzF5H770PAvk+Q119XX81uBvYhu7Gm7y9DzzAJCFK+dB8l7MBWApRJg7HkCqU+rgd64lDXWxNbEHKaeZ2qMI2oxIkYywU2LeE165ScG.Xpy.Vub5KUOc0R6vgHLVYhtmGztgE44jKKSd7uC0TEr2vZgwsd6I+xNISbwGbkYzy0m2GG4LLeEyJOzIsr6WWFD.tlqAhgMJHxqWPzstCkkYnGf5pq.pppJtSlwdxHPnYnYuK.n64Bgldn29tm+rgxxFo3tRknLJd7ebgAxHhHxW6piI6AQDQ++VLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZY7.YQaNIJh5mRDQDkE7.QW6b5QrWIhHhnHHieGYDQDQcDLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9Z+e.4MpQv6X3UxH.....IUjSD4pPfIH" ],
+					"embed" : 1,
+					"forceaspect" : 1,
+					"id" : "obj-33",
+					"maxclass" : "fpic",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "jit_matrix" ],
+					"patching_rect" : [ 761.0, 15.996005521058763, 161.607843137254918, 37.981566820276505 ],
+					"pic" : "/Users/danieleghisi/Downloads/become_a_patron_button@2x.png"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-29",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 331.0, -103.0, 29.5, 22.0 ],
+					"text" : "$1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-18",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 2,
+					"outlettype" : [ "bang", "" ],
+					"patching_rect" : [ 460.0, -34.0, 29.5, 22.0 ],
+					"text" : "t b l"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"hidden" : 1,
+					"id" : "obj-22",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 331.0, -65.0, 39.0, 22.0 ],
+					"text" : "zl.join"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 14.0,
+					"id" : "obj-28",
+					"linkend" : [ ":,;()[]{}" ],
+					"linkstart" : [ "s" ],
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 591.0, 81.0, 93.0, 22.0 ],
+					"text" : "supporting us"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"hidden" : 1,
+					"id" : "obj-27",
+					"linecount" : 2,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 985.0, 233.0, 373.0, 35.0 ],
+					"text" : ";\rmax launchbrowser https://www.patreon.com/bePatron?u=19939828"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontface" : 0,
+					"fontname" : "Arial",
+					"fontsize" : 15.0,
+					"hidden" : 1,
+					"id" : "obj-25",
+					"linkend" : [ ":,;()[]{}" ],
+					"linkstart" : [ "w" ],
+					"maxclass" : "bach.hypercomment",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 1061.0, 144.0, 209.0, 23.0 ],
+					"text" : "www.patreon.com/bachproject"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 11.595186999999999,
 					"hidden" : 1,
@@ -47,24 +171,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ -436.57144199999999, 374.0, 81.0, 21.0 ],
+					"patching_rect" : [ -436.57144199999999, 389.0, 81.0, 21.0 ],
 					"text" : "offset 0 -5381"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 11.0,
-					"id" : "obj-21",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 789.0, 9.0, 141.0, 19.0 ],
-					"text" : "(build 1546619408)",
-					"textcolor" : [ 0.200000002980232, 0.200000002980232, 0.200000002980232, 1.0 ],
-					"textjustification" : 2,
-					"varname" : "autohelp_top_digest[1]"
 				}
 
 			}
@@ -76,21 +184,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 458.0, -56.0, 146.0, 22.0 ],
+					"patching_rect" : [ 460.0, -68.0, 146.0, 22.0 ],
 					"text" : "sprintf symout (build %ld)"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"hidden" : 1,
-					"id" : "obj-18",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 458.0, -26.0, 43.0, 22.0 ],
-					"text" : "set $1"
 				}
 
 			}
@@ -102,7 +197,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 458.0, -83.0, 133.0, 22.0 ],
+					"patching_rect" : [ 460.0, -95.0, 133.0, 22.0 ],
 					"text" : "r bach_getbuildnumber"
 				}
 
@@ -111,12 +206,12 @@
 				"box" : 				{
 					"hidden" : 1,
 					"id" : "obj-19",
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 328.0, -65.0, 43.0, 22.0 ],
-					"text" : "set $1"
+					"patching_rect" : [ 331.0, -34.0, 72.0, 22.0 ],
+					"text" : "prepend set"
 				}
 
 			}
@@ -155,7 +250,7 @@
 					"numinlets" : 0,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 331.0, -95.0, 106.0, 22.0 ],
+					"patching_rect" : [ 331.0, -132.0, 106.0, 22.0 ],
 					"text" : "r bach_getversion"
 				}
 
@@ -164,7 +259,7 @@
 				"box" : 				{
 					"fontface" : 0,
 					"fontname" : "Arial",
-					"fontsize" : 13.0,
+					"fontsize" : 14.0,
 					"id" : "obj-14",
 					"linkend" : [ ":,;()[]{}" ],
 					"linkstart" : [ "w" ],
@@ -172,7 +267,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 696.0, 95.0, 131.0, 21.0 ],
+					"patching_rect" : [ 640.0, 66.0, 142.0, 22.0 ],
 					"text" : "www.bachproject.net"
 				}
 
@@ -187,7 +282,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ -93.571426000000002, 321.0, 81.0, 21.0 ],
+					"patching_rect" : [ -93.571426000000002, 315.0, 81.0, 21.0 ],
 					"text" : "offset 0 -3272"
 				}
 
@@ -201,7 +296,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 250.0, 9.0, 174.0, 19.0 ],
-					"text" : "v0.8.0.2 beta",
+					"text" : "v0.8.0.5 beta (build 1557226751)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -231,7 +326,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ -174.571426000000002, 321.0, 81.0, 21.0 ],
+					"patching_rect" : [ -174.571426000000002, 336.0, 81.0, 21.0 ],
 					"text" : "offset 0 -2628"
 				}
 
@@ -247,7 +342,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 876.0, 232.0, 259.0, 35.0 ],
+					"patching_rect" : [ 985.0, 313.0, 259.0, 35.0 ],
 					"text" : ";\rmax launchbrowser http://www.bachproject.net"
 				}
 
@@ -262,7 +357,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ -244.0, 82.0, 72.0, 22.0 ],
+					"patching_rect" : [ -244.0, 97.0, 72.0, 22.0 ],
 					"text" : "loadmess 0"
 				}
 
@@ -270,6 +365,7 @@
 , 			{
 				"box" : 				{
 					"handoff" : "",
+					"hidden" : 1,
 					"hilite" : 0,
 					"id" : "obj-26",
 					"maxclass" : "ubutton",
@@ -277,7 +373,7 @@
 					"numoutlets" : 4,
 					"outlettype" : [ "bang", "bang", "", "int" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 834.0, 23.0, 92.0, 35.0 ],
+					"patching_rect" : [ 969.0, 23.0, 92.0, 35.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 552.0, 50.0, 87.0, 31.0 ]
 				}
@@ -294,7 +390,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 940.0, 115.0, 453.0, 35.0 ],
+					"patching_rect" : [ 993.333333333333371, 81.0, 453.0, 35.0 ],
 					"text" : ";\rmax launchbrowser http://creativecommons.org/licenses/by-nc-sa/3.0/"
 				}
 
@@ -303,12 +399,13 @@
 				"box" : 				{
 					"data" : [ 2779, "", "IBkSG0fBZn....PCIgDQRA...fE...vGHX....vXHq.3....DLmPIQEBHf.B7g.YHB..JHYRDEDUnEX6Z0FaSccF94dsAM5Dd9eaSNHLBso3HshCEnkNZi85VmZoo45k.EZnCalVaWYcIoDBai7kABzXBywqeoMsl30tpVsREluV6Bc3aHnEm3jXynEmerJaTRToZSyAGzTI9i28iqum3archCsczw5izQ2iOe7bO2my64q2i4HhzvwwcU7E3yBvwA.B.3z8bJvyyCdddnRkJvyqBp34AupzO44AGGO343.GGW5pB.h.ABTJBonTHUJoPxjIkdlJIRlLERkJIKuTTJV4IhRSCwheq.1TEaF..b.fjEWUpTIE3UMSbUpjxiWUZQlCbb7YpuoEmzBaJIwLYxzgLimToHmJUJlvloPeqB1TEaFpAfRwUkZnVwSovIO9ofWudwfCNHlJ1TJHZoZVJV25VGL+cLixe3GBISoB77Ij5PRxCNvAo9xY.khjFI.HMFhSRbGwe.34s7fPgBon7FLX.BUJfUu1RKnOtOuvCG.n+7YeGnVsZlnpVsZofJ0nWwyAGOqCLwDSTPMHc5zgF9EMfxJ6dQhjIQxjIPhDoCISfDIRxrvyzR9Cm3Cwy04yiQCMJ..LYxDLZzH..BFLHDEEA.PwFJF6rlchu1W+qly2+U9vOBufqW3yE7roJ1rj.+t8dFnVk5YDV0KBKRsZzRSsBOGyCqBZ0pEBBBPud8nrxJC..81auHRjHviGOXxImjUVAKBn9F1EVxssDjHQBDOQBjHQbjHQBkSYPovUidU7SexmFwhECBBBvoSmPud8JZrQhDA0UWcviGOPiFMnMGsk0G00hcMTyNq8yM7HOOLc19NK0W+mi52e+zPA8SW38BRBVDHHM3kzpUK0ZqsRQiFklKzc2cSZ0pkUuhMTLc996iFJ3Pjug5m5q+yQd66rzYD6gdm+xaSmtmSQm3sONYvfAB.jUqVUvmLOy9cHy8ad7+nhPwFJNm73xoS5Qejs7IhmwFaLxW+8S95ueZrwFqf3A.DO.fpzyAqVkJnVkRKWiFMh.ABfVZoEnUq1rFFjIrZ0JBGNLanzngFEc33HJlKmmsiDoci32meDJTHHHHfF18tmS9keGBBBXzPihQ7Gfk9H9CfQCMJVcokh69tVOK8ecmchm0gCbxSeZrm52MFe7wKHdxr87GdkWAl1v8fp2xVQ0aYqvzFtGbld5YN4ISP84qOx2P9nQtvvjqmyEyxwnQiyqUatPznQIiFMx3w0y6hF4uMBMvv9ny6qOx64krhe628OQFJQx5Mb3vEL+gCGl..YvfAl0h7nfh+FeSZkKWOU12dCzS9iebB.Tqs1JcnCdHB.zQey2rf3Qt83q+9k36NWO8i1tMpgcUOsxkqmV4x0Stb5Lu7jCKXIqXGOqC.HMea2c287Z0lKnUqV30qWVccbHGo2KcZKXtz6olmGgtTHXxjorliylMaLqba1roHO850CSlLoXk8Pgj3o7xKGaZyaFiO933L8zCV4x0i+8TWCa6w1Ftz6+9nxpppf3Qud8HVrXHTfKB.fJD9A324tKzdGGF6s4l..f6t5Nu7HCd.jdXqzVwj2sPs0VKan9MBzpUKb5zI..lXhIvIOwoXGXQRj4XaSKWuG2tcmy3xHW0wnQivwQ5.GxQ630diWGUVUU3CtbD33HcfksrkA2c0MBcoKUP7Hi19URFb+1e+KyR66c+2O..hEKF9nqbk7xCPZAV1ZxqWu.PRbpolZXERTTDVrXAlMaFlMaF1saOu40YmcxxypUqLqXum0aFVubfieFA9yBbm20cg163vXrwFCMrq5QoeqaGu0QOJJ+A2HpdKakMG5bAMZz.WtbgaSyRwK8RuTNKyG+wWeN4P5fFbbfmiCCN3f..PPPfILhhhvrYyJpjnnHDEEQM0TCrXwRV4cgKbAzc2cy3xsa2XvAGT5DfoEVIwURfCFLXVMLqVsxrbsZ0ZV4mq5L6zhEKFNSO8f163vv5krgxevMB.fA74CC3yGJpnh.2hTOm7rH0pQC0WOtskrDVZC3yGK9x0u771d.XVvRevxmPaUqZUrBTWc0A.o4YBGNL750KzqWO1912NyR1nQiHb3v3XG6XJ1iL.XwmJ1TRuGvkwSfRJoDHJJhHQhnngI2AM63.R6AUTTDFLXfklACFxhmexi+Dns8ser5aeUn5srU7AWNBprppP6cbXT811VAwy3iONZs4Vvi9HaAssu8i1129QyM1H..18d1SdaOJDXvAECWyb9D4dFqVsxlLOb3vvpUqr7jO7gff.KOYj4hWRFsJO17ldDoEcj6HKDHWVgJEXoIGOSdZuiCCa6XG3J+y+A96gCCWNch81bSnxppB1Ov9QoqcMyKO11wNfscrC..zcWcgt6pKb8O95Xik+PXqU+n4s8HirGe7eYr9MrdXnDCviGOvlMaYYsNaHe5ohMTrB+.r50VJJ1PwJ3onhJB6s4lvWZIKAiL7v3mUas2P7r2laBe+G3AvkubD.HMpyPIkLm7HCIKXRoWrxb9DYqY2tciImbRDLXPrhUrBX2tcVdxGSNy7jQlCYkNal71imAM0ZSPiFMvsa2vhEKr5PY3ksHQh.KVrfN6rSnQiFryZ1YVeL64W1PN4YW6td7Zuwq+Ihm0r10fJqpJTYUUACkTRAwCPZm83ejAwhW7hwFt66ASEaJX0pUlkjGOdxZgL.ooLpnhJxadx0ut5pCc1YmXoZVJN+esOL8zSioiOMhmHNhGOgjyfRl.Q+WShCZ+fr8RZznQXznQnUqVHJJx5zmOmzbsXWCsePGLmzbyjGlydFX3AvhW7hg8lsCOGyCzpUKhFMJqfhhhvkKWLm4XxjIzRKsv5.b4xEqrYlG.vJVwJPjHQv88cuObDmcfqO8zH9rDXY+FmJYJ3e.+3XG8luaF+zfGl.6an9whVzhw4O24QMOsz9ec5zIpMi4rtQfa2tYmB6.G7.3A23CfoiOMlNdbjHdbDOwrD3b3.9+WFaphMKMGr7U5XxbYPmNc..vtc6Ys0oEBlbxIYqtpSmtzNhO8sXjJERkdtXJ8UNcqJ3A.RQoPxjR2i19aae.PRfrXwhBe7VnXxImDlMalU2F94Mj1A6ImQjy3JiXKxNqEauUAD.nFaoQx+HCRAuX.5w9gOlBOpEHPfEjmtxzSZBVDnfWL.4ejAo8019Xo++QgY9QsOSMzPA7SAuAb3dznQoVasUENbesqaszEdufzPA8SM1Ri2r+PuoDXWauLZpkFQEVDfZ0pwQbbD7puxqxxagdkQ12eqHQhDXfAFDO0S7TX9PlSOHexRhHEmxb1+Ne7ju5H+NJTGMku1zBhiYGZpkFkrjuX.pK2uLoSmtBtGSmNcjqmyEE7hAngB5mdweyKVv0kHZNimYZyGOyW8KDtxUYVnbjkErLp8YpAUuspYW0in2dwIN9Ilyqs+gEdXXxTYrKz73G+D3.1OPAzGKgbYsjYdKDqNNNt79bgfYasN6EgmO9xq.C.r56nTzTKMihVltLtMhLc2HTruU4+3ISL933W0gSbtdO2B9i4SxTC4iG.jk.uPE6b0IUHbLmBrLt2xtWrwx2Hti0bG3qnQS5+5TxuYoWzUiECCOzv3zm7zKXgMyOBVC6SAK3b86Ex7my2ZBepIveAtwAOQzW9lci3VXv8efsp5.NAVz1iC....PRE4DQtJDXBB" ],
 					"embed" : 1,
+					"hidden" : 1,
 					"id" : "obj-82",
 					"maxclass" : "fpic",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "jit_matrix" ],
-					"patching_rect" : [ 837.0, 26.0, 88.0, 32.0 ],
+					"patching_rect" : [ 972.0, 26.0, 88.0, 32.0 ],
 					"pic" : "Macintosh_HD:/Users/danieleghisi/Documents/Libraries/Max/bach/prove_in_vista_della_0.2/bach_objects/license/cc88x31.png",
 					"presentation" : 1,
 					"presentation_rect" : [ 551.0, 51.0, 88.0, 32.0 ]
@@ -325,7 +422,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ -418.57144199999999, 320.0, 81.0, 21.0 ],
+					"patching_rect" : [ -418.57144199999999, 335.0, 81.0, 21.0 ],
 					"text" : "offset 0 -4856"
 				}
 
@@ -340,7 +437,7 @@
 					"numinlets" : 9,
 					"numoutlets" : 9,
 					"outlettype" : [ "bang", "bang", "bang", "bang", "bang", "bang", "bang", "bang", "" ],
-					"patching_rect" : [ -480.0, 270.0, 449.0, 21.0 ],
+					"patching_rect" : [ -480.0, 264.0, 449.0, 21.0 ],
 					"text" : "sel 0 1 2 3 4 5 6 7"
 				}
 
@@ -355,8 +452,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ -262.57144199999999, 320.0, 81.0, 21.0 ],
-					"text" : "offset 0 -1090"
+					"patching_rect" : [ -262.57144199999999, 335.0, 79.0, 21.0 ],
+					"text" : "offset 0 -5988"
 				}
 
 			}
@@ -370,7 +467,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ -337.57144199999999, 320.0, 81.0, 21.0 ],
+					"patching_rect" : [ -337.57144199999999, 335.0, 81.0, 21.0 ],
 					"text" : "offset 0 -3785"
 				}
 
@@ -385,7 +482,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ -480.0, 320.0, 58.0, 21.0 ],
+					"patching_rect" : [ -480.0, 335.0, 58.0, 21.0 ],
 					"text" : "offset 0 0"
 				}
 
@@ -402,14 +499,14 @@
 					"numoutlets" : 3,
 					"outlettype" : [ "int", "", "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 116.0, 930.0, 26.0 ],
+					"patching_rect" : [ 6.0, 110.0, 930.0, 26.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 316.0, 203.0, 556.0, 226.0 ],
 					"rounded" : 0.0,
 					"spacing_x" : 10.0,
 					"spacing_y" : 0.0,
 					"tabcolor" : [ 0.337255, 0.45098, 0.156863, 0.058824 ],
-					"tabs" : [ "Help Center", "What's new", "Explorer", "Tutorials", "Feedback", "Licence and credits" ],
+					"tabs" : [ "Help Center", "What's new", "Explorer", "Tutorials", "Patreon", "Feedback", "Licence and credits" ],
 					"textcolor" : [ 0.2, 0.2, 0.2, 1.0 ],
 					"valign" : 2
 				}
@@ -424,7 +521,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 702.0, 23.0, 56.0, 22.0 ],
+					"patching_rect" : [ 972.0, 156.0, 56.0, 22.0 ],
 					"text" : "onecopy"
 				}
 
@@ -432,14 +529,14 @@
 , 			{
 				"box" : 				{
 					"fontname" : "Arial",
-					"fontsize" : 13.0,
+					"fontsize" : 14.0,
 					"id" : "obj-3",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 5.0, 66.0, 911.0, 50.0 ],
-					"text" : "bach is a suite of Max objects and abstractions for computer-aided composition. At the highest level of the bach system are two interactive notation objects: bach.roll and bach.score, communicating with the rest of the bach system via Lisp-like-linked-lists (lllls for short). lllls are nested lists, allowing for much more complex data structures than standard Max lists. For any information, and to check for updates, visit the official website:                                   ."
+					"patching_rect" : [ 5.0, 66.0, 833.0, 38.0 ],
+					"text" : "bach is a suite of Max objects and abstractions for computer-aided composition. The official website is                                   .\nIf bach is free, it is also thanks to generous supporters on Patreon. If you can, please consider                        for as little as 2$/month."
 				}
 
 			}
@@ -458,19 +555,19 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, -5381.0 ],
+					"offset" : [ 0.0, 0.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 0,
-							"revision" : 2,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 519.0, 196.0, 887.0, 624.0 ],
+						"rect" : [ 288.0, 90.0, 1179.0, 624.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 12.0,
@@ -499,6 +596,204 @@
 						"subpatcher_template" : "",
 						"boxes" : [ 							{
 								"box" : 								{
+									"id" : "obj-366",
+									"maxclass" : "live.line",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 2.0, 4217.0, 909.0, 5.003994478941422 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 14.0,
+									"id" : "obj-365",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 2.0, 4223.0, 738.0, 38.0 ],
+									"text" : "On our Patreon channel we regularly publish video tutorials. A few are free, and cover some basic techniques. \nMore comprehensive tutorials are accessible to Patreon supporters from 4$/month, on top of many other benefits.",
+									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontface" : 0,
+									"fontname" : "Arial",
+									"fontsize" : 25.788923812050054,
+									"hyperlinkcolor" : [ 0.341176470588235, 0.450980392156863, 0.16078431372549, 0.0 ],
+									"id" : "obj-359",
+									"linkend" : [ ":,;()[]{}" ],
+									"linkstart" : [ " " ],
+									"maxclass" : "bach.hypercomment",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 749.0, 4224.003994478941422, 162.0, 35.0 ],
+									"text" : "                     "
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"autofit" : 1,
+									"data" : [ 5753, "png", "IBkSG0fBZn....PCIgDQRA..AHK...fYHX....fqqRQj....DLmPIQEBHf.B7g.YHB..V.SRDEDU3wY6cmGkUTcmG.+6sp58ZPV5lktAYoYeeuQj8EUTAlfhQLBYvnwbFmnmIS1lwjSzIS7Ldlw3jSRNmLIyjMSF2ih3NhJBBJRDYqoaZPnk8kdCZfdA5tp5dm+3Ac20qp2V2ush46mygywtdUcq68Y8peUcu25WIt3CtREHhHh7ozxzU.hHhnNBFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMiLcEneasVnfvyO6HSOOjShFp0v.hQNVnOghfnu8GhbyChtkKvkZDxyeNnNS0PVVwPV5t.ZngNdCfHhnLpLdfrFsA.Td9YJn.hPPNWtlt.ia81f9bWHDcpyt+7tzUn2qB.F5HAl1rgRZC4d1ILe8+BPkmp8V8IhHJCKiGHKYPadKDAts6FhqoKw81Hzzg9jmFzlXQvdKa.Vq94.LaNEVKIhHJUveGHyv.Fq7a.iYN+1cQHzzgwbuYHFzvg4+yOC3b0lDqfDQDkp4emrGZ5HvC8vcnfXskdgCA47CdbfdzyjR4QDQT5guMPlwJtOnO5wmTKSQt8.A9l+S.AyIoVtDQDk53K6ZQsoOGXLmaJkT15CbvPc22KrdleWJo7upkgAP2yCht1c.kMTUUAPSMkbJacCfbyMTYqqCU80Abgyk7Jehxlwi+iI+Wfr.AQfaeEozcg9LlOr235f5DGKkteZKsaZIPezSH1qnRB04NKj0TEP0UB49KA3hWz60s64h.2y2rcWmr1z6BUo6NxqfP.sYs.nOkoCsQLFHBDvYU870BYUUB6suEH2xFAjxDZ+qMy4A8hlQnxNr6RVIkPdrCC6R1IjaXsw9G0w36BqM9NPU1dhZQHlXQvXt2bD+by+xSATS0w89LVh42+wIwDlBLl2s39Crsg4e3WBXY0g2GIRaUU+EfrxSCT4of7vGLtGW5DscHF3ffwskbNWg0ZeEnNb4IV6rtyAYMUCTcEPcpS.0ISrymjVN921Fl+4eMvkhv4P.fXhSEFycgN2rsuEH+zONtaKoZ9t.YZ23hfHuT63XIDBXbGeUX9qdhT59osz5+.g93lTBucpFpGlu+aA4FWm6YcYffsqx7JrKYGQ3Ai..8NeD3deHnOrQEwsWjaOfdt8.5iXzPcSKAM+ZuHT69yh8Nt24i.q5uG5ibrQtr0zf9fGFzG7vfZ1K.M+z+VnNPYQtLiw2EpK1.rhQfLiYL+nVFV4zYmeekJ+9OAXbCKNhcCu03mLT6d6c7cR6rspLMg8FeGXstWOpmLEnczN5R25Pe+6n7+n2Oz+QG3+mZW5tf0q97Pc5SF8ULMe7uZQ2NrdsWLx6qdkuqsUcru.I1kklZ46Fir.IoI2QrnM5I.jWORK6qNBQW5JBtrUf.Ov2MssO0l0BPN+nmHpAwBmnfqE47.eWncKKM5k8bWHx4Q9oQ8GwtJ6dlOB9seDXb22W6d7M0G2j.zzixJX.sj7XxlVjWOfVT9tzX5yKMVYbSDH.LtkaC47X+bfdmejWwr71Q7Pe7SAAejm.ZW2rh35jIN9W+FVLPuhx289.9p.Yhqs+PTv0ld1WBAzl3TSK6qjA8wMInsvuTJe+nMi4gfq5A79gNOND31taHFyD8tru9Yifq79gHmNEwsWo79dTDBALl+s.iuxWqcUuDctKPL7nb2kCajs61blj1zlMDZQ9m4ZiaR.cI9e9KSUDcKWD39+VQ7hI7KsiXQnoi.q7q64riNSc7uHP.DXYqLg2trI9ptVTL1jS2DDuzG6jfbyqOstOaK6idHX9a9ostfb5DDEzOXbKK0yqXyXVyGMu92Jlkayu9KB0wNbLWOUEgkwS5TmPfk48XNXev8A6suUnNzA.fBhALHDXw2gqK7PnogfeiuEZ5w9d.0UWaJ6Ni.e4+VuK6R1Ir1xFg5HkCzzkfXPCC5SXJP+FWBDBmY9E8Yt.XukMFZ7LRP5SrHXEgtmwUWqnTt12wq182+sC5SetNKypqDh76SK+svH.zJZlP9Qoliya94+CPc3Cd4cl.nG8B5ibrPed2hqwTUevCG1KbIP9duoqxo8zNT0VCr1v63Y8ReBE4X6uRYZWxN8tgTcUQrMB.z7u+WBY466J0FH5d2gneEBiEsLncsCvw5J5bWfwxVIr9S+5VWXF93e8oNCXsg01t9cS1.eUfLsd06z6Nrmo48W3rsbdx95pCpZpFle9dA9gONz6egNVcQAWantVn4nOvupidHn1eoIb0wXIeYH5ddtVt0GsdX8h+Y.Uq8Zt5jGGMsysg.eyuGzC6NvDWSWf1DlJjexG1ZY+kVt2k86+lg5+91bknpCTFrNPYPd3xQf68AgHPvVKag.Fq39g4S7nNpOdQVwIgVe6eK+s9DJBVq9Y8bc0F+Tb72pJNIDgcBp3U686+DkX.EB89MPGKy7utYD3FWLDcoqsrL8oO2TVfLUMUA0IOdqK3DGCVkrKXWxtPvu8i39DwiZbtBj0taGUVArV8y3Y8RzydC8vBjIO0wi35GKpK1nieqpp6BPcxSfl26tQNO5S5Zb80GxvQamZJYhi+Cmwx+Zv7+7GmPaS1B+UWKla58gUVKacLxrsfZu6x0hEZZ.cJxcKQGRA8A52vhbWU1eov5EdJu+QiYyv7Y+8P0zkb8Q5SnnV+i9zOnu.2yFM68UBrd0WvwOhaK4N+TXttW2cYOvACsYufH2VtLUENGzcQ98EnO8y8J1q7cbU0plaBpyVSLK+LsvuKF..09KExC57tN0G5H.B6j5oZpCTFjGbetVt1.GhqkkM2NhoFaD1E6wDbpWE.jykGOqLzw+t1tgLbnccyLg2trA9p.YorSRGI4jEOlHdzO5pFa.3BmOkr6zF0DfP28Mva89wnqLq8LP5wcenMxwzx3gnMkqGBOFaDKO5hovI276CkG2ApdQyHlaq8wOJTgMS4zlXQtVOsv5Ra4A1WzmXHYCDZPOrIUf5BmGpiTNrK18rTT+5mS5pl0Z8opS6ZYht1Mm+N2GzNhEU806ZYBg.nKcC.Yti+kUbRnpy44KBrrU.XDHBaQ1KeUfL04Sy4AwKbtz69Kd0ydA8o49Gr1a98RY6Rs95dR1nNSUPsunOk0A.r2y1C0O+q60PyO0uBM8u8vnoG9AAj1..dNdepZpDpOON59sFpG16ZatquCajgdHsiZEyFxxJ1whz8XB9nO9I6byJcWgFumrXhQOdHx0YOJXW7mAnTPVxNgx14ybkw0O6zY0C..hd3tq6UmuVfK05cv6GZGwh1.FjqkorsAN2YAPl63ekoILCaLDE8LencSKN162rL9pwHKcmPeko6.mgQqacGZssaUxoSPqu8C5yXdtlAc1G5.w0UvA.XbiKFpob8QekZnNX8FubK+onutGOHYbNYDjacyPt0MGwOWqedT1UVQbU1..xpbuth.ACMkhqz8U82V16YmNt5UsgLBftzUfFt7UQaD.ZiZbN2eksanO4oE20uv0d99OQoOcOtPmcd4S30XiPt+Rg93ZM.sH+9BwPFQqSLiTLQ+GHzFk6SfKOwQc72Y6siXQL9I64reVdzC0RBBHic7ul.xM8dPcyK0waNj.25sil9jODntKD20gLMeUfLYB9jw2QoN4Qi8JkBIxuuH389fQccTMTenWCMu8Zh6WCM5gMwE7rbOS0NNQpVecO1QIswI5xcwhyxtZOVwHHBqqnqcCpXDHSVVwPIksL0tEZZPabSFxsEJqEHBKqJHq3jNydGsCsmu+SH4jiq.sp5qCp1LlR167ScD...PeFyAVI6..F5s1UUBAPO6IzF43Qf+l6DBO5BK611MzYSsiXPehEAY98MzeH.zxMOHJbntpaWg06+Fs9GYri+E.W5Rv7cdUD7NWUqKsScFFK8tf0y+Gi+5PFl+JP1dKFJaKOGqlTA6cuizx9oiPdhi54UjkTYD.hdzK266ymD550bxABc2iOPhT1pyEg0Mdd+zUecPd3C53g6VehE0RfL8wG13is2NdJiJUSaxSyUJMxt3s6HEgI2yNfx11w285EMSX8ROSnYKaRRNOzOHtWW6Cc.H2v5Z4uylZGwhwBbOQnhDqstInJ9xmaISe7O.je36A0buIGOpL5y5Ff8FeWnN8Ih65QljuZLxvktnmSbfTA0EaH5o7krD5iZbH3pd.D3gerT2L1xxz0jh..PKAdQlFQMa54C4YhT1hH8fvFmIUU6837BVzF6jBknVAbcE01IgbeXpltGY4B6c8oNWPC0CYXGeK5RWgX7o2mUyqPU24g4e5W6X1u5GaGQixxDVevaCqmsMIj7rfi+gsEZNrG6.glFLV9phvFj8wWcGY..Vq60i3sqmLYt90lVuhNuXexi5LK7ekGnzwOYnOi46HSGn2+AA728cf4+wOJhSW2qv58dCHOUzuRKUSNCbIqpBnWnyoFsHYjVaTRfFq2U2qHRjmguHstMTm2KOLx8rSf63q159tScFhgOZnNa0NtJUUSWBpx+73udEAsmu+iadjJmTM2DTUWIPX2Usc46G5iwYhp1X5yClEm95IBkkIr235f05dMmI+ZeV6HVTW3bnom7eA3rmIrOHye7O.fpzcC6x1CzGaqOym5iYhvZLwQhLOKfuKPl5K9bXW71g9jttT29370B4Gr1TV4G2ZpI2Y.hidHXs6OCxSbLD7qbuN9H8ALHXO0Y.412ZTKV68WZB+.4pp5z.gEHC8tf3aiKnOPqvgB4Q9BfZbmgDjmoFnG93Dj.AI073GxJkJ9GCuJOkqLEg9XFOjgkMGj6uzjxE2zd99OdocctSkShf4fN8X+h3a6G+jC0kTM1PRo9Xehi.zPaJKkBpKTanIyPUmFxCcPfZOiqsKaqcDKM+luTK+VUT3PQvkdWN9bQ2yChdU.TgGHCYAG+eYlu7SCsG8m5nqNMV5cA6sk8jk6iDeWfL..yU+LPaXiJzybRRlRoPyuveLlYGiLM4GuAntyU4p+00F7viYfr1CuFzX89WHrF3fg53GIpaqwzmGLV7cDpbp+BPd3xg8QJGxO7cAt3Eg5.60UPRsALHf9zWfXM6szz87hZjm3nQ90aiGrKYGv3FWRK+snvgBs1j0H.7KcqXG64nRXD.ZScFP9QePRo9XslmucEzNaqcDKpCWdKsSUYk.4zlkirFC.fwxVomYNirgi+A.PkmB1a98fwMz5zuWevCOzcAmkyeMFYWwYpFM+69EtdFRRFLeiWBp8Dg7sV1DKyP+KLIkt6yCxSbDOWtdLxl8PSCZsYplK5Z2g9DJBAl2M2Re3auW2OKZBg.FwQRPV65lomSDEUBNoLrC6+mqU3PfXvCywxjkkcGHSz+Bck1xZO7JSZjN46aGJIrV6q5Zw5CY3PLA2yX0rgi+uBq29UB8h6rMhmGt5LMe4cjA.nJe+v7o9uPf66gbjqw5Hr9f2Fx20cJeIajXXizyrjs5LQO4l1do1yNg8wOBzG3fcrb8oLcHm29hXxUVeQKy0UlB.Xu0M0xrOS84k5p+4ABchH6cssH+Bur2Ef.Kc4tqq0eAXs92NNZUsYaJ+yg5hMBQmuF.DJePp2lAb29jGCn1ylPkY5lW2EippSCYLd+WoMwo5HmGpOzQBydWfmcCb5vUCsC4N9qPtj6v8ckc6q.lktam4Nwrfi+aQiMBy27kQvUd+srHulUkYa7sAx..j6Zan4ZpBAevuOD449pRhWJKSX9B+wn9P6lMQLxwhf2yC34mIOdJ5YeSof0K+zP+64rqQDZZH3JteXcs8G1exlB8VvUJAxMOXrjurq2rrgJJEr15lbrLyW5OAsG8Ic7rEILBffOz+LLekmCxOYisNKrzzgXTiCA+5OTnW+6gw7UegDerQj1vtrhgwT8NWy4UtsLqhPC5SycVsn4077PsmnOoGB78+Wc8tkS+5mCrW6ZRpUw3xUKsiKeWYAu++Am0m9MPXOsY2xi2wUjwO9uMje7Ff87VXR4thSW70Ax..TG+HnoG+GBia81f9BVjqWMDwhcwaGlu1KBTYG+UlQxl1.FDB7C+2acA5ZPqW4Gw2KVpyWKjkF6S3ly+3OJt1+Va6if0e9+t0xu78C6c+YdlUKLl+sBi4eqgx6aMcIH5VtQrbMei+BP386dUUB60+VvXQ2giEKzzQv65qA0ctJHO0wAZ5RPafC10yWzUXe3xgLrfjwK4d1APDBjYWZwdt71i162+QiXziyUpbR0zkfZekDys0dmepq..FSOyD.3pk1APjuqr.Kc4noc7WcNwgxBN9uEJYnKZ867ncrxIMxeNFYgqwFf0q9Bnoex2EVuyZB0MPQg570BqO9CPSO4OFl+1edVYPLfPyRK8BGbq+q+EF4fXJEZ9o+sslZkRQLe4+WXejH+NKRDLmnFDyZKa.x28M79ydmWG161iLENt7q18ALHnOrQEweDKO8If4S+ahRsO5BkkOrcsb0Ea3xum0xd4U2wI26tiqr8hziuyCkpmFdRotkHtZoc.fHNVYhdU.zlyM5Z4Y5i+aK0AJKh0krQ996HygZOKrdyUC7lqFl8r2Pzm9AQt4AzstCboKB04NKvYOSnt+5pHppqDM+JOabk.e6vp8rv7m8Sf8hVVnWblwY+mqrLg8lWOrVyyE4UxrYX969EvdZyBA9J2mi20TQsrkRXu92BVu0pAr5.S.nFZ.xu3fPeDi1whk6qDGYShrN4jCzmr6b2nWISVOU6Yf8Q9BnG1jaQe5yEVoyWzhWszNZiHdWYKdYnostImyN5L8w+gwbMOGzF2jS3d4JS3pq.Ys0YqApyVCh9iFr+jpg5grpJBM.3G9fPtkOL89vaKkPt10flKcWvX42CzF5H770PAvk+Q119XX81uBvYhu7Gm7y9DzzAJCFK+dB8l7MBWApRJg7HkCqU+rgd64lDXWxNbEHKaeZ2qMI2oxIkYywU2LeE165ScG.Xpy.Vub5KUOc0R6vgHLVYhtmGztgE44jKKSd7uC0TEr2vZgwsd6I+xNISbwGbkYzy0m2GG4LLeEyJOzIsr6WWFD.tlqAhgMJHxqWPzstCkkYnGf5pq.pppJtSlwdxHPnYnYuK.n64Bgldn29tm+rgxxFo3tRknLJd7ebgAxHhHxW6piI6AQDQ++VLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZY7.YQaNIJh5mRDQDkE7.QW6b5QrWIhHhnHHieGYDQDQcDLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9Z+e.4MpQv6X3UxH.....IUjSD4pPfIH" ],
+									"embed" : 1,
+									"forceaspect" : 1,
+									"id" : "obj-363",
+									"maxclass" : "fpic",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "jit_matrix" ],
+									"patching_rect" : [ 749.0, 4223.0, 161.607843137254918, 37.981566820276505 ],
+									"pic" : "/Users/danieleghisi/Downloads/become_a_patron_button@2x.png"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 12.0,
+									"hidden" : 1,
+									"id" : "obj-364",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 1191.0, 4457.003994478941422, 307.0, 35.0 ],
+									"text" : ";\rmax launchbrowser http://www.patreon.com/bachproject"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"bubble" : 1,
+									"fontsize" : 14.0,
+									"id" : "obj-336",
+									"linecount" : 2,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 198.5, 6147.0, 364.0, 42.0 ],
+									"text" : "If you consider bach valuable, and you can afford it, please consider supporting us by becoming a patron"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontface" : 0,
+									"fontname" : "Arial",
+									"fontsize" : 25.788923812050054,
+									"hyperlinkcolor" : [ 0.341176470588235, 0.450980392156863, 0.16078431372549, 0.0 ],
+									"id" : "obj-331",
+									"linkend" : [ ":,;()[]{}" ],
+									"linkstart" : [ " " ],
+									"maxclass" : "bach.hypercomment",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 16.0, 6147.0, 162.0, 35.0 ],
+									"text" : "                     "
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"autofit" : 1,
+									"data" : [ 5753, "png", "IBkSG0fBZn....PCIgDQRA..AHK...fYHX....fqqRQj....DLmPIQEBHf.B7g.YHB..V.SRDEDU3wY6cmGkUTcmG.+6sp58ZPV5lktAYoYeeuQj8EUTAlfhQLBYvnwbFmnmIS1lwjSzIS7Ldlw3jSRNmLIyjMSF2ih3NhJBBJRDYqoaZPnk8kdCZfdA5tp5dm+3Ac20qp2V2ush46mygywtdUcq68Y8peUcu25WIt3CtREHhHh7ozxzU.hHhnNBFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMFHiHhHeMiLcEneasVnfvyO6HSOOjShFp0v.hQNVnOghfnu8GhbyChtkKvkZDxyeNnNS0PVVwPV5t.ZngNdCfHhnLpLdfrFsA.Td9YJn.hPPNWtlt.ia81f9bWHDcpyt+7tzUn2qB.F5HAl1rgRZC4d1ILe8+BPkmp8V8IhHJCKiGHKYPadKDAts6FhqoKw81Hzzg9jmFzlXQvdKa.Vq94.LaNEVKIhHJUveGHyv.Fq7a.iYN+1cQHzzgwbuYHFzvg4+yOC3b0lDqfDQDkp4emrGZ5HvC8vcnfXskdgCA47CdbfdzyjR4QDQT5guMPlwJtOnO5wmTKSQt8.A9l+S.AyIoVtDQDk53K6ZQsoOGXLmaJkT15CbvPc22KrdleWJo7upkgAP2yCht1c.kMTUUAPSMkbJacCfbyMTYqqCU80Abgyk7Jehxlwi+iI+Wfr.AQfaeEozcg9LlOr235f5DGKkteZKsaZIPezSH1qnRB04NKj0TEP0UB49KA3hWz60s64h.2y2rcWmr1z6BUo6NxqfP.sYs.nOkoCsQLFHBDvYU870BYUUB6suEH2xFAjxDZ+qMy4A8hlQnxNr6RVIkPdrCC6R1IjaXsw9G0w36BqM9NPU1dhZQHlXQvXt2bD+by+xSATS0w89LVh42+wIwDlBLl2s39Crsg4e3WBXY0g2GIRaUU+EfrxSCT4of7vGLtGW5DscHF3ffwskbNWg0ZeEnNb4IV6rtyAYMUCTcEPcpS.0ISrymjVN921Fl+4eMvkhv4P.fXhSEFycgN2rsuEH+zONtaKoZ9t.YZ23hfHuT63XIDBXbGeUX9qdhT59osz5+.g93lTBucpFpGlu+aA4FWm6YcYffsqx7JrKYGQ3Ai..8NeD3deHnOrQEwsWjaOfdt8.5iXzPcSKAM+ZuHT69yh8Nt24i.q5uG5ibrQtr0zf9fGFzG7vfZ1K.M+z+VnNPYQtLiw2EpK1.rhQfLiYL+nVFV4zYmeekJ+9OAXbCKNhcCu03mLT6d6c7cR6rspLMg8FeGXstWOpmLEnczN5R25Pe+6n7+n2Oz+QG3+mZW5tf0q97Pc5SF8ULMe7uZQ2NrdsWLx6qdkuqsUcru.I1kklZ46Fir.IoI2QrnM5I.jWORK6qNBQW5JBtrUf.Ov2MssO0l0BPN+nmHpAwBmnfqE47.eWncKKM5k8bWHx4Q9oQ8GwtJ6dlOB9seDXb22W6d7M0G2j.zzixJX.sj7XxlVjWOfVT9tzX5yKMVYbSDH.LtkaC47X+bfdmejWwr71Q7Pe7SAAejm.ZW2rh35jIN9W+FVLPuhx289.9p.Yhqs+PTv0ld1WBAzl3TSK6qjA8wMInsvuTJe+nMi4gfq5A79gNOND31taHFyD8tru9Yifq79gHmNEwsWo79dTDBALl+s.iuxWqcUuDctKPL7nb2kCajs61blj1zlMDZQ9m4ZiaR.cI9e9KSUDcKWD39+VQ7hI7KsiXQnoi.q7q64riNSc7uHP.DXYqLg2trI9ptVTL1jS2DDuzG6jfbyqOstOaK6idHX9a9ostfb5DDEzOXbKK0yqXyXVyGMu92Jlkayu9KB0wNbLWOUEgkwS5TmPfk48XNXev8A6suUnNzA.fBhALHDXw2gqK7PnogfeiuEZ5w9d.0UWaJ6Ni.e4+VuK6R1Ir1xFg5HkCzzkfXPCC5SXJP+FWBDBmY9E8Yt.XukMFZ7LRP5SrHXEgtmwUWqnTt12wq182+sC5SetNKypqDh76SK+svH.zJZlP9Qoliya94+CPc3Cd4cl.nG8B5ibrPed2hqwTUevCG1KbIP9duoqxo8zNT0VCr1v63Y8ReBE4X6uRYZWxN8tgTcUQrMB.z7u+WBY466J0FH5d2gneEBiEsLncsCvw5J5bWfwxVIr9S+5VWXF93e8oNCXsg01t9cS1.eUfLsd06z6Nrmo48W3rsbdx95pCpZpFle9dA9gONz6egNVcQAWantVn4nOvupidHn1eoIb0wXIeYH5ddtVt0GsdX8h+Y.Uq8Zt5jGGMsysg.eyuGzC6NvDWSWf1DlJjexG1ZY+kVt2k86+lg5+91bknpCTFrNPYPd3xQf68AgHPvVKag.Fq39g4S7nNpOdQVwIgVe6eK+s9DJBVq9Y8bc0F+Tb72pJNIDgcBp3U686+DkX.EB89MPGKy7utYD3FWLDcoqsrL8oO2TVfLUMUA0IOdqK3DGCVkrKXWxtPvu8i39DwiZbtBj0taGUVArV8y3Y8RzydC8vBjIO0wi35GKpK1nieqpp6BPcxSfl26tQNO5S5Zb80GxvQamZJYhi+Cmwx+Zv7+7GmPaS1B+UWKla58gUVKacLxrsfZu6x0hEZZ.cJxcKQGRA8A52vhbWU1eov5EdJu+QiYyv7Y+8P0zkb8Q5SnnV+i9zOnu.2yFM68UBrd0WvwOhaK4N+TXttW2cYOvACsYufH2VtLUENGzcQ98EnO8y8J1q7cbU0plaBpyVSLK+LsvuKF..09KExC57tN0G5H.B6j5oZpCTFjGbetVt1.GhqkkM2NhoFaD1E6wDbpWE.jykGOqLzw+t1tgLbnccyLg2trA9p.YorSRGI4jEOlHdzO5pFa.3BmOkr6zF0DfP28Mva89wnqLq8LP5wcenMxwzx3gnMkqGBOFaDKO5hovI276CkG2ApdQyHlaq8wOJTgMS4zlXQtVOsv5Ra4A1WzmXHYCDZPOrIUf5BmGpiTNrK18rTT+5mS5pl0Z8opS6ZYht1Mm+N2GzNhEU806ZYBg.nKcC.Yti+kUbRnpy44KBrrU.XDHBaQ1KeUfL04Sy4AwKbtz69Kd0ydA8o49Gr1a98RY6Rs95dR1nNSUPsunOk0A.r2y1C0O+q60PyO0uBM8u8vnoG9AAj1..dNdepZpDpOON59sFpG16ZatquCajgdHsiZEyFxxJ1whz8XB9nO9I6byJcWgFumrXhQOdHx0YOJXW7mAnTPVxNgx14ybkw0O6zY0C..hd3tq6UmuVfK05cv6GZGwh1.FjqkorsAN2YAPl63ekoILCaLDE8LencSKN162rL9pwHKcmPeko6.mgQqacGZssaUxoSPqu8C5yXdtlAc1G5.w0UvA.XbiKFpob8QekZnNX8FubK+onutGOHYbNYDjacyPt0MGwOWqedT1UVQbU1..xpbuth.ACMkhqz8U82V16YmNt5UsgLBftzUfFt7UQaD.ZiZbN2eksanO4oE20uv0d99OQoOcOtPmcd4S30XiPt+Rg93ZM.sH+9BwPFQqSLiTLQ+GHzFk6SfKOwQc72Y6siXQL9I64reVdzC0RBBHic7ul.xM8dPcyK0waNj.25sil9jODntKD20gLMeUfLYB9jw2QoN4Qi8JkBIxuuH389fQccTMTenWCMu8Zh6WCM5gMwE7rbOS0NNQpVecO1QIswI5xcwhyxtZOVwHHBqqnqcCpXDHSVVwPIksL0tEZZPabSFxsEJqEHBKqJHq3jNydGsCsmu+SH4jiq.sp5qCp1LlR167ScD...PeFyAVI6..F5s1UUBAPO6IzF43Qf+l6DBO5BK611MzYSsiXPehEAY98MzeH.zxMOHJbntpaWg06+Fs9GYri+E.W5Rv7cdUD7NWUqKsScFFK8tf0y+Gi+5PFl+JP1dKFJaKOGqlTA6cuizx9oiPdhi54UjkTYD.hdzK266ymD550bxABc2iOPhT1pyEg0Mdd+zUecPd3C53g6VehE0RfL8wG13is2NdJiJUSaxSyUJMxt3s6HEgI2yNfx11w285EMSX8ROSnYKaRRNOzOHtWW6Cc.H2v5Z4uylZGwhwBbOQnhDqstInJ9xmaISe7O.je36A0buIGOpL5y5Ff8FeWnN8Ih65QljuZLxvktnmSbfTA0EaH5o7krD5iZbH3pd.D3gerT2L1xxz0jh..PKAdQlFQMa54C4YhT1hH8fvFmIUU6837BVzF6jBknVAbcE01IgbeXpltGY4B6c8oNWPC0CYXGeK5RWgX7o2mUyqPU24g4e5W6X1u5GaGQixxDVevaCqmsMIj7rfi+gsEZNrG6.glFLV9phvFj8wWcGY..Vq60i3sqmLYt90lVuhNuXexi5LK7ekGnzwOYnOi46HSGn2+AA728cf4+wOJhSW2qv58dCHOUzuRKUSNCbIqpBnWnyoFsHYjVaTRfFq2U2qHRjmguHstMTm2KOLx8rSf63q159tScFhgOZnNa0NtJUUSWBpx+73udEAsmu+iadjJmTM2DTUWIPX2Usc46G5iwYhp1X5yClEm95IBkkIr235f05dMmI+ZeV6HVTW3bnom7eA3rmIrOHye7O.fpzcC6x1CzGaqOym5iYhvZLwQhLOKfuKPl5K9bXW71g9jttT29370B4Gr1TV4G2ZpI2Y.hidHXs6OCxSbLD7qbuN9H8ALHXO0Y.412ZTKV68WZB+.4pp5z.gEHC8tf3aiKnOPqvgB4Q9BfZbmgDjmoFnG93Dj.AI073GxJkJ9GCuJOkqLEg9XFOjgkMGj6uzjxE2zd99OdocctSkShf4fN8X+h3a6G+jC0kTM1PRo9Xehi.zPaJKkBpKTanIyPUmFxCcPfZOiqsKaqcDKM+luTK+VUT3PQvkdWN9bQ2yChdU.TgGHCYAG+eYlu7SCsG8m5nqNMV5cA6sk8jk6iDeWfL..yU+LPaXiJzybRRlRoPyuveLlYGiLM4GuAntyU4p+00F7viYfr1CuFzX89WHrF3fg53GIpaqwzmGLV7cDpbp+BPd3xg8QJGxO7cAt3Eg5.60UPRsALHf9zWfXM6szz87hZjm3nQ90aiGrKYGv3FWRK+snvgBs1j0H.7KcqXG64nRXD.ZScFP9QePRo9XslmucEzNaqcDKpCWdKsSUYk.4zlkirFC.fwxVomYNirgi+A.PkmB1a98fwMz5zuWevCOzcAmkyeMFYWwYpFM+69EtdFRRFLeiWBp8Dg7sV1DKyP+KLIkt6yCxSbDOWtdLxl8PSCZsYplK5Z2g9DJBAl2M2Re3auW2OKZBg.FwQRPV65lomSDEUBNoLrC6+mqU3PfXvCywxjkkcGHSz+Bck1xZO7JSZjN46aGJIrV6q5Zw5CY3PLA2yX0rgi+uBq29UB8h6rMhmGt5LMe4cjA.nJe+v7o9uPf66gbjqw5Hr9f2Fx20cJeIajXXizyrjs5LQO4l1do1yNg8wOBzG3fcrb8oLcHm29hXxUVeQKy0UlB.Xu0M0xrOS84k5p+4ABchH6cssH+Bur2Ef.Kc4tqq0eAXs92NNZUsYaJ+yg5hMBQmuF.DJePp2lAb29jGCn1ylPkY5lW2EippSCYLd+WoMwo5HmGpOzQBydWfmcCb5vUCsC4N9qPtj6v8ckc6q.lktam4Nwrfi+aQiMBy27kQvUd+srHulUkYa7sAx..j6Zan4ZpBAevuOD449pRhWJKSX9B+wn9P6lMQLxwhf2yC34mIOdJ5YeSof0K+zP+64rqQDZZH3JteXcs8G1exlB8VvUJAxMOXrjurq2rrgJJEr15lbrLyW5OAsG8Ic7rEILBffOz+LLekmCxOYisNKrzzgXTiCA+5OTnW+6gw7UegDerQj1vtrhgwT8NWy4UtsLqhPC5SycVsn4077PsmnOoGB78+Wc8tkS+5mCrW6ZRpUw3xUKsiKeWYAu++Am0m9MPXOsY2xi2wUjwO9uMje7Ff87VXR4thSW70Ax..TG+HnoG+GBia81f9BVjqWMDwhcwaGlu1KBTYG+UlQxl1.FDB7C+2acA5ZPqW4Gw2KVpyWKjkF6S3ly+3OJt1+Va6if0e9+t0xu78C6c+YdlUKLl+sBi4eqgx6aMcIH5VtQrbMei+BP386dUUB60+VvXQ2giEKzzQv65qA0ctJHO0wAZ5RPafC10yWzUXe3xgLrfjwK4d1APDBjYWZwdt71i162+QiXziyUpbR0zkfZekDys0dmepq..FSOyD.3pk1APjuqr.Kc4noc7WcNwgxBN9uEJYnKZ867ncrxIMxeNFYgqwFf0q9Bnoex2EVuyZB0MPQg570BqO9CPSO4OFl+1edVYPLfPyRK8BGbq+q+EF4fXJEZ9o+sslZkRQLe4+WXejH+NKRDLmnFDyZKa.x28M79ydmWG161iLENt7q18ALHnOrQEweDKO8If4S+ahRsO5BkkOrcsb0Ea3xum0xd4U2wI26tiqr8hziuyCkpmFdRotkHtZoc.fHNVYhdU.zlyM5Z4Y5i+aK0AJKh0krQ996HygZOKrdyUC7lqFl8r2Pzm9AQt4AzstCboKB04NKvYOSnt+5pHppqDM+JOabk.e6vp8rv7m8Sf8hVVnWblwY+mqrLg8lWOrVyyE4UxrYX969EvdZyBA9J2mi20TQsrkRXu92BVu0pAr5.S.nFZ.xu3fPeDi1whk6qDGYShrN4jCzmr6b2nWISVOU6Yf8Q9BnG1jaQe5yEVoyWzhWszNZiHdWYKdYnostImyN5L8w+gwbMOGzF2jS3d4JS3pq.Ys0YqApyVCh9iFr+jpg5grpJBM.3G9fPtkOL89vaKkPt10flKcWvX42CzF5H770PAvk+Q119XX81uBvYhu7Gm7y9DzzAJCFK+dB8l7MBWApRJg7HkCqU+rgd64lDXWxNbEHKaeZ2qMI2oxIkYywU2LeE165ScG.Xpy.Vub5KUOc0R6vgHLVYhtmGztgE44jKKSd7uC0TEr2vZgwsd6I+xNISbwGbkYzy0m2GG4LLeEyJOzIsr6WWFD.tlqAhgMJHxqWPzstCkkYnGf5pq.pppJtSlwdxHPnYnYuK.n64Bgldn29tm+rgxxFo3tRknLJd7ebgAxHhHxW6piI6AQDQ++VLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZY7.YQaNIJh5mRDQDkE7.QW6b5QrWIhHhnHHieGYDQDQcDLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9ZLPFQDQ9Z+e.4MpQv6X3UxH.....IUjSD4pPfIH" ],
+									"embed" : 1,
+									"forceaspect" : 1,
+									"id" : "obj-332",
+									"maxclass" : "fpic",
+									"numinlets" : 1,
+									"numoutlets" : 1,
+									"outlettype" : [ "jit_matrix" ],
+									"patching_rect" : [ 16.0, 6145.996005521058578, 161.607843137254918, 37.981566820276505 ],
+									"pic" : "/Users/danieleghisi/Downloads/become_a_patron_button@2x.png"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 12.0,
+									"hidden" : 1,
+									"id" : "obj-333",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 458.0, 6374.0, 307.0, 35.0 ],
+									"text" : ";\rmax launchbrowser http://www.patreon.com/bachproject"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontsize" : 14.0,
+									"id" : "obj-132",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 651.0, 6206.0, 89.0, 40.0 ],
+									"text" : ";\rbach donors"
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 14.0,
+									"id" : "obj-123",
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 16.0, 6215.0, 641.0, 22.0 ],
+									"text" : "We would like to thank all our Patreon supporters and all the bach donors. Click here for the full list:",
+									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 14.0,
+									"id" : "obj-334",
+									"linecount" : 7,
+									"maxclass" : "comment",
+									"numinlets" : 1,
+									"numoutlets" : 0,
+									"patching_rect" : [ 16.0, 6006.0, 835.0, 116.0 ],
+									"text" : "Developing and maintaining bach is a lot of work. \n\nWe have decided to keep bach free and to embrace a business model based on Patreon: how much do you consider bach is valuable for you? If the answer is 0$, or if you cannot afford to pay any price, that's totally fine - we completely understand. \nBut if you can afford to pay us as little as a cup of coffee per month, that would really help. \n\nIn addition to keeping bach accessible for everybody, you'll also have exclusive access to prereleases, video tutorials, and more.",
+									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
+								}
+
+							}
+, 							{
+								"box" : 								{
+									"fontname" : "Arial",
+									"fontsize" : 12.0,
+									"hidden" : 1,
+									"id" : "obj-274",
+									"linecount" : 2,
+									"maxclass" : "message",
+									"numinlets" : 2,
+									"numoutlets" : 1,
+									"outlettype" : [ "" ],
+									"patching_rect" : [ 567.5, 3676.0, 307.0, 35.0 ],
+									"text" : ";\rmax launchbrowser http://www.patreon.com/bachproject"
+								}
+
+							}
+, 							{
+								"box" : 								{
 									"hidden" : 1,
 									"id" : "obj-330",
 									"maxclass" : "message",
@@ -520,7 +815,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 453.0, 5566.0615234375, 233.0, 51.0 ],
-									"presentation_linecount" : 2,
 									"text" : "We have a scripting language now, meant to make the implementation of processes in bach easier!"
 								}
 
@@ -534,7 +828,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 24.0, 5572.60986328125, 427.0, 37.0 ],
-									"presentation_linecount" : 3,
 									"text" : "bell: bach evaluation language on lllls"
 								}
 
@@ -820,7 +1113,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 700.0, 3656.0, 261.0, 116.0 ],
+									"patching_rect" : [ 918.0, 3656.0, 261.0, 116.0 ],
 									"text" : ";\rmax launchbrowser https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=ANCMP3NUGY8C6&lc=US&item_name=bach%3a%20automated%20composer%27s%20helper&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"
 								}
 
@@ -828,60 +1121,17 @@
 , 							{
 								"box" : 								{
 									"fontsize" : 14.0,
+									"hidden" : 1,
 									"id" : "obj-144",
 									"maxclass" : "textbutton",
 									"numinlets" : 1,
 									"numoutlets" : 3,
 									"outlettype" : [ "", "", "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 700.0, 3625.201172000000042, 110.0, 24.798828 ],
+									"patching_rect" : [ 918.0, 3625.201172000000042, 110.0, 24.798828 ],
 									"text" : "Donate now!",
 									"usebgoncolor" : 1,
 									"usetextovercolor" : 1
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"id" : "obj-132",
-									"linecount" : 2,
-									"maxclass" : "message",
-									"numinlets" : 2,
-									"numoutlets" : 1,
-									"outlettype" : [ "" ],
-									"patching_rect" : [ 222.0, 3584.899413999999979, 77.0, 35.0 ],
-									"text" : ";\rbach donors"
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontsize" : 14.0,
-									"id" : "obj-124",
-									"maxclass" : "textbutton",
-									"numinlets" : 1,
-									"numoutlets" : 3,
-									"outlettype" : [ "", "", "int" ],
-									"parameter_enable" : 0,
-									"patching_rect" : [ 222.0, 3554.100586000000021, 110.0, 24.798828 ],
-									"text" : "bach donors",
-									"usebgoncolor" : 1,
-									"usetextovercolor" : 1
-								}
-
-							}
-, 							{
-								"box" : 								{
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-123",
-									"linecount" : 6,
-									"maxclass" : "comment",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 7.0, 3556.0, 903.0, 94.0 ],
-									"text" : "bach would also like to thank all the                                 , as well as all the other people who have donated money to the project.\n\nDiscover all donors by sending the                          message (donors are credited for donations greater than or equal to 50€).\n\n\nPlease consider supporting us with a Paypal donation, even a few euros will help us maintain and support the project!",
-									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
 							}
@@ -1107,7 +1357,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 303.0, 4083.063477000000148, 86.0, 20.0 ],
+									"patching_rect" : [ 303.0, 4047.063477000000148, 86.0, 20.0 ],
 									"text" : "Sections:",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"textjustification" : 2
@@ -1122,7 +1372,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 389.0, 4083.0634765625, 525.0, 20.0 ],
+									"patching_rect" : [ 389.0, 4047.0634765625, 525.0, 20.0 ],
 									"text" : "13",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1226,7 +1476,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 303.0, 4103.063476999999693, 86.0, 20.0 ],
+									"patching_rect" : [ 303.0, 4067.063476999999693, 86.0, 20.0 ],
 									"text" : "Topics:",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"textjustification" : 2
@@ -1241,7 +1491,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 389.0, 4103.0634765625, 522.0, 20.0 ],
+									"patching_rect" : [ 389.0, 4067.0634765625, 522.0, 20.0 ],
 									"text" : "displaying lllls, creating lllls, modifying lllls, handling lllls",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1292,7 +1542,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 0,
-											"revision" : 2,
+											"revision" : 4,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -1659,7 +1909,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 389.0, 4163.063476999999693, 525.0, 33.0 ],
+									"patching_rect" : [ 389.0, 4127.063476999999693, 525.0, 33.0 ],
 									"text" : "bach.tree, bach.print, bach.portal, bach.reg, bach.length, bach.depth, bach.nth, bach.find, bach.filternull, bach.roll, bach.score",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
@@ -1673,7 +1923,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 303.0, 4163.063476999999693, 86.0, 20.0 ],
+									"patching_rect" : [ 303.0, 4127.063476999999693, 86.0, 20.0 ],
 									"text" : "Elements:",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"textjustification" : 2
@@ -1710,7 +1960,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 0,
-											"revision" : 2,
+											"revision" : 4,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -1987,7 +2237,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 296.0, 4290.0, 74.0, 22.0 ],
+									"patching_rect" : [ 296.0, 4365.0, 74.0, 22.0 ],
 									"text" : "prepend set"
 								}
 
@@ -2002,7 +2252,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
-									"patching_rect" : [ 296.0, 4258.0, 109.0, 22.0 ],
+									"patching_rect" : [ 296.0, 4333.0, 109.0, 22.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
 									}
@@ -2152,7 +2402,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 661.0, 4216.600585999999566, 169.0, 23.0 ],
+									"patching_rect" : [ 661.0, 4180.600585999999566, 169.0, 23.0 ],
 									"text" : "or go directly to section:"
 								}
 
@@ -2166,7 +2416,7 @@
 									"numoutlets" : 3,
 									"outlettype" : [ "", "", "int" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 389.0, 4210.201172000000042, 263.0, 35.798828 ],
+									"patching_rect" : [ 389.0, 4174.201172000000042, 263.0, 35.798828 ],
 									"text" : "Start tutorial from the beginning",
 									"usebgoncolor" : 1,
 									"usetextovercolor" : 1
@@ -2198,7 +2448,7 @@
 									"numoutlets" : 3,
 									"outlettype" : [ "int", "", "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 830.0, 4216.600585999999566, 81.0, 25.0 ]
+									"patching_rect" : [ 830.0, 4180.600585999999566, 81.0, 25.0 ]
 								}
 
 							}
@@ -2262,7 +2512,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 0,
-											"revision" : 2,
+											"revision" : 4,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -2423,7 +2673,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 0,
-											"revision" : 2,
+											"revision" : 4,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -5524,7 +5774,7 @@
 										"appversion" : 										{
 											"major" : 8,
 											"minor" : 0,
-											"revision" : 2,
+											"revision" : 4,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -6863,7 +7113,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 499.0, 2713.0, 165.0, 21.0 ],
+									"patching_rect" : [ 263.0, 2713.0, 165.0, 21.0 ],
 									"text" : "feedback@bachproject.net"
 								}
 
@@ -6999,7 +7249,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 7.0, 3277.0, 903.0, 224.0 ],
-									"text" : "bach is a completely independent project by composers Andrea Agostini and Daniele Ghisi. \n\nbach includes the Kiss FFT library (distributed under BSD licence), the Mini-XML library (distributed under LGPLv2.0 license), the GPC library (free for non-commercial usage), and the IRCAM SDIF library (distributed under LGPLv2.1 license). All the files needed to recompile the relevant parts of the bach library (namely the bach.score, bach.readsdif, bach.writesdif externals) are available through the downloads section of the bach website.\n\nThanks to Jeremie Garcia for testing the Windows version, to Carlos Agon and Jean Bresson for the OpenMusic compatibility, and to Mika Kuuskankare for the PWGL compatibility. Thanks to Sara Adhitya and Andrew Pask for being the voice of bach in our video tutorials.\n\nThe official bach font is \"November for bach\", created by Robert Piéchaud (                                          ) and automatically loaded at bach startup. \"November for bach\" is a light version of the famous November font. The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique, warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares, and, in addition, is the first commercial music font fully compliant with             . \nYou can purchase November from this web address: \n",
+									"text" : "bach is a completely independent project by composers Andrea Agostini and Daniele Ghisi. \n\nbach includes the Kiss FFT library (distributed under BSD licence), the Mini-XML library (distributed under LGPLv2.0 license), and the IRCAM SDIF library (distributed under LGPLv2.1 license). All the files needed to recompile the relevant parts of the bach library (namely the bach.score, bach.readsdif, bach.writesdif externals) are available through the downloads section of the bach website.\n\nThanks to Jeremie Garcia for testing the Windows version, to Carlos Agon and Jean Bresson for the OpenMusic compatibility, and to Mika Kuuskankare for the PWGL compatibility. Thanks to Sara Adhitya and Andrew Pask for being the voice of bach in our video tutorials.\n\nThe official bach font is \"November for bach\", created by Robert Piéchaud (                                          ) and automatically loaded at bach startup. \"November for bach\" is a light version of the famous November font. The full November font covers a wide range of music symbols, from Renaissance to the XXI century, and gives a unique, warm and lively look to your music scores. It is fully compatible with Finale, Sibelius and other notation softwares, and, in addition, is the first commercial music font fully compliant with             . \nYou can purchase November from this web address: \n",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -7090,8 +7340,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 7.0, 2640.0, 922.0, 341.0 ],
-									"text" : "bach is an experimental project. It is very likely to contain minor and major bugs, and you are likely to find out that some basic feature is missing, or very uncomfortable to exploit.\n\nIf you use bach, you might find really useful to join the forum of our website                                   . In this community you can discuss topics concerning the bach environment, as well as report bugs and submit features requests. This is the most appropriate context for all these things, since all users can benefit from everyone's experiences. Still, if you want to contact us privately, you can do it at                                             .\n\nThe ideal bug report should contain:\n- the sequence of operation after which the bug has happened - have you been able to reproduce the bug by repeating the same sequence?\n- the exact nature of the bug: what would have been the expected behaviour, and what you have obtained instead.\n- if there has been a crash, a copy of the contents of the crash report window - don't send it to Apple, it's our problem, not theirs.\n- if possible, a copy of the patch in which the bug has happened.\n- if possible, the exact input data that have caused the bug.\n\nIf you want to submit a feature request, please consider the fact that this doesn't necessarily mean that the feature will be implemented. It can be technically impossible, it could require major changes to the overall architecture of the work, it could disrupt another functionality, it could be obtained by patching with some workaround, it could be to difficult for us to implement or we could simply not like it. But be assured that even the craziest feature request will be seriously considered and reflected upon!\n\nGeneral commentaries about the work are also welcome - especially if positive ;) - we need your advice to know in which direction the development should be pushed.\n\nThank you for your feedback!",
+									"patching_rect" : [ 7.0, 2640.0, 925.0, 341.0 ],
+									"text" : "bach is an experimental project. It is very likely to contain minor and major bugs, and you are likely to find out that some basic feature is missing, or very uncomfortable to exploit.\n\nIf you use bach, you might find really useful to join the forum of our website                                   . In this community you can discuss topics concerning the bach environment and report bugs. This is the most appropriate context for all these things, since all users can benefit from everyone's experiences. Still, if you want to contact us privately, you can do it at                                             .\n\nThe ideal bug report should contain:\n- the sequence of operation after which the bug has happened - have you been able to reproduce the bug by repeating the same sequence?\n- the exact nature of the bug: what would have been the expected behaviour, and what you have obtained instead.\n- if there has been a crash, a copy of the contents of the crash report window - don't send it to Apple, it's our problem, not theirs.\n- if possible, a copy of the patch in which the bug has happened.\n- if possible, the exact input data that have caused the bug.\n\nPatreon supporters can submit feature requests: that this doesn't necessarily mean that all the features will be implemented. It can be technically impossible, it could require major changes to the overall architecture of the work, it could disrupt another functionality, it could be obtained by patching with some workaround, it could be to difficult for us to implement or we could simply not like it. But be assured that even the craziest feature request will be seriously considered and reflected upon!\n\nGeneral commentaries about the work are also welcome - especially if positive ;) - we need your advice to know in which direction the development should be pushed.\n\nThank you for your feedback!",
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ]
 								}
 
@@ -7174,12 +7424,12 @@
 									"onlyclickonleaves" : 1,
 									"out" : "nnnn",
 									"outlettype" : [ "", "", "", "", "bang" ],
-									"patching_rect" : [ 2.0, 3818.0, 286.0, 428.0 ],
+									"patching_rect" : [ 2.0, 3818.0, 284.0, 385.600585999999566 ],
 									"preventedit" : 1,
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"tree_openstate_data_0000000000" : [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
 									"tree_openstate_data_count" : [ 1 ],
-									"versionnumber" : 80001,
+									"versionnumber" : 80005,
 									"vinset" : 0.0,
 									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path", "21 – Standalone Applications" ],
 									"whole_tree_data_count" : [ 1 ]
@@ -7454,13 +7704,6 @@
 									"destination" : [ "obj-125", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-122", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-132", 0 ],
-									"source" : [ "obj-124", 0 ]
 								}
 
 							}
@@ -8448,6 +8691,14 @@
 							}
 , 							{
 								"patchline" : 								{
+									"destination" : [ "obj-333", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-331", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
 									"destination" : [ "obj-181", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-339", 1 ]
@@ -8555,6 +8806,14 @@
 									"destination" : [ "obj-154", 0 ],
 									"hidden" : 1,
 									"source" : [ "obj-356", 0 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-364", 0 ],
+									"hidden" : 1,
+									"source" : [ "obj-359", 0 ]
 								}
 
 							}
@@ -8922,7 +9181,7 @@
 						"bgcolor" : [ 0.94, 0.94, 0.94, 1.0 ]
 					}
 ,
-					"patching_rect" : [ 6.0, 144.0, 929.0, 476.0 ],
+					"patching_rect" : [ 6.0, 138.0, 929.0, 476.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 113.274520874023438, 128.0, 143.0, 93.0 ],
 					"viewvisibility" : 1
@@ -8976,7 +9235,15 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
+					"destination" : [ "obj-22", 1 ],
+					"hidden" : 1,
+					"source" : [ "obj-18", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-22", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-18", 0 ]
 				}
@@ -9008,9 +9275,49 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-19", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-22", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-27", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-25", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-26", 1 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-27", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-28", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-22", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-29", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-27", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-32", 0 ]
 				}
 
 			}
@@ -9034,7 +9341,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-11", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-44", 4 ]
+					"source" : [ "obj-44", 5 ]
 				}
 
 			}
@@ -9042,7 +9349,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-2", 0 ],
 					"hidden" : 1,
-					"source" : [ "obj-44", 5 ]
+					"source" : [ "obj-44", 6 ]
 				}
 
 			}
@@ -9051,6 +9358,14 @@
 					"destination" : [ "obj-4", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-44", 2 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-50", 0 ],
+					"hidden" : 1,
+					"source" : [ "obj-44", 4 ]
 				}
 
 			}
@@ -9080,7 +9395,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-19", 0 ],
+					"destination" : [ "obj-29", 0 ],
 					"hidden" : 1,
 					"source" : [ "obj-5", 0 ]
 				}
@@ -9143,7 +9458,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.bell.000_introduction.maxpat",
+				"name" : "bach.help.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : "../help",
 				"type" : "JSON",
@@ -9282,23 +9597,18 @@
 				"implicit" : 1
 			}
 , 			{
+				"name" : "become_a_patron_button@2x.png",
+				"bootpath" : "~/Downloads",
+				"patcherrelativepath" : "../../../../../Downloads",
+				"type" : "PNG",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "bach.tree.mxo",
 				"type" : "iLaX"
 			}
 , 			{
 				"name" : "bach.hypercomment.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.eval.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.length.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.reg.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9319,6 +9629,10 @@
 			}
 , 			{
 				"name" : "bach.nth.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.reg.mxo",
 				"type" : "iLaX"
 			}
 , 			{
@@ -9347,6 +9661,10 @@
 			}
 , 			{
 				"name" : "bach.rev.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.length.mxo",
 				"type" : "iLaX"
 			}
 , 			{

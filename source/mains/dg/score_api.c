@@ -622,7 +622,7 @@ void scoreapi_set_autoretranscribe(t_score *x, long l)
 
 void scoreapi_set_outputtrees(t_score *x, long l)
 {
-    x->r_ob.output_trees = CLAMP(l, 0, 2);
+    x->r_ob.output_trees = CLAMP(l, 0, 3);
     object_attr_setdisabled((t_object *)x, gensym("outputtiesindurationtree"), x->r_ob.output_trees < 2);
 }
 
@@ -6165,7 +6165,7 @@ void tuttipoint_calculate_spacing_proportional(t_score *x, t_tuttipoint *tpt, do
                 else if (x->r_ob.align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_CENTER)
                     chord->stem_offset_ux = alignment_point + chord->direction * chord_get_mainside_notehead_uwidth((t_notation_obj *)x, chord->r_sym_duration, chord)/2.;
                 else if (x->r_ob.align_chords_with_what == k_CHORD_ALIGN_WITH_PRINCIPAL_NOTEHEAD_END)
-                    chord->stem_offset_ux = alignment_point - x->r_ob.zoom_y * get_notehead_uwidth((t_notation_obj *)x, chord->r_sym_duration, chord->firstnote, true);
+                    chord->stem_offset_ux = alignment_point - x->r_ob.zoom_y * notehead_get_uwidth((t_notation_obj *)x, chord->r_sym_duration, chord->firstnote, true);
             }
             
             last_done_meas = this_meas;
@@ -7864,7 +7864,7 @@ double chord_get_spacing_correction_for_voiceensembles(t_score *x, t_chord *chor
                         long n_steps = midicents_to_diatsteps_from_middleC((t_notation_obj *)x, note_get_screen_midicents(n));
 
                         if (n_steps == note_steps + 1 || n_steps == note_steps || n_steps == note_steps - 1) {
-                            shift = MAX(shift, get_notehead_uwidth((t_notation_obj *)x, c->r_sym_duration, n, true));
+                            shift = MAX(shift, notehead_get_uwidth((t_notation_obj *)x, c->r_sym_duration, n, true));
                         }
                         
                         acc_shift_for_note = shift;
@@ -8987,7 +8987,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     char lyrics_dashed_going_on = 0, lyrics_word_extension_going_on = 0;
     t_chord *lyrics_word_extensions_start_chord = NULL;
     double left_dashed_ux = 0., left_word_extension_ux = 0.;
-    t_chord *last_drawn_chord = NULL;
     double measure_numbers_top_y = 0;
     t_voice *first_visible_voice = voice_get_first_visible((t_notation_obj *)x);
     char is_in_voiceensemble = (voiceensemble_get_numparts((t_notation_obj *)x, (t_voice *)voice) > 1);
@@ -9012,7 +9011,8 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     
     double curr_hairpin_start_x = -100;
     long curr_hairpin_type = 0;
-    char first_painted_chord = true;
+    t_chord *first_painted_chord = NULL;
+    t_chord *last_painted_chord = NULL;
     t_jrgba prev_hairpin_color = x->r_ob.j_dynamics_rgba;
     char prev_hairpin_dontpaint = false;
 
@@ -9163,25 +9163,6 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             char is_grace_chord = curr_ch->is_grace_chord;
             double grace_ratio = is_grace_chord ? CONST_GRACE_CHORD_SIZE : 1.;
             
-            
-            if (first_painted_chord) {
-                long s = x->r_ob.link_dynamics_to_slot - 1;
-                if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
-                    // check if there's an hairpin ending on this chord
-                    for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
-                        if (chord_has_dynamics(temp)) {
-                            t_dynamics *dyn = chord_get_dynamics(temp);
-                            if (dyn) {
-                                curr_hairpin_type = (dyn->lastmark ? dyn->lastmark->hairpin_to_next : 0);
-                                curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
-                                break;
-                            }
-                        }
-                    }
-                }
-                first_painted_chord = false;
-            }
-            
 //            paint_line(g, build_jrgba(1, 0, 0, 0.5), chord_alignment_point_x, 0., chord_alignment_point_x, rect.height, 1);
             
             // handling selection
@@ -9223,9 +9204,25 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                 double chord_first_notehead_uwidth = 0;
                 long i;
                 
+                if (!first_painted_chord) {
+                    long s = x->r_ob.link_dynamics_to_slot - 1;
+                    if (x->r_ob.show_hairpins && s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
+                        // check if there's an hairpin ending on this chord
+                        for (t_chord *temp = chord_get_prev(curr_ch); temp; temp = chord_get_prev(temp)) {
+                            if (chord_has_dynamics(temp)) {
+                                t_dynamics *dyn = chord_get_dynamics(temp);
+                                if (dyn) {
+                                    curr_hairpin_type = (dyn->lastmark ? dyn->lastmark->hairpin_to_next : 0);
+                                    curr_hairpin_start_x = unscaled_xposition_to_xposition((t_notation_obj *) x, chord_get_alignment_ux((t_notation_obj *) x, temp));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    first_painted_chord = curr_ch;
+                }
                 
-                
-                last_drawn_chord = curr_ch;
+                last_painted_chord = curr_ch;
                 
 #ifdef BACH_PAINT_IDS
                 char text[140];
@@ -9354,7 +9351,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 int j = (howmanyflags >= 2) ? (i > 0 ? 4 : 2) : 0;
                                 
                                 if ((curr_ch->direction == 1) && (x->r_ob.notation_typo_preferences.flag_noteheadaligned[j] == 1))
-                                    this_flag_x = flag_x - round(get_notehead_uwidth((t_notation_obj *)x, curr_ch->figure, NULL, false) * x->r_ob.zoom_y) + 1.45;
+                                    this_flag_x = flag_x - round(notehead_get_uwidth((t_notation_obj *)x, curr_ch->figure, NULL, false) * x->r_ob.zoom_y) + 1.45;
                                 else 
                                     this_flag_x = flag_x; 
                                 
@@ -9595,7 +9592,14 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                         if (x->r_ob.show_dots) {
                             long multiplier = (is_in_voiceensemble && voice->v_ob.part_index % 2 == 1 ? 1 : -1);
                             dot_x_offset = (CONST_CHORD_DOT_USEPARATION * grace_ratio + MAX(0, curr_ch->right_uextension - curr_ch->lyrics_portion_of_right_uextension - curr_ch->dynamics_portion_of_right_uextension)) * x->r_ob.zoom_y ;
-                            dot_y_offset = (curr_ch->is_grace_chord ? 9 : 1) * x->r_ob.zoom_y + (scaleposition % 2 == 0 ? multiplier * x->r_ob.step_y : 0);
+                            dot_y_offset = (curr_ch->is_grace_chord ? 9 : 1) * x->r_ob.zoom_y;
+                            if (is_clef_multistaff((t_notation_obj *)x, clef) || clef == k_CLEF_PERCUSSION || clef == k_CLEF_NONE) {
+                                if (scaleposition % 2 == 0)
+                                    dot_y_offset += multiplier * x->r_ob.step_y;
+                            } else {
+                                if ((scaleposition + clef) % 2 == 0)
+                                    dot_y_offset += multiplier * x->r_ob.step_y;
+                            }
                             for (j=0; j<curr_ch->num_dots; j++) {
                                 unicodeChar dot_char = x->r_ob.notation_typo_preferences.dot_unicode_character;
                                 char dot_txt[5];
@@ -9822,7 +9826,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                                 char is_note_solo = notation_item_is_globally_solo((t_notation_obj *)x, (t_notation_item *)curr_nt);
                                 char is_note_played = x->r_ob.highlight_played_notes ? (should_element_be_played((t_notation_obj *) x, (t_notation_item *)curr_nt) && (curr_ch->played || curr_nt->played)) : false;
                                 t_jrgba annotationcolor = annotation_get_color((t_notation_obj *) x, curr_ch, false, is_note_played, is_note_locked, is_note_muted, is_note_solo, is_chord_linear_edited);
-                                double left_corner_x = curr_nt->center.x - get_notehead_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
+                                double left_corner_x = curr_nt->center.x - notehead_get_uwidth((t_notation_obj *) x, curr_ch->r_sym_duration, curr_nt, true) / 2.;
                                 paint_annotation_from_slot((t_notation_obj *) x, g, &annotationcolor, (t_notation_item *)curr_nt, left_corner_x, s, jf_ann, staff_top, last_annotation_text, &annotation_sequence_start_x_pos, &annotation_sequence_end_x_pos, &annotation_line_y_pos);
                             }
                         }
@@ -10017,9 +10021,9 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                             double xm1, ym1, xm2, ym2; // middle points for line
                             
                             if (beam->direction == -1 && beam->beam_start_chord->direction == 1)
-                                x1 -= get_notehead_uwidth((t_notation_obj *) x, beam->beam_start_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
+                                x1 -= notehead_get_uwidth((t_notation_obj *) x, beam->beam_start_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
                             if (beam->direction == 1 && beam->beam_end_chord->direction == -1)
-                                x2 += get_notehead_uwidth((t_notation_obj *) x, beam->beam_end_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
+                                x2 += notehead_get_uwidth((t_notation_obj *) x, beam->beam_end_chord->r_sym_duration, NULL, false) * x->r_ob.zoom_y;
                             
                             xm1 = x1t - 1 * x->r_ob.zoom_y;
                             ym1 = rescale(xm1, x1, x2, y1, y2);
@@ -10142,7 +10146,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
             }
             barline_color = barline_selected ? x->r_ob.j_selection_rgba : x->r_ob.j_mainstaves_rgba;
             
-            double THRESH_PAGELIKE_BARLINES_END = 3, THRESH_PAGELIKE_BARLINES_START = 3;
+            double THRESH_PAGELIKE_BARLINES_END = 2.5 * x->r_ob.zoom_y, THRESH_PAGELIKE_BARLINES_START = 2.5 * x->r_ob.zoom_y;
 
             if (x->r_ob.pagelike_barlines && fabs(end_barline_x - domain_end_pixel) < THRESH_PAGELIKE_BARLINES_END) {
                 end_barline_x = round_to_semiinteger(domain_end_pixel) - 1;
@@ -10275,7 +10279,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
                     x->r_ob.j_selection_rgba : x->r_ob.j_tempi_rgba;
                     
                     // tempo figure.
-                    line_x = tempibox_x1 + get_notehead_uwidth((t_notation_obj *) x, curr_tempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
+                    line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, curr_tempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
                     line_y = tempibox_y1 + 5 * x->r_ob.zoom_y;
                     // if it's the veryfirst tempo (the one that is meant to go over the clef) we paint it trasparently, since we'll repaint it later on.
                     // however we need the "width" variable to be properly filled.
@@ -10321,7 +10325,7 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
     
     // word extension left to draw?
     if (x->r_ob.show_lyrics && x->r_ob.show_lyrics_word_extensions) {
-        if (lyrics_word_extension_going_on && last_drawn_chord != lyrics_word_extensions_start_chord && last_drawn_chord != chord_get_next(lyrics_word_extensions_start_chord)) {
+        if (lyrics_word_extension_going_on && last_painted_chord != lyrics_word_extensions_start_chord && last_painted_chord != chord_get_next(lyrics_word_extensions_start_chord)) {
             double line_y = get_lyrics_word_extension_y_pos((t_notation_obj *) x, staff_bottom);
             double x1 = unscaled_xposition_to_xposition((t_notation_obj *) x, left_word_extension_ux);
             double x2 = x->r_ob.j_inset_x + x->r_ob.inner_width;
@@ -10337,10 +10341,11 @@ void paint_scorevoice(t_score *x, t_scorevoice *voice, t_object *view, t_jgraphi
         long s = x->r_ob.link_dynamics_to_slot - 1;
         if (s >= 0 && s < CONST_MAX_SLOTS && x->r_ob.slotinfo[s].slot_type == k_SLOT_TYPE_DYNAMICS) {
             long old_hairpin_type = curr_hairpin_type;
-            t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, curr_ch, &curr_hairpin_type, false, true);
+            t_chord *lastch = chord_get_next_with_dynamics((t_notation_obj *)x, last_painted_chord, &curr_hairpin_type, false, true);
             double curr_hairpin_end_x = ms_to_xposition((t_notation_obj *)x, x->r_ob.length_ms_till_last_note); // rect.width * 2;
             if (lastch)
-                curr_hairpin_end_x = onset_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
+                curr_hairpin_end_x = ms_to_xposition((t_notation_obj *)x, lastch->onset, NULL);
+//            curr_hairpin_end_x = onset_to_xposition_roll((t_notation_obj *)x, lastch->onset, NULL);
             paint_dynamics((t_notation_obj *)x, g, NULL, NULL, curr_hairpin_end_x, 0, NULL, jf_dynamics, jf_dynamics_roman, x->r_ob.dynamics_font_size * x->r_ob.zoom_y, x->r_ob.dynamics_roman_font_size * x->r_ob.zoom_y, staff_bottom - x->r_ob.dynamics_uy_pos * x->r_ob.zoom_y, &curr_hairpin_start_x, &old_hairpin_type, &prev_hairpin_color, &prev_hairpin_dontpaint, false, 0);
         }
     }
@@ -10416,8 +10421,11 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
         for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next)
             compute_middleC_position_for_voice((t_notation_obj *) x, (t_voice *) voice);
 
-        if (x->r_ob.num_voices > 0)
-            last_staff_bottom = get_staff_bottom_y((t_notation_obj *) x, voice_get_last_visible((t_notation_obj *)x), false);
+        if (x->r_ob.num_voices > 0) {
+            t_voice *last_visible_voice = voice_get_last_visible((t_notation_obj *)x);
+            if (last_visible_voice)
+                last_staff_bottom = get_staff_bottom_y((t_notation_obj *) x, last_visible_voice, false);
+        }
         
 #ifdef BACH_SPACING_DEBUG
         t_tuttipoint *tmptp;
@@ -10492,7 +10500,7 @@ void paint_static_stuff1(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         if (marker->prev->name_line > 0) {
                             for (t_marker *tempmk = marker->prev->prev; tempmk; tempmk = tempmk->prev)
                                 if (tempmk->name_line == 0) {
-                                    if (onset_to_xposition((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
+                                    if (onset_to_xposition_roll((t_notation_obj *)x, tempmk->position_ms, NULL) + tempmk->name_uwidth * x->r_ob.zoom_y + 2 * x->r_ob.step_y <= this_marker_x - (marker->name_painted_direction < 0) * marker->name_uwidth * x->r_ob.zoom_y)
                                         marker->name_line = 0;
                                     break;
                                 }
@@ -10636,7 +10644,7 @@ void paint_static_stuff2(t_score *x, t_object *view, t_rect rect, t_jfont *jf, t
                         double tempibox_x1 = x->r_ob.j_inset_x + 1 + x->r_ob.notation_typo_preferences.clef_ux_shift + x->r_ob.voice_names_uwidth * x->r_ob.zoom_y; // we put the tempo over the clef
                         double tempibox_y1 = get_staff_top_y((t_notation_obj *) x, (t_voice *) voice, false) + (-x->r_ob.tempi_uy_pos + thistempo->uy_offset) * x->r_ob.zoom_y;
                         // tempo figure.
-                        double line_x = tempibox_x1 + get_notehead_uwidth((t_notation_obj *) x, thistempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
+                        double line_x = tempibox_x1 + notehead_get_uwidth((t_notation_obj *) x, thistempo->tempo_figure, NULL, false) * x->r_ob.zoom_y * CONST_TEMPI_FIGURE_PT;
                         double line_y = tempibox_y1 + 5 * x->r_ob.zoom_y;
                         double tempo_text_width = 0., tempo_text_height = 0., text_x = 0.;
                         double width;
@@ -10911,7 +10919,8 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
         long i, div, number_of_labels, number_of_divisions_in_window, label_step;
         double bottom_y = (x->r_ob.need_hscrollbar && x->r_ob.show_hscrollbar) ? graphic_rect.height - (CONST_XSCROLLBAR_UHEIGHT + CONST_XSCROLLBAR_WHITE_UPAD_UPON + 2) * x->r_ob.zoom_y : graphic_rect.height;
         double right_cur = -1000;
-        
+        double domain_start_x = unscaled_xposition_to_xposition((t_notation_obj *)x, x->r_ob.screen_ux_start);
+
         if (num_subdivisions <= 0) 
             num_subdivisions = 1;
         
@@ -10933,6 +10942,10 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
                 continue;
 
             double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
+            
+            if (pix < 0 || pix < domain_start_x)
+                continue;
+
             if (i % num_subdivisions == 0) { // main division
                 if (x->r_ob.show_grid)
                     paint_line(g, x->r_ob.j_main_grid_rgba, pix, 0, pix, bottom_y, 1.);
@@ -10963,6 +10976,10 @@ void paint_ruler_and_grid_for_score(t_score *x, t_jgraphics* g, t_rect graphic_r
                     continue;
                 
                 double pix = ms_to_xposition((t_notation_obj *)x, ms, 1);
+                
+                if (pix < 0 || pix < domain_start_x)
+                    continue;
+
                 if (pix > right_cur + x->r_ob.ruler_labels_font_size * 3 * x->r_ob.zoom_y) {
                     if (x->r_ob.ruler == 1 || x->r_ob.ruler == 3) { // ruler above
                         if ((div + 1) % label_step == 0)

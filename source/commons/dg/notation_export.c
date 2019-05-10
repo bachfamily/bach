@@ -144,12 +144,13 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     }
     
     must_cleanup = (view != gensym("raw"));
+    r_ob->exporting_image = must_cleanup;
 
     if (fadepredomain < 0)
         fadepredomain = (view == gensym("raw") ? r_ob->fade_predomain : 0);
 
     if (postdomain_uwidth < 0)
-        postdomain_uwidth = (view == gensym("raw") ? 0 : 10); // defaults for postdomain pad
+        postdomain_uwidth = (view == gensym("raw") || r_ob->obj_type == k_NOTATION_OBJECT_SCORE ? 0 : 10); // defaults for postdomain pad
 
     if (arguments->l_size) {
         filename_sym = hatom_getsym(&arguments->l_head->l_hatom);
@@ -453,6 +454,8 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     if (arguments)
         llll_free(arguments);
     
+    r_ob->exporting_image = 0;
+
     return ok ? MAX_ERR_NONE : MAX_ERR_GENERIC;
 }
 

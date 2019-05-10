@@ -116,6 +116,16 @@ char *rat_array_to_string(t_rational *array, long length, char wrapping_brackets
 long llll_to_double_array(t_llll *ll, double **array);
 
 
+/**    Convenience function converting an llll into an array of longs, which will be allocated
+    @ingroup        miscellanea
+    @param    ll        The llll
+    @param    array    Pointer to the array. The memory will be properly allocated, so you need to free it yourself then.
+                        If the original llll is null, the pointer is not allocated and set to NULL.
+    @return            The length of the allocated array (or 0 if not allocated)
+ */
+long llll_to_long_array(t_llll *ll, long **array);
+
+
 /**	Convenience function converting an llll into an array of doubles (already allocated)
 	@ingroup		miscellanea
 	@param	ll		The llll

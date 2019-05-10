@@ -1423,6 +1423,15 @@ void bach_default_set_bach_attr(t_notation_obj *r_ob, void *obj, t_bach_attribut
 				sync_tempi[i]->figure_tempo_value = tempo;
 			llll_free(parsed);
 			return;
+        } else if (attr->name == _llllobj_sym_interp && r_ob->also_changing_in_inspector_all_sync_tempi) {
+            t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
+            long interp = (parsed->l_head && is_hatom_number(&parsed->l_head->l_hatom) ? hatom_getlong(&parsed->l_head->l_hatom) : 0);
+            t_tempo *sync_tempi[CONST_MAX_VOICES];
+            long num_sync_tempi = get_synchronous_tempi(r_ob, (t_tempo *)obj, sync_tempi);
+            for (i = 0; i < num_sync_tempi; i++)
+                sync_tempi[i]->interpolation_type = interp;
+            llll_free(parsed);
+            return;
 		} else if (attr->name == _llllobj_sym_figure && r_ob->also_changing_in_inspector_all_sync_tempi) {
 			t_llll *parsed = llllobj_parse_llll((t_object *)r_ob, LLLL_OBJ_UI, NULL, ac, av, LLLL_PARSE_CLONE);
 			t_rational figure = (parsed->l_head && is_hatom_number(&parsed->l_head->l_hatom) ? (hatom_gettype(&parsed->l_head->l_hatom) == H_DOUBLE ? approx_double_with_rat_fixed_den(hatom_getdouble(&parsed->l_head->l_hatom), CONST_RAT_APPROX_TEMPI_DEN, 0, NULL) : hatom_getrational(&parsed->l_head->l_hatom) ) : RAT_1OVER4);

@@ -10,9 +10,9 @@
 
 #include "bach.h"
 
-#ifdef USE_GPC_LIBRARY
-#include "gpc.h"
-#endif
+//#ifdef USE_GPC_LIBRARY
+//#include "gpc.h"
+//#endif
 
 //#define BACH_MAX7_STYLES_COMPATIBILITY  // uncomment it if you want Max7-styles support - but this will BREAK compatibility with Max6!!!
 
@@ -139,6 +139,8 @@ t_polygon *polygon_build(long num_points, t_pt *points);
 
 
 t_pt polygon_get_barycenter(t_polygon *poly);
+char polygon_get_orientation(t_polygon *poly);
+char triangle_get_orientation(t_pt t1, t_pt t2, t_pt t3);
 
 
 /**    Determine if a point lies inside a generic polygon
@@ -165,14 +167,12 @@ double pt_polygon_distance(t_pt pt, t_polygon *poly);
 double pt_pt_cmp(t_pt pt1, t_pt pt2);
 
 
-//// BEZIER CLOSED CURVES STUFF
+//// BEZIER CLOSED SPLINES STUFF
 t_beziercs *beziercs_build(long num_segments, t_pt *vertices, t_pt *cp1, t_pt *cp2);
 void beziercs_free(t_beziercs *p);
 void paint_beziercs(t_jgraphics* g, t_jrgba *border_color, t_jrgba *inner_color, double linewidth, t_beziercs *bezier);
 t_beziercs *polygon_to_bezier_closed_spline(t_polygon *poly);
 t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, t_pt *pts_out, t_jgraphics *g);
-void polygon_offset_smart_inplace(t_polygon **poly, double amount, long unwanted_pts_size, t_pt *unwanted_pts,
-                                  char mode, t_polygon *container, char algo_intersect, long wanted_pts_size, t_pt *wanted_pts, t_jgraphics *g);
 
 
 // MATH UTILITIES FOR PAINTING

@@ -420,12 +420,12 @@ int T_EXPORT main(void){
     
 #ifdef BACH_MAX7_STYLES_COMPATIBILITY
         CLASS_ATTR_STYLE_RGBA_PREVIEW(c, "bgcolor", 0, t_ratnum, j_bgcolor, "Background Color", "rect_fill");
-        CLASS_ATTR_LEGACYDEFAULT(c, "bgcolor", "bgcolor", 0, "0.290196 0.309804 0.301961 1.0");
+        CLASS_ATTR_LEGACYDEFAULT(c, "bgcolor", "bgcolor", 0, "0.2 0.2 0.2 1.0");
         CLASS_ATTR_BASIC(c, "bgcolor", 0);
 		// @description Sets the color for the displayed/unclicked background.
 #else
         CLASS_ATTR_RGBA(c, "bgcolor", 0, t_ratnum, j_bgcolor);
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "bgcolor", 0, "0.290196 0.309804 0.301961 1.0");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "bgcolor", 0, "0.2 0.2 0.2 1.0");
         CLASS_ATTR_STYLE_LABEL(c, "bgcolor", 0, "rgba", "Background Color");
         CLASS_ATTR_BASIC(c, "bgcolor", 0);
 #endif
@@ -440,27 +440,28 @@ int T_EXPORT main(void){
 
 #ifdef BACH_MAX7_STYLES_COMPATIBILITY
         CLASS_ATTR_STYLE_RGBA_PREVIEW(c, "tricolor", 0, t_ratnum, j_tricolor, "Triangle Color", "triangle_fill");
-        CLASS_ATTR_LEGACYDEFAULT(c, "tricolor", "tricolor", 0, "0.490196 0.498039 0.517647 1.0");
+        CLASS_ATTR_LEGACYDEFAULT(c, "tricolor", "tricolor", 0, "0.501961 0.501961 0.501961 1.0");
         class_attr_stylemap(c, (char *)"tricolor", (char *)"accentcolor");
 		// @description Sets the color for the triangle that indicates that the contents are editable.
 		// This is used when the content is not being edited.
 #else
         CLASS_ATTR_RGBA(c, "tricolor", 0, t_ratnum, j_tricolor);
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "tricolor", 0, "0.490196 0.498039 0.517647 1.0");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "tricolor", 0, "0.501961 0.501961 0.501961 1.0");
         CLASS_ATTR_STYLE_LABEL(c, "tricolor", 0, "rgba", "Triangle Color");
 #endif
-		
+    
 #ifdef BACH_MAX7_STYLES_COMPATIBILITY
         CLASS_ATTR_STYLE_RGBA_PREVIEW(c, "htricolor", 0, t_ratnum, j_htricolor, "Highlighted Triangle Color", "triangle_fill");
-        CLASS_ATTR_LEGACYDEFAULT(c, "htricolor", "htricolor", 0, "0.815686 0.858824 0.34902 1.0");
+        CLASS_ATTR_LEGACYDEFAULT(c, "htricolor", "htricolor", 0, "0.929412 0.929412 0.352941 1.0");
         class_attr_stylemap(c, (char *)"htricolor", (char *)"selectioncolor");
 		// @description Sets the highlight color for the triangle that indicates that the contents are editable.
 		// This is used when the content is being edited.
 #else
         CLASS_ATTR_RGBA(c, "htricolor", 0, t_ratnum, j_htricolor);
-        CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "htricolor", 0, "0.815686 0.858824 0.34902 1.0");
+        CLASS_ATTR_DEFAULT_SAVE_PAINT(c, "htricolor", 0, "0.929412 0.929412 0.352941 1.0");
         CLASS_ATTR_STYLE_LABEL(c, "htricolor", 0, "rgba", "Highlighted Triangle Color");
 #endif
+
     
 	CLASS_STICKY_ATTR_CLEAR(c, "category");
 

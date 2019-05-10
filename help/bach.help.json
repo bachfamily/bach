@@ -2018,6 +2018,13 @@
 				"tags" : [ "editing", "edit", "interface", "marker", "interface", "shift", "offset", "snap", "drag", "snapping", "chord", "note", "tail", "magnetic" ],
 				"title" : [ "Snapping markers to chords" ]
 			},
+			"B_markersinterfacespace" : {
+				"filename" : [ "bach.help.notation.editing.28b_markersinterfacespace.maxpat" ],
+				"objects" : [ "bach.roll" ],
+				"seealso" : [ "marker+interface" ],
+				"tags" : [ "editing", "edit", "interface", "marker", "stretch", "move", "space", "insert", "compress", "add", "silence" ],
+				"title" : [ "Using markers to stretch or move elements" ]
+			},
 			"Fine_editing" : {
 				"filename" : [ "bach.help.notation.editing.29_fine_editing.maxpat" ],
 				"objects" : [ "bach.roll" ],
@@ -2471,6 +2478,13 @@
 				"seealso" : [ "velocity", "marker+name", "slot+syntax" ],
 				"tags" : [ "editing", "edit", "interface", "default", "note", "velocity", "slot", "content", "marker", "name", "defaultvelocity", "defaultmarkername", "defaultnoteslots" ],
 				"title" : [ "Default editing parameters" ]
+			},
+			"Shortcuts" : {
+				"filename" : [ "bach.help.notation.editing.99_shortcuts.maxpat" ],
+				"objects" : [ "bach.roll", "bach.score", "bach.slot" ],
+				"seealso" : [ "editing" ],
+				"tags" : [ "editing", "edit", "interface", "shortcut", "mouse", "keyboard" ],
+				"title" : [ "Keyboard and mouse shortcuts" ]
 			}
 		},
 		"Markers" : {
@@ -2850,11 +2864,18 @@
 					"tags" : [ "message", "selection", "marker", "index", "position", "single", "path", "number", "sel", "unsel", "select" ],
 					"title" : [ "Selecting single markers" ]
 				},
+				"Selectingsinglevoices" : {
+					"filename" : [ "bach.help.notation.messages.20_selection.24_selectingsinglevoices.maxpat" ],
+					"objects" : [ "bach.roll", "bach.score" ],
+					"seealso" : [ "sel", "unsel", "select" ],
+					"tags" : [ "message", "selection", "voice", "index", "position", "number", "single", "sel", "unsel", "select" ],
+					"title" : [ "Selecting single voices" ]
+				},
 				"Selectingmultipleitems" : {
 					"filename" : [ "bach.help.notation.messages.20_selection.25_selectingmultipleitems.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel+note", "sel+chord", "sel+measure", "sel+marker" ],
-					"tags" : [ "message", "selection", "measure", "index", "position", "multiple", "path", "number", "sel", "unsel", "select", "marker" ],
+					"tags" : [ "message", "selection", "measure", "index", "position", "multiple", "path", "number", "sel", "unsel", "select", "marker", "voice" ],
 					"title" : [ "Selecting multiple items" ]
 				},
 				"Selectingmeasureranges" : {
@@ -3145,8 +3166,8 @@
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.10_equationchange.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "sel", "select+if", "relative+parameter+change", "symbolic+variable", "adaptts" ],
-					"tags" : [ "message", "operate", "on", "selection", "equation", "change", "onset", "duration", "tail", "cents", "velocity", "voice", "measure", "modify", "parameter", "symduration" ],
-					"title" : [ "Assigning values via equations" ]
+					"tags" : [ "message", "operate", "on", "selection", "equation", "change", "onset", "duration", "tail", "cents", "velocity", "voice", "measure", "modify", "parameter", "symduration", "expression" ],
+					"title" : [ "Assigning values via expressions" ]
 				},
 				"Inplace" : {
 					"filename" : [ "bach.help.notation.messages.30_operate on selection.11_inplace.maxpat" ],
@@ -5475,7 +5496,7 @@
 				"filename" : [ "bach.help.notation.syntax.25_rhythmictreesoutput.maxpat" ],
 				"objects" : [ "bach.score" ],
 				"seealso" : [ "rhythmic+tree+level", "rhythm+level+type", "write", "writetxt", "writetrees" ],
-				"tags" : [ "syntax", "hierarchy", "hierarchical", "rhythmic", "tree", "level", "beam", "tuplet", "separate", "gathered", "outputtrees", "output", "save", "type", "saveleveltypes" ],
+				"tags" : [ "syntax", "hierarchy", "hierarchical", "rhythmic", "tree", "level", "beam", "tuplet", "separate", "gathered", "outputtrees", "output", "save", "type", "saveleveltypes", "duration" ],
 				"title" : [ "Outputting rhythmic tree levels" ]
 			},
 			"Tiesinrhythmictree" : {
@@ -5878,7 +5899,7 @@
 					"filename" : [ "bach.help.notation.syntax.90_pitches.02_pitchsyntax.maxpat" ],
 					"objects" : [ "bach.roll", "bach.score" ],
 					"seealso" : [ "separate+syntax", "gathered+syntax", "pitch+output", "pitch+syntax", "intervals+syntax" ],
-					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone", "accidental" ],
+					"tags" : [ "syntax", "note", "name", "pitch", "notename", "pitches", "tone", "sharp", "flat", "quarter", "eighth", "microtone", "accidental", "middle" ],
 					"title" : [ "Pitch syntax" ]
 				},
 				"Intervals" : {
