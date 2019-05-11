@@ -768,7 +768,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 675.5, 35.0, 162.0, 21.0 ],
+									"patching_rect" : [ 581.5, 77.0, 259.0, 21.0 ],
 									"text" : "IMPORTANT:",
 									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
@@ -779,11 +779,11 @@
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
 									"id" : "obj-25",
-									"linecount" : 6,
+									"linecount" : 4,
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 675.5, 50.0, 197.0, 94.0 ],
+									"patching_rect" : [ 581.5, 92.0, 294.0, 65.0 ],
 									"text" : "Either the ending values or the maximum number of items should be different from \"none\".\nBeware: set the maximum number of items to \"none\" at your own risk! "
 								}
 

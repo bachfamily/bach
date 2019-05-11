@@ -2,14 +2,15 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 0,
+			"major" : 8,
+			"minor" : 0,
+			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
-		"rect" : [ 100.0, 100.0, 588.0, 346.0 ],
+		"classnamespace" : "box",
+		"rect" : [ 499.0, 84.0, 588.0, 346.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -53,7 +54,6 @@
 						"parameter_enable" : 0
 					}
 ,
-					"style" : "",
 					"text" : "js helpstarter.js bach.append"
 				}
 
@@ -69,14 +69,15 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 0,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 588.0, 320.0 ],
+						"classnamespace" : "box",
+						"rect" : [ 499.0, 110.0, 588.0, 320.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -111,8 +112,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 208.0, 191.0, 164.0, 25.0 ],
-									"style" : "",
+									"patching_rect" : [ 208.0, 241.0, 164.0, 25.0 ],
 									"text" : "click here to know more"
 								}
 
@@ -124,8 +124,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 280.463898, 133.581848, 163.0, 36.0 ],
-									"style" : "",
+									"patching_rect" : [ 280.463897999999972, 183.581848000000008, 163.0, 36.0 ],
 									"text" : "(it behaves exactly as the old bach.append used to)"
 								}
 
@@ -138,9 +137,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 384.0, 97.567627, 142.0, 43.0 ],
-									"presentation_rect" : [ 231.0, 97.567627, 0.0, 0.0 ],
-									"style" : "",
+									"patching_rect" : [ 384.0, 147.567627000000016, 142.0, 43.0 ],
 									"text" : "instead",
 									"textcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ]
 								}
@@ -149,14 +146,12 @@
 , 							{
 								"box" : 								{
 									"fontname" : "Arial",
-									"fontsize" : 76.088019,
+									"fontsize" : 76.088019000000003,
 									"id" : "obj-15",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 75.0, 59.581844, 313.0, 92.0 ],
-									"presentation_rect" : [ 78.0, 98.567627, 0.0, 0.0 ],
-									"style" : "",
+									"patching_rect" : [ 75.0, 109.58184399999999, 313.0, 92.0 ],
 									"text" : "bach.join",
 									"textcolor" : [ 0.239216, 0.254902, 0.278431, 1.0 ]
 								}
@@ -169,8 +164,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 110.0, 191.0, 91.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 110.0, 241.0, 91.0, 23.0 ],
 									"text" : "help bach.join"
 								}
 
@@ -182,8 +176,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 110.0, 228.0, 57.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 110.0, 278.0, 57.0, 23.0 ],
 									"text" : "pcontrol"
 								}
 
@@ -196,9 +189,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 12.0, 97.567627, 74.0, 43.0 ],
-									"presentation_rect" : [ 13.463898, 94.929352, 0.0, 0.0 ],
-									"style" : "",
+									"patching_rect" : [ 12.0, 147.567627000000016, 74.0, 43.0 ],
 									"text" : "use",
 									"textcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ]
 								}
@@ -212,9 +203,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 287.463898, 17.283813, 215.0, 43.0 ],
-									"presentation_rect" : [ 11.0, 71.0, 0.0, 0.0 ],
-									"style" : "",
+									"patching_rect" : [ 192.463897999999972, 49.283812999999995, 215.0, 43.0 ],
 									"text" : "is deprecated!",
 									"textcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ]
 								}
@@ -232,7 +221,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 273.463898, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 273.44000244140625, 57.599853515625 ]
 								}
 
 							}
@@ -240,8 +229,6 @@
 						"lines" : [ 							{
 								"patchline" : 								{
 									"destination" : [ "obj-12", 0 ],
-									"disabled" : 0,
-									"hidden" : 0,
 									"source" : [ "obj-14", 0 ]
 								}
 
@@ -255,11 +242,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p basic",
 					"varname" : "basic_tab"
 				}
@@ -277,7 +262,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 10.0, 273.463898, 57.567627 ]
+					"patching_rect" : [ 10.0, 10.0, 273.463897999999972, 57.567627000000002 ]
 				}
 
 			}
@@ -292,13 +277,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 0,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 588.0, 320.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -337,11 +323,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p ?",
 					"varname" : "q_tab"
 				}
