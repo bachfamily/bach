@@ -2,13 +2,14 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
+			"major" : 8,
+			"minor" : 0,
 			"revision" : 4,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
+		"classnamespace" : "box",
 		"rect" : [ 74.0, 141.0, 704.0, 430.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -49,13 +50,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
+							"major" : 8,
+							"minor" : 0,
 							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 704.0, 404.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -95,7 +97,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 330.0, 174.0, 77.0, 23.0 ],
-									"style" : "",
 									"text" : "loadmess 2"
 								}
 
@@ -113,7 +114,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 129.0, 194.0, 69.0 ],
-									"style" : "",
 									"text" : "Send any llll containing midicents: they will be snapped to the chosen microtonal grid"
 								}
 
@@ -130,8 +130,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 168.0, 350.0, 183.365982, 39.0 ],
-									"presentation_rect" : [ 168.0, 350.0, 183.365982, 39.0 ]
+									"patching_rect" : [ 168.0, 350.0, 183.365982000000002, 39.0 ]
 								}
 
 							}
@@ -145,7 +144,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 480.0, 313.5, 134.0, 25.0 ],
-									"style" : "",
 									"text" : "microtonal division"
 								}
 
@@ -161,8 +159,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 424.0, 321.0, 50.0, 23.0 ],
-									"style" : ""
+									"patching_rect" : [ 424.0, 321.0, 50.0, 23.0 ]
 								}
 
 							}
@@ -176,7 +173,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "float" ],
 									"patching_rect" : [ 424.0, 292.0, 36.0, 23.0 ],
-									"style" : "",
 									"text" : "/ 6."
 								}
 
@@ -191,7 +187,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 480.0, 264.0, 70.0, 25.0 ],
-									"style" : "",
 									"text" : "modulo"
 								}
 
@@ -206,8 +201,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 424.0, 264.0, 53.0, 23.0 ],
-									"style" : ""
+									"patching_rect" : [ 424.0, 264.0, 53.0, 23.0 ]
 								}
 
 							}
@@ -220,7 +214,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 424.0, 239.0, 231.0, 21.0 ],
-									"style" : "",
 									"text" : "microtonal division * 6 = modulo"
 								}
 
@@ -235,7 +228,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 424.0, 167.0, 243.0, 65.0 ],
-									"style" : "",
 									"text" : "In general the number of parts in which you want to divide the ocatve (modulo) and the microtonal division (grid step in semitones) are related by:",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -251,7 +243,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 227.0, 252.0, 168.0, 25.0 ],
-									"style" : "",
 									"text" : "octave divided in 9 parts"
 								}
 
@@ -266,7 +257,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 187.0, 255.0, 36.0, 23.0 ],
-									"style" : "",
 									"text" : "1.5"
 								}
 
@@ -281,7 +271,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 218.0, 228.0, 116.0, 25.0 ],
-									"style" : "",
 									"text" : "eighthtonal grid"
 								}
 
@@ -296,7 +285,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 200.0, 207.0, 122.0, 25.0 ],
-									"style" : "",
 									"text" : "quartertonal grid"
 								}
 
@@ -311,7 +299,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 185.0, 185.0, 108.0, 25.0 ],
-									"style" : "",
 									"text" : "semitonal grid"
 								}
 
@@ -326,7 +313,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 177.0, 231.0, 36.0, 23.0 ],
-									"style" : "",
 									"text" : "8"
 								}
 
@@ -341,7 +327,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 161.0, 210.0, 36.0, 23.0 ],
-									"style" : "",
 									"text" : "4"
 								}
 
@@ -356,7 +341,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 146.0, 188.0, 36.0, 23.0 ],
-									"style" : "",
 									"text" : "2"
 								}
 
@@ -373,7 +357,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 200.0, 277.0, 207.0, 69.0 ],
-									"style" : "",
 									"text" : "Left inlet, or first optional argument, is the tone division, identifying the temperament (microtonal grid). Default is 2."
 								}
 
@@ -389,8 +372,7 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "bang" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 146.0, 292.0, 50.0, 23.0 ],
-									"style" : ""
+									"patching_rect" : [ 146.0, 292.0, 50.0, 23.0 ]
 								}
 
 							}
@@ -404,7 +386,6 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 10.0, 297.5, 66.0, 23.0 ],
-									"style" : "",
 									"text" : "route text"
 								}
 
@@ -421,7 +402,6 @@
 									"outlettype" : [ "", "int", "", "" ],
 									"parameter_enable" : 0,
 									"patching_rect" : [ 10.0, 231.0, 127.0, 55.0 ],
-									"style" : "",
 									"text" : "6702.4 6914 [5941 [] [] 7120]"
 								}
 
@@ -433,8 +413,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 10.0, 201.0, 20.0, 20.0 ],
-									"style" : ""
+									"parameter_enable" : 0,
+									"patching_rect" : [ 10.0, 201.0, 20.0, 20.0 ]
 								}
 
 							}
@@ -451,7 +431,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -466,7 +445,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 10.0, 346.0, 155.0, 23.0 ],
-									"style" : "",
 									"text" : "bach.mcapprox 2"
 								}
 
@@ -577,17 +555,14 @@
 					}
 ,
 					"patching_rect" : [ 32.0, 121.0, 150.0, 22.0 ],
-					"presentation_rect" : [ 32.0, 121.0, 0.0, 0.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p \"backward compatibility\"",
 					"varname" : "basic_tab[1]"
 				}
@@ -608,7 +583,6 @@
 						"parameter_enable" : 0
 					}
 ,
-					"style" : "",
 					"text" : "js helpstarter.js bach.mcapprox"
 				}
 
@@ -624,13 +598,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
+							"major" : 8,
+							"minor" : 0,
 							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 74.0, 167.0, 704.0, 404.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -662,13 +637,12 @@
 						"boxes" : [ 							{
 								"box" : 								{
 									"fontname" : "Arial",
-									"fontsize" : 20.376844,
+									"fontsize" : 20.376843999999998,
 									"id" : "obj-47",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 222.567627, 599.0, 29.0 ],
-									"style" : "",
+									"patching_rect" : [ 10.0, 222.567626999999987, 599.0, 29.0 ],
 									"text" : "bach.approx works like bach.mcapprox, but also supports pitches",
 									"textcolor" : [ 0.239216, 0.254902, 0.278431, 1.0 ]
 								}
@@ -682,7 +656,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 375.0, 268.0, 164.0, 25.0 ],
-									"style" : "",
 									"text" : "click here to know more"
 								}
 
@@ -695,7 +668,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 246.0, 268.0, 110.0, 23.0 ],
-									"style" : "",
 									"text" : "help bach.approx"
 								}
 
@@ -708,7 +680,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 246.0, 305.0, 57.0, 23.0 ],
-									"style" : "",
 									"text" : "pcontrol"
 								}
 
@@ -721,8 +692,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 500.0, 113.553406, 142.0, 43.0 ],
-									"style" : "",
+									"patching_rect" : [ 500.0, 138.553405999999995, 142.0, 43.0 ],
 									"text" : "instead",
 									"textcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ]
 								}
@@ -731,13 +701,12 @@
 , 							{
 								"box" : 								{
 									"fontname" : "Arial",
-									"fontsize" : 76.088019,
+									"fontsize" : 76.088019000000003,
 									"id" : "obj-15",
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 69.0, 71.567627, 429.0, 92.0 ],
-									"style" : "",
+									"patching_rect" : [ 69.0, 96.567627000000002, 429.0, 92.0 ],
 									"text" : "bach.approx",
 									"textcolor" : [ 0.239216, 0.254902, 0.278431, 1.0 ]
 								}
@@ -751,8 +720,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 4.0, 107.553406, 63.0, 43.0 ],
-									"style" : "",
+									"patching_rect" : [ 4.0, 132.553405999999995, 63.0, 43.0 ],
 									"text" : "use",
 									"textcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ]
 								}
@@ -766,8 +734,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 336.527985, 17.283813, 215.0, 43.0 ],
-									"style" : "",
+									"patching_rect" : [ 265.527985000000001, 50.283812999999995, 215.0, 43.0 ],
 									"text" : "is deprecated!",
 									"textcolor" : [ 0.784314, 0.145098, 0.023529, 1.0 ]
 								}
@@ -785,7 +752,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 323.388367, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 323.36004638671875, 57.599853515625 ]
 								}
 
 							}
@@ -806,11 +773,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p basic",
 					"varname" : "basic_tab"
 				}
@@ -828,7 +793,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 10.0, 323.388367, 57.567627 ]
+					"patching_rect" : [ 10.0, 10.0, 323.388367000000017, 57.567627000000002 ]
 				}
 
 			}
@@ -843,13 +808,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
+							"major" : 8,
+							"minor" : 0,
 							"revision" : 4,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 704.0, 404.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -888,11 +854,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p ?",
 					"varname" : "q_tab"
 				}
