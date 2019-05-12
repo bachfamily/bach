@@ -2253,12 +2253,12 @@ void llllobj_ss(t_object *x)
 	t_bach *b = ((t_bach *)gensym("bach")->s_thing);
 	if (b && !b->b_ss) {
 		b->b_ss = (t_object *)-1;
-		if (!no_ss) {
+//		if (!no_ss) { // Here one should check if the must screen must NOT be displayed (for Patrons)
 			t_atom av;
 			t_atom rv;
 			atom_setobj(&av, x);
 			object_method_typed(b, gensym("ss"), 1, &av, &rv);
-		}
+//		}
 	}
 }
 

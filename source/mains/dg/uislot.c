@@ -905,6 +905,10 @@ int T_EXPORT main(void){
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
+    CLASS_ATTR_INVISIBLE(c, "fontname", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+    CLASS_ATTR_INVISIBLE(c, "fontface", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+    CLASS_ATTR_INVISIBLE(c, "fontsize", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+
     s_uislot_class = c;
     class_register(CLASS_BOX, s_uislot_class);
     
