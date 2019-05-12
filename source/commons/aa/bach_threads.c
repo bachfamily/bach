@@ -130,3 +130,7 @@ void bach_thread_end(t_object *x, t_symbol *sym, long ac, t_atom *av)
 	llll_release(inll);
 	llll_release(resll);
 }
+
+
+
+

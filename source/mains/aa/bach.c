@@ -9,6 +9,8 @@
 #endif
 #endif
 
+#include "bach_graphics.h"
+
 #ifdef WIN_VERSION
 
     #include <windows.h>
@@ -43,7 +45,7 @@ int bach_mmi_comp(const t_memmap_item **a, const t_memmap_item **b);
 void bach_poolstatus(t_bach *x);
 void bach_pooldump(t_bach *x);
 void bach_version(t_bach *x);
-void bach_splashscreen(t_bach *x);
+void bach_ss(t_bach *x, t_object *obj);
 void bach_printglobals(t_bach *x);
 void bach_printglobalswithvalues(t_bach *x);
 void bach_clearglobals(t_bach *x);
@@ -143,7 +145,7 @@ void ext_main(void *moduleRef)
 	class_addmethod(c, (method) bach_poolstatus, "poolstatus", 0);
 	class_addmethod(c, (method) bach_pooldump, "pooldump", 0);
     class_addmethod(c, (method) bach_version, "version", 0);
-    class_addmethod(c, (method) bach_splashscreen, "splash", 0);
+    class_addmethod(c, (method) bach_ss, "ss", A_OBJ, 0);
     class_addmethod(c, (method) bach_printglobals, "printglobals", 0);
     class_addmethod(c, (method) bach_printglobalswithvalues, "printglobalswithvalues", 0);
     class_addmethod(c, (method) bach_clearglobals, "clearglobals", 0);
@@ -175,8 +177,6 @@ void ext_main(void *moduleRef)
 	bach_new(NULL, 0, NULL); // among other things, also fills the version number fields
 	
     bach_version(NULL); // posts the version
-    
-    bach_splashscreen(NULL);
     
 	c = class_new("bach.initpargs", (method)initpargs_new, (method)initpargs_free, (short)sizeof(t_initpargs), 0L, A_GIMME, 0);
 	
@@ -447,6 +447,11 @@ void bach_version(t_bach *x)
     dev_post("--- size of t_llll: %ld", (long) sizeof(t_llll));
     dev_post("--- size of t_llllelem_numbered: %ld", (long) sizeof(t_llllelem_numbered));
     dev_post("--- size of t_hatom: %ld", (long) sizeof(t_hatom));
+}
+
+void bach_ss(t_bach *x, t_object *obj)
+{
+    bach_ss_display(obj);
 }
 
 void bach_printglobals(t_bach *x)
@@ -1295,164 +1300,3 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["#>>"] = new t_mathBinaryFunctionAAA<hatom_op_rshift>("#>>");
 }
 
-
-
-
-
-
-
-
-
-/////////////// EXTERNAL UI OBJECT FOR SPLASHSCREEN
-typedef struct _bach_splashscreen_ui {
-    t_jbox            u_box;                ///< The jbox structure
-    t_object          *splashscreen_patcher;
-} t_bach_splashscreen_ui;
-
-static t_class    *s_bach_splashscreen_ui_class;
-
-void *bach_splashscreen_ui_new(t_symbol *s, long argc, t_atom *argv);
-void bach_splashscreen_ui_paint(t_bach_splashscreen_ui *x, t_object *patcherview);
-void bach_splashscreen_ui_mousedown(t_bach_splashscreen_ui *x, t_object *patcherview, t_pt pt, long modifiers);
-void bach_splashscreen_ui_free(t_bach_splashscreen_ui *x);
-
-// useless?
-void bach_splashscreen_ui_patcherview_vis(t_bach_splashscreen_ui *x, t_object *patcherview)
-{
-    object_attach_byptr(x, patcherview);
-}
-
-// useless?
-void bach_splashscreen_ui_patcherview_invis(t_bach_splashscreen_ui *x, t_object *patcherview)
-{
-    object_detach_byptr(x, patcherview);
-}
-
-// should be called, but is never
-// but if the corresponding method is declared, then notify is called when the patcher is resized
-void bach_splashscreen_ui_boxscreenrectchanged(t_jbox *box, t_object *patcherview)
-{
-    jbox_redraw(box);
-}
-
-void bach_inspector_ui_classinit(void)
-{
-    t_class *c = class_new("bach_splashscreen_ui", (method)bach_splashscreen_ui_new, (method)bach_splashscreen_ui_free, sizeof(t_bach_splashscreen_ui), 0L, A_GIMME, 0L);
-    
-    c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
-    
-    jbox_initclass(c, JBOX_TEXTFIELD);
-    class_addmethod(c, (method)bach_splashscreen_ui_paint,    "paint",        A_CANT, 0);
-    class_addmethod(c, (method)bach_splashscreen_ui_mousedown,"mousedown",    A_CANT, 0);
-//    class_addmethod(c, (method)bach_inspector_ui_mousedoubleclick, "mousedoubleclick", A_CANT, 0);
-    
-    //    CLASS_ATTR_RGBA(c, "oncolor", 0, t_scripto_ui, u_oncolor);
-    //    CLASS_ATTR_PAINT(c, "oncolor", 0);
-    //    CLASS_ATTR_RGBA(c, "offcolor", 0, t_scripto_ui, u_offcolor);
-    //    CLASS_ATTR_PAINT(c, "offcolor", 0);
-    
-    class_register(CLASS_BOX, c);
-    
-    s_bach_splashscreen_ui_class = c;
-}
-
-
-void *bach_splashscreen_ui_new(t_symbol *s, long argc, t_atom *argv)
-{
-    t_bach_splashscreen_ui *x = NULL;
-    t_max_err err = MAX_ERR_GENERIC;
-    t_dictionary *d;
-    long flags;
-    
-    if (!(d=object_dictionaryarg(argc,argv)))
-        return NULL;
-    
-    x = (t_bach_splashscreen_ui *) object_alloc(s_bach_splashscreen_ui_class);
-    flags = 0
-    | JBOX_DRAWFIRSTIN
-    //        | JBOX_NODRAWBOX
-    | JBOX_DRAWINLAST
-    | JBOX_TRANSPARENT
-    //        | JBOX_NOGROW
-    //        | JBOX_GROWY
-    //        | JBOX_GROWBOTH
-    //        | JBOX_HILITE
-    //        | JBOX_BACKGROUND
-    //        | JBOX_TEXTFIELD
-    //        | JBOX_DRAWBACKGROUND
-    //        | JBOX_DEFAULTNAMES
-    ;
-    
-    err = jbox_new(&x->u_box, flags, argc, argv);
-    
-    x->u_box.b_firstin = (t_object*) x;
-    
-    attr_dictionary_process(x, d);
-    jbox_ready(&x->u_box);
-    
-    return x;
-}
-
-void bach_splashscreen_ui_paint(t_bach_splashscreen_ui *x, t_object *patcherview)
-{
-    t_jgraphics *g;
-    t_rect rect;
-    t_rect patcher_rect;
-    
-    g = (t_jgraphics*) patcherview_get_jgraphics(patcherview);
-    jbox_get_rect_for_view(&x->u_box.b_ob, patcherview, &rect);
-}
-
-void bach_splashscreen_ui_mousedown(t_bach_splashscreen_ui *x, t_object *patcherview, t_pt pt, long modifiers)
-{
-    // TO DO: open browser
-    object_method(<#void *x#>, <#t_symbol *s, ...#>)
-}
-
-
-
-void bach_splashscreen_ui_free(t_bach_splashscreen_ui *x)
-{
-    jbox_free((t_jbox *)x);
-}
-
-
-
-void bach_splashscreen(t_bach *x) {
-    
-    bach_inspector_ui_classinit();
-    
-    t_dictionary *d = dictionary_new();
-    t_object *splashscreen_patcher = NULL;
-    t_bach_splashscreen_ui *splashscreen_ui = NULL;
-    t_object *thispatcher = NULL;
-    char parsebuf[256];
-    t_atom a;
-    long ac = 0;
-    t_atom *av = NULL;
-    
-    // create a patcher without scroll bars and a toolbar
-//    snprintf_zero(parsebuf, 256, "@defrect 0 0 1120 359 400 @varname inspectorpatcher @enablehscroll 0 @enablevscroll 0 @presentation 0 @toolbarid \"\"");
-    snprintf_zero(parsebuf, 256, "@openrect 0 0 1120 359 400 @varname inspectorpatcher @enablehscroll 0 @enablevscroll 0 @presentation 0 @toolbarid \"\"");
-    atom_setparse_debug(&ac,&av,parsebuf);
-    attr_args_dictionary(d,ac,av);
-    atom_setobj(&a,d);
-    bach_freeptr(av);
-    splashscreen_patcher = (t_object *)object_new_typed(CLASS_NOBOX,gensym("jpatcher"),1, &a);
-    freeobject((t_object *)d);    // we created this dictionary and we don't need it anymore
-
-    object_method(splashscreen_patcher, gensym("vis"));
-    splashscreen_ui = (t_bach_splashscreen_ui *)newobject_sprintf(splashscreen_patcher, "@maxclass bach_splashscreen_ui @patching_rect 0 0 1120 359 @varname splashscreenui");
-    //        object_attach_byptr_register(r_ob->inspector_ui, r_ob->inspector_ui, CLASS_BOX);            // attach our UI object to itself
-    object_attach_byptr_register(splashscreen_ui, splashscreen_patcher, CLASS_NOBOX);        // attach our UI object to object UI
-    object_attach_byptr(splashscreen_ui, jpatcher_get_firstview(splashscreen_patcher));
-
-    splashscreen_ui->splashscreen_patcher = splashscreen_patcher;
-    
-    t_object *thispatcher = newobject_fromboxtext(x->splashscreen_patcher, "thispatcher");
-    //    thispatcher = (t_object *)newobject_sprintf(splashscreen_patcher, "@maxclass thispatcher @varname tp");
-    object_attach_byptr_register(thispatcher, x->splashscreen_patcher, CLASS_NOBOX);        // attach our UI object to object UI
-    object_attach_byptr(thispatcher, jpatcher_get_firstview(x->splashscreen_patcher));
-    
-    jbox_grabfocus((t_jbox *) splashscreen_ui);
-}

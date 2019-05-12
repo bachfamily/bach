@@ -324,7 +324,7 @@ t_textin *textin_new(t_symbol *s, short ac, t_atom *av)
     
     object_attr_setdisabled((t_object *)x, gensym("ignore"), true);
 
-    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
     
     if (x && err == MAX_ERR_NONE)
         return x;

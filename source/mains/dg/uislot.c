@@ -1487,7 +1487,7 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
         
         x->r_ob.last_undo_time = systime_ms();
 
-        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
+        llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
         x->r_ob.creatingnewobj = 0;
 
         return x;

@@ -489,7 +489,7 @@ t_args *args_new(t_symbol *s, short ac, t_atom *av)
 		error(BACH_CANT_INSTANTIATE);
 	
 	//object_post((t_object *) x, "instantiated bach.args: %p", x);
-    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

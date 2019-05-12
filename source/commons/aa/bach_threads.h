@@ -181,7 +181,6 @@ long bach_atomic_wtrylock(t_bach_rwlock *rwlock);
 
 
 
-
 /*
  Create a new thread in which task_fn will be perfomed.
  task_fn will receive x and ll as its arguments.

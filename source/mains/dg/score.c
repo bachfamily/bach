@@ -9862,7 +9862,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
         if (x->r_ob.automessage_ac > 0)
             x->r_ob.need_send_automessage = true;
 
-        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
+        llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
         x->r_ob.creatingnewobj = 0;
         
         return x;
