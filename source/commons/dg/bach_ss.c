@@ -237,60 +237,60 @@ unsigned char ss_bn_data[] = {
 };
 
 /////////////// EXTERNAL UI OBJECT FOR SPLASHSCREEN
-typedef struct _bach_splashscreen_ui {
+typedef struct _bach_ss_ui {
     t_jbox            u_box;                ///< The jbox structure
-    t_object          *splashscreen_patcher;
-    t_object          *splashscreen_webmsg;
+    t_object          *ss_patcher;
+    t_object          *ss_webmsg;
     
     t_jsurface        *ss_jsurface;
     t_jsurface        *ss_gn_jsurface;
     t_jsurface        *ss_bn_jsurface;
-} t_bach_splashscreen_ui;
+} t_bach_ss_ui;
 
-static t_class    *s_bach_splashscreen_ui_class;
+static t_class    *s_bach_ss_ui_class;
 
 const long ss_width = 560;
 const long ss_height = 180;
 const long ss_n_width = 16;
 const long ss_n_height = 13;
 long ss_curr_tick = 0;
-const long ss_num_ticks = 125;
+const long ss_num_ticks = 130;
 void *ss_clock = NULL;
 
-void *bach_splashscreen_ui_new(t_symbol *s, long argc, t_atom *argv);
-void bach_splashscreen_ui_paint(t_bach_splashscreen_ui *x, t_object *patcherview);
-void bach_splashscreen_ui_mousedown(t_bach_splashscreen_ui *x, t_object *patcherview, t_pt pt, long modifiers);
-void bach_splashscreen_ui_free(t_bach_splashscreen_ui *x);
+void *bach_ss_ui_new(t_symbol *s, long argc, t_atom *argv);
+void bach_ss_ui_paint(t_bach_ss_ui *x, t_object *patcherview);
+void bach_ss_ui_mousedown(t_bach_ss_ui *x, t_object *patcherview, t_pt pt, long modifiers);
+void bach_ss_ui_free(t_bach_ss_ui *x);
 
 // useless?
-void bach_splashscreen_ui_patcherview_vis(t_bach_splashscreen_ui *x, t_object *patcherview)
+void bach_ss_ui_patcherview_vis(t_bach_ss_ui *x, t_object *patcherview)
 {
     object_attach_byptr(x, patcherview);
 }
 
 // useless?
-void bach_splashscreen_ui_patcherview_invis(t_bach_splashscreen_ui *x, t_object *patcherview)
+void bach_ss_ui_patcherview_invis(t_bach_ss_ui *x, t_object *patcherview)
 {
     object_detach_byptr(x, patcherview);
 }
 
 // should be called, but is never
 // but if the corresponding method is declared, then notify is called when the patcher is resized
-void bach_splashscreen_ui_boxscreenrectchanged(t_jbox *box, t_object *patcherview)
+void bach_ss_ui_boxscreenrectchanged(t_jbox *box, t_object *patcherview)
 {
     jbox_redraw(box);
 }
 
-void bach_splashscreen_ui_classinit(void)
+void bach_ss_ui_classinit(void)
 {
-    t_class *c = class_new("bach_splashscreen_ui", (method)bach_splashscreen_ui_new, (method)bach_splashscreen_ui_free, sizeof(t_bach_splashscreen_ui), 0L, A_GIMME, 0L);
+    t_class *c = class_new("bach_ss_ui", (method)bach_ss_ui_new, (method)bach_ss_ui_free, sizeof(t_bach_ss_ui), 0L, A_GIMME, 0L);
     
     c->c_flags |= CLASS_FLAG_NEWDICTIONARY;
     
     jbox_initclass(c, JBOX_TEXTFIELD);
-    class_addmethod(c, (method)bach_splashscreen_ui_paint,    "paint",        A_CANT, 0);
-    class_addmethod(c, (method)bach_splashscreen_ui_mousedown,"mousedown",    A_CANT, 0);
-    //    class_addmethod(c, (method)bach_splashscreen_ui_mousedoubleclick, "mousedoubleclick", A_CANT, 0);
+    class_addmethod(c, (method)bach_ss_ui_paint,    "paint",        A_CANT, 0);
+    class_addmethod(c, (method)bach_ss_ui_mousedown,"mousedown",    A_CANT, 0);
+    //    class_addmethod(c, (method)bach_ss_ui_mousedoubleclick, "mousedoubleclick", A_CANT, 0);
     
     //    CLASS_ATTR_RGBA(c, "oncolor", 0, t_scripto_ui, u_oncolor);
     //    CLASS_ATTR_PAINT(c, "oncolor", 0);
@@ -299,20 +299,20 @@ void bach_splashscreen_ui_classinit(void)
     
     class_register(CLASS_BOX, c);
     
-    s_bach_splashscreen_ui_class = c;
+    s_bach_ss_ui_class = c;
 }
 
 
-void bach_splashscreen_ui_create_jsurfaces(t_bach_splashscreen_ui *x)
+void bach_ss_ui_create_jsurfaces(t_bach_ss_ui *x)
 {
     x->ss_jsurface = jgraphics_image_surface_create_for_data(ss_data, JGRAPHICS_FORMAT_RGB24, ss_width, ss_height, 3*ss_width, NULL, NULL);
     x->ss_bn_jsurface = jgraphics_image_surface_create_for_data(ss_bn_data, JGRAPHICS_FORMAT_RGB24, ss_n_width, ss_n_height, 3*ss_n_width, NULL, NULL);
     x->ss_gn_jsurface = jgraphics_image_surface_create_for_data(ss_gn_data, JGRAPHICS_FORMAT_RGB24, ss_n_width, ss_n_height, 3*ss_n_width, NULL, NULL);
 }
 
-void *bach_splashscreen_ui_new(t_symbol *s, long argc, t_atom *argv)
+void *bach_ss_ui_new(t_symbol *s, long argc, t_atom *argv)
 {
-    t_bach_splashscreen_ui *x = NULL;
+    t_bach_ss_ui *x = NULL;
     t_max_err err = MAX_ERR_GENERIC;
     t_dictionary *d;
     long flags;
@@ -320,7 +320,7 @@ void *bach_splashscreen_ui_new(t_symbol *s, long argc, t_atom *argv)
     if (!(d=object_dictionaryarg(argc,argv)))
         return NULL;
     
-    x = (t_bach_splashscreen_ui *) object_alloc(s_bach_splashscreen_ui_class);
+    x = (t_bach_ss_ui *) object_alloc(s_bach_ss_ui_class);
     flags = 0
     | JBOX_DRAWFIRSTIN
     | JBOX_NODRAWBOX
@@ -342,13 +342,13 @@ void *bach_splashscreen_ui_new(t_symbol *s, long argc, t_atom *argv)
     
     attr_dictionary_process(x, d);
     
-    bach_splashscreen_ui_create_jsurfaces(x);
+    bach_ss_ui_create_jsurfaces(x);
     jbox_ready(&x->u_box);
     
     return x;
 }
 
-void bach_splashscreen_ui_paint(t_bach_splashscreen_ui *x, t_object *patcherview)
+void bach_ss_ui_paint(t_bach_ss_ui *x, t_object *patcherview)
 {
     t_jgraphics *g;
     t_rect rect;
@@ -359,23 +359,25 @@ void bach_splashscreen_ui_paint(t_bach_splashscreen_ui *x, t_object *patcherview
     
     jgraphics_image_surface_draw(g, x->ss_jsurface, rect, rect);
 
-    if (ss_curr_tick >= 0) {
-        jgraphics_set_source_rgba(g, 0, 0, 0, CLAMP(ss_curr_tick/5., 0., 1.));
+    long start = 10, dur_1 = 15, dur_2 = 20, dur_3 = 30;
+    double trans_1 = 4., trans_2 = 5., trans_3 = 7., trans_4 = 9.;
+    if (ss_curr_tick >= start) {
+        jgraphics_set_source_rgba(g, 0, 0, 0, CLAMP(ss_curr_tick/trans_1, 0., 1.));
         t_rect rect_n_dest = build_rect(136, 44, ss_n_width, ss_n_height);
         jgraphics_image_surface_draw(g, x->ss_gn_jsurface, rect_n_src, rect_n_dest);
     }
-    if (ss_curr_tick >= 15) {
-        jgraphics_set_source_rgba(g, 0, 0, 0, CLAMP((ss_curr_tick-15.)/5., 0., 1.));
+    if (ss_curr_tick >= (start + dur_1)) {
+        jgraphics_set_source_rgba(g, 0, 0, 0, CLAMP((ss_curr_tick-(start + dur_1))/trans_2, 0., 1.));
         t_rect rect_n_dest = build_rect(164, 52, ss_n_width, ss_n_height);
         jgraphics_image_surface_draw(g, x->ss_bn_jsurface, rect_n_src, rect_n_dest);
     }
-    if (ss_curr_tick >= 35) {
-        jgraphics_set_source_rgba(g, 0, 0, 0, CLAMP((ss_curr_tick-35.)/5., 0., 1.));
+    if (ss_curr_tick >= (start + dur_1 + dur_2)) {
+        jgraphics_set_source_rgba(g, 0, 0, 0, CLAMP((ss_curr_tick-(start + dur_1 + dur_2))/trans_3, 0., 1.));
         t_rect rect_n_dest = build_rect(193, 38, ss_n_width, ss_n_height);
         jgraphics_image_surface_draw(g, x->ss_bn_jsurface, rect_n_src, rect_n_dest);
     }
-    if (ss_curr_tick >= 65) {
-        jgraphics_set_source_rgba(g, 0, 0, 0, CLAMP((ss_curr_tick-65.)/5., 0., 1.));
+    if (ss_curr_tick >= (start + dur_1 + dur_2 + dur_3)) {
+        jgraphics_set_source_rgba(g, 0, 0, 0, CLAMP((ss_curr_tick-(start + dur_1 + dur_2 + dur_3))/trans_4, 0., 1.));
         t_rect rect_n_dest = build_rect(221, 44, ss_n_width, ss_n_height);
         jgraphics_image_surface_draw(g, x->ss_bn_jsurface, rect_n_src, rect_n_dest);
     }
@@ -388,7 +390,7 @@ void bach_splashscreen_ui_paint(t_bach_splashscreen_ui *x, t_object *patcherview
 }
 
 
-void bach_splashscreen_ui_free(t_bach_splashscreen_ui *x)
+void bach_ss_ui_free(t_bach_ss_ui *x)
 {
     jgraphics_surface_destroy(x->ss_jsurface);
     jgraphics_surface_destroy(x->ss_bn_jsurface);
@@ -397,38 +399,38 @@ void bach_splashscreen_ui_free(t_bach_splashscreen_ui *x)
 }
 
 
-void bach_splashscreen_ui_close_do(t_bach_splashscreen_ui *x)
+void bach_ss_ui_close_do(t_bach_ss_ui *x)
 {
     t_bach *b = ((t_bach *)gensym("bach")->s_thing);
-    t_bach_splashscreen_ui *ss = (t_bach_splashscreen_ui *)b->b_ss;
+    t_bach_ss_ui *ss = (t_bach_ss_ui *)b->b_ss;
     if (ss) {
         object_free(ss_clock);
-        object_free(ss->splashscreen_patcher); // is this the right way to close a patcher?
+        object_free(ss->ss_patcher); // is this the right way to close a patcher?
     }
 }
 
-void bach_splashscreen_ui_close(t_bach_splashscreen_ui *x)
+void bach_ss_ui_close(t_bach_ss_ui *x)
 {
-    defer_low(x, (method)bach_splashscreen_ui_close_do, NULL, 0, NULL);
+    defer_low(x, (method)bach_ss_ui_close_do, NULL, 0, NULL);
 }
 
-void bach_splashscreen_ui_task(t_bach_splashscreen_ui *x)
+void bach_ss_ui_task(t_bach_ss_ui *x)
 {
     ss_curr_tick++;
     
     if (ss_curr_tick > ss_num_ticks) {
-        bach_splashscreen_ui_close(x);
+        bach_ss_ui_close(x);
     } else {
         clock_delay(ss_clock, 40);
         jbox_redraw((t_jbox *)x);
     }
 }
 
-void bach_splashscreen_ui_mousedown(t_bach_splashscreen_ui *x, t_object *patcherview, t_pt pt, long modifiers)
+void bach_ss_ui_mousedown(t_bach_ss_ui *x, t_object *patcherview, t_pt pt, long modifiers)
 {
-    object_method_typed(x->splashscreen_webmsg, _sym_bang, 0, NULL, NULL); // open browser
+    object_method_typed(x->ss_webmsg, _sym_bang, 0, NULL, NULL); // open browser
     clock_unset(ss_clock);
-    bach_splashscreen_ui_close(x);
+    bach_ss_ui_close(x);
 }
 
 
@@ -440,7 +442,7 @@ void bach_ss_display(t_object *x)
     
     if (b) {
         t_rect rect;
-
+        
         // CENTER INSIDE THE PATCHER
 /*        t_object *parentpatcher = NULL;
         object_obex_lookup(x, gensym("#P"), &parentpatcher);
@@ -466,12 +468,12 @@ void bach_ss_display(t_object *x)
         }
         
 
-        bach_splashscreen_ui_classinit();
+        bach_ss_ui_classinit();
         
         t_dictionary *d = dictionary_new();
-        t_object *splashscreen_patcher = NULL;
-        t_bach_splashscreen_ui *splashscreen_ui = NULL;
-        t_object *splashscreen_webmsg = NULL;
+        t_object *ss_patcher = NULL;
+        t_bach_ss_ui *ss_ui = NULL;
+        t_object *ss_webmsg = NULL;
         char parsebuf[8192];
         t_atom a;
         long ac = 0;
@@ -484,21 +486,21 @@ void bach_ss_display(t_object *x)
         attr_args_dictionary(d,ac,av);
         atom_setobj(&a,d);
         bach_freeptr(av);
-        splashscreen_patcher = (t_object *)object_new_typed(CLASS_NOBOX,_sym_jpatcher,1, &a);
-        object_attr_setlong(splashscreen_patcher, _sym_locked, 1);                 // start out locked
-        object_attr_setchar(splashscreen_patcher, _sym_enablehscroll, 0);  // turn off scroll bars
-        object_attr_setchar(splashscreen_patcher, _sym_enablevscroll, 0);
+        ss_patcher = (t_object *)object_new_typed(CLASS_NOBOX,_sym_jpatcher,1, &a);
+        object_attr_setlong(ss_patcher, _sym_locked, 1);                 // start out locked
+        object_attr_setchar(ss_patcher, _sym_enablehscroll, 0);  // turn off scroll bars
+        object_attr_setchar(ss_patcher, _sym_enablevscroll, 0);
         snprintf_zero(parsebuf, 256, "constrain %ld %ld %ld %ld", (long)(rect.x + rect.width / 2 - ss_width/2), (long)(rect.y + rect.height/2 - ss_height/2), (long)ss_width, (long)ss_height);
-        object_method_parse(splashscreen_patcher, _sym_window, parsebuf, NULL);
-        object_method_parse(splashscreen_patcher, _sym_window, "notitle", NULL);
-        object_method_parse(splashscreen_patcher, _sym_window, "exec", NULL);
-        object_method(splashscreen_patcher, gensym("vis"));
+        object_method_parse(ss_patcher, _sym_window, parsebuf, NULL);
+        object_method_parse(ss_patcher, _sym_window, "notitle", NULL);
+        object_method_parse(ss_patcher, _sym_window, "exec", NULL);
+        object_method(ss_patcher, gensym("vis"));
         
 
-        splashscreen_ui = (t_bach_splashscreen_ui *)newobject_sprintf(splashscreen_patcher, "@maxclass bach_splashscreen_ui @patching_rect 0 0 1120 359 @varname splashscreenui");
-        object_attach_byptr_register(splashscreen_ui, splashscreen_patcher, CLASS_NOBOX);        // attach our UI object to object UI
-        object_attach_byptr(splashscreen_ui, jpatcher_get_firstview(splashscreen_patcher));
-        ss_clock = clock_new_debug((t_object *)splashscreen_ui, (method) bach_splashscreen_ui_task);
+        ss_ui = (t_bach_ss_ui *)newobject_sprintf(ss_patcher, "@maxclass bach_ss_ui @patching_rect 0 0 1120 359 @varname ssui");
+        object_attach_byptr_register(ss_ui, ss_patcher, CLASS_NOBOX);        // attach our UI object to object UI
+        object_attach_byptr(ss_ui, jpatcher_get_firstview(ss_patcher));
+        ss_clock = clock_new_debug((t_object *)ss_ui, (method) bach_ss_ui_task);
         ss_curr_tick = 0;
         clock_set(ss_clock, 40);
 
@@ -508,14 +510,14 @@ void bach_ss_display(t_object *x)
         snprintf_zero(parsebuf, 256, "@maxclass message @text \"; max launchbrowser https://www.patreon.com/bePatron?u=19939828\" @hidden 1");
         atom_setparse_debug(&ac,&av,parsebuf);
         attr_args_dictionary(d,ac,av);
-        splashscreen_webmsg = newobject_fromdictionary(splashscreen_patcher, d);
-        object_attach_byptr_register(splashscreen_webmsg, splashscreen_patcher, CLASS_BOX);        // attach our UI object to object UI
-        object_attach_byptr(splashscreen_webmsg, jpatcher_get_firstview(splashscreen_patcher));
+        ss_webmsg = newobject_fromdictionary(ss_patcher, d);
+        object_attach_byptr_register(ss_webmsg, ss_patcher, CLASS_BOX);        // attach our UI object to object UI
+        object_attach_byptr(ss_webmsg, jpatcher_get_firstview(ss_patcher));
         
         
-        splashscreen_ui->splashscreen_patcher = splashscreen_patcher;
-        splashscreen_ui->splashscreen_webmsg = splashscreen_webmsg;
-        b->b_ss = (t_object *)splashscreen_ui;
+        ss_ui->ss_patcher = ss_patcher;
+        ss_ui->ss_webmsg = ss_webmsg;
+        b->b_ss = (t_object *)ss_ui;
         
         object_free((t_object *)d);    // we created this dictionary and we don't need it anymore
     }
