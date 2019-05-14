@@ -14331,6 +14331,8 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
             clear_preselection((t_notation_obj *)x);
             preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
             move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            if (notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)voice))
+                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice);
         }
     }
 
