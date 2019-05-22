@@ -513,35 +513,6 @@ void bach_donors(t_bach *x)
     post(" ");
 }
 
-char bach_install_font(char *font_file_name, char force_overwrite)
-{
-    char path[MAX_PATH_CHARS];
-	
-#ifdef WIN_VERSION
-	// Windows
-	// HERE WE NEED TO RETRIEVE THE FONT PATH
-	char mxe_path[MAX_PATH_CHARS];
-	mxe_path[0]=0;
-	// HERE FILL mxe_path with the path of the .mxe file
-	snprintf_zero(path, MAX_PATH_CHARS, "%s/../../media/%s", font_file_name, mxe_path);
-	int result = AddFontResource(path);
-	return result;
-#else
-	// Mac
-	CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.cycling74.bach"));
-    CFURLRef resourcesURL = CFBundleCopyBundleURL(mainBundle);
-    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX)) // Error: expected unqualified-id before 'if'
-		return 1; // ERROR
-    CFRelease(resourcesURL); // error: expected constructor, destructor or type conversion before '(' token
-	
-	char cmd[3000];
-	snprintf_zero(cmd, 3000, "cp %s \"%s/../../media/%s\" ~/Library/Fonts/", force_overwrite ? "": "-n", path, font_file_name);
-	system(cmd);
-	
-	return 0;
-#endif
-	
-}
 
 
 long parse_version_string(char *str, long *major, long *minor, long *revision, long *maintenance)
@@ -593,13 +564,6 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 #endif
 	
 
-	
-#ifdef BACH_INSTALL_FONT
-	if (bach_install_font("Microton.ttf", false)) {
-		post("bach could not install the \"November for bach\" font.");
-		post("Please install such font manually: it is located inside the bach package, in the \"extras\" folder.");
-	}
-#endif
 	
 	llll_reset(&x->b_llll_model);
 	x->b_llll_book = (t_llll **) sysmem_newptr(BACH_LLLL_BOOK_SIZE * sizeof(t_llll *));
@@ -1129,7 +1093,7 @@ char bach_load_default_font(void)
 											   &nFonts      	// number of fonts installed
 											   );
 		
-		if(bachFont == 0)
+		if (bachFont == 0)
 		{
 			error("can't load font!");
 		}

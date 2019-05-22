@@ -45,7 +45,6 @@
 
 	//#define BACH_SAFE_LLLLS
 
-//	#define BACH_INSTALL_FONT
 //#ifndef __clang__
     #define	BACH_PRELOAD_CURSORS
 //#endif
