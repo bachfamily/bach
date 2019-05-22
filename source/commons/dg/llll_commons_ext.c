@@ -7,6 +7,47 @@
 #include "ext_strings.h"
 #include "notation.h"
 
+void tolower_strip_spaces_doublequotes_and_regular(const char *source, char *dest, long dest_size)
+{
+    long len = strlen(source), j = 0;
+    for (long i = 0; i < len && j < dest_size-1; i++) {
+        if (source[i] == ' ') {
+            // nothing to do
+        } else if (source[i] == '"' && (i == 0 || i == len -1)) {
+            // nothing to do
+        } else {
+            dest[j++] = tolower(source[i]);
+        }
+    }
+    dest[j] = 0;
+
+    long L = strlen(dest);
+    if (L > 9 && (strcmp(dest+L-8, " Regular") == 0 || strcmp(dest+L-8, " regular") == 0))
+        dest[L-8] = 0;
+}
+
+
+// Test if font names are equal
+// also accounts for case insensitive matching, starting and trailing double quotes, spaces mismatch, and "Regular" symbol being placed after the font name
+int fontnameeq(const char * str1, const char * str2)
+{
+    char temp1[2048];
+    char temp2[2048];
+    
+    tolower_strip_spaces_doublequotes_and_regular(str1, temp1, 2048);
+    tolower_strip_spaces_doublequotes_and_regular(str2, temp2, 2048);
+
+    // plain test (case insensitive)
+    if (strcmp(temp1, temp2) == 0)
+        return true;
+
+    return false;
+}
+
+
+
+
+
 
 char true_hatom_eq(t_hatom *a, t_hatom *b)
 {
@@ -3090,3 +3131,5 @@ t_llllelem *llll_appendelem_clone_preserve_lthing(t_llll *where, t_llllelem *ele
     new_elem->l_thing = elem->l_thing;
     return new_elem;
 }
+
+
