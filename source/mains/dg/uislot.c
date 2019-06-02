@@ -905,6 +905,10 @@ int T_EXPORT main(void){
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
 
+    CLASS_ATTR_INVISIBLE(c, "fontname", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+    CLASS_ATTR_INVISIBLE(c, "fontface", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+    CLASS_ATTR_INVISIBLE(c, "fontsize", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+
     s_uislot_class = c;
     class_register(CLASS_BOX, s_uislot_class);
     
@@ -1487,7 +1491,7 @@ t_uislot* uislot_new(t_symbol *s, long argc, t_atom *argv)
         
         x->r_ob.last_undo_time = systime_ms();
 
-        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
+        llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
         x->r_ob.creatingnewobj = 0;
 
         return x;

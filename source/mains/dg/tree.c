@@ -1998,7 +1998,7 @@ t_tree* tree_new(t_symbol *s, long argc, t_atom *argv)
         }
         
         
-        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
+        llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
         return x;
     }
     

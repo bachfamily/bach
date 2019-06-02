@@ -483,7 +483,7 @@ t_eq *eq_new(t_symbol *s, short ac, t_atom *av)
 		// Should never happen...
 		error(BACH_CANT_INSTANTIATE);
 
-    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

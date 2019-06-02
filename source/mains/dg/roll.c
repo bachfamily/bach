@@ -6680,6 +6680,10 @@ int T_EXPORT main(void){
     
     CLASS_STICKY_ATTR_CLEAR(c, "category");
     
+    CLASS_ATTR_INVISIBLE(c, "fontname", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+    CLASS_ATTR_INVISIBLE(c, "fontface", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+    CLASS_ATTR_INVISIBLE(c, "fontsize", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+
     
     s_roll_class = c;
     class_register(CLASS_BOX, s_roll_class);
@@ -10840,7 +10844,7 @@ t_roll* roll_new(t_symbol *s, long argc, t_atom *argv)
         
         // N.B.: The version_number attribute is actually EXTREMELY useful: when an object is created in Max its dictionary has 0 as its default value when the
         // new() method is called for the first time, and something > 0 when e.g. it was already saved.
-        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
+        llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
         x->r_ob.creatingnewobj = 0;
 
         return x;
@@ -15354,6 +15358,8 @@ void roll_mousedoubleclick(t_roll *x, t_object *patcherview, t_pt pt, long modif
             clear_preselection((t_notation_obj *)x);
             preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
             move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            if (notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)voice))
+                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice);
         }
     }
             

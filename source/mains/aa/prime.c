@@ -149,7 +149,7 @@ t_prime *prime_new(t_symbol *s, short ac, t_atom *av)
 	
 	if ((x = (t_prime *) object_alloc(prime_class))) {
 		x->n_out = intout(x);
-        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+        llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
 		return x;
 	} else
 		error(BACH_CANT_INSTANTIATE);

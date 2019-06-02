@@ -717,7 +717,7 @@ t_wordcloud* wordcloud_new(t_symbol *s, short argc, t_atom *argv)
 		}
 		
 		x->creating_new_obj = false; 
-        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
+        llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
 		return x;
 	}
 	
