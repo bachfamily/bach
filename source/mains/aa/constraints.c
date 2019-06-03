@@ -974,8 +974,10 @@ void constraints_provisionals_qelem_do(t_constraints *x)
     out_ll = x->n_provisionals_ll;
     x->n_provisionals_ll = NULL;
     systhread_mutex_unlock(x->n_provisionals_mutex);
-    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, out_ll);
-    llll_free(out_ll);
+    if (out_ll) { // two calls to the qelem might be scheduled without the provisional being set in between
+        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, out_ll);
+        llll_free(out_ll);
+    }
 }
 
 void constraints_detailed_score_qelem_do(t_constraints *x)
