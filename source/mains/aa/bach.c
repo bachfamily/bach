@@ -1066,7 +1066,14 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 
 char bach_load_default_font(void)
 {
+    t_fourcc type = 'FONT';
+    char *filepath = bach_ezlocate_file("Bravura.otf", &type);
+    
 #ifdef WIN_VERSION
+    AddFontResourceExW(filepath, FR_PRIVATE);
+#endif
+    
+#ifdef WIN_VERSION_old
 	HINSTANCE hResInstance = hinst;
 	
 	HRSRC res = FindResource(hResInstance, "#1685", RT_RCDATA);
@@ -1095,8 +1102,12 @@ char bach_load_default_font(void)
 	// MAC
 	CFErrorRef error = NULL;
 	CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
-	CFURLRef fontURL = mainBundle ? CFBundleCopyResourceURL(mainBundle, CFSTR("johannsebastian"), CFSTR("dat"), NULL) : NULL;
-	
+	//CFURLRef fontURL = mainBundle ? CFBundleCopyResourceURL(mainBundle, CFSTR("johannsebastian"), CFSTR("dat"), NULL) : NULL;
+
+    CFStringRef path = CFStringCreateWithCString(NULL, filepath, kCFStringEncodingMacRoman);
+    bach_freeptr(filepath);
+    CFURLRef fontURL = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
+    
 	if (!mainBundle || !fontURL) {
 		error("Failed to load default bach font.");
 	} else if (!CTFontManagerRegisterFontsForURL(fontURL, kCTFontManagerScopeProcess, &error)) {
