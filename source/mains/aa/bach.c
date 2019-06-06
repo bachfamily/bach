@@ -1209,7 +1209,8 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["geomser"] = new t_fnGeomser;
     (*bifTable)["map"] = new t_fnMap;
     (*bifTable)["reduce"] = new t_fnReduce;
-    
+    (*bifTable)["apply"] = new t_fnApply;
+
     (*bifTable)["outlet"] = new t_fnOutlet;
     
     (*bifTable)["cos"] = new t_mathUnaryFunctionDD<cos>("cos");

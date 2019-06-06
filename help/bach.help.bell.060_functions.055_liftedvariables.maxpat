@@ -39,58 +39,60 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"id" : "obj-5",
-					"maxclass" : "button",
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-19",
+					"linecount" : 4,
+					"maxclass" : "comment",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 136.0, 24.0, 24.0 ]
+					"numoutlets" : 0,
+					"patching_rect" : [ 336.0, 334.5, 255.0, 69.0 ],
+					"presentation_linecount" : 5,
+					"text" : "$plusY lifts the $y variable from its caller. This allows it to both read and modify it: in fact, at the end of the computation $y holds the value 2."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-2",
+					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 210.0, 98.0, 23.0 ],
+					"patching_rect" : [ 24.0, 396.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$i = 1 ; $f = ($n -> for $i in 1 to $n do print($i)) ; $f(5) $i ",
-					"id" : "obj-1",
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 24.0, 320.0, 50.0, 23.0 ],
+					"text" : "3"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$plusY = ($x -^ $y -> ($y += 1 ; $x + $y)) ; $y = 1 ; $plusY($x1) $y ",
+					"fontsize" : 13.0,
+					"id" : "obj-17",
 					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 168.0, 230.0, 38.0 ],
+					"patching_rect" : [ 24.0, 350.0, 303.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval $i = 1 \\; $f = ($n -> for $i in 1 to $n do print($i)) \\; $f(5) $i @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-18",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 257.0, 160.0, 273.0, 54.0 ],
-					"text" : "The fact that we use and modify a variable called $i in the $f function doesn't affect the $i variable in the main function."
+					"text" : "bach.eval $plusY = ($x -^ $y -> ($y += 1 \\; $x + $y)) \\; $y = 1 \\; $plusY($x1) $y @out m"
 				}
 
 			}
@@ -98,13 +100,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-4",
-					"linecount" : 5,
+					"id" : "obj-6",
+					"linecount" : 16,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 36.0, 585.0, 79.0 ],
-					"text" : "Saying that the visibility of local variables is limited to the object is inaccurate when functions come into play. In fact, by default local variables are only visible within the function in which they are used.\nTo really make the concept solid, let's define the main function of an object as the portion of code that is not contained in any function definition (because, as a matter of fact, it is a function, whose arguments can be set from the outside).",
+					"patching_rect" : [ 6.0, 51.0, 589.0, 239.0 ],
+					"text" : "It is possible for a user-defined function to access (\"lift\") at call time a variable from a scope different from its own. In order to be more specific, we must introduce here the concept of call stack, that is, the imaginary pile of nested functions call starting from the main function and eventually leading to the function currently being executed. The call stack varies dynamically during the execution of a program; a new function is added on its top when it gets called, and is removed when it exits.\nNow, the process of lifting a variable means that a given function descends the call stack looking for it, and only stopping when it finds it or when it reaches the root function. If the lifted variable is not found, it will be treated just like a local variable with a starting value of null. It may be worth pointing out that the same function can lift variables with the same name from different functions over time, depending on where it is being called from.\nHowever bizarre the idea may look, there are some practical cases in which this can be useful (namely, lambda functions and recursive calls) but we'll review them later. For now, let's focus on the syntax.\nAfter the argument list of a function definition, you can specify one or more comma-separated variable names to be lifted from the caller, preceded by the -^ symbol. These variable names can't coincide with any of the function parameter names, and can't have defaults.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -148,8 +150,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 179.0, 23.0 ],
-					"text" : "Scope of local variables",
+					"patching_rect" : [ 6.0, 8.0, 119.0, 23.0 ],
+					"text" : "Lifted variables",
 					"varname" : "title"
 				}
 
@@ -173,15 +175,15 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-1", 0 ]
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-17", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-1", 0 ],
-					"source" : [ "obj-5", 0 ]
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}
