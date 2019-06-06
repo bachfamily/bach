@@ -1175,6 +1175,7 @@ void bach_init_bifs(t_bach *x)
     
     (*bifTable)["length"] = new t_fnLength;
     (*bifTable)["depth"] = new t_fnDepth;
+    (*bifTable)["is"] = new t_fnIs;
     (*bifTable)["nth"] = new t_fnNth;
     (*bifTable)["sort"] = new t_fnSort;
     (*bifTable)["contains"] = new t_fnContains;
