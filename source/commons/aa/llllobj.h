@@ -738,6 +738,7 @@ t_max_err llllobj_dummy_setter(t_object *x, void *attr, long ac, t_atom *av);
 
 
 
+char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type);
 
 
 
