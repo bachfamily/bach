@@ -63,7 +63,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 430.0, 81.0, 157.0, 36.0 ],
-					"text" : "For more information see #eval+depth+attribute.",
+					"text" : "For more information see #eval+depth+argument.",
 					"textcolor" : [ 0.501960784313725, 0.501960784313725, 0.501960784313725, 1.0 ]
 				}
 
