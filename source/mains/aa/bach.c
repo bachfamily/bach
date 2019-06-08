@@ -1066,14 +1066,15 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 
 char bach_load_default_font(void)
 {
-    t_fourcc type = 'FONT';
-    char *filepath = bach_ezlocate_file("bach.omtree2bachtree.mxo", &type);
+	//Sleep(60000);
+    t_fourcc type = 0;
+    char *filepath = bach_ezlocate_file("bach.omtree2bachtree.mxe64", &type);
     
-    char *pastehere = filepath + strlen(filepath) - 34;
+    char *pastehere = filepath + strlen(filepath) - 36;
     strncpy_zero(pastehere, "fonts/November for bach.otf", 28);
     
 #ifdef WIN_VERSION
-    AddFontResourceExW(filepath, FR_PRIVATE);
+    AddFontResourceExA(filepath, FR_PRIVATE, 0);
 #endif
     
 #ifdef WIN_VERSION_old
