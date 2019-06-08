@@ -611,7 +611,6 @@
 		918131011611B80100473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		918131021611B80200473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		9182E8D1145F093800CDFBA9 /* pipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9182E8D0145F093800CDFBA9 /* pipe.c */; };
-		91847A391A6E3E70002F0772 /* johannsebastian.dat in Resources */ = {isa = PBXBuildFile; fileRef = 91847A381A6E3E70002F0772 /* johannsebastian.dat */; };
 		9186870317CCF87F003CC2DC /* write.c in Sources */ = {isa = PBXBuildFile; fileRef = 910AC1FC127EDAFC0018DFE3 /* write.c */; };
 		9186870517CCF8D2003CC2DC /* hypercomment.c in Sources */ = {isa = PBXBuildFile; fileRef = 911FC5C217AF9895004E8E49 /* hypercomment.c */; };
 		918C3BD0124A516F003D216B /* mdelace.c in Sources */ = {isa = PBXBuildFile; fileRef = 918C3BCF124A516F003D216B /* mdelace.c */; };
@@ -3278,7 +3277,6 @@
 		9182E8CB145F086A00CDFBA9 /* bach.pipe.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.pipe.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		9182E8D0145F093800CDFBA9 /* pipe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pipe.c; sourceTree = "<group>"; };
 		91843D502068096B00983C6E /* code.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = code.xcodeproj; path = ../../../code/source/xcproj/code.xcodeproj; sourceTree = SOURCE_ROOT; };
-		91847A381A6E3E70002F0772 /* johannsebastian.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = johannsebastian.dat; sourceTree = "<group>"; };
 		918C3BCB124A512D003D216B /* bach.mdelace.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.mdelace.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		918C3BCF124A516F003D216B /* mdelace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdelace.c; sourceTree = "<group>"; };
 		918C3C12124B3323003D216B /* bach.union.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.union.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5882,18 +5880,9 @@
 			path = ../abstractions;
 			sourceTree = "<group>";
 		};
-		91CEF8311A276361005DADB6 /* fonts */ = {
-			isa = PBXGroup;
-			children = (
-				91847A381A6E3E70002F0772 /* johannsebastian.dat */,
-			);
-			path = fonts;
-			sourceTree = "<group>";
-		};
 		91D5486019B58D8E00BBFE1A /* resources */ = {
 			isa = PBXGroup;
 			children = (
-				91CEF8311A276361005DADB6 /* fonts */,
 				91D5486119B58D8E00BBFE1A /* cursors */,
 				91D5487619B58D8F00BBFE1A /* icons */,
 			);
@@ -10203,7 +10192,6 @@
 				91D5488C19B58D8F00BBFE1A /* cursor_note_fourway.png in Resources */,
 				91D5489719B58D8F00BBFE1A /* icon_mixedselection.png in Resources */,
 				91D5488419B58D8F00BBFE1A /* cursor_delete.png in Resources */,
-				91847A391A6E3E70002F0772 /* johannsebastian.dat in Resources */,
 				916120401DD3D536003CEE3A /* cursor_cut.png in Resources */,
 				91D5489219B58D8F00BBFE1A /* cursor_scale.png in Resources */,
 				91D5489319B58D8F00BBFE1A /* cursor_switch.png in Resources */,

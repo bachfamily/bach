@@ -168,7 +168,7 @@ void ext_main(void *moduleRef)
 	_llllobj_sym_bachcursors->s_thing = (t_object *)resources;
 #endif
     
-	bach_load_default_font();
+	//bach_load_default_font();
     
 	bach_new(NULL, 0, NULL); // among other things, also fills the version number fields
 	
@@ -1064,6 +1064,7 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 	return NULL;
 }
 
+#ifdef _obfuscatedfonts
 char bach_load_default_font(void)
 {
     t_fourcc type = 'FONT';
@@ -1123,6 +1124,7 @@ char bach_load_default_font(void)
 	return 0;
 
 }
+#endif
 
 long bach_getbuildnumber(void)
 {
