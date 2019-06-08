@@ -76,7 +76,6 @@
     <ClCompile Include="..\..\commons\dg\notation_pitches.c" />
     <ClCompile Include="..\..\commons\dg\rational.c" />
     <ClCompile Include="..\..\commons\dg\spectral.c" />
-    <ClCompile Include="..\..\commons\gpc232-release\gpc.c" />
     <ClCompile Include="..\..\commons\kiss_fft\kiss_fft.c" />
     <ClCompile Include="..\..\commons\mxml\mxml-attr.c" />
     <ClCompile Include="..\..\commons\mxml\mxml-entity.c" />
@@ -183,7 +182,6 @@
     <ClInclude Include="..\..\commons\dg\notation_goto.h" />
     <ClInclude Include="..\..\commons\dg\rational.h" />
     <ClInclude Include="..\..\commons\dg\spectral.h" />
-    <ClInclude Include="..\..\commons\gpc232-release\gpc.h" />
     <ClInclude Include="..\..\commons\kiss_fft\kiss_fft.h" />
     <ClInclude Include="..\..\commons\kiss_fft\_kiss_fft_guts.h" />
     <ClInclude Include="..\..\commons\mxml\config.h" />

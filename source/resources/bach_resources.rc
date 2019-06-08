@@ -25,9 +25,6 @@ cursor_switch		RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\sourc
 cursor_trim_end		RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\cursors\\cursor_trim_end.png"
 cursor_trim_start	RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\cursors\\cursor_trim_start.png"
 
-
-1685			RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\fonts\\November_for_bach.otf"
-
 icon_chord		RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\icons\\icon_chord.png"
 icon_marker		RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\icons\\icon_marker.png"
 icon_measure		RCDATA	"C:\\Users\\andag\\Documents\\Max 7\\Packages\\bach\\source\\resources\\icons\\icon_measure.png"
