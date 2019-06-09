@@ -2301,8 +2301,8 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
 		snprintf_zero(link_to_label, 100, "→ notehead");
 	else if (s == r_ob->link_lyrics_to_slot - 1)
 		snprintf_zero(link_to_label, 100, "→ lyrics");
-	else if (s == r_ob->link_notecolor_to_slot - 1)
-		snprintf_zero(link_to_label, 100, "→ notecolor");
+	else if (s == r_ob->link_nitemcolor_to_slot - 1)
+		snprintf_zero(link_to_label, 100, "→ color");
 	else if (s == r_ob->link_notehead_font_to_slot - 1)
 		snprintf_zero(link_to_label, 100, "→ noteheadfont");
 	else if (s == r_ob->link_notesize_to_slot - 1)
@@ -10098,7 +10098,7 @@ t_max_err notation_obj_setattr_rightclickdirectlypopsoutslot(t_notation_obj *r_o
 long linkto_sym_to_linkto_elem(t_notation_obj *r_ob, t_symbol *sym){
 	if (sym == _llllobj_sym_lyrics)
 		return k_SLOT_LINKAGE_LYRICS;
-	else if (sym == _llllobj_sym_notecolor)
+	else if (sym == _llllobj_sym_notecolor || sym == _llllobj_sym_color)
 		return k_SLOT_LINKAGE_NOTE_COLOR;
 	else if (sym == _llllobj_sym_noteheadadjust)
 		return k_SLOT_LINKAGE_NOTEHEAD_ADJUST;
@@ -10125,7 +10125,7 @@ void set_linkto_notation_obj_field_to_value(t_notation_obj *r_ob, char link_to_w
 			r_ob->link_lyrics_to_slot = value;
 			break;
 		case k_SLOT_LINKAGE_NOTE_COLOR:
-			r_ob->link_notecolor_to_slot = value;
+			r_ob->link_nitemcolor_to_slot = value;
 			break;
 		case k_SLOT_LINKAGE_NOTEHEAD_ADJUST:
 			r_ob->link_notehead_adjust_to_slot = value;

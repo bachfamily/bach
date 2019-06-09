@@ -236,7 +236,7 @@ void get_slotlinkages_as_sym_list(t_notation_obj *r_ob, t_symbol **list)
 {
 	list[k_SLOT_LINKAGE_NONE] = _llllobj_sym_none;
 	list[k_SLOT_LINKAGE_LYRICS] = _llllobj_sym_lyrics;
-	list[k_SLOT_LINKAGE_NOTE_COLOR] = _llllobj_sym_notecolor;
+	list[k_SLOT_LINKAGE_NOTE_COLOR] = _llllobj_sym_color;
 	list[k_SLOT_LINKAGE_NOTEHEAD_ADJUST] = _llllobj_sym_noteheadadjust;
 	list[k_SLOT_LINKAGE_NOTEHEAD_FONT] = _llllobj_sym_noteheadfont;
 	list[k_SLOT_LINKAGE_NOTEHEAD] = _llllobj_sym_notehead;

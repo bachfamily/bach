@@ -4152,7 +4152,8 @@ typedef struct _notation_obj
     double        sampling_freq;        ///< Sampling frequency used to properly compute the biquad coefficients in the #k_SLOT_TYPE_FILTER and #k_SLOT_TYPE_DYNFILTER types of slots
     
     // slot linkages: a common way to modify some parameters in bach is to link them with the content of some type of slot 
-    long        link_notecolor_to_slot;            ///< Number of the slot (1-based) which is linked with the notehead color changes, 0 being no linkage for notehead color, and thus notehead colors are the default ones.
+    long        link_nitemcolor_to_slot;            ///< Number of the slot (1-based) which is linked with the notation item color changes (both
+                                                /// for notes and for rests), 0 being no linkage for color, and thus colors are the default ones.
                                                 ///< If the the slot is #k_SLOT_TYPE_INT same colors are given to notes having same slot value
                                                 ///< If the the slot is #k_SLOT_TYPE_FLOAT colors are given as a gradient (red to blue) from the slot (red) minimum to the slot maximum (blue)
                                                 ///< If the the slot is #k_SLOT_TYPE_FLOATLIST, values are interpreted as RGBA values (red, green, blue, alpha coordinates)

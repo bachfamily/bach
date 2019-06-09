@@ -6144,7 +6144,7 @@ t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 
     change_color_depending_on_group(r_ob, &restcolor, chord, k_CHORD);
     
-    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
+    if (!is_chord_played && !is_chord_selected && chord)
         notation_item_change_color_depending_on_slot_linkage(r_ob, &restcolor, (t_notation_item *)chord);
     
     change_color_depending_on_playlockmute(r_ob, &restcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
@@ -6181,17 +6181,17 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
     
     change_color_depending_on_playlockmute(r_ob, &articulationcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                articulationcolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                articulationcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                articulationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                articulationcolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -6212,17 +6212,17 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
     
     change_color_depending_on_playlockmute(r_ob, &annotationcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                annotationcolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                annotationcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                annotationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                annotationcolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -6246,17 +6246,17 @@ t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_s
     
     change_color_depending_on_playlockmute(r_ob, &dynamicscolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                dynamicscolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                dynamicscolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                dynamicscolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                dynamicscolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -30100,8 +30100,8 @@ void apply_velocity_handling(t_notation_obj *r_ob, t_jrgba *color, double veloci
 
 void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_notation_item *nitem)
 {
-    if (r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS) {
-        long slotnum = r_ob->link_notecolor_to_slot - 1;
+    if (r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS) {
+        long slotnum = r_ob->link_nitemcolor_to_slot - 1;
         t_slot *slot = notation_item_get_slot(r_ob, nitem, slotnum);
         if (slot) {
             if (slot->firstitem && slot->firstitem->item) {
@@ -30121,9 +30121,9 @@ void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, 
 
 void note_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note)
 {
-    if (r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS) {
+    if (r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS) {
         t_note *note_to_consider = note;
-        long slotnum = r_ob->link_notecolor_to_slot - 1;
+        long slotnum = r_ob->link_nitemcolor_to_slot - 1;
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && r_ob->slotinfo[slotnum].slot_singleslotfortiednotes)
             note_to_consider = note_get_first_in_tieseq(note_to_consider);
         if (note_to_consider)
@@ -30145,7 +30145,7 @@ void durationline_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t
                 if ((r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INTLIST))
                 *color = long_to_color(*((long *)note_to_consider->slot[slotnum].firstitem->item));
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
-                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
+                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
                 *color = floatlist_slot_to_color(&note_to_consider->slot[slotnum]);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
@@ -35768,7 +35768,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->show_playhead = false; // we don't show the playhead cursor;
     r_ob->play_head_start_ms = 0.; // initialize playhead cursor
     r_ob->play_head_start_ux = 0.; // idem for score
-    r_ob->link_notecolor_to_slot = 0;
+    r_ob->link_nitemcolor_to_slot = 0;
     r_ob->j_mouse_cursor = BACH_CURSOR_DEFAULT; // initial mouse cursor
     r_ob->slot_minimum_window_uwidth = 0; // no minimum
     r_ob->last_used_octave = 5; 

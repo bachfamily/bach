@@ -4790,7 +4790,7 @@ int T_EXPORT main(void){
     // @mattr markershavevoices @type int @default 0 @digest If non-zero, measure-attached markers undergo the voice attributes conditions
     // @mattr where @type llll @default null @digest Sets a condition to be matched by selected items (the other ones are discarded)
     // @mattr until @type llll @default null @digest Sets a condition to be matched, otherwise perform the command again, until condition is met
-    // @example goto 1000 @caption set selection to items which are active at 1sec
+    // @example goto time 1000 @caption set selection to items which are active at 1sec
     // @example goto next @caption select next notation item
     // @example goto prev @caption select previous notation item
     // @example goto next @repeat 10 @caption select the 10th next notation item
@@ -4799,7 +4799,7 @@ int T_EXPORT main(void){
     // @example goto up @caption move selection up
     // @example goto right @caption move selection right
     // @example goto next @voicemode any @polymode overlap @caption navigate through score polyphonically
-    // @example goto 1000 @include tail @caption set selection to items which are active at 1sec, including their tails (but not their heads)
+    // @example goto time 1000 @include tail @caption set selection to items which are active at 1sec, including their tails (but not their heads)
     // @seealso sel, select, unsel
     class_addmethod(c, (method) roll_anything, "goto", A_GIMME, 0);
 

@@ -2140,7 +2140,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
 
         t_llll *args_ll_flat = llll_clone(args_ll);
         llll_flatten(args_ll_flat, 0, 0);
-        this_keys = x->n_keys = (t_playkeys_key *) bach_newptr((args_ll_flat->l_size + 1) * sizeof(t_playkeys_key));
+        this_keys = x->n_keys = (t_playkeys_key *) bach_newptr((args_ll_flat ? args_ll_flat->l_size + 1 : 1) * sizeof(t_playkeys_key));
         llll_free(args_ll_flat);
         
         
