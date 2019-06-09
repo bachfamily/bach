@@ -5557,14 +5557,14 @@ void set_slots_values_to_notationitem_from_llll(t_notation_obj *r_ob, t_notation
 							recompute_all_for_measure(r_ob, ch->parent, false);
 						else
 							ch->need_recompute_parameters = true;
-                        r_ob->process_chord_parameters_asap = true;
+                        set_need_perform_analysis_and_change_flag(r_ob);
 					}
                     if (r_ob->link_dynamics_to_slot > 0 && r_ob->link_dynamics_to_slot - 1 == j && ch) { //i.e.: note is not dummy, since it has a parent!
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)
                             recompute_all_for_measure(r_ob, ch->parent, false);
                         else
                             ch->need_recompute_parameters = true;
-                        r_ob->process_chord_parameters_asap = true;
+                        set_need_perform_analysis_and_change_flag(r_ob);
                     }
 
                     if (r_ob->link_articulations_to_slot > 0 && r_ob->link_articulations_to_slot - 1 == j && ch)

@@ -4004,7 +4004,6 @@ typedef struct _notation_obj
     char        only_play_selection;        ///< (PRIVATE) Flag which is 1 when the play() function is called via the playselection function
     char        defining_numerator;            ///< (PRIVATE) Flag which is 1 if the user is defining the tuplet numerator in the bach.score linear editing system
     char        item_changed_at_mousedown;    ///< (PRIVATE) Flag which is 1 after mousedown when something has been changed directly on mousedown and NOT on mousedrag; it becomes 0 at mouseup
-    char        process_chord_parameters_asap;  ///< (PRIVATE) If set, chord graphical parameters, lyrics and dynamics should be parsed ASAP
     long        private_count;                ///< (PRIVATE) Private utility counter
     double      ux_click_marker_diff;       ///< (PRIVATE) Unscaled x pixels difference between the clicked marker and the clicked point
     
@@ -10890,10 +10889,11 @@ void append_note_breakpoints_formatted_for_pwgl(t_notation_obj *r_ob, t_llll *th
 
 /** Obtain the absolute onset (in milliseconds) of a given breakpoint. 
     @ingroup            breakpoints
+    @param    r_ob        The notation object
     @param        bpt        The breakpoint
     @return                The absolute onset of the breakpoint in milliseconds.
 */
-double breakpoint_get_absolute_onset(t_bpt *bpt);
+double breakpoint_get_absolute_onset(t_notation_obj *r_ob, t_bpt *bpt);
 
 double note_get_spanning_width(t_notation_obj *r_ob, t_note *nt);
 
@@ -13469,6 +13469,16 @@ t_chord *first_all_tied_chord(t_chord *chord, char within_measure);
             coincide with the chord duration if such chord is neither completely tied to its next nor to its previous one.
  */
 t_rational get_all_tied_chord_sequence_abs_r_duration(t_chord *chord, char within_measure);
+
+
+/**    Get the overall duration (in milliseconds) of a sequence of completely tied chords containing a given chord.
+    @ingroup        notation
+    @param    chord    The chord
+    @param    within_measure    If this is non-zero, only chords within the same measure of the given chords are considered.
+    @return    The overall duration in milliseconds of the sequence of completely tied chords containing a given chord. This will
+                coincide with the chord duration if such chord is neither completely tied to its next nor to its previous one.
+ */
+double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measure);
 
 
 /**    Get the last rest in a sequence of rest containing #chord. If #chord is not a rest, NULL is returned

@@ -1256,17 +1256,17 @@ void roll_send_current_chord(t_roll *x){
                 if (chord->onset <= curr_pos_ms && chord->onset + note->duration > curr_pos_ms){
                     // breakpoints
                     t_bpt *prev_bpt = note->firstbreakpoint;
-                    while (prev_bpt && prev_bpt->next && breakpoint_get_absolute_onset(prev_bpt->next) <= curr_pos_ms)
+                    while (prev_bpt && prev_bpt->next && breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next) <= curr_pos_ms)
                         prev_bpt = prev_bpt->next;
                     
                     if (!prev_bpt || !prev_bpt->next) {
                         llll_appenddouble(out_cents, note->midicents + note->lastbreakpoint->delta_mc, 0, WHITENULL_llll);
                         llll_appendlong(out_vels, x->r_ob.breakpoints_have_velocity ? note->lastbreakpoint->velocity : note->velocity, 0, WHITENULL_llll);
                     } else {
-                        double cents = rescale_with_slope(curr_pos_ms, breakpoint_get_absolute_onset(prev_bpt), breakpoint_get_absolute_onset(prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
+                        double cents = rescale_with_slope(curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
                         double velocity;
                         if (x->r_ob.breakpoints_have_velocity)
-                            velocity = rescale(curr_pos_ms, breakpoint_get_absolute_onset(prev_bpt), breakpoint_get_absolute_onset(prev_bpt->next), 
+                            velocity = rescale(curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next),
                                                prev_bpt->velocity, prev_bpt->next->velocity);
                         else 
                             velocity = note->velocity;
@@ -3453,7 +3453,7 @@ void roll_sel_add_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     
     llll_free(slot_as_llll);
     
-    if (x->r_ob.process_chord_parameters_asap)
+    if (x->r_ob.need_perform_analysis_and_change)
         process_chord_parameters_calculation_NOW(x);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
@@ -3478,6 +3478,9 @@ void roll_sel_erase_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
 
     notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
     
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
+
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
 }
 
@@ -3501,6 +3504,9 @@ void roll_sel_move_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     }
     
     notationobj_sel_move_slot((t_notation_obj *)x, from, to, false, lambda);
+
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION);
 }
@@ -3526,6 +3532,9 @@ void roll_sel_copy_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     
     notationobj_sel_move_slot((t_notation_obj *)x, from, to, true, lambda);
     
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
+
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
 }
 
@@ -3558,6 +3567,9 @@ void roll_sel_change_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_MODIFY_ONE);
     llll_release(args);
+    
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
 }
 
 
@@ -3568,6 +3580,9 @@ void roll_sel_append_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         llll_insertlong_after(1, args->l_head); // inserting dummy position
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_APPEND);
     llll_release(args);
+
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
 }
 
 
@@ -3578,6 +3593,9 @@ void roll_sel_prepend_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
         llll_insertlong_after(1, args->l_head); // inserting dummy position
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_PREPEND);
     llll_release(args);
+
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
 }
 
 void roll_sel_insert_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
@@ -3585,6 +3603,9 @@ void roll_sel_insert_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_INSERT_AUTO);
     llll_release(args);
+    
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
 }
 
 
@@ -3593,6 +3614,9 @@ void roll_sel_delete_slot_item(t_roll *x, t_symbol *s, long argc, t_atom *argv)
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_DELETE_ONE);
     llll_release(args);
+
+    if (x->r_ob.need_perform_analysis_and_change)
+        process_chord_parameters_calculation_NOW(x);
 }
 
 
@@ -9534,7 +9558,7 @@ void process_chord_parameters_calculation_NOW(t_roll *x){
             }
         }
     }
-    x->r_ob.process_chord_parameters_asap = false;
+    x->r_ob.need_perform_analysis_and_change = false;
     
     jfont_destroy_debug(jf_lyrics_nozoom);
     jfont_destroy_debug(jf_dynamics_nozoom);
@@ -17231,7 +17255,7 @@ char align_selection_onsets(t_roll *x){
             if ((leftmost_onset == -32000) || (((t_chord *)curr_it)->onset < leftmost_onset)) 
                 leftmost_onset = ((t_chord *)curr_it)->onset;
         } else if (curr_it->type == k_PITCH_BREAKPOINT && !((t_bpt *)curr_it)->next) { // it is a note tail
-            double thisonset = breakpoint_get_absolute_onset((t_bpt *) curr_it);
+            double thisonset = breakpoint_get_absolute_onset((t_notation_obj *)x, (t_bpt *) curr_it);
             if (leftmost_onset == -32000 || thisonset < leftmost_onset) 
                 leftmost_onset = thisonset;
         }

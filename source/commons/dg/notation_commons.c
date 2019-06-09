@@ -14216,6 +14216,20 @@ t_rational get_all_tied_chord_sequence_abs_r_duration(t_chord *chord, char withi
     return tot_duration;
 }
 
+double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measure)
+{
+    t_chord *first = first_all_tied_chord(chord, within_measure);
+    t_chord *last = last_all_tied_chord(chord, within_measure);
+    t_chord *temp;
+    double tot_duration = 0;
+    for (temp = first; temp; temp = chord_get_next(temp)) {
+        tot_duration += temp->duration_ms;
+        if (temp == last)
+            break;
+    }
+    return tot_duration;
+}
+
 void check_ties_around_measure(t_measure *measure){
     measure->need_check_ties = true;
     if (measure->prev) measure->prev->need_check_ties = true;
@@ -34415,7 +34429,7 @@ double unscaled_xposition_snap_to_nearest_chord(t_notation_obj *r_ob, double ux,
                             t_bpt *bpt;
                             for (bpt = note->firstbreakpoint; bpt; bpt = bpt->next) {
                                 if (bpt->prev && bpt->next) { // internal pitch breakpoint
-                                    double bpt_ux = onset_to_unscaled_xposition(r_ob, breakpoint_get_absolute_onset(bpt));
+                                    double bpt_ux = onset_to_unscaled_xposition(r_ob, breakpoint_get_absolute_onset(r_ob, bpt));
                                     double bpt_fabs = fabs(bpt_ux - ux);
                                     if (!best_approx || bpt_fabs < best_approx_fabs) {
                                         best_approx = (t_notation_item *)bpt;
@@ -38572,13 +38586,15 @@ t_xml_chord_beam_info get_xml_chord_beam_info(t_notation_obj *r_ob, t_chord *cho
 
 
 
-double breakpoint_get_absolute_onset(t_bpt *bpt){
+double breakpoint_get_absolute_onset(t_notation_obj *r_ob, t_bpt *bpt)
+{
     if (!bpt->owner)
         return 0;
     
-    if (bpt->owner->parent->is_score_chord)
-        return chord_get_onset_ms(bpt->owner->parent) + bpt->rel_x_pos + bpt->owner->parent->duration_ms;
-    else 
+    if (bpt->owner->parent->is_score_chord) {
+        double tot_dur = r_ob->dl_spans_ties ? get_all_tied_chord_sequence_duration_ms(bpt->owner->parent, false) : bpt->owner->parent->duration_ms;
+        return chord_get_onset_ms(bpt->owner->parent) + bpt->rel_x_pos * tot_dur;
+    } else
         return bpt->owner->parent->onset + bpt->rel_x_pos * bpt->owner->duration;
 }
 
