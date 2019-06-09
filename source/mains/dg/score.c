@@ -2526,6 +2526,9 @@ void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
     }
     
     llll_free(slot_as_llll);
+    
+    if (x->r_ob.process_chord_parameters_asap)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
 }

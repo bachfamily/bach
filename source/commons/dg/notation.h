@@ -4004,6 +4004,7 @@ typedef struct _notation_obj
     char        only_play_selection;        ///< (PRIVATE) Flag which is 1 when the play() function is called via the playselection function
     char        defining_numerator;            ///< (PRIVATE) Flag which is 1 if the user is defining the tuplet numerator in the bach.score linear editing system
     char        item_changed_at_mousedown;    ///< (PRIVATE) Flag which is 1 after mousedown when something has been changed directly on mousedown and NOT on mousedrag; it becomes 0 at mouseup
+    char        process_chord_parameters_asap;  ///< (PRIVATE) If set, chord graphical parameters, lyrics and dynamics should be parsed ASAP
     long        private_count;                ///< (PRIVATE) Private utility counter
     double      ux_click_marker_diff;       ///< (PRIVATE) Unscaled x pixels difference between the clicked marker and the clicked point
     

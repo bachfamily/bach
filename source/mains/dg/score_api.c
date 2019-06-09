@@ -8046,7 +8046,9 @@ void perform_analysis_and_change(t_score *x, t_jfont *jf_lyrics_nozoom, t_jfont 
     
     verbose_post_rhythmic_tree((t_notation_obj *) x, x->firstvoice->firstmeasure, NULL, 0);
 
-    for (tmp_voice = x->firstvoice; (tmp_voice && (tmp_voice->v_ob.number < x->r_ob.num_voices)); tmp_voice = tmp_voice->next) 
+    x->r_ob.process_chord_parameters_asap = false;
+    
+    for (tmp_voice = x->firstvoice; (tmp_voice && (tmp_voice->v_ob.number < x->r_ob.num_voices)); tmp_voice = tmp_voice->next)
         for (tmp_meas = tmp_voice->firstmeasure; tmp_meas; tmp_meas = tmp_meas->next) {
             for (tmp_chord = tmp_meas->firstchord; tmp_chord; tmp_chord = tmp_chord->next) {
                 if (tmp_chord->need_recompute_parameters) { // we have to recalculate chord parameters 

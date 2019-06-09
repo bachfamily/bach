@@ -3452,6 +3452,9 @@ void roll_sel_add_slot(t_roll *x, t_symbol *s, long argc, t_atom *argv){
     }
     
     llll_free(slot_as_llll);
+    
+    if (x->r_ob.process_chord_parameters_asap)
+        process_chord_parameters_calculation_NOW(x);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
 }
@@ -9531,6 +9534,8 @@ void process_chord_parameters_calculation_NOW(t_roll *x){
             }
         }
     }
+    x->r_ob.process_chord_parameters_asap = false;
+    
     jfont_destroy_debug(jf_lyrics_nozoom);
     jfont_destroy_debug(jf_dynamics_nozoom);
     jfont_destroy_debug(jf_dynamics_roman_nozoom);
