@@ -1246,13 +1246,14 @@ void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect,
     }
 }
 
+
 double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord)
 {
     double max_duration = 0;
     t_note *curr_nt;
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
         for (curr_nt = chord->firstnote; curr_nt; curr_nt = curr_nt->next)
-            if (curr_nt->duration >    max_duration)
+            if (curr_nt->duration > max_duration)
                 max_duration = curr_nt->duration;
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
         max_duration = chord->duration_ms;
@@ -14224,6 +14225,20 @@ double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measu
     double tot_duration = 0;
     for (temp = first; temp; temp = chord_get_next(temp)) {
         tot_duration += temp->duration_ms;
+        if (temp == last)
+            break;
+    }
+    return tot_duration;
+}
+
+double get_all_tied_note_sequence_duration_ms(t_note *nt)
+{
+    t_note *first = note_get_first_in_tieseq(nt);
+    t_note *last = note_get_last_in_tieseq(nt);
+    t_note *temp;
+    double tot_duration = 0;
+    for (temp = first; temp && temp != WHITENULL; temp = temp->tie_to) {
+        tot_duration += temp->parent->duration_ms;
         if (temp == last)
             break;
     }
@@ -28056,12 +28071,15 @@ t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     temp = note->firstbreakpoint;
     if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) { // partial notes!
         double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-        while (temp && note->parent->onset + temp->rel_x_pos * note->duration < hot_point)
+        double duration = note->duration;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->dl_spans_ties)
+            duration = get_all_tied_note_sequence_duration_ms(note);
+        while (temp && note->parent->onset + temp->rel_x_pos * duration < hot_point)
             temp = temp->next;
-        if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * note->duration != hot_point)) {
+        if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * duration != hot_point)) {
             double rel_x_pos_ratio;
             t_llll *inner2_llll;
-            start_x_pos = (hot_point - note->parent->onset) / note->duration;
+            start_x_pos = (hot_point - note->parent->onset) / duration;
             rel_x_pos_ratio = (start_x_pos - temp->prev->rel_x_pos) /(temp->rel_x_pos - temp->prev->rel_x_pos);
             start_y_pos = temp->prev->delta_mc + rel_x_pos_ratio * (temp->delta_mc - temp->prev->delta_mc);
             if (temp->delta_mc >= temp->prev->delta_mc)
@@ -28179,16 +28197,20 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                 
                 double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
                 
-                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? notation_item_get_duration_ms(r_ob, nitem) : 1) < hot_point))
+                double dur = notation_item_get_duration_ms(r_ob, nitem);
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+                    dur = get_all_tied_note_sequence_duration_ms((t_note *)nitem);
+
+                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? dur : 1) < hot_point))
                     temp_item = temp_item->next;
-                if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) != hot_point)) {
+                if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * dur != hot_point)) {
                     double this_x = ((t_pts *)temp_item->item)->x; double prev_x = ((t_pts *)temp_item->prev->item)->x;
                     double this_y = ((t_pts *)temp_item->item)->y; double prev_y = ((t_pts *)temp_item->prev->item)->y;
                     double this_slope = ((t_pts *)temp_item->item)->slope;
                     double x_ratio, new_y_pos;
                     t_llll *inner5_llll;
                     if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE) {
-                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / notation_item_get_duration_ms(r_ob, nitem);
+                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / dur;
                     } else if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
                         new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem));
                     }
@@ -28208,6 +28230,8 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); //
                         llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
                     }
+                } else if (mode == k_CONSIDER_FOR_SAMPLING && ((t_pts *)temp_item->item)->x == hot_point) {
+                    llll_appenddouble(inner4_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y position only
                 }
             }
             if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {
@@ -28572,13 +28596,16 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
     // slots
     t_llll* out_llll = llll_get();
     int j;
-    llll_appendsym(out_llll, _llllobj_sym_slots, 0, WHITENULL_llll); 
+    llll_appendsym(out_llll, _llllobj_sym_slots);
 
     for (j = 0; j < CONST_MAX_SLOTS; j++) {
-        if (note->slot[j].firstitem || force_all_slots) { // do we need this slot?
+        t_note *note_for_slot = note;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+            note_for_slot = note_get_first_in_tieseq(note);
+        if (note_for_slot->slot[j].firstitem || force_all_slots) { // do we need this slot?
             if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {
-                t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note, mode, j, false);
-                llll_appendllll(out_llll, thisslot_llll, 0, WHITENULL_llll);
+                t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note_for_slot, mode, j, false);
+                llll_appendllll(out_llll, thisslot_llll);
             }
         }
     }
@@ -29074,8 +29101,11 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     
     // see if we need breakpoint extras
     if (mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE) {
-        if (note_breakpoints_are_nontrivial(r_ob, note)) {
-            llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
+        t_note *note_for_bpts = note;
+        if (mode == k_CONSIDER_FOR_SAMPLING && r_ob->dl_spans_ties)
+            note_for_bpts = note_get_first_in_tieseq(note);
+        if (note_breakpoints_are_nontrivial(r_ob, note_for_bpts)) {
+            llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note_for_bpts, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
             if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
                 hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
                 hatom_setlong(&out_llll->l_head->l_next->l_hatom, round(new_vel));
@@ -29086,7 +29116,7 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     }
     
     // see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
-    if (notation_item_has_slot_content(r_ob, (t_notation_item *)note) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
+    if (notation_item_has_slot_content(r_ob, (t_notation_item *)note, mode) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
         llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false), 0, WHITENULL_llll);    
 
     // see if we need articulations
@@ -43911,7 +43941,7 @@ t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms)
                 for (note = chord->firstnote; note; note = note->next) {
                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE || chord->onset + note->duration > ms) {
                         // the note has something at #ms milliseconds
-                        t_llll *note_ll;
+                        t_llll *note_ll = NULL;
                         
                         r_ob->curr_sampling_ms = ms;
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)

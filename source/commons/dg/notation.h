@@ -9185,9 +9185,10 @@ void close_slot_window(t_notation_obj *r_ob);
     @ingroup        slots
     @param    r_ob    The notation object
     @param    nitem    The notation item
+    @param    mode     The data considering type
     @return            1 if the notation item has some slot content (of any type), 0 if all slots are empty
  */
-char notation_item_has_slot_content(t_notation_obj *r_ob, t_notation_item *nitem);
+char notation_item_has_slot_content(t_notation_obj *r_ob, t_notation_item *nitem, e_data_considering_types mode = k_CONSIDER_FOR_DUMPING);
 
 
 /**    Obtain the standard color for a given slot window
@@ -13479,6 +13480,10 @@ t_rational get_all_tied_chord_sequence_abs_r_duration(t_chord *chord, char withi
                 coincide with the chord duration if such chord is neither completely tied to its next nor to its previous one.
  */
 double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measure);
+
+
+//TBD
+double get_all_tied_note_sequence_duration_ms(t_note *nt);
 
 
 /**    Get the last rest in a sequence of rest containing #chord. If #chord is not a rest, NULL is returned

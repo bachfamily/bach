@@ -9576,12 +9576,17 @@ char slot_handle_mousemove(t_notation_obj *r_ob, t_object *patcherview, t_pt pt,
 }
 
 
-char notation_item_has_slot_content(t_notation_obj *r_ob, t_notation_item *nitem)
+char notation_item_has_slot_content(t_notation_obj *r_ob, t_notation_item *nitem, e_data_considering_types mode)
 {
 	long i;
 	for (i=0; i<CONST_MAX_SLOTS; i++) {
-		if (notation_item_get_slot_firstitem(r_ob, nitem, i))
-			return true;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && nitem->type == k_NOTE && r_ob->slotinfo[i].slot_singleslotfortiednotes) {
+            if (notation_item_get_slot_firstitem(r_ob, (t_notation_item *)note_get_first_in_tieseq((t_note *)nitem), i))
+                return true;
+        } else {
+            if (notation_item_get_slot_firstitem(r_ob, nitem, i))
+                return true;
+        }
 	}
 	return false;
 }
