@@ -2239,6 +2239,28 @@ void llll_subs(t_llll *ll, t_llll *address, t_llll *subs_model)
     return;
 }
 
+// ---DESTRUCTIVE on ll
+void llll_keysubs(t_llll *ll, t_llll *keys, t_llll *subs_model)
+{
+    for (t_llllelem *keys_elem = keys->l_head; keys_elem; keys_elem = keys_elem->l_next) {
+        
+        for (t_llllelem *ll_elem = ll->l_head; ll_elem; ll_elem = ll_elem->l_next) {
+            if (t_llll *sub_ll = hatom_getllll(&ll_elem->l_hatom); sub_ll && sub_ll->l_size > 0) {
+                t_llllelem *head = sub_ll->l_head;
+                if (hatom_eq(&head->l_hatom, &keys_elem->l_hatom)) {
+                    for (head = head->l_next; head; head = head->l_next)
+                        llll_destroyelem(head);
+                    llll_chain(sub_ll, llll_clone(subs_model));
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+
+
 // ---DESTRUCTIVE
 void llll_tailpad_with_last(t_llll *ll, long newsize)
 {
