@@ -2157,8 +2157,8 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         
         attr_args_process(x, ac, av);
         
-        if (!args_ll->l_head) {
-            object_error((t_object *)x, "No keys defined.");
+        if (!args_ll || !args_ll->l_head) {
+            object_error((t_object *)x, "No keys defined, or wrong keys syntax.");
             llll_free(args_ll);
             llll_free(args_ll_flat);
             return NULL;
