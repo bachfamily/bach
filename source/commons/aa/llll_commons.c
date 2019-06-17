@@ -2239,6 +2239,39 @@ void llll_subs(t_llll *ll, t_llll *address, t_llll *subs_model)
     return;
 }
 
+// DESTRUCTIVE ON edited
+void llll_replacewith(t_llll *edited, t_llllelem *victim, t_llll *subs_model)
+{
+    t_llll *this_subs = llll_clone_extended(subs_model, edited, 0, NULL);
+    if (victim->l_prev)
+        victim->l_prev->l_next = this_subs->l_head;
+    else
+        edited->l_head = this_subs->l_head;
+    if ((this_subs->l_head->l_prev = victim->l_prev) == NULL)
+        edited->l_head = this_subs->l_head;
+    
+    if (victim->l_next)
+        victim->l_next->l_prev = this_subs->l_tail;
+    else
+        edited->l_tail = this_subs->l_tail;
+    if ((this_subs->l_tail->l_next = victim->l_next) == NULL)
+        edited->l_tail = this_subs->l_tail;
+    
+    edited->l_size += subs_model->l_size - 1;
+    
+    if (t_llll *victim_llll = hatom_getllll(&victim->l_hatom); victim_llll) {
+        if (victim_llll->l_depth < subs_model->l_depth) {
+            llll_upgrade_depth(this_subs);
+        } else if (victim_llll->l_depth > subs_model->l_depth) {
+            llll_downgrade_depth(edited);
+        }
+    } else if (subs_model->l_depth > 1) {
+        llll_upgrade_depth(this_subs);
+    }
+    llllelem_free(victim);
+}
+
+
 // ---DESTRUCTIVE on ll
 void llll_keysubs(t_llll *ll, t_llll *keys, t_llll *subs_model)
 {

@@ -541,6 +541,9 @@ t_llll *llll_nth(t_llll *root, t_llll *address, long nils);
 // or remove the corresponding element(s) if subs_model is empty
 void llll_subs(t_llll *ll, t_llll *address, t_llll *subs_model);
 
+// DESTRUCTIVE ON edited
+void llll_replacewith(t_llll *edited, t_llllelem *where, t_llll *subs_model);
+
 // ---DESTRUCTIVE on ll
 // substitute subs_model at address in ll
 // or remove the corresponding element(s) if subs_model is empty
