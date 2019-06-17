@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -39,12 +39,25 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-6",
+					"items" : [ "strawberry", ",", "scrambled", "eggs", ",", "savoy", "truffle", ",", "octopus" ],
+					"maxclass" : "umenu",
+					"numinlets" : 1,
+					"numoutlets" : 3,
+					"outlettype" : [ "int", "", "" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 18.0, 286.0, 123.0, 23.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 201.0, 256.0, 62.0, 23.0 ],
+					"patching_rect" : [ 240.0, 255.0, 62.0, 23.0 ],
 					"text" : "loadbang"
 				}
 
@@ -98,6 +111,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 417.5, 200.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -114,20 +128,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 74.0, 284.5, 83.0, 25.0 ],
-					"text" : "Move me!"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-110",
-					"maxclass" : "number",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 286.0, 50.0, 23.0 ]
+					"patching_rect" : [ 147.0, 286.0, 79.0, 25.0 ],
+					"text" : "Pick one!"
 				}
 
 			}
@@ -138,7 +140,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 201.0, 286.0, 293.0, 23.0 ],
+					"patching_rect" : [ 240.0, 285.0, 293.0, 23.0 ],
 					"text" : "[john yoko] [paul linda] [george pattie] [ringo moe]"
 				}
 
@@ -156,19 +158,20 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "`The `ballad `of $x2:($x1 1) `and $x2:($x1 2) ",
+					"code" : "`The `ballad `of $x2:($x1+1 1) `and $x2:($x1+1 2) ",
 					"fontname" : "Arial",
 					"id" : "obj-105",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 322.5, 372.0, 23.0 ],
+					"patching_rect" : [ 18.0, 322.5, 402.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval `The `ballad `of $x2:($x1 1) `and $x2:($x1 2) @out m"
+					"text" : "bach.eval `The `ballad `of $x2:($x1+1 1) `and $x2:($x1+1 2) @out m"
 				}
 
 			}
@@ -220,6 +223,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 209.5, 173.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -291,19 +295,20 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x2:$x1 ",
+					"code" : "$x2:(mod($x1, 4) + 1) ",
 					"fontname" : "Arial",
 					"id" : "obj-83",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 309.0, 114.5, 163.0, 23.0 ],
+					"patching_rect" : [ 309.0, 114.5, 242.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval $x2:$x1 @out m"
+					"text" : "bach.eval $x2:(mod($x1\\, 4) + 1) @out m"
 				}
 
 			}
@@ -341,6 +346,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 96.5, 149.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -468,13 +474,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-105", 0 ],
-					"source" : [ "obj-110", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-108", 0 ],
 					"source" : [ "obj-3", 0 ]
 				}
@@ -498,6 +497,13 @@
 				"patchline" : 				{
 					"destination" : [ "obj-54", 0 ],
 					"source" : [ "obj-55", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-105", 0 ],
+					"source" : [ "obj-6", 0 ]
 				}
 
 			}
