@@ -395,6 +395,8 @@ t_llll *llll_parse_with_leveltypes(long ac, t_atom *av); // same, with leveltype
 // does it contain spaces or parentheses?
 long llll_contains_separators(char *txt);
 
+t_symbol* gensym_fix_backticks(const char *txt);
+
 
 // return a retained llll from a phonenumber
 // NULL if the phonenumber is not valid

@@ -223,6 +223,30 @@ long llll_contains_separators(char *txt)
     return 0;
 }
 
+t_symbol* gensym_fix_backticks(const char *txt)
+{
+    char *out = bach_newptr(MAX_SYM_LENGTH);
+    strncpy_zero(out, txt + 1, MAX_SYM_LENGTH);
+    char *from = out;
+    char *to = out;
+    while (*from) {
+        if (*from == '`') {
+            from++;
+            if (*from == '`') {
+                from++;
+                *(to++) = '`';
+            }
+        } else {
+            *(to++) = *(from++);
+        }
+    }
+    *to = 0;
+    t_symbol *s = gensym(out);
+    bach_freeptr(out);
+    return s;
+    
+}
+
 t_atomarray *llll_deparse_to_aa(t_llll *ll, long flags)
 {
     t_atom *out = NULL;
