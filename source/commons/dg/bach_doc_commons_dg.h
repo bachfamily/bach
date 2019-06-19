@@ -929,7 +929,7 @@
 	//  This information is constantly synchronized with the <m>rightclickslot</m> attribute. <br />
 	//  - <b>linkto</b> (except bach.slot): this field defines the possible slot linkage. Slot linkage is a way to entangle some notation or 
 	//  display features to the content of a given slot. You can specify here to which feature the slot should be linked, 
-	//  via one of the following symbols: "none", "lyrics", "notecolor", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
+	//  via one of the following symbols: "none", "lyrics", "color", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
 	//  <br />
 	
 

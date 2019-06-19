@@ -2239,6 +2239,67 @@ void llll_subs(t_llll *ll, t_llll *address, t_llll *subs_model)
     return;
 }
 
+// DESTRUCTIVE ON edited
+void llll_replacewith(t_llll *edited, t_llllelem *victim, t_llll *subs_model)
+{
+    if (subs_model->l_size > 0) {
+        t_llll *this_subs = llll_clone_extended(subs_model, edited, 0, NULL);
+        if (victim->l_prev) {
+            victim->l_prev->l_next = this_subs->l_head;
+            this_subs->l_head->l_prev = victim->l_prev;
+        } else {
+            edited->l_head = this_subs->l_head;
+        }
+        
+        if (victim->l_next) {
+            victim->l_next->l_prev = this_subs->l_tail;
+            this_subs->l_tail->l_next = victim->l_next;
+        }
+        else {
+            edited->l_tail = this_subs->l_tail;
+        }
+        
+        edited->l_size += this_subs->l_size - 1;
+        
+        if (t_llll *victim_llll = hatom_getllll(&victim->l_hatom); victim_llll) {
+            if (victim_llll->l_depth < subs_model->l_depth - 1) {
+                llll_upgrade_depth(this_subs);
+            } else if (victim_llll->l_depth >= subs_model->l_depth) {
+                llll_downgrade_depth(edited);
+            }
+        } else if (subs_model->l_depth > 1) {
+            llll_upgrade_depth(this_subs);
+        }
+        llllelem_free(victim);
+        llll_chuck(this_subs);
+    } else {
+        llll_destroyelem(victim);
+    }
+}
+
+
+// ---DESTRUCTIVE on ll
+void llll_keysubs(t_llll *ll, t_llll *keys, t_llll *subs_model)
+{
+    for (t_llllelem *keys_elem = keys->l_head; keys_elem; keys_elem = keys_elem->l_next) {
+        
+        for (t_llllelem *ll_elem = ll->l_head; ll_elem; ll_elem = ll_elem->l_next) {
+            if (t_llll *sub_ll = hatom_getllll(&ll_elem->l_hatom); sub_ll && sub_ll->l_size > 0) {
+                t_llllelem *head = sub_ll->l_head;
+                if (hatom_eq(&head->l_hatom, &keys_elem->l_hatom)) {
+                    for (head = head->l_next; head; head = head->l_next)
+                        llll_destroyelem(head);
+                    llll_chain(sub_ll, llll_clone(subs_model));
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+
+
 // ---DESTRUCTIVE
 void llll_tailpad_with_last(t_llll *ll, long newsize)
 {

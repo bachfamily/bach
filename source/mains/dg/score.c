@@ -893,22 +893,25 @@ void score_send_current_chord(t_score *x){
     double curr_pos_ux = x->r_ob.playing ? x->r_ob.play_head_ux : x->r_ob.play_head_start_ux;
     double curr_pos_ms = x->r_ob.playing ? x->r_ob.play_head_ms : x->r_ob.play_head_start_ms;
     for (voice = x->firstvoice; voice && voice->v_ob.number < x->r_ob.num_voices; voice = voice->next){
-        for (meas = voice->firstmeasure; meas; meas = meas->next){
+        for (meas = voice->firstmeasure; meas; meas = meas->next) {
             if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux > curr_pos_ux)
                 break;
-            if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux < curr_pos_ux)
+            if (meas->tuttipoint_reference->offset_ux + meas->start_barline_offset_ux + meas->width_ux < curr_pos_ux &&
+                (!x->r_ob.dl_spans_ties || !meas->lastchord || !chord_is_all_tied_to((t_notation_obj *)x, meas->lastchord, false, NULL)))
                 continue;
-            for (chord = meas->firstchord; chord; chord = chord->next){
-/*
-                double this_chord_offset_ux = chord->prev ? chord->stem_offset_ux : meas->start_barline_offset_ux;
-                double next_chord_offset_ux = chord->next ? chord->next->stem_offset_ux : meas->start_barline_offset_ux + meas->width_ux;
-                if (meas->tuttipoint_reference->offset_ux + this_chord_offset_ux > curr_pos_ux)
-                    break;
-                if (meas->tuttipoint_reference->offset_ux + this_chord_offset_ux <= curr_pos_ux && 
-                    meas->tuttipoint_reference->offset_ux + next_chord_offset_ux >= curr_pos_ux) {
-*/
+            for (chord = meas->firstchord; chord; ) {
                 double this_chord_ms = chord_get_onset_ms(chord);
-                t_chord *next_chord = chord_get_next(chord);
+                t_chord *next_chord = NULL, *next_chord_to_set = chord->next;
+                if (x->r_ob.dl_spans_ties) {
+                    t_chord *last_all_tied = last_all_tied_chord(chord, false);
+                    next_chord = last_all_tied ? chord_get_next(last_all_tied) : chord_get_next(chord);
+                    if (last_all_tied) {
+                        meas = last_all_tied->parent;
+                        next_chord_to_set = last_all_tied->next;
+                    }
+                } else {
+                    next_chord = chord_get_next(chord);
+                }
                 double next_chord_ms = next_chord ? chord_get_onset_ms(chord_get_next(chord)) : x->r_ob.length_ms_till_last_note;
                 if (this_chord_ms > curr_pos_ms)
                     break;
@@ -918,17 +921,17 @@ void score_send_current_chord(t_score *x){
                         
                         // breakpoints
                         t_bpt *prev_bpt = note->firstbreakpoint;
-                        while (prev_bpt && prev_bpt->next && breakpoint_get_absolute_onset(prev_bpt->next) <= curr_pos_ms)
+                        while (prev_bpt && prev_bpt->next && breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next) <= curr_pos_ms)
                             prev_bpt = prev_bpt->next;
                         
                         if (!prev_bpt || !prev_bpt->next) {
                             llll_appenddouble(out_cents, note->midicents + note->lastbreakpoint->delta_mc, 0, WHITENULL_llll);
                             llll_appendlong(out_vels, x->r_ob.breakpoints_have_velocity ? note->lastbreakpoint->velocity : note->velocity, 0, WHITENULL_llll);
                         } else {
-                            double cents = rescale_with_slope(curr_pos_ms, breakpoint_get_absolute_onset(prev_bpt), breakpoint_get_absolute_onset(prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
+                            double cents = rescale_with_slope(curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next), note->midicents + prev_bpt->delta_mc, note->midicents + prev_bpt->next->delta_mc, prev_bpt->next->slope);
                             double velocity;
                             if (x->r_ob.breakpoints_have_velocity)
-                                velocity = rescale(curr_pos_ms, breakpoint_get_absolute_onset(prev_bpt), breakpoint_get_absolute_onset(prev_bpt->next), prev_bpt->velocity, prev_bpt->next->velocity);
+                                velocity = rescale(curr_pos_ms, breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt), breakpoint_get_absolute_onset((t_notation_obj *)x, prev_bpt->next), prev_bpt->velocity, prev_bpt->next->velocity);
                             else 
                                 velocity = note->velocity;
                             llll_appenddouble(out_cents, cents, 0, WHITENULL_llll);
@@ -937,6 +940,7 @@ void score_send_current_chord(t_score *x){
                         
                     }
                 }
+                chord = next_chord_to_set;
             }
         }
     }
@@ -2526,6 +2530,9 @@ void score_sel_add_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
     }
     
     llll_free(slot_as_llll);
+    
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ADD_SLOTS_TO_SELECTION);
 }
@@ -2562,6 +2569,9 @@ void score_sel_erase_slot(t_score *x, t_symbol *s, long argc, t_atom *argv){
 
     notationobj_sel_erase_slot((t_notation_obj *)x, slotnum, lambda);
     
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_ERASE_SLOTS_FOR_SELECTION);
 }
 
@@ -2586,6 +2596,9 @@ void score_sel_move_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     notationobj_sel_move_slot((t_notation_obj *)x, from, to, false, lambda);
     
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_MOVE_SLOTS_FOR_SELECTION);
 }
 
@@ -2610,6 +2623,9 @@ void score_sel_copy_slot(t_score *x, t_symbol *s, long argc, t_atom *argv)
     
     notationobj_sel_move_slot((t_notation_obj *)x, from, to, true, lambda);
     
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
+
     handle_change_if_there_are_free_undo_ticks((t_notation_obj *) x, k_CHANGED_STANDARD_UNDO_MARKER, k_UNDO_OP_COPY_SLOTS_FOR_SELECTION);
 }
 
@@ -2622,6 +2638,8 @@ void score_sel_change_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_MODIFY_ONE);
     llll_release(args);
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 }
 
 
@@ -2632,6 +2650,8 @@ void score_sel_append_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv
         llll_insertlong_after(1, args->l_head); // inserting dummy position
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_APPEND);
     llll_release(args);
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 }
 
 
@@ -2642,6 +2662,8 @@ void score_sel_prepend_slot_item(t_score *x, t_symbol *s, long argc, t_atom *arg
         llll_insertlong_after(1, args->l_head); // inserting dummy position
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_PREPEND);
     llll_release(args);
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 }
 
 void score_sel_insert_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv)
@@ -2649,6 +2671,8 @@ void score_sel_insert_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_INSERT_AUTO);
     llll_release(args);
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 }
 
 
@@ -2657,6 +2681,8 @@ void score_sel_delete_slot_item(t_score *x, t_symbol *s, long argc, t_atom *argv
     t_llll *args = llllobj_parse_llll((t_object *) x, LLLL_OBJ_UI, NULL, argc, argv, LLLL_PARSE_RETAIN);
     notationobj_sel_change_slot_item_from_params((t_notation_obj *)x, args, s == _llllobj_sym_lambda, k_CHANGESLOTITEM_MODE_DELETE_ONE);
     llll_release(args);
+    if (x->r_ob.need_perform_analysis_and_change)
+        perform_analysis_and_change(x, NULL, NULL, NULL, k_BEAMING_CALCULATION_DONT_CHANGE_ANYTHING);
 }
 
 
@@ -5583,9 +5609,9 @@ int T_EXPORT main(void){
     // @mattr markershavevoices @type int @default 0 @digest If non-zero, measure-attached markers undergo the voice attributes conditions
     // @mattr where @type llll @default null @digest Sets a condition to be matched by selected items (the other ones are discarded)
     // @mattr until @type llll @default null @digest Sets a condition to be matched, otherwise perform the command again, until condition is met
-    // @example goto 1000 @caption set selection to items which are active at 1sec
-    // @example goto [5 7/8] @caption set selection to items which are active at measure 5, after 7/8
-    // @example goto [[] 71/8] @caption set selection to items which are active after 71/8 from the beginning (disregarding the measure)
+    // @example goto time 1000 @caption set selection to items which are active at 1sec
+    // @example goto timepoint [5 7/8] @caption set selection to items which are active at measure 5, after 7/8
+    // @example goto timepoint [[] 71/8] @caption set selection to items which are active after 71/8 from the beginning (disregarding the measure)
     // @example goto next @caption select next notation item
     // @example goto prev @caption select previous notation item
     // @example goto next @repeat 10 @caption select the 10th next notation item
@@ -5594,7 +5620,7 @@ int T_EXPORT main(void){
     // @example goto up @caption move selection up
     // @example goto right @caption move selection right
     // @example goto next @voicemode any @polymode overlap @caption navigate through score polyphonically
-    // @example goto 1000 @include tail @caption set selection to items which are active at 1sec, including their tails (but not their heads)
+    // @example goto time 1000 @include tail @caption set selection to items which are active at 1sec, including their tails (but not their heads)
     // @seealso sel, select, unsel
     class_addmethod(c, (method) score_anything, "goto", A_GIMME, 0);
     
@@ -7502,7 +7528,10 @@ int T_EXPORT main(void){
 
     CLASS_STICKY_ATTR_CLEAR(c, "category");
     
-    
+    CLASS_ATTR_INVISIBLE(c, "fontname", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+    CLASS_ATTR_INVISIBLE(c, "fontface", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+    CLASS_ATTR_INVISIBLE(c, "fontsize", ATTR_GET_OPAQUE | ATTR_SET_OPAQUE);
+
     s_score_class = c;
     class_register(CLASS_BOX, s_score_class);
     
@@ -9862,7 +9891,7 @@ t_score* score_new(t_symbol *s, long argc, t_atom *argv)
         if (x->r_ob.automessage_ac > 0)
             x->r_ob.need_send_automessage = true;
 
-        llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_UI);
+        llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_UI);
         x->r_ob.creatingnewobj = 0;
         
         return x;
@@ -14328,6 +14357,8 @@ void score_mousedoubleclick(t_score *x, t_object *patcherview, t_pt pt, long mod
             clear_preselection((t_notation_obj *)x);
             preselect_elements_in_region_for_mouse_selection(x, 0, x->r_ob.length_ms, -500000, 500000, voice->v_ob.number, voice->v_ob.number, true);
             move_preselecteditems_to_selection((t_notation_obj *)x, k_SELECTION_MODE_FORCE_SELECT, false, false);
+            if (notation_item_is_selected((t_notation_obj *)x, (t_notation_item *)voice))
+                notation_item_delete_from_selection((t_notation_obj *)x, (t_notation_item *)voice);
         }
     }
 

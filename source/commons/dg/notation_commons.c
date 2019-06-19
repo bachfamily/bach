@@ -1246,13 +1246,14 @@ void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect,
     }
 }
 
+
 double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord)
 {
     double max_duration = 0;
     t_note *curr_nt;
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
         for (curr_nt = chord->firstnote; curr_nt; curr_nt = curr_nt->next)
-            if (curr_nt->duration >    max_duration)
+            if (curr_nt->duration > max_duration)
                 max_duration = curr_nt->duration;
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
         max_duration = chord->duration_ms;
@@ -6144,7 +6145,7 @@ t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 
     change_color_depending_on_group(r_ob, &restcolor, chord, k_CHORD);
     
-    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
+    if (!is_chord_played && !is_chord_selected && chord)
         notation_item_change_color_depending_on_slot_linkage(r_ob, &restcolor, (t_notation_item *)chord);
     
     change_color_depending_on_playlockmute(r_ob, &restcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
@@ -6181,17 +6182,17 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
     
     change_color_depending_on_playlockmute(r_ob, &articulationcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                articulationcolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                articulationcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                articulationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                articulationcolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -6212,17 +6213,17 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
     
     change_color_depending_on_playlockmute(r_ob, &annotationcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                annotationcolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                annotationcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                annotationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                annotationcolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -6246,17 +6247,17 @@ t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_s
     
     change_color_depending_on_playlockmute(r_ob, &dynamicscolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                dynamicscolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                dynamicscolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                dynamicscolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                dynamicscolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -14210,6 +14211,34 @@ t_rational get_all_tied_chord_sequence_abs_r_duration(t_chord *chord, char withi
     t_rational tot_duration = long2rat(0);
     for (temp = first; temp; temp = chord_get_next(temp)) {
         tot_duration = rat_rat_sum(tot_duration, rat_abs(temp->r_sym_duration));
+        if (temp == last)
+            break;
+    }
+    return tot_duration;
+}
+
+double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measure)
+{
+    t_chord *first = first_all_tied_chord(chord, within_measure);
+    t_chord *last = last_all_tied_chord(chord, within_measure);
+    t_chord *temp;
+    double tot_duration = 0;
+    for (temp = first; temp; temp = chord_get_next(temp)) {
+        tot_duration += temp->duration_ms;
+        if (temp == last)
+            break;
+    }
+    return tot_duration;
+}
+
+double get_all_tied_note_sequence_duration_ms(t_note *nt)
+{
+    t_note *first = note_get_first_in_tieseq(nt);
+    t_note *last = note_get_last_in_tieseq(nt);
+    t_note *temp;
+    double tot_duration = 0;
+    for (temp = first; temp && temp != WHITENULL; temp = temp->tie_to) {
+        tot_duration += temp->parent->duration_ms;
         if (temp == last)
             break;
     }
@@ -28042,12 +28071,15 @@ t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     temp = note->firstbreakpoint;
     if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) { // partial notes!
         double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-        while (temp && note->parent->onset + temp->rel_x_pos * note->duration < hot_point)
+        double duration = note->duration;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->dl_spans_ties)
+            duration = get_all_tied_note_sequence_duration_ms(note);
+        while (temp && note->parent->onset + temp->rel_x_pos * duration < hot_point)
             temp = temp->next;
-        if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * note->duration != hot_point)) {
+        if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * duration != hot_point)) {
             double rel_x_pos_ratio;
             t_llll *inner2_llll;
-            start_x_pos = (hot_point - note->parent->onset) / note->duration;
+            start_x_pos = (hot_point - note->parent->onset) / duration;
             rel_x_pos_ratio = (start_x_pos - temp->prev->rel_x_pos) /(temp->rel_x_pos - temp->prev->rel_x_pos);
             start_y_pos = temp->prev->delta_mc + rel_x_pos_ratio * (temp->delta_mc - temp->prev->delta_mc);
             if (temp->delta_mc >= temp->prev->delta_mc)
@@ -28165,16 +28197,20 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                 
                 double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
                 
-                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? notation_item_get_duration_ms(r_ob, nitem) : 1) < hot_point))
+                double dur = notation_item_get_duration_ms(r_ob, nitem);
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+                    dur = get_all_tied_note_sequence_duration_ms((t_note *)nitem);
+
+                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? dur : 1) < hot_point))
                     temp_item = temp_item->next;
-                if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) != hot_point)) {
+                if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * dur != hot_point)) {
                     double this_x = ((t_pts *)temp_item->item)->x; double prev_x = ((t_pts *)temp_item->prev->item)->x;
                     double this_y = ((t_pts *)temp_item->item)->y; double prev_y = ((t_pts *)temp_item->prev->item)->y;
                     double this_slope = ((t_pts *)temp_item->item)->slope;
                     double x_ratio, new_y_pos;
                     t_llll *inner5_llll;
                     if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE) {
-                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / notation_item_get_duration_ms(r_ob, nitem);
+                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / dur;
                     } else if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
                         new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem));
                     }
@@ -28194,6 +28230,8 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); //
                         llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
                     }
+                } else if (mode == k_CONSIDER_FOR_SAMPLING && ((t_pts *)temp_item->item)->x == hot_point) {
+                    llll_appenddouble(inner4_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y position only
                 }
             }
             if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {
@@ -28558,13 +28596,16 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
     // slots
     t_llll* out_llll = llll_get();
     int j;
-    llll_appendsym(out_llll, _llllobj_sym_slots, 0, WHITENULL_llll); 
+    llll_appendsym(out_llll, _llllobj_sym_slots);
 
     for (j = 0; j < CONST_MAX_SLOTS; j++) {
-        if (note->slot[j].firstitem || force_all_slots) { // do we need this slot?
+        t_note *note_for_slot = note;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+            note_for_slot = note_get_first_in_tieseq(note);
+        if (note_for_slot->slot[j].firstitem || force_all_slots) { // do we need this slot?
             if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {
-                t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note, mode, j, false);
-                llll_appendllll(out_llll, thisslot_llll, 0, WHITENULL_llll);
+                t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note_for_slot, mode, j, false);
+                llll_appendllll(out_llll, thisslot_llll);
             }
         }
     }
@@ -29060,8 +29101,11 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     
     // see if we need breakpoint extras
     if (mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE) {
-        if (note_breakpoints_are_nontrivial(r_ob, note)) {
-            llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
+        t_note *note_for_bpts = note;
+        if (mode == k_CONSIDER_FOR_SAMPLING && r_ob->dl_spans_ties)
+            note_for_bpts = note_get_first_in_tieseq(note);
+        if (note_breakpoints_are_nontrivial(r_ob, note_for_bpts)) {
+            llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note_for_bpts, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
             if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
                 hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
                 hatom_setlong(&out_llll->l_head->l_next->l_hatom, round(new_vel));
@@ -29072,7 +29116,7 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     }
     
     // see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
-    if (notation_item_has_slot_content(r_ob, (t_notation_item *)note) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
+    if (notation_item_has_slot_content(r_ob, (t_notation_item *)note, mode) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
         llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false), 0, WHITENULL_llll);    
 
     // see if we need articulations
@@ -30100,8 +30144,8 @@ void apply_velocity_handling(t_notation_obj *r_ob, t_jrgba *color, double veloci
 
 void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_notation_item *nitem)
 {
-    if (r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS) {
-        long slotnum = r_ob->link_notecolor_to_slot - 1;
+    if (r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS) {
+        long slotnum = r_ob->link_nitemcolor_to_slot - 1;
         t_slot *slot = notation_item_get_slot(r_ob, nitem, slotnum);
         if (slot) {
             if (slot->firstitem && slot->firstitem->item) {
@@ -30121,9 +30165,9 @@ void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, 
 
 void note_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note)
 {
-    if (r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS) {
+    if (r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS) {
         t_note *note_to_consider = note;
-        long slotnum = r_ob->link_notecolor_to_slot - 1;
+        long slotnum = r_ob->link_nitemcolor_to_slot - 1;
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && r_ob->slotinfo[slotnum].slot_singleslotfortiednotes)
             note_to_consider = note_get_first_in_tieseq(note_to_consider);
         if (note_to_consider)
@@ -30145,7 +30189,7 @@ void durationline_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t
                 if ((r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INTLIST))
                 *color = long_to_color(*((long *)note_to_consider->slot[slotnum].firstitem->item));
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
-                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
+                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
                 *color = floatlist_slot_to_color(&note_to_consider->slot[slotnum]);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
@@ -34415,7 +34459,7 @@ double unscaled_xposition_snap_to_nearest_chord(t_notation_obj *r_ob, double ux,
                             t_bpt *bpt;
                             for (bpt = note->firstbreakpoint; bpt; bpt = bpt->next) {
                                 if (bpt->prev && bpt->next) { // internal pitch breakpoint
-                                    double bpt_ux = onset_to_unscaled_xposition(r_ob, breakpoint_get_absolute_onset(bpt));
+                                    double bpt_ux = onset_to_unscaled_xposition(r_ob, breakpoint_get_absolute_onset(r_ob, bpt));
                                     double bpt_fabs = fabs(bpt_ux - ux);
                                     if (!best_approx || bpt_fabs < best_approx_fabs) {
                                         best_approx = (t_notation_item *)bpt;
@@ -35768,7 +35812,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->show_playhead = false; // we don't show the playhead cursor;
     r_ob->play_head_start_ms = 0.; // initialize playhead cursor
     r_ob->play_head_start_ux = 0.; // idem for score
-    r_ob->link_notecolor_to_slot = 0;
+    r_ob->link_nitemcolor_to_slot = 0;
     r_ob->j_mouse_cursor = BACH_CURSOR_DEFAULT; // initial mouse cursor
     r_ob->slot_minimum_window_uwidth = 0; // no minimum
     r_ob->last_used_octave = 5; 
@@ -38572,13 +38616,15 @@ t_xml_chord_beam_info get_xml_chord_beam_info(t_notation_obj *r_ob, t_chord *cho
 
 
 
-double breakpoint_get_absolute_onset(t_bpt *bpt){
+double breakpoint_get_absolute_onset(t_notation_obj *r_ob, t_bpt *bpt)
+{
     if (!bpt->owner)
         return 0;
     
-    if (bpt->owner->parent->is_score_chord)
-        return chord_get_onset_ms(bpt->owner->parent) + bpt->rel_x_pos + bpt->owner->parent->duration_ms;
-    else 
+    if (bpt->owner->parent->is_score_chord) {
+        double tot_dur = r_ob->dl_spans_ties ? get_all_tied_chord_sequence_duration_ms(bpt->owner->parent, false) : bpt->owner->parent->duration_ms;
+        return chord_get_onset_ms(bpt->owner->parent) + bpt->rel_x_pos * tot_dur;
+    } else
         return bpt->owner->parent->onset + bpt->rel_x_pos * bpt->owner->duration;
 }
 
@@ -43895,7 +43941,7 @@ t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms)
                 for (note = chord->firstnote; note; note = note->next) {
                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE || chord->onset + note->duration > ms) {
                         // the note has something at #ms milliseconds
-                        t_llll *note_ll;
+                        t_llll *note_ll = NULL;
                         
                         r_ob->curr_sampling_ms = ms;
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)

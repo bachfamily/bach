@@ -319,7 +319,7 @@ t_read *read_new(t_symbol *s, short ac, t_atom *av)
 		llllobj_obj_setup((t_llllobj_object *) x, 0, "b4");
 	}
 	
-    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
 
 	if (x && err == MAX_ERR_NONE)
 		return x;

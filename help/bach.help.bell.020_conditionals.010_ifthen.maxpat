@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -47,7 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 318.5, 320.0, 240.0, 98.0 ],
+					"patching_rect" : [ 318.5, 335.0, 240.0, 98.0 ],
 					"text" : "... and the value of an \"if ... then\" statement can be used as the input for any other expression. In this case, if the input data is 10 the length of 6 6 6 (that is, 3), otherwise the length of null (that is, 0)"
 				}
 
@@ -107,8 +107,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 357.5, 291.0, 23.0 ],
+					"patching_rect" : [ 18.0, 372.5, 291.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -123,7 +124,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 282.0, 203.5, 49.0, 23.0 ],
+					"patching_rect" : [ 282.0, 189.5, 49.0, 23.0 ],
 					"text" : "4 5 6 7"
 				}
 
@@ -135,7 +136,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 233.0, 203.5, 37.0, 23.0 ],
+					"patching_rect" : [ 233.0, 189.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -162,7 +163,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 203.5, 41.0, 23.0 ],
+					"patching_rect" : [ 111.0, 189.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -174,7 +175,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 203.5, 29.5, 23.0 ],
+					"patching_rect" : [ 66.0, 189.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -186,7 +187,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 203.5, 29.5, 23.0 ],
+					"patching_rect" : [ 18.0, 189.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -197,7 +198,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 281.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 269.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -212,6 +213,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 232.5, 283.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -226,7 +228,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 71.5, 41.0, 23.0 ],
+					"patching_rect" : [ 111.0, 64.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -238,7 +240,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 71.5, 29.5, 23.0 ],
+					"patching_rect" : [ 66.0, 64.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -265,7 +267,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 71.5, 29.5, 23.0 ],
+					"patching_rect" : [ 18.0, 64.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -291,6 +293,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 100.5, 254.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,

@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -55,7 +55,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 250.0, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 232.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -71,6 +71,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 200.0, 254.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -126,8 +127,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 330.5, 299.0, 38.0 ],
+					"patching_rect" : [ 18.0, 330.5, 301.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -145,7 +147,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 322.0, 293.5, 239.0, 112.0 ],
+					"patching_rect" : [ 322.0, 293.5, 243.0, 112.0 ],
 					"text" : "You can put print in the middle of any expression to monitor what's going on without altering the evaluation; and you can have multiple print statements in your expression, which will print to the Max console the data in the order they get evaluated."
 				}
 
@@ -198,6 +200,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 96.5, 185.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,

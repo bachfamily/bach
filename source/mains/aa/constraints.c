@@ -69,8 +69,8 @@
 
 typedef struct _constraints_rvs
 {
-    long                    r_result;
-    t_bool                    r_accepted;
+    double                   r_result;
+    t_bool                   r_accepted;
     t_llll                  *r_getdomains;
     t_llll                  *r_setdomains;
 } t_constraints_rvs;
@@ -153,7 +153,7 @@ typedef struct _domain {
 
 typedef struct {
     t_hatom *s_hatom;
-    long    s_score;
+    double    s_score;
 } t_scored_hatom;
 
 typedef struct {
@@ -190,7 +190,7 @@ typedef struct _pointmap {
 } t_pointmap;
 
 typedef struct _score_and_good {
-    long    score;
+    double  score;
     t_bool  good;
 } t_score_and_good;
 
@@ -212,10 +212,10 @@ t_max_err constraints_setattr_goalscore(t_constraints *x, void *attr, long ac, t
 
 
 
-long constraints_func(t_constraints *x, t_llll *what, t_bool *accepted, long def_accept = 0, long def_result = 0);
+double constraints_func(t_constraints *x, t_llll *what, t_bool *accepted, long def_accept = 0, double def_result = 0.);
 void constraints_outpos(t_constraints *x, long current_var, long double tree_size_inv, long nvars, long *positions, long double *pos_weights);
-void constraints_outscore(t_constraints *x, long score);
-void constraints_out_detailed_score(t_constraints *x, long score, t_constraint *constraints, t_score_and_good *score_constraintwise);
+void constraints_outscore(t_constraints *x, double score);
+void constraints_out_detailed_score(t_constraints *x, double score, t_constraint *constraints, t_score_and_good *score_constraintwise);
 void constraints_outprovisionals(t_constraints *x, t_hatom **provisionals);
 void constraints_outprovisionals_scored(t_constraints *x, t_scored_hatom **provisionals);
 void constraints_outprovisionals_remapped(t_constraints *x, t_hatom **provisionals, long nvars, long *o2r);
@@ -286,8 +286,8 @@ long *pointmap_get_point(t_pointmap *x);
 void pointmap_free(t_pointmap *x);
 unsigned long point_hash(long *point, long nvars);
 
-long constraints_evaluate(t_constraints *x, t_hatom **tuple, t_constraint *this_constraint, t_bool *accepted);
-long constraints_evaluate_with_remap(t_constraints *x, t_hatom **tuple, t_constraint *this_constraint, long *var_remap_r2o);
+double constraints_evaluate(t_constraints *x, t_hatom **tuple, t_constraint *this_constraint, t_bool *accepted);
+double constraints_evaluate_with_remap(t_constraints *x, t_hatom **tuple, t_constraint *this_constraint, long *var_remap_r2o);
 
 void object_warn_point(t_constraints *x, long nvars, long *point);
 
@@ -765,7 +765,7 @@ void constraints_anything(t_constraints *x, t_symbol *msg, long ac, t_atom *av)
                     if (lambda_llll->l_size) { // if there's an llll then parse it
                         t_hatom *lambda_hatom = &lambda_llll->l_head->l_hatom;
                         if (lambda_hatom->h_type != H_SYM) {
-                            x->n_rvs.r_result = hatom_getlong(lambda_hatom);
+                            x->n_rvs.r_result = hatom_getdouble(lambda_hatom);
                             x->n_rvs.r_accepted = true;
                         } else if (lambda_hatom->h_w.w_sym == _llllobj_sym_setdomains) {
                             llll_retain(lambda_llll);
@@ -780,28 +780,28 @@ void constraints_anything(t_constraints *x, t_symbol *msg, long ac, t_atom *av)
                             x->n_rvs.r_getdomains = lambda_llll;
                             bach_atomic_unlock(&x->n_domain_lock);
                         } else { // any other symbol stands for "reject"
-                            x->n_rvs.r_result = 0;
+                            x->n_rvs.r_result = 0.;
                             x->n_rvs.r_accepted = false;
                         }
                     } else { // if it's just null consider it as reject
-                        x->n_rvs.r_result = 0;
+                        x->n_rvs.r_result = 0.;
                         x->n_rvs.r_accepted = false;
                     }
                     llll_free(lambda_llll);
                 } else { // a badly formed llll is considered as reject
-                    x->n_rvs.r_result = 0;
+                    x->n_rvs.r_result = 0.;
                     x->n_rvs.r_accepted = false;
                 }
             } else {
                 if (msg == _sym_int || msg == _sym_float || msg == _sym_list) {
-                    x->n_rvs.r_result = ac ? atom_getlong(av) : 0;
+                    x->n_rvs.r_result = ac ? atom_getfloat(av) : 0;
                     x->n_rvs.r_accepted = true;
                 } else if (msg == _llllobj_sym_setdomains) {
                     x->n_rvs.r_setdomains = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_RETAIN);
                 } else if (msg == _llllobj_sym_getdomains) {
                     x->n_rvs.r_getdomains = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_RETAIN);
                 } else {
-                    x->n_rvs.r_result = 0;
+                    x->n_rvs.r_result = 0.;
                     x->n_rvs.r_accepted = false;
                 }
             }
@@ -821,7 +821,7 @@ void constraints_output(t_constraints *x, t_llll *solutions, t_max_err err)
     }
 }
 
-long constraints_func(t_constraints *x, t_llll *what, t_bool *accepted, long def_accept, long def_result)
+double constraints_func(t_constraints *x, t_llll *what, t_bool *accepted, long def_accept, double def_result)
 {
     x->n_rvs.r_accepted = def_accept;
     x->n_rvs.r_result = def_result;
@@ -854,7 +854,7 @@ void constraints_outpos(t_constraints *x, long current_var, long double tree_siz
     }
 }
 
-void constraints_outscore(t_constraints *x, long score)
+void constraints_outscore(t_constraints *x, double score)
 {
     if (!x->n_thread)
         llllobj_outlet_float((t_object *) x, LLLL_OBJ_VANILLA, 1, score);
@@ -864,7 +864,7 @@ void constraints_outscore(t_constraints *x, long score)
     }
 }
 
-void constraints_out_detailed_score(t_constraints *x, long score, t_constraint *constraints, t_score_and_good *score_constraintwise)
+void constraints_out_detailed_score(t_constraints *x, double score, t_constraint *constraints, t_score_and_good *score_constraintwise)
 {
     t_llll *scorell = llll_get();
     //llll_appendlong(scorell, score);
@@ -877,14 +877,14 @@ void constraints_out_detailed_score(t_constraints *x, long score, t_constraint *
         for (scorell_elem = scorell->l_head; scorell_elem; scorell_elem = scorell_elem->l_next) {
             t_llll *subll = hatom_getllll(&scorell_elem->l_hatom);
             if (hatom_getsym(&subll->l_head->l_hatom) == this_constraints->c_name) {
-                subll->l_tail->l_hatom.h_w.w_long += score_constraintwise[idx].score;
+                subll->l_tail->l_hatom.h_w.w_double += score_constraintwise[idx].score;
                 break;
             }
         }
         if (!scorell_elem) {
             t_llll *subll = llll_get();
             llll_appendsym(subll, this_constraints->c_name);
-            llll_appendlong(subll, score_constraintwise[idx].score);
+            llll_appenddouble(subll, score_constraintwise[idx].score);
             llll_appendllll(scorell, subll);
         }
     }
@@ -974,8 +974,10 @@ void constraints_provisionals_qelem_do(t_constraints *x)
     out_ll = x->n_provisionals_ll;
     x->n_provisionals_ll = NULL;
     systhread_mutex_unlock(x->n_provisionals_mutex);
-    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, out_ll);
-    llll_free(out_ll);
+    if (out_ll) { // two calls to the qelem might be scheduled without the provisional being set in between
+        llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, out_ll);
+        llll_free(out_ll);
+    }
 }
 
 void constraints_detailed_score_qelem_do(t_constraints *x)
@@ -1025,7 +1027,7 @@ void constraints_assist(t_constraints *x, void *b, long m, long a, char *s)
         switch (a) {
             case 0:    sprintf(s, "llll (%s): Solutions", type);            break; // @out 0 @type llll @digest Found solutions
                                                                                    // @description Solutions are output as an llll whose sublists contain one solution each.
-            case 1:    sprintf(s, "float/int: Advancement");    break; // @out 1 @type int/float @digest Search advancement
+            case 1:    sprintf(s, "float: Advancement");    break; // @out 1 @type int/float @digest Search advancement
                                                                        // @description With the deterministic search engine, the middle outlet returns the current search position in the problem tree, expressed in percentage.
                                                                        // With the heuristic and hungry search engines, it returns the current achieved score. In both cases, the value is updated "live" during the search.
             case 2:    sprintf(s, "llll (%s): Lambda Outlet", type);    break; // @out 2 @type llll @digest Lambda outlet
@@ -1101,7 +1103,7 @@ t_constraints *constraints_new(t_symbol *s, short ac, t_atom *av)
     } else
         error(BACH_CANT_INSTANTIATE);
     
-    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
     
     if (x && err == MAX_ERR_NONE)
         return x;
@@ -1148,7 +1150,7 @@ e_llll_constraints_validity constraints_node_consistency(t_constraints *x, t_dom
                     llll_free(vars_llll);
                 }
                 //                if (!((testfn)(data, test_llll))) { // if the constraint is not satisfied
-                if (!(constraints_func(x, test_llll, &dummy_accepted, 1))) { // if the constraint is not satisfied
+                if (!(constraints_func(x, test_llll, &dummy_accepted, 1.))) { // if the constraint is not satisfied
                     this_hatom->h_type = H_NULL; // we shall erase this value later
                     stripped_vals++;
                 }
@@ -1858,7 +1860,7 @@ t_llll *constraints_weak(t_constraints *x, t_llll *domains_ll, t_llll *constrain
     long picky = x->n_picky;
     long scoredetails = x->n_scoredetails;
     long maxsteps = x->n_maxsteps;
-    long maxscore, minscore, goalscore;
+    double maxscore, minscore, goalscore;
     t_bool has_maxscore, has_minscore, has_goalscore;
     long provisionals = x->n_provisionals;
     t_uint64 problem_size;
@@ -1868,7 +1870,7 @@ t_llll *constraints_weak(t_constraints *x, t_llll *domains_ll, t_llll *constrain
         minscore = 0;
     } else {
         has_minscore = true;
-        minscore = atom_getlong(&x->n_minscore);
+        minscore = atom_getfloat(&x->n_minscore);
     }
     
     if (atom_gettype(&x->n_maxscore) == A_SYM) {
@@ -1876,7 +1878,7 @@ t_llll *constraints_weak(t_constraints *x, t_llll *domains_ll, t_llll *constrain
         maxscore = 0;
     } else {
         has_maxscore = true;
-        maxscore = atom_getlong(&x->n_maxscore);
+        maxscore = atom_getfloat(&x->n_maxscore);
     }
     
     if (atom_gettype(&x->n_goalscore) == A_SYM) {
@@ -1884,7 +1886,7 @@ t_llll *constraints_weak(t_constraints *x, t_llll *domains_ll, t_llll *constrain
         goalscore = 0;
     } else {
         has_goalscore = true;
-        goalscore = atom_getlong(&x->n_goalscore);
+        goalscore = atom_getfloat(&x->n_goalscore);
     }
     
     stms = systime_ms();
@@ -1978,18 +1980,20 @@ t_llll *constraints_weak(t_constraints *x, t_llll *domains_ll, t_llll *constrain
     t_hatom **current_tuple = (t_hatom **) bach_newptrclear((nvars + 2) * sizeof (t_hatom *));
     
     t_hatom **center_tuple = (t_hatom **) bach_newptrclear((nvars + 2) * sizeof(t_hatom *));
-    long used, score;
+    long used;
+    double score;
     t_score_and_good *score_constraintwise = (t_score_and_good *) bach_newptrclear((nconstraints + 2) * sizeof(t_score_and_good));
     t_score_and_good *best_score_constraintwise = (t_score_and_good *) bach_newptrclear((nconstraints + 2) * sizeof(t_score_and_good));
     t_score_and_good *current_score_constraintwise = (t_score_and_good *) bach_newptrclear((nconstraints + 2) * sizeof(t_score_and_good));
     starting_point_for_backtracking = (long *) bach_newptrclear((nvars + 2) * sizeof(long));
-    long result, center_is_good = 0;
-    long best_score, overall_best_score = LONG_MIN;
+    double result;
+    long center_is_good = 0;
+    double best_score, overall_best_score = -DBL_MAX;
     long *current_point = NULL;
     long found_a_good_one = 0;
     t_uint64 numpoints_center, numpoints_peripheric = 0;
     t_bool accepted = false;
-    score = -1;
+    //score = -1;
     do {
         used = 0;
         //score = -1;
@@ -2652,7 +2656,7 @@ t_llll *constraints_hungry(t_constraints *x, t_llll *domains_ll, t_llll *constra
     unsigned long stms, maxtime;
     long provisionals = x->n_provisionals;
     t_llll *garbage = NULL;
-    long score;
+    double score;
     
     stms = systime_ms();
     maxtime = x->n_maxtime > 0 ? stms + x->n_maxtime : 0;
@@ -3618,10 +3622,10 @@ unsigned long point_hash(long *point, long nvars)
 }
 
 
-long constraints_evaluate(t_constraints *x, t_hatom **tuple, t_constraint *this_constraint, t_bool *accepted)
+double constraints_evaluate(t_constraints *x, t_hatom **tuple, t_constraint *this_constraint, t_bool *accepted)
 {
     long *this_constraint_var;
-    long result;
+    double result;
     // let's prepare the llll to send out
     t_llll *test_llll = llll_get();
     llll_appendsym(test_llll, this_constraint->c_name, 0, WHITENULL_llll);
@@ -3651,10 +3655,10 @@ long constraints_evaluate(t_constraints *x, t_hatom **tuple, t_constraint *this_
     return result;
 }
 
-long constraints_evaluate_with_remap(t_constraints *x, t_hatom **tuple, t_constraint *this_constraint, t_bool *accepted, long *var_remap_r2o)
+double constraints_evaluate_with_remap(t_constraints *x, t_hatom **tuple, t_constraint *this_constraint, t_bool *accepted, long *var_remap_r2o)
 {
     long *this_constraint_var;
-    long result;
+    double result;
     // let's prepare the llll to send out
     t_llll *test_llll = llll_get();
     llll_appendsym(test_llll, this_constraint->c_name, 0, WHITENULL_llll);
@@ -3770,7 +3774,7 @@ void post_score_constraintwise(t_constraint *c, t_score_and_good *s)
     post("------score_constraintwise for the following constraint:");
     post_one_constraint(c);
     post("-------is it good? %ld", s->good);
-    post("-------and its score is %ld", s->score);
+    post("-------and its score is %lf", s->score);
     post("---------");
 #endif
 }

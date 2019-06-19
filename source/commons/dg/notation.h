@@ -4152,7 +4152,8 @@ typedef struct _notation_obj
     double        sampling_freq;        ///< Sampling frequency used to properly compute the biquad coefficients in the #k_SLOT_TYPE_FILTER and #k_SLOT_TYPE_DYNFILTER types of slots
     
     // slot linkages: a common way to modify some parameters in bach is to link them with the content of some type of slot 
-    long        link_notecolor_to_slot;            ///< Number of the slot (1-based) which is linked with the notehead color changes, 0 being no linkage for notehead color, and thus notehead colors are the default ones.
+    long        link_nitemcolor_to_slot;            ///< Number of the slot (1-based) which is linked with the notation item color changes (both
+                                                /// for notes and for rests), 0 being no linkage for color, and thus colors are the default ones.
                                                 ///< If the the slot is #k_SLOT_TYPE_INT same colors are given to notes having same slot value
                                                 ///< If the the slot is #k_SLOT_TYPE_FLOAT colors are given as a gradient (red to blue) from the slot (red) minimum to the slot maximum (blue)
                                                 ///< If the the slot is #k_SLOT_TYPE_FLOATLIST, values are interpreted as RGBA values (red, green, blue, alpha coordinates)
@@ -9184,9 +9185,10 @@ void close_slot_window(t_notation_obj *r_ob);
     @ingroup        slots
     @param    r_ob    The notation object
     @param    nitem    The notation item
+    @param    mode     The data considering type
     @return            1 if the notation item has some slot content (of any type), 0 if all slots are empty
  */
-char notation_item_has_slot_content(t_notation_obj *r_ob, t_notation_item *nitem);
+char notation_item_has_slot_content(t_notation_obj *r_ob, t_notation_item *nitem, e_data_considering_types mode = k_CONSIDER_FOR_DUMPING);
 
 
 /**    Obtain the standard color for a given slot window
@@ -10888,10 +10890,11 @@ void append_note_breakpoints_formatted_for_pwgl(t_notation_obj *r_ob, t_llll *th
 
 /** Obtain the absolute onset (in milliseconds) of a given breakpoint. 
     @ingroup            breakpoints
+    @param    r_ob        The notation object
     @param        bpt        The breakpoint
     @return                The absolute onset of the breakpoint in milliseconds.
 */
-double breakpoint_get_absolute_onset(t_bpt *bpt);
+double breakpoint_get_absolute_onset(t_notation_obj *r_ob, t_bpt *bpt);
 
 double note_get_spanning_width(t_notation_obj *r_ob, t_note *nt);
 
@@ -13467,6 +13470,20 @@ t_chord *first_all_tied_chord(t_chord *chord, char within_measure);
             coincide with the chord duration if such chord is neither completely tied to its next nor to its previous one.
  */
 t_rational get_all_tied_chord_sequence_abs_r_duration(t_chord *chord, char within_measure);
+
+
+/**    Get the overall duration (in milliseconds) of a sequence of completely tied chords containing a given chord.
+    @ingroup        notation
+    @param    chord    The chord
+    @param    within_measure    If this is non-zero, only chords within the same measure of the given chords are considered.
+    @return    The overall duration in milliseconds of the sequence of completely tied chords containing a given chord. This will
+                coincide with the chord duration if such chord is neither completely tied to its next nor to its previous one.
+ */
+double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measure);
+
+
+//TBD
+double get_all_tied_note_sequence_duration_ms(t_note *nt);
 
 
 /**    Get the last rest in a sequence of rest containing #chord. If #chord is not a rest, NULL is returned
