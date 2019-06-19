@@ -502,6 +502,8 @@ void bach_donors(t_bach *x)
     post(" ");
     post("**************************************************************************");
     post("bach: automated composer's helper would like to thank our top supporters:");
+    //post(" - Francisco Colasanto"); // uncomment starting from june 2020
+    //post(" - Julien Vincenot"); // uncomment starting from june 2020
     post(" - Cody Brookshire");
     post(" - Dimitri Fergadis");
     post("        (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research)");
@@ -509,7 +511,7 @@ void bach_donors(t_bach *x)
     post(" - Pete Kellock");
     //
     post("...as well as all our patrons:");
-    post("Jean-Julien Filatriau, TJ Shredder, Joost Van Kerkhoven");
+    post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Nikola Kołodziejczyk, TJ Shredder, Joost Van Kerkhoven, Julien Vincenot");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
