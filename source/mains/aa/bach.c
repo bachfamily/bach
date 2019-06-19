@@ -1153,6 +1153,7 @@ void bach_init_bifs(t_bach *x)
     
     (*bifTable)["length"] = new t_fnLength;
     (*bifTable)["depth"] = new t_fnDepth;
+    (*bifTable)["is"] = new t_fnIs;
     (*bifTable)["nth"] = new t_fnNth;
     (*bifTable)["sort"] = new t_fnSort;
     (*bifTable)["contains"] = new t_fnContains;
@@ -1164,6 +1165,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["left"] = new t_fnLeft;
     (*bifTable)["right"] = new t_fnRight;
     (*bifTable)["subs"] = new t_fnSubs;
+    //(*bifTable)["keysubs"] = new t_fnKeysubs;
     (*bifTable)["insert"] = new t_fnInsert;
     (*bifTable)["find"] = new t_fnFind;
     (*bifTable)["finditems"] = new t_fnFinditems;
@@ -1187,7 +1189,8 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["geomser"] = new t_fnGeomser;
     (*bifTable)["map"] = new t_fnMap;
     (*bifTable)["reduce"] = new t_fnReduce;
-    
+    (*bifTable)["apply"] = new t_fnApply;
+
     (*bifTable)["outlet"] = new t_fnOutlet;
     
     (*bifTable)["cos"] = new t_mathUnaryFunctionDD<cos>("cos");

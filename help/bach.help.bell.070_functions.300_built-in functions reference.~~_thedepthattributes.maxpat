@@ -48,7 +48,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 400.0, 403.5, 176.0, 40.0 ],
-					"presentation_linecount" : 2,
 					"text" : "Resembles bach.flat, doesn't it?"
 				}
 
@@ -131,7 +130,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 336.0, 561.0, 36.0 ],
-					"presentation_linecount" : 2,
 					"text" : "The same principle holds for the level, minlevel and maxlevel attributes of flat() and, by the way, you can of course use it with the dataflow-style function call syntax:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -198,8 +196,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 400.0, 234.0, 174.0, 69.0 ],
-					"presentation_linecount" : 4,
+					"patching_rect" : [ 400.0, 234.0, 177.0, 69.0 ],
 					"text" : "The second argument is \"depth\": 2 sets maxdepth, 2 3 sets respectively mindepth and maxdepth."
 				}
 
@@ -231,7 +228,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 38.0, 585.0, 166.0 ],
-					"presentation_linecount" : 11,
 					"text" : "Several bell functions accept the \"mindepth\" and \"maxdepth\" attributes, which are generally the two last ones in the function argument list. They accept each an integer number, controlling essentially the same behavior as in the corresponding bach objects.\nAll those bell functions also accept an attribute called \"depth\", which controls the same parameters through a slightly different syntax: depth can either be a single integer, in which case it sets the maxdepth attribute; or a list of two integers, setting respectively the mindepth and maxdepth attribute.\nThis behavior is meant to mimic what happens with the arguments of various bach objects, in which the one-integer or two-integer cases behave likewise.\nGenerally speaking, the depth argument is meant to be passed by position, whereas mindepth / mindepth are meant to by passed by name, but there is nothing enforcing this anyway.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -287,11 +283,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, depth, level, mindepth, maxdepth, minlevel, maxlevel",
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, depth, level, mindepth, maxdepth, minlevel, maxlevel, argument",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

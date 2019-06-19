@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -82,6 +82,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 118.0, 280.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -114,7 +115,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 522.0, 36.0 ],
-					"text" : "The insert() function inserts one or more elements in a list according to their positions, like the bach.subs object.",
+					"text" : "The insert() function inserts one or more elements in a list according to their positions, like the bach.insert object.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

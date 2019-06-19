@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 72.0, 182.0, 617.0, 539.0 ],
+		"rect" : [ 94.0, 208.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -42,25 +42,107 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-18",
-					"linecount" : 6,
+					"id" : "obj-31",
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 318.5, 335.0, 240.0, 98.0 ],
-					"text" : "... and the value of an \"if ... then\" statement can be used as the input for any other expression. In this case, if the input data is 10 the length of 6 6 6 (that is, 3), otherwise the length of null (that is, 0)"
+					"patching_rect" : [ 332.0, 355.5, 259.0, 112.0 ],
+					"presentation_linecount" : 8,
+					"text" : "Can you figure out what this one does before trying it? —By the way, notice the space after `wrote: it's necessary, as symbols have to be preceded by backticks which would eat up everything that follows until the next space, including operators and parentheses."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-19",
+					"id" : "obj-30",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 328.5, 41.0, 23.0 ],
-					"text" : "10 10"
+					"patching_rect" : [ 61.0, 370.0, 33.0, 23.0 ],
+					"text" : "paul"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-29",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 17.0, 370.0, 33.0, 23.0 ],
+					"text" : "john"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-27",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 17.0, 431.0, 99.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$x2.($x2.$x1.`wrote :-1).`wears ",
+					"id" : "obj-24",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 17.0, 400.0, 309.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80005
+					}
+,
+					"text" : "bach.eval $x2.($x2.$x1.`wrote :-1).`wears @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-23",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 251.0, 295.5, 254.0, 40.0 ],
+					"presentation_linecount" : 2,
+					"text" : "By combining dot and colon operators, you can do quite complex things."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontsize" : 8.32223563179911,
+					"id" : "obj-22",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 150.5, 203.596774193548384, 43.0, 18.0 ],
+					"text" : "loadbang"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-21",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 17.0, 338.5, 99.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
@@ -71,49 +153,53 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 328.5, 29.5, 23.0 ],
-					"text" : "20"
+					"patching_rect" : [ 38.0, 257.0, 84.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "george wrote"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-21",
+					"id" : "obj-19",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 328.5, 29.5, 23.0 ],
-					"text" : "10"
+					"patching_rect" : [ 17.0, 232.0, 79.0, 23.0 ],
+					"text" : "john wears"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-22",
+					"code" : "$x2.($x1:1).($x1:2) ",
+					"id" : "obj-17",
 					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 416.5, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "length(if $x1 == 10 then 6 6 6) ",
-					"id" : "obj-23",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 372.5, 291.0, 23.0 ],
+					"patching_rect" : [ 17.0, 304.0, 226.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval length(if $x1 == 10 then 6 6 6) @out m"
+					"text" : "bach.eval $x2.($x1:1).($x1:2) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-16",
+					"linecount" : 3,
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 150.5, 227.5, 430.0, 52.0 ],
+					"presentation_linecount" : 6,
+					"text" : "[john [wears glasses] [wrote lots of great songs with paul]] [paul [wrote lots of great songs with john] [wears no shoes]] [george [wears jeans] [wrote some great songs]] [ringo [wears rings] [wrote two or three songs]]"
 				}
 
 			}
@@ -124,35 +210,34 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 282.0, 189.5, 49.0, 23.0 ],
-					"text" : "4 5 6 7"
+					"patching_rect" : [ 117.0, 81.5, 35.0, 23.0 ],
+					"text" : "mick"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-14",
+					"fontsize" : 8.32223563179911,
+					"id" : "obj-9",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 162.0, 58.596774193548384, 43.0, 18.0 ],
+					"text" : "loadbang"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-6",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 233.0, 189.5, 37.0, 23.0 ],
-					"text" : "1 2 3"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-8",
-					"linecount" : 4,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 333.0, 209.5, 243.0, 69.0 ],
-					"text" : "... but there are a few difference: first of all, not only the \"if\" clause can be any expression, but the \"then\" clause as well can be any expression..."
+					"patching_rect" : [ 61.0, 81.5, 49.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "george"
 				}
 
 			}
@@ -163,85 +248,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 189.5, 41.0, 23.0 ],
-					"text" : "10 10"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-4",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 189.5, 29.5, 23.0 ],
-					"text" : "20"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-5",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 189.5, 29.5, 23.0 ],
-					"text" : "10"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-6",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 269.5, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "if $x1 == 10 then length($x2) ",
-					"id" : "obj-7",
-					"maxclass" : "newobj",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 232.5, 283.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"embed" : 1,
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval if $x1 == 10 then length($x2) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 64.5, 41.0, 23.0 ],
-					"text" : "10 10"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-1",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 64.5, 29.5, 23.0 ],
-					"text" : "20"
+					"patching_rect" : [ 18.0, 81.5, 37.0, 23.0 ],
+					"text" : "ringo"
 				}
 
 			}
@@ -250,25 +258,26 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-52",
-					"linecount" : 4,
+					"id" : "obj-7",
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 282.0, 77.5, 234.0, 69.0 ],
-					"text" : "This is quite similar to what happens with Max's if statement, except that if the condition is false null is returned..."
+					"patching_rect" : [ 187.5, 125.0, 393.0, 54.0 ],
+					"text" : "The dot operator looks for the given key in first element of each first-level sublist, and, when it finds it it, it returns what follows it, or null if it couldn't be found."
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-53",
+					"linecount" : 2,
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 64.5, 29.5, 23.0 ],
-					"text" : "10"
+					"patching_rect" : [ 162.0, 81.5, 255.0, 38.0 ],
+					"text" : "[john guitar piano] [paul bass guitar piano] [george guitar sitar] [ringo drums]"
 				}
 
 			}
@@ -278,26 +287,27 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 133.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 171.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "if $x1 == 10 then `bingo ",
+					"code" : "$x2.$x1 ",
+					"fontname" : "Arial",
 					"id" : "obj-55",
 					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 100.5, 254.0, 23.0 ],
+					"patching_rect" : [ 18.0, 140.5, 163.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval if $x1 == 10 then `bingo @out m"
+					"text" : "bach.eval $x2.$x1 @out m"
 				}
 
 			}
@@ -310,7 +320,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: return+value",
+					"text" : "See Also: bell+llll, concatenation, precedence, retrieval",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -340,8 +350,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 70.0, 23.0 ],
-					"text" : "If ... then",
+					"patching_rect" : [ 6.0, 8.0, 120.0, 23.0 ],
+					"text" : "Access by keys",
 					"varname" : "title"
 				}
 
@@ -355,7 +365,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, if, then, condition, conditional",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, picking, element, double, colon, nth, lookup",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -369,8 +379,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 378.0, 21.0 ],
-					"text" : "bach.eval allows conditional expressions through the if construct",
+					"patching_rect" : [ 6.0, 32.0, 561.0, 21.0 ],
+					"text" : "The . dot operator allows choosing sublists according to their first element, not unlike bach.keys.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -379,83 +389,85 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-55", 0 ],
-					"source" : [ "obj-1", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 1 ],
-					"source" : [ "obj-14", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 1 ],
 					"source" : [ "obj-15", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-23", 0 ],
+					"destination" : [ "obj-17", 1 ],
+					"order" : 1,
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-24", 1 ],
+					"order" : 0,
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-21", 0 ],
+					"source" : [ "obj-17", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-17", 0 ],
 					"source" : [ "obj-19", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-55", 0 ],
-					"source" : [ "obj-2", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-23", 0 ],
+					"destination" : [ "obj-17", 0 ],
 					"source" : [ "obj-20", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-23", 0 ],
-					"source" : [ "obj-21", 0 ]
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-22", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-22", 0 ],
-					"source" : [ "obj-23", 0 ]
+					"destination" : [ "obj-27", 0 ],
+					"source" : [ "obj-24", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-3", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-4", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 0 ],
-					"source" : [ "obj-5", 0 ]
+					"destination" : [ "obj-24", 0 ],
+					"source" : [ "obj-29", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-55", 0 ],
+					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-24", 0 ],
+					"source" : [ "obj-30", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-55", 1 ],
 					"source" : [ "obj-53", 0 ]
 				}
 
@@ -469,8 +481,15 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-7", 0 ]
+					"destination" : [ "obj-55", 0 ],
+					"source" : [ "obj-6", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-53", 0 ],
+					"source" : [ "obj-9", 0 ]
 				}
 
 			}

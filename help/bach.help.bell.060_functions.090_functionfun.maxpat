@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -91,7 +91,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$funfun = (-> (cos sin):random(1, 2)) ; $funfun()($x1) ",
+					"code" : "$funfun = ( -> (cos sin):random(1, 2)) ; $funfun()($x1) ",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
 					"linecount" : 2,
@@ -99,12 +99,13 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 389.5, 287.0, 38.0 ],
+					"patching_rect" : [ 6.0, 389.5, 292.0, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval $funfun = (-> (cos sin):random(1\\, 2)) \\; $funfun()($x1) @out m"
+					"text" : "bach.eval $funfun = ( -> (cos sin):random(1\\, 2)) \\; $funfun()($x1) @out m"
 				}
 
 			}
@@ -157,6 +158,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 287.5, 282.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -212,8 +214,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 174.5, 257.0, 38.0 ],
+					"patching_rect" : [ 6.0, 174.5, 259.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -270,6 +273,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 76.5, 207.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,

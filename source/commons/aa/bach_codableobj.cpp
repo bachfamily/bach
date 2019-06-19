@@ -385,12 +385,28 @@ void codableobj_appendtodictionary(t_codableobj *x, t_dictionary *d)
 void codableobj_read(t_codableobj *x, t_symbol *s)
 {
     x->c_forceread = false;
+    x->c_readappend = false;
     defer(x, (method) codableobj_doread, s, 0, NULL);
 }
 
 void codableobj_forceread(t_codableobj *x, t_symbol *s)
 {
     x->c_forceread = true;
+    x->c_readappend = false;
+    defer(x, (method) codableobj_doread, s, 0, NULL);
+}
+
+void codableobj_readappend(t_codableobj *x, t_symbol *s)
+{
+    x->c_forceread = false;
+    x->c_readappend = x->c_text != nullptr;
+    defer(x, (method) codableobj_doread, s, 0, NULL);
+}
+
+void codableobj_forcereadappend(t_codableobj *x, t_symbol *s)
+{
+    x->c_forceread = true;
+    x->c_readappend = x->c_text != nullptr;
     defer(x, (method) codableobj_doread, s, 0, NULL);
 }
 
@@ -429,10 +445,20 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
     }
     // allocate memory block that is the size of the file
     sysfile_geteof(fh, &codeLen);
-    newCode = sysmem_newptr(codeLen + 2);
-    newCode[0] = 0;
-    // read in the file
-    sysfile_read(fh, &codeLen, newCode);
+    if (!x->c_readappend) {
+        newCode = sysmem_newptr(codeLen + 2);
+        newCode[0] = 0;
+        // read in the file
+        sysfile_read(fh, &codeLen, newCode);
+    } else {
+        size_t oldLen = strlen(x->c_text); // notice that strlen may be the size of the pointer plus 2 or 1,
+        // according to whether a trailing space has been added or not.
+        size_t newSize = sysmem_ptrsize(x->c_text) + codeLen + 1;
+        newCode = sysmem_newptr(newSize);
+        strncpy_zero(newCode, x->c_text, newSize);
+        sysfile_read(fh, &codeLen, newCode + oldLen);
+        codeLen += oldLen;
+    }
     sysfile_close(fh);
     
     if (isspace(newCode[codeLen - 1])) {
@@ -621,6 +647,12 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     // @copy BACH_DOC_CODABLEOBJ_READ
     class_addmethod(c, (method)codableobj_read,   "read",            A_DEFSYM,    0);
     
+    // @copy BACH_DOC_CODABLEOBJ_READAPPEND
+    class_addmethod(c, (method)codableobj_readappend,   "readappend",            A_DEFSYM,    0);
+    
+    // @copy BACH_DOC_CODABLEOBJ_FORCEREADAPPEND
+    class_addmethod(c, (method)codableobj_forcereadappend,   "forcereadappend",            A_DEFSYM,    0);
+    
     // @copy BACH_DOC_CODABLEOBJ_WRITE
     class_addmethod(c, (method)codableobj_write, "write", A_DEFSYM, 0);
     
@@ -641,7 +673,7 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
         CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
         CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
         CLASS_ATTR_SAVE(c, "embed", 0);
-        CLASS_ATTR_BASIC(c, "embed", 0);
+        //CLASS_ATTR_BASIC(c, "embed", 0);
         
         CLASS_ATTR_CHAR_VARSIZE(c, "lambda", 0, t_codableobj, c_text, c_dummysize, 32767);
         CLASS_ATTR_LABEL(c, "lambda", 0, "Expression For Lambda Function");

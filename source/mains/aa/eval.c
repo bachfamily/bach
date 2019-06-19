@@ -138,8 +138,10 @@ int T_EXPORT main()
     // @copy BACH_DOC_STATIC_ATTR
 
 	CLASS_ATTR_ATOM_LONG(c, "embed",    0,    t_codableobj, c_embed);
+    CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);
     CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
     CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
+    CLASS_ATTR_SAVE(c, "embed", 0);
     //CLASS_ATTR_BASIC(c, "embed", 0);
     //CLASS_ATTR_ACCESSORS(c, "embed", (method)NULL, (method)llllobj_dummy_setter)
     // @description When set to 1, the stored code is saved with the patcher.
