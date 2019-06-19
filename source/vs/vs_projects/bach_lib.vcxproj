@@ -65,6 +65,7 @@
     <ClCompile Include="..\..\commons\dg\bach_jit.c" />
     <ClCompile Include="..\..\commons\dg\bach_math_utilities.c" />
     <ClCompile Include="..\..\commons\dg\bach_slots.c" />
+    <ClCompile Include="..\..\commons\dg\bach_ss.c" />
     <ClCompile Include="..\..\commons\dg\llll_commons_ext.c" />
     <ClCompile Include="..\..\commons\dg\llll_linearalgebra.c" />
     <ClCompile Include="..\..\commons\dg\llll_settheory.c" />
@@ -87,7 +88,6 @@
     <ClCompile Include="..\..\commons\mxml\mxml-search.c" />
     <ClCompile Include="..\..\commons\mxml\mxml-set.c" />
     <ClCompile Include="..\..\commons\mxml\mxml-string.c" />
-    <ClCompile Include="..\..\commons\nn\neuralNetwork.cpp" />
     <ClCompile Include="..\..\commons\SDIF-3.11.4-src\sdif\SdifCheck.c" />
     <ClCompile Include="..\..\commons\SDIF-3.11.4-src\sdif\SdifConvToText.c" />
     <ClCompile Include="..\..\commons\SDIF-3.11.4-src\sdif\SdifErrMess.c" />
@@ -187,9 +187,6 @@
     <ClInclude Include="..\..\commons\mxml\config.h" />
     <ClInclude Include="..\..\commons\mxml\mxml-private.h" />
     <ClInclude Include="..\..\commons\mxml\mxml.h" />
-    <ClInclude Include="..\..\commons\nn\dataEntry.h" />
-    <ClInclude Include="..\..\commons\nn\dataReader.h" />
-    <ClInclude Include="..\..\commons\nn\neuralNetwork.h" />
     <ClInclude Include="..\..\commons\SDIF-3.11.4-src\include\sdif.h" />
     <ClInclude Include="..\..\commons\SDIF-3.11.4-src\include\sdif_version.h" />
     <ClInclude Include="..\..\commons\SDIF-3.11.4-src\sdif\config.h" />
