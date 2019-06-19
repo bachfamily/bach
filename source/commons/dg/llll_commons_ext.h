@@ -1078,6 +1078,12 @@ void llll_poset(t_llll *ll, poset_fn cmpfn, void *data, t_llll **out_edges, t_ll
 t_llllelem *llll_appendelem_clone_preserve_lthing(t_llll *where, t_llllelem *elem, long flags, t_llll *adopter);
 
 
+
+
+// utility, could be put somewhere else
+int fontnameeq(const char * str1, const char * str2);
+
+
 // THESE ONLY WORK FOR LLLL_UI OBJECTS!!!!!!!!!!
 void send_sym_lllls_notification(t_object *x, long outlet_num, t_symbol *router, long count,...);
 void send_sym_lllls_notification_and_free(t_object *x, long outlet_num, t_symbol *router, long count,...); // also frees the lllls given as argument

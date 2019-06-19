@@ -9,6 +9,8 @@
 #endif
 #endif
 
+#include "bach_graphics.h"
+
 #ifdef WIN_VERSION
 
     #include <windows.h>
@@ -43,6 +45,7 @@ int bach_mmi_comp(const t_memmap_item **a, const t_memmap_item **b);
 void bach_poolstatus(t_bach *x);
 void bach_pooldump(t_bach *x);
 void bach_version(t_bach *x);
+void bach_ss(t_bach *x, t_object *obj);
 void bach_printglobals(t_bach *x);
 void bach_printglobalswithvalues(t_bach *x);
 void bach_clearglobals(t_bach *x);
@@ -142,6 +145,7 @@ void ext_main(void *moduleRef)
 	class_addmethod(c, (method) bach_poolstatus, "poolstatus", 0);
 	class_addmethod(c, (method) bach_pooldump, "pooldump", 0);
     class_addmethod(c, (method) bach_version, "version", 0);
+    class_addmethod(c, (method) bach_ss, "ss", A_OBJ, 0);
     class_addmethod(c, (method) bach_printglobals, "printglobals", 0);
     class_addmethod(c, (method) bach_printglobalswithvalues, "printglobalswithvalues", 0);
     class_addmethod(c, (method) bach_clearglobals, "clearglobals", 0);
@@ -168,7 +172,7 @@ void ext_main(void *moduleRef)
 	_llllobj_sym_bachcursors->s_thing = (t_object *)resources;
 #endif
     
-	bach_load_default_font();
+	//bach_load_default_font();
     
 	bach_new(NULL, 0, NULL); // among other things, also fills the version number fields
 	
@@ -445,6 +449,11 @@ void bach_version(t_bach *x)
     dev_post("--- size of t_hatom: %ld", (long) sizeof(t_hatom));
 }
 
+void bach_ss(t_bach *x, t_object *obj)
+{
+    bach_ss_display(obj);
+}
+
 void bach_printglobals(t_bach *x)
 {
     x->b_gvt->postNames();
@@ -492,47 +501,23 @@ void bach_donors(t_bach *x)
 {
     post(" ");
     post("**************************************************************************");
-    post("bach: automated composer's helper would like to thank");
+    post("bach: automated composer's helper would like to thank our top supporters:");
+    //post(" - Francisco Colasanto"); // uncomment starting from june 2020
+    //post(" - Julien Vincenot"); // uncomment starting from june 2020
     post(" - Cody Brookshire");
     post(" - Dimitri Fergadis");
     post("        (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research)");
     post("        Proprietor of Halocyan Records");
     post(" - Pete Kellock");
+    //
+    post("...as well as all our patrons:");
+    post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Nikola Kołodziejczyk, TJ Shredder, Joost Van Kerkhoven, Julien Vincenot");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
     post(" ");
 }
 
-char bach_install_font(char *font_file_name, char force_overwrite)
-{
-    char path[MAX_PATH_CHARS];
-	
-#ifdef WIN_VERSION
-	// Windows
-	// HERE WE NEED TO RETRIEVE THE FONT PATH
-	char mxe_path[MAX_PATH_CHARS];
-	mxe_path[0]=0;
-	// HERE FILL mxe_path with the path of the .mxe file
-	snprintf_zero(path, MAX_PATH_CHARS, "%s/../../media/%s", font_file_name, mxe_path);
-	int result = AddFontResource(path);
-	return result;
-#else
-	// Mac
-	CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.cycling74.bach"));
-    CFURLRef resourcesURL = CFBundleCopyBundleURL(mainBundle);
-    if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX)) // Error: expected unqualified-id before 'if'
-		return 1; // ERROR
-    CFRelease(resourcesURL); // error: expected constructor, destructor or type conversion before '(' token
-	
-	char cmd[3000];
-	snprintf_zero(cmd, 3000, "cp %s \"%s/../../media/%s\" ~/Library/Fonts/", force_overwrite ? "": "-n", path, font_file_name);
-	system(cmd);
-	
-	return 0;
-#endif
-	
-}
 
 
 long parse_version_string(char *str, long *major, long *minor, long *revision, long *maintenance)
@@ -584,13 +569,6 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
 #endif
 	
 
-	
-#ifdef BACH_INSTALL_FONT
-	if (bach_install_font("Microton.ttf", false)) {
-		post("bach could not install the \"November for bach\" font.");
-		post("Please install such font manually: it is located inside the bach package, in the \"extras\" folder.");
-	}
-#endif
 	
 	llll_reset(&x->b_llll_model);
 	x->b_llll_book = (t_llll **) sysmem_newptr(BACH_LLLL_BOOK_SIZE * sizeof(t_llll *));
@@ -1100,9 +1078,17 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
 	return NULL;
 }
 
+#ifdef _obfuscatedfonts
 char bach_load_default_font(void)
 {
+    t_fourcc type = 'FONT';
+    char *filepath = bach_ezlocate_file("Bravura.otf", &type);
+    
 #ifdef WIN_VERSION
+    AddFontResourceExW(filepath, FR_PRIVATE);
+#endif
+    
+#ifdef WIN_VERSION_old
 	HINSTANCE hResInstance = hinst;
 	
 	HRSRC res = FindResource(hResInstance, "#1685", RT_RCDATA);
@@ -1120,7 +1106,7 @@ char bach_load_default_font(void)
 											   &nFonts      	// number of fonts installed
 											   );
 		
-		if(bachFont == 0)
+		if (bachFont == 0)
 		{
 			error("can't load font!");
 		}
@@ -1131,8 +1117,12 @@ char bach_load_default_font(void)
 	// MAC
 	CFErrorRef error = NULL;
 	CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
-	CFURLRef fontURL = mainBundle ? CFBundleCopyResourceURL(mainBundle, CFSTR("johannsebastian"), CFSTR("dat"), NULL) : NULL;
-	
+	//CFURLRef fontURL = mainBundle ? CFBundleCopyResourceURL(mainBundle, CFSTR("johannsebastian"), CFSTR("dat"), NULL) : NULL;
+
+    CFStringRef path = CFStringCreateWithCString(NULL, filepath, kCFStringEncodingMacRoman);
+    bach_freeptr(filepath);
+    CFURLRef fontURL = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
+    
 	if (!mainBundle || !fontURL) {
 		error("Failed to load default bach font.");
 	} else if (!CTFontManagerRegisterFontsForURL(fontURL, kCTFontManagerScopeProcess, &error)) {
@@ -1148,6 +1138,7 @@ char bach_load_default_font(void)
 	return 0;
 
 }
+#endif
 
 long bach_getbuildnumber(void)
 {
@@ -1175,6 +1166,7 @@ void bach_init_bifs(t_bach *x)
     
     (*bifTable)["length"] = new t_fnLength;
     (*bifTable)["depth"] = new t_fnDepth;
+    (*bifTable)["is"] = new t_fnIs;
     (*bifTable)["nth"] = new t_fnNth;
     (*bifTable)["sort"] = new t_fnSort;
     (*bifTable)["contains"] = new t_fnContains;
@@ -1186,6 +1178,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["left"] = new t_fnLeft;
     (*bifTable)["right"] = new t_fnRight;
     (*bifTable)["subs"] = new t_fnSubs;
+    //(*bifTable)["keysubs"] = new t_fnKeysubs;
     (*bifTable)["insert"] = new t_fnInsert;
     (*bifTable)["find"] = new t_fnFind;
     (*bifTable)["finditems"] = new t_fnFinditems;
@@ -1209,7 +1202,8 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["geomser"] = new t_fnGeomser;
     (*bifTable)["map"] = new t_fnMap;
     (*bifTable)["reduce"] = new t_fnReduce;
-    
+    (*bifTable)["apply"] = new t_fnApply;
+
     (*bifTable)["outlet"] = new t_fnOutlet;
     
     (*bifTable)["cos"] = new t_mathUnaryFunctionDD<cos>("cos");
@@ -1290,3 +1284,4 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["#<<"] = new t_mathBinaryFunctionAAA<hatom_op_lshift>("#<<");
     (*bifTable)["#>>"] = new t_mathBinaryFunctionAAA<hatom_op_rshift>("#>>");
 }
+

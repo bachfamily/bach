@@ -2,13 +2,14 @@
 	"patcher" : 	{
 		"fileversion" : 1,
 		"appversion" : 		{
-			"major" : 7,
-			"minor" : 3,
-			"revision" : 4,
+			"major" : 8,
+			"minor" : 0,
+			"revision" : 5,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
+		"classnamespace" : "box",
 		"rect" : [ 100.0, 100.0, 851.0, 493.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
@@ -49,13 +50,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -94,7 +96,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 715.5, 313.0, 64.0, 25.0 ],
-									"style" : "",
 									"text" : "Works"
 								}
 
@@ -107,7 +108,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"patching_rect" : [ 604.5, 397.0, 25.0, 23.0 ],
-									"style" : "",
 									"text" : "t 1"
 								}
 
@@ -123,7 +123,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -136,7 +135,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 522.0, 314.0, 190.0, 23.0 ],
-									"style" : "",
 									"text" : "maxdepth moodepth meedepth"
 								}
 
@@ -149,7 +147,6 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 522.0, 397.0, 73.0, 23.0 ],
-									"style" : "",
 									"text" : "bach.sieve"
 								}
 
@@ -166,7 +163,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout @selectors maxdepth"
 								}
 
@@ -181,7 +177,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 371.5, 314.0, 102.0, 25.0 ],
-									"style" : "",
 									"text" : "Doesn't work"
 								}
 
@@ -194,7 +189,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"patching_rect" : [ 260.5, 398.0, 25.0, 23.0 ],
-									"style" : "",
 									"text" : "t 1"
 								}
 
@@ -210,7 +204,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -223,7 +216,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 178.0, 315.0, 190.0, 23.0 ],
-									"style" : "",
 									"text" : "maxdepth moodepth meedepth"
 								}
 
@@ -236,7 +228,6 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 178.0, 398.0, 73.0, 23.0 ],
-									"style" : "",
 									"text" : "bach.sieve"
 								}
 
@@ -253,7 +244,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout"
 								}
 
@@ -267,7 +257,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 357.0, 88.0, 21.0 ],
-									"style" : "",
 									"text" : "IMPORTANT:",
 									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
@@ -283,7 +272,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 372.0, 140.0, 50.0 ],
-									"style" : "",
 									"text" : "The grab outlet does NOT work with abstractions:"
 								}
 
@@ -299,7 +287,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -312,7 +299,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"patching_rect" : [ 716.5, 229.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "itoa"
 								}
 
@@ -325,7 +311,6 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 716.5, 191.0, 42.0, 23.0 ],
-									"style" : "",
 									"text" : "zl.rev"
 								}
 
@@ -338,7 +323,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "list" ],
 									"patching_rect" : [ 716.5, 159.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "atoi"
 								}
 
@@ -351,7 +335,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 604.0, 113.0, 195.0, 23.0 ],
-									"style" : "",
 									"text" : "`maxdepth moodepth meedepth"
 								}
 
@@ -369,7 +352,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.mapelem @out nt"
 								}
 
@@ -384,7 +366,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 484.0, 172.5, 113.0, 79.0 ],
-									"style" : "",
 									"text" : "equivalent to this\n(... but better, since you don't need to deal with backticks! :-)",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -400,7 +381,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 71.0, 634.0, 36.0 ],
-									"style" : "",
 									"text" : "The rightmost outlet of bach.textout can be used to \"grab\" a object's attributes and backtick them by default.\nHave a look at the difference in this case: \"maxdepth\" is an attribute of bach.mapelem",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -417,7 +397,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -430,7 +409,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"patching_rect" : [ 156.5, 224.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "itoa"
 								}
 
@@ -443,7 +421,6 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 156.5, 186.0, 42.0, 23.0 ],
-									"style" : "",
 									"text" : "zl.rev"
 								}
 
@@ -456,7 +433,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "list" ],
 									"patching_rect" : [ 156.5, 154.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "atoi"
 								}
 
@@ -469,7 +445,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 33.0, 113.0, 190.0, 23.0 ],
-									"style" : "",
 									"text" : "maxdepth moodepth meedepth"
 								}
 
@@ -487,7 +462,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.mapelem @out nt"
 								}
 
@@ -503,7 +477,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -516,7 +489,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"patching_rect" : [ 430.5, 263.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "itoa"
 								}
 
@@ -529,7 +501,6 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 430.5, 225.0, 42.0, 23.0 ],
-									"style" : "",
 									"text" : "zl.rev"
 								}
 
@@ -542,7 +513,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "list" ],
 									"patching_rect" : [ 430.5, 193.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "atoi"
 								}
 
@@ -555,7 +525,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 306.0, 113.0, 190.0, 23.0 ],
-									"style" : "",
 									"text" : "maxdepth moodepth meedepth"
 								}
 
@@ -573,7 +542,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.mapelem @out nt"
 								}
 
@@ -590,7 +558,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout"
 								}
 
@@ -607,7 +574,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 271.327698, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 271.327697999999998, 57.567627000000002 ]
 								}
 
 							}
@@ -838,11 +805,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p autobacktick",
 					"varname" : "basic_tab[4]"
 				}
@@ -859,13 +824,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -905,7 +871,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 496.5, 211.0, 224.0, 40.0 ],
-									"style" : "",
 									"text" : "This is useful in these circumstances"
 								}
 
@@ -920,7 +885,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 247.5, 195.0, 204.0, 25.0 ],
-									"style" : "",
 									"text" : "The \"foo\" symbol is backticked"
 								}
 
@@ -932,8 +896,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 91.327698, 195.0, 144.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 91.327697999999998, 195.0, 144.0, 23.0 ],
 									"text" : "foo bar 2/4 [12 14 [15]]"
 								}
 
@@ -948,7 +911,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 261.5, 155.0, 274.0, 25.0 ],
-									"style" : "",
 									"text" : "The \"moodepth\" symbol is NOT backticked"
 								}
 
@@ -963,7 +925,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 233.5, 119.0, 248.0, 25.0 ],
-									"style" : "",
 									"text" : "The \"maxdepth\" symbol is backticked"
 								}
 
@@ -976,7 +937,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 65.0, 155.0, 190.0, 23.0 ],
-									"style" : "",
 									"text" : "moodepth meedepth maxdepth"
 								}
 
@@ -993,7 +953,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout @selectors maxdepth"
 								}
 
@@ -1006,7 +965,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 496.5, 255.0, 190.0, 23.0 ],
-									"style" : "",
 									"text" : "maxdepth moodepth meedepth"
 								}
 
@@ -1019,7 +977,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"patching_rect" : [ 620.0, 402.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "itoa"
 								}
 
@@ -1032,7 +989,6 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 620.0, 364.0, 42.0, 23.0 ],
-									"style" : "",
 									"text" : "zl.rev"
 								}
 
@@ -1045,7 +1001,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "list" ],
 									"patching_rect" : [ 620.0, 332.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "atoi"
 								}
 
@@ -1063,7 +1018,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.mapelem @out nt"
 								}
 
@@ -1075,7 +1029,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 33.0, 297.0, 36.0, 23.0 ],
-									"style" : "",
 									"text" : "print"
 								}
 
@@ -1092,7 +1045,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout @selectors maxdepth mindepth foo"
 								}
 
@@ -1108,7 +1060,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -1123,7 +1074,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 71.0, 634.0, 36.0 ],
-									"style" : "",
 									"text" : "You can set bach.textout to backtick only specific potential message selectors. This is handy when you want to distinguish between a symbol and a message selector or an attribute name:",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1137,7 +1087,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 33.0, 123.0, 190.0, 23.0 ],
-									"style" : "",
 									"text" : "maxdepth moodepth meedepth"
 								}
 
@@ -1154,7 +1103,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 271.327698, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 271.327697999999998, 57.567627000000002 ]
 								}
 
 							}
@@ -1245,11 +1194,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p \"backticking selectors\"",
 					"varname" : "basic_tab[3]"
 				}
@@ -1266,13 +1213,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -1313,7 +1261,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 249.5, 394.0, 140.0, 55.0 ],
-									"style" : "",
 									"text" : "Nicer to represent absolute pitches"
 								}
 
@@ -1330,7 +1277,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 21.0, 394.0, 166.0, 55.0 ],
-									"style" : "",
 									"text" : "Nice in order to represent intervals (default)"
 								}
 
@@ -1342,7 +1288,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 235.0, 362.0, 169.0, 23.0 ],
-									"style" : "",
 									"text" : "print AllowNegativeOctaves"
 								}
 
@@ -1354,7 +1299,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 21.0, 362.0, 155.0, 23.0 ],
-									"style" : "",
 									"text" : "print NoNegativeOctaves"
 								}
 
@@ -1373,7 +1317,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout @negativeoctaves 0"
 								}
 
@@ -1385,8 +1328,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 123.0, 161.0, 24.0, 24.0 ],
-									"style" : ""
+									"parameter_enable" : 0,
+									"patching_rect" : [ 123.0, 161.0, 24.0, 24.0 ]
 								}
 
 							}
@@ -1397,8 +1340,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 193.327698, 217.0, 130.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 193.327697999999998, 217.0, 130.0, 23.0 ],
 									"text" : "C5 E5 F5 A5 Bb4 A3"
 								}
 
@@ -1411,7 +1353,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 21.0, 217.0, 146.0, 23.0 ],
-									"style" : "",
 									"text" : "C5 C5 C#5 Eb5 F#5 A5"
 								}
 
@@ -1423,8 +1364,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 21.0, 275.0, 191.327698, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 21.0, 275.0, 191.327697999999998, 23.0 ],
 									"text" : "bach.-"
 								}
 
@@ -1439,7 +1379,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 77.0, 557.0, 65.0 ],
-									"style" : "",
 									"text" : "By default bach displays negative pitches with the leading minus (e.g.: -E0). This is convenient when negative pitches represent intervals (in this case: a major third downwards).\nIf you prefer, you can instead display pitches without the leading minus and with a negative octave (in this case: Ab-1).",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1459,7 +1398,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout @negativeoctaves 1"
 								}
 
@@ -1476,7 +1414,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 271.327698, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 271.327697999999998, 57.567627000000002 ]
 								}
 
 							}
@@ -1550,11 +1488,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p \"negative pitches\"",
 					"varname" : "basic_tab[2]"
 				}
@@ -1571,14 +1507,15 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 100.0, 126.0, 851.0, 467.0 ],
+						"classnamespace" : "box",
+						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1612,8 +1549,7 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 97.666664, 342.0, 48.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 97.666663999999997, 342.0, 48.0, 23.0 ],
 									"text" : "print B"
 								}
 
@@ -1625,12 +1561,11 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 169.333328, 189.0, 141.0, 23.0 ],
+									"patching_rect" : [ 169.333327999999995, 189.0, 141.0, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textin @ignore Lr"
 								}
 
@@ -1644,8 +1579,7 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 169.333328, 153.0, 128.0, 23.0 ],
-									"style" : "",
+									"patching_rect" : [ 169.333327999999995, 153.0, 128.0, 23.0 ],
 									"text" : "1/2 1/2+1/4 f[x]+g[x]"
 								}
 
@@ -1659,7 +1593,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 83.0, 287.0, 21.0 ],
-									"style" : "",
 									"text" : "bach.textout works on multiple inlets/outlets too:",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -1672,7 +1605,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 26.0, 342.0, 47.0, 23.0 ],
-									"style" : "",
 									"text" : "print A"
 								}
 
@@ -1689,8 +1621,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 201.0, 305.0, 100.0, 24.0 ],
-									"presentation_rect" : [ 201.0, 305.0, 100.0, 24.0 ]
+									"patching_rect" : [ 201.0, 305.0, 100.0, 24.0 ]
 								}
 
 							}
@@ -1703,12 +1634,11 @@
 									"numinlets" : 2,
 									"numoutlets" : 3,
 									"outlettype" : [ "", "", "" ],
-									"patching_rect" : [ 26.0, 301.0, 162.333328, 23.0 ],
+									"patching_rect" : [ 26.0, 301.0, 162.333327999999995, 23.0 ],
 									"saved_object_attributes" : 									{
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout 2 @escape 0"
 								}
 
@@ -1723,7 +1653,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 26.0, 112.0, 199.0, 23.0 ],
-									"style" : "",
 									"text" : "`MyHD:/Path/To/Help(1965).mp3"
 								}
 
@@ -1740,7 +1669,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"parameter_enable" : 0,
-									"patching_rect" : [ 10.0, 10.0, 271.327698, 57.567627 ]
+									"patching_rect" : [ 10.0, 10.0, 271.327697999999998, 57.567627000000002 ]
 								}
 
 							}
@@ -1789,11 +1718,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p \"multi llll\"",
 					"varname" : "basic_tab[1]"
 				}
@@ -1814,7 +1741,6 @@
 						"parameter_enable" : 0
 					}
 ,
-					"style" : "",
 					"text" : "js helpstarter.js bach.textout"
 				}
 
@@ -1830,14 +1756,15 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
-						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
+						"classnamespace" : "box",
+						"rect" : [ 100.0, 126.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1874,7 +1801,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 438.0, 88.0, 21.0 ],
-									"style" : "",
 									"text" : "IMPORTANT:",
 									"textcolor" : [ 0.792157, 0.0, 0.0, 1.0 ]
 								}
@@ -1889,7 +1815,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 99.0, 438.0, 504.0, 21.0 ],
-									"style" : "",
 									"text" : "bach.textout ALWAYS outputs content in textual form. Hence, it has no @out attribute!"
 								}
 
@@ -1905,7 +1830,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print"
 								}
 
@@ -1918,7 +1842,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "int" ],
 									"patching_rect" : [ 729.5, 330.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "itoa"
 								}
 
@@ -1931,7 +1854,6 @@
 									"numoutlets" : 2,
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 729.5, 292.0, 42.0, 23.0 ],
-									"style" : "",
 									"text" : "zl.rev"
 								}
 
@@ -1944,7 +1866,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "list" ],
 									"patching_rect" : [ 729.5, 260.0, 40.0, 23.0 ],
-									"style" : "",
 									"text" : "atoi"
 								}
 
@@ -1957,7 +1878,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 569.0, 186.0, 190.0, 23.0 ],
-									"style" : "",
 									"text" : "maxdepth moodepth meedepth"
 								}
 
@@ -1974,7 +1894,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.mapelem @out nt"
 								}
 
@@ -1991,7 +1910,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout"
 								}
 
@@ -2007,7 +1925,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 248.5, 378.5, 377.0, 54.0 ],
-									"style" : "",
 									"text" : "Beware if you send the non-escaped llll to bach objects, including bach.print, they will parse it anew as if it were a standard message, and this might NOT be what you want"
 								}
 
@@ -2023,7 +1940,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.print Beware @error 2"
 								}
 
@@ -2040,7 +1956,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 155.0, 314.0, 140.0, 55.0 ],
-									"style" : "",
 									"text" : "Needed to be read again by bach"
 								}
 
@@ -2057,7 +1972,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 26.0, 314.0, 87.0, 55.0 ],
-									"style" : "",
 									"text" : "Probably for Max stuff"
 								}
 
@@ -2069,7 +1983,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 174.5, 285.0, 90.0, 23.0 ],
-									"style" : "",
 									"text" : "print Escaped"
 								}
 
@@ -2085,7 +1998,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 333.5, 229.5, 147.0, 54.0 ],
-									"style" : "",
 									"text" : "Use backticks for ambiguous symbols\n(default)"
 								}
 
@@ -2104,7 +2016,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout @escape 1"
 								}
 
@@ -2119,7 +2030,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 182.0, 210.0, 100.0, 25.0 ],
-									"style" : "",
 									"text" : "No escaping"
 								}
 
@@ -2134,7 +2044,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 10.0, 132.0, 675.0, 36.0 ],
-									"style" : "",
 									"text" : "You can set the escaping style and further attributes only as static attributes in the message box (as for bach.args).\nThe \"escape 0\" option is usually convenient to talk directly to Max, without any cumbersom backtick.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -2147,7 +2056,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 26.0, 284.0, 110.0, 23.0 ],
-									"style" : "",
 									"text" : "print NotEscaped"
 								}
 
@@ -2166,7 +2074,6 @@
 										"versionnumber" : 70911
 									}
 ,
-									"style" : "",
 									"text" : "bach.textout @escape 0"
 								}
 
@@ -2181,7 +2088,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 26.0, 175.0, 367.0, 23.0 ],
-									"style" : "",
 									"text" : "`MyHD:/Path/To/Help(1965).mp3 1/2 `1/2 [ 1/2+1/4 `f[x]+g[x] ]"
 								}
 
@@ -2294,6 +2200,7 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-5", 0 ],
+									"midpoints" : [ 35.5, 201.0, 12.0, 201.0, 12.0, 243.0, 171.0, 243.0, 171.0, 240.0, 184.0, 240.0 ],
 									"order" : 0,
 									"source" : [ "obj-9", 0 ]
 								}
@@ -2308,11 +2215,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p basic",
 					"varname" : "basic_tab"
 				}
@@ -2330,7 +2235,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 10.0, 10.0, 271.327698, 57.567627 ]
+					"patching_rect" : [ 10.0, 10.0, 271.327697999999998, 57.567627000000002 ]
 				}
 
 			}
@@ -2345,13 +2250,14 @@
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
-							"major" : 7,
-							"minor" : 3,
-							"revision" : 4,
+							"major" : 8,
+							"minor" : 0,
+							"revision" : 5,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
+						"classnamespace" : "box",
 						"rect" : [ 0.0, 26.0, 851.0, 467.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
@@ -2390,11 +2296,9 @@
 						"digest" : "",
 						"fontsize" : 13.0,
 						"globalpatchername" : "",
-						"style" : "",
 						"tags" : ""
 					}
 ,
-					"style" : "",
 					"text" : "p ?",
 					"varname" : "q_tab"
 				}

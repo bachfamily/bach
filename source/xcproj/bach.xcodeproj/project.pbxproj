@@ -245,6 +245,7 @@
 		1E784F9820274BC400F11D75 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		1E784FA220274C1200F11D75 /* recurser.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E784FA120274C1200F11D75 /* recurser.c */; };
 		1E7A1D4620FCEB030051B9E8 /* notation_export.c in Sources */ = {isa = PBXBuildFile; fileRef = 1E7A1D4420FCEB020051B9E8 /* notation_export.c */; };
+		1EAE5C1E2288532C005487F4 /* bach_ss.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EAE5C1C2288532B005487F4 /* bach_ss.c */; };
 		1EB4D4691610C9740041ABFB /* roll.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4681610C9740041ABFB /* roll.h */; };
 		1EB4D4811610CB740041ABFB /* roll_files.c in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D47F1610CB740041ABFB /* roll_files.c */; };
 		1EB4D4821610CB740041ABFB /* roll_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4801610CB740041ABFB /* roll_files.h */; };
@@ -611,7 +612,6 @@
 		918131011611B80100473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		918131021611B80200473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		9182E8D1145F093800CDFBA9 /* pipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9182E8D0145F093800CDFBA9 /* pipe.c */; };
-		91847A391A6E3E70002F0772 /* johannsebastian.dat in Resources */ = {isa = PBXBuildFile; fileRef = 91847A381A6E3E70002F0772 /* johannsebastian.dat */; };
 		9186870317CCF87F003CC2DC /* write.c in Sources */ = {isa = PBXBuildFile; fileRef = 910AC1FC127EDAFC0018DFE3 /* write.c */; };
 		9186870517CCF8D2003CC2DC /* hypercomment.c in Sources */ = {isa = PBXBuildFile; fileRef = 911FC5C217AF9895004E8E49 /* hypercomment.c */; };
 		918C3BD0124A516F003D216B /* mdelace.c in Sources */ = {isa = PBXBuildFile; fileRef = 918C3BCF124A516F003D216B /* mdelace.c */; };
@@ -2853,6 +2853,7 @@
 		1E784FA120274C1200F11D75 /* recurser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = recurser.c; sourceTree = "<group>"; };
 		1E7A1D4420FCEB020051B9E8 /* notation_export.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_export.c; sourceTree = "<group>"; };
 		1E9026EE150FC5380005B502 /* bach_doc_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_doc_groups.h; sourceTree = "<group>"; };
+		1EAE5C1C2288532B005487F4 /* bach_ss.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = bach_ss.c; sourceTree = "<group>"; };
 		1EB4D4681610C9740041ABFB /* roll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll.h; sourceTree = "<group>"; };
 		1EB4D47F1610CB740041ABFB /* roll_files.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = roll_files.c; sourceTree = "<group>"; };
 		1EB4D4801610CB740041ABFB /* roll_files.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = roll_files.h; sourceTree = "<group>"; };
@@ -3278,7 +3279,6 @@
 		9182E8CB145F086A00CDFBA9 /* bach.pipe.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.pipe.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		9182E8D0145F093800CDFBA9 /* pipe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pipe.c; sourceTree = "<group>"; };
 		91843D502068096B00983C6E /* code.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = code.xcodeproj; path = ../../../code/source/xcproj/code.xcodeproj; sourceTree = SOURCE_ROOT; };
-		91847A381A6E3E70002F0772 /* johannsebastian.dat */ = {isa = PBXFileReference; lastKnownFileType = file; path = johannsebastian.dat; sourceTree = "<group>"; };
 		918C3BCB124A512D003D216B /* bach.mdelace.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.mdelace.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		918C3BCF124A516F003D216B /* mdelace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdelace.c; sourceTree = "<group>"; };
 		918C3C12124B3323003D216B /* bach.union.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.union.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5654,6 +5654,7 @@
 				1E53253C20FB7296001C4EAF /* bach_jit.h */,
 				1EC5F4711BDFC21600669257 /* bach_graphics.h */,
 				1EC5F4721BDFC21600669257 /* bach_graphics.c */,
+				1EAE5C1C2288532B005487F4 /* bach_ss.c */,
 				91D5489D19B58F5F00BBFE1A /* bach_cursors.h */,
 				91D5489E19B58F5F00BBFE1A /* bach_cursors.c */,
 				91CE8D951763927400CF5CD6 /* bach_doc_commons_dg.h */,
@@ -5882,18 +5883,9 @@
 			path = ../abstractions;
 			sourceTree = "<group>";
 		};
-		91CEF8311A276361005DADB6 /* fonts */ = {
-			isa = PBXGroup;
-			children = (
-				91847A381A6E3E70002F0772 /* johannsebastian.dat */,
-			);
-			path = fonts;
-			sourceTree = "<group>";
-		};
 		91D5486019B58D8E00BBFE1A /* resources */ = {
 			isa = PBXGroup;
 			children = (
-				91CEF8311A276361005DADB6 /* fonts */,
 				91D5486119B58D8E00BBFE1A /* cursors */,
 				91D5487619B58D8F00BBFE1A /* icons */,
 			);
@@ -10203,7 +10195,6 @@
 				91D5488C19B58D8F00BBFE1A /* cursor_note_fourway.png in Resources */,
 				91D5489719B58D8F00BBFE1A /* icon_mixedselection.png in Resources */,
 				91D5488419B58D8F00BBFE1A /* cursor_delete.png in Resources */,
-				91847A391A6E3E70002F0772 /* johannsebastian.dat in Resources */,
 				916120401DD3D536003CEE3A /* cursor_cut.png in Resources */,
 				91D5489219B58D8F00BBFE1A /* cursor_scale.png in Resources */,
 				91D5489319B58D8F00BBFE1A /* cursor_switch.png in Resources */,
@@ -12133,6 +12124,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				912AB50E14FD3FF10081E2B5 /* bach.c in Sources */,
+				1EAE5C1E2288532C005487F4 /* bach_ss.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

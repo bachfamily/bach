@@ -2140,7 +2140,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
 
         t_llll *args_ll_flat = llll_clone(args_ll);
         llll_flatten(args_ll_flat, 0, 0);
-        this_keys = x->n_keys = (t_playkeys_key *) bach_newptr((args_ll_flat->l_size + 1) * sizeof(t_playkeys_key));
+        this_keys = x->n_keys = (t_playkeys_key *) bach_newptr((args_ll_flat ? args_ll_flat->l_size + 1 : 1) * sizeof(t_playkeys_key));
         llll_free(args_ll_flat);
         
         
@@ -2157,8 +2157,8 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
         
         attr_args_process(x, ac, av);
         
-        if (!args_ll->l_head) {
-            object_error((t_object *)x, "No keys defined.");
+        if (!args_ll || !args_ll->l_head) {
+            object_error((t_object *)x, "No keys defined, or wrong keys syntax.");
             llll_free(args_ll);
             llll_free(args_ll_flat);
             return NULL;
@@ -2369,7 +2369,7 @@ t_playkeys *playkeys_new(t_symbol *s, short ac, t_atom *av)
     } else
         error(BACH_CANT_INSTANTIATE);
     
-    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
     if (x && err == MAX_ERR_NONE)
         return x;
     

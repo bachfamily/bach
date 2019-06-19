@@ -645,6 +645,7 @@ t_atom_long llllobj_get_version_number(t_object *x, e_llllobj_obj_types types);
 // sets the object version number as the current one
 // should be called by each object at the end of its constructor
 void llllobj_set_current_version_number(t_object *x, e_llllobj_obj_types type);
+void llllobj_set_current_version_number_and_ss(t_object *x, e_llllobj_obj_types type);
 
 
 // sets the object version number as a specified one (useful before handling backward compatibility routines)
@@ -738,6 +739,7 @@ t_max_err llllobj_dummy_setter(t_object *x, void *attr, long ac, t_atom *av);
 
 
 
+char *bach_ezlocate_file(const char *file_name, t_fourcc *file_type);
 
 
 

@@ -1246,13 +1246,14 @@ void notationobj_paint_legend(t_notation_obj *r_ob, t_jgraphics *g, t_rect rect,
     }
 }
 
+
 double chord_get_max_duration(t_notation_obj *r_ob, t_chord *chord)
 {
     double max_duration = 0;
     t_note *curr_nt;
     if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL){
         for (curr_nt = chord->firstnote; curr_nt; curr_nt = curr_nt->next)
-            if (curr_nt->duration >    max_duration)
+            if (curr_nt->duration > max_duration)
                 max_duration = curr_nt->duration;
     } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
         max_duration = chord->duration_ms;
@@ -6144,7 +6145,7 @@ t_jrgba rest_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_selec
 
     change_color_depending_on_group(r_ob, &restcolor, chord, k_CHORD);
     
-    if (!is_chord_played && !is_chord_selected && chord && chord->firstnote)
+    if (!is_chord_played && !is_chord_selected && chord)
         notation_item_change_color_depending_on_slot_linkage(r_ob, &restcolor, (t_notation_item *)chord);
     
     change_color_depending_on_playlockmute(r_ob, &restcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
@@ -6181,17 +6182,17 @@ t_jrgba articulation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_cho
     
     change_color_depending_on_playlockmute(r_ob, &articulationcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                articulationcolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                articulationcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                articulationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                articulationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                articulationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                articulationcolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -6212,17 +6213,17 @@ t_jrgba annotation_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord
     
     change_color_depending_on_playlockmute(r_ob, &annotationcolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                annotationcolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                annotationcolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                annotationcolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                annotationcolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                annotationcolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                annotationcolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -6246,17 +6247,17 @@ t_jrgba dynamics_get_color(t_notation_obj *r_ob, t_chord* chord, char is_chord_s
     
     change_color_depending_on_playlockmute(r_ob, &dynamicscolor, is_chord_selected, is_chord_played, is_chord_locked, is_chord_muted, is_chord_solo, is_chord_linear_edited);
     
-    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
+    if (!is_chord_played && !is_chord_selected && chord && r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS && chord->firstnote) {
         t_note *note = chord->firstnote;
-        if (note->slot[r_ob->link_notecolor_to_slot-1].firstitem && note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item) {
-            if ((r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
-                dynamicscolor = long_to_color(*((long *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item));
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
-                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[1], false);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
-                dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_notecolor_to_slot-1]);
-            else if (r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
-                dynamicscolor = *((t_jrgba *)note->slot[r_ob->link_notecolor_to_slot-1].firstitem->item);
+        if (note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem && note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item) {
+            if ((r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_INTLIST))
+                dynamicscolor = long_to_color(*((long *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item));
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOAT)
+                dynamicscolor = double_to_color(*((double *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[1], false);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_FLOATLIST)
+                dynamicscolor = floatlist_slot_to_color(&note->slot[r_ob->link_nitemcolor_to_slot-1]);
+            else if (r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_type == k_SLOT_TYPE_COLOR)
+                dynamicscolor = *((t_jrgba *)note->slot[r_ob->link_nitemcolor_to_slot-1].firstitem->item);
         }
     }
     
@@ -6409,14 +6410,19 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     long i;
     double base_pt = 24;
     
-    if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    if (fontnameeq(font->s_name, "November for bach")) {
         assign_noteheads_chars(r_ob, 4, 'R', 'S', 'T', 'U');
         assign_noteheads_shifts(r_ob, -0.1, -3.6, 0., -4.2);
         assign_noteheads_uwidths(r_ob, 4, 9., 9., 7.5, 7.5);
-//        assign_noteheads_uwidths(r_ob, 4, 8., 8., 7.9, 7.9);
         assign_noteheads_dl_start_shift(r_ob, -0.7);
         
-    } else if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    } else if (fontnameeq(font->s_name, "Bravura")) {
+        assign_noteheads_chars(r_ob, 4, 57504, 57506, 57507, 57508);
+        assign_noteheads_shifts(r_ob, 0., 18.3, 0., 3.2); // TO DO
+        assign_noteheads_uwidths(r_ob, 4, 9., 9., 7.1, 7.1); // TO DO
+        assign_noteheads_dl_start_shift(r_ob, -0.7); // TO DO
+            
+    } else if (fontnameeq(font->s_name, "Maestro")) {
         assign_noteheads_chars(r_ob, 4, 87, 119, 729, 339);
 //        assign_noteheads_shifts(r_ob, 0.3, 4.9, 0.2, 3.2);
 //        assign_noteheads_uwidths(r_ob, 4, 8., 8., 7.85, 7.85);
@@ -6424,7 +6430,7 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         assign_noteheads_uwidths(r_ob, 4, 8., 8., 7.0, 7.0);
         assign_noteheads_dl_start_shift(r_ob, -0.7);
 
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         
         assign_noteheads_chars(r_ob, 4, 61527, 61559, 61690, 61647);
 //        assign_noteheads_shifts(r_ob, 0.2, -0.15, 0.6, -0.4);
@@ -6433,14 +6439,14 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         assign_noteheads_uwidths(r_ob, 4, 9.4, 8.4, 6.1, 6.1);
         assign_noteheads_dl_start_shift(r_ob, -0.55);
 
-    } else if ((strcmp(font->s_name, "Sonora") == 0) || (strcmp(font->s_name, "sonora") == 0)) {
+    } else if (fontnameeq(font->s_name, "Sonora")) {
         base_pt = 40;
         assign_noteheads_chars(r_ob, 4, 87, 87, 237, 339);
         assign_noteheads_shifts(r_ob, 0.2, 3.15, 0., 0.4);
         assign_noteheads_uwidths(r_ob, 4, 8., 7.6, 7.0, 7.0);
         assign_noteheads_dl_start_shift(r_ob, -0.55);
 
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         
         assign_noteheads_chars(r_ob, 4, 87, 119, 729, 339);
 //        assign_noteheads_shifts(r_ob, 0.25, 2.1, 0., 0.);
@@ -6493,9 +6499,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_CROSS; // *** NOTEHEAD: CROSS ***
     set_notehead_names(ntp, i, gensym("cross"), gensym("cross"), gensym("x"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61632);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'X');
     } else {
         set_all_unicode_characters(r_ob, i, 191);
@@ -6506,9 +6512,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 
     i = k_NOTEHEAD_DIAMOND;
     set_notehead_names(ntp, i, gensym("diamond"), gensym("diamond"), gensym("diam"), gensym("harmonic"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61519);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'V');
     } else {
         set_all_unicode_characters(r_ob, i, 'O');
@@ -6526,9 +6532,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_ACCENT;
     set_notehead_names(ntp, i, gensym("accent"), gensym("acc"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61502);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '/');
     } else {
         set_all_unicode_characters(r_ob, i, 62);
@@ -6540,9 +6546,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_PLUS;
     set_notehead_names(ntp, i, gensym("plus"), gensym("plus"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 61483);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'z');
     } else {
         set_all_unicode_characters(r_ob, i, 710);
@@ -6551,9 +6557,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_BLACK_SQUARE;
     set_notehead_names(ntp, i, gensym("blacksquare"), gensym("blacksquare"), gensym("blacksq"), gensym("bsquare"), gensym("bsq"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'Y');
     } else {
         set_all_unicode_characters(r_ob, i, 8211);
@@ -6563,9 +6569,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_WHITE_SQUARE;
     set_notehead_names(ntp, i, gensym("whitesquare"), gensym("whitesquare"), gensym("whitesq"), gensym("wsquare"), gensym("wsq"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '\\');
     } else {
         set_all_unicode_characters(r_ob, i, '8800');
@@ -6575,9 +6581,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     //    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
     i = k_NOTEHEAD_SQUARE;
     set_notehead_names(ntp, i, gensym("square"), gensym("square"), gensym("sq"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '\\');
         ntp->nhpref[i].unicode_character_black = 'Y';
     } else {
@@ -6589,9 +6595,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_BLACK_RHOMBUS;
     set_notehead_names(ntp, i, gensym("blackrhombus"), gensym("blackrhombus"), gensym("blackrh"), gensym("brhombus"), gensym("brh"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '[');
     } else {
         set_all_unicode_characters(r_ob, i, 8218);
@@ -6601,9 +6607,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_WHITE_RHOMBUS;
     set_notehead_names(ntp, i, gensym("whiterhombus"), gensym("whiterhombus"), gensym("whiterh"), gensym("wrhombus"), gensym("wrh"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, '^');
     } else {
         set_all_unicode_characters(r_ob, i, 183);
@@ -6614,9 +6620,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         i = k_NOTEHEAD_RHOMBUS;
         set_notehead_names(ntp, i, gensym("rhombus"), gensym("rhombus"), gensym("rh"));
-        if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+        if (fontnameeq(font->s_name, "Boulez")) {
             set_all_unicode_characters(r_ob, i, 0);
-        } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+        } else if (fontnameeq(font->s_name, "November for bach")) {
             set_all_unicode_characters(r_ob, i, '^');
             ntp->nhpref[i].unicode_character_black = '[';
         } else {
@@ -6631,9 +6637,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_BLACK_TRIANGLE;
     set_notehead_names(ntp, i, gensym("blacktriangle"), gensym("blacktriangle"), gensym("blacktri"), gensym("btri"), gensym("btriangle"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, 'Z');
     } else {
         set_all_unicode_characters(r_ob, i, 177);
@@ -6644,9 +6650,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     
     i = k_NOTEHEAD_WHITE_TRIANGLE;
     set_notehead_names(ntp, i, gensym("whitetriangle"), gensym("whitetriangle"), gensym("whitetri"), gensym("wtri"), gensym("wtriangle"));
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         set_all_unicode_characters(r_ob, i, 0);
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         set_all_unicode_characters(r_ob, i, ']');
     } else {
         set_all_unicode_characters(r_ob, i, 8212);
@@ -6658,9 +6664,9 @@ void load_noteheads_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //    if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
         i = k_NOTEHEAD_TRIANGLE;
         set_notehead_names(ntp, i, gensym("triangle"), gensym("triangle"), gensym("tri"));
-        if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+        if (fontnameeq(font->s_name, "Boulez")) {
             set_all_unicode_characters(r_ob, i, 0);
-        } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+        } else if (fontnameeq(font->s_name, "November for bach")) {
             set_all_unicode_characters(r_ob, i, ']');
             ntp->nhpref[i].unicode_character_black = 'Z';
         } else {
@@ -6749,7 +6755,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 //    fill_double_array(r_ob->notation_typo_preferences.rest_uwidths, 9, 7.3, 7.3, 7.3, 7.1, 7.0, 7.1,  7.8,  8.7,   9.6);
     fill_double_array(r_ob->notation_typo_preferences.rest_uwidths, 9, 7.3, 7.7, 7.7, 7.1, 8.1, 8.6,  9.1,  9.4,   10.);
     
-    if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    if (fontnameeq(font->s_name, "November for bach")) {
 #ifdef BACH_JUCE
         juce_mul = 2.5;
 #endif
@@ -6783,7 +6789,30 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.; //55;
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.; //55;
         
-    } else if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    } else if (fontnameeq(font->s_name, "Bravura")) {
+        r_ob->notation_typo_preferences.base_pt = 24. * juce_mul;
+        r_ob->notation_typo_preferences.base_pt_ts = 24. * juce_mul;
+        r_ob->notation_typo_preferences.ts_uy_shift = -42; // TO DO
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.numbers_unicode_characters, 10, 57472, 57473, 57474, 57475, 57476, 57477, 57478, 57479, 57480, 57481);
+        r_ob->notation_typo_preferences.plus_unicode_character = 57484;
+        r_ob->notation_typo_preferences.dot_unicode_character = 57852;
+        r_ob->notation_typo_preferences.rest_ux_shift = 0.; // TO DO
+        r_ob->notation_typo_preferences.rest_uy_shift = 18.3; // TO DO
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.rests_unicode_characters, 9, 58594, 58595, 58596, 58597, 58598, 58599, 58600, 58601, 58602);
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.clefs_unicode_characters, 4, 57424, 57442, 57436, 57450);
+        r_ob->notation_typo_preferences.clef_ux_shift = 0.; // TO DO
+        r_ob->notation_typo_preferences.clef_uy_shift = 4.4;
+        // here we put the info about, in the following order: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
+        // the 1/16 flags are the COMPLETE 1/16 flags (which means, with two "tails"), the "next flag" is an added single flag used for 1/32, and then for all the smaller subdivisions
+        fill_char_array(r_ob->notation_typo_preferences.flag_noteheadaligned, 6, 0, 0, 0, 0, 0, 0); // TO DO
+        fill_unicodeChar_array(r_ob->notation_typo_preferences.flag_unicode_characters, 6, 57920, 57921, 57922, 57923, 57936, 57937);
+        fill_double_array(r_ob->notation_typo_preferences.flag_uwidths, 3, 4.5, 4.5, 4.5); // TO DO
+        r_ob->notation_typo_preferences.flag_ux_shift = 0.; // TO DO
+        fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -29.4+6, -21.+12, -29.4+6, -21.+12, -32.9+6, -18.4+12);  // TO DO: 1/8 flag up / down / 1/16 flag up / down / next flags up / down
+        r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.; // TO DO
+        r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.; // TO DO
+        
+    } else if (fontnameeq(font->s_name, "Maestro")) {
 #ifdef BACH_JUCE
         juce_mul = 2.5;
 #endif
@@ -6816,7 +6845,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.55;
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.55;
         
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         // OLD VERSION
 #ifdef BACH_MAX
         r_ob->notation_typo_preferences.base_pt = 24.;
@@ -6881,7 +6910,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -5.55;
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 5.55;
 #endif
-     } else if ((strcmp(font->s_name, "Sonora") == 0) || (strcmp(font->s_name, "sonora") == 0)) {
+     } else if (fontnameeq(font->s_name, "Sonora")) {
         r_ob->notation_typo_preferences.base_pt = 40.;
         r_ob->notation_typo_preferences.base_pt_ts = 38.2;
         r_ob->notation_typo_preferences.ts_uy_shift = -25.57;
@@ -6907,7 +6936,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->notation_typo_preferences.flag_uy_shifts, 6, -25.4, -30., -15.4, -31.5, -33.9, -21.1);  // 1/8 flag up / down / 1/16 flag up / down / next flags up / down
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -5.5;
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 5.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         r_ob->notation_typo_preferences.base_pt = 24.;
         r_ob->notation_typo_preferences.base_pt_ts = 24.;
         r_ob->notation_typo_preferences.ts_uy_shift = -26.;
@@ -6964,7 +6993,7 @@ void load_notation_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         r_ob->notation_typo_preferences.further_flag_uy_step_stemup = -4.85;
         r_ob->notation_typo_preferences.further_flag_uy_step_stemdown = 4.85;
         
-        if (!((strcmp(font->s_name, "Petrucci") == 0) || (strcmp(font->s_name, "petrucci") == 0)))
+        if (!(fontnameeq(font->s_name, "Petrucci")))
             object_warn((t_object *) r_ob, "Warning: font %s is not supported as notation font.", font->s_name);
     }
 }
@@ -7006,10 +7035,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_STACCATO; // *** ARTICULATION: STACCATO ***
     set_articulation_names(atp, i, gensym("staccato"), gensym("stacc"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61486;
         atp->artpref[i].flipped_char = 61486;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = 46;
         atp->artpref[i].flipped_char = 46;
     } else {
@@ -7021,19 +7050,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34.7;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25.4;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.6;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 31.8;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
@@ -7049,9 +7078,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_ACCENT; // *** ARTICULATION: ACCENT ***
     set_articulation_names(atp, i, gensym("accent"), gensym("acc"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61502;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 47;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 62;
@@ -7061,22 +7090,22 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 32;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7;
         atp->artpref[i].main_char_uy_shift = 0.;
         atp->artpref[i].flipped_char_uy_shift = -1.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 24;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5;
         atp->artpref[i].main_char_uy_shift = 1.5;
         atp->artpref[i].flipped_char_uy_shift = -1.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5;
         atp->artpref[i].main_char_uy_shift = 0.5;
         atp->artpref[i].flipped_char_uy_shift = -1.;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 30;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5;
         atp->artpref[i].main_char_uy_shift = 0.5;
@@ -7093,10 +7122,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_PORTATO; // *** ARTICULATION: PORTATO ***
     set_articulation_names(atp, i, gensym("portato"), gensym("port"), gensym("por"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61485;
         atp->artpref[i].flipped_char = 61485;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 45;
     } else {
         atp->artpref[i].main_char = 45;
@@ -7107,19 +7136,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34.2;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].main_char_uy_shift = 4.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.5;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 32.0;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
@@ -7135,10 +7164,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL; // *** ARTICULATION: TRILL ***
     set_articulation_names(atp, i, gensym("trill"), gensym("tr"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61657;
         atp->artpref[i].flipped_char = 61657;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 169;
     } else {
         atp->artpref[i].main_char = 376;
@@ -7151,19 +7180,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_uy_shift = 4.; // unused
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 0;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].extension_line_char = 61566;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 22;
         atp->artpref[i].extension_line_char = 168;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 3.5;
@@ -7178,7 +7207,7 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL; // *** ARTICULATION: TRILL ***
     set_articulation_names(atp, i, gensym("trill"), gensym("tr"));
     atp->artpref[i].base_pt = 48.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61657;
         atp->artpref[i].flipped_char = 61657;
     } else {
@@ -7192,19 +7221,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_uy_shift = 4.; // unused
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 0;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].extension_line_char = 61566;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 22;
         atp->artpref[i].extension_line_char = 168;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 3.5;
@@ -7220,10 +7249,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL_NATURAL; // *** ARTICULATION: TRILL NATURAL ***
     set_articulation_names(atp, i, gensym("trilln"), gensym("trn"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61657;
         atp->artpref[i].flipped_char = 61657;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 172;
     } else {
         atp->artpref[i].main_char = 376;
@@ -7236,19 +7265,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_uy_shift = 4.; // unused
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 0;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].extension_line_char = 61566;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 21;
         atp->artpref[i].extension_line_char = 168;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 3.5;
@@ -7263,10 +7292,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL_FLAT; // *** ARTICULATION: TRILL FLAT ***
     set_articulation_names(atp, i, gensym("trillb"), gensym("trb"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61657;
         atp->artpref[i].flipped_char = 61657;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 171;
     } else {
         atp->artpref[i].main_char = 376;
@@ -7279,19 +7308,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_uy_shift = 4.; // unused
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 0;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].extension_line_char = 61566;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 21;
         atp->artpref[i].extension_line_char = 168;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 3.5;
@@ -7306,10 +7335,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL_SHARP; // *** ARTICULATION: TRILL SHARP ***
     set_articulation_names(atp, i, gensym("trill#"), gensym("tr#"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61657;
         atp->artpref[i].flipped_char = 61657;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 179;
     } else {
         atp->artpref[i].main_char = 376;
@@ -7322,19 +7351,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_uy_shift = 4.; // unused
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 0;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].extension_line_char = 61566;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 21;
         atp->artpref[i].extension_line_char = 168;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 3.5;
@@ -7349,10 +7378,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL_DOUBLE_FLAT; // *** ARTICULATION: TRILL DOUBLE FLAT ***
     set_articulation_names(atp, i, gensym("trillbb"), gensym("trbb"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 0;
         atp->artpref[i].flipped_char = 0;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 170;
     } else {
         atp->artpref[i].main_char = 376;
@@ -7365,19 +7394,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_uy_shift = 4.; // unused
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 0;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].extension_line_char = 61566;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 21;
         atp->artpref[i].extension_line_char = 168;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 3.5;
@@ -7392,10 +7421,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TRILL_DOUBLE_SHARP; // *** ARTICULATION: TRILL DOUBLE SHARP ***
     set_articulation_names(atp, i, gensym("trillx"), gensym("trx"), gensym("tr##"), gensym("trill##"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61657;
         atp->artpref[i].flipped_char = 61657;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 174;
     } else {
         atp->artpref[i].main_char = 376;
@@ -7408,19 +7437,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_uy_shift = 4.; // unused
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 0;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].extension_line_char = 61566;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 21;
         atp->artpref[i].extension_line_char = 168;
         atp->artpref[i].extension_line_uy_offset = 3.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].extension_line_char = 126;
         atp->artpref[i].extension_line_uy_offset = 3.5;
@@ -7436,10 +7465,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_FERMATA; // *** ARTICULATION: FERMATA ***
     set_articulation_names(atp, i, gensym("fermata"), gensym("ferm"), gensym("corona"));
     atp->artpref[i].base_pt = 22.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61525;
         atp->artpref[i].flipped_char = 61557;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = 95;
         atp->artpref[i].flipped_char = 96;
     } else {
@@ -7451,22 +7480,22 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = 28;
         atp->artpref[i].flipped_uy_center = 36;
         atp->artpref[i].main_uheight = 9;
         atp->artpref[i].flipped_uheight = 9;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = 24;
         atp->artpref[i].flipped_uy_center = 32;
         atp->artpref[i].main_uheight = 10;
         atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = 19;
         atp->artpref[i].flipped_uy_center = 27;
         atp->artpref[i].main_uheight = 10;
         atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = 26;
         atp->artpref[i].flipped_uy_center = 33;
         atp->artpref[i].main_uheight = 9;
@@ -7485,10 +7514,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_ACCENT_STACCATO; // *** ARTICULATION: ACCENT+STACCATO ***
     set_articulation_names(atp, i, gensym("accentstaccato"), gensym("accstacc"), gensym("staccatoaccent"), gensym("staccacc"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61502; // unsupported for boulez
         atp->artpref[i].flipped_char = 61502;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = 36;
         atp->artpref[i].flipped_char = 35;
     } else {
@@ -7500,23 +7529,23 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = 32;
         atp->artpref[i].flipped_uy_center = 30.7;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 6;
         atp->artpref[i].main_char_uy_shift = 0.5;
         atp->artpref[i].flipped_char_uy_shift = -1.;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 23;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 8;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = 30;
         atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7;
@@ -7534,15 +7563,15 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_ACCENT_PORTATO; // *** ARTICULATION: ACCENT+PORTATO ***
     set_articulation_names(atp, i, gensym("accentportato"), gensym("accport"), gensym("portatoaccent"), gensym("portacc"), gensym("poracc"), gensym("accpor"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61502; // unsupported: changed to accent
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = 38;
         atp->artpref[i].flipped_char = 37;
-    } else if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    } else if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_char = 228;
         atp->artpref[i].flipped_char = 226;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_char = 730;
         atp->artpref[i].flipped_char = 63743;
     } else {
@@ -7553,23 +7582,23 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = 31;
         atp->artpref[i].flipped_uy_center = 31.7;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 8.5;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 6;
         atp->artpref[i].main_char_uy_shift = 0.5;
         atp->artpref[i].flipped_char_uy_shift = -1.;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 24;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = 29;
         atp->artpref[i].flipped_uy_center = 36;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7;
@@ -7587,9 +7616,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_PORTATO_STACCATO; // *** ARTICULATION: PORTATO+STACCATO ***
     set_articulation_names(atp, i, gensym("staccatoportato"), gensym("staccport"), gensym("portatostaccato"), gensym("portstacc"), gensym("porstacc"), gensym("staccpor"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61485; // unsupported: just portato
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = 34;
         atp->artpref[i].flipped_char = 33;
     } else {
@@ -7601,19 +7630,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = 33.5;
         atp->artpref[i].flipped_uy_center = 32.7;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 1;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 24;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5;
         atp->artpref[i].main_char_uy_shift = 2.5;
         atp->artpref[i].flipped_char_uy_shift = -2.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = 30;
         atp->artpref[i].flipped_uy_center = 30.4;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5;
@@ -7630,10 +7659,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_STACCATISSIMO; // *** ARTICULATION: STACCATISSIMO ***
     set_articulation_names(atp, i, gensym("staccatissimo"), gensym("staccmo"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61614;
         atp->artpref[i].flipped_char = 61479;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = 125;
         atp->artpref[i].flipped_char = 126;
     } else {
@@ -7645,19 +7674,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = 33;
         atp->artpref[i].flipped_uy_center = 32.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = 31;
         atp->artpref[i].flipped_uy_center = 29;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 3;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = 26;
         atp->artpref[i].flipped_uy_center = 25;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 3.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = 33;
         atp->artpref[i].flipped_uy_center = 31;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 3.5;
@@ -7674,10 +7703,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_MARTELLATO; // *** ARTICULATION: MARTELLATO ***
     set_articulation_names(atp, i, gensym("martellato"), gensym("mart"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61534;
         atp->artpref[i].flipped_char = 61558;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = 39;
         atp->artpref[i].flipped_char = 40;
     } else {
@@ -7689,19 +7718,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = 32.5;
         atp->artpref[i].flipped_uy_center = 32.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 6;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = 25;
         atp->artpref[i].flipped_uy_center = 25.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = 23;
         atp->artpref[i].flipped_uy_center = 20;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = 27.5;
         atp->artpref[i].flipped_uy_center = 27;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
@@ -7718,10 +7747,10 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_MARTELLATO_STACCATO; // *** ARTICULATION: MARTELLATO+STACCATO ***
     set_articulation_names(atp, i, gensym("martellatostaccato"), gensym("martstacc"), gensym("staccatomartellato"), gensym("staccmart"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = 61534; // unsupported: martellato
         atp->artpref[i].flipped_char = 61558;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = 41;
         atp->artpref[i].flipped_char = 42;
     } else {
@@ -7733,19 +7762,19 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = 32;
         atp->artpref[i].flipped_uy_center = 31.8;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = 25;
         atp->artpref[i].flipped_uy_center = 25.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = 23;
         atp->artpref[i].flipped_uy_center = 20;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = 27.5;
         atp->artpref[i].flipped_uy_center = 27.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
@@ -7762,9 +7791,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_MORDENT_UP; // *** ARTICULATION: MORDENT UP ***
     set_articulation_names(atp, i, gensym("upmordent"), gensym("umord"), gensym("mordent"), gensym("mord"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61549;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 163;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 109;
@@ -7774,16 +7803,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 32;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 6.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 27;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 6;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 23;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 6.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 6.5;
     } else { // petrucci & others
@@ -7798,9 +7827,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_MORDENT_DOWN; // *** ARTICULATION: MORDENT DOWN ***
     set_articulation_names(atp, i, gensym("downmordent"), gensym("dmord"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61517;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 164;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 77;
@@ -7810,16 +7839,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 32;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 8.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 27;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 8;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 23;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 8.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 8.5;
     } else { // petrucci & others
@@ -7834,9 +7863,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_DOUBLE_MORDENT; // *** ARTICULATION: DOUBLE MORDENT ***
     set_articulation_names(atp, i, gensym("doublemordent"), gensym("mmord"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61621;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 165;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 181;
@@ -7846,16 +7875,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 32;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 27;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 6.5;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 23;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7.5;
     } else { // petrucci & others
@@ -7870,9 +7899,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_GRUPPETTO; // *** ARTICULATION: GRUPPETTO ***
     set_articulation_names(atp, i, gensym("gruppetto"), gensym("grupp"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61524;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 166;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 84;
@@ -7882,16 +7911,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 35.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7.5;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 31;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 26.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7.5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 33;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7.5;
     } else { // petrucci & others
@@ -7906,9 +7935,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_HARMONIC; // *** ARTICULATION: HARMONIC ***
     set_articulation_names(atp, i, gensym("harmonic"), gensym("harm"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61551;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 44;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 111;
@@ -7918,13 +7947,13 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34.7;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.6;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25.8;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 31.8;
     } else { // petrucci & others
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 31.6;
@@ -7938,9 +7967,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_LEFT_HAND_PIZZICATO; // *** ARTICULATION: LEFT HAND PIZZICATO ***
     set_articulation_names(atp, i, gensym("lefthandpizzicato"), gensym("lhpizz"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61483;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 123;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 43;
@@ -7950,13 +7979,13 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 34.9;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.7;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25.7;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 31.9;
     } else { // petrucci & others
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 31.7;
@@ -7970,9 +7999,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_BOWING_UP; // *** ARTICULATION: BOWING UP ***
     set_articulation_names(atp, i, gensym("upbowing"), gensym("ubow"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61618;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 62;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 8804;
@@ -7982,16 +8011,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.9;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 11;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 24.8;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 21.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 27.9;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 11;
     } else { // petrucci & others
@@ -8006,9 +8035,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_BOWING_DOWN; // *** ARTICULATION: BOWING DOWN ***
     set_articulation_names(atp, i, gensym("downbowing"), gensym("dbow"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61619;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 121;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 8805;
@@ -8018,16 +8047,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 30.9;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25.2;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 9;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 21.5;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 27.9;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 10;
     } else { // petrucci & others
@@ -8042,9 +8071,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TREMOLO3; // *** ARTICULATION: TREMOLO WITH 3 LINES ***
     set_articulation_names(atp, i, gensym("tremolo3"), gensym("trem3"), gensym("trem"), gensym("tremolo"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61472; // unsupported
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 60;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 230;
@@ -8054,16 +8083,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 27.3;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 15;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25.2;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 1;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 20.2;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 12;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 26.4;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 13;
     } else { // petrucci & others
@@ -8078,9 +8107,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TREMOLO2; // *** ARTICULATION: TREMOLO WITH 2 LINES ***
     set_articulation_names(atp, i, gensym("tremolo2"), gensym("trem2"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61472; // unsupported
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 59;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 64;
@@ -8090,16 +8119,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 29.7;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 11;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 25.2;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 1;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 21.6;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 9;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 27.6;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 9;
     } else { // petrucci & others
@@ -8114,9 +8143,9 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     i = k_ARTICULATION_TREMOLO1; // *** ARTICULATION: TREMOLO WITH 1 LINE ***
     set_articulation_names(atp, i, gensym("tremolo1"), gensym("trem1"));
     atp->artpref[i].base_pt = 24.;
-    if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 61472; // unsupported
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 58;
     } else {
         atp->artpref[i].main_char = atp->artpref[i].flipped_char = 33;
@@ -8126,16 +8155,16 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
     atp->artpref[i].main_char_ux_shift = 0.;
     atp->artpref[i].flipped_char_ux_shift = 0.;
     atp->artpref[i].outside_staff_uy_nudge = 0.;
-    if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) {
+    if (fontnameeq(font->s_name, "Maestro")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 31.7;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 7;
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 27.2;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 1;
-    } else if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) {
+    } else if (fontnameeq(font->s_name, "November for bach")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 24;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5;
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         atp->artpref[i].main_uy_center = atp->artpref[i].flipped_uy_center = 28.6;
         atp->artpref[i].main_uheight = atp->artpref[i].flipped_uheight = 5;
     } else { // petrucci & others
@@ -8149,6 +8178,7 @@ void load_articulations_typo_preferences(t_articulations_typo_preferences *atp, 
 
 void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
 {
+
 #ifdef BACH_MAX
     double juce_mul = 1;
 #endif
@@ -8158,7 +8188,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
     r_ob->accidentals_typo_preferences.bogus_bottom_uextension = 3.2;
     r_ob->accidentals_typo_preferences.bogus_uwidth = 6;
 
-    if ((strcmp(font->s_name, "November for bach") == 0) || (strcmp(font->s_name, "\"November for bach\"") == 0)) { 
+    if (fontnameeq(font->s_name, "November for bach")) {
 #ifdef BACH_JUCE
         double juce_mul = 2.5;
 #endif
@@ -8188,7 +8218,29 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 3.5, 0., 0., 3.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 11.4, 0., 0., 6., 0., 0., 6., 0., 0., 7., 0., 0., 7.);
         
-    } else if ((strcmp(font->s_name, "Maestro") == 0) || (strcmp(font->s_name, "maestro") == 0)) { 
+    } else if (fontnameeq(font->s_name, "Bravura")) {
+#ifdef BACH_JUCE
+        double juce_mul = 2.5;
+#endif
+        r_ob->accidentals_typo_preferences.base_pt = 24. * juce_mul;
+        r_ob->accidentals_typo_preferences.ux_shift = 0.; // TO DO
+        r_ob->accidentals_typo_preferences.uy_shift = 48.5; // TO DO
+        r_ob->accidentals_typo_preferences.binary_characters_depth = 8; // TO DO
+        r_ob->accidentals_typo_preferences.ternary_characters_depth = 1; // TO DO
+        // binary unicode characters
+        fill_unicodeChar_array(r_ob->accidentals_typo_preferences.unicode_binary_character, 17, 57956, 57976, 57985, 57969, 57952, 57968, 57984, 57971, 57953, 57970, 57986, 57973, 57954, 57972, 57987, 57975, 57955);
+        fill_double_array(r_ob->accidentals_typo_preferences.binary_top_uextension, 17, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5, 10.5,
+                          8.5, 14.5, 8.3, 14.5, 8.5, 14.5, 9.3, 14.5, 3.5); // TO DO
+        fill_double_array(r_ob->accidentals_typo_preferences.binary_bottom_uextension, 17, 3.5, 12.5, 3.5, 12.5, 3.5, 12.5, 3.5, 14.5,
+                          8.5, 8.5, 8.3, 8.3, 8.5, 8.5, 9.5, 9.5, 3.5); // TO DO
+        fill_double_array(r_ob->accidentals_typo_preferences.binary_uwidth, 17, 11.4, 12.4, 12.4, 6.5, 6., 6.5, 6., 7., 7., 7., 5., 5., 7., 7., 9., 9., 7.); // TO DO
+        // ternary accidentals (wrong!!! unsupported, for now)
+        fill_unicodeChar_array(r_ob->accidentals_typo_preferences.unicode_ternary_character, 13, 'a', 0, 0, 'f', 0, 0, 'l', 0, 0, 'r', 0, 0, 'w');
+        fill_double_array(r_ob->accidentals_typo_preferences.ternary_top_extension, 13, 10.5, 0., 0., 10.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
+        fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 3.5, 0., 0., 3.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
+        fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 11.4, 0., 0., 6., 0., 0., 6., 0., 0., 7., 0., 0., 7.);
+        
+    } else if (fontnameeq(font->s_name, "Maestro")) {
 #ifdef BACH_JUCE
         double juce_mul = 2.5;
 #endif
@@ -8209,7 +8261,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_top_extension, 13, 10.5, 0., 0., 10.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 3.5, 0., 0., 3.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 11.4, 0., 0., 6., 0., 0., 6., 0., 0., 7., 0., 0., 7.);
-    } else if ((strcmp(font->s_name, "Accidentals") == 0) || (strcmp(font->s_name, "accidentals") == 0)) {
+    } else if (fontnameeq(font->s_name, "Accidentals")) {
 #ifdef BACH_MAX
         r_ob->accidentals_typo_preferences.base_pt = 24.;
         r_ob->accidentals_typo_preferences.ux_shift = 0.;
@@ -8244,7 +8296,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10.);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10.);
 #endif
-    } else if ((strcmp(font->s_name, "Tamburo") == 0) || (strcmp(font->s_name, "tamburo") == 0)) {
+    } else if (fontnameeq(font->s_name, "Tamburo")) {
         r_ob->accidentals_typo_preferences.base_pt = 24.;
         r_ob->accidentals_typo_preferences.ux_shift = 0.;
         r_ob->accidentals_typo_preferences.uy_shift = 14.45; //47.45;
@@ -8261,7 +8313,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_top_extension, 13, 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10.);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10.);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10.);
-    } else if ((strcmp(font->s_name, "Tempera") == 0) || (strcmp(font->s_name, "tempera") == 0)) {
+    } else if (fontnameeq(font->s_name, "Tempera")) {
         r_ob->accidentals_typo_preferences.base_pt = 24.;
         r_ob->accidentals_typo_preferences.ux_shift = 0.;
         r_ob->accidentals_typo_preferences.uy_shift = 12.25; // 45.25;
@@ -8277,7 +8329,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_top_extension, 13, 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10.);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10.);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10., 10.);
-    } else if ((strcmp(font->s_name, "Sonora") == 0) || (strcmp(font->s_name, "sonora") == 0)) {
+    } else if (fontnameeq(font->s_name, "Sonora")) {
         r_ob->accidentals_typo_preferences.base_pt = 40.;
         r_ob->accidentals_typo_preferences.ux_shift = 3.;
         r_ob->accidentals_typo_preferences.uy_shift = 28.; // 45.25;
@@ -8293,7 +8345,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_top_extension, 13, 10.5, 0., 0., 10.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 3.5, 0., 0., 3.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 11.4, 0., 0., 6., 0., 0., 6., 0., 0., 7., 0., 0., 7.);
-    } else if ((strcmp(font->s_name, "Engraver Font Set") == 0) || (strcmp(font->s_name, "engraver font set") == 0) || (strcmp(font->s_name, "EngraverFontSet") == 0) || (strcmp(font->s_name, "engraverfontset") == 0) || (strcmp(font->s_name, "Engraver") == 0) || (strcmp(font->s_name, "engraver") == 0)) {
+    } else if (fontnameeq(font->s_name, "EngraverFontSet")) {
         // TO DO: to calibrate
         r_ob->accidentals_typo_preferences.base_pt = 24.;
         r_ob->accidentals_typo_preferences.ux_shift = 0.;
@@ -8310,7 +8362,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_top_extension, 13, 10.5, 0., 0., 10.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 3.5, 0., 0., 3.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 11.4, 0., 0., 6., 0., 0., 6., 0., 0., 7., 0., 0., 7.);
-    } else if ((strcmp(font->s_name, "Boulez") == 0) || (strcmp(font->s_name, "boulez") == 0)) {
+    } else if (fontnameeq(font->s_name, "Boulez")) {
         // TO DO: to calibrate
         r_ob->accidentals_typo_preferences.base_pt = 24.;
         r_ob->accidentals_typo_preferences.ux_shift = 0.;
@@ -8344,7 +8396,7 @@ void load_accidentals_typo_preferences(t_notation_obj *r_ob, t_symbol *font)
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_top_extension, 13, 10.5, 0., 0., 10.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_bottom_extension, 13, 3.5, 0., 0., 3.5, 0., 0., 8.5, 0., 0., 8.5, 0., 0., 3.5);
         fill_double_array(r_ob->accidentals_typo_preferences.ternary_width, 13, 11.4, 0., 0., 6., 0., 0., 6., 0., 0., 7., 0., 0., 7.);
-        if (!((strcmp(font->s_name, "Petrucci") == 0) || (strcmp(font->s_name, "petrucci") == 0)))
+        if (!(fontnameeq(font->s_name, "Petrucci")))
             object_warn((t_object *) r_ob, "Warning: font %s is not supported as accidentals font.", font->s_name);
     }
     
@@ -14159,6 +14211,34 @@ t_rational get_all_tied_chord_sequence_abs_r_duration(t_chord *chord, char withi
     t_rational tot_duration = long2rat(0);
     for (temp = first; temp; temp = chord_get_next(temp)) {
         tot_duration = rat_rat_sum(tot_duration, rat_abs(temp->r_sym_duration));
+        if (temp == last)
+            break;
+    }
+    return tot_duration;
+}
+
+double get_all_tied_chord_sequence_duration_ms(t_chord *chord, char within_measure)
+{
+    t_chord *first = first_all_tied_chord(chord, within_measure);
+    t_chord *last = last_all_tied_chord(chord, within_measure);
+    t_chord *temp;
+    double tot_duration = 0;
+    for (temp = first; temp; temp = chord_get_next(temp)) {
+        tot_duration += temp->duration_ms;
+        if (temp == last)
+            break;
+    }
+    return tot_duration;
+}
+
+double get_all_tied_note_sequence_duration_ms(t_note *nt)
+{
+    t_note *first = note_get_first_in_tieseq(nt);
+    t_note *last = note_get_last_in_tieseq(nt);
+    t_note *temp;
+    double tot_duration = 0;
+    for (temp = first; temp && temp != WHITENULL; temp = temp->tie_to) {
+        tot_duration += temp->parent->duration_ms;
         if (temp == last)
             break;
     }
@@ -27991,12 +28071,15 @@ t_llll* note_get_breakpoint_values_as_llll(t_notation_obj *r_ob, t_note *note, e
     temp = note->firstbreakpoint;
     if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) { // partial notes!
         double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
-        while (temp && note->parent->onset + temp->rel_x_pos * note->duration < hot_point)
+        double duration = note->duration;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->dl_spans_ties)
+            duration = get_all_tied_note_sequence_duration_ms(note);
+        while (temp && note->parent->onset + temp->rel_x_pos * duration < hot_point)
             temp = temp->next;
-        if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * note->duration != hot_point)) {
+        if (temp && temp->prev && (note->parent->onset + temp->rel_x_pos * duration != hot_point)) {
             double rel_x_pos_ratio;
             t_llll *inner2_llll;
-            start_x_pos = (hot_point - note->parent->onset) / note->duration;
+            start_x_pos = (hot_point - note->parent->onset) / duration;
             rel_x_pos_ratio = (start_x_pos - temp->prev->rel_x_pos) /(temp->rel_x_pos - temp->prev->rel_x_pos);
             start_y_pos = temp->prev->delta_mc + rel_x_pos_ratio * (temp->delta_mc - temp->prev->delta_mc);
             if (temp->delta_mc >= temp->prev->delta_mc)
@@ -28114,16 +28197,20 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                 
                 double hot_point = (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE) ? r_ob->play_head_start_ms : r_ob->curr_sampling_ms;
                 
-                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? notation_item_get_duration_ms(r_ob, nitem) : 1) < hot_point))
+                double dur = notation_item_get_duration_ms(r_ob, nitem);
+                if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && nitem->type == k_NOTE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+                    dur = get_all_tied_note_sequence_duration_ms((t_note *)nitem);
+
+                while (temp_item && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * (is_relative ? dur : 1) < hot_point))
                     temp_item = temp_item->next;
-                if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * notation_item_get_duration_ms(r_ob, nitem) != hot_point)) {
+                if (temp_item && temp_item->prev && (notation_item_get_onset_ms(r_ob, nitem) + ((t_pts *)temp_item->item)->x * dur != hot_point)) {
                     double this_x = ((t_pts *)temp_item->item)->x; double prev_x = ((t_pts *)temp_item->prev->item)->x;
                     double this_y = ((t_pts *)temp_item->item)->y; double prev_y = ((t_pts *)temp_item->prev->item)->y;
                     double this_slope = ((t_pts *)temp_item->item)->slope;
                     double x_ratio, new_y_pos;
                     t_llll *inner5_llll;
                     if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_RELATIVE) {
-                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / notation_item_get_duration_ms(r_ob, nitem);
+                        new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem)) / dur;
                     } else if (r_ob->slotinfo[j].slot_temporalmode == k_SLOT_TEMPORALMODE_MILLISECONDS) {
                         new_x_pos = (hot_point - notation_item_get_onset_ms(r_ob, nitem));
                     }
@@ -28143,6 +28230,8 @@ t_llll* notation_item_get_single_slot_values_as_llll(t_notation_obj *r_ob, t_not
                         llll_appenddouble(inner5_llll, 0., 0, WHITENULL_llll); //
                         llll_appendllll(inner4_llll, inner5_llll, 0, WHITENULL_llll);
                     }
+                } else if (mode == k_CONSIDER_FOR_SAMPLING && ((t_pts *)temp_item->item)->x == hot_point) {
+                    llll_appenddouble(inner4_llll, ((t_pts *)temp_item->item)->y, 0, WHITENULL_llll); // y position only
                 }
             }
             if (mode != k_CONSIDER_FOR_SAMPLING || !slot_is_temporal(r_ob, j)) {
@@ -28507,13 +28596,16 @@ t_llll* note_get_slots_values_as_llll(t_notation_obj *r_ob, t_note *note, char m
     // slots
     t_llll* out_llll = llll_get();
     int j;
-    llll_appendsym(out_llll, _llllobj_sym_slots, 0, WHITENULL_llll); 
+    llll_appendsym(out_llll, _llllobj_sym_slots);
 
     for (j = 0; j < CONST_MAX_SLOTS; j++) {
-        if (note->slot[j].firstitem || force_all_slots) { // do we need this slot?
+        t_note *note_for_slot = note;
+        if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && mode == k_CONSIDER_FOR_SAMPLING && r_ob->slotinfo[j].slot_singleslotfortiednotes)
+            note_for_slot = note_get_first_in_tieseq(note);
+        if (note_for_slot->slot[j].firstitem || force_all_slots) { // do we need this slot?
             if (mode != k_CONSIDER_FOR_DUMPING_ONLY_TIE_SPANNING || r_ob->slotinfo[j].slot_singleslotfortiednotes) {
-                t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note, mode, j, false);
-                llll_appendllll(out_llll, thisslot_llll, 0, WHITENULL_llll);
+                t_llll *thisslot_llll = note_get_single_slot_values_as_llll(r_ob, note_for_slot, mode, j, false);
+                llll_appendllll(out_llll, thisslot_llll);
             }
         }
     }
@@ -29009,8 +29101,11 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     
     // see if we need breakpoint extras
     if (mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_BEGINNING && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE) {
-        if (note_breakpoints_are_nontrivial(r_ob, note)) {
-            llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
+        t_note *note_for_bpts = note;
+        if (mode == k_CONSIDER_FOR_SAMPLING && r_ob->dl_spans_ties)
+            note_for_bpts = note_get_first_in_tieseq(note);
+        if (note_breakpoints_are_nontrivial(r_ob, note_for_bpts)) {
+            llll_appendllll(out_llll, note_get_breakpoint_values_as_llll(r_ob, note_for_bpts, mode, &new_mc, &new_vel), 0, WHITENULL_llll);
             if (mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE || mode == k_CONSIDER_FOR_PLAYING_AS_PARTIAL_NOTE_VERBOSE || mode == k_CONSIDER_FOR_SAMPLING) {
                 hatom_setdouble(&out_llll->l_head->l_hatom, new_mc);
                 hatom_setlong(&out_llll->l_head->l_next->l_hatom, round(new_vel));
@@ -29021,7 +29116,7 @@ t_llll* get_scorenote_values_as_llll(t_notation_obj *r_ob, t_note *note, e_data_
     }
     
     // see if we need slots extras (if there's AT LEAST 1 slot, we put them all, so it's practical: slot n is at place n in the list
-    if (notation_item_has_slot_content(r_ob, (t_notation_item *)note) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
+    if (notation_item_has_slot_content(r_ob, (t_notation_item *)note, mode) && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_MIDDLE && mode != k_CONSIDER_FOR_COLLAPSING_AS_NOTE_END)
         llll_appendllll(out_llll, note_get_slots_values_as_llll(r_ob, note, mode, false), 0, WHITENULL_llll);    
 
     // see if we need articulations
@@ -30049,8 +30144,8 @@ void apply_velocity_handling(t_notation_obj *r_ob, t_jrgba *color, double veloci
 
 void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_notation_item *nitem)
 {
-    if (r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS) {
-        long slotnum = r_ob->link_notecolor_to_slot - 1;
+    if (r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS) {
+        long slotnum = r_ob->link_nitemcolor_to_slot - 1;
         t_slot *slot = notation_item_get_slot(r_ob, nitem, slotnum);
         if (slot) {
             if (slot->firstitem && slot->firstitem->item) {
@@ -30070,9 +30165,9 @@ void notation_item_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, 
 
 void note_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t_jrgba *color, t_note *note)
 {
-    if (r_ob->link_notecolor_to_slot > 0 && r_ob->link_notecolor_to_slot <= CONST_MAX_SLOTS) {
+    if (r_ob->link_nitemcolor_to_slot > 0 && r_ob->link_nitemcolor_to_slot <= CONST_MAX_SLOTS) {
         t_note *note_to_consider = note;
-        long slotnum = r_ob->link_notecolor_to_slot - 1;
+        long slotnum = r_ob->link_nitemcolor_to_slot - 1;
         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && r_ob->slotinfo[slotnum].slot_singleslotfortiednotes)
             note_to_consider = note_get_first_in_tieseq(note_to_consider);
         if (note_to_consider)
@@ -30094,7 +30189,7 @@ void durationline_change_color_depending_on_slot_linkage(t_notation_obj *r_ob, t
                 if ((r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INT) || (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_INTLIST))
                 *color = long_to_color(*((long *)note_to_consider->slot[slotnum].firstitem->item));
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOAT)
-                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_notecolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
+                *color = double_to_color(*((double *)note_to_consider->slot[slotnum].firstitem->item), r_ob->slotinfo[r_ob->link_nitemcolor_to_slot-1].slot_range[0], r_ob->slotinfo[slotnum].slot_range[1], false);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_FLOATLIST)
                 *color = floatlist_slot_to_color(&note_to_consider->slot[slotnum]);
                 else if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_COLOR)
@@ -34364,7 +34459,7 @@ double unscaled_xposition_snap_to_nearest_chord(t_notation_obj *r_ob, double ux,
                             t_bpt *bpt;
                             for (bpt = note->firstbreakpoint; bpt; bpt = bpt->next) {
                                 if (bpt->prev && bpt->next) { // internal pitch breakpoint
-                                    double bpt_ux = onset_to_unscaled_xposition(r_ob, breakpoint_get_absolute_onset(bpt));
+                                    double bpt_ux = onset_to_unscaled_xposition(r_ob, breakpoint_get_absolute_onset(r_ob, bpt));
                                     double bpt_fabs = fabs(bpt_ux - ux);
                                     if (!best_approx || bpt_fabs < best_approx_fabs) {
                                         best_approx = (t_notation_item *)bpt;
@@ -35717,7 +35812,7 @@ void notation_obj_init(t_notation_obj *r_ob, char obj_type, rebuild_fn rebuild, 
     r_ob->show_playhead = false; // we don't show the playhead cursor;
     r_ob->play_head_start_ms = 0.; // initialize playhead cursor
     r_ob->play_head_start_ux = 0.; // idem for score
-    r_ob->link_notecolor_to_slot = 0;
+    r_ob->link_nitemcolor_to_slot = 0;
     r_ob->j_mouse_cursor = BACH_CURSOR_DEFAULT; // initial mouse cursor
     r_ob->slot_minimum_window_uwidth = 0; // no minimum
     r_ob->last_used_octave = 5; 
@@ -38521,13 +38616,15 @@ t_xml_chord_beam_info get_xml_chord_beam_info(t_notation_obj *r_ob, t_chord *cho
 
 
 
-double breakpoint_get_absolute_onset(t_bpt *bpt){
+double breakpoint_get_absolute_onset(t_notation_obj *r_ob, t_bpt *bpt)
+{
     if (!bpt->owner)
         return 0;
     
-    if (bpt->owner->parent->is_score_chord)
-        return chord_get_onset_ms(bpt->owner->parent) + bpt->rel_x_pos + bpt->owner->parent->duration_ms;
-    else 
+    if (bpt->owner->parent->is_score_chord) {
+        double tot_dur = r_ob->dl_spans_ties ? get_all_tied_chord_sequence_duration_ms(bpt->owner->parent, false) : bpt->owner->parent->duration_ms;
+        return chord_get_onset_ms(bpt->owner->parent) + bpt->rel_x_pos * tot_dur;
+    } else
         return bpt->owner->parent->onset + bpt->rel_x_pos * bpt->owner->duration;
 }
 
@@ -43844,7 +43941,7 @@ t_llll *notationobj_get_interp(t_notation_obj *r_ob, double ms)
                 for (note = chord->firstnote; note; note = note->next) {
                     if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE || chord->onset + note->duration > ms) {
                         // the note has something at #ms milliseconds
-                        t_llll *note_ll;
+                        t_llll *note_ll = NULL;
                         
                         r_ob->curr_sampling_ms = ms;
                         if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE)

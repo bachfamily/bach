@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -72,6 +72,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 414.5, 180.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -128,6 +129,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 322.5, 174.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -184,6 +186,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 230.5, 113.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -230,7 +233,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "## A comment: everything in this line following the ## marker is not evaluated\r\n1 2 3 ## This is why it's called an end-of line comment\r\n##\r\n## (yes, you can have empty end-of-line comments)\r\n##\r\n4 5 ## Always leave a space before ##\r\n## unless the comment takes the whole line! \r\n\r\n##############\r\n## ## ## ## ##\r\n##############\r\n\r\n## (yes, you can do nice decorations with end-of-line comments)\r\n\r\n##############\r\n\r\n\r\n#! This is another way to introduce an end-of-line comment,\r\n#! but the ## form should be preferred \r\n#! unless, for some reason, you need a shebang.\r\n#! If \"shebang\" means nothing to you, just stick to ##\r\n",
+					"code" : "## A comment: everything in this line following the ## marker is not evaluated\r\n1 2 3 ## This is why it's called an end-of line comment\r\n##\r\n## (yes, you can have empty end-of-line comments)\r\n##\r\n4 5 ## Always leave a space before ##\r\n## unless the comment takes the whole line! \r\n\r\n##############\r\n##          ##\r\n## ##    ## ##\r\n##          ##\r\n##    ##    ##\r\n##          ##\r\n## #      # ##\r\n##  ######  ##\r\n##          ##\r\n##############\r\n\r\n## (yes, you can do nice decorations with end-of-line comments)\r\n\r\n##############\r\n\r\n\r\n#! This is another way to introduce an end-of-line comment,\r\n#! but the ## form should be preferred \r\n#! unless, for some reason, you need a shebang.\r\n#! If \"shebang\" means nothing to you, just stick to ##\r\n",
 					"fontname" : "Arial",
 					"id" : "obj-4",
 					"maxclass" : "newobj",
@@ -239,6 +242,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 16.0, 136.5, 113.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,

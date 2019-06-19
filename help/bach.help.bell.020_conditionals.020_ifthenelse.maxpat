@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -59,7 +59,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 339.5, 41.0, 23.0 ],
+					"patching_rect" : [ 111.0, 328.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -71,7 +71,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 339.5, 29.5, 23.0 ],
+					"patching_rect" : [ 66.0, 328.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -83,7 +83,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 339.5, 29.5, 23.0 ],
+					"patching_rect" : [ 18.0, 328.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -109,6 +109,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 368.5, 308.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -123,7 +124,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 234.0, 203.5, 49.0, 23.0 ],
+					"patching_rect" : [ 236.0, 192.5, 49.0, 23.0 ],
 					"text" : "4 5 6 7"
 				}
 
@@ -135,7 +136,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 181.0, 203.5, 37.0, 23.0 ],
+					"patching_rect" : [ 181.0, 192.5, 37.0, 23.0 ],
 					"text" : "1 2 3"
 				}
 
@@ -162,7 +163,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 111.0, 203.5, 41.0, 23.0 ],
+					"patching_rect" : [ 111.0, 192.5, 41.0, 23.0 ],
 					"text" : "10 10"
 				}
 
@@ -174,7 +175,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 66.0, 203.5, 29.5, 23.0 ],
+					"patching_rect" : [ 66.0, 192.5, 29.5, 23.0 ],
 					"text" : "20"
 				}
 
@@ -186,7 +187,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 203.5, 29.5, 23.0 ],
+					"patching_rect" : [ 18.0, 192.5, 29.5, 23.0 ],
 					"text" : "10"
 				}
 
@@ -211,8 +212,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 232.5, 235.0, 38.0 ],
+					"patching_rect" : [ 18.0, 232.5, 237.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -290,8 +292,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 100.5, 325.0, 23.0 ],
+					"patching_rect" : [ 18.0, 109.0, 325.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,

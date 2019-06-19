@@ -1527,7 +1527,7 @@ void notation_class_add_slots_attributes(t_class *c, char obj_type){
 		// @description Sets the slots which should show up in the right-click (or two-fingers-tap) popup menu 
 		// of a note. The attribute expects a list of integers, each representing a slot number.
 		
-		CLASS_ATTR_LONG(c,"linknotecolortoslot",0, t_notation_obj, link_notecolor_to_slot);
+		CLASS_ATTR_LONG(c,"linknotecolortoslot",0, t_notation_obj, link_nitemcolor_to_slot);
 		CLASS_ATTR_STYLE_LABEL(c,"linknotecolortoslot",0,"text","Link Note Color To Slot");
 		CLASS_ATTR_FILTER_CLIP(c, "linknotecolortoslot", 0, CONST_MAX_SLOTS);
 		CLASS_ATTR_DEFAULT_SAVE_PAINT(c,"linknotecolortoslot",0,"0");
@@ -1776,7 +1776,7 @@ void notation_class_add_color_attributes(t_class *c, char obj_type){
 		CLASS_ATTR_STYLE_LABEL(c, "notecolor",0,"rgba","Note Color");
 		CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,"notecolor",0,"0. 0. 0. 1.");
 		// @exclude bach.slot
-		// @description Sets the color of noteheads, duration lines and note tails, in RGBA format.
+		// @description Sets the color (in RGBA format) of noteheads, duration lines, note tails, rests, etc.
 
         CLASS_ATTR_RGBA(c,"accidentalcolor", 0, t_notation_obj, j_accidentals_rgba);
         CLASS_ATTR_STYLE_LABEL(c, "accidentalcolor",0,"rgba","Accidental Color");
@@ -5971,7 +5971,7 @@ t_max_err notationobj_handle_attr_modified_notify(t_notation_obj *r_ob, t_symbol
             else if (attrname == gensym("linknotesizetoslot"))
                 change_linkto_slot_flag(r_ob, r_ob->link_notesize_to_slot - 1, k_SLOT_LINKAGE_NOTE_SIZE);
             else if (attrname == gensym("linknotecolortoslot"))
-                change_linkto_slot_flag(r_ob, r_ob->link_notecolor_to_slot - 1, k_SLOT_LINKAGE_NOTE_COLOR);
+                change_linkto_slot_flag(r_ob, r_ob->link_nitemcolor_to_slot - 1, k_SLOT_LINKAGE_NOTE_COLOR);
             else if (attrname == gensym("linkarticulationstoslot"))
                 change_linkto_slot_flag(r_ob, r_ob->link_articulations_to_slot - 1, k_SLOT_LINKAGE_ARTICULATIONS);
             else if (attrname == gensym("linkannotationtoslot"))

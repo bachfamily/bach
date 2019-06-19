@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 4,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -52,13 +52,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 0,
-							"revision" : 4,
+							"revision" : 6,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 921.0, 553.0 ],
+						"rect" : [ 0.0, 26.0, 921.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -93,8 +93,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 565.0, 219.0, 288.0, 79.0 ],
-									"presentation_linecount" : 5,
+									"patching_rect" : [ 565.0, 219.0, 292.0, 79.0 ],
 									"text" : "The readappend message appends the contents of a file to the bell code already contained in the object, but only if the new code is valid.\nThe forcereadappend message does the same, but retains even invelid code."
 								}
 
@@ -107,7 +106,6 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 361.5, 241.0, 195.0, 23.0 ],
-									"presentation_linecount" : 2,
 									"text" : "forcereadappend baddouble.bell"
 								}
 
@@ -163,6 +161,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 13.5, 276.0, 122.0, 22.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 0,
 										"versionnumber" : 80005
 									}
 ,
@@ -318,6 +317,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 13.5, 385.0, 148.0, 22.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80005
 									}
 ,
@@ -336,6 +336,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 13.5, 125.0, 122.0, 22.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 0,
 										"versionnumber" : 80005
 									}
 ,
@@ -460,7 +461,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 0,
-							"revision" : 4,
+							"revision" : 6,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -519,6 +520,7 @@
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 481.0, 281.0, 159.0, 38.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80005
 									}
 ,
@@ -535,6 +537,7 @@
 									"outlettype" : [ "", "" ],
 									"patching_rect" : [ 481.0, 242.5, 159.0, 23.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80005
 									}
 ,
@@ -568,6 +571,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 481.0, 101.0, 122.0, 38.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80005
 									}
 ,
@@ -692,6 +696,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 231.0, 181.0, 23.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80005
 									}
 ,
@@ -725,6 +730,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 101.0, 135.0, 23.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80005
 									}
 ,
@@ -757,6 +763,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 372.0, 181.0, 52.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80005
 									}
 ,
@@ -853,13 +860,13 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 0,
-							"revision" : 4,
+							"revision" : 6,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 921.0, 553.0 ],
+						"rect" : [ 100.0, 126.0, 921.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -1008,7 +1015,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 0,
-							"revision" : 4,
+							"revision" : 6,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1145,6 +1152,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 279.0, 290.0, 22.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80001
 									}
 ,
@@ -1214,6 +1222,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 173.0, 109.0, 22.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80001
 									}
 ,
@@ -1269,6 +1278,7 @@
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 17.5, 395.0, 410.0, 22.0 ],
 									"saved_object_attributes" : 									{
+										"embed" : 1,
 										"versionnumber" : 80002
 									}
 ,
@@ -1426,7 +1436,7 @@
 						"appversion" : 						{
 							"major" : 8,
 							"minor" : 0,
-							"revision" : 4,
+							"revision" : 6,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1506,7 +1516,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.welcome.maxpat",
+				"name" : "bach.help.bell.010_basics.070_retrievalofelements.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",

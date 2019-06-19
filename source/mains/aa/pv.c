@@ -558,7 +558,7 @@ t_pvault *pvault_new(t_symbol *s, short ac, t_atom *av)
 		object_method(x->p_top2pvitem, gensym("readonly"), 1);
 		hashtab_flags(x->p_top2pvitem, OBJ_FLAG_REF);
 	}
-    llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+    llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
 
 	return x;
 }
