@@ -1187,7 +1187,7 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["left"] = new t_fnLeft;
     (*bifTable)["right"] = new t_fnRight;
     (*bifTable)["subs"] = new t_fnSubs;
-    (*bifTable)["keysubs"] = new t_fnKeysubs;
+    //(*bifTable)["keysubs"] = new t_fnKeysubs;
     (*bifTable)["insert"] = new t_fnInsert;
     (*bifTable)["find"] = new t_fnFind;
     (*bifTable)["finditems"] = new t_fnFinditems;

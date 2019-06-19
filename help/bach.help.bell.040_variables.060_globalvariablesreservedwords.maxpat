@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -42,11 +42,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 453.0, 578.0, 21.0 ],
-					"text" : "—but if you follow the advice of using capitalized names, you don't have to remember any of those!",
+					"patching_rect" : [ 6.0, 441.0, 578.0, 36.0 ],
+					"text" : "—but if you follow the advice of using capitalized names, you don't have to remember any of those, and you're guaranteed that they won't be added to the list in the future.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -56,13 +57,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-7",
-					"linecount" : 12,
+					"linecount" : 13,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 485.0, 95.0, 87.0, 181.0 ],
-					"presentation_linecount" : 12,
-					"text" : "slice\nsort\rsqrt\rsubs\rsymdiff\rtan\rtanh\rthin\rtrans\rtrunc\runion\rwrap",
+					"patching_rect" : [ 485.0, 83.0, 87.0, 195.0 ],
+					"text" : "sinh\nslice\nsort\rsqrt\rsubs\rsymdiff\rtan\rtanh\rthin\rtrans\rtrunc\runion\rwrap",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -76,9 +76,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 385.0, 95.0, 87.0, 355.0 ],
-					"presentation_linecount" : 24,
-					"text" : "map\nmax\rmin\rminmax\rmod\rnth\rnum\roctave\noutlet\rperm\rpitch\rpow\rprimeser\rrandom\rrat\rreduce\rrev\rright\rrot\rround\rscramble\rsgn\rsin\nsinh",
+					"patching_rect" : [ 385.0, 83.0, 81.0, 355.0 ],
+					"text" : "makepitchsc\nmap\nmax\rmin\rminmax\rmod\rnth\rnum\roctave\noutlet\rperm\rpitch\rpow\rprimeser\rrandom\rrat\rreduce\rrev\rright\rrot\rround\rscramble\rsgn\rsin",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -92,9 +91,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 285.0, 95.0, 87.0, 355.0 ],
-					"presentation_linecount" : 24,
-					"text" : "enharm\rexp\rexp2\rfind\rfindaddrs\rfinditems\rflat\rfloat\rfloor\rfmod\rgeomser\rgroup\rhypot\ninclude\rinsert\rint\rintersection\rleft\rlength\rlog\rlog10\rlog2\rmakepitch\rmakepitchsc",
+					"patching_rect" : [ 285.0, 83.0, 87.0, 355.0 ],
+					"text" : "diff\nenharm\rexp\rexp2\rfind\rfindaddrs\rfinditems\rflat\rfloat\rfloor\rfmod\rgeomser\rgroup\rhypot\ninclude\rinsert\rint\nis\rintersection\rleft\rlength\rlog\rlog10\rlog2",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -108,8 +106,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 183.0, 95.0, 87.0, 355.0 ],
-					"text" : "abs\racos\racosh\ralter\rapprox\rarithmser\rasin\rasinh\ratan\ratan2\ratanh\rbessel\rcartesianprod\rceil\rcents\rclassify\rcomb\rcontains\rcos\rcosh\rdegree\rden\rdepth\rdiff",
+					"patching_rect" : [ 183.0, 83.0, 87.0, 355.0 ],
+					"text" : "abs\racos\racosh\ralter\napply\rapprox\rarithmser\rasin\rasinh\ratan\ratan2\ratanh\rbessel\rcartesianprod\rceil\rcents\rclassify\rcomb\rcontains\rcos\rcosh\rdegree\rden\rdepth",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -122,7 +120,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 176.0, 67.0, 107.0, 21.0 ],
+					"patching_rect" : [ 176.0, 55.0, 107.0, 21.0 ],
 					"text" : "Built-in functions:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -133,12 +131,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-2",
-					"linecount" : 11,
+					"linecount" : 13,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 31.0, 95.0, 69.0, 166.0 ],
-					"text" : "as\relse\rfor\rif\rin\rnil\rnull\rpi\rdo\rthen\rwhile",
+					"patching_rect" : [ 31.0, 83.0, 69.0, 195.0 ],
+					"text" : "as\rcollect\nelse\rfor\rif\rin\rnil\rnull\rpi\rdo\rthen\rwhile\nwith",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -151,7 +149,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 24.0, 67.0, 69.0, 21.0 ],
+					"patching_rect" : [ 24.0, 55.0, 69.0, 21.0 ],
 					"text" : "Keywords:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
