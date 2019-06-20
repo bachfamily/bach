@@ -6446,7 +6446,8 @@ int T_EXPORT main(void){
     // An "unnecessary" attribute toggles whether unnecessary dynamic markings should by default be
     // dropped (default is 1: yes, use 0 to turn this of). <br />
     // A "thresh" attribute sets a threshold for hairpin detection (default is 1., 0. meaning: no hairpin detection). <br />
-    // Two attributes, "mindyn" and "maxdyn", allow setting special symbols to be assigned to velocities <= 1 and >= 127 respectively.
+    // Two attributes, "mindyn" and "maxdyn", allow setting special symbols to be assigned to velocities below 1 and above 127 respectively
+    // (both numbers included).
     // If "none" is provided (default), there will be no special symbol for these cases.
     // @marg 0 @name selection @optional 1 @type symbol
     // @marg 1 @name slot_number @optional 1 @type int
@@ -6455,8 +6456,8 @@ int T_EXPORT main(void){
     // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>[<m>dynamics</m> <m>velocity</m>]</b> pairs
     // @mattr unnecessary @type int @default 1 @digest If non-zero, drops unnecessary dynamic markings
     // @mattr thresh @type float @default 1. @digest Hairpin detection threshold
-    // @mattr mindyn @type symbol @default none @digest Dynamic marking for velocities <= 1 (or none if empty symbol)
-    // @mattr maxdyn @type symbol @default none @digest Dynamic marking for velocities >= 127 (or none if empty symbol)
+    // @mattr mindyn @type symbol @default none @digest Dynamic marking for velocities less than or equal to 1 (or none if empty symbol)
+    // @mattr maxdyn @type symbol @default none @digest Dynamic marking for velocities greater than or equal to 127 (or none if empty symbol)
     // @seealso dynamics2velocities, checkdynamics, fixdynamics
     // @example velocities2dynamics @caption convert velocities to dynamics throughout the whole score
     // @example velocities2dynamics selection @caption same thing, for selected items only
