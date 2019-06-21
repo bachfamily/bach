@@ -8518,6 +8518,8 @@ char is_measure_single_whole_rest(t_notation_obj *r_ob, t_measure *measure){
 // tells if a measure has all rests
 char is_measure_empty(t_notation_obj *r_ob, t_measure *measure, char account_for_slots)
 {
+    if (!measure)
+        return false;
     t_chord *chord = measure->firstchord;
     while (chord) {
         if (chord->r_sym_duration.r_num >= 0)
