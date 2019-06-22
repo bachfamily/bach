@@ -511,7 +511,7 @@ void bach_donors(t_bach *x)
     post(" - Pete Kellock");
     //
     post("...as well as all our patrons:");
-    post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Nikola Kołodziejczyk, TJ Shredder, Joost Van Kerkhoven, Julien Vincenot");
+    post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Nikola Kołodziejczyk, TJ Shredder, Joost Van Kerkhoven, Hans Tutschku, Julien Vincenot");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
