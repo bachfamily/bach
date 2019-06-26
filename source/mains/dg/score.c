@@ -13488,9 +13488,8 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
     // In which case, we'll bother adding it manually, and we won't parse the tuttipoints llll again.
     char tuttipoint_aligned = allow_multiple_measures_per_voice ? false : true;
     if (tuttipoint_aligned && (start_voice_num_one_based > 1 || end_voice_num_one_based < x->r_ob.num_voices)) {
-        if (ref_meas_num_one_based < 0) {
-/*            if (ref_meas_num_one_based < -1)
-                tuttipoint_aligned = false; */
+        // THIS WAS THE ANCIENT CODE, but it lead to crashes, so I don't trust it. I think we simply have to recompute tuttipoints in this case
+        /*        if (ref_meas_num_one_based < 0) {
         } else {
             for (this_voice = 1; this_voice < x->r_ob.num_voices; this_voice++) {
                 if (this_voice < start_voice_num_one_based || this_voice > end_voice_num_one_based)
@@ -13502,7 +13501,8 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                     break;
                 }
             }
-        }
+        } */
+        tuttipoint_aligned = false;
     }
     
     t_tuttipoint *ref_tpt = (t_tuttipoint *)WHITENULL;
