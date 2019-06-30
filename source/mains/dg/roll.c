@@ -6226,9 +6226,13 @@ int T_EXPORT main(void){
     // can be also set via the "mspersystem" message attribute; <br />
     // scroll: as the "multiline" mode, but all the systems are collected into a single file, scrollable vertically; the system length
     // is by default the object current domain, but can be also set via the "mspersystem" message attribute. <br />
+    // The "adaptwidth" message attribute defines how the defined "mspersystem" are handled: if it is 0 (default), the horizontal zoom is changed
+    // so that the image width corresponds to the notation object width; if it is 1, the object width is modified in order to keep the current
+    // horizontal zoom.
     // @marg 0 @name filename @optional 1 @type symbol
     // @mattr view @type symbol @default line @digest View mode
     // @mattr mspersystem @type float @default none @digest Length of a system in milliseconds
+    // @mattr adaptwidth @type int @default 0 @digest Adapts the width of the object to preserve current zoom
     // @mattr dpi @type int @default 72 @digest Dots per inch
     // @mattr systemvshift @type int @default 0 @digest Separation between systems in pixels
     // @mattr fadedomain @type int @default none @digest Fade the left part of the domain near the clefs
