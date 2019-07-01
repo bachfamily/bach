@@ -103,6 +103,19 @@ Scroll down for very important things you should now about v0.8b
 - bach.score2roll
 		Fixed bugs
 
+- bach.expr	random function fixed for negative numbers
+		added min and max functions
+
+- bach.diff, bach.intersection, bach.symdiff, bach.union, bach.classify
+		New "lambda" attribute
+
+- bach.constraints
+		Works after entering an invalid or empty llll in the first inlet
+		Now weak and hungry engines also accept and deal with non-integer scores
+		Fixed bug causing crashes with provisionals in parallel mode
+
+- bach.delace	Fixed crash in modo mode without count argument
+
 v0.8b
 
 ******************************************************************
