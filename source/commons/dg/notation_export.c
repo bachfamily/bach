@@ -117,19 +117,20 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
     t_llll *arguments = (t_llll *) atom_getobj(av);
     char ok = true;
     t_symbol *view = gensym("line");
-    long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1, onsetindomain = 0;
+    long dpi = 72, must_cleanup = 1, fadepredomain = -1, fitmeasures = 1, onsetindomain = 0, adaptwidth = 0;
     t_symbol *filename_sym = NULL, *type_sym = NULL;
     double mspersystem = r_ob->domain, uxperline = r_ob->domain_ux;
     t_llll *tuttipoint_system_layout = NULL;
     double new_inner_width = 0, postdomain_uwidth = -1;
     long systemvshift_pixels = 0;
     
-    llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssiddiiiid",
+    llll_parseargs_and_attrs_destructive((t_object *) r_ob, arguments, "sssididiiiid",
                                          _sym_filename, &filename_sym,
                                          _sym_type, &type_sym,
                                          gensym("view"), &view,         // can be one of the following: "raw", "line", "multiline", "scroll"
                                          gensym("dpi"), &dpi,
                                          gensym("mspersystem"), &mspersystem,
+                                         gensym("adaptwidth"), &adaptwidth,
                                          gensym("pixelpersystem"), &uxperline,
                                          gensym("systemvshift"), &systemvshift_pixels,
                                          gensym("fitmeasures"), &fitmeasures,
@@ -225,6 +226,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         long fade_predomain_prev = r_ob->fade_predomain;
         long onsetindomain_prev = r_ob->onset_in_domain;
         double postdomain_prev = r_ob->postdomain_width;
+        double zoom_x_prev = r_ob->zoom_x;
         char send_undo_redo_bang_prev = r_ob->send_undo_redo_bang;
 
         r_ob->fade_predomain = fadepredomain;
@@ -247,8 +249,13 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
                 }
             } else if (view == gensym("scroll") || view == gensym("page") || view == gensym("multiline")) {
                 if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
-                    if (mspersystem != r_ob->domain) {
-                        r_ob->inner_width = r_ob->postdomain_width + mspersystem * (CONST_X_SCALING * r_ob->zoom_x * r_ob->zoom_y) - (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y);
+                    if (mspersystem != r_ob->domain && mspersystem > 0) {
+                        // either we change the inner_width or we change the zoom factor.
+                        if (adaptwidth) {
+                            r_ob->inner_width = r_ob->postdomain_width + mspersystem * (CONST_X_SCALING * r_ob->zoom_x * r_ob->zoom_y) - (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y);
+                        } else {
+                            r_ob->zoom_x = (r_ob->inner_width + (r_ob->j_inset_x - get_max_vscrollbar_width_or_inset_x(r_ob) - (CONST_ROLL_UX_LEFT_START + r_ob->key_signature_uwidth + r_ob->voice_names_uwidth + r_ob->additional_ux_start_pad) * r_ob->zoom_y) - r_ob->postdomain_width) / (mspersystem * CONST_X_SCALING * r_ob->zoom_y);
+                        }
                     }
                     r_ob->inner_height = notationobj_get_supposed_standard_uheight(r_ob) * r_ob->zoom_y;
                     num_shots = ceil(length_ms_prev / mspersystem);
@@ -404,6 +411,7 @@ t_max_err notationobj_dowriteimage(t_notation_obj *r_ob, t_symbol *s, long ac, t
         //    unlock_general_mutex((t_notation_obj *)x);
         
         if (must_cleanup) {
+            r_ob->zoom_x = zoom_x_prev;
             r_ob->show_hscrollbar = show_hscrollbar_prev;
             r_ob->show_vscrollbar = show_vscrollbar_prev;
             r_ob->legend = legend_prev;
