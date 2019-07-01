@@ -169,6 +169,7 @@
 		<seealso name="bach.times" display="bach.*" type="refpage" />
 		<seealso name="bach.div" display="bach./" type="refpage" />
 		<seealso name="bach.remainder" display="bach.%" type="refpage" />
+		<seealso name="bach.eval" />
 		<seealso name="expr" />
 		<seealso name="vexpr" />
 	</seealsolist>

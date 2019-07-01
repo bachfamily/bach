@@ -2,7 +2,7 @@ VERSION NOTES:
 
 v0.8.1b
 
-Scroll down for very important things you should now about v0.8b (v0.8.1 being a minor update, fixing a few bugs)
+Scroll down for very important things you should now about v0.8b
 
 **********************
 *** VERY IMPORTANT ***
@@ -10,7 +10,7 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 
 - bach has switched to square brackets [] instead of parens ().
   	THIS WILL NOT BREAK BACKWARD COMPATIBILITY and you can still continue using () if you liked them.
-  	However we had good reasons for pushing forward this change.
+  	However we had good reasons for pushing forward this change. Look at the "what's new" tab in the bach overview.
 
 
 *****************
@@ -23,11 +23,12 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 		There's a new @applyslope attribute, by default set to 1, 
 			that applies range slopes in function slots automatically
 			to function segments or curves, to account for slot range slope
-		Your patches might then sound different than previously!
+			Your patches might then sound different than previously!
 			if you did NOT want this, simply set @applyslope to 0.
 		The attribute @notificationsformessages is now called @notifymessages. 
 			Backwards compatibility SHOULD be preserved, but verify your patches.
 		The "interp" and "sample" message now only output a single slot value for temporal slots.
+		Now keysignatures appear also by default on auxiliary staves (there's an attribute for turning these extended clefs off)
 
 - bach.score	@outputtrees has changed: now the value 2 outputs trees from the first outlet AND from the duration outlet.
 			To output trees from ALL outlets please use the new attribute value 3 (correct this in your older patches)
@@ -41,6 +42,7 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 ***********************
 
 - all objects	Fixed issues with negative midicents
+		Updated help files for square brackets
 
 - bach.eval	New object and scripting language
 
@@ -49,8 +51,11 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 - bach.roll, bach.score, bach.slot
 		New feature: scores can be mirrored to jitter matrices (to ease the work with Mira and Miraweb)
 		New attribute @notifypaint to notify when display is refreshed
+		Fixed wrong handling of preventedit for markers and breakpoints while moving onsets via keyboard in bach.roll
 
 - bach.roll, bach.score
+		Improved XML import and export
+		Brand new dynamics system, with many new features (see the Dynamics section in the help center)
 		New export as image, also in page view (see #exportimage)
 		New communication with Mira/miraweb via png export (see #bach+mira)
 		New "poly" message to force or handle polyphonic behaviors (see #poly+message)
@@ -59,16 +64,44 @@ Scroll down for very important things you should now about v0.8b (v0.8.1 being a
 		Fixed bug causing wrong breakpoint handling for "dynamics2velocities" in some situations
 		Added "part" as a possible variable for selection expressions
 		Added support for removing duplicate annotation (see #annotation+duplicates)
+		Newly written Venn algorithm (to remove GPC dependency)
+		Fixed bugs causing wrong label contours
+		Feat: now "sel voice" and "sel voices" messages are supported in bach.roll and bach.score
+		Fixed bug causing wrong dot positioning with 8va clefs
+		Fixed bug causing wrong dump output messages
+		Now one can define custom routers for dump message
+		Fixed positioning bugs in new dynamics
+		Fixed bug causing wrong undo data when whole object was under tick
+		Fixed bug causing wrong auto clefs when voices were empty
+		Fix: now slot windows can also be moved with vertical mousewheel
+		Feat: slot 24 is now by default an annotation slot	
+		Fix: changed order of color handling for lock/mute/solo, so that these are always the last step
+		Fixed bug possibly causing wrong velocity on partial notes when breakpointshavevelocity was turned off
+		Fix: now octave jumps via keyboard preserve enharmonicity
+		Fixed doubleclick method for slots, checking for text too long added
+		Feat: added possibility to copy-paste slotinfo; added copy slotinfo and paste slotinfo messages
+
+- bach.roll	Fixed behavior with marker stretching in bach.roll
 
 - bach.score	Fixed possible crashes with "inscreenmeas"
 		Fixed possible crashes in rare scenarios when the score was hidden.
+		Fixed bug causing crash in bach.score when all voices are hidden
+		Fixed issues with image export in bach.score
+		Fix: now if tempo interpolation is changed in the inspector, it is also changed for all synchronous tempi
+		Now barlines can be shown as ticks or intermeasure barlines
+		Fixed bug causing wrong selection on multiple clicks on tied sequences
+		Fixed bug causing scrambled stuff when voices were moved up/down in bach.score
 
 - bach.n2mc	Now handles pitches as well 
 			(this entailed compatibility breaks with older patches, but such issues is now fixed)
 
 - bach.comb	New @repeat attribute to allow repetitions (arrangements)
 
+- bach.playkeys Fixed several bugs
+		Added possibility to use [slot <dynamics/noteheads/...>] in bach.playkeys; added support for annotations
 
+- bach.score2roll
+		Fixed bugs
 
 v0.8b
 

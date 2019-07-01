@@ -104,7 +104,7 @@ int T_EXPORT main()
 
 
     // no @out attribute, only versionnumber (hidden)
-    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_UI);
+    llllobj_class_add_versionnumber_attr(c, LLLL_OBJ_VANILLA);
 
 
 	CLASS_ATTR_CHAR(c, "matchtype", 0, t_minfo, match_type);
@@ -199,7 +199,7 @@ void minfo_inletinfo(t_minfo *x, void *b, long a, char *t)
 
 
 void minfo_free(t_minfo *x)
-{	
+{
 	llllobj_obj_free((t_llllobj_object *) x);
 }
 
@@ -217,7 +217,7 @@ t_minfo *minfo_new(t_symbol *s, short ac, t_atom *av)
 	} else 
 		error(BACH_CANT_INSTANTIATE);
 	
-	llllobj_set_current_version_number((t_object *) x, LLLL_OBJ_VANILLA);
+	llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
     if (x && err == MAX_ERR_NONE)
 		return x;
 	

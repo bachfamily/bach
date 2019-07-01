@@ -64,6 +64,20 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "picking", "element", "double", "colon", "nth", "lookup" ],
 				"title" : [ "Picking elements" ]
 			},
+			"Accessbykeys" : {
+				"filename" : [ "bach.help.bell.010_basics.076_accessbykeys.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "concatenation", "precedence", "retrieval" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "picking", "element", "double", "colon", "nth", "lookup" ],
+				"title" : [ "Access by keys" ]
+			},
+			"Rangeoperator" : {
+				"filename" : [ "bach.help.bell.010_basics.077_rangeoperator.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "concatenation", "precedence", "retrieval", "arithmser", "geomser" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "picking", "element", "triple", "dot", "range" ],
+				"title" : [ "Range operator" ]
+			},
 			"Print" : {
 				"filename" : [ "bach.help.bell.010_basics.080_print.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
@@ -302,6 +316,13 @@
 				"seealso" : [  ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation" ],
 				"title" : [ "Scope of local variables" ]
+			},
+			"Liftedvariables" : {
+				"filename" : [ "bach.help.bell.060_functions.055_liftedvariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation" ],
+				"title" : [ "Lifted variables" ]
 			},
 			"Scopeoflocalvariablesexamples" : {
 				"filename" : [ "bach.help.bell.060_functions.060_scopeoflocalvariablesexamples.maxpat" ],
@@ -707,7 +728,7 @@
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.~~_thedepthattributes.maxpat" ],
 					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union", "bach.classify" ],
 					"seealso" : [ "named+argument", "position+argument" ],
-					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "depth", "level", "mindepth", "maxdepth", "minlevel", "maxlevel" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "depth", "level", "mindepth", "maxdepth", "minlevel", "maxlevel", "argument" ],
 					"title" : [ "The depth / level arguments" ]
 				}
 			}
@@ -970,7 +991,7 @@
 			"filename" : [ "bach.help.llll.10_attributessymbols.maxpat" ],
 			"objects" : [ "all" ],
 			"seealso" : [ "element+backtick" ],
-			"tags" : [ "llll", "message", "attribute", "symbol", "backtick", "literal", "literaly" ],
+			"tags" : [ "llll", "message", "attribute", "symbol", "backtick", "literal", "literaly", "textout" ],
 			"title" : [ "Attributes symbols and backticks" ]
 		},
 		"Backticks" : {
@@ -4556,7 +4577,7 @@
 				"filename" : [ "bach.help.notation.sequencing.07_unpackplaysyntax.maxpat" ],
 				"objects" : [ "bach.roll", "bach.score" ],
 				"seealso" : [  ],
-				"tags" : [ "sequencer", "sequencing", "unpack", "unpacknote", "play", "content", "playkeys", "keys" ],
+				"tags" : [ "sequencer", "sequencing", "unpack", "unpacknote", "play", "content", "playkeys", "keys", "unpacking", "played" ],
 				"title" : [ "Unpacking played content" ]
 			},
 			"Unpackplaysyntaxroll" : {

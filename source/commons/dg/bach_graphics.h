@@ -1416,6 +1416,9 @@ char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen);
 #endif
 
 
+// internal
+void bach_ss_display(t_object *x);
+
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

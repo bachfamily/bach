@@ -169,7 +169,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
-				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.290196 0.309804 0.301961 1.0" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.2 0.2 0.2 1.0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Background Color" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
@@ -202,7 +202,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
-				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.815686 0.858824 0.34902 1.0" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.929412 0.929412 0.352941 1.0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Highlighted Triangle Color" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />
@@ -330,7 +330,7 @@
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />
-				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.490196 0.498039 0.517647 1.0" />
+				<attribute name="default" get="1" set="1" type="rgba" size="1" value="0.501961 0.501961 0.501961 1.0" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Triangle Color" />
 				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="save" get="1" set="1" type="int" size="1" value="1" />

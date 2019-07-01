@@ -4020,7 +4020,7 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
     // 1) find the base path across points
     const double safe_dist = 2 * EXTRUDE_AMOUNT;
     long *path_ids = (long *)bach_newptr(num_pts_in*sizeof(long));
-    long done[num_pts_in];
+    long *done = (long *)bach_newptr(num_pts_in*sizeof(long));
 
     for (long i = 0; i < num_pts_in; i++)
         done[i] = false;
@@ -4375,6 +4375,7 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
     bach_freeptr(temp_pts);
     bach_freeptr(pts_in_modif);
     bach_freeptr(path_ids);
+    bach_freeptr(done);
     bach_freeptr(new_pts);
     bach_freeptr(pts);
     polygon_free(p);
@@ -4382,3 +4383,5 @@ t_beziercs *get_venn_enclosure(long num_pts_in, t_pt *pts_in, long num_pts_out, 
 
     return beziercs;
 }
+
+
