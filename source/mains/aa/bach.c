@@ -14,6 +14,7 @@
 #ifdef WIN_VERSION
 
     #include <windows.h>
+	#include <ShlObj.h>
     HINSTANCE hinst;
 
 #endif
@@ -136,7 +137,9 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved )
 void ext_main(void *moduleRef)
 {
 	t_class *c;
-	
+
+	Sleep(60000);
+
     if (gensym("bach")->s_thing) {
         error("Can't instantiate bach");
         return;
@@ -1318,24 +1321,52 @@ t_uint32 murmur3(const t_uint32 key)
 
 void bach_unlock(t_bach *x, t_atom_long l)
 {
+
+	std::string dq = "\"";
+
 #ifdef MAC_VERSION
     passwd* pw = getpwuid(getuid());
     std::string home = pw->pw_dir;
-    std::string dq = "\"";
-    std::string name = home + "/Library/Application Support/bach/cache/bachutil.mxo";
-    std::string cm = "echo " + std::to_string(l) + " > " + dq + name + dq;
-    system(cm.c_str());
+	std::string folder = home + "/Library/Application Support/bach";
+	std::string name = folder + "/bachutil.mxo";
 #endif
+
+
+#ifdef WIN_VERSION
+	std::string bs = "\\";
+	TCHAR appDataPath[MAX_PATH];
+	if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
+		return;
+	std::string home = appDataPath;
+	std::string folder = home + bs + "bach";
+	std::string name = folder + bs + "bachutil.mxe64";
+#endif
+
+	std::string md = "md " + dq + folder + dq;
+	std::string echo = "echo " + std::to_string(l) + " > " + dq + name + dq;
+	system(md.c_str());
+	system(echo.c_str());
 }
 
 t_bool bach_checkauth()
 {
+	std::string dq = "\"";
 
 #ifdef MAC_VERSION
     passwd* pw = getpwuid(getuid());
     std::string home = pw->pw_dir;
-    std::string dq = "\"";
     std::string name = home + "/Library/Application Support/bach/cache/bachutil.mxo";
+#endif
+#ifdef WIN_VERSION
+	std::string bs = "\\";
+	TCHAR appDataPath[MAX_PATH];
+	if (!SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appDataPath)))
+		return false;
+	std::string home = appDataPath;
+	std::string folder = home + bs + "bach";
+	std::string name = folder + bs + "bachutil.mxe64";
+#endif
+
     t_fourcc filetype = 0, outtype;
     char filename[MAX_PATH_CHARS];
     short path;
@@ -1353,11 +1384,11 @@ t_bool bach_checkauth()
     sysfile_read(fh, &size, buffer);
     sysfile_close(fh);
     // do something with data in buffer here
-    t_uint32 code = atol(buffer);
+    unsigned long code = strtoul(buffer, NULL, 10);
     sysmem_freeptr(buffer);     // must free allocated memory
     t_datetime dt;
     systime_datetime(&dt);
-    t_uint32 h = murmur3(dt.year);
+	unsigned long h = murmur3(dt.year);
     if (code == h)
         return true;
     if (dt.month != 1)
@@ -1367,10 +1398,6 @@ t_bool bach_checkauth()
         return true;
     else
         return false;
-#else
-    return true;
-#endif
-    
 }
 
 
