@@ -18,6 +18,10 @@
 
 #endif
 
+#ifdef MAC_VERSION
+#include "pwd.h"
+#endif
+
 #include "ast.hpp"
 
 long *bach_gen_primes(void);
@@ -53,10 +57,14 @@ void bach_sendbuildnumber(t_bach *x, t_symbol *s);
 void bach_sendversion(t_bach *x, t_symbol *s);
 void bach_sendversionwithbuildnumber(t_bach *x, t_symbol *s);
 void bach_donors(t_bach *x);
+void bach_unlock(t_bach *x, t_atom_long l);
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
 char bach_load_default_font(void);
 long bach_getbuildnumber(void);
 void bach_init_bifs(t_bach *x);
+
+t_uint32 murmur3(const t_uint32 key);
+t_bool bach_checkauth();
 
 t_bach *bach_new(t_symbol *s, long ac, t_atom *av);
 
@@ -153,7 +161,9 @@ void ext_main(void *moduleRef)
     class_addmethod(c, (method) bach_sendversionwithbuildnumber, "sendversionwithbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_sendbuildnumber, "sendbuildnumber", A_SYM, 0);
     class_addmethod(c, (method) bach_donors, "donors", 0);
+    class_addmethod(c, (method) bach_unlock, "unlock", A_LONG, 0);
 
+    
 #ifdef BACH_SAVE_STACK_WITH_MEMORY_LOGS
 //#ifdef BACH_SAVE_STACK_IN_LLLLS
     class_addmethod(c, (method) bach_dump, "dump", 0);
@@ -503,6 +513,7 @@ void bach_donors(t_bach *x)
     post("**************************************************************************");
     post("bach: automated composer's helper would like to thank our top supporters:");
     //post(" - Francisco Colasanto"); // uncomment starting from june 2020
+    //post(" - Yan Maresz"); // uncomment starting from june 2020
     //post(" - Julien Vincenot"); // uncomment starting from june 2020
     post(" - Cody Brookshire");
     post(" - Dimitri Fergadis");
@@ -511,7 +522,8 @@ void bach_donors(t_bach *x)
     post(" - Pete Kellock");
     //
     post("...as well as all our patrons:");
-    post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Nikola Kołodziejczyk, TJ Shredder, Joost Van Kerkhoven, Julien Vincenot");
+    post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Matthew Goodheart, Nikola Kołodziejczyk, ");
+    post("Yan Maresz, TJ Shredder, Joost Van Kerkhoven, Hans Tutschku, Julien Vincenot");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
@@ -636,6 +648,8 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     
     hashtab_store(x->b_reservedselectors, _llllobj_sym_bach_llll, (t_object *) x);
     hashtab_store(x->b_reservedselectors, _llllobj_sym_null, (t_object *) x);
+    
+    x->b_no_ss = bach_checkauth();
     
 	bach_setup(x);
     
@@ -1284,4 +1298,80 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["#<<"] = new t_mathBinaryFunctionAAA<hatom_op_lshift>("#<<");
     (*bifTable)["#>>"] = new t_mathBinaryFunctionAAA<hatom_op_rshift>("#>>");
 }
+
+t_uint32 murmur3(const t_uint32 key)
+{
+    uint32_t h = 0x16851750;
+    uint32_t k = key;
+    k *= 0xcc9e2d51;
+    k = (k << 15) | (k >> 17);
+    k *= 0x1b873593;
+    h ^= k;
+    h ^= 1;
+    h ^= h >> 16;
+    h *= 0x85ebca6b;
+    h ^= h >> 13;
+    h *= 0xc2b2ae35;
+    h ^= h >> 16;
+    return h;
+}
+
+void bach_unlock(t_bach *x, t_atom_long l)
+{
+#ifdef MAC_VERSION
+    passwd* pw = getpwuid(getuid());
+    std::string home = pw->pw_dir;
+    std::string dq = "\"";
+    std::string name = home + "/Library/Application Support/bach/cache/bachutil.mxo";
+    std::string cm = "echo " + std::to_string(l) + " > " + dq + name + dq;
+    system(cm.c_str());
+#endif
+}
+
+t_bool bach_checkauth()
+{
+
+#ifdef MAC_VERSION
+    passwd* pw = getpwuid(getuid());
+    std::string home = pw->pw_dir;
+    std::string dq = "\"";
+    std::string name = home + "/Library/Application Support/bach/cache/bachutil.mxo";
+    t_fourcc filetype = 0, outtype;
+    char filename[MAX_PATH_CHARS];
+    short path;
+    strncpy_zero(filename, name.c_str(), MAX_PATH_CHARS);
+    if (locatefile_extended(filename, &path, &outtype, &filetype, 0))
+        return false;
+    char *buffer;
+    t_filehandle fh;
+    t_ptr_size size;
+    if (path_opensysfile(filename, path, &fh, READ_PERM))
+        return false;
+    sysfile_geteof(fh, &size);
+    buffer = sysmem_newptrclear(size);
+    // read in the file
+    sysfile_read(fh, &size, buffer);
+    sysfile_close(fh);
+    // do something with data in buffer here
+    t_uint32 code = atol(buffer);
+    sysmem_freeptr(buffer);     // must free allocated memory
+    t_datetime dt;
+    systime_datetime(&dt);
+    t_uint32 h = murmur3(dt.year);
+    if (code == h)
+        return true;
+    if (dt.month != 1)
+        return false;
+    h = murmur3(dt.year - 1);
+    if (code == h)
+        return true;
+    else
+        return false;
+#else
+    return true;
+#endif
+    
+}
+
+
 

@@ -2004,7 +2004,7 @@
 				This information is constantly synchronized with the <m>rightclickslot</m> attribute. <br />
 				- <b>linkto</b> (except bach.slot): this field defines the possible slot linkage. Slot linkage is a way to entangle some notation or
 				display features to the content of a given slot. You can specify here to which feature the slot should be linked,
-				via one of the following symbols: "none", "lyrics", "notecolor", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
+				via one of the following symbols: "none", "lyrics", "color", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
 				<br />
 				– <b>commands</b>: specifies the information about the commands. A list of elements (one for each command) is expected.
 				The general syntax for an llll defining commands in a notation object header is:
@@ -3350,7 +3350,7 @@
 			<description>
 				Syntax: <b>goto <m>&lt;symbol: command&gt;</m> <m>[&lt;llll: arguments&gt;]</m> <i>[message attributes]</i> </b><br />
 				Examples:<br />
-				• <b>goto 1000</b>   <i>→ set selection to items which are active at 1sec</i><br />
+				• <b>goto time 1000</b>   <i>→ set selection to items which are active at 1sec</i><br />
 				• <b>goto next</b>   <i>→ select next notation item</i><br />
 				• <b>goto prev</b>   <i>→ select previous notation item</i><br />
 				• <b>goto next @repeat 10</b>   <i>→ select the 10th next notation item</i><br />
@@ -4043,7 +4043,7 @@
 				This information is constantly synchronized with the <m>rightclickslot</m> attribute. <br />
 				- <b>linkto</b> (except bach.slot): this field defines the possible slot linkage. Slot linkage is a way to entangle some notation or
 				display features to the content of a given slot. You can specify here to which feature the slot should be linked,
-				via one of the following symbols: "none", "lyrics", "notecolor", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
+				via one of the following symbols: "none", "lyrics", "color", "noteheadadjust", "noteheadchar", "noteheadfont", "notesize". <br />
 				<br />
 				– <b>commands</b>: specifies the information about the commands. A list of elements (one for each command) is expected.
 				The general syntax for an llll defining commands in a notation object header is:
@@ -5947,6 +5947,8 @@
 				<m>@mapping</m> (llll): Custom dynamics-to-velocity mapping via <b>[<m>dynamics</m> <m>velocity</m>]</b> pairs<br />
 				<m>@unnecessary</m> (int, default: 1): If non-zero, drops unnecessary dynamic markings<br />
 				<m>@thresh</m> (float, default: 1.): Hairpin detection threshold<br />
+				<m>@mindyn</m> (symbol, default: none): Dynamic marking for velocities less than or equal to 1 (or none if empty symbol)<br />
+				<m>@maxdyn</m> (symbol, default: none): Dynamic marking for velocities greater than or equal to 127 (or none if empty symbol)<br />
 				<br />
 				A <m>velocities2dynamics</m> message will infer and assign chord dynamics and hairpins, depending on the current velocities,
 				for the whole score or - if "selection" is set as first argument, for the selected items only.
@@ -5987,8 +5989,12 @@
 				<b>[mapping [<m>dynamics1</m> <m>velocity1</m>] [<m>dynamics2</m> <m>velocity2</m>]...]</b>.
 				Differently from <m>dynamics2velocities</m>, if you define a mapping, you need to define the velocity association for each of the dynamic marking
 				you want to use. <br />
-				An "unnecessary" attribute toggles whether unnecessary dynamic markings should by default be dropped (default is 1: yes, use 0 to turn this of). <br />
-				Finally, a "thresh" attribute sets a threshold for hairpin detection (default is 1., 0. meaning: no hairpin detection).
+				An "unnecessary" attribute toggles whether unnecessary dynamic markings should by default be
+				dropped (default is 1: yes, use 0 to turn this of). <br />
+				A "thresh" attribute sets a threshold for hairpin detection (default is 1., 0. meaning: no hairpin detection). <br />
+				Two attributes, "mindyn" and "maxdyn", allow setting special symbols to be assigned to velocities below 1 and above 127 respectively
+				(both numbers included).
+				If "none" is provided (default), there will be no special symbol for these cases.
 				<br />				See also:<m>dynamics2velocities</m>,<m>checkdynamics</m>,<m>fixdynamics</m><br />
 			</description>
 		</method>
@@ -7115,6 +7121,36 @@
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="onoff" />
 			</attributelist>
 		</attribute>
+		<attribute name="fontface" get="1" set="1" type="" size="1">
+			<digest>
+				
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="fontname" get="1" set="1" type="" size="1">
+			<digest>
+				
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
+		<attribute name="fontsize" get="1" set="1" type="" size="1">
+			<digest>
+				
+			</digest>
+			<description>
+			</description>
+			<attributelist>
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="grid" get="1" set="1" type="int" size="1">
 			<digest>
 				Show Grid
@@ -7900,7 +7936,7 @@
 				Note Color
 			</digest>
 			<description>
-				Sets the color of noteheads, duration lines and note tails, in RGBA format.
+				Sets the color (in RGBA format) of noteheads, duration lines, note tails, rests, etc.
 			</description>
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Color" />

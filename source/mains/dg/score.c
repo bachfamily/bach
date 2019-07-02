@@ -6618,7 +6618,8 @@ int T_EXPORT main(void){
     // An "unnecessary" attribute toggles whether unnecessary dynamic markings should
     // by default be dropped (default is 1: yes, use 0 to turn this of). <br />
     // A "thresh" attribute sets a threshold for hairpin detection (default is 1., 0. meaning: no hairpin detection). <br />
-    // Two attributes, "mindyn" and "maxdyn", allow setting special symbols to be assigned to velocities <= 1 and >= 127 respectively.
+    // Two attributes, "mindyn" and "maxdyn", allow setting special symbols to be assigned to velocities below 1 and above 127 respectively
+    // (both numbers included).
     // If "none" is provided (default), there will be no special symbol for these cases.
     // @marg 0 @name selection @optional 1 @type symbol
     // @marg 1 @name slot_number @optional 1 @type int
@@ -6627,8 +6628,8 @@ int T_EXPORT main(void){
     // @mattr mapping @type llll @digest Custom dynamics-to-velocity mapping via <b>[<m>dynamics</m> <m>velocity</m>]</b> pairs
     // @mattr unnecessary @type int @default 1 @digest If non-zero, drops unnecessary dynamic markings
     // @mattr thresh @type float @default 1. @digest Hairpin detection threshold
-    // @mattr mindyn @type symbol @default "" @digest Dynamic marking for velocities <= 1 (or none if empty symbol)
-    // @mattr maxdyn @type symbol @default "" @digest Dynamic marking for velocities >= 127 (or none if empty symbol)
+    // @mattr mindyn @type symbol @default "" @digest Dynamic marking for velocities less than or equal to 1 (or none if empty symbol)
+    // @mattr maxdyn @type symbol @default "" @digest Dynamic marking for velocities greater than or equal to 127 (or none if empty symbol)
     // @seealso dynamics2velocities, checkdynamics, fixdynamics
     // @example velocities2dynamics @caption convert velocities to dynamics throughout the whole score
     // @example velocities2dynamics selection @caption same thing, for selected items only
@@ -13487,9 +13488,8 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
     // In which case, we'll bother adding it manually, and we won't parse the tuttipoints llll again.
     char tuttipoint_aligned = allow_multiple_measures_per_voice ? false : true;
     if (tuttipoint_aligned && (start_voice_num_one_based > 1 || end_voice_num_one_based < x->r_ob.num_voices)) {
-        if (ref_meas_num_one_based < 0) {
-/*            if (ref_meas_num_one_based < -1)
-                tuttipoint_aligned = false; */
+        // THIS WAS THE ANCIENT CODE, but it lead to crashes, so I don't trust it. I think we simply have to recompute tuttipoints in this case
+        /*        if (ref_meas_num_one_based < 0) {
         } else {
             for (this_voice = 1; this_voice < x->r_ob.num_voices; this_voice++) {
                 if (this_voice < start_voice_num_one_based || this_voice > end_voice_num_one_based)
@@ -13501,7 +13501,8 @@ void insert_measures_from_message(t_score *x, long start_voice_num_one_based, lo
                     break;
                 }
             }
-        }
+        } */
+        tuttipoint_aligned = false;
     }
     
     t_tuttipoint *ref_tpt = (t_tuttipoint *)WHITENULL;

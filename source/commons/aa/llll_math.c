@@ -225,9 +225,18 @@ void hatom_fn_cents(t_hatom *a1, t_hatom *res)
 
 void hatom_fn_random(t_hatom *a1, t_hatom *a2, t_hatom *res)
 {
-    double d1 = hatom_getdouble(a1);
-    double d2 = hatom_getdouble(a2);
-    hatom_setlong(res, rand() / (double) RAND_MAX * (d2 - d1 + 1) + d1);
+    t_atom_long d1 = hatom_getlong(a1);
+    t_atom_long d2 = hatom_getlong(a2);
+    if (d1 > d2) {
+        t_atom_long swap = d1;
+        d1 = d2;
+        d2 = swap;
+    }
+    double range = d2 - d1 + 1;
+    double randZeroOne = rand() / (double) RAND_MAX;
+    t_atom_long randRange = randZeroOne * range;
+    t_atom_long r = randRange + d1;
+    hatom_setlong(res, r);
 }
 
 void hatom_fn_pow(t_hatom *h1, t_hatom *h2, t_hatom *res)
