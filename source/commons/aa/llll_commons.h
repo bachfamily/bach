@@ -325,7 +325,8 @@ typedef struct _bach {
     class t_globalVariableTable *b_gvt;
     std::unordered_map<std::string, t_function *> *b_bifTable;
     
-    t_object             *b_ss; 
+    t_object             *b_ss;
+    t_bool               b_no_ss;
 } t_bach;
 
 

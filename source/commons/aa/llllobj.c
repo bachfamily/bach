@@ -5,6 +5,7 @@
 #include "jpatcher_api.h"
 //#include "bach_graphics.h"
 
+
 #define LLLLOBJ_ENABLE_DESTRUCTIVE	0
 #define LLLLOBJ_ENABLE_VOLATILE	0
 #define LLLLOBJ_ENABLE_ONCE		0
@@ -2253,19 +2254,19 @@ void llllobj_ss(t_object *x)
 	t_bach *b = ((t_bach *)gensym("bach")->s_thing);
 	if (b && !b->b_ss) {
 		b->b_ss = (t_object *)-1;
-//		if (!no_ss) { // Here one should check if the must screen must NOT be displayed (for Patrons)
+		if (!b->b_no_ss) { // Here one should check if the must screen must NOT be displayed (for Patrons)
 			t_atom av;
 			t_atom rv;
 			atom_setobj(&av, x);
 			object_method_typed(b, gensym("ss"), 1, &av, &rv);
-//		}
+		}
 	}
 }
 
 void llllobj_set_current_version_number_and_ss(t_object *x, e_llllobj_obj_types type)
 {
 	llllobj_set_version_number(x, type, bach_get_current_version());
-//	defer_low((t_object *)x, (method)llllobj_ss, NULL, 0, NULL);
+	defer_low((t_object *)x, (method)llllobj_ss, NULL, 0, NULL);
 }
 
 void llllobj_cleanup_vanilla(t_object *x)
@@ -2682,3 +2683,5 @@ t_max_err llllobj_dummy_setter(t_object *x, void *attr, long ac, t_atom *av)
 {
 	return MAX_ERR_NONE;
 }
+
+
