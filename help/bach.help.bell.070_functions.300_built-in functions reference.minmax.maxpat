@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 4,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -140,6 +140,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 337.0, 315.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -180,6 +181,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 9.0, 150.0, 192.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -212,7 +214,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 9.0, 39.0, 383.0, 50.0 ],
-					"text" : "The minmax() function returns an llll composed of four elements, respectively the minimum and maximum values in the llll, and their addresses.",
+					"text" : "The minmax() function returns an llll composed of four elements, respectively the minimum value in the llll, its address, the maximum value and its address.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

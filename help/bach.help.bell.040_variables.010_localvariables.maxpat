@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 4,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -74,8 +74,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 171.25, 342.0, 294.25, 54.0 ],
-					"text" : "Variables are seldom necessary, but they can improve the readability of the code, especially if you choose meaningful names for them."
+					"patching_rect" : [ 171.25, 342.0, 333.25, 54.0 ],
+					"text" : "Strictly speaking, variables are seldom necessary, but they can improve the readability of the code, especially if you choose meaningful names for them."
 				}
 
 			}
@@ -101,6 +101,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 14.0, 342.0, 148.0, 52.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -117,7 +118,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 205.0, 580.0, 108.0 ],
+					"patching_rect" : [ 14.0, 205.0, 561.0, 108.0 ],
 					"text" : "The name of a local variable, after the dollar sign, must start with a letter, optionally followed by one or more letters, underscores or numbers, and end with a letter or number.\nThus, examples of legal names are $a, $me, $a1_b2_c3.\nThe following names and patterns can't be used as variable names:\n$args, $argcount, and\n$x<n>, $l<N>, $i<N>, $f<N>, $r<N>, $o<N>, $do<N>, $dx<N>, where <N> is any non-negative integer.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -171,6 +172,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 14.0, 128.0, 220.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
