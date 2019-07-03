@@ -21,7 +21,7 @@
  Share lllls
  
  @description
- Shares the data it receives with other <o>bach.value</o> objects with the same name.
+ Shares the data it receives with other <o>bach.value</o> objects with the same name, as well as bell variables.
  
  @discussion
  Unlike <o>bach.pv</o>, <o>bach.value</o> also share its data between different patcher hierarchies.
@@ -222,7 +222,8 @@ t_v *value_new(t_symbol *s, short ac, t_atom *av)
 	
 	if ((x = (t_v *) object_alloc_debug(value_class))) {
 		// @arg 0 @name name @optional 0 @type symbol @digest Name
-		// @description All the <o>bach.value</o> objects with the same name share the same data.
+		// @description All the <o>bach.value</o> objects and bell variables
+        // with the same name share the same data.
 		// @arg 1 @name initial @optional 1 @type llll @digest Default llll
 		// @description Initial llll to be shared. 
 		// No more than one <o>bach.value</o> instance per sharing group should have the llll argument set.
