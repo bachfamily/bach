@@ -33,7 +33,7 @@
  value, share, name, patcher, hierarchy
 
  @seealso
- bach.pv, bach.shelf, bach.reg, value, pv
+ bach.pv, bach.shelf, bach.reg, value, pv, bach.eval
  
  @owner
  Andrea Agostini
