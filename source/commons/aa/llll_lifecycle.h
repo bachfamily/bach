@@ -51,6 +51,10 @@ t_llll *llll_retain(t_llll *ll);
 t_llll *llll_retain_nocheck(t_llll *ll);
 void llll_release(t_llll *ll);
 
+// non-threadsafe versions of the above---USE CAUTIOUSLY
+t_llll *llll_retain_unsafe(t_llll *ll); // doesn't perform the check either
+void llll_release_unsafe(t_llll *ll); // doesn't take into account the llll flags
+
 // free a llll without calling llll_check; all the l_thing fields will be freed according to freething - DEPRECATED
 void llll_free_nocheck_freethings(t_llll *ll, e_freething_modes freething);
 
