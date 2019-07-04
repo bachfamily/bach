@@ -138,7 +138,7 @@ void ext_main(void *moduleRef)
 {
 	t_class *c;
 
-	Sleep(60000);
+	//Sleep(60000);
 
     if (gensym("bach")->s_thing) {
         error("Can't instantiate bach");

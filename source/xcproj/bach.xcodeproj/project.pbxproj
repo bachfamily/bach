@@ -812,10 +812,6 @@
 		91DB2E8D1BBE8BB4003DCC81 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		91DB2E8E1BBE8BB4003DCC81 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		91DB2E981BBE8C66003DCC81 /* neuralnet.c in Sources */ = {isa = PBXBuildFile; fileRef = 91DB2E971BBE8C66003DCC81 /* neuralnet.c */; };
-		91DB2E9E1BBE8D0C003DCC81 /* dataEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 91DB2E9A1BBE8D0C003DCC81 /* dataEntry.h */; };
-		91DB2E9F1BBE8D0C003DCC81 /* dataReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 91DB2E9B1BBE8D0C003DCC81 /* dataReader.h */; };
-		91DB2EA01BBE8D0C003DCC81 /* neuralNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91DB2E9C1BBE8D0C003DCC81 /* neuralNetwork.cpp */; };
-		91DB2EA11BBE8D0C003DCC81 /* neuralNetwork.h in Headers */ = {isa = PBXBuildFile; fileRef = 91DB2E9D1BBE8D0C003DCC81 /* neuralNetwork.h */; };
 		91DB2EAC1BBF1CCB003DCC81 /* spectral.c in Sources */ = {isa = PBXBuildFile; fileRef = 91DB2EAA1BBF1CCB003DCC81 /* spectral.c */; };
 		91DB2EAD1BBF1CCB003DCC81 /* spectral.h in Headers */ = {isa = PBXBuildFile; fileRef = 91DB2EAB1BBF1CCB003DCC81 /* spectral.h */; };
 		91DD1ABA128021AD008A8088 /* read.c in Sources */ = {isa = PBXBuildFile; fileRef = 91DD1AB9128021AD008A8088 /* read.c */; };
@@ -3578,10 +3574,6 @@
 		91DA817F131B36F800FCB316 /* bach.zsearch.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.zsearch.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91DB2E931BBE8BB4003DCC81 /* bach.neuralnet.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.neuralnet.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91DB2E971BBE8C66003DCC81 /* neuralnet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = neuralnet.c; sourceTree = "<group>"; };
-		91DB2E9A1BBE8D0C003DCC81 /* dataEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dataEntry.h; sourceTree = "<group>"; };
-		91DB2E9B1BBE8D0C003DCC81 /* dataReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dataReader.h; sourceTree = "<group>"; };
-		91DB2E9C1BBE8D0C003DCC81 /* neuralNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = neuralNetwork.cpp; sourceTree = "<group>"; };
-		91DB2E9D1BBE8D0C003DCC81 /* neuralNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = neuralNetwork.h; sourceTree = "<group>"; };
 		91DB2EAA1BBF1CCB003DCC81 /* spectral.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spectral.c; sourceTree = "<group>"; };
 		91DB2EAB1BBF1CCB003DCC81 /* spectral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spectral.h; sourceTree = "<group>"; };
 		91DD1AB012802167008A8088 /* bach.read.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.read.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5866,7 +5858,6 @@
 				91C603FE18C0D9CD0027BB79 /* sdif */,
 				1E3B57CA15ACECA900B32D1F /* kiss_fft */,
 				1EB99F3E15164BE900B02E03 /* mxml */,
-				91DB2E991BBE8D0C003DCC81 /* nn */,
 				1E9026EE150FC5380005B502 /* bach_doc_groups.h */,
 				91EE71CB13A3C9EB00BBE47C /* bach.h */,
 			);
@@ -5950,17 +5941,6 @@
 				91D6FF4C1A3F8C5900AC1DAF /* bach_libs.xcconfig */,
 			);
 			name = xcproj;
-			sourceTree = "<group>";
-		};
-		91DB2E991BBE8D0C003DCC81 /* nn */ = {
-			isa = PBXGroup;
-			children = (
-				91DB2E9A1BBE8D0C003DCC81 /* dataEntry.h */,
-				91DB2E9B1BBE8D0C003DCC81 /* dataReader.h */,
-				91DB2E9C1BBE8D0C003DCC81 /* neuralNetwork.cpp */,
-				91DB2E9D1BBE8D0C003DCC81 /* neuralNetwork.h */,
-			);
-			path = nn;
 			sourceTree = "<group>";
 		};
 		91E108DE12A77BA2006F8CBC /* dg */ = {
@@ -6376,7 +6356,6 @@
 				91812A761611B29E00473F86 /* kiss_fftr.h in Headers */,
 				91812A771611B29E00473F86 /* config.h in Headers */,
 				91812A7F1611B29E00473F86 /* mxml-private.h in Headers */,
-				91DB2EA11BBE8D0C003DCC81 /* neuralNetwork.h in Headers */,
 				91812A831611B29E00473F86 /* mxml.h in Headers */,
 				91812A841611B29E00473F86 /* bach_doc_groups.h in Headers */,
 				91812A851611B29E00473F86 /* bach.h in Headers */,
@@ -6385,7 +6364,6 @@
 				91FDDC341FBE2BC90040D803 /* bach_symparser_lex.h in Headers */,
 				91812A951611B29E00473F86 /* hatom.h in Headers */,
 				91812A961611B29E00473F86 /* lexpr.h in Headers */,
-				91DB2E9F1BBE8D0C003DCC81 /* dataReader.h in Headers */,
 				91812A971611B29E00473F86 /* llll_commons.h in Headers */,
 				91B62BB61F4FE52300B9FC63 /* llll_append.h in Headers */,
 				91812A981611B29E00473F86 /* llll_commonsyms.h in Headers */,
@@ -6439,7 +6417,6 @@
 				91C6047418C0D9F50027BB79 /* sdiftypes.h in Headers */,
 				911385BA1F4C3AC300637524 /* notation_goto.h in Headers */,
 				91C6047C18C0DA030027BB79 /* sdif.h in Headers */,
-				91DB2E9E1BBE8D0C003DCC81 /* dataEntry.h in Headers */,
 				91C6047D18C0DA030027BB79 /* sdif_version.h in Headers */,
 				91FE0ED0190AAB57007B6BED /* llll_comparisons.h in Headers */,
 			);
@@ -12439,7 +12416,6 @@
 				91C6046618C0D9F50027BB79 /* SdifPreTypes.c in Sources */,
 				91C6046718C0D9F50027BB79 /* SdifPrint.c in Sources */,
 				91C6046818C0D9F50027BB79 /* SdifRWLowLevel.c in Sources */,
-				91DB2EA01BBE8D0C003DCC81 /* neuralNetwork.cpp in Sources */,
 				91FDDC221FBE249F0040D803 /* bach_strparser.c in Sources */,
 				917388B31F69609000FF3971 /* notation_pitches.c in Sources */,
 				91C6046A18C0D9F50027BB79 /* SdifSelect.c in Sources */,
@@ -14743,6 +14719,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PRODUCT_VERSION = 0.8.0.6;
 				SDKROOT = macosx;
+				WARNING_CFLAGS = "-Wno-C++17-extensions";
 			};
 			name = Development;
 		};
@@ -14757,6 +14734,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PRODUCT_VERSION = 0.8.0.6;
 				SDKROOT = macosx;
+				WARNING_CFLAGS = "-Wno-C++17-extensions";
 			};
 			name = Deployment;
 		};

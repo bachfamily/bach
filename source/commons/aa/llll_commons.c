@@ -2239,43 +2239,7 @@ void llll_subs(t_llll *ll, t_llll *address, t_llll *subs_model)
     return;
 }
 
-// DESTRUCTIVE ON edited
-void llll_replacewith(t_llll *edited, t_llllelem *victim, t_llll *subs_model)
-{
-    if (subs_model->l_size > 0) {
-        t_llll *this_subs = llll_clone_extended(subs_model, edited, 0, NULL);
-        if (victim->l_prev) {
-            victim->l_prev->l_next = this_subs->l_head;
-            this_subs->l_head->l_prev = victim->l_prev;
-        } else {
-            edited->l_head = this_subs->l_head;
-        }
-        
-        if (victim->l_next) {
-            victim->l_next->l_prev = this_subs->l_tail;
-            this_subs->l_tail->l_next = victim->l_next;
-        }
-        else {
-            edited->l_tail = this_subs->l_tail;
-        }
-        
-        edited->l_size += this_subs->l_size - 1;
-        
-        if (t_llll *victim_llll = hatom_getllll(&victim->l_hatom); victim_llll) {
-            if (victim_llll->l_depth < subs_model->l_depth - 1) {
-                llll_upgrade_depth(this_subs);
-            } else if (victim_llll->l_depth >= subs_model->l_depth) {
-                llll_downgrade_depth(edited);
-            }
-        } else if (subs_model->l_depth > 1) {
-            llll_upgrade_depth(this_subs);
-        }
-        llllelem_free(victim);
-        llll_chuck(this_subs);
-    } else {
-        llll_destroyelem(victim);
-    }
-}
+
 
 
 // ---DESTRUCTIVE on ll
@@ -9109,7 +9073,7 @@ void llll_remove_lllls_from_lthing(t_llll *ll)
         llll_free(elem->l_thing.w_llll);
         elem->l_thing.w_llll = NULL;
     }
-}  
+}
 
 
 t_bool llll_istrue(const t_llll *ll)
@@ -9120,12 +9084,7 @@ t_bool llll_istrue(const t_llll *ll)
         case 1: {
             t_llllelem *head = ll->l_head;
             t_hatom *head_hatom = &head->l_hatom;
-            long type = hatom_gettype(head_hatom);
-            if (!hatom_type_is_number(type))
-                return true;
-            if (hatom_getdouble(head_hatom) != 0.)
-                return true;
-            return false;
+            return hatom_istrue(head_hatom);
         }
         default:
             return true;
@@ -9139,6 +9098,15 @@ t_llll *get_num_ll(const t_atom_long n)
     return ll;
 }
 
-
+void llll_destroy_everything_but_head(t_llll *ll)
+{
+    t_llllelem *currElem, *nextElem;
+    if (!ll || ll->l_head == NULL)
+        return;
+    for (currElem = ll->l_head->l_next; currElem; currElem = nextElem) {
+        nextElem = currElem->l_next;
+        llll_destroyelem(currElem);
+    }
+}
 
 

@@ -543,8 +543,7 @@ t_llll *llll_nth(t_llll *root, t_llll *address, long nils);
 // or remove the corresponding element(s) if subs_model is empty
 void llll_subs(t_llll *ll, t_llll *address, t_llll *subs_model);
 
-// DESTRUCTIVE ON edited
-void llll_replacewith(t_llll *edited, t_llllelem *where, t_llll *subs_model);
+
 
 // ---DESTRUCTIVE on ll
 // substitute subs_model at address in ll
@@ -1294,11 +1293,60 @@ t_llll *llll_develop_ranges(t_llll *ll);
 void llll_put_elems_in_lllls_in_lthing(t_llll *ll);
 void llll_remove_lllls_from_lthing(t_llll *ll);
 
+void llll_destroy_everything_but_head(t_llll *ll);
+
 t_bool llll_istrue(const t_llll *ll);
 t_llll *get_num_ll(const t_atom_long n);
 t_atom_long llll_getlong(t_llll *ll, t_atom_long def = 0);
 
 void dev_llll_send(t_llll *x, const char* receiver);
+
+
+
+// DESTRUCTIVE ON edited
+template <t_bool destroyModel = true>
+void llll_replacewith(t_llll *edited, t_llllelem *victim, t_llll *subs_model)
+{
+    if (subs_model->l_size > 0) {
+        t_llll *this_subs;
+        if constexpr (destroyModel)
+            this_subs = llll_clone_extended(subs_model, edited, 0, NULL);
+        else {
+            llll_adopt(subs_model, edited);
+            this_subs = subs_model;
+        }
+        if (victim->l_prev) {
+            victim->l_prev->l_next = this_subs->l_head;
+            this_subs->l_head->l_prev = victim->l_prev;
+        } else {
+            edited->l_head = this_subs->l_head;
+        }
+        
+        if (victim->l_next) {
+            victim->l_next->l_prev = this_subs->l_tail;
+            this_subs->l_tail->l_next = victim->l_next;
+        }
+        else {
+            edited->l_tail = this_subs->l_tail;
+        }
+        
+        edited->l_size += this_subs->l_size - 1;
+        
+        if (t_llll *victim_llll = hatom_getllll(&victim->l_hatom); victim_llll) {
+            if (victim_llll->l_depth < subs_model->l_depth - 1) {
+                llll_upgrade_depth(this_subs);
+            } else if (victim_llll->l_depth >= subs_model->l_depth) {
+                llll_downgrade_depth(edited);
+            }
+        } else if (subs_model->l_depth > 1) {
+            llll_upgrade_depth(this_subs);
+        }
+        llllelem_free(victim);
+        llll_chuck(this_subs);
+    } else {
+        llll_destroyelem(victim);
+    }
+}
 
 
 
