@@ -32,6 +32,8 @@ t_class *initpargs_class = NULL;
 
 extern t_bach *bach;
 
+t_bool bach_exists = false;
+
 
 #ifdef BACH_SAVE_STACK_WITH_MEMORY_LOGS
 //#ifdef BACH_SAVE_STACK_IN_LLLLS
@@ -141,7 +143,8 @@ void ext_main(void *moduleRef)
 	//Sleep(60000);
 
     if (gensym("bach")->s_thing) {
-        error("Can't instantiate bach");
+        if (!bach_exists)
+            error("Can't instantiate bach");
         return;
     }
     
@@ -202,6 +205,8 @@ void ext_main(void *moduleRef)
 	
 	//dev_post("bach.initpargs compiled %s %s", __DATE__, __TIME__);
 	
+    bach_exists = true;
+    
 	return;
 }
 

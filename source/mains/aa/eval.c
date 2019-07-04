@@ -33,7 +33,7 @@
  expression, evaluate, variable, number, calculate, compute, function, code, if, branching
 
  @seealso
- expr, vexpr, bach.expr
+ expr, vexpr, bach.expr, bach.value
  
  @owner
  Andrea Agostini

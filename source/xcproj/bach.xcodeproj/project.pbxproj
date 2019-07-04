@@ -5591,8 +5591,12 @@
 				918055DC1F55C61500BCB4AB /* strparser */,
 				91B62BAD1F4EFC4900B9FC63 /* symparser */,
 				91BCCC421F56CE2B002D8BE2 /* chkparser */,
-				913F87931C216C5D00C9CAE0 /* bach_jitclang.h */,
+				91071DB02100DB5900452762 /* bach_codableobj.hpp */,
+				91071DAF2100DB5900452762 /* bach_codableobj.cpp */,
 				91CE8E0D1763991B00CF5CD6 /* bach_doc_commons_aa.h */,
+				913F87931C216C5D00C9CAE0 /* bach_jitclang.h */,
+				91B62BC01F5218A200B9FC63 /* bach_mem.h */,
+				91040DA31FB1ABCD009E91CD /* bach_parser.hpp */,
 				9141D7BE123158FB000EE69C /* collector.h */,
 				915F721414F66ACD005DF0BD /* collector_commons.c */,
 				91E7BFC31826AF0900AA6F56 /* bach_mem.c */,
@@ -5605,6 +5609,7 @@
 				9141D7C5123158FB000EE69C /* llll_commonsyms.h */,
 				91E2B3271272D41300042E30 /* llll_files.c */,
 				91E2B3261272D41300042E30 /* llll_files.h */,
+				91B62BBB1F501A3800B9FC63 /* llll_lifecycle.h */,
 				9115B6F0129AD23A008ABC73 /* llll_math.h */,
 				910E890F12A46C3B005604FF /* llll_math.c */,
 				910AFCFB129C652D00F29D84 /* llll_modifiers.c */,
@@ -5630,11 +5635,6 @@
 				91B62BB41F4FE52200B9FC63 /* llll_append.h */,
 				91B62BB71F4FEBE200B9FC63 /* llll_hatom_change.c */,
 				91B62BB81F4FEBE200B9FC63 /* llll_hatom_change.h */,
-				91B62BBB1F501A3800B9FC63 /* llll_lifecycle.h */,
-				91B62BC01F5218A200B9FC63 /* bach_mem.h */,
-				91040DA31FB1ABCD009E91CD /* bach_parser.hpp */,
-				91071DAF2100DB5900452762 /* bach_codableobj.cpp */,
-				91071DB02100DB5900452762 /* bach_codableobj.hpp */,
 			);
 			path = aa;
 			sourceTree = "<group>";

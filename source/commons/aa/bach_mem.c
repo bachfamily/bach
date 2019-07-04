@@ -886,6 +886,21 @@ t_llll *llll_retain_nocheck(t_llll *ll)
     return ll;
 }
 
+t_llll *llll_retain_unsafe(t_llll *ll)
+{
+    if (ll)
+        ++(ll->l_count);
+    return ll;
+}
+
+void llll_release_unsafe(t_llll *ll)
+{
+    if (!ll)
+        return;
+    if (--(ll->l_count) == 0)
+        llll_dispose(ll);
+}
+
 void llll_release(t_llll *ll)
 {
     llll_free(ll);

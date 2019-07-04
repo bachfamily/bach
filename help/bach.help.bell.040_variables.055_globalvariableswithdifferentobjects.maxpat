@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -39,12 +39,28 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-20",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 168.0, 104.5, 233.0, 54.0 ],
+					"presentation_linecount" : 3,
+					"text" : "The bach.value object is a convenient way to set a default for a global variable. "
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-1",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 183.0, 264.0, 102.0, 23.0 ],
+					"patching_rect" : [ 179.0, 302.0, 102.0, 23.0 ],
 					"text" : "7200 5400 4800"
 				}
 
@@ -56,7 +72,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 264.0, 102.0, 23.0 ],
+					"patching_rect" : [ 10.0, 302.0, 102.0, 23.0 ],
 					"text" : "6000 6400 6700"
 				}
 
@@ -67,7 +83,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 326.0, 99.0, 23.0 ],
+					"patching_rect" : [ 10.0, 364.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -80,7 +96,7 @@
 					"numinlets" : 3,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 14.0, 297.0, 357.0, 23.0 ],
+					"patching_rect" : [ 10.0, 335.0, 357.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -97,7 +113,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 63.0, 68.0, 37.0, 23.0 ],
+					"patching_rect" : [ 59.0, 83.0, 37.0, 23.0 ],
 					"text" : "1000"
 				}
 
@@ -109,7 +125,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 207.5, 156.0, 102.0, 23.0 ],
+					"patching_rect" : [ 203.5, 194.0, 102.0, 23.0 ],
 					"text" : "7200 5400 4800"
 				}
 
@@ -121,7 +137,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 156.0, 102.0, 23.0 ],
+					"patching_rect" : [ 10.0, 194.0, 102.0, 23.0 ],
 					"text" : "6000 6400 6700"
 				}
 
@@ -132,7 +148,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 14.0, 218.0, 99.0, 23.0 ],
+					"patching_rect" : [ 10.0, 256.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -145,7 +161,7 @@
 					"numinlets" : 3,
 					"numoutlets" : 3,
 					"outlettype" : [ "", "", "" ],
-					"patching_rect" : [ 14.0, 189.0, 406.0, 23.0 ],
+					"patching_rect" : [ 10.0, 227.0, 406.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80001
@@ -162,7 +178,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 68.0, 37.0, 23.0 ],
+					"patching_rect" : [ 10.0, 83.0, 37.0, 23.0 ],
 					"text" : "1900"
 				}
 
@@ -184,18 +200,17 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "Modulo = $x1 ||| 1200 ",
 					"id" : "obj-59",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 14.0, 105.0, 245.0, 23.0 ],
+					"patching_rect" : [ 10.0, 120.0, 150.0, 23.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval Modulo = $x1 ||| 1200 @auto 1"
+					"text" : "bach.value Modulo 1200"
 				}
 
 			}
@@ -253,7 +268,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, variable, global",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, variable, global, bach.value, value",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -264,11 +279,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 368.0, 21.0 ],
-					"text" : "All the objects supporting bell share the same global variables.",
+					"patching_rect" : [ 6.0, 32.0, 368.0, 36.0 ],
+					"text" : "All the objects supporting bell share the same global variables. Moreover, global variables are shared with bach.value objects.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -332,7 +348,7 @@
 			}
  ],
 		"dependency_cache" : [ 			{
-				"name" : "bach.eval.mxo",
+				"name" : "bach.value.mxo",
 				"type" : "iLaX"
 			}
 , 			{
