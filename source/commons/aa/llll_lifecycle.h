@@ -24,11 +24,11 @@
 
 // used by llll_flat and llll_splatter
 typedef enum {
-    LLLL_FREETHING_DONT	= 0,	// don't free l_thing when removing a pair of parentheses
-    LLLL_FREETHING_MEM,			// free l_thing with bach_freeptr()
-    LLLL_FREETHING_OBJ,			// free l_thing with object_free_debug()
-    LLLL_FREETHING_LLLL,		// free l_thing with llll_free()
-    LLLL_FREETHING_LLLLELEM		// free l_thing with llllelem_free()
+    LLLL_FREETHING_DONT    = 0,    // don't free l_thing when removing a pair of parentheses
+    LLLL_FREETHING_MEM,            // free l_thing with bach_freeptr()
+    LLLL_FREETHING_OBJ,            // free l_thing with object_free_debug()
+    LLLL_FREETHING_LLLL,        // free l_thing with llll_free()
+    LLLL_FREETHING_LLLLELEM        // free l_thing with llllelem_free()
 } e_freething_modes;
 
 

@@ -48,8 +48,8 @@
 
 typedef struct _value
 {
-	struct llllobj_object 	n_ob;
-	t_symbol				*n_name;
+    struct llllobj_object     n_ob;
+    t_symbol                *n_name;
     astGlobalVar            *n_var;
     t_object                *m_editor;
 } t_v;
@@ -80,48 +80,48 @@ extern t_bach* bach;
 
 int T_EXPORT main()
 {
-	t_class *c;
-	
-	common_symbols_init();
-	llllobj_common_symbols_init();
-	
-	if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
-		error("bach: bad installation");
-		return 1;
-	}
-	
-	c = class_new("bach.value", (method) value_new, (method) value_free, (short) sizeof(t_v), 0L, A_GIMME, 0);
-	
-	// @method llll @digest Store and share the llll
-	// @description The llll is stored and shared between all the other instances of <o>bach.value</o> with the same name.
-	class_addmethod(c, (method)value_anything,	"anything",		A_GIMME,	0);
-	
-	class_addmethod(c, (method)value_int,		"int",			A_LONG,		0);
-	class_addmethod(c, (method)value_float,		"float",		A_FLOAT,	0);
-	class_addmethod(c, (method)value_anything,	"list",			A_GIMME,	0);
-	
-	// @method bang @digest Output the shared llll
-	// @description When <o>bach.value</o> receives a bang, it outputs its shared llll.
-	class_addmethod(c, (method)value_bang,		"bang",			0);
-	
-	class_addmethod(c, (method)value_assist,	"assist",		A_CANT,		0);
-	
+    t_class *c;
+    
+    common_symbols_init();
+    llllobj_common_symbols_init();
+    
+    if (llllobj_check_version(bach_get_current_llll_version()) || llllobj_test()) {
+        error("bach: bad installation");
+        return 1;
+    }
+    
+    c = class_new("bach.value", (method) value_new, (method) value_free, (short) sizeof(t_v), 0L, A_GIMME, 0);
+    
+    // @method llll @digest Store and share the llll
+    // @description The llll is stored and shared between all the other instances of <o>bach.value</o> with the same name.
+    class_addmethod(c, (method)value_anything,    "anything",        A_GIMME,    0);
+    
+    class_addmethod(c, (method)value_int,        "int",            A_LONG,        0);
+    class_addmethod(c, (method)value_float,        "float",        A_FLOAT,    0);
+    class_addmethod(c, (method)value_anything,    "list",            A_GIMME,    0);
+    
+    // @method bang @digest Output the shared llll
+    // @description When <o>bach.value</o> receives a bang, it outputs its shared llll.
+    class_addmethod(c, (method)value_bang,        "bang",            0);
+    
+    class_addmethod(c, (method)value_assist,    "assist",        A_CANT,        0);
+    
     
     // @method (doubleclick) @digest Edit llll as text
     // @description Doubleclicking on the object forces a text editor to open up, where the llll can be edited directly in text form.
-    class_addmethod(c, (method)value_dblclick,		"dblclick",		A_CANT, 0);
-    class_addmethod(c, (method)value_edclose,         "edclose",		A_CANT, 0);
+    class_addmethod(c, (method)value_dblclick,        "dblclick",        A_CANT, 0);
+    class_addmethod(c, (method)value_edclose,         "edclose",        A_CANT, 0);
     class_addmethod(c, (method)value_okclose,         "okclose",       A_CANT, 0);
 
     
-	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
-	
-	class_register(CLASS_BOX, c);
-	value_class = c;
-	
-	dev_post("bach.value compiled %s %s", __DATE__, __TIME__);
-	
-	return 0;
+    llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+    
+    class_register(CLASS_BOX, c);
+    value_class = c;
+    
+    dev_post("bach.value compiled %s %s", __DATE__, __TIME__);
+    
+    return 0;
 }
 
 
@@ -170,93 +170,93 @@ void value_edclose(t_v *x, char **ht, long size)
 
 
 void value_bang(t_v *x)
-{	
+{    
     t_llll *out_ll = x->n_var->eval();
-	llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, out_ll);
-	llll_release(out_ll);
+    llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, out_ll);
+    llll_release(out_ll);
 }
 
 void value_int(t_v *x, t_atom_long v)
 {
-	t_atom outatom;
-	atom_setlong(&outatom, v);
-	value_anything(x, _sym_int, 1, &outatom);
+    t_atom outatom;
+    atom_setlong(&outatom, v);
+    value_anything(x, _sym_int, 1, &outatom);
 }
 
 void value_float(t_v *x, double v)
 {
-	t_atom outatom;
-	atom_setfloat(&outatom, v);
-	value_anything(x, _sym_float, 1, &outatom);
+    t_atom outatom;
+    atom_setfloat(&outatom, v);
+    value_anything(x, _sym_float, 1, &outatom);
 }
 
 void value_anything(t_v *x, t_symbol *msg, long ac, t_atom *av)
-{	
-	t_llll *in_ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_RETAIN);
-	if (!in_ll)
-		return;
+{    
+    t_llll *in_ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_RETAIN);
+    if (!in_ll)
+        return;
     x->n_var->assign(in_ll);
 }
 
 void value_assist(t_v *x, void *b, long m, long a, char *s)
-{	
-	if (m == ASSIST_INLET) {
-		sprintf(s, "llll or bang"); // @in 0 @type llll/bang @digest llll to be stored and shared, or bang to output it
-	} else {
-		char *type;
-		llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
-		sprintf(s, "stored llll (%s)", type); // @out 0 @type llll @digest The stored llll
-	}
+{    
+    if (m == ASSIST_INLET) {
+        sprintf(s, "llll or bang"); // @in 0 @type llll/bang @digest llll to be stored and shared, or bang to output it
+    } else {
+        char *type;
+        llllobj_get_llll_outlet_type_as_string((t_object *) x, LLLL_OBJ_VANILLA, a, &type);
+        sprintf(s, "stored llll (%s)", type); // @out 0 @type llll @digest The stored llll
+    }
 }
 
 void value_free(t_v *x)
 {
     object_free_debug(x->m_editor);
-	llllobj_obj_free((t_llllobj_object *) x);
+    llllobj_obj_free((t_llllobj_object *) x);
 }
 
 t_v *value_new(t_symbol *s, short ac, t_atom *av)
 {
-	t_v *x = NULL;
-	t_max_err err = MAX_ERR_NONE;
-	
-	if ((x = (t_v *) object_alloc_debug(value_class))) {
-		// @arg 0 @name name @optional 0 @type symbol @digest Name
-		// @description All the <o>bach.value</o> objects and bell variables
+    t_v *x = NULL;
+    t_max_err err = MAX_ERR_NONE;
+    
+    if ((x = (t_v *) object_alloc_debug(value_class))) {
+        // @arg 0 @name name @optional 0 @type symbol @digest Name
+        // @description All the <o>bach.value</o> objects and bell variables
         // with the same name share the same data.
-		// @arg 1 @name initial @optional 1 @type llll @digest Default llll
-		// @description Initial llll to be shared. 
-		// No more than one <o>bach.value</o> instance per sharing group should have the llll argument set.
-		// If more than one do, it is undefined which llll will be eventually shared.
-		
+        // @arg 1 @name initial @optional 1 @type llll @digest Default llll
+        // @description Initial llll to be shared. 
+        // No more than one <o>bach.value</o> instance per sharing group should have the llll argument set.
+        // If more than one do, it is undefined which llll will be eventually shared.
+        
         x->m_editor = NULL;
         
-		long true_ac = attr_args_offset(ac, av);
-		if (true_ac == 0 || atom_gettype(av) != A_SYM) {
-			object_error((t_object *) x, "Invalid or missing name");
-			object_free_debug(x);
-			return NULL;
-		}
-		x->n_name = atom_getsym(av);
+        long true_ac = attr_args_offset(ac, av);
+        if (true_ac == 0 || atom_gettype(av) != A_SYM) {
+            object_error((t_object *) x, "Invalid or missing name");
+            object_free_debug(x);
+            return NULL;
+        }
+        x->n_name = atom_getsym(av);
         
         // casting x to t_codableobj* is a ugly hack
         // but it should work
         // and help to keep things simple
         x->n_var = new astGlobalVar(bach->b_gvt, x->n_name, (t_codableobj *) x);
 
-		attr_args_process(x, ac, av);
-		llllobj_obj_setup((t_llllobj_object *) x, 1, "4");
-		if (true_ac > 1)
-			value_anything(x, NULL, true_ac - 1, av + 1);
-	} else
-		object_bug((t_object *) x, "Memory allocation error: couldn't create bach.value");
-	
+        attr_args_process(x, ac, av);
+        llllobj_obj_setup((t_llllobj_object *) x, 1, "4");
+        if (true_ac > 1)
+            value_anything(x, NULL, true_ac - 1, av + 1);
+    } else
+        object_bug((t_object *) x, "Memory allocation error: couldn't create bach.value");
+    
     llllobj_set_current_version_number_and_ss((t_object *) x, LLLL_OBJ_VANILLA);
 
-	if (x && err == MAX_ERR_NONE)
-		return x;
-	
-	object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL
-	return NULL;
+    if (x && err == MAX_ERR_NONE)
+        return x;
+    
+    object_free_debug(x); // unlike freeobject(), this works even if the argument is NULL
+    return NULL;
 }
 
