@@ -445,8 +445,8 @@ t_max_err score_dowritemidi(t_score *x, t_symbol *s, long ac, t_atom *av)
                     tempo = new_tempo;
                 }
                 // if it's a tempo ramp
-                if (this_tempo->interpolation_type) {
-                    t_tempo *next_tempo = tempo_get_next(this_tempo);
+                if (t_tempo *next_tempo ;
+                    this_tempo->interpolation_type && (next_tempo = tempo_get_next(this_tempo))) {
                     double next_tempo_bpm = rat2double(next_tempo->tempo_value);
                     if (next_tempo_bpm != tempo) {
                         t_measure *next_tempo_measure = next_tempo->owner;
