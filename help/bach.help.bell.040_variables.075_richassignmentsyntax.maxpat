@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -54,12 +54,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 43.0, 378.0, 36.0 ],
-					"text" : "It is possible to substitute an element of an llll held by a variable through the : operator in conjunction with assignment.",
+					"patching_rect" : [ 6.0, 43.0, 378.0, 21.0 ],
+					"text" : "It is possible to ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -85,6 +84,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 134.5, 269.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -132,7 +132,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 8.0, 184.0, 23.0 ],
-					"text" : "Substitution assignment",
+					"text" : "Rich assignment syntax",
 					"varname" : "title"
 				}
 
