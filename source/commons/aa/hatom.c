@@ -302,3 +302,14 @@ long hatom_eq(const t_hatom *a, const t_hatom *b)
     }
     return 1;
 }
+
+
+t_bool hatom_istrue(const t_hatom *h)
+{
+    long type = hatom_gettype(h);
+    if (!hatom_type_is_number(type))
+        return true;
+    if (hatom_getdouble(h) != 0.)
+        return true;
+    return false;
+}

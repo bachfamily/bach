@@ -308,6 +308,7 @@ void hatom_setfunc(t_hatom *h, t_function *fn);
 void hatom_setatom(t_hatom *h, const t_atom *a); // atom to hatom conversion. If the atom is A_OBJ and points to a llll, the hatom is correctly set to A_LLLL
 long hatom_eq(const t_hatom *a, const t_hatom *b); // comparison between two atoms
 
+t_bool hatom_istrue(const t_hatom *h);
 
 
 

@@ -24,11 +24,11 @@
 
 // used by llll_flat and llll_splatter
 typedef enum {
-    LLLL_FREETHING_DONT	= 0,	// don't free l_thing when removing a pair of parentheses
-    LLLL_FREETHING_MEM,			// free l_thing with bach_freeptr()
-    LLLL_FREETHING_OBJ,			// free l_thing with object_free_debug()
-    LLLL_FREETHING_LLLL,		// free l_thing with llll_free()
-    LLLL_FREETHING_LLLLELEM		// free l_thing with llllelem_free()
+    LLLL_FREETHING_DONT    = 0,    // don't free l_thing when removing a pair of parentheses
+    LLLL_FREETHING_MEM,            // free l_thing with bach_freeptr()
+    LLLL_FREETHING_OBJ,            // free l_thing with object_free_debug()
+    LLLL_FREETHING_LLLL,        // free l_thing with llll_free()
+    LLLL_FREETHING_LLLLELEM        // free l_thing with llllelem_free()
 } e_freething_modes;
 
 
@@ -50,6 +50,10 @@ void llll_dispose(t_llll *x);
 t_llll *llll_retain(t_llll *ll);
 t_llll *llll_retain_nocheck(t_llll *ll);
 void llll_release(t_llll *ll);
+
+// non-threadsafe versions of the above---USE CAUTIOUSLY
+t_llll *llll_retain_unsafe(t_llll *ll); // doesn't perform the check either
+void llll_release_unsafe(t_llll *ll); // doesn't take into account the llll flags
 
 // free a llll without calling llll_check; all the l_thing fields will be freed according to freething - DEPRECATED
 void llll_free_nocheck_freethings(t_llll *ll, e_freething_modes freething);

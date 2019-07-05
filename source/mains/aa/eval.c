@@ -33,7 +33,7 @@
  expression, evaluate, variable, number, calculate, compute, function, code, if, branching
 
  @seealso
- expr, vexpr, bach.expr
+ expr, vexpr, bach.expr, bach.value
  
  @owner
  Andrea Agostini
@@ -87,7 +87,7 @@ int T_EXPORT main()
     // @description
     // The lllls provide the data to the expression.
     // An llll received in the leftmost inlet will trigger the evaluation and cause the result to be output.
-    class_addmethod(c, (method)eval_anything,	"anything",		A_GIMME,	0);
+    class_addmethod(c, (method)eval_anything,    "anything",        A_GIMME,    0);
     
     // @method expr @digest Expression to evaluate
     // @description
@@ -97,21 +97,21 @@ int T_EXPORT main()
     
     // @method bang @digest Perform the last operation
     // @description Return the result of the evaluation of the most recently received lllls and expression.
-    class_addmethod(c, (method)eval_bang,		"bang",			0);
+    class_addmethod(c, (method)eval_bang,        "bang",            0);
    
-    class_addmethod(c, (method)eval_int,		"int",			A_LONG,		0);
-    class_addmethod(c, (method)eval_float,		"float",		A_FLOAT,	0);
-    class_addmethod(c, (method)eval_anything,	"list",			A_GIMME,	0);
+    class_addmethod(c, (method)eval_int,        "int",            A_LONG,        0);
+    class_addmethod(c, (method)eval_float,        "float",        A_FLOAT,    0);
+    class_addmethod(c, (method)eval_anything,    "list",            A_GIMME,    0);
     
     // @method bang @digest Perform the last operation
     // @description Return the comparison result for the most recently received lllls.
     
-    class_addmethod(c, (method)eval_assist,		"assist",		A_CANT,		0);
-    class_addmethod(c, (method)eval_inletinfo,	"inletinfo",	A_CANT,		0);
+    class_addmethod(c, (method)eval_assist,        "assist",        A_CANT,        0);
+    class_addmethod(c, (method)eval_inletinfo,    "inletinfo",    A_CANT,        0);
 
     // @method (doubleclick) @digest Edit llll as text
     // @description Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.
-    class_addmethod(c, (method)eval_dblclick,		"dblclick",		A_CANT, 0);
+    class_addmethod(c, (method)eval_dblclick,        "dblclick",        A_CANT, 0);
 
     CLASS_ATTR_ATOM_LONG(c, "inlets",    0,    t_eval, n_dataInlets);
     CLASS_ATTR_LABEL(c, "inlets", 0, "Number of Inlets");
@@ -119,25 +119,25 @@ int T_EXPORT main()
     // @description Number of data inlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
-	CLASS_ATTR_ATOM_LONG(c, "extraoutlets",    0,    t_eval, n_dataOutlets);
+    CLASS_ATTR_ATOM_LONG(c, "extraoutlets",    0,    t_eval, n_dataOutlets);
     CLASS_ATTR_LABEL(c, "extraoutlets", 0, "Number of Extra Outlets");
     //CLASS_ATTR_ACCESSORS(c, "outlets", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of data outlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
-	CLASS_ATTR_ATOM_LONG(c, "directins",    0,    t_eval, n_directInlets);
+    CLASS_ATTR_ATOM_LONG(c, "directins",    0,    t_eval, n_directInlets);
     CLASS_ATTR_LABEL(c, "directins", 0, "Number of Direct Inlets");
     //CLASS_ATTR_ACCESSORS(c, "directins", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of direct inlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
     
-	CLASS_ATTR_ATOM_LONG(c, "directouts",    0,    t_eval, n_directOutlets);
+    CLASS_ATTR_ATOM_LONG(c, "directouts",    0,    t_eval, n_directOutlets);
     CLASS_ATTR_LABEL(c, "directouts", 0, "Number of Outlets");
     //CLASS_ATTR_ACCESSORS(c, "directouts", (method)NULL, (method)llllobj_dummy_setter)
     // @description Number of direct outlets. <br />
     // @copy BACH_DOC_STATIC_ATTR
 
-	CLASS_ATTR_ATOM_LONG(c, "embed",    0,    t_codableobj, c_embed);
+    CLASS_ATTR_ATOM_LONG(c, "embed",    0,    t_codableobj, c_embed);
     CLASS_ATTR_FILTER_CLIP(c, "embed", 0, 1);
     CLASS_ATTR_LABEL(c, "embed", 0, "Save Data With Patcher");
     CLASS_ATTR_STYLE(c, "embed", 0, "onoff");
@@ -147,7 +147,7 @@ int T_EXPORT main()
     // @description When set to 1, the stored code is saved with the patcher.
     // @copy BACH_DOC_STATIC_ATTR
 
-	CLASS_ATTR_ATOM_LONG(c, "auto",    0,    t_codableobj, c_auto);
+    CLASS_ATTR_ATOM_LONG(c, "auto",    0,    t_codableobj, c_auto);
     CLASS_ATTR_LABEL(c, "auto", 0, "Automatically Run Code");
     CLASS_ATTR_STYLE(c, "auto", 0, "onoff");
     //CLASS_ATTR_BASIC(c, "auto", 0);
