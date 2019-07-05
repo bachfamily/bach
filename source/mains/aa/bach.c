@@ -188,7 +188,7 @@ void ext_main(void *moduleRef)
     _llllobj_sym_bachcursors->s_thing = (t_object *)resources;
 #endif
     
-    //bach_load_default_font();
+    bach_load_default_font();
     
     bach_new(NULL, 0, NULL); // among other things, also fills the version number fields
     
@@ -1100,14 +1100,31 @@ t_initpargs *initpargs_new(t_symbol *s, short ac, t_atom *av)
     return NULL;
 }
 
-#ifdef _obfuscatedfonts
 char bach_load_default_font(void)
 {
-    t_fourcc type = 'FONT';
-    char *filepath = bach_ezlocate_file("Bravura.otf", &type);
+    //Sleep(60000);
+    t_fourcc type = 0;
+    char *filepath;
+    size_t bachlen = 8;
+    filepath = bach_ezlocate_file("bach.mxo", &type);
+    if (!filepath) {
+        filepath = bach_ezlocate_file("bach.mxe", &type);
+        if (!filepath) {
+            filepath = bach_ezlocate_file("bach.mxe64", &type);
+            bachlen = 10;
+        }
+    }
+    if (!filepath) {
+        error("can't load font!");
+        return 0;
+    }
+
+    
+    char *pastehere = filepath + strlen(filepath) - (bachlen + 11);
+    strncpy_zero(pastehere, "fonts/November for bach.otf", 28);
     
 #ifdef WIN_VERSION
-    AddFontResourceExW(filepath, FR_PRIVATE);
+    AddFontResourceExA(filepath, FR_PRIVATE, 0);
 #endif
     
 #ifdef WIN_VERSION_old
@@ -1128,19 +1145,19 @@ char bach_load_default_font(void)
                                                &nFonts          // number of fonts installed
                                                );
         
-        if (bachFont == 0)
+        if(bachFont == 0)
         {
             error("can't load font!");
         }
     }
 #endif
-
+    
 #ifdef MAC_VERSION
     // MAC
     CFErrorRef error = NULL;
     CFBundleRef mainBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.bachproject.bach"));
     //CFURLRef fontURL = mainBundle ? CFBundleCopyResourceURL(mainBundle, CFSTR("johannsebastian"), CFSTR("dat"), NULL) : NULL;
-
+    
     CFStringRef path = CFStringCreateWithCString(NULL, filepath, kCFStringEncodingMacRoman);
     bach_freeptr(filepath);
     CFURLRef fontURL = CFURLCreateWithFileSystemPath(NULL, path, kCFURLPOSIXPathStyle, false);
@@ -1148,19 +1165,18 @@ char bach_load_default_font(void)
     if (!mainBundle || !fontURL) {
         error("Failed to load default bach font.");
     } else if (!CTFontManagerRegisterFontsForURL(fontURL, kCTFontManagerScopeProcess, &error)) {
-    
+        
         // WE DON'T THROW AN ERROR HERE, since it could be that the font is already installed.
         
     }
     
     if (fontURL)
         CFRelease(fontURL);
-
+    
 #endif
     return 0;
-
+    
 }
-#endif
 
 long bach_getbuildnumber(void)
 {
