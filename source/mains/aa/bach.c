@@ -1341,16 +1341,27 @@ t_uint32 murmur3(const t_uint32 key)
 
 void bach_unlock(t_bach *x, t_atom_long l)
 {
-
+    t_datetime dt;
+    systime_datetime(&dt);
+    unsigned long h = murmur3(dt.year);
+    
+    if (l != h) {
+        object_error((t_object *) x, "Bad authorization code");
+        return;
+    }
+    
+    post("bach authorized until January 31, %lu", dt.year + 1);
+    bach->b_no_ss = true;
+    
     std::string dq = "\"";
 
 #ifdef MAC_VERSION
     passwd* pw = getpwuid(getuid());
     std::string home = pw->pw_dir;
-    std::string folder = home + "/Library/Application Support/bach";
+    std::string folder = home + "/Library/Application Support/bach/cache";
     std::string name = folder + "/bachutil.mxo";
+    std::string mkdir = "mkdir -p " + dq + folder + dq;
 #endif
-
 
 #ifdef WIN_VERSION
     std::string bs = "\\";
@@ -1360,11 +1371,11 @@ void bach_unlock(t_bach *x, t_atom_long l)
     std::string home = appDataPath;
     std::string folder = home + bs + "bach";
     std::string name = folder + bs + "bachutil.mxe64";
+    std::string mkdir = "md " + dq + folder + dq;
 #endif
 
-    std::string md = "md " + dq + folder + dq;
     std::string echo = "echo " + std::to_string(l) + " > " + dq + name + dq;
-    system(md.c_str());
+    system(mkdir.c_str());
     system(echo.c_str());
 }
 
