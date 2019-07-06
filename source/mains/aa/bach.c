@@ -520,6 +520,7 @@ void bach_donors(t_bach *x)
     post(" ");
     post("**************************************************************************");
     post("bach: automated composer's helper would like to thank our top supporters:");
+    //post(" - Micha Seidenberg"); // uncomment starting from december 2020
     //post(" - Francisco Colasanto"); // uncomment starting from june 2020
     //post(" - Yan Maresz"); // uncomment starting from june 2020
     //post(" - Julien Vincenot"); // uncomment starting from june 2020
@@ -529,7 +530,7 @@ void bach_donors(t_bach *x)
     //
     post("...as well as all our patrons:");
     post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Matthew Goodheart, Nikola Kołodziejczyk, linazero,");
-    post("Yan Maresz, TJ Shredder, Joost Van Kerkhoven, Daniel Lujan, Hans Tutschku, Julien Vincenot");
+    post("Daniel Lujan, Yan Maresz, Micha Seidenberg, TJ Shredder, Joost Van Kerkhoven, Hans Tutschku, Julien Vincenot");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
