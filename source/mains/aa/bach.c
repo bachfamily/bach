@@ -190,9 +190,9 @@ void ext_main(void *moduleRef)
     
     bach_load_default_font();
     
-    bach_new(NULL, 0, NULL); // among other things, also fills the version number fields
+    t_bach *b = bach_new(NULL, 0, NULL); // among other things, also fills the version number fields
     
-    bach_version(NULL); // posts the version
+    bach_version(b); // posts the version
     
     c = class_new("bach.initpargs", (method)initpargs_new, (method)initpargs_free, (short)sizeof(t_initpargs), 0L, A_GIMME, 0);
     
@@ -373,8 +373,12 @@ void bach_version(t_bach *x)
     
     post("--- bach: automated composer's helper ---");
     post("© 2010-2019 - Andrea Agostini and Daniele Ghisi");
-    post("The bach project is maintained thanks to our generous supporters on Patreon.");
-    post("Please consider supporting us on www.patreon.com/bachproject for as little as the price of a coffee.");
+    if (x && x->b_no_ss) {
+        post("♥ Thank you so much for supporting us on patreon! ♥");
+    } else {
+        post("The bach project is maintained thanks to our generous supporters on Patreon.");
+        post("Please consider supporting us on www.patreon.com/bachproject for as little as the price of a coffee.");
+    }
     
     
 // Post version

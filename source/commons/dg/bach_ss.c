@@ -254,7 +254,7 @@ const long ss_height = 180;
 const long ss_n_width = 16;
 const long ss_n_height = 13;
 long ss_curr_tick = 0;
-const long ss_num_ticks = 130;
+const long ss_num_ticks = 155;
 void *ss_clock = NULL;
 
 void *bach_ss_ui_new(t_symbol *s, long argc, t_atom *argv);
