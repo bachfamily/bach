@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 40.0, 198.0, 617.0, 539.0 ],
+		"rect" : [ 53.0, 116.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -42,135 +42,147 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-4",
+					"id" : "obj-18",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 255.0, 400.5, 219.0, 25.0 ],
-					"text" : "An alternative for the case above."
+					"patching_rect" : [ 351.0, 420.0, 234.0, 25.0 ],
+					"text" : "Addresses and keys are just values!"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-7",
-					"maxclass" : "button",
+					"fontsize" : 8.0,
+					"id" : "obj-30",
+					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 372.0, 24.0, 24.0 ]
+					"patching_rect" : [ 120.0, 366.0, 41.0, 17.0 ],
+					"text" : "loadbang"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-8",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 432.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "\"`ain't no sunshine\" ",
-					"fontname" : "Arial",
-					"id" : "obj-9",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
+					"id" : "obj-29",
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 401.5, 228.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"embed" : 1,
-						"versionnumber" : 80006
-					}
-,
-					"text" : "bach.eval \"`ain't no sunshine\" @out m"
+					"patching_rect" : [ 65.0, 387.0, 35.0, 23.0 ],
+					"text" : "Paul"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-1",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 248.0, 287.0, 307.0, 54.0 ],
-					"presentation_linecount" : 3,
-					"text" : "But it can be useful in the exotic situation of needing a symbol containing both spaces and single quotes / apostrophes."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-19",
-					"maxclass" : "button",
-					"numinlets" : 1,
+					"id" : "obj-28",
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 273.0, 24.0, 24.0 ]
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 387.0, 37.0, 23.0 ],
+					"text" : "John"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-17",
-					"maxclass" : "button",
-					"numinlets" : 1,
+					"maxclass" : "message",
+					"numinlets" : 2,
 					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 170.5, 24.0, 24.0 ]
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 120.0, 387.0, 277.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "[ Paul \"Hey Jude\" ] [ John \"Strawberry Fields\" ]"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-15",
+					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 131.0, 99.0, 23.0 ],
+					"patching_rect" : [ 15.0, 448.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$a = $x2 ; $a.$x1 = `is `my `favourite ",
+					"id" : "obj-25",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 420.0, 329.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80006
+					}
+,
+					"text" : "bach.eval $a = $x2 \\; $a.$x1 = `is `my `favourite @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-8",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 318.0, 196.0, 227.0, 40.0 ],
+					"text" : "The assignment can be performed in a sublist as well."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-9",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 177.0, 67.0, 23.0 ],
+					"text" : "a b (x y z)"
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-14",
-					"maxclass" : "button",
+					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 18.0, 71.0, 24.0, 24.0 ]
+					"numoutlets" : 0,
+					"patching_rect" : [ 15.0, 229.5, 98.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "\"foo\" \"bar\" ",
-					"id" : "obj-6",
+					"code" : "$a = $x1 ; $a:(-1 2) = `why ; $a ",
+					"id" : "obj-15",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 101.0, 113.0, 23.0 ],
+					"patching_rect" : [ 15.0, 204.5, 295.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval @out m"
+					"text" : "bach.eval $a = $x1 \\; $a:(-1 2) = `why \\; $a @out m"
 				}
 
 			}
@@ -179,43 +191,55 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-3",
+					"id" : "obj-2",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 137.0, 92.5, 364.0, 40.0 ],
-					"text" : "In code written the editor window or loaded from a file, symbols can be marked by a pair of double quotes as well."
+					"patching_rect" : [ 335.0, 296.5, 239.0, 40.0 ],
+					"text" : "What is associated to the \"John\" key is replaced."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-2",
+					"id" : "obj-4",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 270.0, 224.0, 23.0 ],
+					"text" : "[ Paul \"Hey Jude\" ] [ John Yesterday ]"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 333.0, 99.0, 23.0 ],
+					"patching_rect" : [ 15.0, 341.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "\"ain't no sunshine\" ",
-					"fontname" : "Arial",
-					"id" : "obj-5",
+					"code" : "$a = $x1 ; $a.'John' = 'Strawberry Fields' ; $a ",
+					"id" : "obj-7",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 302.5, 223.0, 23.0 ],
+					"patching_rect" : [ 15.0, 297.5, 313.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
 						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval \"ain't no sunshine\" @out m"
+					"text" : "bach.eval $a = $x1 \\; $a.'John' = 'Strawberry Fields' \\; $a @out m"
 				}
 
 			}
@@ -224,43 +248,68 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-47",
-					"linecount" : 7,
+					"id" : "obj-6",
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 280.0, 156.0, 311.0, 112.0 ],
-					"text" : "This is also possible in the object box, but only if the symbol contains spaces, otherwise Max will remove the double quotes.\nSpaces must separate the double-quoted symbol from everything preceding and following it.\nGenerally speaking, this should be considered little more than a side effect..."
+					"patching_rect" : [ 295.0, 111.5, 229.0, 25.0 ],
+					"text" : "The third element of $a is replaced."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-38",
+					"id" : "obj-3",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 15.0, 86.0, 58.0, 23.0 ],
+					"text" : "a b c d e"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-1",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 6.0, 43.0, 585.0, 36.0 ],
+					"text" : "It is possible to modify the llll contained in a variable by assigning new values to specific parts of it by address or keys. This mechanism is called \"rich assignment\".",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-21",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 230.5, 99.0, 23.0 ],
+					"patching_rect" : [ 15.0, 139.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "bach.length( \"rock star\" ) ",
-					"fontname" : "Arial",
-					"id" : "obj-39",
+					"code" : "$a = $x1 ; $a:3 = `see ; $a ",
+					"id" : "obj-22",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 200.5, 259.0, 23.0 ],
+					"patching_rect" : [ 15.0, 112.5, 269.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80006
+						"versionnumber" : 80001
 					}
 ,
-					"text" : "bach.eval bach.length( \"rock star\" ) @out m"
+					"text" : "bach.eval $a = $x1 \\; $a:3 = `see \\; $a @out m"
 				}
 
 			}
@@ -273,7 +322,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also:",
+					"text" : "See Also: colon",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -303,8 +352,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 154.0, 23.0 ],
-					"text" : "More about symbols",
+					"patching_rect" : [ 6.0, 8.0, 184.0, 23.0 ],
+					"text" : "Rich assignment syntax",
 					"varname" : "title"
 				}
 
@@ -318,79 +367,86 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, literal, concatenation, construction, space, whitespace, symbol",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, variable, rich, assignment, substitution",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 32.0, 441.0, 21.0 ],
-					"text" : "Some special care must be taken in order to use symbols in your bell code.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-14", 0 ]
+					"destination" : [ "obj-14", 0 ],
+					"source" : [ "obj-15", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-39", 0 ],
+					"destination" : [ "obj-25", 1 ],
 					"source" : [ "obj-17", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-21", 0 ],
+					"source" : [ "obj-22", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-25", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-25", 0 ],
+					"source" : [ "obj-28", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-25", 0 ],
+					"source" : [ "obj-29", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-22", 0 ],
+					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-30", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-5", 0 ],
-					"source" : [ "obj-19", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-38", 0 ],
-					"source" : [ "obj-39", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-5", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
-					"source" : [ "obj-6", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-9", 0 ],
 					"source" : [ "obj-7", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-8", 0 ],
+					"destination" : [ "obj-15", 0 ],
 					"source" : [ "obj-9", 0 ]
 				}
 

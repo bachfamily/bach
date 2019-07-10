@@ -47,8 +47,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 332.0, 355.5, 259.0, 112.0 ],
-					"presentation_linecount" : 8,
+					"patching_rect" : [ 332.0, 355.5, 262.0, 112.0 ],
 					"text" : "Can you figure out what this one does before trying it? —By the way, notice the space after `wrote: it's necessary, as symbols have to be preceded by backticks which would eat up everything that follows until the next space, including operators and parentheses."
 				}
 
@@ -90,19 +89,19 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x2.($x2.$x1.`wrote :-1).`wears ",
+					"code" : "$x2.($x2.$x1.'wrote':-1).`wears ",
 					"id" : "obj-24",
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 17.0, 400.0, 309.0, 23.0 ],
+					"patching_rect" : [ 17.0, 400.0, 294.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80005
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval $x2.($x2.$x1.`wrote :-1).`wears @out m"
+					"text" : "bach.eval $x2.($x2.$x1.'wrote':-1).`wears @out m"
 				}
 
 			}
@@ -117,7 +116,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 251.0, 295.5, 254.0, 40.0 ],
-					"presentation_linecount" : 2,
 					"text" : "By combining dot and colon operators, you can do quite complex things."
 				}
 
@@ -154,7 +152,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 38.0, 257.0, 84.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "george wrote"
 				}
 
@@ -198,7 +195,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 150.5, 227.5, 430.0, 52.0 ],
-					"presentation_linecount" : 6,
 					"text" : "[john [wears glasses] [wrote lots of great songs with paul]] [paul [wrote lots of great songs with john] [wears no shoes]] [george [wears jeans] [wrote some great songs]] [ringo [wears rings] [wrote two or three songs]]"
 				}
 
@@ -236,7 +232,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 61.0, 81.5, 49.0, 23.0 ],
-					"presentation_linecount" : 2,
 					"text" : "george"
 				}
 
@@ -263,7 +258,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 187.5, 125.0, 393.0, 54.0 ],
+					"patching_rect" : [ 187.5, 125.0, 396.0, 54.0 ],
 					"text" : "The dot operator looks for the given key in first element of each first-level sublist, and, when it finds it it, it returns what follows it, or null if it couldn't be found."
 				}
 
@@ -320,7 +315,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: bell+llll, concatenation, precedence, retrieval",
+					"text" : "See Also: bell+llll, colon, dot, symbol",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -365,7 +360,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, picking, element, double, colon, nth, lookup",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, picking, element, dot, key, lookup",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
