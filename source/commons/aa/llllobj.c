@@ -562,7 +562,7 @@ void llllobj_gunload_llll(t_object *x, e_llllobj_obj_types type, t_llll *inll, l
 	
 	cache = llllobj_get_out(x, type) + outnum;
 
-	switch (cache->b_type) {
+	switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
 		case LLLL_O_TEXT:
 			llllobj_gunload_bttext(cache, inll);
 			break;
@@ -584,7 +584,7 @@ void llllobj_gunload_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type
 	
 	cache = llllobj_get_out(x, type) + outnum;
 	
-	switch (cache->b_type) {
+	switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
 		case LLLL_O_TEXT:
 			llllobj_gunload_bttext(cache, inll);
 			break;
@@ -619,7 +619,7 @@ void llllobj_gunload_wrap(t_object *x, e_llllobj_obj_types type, t_atom *in_aa_a
 	for (i = ac - 1; i >= 0; i --) {
 		cache = out + *(--this_outnum);
 		
-		switch (cache->b_type) {
+		switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
 			case LLLL_O_TEXT:
 				llllobj_gunload_bttext(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
 				break;
@@ -648,7 +648,7 @@ void llllobj_gunload_array_range(t_object *x, e_llllobj_obj_types type, t_llll *
 	
 	for (this_arr = arr + maxout - minout, cache = out + maxout; this_arr >= arr; this_arr--, cache--) {
 		
-		switch (cache->b_type) {
+		switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
 			case LLLL_O_TEXT:
 				llllobj_gunload_bttext(cache, *this_arr);
 				break;
@@ -680,7 +680,7 @@ void llllobj_gunload_wrap_range(t_object *x, e_llllobj_obj_types type, t_atom *i
 
 	for (i = maxout - minout, cache = out + maxout; i >= 0; i--, cache--) {
 		
-		switch (cache->b_type) {
+		switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
 			case LLLL_O_TEXT:
 				llllobj_gunload_bttext(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
 				break;
@@ -709,7 +709,7 @@ void llllobj_shoot_llll(t_object *x, e_llllobj_obj_types type, long outnum)
 		return;
 	}
 	
-	switch (out->b_type) {
+	switch (bach->b_nonative ? LLLL_O_MAX : out->b_type) {
 			
 		case LLLL_O_NATIVE: {
 			t_atom out_av = *(out->b_av);
@@ -830,7 +830,7 @@ void llllobj_outlet_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type,
 	
 	cache = llllobj_get_out(x, type) + outnum;
 
-	switch (cache->b_type) {
+	switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
 		case LLLL_O_TEXT:
 		case LLLL_O_MAX:
 			llllobj_outlet_llll(x, type, outnum, inll);
@@ -861,7 +861,7 @@ void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_l
 	out = llllobj_get_out(x, type);
 	cache = out + outnum;
 	
-	switch (cache->b_type) {
+	switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
 			
 		case LLLL_O_TEXT:
 		case LLLL_O_MAX: {
