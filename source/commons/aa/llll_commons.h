@@ -1304,12 +1304,12 @@ void dev_llll_send(t_llll *x, const char* receiver);
 
 
 // DESTRUCTIVE ON edited
-template <t_bool destroyModel = true>
+template <t_bool cloneModel = true>
 void llll_replacewith(t_llll *edited, t_llllelem *victim, t_llll *subs_model)
 {
     if (subs_model->l_size > 0) {
         t_llll *this_subs;
-        if constexpr (destroyModel)
+        if constexpr (cloneModel)
             this_subs = llll_clone_extended(subs_model, edited, 0, NULL);
         else {
             llll_adopt(subs_model, edited);
