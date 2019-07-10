@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -43,12 +43,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 197.0, 396.0, 245.0, 40.0 ],
-					"text" : "Pitches are not symbols, and as such must not be escaped with backticks!"
+					"patching_rect" : [ 204.0, 333.5, 181.0, 25.0 ],
+					"text" : "Pitches are supported, too!"
 				}
 
 			}
@@ -59,7 +58,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 375.5, 78.0, 23.0 ],
+					"patching_rect" : [ 18.0, 305.5, 78.0, 23.0 ],
 					"text" : "G3 F5 4800"
 				}
 
@@ -70,7 +69,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 434.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 364.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -84,27 +83,13 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 404.5, 170.0, 23.0 ],
+					"patching_rect" : [ 18.0, 334.5, 170.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
 					"text" : "bach.eval $x1 + C2 @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-47",
-					"linecount" : 6,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 314.0, 255.0, 277.0, 98.0 ],
-					"text" : "llll literals can contain symbols, which must all be escaped with backticks. \nNotice the space between `five and the closed paren: with no space, the paren would be considered part of the `five) symbol, thus leading to a syntax error."
 				}
 
 			}
@@ -125,53 +110,12 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-37",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 263.5, 31.5, 23.0 ],
-					"text" : "100"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-38",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 335.5, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "length(`one 2 3 4 `five ) + $x1 ",
-					"fontname" : "Arial",
-					"id" : "obj-39",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 292.5, 288.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval length(`one 2 3 4 `five ) + $x1 @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-33",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 163.5, 78.0, 23.0 ],
+					"patching_rect" : [ 18.0, 189.5, 78.0, 23.0 ],
 					"text" : "40 30 20 10"
 				}
 
@@ -182,7 +126,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 223.5, 99.0, 23.0 ],
+					"patching_rect" : [ 18.0, 249.5, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -196,8 +140,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 18.0, 192.5, 227.0, 23.0 ],
+					"patching_rect" : [ 18.0, 218.5, 227.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -239,6 +184,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 18.0, 95.5, 227.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -256,7 +202,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 253.0, 184.0, 245.0, 40.0 ],
+					"patching_rect" : [ 253.0, 210.0, 245.0, 40.0 ],
 					"text" : "Deep llll literals, with sublists marked by square brackets, are supported. "
 				}
 
@@ -270,7 +216,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: bell+function",
+					"text" : "See Also: bell+function, bell+symbol",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -311,11 +257,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, literal, concatenation, construction, space, whitespace, symbol, pitch, flat",
+					"patching_rect" : [ 6.0, 476.0, 588.0, 31.0 ],
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, literal, concatenation, construction, space, whitespace, pitch, flat",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -361,20 +308,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-34", 0 ],
 					"source" : [ "obj-35", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-39", 0 ],
-					"source" : [ "obj-37", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-38", 0 ],
-					"source" : [ "obj-39", 0 ]
 				}
 
 			}
