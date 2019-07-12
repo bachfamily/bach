@@ -119,7 +119,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 297.0, 276.5, 211.0, 54.0 ],
+					"patching_rect" : [ 301.0, 272.0, 211.0, 54.0 ],
 					"text" : "Built-in functions can be treated as any other value, and assigned to variables as well."
 				}
 

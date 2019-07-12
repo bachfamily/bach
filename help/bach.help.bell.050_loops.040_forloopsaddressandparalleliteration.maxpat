@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -71,7 +71,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 316.0, 361.5, 192.0, 54.0 ],
+					"patching_rect" : [ 322.0, 361.5, 192.0, 54.0 ],
 					"text" : "Address variables in parallel iterations. This will get more interesting in a while, too."
 				}
 
@@ -89,7 +89,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $xaddr in $x1, $y $yaddr in $x2 do $res _= $x * $xaddr + $y * $yaddr ",
+					"code" : "for $x $xaddr in $x1, $y $yaddr in $x2 collect $x * $xaddr + $y * $yaddr ",
 					"id" : "obj-23",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -98,10 +98,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 369.5, 297.0, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval for $x $xaddr in $x1\\, $y $yaddr in $x2 do $res _= $x * $xaddr + $y * $yaddr @out m"
+					"text" : "bach.eval for $x $xaddr in $x1\\, $y $yaddr in $x2 collect $x * $xaddr + $y * $yaddr @out m"
 				}
 
 			}
@@ -139,7 +140,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 225.0, 224.0, 295.0, 54.0 ],
+					"patching_rect" : [ 225.0, 231.5, 295.0, 54.0 ],
 					"text" : "Parallel iterations are possible. In general, the for loop stops at the end of the shortest list, with one possible exception we'll meet shortly."
 				}
 
@@ -157,7 +158,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x in $x1, $y in $x2 do $res _= $x + $y ",
+					"code" : "for $x in $x1, $y in $x2 collect $x + $y ",
 					"id" : "obj-5",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -166,10 +167,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 239.5, 202.0, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval for $x in $x1\\, $y in $x2 do $res _= $x + $y @out m"
+					"text" : "bach.eval for $x in $x1\\, $y in $x2 collect $x + $y @out m"
 				}
 
 			}
@@ -191,12 +193,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-21",
-					"linecount" : 6,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 267.5, 44.0, 316.0, 98.0 ],
-					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address.\nThe return value of the for loop is the value taken by the \"do\" clause at the end of the last iteration."
+					"patching_rect" : [ 272.5, 65.5, 306.0, 54.0 ],
+					"text" : "If you provide two variable names are provided for a single lllls, the first will contain the actual data, and the second the address."
 				}
 
 			}
@@ -213,7 +215,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $data $address in $x1 do $res _= $data + $address ",
+					"code" : "for $data $address in $x1 collect $data + $address ",
 					"id" : "obj-20",
 					"linecount" : 2,
 					"maxclass" : "newobj",
@@ -222,10 +224,11 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 73.5, 251.0, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval for $data $address in $x1 do $res _= $data + $address @out m"
+					"text" : "bach.eval for $data $address in $x1 collect $data + $address @out m"
 				}
 
 			}

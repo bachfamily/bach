@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -105,19 +105,20 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$sum = 0 ; [for $x in $x1 as $sum + $x <= 100 do ($sum += $x ; $res _= $x)] $sum ",
+					"code" : "$sum = 0 ; [for $x in $x1 as $sum + $x <= 100 collect ($sum += $x ; $x)] $sum ",
 					"id" : "obj-7",
-					"linecount" : 4,
+					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 338.5, 207.0, 67.0 ],
+					"patching_rect" : [ 13.0, 338.5, 205.0, 52.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval $sum = 0 \\; [for $x in $x1 as $sum + $x <= 100 do ($sum += $x \\; $res _= $x)] $sum @out m"
+					"text" : "bach.eval $sum = 0 \\; [for $x in $x1 as $sum + $x <= 100 collect ($sum += $x \\; $x)] $sum @out m"
 				}
 
 			}
@@ -187,7 +188,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 243.0, 152.0, 348.0, 98.0 ],
+					"patching_rect" : [ 243.0, 152.0, 351.0, 98.0 ],
 					"text" : "This one only retains the elements of the incoming llll until their sum doesn't exceed 100.\n$sum actually gets incremented past 100 during the last evaluation of the \"as\" clause: as a consequence, after the end of the loop we subtract $x (which now holds the last value it has taken during the loop) from it."
 				}
 
@@ -205,19 +206,20 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$sum = 0 ; [for $x in $x1 as ($sum += print($x)) <= 100 do $res _= $x] $sum - $x ",
+					"code" : "$sum = 0 ; [for $x in $x1 as ($sum += print($x)) <= 100 collect $x] $sum - $x ",
 					"id" : "obj-23",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 161.5, 225.0, 52.0 ],
+					"patching_rect" : [ 13.0, 161.5, 228.0, 52.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval $sum = 0 \\; [for $x in $x1 as ($sum += print($x)) <= 100 do $res _= $x] $sum - $x @out m"
+					"text" : "bach.eval $sum = 0 \\; [for $x in $x1 as ($sum += print($x)) <= 100 collect $x] $sum - $x @out m"
 				}
 
 			}

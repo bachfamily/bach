@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -43,7 +43,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 348.0, 448.0, 99.0, 23.0 ],
+					"patching_rect" : [ 358.0, 448.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -58,8 +58,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 467.0, 386.5, 109.0, 54.0 ],
-					"presentation_linecount" : 2,
+					"patching_rect" : [ 482.0, 392.5, 109.0, 54.0 ],
 					"text" : "A typical case:\niterating over a range."
 				}
 
@@ -72,25 +71,26 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 348.0, 350.0, 50.0, 23.0 ]
+					"patching_rect" : [ 358.0, 365.0, 50.0, 23.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $i in arithmser(1, $x1) do print($i) ",
+					"code" : "for $i in 1 ... $x1 do print($i) ",
 					"id" : "obj-6",
 					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 348.0, 386.5, 112.0, 52.0 ],
+					"patching_rect" : [ 358.0, 394.0, 115.0, 52.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval for $i in arithmser(1\\, $x1) do print($i)"
+					"text" : "bach.eval for $i in 1 ... $x1 do print($i) @out m"
 				}
 
 			}
@@ -99,12 +99,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
-					"linecount" : 8,
+					"linecount" : 11,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 219.0, 579.0, 123.0 ],
-					"text" : "where the lllls, attribute values, condition and body are expressions of any complexity.\n\nThe general idea is that the \"for\" loop roughly behaves like bach.iter: given one or more lllls, their elements (optionally alongside the respective addresses) are iteratively assigned to the given variables, for each element or set of elements the loop body is evaluated, and the value of the \"for\" loop is the last value of the body. The optional \"with\" clause allows setting some attributes to control the details of the parallel iteration of multiple lllls, and the optional \"as\" clause allows setting a condition to be checked before every iteration, and causing the iteration to terminate if false.",
+					"patching_rect" : [ 12.0, 207.0, 579.0, 166.0 ],
+					"text" : "where the lllls, attribute values, condition and body are expressions of any complexity.\n\nThe general idea is that the \"for\" loop roughly behaves like bach.iter: given one or more lllls, their elements (optionally alongside the respective addresses) are iteratively assigned to the given variables, for each element or set of elements the loop body is evaluated, and the value of the \"for\" loop is the last value of the body. The optional \"with\" clause allows setting some attributes to control the details of the parallel iteration of multiple lllls, and the optional \"as\" clause allows setting a condition to be checked before every iteration, and causing the iteration to terminate if false.\nThe return value of a for ... do loop is the value of the body at the end of the last iteration. \nThe return value of a for ... collect loop is the collection of the values taken by the body at each iteration.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -118,8 +118,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 18.0, 87.0, 461.0, 124.0 ],
-					"text" : "for <index variable 1> [address variable 1] in <llll 1>\n    [, <index variable 2> [address variable 2] in <llll 2>\n     [...] ]\n    [with @<attribute name 1> <attribute value 1> \n          [[,] @<attribute name 2> <attribute value 2>] \n          [...] ]\n    [as <condition>]\ndo <body>"
+					"patching_rect" : [ 18.0, 81.0, 461.0, 124.0 ],
+					"text" : "for <index variable 1> [address variable 1] in <llll 1>\n    [, <index variable 2> [address variable 2] in <llll 2>\n     [...] ]\n    [with @<attribute name 1> <attribute value 1> \n          [[,] @<attribute name 2> <attribute value 2>] \n          [...] ]\n    [as <condition>]\ndo|collect <body>"
 				}
 
 			}
@@ -130,7 +130,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 357.0, 78.0, 23.0 ],
+					"patching_rect" : [ 12.0, 371.0, 78.0, 23.0 ],
 					"text" : "10 20 30 40"
 				}
 
@@ -145,7 +145,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 164.0, 357.0, 158.0, 98.0 ],
+					"patching_rect" : [ 164.0, 371.0, 162.0, 98.0 ],
 					"text" : "The elements of the incoming llll are printed one by one in the Max console, and the last one is the result of the expression."
 				}
 
@@ -156,7 +156,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 12.0, 431.0, 99.0, 23.0 ],
+					"patching_rect" : [ 12.0, 445.0, 99.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -170,8 +170,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 12.0, 386.5, 148.0, 38.0 ],
+					"patching_rect" : [ 12.0, 400.5, 148.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -187,8 +188,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 64.0, 181.0, 21.0 ],
-					"text" : "The syntax of the \"for\" loop is:",
+					"patching_rect" : [ 6.0, 58.0, 228.0, 21.0 ],
+					"text" : "The general syntax of the \"for\" loop is:",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -202,7 +203,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: recursion, while+loop",
+					"text" : "See Also: recursion, while+loop, map, reduce",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

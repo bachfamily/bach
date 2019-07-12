@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 135.0, 140.0, 617.0, 539.0 ],
+		"rect" : [ 53.0, 116.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -42,13 +42,85 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-3",
-					"linecount" : 2,
+					"id" : "obj-8",
+					"linecount" : 5,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 217.0, 265.0, 187.0, 40.0 ],
-					"text" : "... or not, in case you prefer a more Max-like look!"
+					"patching_rect" : [ 294.0, 350.0, 297.0, 83.0 ],
+					"presentation_linecount" : 10,
+					"text" : "Let's assume you want to perform a variable-less rich assignment on the value of a variable. What can you do? \nTo get the value of a variable, instead of the variable itself, wrap it into parentheses!"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 12.0, 426.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$a = $x1 ; $b = ($a).'sizes' .= sqrt() ; $a $b ",
+					"id" : "obj-6",
+					"linecount" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 12.0, 372.5, 275.0, 38.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80006
+					}
+,
+					"text" : "bach.eval $a = $x1 \\; $b = ($a).'sizes' .= sqrt() \\; $a $b @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-7",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 12.0, 337.5, 128.0, 23.0 ],
+					"text" : "[ sizes 100 400 900 ]"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 12.0, 274.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$x1.'notes':(-1 -1) += 2000 ",
+					"id" : "obj-3",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 12.0, 241.5, 269.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80006
+					}
+,
+					"text" : "bach.eval $x1.'notes':(-1 -1) += 2000 @out m"
 				}
 
 			}
@@ -59,42 +131,49 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 232.0, 121.0, 23.0 ],
-					"text" : "10 20 [30 40] 50 60"
+					"patching_rect" : [ 12.0, 206.5, 389.0, 23.0 ],
+					"text" : "[ markers 1000 2000 4000 ] [ notes [ C4 1000 100 ] [ G5 500 80 ] ]"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1 @unwrap 1 do print($x [$addr]) ",
-					"id" : "obj-6",
-					"linecount" : 3,
+					"id" : "obj-18",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 12.0, 164.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "$x1.'notes':(-1 1) = F#3 ",
+					"id" : "obj-17",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 259.0, 195.0, 52.0 ],
+					"patching_rect" : [ 12.0, 131.5, 250.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1 @unwrap 1 do print($x [$addr]) @out m"
+					"text" : "bach.eval $x1.'notes':(-1 1) = F#3 @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 5,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 381.0, 178.0, 79.0 ],
-					"text" : "maxdepth (defaults to 1)\nscalarmode (defaults to 1)\nunwrap (defaults to 0)\nrecursionmode (defaults to 0)\nspikemode (defaults to 0)",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"id" : "obj-16",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 12.0, 96.5, 389.0, 23.0 ],
+					"text" : "[ markers 1000 2000 4000 ] [ notes [ C4 1000 100 ] [ G5 500 80 ] ]"
 				}
 
 			}
@@ -103,72 +182,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-1",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 358.0, 472.0, 21.0 ],
-					"text" : "The attributes of the \"for\" loop correspond exactly to those of bach.iter. They are:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-14",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 217.0, 132.0, 177.0, 40.0 ],
-					"text" : "Multiple attributes can be separated by commas..."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 99.0, 121.0, 23.0 ],
-					"text" : "10 20 [30 40] 50 60"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1, @unwrap 1 do print($x [$addr]) ",
-					"id" : "obj-17",
-					"linecount" : 3,
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 126.0, 195.0, 52.0 ],
-					"saved_object_attributes" : 					{
-						"embed" : 1,
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1\\, @unwrap 1 do print($x [$addr]) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 39.0, 536.0, 36.0 ],
-					"text" : "The \"with\" clause of the for loop allows fine-tuning the iteration behavior, through the use of attributes corresponding to those of bach.iter.",
+					"patching_rect" : [ 6.0, 43.0, 546.0, 36.0 ],
+					"text" : "It is possible to apply the rich assignment syntax to any value, without actually assigning the result to a variable. The operation will return the modified llll, without actually assigning it.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -182,7 +201,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: recursion, while+loop",
+					"text" : "See Also: bell+llll, colon, dot, symbol, assigning+operator",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -212,8 +231,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 268.0, 23.0 ],
-					"text" : "\"For\" loops: \"with\" clause attributes",
+					"patching_rect" : [ 6.0, 8.0, 219.0, 23.0 ],
+					"text" : "Variable-less rich assignment",
 					"varname" : "title"
 				}
 
@@ -223,12 +242,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
-					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, for, condition, with, clause, attributes, maxdepth, unwrap, scalarmode, recursionmode, spikemode",
+					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, variable, rich, assignment, substitution, operator",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -238,14 +256,42 @@
 		"lines" : [ 			{
 				"patchline" : 				{
 					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-15", 0 ]
+					"source" : [ "obj-16", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-18", 0 ],
+					"source" : [ "obj-17", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-5", 0 ],
+					"source" : [ "obj-6", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-4", 0 ]
+					"source" : [ "obj-7", 0 ]
 				}
 
 			}

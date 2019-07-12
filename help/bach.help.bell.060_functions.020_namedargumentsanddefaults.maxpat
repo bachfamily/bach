@@ -4,13 +4,13 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 316.0, 145.0, 617.0, 539.0 ],
+		"rect" : [ 101.0, 145.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -48,7 +48,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 167.0, 347.0, 378.0, 127.0 ],
+					"patching_rect" : [ 167.0, 347.0, 380.0, 127.0 ],
 					"text" : "The rot function has other arguments, which we had left to their defaults so far: mindepth and maxdepth.\nHere we see a meaningful way to use named arguments: if we want to cherrypick the arguments that we want to set, especially in functions that have many, and leave the other to their defaults, we can set them by name, and even mix them with arguments passed by position: the only rule is that all the arguments passed by position must come before."
 				}
 
@@ -87,6 +87,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.0, 405.0, 152.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -154,6 +155,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.0, 303.0, 162.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -196,8 +198,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 184.0, 197.0, 38.0 ],
+					"patching_rect" : [ 13.0, 184.0, 200.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -253,6 +256,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.0, 77.0, 176.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -310,10 +314,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
 					"text" : "Tags: evaluation, language, script, scripting, code, bell, function, built, in, rot, argument, name, named, position, at, default",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"

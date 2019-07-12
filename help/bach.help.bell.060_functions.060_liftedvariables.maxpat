@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 135.0, 140.0, 617.0, 539.0 ],
+		"rect" : [ 135.0, 163.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -42,119 +42,56 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-3",
-					"linecount" : 2,
+					"id" : "obj-19",
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 217.0, 265.0, 187.0, 40.0 ],
-					"text" : "... or not, in case you prefer a more Max-like look!"
+					"patching_rect" : [ 336.0, 334.5, 255.0, 69.0 ],
+					"text" : "$plusY lifts the $y variable from its caller. This allows it to both read and modify it: in fact, at the end of the computation $y holds the value 2."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-4",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 232.0, 121.0, 23.0 ],
-					"text" : "10 20 [30 40] 50 60"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1 @unwrap 1 do print($x [$addr]) ",
-					"id" : "obj-6",
-					"linecount" : 3,
+					"id" : "obj-16",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 259.0, 195.0, 52.0 ],
-					"saved_object_attributes" : 					{
-						"embed" : 1,
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1 @unwrap 1 do print($x [$addr]) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-2",
-					"linecount" : 5,
-					"maxclass" : "comment",
-					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 381.0, 178.0, 79.0 ],
-					"text" : "maxdepth (defaults to 1)\nscalarmode (defaults to 1)\nunwrap (defaults to 0)\nrecursionmode (defaults to 0)\nspikemode (defaults to 0)",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"patching_rect" : [ 24.0, 396.5, 98.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-1",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 358.0, 472.0, 21.0 ],
-					"text" : "The attributes of the \"for\" loop correspond exactly to those of bach.iter. They are:",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-14",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 217.0, 132.0, 177.0, 40.0 ],
-					"text" : "Multiple attributes can be separated by commas..."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-15",
+					"id" : "obj-8",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 99.0, 121.0, 23.0 ],
-					"text" : "10 20 [30 40] 50 60"
+					"patching_rect" : [ 24.0, 320.0, 50.0, 23.0 ],
+					"text" : "3"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "for $x $addr in $x1 with @maxdepth 1, @unwrap 1 do print($x [$addr]) ",
+					"code" : "$plusY = ($x -^ $y -> ($y += 1 ; $x + $y)) ; $y = 1 ; $plusY($x1) $y ",
+					"fontsize" : 13.0,
 					"id" : "obj-17",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 126.0, 195.0, 52.0 ],
+					"patching_rect" : [ 24.0, 350.0, 304.0, 38.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80005
 					}
 ,
-					"text" : "bach.eval for $x $addr in $x1 with @maxdepth 1\\, @unwrap 1 do print($x [$addr]) @out m"
+					"text" : "bach.eval $plusY = ($x -^ $y -> ($y += 1 \\; $x + $y)) \\; $y = 1 \\; $plusY($x1) $y @out m"
 				}
 
 			}
@@ -162,13 +99,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-76",
-					"linecount" : 2,
+					"id" : "obj-6",
+					"linecount" : 16,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 39.0, 536.0, 36.0 ],
-					"text" : "The \"with\" clause of the for loop allows fine-tuning the iteration behavior, through the use of attributes corresponding to those of bach.iter.",
+					"patching_rect" : [ 6.0, 51.0, 589.0, 239.0 ],
+					"text" : "It is possible for a user-defined function to access (\"lift\") at call time a variable from a scope different from its own. In order to be more specific, we must introduce here the concept of call stack, that is, the imaginary pile of nested functions call starting from the main function and eventually leading to the function currently being executed. The call stack varies dynamically during the execution of a program; a new function is added on its top when it gets called, and is removed when it exits.\nNow, the process of lifting a variable means that a given function descends the call stack looking for it, and only stopping when it finds it or when it reaches the root function. If the lifted variable is not found, it will be treated just like a local variable with a starting value of null. It may be worth pointing out that the same function can lift variables with the same name from different functions over time, depending on where it is being called from.\nHowever bizarre the idea may look, there are some practical cases in which this can be useful (namely, lambda functions and recursive calls) but we'll review them later. For now, let's focus on the syntax.\nAfter the argument list of a function definition, you can specify one or more comma-separated variable names to be lifted from the caller, preceded by the -^ symbol. These variable names can't coincide with any of the function parameter names, and can't have defaults.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -182,7 +119,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: recursion, while+loop",
+					"text" : "See Also: ",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -212,8 +149,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 268.0, 23.0 ],
-					"text" : "\"For\" loops: \"with\" clause attributes",
+					"patching_rect" : [ 6.0, 8.0, 119.0, 23.0 ],
+					"text" : "Lifted variables",
 					"varname" : "title"
 				}
 
@@ -228,7 +165,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, for, condition, with, clause, attributes, maxdepth, unwrap, scalarmode, recursionmode, spikemode",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, function, user, defined, variable, local, assignment, scope, visibility, scoping, propagation, lift, lifted",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -237,15 +174,15 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-15", 0 ]
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-17", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-6", 0 ],
-					"source" : [ "obj-4", 0 ]
+					"destination" : [ "obj-17", 0 ],
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}

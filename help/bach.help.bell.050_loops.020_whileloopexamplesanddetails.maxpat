@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -43,12 +43,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-23",
-					"linecount" : 9,
+					"linecount" : 7,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 128.0, 302.0, 447.0, 141.0 ],
-					"text" : "Multiplication tables—a complicated one, with nested while loops.\nA notable thing is that if the body of the \"while\" loop contains a sequence of operations (;), it must be surrounded by parens. This kind of structure is much more readable if indented, so this time the code is not in the object box, but in the internal text editor. Double-click bach.eval to view it.\nAlso, notice how the result we want to obtain is not the last value of the while loop, but the value of a variable we define and update in the middle of it: so, the last item of our sequence of evaluation is the variable itself, so as to return its value finally."
+					"patching_rect" : [ 134.5, 316.5, 463.0, 112.0 ],
+					"text" : "Multiplication tables—a complicated one, with nested while...collect loops.\nA notable thing is that if the body of the \"while\" loop contains a sequence of operations (;), it must be surrounded by parens or brackets (the latter if you want the return value of each iterationto be a wrapped llll). \nThis kind of structure is much more readable if indented, so this time the code is not in the object box, but in the internal text editor. Double-click bach.eval to view it."
 				}
 
 			}
@@ -101,7 +101,7 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$x = 1 ; \r\nwhile $x <= $x1 do (\r\n\t$row = null ; \r\n\t$y = 1 ; \r\n\twhile $y <= $x1 do (\r\n\t\t$row _= $x * $y ; \r\n\t\t$y += 1) ; \r\n\t$res = $res [$row] ; \r\n\t$x += 1\r\n\t) ; \r\n$res ",
+					"code" : "$x = 0 ; \r\nwhile $x < $x1 collect [ \r\n\t$y = 0 ; \r\n\t$x += 1 ;\r\n\twhile $y < $x1 collect (\r\n\t\t$y += 1 ;\r\n\t\t$x * $y \r\n\t)\r\n] ",
 					"fontsize" : 13.0,
 					"id" : "obj-17",
 					"maxclass" : "newobj",
@@ -110,6 +110,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 10.0, 361.0, 113.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -127,7 +128,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 301.0, 203.5, 243.0, 69.0 ],
+					"patching_rect" : [ 301.0, 203.5, 246.0, 69.0 ],
 					"text" : "The Fibonacci sequence, up to the n-th term. Notice how we build the result by appending to each new term the sum of the two previous ones."
 				}
 
@@ -179,6 +180,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 10.0, 219.0, 285.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -247,6 +249,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 10.0, 77.5, 170.0, 52.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -304,10 +307,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
 					"text" : "Tags: evaluation, language, script, scripting, code, bell, loop, while, condition, do, body, nested, sequence, factorial, fibonacci",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"

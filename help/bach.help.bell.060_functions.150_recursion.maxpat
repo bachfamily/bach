@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -85,19 +85,21 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) ; $fun($x1) ",
+					"code" : "$fun = ($x -^ $fun -> if $x == 0 then 0 else $fun(print($x) - 1)) ; $fun($x1) ",
 					"fontsize" : 13.0,
 					"id" : "obj-4",
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 433.5, 440.0, 23.0 ],
+					"patching_rect" : [ 13.0, 433.5, 440.0, 38.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval $fun = ($x -> if $x == 0 then 0 else $fun(print($x) - 1)) \\; $fun($x1)"
+					"text" : "bach.eval $fun = ($x -^ $fun -> if $x == 0 then 0 else $fun(print($x) - 1)) \\; $fun($x1)"
 				}
 
 			}
@@ -125,7 +127,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 202.0, 457.0, 79.0 ],
+					"patching_rect" : [ 13.0, 208.0, 457.0, 79.0 ],
 					"text" : "Recursion can be a very elegant way of expressing problems, but bell's implementation of recursion is currently not very optimized. In general, if efficiency is your goal, it is recommended to refactor recursive problems iteratively when not too complicated (it has been proven that it's always possible, but this doesn't mean that it's easy).",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
@@ -136,11 +138,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 37.0, 457.0, 21.0 ],
-					"text" : "By virtue of the visibility rules, setting up recursive functions is straightforward.",
+					"patching_rect" : [ 13.0, 37.0, 459.0, 50.0 ],
+					"text" : "A recursive function is a function that calls itself. In order to do this, it needs to actually be able to access itself, that is, the variable to which it is assigned. This can be accomplished by lifting the function itself.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -151,7 +154,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 157.5, 98.0, 23.0 ],
+					"patching_rect" : [ 13.0, 177.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -163,27 +166,28 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 79.0, 37.0, 23.0 ],
+					"patching_rect" : [ 13.0, 92.0, 37.0, 23.0 ],
 					"text" : "5"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "$fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) ; $fact($x1) ",
+					"code" : "$fact = ($x -^ $fact -> if $x == 1 then 1 else $x * $fact($x-1)) ; $fact($x1) ",
 					"fontsize" : 13.0,
 					"id" : "obj-29",
-					"linecount" : 2,
+					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 109.5, 249.0, 38.0 ],
+					"patching_rect" : [ 13.0, 122.5, 251.0, 52.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval $fact = ($x -> if $x == 1 then 1 else $x * $fact($x-1)) \\; $fact($x1) @out m"
+					"text" : "bach.eval $fact = ($x -^ $fact -> if $x == 1 then 1 else $x * $fact($x-1)) \\; $fact($x1) @out m"
 				}
 
 			}
@@ -193,12 +197,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-5",
-					"linecount" : 5,
+					"linecount" : 4,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 268.0, 79.0, 278.0, 83.0 ],
-					"text" : "A classic example: implementation of factorial by recursion. The $fact function (that is, more precisely, the function held by the $fact variable) is available inside itself as it is defined in the scope of the caller."
+					"patching_rect" : [ 268.0, 114.0, 279.0, 69.0 ],
+					"text" : "A classic example: implementation of factorial by recursion. The $fact function (that is, more precisely, the function held by the $fact variable) gets lifted."
 				}
 
 			}
@@ -211,7 +215,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: bell+loop, scope",
+					"text" : "See Also: bell+loop, scope, lift, lifted",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}

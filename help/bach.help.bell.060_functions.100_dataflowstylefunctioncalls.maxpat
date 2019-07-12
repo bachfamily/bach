@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -48,6 +48,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 338.0, 423.0, 138.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -67,18 +68,6 @@
 					"numoutlets" : 0,
 					"patching_rect" : [ 195.0, 400.0, 338.0, 40.0 ],
 					"text" : "There is also an assigning version of the dot operator. This is equivalent to:"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-34",
-					"maxclass" : "button",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 6.0, 317.0, 24.0, 24.0 ]
 				}
 
 			}
@@ -131,6 +120,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 408.5, 180.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -147,8 +137,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 349.5, 225.0, 23.0 ],
+					"patching_rect" : [ 6.0, 341.5, 225.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -167,6 +158,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 256.0, 280.0, 198.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -207,8 +199,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 192.0, 76.5, 137.0, 38.0 ],
+					"patching_rect" : [ 192.0, 76.5, 140.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -265,6 +258,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 205.5, 243.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -320,8 +314,9 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 76.5, 134.0, 38.0 ],
+					"patching_rect" : [ 6.0, 76.5, 136.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -379,10 +374,11 @@
 					"fontname" : "Arial",
 					"fontsize" : 11.0,
 					"id" : "obj-12",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
+					"patching_rect" : [ 6.0, 476.0, 585.0, 31.0 ],
 					"text" : "Tags: evaluation, language, script, scripting, code, bell, function, call, calling, dataflow, style, first, argument, passing, assigning",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
@@ -443,13 +439,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-29", 0 ],
 					"source" : [ "obj-31", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-28", 0 ],
-					"source" : [ "obj-34", 0 ]
 				}
 
 			}

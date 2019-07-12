@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -83,7 +83,7 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 409.0, 367.0, 182.0, 98.0 ],
+					"patching_rect" : [ 409.0, 367.0, 184.0, 98.0 ],
 					"text" : "Even better: since the defaults are only evaluated once in lambda calls, we don't waste time checking if $epsilon is non-null at every tested value."
 				}
 
@@ -121,8 +121,9 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 397.5, 400.0, 38.0 ],
+					"patching_rect" : [ 6.0, 397.5, 404.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -180,6 +181,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 244.5, 250.0, 52.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -234,7 +236,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 385.0, 111.5, 173.0, 40.0 ],
-					"text" : "$epsilon is passed by propagation."
+					"text" : "$epsilon is lifted from the calling scope."
 				}
 
 			}
@@ -244,7 +246,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 155.5, 98.0, 23.0 ],
+					"patching_rect" : [ 6.0, 171.5, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
@@ -263,20 +265,21 @@
 			}
 , 			{
 				"box" : 				{
-					"code" : "$closeEnough = ($x, $y -> abs($x - $y) <= $epsilon) ; $epsilon = $x2 ||| 0 ; finditems($x1, 1, $closeEnough) ",
+					"code" : "$closeEnough = ($x, $y -^ $epsilon -> abs($x - $y) <= $epsilon) ; $epsilon = $x2 ||| 0 ; finditems($x1, 1, $closeEnough) ",
 					"fontsize" : 13.0,
 					"id" : "obj-14",
-					"linecount" : 2,
+					"linecount" : 3,
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 6.0, 111.5, 377.0, 38.0 ],
+					"patching_rect" : [ 6.0, 111.5, 378.0, 52.0 ],
 					"saved_object_attributes" : 					{
-						"versionnumber" : 80001
+						"embed" : 1,
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval $closeEnough = ($x\\, $y -> abs($x - $y) <= $epsilon) \\; $epsilon = $x2 ||| 0 \\; finditems($x1\\, 1\\, $closeEnough) @out m"
+					"text" : "bach.eval $closeEnough = ($x\\, $y -^ $epsilon -> abs($x - $y) <= $epsilon) \\; $epsilon = $x2 ||| 0 \\; finditems($x1\\, 1\\, $closeEnough) @out m"
 				}
 
 			}
@@ -290,7 +293,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 37.0, 585.0, 36.0 ],
-					"text" : "Lambda functions are subject to the same scoping rules as any other functions. This can be useful for passing parameters to them.",
+					"text" : "Lambda functions are subject to the same scoping rules as any other functions, and you can pass parameters to them through lifting.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 89.0, 165.0, 617.0, 539.0 ],
+		"rect" : [ 96.0, 156.0, 617.0, 539.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 13.0,
@@ -39,6 +39,7 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-24",
@@ -46,67 +47,51 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 294.0, 432.0, 297.0, 36.0 ],
-					"text" : "All the other operators have a functional form, consisting of the operator symbol preceded by #.",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"bubblepoint" : 1.0,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-22",
-					"linecount" : 2,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 91.0, 373.5, 284.0, 40.0 ],
-					"text" : "#/ is a function to all effects and purposes (it even has parameter names, $x and $y)."
+					"patching_rect" : [ 256.0, 400.5, 216.0, 40.0 ],
+					"presentation_linecount" : 2,
+					"text" : "You can pass named arguments as key-value sublists."
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-21",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 382.0, 130.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "[exponent 2] [base 3]"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-22",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 445.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 438.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-20",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 382.0, 29.5, 23.0 ],
-					"text" : "4"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "#/(2, $x1) ",
-					"fontsize" : 13.0,
-					"id" : "obj-18",
+					"code" : "apply(pow, null, $x1) ",
+					"id" : "obj-23",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 411.5, 172.0, 23.0 ],
+					"patching_rect" : [ 9.0, 409.0, 236.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval #/(2\\, $x1) @out m"
+					"text" : "bach.eval apply(pow\\, null\\, $x1) @out m"
 				}
 
 			}
@@ -115,54 +100,167 @@
 					"bubble" : 1,
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-14",
+					"id" : "obj-18",
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 225.5, 316.5, 284.0, 25.0 ],
-					"text" : "We can use the functional form of division: #/"
+					"patching_rect" : [ 236.0, 293.5, 308.0, 40.0 ],
+					"presentation_linecount" : 3,
+					"text" : "... which means that if you actually want to pass a deep llll you have to wrap it one extra level."
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-15",
+					"id" : "obj-17",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 282.0, 92.0, 23.0 ],
+					"presentation_linecount" : 2,
+					"text" : "[[1 2 3] [2 4 6]]"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-9",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 348.0, 98.0, 23.0 ],
+					"patching_rect" : [ 9.0, 338.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-16",
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"code" : "apply(trans, $x1) ",
+					"id" : "obj-8",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 287.0, 37.0, 23.0 ],
-					"text" : "2 3 4"
+					"patching_rect" : [ 9.0, 309.0, 214.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80006
+					}
+,
+					"text" : "bach.eval apply(trans\\, $x1) @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "reduce($x1, #/) ",
+					"bubble" : 1,
+					"fontname" : "Arial",
 					"fontsize" : 13.0,
-					"id" : "obj-17",
+					"id" : "obj-2",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 240.0, 208.0, 232.0, 40.0 ],
+					"presentation_linecount" : 3,
+					"text" : "first-level lllls are unwrapped and passed as individual arguments..."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 246.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-5",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 187.0, 84.0, 23.0 ],
+					"presentation_linecount" : 6,
+					"text" : "[1 2 3] [2 4 6]"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"code" : "apply(union, $x1) ",
+					"id" : "obj-7",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 317.5, 205.0, 23.0 ],
+					"patching_rect" : [ 9.0, 216.5, 217.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval reduce($x1\\, #/) @out m"
+					"text" : "bach.eval apply(union\\, $x1) @out m"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bubble" : 1,
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-1",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 222.0, 104.0, 216.0, 54.0 ],
+					"text" : "The two elements of the incoming lllls are passed as two separate parameters to pow."
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-20",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 151.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-19",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 9.0, 89.0, 29.5, 23.0 ],
+					"text" : "3 2"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-6",
+					"linecount" : 4,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 455.0, 81.0, 136.0, 65.0 ],
+					"text" : "Arguments:\nfunction\narguments by position\narguments by name",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
@@ -175,123 +273,27 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 37.0, 534.0, 36.0 ],
-					"text" : "Every operator has a corresponding functional form, that is, a function doing its exact work. The functional form is especially useful for lambdas.",
+					"patching_rect" : [ 9.0, 39.0, 545.0, 36.0 ],
+					"text" : "The $apply() function calls another function by passing it individual parameters expressed as two llll, one for arguments passed by position, the other for arguments passed by name.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-1",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 250.5, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 189.0, 37.0, 23.0 ],
-					"text" : "2 3 4"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "reduce($x1, pow) ",
-					"fontsize" : 13.0,
+					"code" : "apply(pow, $x1) ",
 					"id" : "obj-3",
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 219.5, 218.0, 23.0 ],
+					"patching_rect" : [ 9.0, 119.5, 208.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80006
 					}
 ,
-					"text" : "bach.eval reduce($x1\\, pow) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-4",
-					"linecount" : 3,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 242.5, 204.0, 267.0, 54.0 ],
-					"text" : "This one shouldn't come as a surprise. But what if we want to reduce by division, rather than by power?"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-27",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 142.5, 98.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-28",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 79.0, 37.0, 23.0 ],
-					"text" : "2 3 4"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"code" : "reduce($x1, ($x, $y -> pow($x, $y))) ",
-					"fontsize" : 13.0,
-					"id" : "obj-29",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 109.5, 323.0, 23.0 ],
-					"saved_object_attributes" : 					{
-						"embed" : 1,
-						"versionnumber" : 80001
-					}
-,
-					"text" : "bach.eval reduce($x1\\, ($x\\, $y -> pow($x\\, $y))) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"bubble" : 1,
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-5",
-					"linecount" : 4,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 342.0, 86.5, 249.0, 69.0 ],
-					"text" : "Meet the \"reduce\" function: it accumulates the result of a lambda function. Here we compute 2 raised to 3 raised to 4."
+					"text" : "bach.eval apply(pow\\, $x1) @out m"
 				}
 
 			}
@@ -304,7 +306,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: bell+lambda",
+					"text" : "See Also: $argcount",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -334,8 +336,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 222.0, 23.0 ],
-					"text" : "Functional forms of operators",
+					"patching_rect" : [ 6.0, 8.0, 201.0, 23.0 ],
+					"text" : "$apply() function reference",
 					"varname" : "title"
 				}
 
@@ -349,7 +351,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, operator, functional, form, hash",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, $args",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -358,57 +360,57 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
-					"destination" : [ "obj-17", 0 ],
-					"source" : [ "obj-16", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-15", 0 ],
+					"destination" : [ "obj-8", 0 ],
 					"source" : [ "obj-17", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-21", 0 ],
-					"source" : [ "obj-18", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-3", 0 ],
-					"source" : [ "obj-2", 0 ]
+					"source" : [ "obj-19", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-18", 0 ],
-					"source" : [ "obj-20", 0 ]
+					"destination" : [ "obj-23", 0 ],
+					"source" : [ "obj-21", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-29", 0 ],
-					"source" : [ "obj-28", 0 ]
+					"destination" : [ "obj-22", 0 ],
+					"source" : [ "obj-23", 0 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-27", 0 ],
-					"source" : [ "obj-29", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-1", 0 ],
+					"destination" : [ "obj-20", 0 ],
 					"source" : [ "obj-3", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-7", 0 ],
+					"source" : [ "obj-5", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"source" : [ "obj-7", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-9", 0 ],
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}

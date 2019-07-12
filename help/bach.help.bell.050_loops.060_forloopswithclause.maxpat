@@ -4,7 +4,7 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 0,
-			"revision" : 2,
+			"revision" : 6,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -90,17 +90,6 @@
 			}
 , 			{
 				"box" : 				{
-					"id" : "obj-2",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 385.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"code" : "for $x $addr in $x1 with @maxdepth $x2 ||| -1 do print($x [$addr]) ",
 					"id" : "obj-3",
 					"linecount" : 3,
@@ -110,6 +99,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.0, 321.5, 270.0, 52.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -154,19 +144,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 267.0, 143.5, 299.0, 54.0 ],
+					"patching_rect" : [ 284.0, 135.5, 299.0, 54.0 ],
 					"text" : "Differently from bach.iter, the \"for\" loop only iterates the root level of lllls by default, but this can be controlled with the maxdepth attribute."
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-22",
-					"maxclass" : "newobj",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 13.0, 206.0, 99.0, 23.0 ],
-					"text" : "print @popup 1"
 				}
 
 			}
@@ -174,13 +153,14 @@
 				"box" : 				{
 					"code" : "for $x $addr in $x1 with @maxdepth -1 do print($x [$addr]) ",
 					"id" : "obj-23",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 13.0, 143.5, 243.0, 54.0 ],
+					"patching_rect" : [ 13.0, 143.5, 259.0, 38.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -260,20 +240,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-23", 0 ],
 					"source" : [ "obj-18", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-22", 0 ],
-					"source" : [ "obj-23", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-2", 0 ],
-					"source" : [ "obj-3", 0 ]
 				}
 
 			}
