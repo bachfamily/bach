@@ -536,7 +536,8 @@ void bach_donors(t_bach *x)
     //
     post("...as well as all our patrons:");
     post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Matthew Goodheart, Nikola Kołodziejczyk, linazero,");
-    post("Daniel Lujan, Yan Maresz, Micha Seidenberg, TJ Shredder, Joost Van Kerkhoven, Hans Tutschku, Julien Vincenot");
+    post("Daniel Lujan, Yan Maresz, Micha Seidenberg, TJ Shredder, Christopher Michael Trapani, Hans Tutschku,");
+    post("Joost Van Kerkhoven, Vens R., Julien Vincenot");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
