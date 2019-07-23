@@ -1030,7 +1030,7 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
     long mapsto[7];
     long clef_mcs[7];
     t_rational *acc_pattern = voice->acc_pattern;
-    char key = voice->key;
+    long key = (long)voice->key;
     long clef = get_voice_clef(r_ob, voice);
     
     if (clef == k_CLEF_PERCUSSION)
@@ -1104,8 +1104,8 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
             clef_mcs[0] = 7200 + shift;
             clef_mcs[1] = 7400 + shift;
             clef_mcs[2] = 7600 + shift;
-            clef_mcs[3] = (key > 0) ? 7700 + shift : 6500 + 2400;
-            clef_mcs[4] = (key > 0) ? 7800 + shift : 6700 + 2400;
+            clef_mcs[3] = (key > 0) ? 7700 + shift : 6500 + shift;
+            clef_mcs[4] = (key > 0) ? 7800 + shift : 6700 + shift;
             clef_mcs[5] = 6900 + shift;
             clef_mcs[6] = 7100 + shift;
             paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);
@@ -1118,8 +1118,8 @@ void paint_keysignature(t_notation_obj *r_ob, t_jgraphics* g, t_jfont *jf_acc, t
             clef_mcs[0] = 4800 + shift;
             clef_mcs[1] = 5000 + shift;
             clef_mcs[2] = 5200 + shift;
-            clef_mcs[3] = (key > 0) ? 5300 + shift : 4100 - 2400;
-            clef_mcs[4] = (key > 0) ? 5500 + shift : 4300 - 2400;
+            clef_mcs[3] = (key > 0) ? 5300 + shift : 4100 + shift;
+            clef_mcs[4] = (key > 0) ? 5500 + shift : 4300 + shift;
             clef_mcs[5] = 4500 + shift;
             clef_mcs[6] = 4700 + shift;
             paint_keysigaccidentals(r_ob, g, jf_acc, jf_acc_bogus, acc_pattern, voice, color, clef_mcs, mapsto);

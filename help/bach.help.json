@@ -25,9 +25,23 @@
 			"Llllliterals" : {
 				"filename" : [ "bach.help.bell.010_basics.030_llllliterals.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "bell+function" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "literal", "concatenation", "construction", "space", "whitespace", "symbol", "pitch", "flat" ],
+				"seealso" : [ "bell+function", "bell+symbol" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "literal", "concatenation", "construction", "space", "whitespace", "pitch", "flat" ],
 				"title" : [ "llll literals" ]
+			},
+			"Symbols" : {
+				"filename" : [ "bach.help.bell.010_basics.035_symbols.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "literal", "concatenation", "construction", "space", "whitespace", "symbol" ],
+				"title" : [ "Symbols" ]
+			},
+			"Moreaboutsymbols" : {
+				"filename" : [ "bach.help.bell.010_basics.037_moreaboutsymbols.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "literal", "concatenation", "construction", "space", "whitespace", "symbol" ],
+				"title" : [ "More about symbols" ]
 			},
 			"Implicitllllconstruction" : {
 				"filename" : [ "bach.help.bell.010_basics.040_implicitllllconstruction.maxpat" ],
@@ -58,42 +72,42 @@
 				"title" : [ "Retrieval of elements" ]
 			},
 			"Pickingelements" : {
-				"filename" : [ "bach.help.bell.010_basics.075_pickingelements.maxpat" ],
+				"filename" : [ "bach.help.bell.010_basics.080_pickingelements.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "bell+llll", "concatenation", "precedence", "retrieval" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "picking", "element", "double", "colon", "nth", "lookup" ],
 				"title" : [ "Picking elements" ]
 			},
 			"Accessbykeys" : {
-				"filename" : [ "bach.help.bell.010_basics.076_accessbykeys.maxpat" ],
+				"filename" : [ "bach.help.bell.010_basics.090_accessbykeys.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "bell+llll", "concatenation", "precedence", "retrieval" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "picking", "element", "double", "colon", "nth", "lookup" ],
+				"seealso" : [ "bell+llll", "colon", "dot", "symbol" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "picking", "element", "dot", "key", "lookup" ],
 				"title" : [ "Access by keys" ]
 			},
 			"Rangeoperator" : {
-				"filename" : [ "bach.help.bell.010_basics.077_rangeoperator.maxpat" ],
+				"filename" : [ "bach.help.bell.010_basics.100_rangeoperator.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "bell+llll", "concatenation", "precedence", "retrieval", "arithmser", "geomser" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "picking", "element", "triple", "dot", "range" ],
 				"title" : [ "Range operator" ]
 			},
 			"Print" : {
-				"filename" : [ "bach.help.bell.010_basics.080_print.maxpat" ],
+				"filename" : [ "bach.help.bell.010_basics.110_print.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "return+value" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "print", "Max", "console" ],
 				"title" : [ "Print" ]
 			},
 			"Comments" : {
-				"filename" : [ "bach.help.bell.010_basics.090_comments.maxpat" ],
+				"filename" : [ "bach.help.bell.010_basics.120_comments.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "return+value" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "comment", "block", "end", "of", "line", "hash", "shebang" ],
 				"title" : [ "Comments" ]
 			},
 			"Examples" : {
-				"filename" : [ "bach.help.bell.010_basics.100_examples.maxpat" ],
+				"filename" : [ "bach.help.bell.010_basics.130_examples.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "message+addchord" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell" ],
@@ -191,7 +205,7 @@
 				"filename" : [ "bach.help.bell.040_variables.055_globalvariableswithdifferentobjects.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "local+variable", "equal" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "global" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "global", "bach.value", "value" ],
 				"title" : [ "Global variables with different objects" ]
 			},
 			"Globalvariablesreservedwords" : {
@@ -215,26 +229,47 @@
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "assignment", "operator", "assigning" ],
 				"title" : [ "Assigning operators" ]
 			},
-			"Moreassigningoperators" : {
-				"filename" : [ "bach.help.bell.040_variables.090_moreassigningoperators.maxpat" ],
+			"Moreaboutassigningoperators" : {
+				"filename" : [ "bach.help.bell.040_variables.090_moreaboutassigningoperators.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "global+variable", "concatenation" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "assignment", "operator", "assigning" ],
-				"title" : [ "More assigning operators" ]
+				"title" : [ "More about assigning operators" ]
 			},
-			"Substitutionassignment" : {
-				"filename" : [ "bach.help.bell.040_variables.100_substitutionassignment.maxpat" ],
+			"Richassignmentsyntax" : {
+				"filename" : [ "bach.help.bell.040_variables.100_richassignmentsyntax.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "global+variable", "colon" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "assignment", "operator", "substitution" ],
-				"title" : [ "Substitution assignment" ]
+				"seealso" : [ "colon" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "rich", "assignment", "substitution" ],
+				"title" : [ "Rich assignment syntax" ]
+			},
+			"Moreaboutrichassignmentsyntax" : {
+				"filename" : [ "bach.help.bell.040_variables.110_moreaboutrichassignmentsyntax.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "colon", "dot", "symbol" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "rich", "assignment", "substitution" ],
+				"title" : [ "More about rich assignment syntax" ]
+			},
+			"Richassignmentoperators" : {
+				"filename" : [ "bach.help.bell.040_variables.120_richassignmentoperators.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "colon", "dot", "symbol", "assigning+operator" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "rich", "assignment", "substitution", "operator" ],
+				"title" : [ "Rich assignment operators" ]
+			},
+			"Variablelessrichassignment" : {
+				"filename" : [ "bach.help.bell.040_variables.130_variablelessrichassignment.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "bell+llll", "colon", "dot", "symbol", "assigning+operator" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "rich", "assignment", "substitution", "operator" ],
+				"title" : [ "Variable-less rich assignment" ]
 			}
 		},
 		"Loops" : {
 			"Whileloops" : {
 				"filename" : [ "bach.help.bell.050_loops.010_whileloops.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "recursion", "for+loop" ],
+				"seealso" : [ "recursion", "for+loop", "map", "reduce" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "while", "condition", "do", "body", "clause" ],
 				"title" : [ "\"While\" loops" ]
 			},
@@ -248,7 +283,7 @@
 			"Forloops" : {
 				"filename" : [ "bach.help.bell.050_loops.030_forloops.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "recursion", "while+loop" ],
+				"seealso" : [ "recursion", "while+loop", "map", "reduce" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "loop", "for", "condition", "do", "body", "with", "in", "as" ],
 				"title" : [ "\"For\" loops" ]
 			},
@@ -318,25 +353,18 @@
 				"title" : [ "Scope of local variables" ]
 			},
 			"Liftedvariables" : {
-				"filename" : [ "bach.help.bell.060_functions.055_liftedvariables.maxpat" ],
+				"filename" : [ "bach.help.bell.060_functions.060_liftedvariables.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [  ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "propagation", "lift", "lifted" ],
 				"title" : [ "Lifted variables" ]
 			},
 			"Scopeoflocalvariablesexamples" : {
-				"filename" : [ "bach.help.bell.060_functions.060_scopeoflocalvariablesexamples.maxpat" ],
+				"filename" : [ "bach.help.bell.060_functions.070_scopeoflocalvariablesexamples.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
 				"seealso" : [ "global+variable", "global+function" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation" ],
-				"title" : [ "Scope of local variables: examples" ]
-			},
-			"Argumentsandscope" : {
-				"filename" : [ "bach.help.bell.060_functions.070_argumentsandscope.maxpat" ],
-				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [  ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "dynamic", "scoping", "propagation", "argument" ],
-				"title" : [ "Arguments and scope" ]
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "lift", "lifted" ],
+				"title" : [ "Lifted local variables: examples" ]
 			},
 			"Argumentnames" : {
 				"filename" : [ "bach.help.bell.060_functions.080_argumentnames.maxpat" ],
@@ -390,7 +418,7 @@
 			"Recursion" : {
 				"filename" : [ "bach.help.bell.060_functions.150_recursion.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "bell+loop", "scope" ],
+				"seealso" : [ "bell+loop", "scope", "lift", "lifted" ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "scope", "recursion", "recursive", "factorial" ],
 				"title" : [ "Recursion" ]
 			},
@@ -436,6 +464,13 @@
 					"seealso" : [  ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "math", "mathematics", "functional", "form", "operator" ],
 					"title" : [ "Math functions reference" ]
+				},
+				"Apply" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.apply.maxpat" ],
+					"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+					"seealso" : [ "$argcount" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "$args" ],
+					"title" : [ "$apply() function reference" ]
 				},
 				"Args" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.args.maxpat" ],

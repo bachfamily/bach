@@ -170,7 +170,8 @@
     "seealso": [
       "expr",
       "vexpr",
-      "bach.expr"
+      "bach.expr",
+      "bach.value"
     ]
   },
   "bach.collect": {
@@ -1431,7 +1432,8 @@
       "bach.shelf",
       "bach.reg",
       "value",
-      "pv"
+      "pv",
+      "bach.eval"
     ]
   },
   "bach.pv": {

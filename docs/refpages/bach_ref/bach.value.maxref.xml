@@ -10,7 +10,7 @@
 	</digest>
 
 	<description>
-		Shares the data it receives with other <o>bach.value</o> objects with the same name.
+		Shares the data it receives with other <o>bach.value</o> objects with the same name, as well as bell variables.
 	</description>
 
 	<!--METADATA-->
@@ -50,7 +50,8 @@
 				Name
 			</digest>
 			<description>
-				All the <o>bach.value</o> objects with the same name share the same data.
+				All the <o>bach.value</o> objects and bell variables
+				with the same name share the same data.
 			</description>
 		</objarg>
 		<objarg name="initial" optional="1" type="llll">
@@ -141,6 +142,7 @@
 		<seealso name="bach.reg" />
 		<seealso name="value" />
 		<seealso name="pv" />
+		<seealso name="bach.eval" />
 	</seealsolist>
 
 	<misc name = "Input">

@@ -295,8 +295,6 @@ typedef struct _bach {
     char                b_llll_version_string[128];
     unsigned long       b_buildnumber;
     
-    t_bool              b_nonative;
-    
     t_llll                **b_llll_book; // an array of arrays of lllls
     t_uint32            **b_llll_phonebook;
     t_uint32            b_llll_current_phonebook_idx;
@@ -329,6 +327,7 @@ typedef struct _bach {
     
     t_object             *b_ss;
     t_bool               b_no_ss;
+    t_bool              b_nonative;
 } t_bach;
 
 

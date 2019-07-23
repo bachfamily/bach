@@ -246,6 +246,7 @@
 		<seealso name="expr" />
 		<seealso name="vexpr" />
 		<seealso name="bach.expr" />
+		<seealso name="bach.value" />
 	</seealsolist>
 
 	<misc name = "Input">
