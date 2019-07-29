@@ -126,6 +126,7 @@ void bach_fft_cartesian_complex(int nfft, char is_inverse_fft, const kiss_fft_cp
 }
 
 // ampli and phase must be already initialized
+// this makes sense if you do it just once, otherwise use the _kiss versions
 void bach_fft(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, double *ampli, double *phase)
 {
 	int i;
@@ -139,6 +140,65 @@ void bach_fft(int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, double *am
 	}
 	bach_freeptr(fout);
 }
+
+
+void bach_rfft(int nfft, const double *input, double *ampli, double *phase)
+{
+    int i;
+    kiss_fft_cpx *fin = (kiss_fft_cpx *) bach_newptr(nfft * sizeof (kiss_fft_cpx));
+    kiss_fft_cpx *fout = (kiss_fft_cpx *) bach_newptr(nfft * sizeof (kiss_fft_cpx));
+    
+    for (i = 0; i < nfft; i++) {
+        fin[i].r = input[i];
+        fin[i].i = 0.;
+    }
+    
+    bach_fft_cartesian_complex(nfft, false, fin, fout);
+    
+    // splitting freq and phase
+    for (i = 0; i < nfft; i++) {
+        ampli[i] = get_cpx_ampli(fout[i]);
+        phase[i] = get_cpx_phase(fout[i]);
+    }
+    bach_freeptr(fin);
+    bach_freeptr(fout);
+}
+
+void bach_irfft(int nfft, const double *input_ampli, const double *input_phase, double *output)
+{
+    int i;
+    kiss_fft_cpx *fin = (kiss_fft_cpx *) bach_newptr(nfft * sizeof (kiss_fft_cpx));
+    kiss_fft_cpx *fout = (kiss_fft_cpx *) bach_newptr(nfft * sizeof (kiss_fft_cpx));
+    
+    for (i = 0; i < nfft; i++) {
+        fin[i].r = input_ampli[i]*cos(input_phase[i]);
+        fin[i].i = input_ampli[i]*sin(input_phase[i]);
+    }
+    
+    bach_fft_cartesian_complex(nfft, true, fin, fout);
+    
+    // splitting freq and phase
+    for (i = 0; i < nfft; i++) {
+        output[i] = fout[i].r;
+    }
+    bach_freeptr(fin);
+    bach_freeptr(fout);
+}
+
+// use this one if you want to make fft repeatedly: this does not allocate memory (you do, outside)
+void bach_fft_kiss(kiss_fft_cfg cfg, int nfft, char is_inverse_fft, const kiss_fft_cpx *fin, kiss_fft_cpx *fout)
+{
+    kiss_fft(cfg, fin, fout);
+    
+    if (is_inverse_fft){    // apparently there's a bug in the library...
+        for (long i = 0; i < nfft; i++) {
+            fout[i].r /= nfft;
+            fout[i].i /= nfft;
+        }
+    }
+}
+
+
 
 
 // freq_mapped_acf must be already inizialized and sized at least nfft
