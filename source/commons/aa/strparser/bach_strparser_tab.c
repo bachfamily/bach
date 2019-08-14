@@ -73,6 +73,7 @@
 	#ifdef BACH_MAX
     #include "strparser.h"
     #else
+    #include "llll_commons.h"
     #include <stdio.h>
     #define parserpost printf
     #endif
@@ -1550,6 +1551,7 @@ yyreturn:
 }
 
 
+/*
 void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long *depth)
 {
     parserpost("strparser: parsing %s", buf);
@@ -1570,17 +1572,9 @@ void t_strParser::parse(const char *buf, t_llll **ll, t_llll_stack *stack, long 
         strparser_lex_destroy(myscanner);
     }
 }
+ */
 
 
-#ifndef BACH_MAX
-int main(int argc, char **argv)
-{
-    int result = scrisp_parse("(1+2*3)*(4+5) ");
-    
-    printf("result: %d\n", result);
-    return 0;
-}
-#endif
 
 int yyerror(void *dummy, t_llll **ll, t_llll_stack *stack, long *depth, char *s)
 {

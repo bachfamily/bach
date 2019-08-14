@@ -11,8 +11,12 @@
 
 #include <unordered_map>
 #include "llllobj.h"
+
+#ifdef BACH_MAX
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
+#endif
+
 #include "bach_codableobj.hpp"
 
 typedef struct _eval

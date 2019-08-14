@@ -274,8 +274,10 @@ extern int		mxmlSaveFd(mxml_node_t *node, int fd,
 			           mxml_save_cb_t cb);
 extern int		mxmlSaveFile(mxml_node_t *node, FILE *fp,
 			             mxml_save_cb_t cb);
+#ifdef BACH_MAX
 extern int		mxmlSaveMaxFile(mxml_node_t *node, t_filehandle fh,
 							 mxml_save_cb_t cb);
+#endif
 extern int		mxmlSaveString(mxml_node_t *node, char *buffer,
 			               int bufsize, mxml_save_cb_t cb);
 extern mxml_node_t	*mxmlSAXLoadFd(mxml_node_t *top, int fd,
@@ -312,7 +314,9 @@ extern mxml_node_t	*mxmlWalkNext(mxml_node_t *node, mxml_node_t *top,
 extern mxml_node_t	*mxmlWalkPrev(mxml_node_t *node, mxml_node_t *top,
 			              int descend);
 
+    
 
+    
 /*
  * Semi-private functions...
  */

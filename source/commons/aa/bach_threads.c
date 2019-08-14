@@ -7,7 +7,10 @@
  *
  */
 
+#ifdef BACH_MAX
 #include "ext.h"
+#endif
+
 #include "llll_commons.h"
 
 typedef struct _task_data { 

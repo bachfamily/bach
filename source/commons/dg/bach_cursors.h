@@ -9,8 +9,14 @@
 #ifndef _BACH_CURSORS_H_
 #define _BACH_CURSORS_H_
 
+#ifdef BACH_MAX
 #include "llllobj.h"
 #include "jgraphics.h"
+#endif
+
+#ifdef BACH_JUCE
+#include "llll_commons.h"
+#endif
 
 /** Mouse cursor types.
  @ingroup	interface

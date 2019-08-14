@@ -109,7 +109,9 @@ static int		mxml_fd_read(_mxml_fdbuf_t *buf);
 static int		mxml_fd_write(_mxml_fdbuf_t *buf);
 static int		mxml_file_getc(void *p, int *encoding);
 static int		mxml_file_putc(int ch, void *p);
+#ifdef BACH_MAX
 static int		mxml_max_file_putc(int ch, t_filehandle fh);
+#endif
 static int		mxml_get_entity(mxml_node_t *parent, void *p,
 								int *encoding,
 								_mxml_getc_cb_t getc_cb);
@@ -396,7 +398,7 @@ mxmlSaveFile(mxml_node_t    *node,	/* I - Node to write */
  * with leading whitespace and before attribute names inside opening
  * element tags.
  */
-
+#ifdef BACH_MAX
 int					/* O - 0 on success, -1 on error. */
 mxmlSaveMaxFile(mxml_node_t    *node,	/* I - Node to write */
 				t_filehandle   fh,		/* I - File to write to */
@@ -424,6 +426,7 @@ mxmlSaveMaxFile(mxml_node_t    *node,	/* I - Node to write */
 	
 	return (0);
 }
+#endif
 
 /*
  * 'mxmlSaveString()' - Save an XML node tree to a string.
@@ -1394,6 +1397,7 @@ mxml_file_putc(int  ch,			/* I - Character to write */
  * 'mxml_max_file_putc()' - Write a character to a file.
  */
 
+#ifdef BACH_MAX
 static int				/* O - 0 on success, -1 on failure */
 mxml_max_file_putc(int  ch,					/* I - Character to write */
 				   t_filehandle fh)			/* I - filehandle */
@@ -1403,6 +1407,7 @@ mxml_max_file_putc(int  ch,					/* I - Character to write */
 	return sysfile_write(fh, &count, &c);
 //	return (putc(ch, (FILE *)p) == EOF ? -1 : 0);
 }
+#endif
 
 /*
  * 'mxml_get_entity()' - Get the character corresponding to an entity...

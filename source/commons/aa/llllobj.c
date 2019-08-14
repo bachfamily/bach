@@ -1,8 +1,11 @@
 #include "llllobj.h"
+
+#ifdef BACH_MAX
 #include "ext_common.h"
 #include "ext_strings.h"
 #include "ext_critical.h"
 #include "jpatcher_api.h"
+#endif
 //#include "bach_graphics.h"
 
 

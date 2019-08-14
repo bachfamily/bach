@@ -19,9 +19,9 @@
 #include "ext_charset.h"
 #include "ext_atomic.h"
 #include "ext_common.h"
+#endif
 #include "llll_files.h" // llllobj.h is included here
 #include "lexpr.h"
-#endif
 
 #ifdef BACH_JUCE
 #include "bach_jucewrapper.h"

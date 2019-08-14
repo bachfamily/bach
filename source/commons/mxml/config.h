@@ -87,6 +87,56 @@ extern char	*_mxml_strdup(const char *);
 #    define strdup _mxml_strdup
 #  endif /* !HAVE_STRDUP */
 
+
+/*
+ * '_mxml_strdupf()' - Format and duplicate a string.
+ */
+
+char *                    /* O - New string pointer */
+_mxml_vstrdupf(const char *format,    /* I - Printf-style format string */
+               va_list    ap)        /* I - Pointer to additional arguments */
+{
+    int        bytes;            /* Number of bytes required */
+    char        *buffer,        /* String buffer */
+    temp[256];        /* Small buffer for first vsnprintf */
+    va_list    apcopy;            /* Copy of argument list */
+    
+    
+    /*
+     * First format with a tiny buffer; this will tell us how many bytes are
+     * needed...
+     */
+    
+    va_copy(apcopy, ap);
+    bytes = vsnprintf(temp, sizeof(temp), format, apcopy);
+    
+    if (bytes < (int) sizeof(temp))
+    {
+        /*
+         * Hey, the formatted string fits in the tiny buffer, so just dup that...
+         */
+        
+        return (strdup(temp));
+    }
+    
+    /*
+     * Allocate memory for the whole thing and reformat to the new, larger
+     * buffer...
+     */
+    
+    if ((buffer = (char *) calloc(1, bytes + 1)) != NULL)
+        vsnprintf(buffer, bytes + 1, format, ap);
+    
+    /*
+     * Return the new string...
+     */
+    
+    return (buffer);
+}
+
+
+
+
 extern char	*_mxml_strdupf(const char *, ...);
 extern char	*_mxml_vstrdupf(const char *, va_list);
 

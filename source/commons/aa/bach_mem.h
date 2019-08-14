@@ -9,7 +9,9 @@
 #ifndef bach_mem_h
 #define bach_mem_h
 
+#ifdef BACH_MAX
 #include "ext.h"
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 // MEMORY API

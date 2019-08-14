@@ -81,7 +81,7 @@ _mxml_strdup(const char *s)		/* I - String to duplicate */
   if (s == NULL)
     return (NULL);
 
-  if ((t = malloc(strlen(s) + 1)) == NULL)
+  if ((t = (char *)malloc(strlen(s) + 1)) == NULL)
     return (NULL);
 
   return (strcpy(t, s));
@@ -89,29 +89,6 @@ _mxml_strdup(const char *s)		/* I - String to duplicate */
 #endif /* !HAVE_STRDUP */
 
 
-/*
- * '_mxml_strdupf()' - Format and duplicate a string.
- */
-
-char *					/* O - New string pointer */
-_mxml_strdupf(const char *format,	/* I - Printf-style format string */
-              ...)			/* I - Additional arguments as needed */
-{
-  va_list	ap;			/* Pointer to additional arguments */
-  char		*s;			/* Pointer to formatted string */
-
-
- /*
-  * Get a pointer to the additional arguments, format the string,
-  * and return it...
-  */
-
-  va_start(ap, format);
-  s = _mxml_vstrdupf(format, ap);
-  va_end(ap);
-
-  return (s);
-}
 
 
 #ifndef HAVE_VSNPRINTF
@@ -424,51 +401,6 @@ _mxml_vsnprintf(char       *buffer,	/* O - Output buffer */
 #endif /* !HAVE_VSNPRINTF */
 
 
-/*
- * '_mxml_vstrdupf()' - Format and duplicate a string.
- */
-
-char *					/* O - New string pointer */
-_mxml_vstrdupf(const char *format,	/* I - Printf-style format string */
-               va_list    ap)		/* I - Pointer to additional arguments */
-{
-  int		bytes;			/* Number of bytes required */
-  char		*buffer,		/* String buffer */
-		temp[256];		/* Small buffer for first vsnprintf */
-  va_list	apcopy;			/* Copy of argument list */
-
-
- /*
-  * First format with a tiny buffer; this will tell us how many bytes are
-  * needed...
-  */
-
-  va_copy(apcopy, ap);
-  bytes = vsnprintf(temp, sizeof(temp), format, apcopy);
-
-  if (bytes < (int) sizeof(temp))
-  {
-   /*
-    * Hey, the formatted string fits in the tiny buffer, so just dup that...
-    */
-
-    return (strdup(temp));
-  }
-
- /*
-  * Allocate memory for the whole thing and reformat to the new, larger
-  * buffer...
-  */
-
-  if ((buffer = (char *) calloc(1, bytes + 1)) != NULL)
-    vsnprintf(buffer, bytes + 1, format, ap);
-
- /*
-  * Return the new string...
-  */
-
-  return (buffer);
-}
 
 
 /*

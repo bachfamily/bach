@@ -24,9 +24,9 @@ typedef unsigned short unicodeChar;
 
 #ifdef BACH_JUCE
 #include "bach_jucewrapper.h"
-#include "juce_paint_wrappers.h"
+//#include "juce_paint_wrappers.h"
 /**    Declaration of type for the unicode character, for cross-platform compatibility        @ingroup datatypes    */
-typedef juce_wchar unicodeChar;
+//typedef juce_wchar unicodeChar;
 #endif
 
 
@@ -1410,8 +1410,8 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
 #endif
 
 #ifdef BACH_JUCE
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft);
-void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, const Justification& justificationFlags = Justification::topLeft, char single_line, char use_ellipsis);
+void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, long justificationFlags);
+void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, long justificationFlags, char single_line, char use_ellipsis);
 char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen);
 #endif
 

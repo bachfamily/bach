@@ -11,6 +11,7 @@
 
 #include <string>
 #include "rational.h"
+#include "math.h"
 
 
 /** Accidental preferences.

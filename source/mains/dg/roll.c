@@ -54,6 +54,8 @@
 #include "roll_files.h" //< roll.h is included in here
 #include "notation_attrs.h"
 #include "notation_goto.h"
+
+#ifdef BACH_MAX
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
@@ -61,6 +63,8 @@
 #include "ext_globalsymbol.h"
 #include "ext_systhread.h"
 #include "ext_critical.h"
+#endif
+
 #include <stdio.h>
 #include <locale.h>
 #include <time.h>
@@ -450,11 +454,13 @@ void preselect_elements_in_region_for_mouse_selection(t_roll *x, double ms1, dou
 // quantization
 void roll_quantize(t_roll *x, t_symbol *s, long argc, t_atom *argv);
 
+#ifdef BACH_MAX
 DEFINE_NOTATIONOBJ_SYMPTR_GETTER(clefs_as_symlist, num_voices)
 DEFINE_NOTATIONOBJ_SYMPTR_GETTER(keys_as_symlist, num_voices)
 DEFINE_NOTATIONOBJ_SYMPTR_GETTER(full_acc_repr, num_voices)
 DEFINE_NOTATIONOBJ_CHARPTR_GETTER(hidevoices_as_charlist, num_voices)
 DEFINE_NOTATIONOBJ_DBLPTR_GETTER(voiceuspacing_as_floatlist, num_voices_plus_one)
+#endif
 
 // clipboard
 t_clipboard clipboard = {k_NONE, k_NOTATION_OBJECT_ROLL, NULL, NULL, 0.};
@@ -791,6 +797,7 @@ void roll_end_preset(t_roll *x)
     bach_freeptr(x->r_ob.preset_av);
 }
 
+#ifdef BACH_MAX
 void roll_preset(t_roll *x)
 {
     t_atom temp[256];
@@ -855,6 +862,7 @@ void roll_preset(t_roll *x)
         
     if (av) bach_freeptr(av);
 }
+#endif
 
 /* preset: Zicarelli
 

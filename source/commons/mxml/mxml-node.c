@@ -305,6 +305,10 @@ mxmlGetRefCount(mxml_node_t *node)	/* I - Node */
 }
 
 
+
+
+
+
 /*
  * 'mxmlNewCDATA()' - Create a new CDATA node.
  *
@@ -575,6 +579,7 @@ mxmlNewText(mxml_node_t *parent,	/* I - Parent node or MXML_NO_PARENT */
  * whether leading whitespace is present before the node. The format
  * string must be nul-terminated and is formatted into the new node.  
  */
+
 
 mxml_node_t *				/* O - New node */
 mxmlNewTextf(mxml_node_t *parent,	/* I - Parent node or MXML_NO_PARENT */

@@ -25,7 +25,9 @@
  @ingroup threading
  return value of ATOMIC_INCREMENT and ATOMIC_DECREMENT is the *new* value after performing the operation
  */
+#ifndef BACH_JUCE
 #define ATOMIC_INCREMENT_BARRIER_32(atomicptr) OSAtomicIncrement32Barrier((int32_t *)atomicptr)
+#endif
 
 /** decrement an atomic int value
  @ingroup threading
@@ -37,7 +39,9 @@
  @ingroup threading
  return value of ATOMIC_INCREMENT and ATOMIC_DECREMENT is the *new* value after performing the operation
  */
+#ifndef BACH_JUCE
 #define ATOMIC_DECREMENT_BARRIER_32(atomicptr) OSAtomicDecrement32Barrier((int32_t *)atomicptr)
+#endif
 
 /** increment an atomic int value
  @ingroup threading

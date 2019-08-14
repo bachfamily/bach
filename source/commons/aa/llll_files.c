@@ -1,7 +1,10 @@
 #include "notation.h"
 //#include "score_api.h"
 #include "llll_files.h"
+
+#ifdef BACH_MAX
 #include "ext_strings.h"
+#endif
 
 t_max_err llll_dowritetxt(t_object *x, t_symbol *s, long ac, t_atom *av);
 t_max_err llll_dowritenative(t_object *x, t_symbol *s, long ac, t_atom *av);

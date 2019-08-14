@@ -42,6 +42,31 @@
  * @since Mini-XML 2.3@
  */
 
+
+
+
+
+char *                    /* O - New string pointer */
+_mxml_strdupf(const char *format,    /* I - Printf-style format string */
+...)            /* I - Additional arguments as needed */
+{
+    va_list    ap;            /* Pointer to additional arguments */
+    char        *s;            /* Pointer to formatted string */
+    
+    
+    /*
+     * Get a pointer to the additional arguments, format the string,
+     * and return it...
+     */
+    
+    va_start(ap, format);
+    s = _mxml_vstrdupf(format, ap);
+    va_end(ap);
+    
+    return (s);
+}
+
+
 int					/* O - 0 on success, -1 on failure */
 mxmlSetCDATA(mxml_node_t *node,		/* I - Node to set */
              const char  *data)		/* I - New data string */

@@ -6,11 +6,15 @@
  *  Copyright 2012 __MyCompanyName__. All rights reserved.
  *
  */
+
+#ifdef BACH_MAX
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
 #include "ext_systhread.h"
+#endif
+
 #include "llll_commons.h"
 #include "bach_threads.h"
 #include "collector.h"

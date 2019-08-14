@@ -34,7 +34,9 @@
 #ifdef BACH_JITCLANG
 #include "bach_jitclang.h"
 #else
+#ifdef BACH_MAX
 #include "ext_hashtab.h"
+#endif
 #endif
 
 #ifdef BACH_TRACK_MEMORY_ALLOCATION

@@ -7,9 +7,13 @@
  *
  */
 #include "llll_commons.h"
+
+#ifdef BACH_MAX
 #include "ext_strings.h"
 #include "ext_critical.h"
 #include "ext_common.h"
+#endif
+
 #include "bach_threads.h"
 
 

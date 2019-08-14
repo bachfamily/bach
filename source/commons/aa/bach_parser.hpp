@@ -147,7 +147,9 @@ public:
     
     static void fatalError(const char *msg)
     {
+#ifdef BACH_MAX
         error("%s", msg);
+#endif
     }
 
 };

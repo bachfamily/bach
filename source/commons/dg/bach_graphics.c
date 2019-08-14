@@ -245,8 +245,7 @@ void paint_rectangle_rounded(t_jgraphics* g, t_jrgba border_color, t_jrgba fill_
     g->drawRoundedRectangle(x1, y1, width, height, cornerSize, border_width);
 } 
  
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, 
-                const Justification& justificationFlags)
+void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, long justificationFlags)
 {
     g->setFont(*jf);
 //    g->setFont(Font(String("Maestro"), 24., 0));
@@ -256,8 +255,7 @@ void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const cha
 
 }
 
-void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height,
-                                   const Justification& justificationFlags, char single_line, char use_ellipsis)
+void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, long justificationFlags, char single_line, char use_ellipsis)
 {
     g->setFont(*jf);
     jgraphics_set_source_jrgba (g, &textcolor);

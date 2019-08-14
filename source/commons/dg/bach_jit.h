@@ -9,7 +9,10 @@
 #define _BACH_JIT_H_
 
 #include "notation.h"
+
+#ifdef BACH_MAX
 #include "jit.common.h"
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE

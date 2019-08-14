@@ -7,10 +7,13 @@
  *
  */
 
+#ifdef BACH_MAX
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_systhread.h"
 #include "ext_common.h"
+#endif
+
 #include "llll_commons.h"
 #include "llll_math.h"
 #include "exprparser.h"

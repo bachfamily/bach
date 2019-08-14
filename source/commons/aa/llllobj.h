@@ -11,8 +11,12 @@
 #define BACH_DEFAULT_EDITOR_LLLL_WRAP   68 
 
 #include "llll_commons.h"
+
+#ifdef BACH_MAX
 #include "jpatcher_api.h"
 #include "z_dsp.h"
+#endif
+
 #include "bach_threads.h"
 
 #ifndef CLASS_ATTR_BASIC
@@ -813,9 +817,10 @@ t_max_err GETTER(STRUCT *x, t_object *attr, long *ac, t_atom **av) \
 
 // Objects having llll attributes may call this macro in the main() function
 // It defines the actual attribute
+#ifdef BACH_MAX
 #define CLASS_ATTR_LLLL(c,attrname,flags,structname,structmember,getter,setter) \
 	class_addattr((c), attr_offset_array_new(attrname, USESYM(atom), 1, (flags), (method)getter, (method)setter, 0, calcoffset(structname, structmember)))
-
+#endif
 
 
 
