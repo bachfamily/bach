@@ -127,10 +127,18 @@ END_USING_C_LINKAGE
 #define ATOMIC_DECREMENT_BARRIER_ATOM(atomicptr)  ATOMIC_DECREMENT_BARRIER_64(atomicptr)
 #else
 #define t_atom_long_atomic t_int32_atomic
+#ifdef BACH_MAX
 #define ATOMIC_INCREMENT_ATOM(atomicptr)  ATOMIC_INCREMENT_32(atomicptr)
 #define ATOMIC_INCREMENT_BARRIER_ATOM(atomicptr)  ATOMIC_INCREMENT_BARRIER_32(atomicptr)
 #define ATOMIC_DECREMENT_ATOM(atomicptr)  ATOMIC_DECREMENT_32(atomicptr)
 #define ATOMIC_DECREMENT_BARRIER_ATOM(atomicptr)  ATOMIC_DECREMENT_BARRIER_32(atomicptr)
+#endif
+#ifdef BACH_JUCE
+#define ATOMIC_INCREMENT_ATOM(atomicptr)  ATOMIC_INCREMENT(atomicptr)
+#define ATOMIC_INCREMENT_BARRIER_ATOM(atomicptr)  ATOMIC_INCREMENT_BARRIER(atomicptr)
+#define ATOMIC_DECREMENT_ATOM(atomicptr)  ATOMIC_DECREMENT(atomicptr)
+#define ATOMIC_DECREMENT_BARRIER_ATOM(atomicptr)  ATOMIC_DECREMENT_BARRIER(atomicptr)
+#endif
 #endif
 
 typedef enum _llllobj_obj_types {

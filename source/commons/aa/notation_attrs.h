@@ -13,6 +13,8 @@
 
 #include "notation.h"
 
+#ifdef BACH_MAX
+
 #define DEFINE_NOTATIONOBJ_LONGPTR_GETTER(DATA_FIELD, COUNT_FIELD) \
 t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \
 { \
@@ -120,5 +122,6 @@ class_addattr((c), attr_offset_array_new(attrname, USESYM(char), maxcount, (flag
 #define CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c,attrname,flags,structmember,maxcount,setter) \
 class_addattr((c), attr_offset_array_new(attrname, USESYM(atom), maxcount, (flags), (method)notation_obj_##structmember##_getattr, (method)setter, 0, calcoffset(t_notation_obj, structmember)))
 
+#endif // BACH_MAX
 
 #endif // _NOTATION_ATTRS_H_

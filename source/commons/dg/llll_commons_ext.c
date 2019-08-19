@@ -4,7 +4,9 @@
 #include <stdarg.h>
 #include <string.h>
 #include "llll_commonsyms.h"
+#ifdef BACH_MAX
 #include "ext_strings.h"
+#endif 
 #include "notation.h"
 
 void tolower_strip_spaces_doublequotes_and_regular(const char *source, char *dest, long dest_size)

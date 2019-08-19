@@ -1,5 +1,6 @@
 #include "notation.h" 
 #include "notation_attrs.h"
+#include "juce_Path.h"
 
 #define CONST_SLOT_INT_FLOAT_BAR_Y_POS 0.2 // relative to window active height
 #define CONST_SLOT_INT_FLOAT_BAR_Y_HEIGHT 0.35 // relative to window active height

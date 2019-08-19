@@ -52,12 +52,10 @@ BEGIN_CHECK_LINKAGE
 #endif
 
 // Convenience constants combining the #t_jgraphics_text_justification constants
-#ifdef BACH_MAX
 #define JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMLEFT        (JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM |    JGRAPHICS_TEXT_JUSTIFICATION_LEFT) 
 #define JGRAPHICS_TEXT_JUSTIFICATION_BOTTOMRIGHT    (JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM |    JGRAPHICS_TEXT_JUSTIFICATION_RIGHT) 
 #define JGRAPHICS_TEXT_JUSTIFICATION_TOPLEFT        (JGRAPHICS_TEXT_JUSTIFICATION_TOP |        JGRAPHICS_TEXT_JUSTIFICATION_LEFT) 
 #define JGRAPHICS_TEXT_JUSTIFICATION_TOPRIGHT        (JGRAPHICS_TEXT_JUSTIFICATION_TOP |        JGRAPHICS_TEXT_JUSTIFICATION_RIGHT) 
-#endif
 
 typedef struct _jhsla {
     double hue;                ///< Hue component in the range [0.0, 2*pi]
@@ -1393,6 +1391,7 @@ void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const cha
  */ 
 void write_text_in_vertical(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double boxwidth, double boxheight, int justification, double line_spacing);
 
+#endif
 
 
 
@@ -1407,12 +1406,11 @@ void paint_border(t_object *x, t_jgraphics *g, t_rect *rect, t_jrgba *border_col
 
 
 
-#endif
 
 #ifdef BACH_JUCE
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, long justificationFlags);
+void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height);
 void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, long justificationFlags, char single_line, char use_ellipsis);
-char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen);
+char *charset_unicodetoutf8(unicodeChar *uni, long len, long *outlen);
 #endif
 
 

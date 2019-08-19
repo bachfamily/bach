@@ -68,7 +68,16 @@ int32_t ATOMIC_DECREMENT_32_MANUAL(volatile std::atomic<std::int32_t> *ptr)
 #define _sym_down gensym("down")
 #define _sym_print gensym("print")
 #define _sym_all gensym("all")
-
+#define _sym_paste gensym("paste")
+#define _sym_clear gensym("clear")
+#define _sym_replace gensym("replace")
+#define _sym_readonly gensym("readonly")
+#define _sym_attr_modified gensym("attr_modified")
+#define _sym_getname gensym("getname")
+#define _sym_grid gensym("grid")
+#define _sym_fontface gensym("fontface")
+#define _sym_zoomfactor gensym("zoomfactor")
+#define _sym_labels gensym("labels")
 
 void common_symbols_init()
 {
@@ -152,7 +161,8 @@ typedef long t_int16;
 typedef unsigned long t_uint16;
 typedef bool t_bool;
 typedef long t_max_err;
-typedef unsigned short unicodeChar;
+typedef uint32_t        unicodeChar;
+//typedef unsigned short unicodeChar;
 typedef __uint32_t t_uint32;
 typedef t_uint32 t_fourcc;
 typedef unsigned long long t_ptr_uint;
@@ -631,6 +641,17 @@ void post(const char *format, ...)
     // NOTHING TO DO
 }
 
+void cpost(const char *format, ...)
+{
+    // NOTHING TO DO
+}
+
+void postatom(t_atom *ap)
+{
+    ;
+}
+
+
 void error(const char *format, ...)
 {
     // NOTHING TO DO
@@ -642,6 +663,11 @@ void object_error(t_object *x, const char *format, ...)
 }
 
 void object_post(t_object *x, const char *format, ...)
+{
+    // NOTHING TO DO
+}
+
+void object_bug(t_object *x, const char *format, ...)
 {
     // NOTHING TO DO
 }
@@ -669,24 +695,6 @@ void *defer_low(void *ob,method fn,t_symbol *sym,short argc,t_atom *argv)
     return NULL;
 }
 
-
-t_max_err dictionary_read(char *filename, short path, t_dictionary **d)
-{
-    // TO DO
-    return MAX_ERR_GENERIC;
-}
-
-t_max_err dictionary_write(t_dictionary *d, char *filename, short path)
-{
-    return MAX_ERR_GENERIC;
-}
-
-
-t_max_err object_free(void *x)
-{
-    // TO DO
-    return MAX_ERR_GENERIC;
-}
 
 
 
@@ -785,6 +793,13 @@ t_max_err hashtab_clear(t_hashtab *x)
     return MAX_ERR_GENERIC;
 }
 
+t_max_err hashtab_delete(t_hashtab *x, t_symbol *key)
+{
+    
+}
+
+
+
 
 char *strncpy_zero(char *dst, const char* src, long size)
 {
@@ -862,6 +877,11 @@ t_max_err atom_setfloat(t_atom *a, double d)
     return MAX_ERR_NONE;
 }
 
+t_max_err atom_setparse(long *ac, t_atom **av, const char *parsestr)
+{
+    return MAX_ERR_GENERIC;
+}
+
 t_max_err atom_gettext(long ac, t_atom *av, long *textsize, char **text, long flags)
 {
     // TO DO
@@ -877,6 +897,11 @@ t_max_err atomarray_getatoms(t_atomarray *x, long *ac, t_atom **av)
 {
     // TO DO;
     return MAX_ERR_GENERIC;
+}
+
+short readatom(char *outstr, char **text, long *n, long e, t_atom *ap)
+{
+    return 0;
 }
 
 
@@ -922,7 +947,16 @@ t_max_err object_attr_setsym(void *x, t_symbol *s, t_symbol *c)
     return MAX_ERR_GENERIC;
 }
 
+t_max_err object_attr_setlong(void *x, t_symbol *s, t_atom_long c)
+{
+    return MAX_ERR_GENERIC;
+}
 
+
+
+#ifndef calcoffset
+#define calcoffset(x,y) ((t_ptr_int)(&(((x *)0L)->y)))
+#endif
 
 short wind_advise_explain(t_object *w, char *note, char *explanation, char *b1, char *b2, char *b3)
 {
@@ -935,10 +969,19 @@ void *object_new(t_symbol *name_space, t_symbol *classname, ...)
     return NULL;
 }
 
-t_max_err dictionary_appendstring(t_dictionary *d, t_symbol *key, const char *value)
+void *newinstance(t_symbol *s, short argc, t_atom *argv)
 {
-    return MAX_ERR_GENERIC;
+    return NULL;
 }
+
+
+void *object_new_typed(t_symbol *name_space, t_symbol *classname, long ac, t_atom *av)
+{
+    return NULL;
+}
+
+
+
 
 short open_dialog(char *name, short *volptr, t_fourcc *typeptr, t_fourcc *types, short ntypes)
 {
@@ -1032,16 +1075,19 @@ t_max_err class_addmethod(t_class *c, const method m, const char *name, ...)
     return MAX_ERR_GENERIC;
 }
 
+void class_setname(char *obname, char *filename)
+{
+    ;
+}
+
 
 t_max_err sysfile_writetextfile(t_filehandle f, t_handle htext, t_sysfile_text_flags flags)
 {
     return MAX_ERR_GENERIC;
 }
 
-t_max_err dictionary_getstring(const t_dictionary *d, t_symbol *key, const char **value)
-{
-    return MAX_ERR_GENERIC;
-}
+
+
 
 #define CLASS_ATTR_ATOM_LONG(c,attrname,flags,structname,structmember) ((void)0)
 #define CLASS_ATTR_LABEL(c,attrname,flags,labelstr) ((void)0)
@@ -1053,11 +1099,144 @@ t_max_err dictionary_getstring(const t_dictionary *d, t_symbol *key, const char 
 #define CLASS_ATTR_CHAR_VARSIZE(c,attrname,flags,structname,structmember,sizemember,maxsize) ((void)0)
 #define CLASS_ATTR_ACCESSORS(c,attrname,getter,setter) ((void)0)
 #define CLASS_ATTR_LLLL(c,attrname,flags,structname,structmember,getter,setter) ((void)0)
+#define CLASS_ATTR_DEFAULT(c,attrname,flags,parsestr) ((void)0)
+#define CLASS_STICKY_ATTR(c,name,flags,parsestr) ((void)0)
+#define CLASS_STICKY_ATTR_CLEAR(c,name) ((void)0)
+#define CLASS_ATTR_BASIC(c, name, flags) ((void)0)
+#define CLASS_ATTR_PAINT(c, name, flags) ((void)0)
+#define CLASS_ATTR_ATOM(c,attrname,flags,structname,structmember) ((void)0)
+#define CLASS_ATTR_LONG(c,attrname,flags,structname,structmember) ((void)0)
+#define CLASS_ATTR_DOUBLE(c,attrname,flags,structname,structmember) ((void)0)
+#define CLASS_ATTR_CHAR(c,attrname,flags,structname,structmember) ((void)0)
+#define CLASS_ATTR_SYM(c,attrname,flags,structname,structmember) ((void)0)
+#define CLASS_ATTR_DEFAULT_SAVE_PAINT(c,attrname,flags,parsestr) ((void)0)
+#define CLASS_ATTR_DEFAULT_SAVE(c,attrname,flags,parsestr) ((void)0)
+#define CLASS_ATTR_CATEGORY(c,attrname,flags,parsestr) ((void)0)
+#define CLASS_ATTR_ENUMINDEX(c,attrname,flags,parsestr) ((void)0)
+#define CLASS_ATTR_ALIAS(c,attrname,aliasname) ((void)0)
+#define CLASS_ATTR_DEFAULTNAME_SAVE_PAINT(c,attrname,flags,parsestr) ((void)0)
+#define CLASS_ATTR_NOTATIONOBJ_SYMPTR(c,attrname,flags,structmember,maxcount,setter) ((void)0)
+#define CLASS_ATTR_NOTATIONOBJ_CHARPTR(c,attrname,flags,structmember,maxcount,setter) ((void)0)
+#define CLASS_ATTR_NOTATIONOBJ_ATOMPTR(c,attrname,flags,structmember,maxcount,setter) ((void)0)
+#define CLASS_ATTR_NOTATIONOBJ_LONGPTR(c,attrname,flags,structmember,maxcount,setter) ((void)0)
+#define CLASS_ATTR_NOTATIONOBJ_DBLPTR(c,attrname,flags,structmember,maxcount,setter) ((void)0)
+#define CLASS_ATTR_INVISIBLE(c,attrname,flags) ((void)0)
+
+
+t_max_err object_attr_setdisabled(t_object *o, t_symbol *attrname, long way)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+/** Attribute flags
+ @ingroup attr
+ 
+ @remark     To create a readonly attribute, for example,
+ you should pass ATTR_SET_OPAQUE or ATTR_SET_OPAQUE_USER as a flag when you create your attribute.
+ */
+typedef enum {
+    ATTR_FLAGS_NONE =        0x0000000,    ///< No flags
+    ATTR_GET_OPAQUE =        0x00000001,    ///< The attribute cannot be queried by either max message when used inside of a CLASS_BOX object, nor from C code.
+    ATTR_SET_OPAQUE =        0x00000002, ///< The attribute cannot be set by either max message when used inside of a CLASS_BOX object, nor from C code.
+    ATTR_GET_OPAQUE_USER =    0x00000100, ///< The attribute cannot be queried by max message when used inside of a CLASS_BOX object, but <em>can</em> be queried from C code.
+    ATTR_SET_OPAQUE_USER =    0x00000200, ///< The attribute cannot be set by max message when used inside of a CLASS_BOX object, but <em>can</em> be set from C code.
+    ATTR_GET_DEFER =        0x00010000,    // Placeholder for potential future functionality: Any attribute queries will be called through a defer().
+    ATTR_GET_USURP =        0x00020000,    // Placeholder for potential future functionality: Any calls to query the attribute will be called through the equivalent of a defer(), repeated calls will be ignored until the getter is actually run.
+    ATTR_GET_DEFER_LOW =    0x00040000, // Placeholder for potential future functionality: Any attribute queries will be called through a defer_low().
+    ATTR_GET_USURP_LOW =    0x00080000, // Placeholder for potential future functionality: Any calls to query the attribute will be called through the equivalent of a defer_low(), repeated calls will be ignored until the getter is actually run.
+    ATTR_SET_DEFER =        0x01000000, // Placeholder for potential future functionality: The attribute setter will be called through a defer().
+    ATTR_SET_USURP =        0x02000000,    // Placeholder for potential future functionality: Any calls to set the attribute will be called through the equivalent of a defer_low(), repeated calls will be ignored until the setter is actually run.
+    ATTR_SET_DEFER_LOW =    0x04000000, // Placeholder for potential future functionality: The attribute setter will be called through a defer_low()
+    ATTR_SET_USURP_LOW =    0x08000000,    // Placeholder for potential future functionality: Any calls to set the attribute will be called through the equivalent of a defer_low(), repeated calls will be ignored until the setter is actually run.
+    ATTR_IS_JBOXATTR =        0x10000000,  // a common jbox attr
+    ATTR_DIRTY =            0x20000000  // attr has been changed from its default value
+} e_max_attrflags;
+
+/** Class flags. If not box or polyglot, class is only accessible in C via known interface
+ @ingroup class
+ */
+typedef enum {
+    CLASS_FLAG_BOX =                    0x00000001L,    ///< for use in a patcher
+    CLASS_FLAG_POLYGLOT =                0x00000002L,    ///< for use by any text language (c/js/java/etc)
+    CLASS_FLAG_NEWDICTIONARY =            0x00000004L,    ///< dictionary based constructor
+    CLASS_FLAG_REGISTERED =                0x00000008L,    ///< for backward compatible messlist implementation (once reg'd can't grow)
+    CLASS_FLAG_UIOBJECT =                0x00000010L,    ///< for objects that don't go inside a newobj box.
+    CLASS_FLAG_ALIAS =                    0x00000020L,    ///< for classes that are just copies of some other class (i.e. del is a copy of delay)
+    CLASS_FLAG_DO_NOT_PARSE_ATTR_ARGS =    0x00000080L,     ///< override dictionary based constructor attr arg parsing
+    CLASS_FLAG_DO_NOT_ZERO =            0x00000100L,     ///< don't zero the object struct on construction (for efficiency)
+    CLASS_FLAG_NOATTRIBUTES =            0x00010000L,    ///< for efficiency
+    CLASS_FLAG_OWNATTRIBUTES =            0x00020000L,    ///< for classes which support a custom attr interface (e.g. jitter)
+    CLASS_FLAG_PARAMETER =                0x00040000L,    ///< for classes which have a parameter
+    CLASS_FLAG_RETYPEABLE =                0x00080000L,    ///< object box can be retyped without recreating the object
+    CLASS_FLAG_OBJECT_METHOD =            0x00100000L        ///< objects of this class may have object specific methods
+} e_max_class_flags;
+
+
+// jbox flags
+// flags passed to box_new
+
+// The following flags affect how the boxes are drawn
+#define JBOX_DRAWFIRSTIN            (1<<0)            ///< draw first inlet                                                @ingroup jbox
+#define JBOX_NODRAWBOX              (1<<1)            ///< don't draw the frame                                              @ingroup jbox
+#define JBOX_DRAWINLAST             (1<<2)            ///< draw inlets after update method                                 @ingroup jbox
+
+// JBOX_TRANSPARENT is unused -- box is always transparent by default
+#define JBOX_TRANSPARENT            (1<<3)            ///< don't make transparent unless you need it (for efficiency)        @ingroup jbox
+
+// Box growing: nogrow is clear -- box is not sizable.
+// Default (none of following three flags) means box width is only sizable.
+// JBOX_GROWY means that X and Y are sizable and the aspect ratio is fixed (or maybe it has to be square, like dial?).
+// JBOX_GROWBOTH means that X and Y are independently sizable.
+#define JBOX_NOGROW                 (1<<4)            ///< don't even draw grow thingie                 @ingroup jbox
+#define JBOX_GROWY                  (1<<5)            ///< can grow in y direction by dragging        @ingroup jbox
+#define JBOX_GROWBOTH               (1<<6)            ///< can grow independently in both x and y     @ingroup jbox
+
+// Box interaction
+#define JBOX_IGNORELOCKCLICK        (1<<7)            ///< box should ignore a click if patcher is locked     @ingroup jbox
+#define JBOX_HILITE                 (1<<8)            ///< flag passed to jbox_new() to tell max that the UI object can receive the focus when clicked on -- may be replaced by JBOX_FOCUS in the future         @ingroup jbox
+#define JBOX_BACKGROUND             (1<<9)            ///< immediately set box into the background            @ingroup jbox
+#define JBOX_NOFLOATINSPECTOR       (1<<10)            ///< no floating inspector window                        @ingroup jbox
+
+// textfield: give this flag for automatic textfield support
+#define JBOX_TEXTFIELD              (1<<11)            ///< save/load text from textfield, unless JBOX_BINBUF flag is set                @ingroup jbox
+#define JBOX_FIXWIDTH               (1<<19)            ///< give the box a textfield based fix-width (bfixwidth) method                @ingroup jbox
+#define JBOX_FONTATTR               (1<<18)            ///< if you want font related attribute you must add this to jbox_initclass()    @ingroup jbox
+#define JBOX_TEXTJUSTIFICATIONATTR  (1<<21)         ///< give your object a textjustification attr to control textfield             @ingroup jbox
+#define JBOX_BINBUF                 (1<<14)            ///< save/load text from b_binbuf                                                @ingroup jbox
+
+#define JBOX_MOUSEDRAGDELTA         (1<<12)            ///< hides mouse cursor in drag and sends mousedragdelta instead of mousedrag (for infinite scrolling like number)    @ingroup jbox
+
+#define JBOX_COLOR                  (1<<13)            ///< support the "color" method for color customization                                                @ingroup jbox
+#define JBOX_DRAWIOLOCKED           (1<<15)            ///< draw inlets and outlets when locked (default is not to draw them)                                @ingroup jbox
+#define JBOX_DRAWBACKGROUND         (1<<16)            ///< set to have box bg filled in for you based on getdrawparams method or brgba attribute            @ingroup jbox
+#define JBOX_NOINSPECTFIRSTIN       (1<<17)            ///< flag for objects such as bpatcher that have a different b_firstin,
+///< but the attrs of the b_firstin should not be shown in the inspector                            @ingroup jbox
+
+// JBOX_DEFAULTNAMES is unused -- box is attached automatically if needed
+// Since JBOX_DEFAULTNAMES was unused and used a conflicting flag bit with JBOX_FONTATTR it is being removed.
+// Just remove from your code if you have a compile error about JBOX_DEFAULTNAMES missing.
+//#define JBOX_DEFAULTNAMES            (1<<18)            ///< flag instructing jbox_new to attach object to the defaults object for live defaults updating    @ingroup jbox
+
+#define JBOX_FOCUS                    (1<<20)            ///< more advanced focus support (passed to jbox_initclass() to add "nextfocus" and "prevfocus" attributes to the UI object).  Not implemented as of 2009-05-11   @ingroup jbox
+#define JBOX_BOXVIEW                (1<<23)            ///< enable jboxview methods   @ingroup jbox
+
+#define JBOX_LEGACYCOLOR            (1<<22)            ///< add undocumented color N message to objects from Max 4 that used it   @ingroup jbox
+#define JBOX_COPYLEGACYDEFAULT        (1<<24)            ///< if there is a legacy default, copy it instead of the regular default   @ingroup jbox
+#define JBOX_NOLEGACYDEFAULT        (1<<25)            ///< if there is a legacy default, don't copy any default   @ingroup jbox
+
 
 t_class *object_class(void *x)
 {
     return NULL;
 }
+
+void jbox_initclass(t_class *c, long flags)
+{
+    ;
+}
+
+#define CLASS_METHOD_ATTR_PARSE(c,methodname,attrname,type,flags,parsestring) ((void)0)
 
 long attr_args_offset(short ac, t_atom *av)
 {
@@ -1070,10 +1249,164 @@ void attr_args_process(void *x, short ac, t_atom *av)
 }
 
 
+
+//// DICTIONARY STUFF
+
 t_dictionary* dictionary_new(void)
 {
     return NULL;
 }
+
+t_max_err dictionary_getdictionary(const t_dictionary *d, t_symbol *key, t_object **value)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_dictionary *object_dictionaryarg(long ac, t_atom *av)
+{
+    return NULL;
+}
+
+
+t_max_err dictionary_getatoms(const t_dictionary *d, t_symbol *key, long *argc, t_atom **argv)
+{
+    return MAX_ERR_GENERIC;
+}
+t_max_err dictionary_appendatoms(t_dictionary *d, t_symbol *key, long argc, t_atom *argv)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err dictionary_read(char *filename, short path, t_dictionary **d)
+{
+    // TO DO
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err dictionary_write(t_dictionary *d, char *filename, short path)
+{
+    return MAX_ERR_GENERIC;
+}
+
+long dictionary_hasentry(const t_dictionary *d, t_symbol *key)
+{
+    return 0;
+}
+
+t_max_err dictionary_getlong(const t_dictionary *d, t_symbol *key, t_atom_long *value)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err dictionary_getfloat(const t_dictionary *d, t_symbol *key, double *value)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+t_max_err dictionary_appendstring(t_dictionary *d, t_symbol *key, const char *value)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err dictionary_getstring(const t_dictionary *d, t_symbol *key, const char **value)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+
+void attr_args_dictionary(t_dictionary *x, short ac, t_atom *av)
+{
+    ;
+}
+
+void attr_dictionary_process(void *x, t_dictionary *d)
+{
+    ;
+}
+
+
+// JBOX TEXT
+
+t_max_err jbox_set_fontname(t_object *b, t_symbol *ps)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+t_max_err jbox_set_fontsize(t_object *b, double d)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err textfield_set_noactivate(t_object *tf, char c)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err textfield_set_editonclick(t_object *tf, char c)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err textfield_set_useellipsis(t_object *tf, char c)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err textfield_set_wantsreturn(t_object *tf, char c)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err textfield_set_wordwrap(t_object *tf, char c)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err textfield_set_textmargins(t_object *tf, double left, double top, double right, double bottom)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+t_max_err textfield_set_textcolor(t_object *tf, t_jrgba *prgba)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+
+
+
+t_max_err object_free(void *x)
+{
+    // TO DO
+    return MAX_ERR_GENERIC;
+}
+
+void freeobject(t_object *op)
+{
+    ;
+}
+
+t_object *newobject_sprintf(t_object *patcher, const char *fmt, ...)
+{
+    return NULL;
+}
+
+t_max_err object_attach_byptr(void *x, void *registeredobject)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err object_detach_byptr(void *x, void *registeredobject)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
 
 
 t_max_err jbox_notify(t_jbox *b, t_symbol *s, t_symbol *msg, void *sender, void *data)
@@ -1086,6 +1419,21 @@ t_max_err jbox_invalidate_layer(t_object *b, t_object *view, t_symbol *name)
     return MAX_ERR_GENERIC;
 }
 
+void jbox_redraw(t_jbox *b)
+{
+    ;
+}
+
+void jbox_grabfocus(t_jbox *b)
+{
+    ;
+}
+
+
+
+
+
+
 t_max_err object_method_typed(void *x, t_symbol *s, long ac, t_atom *av, t_atom *rv)
 {
     return MAX_ERR_GENERIC;
@@ -1095,6 +1443,147 @@ method zgetfn(t_object *op, t_symbol *msg)
 {
     return NULL;
 }
+
+
+t_class *class_new(const char *name, const method mnew, const method mfree, long size, const method mmenu, short type, ...)
+{
+    return NULL;
+}
+
+t_max_err class_register(t_symbol *name_space, t_class *c)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+
+/**    Enumeration of slanting options for font display.
+ @ingroup    jfont            */
+typedef enum _jgraphics_font_slant {
+    JGRAPHICS_FONT_SLANT_NORMAL,        ///< Normal slanting (typically this means no slanting)
+    JGRAPHICS_FONT_SLANT_ITALIC         ///< Italic slanting
+    // JGRAPHICS_FONT_SLANT_OBLIQUE
+} t_jgraphics_font_slant;
+
+
+/**    Enumeration of font weight options for font display.
+ @ingroup    jfont            */
+typedef enum _jgraphics_font_weight {
+    JGRAPHICS_FONT_WEIGHT_NORMAL,        ///< Normal font weight
+    JGRAPHICS_FONT_WEIGHT_BOLD            ///< Bold font weight
+} t_jgraphics_font_weight;
+
+
+t_object* jpatcher_get_firstview(t_object *p)
+{
+    return NULL;
+}
+
+t_max_err jbox_get_rect_for_view(t_object *box, t_object *patcherview, t_rect *rect)
+{
+    return MAX_ERR_GENERIC;
+}
+
+#define ASSIST_INLET 1
+#define ASSIST_OUTLET 2
+
+
+long proxy_getinlet(t_object *master)
+{
+    return 0;
+}
+
+void *object_alloc(t_class *c)
+{
+    return NULL;
+}
+
+t_max_err jbox_new(t_jbox *b, long flags, long argc, t_atom *argv)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err object_obex_lookup(void *x, t_symbol *key, t_object **val)
+{
+    return MAX_ERR_GENERIC;
+}
+
+void *proxy_new(void *x,long id,long *stuffloc)
+{
+    return NULL;
+}
+
+void *outlet_anything(void *o, t_symbol *s, short ac, t_atom *av)
+{
+    return NULL;
+}
+
+void *outlet_int(void *o, t_atom_long n)
+{
+    return NULL;
+}
+
+void *outlet_float(void *o, double f)
+{
+    return NULL;
+}
+
+void *outlet_list(void *o, t_symbol *s, short ac, t_atom *av)
+{
+    return NULL;
+}
+
+void *outlet_new(void *x, const char *s)
+{
+    return NULL;
+}
+
+void *outlet_bang(void *o){
+    return NULL;
+}
+
+void *bangout(void *x)
+{
+    return NULL;
+}
+
+void *floatout(void *x)
+{
+    return NULL;
+}
+
+void *intout(void *x)
+{
+    return NULL;
+}
+
+void *listout(void *x)
+{
+    return NULL;
+}
+
+
+t_max_err object_attach_byptr_register(void *x, void *object_to_attach, t_symbol *reg_name_space)
+{
+    return MAX_ERR_GENERIC;
+}
+
+#define NOGOOD(o) (0)
+#define ob_sym(x) (gensym("bach")) // for now
+
+
+//// CLOCKS
+
+void *clock_new(void *obj, method fn)
+{
+    return NULL;
+}
+
+void clock_set(void *obj,long when)
+{
+    ;
+}
+
 
 void schedule_delay(void *ob, method fun, long delay, t_symbol *sym, short argc, t_atom *argv)
 {
@@ -1137,6 +1626,287 @@ void setclock_unset(t_object *x, void *c)
 }
 
 
+
+//// MUTEX
+
+long systhread_mutex_lock(t_systhread_mutex pmutex)
+{
+    return 0;
+}
+
+long systhread_mutex_unlock(t_systhread_mutex pmutex)
+{
+    return 0;
+}
+
+long systhread_mutex_trylock(t_systhread_mutex pmutex)
+{
+    return 0;
+    
+}
+
+
+#define DECLARE_BACH_ATTR(man, forced_position, name, displayed_label, owner_type, struct_name, struct_member, attr_type, attr_size, display_type, preprocess_flags, postprocess_flags) ((void)0)
+
+
+
+void jbox_ready(t_jbox *b)
+{
+    ;
+}
+
+void jbox_free(t_jbox *b)
+{
+    ;
+}
+
+
+
+
+t_jgraphics* jbox_start_layer(t_object *b, t_object *view, t_symbol *name, double width, double height)
+{
+    return NULL;
+}
+
+t_max_err jbox_end_layer(t_object *b, t_object *view, t_symbol *name)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err jbox_paint_layer(t_object *b, t_object *view, t_symbol *name, double x, double y)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+t_object* patcherview_get_jgraphics(t_object *pv)
+{
+    return NULL;
+}
+
+
+void jmouse_setposition_box(t_object *patcherview, t_object *box, double bx, double by)
+{
+    ;
+}
+
+void evnum_incr(void)
+{
+    ;
+}
+
+t_object* jbox_get_textfield(t_object *b)
+{
+    return NULL;
+}
+
+
+
+
+/**    Bit mask values for various meta-key presses on the keyboard.
+ @ingroup    jmouse    */
+typedef enum _modifiers {
+    eCommandKey = 1,        ///< Command Key
+    eShiftKey = 2,            ///< Shift Key
+    eControlKey = 4,        ///< Control Key
+    eAltKey = 8,            ///< Alt Key
+    eLeftButton = 16,        ///< Left mouse button
+    eRightButton = 32,        ///< Right mouse button
+    eMiddleButton = 64,        ///< Middle mouse button
+    ePopupMenu = 128,        ///< Popup Menu (contextual menu requested)
+    eCapsLock = 256,        ///< Caps lock
+    eAutoRepeat = 512        ///< Key is generated by key press auto-repeat
+} t_modifiers;
+
+
+/**    Enumeration of text justification options, which are specified as a bitmask.
+ @ingroup    jgraphics            */
+typedef enum _jgraphics_text_justification {
+    JGRAPHICS_TEXT_JUSTIFICATION_LEFT = 1,            ///< Justify left
+    JGRAPHICS_TEXT_JUSTIFICATION_RIGHT = 2,            ///< Justify right
+    JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED = 4,        ///< Centered horizontally
+    JGRAPHICS_TEXT_JUSTIFICATION_TOP = 8,             ///< Justified to the top
+    JGRAPHICS_TEXT_JUSTIFICATION_BOTTOM = 16,        ///< Justified to the bottom
+    JGRAPHICS_TEXT_JUSTIFICATION_VCENTERED = 32,    ///< Centered vertically
+    JGRAPHICS_TEXT_JUSTIFICATION_HJUSTIFIED = 64,    ///< Horizontally justified
+    JGRAPHICS_TEXT_JUSTIFICATION_CENTERED = JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED + JGRAPHICS_TEXT_JUSTIFICATION_VCENTERED    ///< Shortcut for Centering both vertically and horizontally
+} t_jgraphics_text_justification;
+
+
+
+/**    Flags for setting text layout options.
+ @ingroup    textlayout            */
+typedef enum _jgraphics_textlayout_flags {
+    JGRAPHICS_TEXTLAYOUT_NOWRAP = 1,        ///< disable word wrapping
+    JGRAPHICS_TEXTLAYOUT_USEELLIPSIS = 3    ///< show ... if a line doesn't fit (implies NOWRAP too)
+} t_jgraphics_textlayout_flags;
+
+
+
+//// PATHS
+
+/**
+ Constants that determine the output of path_nameconform().
+ @ingroup files
+ @see #e_max_path_types
+ @see path_nameconform()
+ */
+typedef enum {
+    PATH_STYLE_MAX = 0,            ///< use PATH_STYLE_MAX_PLAT
+    PATH_STYLE_NATIVE,            ///< use PATH_STYLE_NATIVE_PLAT
+    PATH_STYLE_COLON,            ///< ':'  sep, "vol:"   volume, ":"   relative, "^:" boot
+    PATH_STYLE_SLASH,            ///< '/'  sep, "vol:/"  volume, "./"  relative, "/"  boot
+    PATH_STYLE_NATIVE_WIN        ///< '\\' sep, "vol:\\" volume, ".\\" relative, "\\" boot
+} e_max_path_styles;
+
+
+/**
+ Constants that determine the output of path_nameconform().
+ @ingroup files
+ @see #e_max_path_styles
+ @see path_nameconform()
+ */
+typedef enum {
+    PATH_TYPE_IGNORE = 0,        ///< ignore
+    PATH_TYPE_ABSOLUTE,            ///< absolute path
+    PATH_TYPE_RELATIVE,            ///< relative path
+    PATH_TYPE_BOOT,                ///< boot path
+    PATH_TYPE_C74,                ///< Cycling '74 folder
+    PATH_TYPE_PATH,                ///< path
+    PATH_TYPE_DESKTOP,            ///< desktop
+    PATH_TYPE_TILDE,            ///< "home"
+    PATH_TYPE_TEMPFOLDER,        ///< /tmp
+    PATH_TYPE_MAXDB                ///< combi: try PATH_TYPE_C74, PATH_TYPE_TILDE, PATH_TYPE_RELATIVE, PATH_TYPE_ABSOLUTE in that order
+} e_max_path_types;
+
+
+short path_topathname(const short path, const char *file, char *name)
+{
+    return 0;
+}
+
+short path_frompathname(const char *name, short *path, char *filename)
+{
+    return 0;
+}
+
+short path_frompotentialpathname(const char *name, short *path, char *filename)
+{
+    return 0;
+}
+
+short path_nameconform(const char *src, char *dst, long style, long type)
+{
+    return 0;
+}
+
+t_symbol* jpatcher_get_filename(t_object *p)
+{
+    return NULL;
+}
+
+t_object* jpatcher_get_parentpatcher(t_object *p)
+{
+    return NULL;
+}
+
+t_max_err jpatcher_get_rect(t_object *p, t_rect *pr)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err patcherview_set_zoomfactor(t_object *pv, double d)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err jbox_set_presentation_size(t_object *box, t_size *size)
+{
+    return MAX_ERR_GENERIC;
+}
+
+t_max_err jbox_set_patching_size(t_object *box, t_size *size)
+{
+    return MAX_ERR_GENERIC;
+}
+
+
+
+
+/**    Mouse cursor types.
+ @ingroup jmouse            */
+typedef enum _jmouse_cursortype {
+    JMOUSE_CURSOR_NONE,                         ///< None
+    JMOUSE_CURSOR_ARROW,                         ///< Arrow
+    JMOUSE_CURSOR_WAIT,                         ///< Wait
+    JMOUSE_CURSOR_IBEAM,                         ///< I-Beam
+    JMOUSE_CURSOR_CROSSHAIR,                     ///< Crosshair
+    JMOUSE_CURSOR_COPYING,                        ///< Copying
+    JMOUSE_CURSOR_POINTINGHAND,                    ///< Pointing Hand
+    JMOUSE_CURSOR_DRAGGINGHAND,                    ///< Dragging Hand
+    JMOUSE_CURSOR_RESIZE_LEFTRIGHT,                ///< Left-Right
+    JMOUSE_CURSOR_RESIZE_UPDOWN,                ///< Up-Down
+    JMOUSE_CURSOR_RESIZE_FOURWAY,                ///< Four Way
+    JMOUSE_CURSOR_RESIZE_TOPEDGE,                ///< Top Edge
+    JMOUSE_CURSOR_RESIZE_BOTTOMEDGE,            ///< Bottom Edge
+    JMOUSE_CURSOR_RESIZE_LEFTEDGE,                ///< Left Edge
+    JMOUSE_CURSOR_RESIZE_RIGHTEDGE,                ///< Right Edge
+    JMOUSE_CURSOR_RESIZE_TOPLEFTCORNER,            ///< Top-Left Corner
+    JMOUSE_CURSOR_RESIZE_TOPRIGHTCORNER,        ///< Top-Right Corner
+    JMOUSE_CURSOR_RESIZE_BOTTOMLEFTCORNER,        ///< Bottom-Left Corner
+    JMOUSE_CURSOR_RESIZE_BOTTOMRIGHTCORNER        ///< Bottom-Right Corner
+} t_jmouse_cursortype;
+
+
+
+/**    Enumeration of color formats used by jgraphics surfaces.
+ @ingroup    jgraphics            */
+typedef enum _jgraphics_format {
+    JGRAPHICS_FORMAT_ARGB32,        ///< Color is represented using 32 bits, 8 bits each for the components, and including an alpha component.
+    JGRAPHICS_FORMAT_RGB24,            ///< Color is represented using 32 bits, 8 bits each for the components.  There is no alpha component.
+    JGRAPHICS_FORMAT_A8                ///< The color is represented only as an 8-bit alpha mask.
+    //    JGRAPHICS_FORMAT_A1                // not supported
+} t_jgraphics_format;
+
+//// IMPLEMENTED IN bach_graphics.c
+t_jfont* jfont_create(const char *family, t_jgraphics_font_slant slant, t_jgraphics_font_weight weight, double size);
+void jfont_destroy(t_jfont *f);
+void jfont_text_measure(t_jfont *font, const char *text, double *width, double *height);
+void jgraphics_set_source_jrgba(t_jgraphics *g, t_jrgba *color);
+void jgraphics_set_source_rgba(t_jgraphics *g, double red, double green, double blue, double alpha);
+char *charset_unicodetoutf8(unicodeChar *uni, long len, long *outlen);
+unsigned short *charset_utf8tounicode(char *s, long *outlen);
+
+t_jsurface* jgraphics_image_surface_create_from_resource(const void* moduleRef, const char *resname);
+int jgraphics_image_surface_get_height(t_jsurface *s);
+int jgraphics_image_surface_get_width(t_jsurface *s);
+void jgraphics_surface_destroy(t_jsurface *s);
+
+void jmouse_setcursor_surface(t_object *patcherview, t_object *box, t_jsurface *surface, int xHotSpot, int yHotSpot);
+void jgraphics_image_surface_draw(t_jgraphics *g, t_jsurface *s, t_rect srcRect, t_rect destRect);
+void jmouse_setcursor(t_object *patcherview, t_object *box, t_jmouse_cursortype type);
+
+/// SHOULD BE BETTER IMPLEMENTED
+
+t_jsurface* jgraphics_image_surface_create(t_jgraphics_format format, int width, int height)
+{
+    return NULL;
+}
+
+t_jgraphics* jgraphics_create(t_jsurface *target)
+{
+    return NULL;
+}
+
+void jgraphics_destroy(t_jgraphics *g)
+{
+    ;
+}
+
+
+
+
+////
 
 
 #endif // _BACH_JUCEWRAPPER_H_

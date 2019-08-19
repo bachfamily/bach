@@ -251,6 +251,11 @@
 		1EB4D4821610CB740041ABFB /* roll_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D4801610CB740041ABFB /* roll_files.h */; };
 		1EB4D4A11610CCB20041ABFB /* score_files.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EB4D49F1610CCB20041ABFB /* score_files.h */; };
 		1EB4D4A21610CCB20041ABFB /* score_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1EB4D4A01610CCB20041ABFB /* score_files.cpp */; };
+		1EBF7A362305502C00D48779 /* juce_Colour.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBF7A2C2305501400D48779 /* juce_Colour.h */; };
+		1EBF7A392305587B00D48779 /* juce_GraphicsContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1EBF79892305501000D48779 /* juce_GraphicsContext.cpp */; };
+		1EBF7A3A2305587B00D48779 /* juce_GraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBF798A2305501000D48779 /* juce_GraphicsContext.h */; };
+		1EBF7A3C23055F1000D48779 /* juce_Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1EBF7A0A2305501300D48779 /* juce_Path.cpp */; };
+		1EBF7A3D23055F1000D48779 /* juce_Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 1EBF7A0D2305501300D48779 /* juce_Path.h */; };
 		1EC13FA123044BFA008A796B /* bach_exprparser_lex.h in Headers */ = {isa = PBXBuildFile; fileRef = 91FDDC291FBE2B2F0040D803 /* bach_exprparser_lex.h */; };
 		1EC13FA223044BFA008A796B /* bach_parser.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91040DA31FB1ABCD009E91CD /* bach_parser.hpp */; };
 		1EC13FA323044BFA008A796B /* bach_codableobj.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 91071DB02100DB5900452762 /* bach_codableobj.hpp */; };
@@ -3086,6 +3091,173 @@
 		1EB99F4915164BE900B02E03 /* mxml-set.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-set.c"; sourceTree = "<group>"; };
 		1EB99F4A15164BE900B02E03 /* mxml-string.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "mxml-string.c"; sourceTree = "<group>"; };
 		1EB99F4B15164BE900B02E03 /* mxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mxml.h; sourceTree = "<group>"; };
+		1EBF79842305500F00D48779 /* juce_LowLevelGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_LowLevelGraphicsContext.h; sourceTree = "<group>"; };
+		1EBF79852305500F00D48779 /* juce_LowLevelGraphicsSoftwareRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_LowLevelGraphicsSoftwareRenderer.cpp; sourceTree = "<group>"; };
+		1EBF79862305500F00D48779 /* juce_LowLevelGraphicsSoftwareRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_LowLevelGraphicsSoftwareRenderer.h; sourceTree = "<group>"; };
+		1EBF79872305500F00D48779 /* juce_LowLevelGraphicsPostScriptRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_LowLevelGraphicsPostScriptRenderer.cpp; sourceTree = "<group>"; };
+		1EBF79882305500F00D48779 /* juce_LowLevelGraphicsPostScriptRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_LowLevelGraphicsPostScriptRenderer.h; sourceTree = "<group>"; };
+		1EBF79892305501000D48779 /* juce_GraphicsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_GraphicsContext.cpp; sourceTree = "<group>"; };
+		1EBF798A2305501000D48779 /* juce_GraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_GraphicsContext.h; sourceTree = "<group>"; };
+		1EBF798C2305501000D48779 /* juce_android_IconHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_android_IconHelpers.cpp; sourceTree = "<group>"; };
+		1EBF798D2305501000D48779 /* juce_RenderingHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_RenderingHelpers.h; sourceTree = "<group>"; };
+		1EBF798E2305501000D48779 /* juce_mac_IconHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_mac_IconHelpers.cpp; sourceTree = "<group>"; };
+		1EBF798F2305501000D48779 /* juce_win32_Direct2DGraphicsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_win32_Direct2DGraphicsContext.cpp; sourceTree = "<group>"; };
+		1EBF79902305501000D48779 /* juce_linux_IconHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_linux_IconHelpers.cpp; sourceTree = "<group>"; };
+		1EBF79912305501000D48779 /* juce_linux_Fonts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_linux_Fonts.cpp; sourceTree = "<group>"; };
+		1EBF79922305501000D48779 /* juce_win32_Direct2DGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_win32_Direct2DGraphicsContext.h; sourceTree = "<group>"; };
+		1EBF79932305501000D48779 /* juce_win32_Fonts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_win32_Fonts.cpp; sourceTree = "<group>"; };
+		1EBF79942305501000D48779 /* juce_mac_CoreGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_mac_CoreGraphicsContext.h; sourceTree = "<group>"; };
+		1EBF79952305501000D48779 /* juce_win32_DirectWriteTypeLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_win32_DirectWriteTypeLayout.cpp; sourceTree = "<group>"; };
+		1EBF79962305501000D48779 /* juce_win32_IconHelpers.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_win32_IconHelpers.cpp; sourceTree = "<group>"; };
+		1EBF79972305501000D48779 /* juce_win32_DirectWriteTypeface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_win32_DirectWriteTypeface.cpp; sourceTree = "<group>"; };
+		1EBF79982305501000D48779 /* juce_mac_Fonts.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = juce_mac_Fonts.mm; sourceTree = "<group>"; };
+		1EBF79992305501000D48779 /* juce_mac_CoreGraphicsContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = juce_mac_CoreGraphicsContext.mm; sourceTree = "<group>"; };
+		1EBF799A2305501000D48779 /* juce_mac_CoreGraphicsHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_mac_CoreGraphicsHelpers.h; sourceTree = "<group>"; };
+		1EBF799B2305501000D48779 /* juce_android_GraphicsContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_android_GraphicsContext.cpp; sourceTree = "<group>"; };
+		1EBF799C2305501000D48779 /* juce_freetype_Fonts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_freetype_Fonts.cpp; sourceTree = "<group>"; };
+		1EBF799D2305501000D48779 /* juce_android_Fonts.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_android_Fonts.cpp; sourceTree = "<group>"; };
+		1EBF799F2305501000D48779 /* juce_Image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Image.h; sourceTree = "<group>"; };
+		1EBF79A02305501000D48779 /* juce_ImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_ImageCache.h; sourceTree = "<group>"; };
+		1EBF79A12305501000D48779 /* juce_ImageConvolutionKernel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_ImageConvolutionKernel.h; sourceTree = "<group>"; };
+		1EBF79A22305501000D48779 /* juce_ImageCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_ImageCache.cpp; sourceTree = "<group>"; };
+		1EBF79A32305501000D48779 /* juce_ImageFileFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_ImageFileFormat.h; sourceTree = "<group>"; };
+		1EBF79A42305501000D48779 /* juce_ImageConvolutionKernel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_ImageConvolutionKernel.cpp; sourceTree = "<group>"; };
+		1EBF79A52305501000D48779 /* juce_Image.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_Image.cpp; sourceTree = "<group>"; };
+		1EBF79A62305501000D48779 /* juce_ImageFileFormat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_ImageFileFormat.cpp; sourceTree = "<group>"; };
+		1EBF79A72305501000D48779 /* juce_graphics.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_graphics.cpp; sourceTree = "<group>"; };
+		1EBF79AA2305501000D48779 /* pnginfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pnginfo.h; sourceTree = "<group>"; };
+		1EBF79AB2305501000D48779 /* pngrio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrio.c; sourceTree = "<group>"; };
+		1EBF79AC2305501000D48779 /* pngerror.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngerror.c; sourceTree = "<group>"; };
+		1EBF79AD2305501100D48779 /* pngwio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwio.c; sourceTree = "<group>"; };
+		1EBF79AE2305501100D48779 /* pngstruct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngstruct.h; sourceTree = "<group>"; };
+		1EBF79AF2305501100D48779 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		1EBF79B02305501100D48779 /* pngtrans.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngtrans.c; sourceTree = "<group>"; };
+		1EBF79B12305501100D48779 /* pngpriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngpriv.h; sourceTree = "<group>"; };
+		1EBF79B22305501100D48779 /* pngwrite.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwrite.c; sourceTree = "<group>"; };
+		1EBF79B32305501100D48779 /* png.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
+		1EBF79B42305501100D48779 /* pngwutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwutil.c; sourceTree = "<group>"; };
+		1EBF79B52305501100D48779 /* pngwtran.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngwtran.c; sourceTree = "<group>"; };
+		1EBF79B62305501100D48779 /* pngconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
+		1EBF79B72305501100D48779 /* pngpread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngpread.c; sourceTree = "<group>"; };
+		1EBF79B82305501100D48779 /* pngread.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngread.c; sourceTree = "<group>"; };
+		1EBF79B92305501100D48779 /* libpng_readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = libpng_readme.txt; sourceTree = "<group>"; };
+		1EBF79BA2305501100D48779 /* pngmem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngmem.c; sourceTree = "<group>"; };
+		1EBF79BB2305501100D48779 /* pngget.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngget.c; sourceTree = "<group>"; };
+		1EBF79BC2305501100D48779 /* png.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
+		1EBF79BD2305501100D48779 /* pngrtran.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrtran.c; sourceTree = "<group>"; };
+		1EBF79BE2305501100D48779 /* pngrutil.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngrutil.c; sourceTree = "<group>"; };
+		1EBF79BF2305501100D48779 /* pngset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pngset.c; sourceTree = "<group>"; };
+		1EBF79C02305501100D48779 /* juce_PNGLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_PNGLoader.cpp; sourceTree = "<group>"; };
+		1EBF79C22305501100D48779 /* jpeglib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jpeglib.h; sourceTree = "<group>"; };
+		1EBF79C32305501100D48779 /* jddctmgr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jddctmgr.c; sourceTree = "<group>"; };
+		1EBF79C42305501100D48779 /* jdphuff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdphuff.c; sourceTree = "<group>"; };
+		1EBF79C52305501100D48779 /* jerror.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jerror.h; sourceTree = "<group>"; };
+		1EBF79C62305501100D48779 /* jidctfst.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jidctfst.c; sourceTree = "<group>"; };
+		1EBF79C72305501100D48779 /* jdatasrc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdatasrc.c; sourceTree = "<group>"; };
+		1EBF79C82305501100D48779 /* jdhuff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdhuff.c; sourceTree = "<group>"; };
+		1EBF79C92305501100D48779 /* jdinput.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdinput.c; sourceTree = "<group>"; };
+		1EBF79CA2305501100D48779 /* jdtrans.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdtrans.c; sourceTree = "<group>"; };
+		1EBF79CB2305501100D48779 /* jcmaster.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcmaster.c; sourceTree = "<group>"; };
+		1EBF79CC2305501100D48779 /* jdapistd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdapistd.c; sourceTree = "<group>"; };
+		1EBF79CD2305501100D48779 /* jcapimin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcapimin.c; sourceTree = "<group>"; };
+		1EBF79CE2305501100D48779 /* jdmarker.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdmarker.c; sourceTree = "<group>"; };
+		1EBF79CF2305501100D48779 /* jdmerge.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdmerge.c; sourceTree = "<group>"; };
+		1EBF79D02305501200D48779 /* jdcolor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdcolor.c; sourceTree = "<group>"; };
+		1EBF79D12305501200D48779 /* transupp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = transupp.c; sourceTree = "<group>"; };
+		1EBF79D22305501200D48779 /* jfdctflt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jfdctflt.c; sourceTree = "<group>"; };
+		1EBF79D32305501200D48779 /* jcparam.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcparam.c; sourceTree = "<group>"; };
+		1EBF79D42305501200D48779 /* jccoefct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jccoefct.c; sourceTree = "<group>"; };
+		1EBF79D52305501200D48779 /* jfdctint.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jfdctint.c; sourceTree = "<group>"; };
+		1EBF79D62305501200D48779 /* jcsample.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcsample.c; sourceTree = "<group>"; };
+		1EBF79D72305501200D48779 /* jcmainct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcmainct.c; sourceTree = "<group>"; };
+		1EBF79D82305501200D48779 /* jchuff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jchuff.c; sourceTree = "<group>"; };
+		1EBF79D92305501200D48779 /* jmemnobs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jmemnobs.c; sourceTree = "<group>"; };
+		1EBF79DA2305501200D48779 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		1EBF79DB2305501200D48779 /* changes to libjpeg for JUCE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "changes to libjpeg for JUCE.txt"; sourceTree = "<group>"; };
+		1EBF79DC2305501200D48779 /* jcprepct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcprepct.c; sourceTree = "<group>"; };
+		1EBF79DD2305501200D48779 /* jdhuff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jdhuff.h; sourceTree = "<group>"; };
+		1EBF79DE2305501200D48779 /* jmemsys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jmemsys.h; sourceTree = "<group>"; };
+		1EBF79DF2305501200D48779 /* jccolor.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jccolor.c; sourceTree = "<group>"; };
+		1EBF79E02305501200D48779 /* jerror.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jerror.c; sourceTree = "<group>"; };
+		1EBF79E12305501200D48779 /* jquant1.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jquant1.c; sourceTree = "<group>"; };
+		1EBF79E22305501200D48779 /* jcdctmgr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcdctmgr.c; sourceTree = "<group>"; };
+		1EBF79E32305501200D48779 /* jutils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jutils.c; sourceTree = "<group>"; };
+		1EBF79E42305501200D48779 /* jconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jconfig.h; sourceTree = "<group>"; };
+		1EBF79E52305501200D48779 /* jcapistd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcapistd.c; sourceTree = "<group>"; };
+		1EBF79E62305501200D48779 /* jmorecfg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jmorecfg.h; sourceTree = "<group>"; };
+		1EBF79E72305501200D48779 /* jfdctfst.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jfdctfst.c; sourceTree = "<group>"; };
+		1EBF79E82305501200D48779 /* jdmaster.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdmaster.c; sourceTree = "<group>"; };
+		1EBF79E92305501200D48779 /* jdct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jdct.h; sourceTree = "<group>"; };
+		1EBF79EA2305501200D48779 /* jversion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jversion.h; sourceTree = "<group>"; };
+		1EBF79EB2305501200D48779 /* cderror.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cderror.h; sourceTree = "<group>"; };
+		1EBF79EC2305501200D48779 /* jinclude.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jinclude.h; sourceTree = "<group>"; };
+		1EBF79ED2305501200D48779 /* jcomapi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcomapi.c; sourceTree = "<group>"; };
+		1EBF79EE2305501200D48779 /* jcphuff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcphuff.c; sourceTree = "<group>"; };
+		1EBF79EF2305501200D48779 /* transupp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = transupp.h; sourceTree = "<group>"; };
+		1EBF79F02305501200D48779 /* jmemmgr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jmemmgr.c; sourceTree = "<group>"; };
+		1EBF79F12305501300D48779 /* jcmarker.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcmarker.c; sourceTree = "<group>"; };
+		1EBF79F22305501300D48779 /* jquant2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jquant2.c; sourceTree = "<group>"; };
+		1EBF79F32305501300D48779 /* jidctint.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jidctint.c; sourceTree = "<group>"; };
+		1EBF79F42305501300D48779 /* jdapimin.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdapimin.c; sourceTree = "<group>"; };
+		1EBF79F52305501300D48779 /* jctrans.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jctrans.c; sourceTree = "<group>"; };
+		1EBF79F62305501300D48779 /* jidctflt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jidctflt.c; sourceTree = "<group>"; };
+		1EBF79F72305501300D48779 /* jcinit.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jcinit.c; sourceTree = "<group>"; };
+		1EBF79F82305501300D48779 /* jchuff.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jchuff.h; sourceTree = "<group>"; };
+		1EBF79F92305501300D48779 /* jdmainct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdmainct.c; sourceTree = "<group>"; };
+		1EBF79FA2305501300D48779 /* jdcoefct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdcoefct.c; sourceTree = "<group>"; };
+		1EBF79FB2305501300D48779 /* jdsample.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdsample.c; sourceTree = "<group>"; };
+		1EBF79FC2305501300D48779 /* jidctred.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jidctred.c; sourceTree = "<group>"; };
+		1EBF79FD2305501300D48779 /* jpegint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jpegint.h; sourceTree = "<group>"; };
+		1EBF79FE2305501300D48779 /* jdpostct.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jdpostct.c; sourceTree = "<group>"; };
+		1EBF79FF2305501300D48779 /* juce_GIFLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_GIFLoader.cpp; sourceTree = "<group>"; };
+		1EBF7A002305501300D48779 /* juce_JPEGLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_JPEGLoader.cpp; sourceTree = "<group>"; };
+		1EBF7A022305501300D48779 /* juce_PathIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_PathIterator.h; sourceTree = "<group>"; };
+		1EBF7A032305501300D48779 /* juce_EdgeTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_EdgeTable.h; sourceTree = "<group>"; };
+		1EBF7A042305501300D48779 /* juce_AffineTransform.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_AffineTransform.cpp; sourceTree = "<group>"; };
+		1EBF7A052305501300D48779 /* juce_Line.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Line.h; sourceTree = "<group>"; };
+		1EBF7A062305501300D48779 /* juce_BorderSize.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_BorderSize.h; sourceTree = "<group>"; };
+		1EBF7A072305501300D48779 /* juce_RectangleList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_RectangleList.h; sourceTree = "<group>"; };
+		1EBF7A082305501300D48779 /* juce_Parallelogram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Parallelogram.h; sourceTree = "<group>"; };
+		1EBF7A092305501300D48779 /* juce_PathIterator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_PathIterator.cpp; sourceTree = "<group>"; };
+		1EBF7A0A2305501300D48779 /* juce_Path.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_Path.cpp; sourceTree = "<group>"; };
+		1EBF7A0B2305501300D48779 /* juce_Rectangle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Rectangle.h; sourceTree = "<group>"; };
+		1EBF7A0C2305501300D48779 /* juce_PathStrokeType.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_PathStrokeType.cpp; sourceTree = "<group>"; };
+		1EBF7A0D2305501300D48779 /* juce_Path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Path.h; sourceTree = "<group>"; };
+		1EBF7A0E2305501300D48779 /* juce_Point.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Point.h; sourceTree = "<group>"; };
+		1EBF7A0F2305501300D48779 /* juce_PathStrokeType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_PathStrokeType.h; sourceTree = "<group>"; };
+		1EBF7A102305501300D48779 /* juce_EdgeTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_EdgeTable.cpp; sourceTree = "<group>"; };
+		1EBF7A112305501300D48779 /* juce_AffineTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_AffineTransform.h; sourceTree = "<group>"; };
+		1EBF7A132305501400D48779 /* juce_AttributedString.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_AttributedString.cpp; sourceTree = "<group>"; };
+		1EBF7A142305501400D48779 /* juce_GlyphArrangement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_GlyphArrangement.cpp; sourceTree = "<group>"; };
+		1EBF7A152305501400D48779 /* juce_GlyphArrangement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_GlyphArrangement.h; sourceTree = "<group>"; };
+		1EBF7A162305501400D48779 /* juce_Font.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Font.h; sourceTree = "<group>"; };
+		1EBF7A172305501400D48779 /* juce_CustomTypeface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_CustomTypeface.cpp; sourceTree = "<group>"; };
+		1EBF7A182305501400D48779 /* juce_Typeface.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_Typeface.cpp; sourceTree = "<group>"; };
+		1EBF7A192305501400D48779 /* juce_Font.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_Font.cpp; sourceTree = "<group>"; };
+		1EBF7A1A2305501400D48779 /* juce_TextLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_TextLayout.h; sourceTree = "<group>"; };
+		1EBF7A1B2305501400D48779 /* juce_CustomTypeface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_CustomTypeface.h; sourceTree = "<group>"; };
+		1EBF7A1C2305501400D48779 /* juce_AttributedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_AttributedString.h; sourceTree = "<group>"; };
+		1EBF7A1D2305501400D48779 /* juce_TextLayout.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_TextLayout.cpp; sourceTree = "<group>"; };
+		1EBF7A1E2305501400D48779 /* juce_Typeface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Typeface.h; sourceTree = "<group>"; };
+		1EBF7A202305501400D48779 /* juce_ImageEffectFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_ImageEffectFilter.h; sourceTree = "<group>"; };
+		1EBF7A212305501400D48779 /* juce_GlowEffect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_GlowEffect.cpp; sourceTree = "<group>"; };
+		1EBF7A222305501400D48779 /* juce_DropShadowEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_DropShadowEffect.h; sourceTree = "<group>"; };
+		1EBF7A232305501400D48779 /* juce_GlowEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_GlowEffect.h; sourceTree = "<group>"; };
+		1EBF7A242305501400D48779 /* juce_DropShadowEffect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_DropShadowEffect.cpp; sourceTree = "<group>"; };
+		1EBF7A262305501400D48779 /* juce_ColourGradient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_ColourGradient.cpp; sourceTree = "<group>"; };
+		1EBF7A272305501400D48779 /* juce_Colours.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Colours.h; sourceTree = "<group>"; };
+		1EBF7A282305501400D48779 /* juce_PixelFormats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_PixelFormats.h; sourceTree = "<group>"; };
+		1EBF7A292305501400D48779 /* juce_Colours.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_Colours.cpp; sourceTree = "<group>"; };
+		1EBF7A2A2305501400D48779 /* juce_FillType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_FillType.h; sourceTree = "<group>"; };
+		1EBF7A2B2305501400D48779 /* juce_Colour.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_Colour.cpp; sourceTree = "<group>"; };
+		1EBF7A2C2305501400D48779 /* juce_Colour.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Colour.h; sourceTree = "<group>"; };
+		1EBF7A2D2305501400D48779 /* juce_ColourGradient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_ColourGradient.h; sourceTree = "<group>"; };
+		1EBF7A2E2305501400D48779 /* juce_FillType.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_FillType.cpp; sourceTree = "<group>"; };
+		1EBF7A2F2305501400D48779 /* juce_graphics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_graphics.h; sourceTree = "<group>"; };
+		1EBF7A302305501400D48779 /* juce_graphics.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = juce_graphics.mm; sourceTree = "<group>"; };
+		1EBF7A322305501400D48779 /* juce_Justification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_Justification.h; sourceTree = "<group>"; };
+		1EBF7A332305501400D48779 /* juce_RectanglePlacement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = juce_RectanglePlacement.cpp; sourceTree = "<group>"; };
+		1EBF7A342305501500D48779 /* juce_RectanglePlacement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = juce_RectanglePlacement.h; sourceTree = "<group>"; };
 		1EC1405123044BFA008A796B /* lib_bachjuce.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib_bachjuce.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EC1405823044E4E008A796B /* rolljuce.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rolljuce.h; sourceTree = "<group>"; };
 		1EC1405A230453FF008A796B /* bachjuce_libs.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = bachjuce_libs.xcconfig; sourceTree = "<group>"; };
@@ -5120,6 +5292,7 @@
 				9141D7FA12315907000EE69C /* mains */,
 				91C79922123156FB00165F4A /* commons */,
 				911BB20617CBA88F00B513E8 /* c74support */,
+				1EBF79822305500F00D48779 /* juce_graphics */,
 			);
 			name = Source;
 			path = ..;
@@ -5315,6 +5488,269 @@
 				1EB99F4B15164BE900B02E03 /* mxml.h */,
 			);
 			path = mxml;
+			sourceTree = "<group>";
+		};
+		1EBF79822305500F00D48779 /* juce_graphics */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF79832305500F00D48779 /* contexts */,
+				1EBF798B2305501000D48779 /* native */,
+				1EBF799E2305501000D48779 /* images */,
+				1EBF79A72305501000D48779 /* juce_graphics.cpp */,
+				1EBF79A82305501000D48779 /* image_formats */,
+				1EBF7A012305501300D48779 /* geometry */,
+				1EBF7A122305501300D48779 /* fonts */,
+				1EBF7A1F2305501400D48779 /* effects */,
+				1EBF7A252305501400D48779 /* colour */,
+				1EBF7A2F2305501400D48779 /* juce_graphics.h */,
+				1EBF7A302305501400D48779 /* juce_graphics.mm */,
+				1EBF7A312305501400D48779 /* placement */,
+			);
+			name = juce_graphics;
+			path = ../../../../../JUCE/modules/juce_graphics;
+			sourceTree = "<group>";
+		};
+		1EBF79832305500F00D48779 /* contexts */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF79842305500F00D48779 /* juce_LowLevelGraphicsContext.h */,
+				1EBF79852305500F00D48779 /* juce_LowLevelGraphicsSoftwareRenderer.cpp */,
+				1EBF79862305500F00D48779 /* juce_LowLevelGraphicsSoftwareRenderer.h */,
+				1EBF79872305500F00D48779 /* juce_LowLevelGraphicsPostScriptRenderer.cpp */,
+				1EBF79882305500F00D48779 /* juce_LowLevelGraphicsPostScriptRenderer.h */,
+				1EBF79892305501000D48779 /* juce_GraphicsContext.cpp */,
+				1EBF798A2305501000D48779 /* juce_GraphicsContext.h */,
+			);
+			path = contexts;
+			sourceTree = "<group>";
+		};
+		1EBF798B2305501000D48779 /* native */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF798C2305501000D48779 /* juce_android_IconHelpers.cpp */,
+				1EBF798D2305501000D48779 /* juce_RenderingHelpers.h */,
+				1EBF798E2305501000D48779 /* juce_mac_IconHelpers.cpp */,
+				1EBF798F2305501000D48779 /* juce_win32_Direct2DGraphicsContext.cpp */,
+				1EBF79902305501000D48779 /* juce_linux_IconHelpers.cpp */,
+				1EBF79912305501000D48779 /* juce_linux_Fonts.cpp */,
+				1EBF79922305501000D48779 /* juce_win32_Direct2DGraphicsContext.h */,
+				1EBF79932305501000D48779 /* juce_win32_Fonts.cpp */,
+				1EBF79942305501000D48779 /* juce_mac_CoreGraphicsContext.h */,
+				1EBF79952305501000D48779 /* juce_win32_DirectWriteTypeLayout.cpp */,
+				1EBF79962305501000D48779 /* juce_win32_IconHelpers.cpp */,
+				1EBF79972305501000D48779 /* juce_win32_DirectWriteTypeface.cpp */,
+				1EBF79982305501000D48779 /* juce_mac_Fonts.mm */,
+				1EBF79992305501000D48779 /* juce_mac_CoreGraphicsContext.mm */,
+				1EBF799A2305501000D48779 /* juce_mac_CoreGraphicsHelpers.h */,
+				1EBF799B2305501000D48779 /* juce_android_GraphicsContext.cpp */,
+				1EBF799C2305501000D48779 /* juce_freetype_Fonts.cpp */,
+				1EBF799D2305501000D48779 /* juce_android_Fonts.cpp */,
+			);
+			path = native;
+			sourceTree = "<group>";
+		};
+		1EBF799E2305501000D48779 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF799F2305501000D48779 /* juce_Image.h */,
+				1EBF79A02305501000D48779 /* juce_ImageCache.h */,
+				1EBF79A12305501000D48779 /* juce_ImageConvolutionKernel.h */,
+				1EBF79A22305501000D48779 /* juce_ImageCache.cpp */,
+				1EBF79A32305501000D48779 /* juce_ImageFileFormat.h */,
+				1EBF79A42305501000D48779 /* juce_ImageConvolutionKernel.cpp */,
+				1EBF79A52305501000D48779 /* juce_Image.cpp */,
+				1EBF79A62305501000D48779 /* juce_ImageFileFormat.cpp */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		1EBF79A82305501000D48779 /* image_formats */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF79A92305501000D48779 /* pnglib */,
+				1EBF79C02305501100D48779 /* juce_PNGLoader.cpp */,
+				1EBF79C12305501100D48779 /* jpglib */,
+				1EBF79FF2305501300D48779 /* juce_GIFLoader.cpp */,
+				1EBF7A002305501300D48779 /* juce_JPEGLoader.cpp */,
+			);
+			path = image_formats;
+			sourceTree = "<group>";
+		};
+		1EBF79A92305501000D48779 /* pnglib */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF79AA2305501000D48779 /* pnginfo.h */,
+				1EBF79AB2305501000D48779 /* pngrio.c */,
+				1EBF79AC2305501000D48779 /* pngerror.c */,
+				1EBF79AD2305501100D48779 /* pngwio.c */,
+				1EBF79AE2305501100D48779 /* pngstruct.h */,
+				1EBF79AF2305501100D48779 /* LICENSE */,
+				1EBF79B02305501100D48779 /* pngtrans.c */,
+				1EBF79B12305501100D48779 /* pngpriv.h */,
+				1EBF79B22305501100D48779 /* pngwrite.c */,
+				1EBF79B32305501100D48779 /* png.h */,
+				1EBF79B42305501100D48779 /* pngwutil.c */,
+				1EBF79B52305501100D48779 /* pngwtran.c */,
+				1EBF79B62305501100D48779 /* pngconf.h */,
+				1EBF79B72305501100D48779 /* pngpread.c */,
+				1EBF79B82305501100D48779 /* pngread.c */,
+				1EBF79B92305501100D48779 /* libpng_readme.txt */,
+				1EBF79BA2305501100D48779 /* pngmem.c */,
+				1EBF79BB2305501100D48779 /* pngget.c */,
+				1EBF79BC2305501100D48779 /* png.c */,
+				1EBF79BD2305501100D48779 /* pngrtran.c */,
+				1EBF79BE2305501100D48779 /* pngrutil.c */,
+				1EBF79BF2305501100D48779 /* pngset.c */,
+			);
+			path = pnglib;
+			sourceTree = "<group>";
+		};
+		1EBF79C12305501100D48779 /* jpglib */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF79C22305501100D48779 /* jpeglib.h */,
+				1EBF79C32305501100D48779 /* jddctmgr.c */,
+				1EBF79C42305501100D48779 /* jdphuff.c */,
+				1EBF79C52305501100D48779 /* jerror.h */,
+				1EBF79C62305501100D48779 /* jidctfst.c */,
+				1EBF79C72305501100D48779 /* jdatasrc.c */,
+				1EBF79C82305501100D48779 /* jdhuff.c */,
+				1EBF79C92305501100D48779 /* jdinput.c */,
+				1EBF79CA2305501100D48779 /* jdtrans.c */,
+				1EBF79CB2305501100D48779 /* jcmaster.c */,
+				1EBF79CC2305501100D48779 /* jdapistd.c */,
+				1EBF79CD2305501100D48779 /* jcapimin.c */,
+				1EBF79CE2305501100D48779 /* jdmarker.c */,
+				1EBF79CF2305501100D48779 /* jdmerge.c */,
+				1EBF79D02305501200D48779 /* jdcolor.c */,
+				1EBF79D12305501200D48779 /* transupp.c */,
+				1EBF79D22305501200D48779 /* jfdctflt.c */,
+				1EBF79D32305501200D48779 /* jcparam.c */,
+				1EBF79D42305501200D48779 /* jccoefct.c */,
+				1EBF79D52305501200D48779 /* jfdctint.c */,
+				1EBF79D62305501200D48779 /* jcsample.c */,
+				1EBF79D72305501200D48779 /* jcmainct.c */,
+				1EBF79D82305501200D48779 /* jchuff.c */,
+				1EBF79D92305501200D48779 /* jmemnobs.c */,
+				1EBF79DA2305501200D48779 /* README */,
+				1EBF79DB2305501200D48779 /* changes to libjpeg for JUCE.txt */,
+				1EBF79DC2305501200D48779 /* jcprepct.c */,
+				1EBF79DD2305501200D48779 /* jdhuff.h */,
+				1EBF79DE2305501200D48779 /* jmemsys.h */,
+				1EBF79DF2305501200D48779 /* jccolor.c */,
+				1EBF79E02305501200D48779 /* jerror.c */,
+				1EBF79E12305501200D48779 /* jquant1.c */,
+				1EBF79E22305501200D48779 /* jcdctmgr.c */,
+				1EBF79E32305501200D48779 /* jutils.c */,
+				1EBF79E42305501200D48779 /* jconfig.h */,
+				1EBF79E52305501200D48779 /* jcapistd.c */,
+				1EBF79E62305501200D48779 /* jmorecfg.h */,
+				1EBF79E72305501200D48779 /* jfdctfst.c */,
+				1EBF79E82305501200D48779 /* jdmaster.c */,
+				1EBF79E92305501200D48779 /* jdct.h */,
+				1EBF79EA2305501200D48779 /* jversion.h */,
+				1EBF79EB2305501200D48779 /* cderror.h */,
+				1EBF79EC2305501200D48779 /* jinclude.h */,
+				1EBF79ED2305501200D48779 /* jcomapi.c */,
+				1EBF79EE2305501200D48779 /* jcphuff.c */,
+				1EBF79EF2305501200D48779 /* transupp.h */,
+				1EBF79F02305501200D48779 /* jmemmgr.c */,
+				1EBF79F12305501300D48779 /* jcmarker.c */,
+				1EBF79F22305501300D48779 /* jquant2.c */,
+				1EBF79F32305501300D48779 /* jidctint.c */,
+				1EBF79F42305501300D48779 /* jdapimin.c */,
+				1EBF79F52305501300D48779 /* jctrans.c */,
+				1EBF79F62305501300D48779 /* jidctflt.c */,
+				1EBF79F72305501300D48779 /* jcinit.c */,
+				1EBF79F82305501300D48779 /* jchuff.h */,
+				1EBF79F92305501300D48779 /* jdmainct.c */,
+				1EBF79FA2305501300D48779 /* jdcoefct.c */,
+				1EBF79FB2305501300D48779 /* jdsample.c */,
+				1EBF79FC2305501300D48779 /* jidctred.c */,
+				1EBF79FD2305501300D48779 /* jpegint.h */,
+				1EBF79FE2305501300D48779 /* jdpostct.c */,
+			);
+			path = jpglib;
+			sourceTree = "<group>";
+		};
+		1EBF7A012305501300D48779 /* geometry */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF7A022305501300D48779 /* juce_PathIterator.h */,
+				1EBF7A032305501300D48779 /* juce_EdgeTable.h */,
+				1EBF7A042305501300D48779 /* juce_AffineTransform.cpp */,
+				1EBF7A052305501300D48779 /* juce_Line.h */,
+				1EBF7A062305501300D48779 /* juce_BorderSize.h */,
+				1EBF7A072305501300D48779 /* juce_RectangleList.h */,
+				1EBF7A082305501300D48779 /* juce_Parallelogram.h */,
+				1EBF7A092305501300D48779 /* juce_PathIterator.cpp */,
+				1EBF7A0A2305501300D48779 /* juce_Path.cpp */,
+				1EBF7A0B2305501300D48779 /* juce_Rectangle.h */,
+				1EBF7A0C2305501300D48779 /* juce_PathStrokeType.cpp */,
+				1EBF7A0D2305501300D48779 /* juce_Path.h */,
+				1EBF7A0E2305501300D48779 /* juce_Point.h */,
+				1EBF7A0F2305501300D48779 /* juce_PathStrokeType.h */,
+				1EBF7A102305501300D48779 /* juce_EdgeTable.cpp */,
+				1EBF7A112305501300D48779 /* juce_AffineTransform.h */,
+			);
+			path = geometry;
+			sourceTree = "<group>";
+		};
+		1EBF7A122305501300D48779 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF7A132305501400D48779 /* juce_AttributedString.cpp */,
+				1EBF7A142305501400D48779 /* juce_GlyphArrangement.cpp */,
+				1EBF7A152305501400D48779 /* juce_GlyphArrangement.h */,
+				1EBF7A162305501400D48779 /* juce_Font.h */,
+				1EBF7A172305501400D48779 /* juce_CustomTypeface.cpp */,
+				1EBF7A182305501400D48779 /* juce_Typeface.cpp */,
+				1EBF7A192305501400D48779 /* juce_Font.cpp */,
+				1EBF7A1A2305501400D48779 /* juce_TextLayout.h */,
+				1EBF7A1B2305501400D48779 /* juce_CustomTypeface.h */,
+				1EBF7A1C2305501400D48779 /* juce_AttributedString.h */,
+				1EBF7A1D2305501400D48779 /* juce_TextLayout.cpp */,
+				1EBF7A1E2305501400D48779 /* juce_Typeface.h */,
+			);
+			path = fonts;
+			sourceTree = "<group>";
+		};
+		1EBF7A1F2305501400D48779 /* effects */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF7A202305501400D48779 /* juce_ImageEffectFilter.h */,
+				1EBF7A212305501400D48779 /* juce_GlowEffect.cpp */,
+				1EBF7A222305501400D48779 /* juce_DropShadowEffect.h */,
+				1EBF7A232305501400D48779 /* juce_GlowEffect.h */,
+				1EBF7A242305501400D48779 /* juce_DropShadowEffect.cpp */,
+			);
+			path = effects;
+			sourceTree = "<group>";
+		};
+		1EBF7A252305501400D48779 /* colour */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF7A262305501400D48779 /* juce_ColourGradient.cpp */,
+				1EBF7A272305501400D48779 /* juce_Colours.h */,
+				1EBF7A282305501400D48779 /* juce_PixelFormats.h */,
+				1EBF7A292305501400D48779 /* juce_Colours.cpp */,
+				1EBF7A2A2305501400D48779 /* juce_FillType.h */,
+				1EBF7A2B2305501400D48779 /* juce_Colour.cpp */,
+				1EBF7A2C2305501400D48779 /* juce_Colour.h */,
+				1EBF7A2D2305501400D48779 /* juce_ColourGradient.h */,
+				1EBF7A2E2305501400D48779 /* juce_FillType.cpp */,
+			);
+			path = colour;
+			sourceTree = "<group>";
+		};
+		1EBF7A312305501400D48779 /* placement */ = {
+			isa = PBXGroup;
+			children = (
+				1EBF7A322305501400D48779 /* juce_Justification.h */,
+				1EBF7A332305501400D48779 /* juce_RectanglePlacement.cpp */,
+				1EBF7A342305501500D48779 /* juce_RectanglePlacement.h */,
+			);
+			path = placement;
 			sourceTree = "<group>";
 		};
 		911B65D8206920FE00464E16 /* Products */ = {
@@ -6274,12 +6710,14 @@
 				1EC13FA523044BFA008A796B /* kiss_fft.h in Headers */,
 				1EC13FA623044BFA008A796B /* kissfft.hh in Headers */,
 				1EC13FA723044BFA008A796B /* kfc.h in Headers */,
+				1EBF7A3A2305587B00D48779 /* juce_GraphicsContext.h in Headers */,
 				1EC13FA823044BFA008A796B /* bach_strparser_tab.h in Headers */,
 				1EC13FA923044BFA008A796B /* kiss_fftnd.h in Headers */,
 				1EC13FAA23044BFA008A796B /* kiss_fftndr.h in Headers */,
 				1EC13FAB23044BFA008A796B /* bach_strparser_lex.h in Headers */,
 				1EC13FAC23044BFA008A796B /* kiss_fftr.h in Headers */,
 				1EC13FAD23044BFA008A796B /* config.h in Headers */,
+				1EBF7A362305502C00D48779 /* juce_Colour.h in Headers */,
 				1EC13FAE23044BFA008A796B /* mxml-private.h in Headers */,
 				1EC13FAF23044BFA008A796B /* mxml.h in Headers */,
 				1EC13FB023044BFA008A796B /* bach_doc_groups.h in Headers */,
@@ -6322,6 +6760,7 @@
 				1EC13FD523044BFA008A796B /* SdifFrame.h in Headers */,
 				1EC13FD623044BFA008A796B /* SdifFrameType.h in Headers */,
 				1EC13FD723044BFA008A796B /* SdifFRead.h in Headers */,
+				1EBF7A3D23055F1000D48779 /* juce_Path.h in Headers */,
 				1EC13FD823044BFA008A796B /* bach_jitclang.h in Headers */,
 				1EC13FD923044BFA008A796B /* SdifFScan.h in Headers */,
 				1EC13FDA23044BFA008A796B /* SdifFWrite.h in Headers */,
@@ -12349,6 +12788,7 @@
 				1EC13FFD23044BFA008A796B /* mxml-node.c in Sources */,
 				1EC13FFE23044BFA008A796B /* mxml-private.c in Sources */,
 				1EC13FFF23044BFA008A796B /* mxml-search.c in Sources */,
+				1EBF7A3C23055F1000D48779 /* juce_Path.cpp in Sources */,
 				1EC1400023044BFA008A796B /* mxml-set.c in Sources */,
 				1EC1400223044BFA008A796B /* bach_codableobj.cpp in Sources */,
 				1EC1400323044BFA008A796B /* notation_files.c in Sources */,
@@ -12382,6 +12822,7 @@
 				1EC1402023044BFA008A796B /* SdifCheck.c in Sources */,
 				1EC1402123044BFA008A796B /* SdifConvToText.c in Sources */,
 				1EC1402223044BFA008A796B /* SdifErrMess.c in Sources */,
+				1EBF7A392305587B00D48779 /* juce_GraphicsContext.cpp in Sources */,
 				1EC1402323044BFA008A796B /* SdifFGet.c in Sources */,
 				1EC1402423044BFA008A796B /* SdifFile.c in Sources */,
 				1EC1402523044BFA008A796B /* SdifFPrint.c in Sources */,

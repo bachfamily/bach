@@ -26,7 +26,11 @@
 
 #ifdef BACH_JUCE
 #include "bach_jucewrapper.h"
-#include "juce_paint_wrappers.h"
+#include "juce_Colour.h"
+#include "juce_GraphicsContext.h"
+
+using namespace juce;
+//#include "juce_paint_wrappers.h"
 
 
 /**
@@ -38,7 +42,12 @@
  
  */
 
-char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen)
+unsigned short *charset_utf8tounicode(char *s, long *outlen)
+{
+    return NULL; // for now, TO DO
+}
+
+char *charset_unicodetoutf8(unicodeChar *uni, long len, long *outlen)
 {
     // determine how many bytes are needed for the complete conversion
     int i;
@@ -52,7 +61,7 @@ char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen)
             len++;
     }
     
-    for (i = 0, thisUni = uni; i < len, *thisUni; i++, thisUni++) {
+    for (i = 0, thisUni = uni; i < len && *thisUni; i++, thisUni++) {
         if (*thisUni < 0x80)
             ++bytesNeeded;
         else if (*thisUni < 0x0800)
@@ -98,14 +107,23 @@ char *charset_unicodetoutf8_debug(unicodeChar *uni, long len, long *outlen)
     return utf8;
 }
 
-void jgraphics_set_source_jrgba (t_jgraphics *g, t_jrgba *color)
+void jgraphics_set_source_jrgba(t_jgraphics *g, t_jrgba *color)
 {
-    Colour col ((uint8) jlimit (0, 0xff, roundToInt (color->red * 255.0f)),
-                (uint8) jlimit (0, 0xff, roundToInt (color->green * 255.0f)),
-                (uint8) jlimit (0, 0xff, roundToInt (color->blue * 255.0f)),
-                (uint8) jlimit (0, 0xff, roundToInt (color->alpha * 255.0f)));
+    Colour col ((uint8_t) jlimit (0, 0xff, roundToInt (color->red * 255.0f)),
+                (uint8_t) jlimit (0, 0xff, roundToInt (color->green * 255.0f)),
+                (uint8_t) jlimit (0, 0xff, roundToInt (color->blue * 255.0f)),
+                (uint8_t) jlimit (0, 0xff, roundToInt (color->alpha * 255.0f)));
     g->setColour(col);
 } 
+
+void jgraphics_set_source_rgba(t_jgraphics *g, double red, double green, double blue, double alpha)
+{
+    Colour col ((uint8_t) jlimit (0, 0xff, roundToInt (red * 255.0f)),
+                (uint8_t) jlimit (0, 0xff, roundToInt (green * 255.0f)),
+                (uint8_t) jlimit (0, 0xff, roundToInt (blue * 255.0f)),
+                (uint8_t) jlimit (0, 0xff, roundToInt (alpha * 255.0f)));
+    g->setColour(col);
+}
 
 void jfont_text_measure(t_jfont *font, const char *text, double *width, double *height)
 {
@@ -123,12 +141,12 @@ void jfont_text_measure(t_jfont *font, const char *text, double *width, double *
     *height = r.getHeight();
 }
 
-t_jfont* jfont_create_debug(const char *family, t_jgraphics_font_slant slant, t_jgraphics_font_weight weight, double size) 
+t_jfont* jfont_create(const char *family, t_jgraphics_font_slant slant, t_jgraphics_font_weight weight, double size)
 {
     return new Font(family, size, slant | weight);
 }
 
-void jfont_destroy_debug(t_jfont *f)
+void jfont_destroy(t_jfont *f)
 {
     delete f;
 }
@@ -244,8 +262,15 @@ void paint_rectangle_rounded(t_jgraphics* g, t_jrgba border_color, t_jrgba fill_
     jgraphics_set_source_jrgba (g, &border_color);
     g->drawRoundedRectangle(x1, y1, width, height, cornerSize, border_width);
 } 
- 
-void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height, long justificationFlags)
+
+void paint_rect(t_jgraphics* g, t_rect *rect, t_jrgba *border_color, t_jrgba *fill_color, double border_width, double corner_roundness)
+{
+    paint_rectangle(g, *border_color, *fill_color, rect->x, rect->y, rect->width, rect->height, border_width);
+}
+
+
+
+void write_text_simple(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text, double x1, double y1, double max_width, double max_height)
 {
     g->setFont(*jf);
 //    g->setFont(Font(String("Maestro"), 24., 0));
@@ -261,6 +286,43 @@ void write_text(t_jgraphics* g, t_jfont* jf, t_jrgba textcolor, const char *text
     jgraphics_set_source_jrgba (g, &textcolor);
     g->drawFittedText(CharPointer_UTF8 (text), x1, y1, max_width, max_height, justificationFlags, single_line ? 1 : 255, 0.8);
 }
+
+
+t_jsurface* jgraphics_image_surface_create_from_resource(const void* moduleRef, const char *resname)
+{
+    return NULL;
+}
+
+int jgraphics_image_surface_get_height(t_jsurface *s)
+{
+    return 0;
+}
+
+int jgraphics_image_surface_get_width(t_jsurface *s)
+{
+    return 0;
+}
+
+void jgraphics_surface_destroy(t_jsurface *s)
+{
+    ;
+}
+
+void jmouse_setcursor_surface(t_object *patcherview, t_object *box, t_jsurface *surface, int xHotSpot, int yHotSpot)
+{
+    ;
+}
+
+void jgraphics_image_surface_draw(t_jgraphics *g, t_jsurface *s, t_rect srcRect, t_rect destRect)
+{
+    ;
+}
+
+void jmouse_setcursor(t_object *patcherview, t_object *box, t_jmouse_cursortype type)
+{
+    ;
+}
+
 
 #endif
 

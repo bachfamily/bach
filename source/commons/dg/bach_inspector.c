@@ -621,6 +621,7 @@ void paint_bach_inspector_items(t_notation_obj *r_ob, t_bach_inspector_manager *
 				write_text(g, jf_text, inactive ? inactive_color : text_color_no_correction, content_txt, column2_x, ypos + step_vpad_before_text, column2b_x - column2_x, row_vheight, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_VCENTERED, true, true);
 				
 				// triangle
+#ifdef BACH_MAX // TO DO FOR JUCE
 				jgraphics_set_source_jrgba(g, &umenu_color);
 				jgraphics_set_line_width(g, 0.);
 				jgraphics_move_to(g, column2b_x + 2 * zoom, ypos + step_vpad_before_text + 4 * zoom);
@@ -628,7 +629,8 @@ void paint_bach_inspector_items(t_notation_obj *r_ob, t_bach_inspector_manager *
 				jgraphics_line_to(g, column2b_x + 6 * zoom, ypos + ystep - 5 * zoom);
 				jgraphics_close_path(g); 
 				jgraphics_fill(g);
-				
+#endif
+                
 			} else if (attr->display_type == k_BACH_ATTR_DISPLAY_CHAR) {
 				content_txt = get_bach_attribute_as_character(man, obj, &man->attr_manager->attr[obj_type][i]);
 				write_text(g, jf_text, inactive ? inactive_color : text_color, content_txt, column2_x, ypos + step_vpad_before_text, rect.width - column2_x, row_vheight, JGRAPHICS_TEXT_JUSTIFICATION_LEFT + JGRAPHICS_TEXT_JUSTIFICATION_VCENTERED, true, true);
