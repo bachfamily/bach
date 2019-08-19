@@ -8803,16 +8803,20 @@ t_llll* get_all_extras_values_as_llll(t_score *x, char tree)
                 t_note *temp_note = temp_chord->firstnote;
 //                t_llll* graphic_subllll = llll_get();
                 t_llll* breakpoints_subllll = llll_get();
-                t_llll* slots_subllll = llll_get();
-                while (temp_note) { // append chord lllls
-//                    llll_appendllll(graphic_subllll, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
-                    llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
-                    llll_appendllll(slots_subllll, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, temp_note, false), 0, WHITENULL_llll);
-                    temp_note = temp_note->next;
+                if (!temp_note) {
+                    llll_appendllll(slots_measllll, notation_item_get_slots_values_no_header_as_llll((t_notation_obj *) x, (t_notation_item *)temp_chord, false));
+                } else {
+                    t_llll* slots_subllll = llll_get();
+                    while (temp_note) { // append chord lllls
+                        //                    llll_appendllll(graphic_subllll, note_get_graphic_values_no_router_as_llll((t_notation_obj *) x, temp_note), 0, WHITENULL_llll);
+                        llll_appendllll(breakpoints_subllll, note_get_breakpoints_values_no_router_as_llll((t_notation_obj *) x, temp_note));
+                        llll_appendllll(slots_subllll, note_get_slots_values_no_header_as_llll((t_notation_obj *) x, temp_note, false));
+                        temp_note = temp_note->next;
+                    }
+                    llll_appendllll(slots_measllll, slots_subllll, 0, WHITENULL_llll);
                 }
 //                llll_appendllll(graphic_measllll, graphic_subllll, 0, WHITENULL_llll);
                 llll_appendllll(breakpoints_measllll, breakpoints_subllll, 0, WHITENULL_llll);
-                llll_appendllll(slots_measllll, slots_subllll, 0, WHITENULL_llll);
                 temp_chord = temp_chord->next;
             }
             

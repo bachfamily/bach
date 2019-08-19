@@ -28703,22 +28703,30 @@ t_llll* note_get_breakpoints_values_no_router_as_llll(t_notation_obj *r_ob, t_no
     return outllll;
 }
 
-t_llll* note_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t_note *note, char force_all_slots){
+t_llll* notation_item_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char force_all_slots)
+{
     t_llll *outllll;
     char needslots = 0; long i;
     for (i=0; i<CONST_MAX_SLOTS; i++) {
-        if (note->slot[i].firstitem) {
+        if (notation_item_get_slot_firstitem(r_ob, nitem, i)) {
             needslots = 1;
             break;
         }
     }
     if (needslots) {
-        outllll = note_get_slots_values_as_llll(r_ob, note, k_CONSIDER_FOR_DUMPING, force_all_slots);
+        outllll = notation_item_get_slots_values_as_llll(r_ob, nitem, k_CONSIDER_FOR_DUMPING, force_all_slots);
         llll_behead(outllll);
     } else {
         outllll = llll_get();
     }
     return outllll;
+}
+
+
+
+t_llll* note_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t_note *note, char force_all_slots)
+{
+    return notation_item_get_slots_values_no_header_as_llll(r_ob, (t_notation_item *)note, force_all_slots);
 }
 
 

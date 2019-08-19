@@ -8558,6 +8558,18 @@ t_llll* get_single_slotinfo_as_llll(t_notation_obj *r_ob, long slotnum, char exp
 t_llll* note_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t_note *note, char force_all_slots);
 
 
+/**    Just like notation_item_get_slots_values_as_llll() but it removes the gensym("slots") symbol.
+ The mode is by set as #k_CONSIDER_FOR_DUMPING.
+ @ingroup                    slots
+ @param    r_ob                The notation object
+ @param    nitem                The notation item
+ @param    force_all_slots        If this is 1 the algorithm will return all the note slots, if this is 0 (advised) only the one containing real slot information, and not the empty ones.
+ @return                        An llll containing all the notation item slots information (with no "slots" starting symbol).
+ @see                        notation_item_get_slots_values_as_llll;
+ */
+t_llll* notation_item_get_slots_values_no_header_as_llll(t_notation_obj *r_ob, t_notation_item *nitem, char force_all_slots);
+
+
 /**    From an llll containing the slot information, it set all the information to a note's slots.
     @ingroup            slots
     @param    r_ob        The notation object
