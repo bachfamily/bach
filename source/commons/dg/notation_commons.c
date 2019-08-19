@@ -25243,13 +25243,14 @@ void enharmonically_retranscribe_note(t_notation_obj *r_ob, t_note *note, char a
 
     
     note->parent->need_recompute_parameters = true;
+    note_compute_approximation(r_ob, note);
     if (note->parent->is_score_chord) { // only for score!
         note->parent->parent->need_check_ties = true;
         validate_accidentals_for_measure(r_ob, note->parent->parent);
+        recompute_all_measure_chord_parameters(r_ob, note->parent->parent);
         note->parent->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
         set_need_perform_analysis_and_change_flag(r_ob);
     }
-    note_compute_approximation(r_ob, note);
 }
 
 
@@ -32181,7 +32182,7 @@ void note_delete(t_notation_obj *r_ob, t_note *note, char need_recompute_total_l
         if (r_ob->obj_type == k_NOTATION_OBJECT_ROLL) {
             chord->need_recompute_parameters = true; // we have to recalculate chord parameters 
         } else if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE) {
-            recalculate_all_measure_chord_parameters(r_ob, chord->parent); // we have to recalculate chord parameters 
+            recompute_all_measure_chord_parameters(r_ob, chord->parent); // we have to recalculate chord parameters
             chord->parent->need_recompute_beams_positions = true;
             chord->parent->need_check_ties = true;
             chord->parent->need_check_autocompletion = true; 
@@ -32587,7 +32588,7 @@ char enharmonically_respell_selection(t_notation_obj *r_ob){
     return changed;
 }
 
-void recalculate_all_measure_chord_parameters(t_notation_obj *r_ob, t_measure *measure) 
+void recompute_all_measure_chord_parameters(t_notation_obj *r_ob, t_measure *measure)
 {
     // recalculate all the chords parameters in the measure *measure
     t_chord *temp_ch = measure->firstchord;
@@ -32661,7 +32662,7 @@ void recompute_all_for_measure_ext(t_notation_obj *r_ob, t_measure *meas, char a
     notation_obj_check(r_ob);
 #endif
 
-    recalculate_all_measure_chord_parameters(r_ob, meas);
+    recompute_all_measure_chord_parameters(r_ob, meas);
 
 #ifdef BACH_CHECK_NOTATION_ITEMS
     notation_obj_check_all_measure_tuttipoints(r_ob);

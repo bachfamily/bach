@@ -5454,7 +5454,7 @@ void set_stafflines_to_voice_from_llllelem(t_notation_obj *r_ob, t_voice *voice,
 	if (r_ob->obj_type == k_NOTATION_OBJECT_SCORE){
 		t_measure *meas;
 		for (meas = ((t_scorevoice *)voice)->firstmeasure; meas; meas = meas->next) {
-			recalculate_all_measure_chord_parameters(r_ob, meas);
+			recompute_all_measure_chord_parameters(r_ob, meas);
 			meas->need_recompute_beams_positions = true;
 		}
 		set_need_perform_analysis_and_change_flag(r_ob);

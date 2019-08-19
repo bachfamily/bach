@@ -4864,7 +4864,7 @@ char chord_merge_mc(t_score *x, t_chord *chord, double threshold_cents, char gat
             
         }
         if (changed) {
-            recalculate_all_measure_chord_parameters((t_notation_obj *)x, chord->parent);
+            recompute_all_measure_chord_parameters((t_notation_obj *)x, chord->parent);
             chord->parent->need_check_ties = true;
             chord->parent->need_recompute_beamings = true;
             chord->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;

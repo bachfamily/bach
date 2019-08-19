@@ -13739,12 +13739,12 @@ t_llll *measure_get_aligned_measures_as_llll(t_notation_obj *r_ob, t_measure *me
     @param    r_ob    The notation object
     @param    measure    The measure
  */
-void recalculate_all_measure_chord_parameters(t_notation_obj *r_ob, t_measure *measure);
+void recompute_all_measure_chord_parameters(t_notation_obj *r_ob, t_measure *measure);
 
 
 /**    Sets the flag to recompute rhythmic tree and graphical parameters for a given measure.
     This function actually properly sets the recalculation flags, and then the actual recomputing will be done inside the next paint cycle.
-    The function calls recalculate_all_measure_chord_parameters() and check_ties_around_measure(), sets the t_tuttipoint::need_recompute_spacing flag
+    The function calls recompute_all_measure_chord_parameters() and check_ties_around_measure(), sets the t_tuttipoint::need_recompute_spacing flag
     to #k_SPACING_RECALCULATE, sets the t_notation_object::need_perform_analysis_and_change flag, recomputes the t_notation_objec::domain_ux.
     If #also_recompute_beamings is true, it also sets t_measure::need_recompute_beamings and t_measure::need_check_autocompletion; otherwise it just
     sets #t_measure::need_recompute_beams_positions.

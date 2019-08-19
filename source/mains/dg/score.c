@@ -10672,7 +10672,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                 t_note *new_note = clone_note((t_notation_obj *) x, (t_note *)temp, k_CLONE_FOR_SAME_CHORD); // we clone the note
                                 note_insert((t_notation_obj *) x, ((t_note *)temp)->parent, new_note, 0);
                                 ((t_note *)temp)->parent->parent->need_recompute_beams_positions = true;
-                                recalculate_all_measure_chord_parameters((t_notation_obj *)x, ((t_note *)temp)->parent->parent);
+                                recompute_all_measure_chord_parameters((t_notation_obj *)x, ((t_note *)temp)->parent->parent);
                                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                                 x->r_ob.j_mousedrag_copy_ptr = new_note;
                                 // checking if we have to transfer the mousedown pointer
@@ -10699,7 +10699,7 @@ void score_mousedrag(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                                 x->r_ob.changed_while_dragging = true;
                                 ((t_chord *)temp)->parent->need_recompute_beams_positions = true;
                                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
-                                recalculate_all_measure_chord_parameters((t_notation_obj *)x, ((t_chord *)temp)->parent);
+                                recompute_all_measure_chord_parameters((t_notation_obj *)x, ((t_chord *)temp)->parent);
                                 x->r_ob.j_mousedrag_copy_ptr = ((t_chord *)temp);
                                 if (new_mousedown_note) {
                                     set_mousedown((t_notation_obj *) x, new_mousedown_note, k_NOTE);
@@ -11048,7 +11048,7 @@ char change_pitch_for_selection(t_score *x, double delta, char mode, char allow_
                 if (is_in_voiceensemble)
                     recompute_all_for_measures_in_voiceensemble((t_notation_obj *)x, oldch->parent, false);
                 else
-                    recalculate_all_measure_chord_parameters((t_notation_obj *)x, oldch->parent);
+                    recompute_all_measure_chord_parameters((t_notation_obj *)x, oldch->parent);
                 oldch->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
             }
             
@@ -11483,7 +11483,7 @@ void tie_untie_note_smart(t_score *x, t_note *nt, char *changed)
         *changed = 1;
         check_ties_around_measure(meas);
         meas->need_recompute_beamings = true;
-        recalculate_all_measure_chord_parameters((t_notation_obj *)x, meas);
+        recompute_all_measure_chord_parameters((t_notation_obj *)x, meas);
         meas->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
         set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
     }
@@ -11535,7 +11535,7 @@ char tie_untie_selection(t_score *x)
                     meas = ((t_note *)curr_it)->parent->parent;
                     check_ties_around_measure(meas);
                     meas->need_recompute_beamings = true;
-                    recalculate_all_measure_chord_parameters((t_notation_obj *)x, meas);
+                    recompute_all_measure_chord_parameters((t_notation_obj *)x, meas);
                     meas->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
                     set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                 }
@@ -11549,7 +11549,7 @@ char tie_untie_selection(t_score *x)
                     meas = ((t_chord *)curr_it)->parent;
                     check_ties_around_measure(meas);
                     meas->need_recompute_beamings = true;
-                    recalculate_all_measure_chord_parameters((t_notation_obj *)x, meas);
+                    recompute_all_measure_chord_parameters((t_notation_obj *)x, meas);
                     meas->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
                     set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
                 }
@@ -14066,7 +14066,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (is_in_voiceensemble) // rests floating position might change!
                     recompute_all_for_measures_in_voiceensemble((t_notation_obj *)x, tempch->parent, false);
                 else
-                    recalculate_all_measure_chord_parameters((t_notation_obj *)x, tempch->parent);
+                    recompute_all_measure_chord_parameters((t_notation_obj *)x, tempch->parent);
                 check_ties_around_measure(tempch->parent);
                 tempch->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
@@ -14077,7 +14077,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (is_in_voiceensemble) // rests floating position might change!
                     recompute_all_for_measures_in_voiceensemble((t_notation_obj *)x, tempch->parent, false);
                 else
-                    recalculate_all_measure_chord_parameters((t_notation_obj *)x, tempch->parent);
+                    recompute_all_measure_chord_parameters((t_notation_obj *)x, tempch->parent);
                 tempch->parent->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
             } else if (curr_it->type == k_MEASURE) {
@@ -14087,7 +14087,7 @@ void score_mouseup(t_score *x, t_object *patcherview, t_pt pt, long modifiers)
                 if (is_in_voiceensemble) // rests floating position might change!
                     recompute_all_for_measures_in_voiceensemble((t_notation_obj *)x, tempmeas, false);
                 else
-                    recalculate_all_measure_chord_parameters((t_notation_obj *)x, tempmeas);
+                    recompute_all_measure_chord_parameters((t_notation_obj *)x, tempmeas);
                 tempmeas->tuttipoint_reference->need_recompute_spacing = k_SPACING_RECALCULATE;
                 set_need_perform_analysis_and_change_flag((t_notation_obj *)x);
             }
