@@ -33,7 +33,7 @@ typedef struct _eval
     t_llll *n_triggers;
     long n_triggerInlets[256];
     long n_triggerInletsCount;
-    class t_sharedVariable *n_triggerVars[256];
+    class t_globalVariable *n_triggerVars[256];
     long n_triggerVarsCount;
     t_bach_atomic_lock n_triggers_lock;
     
