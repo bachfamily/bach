@@ -77,10 +77,11 @@ void pv_dblclick(t_pv *x);
 
 void pv_setpatchervariable(t_pv *x, t_symbol *name, t_patcherVariable *var);
 
+void pv_getVariable_do(t_object *x, t_symbol *name, short dummy_ac, t_atom *dummy_av);
+
 t_class *pv_class;
 
 extern t_bach* bach;
-pvManager* thePvManager = bach->b_thePvManager;
 
 int T_EXPORT main()
 {
@@ -224,7 +225,7 @@ void pv_assist(t_pv *x, void *b, long m, long a, char *s)
 
 void pv_free(t_pv *x)
 {
-    thePvManager->removeVariable(x->n_name, (t_object*) x);
+    bach->b_thePvManager->removeVariable(x->n_name, (t_object*) x);
     object_free_debug(x->m_editor);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
@@ -251,8 +252,8 @@ t_pv *pv_new(t_symbol *s, short ac, t_atom *av)
 			return NULL;
 		}
 		name = atom_getsym(av);
-        x->n_var = thePvManager->getVariable(name, (t_object *) x);
-
+        
+        defer_low(x, (method) pv_getVariable_do, name, 0, nullptr);
 		x->n_name = name;
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "4");
@@ -265,3 +266,10 @@ t_pv *pv_new(t_symbol *s, short ac, t_atom *av)
 	object_free(x); // unlike freeobject(), this works even if the argument is NULL
 	return NULL;
 }
+
+void pv_getVariable_do(t_object *x, t_symbol *name, short dummy_ac, t_atom *dummy_av)
+{
+    // also calls the setpatchervariable method
+    bach->b_thePvManager->getVariable(name, x);
+}
+
