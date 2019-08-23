@@ -64,6 +64,13 @@ void eval_dblclick(t_eval *x);
 //void bifSetup();
 void eval_ownedFunctionsSetup(t_eval *x);
 
+
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_eval, n_triggers, eval_getattr_triggers);
+t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av);
+
+t_max_err eval_check_triggers_llll(t_eval *x, t_llll *ll);
+
+
 t_class *eval_class;
 
 
@@ -155,6 +162,16 @@ int T_EXPORT main()
     // @description When set to 1, the stored code is automatically run at startup.
     // @copy BACH_DOC_STATIC_ATTR
 
+    CLASS_ATTR_LLLL(c, "triggers", 0, t_eval, n_triggers, eval_getattr_triggers, eval_setattr_triggers);
+    CLASS_ATTR_LABEL(c, "triggers", 0, "Triggers");
+    // @description A list setting which inlets are "hot" (i.e., which will will trigger the result).
+    // Inlets are counted from 1. 0 means that all inlets are hot.
+    // Negative indices are counted from the right (e.g., -1 means the rightmost inlet).
+    // <m>null</m> means that all inlets are cold,
+    // but a <m>bang</m> in any inlet will still cause the llll to be output.
+    // The default is 1.
+    
+    
     llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
     // @copy BACH_DOC_STATIC_ATTR
 
@@ -169,6 +186,63 @@ int T_EXPORT main()
     return 0;
 }
 
+
+t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av)
+{
+    t_llll *ll;
+    if (ac == 0 || av) {
+        if ((ll = llllobj_parse_llllattr_llll((t_object *) x, LLLL_OBJ_VANILLA, ac, av))) {
+            t_llll *free_me;
+            if (eval_check_triggers_llll(x, ll) != MAX_ERR_NONE) {
+                llll_free(ll);
+                return MAX_ERR_NONE;
+            }
+            
+            for (long i = 0; i < x->n_triggerVarsCount; i++) {
+                x->n_triggerVars[i]->removeObject((t_object *) x);
+            }
+            
+            x->n_triggerInletsCount = 0;
+            x->n_triggerVarsCount = 0;
+            for (t_llllelem *elem = ll->l_head; elem; elem = elem->l_next) {
+                
+            }
+            
+            bach_atomic_lock(&x->n_triggers_lock);
+            free_me = x->n_triggers;
+            x->n_triggers = ll;
+            bach_atomic_unlock(&x->n_triggers_lock);
+            llll_free(free_me);
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+t_max_err eval_check_triggers_llll(t_eval *x, t_llll *ll)
+{
+    t_llllelem *elem;
+    if (ll->l_depth > 2)
+        goto eval_check_triggers_llll_error;
+        for (elem = ll->l_head; elem; elem = elem->l_next) {
+        if (!hatom_is_number(&elem->l_hatom)) {
+            if (t_llll *sub_ll = hatom_getllll(&elem->l_hatom); sub_ll) {
+                if (sub_ll->l_size > 2)
+                    goto eval_check_triggers_llll_error;
+                if (sub_ll->l_head->l_hatom.h_type != H_SYM)
+                    goto eval_check_triggers_llll_error;
+                if (sub_ll->l_size == 2 && !hatom_is_number(&sub_ll->l_tail->l_hatom))
+                    goto eval_check_triggers_llll_error;
+            } else if (elem->l_hatom.h_type != H_SYM) {
+                goto eval_check_triggers_llll_error;
+            }
+        }
+    }
+    return MAX_ERR_NONE;
+    
+eval_check_triggers_llll_error:
+    object_error((t_object *) x, "Bad triggers llll");
+    return MAX_ERR_GENERIC;
+}
 
 void eval_dblclick(t_eval *x)
 {

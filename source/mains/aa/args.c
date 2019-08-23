@@ -60,6 +60,8 @@
 #include "jpatcher_api.h"
 #include "chkparser.h"
 
+#include "bach_maxutils.h"
+
 #define MAX_ATTRS 256
 
 typedef struct _args
@@ -526,8 +528,7 @@ void args_dopargs(t_args *x, t_symbol *msg, long argc, t_atom *argv)
 		return;
 	}
 	
-	object_obex_lookup(x, gensym("#P"), (t_object **) &patcher);
-	
+    patcher = obj_getpatcher((t_object *) x);
     x->n_patcher = patcher;
     
 	if (!(box = object_attr_getobj(patcher, _sym_box)))
