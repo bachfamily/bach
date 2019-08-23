@@ -225,7 +225,8 @@ void pv_assist(t_pv *x, void *b, long m, long a, char *s)
 
 void pv_free(t_pv *x)
 {
-    bach->b_thePvManager->removeVariable(x->n_name, (t_object*) x);
+    if (x->n_var)
+        bach->b_thePvManager->removeVariable(x->n_name, (t_object*) x);
     object_free_debug(x->m_editor);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
