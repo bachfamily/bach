@@ -37,6 +37,9 @@ Scroll down for very important things you should now about v0.8b
 - bach.partition
 		Now when partitions of 0 are requested a "null" list is output.
 
+- bach.value
+        The value contained in bach.value is kept even if all the bach.value objects are destroyed.
+
 ***********************
 *** VERSION CHANGES ***
 ***********************
@@ -114,7 +117,11 @@ Scroll down for very important things you should now about v0.8b
 		Now weak and hungry engines also accept and deal with non-integer scores
 		Fixed bug causing crashes with provisionals in parallel mode
 
-- bach.delace	Fixed crash in modo mode without count argument
+- bach.delace	Fixed crash in mono mode without count argument
+
+- bach.value
+        The value contained in bach.value is kept even if all the bach.value objects are destroyed.
+        New @auto attribute.
 
 v0.8b
 
