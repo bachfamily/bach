@@ -199,7 +199,7 @@ t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av)
             }
             
             for (long i = 0; i < x->n_triggerVarsCount; i++) {
-                x->n_triggerVars[i]->removeObject((t_object *) x);
+                x->n_triggerVars[i]->removeClient((t_object *) x);
             }
             
             x->n_triggerInletsCount = 0;

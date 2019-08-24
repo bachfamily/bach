@@ -165,7 +165,7 @@ void pv_edclose(t_pv *x, char **ht, long size)
     if (ht) {
         t_llll *ll = llll_from_text_buf(*ht, size > MAX_SYM_LENGTH);
         if (ll) {
-            x->n_var->set(ll);
+            x->n_var->set(ll, (t_object *) x);
             llll_free(ll);
         } else
             object_error((t_object *)x, "Can't modify llll: it is wrongly formatted.");
@@ -208,7 +208,7 @@ void pv_anything(t_pv *x, t_symbol *msg, long ac, t_atom *av)
 	t_llll *in_ll = llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, LLLL_PARSE_RETAIN);
 	if (!in_ll)
 		return;
-    x->n_var->set(in_ll);
+    x->n_var->set(in_ll, (t_object *) x);
     llll_free(in_ll);
 }
 
