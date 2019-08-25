@@ -154,7 +154,7 @@ t_max_err pv_setattr_auto(t_pv *x, t_object *attr, long ac, t_atom *av)
             return MAX_ERR_NONE;
         switch (val) {
             case 0: {
-                bach->b_thePvManager->removeClient(x->n_name, (t_object *) x, x->n_auto[2]);
+                bach->b_thePvManager->removeClient(x->n_name, (t_object *) x);
                 x->n_auto[0] = 0;
                 break;
             }
@@ -265,7 +265,7 @@ void pv_assist(t_pv *x, void *b, long m, long a, char *s)
 void pv_free(t_pv *x)
 {
     if (x->n_var) {
-        bach->b_thePvManager->removeVariable(x->n_name, (t_object*) x, x->n_auto[1]);
+        bach->b_thePvManager->removeVariable(x->n_name, (t_object*) x);
     }
     object_free_debug(x->m_editor);
 	llllobj_obj_free((t_llllobj_object *) x);

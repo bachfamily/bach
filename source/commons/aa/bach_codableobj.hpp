@@ -63,6 +63,10 @@ t_max_err codableobj_buildAst(t_codableobj *x,
 
 void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av);
 
+void codableobj_resolvepatchervars(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
+
+void codableobj_setpatchervariable(t_codableobj *x, t_symbol *name, class t_patcherVariable *var);
+
 void codableobj_dblclick(t_codableobj *x);
 
 void codableobj_okclose(t_codableobj *x, char *s, short *result);

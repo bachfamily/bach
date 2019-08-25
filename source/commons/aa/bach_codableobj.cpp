@@ -259,6 +259,18 @@ long codableobj_parseLambdaAttrArg(t_codableobj *x, short *ac, t_atom *av)
     return 0;
 }
 
+void codableobj_resolvepatchervars(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
+{
+    x->c_main->resolvePatcherVars();
+}
+
+void codableobj_setpatchervariable(t_codableobj *x, t_symbol *name, t_patcherVariable *var)
+{
+    x->c_main->setPatcherVar(name, var);
+}
+
+
+
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_codableobj, c_paramsll, codableobj_params_get)
 
 void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
@@ -631,6 +643,7 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
         sysmem_freeptr(oldText);
         if (oldMain)
             oldMain->decrease();
+        codableobj_resolvepatchervars(x, NULL, 0, NULL);
         if (x->c_auto)
             object_method(x, _sym_bang);
     } else {
@@ -660,6 +673,9 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
+    
+    
+    class_addmethod(c, (method)codableobj_setpatchervariable, "setpatchervariable", A_CANT, 0);
     
     CLASS_ATTR_ATOM_LONG(c, "maxtime",    0,    t_codableobj, c_maxtime);
     CLASS_ATTR_LABEL(c, "maxtime", 0, "Maximum Duration Of Evaluation");

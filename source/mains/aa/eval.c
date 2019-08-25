@@ -452,8 +452,10 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         d = (t_dictionary *)gensym("#D")->s_thing;
         codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
         
-        if (x->n_ob.c_main)
+        if (x->n_ob.c_main) {
             x->n_ob.c_main->setOutlets(x->n_dataOutlets);
+            defer_low(x, (method)codableobj_resolvepatchervars, NULL, 0, NULL);
+        }
 
     } else
         error(BACH_CANT_INSTANTIATE);
@@ -481,3 +483,4 @@ void eval_ownedFunctionsSetup(t_eval *x)
     (*x->n_ob.c_ofTable)["directin"] = new t_fnDirectin(x);
     (*x->n_ob.c_ofTable)["print"] = new t_fnPrint((t_object *) x);
 }
+
