@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 100.0, 100.0, 635.0, 394.0 ],
+		"rect" : [ 502.0, 170.0, 635.0, 394.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 635.0, 368.0 ],
+						"rect" : [ 502.0, 196.0, 635.0, 368.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -173,8 +173,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 34.0, 202.0, 386.0, 65.0 ],
-									"text" : "If the @auto value has a second integer value, it sets the priority at which the bach.value object will automatically output the value, with respect to the other bach.value objects of the same name.\nThe higher the priority, the earlier the object will fire.",
+									"patching_rect" : [ 34.0, 202.0, 402.0, 65.0 ],
+									"text" : "If the @auto attribute has a second integer value, it sets the priority at which the bach.value object will automatically output the value, with respect to the other bach.value objects of the same name.\nThe higher the priority, the earlier the object will fire.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
 
@@ -261,7 +261,6 @@
 					}
 ,
 					"patching_rect" : [ 42.0, 146.0, 55.0, 22.0 ],
-					"presentation_linecount" : 3,
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -388,7 +387,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 251.0, 577.0, 94.0 ],
+									"patching_rect" : [ 10.0, 251.0, 581.0, 94.0 ],
 									"text" : "The documentation of previous versions of bach stated that it is perfectly safe to use regular send/receive pairs with lllls. In fact, this is not completely accurate, as there are scenarios in which it might not work.\nUsing networks of bach.value objects, on the other hand, is guaranteed to always work.\nIf you prefer a more traditional interface, you can use the bach.send/bach.receive modules instead, which in fact are just wrappers for bach.value @auto 1.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -490,7 +489,6 @@
 					}
 ,
 					"patching_rect" : [ 22.0, 117.0, 42.0, 22.0 ],
-					"presentation_linecount" : 2,
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -639,7 +637,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 261.0, 124.5, 308.0, 94.0 ],
+									"patching_rect" : [ 261.0, 124.5, 312.0, 94.0 ],
 									"text" : "Whereas there are no intrinsic limitations for naming bach.value objects, it is good practice to comply with the same rules and criteria as variables in bell.\nIn a nutshell, bach.value names should start with an uppercase letter; only contain letters, numbers and underscores; and end with a letter or a number.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -886,7 +884,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 635.0, 368.0 ],
+						"rect" : [ 0.0, 26.0, 635.0, 368.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,

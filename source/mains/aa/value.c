@@ -123,7 +123,7 @@ int T_EXPORT main()
     CLASS_ATTR_LABEL(c, "auto", 0, "Automatically output llll");
     CLASS_ATTR_BASIC(c, "auto", 0);
     // @description When set to 1, the stored llll is automatically output
-    // whenever it is set by another object.<br/>
+    // whenever it is set by another object of the same name.<br/>
     // An optional second integer sets the priority (defaulting to 0):
     // the priority controls the order in which different bach.value objects
     // of the same name (and with the <b>auto</b> attribute switched on)
@@ -149,7 +149,7 @@ t_max_err value_setattr_auto(t_v *x, t_object *attr, long ac, t_atom *av)
             return MAX_ERR_NONE;
         switch (val) {
             case 0: {
-                x->n_var->getVar()->removeClient((t_object *) x);
+                x->n_var->getVar()->clients.erase({(t_object *) x, x->n_auto[1]});
                 x->n_auto[0] = 0;
                 break;
             }
@@ -253,7 +253,7 @@ void value_assist(t_v *x, void *b, long m, long a, char *s)
 void value_free(t_v *x)
 {
     if (x->n_auto[0] && x->n_var)
-        x->n_var->getVar()->removeClient((t_object *) x);
+        x->n_var->getVar()->clients.erase({(t_object *) x, x->n_auto[1]});
     object_free_debug(x->m_editor);
     llllobj_obj_free((t_llllobj_object *) x);
 }

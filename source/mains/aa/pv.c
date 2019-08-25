@@ -53,7 +53,7 @@ typedef struct _pv
 	t_symbol		    *n_name;
     
     t_patcherVariable   *n_var;
-    
+    long                n_auto[2];
     t_object            *m_editor;
 } t_pv;
 
@@ -78,6 +78,8 @@ void pv_dblclick(t_pv *x);
 void pv_setpatchervariable(t_pv *x, t_symbol *name, t_patcherVariable *var);
 
 void pv_getVariable_do(t_object *x, t_symbol *name, short dummy_ac, t_atom *dummy_av);
+
+t_max_err pv_setattr_auto(t_pv *x, t_object *attr, long ac, t_atom *av);
 
 t_class *pv_class;
 
@@ -120,6 +122,19 @@ int T_EXPORT main()
     
     class_addmethod(c, (method)pv_setpatchervariable, "setpatchervariable", A_CANT, 0);
 
+    CLASS_ATTR_LONG_ARRAY(c, "auto", 0, t_pv, n_auto, 2);
+    CLASS_ATTR_ACCESSORS(c, "auto", NULL, pv_setattr_auto);
+    CLASS_ATTR_LABEL(c, "auto", 0, "Automatically output llll");
+    CLASS_ATTR_BASIC(c, "auto", 0);
+    // @description When set to 1, the stored llll is automatically output
+    // whenever it is set by another object of the same name and in the same hierarchy.<br/>
+    // An optional second integer sets the priority (defaulting to 0):
+    // the priority controls the order in which different bach.value objects
+    // of the same name (and with the <b>auto</b> attribute switched on)
+    // will automatically output the llll they receive.
+    // The higher the priority, the earlier the object will fire.
+    // The output order of objects with the same priority is undefined.
+    
 	llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
 	
 	class_register(CLASS_BOX, c);
@@ -130,6 +145,30 @@ int T_EXPORT main()
 	return 0;
 }
 
+
+t_max_err pv_setattr_auto(t_pv *x, t_object *attr, long ac, t_atom *av)
+{
+    if (ac >= 1) {
+        long val = atom_getlong(av);
+        if (!x->n_var)
+            return MAX_ERR_NONE;
+        switch (val) {
+            case 0: {
+                bach->b_thePvManager->removeClient(x->n_name, (t_object *) x, x->n_auto[2]);
+                x->n_auto[0] = 0;
+                break;
+            }
+            default: {
+                long const priority = ac >= 2 ? atom_getlong(av + 1) : 0;
+                bach->b_thePvManager->addClient(x->n_name, (t_object *) x, priority);
+                x->n_auto[0] = 1;
+                x->n_auto[1] = priority;
+                break;
+            }
+        }
+    }
+    return MAX_ERR_NONE;
+}
 
 void pv_dblclick(t_pv *x)
 {
@@ -225,8 +264,9 @@ void pv_assist(t_pv *x, void *b, long m, long a, char *s)
 
 void pv_free(t_pv *x)
 {
-    if (x->n_var)
-        bach->b_thePvManager->removeVariable(x->n_name, (t_object*) x);
+    if (x->n_var) {
+        bach->b_thePvManager->removeVariable(x->n_name, (t_object*) x, x->n_auto[1]);
+    }
     object_free_debug(x->m_editor);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
@@ -254,7 +294,7 @@ t_pv *pv_new(t_symbol *s, short ac, t_atom *av)
 		}
 		name = atom_getsym(av);
         
-        defer_low(x, (method) pv_getVariable_do, name, 0, nullptr);
+        defer_low(x, (method) pv_getVariable_do, name, ac, av);
 		x->n_name = name;
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "4");
@@ -268,9 +308,10 @@ t_pv *pv_new(t_symbol *s, short ac, t_atom *av)
 	return NULL;
 }
 
-void pv_getVariable_do(t_object *x, t_symbol *name, short dummy_ac, t_atom *dummy_av)
+void pv_getVariable_do(t_object *x, t_symbol *name, short ac, t_atom *av)
 {
     // also calls the setpatchervariable method
     bach->b_thePvManager->getVariable(name, x);
+    attr_args_process(x, ac, av);
 }
 
