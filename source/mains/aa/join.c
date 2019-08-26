@@ -353,6 +353,8 @@ t_join *join_new(t_symbol *s, short ac, t_atom *av)
 		proxies = true_ac ? MAX(atom_getlong(av) - 1, 0) : 1;
 		x->n_set = llll_get();
 
+        x->n_triggers = get_num_ll(1);
+        
 		attr_args_process(x, ac, av); // this must be called before llllobj_obj_setup
 		// among the other things, it will parse the out attribute
 		// the set attribute will not be set now, as it depends on the stores which have not been initialized yet
@@ -379,10 +381,6 @@ t_join *join_new(t_symbol *s, short ac, t_atom *av)
 			x->n_proxy[i] = proxy_new_debug((t_object *) x, i, &x->n_in);
 		attr_args_process(x, ac, av); // we call it again, because only now we can set the set attribute
 
-        if (x->n_triggers == NULL) {
-            x->n_triggers = llll_get();
-            llll_appendlong(x->n_triggers, 1);
-        }
 	} else
 		error(BACH_CANT_INSTANTIATE);
 	

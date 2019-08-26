@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 502.0, 170.0, 635.0, 394.0 ],
+		"rect" : [ 203.0, 660.0, 635.0, 394.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 502.0, 196.0, 635.0, 368.0 ],
+						"rect" : [ 0.0, 26.0, 635.0, 368.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -521,7 +521,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 635.0, 368.0 ],
+						"rect" : [ 203.0, 686.0, 635.0, 368.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -559,8 +559,8 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 375.0, 263.0, 219.0, 69.0 ],
-									"text" : "Whenever the value of a variable changes, the corresponding bach.value objects fire if they are set to automatic."
+									"patching_rect" : [ 375.0, 263.0, 243.0, 69.0 ],
+									"text" : "Whenever the value of a bell global variable changes, the corresponding bach.value objects fire if they are set to automatic."
 								}
 
 							}
@@ -637,7 +637,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 261.0, 124.5, 312.0, 94.0 ],
+									"patching_rect" : [ 272.0, 119.5, 314.0, 94.0 ],
 									"text" : "Whereas there are no intrinsic limitations for naming bach.value objects, it is good practice to comply with the same rules and criteria as variables in bell.\nIn a nutshell, bach.value names should start with an uppercase letter; only contain letters, numbers and underscores; and end with a letter or a number.",
 									"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 								}
@@ -663,12 +663,12 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 164.0, 196.5, 68.0, 23.0 ],
+									"patching_rect" : [ 164.0, 196.5, 100.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80006
+										"versionnumber" : 80007
 									}
 ,
-									"text" : "bach.print"
+									"text" : "bach.print value"
 								}
 
 							}
@@ -734,12 +734,12 @@
 									"maxclass" : "newobj",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 19.0, 196.5, 68.0, 23.0 ],
+									"patching_rect" : [ 19.0, 196.5, 93.0, 23.0 ],
 									"saved_object_attributes" : 									{
-										"versionnumber" : 80006
+										"versionnumber" : 80007
 									}
 ,
-									"text" : "bach.print"
+									"text" : "bach.print eval"
 								}
 
 							}

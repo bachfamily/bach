@@ -77,7 +77,7 @@ void pv_dblclick(t_pv *x);
 
 void pv_setpatchervariable(t_pv *x, t_symbol *name, t_patcherVariable *var);
 
-void pv_getVariable_do(t_object *x, t_symbol *name, short dummy_ac, t_atom *dummy_av);
+void pv_init_do(t_pv *x, t_symbol *name, short ac, t_atom *av);
 
 t_max_err pv_setattr_auto(t_pv *x, t_object *attr, long ac, t_atom *av);
 
@@ -294,7 +294,7 @@ t_pv *pv_new(t_symbol *s, short ac, t_atom *av)
 		}
 		name = atom_getsym(av);
         
-        defer_low(x, (method) pv_getVariable_do, name, ac, av);
+        defer_low(x, (method) pv_init_do, name, ac, av);
 		x->n_name = name;
 		attr_args_process(x, ac, av);
 		llllobj_obj_setup((t_llllobj_object *) x, 1, "4");
@@ -308,10 +308,14 @@ t_pv *pv_new(t_symbol *s, short ac, t_atom *av)
 	return NULL;
 }
 
-void pv_getVariable_do(t_object *x, t_symbol *name, short ac, t_atom *av)
+void pv_init_do(t_pv *x, t_symbol *name, short ac, t_atom *av)
 {
     // also calls the setpatchervariable method
-    bach->b_thePvManager->getVariable(name, x);
+    bach->b_thePvManager->getVariable(name, (t_object *) x);
     attr_args_process(x, ac, av);
+    long true_ac = attr_args_offset(ac, av);
+    if (true_ac > 1) {
+        pv_anything(x, NULL, true_ac - 1, av + 1);
+    }
 }
 
