@@ -123,6 +123,12 @@ Scroll down for very important things you should now about v0.8b
         The value contained in bach.value is kept even if all the bach.value objects are destroyed.
         New @auto attribute.
 
+- bach.pv
+        New @auto attribute.
+
+- bach.join
+        Now accepts @triggers null typed in the object box.
+
 v0.8b
 
 ******************************************************************
