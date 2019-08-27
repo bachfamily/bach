@@ -42,11 +42,17 @@ typedef struct _codableobj
     bool c_forceread;
     bool c_readappend;
     
-    class astGlobalVar *c_triggerGVs[256];
+    std::pair<t_symbol*, long> c_triggerGVs[256];
     long c_triggerGVsCount;
     std::pair<t_symbol*, long> c_triggerPVs[256];
     long c_triggerPVsCount;
     t_bach_atomic_lock c_triggers_lock;
+    
+    t_bool c_allPVTrigger;
+    long c_allPVPriority;
+    
+    t_bool c_allGVTrigger;
+    long c_allGVPriority;
     
 } t_codableobj;
 
@@ -76,7 +82,7 @@ void codableobj_resolvepatchervars(t_codableobj *x, t_symbol *msg, long ac, t_at
 
 void codableobj_setpatchervariable(t_codableobj *x, t_symbol *name, class t_patcherVariable *var);
 
-void codableobj_resolve_trigger_pvars(t_codableobj *x, t_symbol *s, long ac, t_atom *av);
+void codableobj_resolve_trigger_vars(t_codableobj *x, t_symbol *s, long ac, t_atom *av);
 
 void codableobj_removeAllVarTriggers(t_codableobj* x);
 

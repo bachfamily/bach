@@ -262,12 +262,28 @@ long codableobj_parseLambdaAttrArg(t_codableobj *x, short *ac, t_atom *av)
 
 void codableobj_register_trigger_variable(t_codableobj *x, t_symbol *varname, long priority)
 {
-    if (varname->s_name[0] == '#')
-        x->c_triggerPVs[x->c_triggerPVsCount++] = {gensym(varname->s_name + 1), priority};
+    if (varname == gensym("*")) {
+        x->c_allGVTrigger = true;
+        x->c_allPVTrigger = true;
+        x->c_allGVPriority = priority;
+        x->c_allPVPriority = priority;
+        x->c_main->makeClientToAllGVs(priority);
+    } else if (varname == gensym("#*")) {
+        x->c_allPVTrigger = true;
+        x->c_allPVPriority = priority;
+    } else if (varname == gensym(".*")) {
+        x->c_allGVTrigger = true;
+        x->c_allGVPriority = priority;
+    } else if (varname->s_name[0] == '#')
+        x->c_triggerPVs[x->c_triggerPVsCount++] = {
+            gensym(varname->s_name + 1),
+            priority
+        };
     else {
-        auto *v = new astGlobalVar(bach->b_gvt, varname, (t_codableobj *) x);
-        x->c_triggerGVs[x->c_triggerGVsCount++] = v;
-        v->getVar()->addClient((t_object *) x, priority);
+        x->c_triggerGVs[x->c_triggerGVsCount++] = {
+            gensym(varname->s_name),
+            priority
+        };
     }
 }
 
@@ -283,16 +299,32 @@ void codableobj_setpatchervariable(t_codableobj *x, t_symbol *name, t_patcherVar
 }
 
 
-void codableobj_resolve_trigger_pvars(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
+void codableobj_resolve_trigger_vars(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
 {
     pvManager *pvm = bach->b_thePvManager;
+    t_globalVariableTable *gvt = bach->b_gvt;
     bach_atomic_lock(&x->c_triggers_lock);
+    
+    for (int i = 0; i < x->c_triggerGVsCount; i++) {
+        t_symbol *name = x->c_triggerGVs[i].first;
+        t_globalVariable *v = gvt->lookup(name);
+        if (!v) {
+            v = new t_globalVariable(name, llll_get());
+            gvt->insert(v);
+        }
+        v->addClient((t_object *) x, x->c_triggerPVs[i].second);
+    }
+    
     for (int i = 0; i < x->c_triggerPVsCount; i++) {
         t_symbol *name = x->c_triggerPVs[i].first;
         pvm->getVariable(name, (t_object *) x); // dummy variable
         pvm->addClient(name, (t_object *) x, x->c_triggerPVs[i].second);
     }
     bach_atomic_unlock(&x->c_triggers_lock);
+    if (x->c_allGVTrigger)
+        x->c_main->makeClientToAllGVs(x->c_allGVPriority);
+    if (x->c_allPVTrigger)
+        x->c_main->makeClientToAllPVs(x->c_allPVPriority);
 }
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_codableobj, c_paramsll, codableobj_params_get)
@@ -513,7 +545,7 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
         sysmem_freeptr(oldCode);
         if (oldMain)
             oldMain->decrease();
-        codableobj_resolve_trigger_pvars(x, NULL, 0, NULL);
+        codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
         if (x->c_auto) {
             object_method(x, gensym("bang"));
         }
@@ -641,17 +673,22 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
 void codableobj_removeAllVarTriggers(t_codableobj* x)
 {
     pvManager *pvm = bach->b_thePvManager;
+    t_globalVariableTable *gvt = bach->b_gvt;
+    
     for (auto i = 0; i < x->c_triggerPVsCount; i++) {
         t_symbol *name = x->c_triggerPVs[i].first;
         pvm->removeVariable(x->c_triggerPVs[i].first, (t_object *) x);
     }
+    
     for (auto i = 0; i < x->c_triggerGVsCount; i++) {
-        auto *v = x->c_triggerGVs[i];
-        v->getVar()->removeClient((t_object *) x);
-        delete v;
+        auto *v = gvt->lookup(x->c_triggerGVs[i].first);
+        v->removeClient((t_object *) x);
     }
+    
     x->c_triggerGVsCount = 0;
     x->c_triggerPVsCount = 0;
+    x->c_allPVTrigger = false;
+    x->c_allGVTrigger = false;
 
 }
 
@@ -688,7 +725,7 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
         if (oldMain)
             oldMain->decrease();
         codableobj_resolvepatchervars(x, NULL, 0, NULL);
-        codableobj_resolve_trigger_pvars(x, NULL, 0, NULL);
+        codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
         if (x->c_auto)
             object_method(x, _sym_bang);
     } else {

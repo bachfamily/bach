@@ -184,13 +184,23 @@ int T_EXPORT main()
     // if different objects register to the same variable with different priorities,
     // when the value of the variable changes they will be evaluated
     // according to each's priority, from highest to lowest. The default is 0.<br/>
+    // Three special wildcard tokens can be included in the trigger lists:<br/>
+    // - * includes all the patcher and global variables used in the code;<br/>
+    // - .* includes all the global variables used in the code;<br/>
+    // - .# includes all the patcher variables used in the code.<br/>
+    // Wildcards can also have a priority, with the same syntax as regular variables.<br/>
     // An important caveat concerning patcher variables
     // is that the ones declared as triggers affect the variable hierarchies,
     // even if they do not appear in the expression.<br/>
-    // For example, the llll <m>1 2 foo (#bar 10) -1</m> will cause
+    // Examples:<br/>
+    // <m>1 2 foo [ #bar 10 ] -1</m> will cause
     // the first, second and rightmost data inlets to be hot,
     // and the foo global variable and bar patcher variable
-    // to trigger the evaluation, with priorities respectively of 0 and 10.
+    // to trigger the evaluation, with priorities respectively of 0 and 10.<br/>
+    // <m>#* [ .* -10 ] 1</m> will cause
+    // all the patcher and global variables in the code to trigger the evaluation,
+    // respectively with a priority of 0 and -10; moreover,
+    // data received the first inlet will trigger the evaluation, too.
     
     llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
     // @copy BACH_DOC_STATIC_ATTR
@@ -250,7 +260,9 @@ t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av)
             bach_atomic_unlock(&x->n_ob.c_triggers_lock);
             llll_free(free_me);
             if (x->n_ready)
-                codableobj_resolve_trigger_pvars((t_codableobj*) x, NULL, 0, NULL);
+                codableobj_resolve_trigger_vars((t_codableobj*) x, NULL, 0, NULL);
+            else
+                x->n_ready = true;
         }
     }
     return MAX_ERR_NONE;
@@ -519,7 +531,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
             x->n_ob.c_main->setOutlets(x->n_dataOutlets);
             defer_low(x, (method)codableobj_resolvepatchervars, NULL, 0, NULL);
         }
-        defer_low(x, (method)codableobj_resolve_trigger_pvars, NULL, 0, NULL);
+        defer_low(x, (method)codableobj_resolve_trigger_vars, NULL, 0, NULL);
 
     } else
         error(BACH_CANT_INSTANTIATE);
