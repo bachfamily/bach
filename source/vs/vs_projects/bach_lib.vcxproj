@@ -31,11 +31,13 @@
     <ClCompile Include="..\..\..\..\code\source\code\mathFunction.cpp" />
     <ClCompile Include="..\..\..\..\code\source\code\operator.cpp" />
     <ClCompile Include="..\..\..\..\code\source\code\ownedFunction.cpp" />
+    <ClCompile Include="..\..\..\..\code\source\code\pvManager.cpp" />
     <ClCompile Include="..\..\..\..\code\source\code\stringparser\stringparser_nolines.c" />
     <ClCompile Include="..\..\..\..\code\source\code\stringparser\stringparser_tab_nolines.c" />
     <ClCompile Include="..\..\commons\aa\alterparser\bach_alterparser.c" />
     <ClCompile Include="..\..\commons\aa\bach_128bit.cpp" />
     <ClCompile Include="..\..\commons\aa\bach_codableobj.cpp" />
+    <ClCompile Include="..\..\commons\aa\bach_maxutils.c" />
     <ClCompile Include="..\..\commons\aa\bach_mem.c" />
     <ClCompile Include="..\..\commons\aa\bach_pitch.cpp" />
     <ClCompile Include="..\..\commons\aa\bach_threads.c" />
@@ -130,10 +132,14 @@
     <ClInclude Include="..\..\..\..\code\source\code\conditional.hpp" />
     <ClInclude Include="..\..\..\..\code\source\code\fnMap.hpp" />
     <ClInclude Include="..\..\..\..\code\source\code\function.hpp" />
+    <ClInclude Include="..\..\..\..\code\source\code\globalVariable.hpp" />
     <ClInclude Include="..\..\..\..\code\source\code\llllIterator.hpp" />
     <ClInclude Include="..\..\..\..\code\source\code\mathFunction.hpp" />
     <ClInclude Include="..\..\..\..\code\source\code\operator.hpp" />
     <ClInclude Include="..\..\..\..\code\source\code\ownedFunction.hpp" />
+    <ClInclude Include="..\..\..\..\code\source\code\patcherVariable.hpp" />
+    <ClInclude Include="..\..\..\..\code\source\code\pvManager.hpp" />
+    <ClInclude Include="..\..\..\..\code\source\code\sharedVariable.hpp" />
     <ClInclude Include="..\..\..\..\code\source\code\stringparser\stringparser.h" />
     <ClInclude Include="..\..\..\..\code\source\code\stringparser\stringparser_lex_nolines.h" />
     <ClInclude Include="..\..\..\..\code\source\code\stringparser\stringparser_tab_nolines.h" />
@@ -141,6 +147,7 @@
     <ClInclude Include="..\..\commons\aa\alterparser\alterparser.h" />
     <ClInclude Include="..\..\commons\aa\bach_128bit.h" />
     <ClInclude Include="..\..\commons\aa\bach_codableobj.hpp" />
+    <ClInclude Include="..\..\commons\aa\bach_maxutils.h" />
     <ClInclude Include="..\..\commons\aa\bach_mem.h" />
     <ClInclude Include="..\..\commons\aa\bach_parser.hpp" />
     <ClInclude Include="..\..\commons\aa\bach_pitch.hpp" />
