@@ -14014,7 +14014,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
                                     long voice = get_selection_topmost_voice(x);
                                     roll_delete_selection(x, false);
                                     if (voice >= 0)
-                                        roll_paste_clipboard(x, false, onset, false, voice, true, true);
+                                        roll_paste_clipboard(x, false, MAX(0, onset), false, voice, true, true);
                                 }
                             } else if (res == 981) { // paste duration line
                                 if (clipboard.type == k_DURATION_LINE)
@@ -14399,7 +14399,7 @@ void roll_mousedown(t_roll *x, t_object *patcherview, t_pt pt, long modifiers)
             double onset = xposition_to_onset((t_notation_obj *) x, x->r_ob.j_mouse_x, 0);
             long voice = yposition_to_voicenumber((t_notation_obj *)x, x->r_ob.j_mouse_y, -1, k_VOICEENSEMBLE_INTERFACE_ACTIVE);
             if (voice >= 0)
-                roll_paste_clipboard(x, false, onset, false, voice, true, true);
+                roll_paste_clipboard(x, false, MAX(0, onset), false, voice, true, true);
         } else if (res == 991) { // paste at original location
              roll_paste_clipboard(x, true, 0, true, 0, true, true);
         } else
@@ -16828,7 +16828,7 @@ long roll_key(t_roll *x, t_object *patcherview, long keycode, long modifiers, lo
                             voice = yposition_to_voicenumber((t_notation_obj *)x, x->r_ob.j_mouse_y, -1, k_VOICEENSEMBLE_INTERFACE_ACTIVE);
                         }
                         if (voice >= 0)
-                            roll_paste_clipboard(x, modifiers & eShiftKey, onset, false, voice, true, true);
+                            roll_paste_clipboard(x, modifiers & eShiftKey, MAX(0, onset), false, voice, true, true);
                     }
                 }
             }
