@@ -21,11 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>max2</string>
 	<key>CFBundleVersion</key>
-<<<<<<< HEAD
-	<string>1566905205</string>
-=======
 	<string>1566899338</string>
->>>>>>> c51d95e20e56b0ca930bf9f13107c195bbcca666
 	<key>CSResourcesFileMapped</key>
 	<true/>
 </dict>
