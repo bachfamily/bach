@@ -33,7 +33,7 @@
  expression, evaluate, variable, number, calculate, compute, function, code, if, branching
 
  @seealso
- expr, vexpr, bach.expr, bach.value
+ expr, vexpr, bach.expr, bach.value, bach.pv
  
  @owner
  Andrea Agostini
@@ -42,6 +42,7 @@
 #include "eval.h"
 #include "bach_codableobj.hpp"
 #include "ast.hpp"
+#include "pvManager.hpp"
 
 
 void eval_assist(t_eval *x, void *b, long m, long a, char *s);
@@ -58,11 +59,21 @@ void eval_expr(t_eval *x, t_symbol *msg, long ac, t_atom *av);
 
 void eval_deferbang(t_eval *x, t_symbol *msg, long ac, t_atom *av);
 
+void eval_inletinfo(t_eval *x, void *b, long a, char *t);
+long eval_ishot(t_eval *x, long inlet);
+
 // editor
 void eval_dblclick(t_eval *x);
 
 //void bifSetup();
 void eval_ownedFunctionsSetup(t_eval *x);
+
+
+DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_eval, n_triggers, eval_getattr_triggers);
+t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av);
+
+t_max_err eval_check_triggers_llll(t_eval *x, t_llll *ll);
+
 
 t_class *eval_class;
 
@@ -155,6 +166,42 @@ int T_EXPORT main()
     // @description When set to 1, the stored code is automatically run at startup.
     // @copy BACH_DOC_STATIC_ATTR
 
+    CLASS_ATTR_LLLL(c, "triggers", 0, t_eval, n_triggers, eval_getattr_triggers, eval_setattr_triggers);
+    CLASS_ATTR_LABEL(c, "triggers", 0, "Triggers");
+    CLASS_ATTR_STYLE(c, "triggers", 0, "onoff");
+    // @description An llll setting which data inlets are "hot" (i.e., which will will trigger the result)
+    // and which global and patcher variables must cause
+    // the re-evaluation of the program when assigned a new value.
+    // Inlets are counted from 1. 0 means that all data inlets are hot.
+    // Negative indices are counted from the right, but only considering data inlets,
+    // excluding direct inlets which are always cold anyway.
+    // (e.g., -1 means the rightmost data inlet).
+    // <m>null</m> means that all inlets are cold,
+    // but a <m>bang</m> in any inlet will still cause the llll to be output. <br/>
+    // The llll can contain names of global and patcher variables (the latter preceded by a # sign):
+    // whenever any of those variables takes a new value, the expression will be re-evaluated.<br/>
+    // Sublists composed of a variable name and an integer will treat the integer as the variable auto-evaluation priority:
+    // if different objects register to the same variable with different priorities,
+    // when the value of the variable changes they will be evaluated
+    // according to each's priority, from highest to lowest. The default is 0.<br/>
+    // Three special wildcard tokens can be included in the trigger lists:<br/>
+    // - * includes all the patcher and global variables used in the code;<br/>
+    // - .* includes all the global variables used in the code;<br/>
+    // - .# includes all the patcher variables used in the code.<br/>
+    // Wildcards can also have a priority, with the same syntax as regular variables.<br/>
+    // An important caveat concerning patcher variables
+    // is that the ones declared as triggers affect the variable hierarchies,
+    // even if they do not appear in the expression.<br/>
+    // Examples:<br/>
+    // <m>1 2 foo [ #bar 10 ] -1</m> will cause
+    // the first, second and rightmost data inlets to be hot,
+    // and the foo global variable and bar patcher variable
+    // to trigger the evaluation, with priorities respectively of 0 and 10.<br/>
+    // <m>#* [ .* -10 ] 1</m> will cause
+    // all the patcher and global variables in the code to trigger the evaluation,
+    // respectively with a priority of 0 and -10; moreover,
+    // data received the first inlet will trigger the evaluation, too.
+    
     llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
     // @copy BACH_DOC_STATIC_ATTR
 
@@ -169,6 +216,86 @@ int T_EXPORT main()
     return 0;
 }
 
+void eval_parse_all_triggers(t_eval *x)
+{
+    codableobj_removeAllVarTriggers((t_codableobj*) x);
+
+    x->n_triggerInletsCount = 0;
+    
+    for (t_llllelem *elem = x->n_triggers->l_head;
+         elem;
+         elem = elem->l_next) {
+        t_hatom *h = &elem->l_hatom;
+        if (hatom_is_number(h)) {
+            x->n_triggerInlets[x->n_triggerInletsCount++] = hatom_getlong(h);
+        } else {
+            t_symbol *varname;
+            long priority = 0;
+            if (t_llll *subll = hatom_getllll(h) ; subll) {
+                varname = hatom_getsym(&subll->l_head->l_hatom);
+                if (subll->l_size == 2)
+                    priority = hatom_getlong(&subll->l_tail->l_hatom);
+            } else
+                varname = hatom_getsym(h);
+            codableobj_register_trigger_variable((t_codableobj *) x, varname, priority);
+        }
+    }
+}
+
+
+t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av)
+{
+    t_llll *ll;
+    if (ac == 0 || av) {
+        if ((ll = llllobj_parse_llllattr_llll((t_object *) x, LLLL_OBJ_VANILLA, ac, av))) {
+            t_llll *free_me;
+            if (eval_check_triggers_llll(x, ll) != MAX_ERR_NONE) {
+                llll_free(ll);
+                return MAX_ERR_NONE;
+            }
+            bach_atomic_lock(&x->n_ob.c_triggers_lock);
+            free_me = x->n_triggers;
+            x->n_triggers = ll;
+            eval_parse_all_triggers(x);
+            bach_atomic_unlock(&x->n_ob.c_triggers_lock);
+            llll_free(free_me);
+            if (x->n_ready)
+                codableobj_resolve_trigger_vars((t_codableobj*) x, NULL, 0, NULL);
+            else
+                x->n_ready = true;
+        }
+    }
+    return MAX_ERR_NONE;
+}
+
+t_max_err eval_check_triggers_llll(t_eval *x, t_llll *ll)
+{
+    t_llllelem *elem;
+    if (ll->l_depth > 2)
+        goto eval_check_triggers_llll_error;
+        for (elem = ll->l_head; elem; elem = elem->l_next) {
+        if (!hatom_is_number(&elem->l_hatom)) {
+            if (t_llll *sub_ll = hatom_getllll(&elem->l_hatom); sub_ll) {
+                if (sub_ll->l_size > 2)
+                    goto eval_check_triggers_llll_error;
+                if (t_symbol *s = hatom_getsym(&sub_ll->l_head->l_hatom);
+                    !s || *(s->s_name) == '$') {
+                    object_error((t_object *) x, "Bad trigger variable");
+                        goto eval_check_triggers_llll_error;
+                }
+                if (sub_ll->l_size == 2 && !hatom_is_number(&sub_ll->l_tail->l_hatom))
+                    goto eval_check_triggers_llll_error;
+            } else if (elem->l_hatom.h_type != H_SYM) {
+                goto eval_check_triggers_llll_error;
+            }
+        }
+    }
+    return MAX_ERR_NONE;
+    
+eval_check_triggers_llll_error:
+    object_error((t_object *) x, "Bad triggers llll");
+    return MAX_ERR_GENERIC;
+}
 
 void eval_dblclick(t_eval *x)
 {
@@ -227,13 +354,38 @@ void eval_anything(t_eval *x, t_symbol *msg, long ac, t_atom *av)
 {
     long inlet = proxy_getinlet((t_object *) x);
     llllobj_parse_and_store((t_object *) x, LLLL_OBJ_VANILLA, msg, ac, av, inlet);
-    if (inlet == 0)
+    if (eval_ishot(x, inlet))
         eval_bang(x);
 }
 
 void eval_expr(t_eval *x, t_symbol *msg, long ac, t_atom *av)
 {
     codableobj_lambda_set((t_codableobj *) x, nullptr, ac, av);
+}
+
+long eval_ishot(t_eval *x, long inlet)
+{
+    long hot = 0;
+    bach_atomic_lock(&x->n_ob.c_triggers_lock);
+    if (x->n_triggerInletsCount == 0)
+        hot = 0;
+    else {
+        long numinlets = x->n_dataInlets;
+        for (auto i = 0; i < x->n_triggerInletsCount; i++) {
+            long this_trigger = x->n_triggerInlets[i];
+            if ((this_trigger == 0 && inlet < x->n_dataInlets) ||
+                this_trigger == inlet + 1 ||
+                (this_trigger < 0 && this_trigger == inlet - numinlets))
+                hot = 1;
+        }
+    }
+    bach_atomic_unlock(&x->n_ob.c_triggers_lock);
+    return hot;
+}
+
+void eval_inletinfo(t_eval *x, void *b, long a, char *t)
+{
+    *t = !eval_ishot(x, a);
 }
 
 void eval_assist(t_eval *x, void *b, long m, long a, char *s)
@@ -256,13 +408,6 @@ void eval_assist(t_eval *x, void *b, long m, long a, char *s)
         else
             sprintf(s, "llll (%s): Direct Outlet " ATOM_LONG_PRINTF_FMT, type, a - x->n_dataOutlets);
     }
-
-}
-
-void eval_inletinfo(t_eval *x, void *b, long a, char *t)
-{
-    if (a)
-        *t = 1;
 }
 
 void eval_free(t_eval *x)
@@ -285,10 +430,14 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         // but it can contain branching and loop statements, and user-defined variables and functions.
         // For a complete description of the expression syntax, please refer to the help file.
         
+        x->n_triggerInletsCount = 1;
+        x->n_triggerInlets[0] = 1;
+        
         x->n_ob.c_ofTable = new t_ofTable;
         eval_ownedFunctionsSetup(x);
         x->n_ob.c_embed = 1;
         x->n_ob.c_maxtime = 1000;
+        
         
         true_ac = ac;
         
@@ -378,8 +527,11 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         d = (t_dictionary *)gensym("#D")->s_thing;
         codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
         
-        if (x->n_ob.c_main)
+        if (x->n_ob.c_main) {
             x->n_ob.c_main->setOutlets(x->n_dataOutlets);
+            defer_low(x, (method)codableobj_resolvepatchervars, NULL, 0, NULL);
+        }
+        defer_low(x, (method)codableobj_resolve_trigger_vars, NULL, 0, NULL);
 
     } else
         error(BACH_CANT_INSTANTIATE);
@@ -407,3 +559,4 @@ void eval_ownedFunctionsSetup(t_eval *x)
     (*x->n_ob.c_ofTable)["directin"] = new t_fnDirectin(x);
     (*x->n_ob.c_ofTable)["print"] = new t_fnPrint((t_object *) x);
 }
+

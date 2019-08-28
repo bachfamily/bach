@@ -24,6 +24,7 @@
 #endif
 
 #include "ast.hpp"
+#include "pvManager.hpp"
 
 long *bach_gen_primes(void);
 
@@ -715,6 +716,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     gensym("bach")->s_thing = (t_object *) x;
     
     bach_init_bifs(x);
+    x->b_thePvManager = pvManager::getPvManager();
 
     defer_low(x, (method) bach_init_print, NULL, 0, NULL);
     return x;

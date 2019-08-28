@@ -328,6 +328,9 @@ typedef struct _bach {
     t_object             *b_ss;
     t_bool               b_no_ss;
     t_bool              b_nonative;
+    
+    class pvManager     *b_thePvManager;
+    
 } t_bach;
 
 

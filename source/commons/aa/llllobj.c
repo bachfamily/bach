@@ -433,9 +433,7 @@ t_llll *llllobj_parse_llll(t_object *x, e_llllobj_obj_types type, t_symbol *msg,
 t_llll *llllobj_parse_llllattr_llll(t_object *x, e_llllobj_obj_types type, long ac, t_atom *av)
 {
     if (ac == 1 && atom_gettype(av) == A_SYM) {
-        t_atom a;
-        atom_setobj(&a, atom_getsym(av)->s_name);
-        return llllobj_parse_llll((t_object *) x, LLLL_OBJ_VANILLA, NULL, 1, &a, LLLL_PARSE_CLONE);
+		return llll_from_text_buf(atom_getsym(av)->s_name);
         // this is a workaround, because pointer attributes (as lllls are) only pass one symbol
         // containing all the text for the new attribute value
     } else {

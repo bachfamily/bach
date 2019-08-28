@@ -48,10 +48,11 @@
 
 typedef struct _value
 {
-    struct llllobj_object     n_ob;
-    t_symbol                *n_name;
-    astGlobalVar            *n_var;
-    t_object                *m_editor;
+    t_llllobj_object    n_ob;
+    t_symbol            *n_name;
+    astGlobalVar        *n_var;
+    long                n_auto[2];
+    t_object            *m_editor;
 } t_v;
 
 
@@ -66,11 +67,15 @@ void value_int(t_v *x, t_atom_long v);
 void value_float(t_v *x, double v);
 void value_anything(t_v *x, t_symbol *msg, long ac, t_atom *av);
 
+t_max_err value_setattr_auto(t_v *x, t_object *attr, long ac, t_atom *av);
+
+
 
 // editor
 void value_okclose(t_v *x, char *s, short *result);
 void value_edclose(t_v *x, char **ht, long size);
 void value_dblclick(t_v *x);
+
 
 
 t_class *value_class;
@@ -113,6 +118,18 @@ int T_EXPORT main()
     class_addmethod(c, (method)value_edclose,         "edclose",        A_CANT, 0);
     class_addmethod(c, (method)value_okclose,         "okclose",       A_CANT, 0);
 
+    CLASS_ATTR_LONG_ARRAY(c, "auto", 0, t_v, n_auto, 2);
+    CLASS_ATTR_ACCESSORS(c, "auto", NULL, value_setattr_auto);
+    CLASS_ATTR_LABEL(c, "auto", 0, "Automatically output llll");
+    CLASS_ATTR_BASIC(c, "auto", 0);
+    // @description When set to 1, the stored llll is automatically output
+    // whenever it is set by another object of the same name.<br/>
+    // An optional second integer sets the priority (defaulting to 0):
+    // the priority controls the order in which different bach.value objects
+    // of the same name (and with the <b>auto</b> attribute switched on)
+    // will automatically output the llll they receive.
+    // The higher the priority, the earlier the object will fire.
+    // The output order of objects with the same priority is undefined.
     
     llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
     
@@ -122,6 +139,30 @@ int T_EXPORT main()
     dev_post("bach.value compiled %s %s", __DATE__, __TIME__);
     
     return 0;
+}
+
+t_max_err value_setattr_auto(t_v *x, t_object *attr, long ac, t_atom *av)
+{
+    if (ac >= 1) {
+        long val = atom_getlong(av);
+        if (!x->n_var)
+            return MAX_ERR_NONE;
+        switch (val) {
+            case 0: {
+                x->n_var->getVar()->clients.erase({(t_object *) x, x->n_auto[1]});
+                x->n_auto[0] = 0;
+                break;
+            }
+            default: {
+                long const priority = ac >= 2 ? atom_getlong(av + 1) : 0;
+                x->n_var->getVar()->addClient((t_object *) x, priority);
+                x->n_auto[0] = 1;
+                x->n_auto[1] = priority;
+                break;
+            }
+        }
+    }
+    return MAX_ERR_NONE;
 }
 
 
@@ -211,6 +252,8 @@ void value_assist(t_v *x, void *b, long m, long a, char *s)
 
 void value_free(t_v *x)
 {
+    if (x->n_auto[0] && x->n_var)
+        x->n_var->getVar()->clients.erase({(t_object *) x, x->n_auto[1]});
     object_free_debug(x->m_editor);
     llllobj_obj_free((t_llllobj_object *) x);
 }

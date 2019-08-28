@@ -7,6 +7,7 @@
 
 #include "bach_codableobj.hpp"
 #include "ast.hpp"
+#include "pvManager.hpp"
 
 void codableobj_doread(t_codableobj *x, t_symbol *s);
 void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short path);
@@ -259,6 +260,73 @@ long codableobj_parseLambdaAttrArg(t_codableobj *x, short *ac, t_atom *av)
     return 0;
 }
 
+void codableobj_register_trigger_variable(t_codableobj *x, t_symbol *varname, long priority)
+{
+    if (varname == gensym("*")) {
+        x->c_allGVTrigger = true;
+        x->c_allPVTrigger = true;
+        x->c_allGVPriority = priority;
+        x->c_allPVPriority = priority;
+        x->c_main->makeClientToAllGVs(priority);
+    } else if (varname == gensym("#*")) {
+        x->c_allPVTrigger = true;
+        x->c_allPVPriority = priority;
+    } else if (varname == gensym(".*")) {
+        x->c_allGVTrigger = true;
+        x->c_allGVPriority = priority;
+    } else if (varname->s_name[0] == '#')
+        x->c_triggerPVs[x->c_triggerPVsCount++] = {
+            gensym(varname->s_name + 1),
+            priority
+        };
+    else {
+        x->c_triggerGVs[x->c_triggerGVsCount++] = {
+            gensym(varname->s_name),
+            priority
+        };
+    }
+}
+
+void codableobj_resolvepatchervars(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
+{
+    x->c_main->resolvePatcherVars();
+}
+
+void codableobj_setpatchervariable(t_codableobj *x, t_symbol *name, t_patcherVariable *var)
+{
+    if (x->c_main)
+        x->c_main->setPatcherVar(name, var);
+}
+
+
+void codableobj_resolve_trigger_vars(t_codableobj *x, t_symbol *s, long ac, t_atom *av)
+{
+    pvManager *pvm = bach->b_thePvManager;
+    t_globalVariableTable *gvt = bach->b_gvt;
+    bach_atomic_lock(&x->c_triggers_lock);
+    
+    for (int i = 0; i < x->c_triggerGVsCount; i++) {
+        t_symbol *name = x->c_triggerGVs[i].first;
+        t_globalVariable *v = gvt->lookup(name);
+        if (!v) {
+            v = new t_globalVariable(name, llll_get());
+            gvt->insert(v);
+        }
+        v->addClient((t_object *) x, x->c_triggerPVs[i].second);
+    }
+    
+    for (int i = 0; i < x->c_triggerPVsCount; i++) {
+        t_symbol *name = x->c_triggerPVs[i].first;
+        pvm->getVariable(name, (t_object *) x); // dummy variable
+        pvm->addClient(name, (t_object *) x, x->c_triggerPVs[i].second);
+    }
+    bach_atomic_unlock(&x->c_triggers_lock);
+    if (x->c_allGVTrigger)
+        x->c_main->makeClientToAllGVs(x->c_allGVPriority);
+    if (x->c_allPVTrigger)
+        x->c_main->makeClientToAllPVs(x->c_allPVPriority);
+}
+
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_codableobj, c_paramsll, codableobj_params_get)
 
 void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av)
@@ -477,8 +545,10 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
         sysmem_freeptr(oldCode);
         if (oldMain)
             oldMain->decrease();
-        if (x->c_auto)
+        codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
+        if (x->c_auto) {
             object_method(x, gensym("bang"));
+        }
         if (x->c_filename)
             bach_freeptr(x->c_filename);
         x->c_filename = (char *) bach_newptr(MAX_PATH_CHARS);
@@ -600,6 +670,28 @@ void codableobj_getCodeFromDictionaryAndBuild(t_codableobj *x, t_dictionary *d, 
     }
 }
 
+void codableobj_removeAllVarTriggers(t_codableobj* x)
+{
+    pvManager *pvm = bach->b_thePvManager;
+    t_globalVariableTable *gvt = bach->b_gvt;
+    
+    for (auto i = 0; i < x->c_triggerPVsCount; i++) {
+        t_symbol *name = x->c_triggerPVs[i].first;
+        pvm->removeVariable(x->c_triggerPVs[i].first, (t_object *) x);
+    }
+    
+    for (auto i = 0; i < x->c_triggerGVsCount; i++) {
+        auto *v = gvt->lookup(x->c_triggerGVs[i].first);
+        v->removeClient((t_object *) x);
+    }
+    
+    x->c_triggerGVsCount = 0;
+    x->c_triggerPVsCount = 0;
+    x->c_allPVTrigger = false;
+    x->c_allGVTrigger = false;
+
+}
+
 void codableobj_free(t_codableobj *x)
 {
     if (x->c_main)
@@ -611,6 +703,7 @@ void codableobj_free(t_codableobj *x)
     for (int i = 0; i < x->c_nparams; i++)
         llll_free(x->c_paramsvalues[i]);
     llll_free(x->c_paramsll);
+    codableobj_removeAllVarTriggers(x);
     delete x->c_ofTable;
     object_free_debug(x->c_editor);
     llllobj_obj_free((t_llllobj_object *) x);
@@ -631,6 +724,8 @@ void codableobj_expr_do(t_codableobj *x, t_symbol *msg, long ac, t_atom *av)
         sysmem_freeptr(oldText);
         if (oldMain)
             oldMain->decrease();
+        codableobj_resolvepatchervars(x, NULL, 0, NULL);
+        codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
         if (x->c_auto)
             object_method(x, _sym_bang);
     } else {
@@ -660,6 +755,9 @@ void codableclass_add_standard_methods(t_class *c, t_bool isBachCode)
     
     class_addmethod(c, (method)codableobj_okclose,  "okclose",       A_CANT, 0);
     class_addmethod(c, (method)codableobj_edclose,  "edclose",        A_CANT, 0);
+    
+    
+    class_addmethod(c, (method)codableobj_setpatchervariable, "setpatchervariable", A_CANT, 0);
     
     CLASS_ATTR_ATOM_LONG(c, "maxtime",    0,    t_codableobj, c_maxtime);
     CLASS_ATTR_LABEL(c, "maxtime", 0, "Maximum Duration Of Evaluation");

@@ -29,6 +29,13 @@ typedef struct _eval
     t_atom_long n_directOutlets;
 
     short n_path;
+    
+    t_llll *n_triggers;
+    long n_triggerInlets[256];
+    long n_triggerInletsCount;
+    
+    t_bool n_ready;
+    
 } t_eval;
 
 #endif /* eval_h */

@@ -41,6 +41,19 @@ typedef struct _codableobj
     t_atom_long c_maxtime;
     bool c_forceread;
     bool c_readappend;
+    
+    std::pair<t_symbol*, long> c_triggerGVs[256];
+    long c_triggerGVsCount;
+    std::pair<t_symbol*, long> c_triggerPVs[256];
+    long c_triggerPVsCount;
+    t_bach_atomic_lock c_triggers_lock;
+    
+    t_bool c_allPVTrigger;
+    long c_allPVPriority;
+    
+    t_bool c_allGVTrigger;
+    long c_allGVPriority;
+    
 } t_codableobj;
 
 
@@ -62,6 +75,18 @@ t_max_err codableobj_buildAst(t_codableobj *x,
                               t_atom_long *directOutlets = nullptr);
 
 void codableobj_lambda_set(t_codableobj *x, t_object *attr, long ac, t_atom *av);
+
+void codableobj_register_trigger_variable(t_codableobj *x, t_symbol *varname, long priority);
+
+void codableobj_resolvepatchervars(t_codableobj *x, t_symbol *msg, long ac, t_atom *av);
+
+void codableobj_setpatchervariable(t_codableobj *x, t_symbol *name, class t_patcherVariable *var);
+
+void codableobj_resolve_trigger_vars(t_codableobj *x, t_symbol *s, long ac, t_atom *av);
+
+void codableobj_removeAllVarTriggers(t_codableobj* x);
+
+
 
 void codableobj_dblclick(t_codableobj *x);
 

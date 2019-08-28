@@ -660,6 +660,8 @@
 		91C1E7CA1A39A71A0001297A /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		91C1E7CB1A39A71A0001297A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		91C1E7D31A39A8030001297A /* swap.c in Sources */ = {isa = PBXBuildFile; fileRef = 91C1E7D21A39A8030001297A /* swap.c */; };
+		91C3F862230C4C58002BA999 /* bach_maxutils.h in Headers */ = {isa = PBXBuildFile; fileRef = 91C3F860230C4C58002BA999 /* bach_maxutils.h */; };
+		91C3F863230C4C58002BA999 /* bach_maxutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 91C3F861230C4C58002BA999 /* bach_maxutils.c */; };
 		91C4797C1D312C8700FBC195 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		91C4797D1D312C8700FBC195 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		91C479851D312CCB00FBC195 /* pad.c in Sources */ = {isa = PBXBuildFile; fileRef = 91C479841D312CCB00FBC195 /* pad.c */; };
@@ -3362,6 +3364,8 @@
 		91C1AC90188EB856008FD25B /* bach.weights.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.weights.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91C1E7D01A39A71A0001297A /* bach.swap.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.swap.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91C1E7D21A39A8030001297A /* swap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = swap.c; sourceTree = "<group>"; };
+		91C3F860230C4C58002BA999 /* bach_maxutils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bach_maxutils.h; sourceTree = "<group>"; };
+		91C3F861230C4C58002BA999 /* bach_maxutils.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bach_maxutils.c; sourceTree = "<group>"; };
 		91C479821D312C8700FBC195 /* bach.pad.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.pad.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91C479841D312CCB00FBC195 /* pad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pad.c; sourceTree = "<group>"; };
 		91C6031E18C0D92A0027BB79 /* writesdif.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = writesdif.c; sourceTree = "<group>"; };
@@ -5635,6 +5639,8 @@
 				91B62BB41F4FE52200B9FC63 /* llll_append.h */,
 				91B62BB71F4FEBE200B9FC63 /* llll_hatom_change.c */,
 				91B62BB81F4FEBE200B9FC63 /* llll_hatom_change.h */,
+				91C3F860230C4C58002BA999 /* bach_maxutils.h */,
+				91C3F861230C4C58002BA999 /* bach_maxutils.c */,
 			);
 			path = aa;
 			sourceTree = "<group>";
@@ -6383,6 +6389,7 @@
 				91B420D5165E84AB00410C2C /* bach_threads.h in Headers */,
 				91165B051694FB7A00019F77 /* score_api.h in Headers */,
 				91B62BBA1F4FEBE200B9FC63 /* llll_hatom_change.h in Headers */,
+				91C3F862230C4C58002BA999 /* bach_maxutils.h in Headers */,
 				91AF1C5017BCFA7E0071A497 /* bach_128bit.h in Headers */,
 				91DB2EAD1BBF1CCB003DCC81 /* spectral.h in Headers */,
 				911A5BB6183219CC00E8A26C /* notation_attrs.h in Headers */,
@@ -12390,6 +12397,7 @@
 				91C6044318C0D9F50027BB79 /* SdifConvToText.c in Sources */,
 				91C6044418C0D9F50027BB79 /* SdifErrMess.c in Sources */,
 				91C6044618C0D9F50027BB79 /* SdifFGet.c in Sources */,
+				91C3F863230C4C58002BA999 /* bach_maxutils.c in Sources */,
 				91C6044818C0D9F50027BB79 /* SdifFile.c in Sources */,
 				91C6044A18C0D9F50027BB79 /* SdifFPrint.c in Sources */,
 				91C6044B18C0D9F50027BB79 /* SdifFPut.c in Sources */,
