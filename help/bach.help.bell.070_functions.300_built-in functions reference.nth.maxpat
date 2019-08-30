@@ -144,8 +144,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 414.0, 97.0, 121.0, 65.0 ],
-					"text" : "Arguments:\nllll\naddress (default: 1)\nnils (default: 0)",
+					"patching_rect" : [ 414.0, 97.0, 154.0, 65.0 ],
+					"text" : "Arguments:\nllll\naddress (default: 1)\nplaceholder (default: null)",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -155,12 +155,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 2,
+					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 496.0, 36.0 ],
-					"text" : "The nth() function returns one or more elements from an llll according to its address, like the bach.nth object (and supporting its full address syntax)",
+					"patching_rect" : [ 9.0, 39.0, 496.0, 50.0 ],
+					"text" : "The nth() function returns one or more elements from an llll according to its address, like the bach.nth object (and supporting its full address syntax). If a placeholder is provided, it will be inserted in the place of non-existing elements.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
