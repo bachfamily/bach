@@ -271,7 +271,7 @@ void codableobj_register_trigger_variable(t_codableobj *x, t_symbol *varname, lo
     } else if (varname == gensym("#*")) {
         x->c_allPVTrigger = true;
         x->c_allPVPriority = priority;
-    } else if (varname == gensym(".*")) {
+    } else if (varname == gensym("**")) {
         x->c_allGVTrigger = true;
         x->c_allGVPriority = priority;
     } else if (varname->s_name[0] == '#')
