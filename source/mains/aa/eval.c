@@ -52,6 +52,9 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av);
 void eval_free(t_eval *x);
 
 void eval_bang(t_eval *x);
+void eval_triggerfromclient(t_eval *x, long dummy);
+void eval_run(t_eval *x, long inlet);
+
 void eval_int(t_eval *x, t_atom_long v);
 void eval_float(t_eval *x, double v);
 void eval_anything(t_eval *x, t_symbol *msg, long ac, t_atom *av);
@@ -123,6 +126,8 @@ int T_EXPORT main()
     // @method (doubleclick) @digest Edit llll as text
     // @description Double-clicking on the object forces a text editor to open up, where the expression can be edited directly.
     class_addmethod(c, (method)eval_dblclick,        "dblclick",        A_CANT, 0);
+    
+    class_addmethod(c, (method)eval_triggerfromclient, "triggerfromclient", A_CANT, 0);
 
     CLASS_ATTR_ATOM_LONG(c, "inlets",    0,    t_eval, n_dataInlets);
     CLASS_ATTR_LABEL(c, "inlets", 0, "Number of Inlets");
@@ -305,10 +310,20 @@ void eval_dblclick(t_eval *x)
 
 void eval_bang(t_eval *x)
 {
-    
+    eval_run(x, proxy_getinlet((t_object *) x) + 1);
+}
+
+void eval_triggerfromclient(t_eval *x, long dummy)
+{
+    eval_run(x, 0);
+}
+
+void eval_run(t_eval *x, long inlet)
+{
     if (!x->n_ob.c_main)
         return;
-    t_execEnv context((t_llllobj_object *) x);
+    x->n_ob.c_main->setInlet(inlet);
+    t_execEnv context((t_llllobj_object *) x, x->n_ob.c_main);
     long dataInlets = x->n_dataInlets;
     
     for (int i = 0; i < dataInlets; i++) {
@@ -318,7 +333,7 @@ void eval_bang(t_eval *x)
     
     long outlets = x->n_dataOutlets;
     x->n_ob.c_main->setOutlets(outlets); // in case the code has just changed
-
+    
     x->n_ob.c_main->clearOutletData();
     t_llll *result = codableobj_run((t_codableobj *) x, context);
     llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, outlets, result);

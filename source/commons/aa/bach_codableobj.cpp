@@ -547,7 +547,7 @@ void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short pat
             oldMain->decrease();
         codableobj_resolve_trigger_vars(x, NULL, 0, NULL);
         if (x->c_auto) {
-            object_method(x, gensym("bang"));
+            object_method(x, _sym_bang);
         }
         if (x->c_filename)
             bach_freeptr(x->c_filename);
@@ -820,6 +820,7 @@ void codableobj_ownedFunctionsSetup(t_codableobj *x)
 t_llll *codableobj_run(t_codableobj* x, t_execEnv &context)
 {
     context.setRootParams(x->c_nparams, x->c_paramsnames, x->c_paramsvalues);
+    context.resetLocalVariables();
     context.stopTime = x->c_maxtime > 0 ? x->c_maxtime + systime_ms() : 0;
     return x->c_main->call(context);
 }

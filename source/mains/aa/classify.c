@@ -174,7 +174,7 @@ void classify_anything(t_classify *x, t_symbol *msg, long ac, t_atom *av)
                 ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 1);
             if (ll->l_size >= 2) {
                 if (x->n_ob.c_main) {
-                    t_execEnv lambdaContext((t_llllobj_object *) x);
+                    t_execEnv lambdaContext((t_llllobj_object *) x, x->n_ob.c_main);
                     lambdaContext.argc = 2;
                     t_lambdaData lambdaData = {
                         x,
