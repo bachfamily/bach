@@ -533,13 +533,18 @@ void bach_donors(t_bach *x)
     //post(" - Julien Vincenot"); // uncomment starting from june 2020
     //post(" - Michele Zaccagnini") // uncomment starting from august 2020
     post(" - Cody Brookshire");
+    post(" - Francisco Colasanto");
     post(" - Dimitri Fergadis (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research, proprietor of Halocyan Records)");
     post(" - Pete Kellock");
+    post(" - Yan Maresz");
+    post(" - Seidenberg");
+    post(" - Julien Vincenot");
+    post(" - Michele Zaccagnini");
     //
     post("...as well as all our patrons:");
-    post("Paolo Aralla, Francisco Colasanto, Jean-Julien Filatriau, Matthew Goodheart, Nikola Kołodziejczyk, linazero,");
-    post("Daniel Lujan, Yan Maresz, Micha Seidenberg, TJ Shredder, Christopher Michael Trapani, Pierre Alexandre Tremblay,");
-    post("Hans Tutschku, Joost Van Kerkhoven, Vens R., Julien Vincenot");
+    post("Paolo Aralla, Jean-Julien Filatriau, Matthew Goodheart, Nikola Kołodziejczyk, linazero,");
+    post("Daniel Lujan, Alessandro Ratoci, Micha Seidenberg, TJ Shredder, Christopher Michael Trapani, Pierre Alexandre Tremblay,");
+    post("Hans Tutschku, Joost Van Kerkhoven, Vens R.");
     post("for generously sustaining its development and maintenance");
     post("---peace & love, bach");
     post("**************************************************************************");
