@@ -171,7 +171,8 @@
       "expr",
       "vexpr",
       "bach.expr",
-      "bach.value"
+      "bach.value",
+      "bach.pv"
     ]
   },
   "bach.collect": {

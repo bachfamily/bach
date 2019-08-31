@@ -190,8 +190,8 @@
 			"Localvariableslifecycle" : {
 				"filename" : [ "bach.help.bell.040_variables.040_localvariableslifecycle.maxpat" ],
 				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
-				"seealso" : [ "return+value", "bell+sequence", "scope", "built+in+function" ],
-				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variables", "local", "assignment", "equal", "operator", "lifecycle", "params", "persistence" ],
+				"seealso" : [ "return+value", "bell+sequence", "scope", "built+in+function", "bell+keep", "bell+init" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variables", "local", "assignment", "lifecycle", "params", "persistence" ],
 				"title" : [ "Lifecycle of local variables" ]
 			},
 			"Globalvariables" : {
@@ -221,6 +221,13 @@
 				"seealso" : [  ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "global", "assignment", "persistence", "query", "reset", "printglobals", "printglobalswithvalues", "clearglobals", "auto", "attribute" ],
 				"title" : [ "Querying and resetting global variables" ]
+			},
+			"Patchervariables" : {
+				"filename" : [ "bach.help.bell.040_variables.075_patchervariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [ "global+variable" ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "variable", "patcher", "assignment", "pv" ],
+				"title" : [ "Patcher variables" ]
 			},
 			"Assigningoperators" : {
 				"filename" : [ "bach.help.bell.040_variables.080_assigningoperators.maxpat" ],
@@ -358,6 +365,34 @@
 				"seealso" : [  ],
 				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "scope", "visibility", "scoping", "propagation", "lift", "lifted" ],
 				"title" : [ "Lifted variables" ]
+			},
+			"Keepingthevalueofalocalvariables" : {
+				"filename" : [ "bach.help.bell.060_functions.062_keepingthevalueofalocalvariables.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static" ],
+				"title" : [ "Keeping the value of a local variable" ]
+			},
+			"Keepingvaluesinsidefunctions" : {
+				"filename" : [ "bach.help.bell.060_functions.064_keepingvaluesinsidefunctions.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static" ],
+				"title" : [ "Keeping values inside functions" ]
+			},
+			"Precedenceofvariableinitialization" : {
+				"filename" : [ "bach.help.bell.060_functions.066_precedenceofvariableinitialization.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static", "initialization", "order", "precedence" ],
+				"title" : [ "Precedence of variable initialization" ]
+			},
+			"Unkeepingvalues" : {
+				"filename" : [ "bach.help.bell.060_functions.068_unkeepingvalues.maxpat" ],
+				"objects" : [ "bach.eval", "bach.diff", "bach.intersection", "bach.symdiff", "bach.union" ],
+				"seealso" : [  ],
+				"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "function", "user", "defined", "variable", "local", "assignment", "persistence", "keep", "init", "static", "unkeep" ],
+				"title" : [ "Unkeeping values" ]
 			},
 			"Scopeoflocalvariablesexamples" : {
 				"filename" : [ "bach.help.bell.060_functions.070_scopeoflocalvariablesexamples.maxpat" ],
@@ -590,6 +625,13 @@
 					"seealso" : [ "flat", "lace", "delace", "trans" ],
 					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "group", "sublist", "modulo" ],
 					"title" : [ "group() function reference" ]
+				},
+				"Inlet" : {
+					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.inlet.maxpat" ],
+					"objects" : [ "bach.eval" ],
+					"seealso" : [ "outlet", "directin" ],
+					"tags" : [ "evaluation", "language", "script", "scripting", "code", "bell", "built", "in", "function", "inlet" ],
+					"title" : [ "inlet() function reference" ]
 				},
 				"Insert" : {
 					"filename" : [ "bach.help.bell.070_functions.300_built-in functions reference.insert.maxpat" ],

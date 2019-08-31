@@ -537,7 +537,7 @@ void bach_donors(t_bach *x)
     post(" - Dimitri Fergadis (aka Phthalocyanine, of A-Musik, Planet-Mu, and Plug Research, proprietor of Halocyan Records)");
     post(" - Pete Kellock");
     post(" - Yan Maresz");
-    post(" - Seidenberg");
+    post(" - Micha Seidenberg");
     post(" - Julien Vincenot");
     post(" - Michele Zaccagnini");
     //

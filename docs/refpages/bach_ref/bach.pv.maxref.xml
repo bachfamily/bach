@@ -100,6 +100,26 @@
 
 	<!--ATTRIBUTES-->
 	<attributelist>
+		<attribute name="auto" get="1" set="1" type="int_array" size="0">
+			<digest>
+				Automatically output llll
+			</digest>
+			<description>
+				When set to 1, the stored llll is automatically output
+				whenever it is set by another object of the same name and in the same hierarchy.<br/>
+				An optional second integer sets the priority (defaulting to 0):
+				the priority controls the order in which different bach.value objects
+				of the same name (and with the <b>auto</b> attribute switched on)
+				will automatically output the llll they receive.
+				The higher the priority, the earlier the object will fire.
+				The output order of objects with the same priority is undefined.
+			</description>
+			<attributelist>
+				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Automatically output llll" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
+				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
+			</attributelist>
+		</attribute>
 		<attribute name="out" get="1" set="1" type="symbol" size="1">
 			<digest>
 				Outlet Types
@@ -126,6 +146,7 @@
 			<attributelist>
 				<attribute name="category" get="1" set="1" type="symbol" size="1" value="Behavior" />
 				<attribute name="label" get="1" set="1" type="symbol" size="1" value="Outlet Types" />
+				<attribute name="paint" get="1" set="1" type="int" size="1" value="1" />
 				<attribute name="style" get="1" set="1" type="symbol" size="1" value="text" />
 			</attributelist>
 		</attribute>
