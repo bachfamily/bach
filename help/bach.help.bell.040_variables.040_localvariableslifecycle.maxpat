@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 2,
+			"minor" : 1,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -38,6 +38,22 @@
 		"style" : "",
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-14",
+					"linecount" : 3,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 208.0, 420.0, 385.0, 50.0 ],
+					"presentation_linecount" : 3,
+					"text" : "There is actually another way to keep a value persistent, through the keep keyword, but once again introducing it needs discussing functions first.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
@@ -143,6 +159,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 359.0, 278.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -238,6 +255,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 173.0, 139.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -282,6 +300,7 @@
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 6.0, 97.0, 277.0, 23.0 ],
 					"saved_object_attributes" : 					{
+						"embed" : 1,
 						"versionnumber" : 80001
 					}
 ,
@@ -298,7 +317,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: return+value, bell+sequence, scope, built+in+function",
+					"text" : "See Also: return+value, bell+sequence, scope, built+in+function, bell+keep, bell+init",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -342,8 +361,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, variables, local, assignment, equal, operator, lifecycle, params, persistence",
+					"patching_rect" : [ 6.0, 476.0, 564.0, 19.0 ],
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, variables, local, assignment, lifecycle, params, persistence",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}

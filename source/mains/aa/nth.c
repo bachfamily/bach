@@ -51,6 +51,7 @@ typedef struct _nth
 	long				n_in;
 	long				n_nils;
 	long				n_unwrap;
+    t_llll              *n_nil;
 } t_nth;
 
 
@@ -163,7 +164,7 @@ void nth_anything(t_nth *x, t_symbol *msg, long ac, t_atom *av)
 		} else
 			ll = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 0);
 		address = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 0);
-		outll = llll_nth(ll, address, x->n_nils);
+        outll = llll_nth(ll, address, x->n_nils ? x->n_nil : nullptr);
 		if (x->n_unwrap)
 			llll_flatten(outll, 1, 0);
 		llll_release(ll);
@@ -195,6 +196,7 @@ void nth_inletinfo(t_nth *x, void *b, long a, char *t)
 
 void nth_free(t_nth *x)
 {
+    llll_free(x->n_nil);
 	object_free_debug(x->n_proxy);
 	llllobj_obj_free((t_llllobj_object *) x);
 }
@@ -215,7 +217,8 @@ t_nth *nth_new(t_symbol *s, short ac, t_atom *av)
 		if (true_ac)
 			llllobj_parse_and_store_llll_address((t_object *) x, LLLL_OBJ_VANILLA, _sym_list, true_ac, av, 1, true, true);
 		x->n_proxy = proxy_new_debug((t_object *) x, 1, &x->n_in);
-		
+        x->n_nil = llll_get();
+        llll_appendllll(x->n_nil, llll_get());
 	} else 
 		error(BACH_CANT_INSTANTIATE);		
 	

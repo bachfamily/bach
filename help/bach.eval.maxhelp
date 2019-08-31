@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 100.0, 100.0, 937.0, 579.0 ],
+		"rect" : [ 97.0, 163.0, 937.0, 579.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 937.0, 553.0 ],
+						"rect" : [ 97.0, 189.0, 937.0, 553.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -114,7 +114,7 @@
 										"versionnumber" : 80007
 									}
 ,
-									"text" : "bach.eval John Paul #George #Ringo @triggers [.* -20] @out m"
+									"text" : "bach.eval John Paul #George #Ringo @triggers [** -20] @out m"
 								}
 
 							}
@@ -161,7 +161,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 732.0, 425.0, 175.0, 98.0 ],
-									"presentation_linecount" : 4,
 									"text" : "You can set priorities for wildcards just like for regular variable names. The priority applies to all the variables. If not specified, it defaults to 0. "
 								}
 
@@ -209,7 +208,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 251.0, 349.0, 298.0, 40.0 ],
-									"text" : "@triggers .* means that all the global variables appearing in the code will trigger the result."
+									"text" : "@triggers ** means that all the global variables appearing in the code will trigger the result."
 								}
 
 							}
@@ -241,7 +240,7 @@
 										"versionnumber" : 80007
 									}
 ,
-									"text" : "bach.eval John Paul #George #Ringo @triggers .* @out m"
+									"text" : "bach.eval John Paul #George #Ringo @triggers ** @out m"
 								}
 
 							}
@@ -256,7 +255,6 @@
 									"numinlets" : 1,
 									"numoutlets" : 0,
 									"patching_rect" : [ 251.0, 270.0, 310.0, 40.0 ],
-									"presentation_linecount" : 2,
 									"text" : "@triggers #* means that all the patcher variables appearing in the code will trigger the result."
 								}
 
@@ -509,7 +507,7 @@
 									"maxclass" : "comment",
 									"numinlets" : 1,
 									"numoutlets" : 0,
-									"patching_rect" : [ 10.0, 76.0, 494.0, 36.0 ],
+									"patching_rect" : [ 10.0, 76.0, 496.0, 36.0 ],
 									"text" : "The trigger attribute supports some special wildcard tokens allowing to automatically set all the global and patcher variables appearing in a bell program as triggers."
 								}
 
@@ -619,7 +617,6 @@
 					}
 ,
 					"patching_rect" : [ 51.0, 211.0, 166.0, 22.0 ],
-					"presentation_linecount" : 2,
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -3911,7 +3908,7 @@
 				"implicit" : 1
 			}
 , 			{
-				"name" : "bach.help.bell.010_basics.130_examples.maxpat",
+				"name" : "bach.help.welcome.maxpat",
 				"bootpath" : "~/Documents/Max 7/Packages/bach/help",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
@@ -4000,10 +3997,6 @@
 			}
 , 			{
 				"name" : "bach.print.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.roll.mxo",
 				"type" : "iLaX"
 			}
 , 			{

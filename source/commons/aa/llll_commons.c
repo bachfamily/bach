@@ -2152,7 +2152,7 @@ t_llll *llll_nth_as_objs(t_llll *root, t_llll *address)
 }
 
 // return a llll with hatoms copied (and sublllls cloned) from each element in root pointed by address, according to the address syntax
-t_llll *llll_nth(t_llll *root, t_llll *address, long nils)
+t_llll *llll_nth(t_llll *root, t_llll *address, t_llll *placeholder)
 {
     t_llll *out_llll = llll_get();
     t_llll *baby_llll = llll_get();
@@ -2161,8 +2161,8 @@ t_llll *llll_nth(t_llll *root, t_llll *address, long nils)
     for (elem = baby_llll->l_head; elem; elem = elem->l_next) {
         if ((baby = (t_llllelem *) elem->l_hatom.h_w.w_obj)) {
             llll_appendhatom_clone(out_llll, &baby->l_hatom, 0, WHITENULL_llll);
-        } else if (nils)
-            llll_appendllll(out_llll, llll_get(), 0, WHITENULL_llll);
+        } else if (placeholder && placeholder->l_size > 0)
+            llll_chain(out_llll, llll_clone(placeholder));
     }
     llll_free(baby_llll);
     pedantic_llll_check(out_llll);

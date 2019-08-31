@@ -66,6 +66,7 @@ void pv_free(t_pv *x);
 
 
 void pv_bang(t_pv *x);
+void pv_triggerfromclient(t_pv *x, long dummy);
 void pv_int(t_pv *x, t_atom_long v);
 void pv_float(t_pv *x, double v);
 void pv_anything(t_pv *x, t_symbol *msg, long ac, t_atom *av);
@@ -111,7 +112,8 @@ int T_EXPORT main()
 	// @method bang @digest Output the shared llll
 	// @description When <o>bach.pv</o> receives a bang, it outputs its shared llll.
 	class_addmethod(c, (method)pv_bang,		"bang",			0);
-	
+    class_addmethod(c, (method)pv_triggerfromclient,     "triggerfromclient", A_CANT, 0);
+
 	class_addmethod(c, (method)pv_assist,	"assist",		A_CANT,		0);
 	
     // @method (doubleclick) @digest Edit llll as text
@@ -222,6 +224,11 @@ void pv_bang(t_pv *x)
     t_llll *out_ll = x->n_var->get();
 	llllobj_outlet_llll((t_object *) x, LLLL_OBJ_VANILLA, 0, out_ll);
 	llll_release(out_ll);
+}
+
+void pv_triggerfromclient(t_pv *x, long dummy)
+{
+    pv_bang(x);
 }
 
 void pv_int(t_pv *x, t_atom_long v)

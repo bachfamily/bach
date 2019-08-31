@@ -281,7 +281,7 @@ void writesdif_dowrite(t_writesdif *x, t_symbol *s, long ac, t_atom *av)
 								bach_assert_objerror_goto(x, matrix_hatom_type == H_NOTHING || matrix_hatom_type == H_SYM, "bad body llll: inconsistent data type", writesdif_exit);
 								long len = strlen(row_elem->l_hatom.h_w.w_sym->s_name);
 								if (len >= row_size)
-									row_size = len + 1;
+									row_size = len;
 								matrix_hatom_type = H_SYM;
 								break;
 							}

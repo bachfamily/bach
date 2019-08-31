@@ -1256,6 +1256,8 @@ void bach_init_bifs(t_bach *x)
     (*bifTable)["apply"] = new t_fnApply;
 
     (*bifTable)["outlet"] = new t_fnOutlet;
+    (*bifTable)["inlet"] = new t_fnInlet;
+
     
     (*bifTable)["cos"] = new t_mathUnaryFunctionDD<cos>("cos");
     (*bifTable)["sin"] = new t_mathUnaryFunctionDD<sin>("sin");

@@ -39,70 +39,105 @@
 		"subpatcher_template" : "",
 		"boxes" : [ 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-9",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 386.0, 203.5, 78.0, 23.0 ],
-					"text" : "-1 -1 [1 4 6]"
+					"id" : "obj-16",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 157.0, 342.0, 98.0, 23.0 ],
+					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-3",
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"code" : "inlet() ",
+					"id" : "obj-15",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 329.0, 203.5, 48.0, 23.0 ],
-					"text" : "[1 2 3]"
+					"patching_rect" : [ 157.0, 307.0, 239.0, 23.0 ],
+					"saved_object_attributes" : 					{
+						"embed" : 1,
+						"versionnumber" : 80007
+					}
+,
+					"text" : "bach.eval inlet() @triggers #foo @out m"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-4",
+					"id" : "obj-14",
 					"maxclass" : "message",
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 191.0, 203.5, 39.0, 23.0 ],
-					"text" : "7 3 1"
+					"patching_rect" : [ 55.0, 307.0, 29.5, 23.0 ],
+					"text" : "1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
 					"id" : "obj-8",
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"maxclass" : "newobj",
+					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 237.0, 203.5, 85.0, 23.0 ],
-					"text" : "7 3 [1 4 7 -2]"
+					"patching_rect" : [ 55.0, 342.0, 76.0, 23.0 ],
+					"text" : "bach.pv foo"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 13.0,
+					"id" : "obj-6",
+					"linecount" : 2,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 9.0, 247.0, 349.0, 36.0 ],
+					"text" : "If the computation has been triggered by a trigger variable, rather than an inlet, the function returns 0.",
+					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-4",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 302.0, 98.0, 24.0, 24.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-3",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 172.0, 98.0, 24.0, 24.0 ]
 				}
 
 			}
 , 			{
 				"box" : 				{
 					"id" : "obj-2",
-					"linecount" : 2,
-					"maxclass" : "message",
-					"numinlets" : 2,
+					"maxclass" : "button",
+					"numinlets" : 1,
 					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 196.0, 172.0, 38.0 ],
-					"text" : "a b c [d e f [g] h i [j k [l x y]]] m n [o p [q r s t u v w]]"
+					"outlettype" : [ "bang" ],
+					"parameter_enable" : 0,
+					"patching_rect" : [ 42.0, 98.0, 24.0, 24.0 ]
 				}
 
 			}
@@ -112,41 +147,26 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 329.0, 98.0, 23.0 ],
+					"patching_rect" : [ 42.0, 169.0, 98.0, 23.0 ],
 					"text" : "print @popup 1"
 				}
 
 			}
 , 			{
 				"box" : 				{
-					"code" : "nth($l1, $l2) ",
+					"code" : "inlet() ",
 					"id" : "obj-7",
 					"maxclass" : "newobj",
-					"numinlets" : 2,
+					"numinlets" : 3,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 9.0, 261.0, 228.0, 23.0 ],
+					"patching_rect" : [ 42.0, 133.0, 279.0, 23.0 ],
 					"saved_object_attributes" : 					{
 						"embed" : 1,
-						"versionnumber" : 80001
+						"versionnumber" : 80007
 					}
 ,
-					"text" : "bach.eval nth($l1\\, $l2) @out m"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 13.0,
-					"id" : "obj-6",
-					"linecount" : 4,
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 414.0, 97.0, 154.0, 65.0 ],
-					"text" : "Arguments:\nllll\naddress (default: 1)\nplaceholder (default: null)",
-					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
+					"text" : "bach.eval inlet() @inlets 3 @triggers 0 @out m"
 				}
 
 			}
@@ -155,12 +175,12 @@
 					"fontname" : "Arial",
 					"fontsize" : 13.0,
 					"id" : "obj-76",
-					"linecount" : 3,
+					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 9.0, 39.0, 496.0, 50.0 ],
-					"text" : "The nth() function returns one or more elements from an llll according to its address, like the bach.nth object (and supporting its full address syntax). If a placeholder is provided, it will be inserted in the place of non-existing elements.",
+					"patching_rect" : [ 9.0, 39.0, 479.0, 36.0 ],
+					"text" : "The inlet() function returns the number of the inlet that triggered the computation. This is always 1, unless you set the \"triggers\" attribute to a different value.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 
@@ -174,7 +194,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 514.0, 585.0, 19.0 ],
-					"text" : "See Also: subs, insert, colon, pick",
+					"text" : "See Also: outlet, directin",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "seealso"
 				}
@@ -189,7 +209,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 495.0, 585.0, 19.0 ],
-					"text" : "Objects: bach.eval, bach.diff, bach.intersection, bach.symdiff, bach.union, bach.classify",
+					"text" : "Objects: bach.eval",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "objects"
 				}
@@ -204,8 +224,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 8.0, 177.0, 23.0 ],
-					"text" : "nth() function reference",
+					"patching_rect" : [ 6.0, 8.0, 184.0, 23.0 ],
+					"text" : "inlet() function reference",
 					"varname" : "title"
 				}
 
@@ -219,7 +239,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, nth, address, permutation",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, built, in, function, inlet",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -227,6 +247,20 @@
 			}
  ],
 		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-8", 0 ],
+					"source" : [ "obj-14", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-16", 0 ],
+					"source" : [ "obj-15", 0 ]
+				}
+
+			}
+, 			{
 				"patchline" : 				{
 					"destination" : [ "obj-7", 0 ],
 					"source" : [ "obj-2", 0 ]
@@ -242,7 +276,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-7", 1 ],
+					"destination" : [ "obj-7", 2 ],
 					"source" : [ "obj-4", 0 ]
 				}
 
@@ -254,23 +288,13 @@
 				}
 
 			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 1 ],
-					"source" : [ "obj-8", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-7", 1 ],
-					"source" : [ "obj-9", 0 ]
-				}
-
-			}
  ],
 		"dependency_cache" : [ 			{
 				"name" : "bach.eval.mxo",
+				"type" : "iLaX"
+			}
+, 			{
+				"name" : "bach.pv.mxo",
 				"type" : "iLaX"
 			}
  ],

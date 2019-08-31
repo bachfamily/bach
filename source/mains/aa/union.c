@@ -164,7 +164,7 @@ void union_anything(t_union *x, t_symbol *msg, long ac, t_atom *av)
                 inll1 = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 0, 1);
             inll2 = llllobj_get_store_contents((t_object *) x, LLLL_OBJ_VANILLA, 1, 1);
             if (x->n_ob.c_main) {
-                t_execEnv lambdaContext((t_llllobj_object *) x);
+                t_execEnv lambdaContext((t_llllobj_object *) x, x->n_ob.c_main);
                 lambdaContext.argc = 2;
                 t_lambdaData lambdaData = {
                     x,

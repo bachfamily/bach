@@ -560,7 +560,7 @@ void llllobj_gunload_llll(t_object *x, e_llllobj_obj_types type, t_llll *inll, l
     
     cache = llllobj_get_out(x, type) + outnum;
 
-    switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
+    switch (cache->b_type) {
         case LLLL_O_TEXT:
             llllobj_gunload_bttext(cache, inll);
             break;
@@ -582,7 +582,7 @@ void llllobj_gunload_llll_with_phonenumber(t_object *x, e_llllobj_obj_types type
     
     cache = llllobj_get_out(x, type) + outnum;
     
-    switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
+    switch (cache->b_type) {
         case LLLL_O_TEXT:
             llllobj_gunload_bttext(cache, inll);
             break;
@@ -617,7 +617,7 @@ void llllobj_gunload_wrap(t_object *x, e_llllobj_obj_types type, t_atom *in_aa_a
     for (i = ac - 1; i >= 0; i --) {
         cache = out + *(--this_outnum);
         
-        switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
+        switch (cache->b_type) {
             case LLLL_O_TEXT:
                 llllobj_gunload_bttext(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
                 break;
@@ -646,7 +646,7 @@ void llllobj_gunload_array_range(t_object *x, e_llllobj_obj_types type, t_llll *
     
     for (this_arr = arr + maxout - minout, cache = out + maxout; this_arr >= arr; this_arr--, cache--) {
         
-        switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
+        switch (cache->b_type) {
             case LLLL_O_TEXT:
                 llllobj_gunload_bttext(cache, *this_arr);
                 break;
@@ -678,7 +678,7 @@ void llllobj_gunload_wrap_range(t_object *x, e_llllobj_obj_types type, t_atom *i
 
     for (i = maxout - minout, cache = out + maxout; i >= 0; i--, cache--) {
         
-        switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
+        switch (cache->b_type) {
             case LLLL_O_TEXT:
                 llllobj_gunload_bttext(cache, (t_llll *) in_ll_atom[i].a_w.w_obj);
                 break;
@@ -707,20 +707,25 @@ void llllobj_shoot_llll(t_object *x, e_llllobj_obj_types type, long outnum)
         return;
     }
     
-    switch (bach->b_nonative ? LLLL_O_MAX : out->b_type) {
+    switch (out->b_type) {
             
         case LLLL_O_NATIVE: {
-            t_atom out_av = *(out->b_av);
-            t_llll *outll = out->b_ll;
+			t_llll *outll = llll_retain(out->b_ll);
 #ifdef BACH_CHECK_LLLLS
-            if (llll_check(outll))
-                error("llllobj_shoot_llll: bad llll");
+			if (llll_check(outll))
+				error("llllobj_shoot_llll: bad llll");
 #endif
-            llll_retain(outll);
-            bach_atomic_unlock(&out->b_lock);
-            outlet_anything(out->b_outlet, out_msg, 1, &out_av);
-            llll_release(outll);
-            break;
+			if (bach->b_nonative) {
+				bach_atomic_unlock(&out->b_lock);
+				llllobj_outlet_llll(x, type, outnum, outll);
+				llll_release(outll);
+			} else {
+				t_atom out_av = *(out->b_av);
+				bach_atomic_unlock(&out->b_lock);
+				outlet_anything(out->b_outlet, out_msg, 1, &out_av);
+				llll_release(outll);
+			}
+			break;
         }
             
         case LLLL_O_TEXT:
@@ -741,7 +746,7 @@ void llllobj_shoot_llll(t_object *x, e_llllobj_obj_types type, long outnum)
                     bach_copyptr(out->b_av, out_av, out_size);
                     bach_atomic_unlock(&out->b_lock);
                     if (out_msg == _sym_list)
-                        outlet_list(out->b_outlet, NULL, MIN(out_ac, 32767), out_av);
+                        outlet_list(out->b_outlet, _sym_list, MIN(out_ac, 32767), out_av);
                     else
                         outlet_anything(out->b_outlet, out_msg, MIN(out_ac, 32767), out_av);
                     bach_freeptr(out_av);
@@ -799,7 +804,7 @@ void outlet_anything_prudent(void *o, t_symbol *s, short ac, t_atom *av)
     else if (s == _sym_float)
         outlet_float(o, atom_getfloat(av));
     else if (s == _sym_list)
-        outlet_list(o, NULL, ac, av);
+        outlet_list(o, _sym_list, ac, av);
     else */
         outlet_anything(o, s, ac, av);
 }
@@ -877,13 +882,13 @@ void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_l
                 switch(atom_gettype(outlist)) {
                     case A_FLOAT:
                         if (ac > 1)
-                            outlet_list(cache->b_outlet, NULL, ac, outlist);
+                            outlet_list(cache->b_outlet, _sym_list, ac, outlist);
                         else
                             outlet_float(cache->b_outlet, atom_getfloat(outlist));
                         break;
                     case A_LONG:
                         if (ac > 1)
-                            outlet_list(cache->b_outlet, NULL, ac, outlist);
+                            outlet_list(cache->b_outlet, _sym_list, ac, outlist);
                         else
                             outlet_int(cache->b_outlet, atom_getlong(outlist));
                         break;

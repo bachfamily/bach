@@ -540,7 +540,7 @@ t_llllelem *llll_nth_one(const t_llll *root, t_llll *address);
 t_llll *llll_nth_as_objs(t_llll *root, t_llll *address);
 
 // return a llll with hatoms copied (and sublllls cloned) from each element in root pointed by address, according to the address syntax
-t_llll *llll_nth(t_llll *root, t_llll *address, long nils);
+t_llll *llll_nth(t_llll *root, t_llll *address, t_llll *placeholder);
 
 // ---DESTRUCTIVE on ll
 // substitute subs_model at address in ll
