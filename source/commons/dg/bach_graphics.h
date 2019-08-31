@@ -159,6 +159,7 @@ char is_pt_in_polygon(t_pt pt, t_polygon *poly);
 void polygon_offset_smart_inplace(t_polygon **poly, double amount, long unwanted_pts_size, t_pt *unwanted_pts, 
                                    char mode, t_polygon *container, char algo_intersect, long wanted_pts_size, t_pt *wanted_pts);
 */
+t_polygon *polygon_offset_simple(t_polygon *poly, double amount);
 t_polygon *get_convex_hull(long num_points, t_pt *points);
 t_polygon *get_bounding_box(long num_points, t_pt *points, t_pt pad);
 double pt_polygon_distance(t_pt pt, t_polygon *poly);
