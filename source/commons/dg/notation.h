@@ -10328,10 +10328,10 @@ void paint_annotation_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *c
                                 char *last_annotation_text, double *annotation_sequence_start_x_pos, double *annotation_sequence_end_x_pos,
                                 double *annotation_line_y_pos);
 
-void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                              double center_x, double duration_x, long slot, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double staff_bottom_y, double *curr_hairpin_start_x, long *curr_hairpin_type, char boxed);
-void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
-                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window, double min_hairpin_start_x);
+double paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
+                              double center_x, double duration_x, long slot, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double staff_bottom_y, double *curr_hairpin_start_x, long *curr_hairpin_type, char paint_mode);
+double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
+                    double center_x, double duration_x, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char paint_mode, double min_hairpin_start_x);
 
 
 
@@ -10382,7 +10382,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
                                     background painting of the "foreground" slot. Leave this to -1 in order to ignore it (and to paint all background slots).
  */ 
 void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bgwindow_active_x1, double slot_bgwindow_active_y2, double duration_line_length, 
-                                t_jfont *jf_slottext, t_jfont *jf_slotbold, t_jfont *jf_slotdynamics, t_notation_item *nitem, double pos_x_for_numbers, double pos_y_for_numbers,
+                                t_jfont *jf_slottext, t_jfont *jf_slotbold, t_jfont *jf_slotdynamics, t_jfont *jf_slotdynamicsroman, t_notation_item *nitem, double pos_x_for_numbers, double pos_y_for_numbers,
                                 double pos_x_for_text, double pos_y_for_text, long dont_paint_this_slot);
 
 

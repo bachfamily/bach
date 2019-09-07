@@ -1548,7 +1548,8 @@ void uislot_paint_ext(t_uislot *x, t_object *view, t_jgraphics *g, t_rect rect)
         if (x->r_ob.slot_background_alpha_percentage < 100) {
             t_jfont *jf_text_small = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y));  // text font (small and bold)
             t_jfont *jf_text_smallbold = jfont_create_debug("Arial", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y));  // text font (small and bold)
-            t_jfont *jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_BOLD, round(x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y));  // text font (small and bold)
+            t_jfont *jf_dynamics = jfont_create_debug("November for bach", JGRAPHICS_FONT_SLANT_NORMAL, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * 2 * x->r_ob.zoom_y));  // text font (small and bold)
+            t_jfont *jf_dynamics_roman = jfont_create_debug("Times New Roman", JGRAPHICS_FONT_SLANT_ITALIC, JGRAPHICS_FONT_WEIGHT_NORMAL, round(x->r_ob.slot_background_font_size * x->r_ob.zoom_y));
 
             double slot_window_active_x1 = CONST_SLOT_WINDOW_INSET_X;
             double slot_window_active_width = (rect.width - 2 * CONST_SLOT_WINDOW_INSET_X) * x->r_ob.slot_window_hzoom_factor;
@@ -1560,7 +1561,7 @@ void uislot_paint_ext(t_uislot *x, t_object *view, t_jgraphics *g, t_rect rect)
             
             paint_background_slots((t_notation_obj *) x, bg_slots_g, 
                         slot_window_active_x1, rect.height - CONST_SLOT_FUNCTION_UY_INSET_BOTTOM * x->r_ob.zoom_y, slot_window_active_width,
-                        jf_text_small, jf_text_smallbold, jf_dynamics, (t_notation_item *)x->r_ob.dummynote, 0, 0, 0, 0, x->r_ob.active_slot_num);
+                        jf_text_small, jf_text_smallbold, jf_dynamics, jf_dynamics_roman, (t_notation_item *)x->r_ob.dummynote, 0, 0, 0, 0, x->r_ob.active_slot_num);
             jgraphics_set_source_rgba(g, 0, 0, 0, (100 - x->r_ob.slot_background_alpha_percentage)/100.); 
             jgraphics_set_source_rgba(bg_slots_g, 0, 0, 0, (100 - x->r_ob.slot_background_alpha_percentage)/100.); 
             jgraphics_image_surface_draw(g, bg_slots_surface, rect_oo, rect_oo);
@@ -1571,6 +1572,7 @@ void uislot_paint_ext(t_uislot *x, t_object *view, t_jgraphics *g, t_rect rect)
             jfont_destroy_debug(jf_text_small);
             jfont_destroy_debug(jf_text_smallbold);
             jfont_destroy_debug(jf_dynamics);
+            jfont_destroy_debug(jf_dynamics_roman);
         }
 
         if (x->r_ob.active_slot_num_1based == 0)

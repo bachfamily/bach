@@ -24031,49 +24031,53 @@ void chord_assign_dynamics(t_notation_obj *r_ob, t_chord *chord, t_jfont *jf_dyn
 
     chord->dynamics_slot = NULL;
     
-    long slotnum = r_ob->link_dynamics_to_slot - 1;
-    if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS && r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_DYNAMICS){
+//    long slotnum = r_ob->link_dynamics_to_slot - 1;
+//    if (slotnum >= 0 && slotnum < CONST_MAX_SLOTS && r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_DYNAMICS){
 
-        t_notation_item *item = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, slotnum);
-        t_slotitem *firstitem = notation_item_get_slot_firstitem(r_ob, item, slotnum);
-        if (firstitem && firstitem->item){
-            t_dynamics *dyn = (t_dynamics *)firstitem->item;
-            chord->dynamics_slot = notation_item_get_slot(r_ob, item, slotnum);
-            
-            if (jf_dynamics_nozoom && jf_dynamics_roman_nozoom) {
-                double w = 0, h = 0, firstw = 0, firsth = 0;
-                if (dyn->firstmark) {
-                    if (dyn->firstmark->num_words > 0) {
-                        dynamics_mark_measure(dyn->firstmark, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
-                        if (dyn->firstmark->is_roman[0]) {
-                            dyn->dynamics_left_uext = CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
-                            dyn->dynamics_min_uwidth = w;
-                            dyn->dynamics_right_uext = w - dyn->dynamics_left_uext;
-                        } else {
-                            jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic[0]->s_name, &firstw, &firsth);
-                            dyn->dynamics_left_uext = firstw/2.;
-                            dyn->dynamics_min_uwidth = w;
-                            dyn->dynamics_right_uext = firstw/2. + (w - firstw);
-                        }
-                    } else {
-                        dyn->dynamics_left_uext = 0;
-                        dyn->dynamics_min_uwidth = 0;
-                        dyn->dynamics_right_uext = 0;
-                    }
-                    
-                    for (t_dynamics_mark *dynsign = dyn->firstmark->next; dynsign; dynsign = dynsign->next) {
-                        dynamics_mark_measure(dynsign, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
-                        dyn->dynamics_min_uwidth += CONST_MIN_UWIDTH_BETWEEN_DYNAMICS + w;
-                        if (!dynsign->next) {
-                            if (dynsign->num_words > 0) {
-                                if (dynsign->is_roman[0]) {
-                                    dyn->dynamics_right_uext = w - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
-                                } else {
-                                    jfont_text_measure(jf_dynamics_nozoom, dynsign->text_typographic[0]->s_name, &firstw, &firsth);
-                                    dyn->dynamics_right_uext = w - firstw/2.;
-                                }
+    for (long slotnum = 0; slotnum < CONST_MAX_SLOTS; slotnum ++) {
+        if (r_ob->slotinfo[slotnum].slot_type == k_SLOT_TYPE_DYNAMICS) {
+            t_notation_item *item = notation_item_get_bearing_dynamics(r_ob, (t_notation_item *)chord, slotnum);
+            t_slotitem *firstitem = notation_item_get_slot_firstitem(r_ob, item, slotnum);
+            if (firstitem && firstitem->item){
+                t_dynamics *dyn = (t_dynamics *)firstitem->item;
+                if (slotnum == r_ob->link_dynamics_to_slot - 1)
+                    chord->dynamics_slot = notation_item_get_slot(r_ob, item, slotnum);
+                
+                if (jf_dynamics_nozoom && jf_dynamics_roman_nozoom) {
+                    double w = 0, h = 0, firstw = 0, firsth = 0;
+                    if (dyn->firstmark) {
+                        if (dyn->firstmark->num_words > 0) {
+                            dynamics_mark_measure(dyn->firstmark, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
+                            if (dyn->firstmark->is_roman[0]) {
+                                dyn->dynamics_left_uext = CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                                dyn->dynamics_min_uwidth = w;
+                                dyn->dynamics_right_uext = w - dyn->dynamics_left_uext;
                             } else {
-                                dyn->dynamics_right_uext = 0;
+                                jfont_text_measure(jf_dynamics_nozoom, dyn->firstmark->text_typographic[0]->s_name, &firstw, &firsth);
+                                dyn->dynamics_left_uext = firstw/2.;
+                                dyn->dynamics_min_uwidth = w;
+                                dyn->dynamics_right_uext = firstw/2. + (w - firstw);
+                            }
+                        } else {
+                            dyn->dynamics_left_uext = 0;
+                            dyn->dynamics_min_uwidth = 0;
+                            dyn->dynamics_right_uext = 0;
+                        }
+                        
+                        for (t_dynamics_mark *dynsign = dyn->firstmark->next; dynsign; dynsign = dynsign->next) {
+                            dynamics_mark_measure(dynsign, jf_dynamics_nozoom, jf_dynamics_roman_nozoom, &w, &h);
+                            dyn->dynamics_min_uwidth += CONST_MIN_UWIDTH_BETWEEN_DYNAMICS + w;
+                            if (!dynsign->next) {
+                                if (dynsign->num_words > 0) {
+                                    if (dynsign->is_roman[0]) {
+                                        dyn->dynamics_right_uext = w - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                                    } else {
+                                        jfont_text_measure(jf_dynamics_nozoom, dynsign->text_typographic[0]->s_name, &firstw, &firsth);
+                                        dyn->dynamics_right_uext = w - firstw/2.;
+                                    }
+                                } else {
+                                    dyn->dynamics_right_uext = 0;
+                                }
                             }
                         }
                     }

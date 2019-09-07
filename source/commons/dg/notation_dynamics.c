@@ -683,16 +683,17 @@ t_dynamics *dynamics_from_llll(t_notation_obj *r_ob, t_notation_item *owner, t_l
 }
 
 
-void paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item, double center_x,
+double paint_dynamics_from_slot(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item, double center_x,
                               double duration_x, long slot, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman, double font_size,
-                              double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, char boxed)
+                              double roman_font_size, double y_position, double *curr_hairpin_start_x, long *curr_hairpin_type, char paint_mode)
 {
     t_slotitem *firstitem = notation_item_get_slot_firstitem(r_ob, item, slot);
     if (firstitem && (t_symbol *)firstitem->item){
         t_dynamics *dyn = (t_dynamics *)firstitem->item;
         if (dyn && dyn->firstmark)
-            paint_dynamics(r_ob, g, color, item, center_x, duration_x, dyn, jf_dynamics, jf_dynamics_roman, font_size, roman_font_size, y_position, curr_hairpin_start_x, curr_hairpin_type, NULL, NULL, boxed, 0);
+            return paint_dynamics(r_ob, g, color, item, center_x, duration_x, dyn, jf_dynamics, jf_dynamics_roman, font_size, roman_font_size, y_position, curr_hairpin_start_x, curr_hairpin_type, NULL, NULL, paint_mode, 0);
     }
+    return 0;
 }
 
 char dynamics_mark_is_zero(t_dynamics_mark *dynsign)
@@ -779,15 +780,20 @@ double dynamics_get_left_extension_from_chord_stem(t_notation_obj *r_ob, t_dynam
     }
     return 0;
 }
+
 // use item == NULL to only finish an hairpin
-// slot_window_width is only used when inside_slot_window is true
-void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
+// paint_mode == 0: dynamics painted along with note duration
+// paint_mode == 1: dynamics painted inside a fixed box (e.g. slot window)
+// paint_mode == 2: dynamics painted in the minimum possible space, left aligned
+// slot_window_width is only used when mode is 1
+// returns the dynamics width in pixels
+double paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_notation_item *item,
                     double center_x, double slot_window_width, t_dynamics *dyn, t_jfont *jf_dynamics, t_jfont *jf_dynamics_roman,
                     double font_size, double roman_font_size, double y_position, double *curr_hairpin_start_x,
-                    long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char inside_slot_window,
+                    long *curr_hairpin_type, t_jrgba *prev_hairpin_color, char *prev_hairpin_dont_paint, char paint_mode,
                     double min_hairpin_start_x)
 {
-    char boxed = inside_slot_window;
+    char boxed = (paint_mode == 1);
     double xpos = center_x, ypos = y_position;
     double h = -1, w = -1;
     //    double font_size = jfont_get_font_size(jf_dynamics);
@@ -833,7 +839,7 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
         if (prev_hairpin_color && color)
             *prev_hairpin_color = *color;
         
-        return;
+        return 0;
     }
     
     if (dyn){
@@ -903,25 +909,39 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
             *prev_hairpin_color = *color;
         
         double prev_end_xpos = 0;
+        double cursor_x = center_x;
         double y_adj_for_dynamics = - 0.93 * font_size;
         double y_adj_for_romans = y_adj_for_dynamics + (font_size - roman_font_size) + 0.18 * font_size;
+        double font_size_ratio = (font_size / r_ob->dynamics_font_size);
+        
+        if (paint_mode == 2)
+            y_adj_for_dynamics -= 0.15 * font_size;
+        
+//        paint_line(g, build_jrgba(0, 0, 0, 1), 0, ypos, 500, ypos, 1);
+//        paint_line(g, build_jrgba(1, 0, 0, 1), 0, ypos + y_adj_for_dynamics, 500, ypos + y_adj_for_dynamics, 1);
+//        paint_line(g, build_jrgba(0, 1, 0, 1), 0, ypos + y_adj_for_romans, 500, ypos + y_adj_for_romans, 1);
+
         for (t_dynamics_mark *mark = dyn->firstmark; mark; mark = mark->next) {
             char is_dynamic_zero = false;
             
-            xpos = center_x + dynamics_mark_get_relative_position(dyn, mark) * duration_x;
-            
-            if (boxed) xpos += dyn->dynamics_left_uext * r_ob->zoom_y;
-            
-            if (!boxed && (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && xpos + dyn->dynamics_right_uext > center_x + duration_x))
-                xpos = center_x + duration_x - dyn->dynamics_right_uext;
+            if (paint_mode == 2) {
+                xpos = cursor_x;
+            } else {
+                xpos = center_x + dynamics_mark_get_relative_position(dyn, mark) * duration_x;
+                
+                if (boxed) xpos += dyn->dynamics_left_uext * r_ob->zoom_y;
+                
+                if (!boxed && (r_ob->obj_type == k_NOTATION_OBJECT_SCORE && xpos + dyn->dynamics_right_uext > center_x + duration_x))
+                    xpos = center_x + duration_x - dyn->dynamics_right_uext;
+            }
             
             double cur = xpos, end_previous_hairpin_here = xpos;
             if (r_ob->show_dynamics || boxed) {
                 if (dynamics_mark_is_zero(mark)) {
                     if (!dont_paint)
-                        paint_circle_stroken(g, *color, xpos, ypos, ZEROCIRCLE_RADIUS, 1);
+                        paint_circle_stroken(g, *color, xpos + (paint_mode == 2 ? ZEROCIRCLE_RADIUS : 0), ypos, ZEROCIRCLE_RADIUS, 1);
                     is_dynamic_zero = true;
-                    cur += ZEROCIRCLE_RADIUS;
+                    cur += (paint_mode == 2 ? 2 : 1) * ZEROCIRCLE_RADIUS;
                     end_previous_hairpin_here -= ZEROCIRCLE_RADIUS;
                 } else {
                     end_previous_hairpin_here -= HAIRPIN_PAD;
@@ -933,20 +953,26 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                             jfont_text_measure(jfont, mark->text_typographic[i]->s_name, &thisw, &thish);
                             if (i == 0) {
                                 if (mark->is_roman[i]) {
-                                    write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y, this_ypos, 600, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_LEFT | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
-                                    cur += thisw - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
-                                    end_previous_hairpin_here -= CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y;
+                                    write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y * font_size_ratio, this_ypos, 600, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_LEFT | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
+                                    cur += thisw - CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y * font_size_ratio;
+                                    end_previous_hairpin_here -= CONST_UX_NUDGE_LEFT_FOR_FIRST_ROMAN_WORD * r_ob->zoom_y * font_size_ratio;
                                 } else {
-                                    write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur - 200, this_ypos, 400, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
-                                    cur += thisw/2;
-                                    end_previous_hairpin_here -= thisw/2;
+                                    if (paint_mode == 2) {
+                                        write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur, this_ypos, 400, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_LEFT | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
+                                        cur += thisw;
+                                        end_previous_hairpin_here -= thisw;
+                                    } else {
+                                        write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur - 200, this_ypos, 400, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_HCENTERED | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
+                                        cur += thisw/2;
+                                        end_previous_hairpin_here -= thisw/2;
+                                    }
                                 }
                             } else {
                                 write_text(g, jfont, *color, mark->text_typographic[i]->s_name, cur, this_ypos, 600, ypos + 300, JGRAPHICS_TEXT_JUSTIFICATION_LEFT | JGRAPHICS_TEXT_JUSTIFICATION_TOP, false, false);
                                 cur += thisw;
                             }
                             if (i != mark->num_words - 1)
-                                cur += CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS * r_ob->zoom_y;
+                                cur += CONST_USPACE_BETWEEN_DYNAMICS_MARK_WORDS * r_ob->zoom_y * font_size_ratio;
                         }
                     }
                 }
@@ -958,8 +984,19 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
                 dynamics_mark_measure(mark, jf_dynamics, jf_dynamics_roman, &w, &h);
             
             // painting hairpin?
-            if ((r_ob->show_hairpins || boxed) && !dont_paint && mark->prev && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < end_previous_hairpin_here)
-                paint_hairpin(g, *color, mark->prev->hairpin_to_next, prev_end_xpos, end_previous_hairpin_here, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, 0);
+            if (paint_mode == 2) {
+                // we are writing the dynamics linearly: we paint the next hairpin
+                if (mark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE) {
+                    paint_hairpin(g, *color, mark->hairpin_to_next, cur, cur + font_size, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, 0);
+                    cursor_x = cur + font_size;
+                } else
+                    cursor_x = cur;
+            } else {
+                // we paint the previous hairpin
+                if ((r_ob->show_hairpins || paint_mode > 0) && !dont_paint && mark->prev && mark->prev->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < end_previous_hairpin_here) {
+                    paint_hairpin(g, *color, mark->prev->hairpin_to_next, prev_end_xpos, end_previous_hairpin_here, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, 0);
+                }
+            }
             
             prev_end_xpos = cur + (is_dynamic_zero ? 0. : HAIRPIN_PAD);
             
@@ -973,7 +1010,10 @@ void paint_dynamics(t_notation_obj *r_ob, t_jgraphics* g, t_jrgba *color, t_nota
         if (boxed && !dont_paint && dyn->lastmark && dyn->lastmark->hairpin_to_next != k_DYNAMICS_HAIRPIN_NONE && prev_end_xpos < center_x + duration_x - HAIRPIN_PAD) {
             paint_hairpin(g, *color, dyn->lastmark->hairpin_to_next, prev_end_xpos, center_x + duration_x - HAIRPIN_PAD, ypos, HAIRPIN_SEMIAPERTURE, 1, DASH_LENGTH, 0);
         }
+        
+        return cursor_x - center_x;
     }
+    return 0;
 }
 
 

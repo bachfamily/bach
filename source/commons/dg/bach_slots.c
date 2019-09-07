@@ -2234,7 +2234,7 @@ void paint_slot(t_notation_obj *r_ob, t_jgraphics* g, t_rect graphic_rect, t_not
                 double text_pad = 5 * zoom_y;
                 double curr_hairpin_start_x = 0;
                 long curr_hairpin_type = 0;
-                paint_dynamics(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad, dyn, jf_slot_dynamics, jf_slot_dynamics_roman, 18 * zoom_y, 9 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, NULL, NULL, true, 0);
+                paint_dynamics(r_ob, g, &slot_text_textcolor, r_ob->active_slot_notationitem, slot_window_active_x1 + text_pad, slot_window_active_x2 - slot_window_active_x1 - 2 * text_pad, dyn, jf_slot_dynamics, jf_slot_dynamics_roman, 18 * zoom_y, 9 * zoom_y, slot_window_active_y1 + slot_window_active_height * 0.5, &curr_hairpin_start_x, &curr_hairpin_type, NULL, NULL, 1, 0);
             }
         }
             break;
@@ -2597,10 +2597,7 @@ void slot_clip_domain_value(t_notation_obj *r_ob, t_notation_item *nitem, long s
 }
 
 
-void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bgwindow_active_x1, double slot_bgwindow_active_y2, double duration_line_length,
-								t_jfont *jf_slottext, t_jfont *jf_slotbold, t_jfont *jf_slotdynamics, t_notation_item *nitem,
-								double pos_x_for_numbers, double pos_y_for_numbers, double pos_x_for_text, double pos_y_for_text,
-								long dont_paint_this_slot)
+void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bgwindow_active_x1, double slot_bgwindow_active_y2, double duration_line_length, t_jfont *jf_slottext, t_jfont *jf_slotbold, t_jfont *jf_slotdynamics, t_jfont *jf_slotdynamicsroman, t_notation_item *nitem, double pos_x_for_numbers, double pos_y_for_numbers, double pos_x_for_text, double pos_y_for_text, long dont_paint_this_slot)
 {
 	long i;
 	double x_deplacement_numbers = 0., x_deplacement_text = 0.;
@@ -2839,14 +2836,19 @@ void paint_background_slots(t_notation_obj *r_ob, t_jgraphics* g, double slot_bg
                     char dyntext[1024];
                     double width, height;
                     t_dynamics *dyn = (slot->firstitem && slot->firstitem->item ? (t_dynamics *)slot->firstitem->item : NULL);
-                    if (dyn) {
+                    dyntext[0] = 0;
+                    
+                    /*
+                    if (dyn)
                         snprintf_zero(dyntext, 1024, "%s", dyn->text_deparsed->s_name);
-                    } else {
-                        dyntext[0] = 0;
-                    }
-                    jfont_text_measure(jf_slotdynamics, dyntext, &width, &height);
-                    write_text_account_for_vinset(r_ob, g, jf_slotdynamics, slot_color, dyntext, pos_x_for_text + x_deplacement_text, pos_y_for_text);
+                    jfont_text_measure(jf_slottext, dyntext, &width, &height);
+                    write_text_account_for_vinset(r_ob, g, jf_slottext, slot_color, dyntext, pos_x_for_text + x_deplacement_text, pos_y_for_text);
                     x_deplacement_text += width + 4 * zoom_y;
+                     */
+                    
+                    width = paint_dynamics(r_ob, g, &slot_color, nitem, pos_x_for_text + x_deplacement_text, -1, dyn, jf_slotdynamics, jf_slotdynamicsroman, r_ob->slot_background_font_size*2., r_ob->slot_background_font_size, pos_y_for_text, NULL, NULL, NULL, NULL, 2, 0);
+                    x_deplacement_text += width + 4 * zoom_y;
+
                 }
                     break;
 			}
