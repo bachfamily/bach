@@ -58,7 +58,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 65.0, 126.0, 661.0, 427.0 ],
+						"rect" : [ 0.0, 26.0, 661.0, 427.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -379,7 +379,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 661.0, 427.0 ],
+						"rect" : [ 65.0, 126.0, 661.0, 427.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -431,12 +431,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 386.0, 121.5, 168.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80007
-									}
-,
-									"text" : "bach.value radio @auto 1 1"
+									"patching_rect" : [ 386.0, 121.5, 150.0, 23.0 ],
+									"text" : "bach.pv radio @auto 1 1"
 								}
 
 							}
@@ -476,12 +472,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 175.0, 121.5, 168.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80007
-									}
-,
-									"text" : "bach.value radio @auto 1 2"
+									"patching_rect" : [ 175.0, 121.5, 150.0, 23.0 ],
+									"text" : "bach.pv radio @auto 1 2"
 								}
 
 							}
@@ -524,12 +516,8 @@
 									"numinlets" : 1,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 20.0, 121.5, 104.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80007
-									}
-,
-									"text" : "bach.value radio"
+									"patching_rect" : [ 20.0, 121.5, 87.0, 23.0 ],
+									"text" : "bach.pv radio"
 								}
 
 							}
@@ -1360,7 +1348,7 @@
 										}
 ,
 										"classnamespace" : "box",
-										"rect" : [ 233.0, 197.0, 693.0, 298.0 ],
+										"rect" : [ 80.0, 413.0, 693.0, 298.0 ],
 										"bglocked" : 0,
 										"openinpresentation" : 0,
 										"default_fontsize" : 10.0,
@@ -2040,10 +2028,6 @@
 			}
 , 			{
 				"name" : "bach.print.mxo",
-				"type" : "iLaX"
-			}
-, 			{
-				"name" : "bach.value.mxo",
 				"type" : "iLaX"
 			}
 , 			{

@@ -550,7 +550,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 476.0, 585.0, 19.0 ],
-					"text" : "Tags: evaluation, language, script, scripting, code, bell, variable, patcher, assignment, pv",
+					"text" : "Tags: evaluation, language, script, scripting, code, bell, variable, patcher, assignment, pv, bach.pv, scope",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ],
 					"varname" : "tags"
 				}
@@ -566,7 +566,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 6.0, 32.0, 586.0, 94.0 ],
-					"text" : "Patcher variables behave like global variables under most respects, but they share their values throughout the patcher hierarchy, just like pv and bach.pv objects (for more details, please refer to the latter's help file). This makes them especially handy for abstractions and Max For Live devices.\nThe name of a patcher variable must be preceded by the # sign.\nA patcher variable shares its value with other bell-compatible object and correspondingly named bach.pv objects, provided they are in the same patcher hierarchy.",
+					"text" : "Patcher variables behave like global variables under most respects, but they share their values throughout the patcher hierarchy, just like pv and bach.pv objects (for more details, please refer to the latter's help file). This makes them especially handy for abstractions and Max For Live devices.\nThe name of a patcher variable must be preceded by the # sign.\nA patcher variable shares its value with other bell-compatible object and correspondingly named bach.pv objects, provided that they are in the same patcher hierarchy.",
 					"textcolor" : [ 0.5, 0.5, 0.5, 1.0 ]
 				}
 

@@ -61,6 +61,7 @@ void eval_anything(t_eval *x, t_symbol *msg, long ac, t_atom *av);
 void eval_expr(t_eval *x, t_symbol *msg, long ac, t_atom *av);
 
 void eval_deferbang(t_eval *x, t_symbol *msg, long ac, t_atom *av);
+void eval_setready(t_eval *x, t_symbol *msg, long ac, t_atom *av);
 
 void eval_inletinfo(t_eval *x, void *b, long a, char *t);
 long eval_ishot(t_eval *x, long inlet);
@@ -266,8 +267,6 @@ t_max_err eval_setattr_triggers(t_eval *x, t_object *attr, long ac, t_atom *av)
             llll_free(free_me);
             if (x->n_ready)
                 codableobj_resolve_trigger_vars((t_codableobj*) x, NULL, 0, NULL);
-            else
-                x->n_ready = true;
         }
     }
     return MAX_ERR_NONE;
@@ -307,10 +306,26 @@ void eval_dblclick(t_eval *x)
     codableobj_dblclick_helper((t_codableobj *) x, gensym("expr"));
 }
 
+void eval_bang_deferred(t_eval *x, t_symbol *s, long ac, t_atom *av)
+{
+    if (x->n_ready) {
+        t_atom_long inlet = atom_getlong(av);
+        eval_run(x, inlet);
+    } else {
+        defer_low(x, (method) eval_bang_deferred, _sym_int, 1, av);
+    }
+}
 
 void eval_bang(t_eval *x)
 {
-    eval_run(x, proxy_getinlet((t_object *) x) + 1);
+    t_atom_long inlet = proxy_getinlet((t_object *) x) + 1;
+    if (x->n_ready)
+        eval_run(x, inlet);
+    else {
+        t_atom a;
+        atom_setlong(&a, inlet);
+        defer_low(x, (method) eval_bang_deferred, _sym_int, 1, &a);
+    }
 }
 
 void eval_triggerfromclient(t_eval *x, long dummy)
@@ -542,12 +557,12 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         d = (t_dictionary *)gensym("#D")->s_thing;
         codableobj_getCodeFromDictionaryAndBuild((t_codableobj *) x, d);
         
+        defer_low(x, (method)eval_setready, NULL, 0, NULL);
         if (x->n_ob.c_main) {
             x->n_ob.c_main->setOutlets(x->n_dataOutlets);
             defer_low(x, (method)codableobj_resolvepatchervars, NULL, 0, NULL);
         }
         defer_low(x, (method)codableobj_resolve_trigger_vars, NULL, 0, NULL);
-
     } else
         error(BACH_CANT_INSTANTIATE);
     
@@ -566,6 +581,11 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
 void eval_deferbang(t_eval *x, t_symbol *msg, long ac, t_atom *av)
 {
     eval_bang(x);
+}
+
+void eval_setready(t_eval *x, t_symbol *msg, long ac, t_atom *av)
+{
+    x->n_ready = true;
 }
 
 void eval_ownedFunctionsSetup(t_eval *x)
