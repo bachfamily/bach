@@ -63,7 +63,7 @@ t_v *value_new(t_symbol *s, short ac, t_atom *av);
 void value_free(t_v *x);
 
 void value_bang(t_v *x);
-void pv_triggerfromclient(t_v *x, long dummy);
+void value_triggerfromclient(t_v *x, long dummy);
 
 void value_int(t_v *x, t_atom_long v);
 void value_float(t_v *x, double v);
@@ -110,7 +110,7 @@ int T_EXPORT main()
     // @method bang @digest Output the shared llll
     // @description When <o>bach.value</o> receives a bang, it outputs its shared llll.
     class_addmethod(c, (method)value_bang,        "bang",            0);
-    class_addmethod(c, (method)pv_triggerfromclient,     "triggerfromclient", A_CANT, 0);
+    class_addmethod(c, (method)value_triggerfromclient,     "triggerfromclient", A_CANT, 0);
 
     class_addmethod(c, (method)value_assist,    "assist",        A_CANT,        0);
     
@@ -218,9 +218,9 @@ void value_bang(t_v *x)
     llll_release(out_ll);
 }
 
-void pv_triggerfromclient(t_v *x, long dummy)
+void value_triggerfromclient(t_v *x, long dummy)
 {
-    
+    value_bang(x);
 }
 
 void value_int(t_v *x, t_atom_long v)

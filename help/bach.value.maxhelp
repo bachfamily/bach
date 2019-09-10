@@ -521,7 +521,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 0.0, 26.0, 635.0, 368.0 ],
+						"rect" : [ 100.0, 126.0, 635.0, 368.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
@@ -728,23 +728,6 @@
 							}
 , 							{
 								"box" : 								{
-									"fontname" : "Arial",
-									"fontsize" : 13.0,
-									"id" : "obj-1",
-									"maxclass" : "newobj",
-									"numinlets" : 1,
-									"numoutlets" : 0,
-									"patching_rect" : [ 19.0, 196.5, 93.0, 23.0 ],
-									"saved_object_attributes" : 									{
-										"versionnumber" : 80007
-									}
-,
-									"text" : "bach.print eval"
-								}
-
-							}
-, 							{
-								"box" : 								{
 									"code" : "X = $x1 * 2 ",
 									"fontname" : "Arial",
 									"fontsize" : 13.0,
@@ -805,13 +788,6 @@
 								"patchline" : 								{
 									"destination" : [ "obj-14", 0 ],
 									"source" : [ "obj-17", 0 ]
-								}
-
-							}
-, 							{
-								"patchline" : 								{
-									"destination" : [ "obj-1", 0 ],
-									"source" : [ "obj-20", 0 ]
 								}
 
 							}
@@ -884,7 +860,7 @@
 						}
 ,
 						"classnamespace" : "box",
-						"rect" : [ 100.0, 126.0, 635.0, 368.0 ],
+						"rect" : [ 0.0, 26.0, 635.0, 368.0 ],
 						"bglocked" : 0,
 						"openinpresentation" : 0,
 						"default_fontsize" : 13.0,
