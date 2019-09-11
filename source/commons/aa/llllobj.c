@@ -864,14 +864,18 @@ void llllobj_outlet_llll(t_object *x, e_llllobj_obj_types type, long outnum, t_l
     out = llllobj_get_out(x, type);
     cache = out + outnum;
     
-    switch (bach->b_nonative ? LLLL_O_MAX : cache->b_type) {
+    switch (bach->b_nonative ? LLLL_O_TEXT : cache->b_type) {
             
         case LLLL_O_TEXT:
         case LLLL_O_MAX: {
             t_atom *outlist;
             if (in_ll) {
-                out_aa = llll_deparse_to_aa(in_ll,
-                                            (cache->b_type == LLLL_O_TEXT ? LLLL_D_QUOTE | LLLL_D_MAX : LLLL_D_MAX) | flags);
+				if (bach->b_nonative) {
+					flags |= LLLL_D_QUOTE | LLLL_D_MAX;
+				} else {
+					flags |= cache->b_type == LLLL_O_TEXT ? LLLL_D_QUOTE | LLLL_D_MAX : LLLL_D_MAX;
+				}
+                out_aa = llll_deparse_to_aa(in_ll, flags);
                 atomarray_getatoms(out_aa, &ac, &outlist);
                 
                 if (ac == 0) {
