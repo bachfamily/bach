@@ -1,10 +1,4 @@
-// Xcode target configuration settings for the Max 5 SDK
-// Used as the basis for Xcode projects to build Max externals.
-//
-// Changes to the settings in this file will be applied to all SDK examples
-// To change settings for only one of the examples, override the settings using
-// Xcode's target inspector.
-//
+// Based upon the Xcode target configuration settings for the Max 5 SDK
 // by Timothy Place
 // Copyright © 2008, Cycling '74
 
@@ -15,8 +9,9 @@
 ARCHS = i386 x86_64
 
 // Paths
-C74SUPPORT = $(SRCROOT)/../../../max-sdk-7.3.3/source/c74support
-HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(SRCROOT)/../../../code/source/code" "$(SRCROOT)/../../../code/source/code/stringparser"
+MAXSDK = $(SRCROOT)/../../../max-sdk-7.3.3
+C74SUPPORT = $(MAXSDK)/source/c74support
+HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
 FRAMEWORK_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
 
 // *** UNCOMMENT FOR MAX6 INSTALL
@@ -25,11 +20,11 @@ FRAMEWORK_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-include
 //DSTROOT = /Applications/Max 6.1/packages/bach
 // (This next path is relative to DSTROOT)
 DSTROOT = $(SRCROOT)/../../
+LIB_DSTROOT = $(SRCROOT)/../lib
 INSTALL_PATH = /
 AA_INSTALL_PATH = /externals
 DG_INSTALL_PATH = /externals
 EXT_INSTALL_PATH = /extensions
-ZULU_INSTALL_PATH = /../zulu/externals
 
 
 // *** UNCOMMENT FOR MAX5 INSTALL
