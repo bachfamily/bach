@@ -1,6 +1,8 @@
 # Compiled source #
 ###################
 *.mxo
+*.mxe
+*.mxe64
 *.a
 
 
