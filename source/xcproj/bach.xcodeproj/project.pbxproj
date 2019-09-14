@@ -625,6 +625,7 @@
 		9186870517CCF8D2003CC2DC /* hypercomment.c in Sources */ = {isa = PBXBuildFile; fileRef = 911FC5C217AF9895004E8E49 /* hypercomment.c */; };
 		918C3BD0124A516F003D216B /* mdelace.c in Sources */ = {isa = PBXBuildFile; fileRef = 918C3BCF124A516F003D216B /* mdelace.c */; };
 		918C3C69124B35EA003D216B /* union.c in Sources */ = {isa = PBXBuildFile; fileRef = 918C3C68124B35EA003D216B /* union.c */; };
+		919AF65E232CBBBD006F943C /* llll_sort.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 919AF65D232CBBBD006F943C /* llll_sort.cpp */; };
 		919B518D13B4C011005C7C7A /* tree.c in Sources */ = {isa = PBXBuildFile; fileRef = 919B518C13B4C011005C7C7A /* tree.c */; };
 		919BF8151E01AB0200CDEA02 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		919BF8161E01AB0200CDEA02 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
@@ -3251,6 +3252,7 @@
 		918C3BCF124A516F003D216B /* mdelace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mdelace.c; sourceTree = "<group>"; };
 		918C3C12124B3323003D216B /* bach.union.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.union.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		918C3C68124B35EA003D216B /* union.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = union.c; sourceTree = "<group>"; };
+		919AF65D232CBBBD006F943C /* llll_sort.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = llll_sort.cpp; sourceTree = "<group>"; };
 		919B518113B4BF9B005C7C7A /* bach.tree.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.tree.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		919B518C13B4C011005C7C7A /* tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tree.c; sourceTree = "<group>"; };
 		919BF81B1E01AB0200CDEA02 /* bach.partition.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.partition.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5593,6 +5595,7 @@
 				9141D7C1123158FB000EE69C /* lexpr.h */,
 				9141D7C2123158FB000EE69C /* llll_commons.c */,
 				9141D7C3123158FB000EE69C /* llll_commons.h */,
+				919AF65D232CBBBD006F943C /* llll_sort.cpp */,
 				9141D7C4123158FB000EE69C /* llll_commonsyms.c */,
 				9141D7C5123158FB000EE69C /* llll_commonsyms.h */,
 				91E2B3271272D41300042E30 /* llll_files.c */,
@@ -12327,6 +12330,7 @@
 				91812A731611B29E00473F86 /* kiss_fftndr.c in Sources */,
 				91FDDC201FBE249F0040D803 /* bach_strparser_tab.c in Sources */,
 				913D57AF232B972E00BC6B45 /* astNode.cpp in Sources */,
+				919AF65E232CBBBD006F943C /* llll_sort.cpp in Sources */,
 				91812A751611B29E00473F86 /* kiss_fftr.c in Sources */,
 				91812A781611B29E00473F86 /* mxml-attr.c in Sources */,
 				91812A791611B29E00473F86 /* mxml-entity.c in Sources */,
