@@ -1,7 +1,7 @@
 /*
  
- This file has been modified from the original by Andrea Agostini on May 13, 2014
- 
+ This file has been modified from the original by Andrea Agostini and Daniele Ghisi
+
  */
 
 /* $Id: SdifErrMess.c,v 3.28 2011/04/12 20:17:32 roebel Exp $

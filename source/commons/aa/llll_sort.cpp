@@ -1,16 +1,10 @@
-//
-//  llll_sort.cpp
-//  lib_bach
-//
-//  Created by Andrea Agostini on 14/09/2019.
-//
-
-
 /*
+ * llll_sort.cpp
+ *
  * This file is copyright 2001 Simon Tatham and copyright 2019 Andrea Agostini.
  *
  * This file has been modified from the original
- * for making it compatible with the bach library code
+ * for making it compatible with the bach library code.
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation

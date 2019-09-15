@@ -1,7 +1,7 @@
 /*
  
- This file has been modified from the original by Andrea Agostini on May 13, 2014
- 
+ This file has been modified from the original by Andrea Agostini and Daniele Ghisi
+
  */
 
 /* $Id: SdifFGet.h,v 3.13 2005/05/24 09:34:32 roebel Exp $

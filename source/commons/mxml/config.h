@@ -1,4 +1,5 @@
-// Modifi
+// This file has been modified by Andrea Agostini and Daniele Ghisi
+
 
 /* config.h.  Generated from config.h.in by configure.  */
 /*

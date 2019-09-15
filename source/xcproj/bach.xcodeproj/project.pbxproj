@@ -420,7 +420,6 @@
 		913D57C9232B972E00BC6B45 /* ast.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 913D579D232B972D00BC6B45 /* ast.hpp */; };
 		913F87881C20B59000C9CAE0 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		913F87891C20B59000C9CAE0 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
-		913F87941C216C5D00C9CAE0 /* bach_jitclang.h in Headers */ = {isa = PBXBuildFile; fileRef = 913F87931C216C5D00C9CAE0 /* bach_jitclang.h */; };
 		914016F9134DFE3900C1F7D9 /* decode.c in Sources */ = {isa = PBXBuildFile; fileRef = 914016F6134DFE3900C1F7D9 /* decode.c */; };
 		914017E2134EFCD200C1F7D9 /* encode.c in Sources */ = {isa = PBXBuildFile; fileRef = 914017DE134EF13E00C1F7D9 /* encode.c */; };
 		914EB2621250E4A000413C39 /* intersection.c in Sources */ = {isa = PBXBuildFile; fileRef = 914EB2611250E4A000413C39 /* intersection.c */; };
@@ -3159,7 +3158,6 @@
 		913D578A232B972C00BC6B45 /* stringparser_nolines.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringparser_nolines.c; sourceTree = "<group>"; };
 		913D578B232B972C00BC6B45 /* stringparser.tab.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringparser.tab.c; sourceTree = "<group>"; };
 		913D578C232B972C00BC6B45 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
-		913D578D232B972C00BC6B45 /* stringparser.output */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = stringparser.output; sourceTree = "<group>"; };
 		913D578E232B972C00BC6B45 /* stringparser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringparser.h; sourceTree = "<group>"; };
 		913D578F232B972D00BC6B45 /* stringparser_tab_nolines.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringparser_tab_nolines.c; sourceTree = "<group>"; };
 		913D5790232B972D00BC6B45 /* stringparser.tab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringparser.tab.h; sourceTree = "<group>"; };
@@ -3177,7 +3175,6 @@
 		913D579C232B972D00BC6B45 /* pvManager.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = pvManager.hpp; sourceTree = "<group>"; };
 		913D579D232B972D00BC6B45 /* ast.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ast.hpp; sourceTree = "<group>"; };
 		913F878E1C20B59000C9CAE0 /* bach.clanger.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.clanger.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		913F87931C216C5D00C9CAE0 /* bach_jitclang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bach_jitclang.h; sourceTree = "<group>"; };
 		9140168F134DFD2400C1F7D9 /* bach.decode.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.decode.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		914016F6134DFE3900C1F7D9 /* decode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decode.c; sourceTree = "<group>"; };
 		914017DB134EF0C600C1F7D9 /* bach.encode.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.encode.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3194,8 +3191,6 @@
 		9141D7C7123158FB000EE69C /* llllobj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = llllobj.h; sourceTree = "<group>"; };
 		9141D7C8123158FB000EE69C /* rational.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rational.c; sourceTree = "<group>"; };
 		9141D7C9123158FB000EE69C /* rational.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rational.h; sourceTree = "<group>"; };
-		9141D7FD12315932000EE69C /* collector.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = collector.c; sourceTree = "<group>"; };
-		9141D8081231594D000EE69C /* lexpr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lexpr.c; sourceTree = "<group>"; };
 		91453FD912CA484000828342 /* bach.edit.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.edit.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		914EB1D81250E08800413C39 /* bach.intersection.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.intersection.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		914EB1EF1250E0C500413C39 /* bach.symdiff.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.symdiff.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5053,8 +5048,8 @@
 				911BB2A017CBA89100B513E8 /* msp-includes */,
 			);
 			name = c74support;
-			path = "../../../max-sdk-7.3.3/source/c74support";
-			sourceTree = SOURCE_ROOT;
+			path = "../../max-sdk-7.3.3/source/c74support";
+			sourceTree = "<group>";
 		};
 		911BB20717CBA88F00B513E8 /* jit-includes */ = {
 			isa = PBXGroup;
@@ -5397,37 +5392,37 @@
 			isa = PBXGroup;
 			children = (
 				913D5785232B972C00BC6B45 /* stringparser */,
-				913D5771232B972B00BC6B45 /* builtInFunctionWithSortFn.hpp */,
-				913D5772232B972B00BC6B45 /* mathFunction.cpp */,
-				913D5773232B972B00BC6B45 /* conditional.cpp */,
-				913D5774232B972B00BC6B45 /* pvManager.cpp */,
-				913D5775232B972B00BC6B45 /* builtInFunction.hpp */,
-				913D5776232B972C00BC6B45 /* function.hpp */,
-				913D5777232B972C00BC6B45 /* astNode.hpp */,
-				913D5778232B972C00BC6B45 /* fnMap.hpp */,
-				913D5779232B972C00BC6B45 /* operator.cpp */,
-				913D577A232B972C00BC6B45 /* llllIterator.cpp */,
+				913D579D232B972D00BC6B45 /* ast.hpp */,
 				913D577B232B972C00BC6B45 /* value.hpp */,
-				913D577C232B972C00BC6B45 /* ownedFunction.hpp */,
-				913D577D232B972C00BC6B45 /* builtInFunctionWithFindFn.hpp */,
-				913D577E232B972C00BC6B45 /* comparator.cpp */,
-				913D577F232B972C00BC6B45 /* function.cpp */,
-				913D5780232B972C00BC6B45 /* builtInFunction.cpp */,
+				913D5777232B972C00BC6B45 /* astNode.hpp */,
 				913D5781232B972C00BC6B45 /* astNode.cpp */,
+				913D5798232B972D00BC6B45 /* sharedVariable.hpp */,
+				913D579B232B972D00BC6B45 /* globalVariable.hpp */,
+				913D5795232B972D00BC6B45 /* patcherVariable.hpp */,
+				913D579C232B972D00BC6B45 /* pvManager.hpp */,
+				913D5774232B972B00BC6B45 /* pvManager.cpp */,
+				913D579A232B972D00BC6B45 /* conditional.hpp */,
+				913D5773232B972B00BC6B45 /* conditional.cpp */,
+				913D5796232B972D00BC6B45 /* comparator.hpp */,
+				913D577E232B972C00BC6B45 /* comparator.cpp */,
+				913D5776232B972C00BC6B45 /* function.hpp */,
+				913D577F232B972C00BC6B45 /* function.cpp */,
+				913D5775232B972B00BC6B45 /* builtInFunction.hpp */,
+				913D5780232B972C00BC6B45 /* builtInFunction.cpp */,
+				913D577C232B972C00BC6B45 /* ownedFunction.hpp */,
+				913D5794232B972D00BC6B45 /* ownedFunction.cpp */,
+				913D5771232B972B00BC6B45 /* builtInFunctionWithSortFn.hpp */,
+				913D5797232B972D00BC6B45 /* builtInFunctionWithSortFn.cpp */,
+				913D577D232B972C00BC6B45 /* builtInFunctionWithFindFn.hpp */,
+				913D5793232B972D00BC6B45 /* builtInFunctionWithFindFn.cpp */,
+				913D5772232B972B00BC6B45 /* mathFunction.cpp */,
+				913D5799232B972D00BC6B45 /* mathFunction.hpp */,
+				913D5778232B972C00BC6B45 /* fnMap.hpp */,
 				913D5782232B972C00BC6B45 /* fnMap.cpp */,
 				913D5783232B972C00BC6B45 /* operator.hpp */,
+				913D5779232B972C00BC6B45 /* operator.cpp */,
 				913D5784232B972C00BC6B45 /* llllIterator.hpp */,
-				913D5793232B972D00BC6B45 /* builtInFunctionWithFindFn.cpp */,
-				913D5794232B972D00BC6B45 /* ownedFunction.cpp */,
-				913D5795232B972D00BC6B45 /* patcherVariable.hpp */,
-				913D5796232B972D00BC6B45 /* comparator.hpp */,
-				913D5797232B972D00BC6B45 /* builtInFunctionWithSortFn.cpp */,
-				913D5798232B972D00BC6B45 /* sharedVariable.hpp */,
-				913D5799232B972D00BC6B45 /* mathFunction.hpp */,
-				913D579A232B972D00BC6B45 /* conditional.hpp */,
-				913D579B232B972D00BC6B45 /* globalVariable.hpp */,
-				913D579C232B972D00BC6B45 /* pvManager.hpp */,
-				913D579D232B972D00BC6B45 /* ast.hpp */,
+				913D577A232B972C00BC6B45 /* llllIterator.cpp */,
 			);
 			path = bell;
 			sourceTree = "<group>";
@@ -5442,7 +5437,6 @@
 				913D578A232B972C00BC6B45 /* stringparser_nolines.c */,
 				913D578B232B972C00BC6B45 /* stringparser.tab.c */,
 				913D578C232B972C00BC6B45 /* makefile */,
-				913D578D232B972C00BC6B45 /* stringparser.output */,
 				913D578E232B972C00BC6B45 /* stringparser.h */,
 				913D578F232B972D00BC6B45 /* stringparser_tab_nolines.c */,
 				913D5790232B972D00BC6B45 /* stringparser.tab.h */,
@@ -5486,7 +5480,6 @@
 				911289FD17E08FDB008381E3 /* cartesianprod.c */,
 				91D261AA1CC64C8B00C75E35 /* classify.c */,
 				91D7C9551233C2D500D767D4 /* collect.c */,
-				9141D7FD12315932000EE69C /* collector.c */,
 				91D18C07130EE35900A2E668 /* comb.c */,
 				915330321639D05700AF7607 /* constraints.c */,
 				91D7C7D7123395A000D767D4 /* contains.c */,
@@ -5518,7 +5511,6 @@
 				91757A1F12412E980088A421 /* lace.c */,
 				91D7C787123392A700D767D4 /* length.c */,
 				91D7CB281233DEC800D767D4 /* leq.c */,
-				9141D8081231594D000EE69C /* lexpr.c */,
 				91D7CB071233DE1200D767D4 /* lt.c */,
 				910B178F19920A39003F580D /* mapelem.c */,
 				918C3BCF124A516F003D216B /* mdelace.c */,
@@ -5584,33 +5576,32 @@
 				91071DB02100DB5900452762 /* bach_codableobj.hpp */,
 				91071DAF2100DB5900452762 /* bach_codableobj.cpp */,
 				91CE8E0D1763991B00CF5CD6 /* bach_doc_commons_aa.h */,
-				913F87931C216C5D00C9CAE0 /* bach_jitclang.h */,
 				91B62BC01F5218A200B9FC63 /* bach_mem.h */,
 				91040DA31FB1ABCD009E91CD /* bach_parser.hpp */,
 				9141D7BE123158FB000EE69C /* collector.h */,
 				915F721414F66ACD005DF0BD /* collector_commons.c */,
 				91E7BFC31826AF0900AA6F56 /* bach_mem.c */,
-				9141D7BF123158FB000EE69C /* hatom.c */,
 				9141D7C0123158FB000EE69C /* hatom.h */,
+				9141D7BF123158FB000EE69C /* hatom.c */,
 				9141D7C1123158FB000EE69C /* lexpr.h */,
 				9141D7C2123158FB000EE69C /* llll_commons.c */,
 				9141D7C3123158FB000EE69C /* llll_commons.h */,
 				919AF65D232CBBBD006F943C /* llll_sort.cpp */,
-				9141D7C4123158FB000EE69C /* llll_commonsyms.c */,
 				9141D7C5123158FB000EE69C /* llll_commonsyms.h */,
-				91E2B3271272D41300042E30 /* llll_files.c */,
+				9141D7C4123158FB000EE69C /* llll_commonsyms.c */,
 				91E2B3261272D41300042E30 /* llll_files.h */,
+				91E2B3271272D41300042E30 /* llll_files.c */,
 				91B62BBB1F501A3800B9FC63 /* llll_lifecycle.h */,
 				9115B6F0129AD23A008ABC73 /* llll_math.h */,
 				910E890F12A46C3B005604FF /* llll_math.c */,
-				910AFCFB129C652D00F29D84 /* llll_modifiers.c */,
 				910AFCF4129C651B00F29D84 /* llll_modifiers.h */,
-				9141D7C6123158FB000EE69C /* llllobj.c */,
+				910AFCFB129C652D00F29D84 /* llll_modifiers.c */,
 				9141D7C7123158FB000EE69C /* llllobj.h */,
+				9141D7C6123158FB000EE69C /* llllobj.c */,
 				9151BC0C130884B0002276EF /* llll_expr_commons.c */,
 				91EE6FE213A290E900BBE47C /* llll_maxinterface.c */,
-				1EB4D4841610CB930041ABFB /* notation_files.c */,
 				1EB4D4831610CB930041ABFB /* notation_files.h */,
+				1EB4D4841610CB930041ABFB /* notation_files.c */,
 				91B420D3165E84AB00410C2C /* bach_threads.h */,
 				91B420D4165E84AB00410C2C /* bach_threads.c */,
 				91AF1C4E17BCFA7E0071A497 /* bach_128bit.h */,
@@ -5620,12 +5611,12 @@
 				91FE0ECF190AAB57007B6BED /* llll_comparisons.c */,
 				916AB5101F21FD7800385555 /* bach_urrat.hpp */,
 				916AB5131F24922F00385555 /* bach_rat.hpp */,
-				91B62BA91F4EE6D400B9FC63 /* bach_pitch.cpp */,
 				91B62BAA1F4EE6D400B9FC63 /* bach_pitch.hpp */,
-				91B62BB31F4FE52200B9FC63 /* llll_append.c */,
+				91B62BA91F4EE6D400B9FC63 /* bach_pitch.cpp */,
 				91B62BB41F4FE52200B9FC63 /* llll_append.h */,
-				91B62BB71F4FEBE200B9FC63 /* llll_hatom_change.c */,
+				91B62BB31F4FE52200B9FC63 /* llll_append.c */,
 				91B62BB81F4FEBE200B9FC63 /* llll_hatom_change.h */,
+				91B62BB71F4FEBE200B9FC63 /* llll_hatom_change.c */,
 				91C3F860230C4C58002BA999 /* bach_maxutils.h */,
 				91C3F861230C4C58002BA999 /* bach_maxutils.c */,
 			);
@@ -5635,8 +5626,8 @@
 		918A53BD131AD06600D3993D /* dg */ = {
 			isa = PBXGroup;
 			children = (
-				1E53253A20FB7295001C4EAF /* bach_jit.c */,
 				1E53253C20FB7296001C4EAF /* bach_jit.h */,
+				1E53253A20FB7295001C4EAF /* bach_jit.c */,
 				1EC5F4711BDFC21600669257 /* bach_graphics.h */,
 				1EC5F4721BDFC21600669257 /* bach_graphics.c */,
 				1EAE5C1C2288532B005487F4 /* bach_ss.c */,
@@ -5647,12 +5638,12 @@
 				91B0EA89150BD29B0069A206 /* bach_math_utilities.h */,
 				91B0EA88150BD29B0069A206 /* bach_math_utilities.c */,
 				91B0EA8A150BD29B0069A206 /* bach_slots.c */,
-				91B0EA8B150BD29B0069A206 /* llll_commons_ext.c */,
 				91B0EA8C150BD29B0069A206 /* llll_commons_ext.h */,
-				91DA8082131B33D900FCB316 /* llll_settheory.c */,
+				91B0EA8B150BD29B0069A206 /* llll_commons_ext.c */,
 				91DA8083131B33D900FCB316 /* llll_settheory.h */,
-				91D18933130EC15100A2E668 /* llll_linearalgebra.c */,
+				91DA8082131B33D900FCB316 /* llll_settheory.c */,
 				91D18934130EC15100A2E668 /* llll_linearalgebra.h */,
+				91D18933130EC15100A2E668 /* llll_linearalgebra.c */,
 				91EED59E1237C06B003C05FC /* notation.h */,
 				91EED59D1237C06B003C05FC /* notation_commons.c */,
 				91CA0C5D1DF9374D0068B29D /* notation_dynamics.c */,
@@ -6407,7 +6398,6 @@
 				91C6045018C0D9F50027BB79 /* SdifFrameType.h in Headers */,
 				913D57C1232B972E00BC6B45 /* patcherVariable.hpp in Headers */,
 				91C6045218C0D9F50027BB79 /* SdifFRead.h in Headers */,
-				913F87941C216C5D00C9CAE0 /* bach_jitclang.h in Headers */,
 				913D57C7232B972E00BC6B45 /* globalVariable.hpp in Headers */,
 				91C6045418C0D9F50027BB79 /* SdifFScan.h in Headers */,
 				91C6045618C0D9F50027BB79 /* SdifFWrite.h in Headers */,

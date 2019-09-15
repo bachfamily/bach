@@ -1,8 +1,8 @@
 /*
 
- This file has been modified from the original by Michael R Sweet by Andrea Agostini on May 13, 2014
- 
- */
+ This file has been modified by Andrea Agostini and Daniele Ghisi
+
+*/
 
 /*
  * "$Id: mxml-file.c 438 2011-03-24 05:47:51Z mike $"

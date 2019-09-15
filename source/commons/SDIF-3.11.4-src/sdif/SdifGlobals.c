@@ -1,7 +1,7 @@
 /*
  
- This file has been modified from the original by Andrea Agostini on May 13, 2014
- 
+ This file has been modified from the original by Andrea Agostini and Daniele Ghisi
+
  */
 
 /* $Id: SdifGlobals.c,v 3.22 2007/11/26 18:19:49 roebel Exp $

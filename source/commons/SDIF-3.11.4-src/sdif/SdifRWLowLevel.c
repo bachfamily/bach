@@ -1,7 +1,7 @@
 /*
  
- This file has been modified from the original by Andrea Agostini on May 13, 2014
- 
+ This file has been modified from the original by Andrea Agostini and Daniele Ghisi
+
  */
 
 /* $Id: SdifRWLowLevel.c,v 3.38 2008/01/11 15:48:29 roebel Exp $

@@ -1,6 +1,6 @@
 /*
  
- This file has been modified from the original by Andrea Agostini on May 13, 2014
+ This file has been modified from the original by Andrea Agostini and Daniele Ghisi
  
  */
 
