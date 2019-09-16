@@ -3215,7 +3215,6 @@
 		916291C312C7EC7A00FEA25C /* trans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trans.c; sourceTree = "<group>"; };
 		916291DA12C7EDC600FEA25C /* bach.trans.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.trans.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		916336251CB82E1C00A77708 /* bach.lisp.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.lisp.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		916625BA17E0B223002BAFD3 /* helphelper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = helphelper.c; sourceTree = "<group>"; };
 		91689007134FA75900805BC9 /* bach.constraints.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.constraints.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		916AB5101F21FD7800385555 /* bach_urrat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bach_urrat.hpp; sourceTree = "<group>"; };
 		916AB5131F24922F00385555 /* bach_rat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = bach_rat.hpp; sourceTree = "<group>"; };
@@ -5408,7 +5407,6 @@
 				91B6BB6D18F01DD50093DA53 /* wordcloud.c */,
 				911FC5C217AF9895004E8E49 /* hypercomment.c */,
 				9151A45D131EDC370019DF19 /* args.c */,
-				916625BA17E0B223002BAFD3 /* helphelper.c */,
 			);
 			path = utilities;
 			sourceTree = "<group>";
