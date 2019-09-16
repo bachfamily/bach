@@ -17,8 +17,8 @@
  *
  */
 
-#include "function.hpp"
-#include "pvManager.hpp"
+#include "bell/function.hpp"
+#include "bell/pvManager.hpp"
 
 funArg* t_function::getArgNameAndDefault(long const n)  {
     if (n != 0 && n <= namedArgumentsCount && n >= namedArgumentsCountAfterEllipsis)

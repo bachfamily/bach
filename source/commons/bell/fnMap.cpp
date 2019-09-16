@@ -17,7 +17,7 @@
  *
  */
 
-#include "fnMap.hpp"
+#include "bell/fnMap.hpp"
 
 long t_fnMap::lambdaAsk(t_fnData *lambdaData, t_llll *ll, t_llll *old_address, t_llll *new_address)
 {

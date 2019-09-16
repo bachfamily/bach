@@ -25,7 +25,7 @@
 #ifndef _BACH_JIT_H_
 #define _BACH_JIT_H_
 
-#include "notation.h"
+#include "notation/notation.h"
 #include "jit.common.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

@@ -20,7 +20,7 @@
 #ifndef globalVariable_hpp
 #define globalVariable_hpp
 
-#include "sharedVariable.hpp"
+#include "bell/sharedVariable.hpp"
 
 
 class t_globalVariable : public t_sharedVariable

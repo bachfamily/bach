@@ -17,7 +17,7 @@
  *
  */
 
-#include "notation.h"
+#include "notation/notation.h"
 
 static t_class	*s_bach_inspector_ui_class;
 

@@ -17,10 +17,10 @@
  *
  */
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_globalsymbol.h"
 #include "ext_common.h"
-#include "bach_cursors.h"
+#include "graphics/bach_cursors.h"
 #include <stdlib.h>
 #ifdef BACH_TRACK_MEMORY_ALLOCATION
 #ifdef MAC_VERSION
@@ -28,7 +28,7 @@
 #endif
 #endif
 
-#include "bach_graphics.h"
+#include "graphics/bach_graphics.h"
 
 #ifdef WIN_VERSION
 
@@ -42,8 +42,8 @@
 #include "pwd.h"
 #endif
 
-#include "ast.hpp"
-#include "pvManager.hpp"
+#include "bell/ast.hpp"
+#include "bell/pvManager.hpp"
 
 long *bach_gen_primes(void);
 

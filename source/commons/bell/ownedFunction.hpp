@@ -20,7 +20,7 @@
 #ifndef ownedFunctions_hpp
 #define ownedFunctions_hpp
 
-#include "builtInFunction.hpp"
+#include "bell/builtInFunction.hpp"
 
 class t_ownedFunction : public t_builtInFunction
 {

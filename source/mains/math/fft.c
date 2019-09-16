@@ -60,12 +60,12 @@
 	Daniele Ghisi
 */
 
-#include "spectral.h"
-#include "llll_files.h" // llllobj.h is included here
-#include "llll_commons_ext.h"
-#include "kiss_fft.h"
-#include "llll_commons.h"
-#include "bach_math_utilities.h"
+#include "math/spectral.h"
+#include "foundation/llll_files.h" // llllobj.h is included here
+#include "foundation/llll_commons_ext.h"
+#include "libraries/kiss_fft/kiss_fft.h"
+#include "foundation/llll_commons.h"
+#include "math/bach_math_utilities.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"

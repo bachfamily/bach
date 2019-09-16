@@ -20,7 +20,7 @@
 #ifndef _BACH_THREADS_H_
 #define _BACH_THREADS_H_
 
-#include "hatom.h"
+#include "foundation/hatom.h"
 
 #ifdef MAC_VERSION
 

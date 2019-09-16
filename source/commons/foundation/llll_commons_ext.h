@@ -27,9 +27,9 @@
 
 // higher level llll functions
 
-#include "bach.h"
-#include "hatom.h"
-#include "lexpr.h"
+#include "foundation/bach.h"
+#include "foundation/hatom.h"
+#include "math/lexpr.h"
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

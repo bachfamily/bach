@@ -38,7 +38,7 @@
     
     //#define BACH_MAX
     #ifdef BACH_MAX
-    #include "llllobj.h"
+    #include "foundation/llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
     #else
@@ -46,8 +46,8 @@
     #define code_dev_post printf
     #endif
     
-    #include "bach_codableobj.hpp"
-    #include "ast.hpp"
+    #include "bell/bach_codableobj.hpp"
+    #include "bell/ast.hpp"
     #include "stringparser.h"
     
     extern t_bach *bach;

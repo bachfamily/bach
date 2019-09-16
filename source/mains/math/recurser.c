@@ -57,11 +57,11 @@
  Daniele Ghisi
  */
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
-#include "llll_commons_ext.h"
-#include "lexpr.h"
+#include "foundation/llll_commons_ext.h"
+#include "math/lexpr.h"
 
 typedef struct _recurser
 {

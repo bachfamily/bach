@@ -17,4 +17,4 @@
  *
  */
 
-#include "operator.hpp"
+#include "bell/operator.hpp"

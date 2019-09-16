@@ -29,7 +29,7 @@ struct _memmap_item *memmap_item_new(void *address, size_t size, t_symbol *name)
 
 #ifdef BACH_TRACK_MEMORY_ALLOCATION
 #include "jgraphics.h"
-#include "hatom.h"
+#include "foundation/hatom.h"
 void object_free_debug(void *x);
 void object_release_debug(void *x);
 void bach_save_stack(t_mframe *frame);

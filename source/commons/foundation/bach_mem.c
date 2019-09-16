@@ -17,14 +17,14 @@
  *
  */
 
-#include "llllobj.h"
-#include "bach_threads.h"
+#include "foundation/llllobj.h"
+#include "foundation/bach_threads.h"
 #include "ext_strings.h"
 #include "ext_charset.h"
 #include "ext_atomic.h"
-#include "symparser.h"
+#include "parsers/symparser/symparser.h"
 #include "strparser.h"
-#include "function.hpp"
+#include "bell/function.hpp"
 #ifdef MAC_VERSION
 #include <execinfo.h>
 #endif

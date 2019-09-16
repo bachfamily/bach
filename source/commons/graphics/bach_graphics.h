@@ -25,7 +25,7 @@
 #ifndef _BACH_GRAPHICS_H_
 #define _BACH_GRAPHICS_H_
 
-#include "bach.h"
+#include "foundation/bach.h"
 
 //#ifdef USE_GPC_LIBRARY
 //#include "gpc.h"

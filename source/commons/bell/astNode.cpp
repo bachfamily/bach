@@ -17,10 +17,10 @@
  *
  */
 
-#include "astNode.hpp"
-#include "function.hpp"
-#include "conditional.hpp"
-#include "bach_maxutils.h"
+#include "bell/astNode.hpp"
+#include "bell/function.hpp"
+#include "bell/conditional.hpp"
+#include "foundation/bach_maxutils.h"
 
 t_execEnv::~t_execEnv()
 {

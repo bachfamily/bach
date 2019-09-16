@@ -65,10 +65,10 @@
 	Daniele Ghisi
  */
 
-#include "llll_files.h" // llllobj.h is included here
-#include "llll_commons_ext.h"
-#include "llll_modifiers.h"
-#include "bach_graphics.h"
+#include "foundation/llll_files.h" // llllobj.h is included here
+#include "foundation/llll_commons_ext.h"
+#include "graphics/llll_modifiers.h"
+#include "graphics/bach_graphics.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"

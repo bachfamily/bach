@@ -20,7 +20,7 @@
 #ifndef _SCORE_API_H_
 #define _SCORE_API_H_
 
-#include "bach.h"
+#include "foundation/bach.h"
 
 
 #ifdef BACH_MAX
@@ -42,7 +42,7 @@
 #include <stdio.h>
 #include <locale.h>
 #include <time.h> 
-#include "notation.h" // header with all the structures for the notation objects
+#include "notation/notation.h" // header with all the structures for the notation objects
 
 typedef struct _score // [bach.score] structure
 {

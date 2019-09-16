@@ -21,7 +21,7 @@
 #ifndef _NOTATION_FILES_H_
 #define _NOTATION_FILES_H_
 
-#include "notation.h" // includes llll_files.h
+#include "notation/notation.h" // includes llll_files.h
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE

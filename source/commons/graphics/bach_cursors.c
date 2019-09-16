@@ -23,7 +23,7 @@
 	Cursor utilities for bach library
 */
 
-#include "bach_cursors.h"
+#include "graphics/bach_cursors.h"
 
 
 void load_cursors(t_bach_resources *resources, void *moduleRef)

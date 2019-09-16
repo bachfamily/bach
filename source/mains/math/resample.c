@@ -64,11 +64,11 @@
 #include "jpatcher_api.h"
 #include "jgraphics.h"
 #include "ext_systhread.h"
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_strings.h"
-#include "llll_commons_ext.h"
-#include "collector.h"
-#include "llll_math.h"
+#include "foundation/llll_commons_ext.h"
+#include "foundation/collector.h"
+#include "math/llll_math.h"
 
 enum {
     BACH_RESAMPLE_NEAREST = 0,

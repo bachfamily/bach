@@ -22,8 +22,8 @@
 #ifndef _LLLL_MATH_H_
 #define _LLLL_MATH_H_
 
-#include "bach.h"
-#include "hatom.h"
+#include "foundation/bach.h"
+#include "foundation/hatom.h"
 
 #ifdef BACH_JUCE
 #include "bach_jucewrapper.h"

@@ -19,8 +19,8 @@
 
 #include "math.h"
 #include "stdlib.h"
-#include "rational.h"
-#include "llll_math.h"
+#include "math/rational.h"
+#include "math/llll_math.h"
 
 char fsign(double number){
 	return (number > 0 ? 1 : (number == 0 ? 0 : -1));

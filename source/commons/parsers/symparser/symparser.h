@@ -20,8 +20,8 @@
 #ifndef symparser_h
 #define symparser_h
 
-#include "bach_parser.hpp"
-#include "llll_commons.h"
+#include "parsers/bach_parser.hpp"
+#include "foundation/llll_commons.h"
 
 #ifndef parserpost
 #ifdef CONFIGURATION_Development

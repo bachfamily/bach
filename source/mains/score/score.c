@@ -70,12 +70,12 @@
 */
 
 #include "score_files.h"
-#include "llll_modifiers.h"
-#include "notation_attrs.h"
-#include "notation_goto.h"
+#include "graphics/llll_modifiers.h"
+#include "notation/notation_attrs.h"
+#include "notation/notation_goto.h"
 #include "ext_drag.h"
 
-#include "bach_jit.h"
+#include "graphics/bach_jit.h"
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, loop_region_as_llll, score_getattr_loop)
 

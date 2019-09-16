@@ -21,7 +21,7 @@
 #define bach_pitch_hpp
 
 #include <string>
-#include "rational.h"
+#include "math/rational.h"
 
 
 /** Accidental preferences.

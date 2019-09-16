@@ -17,7 +17,7 @@
  *
  */
 
-#include "builtInFunctionWithFindFn.hpp"
+#include "bell/builtInFunctionWithFindFn.hpp"
 
 /*
 long t_builtInFunctionWithFindFn::lambdaDefault(t_fnData *lambdaData, t_llll *ll)

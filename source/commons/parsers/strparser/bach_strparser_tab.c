@@ -171,8 +171,8 @@ int strparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *dept
 
 /* Copy the second part of user declarations.  */
 
-    #include "bach_strparser_tab.h"
-    #include "bach_strparser_lex.h"
+    #include "parsers/strparser/bach_strparser_tab.h"
+    #include "parsers/strparser/bach_strparser_lex.h"
     
     int yylex(YYSTYPE *yylval_param, yyscan_t myscanner);
     int yyerror(yyscan_t myscanner, t_llll **ll, t_llll_stack *stack, long *depth, char *s);

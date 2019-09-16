@@ -18,8 +18,8 @@
  */
 
 
-#include "notation.h"
-#include "notation_attrs.h"
+#include "notation/notation.h"
+#include "notation/notation_attrs.h"
 
 DEFINE_LLLL_ATTR_DEFAULT_GETTER(t_notation_obj, constraint_pitches_when_editing, notation_obj_getattr_pitcheditrange);
 DEFINE_LLLL_ATTR_DEFAULT_SETTER(t_notation_obj, constraint_pitches_when_editing, notation_obj_setattr_pitcheditrange);

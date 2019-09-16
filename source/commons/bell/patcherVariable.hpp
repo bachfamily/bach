@@ -20,7 +20,7 @@
 #ifndef patcherVariable_hpp
 #define patcherVariable_hpp
 
-#include "sharedVariable.hpp"
+#include "bell/sharedVariable.hpp"
 #include <unordered_set>
 #include <unordered_map>
 

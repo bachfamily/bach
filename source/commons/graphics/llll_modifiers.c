@@ -20,7 +20,7 @@
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
-#include "llll_modifiers.h"
+#include "graphics/llll_modifiers.h"
 
 void llll_format_modifiers(long *modifiers, long *keycode)
 {

@@ -69,9 +69,9 @@
 */
 
 
-#include "llll_settheory.h"
-#include "lexpr.h"
-#include "bach_graphics.h"
+#include "math/llll_settheory.h"
+#include "math/lexpr.h"
+#include "graphics/bach_graphics.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"

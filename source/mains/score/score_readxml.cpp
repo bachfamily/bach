@@ -18,7 +18,7 @@
  */
 
 #include "score_files.h"
-#include "mxml.h"
+#include "libraries/mxml/mxml.h"
 #include <string>
 #include <vector>
 #include <algorithm>

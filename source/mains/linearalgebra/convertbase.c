@@ -58,11 +58,11 @@
  */
 
 
-#include "llllobj.h"
-#include "llll_commons_ext.h"
+#include "foundation/llllobj.h"
+#include "foundation/llll_commons_ext.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
-#include "bach_math_utilities.h"
+#include "math/bach_math_utilities.h"
 
 enum {
     BACH_CONVERTBASE_OUTSYM_NEVER = 0,

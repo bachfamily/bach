@@ -20,9 +20,9 @@
 #ifndef mathUnaryFunction_hpp
 #define mathUnaryFunction_hpp
 
-#include "builtInFunction.hpp"
-#include "llllIterator.hpp"
-#include "llll_math.h"
+#include "bell/builtInFunction.hpp"
+#include "bell/llllIterator.hpp"
+#include "math/llll_math.h"
 
 template <int ARITY>
 class t_mathFunction : public t_builtInFunction, public llllIterator<ARITY>

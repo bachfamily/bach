@@ -63,10 +63,10 @@
 
 #define C_MAX_COLLECTORS 16
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
-#include "collector.h"
+#include "foundation/collector.h"
 
 typedef struct _collect
 {

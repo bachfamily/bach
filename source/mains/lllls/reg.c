@@ -58,13 +58,9 @@
  Andrea Agostini
  */
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
-
-#include "bach_rat.hpp"
-#include "pitchparser.h"
-#include "alterparser.h"
 
 //#define parsertests
 

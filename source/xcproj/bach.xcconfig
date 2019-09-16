@@ -11,7 +11,9 @@ ARCHS = i386 x86_64
 // Paths
 MAXSDK = $(SRCROOT)/../../../max-sdk-7.3.3
 C74SUPPORT = $(MAXSDK)/source/c74support
-HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
+MAINS_ROOT = $(SRCROOT)/../mains
+COMMONS_ROOT = $(SRCROOT)/../commons
+HEADER_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes" "$(COMMONS_ROOT)"
 FRAMEWORK_SEARCH_PATHS = "$(C74SUPPORT)/max-includes" "$(C74SUPPORT)/msp-includes" "$(C74SUPPORT)/jit-includes"
 
 // *** UNCOMMENT FOR MAX6 INSTALL

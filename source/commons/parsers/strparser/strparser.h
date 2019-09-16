@@ -20,8 +20,8 @@
 #ifndef strparser_h
 #define strparser_h
 
-#include "bach_parser.hpp"
-#include "llll_commons.h"
+#include "parsers/bach_parser.hpp"
+#include "foundation/llll_commons.h"
 
 #ifndef parserpost
 #ifdef CONFIGURATION_Development

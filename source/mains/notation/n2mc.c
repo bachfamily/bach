@@ -62,8 +62,8 @@
     Daniele Ghisi
 */
 
-#include "llllobj.h"
-#include "notation.h"
+#include "foundation/llllobj.h"
+#include "notation/notation.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_common.h"

@@ -20,9 +20,9 @@
 #ifndef exprparser_h
 #define exprparser_h
 
-#include "bach_parser.hpp"
-#include "llll_commons.h"
-#include "lexpr.h"
+#include "parsers/bach_parser.hpp"
+#include "foundation/llll_commons.h"
+#include "math/lexpr.h"
 
 #ifndef parserpost
 #ifdef CONFIGURATION_Development

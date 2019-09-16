@@ -17,8 +17,8 @@
  *
  */
 
-#include "pvManager.hpp"
-#include "bach_maxutils.h"
+#include "bell/pvManager.hpp"
+#include "foundation/bach_maxutils.h"
 
 class pvault : public variableClientManager 
 {

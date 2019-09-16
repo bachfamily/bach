@@ -17,8 +17,8 @@
  *
  */
 
-#include "bach_pitch.hpp"
-#include "bach_mem.h"
+#include "math/bach_pitch.hpp"
+#include "foundation/bach_mem.h"
 
 
 inline long divdiv_floor(long a, long b) {

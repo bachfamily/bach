@@ -29,10 +29,10 @@
 #define BACH_DEFAULT_MAXDECIMALS	6
 #define BACH_DEFAULT_EDITOR_LLLL_WRAP   68 
 
-#include "llll_commons.h"
+#include "foundation/llll_commons.h"
 #include "jpatcher_api.h"
 #include "z_dsp.h"
-#include "bach_threads.h"
+#include "foundation/bach_threads.h"
 
 #ifndef CLASS_ATTR_BASIC
 #define CLASS_ATTR_BASIC(c, name, flags) CLASS_ATTR_ATTR_PARSE(c,name,"basic",_sym_long,flags,"1")

@@ -17,8 +17,8 @@
  *
  */
 
-#include "llll_hatom_change.h"
-#include "function.hpp"
+#include "foundation/llll_hatom_change.h"
+#include "bell/function.hpp"
 
 
 t_llllelem *llll_hatom2elem(const t_hatom *hatom)

@@ -17,4 +17,4 @@
  *
  */
 
-#include "comparator.hpp"
+#include "bell/comparator.hpp"

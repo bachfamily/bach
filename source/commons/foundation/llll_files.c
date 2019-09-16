@@ -17,8 +17,8 @@
  *
  */
 
-#include "notation.h"
-#include "llll_files.h"
+#include "notation/notation.h"
+#include "foundation/llll_files.h"
 #include "ext_strings.h"
 
 t_max_err llll_dowritetxt(t_object *x, t_symbol *s, long ac, t_atom *av);

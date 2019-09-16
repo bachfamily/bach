@@ -17,8 +17,8 @@
  *
  */
 
-#include "bach.h"
-#include "notation.h"
+#include "foundation/bach.h"
+#include "notation/notation.h"
 
 unsigned char ss_data[] = {
 

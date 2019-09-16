@@ -40,12 +40,12 @@ ACCIDENTAL ([#bxdq\^v]+)
     #define BACH_MAX
     #endif
     #ifdef BACH_MAX
-    #include "llllobj.h"
+    #include "foundation/llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
-    #include "exprparser.h"
-    #include "lexpr.h"
-    #include "llll_math.h"
+    #include "parsers/exprparser/exprparser.h"
+    #include "math/lexpr.h"
+    #include "math/llll_math.h"
     #else
     #include <stdio.h>
     #include <ctype.h>

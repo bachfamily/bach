@@ -26,7 +26,7 @@
 #ifndef _BACH_CURSORS_H_
 #define _BACH_CURSORS_H_
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "jgraphics.h"
 
 /** Mouse cursor types.

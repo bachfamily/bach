@@ -17,12 +17,12 @@
  *
  */
 
-#include "llll_commons_ext.h"
-#include "llll_commons.h"
+#include "foundation/llll_commons_ext.h"
+#include "foundation/llll_commons.h"
 #include <stdarg.h>
 #include <string.h>
-#include "llll_commonsyms.h"
-#include "bach_math_utilities.h"
+#include "foundation/llll_commonsyms.h"
+#include "math/bach_math_utilities.h"
 
 double solve_cubic(double a, double b, double c, double d){
 	double bn = b/a; 

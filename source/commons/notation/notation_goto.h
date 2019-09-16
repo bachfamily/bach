@@ -24,7 +24,7 @@
 #ifndef _NOTATION_GOTO_H_
 #define _NOTATION_GOTO_H_
 
-#include "notation.h"
+#include "notation/notation.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE

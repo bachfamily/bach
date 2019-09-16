@@ -25,8 +25,8 @@
 #ifndef _SPECTRAL_H_
 #define _SPECTRAL_H_
 
-#include "notation.h" // header with all the structures for the notation objects
-#include "kiss_fft.h"
+#include "notation/notation.h" // header with all the structures for the notation objects
+#include "libraries/kiss_fft/kiss_fft.h"
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

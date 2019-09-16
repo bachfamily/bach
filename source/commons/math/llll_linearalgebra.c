@@ -17,7 +17,7 @@
  *
  */
 
-#include "llll_linearalgebra.h"
+#include "math/llll_linearalgebra.h"
 #include <ext_common.h> 
 
 // returns the matrix having 1's on the diagonal, and 0 elsewhere

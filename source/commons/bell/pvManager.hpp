@@ -20,7 +20,7 @@
 #ifndef pvManager_hpp
 #define pvManager_hpp
 
-#include "patcherVariable.hpp"
+#include "bell/patcherVariable.hpp"
 
 
 class pvManager final : private t_safe {

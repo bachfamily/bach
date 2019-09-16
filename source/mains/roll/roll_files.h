@@ -22,7 +22,7 @@
 #define _ROLL_FILES_H_
 
 #include "roll.h"
-#include "notation_files.h"
+#include "notation/notation_files.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE

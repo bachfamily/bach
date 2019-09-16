@@ -20,9 +20,9 @@
 #ifndef operator_hpp
 #define operator_hpp
 
-#include "astNode.hpp"
-#include "llllIterator.hpp"
-#include "llll_math.h"
+#include "bell/astNode.hpp"
+#include "bell/llllIterator.hpp"
+#include "math/llll_math.h"
 
 template <void (*FN)(t_hatom*, t_hatom*)>
 class astUnaryOperator : public astNode, public llllIterator<1> {

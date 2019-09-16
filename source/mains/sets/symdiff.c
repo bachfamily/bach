@@ -60,8 +60,8 @@
  Andrea Agostini
  */
 
-#include "bach_codableobj.hpp"
-#include "ast.hpp"
+#include "bell/bach_codableobj.hpp"
+#include "bell/ast.hpp"
 
 typedef struct _symdiff
 {

@@ -20,7 +20,7 @@
 #ifndef conditional_hpp
 #define conditional_hpp
 
-#include "astNode.hpp"
+#include "bell/astNode.hpp"
 
 t_bool astLogXor_core(t_llll *first, astNode *second, t_execEnv const &context);
 t_bool astSCOr_core(t_llll *first, astNode *second, t_execEnv const &context);

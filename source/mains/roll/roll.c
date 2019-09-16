@@ -69,10 +69,10 @@
 */
 
 
-#include "llll_modifiers.h"
+#include "graphics/llll_modifiers.h"
 #include "roll_files.h" //< roll.h is included in here
-#include "notation_attrs.h"
-#include "notation_goto.h"
+#include "notation/notation_attrs.h"
+#include "notation/notation_goto.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
@@ -84,7 +84,7 @@
 #include <locale.h>
 #include <time.h>
 
-#include "bach_jit.h"
+#include "graphics/bach_jit.h"
 
 
 #ifdef MAC_VERSION

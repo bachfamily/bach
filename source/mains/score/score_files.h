@@ -21,7 +21,7 @@
 #define _SCORE_FILES_H_
 
 #include "score_api.h"
-#include "notation_files.h"
+#include "notation/notation_files.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE

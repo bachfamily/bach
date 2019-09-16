@@ -20,7 +20,7 @@
 #ifndef function_hpp
 #define function_hpp
 
-#include "astNode.hpp"
+#include "bell/astNode.hpp"
 #include <unordered_set>
 #define BELL_MAX_RECURSION_DEPTH 1000
 

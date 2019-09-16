@@ -20,7 +20,7 @@
 #ifndef builtInFunction_hpp
 #define builtInFunction_hpp
 
-#include "function.hpp"
+#include "bell/function.hpp"
 
 
 class t_builtInFunction : public t_function

@@ -38,10 +38,10 @@ ACCIDENTAL ([n#bxdq+-\^v]+)
     #define BACH_MAX
     #endif
     #ifdef BACH_MAX
-    #include "llllobj.h"
+    #include "foundation/llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
-    #include "alterparser.h"
+    #include "parsers/alterparser/alterparser.h"
     #else
     #include <stdio.h>
     #include <ctype.h>

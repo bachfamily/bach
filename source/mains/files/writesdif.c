@@ -92,10 +92,10 @@
  ...
  */
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
-#include "sdif.h"
+#include "libraries/SDIF-3.11.4-src/include/sdif.h"
 #include <stdio.h>
 
 typedef struct _writesdif

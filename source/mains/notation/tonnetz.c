@@ -71,9 +71,9 @@
 */
 
 
-#include "llll_settheory.h"
-#include "notation.h"
-#include "bach_graphics.h"
+#include "math/llll_settheory.h"
+#include "notation/notation.h"
+#include "graphics/bach_graphics.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"

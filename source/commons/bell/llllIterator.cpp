@@ -17,7 +17,7 @@
  *
  */
 
-#include "llllIterator.hpp"
+#include "bell/llllIterator.hpp"
 
 template <>
 long llllIterator<1>::iterCmd(t_iterationData *x, long cmd) {

@@ -20,7 +20,7 @@
 #ifndef _LLLL_FILES_H_
 #define _LLLL_FILES_H_
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE

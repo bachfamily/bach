@@ -21,7 +21,7 @@
 	notation_goto - navigation "go-to"-style functions for notation objects
 */
 
-#include "notation_goto.h"
+#include "notation/notation_goto.h"
 
 
 long goto_get_marker_voicenumber(t_notation_obj *r_ob, t_marker *mk)

@@ -66,10 +66,10 @@
 	Daniele Ghisi
 */
 
-#include "llllobj.h"
-#include "bach_math_utilities.h"
-#include "bach_graphics.h"
-#include "llll_commons_ext.h"
+#include "foundation/llllobj.h"
+#include "math/bach_math_utilities.h"
+#include "graphics/bach_graphics.h"
+#include "foundation/llll_commons_ext.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_dictionary.h"

@@ -17,7 +17,7 @@
  *
  */
 
-#include "ownedFunction.hpp"
+#include "bell/ownedFunction.hpp"
 
 
 

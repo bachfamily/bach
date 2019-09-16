@@ -18,7 +18,7 @@
  */
 
 
-#include "bach_128bit.h"
+#include "math/bach_128bit.h"
 
 #ifdef C74_X64
 #ifndef BACH_USE_NATIVE_128BIT_INTEGER

@@ -25,8 +25,8 @@
 #ifndef _LLLL_LINEARALGEBRA_H_
 #define _LLLL_LINEARALGEBRA_H_
 
-#include "llll_files.h"
-#include "bach_math_utilities.h"
+#include "foundation/llll_files.h"
+#include "math/bach_math_utilities.h"
 
 #define CONST_LINEAR_ALGEBRA_EPSILON_APPROX_ZERO 0.0000001	///< @ingroup linear_algebra Smallest number considered different from zero while examining a matrix element
 

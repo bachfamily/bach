@@ -20,7 +20,7 @@
 #ifndef _HATOM_H_
 #define _HATOM_H_
 
-#include "bach.h"
+#include "foundation/bach.h"
 
 #ifdef BACH_MAX
 #include "ext.h"
@@ -36,11 +36,11 @@
 #include "bach_jitclang.h"
 #endif
 
-#include "bach_pitch.hpp"
-#include "llll_commonsyms.h"
+#include "math/bach_pitch.hpp"
+#include "foundation/llll_commonsyms.h"
 
 #ifdef C74_X64
-#include "bach_128bit.h"
+#include "math/bach_128bit.h"
 #endif
 
 typedef t_int32_atomic t_bach_atomic_lock;

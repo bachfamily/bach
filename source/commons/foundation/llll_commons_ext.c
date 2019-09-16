@@ -17,14 +17,14 @@
  *
  */
 
-#include "llll_commons_ext.h"
-#include "llll_commons.h"
+#include "foundation/llll_commons_ext.h"
+#include "foundation/llll_commons.h"
 #include <ext_common.h>
 #include <stdarg.h>
 #include <string.h>
-#include "llll_commonsyms.h"
+#include "foundation/llll_commonsyms.h"
 #include "ext_strings.h"
-#include "notation.h"
+#include "notation/notation.h"
 
 void tolower_strip_spaces_doublequotes_and_regular(const char *source, char *dest, long dest_size)
 {

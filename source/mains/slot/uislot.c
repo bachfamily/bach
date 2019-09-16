@@ -66,8 +66,8 @@
     Daniele Ghisi
 */
 
-#include "notation.h" // header with all the structures for the notation objects
-#include "llll_modifiers.h"
+#include "notation/notation.h" // header with all the structures for the notation objects
+#include "graphics/llll_modifiers.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
@@ -79,7 +79,7 @@
 #include <locale.h>
 #include <time.h> 
 
-#include "bach_jit.h"
+#include "graphics/bach_jit.h"
 
 
 typedef struct _uislot 

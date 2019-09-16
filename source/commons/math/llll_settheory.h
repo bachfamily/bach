@@ -25,11 +25,11 @@
 #ifndef _LLLL_SETTHEORY_H_
 #define _LLLL_SETTHEORY_H_
 
-#include "llll_files.h"
-#include "notation.h"
-#include "llll_math.h"
-#include "llll_modifiers.h"
-#include "llll_commons_ext.h"
+#include "foundation/llll_files.h"
+#include "notation/notation.h"
+#include "math/llll_math.h"
+#include "graphics/llll_modifiers.h"
+#include "foundation/llll_commons_ext.h"
 
 #define CONST_MAX_MODULO 1000				///< Maximum possible modulo
 

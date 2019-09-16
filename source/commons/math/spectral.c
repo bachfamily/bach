@@ -21,8 +21,8 @@
 	notation_spectral.c - spectral functions for notation objects
 */
 
-#include "bach.h"
-#include "spectral.h" // notation.h is inside here
+#include "foundation/bach.h"
+#include "math/spectral.h" // notation.h is inside here
 
 
 

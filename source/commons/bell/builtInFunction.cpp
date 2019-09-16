@@ -17,7 +17,7 @@
  *
  */
 
-#include "builtInFunction.hpp"
+#include "bell/builtInFunction.hpp"
 
 t_fnLength::t_fnLength() : t_builtInFunction("length") {
     setArgument("llll");

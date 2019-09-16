@@ -17,7 +17,7 @@
  *
  */
 
-#include "bach.h"
+#include "foundation/bach.h"
 
 #define BACH_MAX_ATTRS 1024 
 #ifdef BACH_MAX
@@ -29,7 +29,7 @@
 #include "bach_jucewrapper.h"
 #endif
 
-#include "llll_commonsyms.h"
+#include "foundation/llll_commonsyms.h"
 
 t_llllobj_common_symbols_table *_llllobj_common_symbols;
 

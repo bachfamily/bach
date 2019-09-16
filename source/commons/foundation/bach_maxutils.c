@@ -17,7 +17,7 @@
  *
  */
 
-#include "bach_maxutils.h"
+#include "foundation/bach_maxutils.h"
 
 t_patcher *obj_getpatcher(t_object *x)
 {

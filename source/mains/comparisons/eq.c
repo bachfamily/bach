@@ -61,7 +61,7 @@
 // you probably want to look at the instance creation method first: eq_new()
 // bach.eq outputs ints, not lllls. to learn how to deal with outlets, refer to bach.join
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
 

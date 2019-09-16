@@ -665,10 +665,10 @@ static const flex_int16_t yy_chk[70] =
     #define BACH_MAX
     #endif
     #ifdef BACH_MAX
-    #include "llllobj.h"
+    #include "foundation/llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
-    #include "pitchparser.h"
+    #include "parsers/pitchparser/pitchparser.h"
     #else
     #include <stdio.h>
     #include <ctype.h>

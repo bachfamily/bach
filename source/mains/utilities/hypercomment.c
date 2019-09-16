@@ -67,14 +67,14 @@
 	Daniele Ghisi
 */
 
-#include "bach.h"
+#include "foundation/bach.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_dictionary.h"
 #include "jpatcher_api.h"
 #include "jpatcher_syms.h"
 #include "jgraphics.h"
-#include "bach_graphics.h"
+#include "graphics/bach_graphics.h"
 #include "ext_boxstyle.h"
 
 #define CONST_MAX_LINK_PER_COMMENT 100

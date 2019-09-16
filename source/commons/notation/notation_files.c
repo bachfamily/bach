@@ -24,8 +24,8 @@
 	by Andrea Agostini
 */
 
-#include "llll_commons.h"
-#include "notation_files.h"
+#include "foundation/llll_commons.h"
+#include "notation/notation_files.h"
 
 t_max_err write_to_buf_ptr(const void *src, unsigned char **basedest, long bytes, long *pos, long *size)
 {

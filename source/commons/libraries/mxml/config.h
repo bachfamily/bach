@@ -21,8 +21,8 @@
 /*
  * Include necessary headers...
  */
-#include "bach.h"
-#include "hatom.h"
+#include "foundation/bach.h"
+#include "foundation/hatom.h"
 
 #define BACH_MXML_SIZE_STEP	8192
 #define BACH_MXML_NODE_SIZE	1024

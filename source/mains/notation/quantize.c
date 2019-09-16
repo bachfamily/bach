@@ -68,7 +68,7 @@
 	Daniele Ghisi
  */
 
-#include "notation.h" // header with all the structures for the notation objects
+#include "notation/notation.h" // header with all the structures for the notation objects
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_common.h"

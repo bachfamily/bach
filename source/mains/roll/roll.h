@@ -20,7 +20,7 @@
 #ifndef _ROLL_H_
 #define _ROLL_H_
 
-#include "notation.h"
+#include "notation/notation.h"
 #include "roll_files.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

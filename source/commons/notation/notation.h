@@ -25,7 +25,7 @@
 #ifndef _NOTATION_H_
 #define _NOTATION_H_
 
-#include "bach.h"
+#include "foundation/bach.h"
 
 #ifdef BACH_MAX
 #include "ext.h"
@@ -36,25 +36,25 @@
 #include "ext_charset.h"
 #include "ext_atomic.h"
 #include "ext_common.h"
-#include "llll_files.h" // llllobj.h is included here
-#include "lexpr.h"
+#include "foundation/llll_files.h" // llllobj.h is included here
+#include "math/lexpr.h"
 #endif
 
 #ifdef BACH_JUCE
 #include "bach_jucewrapper.h"
-#include "llll_commons.h"
+#include "foundation/llll_commons.h"
 #endif
 
 #include <stdio.h>
 #include <locale.h>
 #include <time.h> 
-#include "llll_math.h"
+#include "math/llll_math.h"
 #include <stdarg.h>
-#include "bach_graphics.h"
-#include "bach_math_utilities.h"
-#include "bach_cursors.h"
-#include "llll_commons_ext.h"
-#include "alterparser.h"
+#include "graphics/bach_graphics.h"
+#include "math/bach_math_utilities.h"
+#include "graphics/bach_cursors.h"
+#include "foundation/llll_commons_ext.h"
+#include "parsers/alterparser/alterparser.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 

@@ -21,7 +21,7 @@
 #ifndef _NOTATION_ATTRS_H_
 #define _NOTATION_ATTRS_H_
 
-#include "notation.h"
+#include "notation/notation.h"
 
 #define DEFINE_NOTATIONOBJ_LONGPTR_GETTER(DATA_FIELD, COUNT_FIELD) \
 t_max_err notation_obj_##DATA_FIELD##_getattr(t_notation_obj *x, t_object *attr, long *ac, t_atom **av) \

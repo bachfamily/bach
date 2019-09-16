@@ -60,14 +60,14 @@
 	Daniele Ghisi
 */
 
-#include "notation.h"
+#include "notation/notation.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_common.h"
 #include "jpatcher_api.h"
 #include "jgraphics.h"
 #include "ext_systhread.h"
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 
 typedef struct _mc2p
 {

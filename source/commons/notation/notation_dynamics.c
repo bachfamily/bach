@@ -21,8 +21,8 @@
  notation_dynamic.c - functions handling dynamics
  */
 
-#include "bach.h"
-#include "notation.h" // header with all the structures for the notation objects
+#include "foundation/bach.h"
+#include "notation/notation.h" // header with all the structures for the notation objects
 
 
 long dynamics_get_ending_hairpin(t_dynamics *dyn)

@@ -17,8 +17,8 @@
  *
  */
 
-#include "llll_append.h"
-#include "function.hpp"
+#include "foundation/llll_append.h"
+#include "bell/function.hpp"
 
 // check the depth of a list taking into account a newly-added sub-llll (son)
 // it updates all the depths of the super-lists of son, if needed

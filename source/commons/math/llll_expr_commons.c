@@ -21,9 +21,9 @@
 #include "ext_obex.h"
 #include "ext_systhread.h"
 #include "ext_common.h"
-#include "llll_commons.h"
-#include "llll_math.h"
-#include "exprparser.h"
+#include "foundation/llll_commons.h"
+#include "math/llll_math.h"
+#include "parsers/exprparser/exprparser.h"
 
 #define YY_HEADER_EXPORT_START_CONDITIONS
 #define YY_NO_UNISTD_H

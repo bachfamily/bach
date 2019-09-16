@@ -20,7 +20,7 @@
 #ifndef builtInFunctionWithSortFn_hpp
 #define builtInFunctionWithSortFn_hpp
 
-#include "builtInFunction.hpp"
+#include "bell/builtInFunction.hpp"
 
 class t_builtInFunctionWithSortFn : public t_builtInFunction
 {

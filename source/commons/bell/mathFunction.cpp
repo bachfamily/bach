@@ -17,4 +17,4 @@
  *
  */
 
-#include "mathFunction.hpp"
+#include "bell/mathFunction.hpp"

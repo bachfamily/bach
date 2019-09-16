@@ -59,9 +59,9 @@
  */
 
 #include "eval.h"
-#include "bach_codableobj.hpp"
-#include "ast.hpp"
-#include "pvManager.hpp"
+#include "bell/bach_codableobj.hpp"
+#include "bell/ast.hpp"
+#include "bell/pvManager.hpp"
 
 
 void eval_assist(t_eval *x, void *b, long m, long a, char *s);

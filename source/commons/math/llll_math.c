@@ -18,9 +18,9 @@
  */
 
 #include <math.h>
-#include "hatom.h"
-#include "llll_math.h"
-#include "llll_comparisons.h"
+#include "foundation/hatom.h"
+#include "math/llll_math.h"
+#include "foundation/llll_comparisons.h"
 
 #ifdef WIN_VERSION
 

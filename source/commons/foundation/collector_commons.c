@@ -22,9 +22,9 @@
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
 #include "ext_systhread.h"
-#include "llll_commons.h"
-#include "bach_threads.h"
-#include "collector.h"
+#include "foundation/llll_commons.h"
+#include "foundation/bach_threads.h"
+#include "foundation/collector.h"
 
 
 t_collector *collector_new(t_atom_long stacks, long reentrant)

@@ -18,11 +18,11 @@
  */
 
 
-#include "llll_commons.h"
+#include "foundation/llll_commons.h"
 #include "ext_strings.h"
 #include "ext_critical.h"
 #include "ext_common.h"
-#include "bach_threads.h"
+#include "foundation/bach_threads.h"
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

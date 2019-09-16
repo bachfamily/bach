@@ -44,10 +44,10 @@
 #define ATOM_LIST_LENGTH_STEP        (4096*64)
 #define TEXT_BUF_SIZE_STEP            (4096*64)
 
-#include "llll_append.h"
-#include "llll_hatom_change.h"
-#include "llll_comparisons.h"
-#include "bach_threads.h"
+#include "foundation/llll_append.h"
+#include "foundation/llll_hatom_change.h"
+#include "foundation/llll_comparisons.h"
+#include "foundation/bach_threads.h"
 #include <unordered_map>
 
 #ifdef BACH_JITCLANG

@@ -21,11 +21,11 @@
     notation_commons.c - common functions (or useful functions) for notation objects
 */
 
-#include "bach.h"
-#include "notation.h" // header with all the structures for the notation objects
+#include "foundation/bach.h"
+#include "notation/notation.h" // header with all the structures for the notation objects
 
-//#include "llll_modifiers.h" 
-//#include "llll_math.h"
+//#include "graphics/llll_modifiers.h" 
+//#include "math/llll_math.h"
 
 // GLOBAL VARIABLE
 

@@ -65,7 +65,7 @@
  */
 
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_common.h"
@@ -75,8 +75,8 @@
 #include <stdio.h>
 #include <locale.h>
 #include <time.h> 
-#include "llll_commons_ext.h"
-#include "notation.h"
+#include "foundation/llll_commons_ext.h"
+#include "notation/notation.h"
 
 typedef struct _transcribe_event
 {

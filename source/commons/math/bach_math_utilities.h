@@ -27,8 +27,8 @@
 
 // general mathematical utilities
 
-#include "llll_math.h"
-#include "lexpr.h"
+#include "math/llll_math.h"
+#include "math/lexpr.h"
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 BEGIN_CHECK_LINKAGE

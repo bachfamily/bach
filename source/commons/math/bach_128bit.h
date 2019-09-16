@@ -20,7 +20,7 @@
 #ifndef _BACH_128BIT_H_
 #define _BACH_128BIT_H_
 
-#include "bach.h"
+#include "foundation/bach.h"
 
 #ifdef BACH_MAX
 #include "ext.h"

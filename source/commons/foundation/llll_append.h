@@ -20,7 +20,7 @@
 #ifndef llll_append_h
 #define llll_append_h
 
-#include "llll_lifecycle.h"
+#include "foundation/llll_lifecycle.h"
 
 // - DESTRUCTIVE - inplace
 // check the depth of a list taking into account a newly-added sub-llll (son)

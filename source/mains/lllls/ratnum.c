@@ -65,8 +65,8 @@
 	Daniele Ghisi
 */
 
-#include "llllobj.h"
-#include "llll_math.h"
+#include "foundation/llllobj.h"
+#include "math/llll_math.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "jpatcher_api.h"
@@ -76,7 +76,7 @@
 #include <stdio.h>
 #include <locale.h>
 #include "ext_strings.h"
-#include "bach_graphics.h"
+#include "graphics/bach_graphics.h"
 #include "ext_boxstyle.h"
 
 #define CONST_MAXDEN_FOR_DOUBLE_TO_RAT_APPROXIMATION 10000

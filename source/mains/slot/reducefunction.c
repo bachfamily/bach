@@ -64,9 +64,9 @@
 #include "jpatcher_api.h"
 #include "jgraphics.h"
 #include "ext_systhread.h"
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_strings.h"
-#include "llll_commons_ext.h"
+#include "foundation/llll_commons_ext.h"
 
 
 

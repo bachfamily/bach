@@ -17,9 +17,9 @@
  *
  */
 
-#include "hatom.h"
-#include "llll_math.h"
-#include "function.hpp"
+#include "foundation/hatom.h"
+#include "math/llll_math.h"
+#include "bell/function.hpp"
 
 extern t_class *llll_class;
 

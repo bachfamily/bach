@@ -20,7 +20,7 @@
 #ifndef bach_codableobj_hpp
 #define bach_codableobj_hpp
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include <unordered_map>
 
 long bach_atoms2text(long ac, t_atom *av, char **buf);

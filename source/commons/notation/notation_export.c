@@ -21,8 +21,8 @@
 	notation_dynamicsommons.c - function handling dynamics
 */
 
-#include "bach.h"
-#include "notation.h" // header with all the structures for the notation objects
+#include "foundation/bach.h"
+#include "notation/notation.h" // header with all the structures for the notation objects
 
 
 void get_filename_extension(char *filename, char *ext, char also_truncate_filename)

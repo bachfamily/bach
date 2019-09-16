@@ -20,8 +20,8 @@
 #ifndef llll_lifecycle_h
 #define llll_lifecycle_h
 
-#include "hatom.h"
-#include "bach_mem.h"
+#include "foundation/hatom.h"
+#include "foundation/bach_mem.h"
 
 ///////////////////////////////////////////////////////////////////////
 ///// MEMORY STUFF

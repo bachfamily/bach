@@ -17,12 +17,12 @@
  *
  */
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_strings.h"
 #include "ext_critical.h"
 #include "jpatcher_api.h"
-//#include "bach_graphics.h"
+//#include "graphics/bach_graphics.h"
 
 
 #define LLLLOBJ_ENABLE_DESTRUCTIVE    0

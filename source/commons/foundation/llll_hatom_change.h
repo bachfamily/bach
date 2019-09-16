@@ -20,7 +20,7 @@
 #ifndef llll_hatom_change_h
 #define llll_hatom_change_h
 
-#include "llll_append.h"
+#include "foundation/llll_append.h"
 
 
 // retrieve the address of an llllelem from the address of its hatom

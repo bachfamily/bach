@@ -21,8 +21,8 @@
 	notation_pitches.c - function handling pitches
 */
 
-#include "bach.h"
-#include "notation.h" // header with all the structures for the notation objects
+#include "foundation/bach.h"
+#include "notation/notation.h" // header with all the structures for the notation objects
 
 const char *subs[] = {"numnotes", "extension"};
 const long subs_count = 2;

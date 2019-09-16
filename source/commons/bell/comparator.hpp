@@ -20,7 +20,7 @@
 #ifndef comparator_hpp
 #define comparator_hpp
 
-#include "astNode.hpp"
+#include "bell/astNode.hpp"
 
 class astComparator : public astNode
 {

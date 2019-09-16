@@ -20,7 +20,7 @@
 #ifndef fnMap_hpp
 #define fnMap_hpp
 
-#include "builtInFunction.hpp"
+#include "bell/builtInFunction.hpp"
 
 class t_fnMap : public t_builtInFunction
 {

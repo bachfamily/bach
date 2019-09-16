@@ -17,7 +17,7 @@
  *
  */
 
-#include "conditional.hpp"
+#include "bell/conditional.hpp"
 
 
 t_llll *astLogNot::eval(t_execEnv const &context) {

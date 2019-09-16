@@ -17,9 +17,9 @@
  *
  */
 
-#include "bach_codableobj.hpp"
-#include "ast.hpp"
-#include "pvManager.hpp"
+#include "bell/bach_codableobj.hpp"
+#include "bell/ast.hpp"
+#include "bell/pvManager.hpp"
 
 void codableobj_doread(t_codableobj *x, t_symbol *s);
 void codableobj_readfile(t_codableobj *x, t_symbol *s, char *filename, short path);

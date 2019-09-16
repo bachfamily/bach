@@ -69,7 +69,7 @@
  Andrea Agostini
  */
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
 #include "ext_maxtypes.h"
@@ -77,9 +77,9 @@
 #include "ext_systhread.h"
 #include "ext_dictionary.h"
 #include "jpatcher_api.h"
-#include "chkparser.h"
+#include "parsers/chkparser/chkparser.h"
 
-#include "bach_maxutils.h"
+#include "foundation/bach_maxutils.h"
 
 #define MAX_ATTRS 256
 

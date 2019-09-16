@@ -1796,7 +1796,7 @@ static const flex_int16_t yy_chk[4257] =
     
     //#define BACH_MAX
     #ifdef BACH_MAX
-    #include "llllobj.h"
+    #include "foundation/llllobj.h"
     #include "ext_common.h"
     #include "ext_globalsymbol.h"
     #else
@@ -1804,8 +1804,8 @@ static const flex_int16_t yy_chk[4257] =
     #define code_dev_post printf
     #endif
     
-    #include "bach_parser.hpp"
-    #include "ast.hpp"
+    #include "parsers/bach_parser.hpp"
+    #include "bell/ast.hpp"
     #include "stringparser.h"
     
     #include "stringparser_tab_nolines.h"

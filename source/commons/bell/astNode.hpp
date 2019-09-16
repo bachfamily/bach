@@ -20,8 +20,8 @@
 #ifndef ast_hpp
 #define ast_hpp
 
-#include "globalVariable.hpp"
-#include "patcherVariable.hpp"
+#include "bell/globalVariable.hpp"
+#include "bell/patcherVariable.hpp"
 #include "eval.h"
 #include <set>
 

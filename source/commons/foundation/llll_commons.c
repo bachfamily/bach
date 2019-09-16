@@ -17,11 +17,11 @@
  *
  */
 
-#include "llll_commons.h"
+#include "foundation/llll_commons.h"
 #include <stdarg.h>
 #include <string.h>
-#include "llll_commonsyms.h"
-#include "bach_threads.h"
+#include "foundation/llll_commonsyms.h"
+#include "foundation/bach_threads.h"
 
 #ifdef BACH_MAX
 #include "ext_strings.h"
@@ -31,9 +31,9 @@
 //#include "ext_atomic.h"
 typedef t_object t_binbuf;
 #endif
-//#include "llll_math.h"
-#include "chkparser.h"
-#include "function.hpp"
+//#include "math/llll_math.h"
+#include "parsers/chkparser/chkparser.h"
+#include "bell/function.hpp"
 /*
  possible types:
  i = long

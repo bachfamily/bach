@@ -22,7 +22,7 @@
 	@brief	Common tools for dealing with rationals.
 */
 
-#include "bach.h"
+#include "foundation/bach.h"
 
 #ifdef BACH_JUCE
 #include "bach_jucewrapper.h"
@@ -35,8 +35,8 @@
 #ifndef _RATIONAL_H_
 #define _RATIONAL_H_
 
-#include "bach_128bit.h"
-#include "bach_rat.hpp"
+#include "math/bach_128bit.h"
+#include "math/bach_rat.hpp"
 
 #ifdef C74_X64 // 64 bit arch
 /**	Declaration of type t_atom_longlong, 128-bit integer, used with 64-bit architecture  

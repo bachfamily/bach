@@ -20,8 +20,8 @@
 #ifndef iterator_hpp
 #define iterator_hpp
 
-#include "astNode.hpp"
-#include "collector.h"
+#include "bell/astNode.hpp"
+#include "foundation/collector.h"
 
 template <int ARITY>
 class llllIterator

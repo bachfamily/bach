@@ -58,10 +58,10 @@
 */
 
 
-#include "bach.h"
-#include "llllobj.h"
-#include "llll_commons_ext.h"
-#include "bach_math_utilities.h"
+#include "foundation/bach.h"
+#include "foundation/llllobj.h"
+#include "foundation/llll_commons_ext.h"
+#include "math/bach_math_utilities.h"
 #include "ext.h"
 #include "ext_obex.h"
 #include "ext_common.h"

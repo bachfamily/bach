@@ -58,13 +58,13 @@
  Andrea Agostini
  */
 
-#include "llllobj.h"
+#include "foundation/llllobj.h"
 #include "ext_common.h"
 #include "ext_globalsymbol.h"
 #include "ext_strings.h"
 #include "ext_critical.h"
-#include "collector.h"
-#include "llll_math.h"
+#include "foundation/collector.h"
+#include "math/llll_math.h"
 
 
 typedef struct _weights

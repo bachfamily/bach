@@ -92,7 +92,7 @@
 
 	//#define BACH_MAX
 	#ifdef BACH_MAX
-    #include "symparser.h"
+    #include "parsers/symparser/symparser.h"
     #else
     #include <stdio.h>
     #define parserpost printf
@@ -179,8 +179,8 @@ int symparser_parse (void *scanner, t_llll **ll, t_llll_stack *stack, long *dept
 /* Copy the second part of user declarations.  */
 
 
-    #include "bach_symparser_tab.h"
-    #include "bach_symparser_lex.h"
+    #include "parsers/symparser/bach_symparser_tab.h"
+    #include "parsers/symparser/bach_symparser_lex.h"
 
     int yylex(YYSTYPE *yylval_param, yyscan_t myscanner);
     int yyerror(yyscan_t myscanner, t_llll **ll, t_llll_stack *stack, long *depth, char *s);

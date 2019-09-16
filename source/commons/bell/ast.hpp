@@ -21,16 +21,16 @@
 #define ast_h
 
 #include <string>
-#include "globalVariable.hpp"
-#include "patcherVariable.hpp"
-#include "conditional.hpp"
-#include "builtInFunction.hpp"
-#include "ownedFunction.hpp"
-#include "builtInFunctionWithFindFn.hpp"
-#include "builtInFunctionWithSortFn.hpp"
-#include "mathFunction.hpp"
-#include "fnMap.hpp"
-#include "operator.hpp"
-#include "comparator.hpp"
+#include "bell/globalVariable.hpp"
+#include "bell/patcherVariable.hpp"
+#include "bell/conditional.hpp"
+#include "bell/builtInFunction.hpp"
+#include "bell/ownedFunction.hpp"
+#include "bell/builtInFunctionWithFindFn.hpp"
+#include "bell/builtInFunctionWithSortFn.hpp"
+#include "bell/mathFunction.hpp"
+#include "bell/fnMap.hpp"
+#include "bell/operator.hpp"
+#include "bell/comparator.hpp"
 
 #endif /* ast_h */

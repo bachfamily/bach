@@ -20,7 +20,7 @@
 #ifndef builtInFunctionWithFindFn_hpp
 #define builtInFunctionWithFindFn_hpp
 
-#include "builtInFunction.hpp"
+#include "bell/builtInFunction.hpp"
 
 class t_builtInFunctionWithFindFn : public t_builtInFunction
 {

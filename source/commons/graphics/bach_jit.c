@@ -17,7 +17,7 @@
  *
  */
 
-#include "bach_jit.h"
+#include "graphics/bach_jit.h"
 
 
 void bach_paint_to_jitter_matrix(t_object *x, t_symbol *matrix_name, long width, long height, bach_paint_ext_fn obj_paint_ext)
