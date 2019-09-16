@@ -50,6 +50,7 @@
     <ClCompile Include="..\..\commons\foundation\llll_hatom_change.c" />
     <ClCompile Include="..\..\commons\foundation\llll_maxinterface.c" />
     <ClCompile Include="..\..\commons\foundation\llllobj.c" />
+    <ClCompile Include="..\..\commons\foundation\llll_sort.cpp" />
     <ClCompile Include="..\..\commons\graphics\bach_cursors.c" />
     <ClCompile Include="..\..\commons\graphics\bach_graphics.c" />
     <ClCompile Include="..\..\commons\graphics\bach_inspector.c" />
