@@ -21,8 +21,10 @@ HOW TO INSTALL
 
 You should install bach directly from Max Package Manager.
 
-Alternatively, you can copy the "bach" folder inside the "packages" folder in your Max folder.
-  	The Max packages folder is under "Documents/Max" (for Max 6) or "Documents/Max 7" (for Max 7).
+Alternatively, you can copy the "bach" folder inside the "packages" folder in your Max folder. The Max packages folder is under "Documents/Max 7" (for Max 7) or "Documents/Max 8" (for Max 8).
+
+You can also build bach from its source code. For more information about this, see below.
+
 
 
 ===================================================
@@ -45,6 +47,25 @@ The only prerequisite to bach is a solid (but not necessarily hyper-advanced) kn
 Of course, experimentation is always the core of understanding. As soon as you get the very first notions, the best you can do is start patching. Just remember that this is still an alpha release: save your patches and data as often as you can - we can't assure you that Max won't hang or crash as soon as you click that button you just added!
 
 
+
+===================================================
+BUILDING FROM SOURCE
+===================================================
+
+As bach is an open source project as of v0.8.1, it is possible to download its complete source code and build the library from it.
+The source code of bach is hosted on Github, at the URL
+The repository is identical to the bach Max package, with the two exceptions that it does not contain the binaries (which you are supposed to be willing to build if you download it), but it contains a "source" folder with all the source code, third-party dependencies included (see below), except the Max SDK. You should install the bach folder downloaded from Github, or clone the repository, directly in your Max packages folder, instead of the bach package from the Package Manager.
+
+On a Mac, you need the following tools for building bach:
+- Xcode (version 9.4 or higher)
+- The Max SDK (version 7.3.3 or higher: the provided Xcode project looks for version 7.3.3, but it should not be difficult to upgrade it for a higher version), installed in the Max packages folder.
+- Flex (version 2.6.0 or higher) and Bison (version 2.3 or higher). Notice that you need to install manually Flex and Bison, as the versions provided with Xcode are not compatible with the grammars included in bach.
+
+On Windows, you only need Visual Studio 2017 or higher.
+
+bach contains a number of Flex / Bison lexers and parsers tackling the llll textual representation, bach.expr expressions and bell programs. The bach repository contains both the Flex / Bison grammar files (.l and .y), with the makefiles invoking Flex and Bison, and the C code files they produce. This is somewhat unorthodox, but necessary because currently Flex and Bison are only invoked when bach is built on a Mac, whereas on Windows the .l, .y and makefiles are ignored, and bach is only built from the C code files. So, if you are a Windows user and you want to modify the grammars, you have to either find a compatible Flex / Bison distribution for Windows, install it and run it on your machine (and, why not, share some information about it with us the bach dev community), or generate the lexers and parsers on a Mac or Unix machine and transfer them to Windows. If you don't want to fiddle with the grammars, you can avoid installing Flex and Bison on a Mac as well, and modify the makefiles or the relevant build targets so as not to invoke them when the project is built (and perhaps adding an exclude file to your local repository, so that these customizations are preserved whenever you pull from the remote).
+
+
 ===================================================
 ACKNOWLEDGMENTS
 ===================================================
@@ -63,6 +84,8 @@ bach includes:
 - A modified version of The Mini-XML library (https://www.msweet.org/mxml/index.html)
 - A modified version of the Kiss FFT library (https://github.com/mborgerding/kissfft)
 - A modified version of the IRCAM SDIF library (http://sdif.sourceforge.net/extern/alpha-main.html)
+
+All the above libraries are included in the publicly available source code repository of bach.
 
 
 ===================================================
