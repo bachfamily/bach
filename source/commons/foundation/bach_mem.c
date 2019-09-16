@@ -23,7 +23,7 @@
 #include "ext_charset.h"
 #include "ext_atomic.h"
 #include "parsers/symparser/symparser.h"
-#include "strparser.h"
+#include "parsers/strparser/strparser.h"
 #include "bell/function.hpp"
 #ifdef MAC_VERSION
 #include <execinfo.h>
