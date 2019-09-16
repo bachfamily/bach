@@ -22,7 +22,7 @@
 
 #include "bell/globalVariable.hpp"
 #include "bell/patcherVariable.hpp"
-#include "eval.h"
+#include "bell/eval.h"
 #include <set>
 
 class astNode;

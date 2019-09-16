@@ -34,7 +34,7 @@
     <ClCompile Include="..\..\commons\bell\pvManager.cpp" />
     <ClCompile Include="..\..\commons\bell\stringparser\stringparser_nolines.c" />
     <ClCompile Include="..\..\commons\bell\stringparser\stringparser_tab_nolines.c" />
-    <ClCompile Include="..\..\commons\foundation\bach_codableobj.cpp" />
+    <ClCompile Include="..\..\commons\bell\bach_codableobj.cpp" />
     <ClCompile Include="..\..\commons\foundation\bach_maxutils.c" />
     <ClCompile Include="..\..\commons\foundation\bach_mem.c" />
     <ClCompile Include="..\..\commons\foundation\bach_ss.c" />
