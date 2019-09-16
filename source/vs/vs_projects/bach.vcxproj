@@ -294,7 +294,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\commonsyms.c" />
-    <ClCompile Include="..\..\mains\aa\bach.c" />
+    <ClCompile Include="..\..\mains\bach\bach.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bach_lib.vcxproj">

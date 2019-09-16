@@ -290,7 +290,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\commonsyms.c" />
     <ClCompile Include="..\..\..\..\max-sdk-7.3.3\source\c74support\max-includes\common\dllmain_win.c" />
-    <ClCompile Include="..\..\mains\dg\poset.c" />
+    <ClCompile Include="..\..\mains\combinatorial\poset.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="bach_lib.vcxproj">
