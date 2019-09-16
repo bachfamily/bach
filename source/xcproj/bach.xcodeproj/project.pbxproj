@@ -5333,7 +5333,7 @@
 				9157F58D232F6A5400A4ADAB /* roll */,
 				9157F58E232F6A6400A4ADAB /* score */,
 				9157F5A5232F6CD400A4ADAB /* slot */,
-				9157F59C232F6AFF00A4ADAB /* matrix_calculus */,
+				9157F59C232F6AFF00A4ADAB /* linearalgebra */,
 				9157F58F232F6A7E00A4ADAB /* files */,
 				9157F58B232F6A3200A4ADAB /* eval */,
 				9157F586232F694C00A4ADAB /* utilities */,
@@ -5548,7 +5548,7 @@
 			path = notation;
 			sourceTree = "<group>";
 		};
-		9157F59C232F6AFF00A4ADAB /* matrix_calculus */ = {
+		9157F59C232F6AFF00A4ADAB /* linearalgebra */ = {
 			isa = PBXGroup;
 			children = (
 				91D1893A130EC1D100A2E668 /* trace.c */,
@@ -5564,7 +5564,7 @@
 				91D18937130EC1D100A2E668 /* gausselim.c */,
 				91D18935130EC1D100A2E668 /* linearsolve.c */,
 			);
-			path = matrix_calculus;
+			path = linearalgebra;
 			sourceTree = "<group>";
 		};
 		9157F5A5232F6CD400A4ADAB /* slot */ = {
