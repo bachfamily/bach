@@ -1,0 +1,118 @@
+/*
+ *  maximum.c
+ *
+ * Copyright (C) 2010-2019 Andrea Agostini and Daniele Ghisi
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License
+ * as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
+/**
+	@file
+	maximum.c
+	
+	@name 
+	bach.maximum
+	
+	@realname 
+	bach.maximum
+
+	@type
+	abstraction
+	
+	@module
+	bach
+
+	@author
+	bachproject
+	
+	@digest 
+	Output maximum element-wise
+	
+	@description
+	Compares every element of the left llll with the corresponding
+	element of the right llll, and outputs the bigger.
+	
+	@discussion
+
+	@category
+	bach, bach abstractions, bach math
+
+	@keywords
+	maximum, calculate, element, compute, number
+
+	@seealso
+	bach.minimum, bach.minmax, maximum, bach.clip, bach.expr
+	
+	@owner
+	Andrea Agostini
+*/
+
+// ---------------
+// METHODS
+// ---------------
+
+// @method llll @digest Set operand, output result
+// @description An llll in the first inlet will set the left
+// llll for the comparison, and will output the result.
+// An llll in the second inlet will set the right llll for the comparison,
+// without outputting any result.
+// The result is computed as follows: each element
+// of the left llll is compared with the element in the corresponding position
+// in the right llll, and the bigger one is taken. 
+// An llll with all such maxima is formed and output from the outlet.
+// If the lllls do not correspond in length, the longer is always 
+// considered (and exceeding elements are trivially taken as maximum).
+// If single scalar elements are in the same position of complex lllls, such
+// scalars apply for all elements of the corresponding llll. 
+// Namely, if one of the two lllls is a single number, such number will apply
+// for all elements of the other llll.
+
+// @method bang @digest Output result
+// @description Performs and outputs the calculation on the most recently received input lllls.
+
+
+
+// ---------------
+// ATTRIBUTES
+// ---------------
+
+void main_foo() {
+
+llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
+
+}
+
+// ---------------
+// INLETS
+// ---------------
+
+// @in 0 @type llll @digest Left operand llll
+// @in 1 @type llll @digest Right operand llll
+
+
+
+// ---------------
+// OUTLETS
+// ---------------
+
+// @out 0 @type llll @digest The maximum of the two lllls element-wise
+
+
+
+// ---------------
+// ARGUMENTS
+// ---------------
+
+// @arg 0 @name right_operand @optional 1 @type llll @digest Right operand llll
+// @description The optional argument is the right operand llll.
