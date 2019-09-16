@@ -49,8 +49,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.diff", "vs_projects\ba
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.eig", "vs_projects\bach.eig.vcxproj", "{A72FFD77-86F9-4668-BCD7-DCCC6E280C80}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.embed", "vs_projects\bach.embed.vcxproj", "{22A01036-D930-4501-8578-B12DAEEA4B7D}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.encode", "vs_projects\bach.encode.vcxproj", "{C61CC5D2-F254-4F26-B9D3-E1C5A80004F8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bach.eq", "vs_projects\bach.eq.vcxproj", "{630EAD6B-34E5-4A09-B29E-164AE0EC2862}"
@@ -451,14 +449,6 @@ Global
 		{A72FFD77-86F9-4668-BCD7-DCCC6E280C80}.Release|Win32.Build.0 = Release|Win32
 		{A72FFD77-86F9-4668-BCD7-DCCC6E280C80}.Release|x64.ActiveCfg = Release|x64
 		{A72FFD77-86F9-4668-BCD7-DCCC6E280C80}.Release|x64.Build.0 = Release|x64
-		{22A01036-D930-4501-8578-B12DAEEA4B7D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{22A01036-D930-4501-8578-B12DAEEA4B7D}.Debug|Win32.Build.0 = Debug|Win32
-		{22A01036-D930-4501-8578-B12DAEEA4B7D}.Debug|x64.ActiveCfg = Debug|x64
-		{22A01036-D930-4501-8578-B12DAEEA4B7D}.Debug|x64.Build.0 = Debug|x64
-		{22A01036-D930-4501-8578-B12DAEEA4B7D}.Release|Win32.ActiveCfg = Release|Win32
-		{22A01036-D930-4501-8578-B12DAEEA4B7D}.Release|Win32.Build.0 = Release|Win32
-		{22A01036-D930-4501-8578-B12DAEEA4B7D}.Release|x64.ActiveCfg = Release|x64
-		{22A01036-D930-4501-8578-B12DAEEA4B7D}.Release|x64.Build.0 = Release|x64
 		{C61CC5D2-F254-4F26-B9D3-E1C5A80004F8}.Debug|Win32.ActiveCfg = Debug|Win32
 		{C61CC5D2-F254-4F26-B9D3-E1C5A80004F8}.Debug|Win32.Build.0 = Debug|Win32
 		{C61CC5D2-F254-4F26-B9D3-E1C5A80004F8}.Debug|x64.ActiveCfg = Debug|x64
