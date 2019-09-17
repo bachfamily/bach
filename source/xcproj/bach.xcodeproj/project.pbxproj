@@ -101,7 +101,6 @@
 			buildPhases = (
 			);
 			dependencies = (
-				91165A7D1694FA3600019F77 /* PBXTargetDependency */,
 				91DA818E131B380700FCB316 /* PBXTargetDependency */,
 				91DA818C131B380700FCB316 /* PBXTargetDependency */,
 				91DA818A131B380700FCB316 /* PBXTargetDependency */,
@@ -296,7 +295,6 @@
 		9136385F16EA4D7800254F9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		9136386016EA4D7900254F9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		9136386116EA4D7A00254F9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
-		9136386216EA4D7A00254F9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		9136386316EA4D7B00254F9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		9136386416EA4D7C00254F9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
 		9136386516EA4D7D00254F9F /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 91EA229B16EA4B9100020760 /* CoreServices.framework */; };
@@ -586,7 +584,6 @@
 		918130B61611B7C500473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		918130B71611B7C500473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		918130B81611B7C600473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
-		918130B91611B7C700473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		918130BA1611B7C700473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		918130BB1611B7C800473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
 		918130BC1611B7C800473F86 /* lib_bach.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 918129451611AEA700473F86 /* lib_bach.a */; };
@@ -1007,13 +1004,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 918129441611AEA700473F86;
 			remoteInfo = lib_bach;
-		};
-		91165A7C1694FA3600019F77 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 91DA8100131B367F00FCB316;
-			remoteInfo = bach.embed;
 		};
 		9118C1F51941D85800BA58AF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2178,13 +2168,6 @@
 			remoteInfo = lib_bach;
 		};
 		9181327A1611CB7000473F86 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 918129441611AEA700473F86;
-			remoteInfo = lib_bach;
-		};
-		9181327C1611CB7500473F86 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
@@ -3531,7 +3514,6 @@
 		91DA80C2131B346000FCB316 /* bach.eig.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.eig.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91DA80DE131B347B00FCB316 /* bach.extractbasis.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.extractbasis.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91DA80FA131B34CD00FCB316 /* bach.circle.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.circle.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
-		91DA8119131B367F00FCB316 /* bach.embed.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.embed.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91DA814D131B36CD00FCB316 /* bach.ivec.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.ivec.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91DA8166131B36E500FCB316 /* bach.primeform.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.primeform.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		91DA817F131B36F800FCB316 /* bach.zsearch.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.zsearch.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4624,15 +4606,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		91DA8113131B367F00FCB316 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				918130B91611B7C700473F86 /* lib_bach.a in Frameworks */,
-				9136386216EA4D7A00254F9F /* CoreServices.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		91DA8147131B36CD00FCB316 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4913,7 +4886,6 @@
 				91DA80C2131B346000FCB316 /* bach.eig.mxo */,
 				91DA80DE131B347B00FCB316 /* bach.extractbasis.mxo */,
 				91DA80FA131B34CD00FCB316 /* bach.circle.mxo */,
-				91DA8119131B367F00FCB316 /* bach.embed.mxo */,
 				91DA814D131B36CD00FCB316 /* bach.ivec.mxo */,
 				91DA8166131B36E500FCB316 /* bach.primeform.mxo */,
 				91DA817F131B36F800FCB316 /* bach.zsearch.mxo */,
@@ -6994,13 +6966,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		91DA8101131B367F00FCB316 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		91DA8137131B36CD00FCB316 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -8185,7 +8150,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 918129531611AEAE00473F86 /* Build configuration list for PBXNativeTarget "lib_bach" */;
 			buildPhases = (
-				1EEBD5561FCC82D300771A1A /* ShellScript */,
 				918129411611AEA700473F86 /* Headers */,
 				918129421611AEA700473F86 /* Sources */,
 				918129431611AEA700473F86 /* Frameworks */,
@@ -9524,26 +9488,6 @@
 			productReference = 91DA80FA131B34CD00FCB316 /* bach.circle.mxo */;
 			productType = "com.apple.product-type.bundle";
 		};
-		91DA8100131B367F00FCB316 /* bach.embed */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 91DA8116131B367F00FCB316 /* Build configuration list for PBXNativeTarget "bach.embed" */;
-			buildPhases = (
-				91DA8101131B367F00FCB316 /* Headers */,
-				91DA8109131B367F00FCB316 /* Resources */,
-				91DA810A131B367F00FCB316 /* Sources */,
-				91DA8113131B367F00FCB316 /* Frameworks */,
-				91DA8115131B367F00FCB316 /* Rez */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				9181327D1611CB7500473F86 /* PBXTargetDependency */,
-			);
-			name = bach.embed;
-			productName = iterator;
-			productReference = 91DA8119131B367F00FCB316 /* bach.embed.mxo */;
-			productType = "com.apple.product-type.bundle";
-		};
 		91DA8136131B36CD00FCB316 /* bach.ivec */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 91DA814A131B36CD00FCB316 /* Build configuration list for PBXNativeTarget "bach.ivec" */;
@@ -9995,7 +9939,6 @@
 				914EB1F11250E0E300413C39 /* bach.diff */,
 				91453FC312CA484000828342 /* bach.edit */,
 				91DA80A8131B346000FCB316 /* bach.eig */,
-				91DA8100131B367F00FCB316 /* bach.embed */,
 				914017C5134EF0C500C1F7D9 /* bach.encode */,
 				91D7CA691233D7A700D767D4 /* bach.eq */,
 				91D7CA371233D2BF00D767D4 /* bach.expr */,
@@ -10938,13 +10881,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		91DA8109131B367F00FCB316 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		91DA813E131B36CD00FCB316 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11872,13 +11808,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		91DA8115131B367F00FCB316 /* Rez */ = {
-			isa = PBXRezBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		91DA8149131B36CD00FCB316 /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
@@ -12013,22 +11942,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXRezBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		1EEBD5561FCC82D300771A1A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\nbuildNumber=$(date +%s)\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$INFOPLIST_FILE\"";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1E5F435C1526109A0085FA87 /* Sources */ = {
@@ -13055,13 +12968,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		91DA810A131B367F00FCB316 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		91DA813F131B36CD00FCB316 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -13317,11 +13223,6 @@
 			isa = PBXTargetDependency;
 			target = 918129441611AEA700473F86 /* lib_bach */;
 			targetProxy = 911289EE17E08EDC008381E3 /* PBXContainerItemProxy */;
-		};
-		91165A7D1694FA3600019F77 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 91DA8100131B367F00FCB316 /* bach.embed */;
-			targetProxy = 91165A7C1694FA3600019F77 /* PBXContainerItemProxy */;
 		};
 		9118C1F41941D85800BA58AF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14157,11 +14058,6 @@
 			isa = PBXTargetDependency;
 			target = 918129441611AEA700473F86 /* lib_bach */;
 			targetProxy = 9181327A1611CB7000473F86 /* PBXContainerItemProxy */;
-		};
-		9181327D1611CB7500473F86 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 918129441611AEA700473F86 /* lib_bach */;
-			targetProxy = 9181327C1611CB7500473F86 /* PBXContainerItemProxy */;
 		};
 		9181327F1611CB7700473F86 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -18936,37 +18832,6 @@
 			};
 			name = Deployment;
 		};
-		91DA8117131B367F00FCB316 /* Development */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/Library/Frameworks\"",
-				);
-				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = "$(DG_INSTALL_PATH)";
-			};
-			name = Development;
-		};
-		91DA8118131B367F00FCB316 /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"/Library/Frameworks\"",
-				);
-				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
-				INSTALL_PATH = "$(DG_INSTALL_PATH)";
-			};
-			name = Deployment;
-		};
 		91DA814B131B36CD00FCB316 /* Development */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 22CF10220EE984600054F513 /* bach.xcconfig */;
@@ -20768,15 +20633,6 @@
 			buildConfigurations = (
 				91DA80F8131B34CD00FCB316 /* Development */,
 				91DA80F9131B34CD00FCB316 /* Deployment */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Development;
-		};
-		91DA8116131B367F00FCB316 /* Build configuration list for PBXNativeTarget "bach.embed" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				91DA8117131B367F00FCB316 /* Development */,
-				91DA8118131B367F00FCB316 /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Development;

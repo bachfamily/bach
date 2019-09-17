@@ -312,7 +312,7 @@ typedef struct _bach {
     char                b_version_string_verbose_with_build[128];
     unsigned long        b_llll_version;
     char                b_llll_version_string[128];
-    unsigned long       b_buildnumber;
+    unsigned long       b_buildnumber; // unused
     
     t_llll                **b_llll_book; // an array of arrays of lllls
     t_uint32            **b_llll_phonebook;
@@ -349,6 +349,8 @@ typedef struct _bach {
     t_bool              b_nonative;
     
     class pvManager     *b_thePvManager;
+    
+    t_symbol *b_buildnumber_sym;
     
 } t_bach;
 

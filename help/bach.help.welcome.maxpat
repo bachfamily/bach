@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 4,
+			"minor" : 1,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -229,8 +229,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 6.0, 287.0, 281.0, 40.0 ],
-					"text" : "If you prefer to have a sistematic look at the documentation run through the list of topics."
+					"patching_rect" : [ 6.0, 287.0, 334.0, 40.0 ],
+					"text" : "If you prefer to have a systematic look at the documentation, you can run through the list of topics."
 				}
 
 			}

@@ -86,6 +86,7 @@ void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av);
 char bach_load_default_font(void);
 long bach_getbuildnumber(void);
 void bach_init_bifs(t_bach *x);
+t_symbol *get_buildnumber_sym(void);
 
 t_uint32 murmur3(const t_uint32 key);
 t_bool bach_checkauth();
@@ -516,9 +517,7 @@ void bach_printglobalswithvalues(t_bach *x)
 void bach_sendbuildnumber(t_bach *x, t_symbol *s)
 {
     if (s && s->s_thing) {
-        t_atom bnum;
-        atom_setlong(&bnum, bach_getbuildnumber());
-        object_method_typed(s->s_thing, NULL, 1, &bnum, NULL);
+        object_method_typed(s->s_thing, x->b_buildnumber_sym, 0, NULL, NULL);
     }
 }
 
@@ -697,7 +696,8 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     
     bach_setup(x);
     
-    
+    x->b_buildnumber_sym = get_buildnumber_sym();
+
     
     // Filling version fields
     snprintf_zero(x->b_llll_version_string, 128, "%s", BACH_LLLL_VERSION);
@@ -705,11 +705,7 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     snprintf_zero(x->b_version_string_verbose, 128, "v%s beta", BACH_VERSION);
     x->b_version = parse_version_string(x->b_version_string, NULL, NULL, NULL, NULL);
     x->b_llll_version = parse_version_string(x->b_llll_version_string, NULL, NULL, NULL, NULL);
-    x->b_buildnumber = bach_getbuildnumber();
-    snprintf_zero(x->b_version_string_verbose_with_build, 128, "v%s beta (build %ld)", BACH_VERSION, x->b_buildnumber);
-    
-    
-    
+    snprintf_zero(x->b_version_string_verbose_with_build, 128, "v%s beta (build %s)", BACH_VERSION, x->b_buildnumber_sym->s_name);
 
     /*
     this_llll_pool_item = x->b_llll_pool;
@@ -742,9 +738,57 @@ t_bach *bach_new(t_symbol *s, long ac, t_atom *av)
     
     bach_init_bifs(x);
     x->b_thePvManager = pvManager::getPvManager();
-
+    
     defer_low(x, (method) bach_init_print, NULL, 0, NULL);
     return x;
+}
+
+t_symbol *get_buildnumber_sym(void)
+{
+    
+    const std::string buildDate = __DATE__;
+    const std::string buildTime = __TIME__;
+    
+    const std::string month = buildDate.substr(0, 3);
+    const std::string day = buildDate.substr(4, 2);
+    const std::string year = buildDate.substr(7, 4);
+    
+    const std::string hour = buildTime.substr(0, 2);
+    const std::string min = buildTime.substr(3, 2);
+    const std::string sec = buildTime.substr(6, 2);
+    
+    std::string monthNum;
+    if (month == "Jan")
+        monthNum = "01";
+    else if (month == "Feb")
+        monthNum = "02";
+    else if (month == "Mar")
+        monthNum = "03";
+    else if (month == "Apr")
+        monthNum = "04";
+    else if (month == "May")
+        monthNum = "05";
+    else if (month == "Jun")
+        monthNum = "06";
+    else if (month == "Jul")
+        monthNum = "07";
+    else if (month == "Aug")
+        monthNum = "08";
+    else if (month == "Sep")
+        monthNum = "09";
+    else if (month == "Oct")
+        monthNum = "10";
+    else if (month == "Nov")
+        monthNum = "11";
+    else if (month == "Dec")
+        monthNum = "12";
+    else
+        monthNum = "00";
+    
+    
+    std::string bn;
+    bn = year + monthNum + day + hour + min + sec;
+    return gensym(bn.c_str());
 }
 
 void bach_init_print(t_bach *x, t_symbol *s, long ac, t_atom *av)
