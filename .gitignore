@@ -5,6 +5,9 @@
 *.mxe64
 *.a
 
+# Temp build locations #
+source/vs_stuff/*
+
 
 # OS generated files #
 ######################
