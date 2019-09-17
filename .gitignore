@@ -1,5 +1,7 @@
 # Binaries #
 ############
+extensions/*
+externals/*
 *.mxo
 *.mxe
 *.mxe64
