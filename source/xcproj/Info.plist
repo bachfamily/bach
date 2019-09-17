@@ -13,15 +13,13 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>
-	<string>${PRODUCT_NAME} ${PRODUCT_VERSION}, Copyright 2010-2015 Andrea Agostini and Daniele Ghisi</string>
+	<string>${PRODUCT_NAME} ${PRODUCT_VERSION}, Copyright 2010-2019 Andrea Agostini and Daniele Ghisi</string>
 	<key>CFBundlePackageType</key>
 	<string>iLaX</string>
 	<key>CFBundleShortVersionString</key>
 	<string>${PRODUCT_VERSION}</string>
-	<key>CFBundleSignature</key>
-	<string>max2</string>
 	<key>CFBundleVersion</key>
-	<string>1568716577</string>
+	<string>${PRODUCT_VERSION}</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 </dict>

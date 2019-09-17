@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 0,
-			"revision" : 4,
+			"minor" : 1,
+			"revision" : 0,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -185,7 +185,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 460.0, -68.0, 146.0, 22.0 ],
-					"text" : "sprintf symout (build %ld)"
+					"text" : "sprintf symout (build %s)"
 				}
 
 			}
@@ -295,8 +295,8 @@
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 250.0, 9.0, 174.0, 19.0 ],
-					"text" : "v0.8.0.5 beta (build 1557226751)",
+					"patching_rect" : [ 250.0, 9.0, 208.0, 19.0 ],
+					"text" : "v0.8.0.8 beta (build 20190917150619)",
 					"textcolor" : [ 0.10980399698019, 0.10980399698019, 0.10980399698019, 1.0 ],
 					"varname" : "autohelp_top_digest[3]"
 				}
@@ -555,13 +555,13 @@
 					"name" : "bach.overviewswitch.maxpat",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"offset" : [ 0.0, 0.0 ],
+					"offset" : [ 0.0, -3272.0 ],
 					"patcher" : 					{
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 0,
-							"revision" : 4,
+							"minor" : 1,
+							"revision" : 0,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1541,8 +1541,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 0,
-											"revision" : 4,
+											"minor" : 1,
+											"revision" : 0,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -1959,8 +1959,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 0,
-											"revision" : 4,
+											"minor" : 1,
+											"revision" : 0,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -2511,8 +2511,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 0,
-											"revision" : 4,
+											"minor" : 1,
+											"revision" : 0,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -2672,8 +2672,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 0,
-											"revision" : 4,
+											"minor" : 1,
+											"revision" : 0,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -5773,8 +5773,8 @@
 										"fileversion" : 1,
 										"appversion" : 										{
 											"major" : 8,
-											"minor" : 0,
-											"revision" : 4,
+											"minor" : 1,
+											"revision" : 0,
 											"architecture" : "x64",
 											"modernui" : 1
 										}
@@ -7429,7 +7429,7 @@
 									"textcolor" : [ 0.25, 0.25, 0.25, 1.0 ],
 									"tree_openstate_data_0000000000" : [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
 									"tree_openstate_data_count" : [ 1 ],
-									"versionnumber" : 80005,
+									"versionnumber" : 80008,
 									"vinset" : 0.0,
 									"whole_tree_data_0000000000" : [ "1 – Hello World", "2 – Brother John", "3 – Iterations", "4 – Through The Looking Glass", "5 – Slot Machines", "6 – The Gift Of Synthesis", "7 – Inspector As A Gadget", "8 – Real Time Stories", "9 – The Minimal Way", "10 – The World Outside", "11 – From OpenMusic to bach", "12 – Abstract Thinking", "13 – Beams Through The Trees", "14 – A Mazing Grace", "15 – God Solve The Queens", "16 – Into The Matrix", "17 – Lambda Scores", "18 – Graphical Synchronization", "19 – Filter Filter Little Star", "20 – Edit Path", "21 – Standalone Applications" ],
 									"whole_tree_data_count" : [ 1 ]
@@ -9594,13 +9594,6 @@
 				"bootpath" : "~/Documents/Max 7/Packages/bach/patchers",
 				"patcherrelativepath" : "../patchers",
 				"type" : "JSON",
-				"implicit" : 1
-			}
-, 			{
-				"name" : "become_a_patron_button@2x.png",
-				"bootpath" : "~/Downloads",
-				"patcherrelativepath" : "../../../../../Downloads",
-				"type" : "PNG",
 				"implicit" : 1
 			}
 , 			{
