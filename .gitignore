@@ -6,7 +6,7 @@
 *.a
 
 # Temp build locations #
-source/vs_stuff/*
+source/vs/vs_stuff/*
 
 
 # OS generated files #
@@ -25,12 +25,6 @@ source/xcproj/bach.xcodeproj/project.xcworkspace
 source/xcproj/bach.xcodeproj/xcuserdata
 source/xcproj/bach.xcodeproj/*.pbxuser
 source/xcproj/bach.xcodeproj/*.mode*
-
-
-# Plist Data: we need to unsync this otherwise we have constant conflicts #
-# given that the build number is updated automatically at each build      #
-###########################################################################
-source/xcproj/Info.plist
 
 
 # Emacs temp files for .gitignore and .gitattributes #
