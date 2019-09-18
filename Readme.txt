@@ -43,7 +43,7 @@ The best thing to do to start learning bach is following the tutorials that you 
 
 The only prerequisite to bach is a solid (but not necessarily hyper-advanced) knowledge of Max. The documentation will sometimes hint at advanced topics, such as threading, but if you don't feel at ease with them you can simply overlook them.
 
-Of course, experimentation is always the core of understanding. As soon as you get the very first notions, the best you can do is start patching. Just remember that this is still an alpha release: save your patches and data as often as you can - we can't assure you that Max won't hang or crash as soon as you click that button you just added!
+Of course, experimentation is always the core of understanding. As soon as you get the very first notions, the best you can do is start patching. Just remember that this is a beta release: save your patches and data as often as you can - we can't assure you that Max won't hang or crash as soon as you click that button you just added!
 
 
 ===================================================
