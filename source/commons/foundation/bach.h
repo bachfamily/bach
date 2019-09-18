@@ -22,13 +22,6 @@
 
 	#define BACH_MAGIC_GOOD	3282844379u
 	#define BACH_MAGIC_BAD	666 // hahaha!!!
-	
-//	#define BACH_CURRENT_VERSION 70911
-//	#define BACH_CURRENT_VERSION_TEXT "v0.7.9.11 beta"
-//	#define bach_get_current_llll_version() 8000
-
-	////////////////////#define BACH_MAX
-	//#define BACH_JUCE
 
     #ifdef __cplusplus_WEDONTNEEDTHIS
         #define BEGIN_CHECK_LINKAGE \
@@ -83,7 +76,7 @@
 				#define CONFIGURATION_Deployment
 			#endif
 			#define BACH_LLLL_VERSION "0.8.0.0"
-			#define BACH_VERSION "0.8.0.8"
+			#define BACH_VERSION "0.8.1"
 
 			#define MAXAPI_USE_MSCRT
 		#endif

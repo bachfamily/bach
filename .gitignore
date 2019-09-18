@@ -28,7 +28,6 @@ Thumbs.db
 *.xcworkspace
 **/xcuserdata/*
 *.pbxuser
-*.pbxproj
 *.mode*
 
 
