@@ -1,0 +1,4 @@
+alterparser:	alterparser.l
+			
+						
+clean:		

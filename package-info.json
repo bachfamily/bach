@@ -27,7 +27,7 @@
 	}
 ,
 	"tags" : [ "computer-aided composition", "notation", "score", "roll", "composition", "generation", "symbolic composition" ],
-	"version" : "0.8.0",
+	"version" : "0.8.1",
 	"website" : "https://www.bachproject.net",
 	"filelist" : 	{
 		"extensions" : [ "bach.mxe", "bach.mxe64", "bach.mxo" ],

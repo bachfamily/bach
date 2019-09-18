@@ -1,0 +1,3 @@
+strparser:	strparser.l
+						
+clean:		

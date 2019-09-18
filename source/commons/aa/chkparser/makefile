@@ -1,0 +1,4 @@
+chkparser:	chkparser.l
+			
+						
+clean:		
