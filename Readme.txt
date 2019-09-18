@@ -3,6 +3,7 @@ bach for Max
 - SYSTEM REQUIREMENTS
 - HOW TO INSTALL
 - HOW TO UNINSTALL
+- HOW TO SUPPORT BACH
 - WHERE TO START
 - ACKNOWLEDGMENTS
 - CONTACT
@@ -34,12 +35,30 @@ Uninstall from Max Package Manager, or delete the "bach" folder from the "packag
 
 
 ===================================================
+HOW TO SUPPORT BACH
+===================================================
+
+You can support the bach project on Patreon, at the page https://www.patreon.com/bachproject
+
+Developing and maintaining the bach project is a huge work, which has been taking significant effort and a good chunk of our time since 2010. Most of the work is on the core system (bach), which is freelance project with no institutional support: we rely on Patreon to try to make it sustainable for us.
+
+If you think that bach is not worth your money, or if you can’t afford to pay anything, that's absolutely ok and you then should not contribute. However, if you think that bach is useful and if you can afford to pay us as little as a cup of coffee per month, then you might want to contribute, because this will help keeping bach alive, maintained, and free for everyone.
+
+What do you get for contributing? As we said, contributions are targeted to keeping bach alive, supported and free. The most important thing you get, we hope, is the warm feeling of being part of a family that makes all of this possible!
+
+All Patrons obtain a code to remove the bach splash screen in their patches for the whole solar year (on the other hand, removing the splash screen from standalones is unfortunately more complicated, and might require particular arrangements).
+
+In addition, Patrons get several benefits: from early access to prereleases, all the way up to private Skype/Google Hangouts meeting for the top tier (passing through a set of exclusive video tutorials and the possibility to submit feature requests).
+
+
+===================================================
 WHERE TO START
 ===================================================
 
 The patch "bach.overview" (located in the "Extras" Max's menu) contains a detailed documentation of all the global system features (which you should read entirely), and links to the help files of all the externals and abstractions. We have tried to keep all this information in a somewhat pedagogical order, and in principle you are encouraged to run through it from beginning to end to get an idea of the tools you are provided with.
 
 The best thing to do to start learning bach is following the tutorials that you find in the "bach.overview". 
+You can also access a series of video tutorials from our Patreon page; for some of the videos Patrons have early access (1 year before anyone else), but you can still access all the other ones, as well as the old patrons-only videos when after 1 year from they creation (also see the Patreon section above).
 
 The only prerequisite to bach is a solid (but not necessarily hyper-advanced) knowledge of Max. The documentation will sometimes hint at advanced topics, such as threading, but if you don't feel at ease with them you can simply overlook them.
 
