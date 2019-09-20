@@ -69,7 +69,9 @@ typedef struct _codableobj
 } t_codableobj;
 
 
-void codableclass_add_standard_methods(t_class *c, t_bool isBachCode = false);
+void codableclass_add_standard_methods(t_class *c);
+void codableclass_add_standard_methods_ext(t_class *c);
+
 
 
 t_mainFunction *codableobj_parse_buffer(t_codableobj *x,
@@ -149,5 +151,8 @@ void codableobj_ownedFunctionsSetup(t_codableobj *x);
 class t_execEnv;
 
 t_llll *codableobj_run(t_codableobj* x, t_execEnv &context);
+
+t_max_err codableobj_params_get(t_codableobj *x, t_object *attr, long *ac, t_atom **av);
+void codableobj_params_set(t_codableobj *x, t_object *attr, long ac, t_atom *av);
 
 #endif /* bach_codableobj_hpp */

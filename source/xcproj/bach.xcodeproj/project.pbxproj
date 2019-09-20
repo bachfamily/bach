@@ -2825,6 +2825,7 @@
 		911385B71F4C3AB100637524 /* notation_goto.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notation_goto.c; sourceTree = "<group>"; };
 		911385B91F4C3AC300637524 /* notation_goto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notation_goto.h; sourceTree = "<group>"; };
 		9115B6F0129AD23A008ABC73 /* llll_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 2; path = llll_math.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		911621C02334CBE800CC8A04 /* bach_doc_substitutions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bach_doc_substitutions.h; sourceTree = "<group>"; };
 		9117D1DD1509FC2B000B927F /* bach.group.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.group.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
 		9117D1E01509FCA5000B927F /* group.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = group.c; sourceTree = "<group>"; };
 		9118C2011941D85800BA58AF /* bach.life.mxo */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = bach.life.mxo; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5673,6 +5674,7 @@
 		9157F5AD232F6F2C00A4ADAB /* doc */ = {
 			isa = PBXGroup;
 			children = (
+				911621C02334CBE800CC8A04 /* bach_doc_substitutions.h */,
 				91CE8D951763927400CF5CD6 /* bach_doc_commons.h */,
 				1E9026EE150FC5380005B502 /* bach_doc_groups.h */,
 			);

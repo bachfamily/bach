@@ -109,6 +109,7 @@ int T_EXPORT main()
 	c = class_new("bach.diff", (method)diff_new, (method)diff_free, (short)sizeof(t_diff), 0L, A_GIMME, 0);
 	
     codableclass_add_standard_methods(c);
+    codableclass_add_standard_methods_ext(c);
 
 	// @method llll @digest Store data and compute difference
 	// @description

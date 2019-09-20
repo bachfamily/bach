@@ -115,7 +115,8 @@ int T_EXPORT main()
     
     c = class_new("bach.eval", (method)eval_new, (method)eval_free, (short)sizeof(t_eval), 0L, A_GIMME, 0);
     
-    codableclass_add_standard_methods(c, true);
+    codableclass_add_standard_methods(c);
+    codableclass_add_standard_methods_ext(c);
 
     // @method llll @digest Store values for the expression variables
     // @description
@@ -225,6 +226,15 @@ int T_EXPORT main()
     // all the patcher and global variables in the code to trigger the evaluation,
     // respectively with a priority of 0 and -10; moreover,
     // data received the first inlet will trigger the evaluation, too.
+    
+    CLASS_ATTR_LLLL(c, "params", 0, t_codableobj, c_paramsll, codableobj_params_get, codableobj_params_set);
+    CLASS_ATTR_LABEL(c, "params", 0, "Extra Parameters");
+    // @description The <m>params</m> attribute allows setting the values
+    // of local variables to be passed to the code.
+    // It is structured as an llll consisting of one or more sublists,
+    // each containing the name of a variable and its value to be passed to the code.
+    // For example, the llll <m>[ $foo 1 ] [ $bar [ 2 3 ] ]</m>
+    // will set the $foo and $bar local variables respectively to <m>1</m> and <m>[ 2 3 ]</m>.
     
     llllobj_class_add_default_bach_attrs(c, LLLL_OBJ_VANILLA);
     // @copy BACH_DOC_STATIC_ATTR
@@ -484,8 +494,7 @@ t_eval *eval_new(t_symbol *s, short ac, t_atom *av)
         x->n_ob.c_ofTable = new t_ofTable;
         eval_ownedFunctionsSetup(x);
         x->n_ob.c_embed = 1;
-        x->n_ob.c_maxtime = 1000;
-        
+        x->n_ob.c_maxtime = 60000;
         
         true_ac = ac;
         
